@@ -37,3 +37,14 @@ func TestGeneratedArtifactsAndReadOnlyDriftCheck(t *testing.T) {
 		t.Fatal("check mode rewrote the working tree")
 	}
 }
+
+func TestGalleryNormalizesWindowsPathsWithoutChangingAuthoredEscapes(t *testing.T) {
+	input := `{"path":"C:\\work\\project\\specs\\system.spec.md","scope":"C:\\work\\project","markdown":"Literal \\text\n[link](a\\b)","unrelated":"C:\\work\\project-other\\file"}`
+	want := `{"path":"$PROJECT/specs/system.spec.md","scope":"$PROJECT","markdown":"Literal \\text\n[link](a\\b)","unrelated":"C:\\work\\project-other\\file"}`
+	if got := galleryOutput(input, `C:\work\project`); got != want {
+		t.Fatalf("normalized output:\n%s\nwant:\n%s", got, want)
+	}
+	if got := galleryOutput(`{"path":"/tmp/project/specs/system.spec.md"}`, "/tmp/project"); got != `{"path":"$PROJECT/specs/system.spec.md"}` {
+		t.Fatal(got)
+	}
+}

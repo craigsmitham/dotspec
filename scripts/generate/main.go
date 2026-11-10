@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/cli"
@@ -161,13 +162,38 @@ func outputGallery() (result string, err error) {
 		if err != nil {
 			return "", err
 		}
-		encoded, err := json.Marshal(resolved)
-		if err != nil {
-			return "", err
-		}
-		content := strings.ReplaceAll(out.String(), string(encoded[1:len(encoded)-1]), "$PROJECT")
-		content = strings.ReplaceAll(content, filepath.ToSlash(resolved), "$PROJECT")
+		content := galleryOutput(out.String(), resolved)
 		fmt.Fprintf(&gallery, "## %s\n\n```sh\ndotspec %s\n```\n\n````text\n%s````\n\n", strings.Join(args, " "), strings.Join(args, " "), content)
 	}
 	return gallery.String(), nil
+}
+
+var jsonString = regexp.MustCompile(`"(?:[^"\\]|\\.)*"`)
+
+// Normalize complete JSON path strings without changing key order or escapes
+// in authored Markdown. Replacing backslashes across the entire JSON output
+// would corrupt its contents. The CLI retains native paths on each platform.
+func galleryOutput(content, project string) string {
+	if json.Valid([]byte(content)) {
+		return jsonString.ReplaceAllStringFunc(content, func(token string) string {
+			var value string
+			if err := json.Unmarshal([]byte(token), &value); err != nil {
+				return token
+			}
+			switch {
+			case value == project:
+				value = "$PROJECT"
+			case strings.HasPrefix(value, project+"\\"):
+				value = "$PROJECT" + strings.ReplaceAll(value[len(project):], "\\", "/")
+			case strings.HasPrefix(value, project+"/"):
+				value = "$PROJECT" + value[len(project):]
+			default:
+				return token
+			}
+			// Marshaling a string cannot fail.
+			encoded, _ := json.Marshal(value)
+			return string(encoded)
+		})
+	}
+	return strings.ReplaceAll(content, filepath.ToSlash(project), "$PROJECT")
 }
