@@ -182,18 +182,21 @@ dotspec use-case show check-specifications --json
   "use_case": {
     "slug": "check-specifications",
     "name": "New use case",
-    "goal": "Describe what the primary actor wants to accomplish through this interaction.",
-    "system_boundary": "Name the system whose behavior this use case describes.",
-    "primary_actor": "Describe the role pursuing the goal.",
-    "goal_level": "Identify the level: summary, user task, or subfunction.",
-    "trigger": "Describe the action or time event that starts the interaction.",
-    "preconditions": "Describe the state expected to be true before the interaction, or state that none is assumed.",
-    "success_criterion": "State or link to the observable condition that completes the actor's goal.",
-    "main_success_scenario": "1. Describe the actor's action.\n2. Describe the system's response and how the actor reaches the goal.",
-    "extensions": "Describe exceptional conditions and their responses, linking to governing rules.",
-    "sequence": "State whether the scenario's order is representative or required; link to the governing rule for required order.",
-    "related_jobs": "Link to the jobs, steps, or desired outcomes this use case supports.",
-    "markdown": "# New use case\n\n## Goal\n\nDescribe what the primary actor wants to accomplish through this interaction.\n\n## System boundary\n\nName the system whose behavior this use case describes.\n\n## Primary actor\n\nDescribe the role pursuing the goal.\n\n## Goal level\n\nIdentify the level: summary, user task, or subfunction.\n\n## Trigger\n\nDescribe the action or time event that starts the interaction.\n\n## Preconditions\n\nDescribe the state expected to be true before the interaction, or state that none is assumed.\n\n## Success criterion\n\nState or link to the observable condition that completes the actor's goal.\n\n## Main success scenario\n\n1. Describe the actor's action.\n2. Describe the system's response and how the actor reaches the goal.\n\n## Extensions\n\nDescribe exceptional conditions and their responses, linking to governing rules.\n\n## Sequence\n\nState whether the scenario's order is representative or required; link to the governing rule for required order.\n\n## Related jobs\n\nLink to the jobs, steps, or desired outcomes this use case supports.",
+    "goal": "Name what the primary actor wants to accomplish, using an active verb phrase.",
+    "system_boundary": "Name the system whose external behavior this use case describes.",
+    "primary_actor": "Identify the role pursuing the goal.",
+    "goal_level": "Identify the level: summary (kite), user task (sea), or subfunction (fish).",
+    "trigger": "",
+    "preconditions": "",
+    "success_criterion": "",
+    "main_success_scenario": "Describe the typical successful interaction in a short paragraph or a few steps.\nKeep internal implementation and interface details in their own sources.",
+    "extensions": "List alternative success paths and failure conditions before resolving their handling.\nMark unknown responses as unresolved; expand the branches needed for the next decision.",
+    "sequence": "",
+    "supporting_actors": "",
+    "stakeholder_interests": "",
+    "minimum_guarantees": "",
+    "related_jobs": "",
+    "markdown": "# New use case\n\n## Goal\n\nName what the primary actor wants to accomplish, using an active verb phrase.\n\n## System boundary\n\nName the system whose external behavior this use case describes.\n\n## Primary actor\n\nIdentify the role pursuing the goal.\n\n## Goal level\n\nIdentify the level: summary (kite), user task (sea), or subfunction (fish).\n\n## Main success scenario\n\nDescribe the typical successful interaction in a short paragraph or a few steps.\nKeep internal implementation and interface details in their own sources.\n\n## Extensions\n\nList alternative success paths and failure conditions before resolving their handling.\nMark unknown responses as unresolved; expand the branches needed for the next decision.",
     "path": "$PROJECT/specs/use-cases/check-specifications.use-case.spec.md",
     "system": {
       "name": "New system",
@@ -209,6 +212,41 @@ dotspec use-case show check-specifications --json
     }
   }
 }
+````
+
+## use-case init review-change --template expanded
+
+```sh
+dotspec use-case init review-change --template expanded
+```
+
+````text
+Created specs/use-cases/review-change.use-case.spec.md
+Edit the actor goal and system boundary; add success criteria, scenarios, and extensions as they become known.
+````
+
+## use-case list --overview
+
+```sh
+dotspec use-case list --overview
+```
+
+````text
+Use cases
+
+System: New system (specs/system.spec.md)
+
+  New use case (specs/use-cases/check-specifications.use-case.spec.md)
+    Actor: Identify the role pursuing the goal.
+    Goal: Name what the primary actor wants to accomplish, using an active verb phrase.
+    Level: Identify the level: summary (kite), user task (sea), or subfunction (fish).
+    Stated boundary: Name the system whose external behavior this use case describes.
+
+  New use case (specs/use-cases/review-change.use-case.spec.md)
+    Actor: Describe the role pursuing the goal.
+    Goal: Describe what the primary actor wants to accomplish through this interaction.
+    Level: Identify the level: summary, user task, or subfunction.
+    Stated boundary: Name the system whose behavior this use case describes.
 ````
 
 ## use-case check check-specifications --json
@@ -236,9 +274,32 @@ dotspec use-case check check-specifications --json
     "files_checked": 1,
     "context_files_checked": 1,
     "errors": 0,
-    "advice": 0
+    "advice": 2
   },
-  "diagnostics": []
+  "diagnostics": [
+    {
+      "rule": "use-case.sequence",
+      "severity": "advice",
+      "message": "State whether scenario order is representative or required, and link to the governing rule for required order.",
+      "location": {
+        "path": "$PROJECT/specs/use-cases/check-specifications.use-case.spec.md",
+        "line": 5,
+        "column": 1,
+        "element": "Sequence"
+      }
+    },
+    {
+      "rule": "use-case.success-criterion",
+      "severity": "advice",
+      "message": "State or link to the observable condition that completes the actor's goal.",
+      "location": {
+        "path": "$PROJECT/specs/use-cases/check-specifications.use-case.spec.md",
+        "line": 5,
+        "column": 1,
+        "element": "Success criterion"
+      }
+    }
+  ]
 }
 ````
 
@@ -620,6 +681,10 @@ dotspec sources --json
     {
       "path": "$PROJECT/specs/use-cases/check-specifications.use-case.spec.md",
       "referenced_by": []
+    },
+    {
+      "path": "$PROJECT/specs/use-cases/review-change.use-case.spec.md",
+      "referenced_by": []
     }
   ],
   "diagnostics": [
@@ -632,6 +697,28 @@ dotspec sources --json
         "line": 7,
         "column": 1,
         "element": "Job"
+      }
+    },
+    {
+      "rule": "use-case.sequence",
+      "severity": "advice",
+      "message": "State whether scenario order is representative or required, and link to the governing rule for required order.",
+      "location": {
+        "path": "$PROJECT/specs/use-cases/check-specifications.use-case.spec.md",
+        "line": 5,
+        "column": 1,
+        "element": "Sequence"
+      }
+    },
+    {
+      "rule": "use-case.success-criterion",
+      "severity": "advice",
+      "message": "State or link to the observable condition that completes the actor's goal.",
+      "location": {
+        "path": "$PROJECT/specs/use-cases/check-specifications.use-case.spec.md",
+        "line": 5,
+        "column": 1,
+        "element": "Success criterion"
       }
     }
   ]

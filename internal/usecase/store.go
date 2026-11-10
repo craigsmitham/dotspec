@@ -14,6 +14,19 @@ type Group struct {
 }
 
 func Init(path, slug string) (string, error) {
+	return InitTemplate(path, slug, "brief")
+}
+
+// InitTemplate selects writing prompts, not a separate format or maturity state.
+func InitTemplate(path, slug, template string) (string, error) {
+	content := Template
+	switch template {
+	case "brief":
+	case "expanded":
+		content = ExpandedTemplate
+	default:
+		return "", fmt.Errorf("unknown use-case template %q; use brief or expanded", template)
+	}
 	if err := ValidateSlug(slug); err != nil {
 		return "", err
 	}
@@ -24,7 +37,7 @@ func Init(path, slug string) (string, error) {
 	if err := Layout.ValidateLocal(dir); err != nil {
 		return "", err
 	}
-	return Layout.Create(dir, slug, Template)
+	return Layout.Create(dir, slug, content)
 }
 
 // Show selects exactly one use case in the requested directory, without searching

@@ -29,8 +29,27 @@ The contributor requests a specification check before committing a change.
 
 ## Preconditions
 
-The selected project directory exists. Dotspec can read its files, and Git is
-available when discovery takes place inside a Git repository.
+The contributor has selected an existing project directory. Reading files and
+invoking Git during discovery can fail; those failures are handled below, not
+assumed away by this precondition.
+
+## Supporting actors
+
+Git supplies repository discovery information when the selected directory is
+inside a Git repository.
+
+## Stakeholder interests
+
+Contributors need actionable findings. Reviewers need an honest account of what
+was inspected. Both need their authored sources preserved.
+
+## Minimum guarantees
+
+Inspection leaves authored sources unchanged, as defined by the
+[source preservation requirement](../quality/inspection-preserves-source.quality.spec.md).
+The [check report contract](../../README.md#check-specifications) requires the
+report to distinguish incomplete scans from completed ones, even when inspection
+cannot finish.
 
 ## Success criterion
 
@@ -54,17 +73,31 @@ requirements are complete, validated, or satisfied.
 
 ## Extensions
 
-- A specification is malformed: report its structural error, skip dependent
-  checks for that file, and follow the
-  [continued-inspection requirement](../requirements/continue-after-invalid-spec.requirement.spec.md).
-- A file cannot be read or discovery fails: report the operational failure and
-  mark the scan incomplete. The contributor can repair access and retry.
-- No supported specifications are found: explicitly report an empty, completed
-  scan.
-- Content is unfinished: retain readable drafts and report applicable writing
-  advice. The
-  [advice-permits-success requirement](../requirements/advice-permits-success.requirement.spec.md)
-  governs the exit status.
+### Malformed specification
+
+During steps 2–3, a specification is malformed. Report its structural error,
+skip dependent checks for that file, and continue according to the
+[continued-inspection requirement](../requirements/continue-after-invalid-spec.requirement.spec.md).
+Resume reporting at step 4. A complete report with errors still achieves this goal.
+
+### Unreadable input or failed discovery
+
+During steps 2–3, a file cannot be read or discovery fails, including a required
+Git invocation. Report the operational failure and mark the scan incomplete.
+End without achieving the complete-report goal; the contributor can repair access
+and start another check.
+
+### Empty scope
+
+At step 2, no supported specifications are found. Explicitly report an empty,
+completed scan at step 4. This is an alternative successful outcome.
+
+### Unfinished content
+
+At step 3, content is unfinished. Retain readable drafts, report applicable writing
+advice, and continue to step 4. The
+[advice-permits-success requirement](../requirements/advice-permits-success.requirement.spec.md)
+governs exit status. This also completes the information-gathering goal.
 
 ## Sequence
 
@@ -88,3 +121,12 @@ describes the report and inspection behavior used in this interaction.
 
 Its [quality obligations](../concepts/specification-inspection.concept.spec.md#state)
 cover diagnostic severity, report repeatability, and source preservation.
+
+## Authority and evidence
+
+This narrative explains obligations defined by the linked report contract and
+requirements. Their definitions remain authoritative. The
+[use-case command examples](../../internal/integration/testdata/use-cases.txtar)
+define the illustrated CLI outcomes; they do not prove every narrative branch is
+covered. A reference to [unreadable input](#unreadable-input-or-failed-discovery)
+identifies a branch, not a successful execution of it.

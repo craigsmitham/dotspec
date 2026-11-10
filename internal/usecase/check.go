@@ -17,9 +17,11 @@ func Check(spec *UseCase) []diagnostic.Diagnostic {
 		{"use-case.goal-level", "Goal level", spec.GoalLevel, "Identify the goal level, such as summary, user task, or subfunction."},
 		{"use-case.success-criterion", "Success criterion", spec.SuccessCriterion, "State or link to the observable condition that completes the actor's goal."},
 		{"use-case.main-success-scenario", "Main success scenario", spec.MainSuccessScenario, "Describe or reference the actor-system interaction that reaches the goal."},
+		{"use-case.extensions", "Extensions", spec.Extensions, "Consider alternative success paths and failure conditions. List conditions first; handling may remain explicitly unresolved."},
 		{"use-case.sequence", "Sequence", spec.Sequence, "State whether scenario order is representative or required, and link to the governing rule for required order."},
 	} {
-		if strings.TrimSpace(field.value) != "" || (field.name == "Sequence" && strings.TrimSpace(spec.MainSuccessScenario) == "") {
+		needsScenario := field.name == "Sequence" || field.name == "Extensions" || field.name == "Success criterion"
+		if strings.TrimSpace(field.value) != "" || (needsScenario && strings.TrimSpace(spec.MainSuccessScenario) == "") {
 			continue
 		}
 		location, found := spec.SectionLocations[field.name]

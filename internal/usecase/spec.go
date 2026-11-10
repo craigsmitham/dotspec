@@ -23,7 +23,41 @@ type metadata struct {
 	ID                string `yaml:"id"`
 }
 
+// Template starts a readable sketch; expanded prompts are optional elaboration.
 const Template = `---
+type: use-case
+---
+
+# New use case
+
+## Goal
+
+Name what the primary actor wants to accomplish, using an active verb phrase.
+
+## System boundary
+
+Name the system whose external behavior this use case describes.
+
+## Primary actor
+
+Identify the role pursuing the goal.
+
+## Goal level
+
+Identify the level: summary (kite), user task (sea), or subfunction (fish).
+
+## Main success scenario
+
+Describe the typical successful interaction in a short paragraph or a few steps.
+Keep internal implementation and interface details in their own sources.
+
+## Extensions
+
+List alternative success paths and failure conditions before resolving their handling.
+Mark unknown responses as unresolved; expand the branches needed for the next decision.
+`
+
+const ExpandedTemplate = `---
 type: use-case
 ---
 
@@ -53,6 +87,18 @@ Describe the action or time event that starts the interaction.
 
 Describe the state expected to be true before the interaction, or state that none is assumed.
 
+## Supporting actors
+
+Name external collaborators and the services or notifications exchanged with them.
+
+## Stakeholder interests
+
+Identify interests that affect the promised behavior, including those of nonparticipants.
+
+## Minimum guarantees
+
+State or link to what remains protected even when the actor's goal is not achieved.
+
 ## Success criterion
 
 State or link to the observable condition that completes the actor's goal.
@@ -64,7 +110,11 @@ State or link to the observable condition that completes the actor's goal.
 
 ## Extensions
 
-Describe exceptional conditions and their responses, linking to governing rules.
+Describe alternative success paths and failure conditions. For each developed branch,
+identify where its condition arises, the response, and whether the interaction resumes,
+succeeds another way, or ends without achieving the goal. Link to governing rules.
+Condition-only entries with explicitly unresolved handling are useful drafts.
+Use descriptive subheadings when other sources need to link to a branch.
 
 ## Sequence
 
@@ -80,26 +130,29 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 // UseCase retains section bodies as Markdown. Scenario steps and extensions
 // are not separate records, and file ownership does not set the system boundary.
 type UseCase struct {
-	References          *specfile.ReferenceDocument    `json:"-"`
-	ID                  string                         `json:"id,omitempty"`
-	Slug                string                         `json:"slug"`
-	Name                string                         `json:"name"`
-	Goal                string                         `json:"goal"`
-	SystemBoundary      string                         `json:"system_boundary"`
-	PrimaryActor        string                         `json:"primary_actor"`
-	GoalLevel           string                         `json:"goal_level"`
-	Trigger             string                         `json:"trigger"`
-	Preconditions       string                         `json:"preconditions"`
-	SuccessCriterion    string                         `json:"success_criterion"`
-	MainSuccessScenario string                         `json:"main_success_scenario"`
-	Extensions          string                         `json:"extensions"`
-	Sequence            string                         `json:"sequence"`
-	RelatedJobs         string                         `json:"related_jobs"`
-	Markdown            string                         `json:"markdown"`
-	Path                string                         `json:"path"`
-	System              *system.System                 `json:"system"`
-	Location            diagnostic.Location            `json:"location"`
-	SectionLocations    map[string]diagnostic.Location `json:"-"`
+	References           *specfile.ReferenceDocument    `json:"-"`
+	ID                   string                         `json:"id,omitempty"`
+	Slug                 string                         `json:"slug"`
+	Name                 string                         `json:"name"`
+	Goal                 string                         `json:"goal"`
+	SystemBoundary       string                         `json:"system_boundary"`
+	PrimaryActor         string                         `json:"primary_actor"`
+	GoalLevel            string                         `json:"goal_level"`
+	Trigger              string                         `json:"trigger"`
+	Preconditions        string                         `json:"preconditions"`
+	SuccessCriterion     string                         `json:"success_criterion"`
+	MainSuccessScenario  string                         `json:"main_success_scenario"`
+	Extensions           string                         `json:"extensions"`
+	Sequence             string                         `json:"sequence"`
+	SupportingActors     string                         `json:"supporting_actors"`
+	StakeholderInterests string                         `json:"stakeholder_interests"`
+	MinimumGuarantees    string                         `json:"minimum_guarantees"`
+	RelatedJobs          string                         `json:"related_jobs"`
+	Markdown             string                         `json:"markdown"`
+	Path                 string                         `json:"path"`
+	System               *system.System                 `json:"system"`
+	Location             diagnostic.Location            `json:"location"`
+	SectionLocations     map[string]diagnostic.Location `json:"-"`
 }
 
 func ValidateSlug(slug string) error {
@@ -151,7 +204,9 @@ func Parse(data []byte) (*UseCase, error) {
 		"Goal": &spec.Goal, "System boundary": &spec.SystemBoundary,
 		"Primary actor": &spec.PrimaryActor, "Goal level": &spec.GoalLevel,
 		"Trigger": &spec.Trigger, "Preconditions": &spec.Preconditions,
-		"Success criterion": &spec.SuccessCriterion, "Main success scenario": &spec.MainSuccessScenario,
+		"Supporting actors": &spec.SupportingActors, "Stakeholder interests": &spec.StakeholderInterests,
+		"Minimum guarantees": &spec.MinimumGuarantees,
+		"Success criterion":  &spec.SuccessCriterion, "Main success scenario": &spec.MainSuccessScenario,
 		"Extensions": &spec.Extensions, "Sequence": &spec.Sequence, "Related jobs": &spec.RelatedJobs,
 	}
 	for _, section := range doc.Sections {

@@ -101,7 +101,7 @@ func TestDraftsAndAdvice(t *testing.T) {
 		}
 		spec.Path = "specs/use-cases/check-specifications.use-case.spec.md"
 		advice := Check(spec)
-		if len(advice) != 6 {
+		if len(advice) != 5 {
 			t.Fatalf("missing content advice: %+v", advice)
 		}
 		for _, d := range advice {
@@ -155,7 +155,7 @@ func TestStructureAndSourceLocations(t *testing.T) {
 }
 
 func TestEveryConventionalSectionRejectsDuplicates(t *testing.T) {
-	for _, name := range []string{"Goal", "System boundary", "Primary actor", "Goal level", "Trigger", "Preconditions", "Success criterion", "Main success scenario", "Extensions", "Sequence", "Related jobs"} {
+	for _, name := range []string{"Goal", "System boundary", "Primary actor", "Goal level", "Trigger", "Preconditions", "Success criterion", "Main success scenario", "Extensions", "Sequence", "Related jobs", "Supporting actors", "Stakeholder interests", "Minimum guarantees"} {
 		_, err := Parse([]byte(draft + "## " + name + "\n\n## " + name + "\n"))
 		var d *diagnostic.Diagnostic
 		if !errors.As(err, &d) || d.Rule != "structure.duplicate-section" {
@@ -181,7 +181,7 @@ func TestExamplesAndUnknownProseRemainMarkdown(t *testing.T) {
 }
 
 func FuzzParse(f *testing.F) {
-	for _, source := range []string{draft, example, Template, draft + "## Goal\n\n## Goal\n", draft + "[bad](#missing)\n"} {
+	for _, source := range []string{draft, example, Template, ExpandedTemplate, draft + "## Goal\n\n## Goal\n", draft + "[bad](#missing)\n"} {
 		f.Add([]byte(source))
 	}
 	f.Fuzz(func(t *testing.T, data []byte) {
@@ -189,4 +189,44 @@ func FuzzParse(f *testing.F) {
 			_ = Check(spec)
 		}
 	})
+}
+
+func TestProgressiveExtensionsAndGuarantees(t *testing.T) {
+	source := draft + "## Main success scenario\nThe actor requests service; the system supplies it.\n## Extensions\n"
+	spec, err := Parse([]byte(source))
+	if err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, d := range Check(spec) {
+		if d.Rule == "use-case.extensions" {
+			found = true
+			if d.Severity != "advice" || d.Location.Line != 7 {
+				t.Fatalf("extension advice: %+v", d)
+			}
+		}
+	}
+	if !found {
+		t.Fatal("missing extension advice after a scenario")
+	}
+	source += "### Alternative service\nCondition: preferred service unavailable. Handling unresolved.\n" +
+		"## Minimum guarantees\nNo unconfirmed promise.\n## Supporting actors\nExternal provider.\n## Stakeholder interests\nOperator: accurate commitments.\n" +
+		"## Evidence\n[Branch](#alternative-service)\n"
+	spec, err = Parse([]byte(source))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if spec.MinimumGuarantees != "No unconfirmed promise." || spec.SupportingActors != "External provider." || spec.StakeholderInterests != "Operator: accurate commitments." {
+		t.Fatalf("lost context: %+v", spec)
+	}
+	for _, d := range Check(spec) {
+		if d.Rule == "use-case.extensions" {
+			t.Fatal("condition-only branch should be accepted")
+		}
+	}
+	for _, template := range []string{Template, ExpandedTemplate} {
+		if _, err := Parse([]byte(template)); err != nil {
+			t.Fatal(err)
+		}
+	}
 }

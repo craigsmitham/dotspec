@@ -33,6 +33,16 @@ func newUseCaseCommand() *cobra.Command {
 		if action.name == "list" {
 			cmd.Use, cmd.Example, cmd.Args = "list", "dotspec use-case list --path .", cobra.NoArgs
 		}
+		template := "brief"
+		overview := false
+		if action.name == "init" {
+			cmd.Flags().StringVar(&template, "template", "brief", "Writing prompts: brief or expanded (same document format)")
+			cmd.Example += "\ndotspec use-case init review-change --template expanded --path ."
+		}
+		if action.name == "list" {
+			cmd.Flags().BoolVar(&overview, "overview", false, "Show actor, goal, level, and stated boundary in text; JSON retains the full records")
+			cmd.Example += "\ndotspec use-case list --overview --path ."
+		}
 		if action.name == "check" {
 			cmd.Long = action.short + ".\n\n" + exitPolicy
 		}
@@ -46,12 +56,12 @@ func newUseCaseCommand() *cobra.Command {
 				return err
 			}
 			if action.name == "list" {
-				return listUseCases(path, format, cmd.OutOrStdout())
+				return listUseCases(path, format, overview, cmd.OutOrStdout())
 			}
 			if err := usecase.ValidateSlug(args[0]); err != nil {
 				return err
 			}
-			return runUseCase(action.name, path, args[0], format, cmd.OutOrStdout())
+			return runUseCase(action.name, path, args[0], format, template, cmd.OutOrStdout())
 		}
 		addPath(cmd)
 		addOutput(cmd, false)
@@ -60,9 +70,9 @@ func newUseCaseCommand() *cobra.Command {
 	return root
 }
 
-func runUseCase(command, path, slug, format string, out io.Writer) error {
+func runUseCase(command, path, slug, format, template string, out io.Writer) error {
 	if command == "init" {
-		target, err := usecase.Init(path, slug)
+		target, err := usecase.InitTemplate(path, slug, template)
 		if err != nil {
 			return err
 		}
@@ -86,7 +96,7 @@ func runUseCase(command, path, slug, format string, out io.Writer) error {
 	return err
 }
 
-func listUseCases(path, format string, out io.Writer) error {
+func listUseCases(path, format string, overview bool, out io.Writer) error {
 	groups, err := usecase.List(path)
 	if err != nil {
 		return err
@@ -103,10 +113,28 @@ func listUseCases(path, format string, out io.Writer) error {
 	output.WriteString("Use cases\n")
 	for _, group := range result.Groups {
 		fmt.Fprintf(&output, "\nSystem: %s\n", systemLabel(group.System))
+		if overview {
+			for _, spec := range group.UseCases {
+				goal := spec.Goal
+				if strings.TrimSpace(goal) == "" {
+					goal = spec.Name
+				}
+				fmt.Fprintf(&output, "\n  %s (%s)\n    Actor: %s\n    Goal: %s\n    Level: %s\n    Stated boundary: %s\n", spec.Name, displayPath(spec.Path), overviewCell(spec.PrimaryActor), overviewCell(goal), overviewCell(spec.GoalLevel), overviewCell(spec.SystemBoundary))
+			}
+			continue
+		}
 		for _, spec := range group.UseCases {
 			fmt.Fprintf(&output, "  %s  (%s)\n", spec.Name, displayPath(spec.Path))
 		}
 	}
 	_, err = io.WriteString(out, output.String())
 	return err
+}
+
+// Collapse layout whitespace only; never infer an actor or boundary from ownership.
+func overviewCell(value string) string {
+	if strings.TrimSpace(value) == "" {
+		return "(unspecified)"
+	}
+	return strings.Join(strings.Fields(value), " ")
 }

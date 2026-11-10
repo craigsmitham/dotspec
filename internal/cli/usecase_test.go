@@ -19,7 +19,7 @@ func TestUseCaseCommandsAndJSON(t *testing.T) {
 	if code, out, errOut := invoke("use-case", "list"); code != 0 || errOut != "" || !strings.Contains(out, "No use cases found") {
 		t.Fatalf("empty text: %d %s %s", code, out, errOut)
 	}
-	code, out, errOut = invoke("use-case", "init", "--path", ".", "review", "--json")
+	code, out, errOut = invoke("use-case", "init", "--path", ".", "review", "--template", "expanded", "--json")
 	var created createdResult
 	if err := json.Unmarshal([]byte(out), &created); err != nil || code != 0 || errOut != "" || !filepath.IsAbs(created.Path) {
 		t.Fatalf("created JSON: %d %s %s %v", code, out, errOut, err)
@@ -67,7 +67,7 @@ func TestUseCaseUsageAndFailureChannels(t *testing.T) {
 		{"init"}, {"init", "../escape"}, {"show", "UPPER"}, {"show", "work", "extra"},
 		{"list", "extra"}, {"check"}, {"check", "../escape"}, {"list", "--format", "mermaid"},
 		{"init", "unused", "--json", "--format", "text"}, {"init", "unused", "--path", ""},
-		{"show", "absent"},
+		{"show", "absent"}, {"init", "unused", "--template", "unknown"},
 	} {
 		if code, out, errOut := invoke(append([]string{"use-case"}, args...)...); code != 2 || out != "" || errOut == "" {
 			t.Errorf("usage %v: %d %q %q", args, code, out, errOut)
@@ -95,5 +95,33 @@ func TestUseCaseUsageAndFailureChannels(t *testing.T) {
 	writeFixture(t, "specs/use-cases/draft.use-case.spec.md", "---\ntype: use-case\n---\n# Draft\n")
 	if code, out, errOut := invoke("use-case", "check", "draft"); code != 0 || errOut != "" || !strings.Contains(out, "advice [use-case.goal]") {
 		t.Fatalf("draft should succeed with advice: %d %q %q", code, out, errOut)
+	}
+}
+
+func TestUseCaseBriefAndOverview(t *testing.T) {
+	prepareExample(t, "overview")
+	if code, out, errOut := invoke("use-case", "init", "sketch"); code != 0 || errOut != "" {
+		t.Fatalf("init: %d %s %s", code, out, errOut)
+	}
+	data, err := os.ReadFile("specs/use-cases/sketch.use-case.spec.md")
+	if err != nil || strings.Contains(string(data), "## Preconditions") || !strings.Contains(string(data), "## System boundary") {
+		t.Fatalf("brief: %s %v", data, err)
+	}
+	writeFixture(t, "specs/use-cases/sketch.use-case.spec.md", "---\ntype: use-case\n---\n# Reserve equipment\n## Primary actor\nCustomer\n## Goal level\nUser task\n## System boundary\nRental business\nincluding depot handover.\n")
+	code, out, errOut := invoke("use-case", "list", "--overview")
+	for _, want := range []string{"System: New system", "Customer", "Reserve equipment", "User task", "Rental business including depot handover.", "sketch.use-case.spec.md"} {
+		if code != 0 || errOut != "" || !strings.Contains(out, want) {
+			t.Fatalf("overview missing %q: %d %s %s", want, code, out, errOut)
+		}
+	}
+	code, ordinary, errOut := invoke("use-case", "list", "--json")
+	overviewCode, overview, overviewErr := invoke("use-case", "list", "--overview", "--json")
+	if code != 0 || overviewCode != 0 || errOut != "" || overviewErr != "" || ordinary != overview {
+		t.Fatal("overview changed JSON records")
+	}
+	writeFixture(t, "specs/use-cases/sketch.use-case.spec.md", "---\ntype: use-case\n---\n# Reserve equipment\n")
+	_, out, _ = invoke("use-case", "list", "--overview")
+	if strings.Count(out, "(unspecified)") != 3 {
+		t.Fatalf("missing fields were inferred: %s", out)
 	}
 }

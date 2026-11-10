@@ -154,7 +154,7 @@ func TestOutputFailuresAcrossCommands(t *testing.T) {
 		{"--help"}, {"--version"}, {"completion", "bash"}, {"man"}, {"sources"}, {"sources", "--json"},
 		{"system", "show"}, {"system", "list", "--json"}, {"job", "show", "develop-requirements"},
 		{"job", "check", "develop-requirements", "--json"},
-		{"use-case", "show", "check-specifications"}, {"use-case", "list", "--json"},
+		{"use-case", "show", "check-specifications"}, {"use-case", "list", "--json"}, {"use-case", "list", "--overview"},
 		{"use-case", "check", "check-specifications", "--json"},
 		{"concept", "show", "job-map"}, {"concept", "list", "--json"}, {"concept", "check", "job-map", "--json"},
 		{"quality", "show", "diagnostic-severity"}, {"quality", "list", "--json"}, {"quality", "check", "diagnostic-severity", "--json"},

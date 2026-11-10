@@ -10,7 +10,8 @@ Job specs describe jobs to be done (JTBDs): the accomplishment someone seeks,
 their context, the steps involved, and how success is judged. Jobs are associated
 with the nearest enclosing system.
 Use-case specs describe an actor’s goal and interaction with a stated system
-boundary, including success criteria and exceptional conditions.
+boundary, including success criteria, alternative success paths, and failure conditions.
+See [Develop use cases](docs/develop-use-cases.md) for a progressive authoring workflow.
 Concept specs describe a coherent piece of product behavior through its purpose,
 abstract state, actions, and operational principle.
 Requirement specs state required results, rules, properties, or restrictions directly.
@@ -248,7 +249,7 @@ The current rules are:
 | `identity.invalid`, `identity.duplicate` | Explicit ID syntax and uniqueness within one document. |
 | `reference.invalid`, `reference.unresolved`, `reference.boundary` | Local reference syntax, target resolution, and repository boundaries. |
 | `job.statement`, `job.performer`, `job.boundary`, `job.outcome-empty`, `job.outcome-measure` | Advisory job-writing suggestions. |
-| `use-case.goal`, `use-case.system-boundary`, `use-case.primary-actor`, `use-case.goal-level`, `use-case.success-criterion`, `use-case.main-success-scenario`, `use-case.sequence` | Advice about missing use-case content or scenario order. |
+| `use-case.goal`, `use-case.system-boundary`, `use-case.primary-actor`, `use-case.goal-level`, `use-case.success-criterion`, `use-case.main-success-scenario`, `use-case.extensions`, `use-case.sequence` | Advice about missing use-case content or scenario order. |
 | `concept.purpose`, `concept.state`, `concept.actions`, `concept.operational-principle` | Advice about missing concept content. |
 | `scan.scope`, `scan.discovery`, `scan.read`, `scan.context`, `scan.reference` | Operational failures that prevent a complete check. |
 
@@ -764,13 +765,18 @@ Each command accepts `--path DIR` (the existing project directory, defaulting to
 `.`) and `--json` or `--format json`. Slugs follow the same rules as job slugs.
 
 - `init <slug>` creates `specs/use-cases/<slug>.use-case.spec.md` from an editable
-  template without overwriting existing content.
+  brief template without overwriting existing content. Use `--template expanded`
+  for additional prompts in the same format; neither option sets a maturity state.
 - `show <slug>` selects that file in the chosen project directory, displays all
   authored Markdown, and reports its enclosing system and source path. It does
   not search ancestor directories for the same slug.
 - `list` discovers use cases in the selected subtree and groups them by enclosing
   system. Groups are ordered by system name and source path, with unassociated
   use cases last; use cases within each group are ordered by source path.
+  `--overview` displays actor, goal (falling back to the title), goal level, stated
+  boundary, and source. Missing actors, levels, and boundaries are shown as
+  unspecified. Multiline prose is collapsed onto one line without interpreting it.
+  JSON retains the full grouped records with or without this presentation flag.
 - `check <slug>` checks one use case and its enclosing system, reporting structural
   errors and nonfatal missing-content advice. Project-wide `check` includes use
   cases alongside systems and jobs. Ordinary reads do not emit writing advice.
@@ -818,7 +824,7 @@ The contributor requests a specification check.
 
 ## Preconditions
 
-The selected project directory exists and is readable.
+The contributor has selected an existing project directory. Read failures are handled as extensions.
 
 ## Success criterion
 
@@ -843,7 +849,8 @@ Representative. The check report contract defines required behavior.
 [Evaluate requirements](../jobs/develop-requirements.job.spec.md#evaluate-the-requirements).
 ```
 
-These eleven H2 headings are conventional sections. They are case-sensitive,
+The H2 headings above, plus `Supporting actors`, `Stakeholder interests`, and
+`Minimum guarantees`, are conventional sections. They are case-sensitive,
 optional, may appear in any order after the title, and may be empty in a draft.
 Duplicate conventional sections are errors, even if empty. A conventional section
 at document level must use H2. Deeper headings belong to the containing section;
@@ -853,23 +860,30 @@ blockquotes do not define sections. Additional prose and sections are retained.
 JSON exposes conventional section bodies as Markdown strings in `goal`,
 `system_boundary`, `primary_actor`, `goal_level`, `trigger`, `preconditions`,
 `success_criterion`, `main_success_scenario`, `extensions`, `sequence`, and
-`related_jobs`. Missing bodies are empty strings. The object also includes
+`related_jobs`, `supporting_actors`, `stakeholder_interests`, and
+`minimum_guarantees`. Missing bodies are empty strings. The object also includes
 `name`, `slug`, optional `id`, `markdown`, absolute `path`, `system`, and the title's
 source `location`.
 
 A trigger is an initiating event; preconditions describe an already-expected
-state. Success criteria can be stated here or referenced from a governing rule.
+state. Conditions the system must detect and respond to belong in the interaction
+and its extensions rather than being assumed away. Success criteria can be stated
+here or referenced from a governing rule. Minimum guarantees describe what remains
+protected even when the goal fails. Supporting actors identify external services
+or notification recipients; stakeholder interests can include nonparticipants.
 `Sequence` explains whether the narrative order is representative or required;
 link to the governing rule when order is required. These bodies are prose, not
 enumerations or executable contracts. Steps and extensions remain Markdown
 inside the use case, without separate records, IDs, or branch-coverage claims.
 
-`check` suggests a goal, system boundary, primary actor, goal level, success
-criterion, and main success scenario when their conventional sections are missing
-or empty. It also suggests `Sequence` when a main success scenario is present but
-that section is missing or empty. It does not interpret prose elsewhere as these
-fields or judge whether a filled section is adequate. Missing triggers,
-preconditions, extensions, job links, and IDs produce no advice.
+`check` suggests a goal, system boundary, primary actor, goal level, and main
+success scenario when their conventional sections are missing or empty. Once a
+main success scenario is present, it also suggests missing success criteria,
+extensions, and sequence information. An extension can record only a condition
+with unresolved handling. These suggestions are possible next writing steps, not
+completion gates or a maturity score. The checker does not interpret prose
+elsewhere as these fields or judge whether a filled section is adequate. Other
+optional sections and IDs produce no missing-content advice.
 
 Same-document links resolve against heading anchors and the optional document
 ID. Check commands validate relative file links using the shared
@@ -880,7 +894,11 @@ requirement-satisfaction inference in this version.
 
 The repository's [Check specifications before committing](specs/use-cases/check-specifications.use-case.spec.md)
 example connects this interaction to the Develop Requirements job and references
-the governing check report contract.
+the governing check report contract. The summary use case
+[Prepare specifications for review](specs/use-cases/prepare-specifications.use-case.spec.md)
+connects it to creating a draft and discovering sources. See
+[Develop use cases](docs/develop-use-cases.md) for extension links, behavioral
+authority, and delivery slices.
 
 ## Concept commands
 

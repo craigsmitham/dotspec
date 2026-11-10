@@ -753,6 +753,7 @@ dotspec use-case init <slug> [flags]
 
 ```sh
 dotspec use-case init check-specifications --path .
+dotspec use-case init review-change --template expanded --path .
 ```
 
 | Flag | Default | Description |
@@ -761,6 +762,7 @@ dotspec use-case init check-specifications --path .
 | `--help, -h` | `false` | help for init |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--template` | `brief` | Writing prompts: brief or expanded (same document format) |
 
 ## dotspec use-case list
 
@@ -772,6 +774,7 @@ dotspec use-case list [flags]
 
 ```sh
 dotspec use-case list --path .
+dotspec use-case list --overview --path .
 ```
 
 | Flag | Default | Description |
@@ -779,6 +782,7 @@ dotspec use-case list --path .
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--overview` | `false` | Show actor, goal, level, and stated boundary in text; JSON retains the full records |
 | `--path` | `.` | project directory to inspect or initialize |
 
 ## dotspec use-case show

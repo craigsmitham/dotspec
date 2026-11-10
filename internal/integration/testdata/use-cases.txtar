@@ -53,6 +53,72 @@ stdout '"complete": true'
 status 1 dotspec use-case list
 stderr 'metadata.frontmatter'
 ! stdout .
+# Brief and expanded prompts share a format and never overwrite existing drafts.
+# The create-specification use case's "More detailed use-case prompts" branch
+# is illustrated here; these assertions define only the outcomes exercised.
+cd ..
+mkdir elaboration
+cd elaboration
+status 0 dotspec use-case init reserve
+status 0 dotspec use-case show reserve --json
+stdout '"trigger": ""'
+status 0 dotspec use-case init detailed --template expanded
+status 0 dotspec use-case show detailed --json
+stdout '"minimum_guarantees": "State or link'
+stdout '"supporting_actors": "Name external'
+status 2 dotspec use-case init invalid --template unknown
+! exists specs/use-cases/invalid.use-case.spec.md
+status 2 dotspec use-case init reserve --template expanded
+stderr 'refusing to overwrite'
+
+# Overview retains the stated boundary and permits unresolved, linkable branches.
+cp ../branch.md specs/use-cases/reserve.use-case.spec.md
+status 0 dotspec use-case list --overview
+stdout 'Customer'
+stdout 'Rental business'
+stdout 'User task'
+status 0 dotspec use-case list --overview --json
+stdout '"system_boundary": "Rental business"'
+status 0 dotspec use-case check reserve --json
+! stdout '"rule": "use-case.extensions"'
+! stderr .
+cp ../branch-link.md specs/use-cases/link.use-case.spec.md
+status 0 dotspec use-case check link --json
+! stdout '"rule": "reference.unresolved"'
+cp ../broken-branch-link.md specs/use-cases/link.use-case.spec.md
+status 1 dotspec use-case check link --json
+stdout '"rule": "reference.unresolved"'
+! stderr .
+-- branch.md --
+---
+type: use-case
+---
+# Reserve equipment
+## Primary actor
+Customer
+## System boundary
+Rental business
+## Goal level
+User task
+## Main success scenario
+Customer requests equipment; the business confirms a reservation.
+## Extensions
+### Preferred equipment unavailable
+Handling unresolved: investigate whether to offer a substitute.
+-- branch-link.md --
+---
+type: use-case
+---
+# Arrange equipment for a job
+## Related behavior
+[Substitution question](reserve.use-case.spec.md#preferred-equipment-unavailable).
+-- broken-branch-link.md --
+---
+type: use-case
+---
+# Arrange equipment for a job
+## Related behavior
+[Substitution question](reserve.use-case.spec.md#missing-branch).
 -- draft.md --
 ---
 type: use-case
