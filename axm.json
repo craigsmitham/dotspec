@@ -11,5 +11,8 @@
       "source": "workspace",
       "origin": "bundled"
     }
+  },
+  "packs": {
+    "codebase-renewal": "agentxm:@craigsmitham/packs/codebase-renewal"
   }
 }
