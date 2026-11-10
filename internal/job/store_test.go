@@ -21,14 +21,14 @@ func writeFile(t *testing.T, path, content string) {
 
 func writeJob(t *testing.T, dir, slug, name string) string {
 	t.Helper()
-	path := filepath.Join(dir, slug+Suffix)
+	path := filepath.Join(dir, "specs", "jobs", slug+Suffix)
 	writeFile(t, path, strings.Replace(validJob, "Develop Requirements", name, 1))
 	return path
 }
 
 func writeSystem(t *testing.T, dir, name string) {
 	t.Helper()
-	writeFile(t, filepath.Join(dir, "system.spec.md"), "---\ntype: system\n---\n# "+name+"\n## Purpose\nHelp teams.\n## Scope\nRequirements.\n")
+	writeFile(t, filepath.Join(dir, "specs", "system.spec.md"), "---\ntype: system\n---\n# "+name+"\n## Purpose\nHelp teams.\n## Scope\nRequirements.\n")
 }
 
 func boundLookup(t *testing.T, dir string) {
@@ -182,7 +182,7 @@ func TestAssociationAndSubtreeGrouping(t *testing.T) {
 	if err != nil || !reflect.DeepEqual(summary(groups), want) {
 		t.Fatalf("subtree: %v, %v", summary(groups), err)
 	}
-	if filepath.Base(filepath.Dir(groups[0].System.Path)) != "parser" {
+	if filepath.Base(filepath.Dir(filepath.Dir(groups[0].System.Path))) != "parser" {
 		t.Fatal("system above subtree was not resolved")
 	}
 }
@@ -238,7 +238,7 @@ func TestMalformedJobsAndAssociatedSystems(t *testing.T) {
 		t.Fatalf("malformed list: %v", err)
 	}
 	writeJob(t, dir, "work", "Work")
-	writeFile(t, filepath.Join(dir, "system.spec.md"), "malformed")
+	writeFile(t, filepath.Join(dir, "specs", "system.spec.md"), "malformed")
 	if _, err := Show(dir, "work"); err == nil || !strings.Contains(err.Error(), "system.spec.md") {
 		t.Fatalf("malformed association: %v", err)
 	}
@@ -246,7 +246,7 @@ func TestMalformedJobsAndAssociatedSystems(t *testing.T) {
 		t.Fatalf("malformed group: %v", err)
 	}
 	writeSystem(t, dir, "Valid")
-	writeFile(t, filepath.Join(dir, "Invalid_slug.job.spec.md"), validJob)
+	writeFile(t, filepath.Join(dir, "specs", "jobs", "Invalid_slug.job.spec.md"), validJob)
 	if _, err := List(dir); err == nil || !strings.Contains(err.Error(), "invalid job slug") {
 		t.Fatalf("invalid filename: %v", err)
 	}
@@ -255,7 +255,7 @@ func TestMalformedJobsAndAssociatedSystems(t *testing.T) {
 func TestDiscoveryIgnoresAndLinks(t *testing.T) {
 	dir := gitRepo(t)
 	writeJob(t, dir, "tracked", "Tracked")
-	git(t, dir, "add", "tracked.job.spec.md")
+	git(t, dir, "add", "specs/jobs/tracked.job.spec.md")
 	writeFile(t, filepath.Join(dir, ".gitignore"), "ignored/\ntracked.job.spec.md\nchoices/*\n!choices/keep/\n")
 	writeFile(t, filepath.Join(dir, "ignored", "bad.job.spec.md"), "malformed but ignored")
 	writeFile(t, filepath.Join(dir, "choices", "omit", "bad.job.spec.md"), "ignored")

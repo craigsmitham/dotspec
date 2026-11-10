@@ -19,8 +19,17 @@ func Init(path, slug string) (string, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return "", err
 	}
-	return specfile.Create(path, slug+Suffix, Template)
+	dir, err := specfile.Scope(path)
+	if err != nil {
+		return "", err
+	}
+	if err := specfile.ValidateLocal(dir, "jobs", isSpec); err != nil {
+		return "", err
+	}
+	return specfile.Create(dir, filepath.Join(specfile.Folder, "jobs", slug+Suffix), Template)
 }
+
+func isSpec(name string) bool { return strings.HasSuffix(name, Suffix) }
 
 // Show selects exactly one job in the requested directory, without searching
 // ancestor directories for a matching slug.
@@ -28,11 +37,14 @@ func Show(path, slug string) (*Job, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return nil, err
 	}
-	dir, err := specfile.Directory(path)
+	dir, err := specfile.Scope(path)
 	if err != nil {
 		return nil, err
 	}
-	job, err := Read(filepath.Join(dir, slug+Suffix))
+	if err := specfile.ValidateLocal(dir, "jobs", isSpec); err != nil {
+		return nil, err
+	}
+	job, err := Read(specfile.Path(dir, "jobs", slug+Suffix))
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +59,11 @@ func Show(path, slug string) (*Job, error) {
 // Groups are ordered by system name then path, with unassociated jobs last.
 // Jobs within a group are ordered by source path.
 func List(path string) ([]*Group, error) {
-	paths, err := specfile.Discover(path, func(name string) bool { return strings.HasSuffix(name, Suffix) })
+	dir, err := specfile.Scope(path)
+	if err != nil {
+		return nil, err
+	}
+	paths, err := specfile.Discover(dir, isSpec)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +75,10 @@ func List(path string) ([]*Group, error) {
 		if err != nil {
 			return nil, err
 		}
-		dir := filepath.Dir(path)
+		dir, err := specfile.Owner(path, "jobs")
+		if err != nil {
+			return nil, err
+		}
 		associated, found := byDirectory[dir]
 		if !found {
 			associated, err = associatedSystem(dir)

@@ -89,6 +89,9 @@ func Read(path string) (*Job, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return nil, fmt.Errorf("%s: %w", path, err)
 	}
+	if _, err := specfile.Owner(path, "jobs"); err != nil {
+		return nil, err
+	}
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err

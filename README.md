@@ -3,7 +3,8 @@
 A framework and CLI for managing software product requirements in `*.spec.md` files.
 
 System specs describe a system's name, purpose, and scope. Subsystems use the
-same format, placed alongside the code they describe.
+same format, placed in a `specs/` directory within the part of the project they
+describe.
 Job specs describe jobs to be done (JTBDs): the accomplishment someone seeks,
 their context, the steps involved, and how success is judged. Jobs are associated
 with the nearest enclosing system.
@@ -26,10 +27,56 @@ go build -o dotspec .
 ./dotspec --help
 ```
 
+## Project layout
+
+Each part of the project can have a `specs/` directory. It describes its parent
+project directory; folders inside `specs/` organize concepts and do not create
+subsystems or new scopes.
+
+```text
+specs/
+  system.spec.md
+  jobs/
+    develop-requirements.job.spec.md
+    manage-requirements.job.spec.md
+internal/
+  parser/
+    parser.go
+    specs/
+      system.spec.md
+      jobs/
+        interpret-specification.job.spec.md
+```
+
+The layout is required:
+
+- The system spec is `specs/system.spec.md`, with one system per project directory.
+- Jobs are `specs/jobs/<slug>.job.spec.md`, directly inside the plural `jobs/` folder.
+- CLI namespaces and file type suffixes remain singular: `dotspec job` and
+  `.job.spec.md`. Collection directories are plural. Future types will follow
+  the same convention, for example `use-cases/` and `quality-requirements/`;
+  those types are not implemented yet.
+- Create folders only when needed. `init` creates the required spec directories;
+  the selected project directory must already exist.
+
+`--path` always selects a project directory, such as `internal/parser`, rather
+than `internal/parser/specs` or its `jobs/` folder. Using a metadata directory as
+a project scope is an error. A nested `specs/` tree inside another `specs/` tree
+is not a separate scope.
+
+Adjacent spec files and singular collection folders are not supported. Move an
+existing `system.spec.md` to `specs/system.spec.md`, and move each adjacent
+`<slug>.job.spec.md` to `specs/jobs/<slug>.job.spec.md`. Discovery rejects misplaced
+files of the requested type with an expected-location diagnostic. Local lookup
+and initialization also reject misplaced specs of that type directly in the
+selected project directory or anywhere within its `specs/` tree. Having both
+old and new locations is an error; there is no location precedence or automatic
+migration. Revise any relative file links when moving documents.
+
 ## System commands
 
 ```sh
-dotspec system init                     # Create a system spec here
+dotspec system init                     # Create specs/system.spec.md here
 dotspec system show                     # Describe the nearest enclosing system
 dotspec system list                     # Discover systems in this subtree
 dotspec system show --path internal/cli
@@ -39,13 +86,14 @@ dotspec system list --path internal
 Use `./dotspec` for a local build, or replace `dotspec` with `go run .` when
 running from the repository root.
 
-Every command accepts `--path DIR`, defaulting to the current directory. The
-directory must already exist. Use `dotspec system <command> --help` for usage.
+Every command accepts `--path DIR`, defaulting to the current project directory.
+The project directory must already exist. Use `dotspec system <command> --help`
+for usage.
 
-- `init` creates `system.spec.md` with editable placeholders for the name,
+- `init` creates `specs/system.spec.md` with editable placeholders for the name,
   purpose, and scope. It never overwrites an existing file.
-- `show` reads the selected directory's system spec, or the nearest ancestor's
-  if there is no local spec. It displays the name, purpose, scope, nearest parent
+- `show` reads the selected project directory's `specs/system.spec.md`, or the
+  nearest ancestor's if there is no local spec. It displays the name, purpose, scope, nearest parent
   system, and source path. Ancestor lookup stops at the Git repository root
   (including a worktree root), or the filesystem root outside Git.
 - `list` displays a tree of systems within the selected directory and its
@@ -69,7 +117,7 @@ its jobs.
 
 ## System spec format
 
-Each directory can contain one system spec, named `system.spec.md`:
+Each project directory can contain one system spec at `specs/system.spec.md`:
 
 ```markdown
 ---
@@ -94,11 +142,12 @@ Section bodies can contain Markdown, including lists, code blocks, and deeper
 headings. Other sections are allowed but are not displayed by `system show`.
 There is no requirements section or requirement inheritance behavior.
 
-The nearest ancestor directory containing a system spec defines the parent:
+The nearest ancestor project directory containing `specs/system.spec.md` defines
+the parent system:
 
 ```text
-system.spec.md                  # dotspec
-internal/parser/system.spec.md  # Spec parser, a subsystem of dotspec
+specs/system.spec.md                  # dotspec
+internal/parser/specs/system.spec.md  # Spec parser, a subsystem of dotspec
 ```
 
 Moving a spec can therefore change its parent. Source paths in command output
@@ -119,7 +168,7 @@ dotspec job map develop-requirements --format mermaid
 dotspec job check develop-requirements
 ```
 
-The `--path DIR` directory must already exist and defaults to the current
+The `--path DIR` project directory must already exist and defaults to the current
 working directory. It can appear before or after the slug. For example:
 
 ```sh
@@ -130,11 +179,12 @@ dotspec job list --path internal/parser
 
 Use `dotspec job <command> --help` for command-specific options.
 
-- `init <slug>` creates `<slug>.job.spec.md` with an editable template. It never
-  overwrites an existing file. Edit the file in your text editor.
+- `init <slug>` creates `specs/jobs/<slug>.job.spec.md` with an editable template.
+  It never overwrites an existing file. Edit the file in your text editor.
 - `show <slug>` displays all authored Markdown, including additional sections,
   plus the associated system and source path. It selects the job in the chosen
-  directory without searching other directories for the same slug.
+  project directory's `specs/jobs/` folder without searching other scopes for the
+  same slug.
 - `list` discovers jobs within the selected subtree, grouped by associated
   system. Groups are ordered by system name and source path; jobs within each
   group are ordered by source path. Jobs without a system appear last under
@@ -162,8 +212,9 @@ hyphens: for example, `develop-requirements`. Slugs cannot contain paths, spaces
 or file extensions. Different directories can reuse a slug. Changing a job's
 name does not change its file slug.
 
-Each job is associated with the nearest `system.spec.md` in its directory or an
-ancestor directory, even if that system is outside the subtree selected for
+Each job belongs to the project directory containing its `specs/` tree. It is
+associated with that directory's `specs/system.spec.md`, or the nearest ancestor
+project directory's system, even if that system is outside the subtree selected for
 `job list`. Lookup stops at the Git repository or worktree root, or the filesystem
 root outside Git. A job without an enclosing system is valid and displays
 `System: None`. A malformed enclosing system is an error. System association does
@@ -337,8 +388,8 @@ suggestions. These checks are advisory, not proof of clarity,
 completeness, measurability, or research validation. They do not assess whether a
 custom stage is correct or make missing evidence an error.
 
-The repository's [Develop Requirements](develop-requirements.job.spec.md) and
-[Manage Requirements](manage-requirements.job.spec.md) examples each contain a
+The repository's [Develop Requirements](specs/jobs/develop-requirements.job.spec.md) and
+[Manage Requirements](specs/jobs/manage-requirements.job.spec.md) examples each contain a
 bounded job statement, performer, proposed steps, and outcomes. Both are marked
 as hypotheses pending research. They cover collaboration and judgment outside
 the CLI as well as work dotspec may support.

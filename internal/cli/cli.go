@@ -25,11 +25,12 @@ Use dotspec <concept> --help for commands.
 const systemUsage = `Usage: dotspec system <command> [--path DIR]
 
 Commands:
-  init   Create a system.spec.md template in the selected directory
+  init   Create specs/system.spec.md in the selected project directory
   show   Describe the nearest enclosing system and identify its parent
   list   Display the hierarchy of systems within the selected subtree
 
---path defaults to the current directory. Use --help for command help.
+--path selects a project directory and defaults to the current directory.
+Use --help for command help.
 `
 
 func Run(args []string, stdout, stderr io.Writer) int {
@@ -62,7 +63,7 @@ func run(args []string, out io.Writer) error {
 	}
 	path, operands, err := parseOptions(args[2:])
 	if errors.Is(err, flag.ErrHelp) {
-		_, err := fmt.Fprintf(out, "Usage: dotspec system %s [--path DIR]\n\n--path defaults to the current directory.\n", command)
+		_, err := fmt.Fprintf(out, "Usage: dotspec system %s [--path DIR]\n\n--path selects a project directory and defaults to the current directory.\nSystem specs live at DIR/specs/system.spec.md.\n", command)
 		return err
 	}
 	if err != nil {
@@ -81,7 +82,7 @@ func run(args []string, out io.Writer) error {
 func parseOptions(args []string) (string, []string, error) {
 	flags := flag.NewFlagSet("dotspec", flag.ContinueOnError)
 	flags.SetOutput(io.Discard)
-	path := flags.String("path", ".", "directory to inspect or initialize")
+	path := flags.String("path", ".", "project directory to inspect or initialize")
 	operands, err := parseFlagArgs(flags, args)
 	return *path, operands, err
 }

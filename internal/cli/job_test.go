@@ -15,12 +15,12 @@ func TestJobWorkflow(t *testing.T) {
 	}
 	for _, slug := range []string{"develop-requirements", "manage-requirements"} {
 		code, out, errOut := invoke("job", "init", slug)
-		if code != 0 || errOut != "" || !strings.Contains(out, "Created "+slug+".job.spec.md") {
+		if code != 0 || errOut != "" || !strings.Contains(out, "Created specs/jobs/"+slug+".job.spec.md") {
 			t.Fatalf("init: %d %q %q", code, out, errOut)
 		}
 	}
 	code, out, errOut := invoke("job", "show", "develop-requirements")
-	for _, want := range []string{"New job", "Situation", "Motivation", "Intended progress", "System: New system (system.spec.md)", "Source: develop-requirements.job.spec.md"} {
+	for _, want := range []string{"New job", "Situation", "Motivation", "Intended progress", "System: New system (specs/system.spec.md)", "Source: specs/jobs/develop-requirements.job.spec.md"} {
 		if code != 0 || errOut != "" || !strings.Contains(out, want) {
 			t.Fatalf("show missing %q: %d %q %q", want, code, out, errOut)
 		}
@@ -29,7 +29,7 @@ func TestJobWorkflow(t *testing.T) {
 		t.Fatalf("new template uses the legacy heading: %s", out)
 	}
 	code, out, errOut = invoke("job", "list")
-	want := "Jobs\n\nSystem: New system (system.spec.md)\n  New job  (develop-requirements.job.spec.md)\n  New job  (manage-requirements.job.spec.md)\n"
+	want := "Jobs\n\nSystem: New system (specs/system.spec.md)\n  New job  (specs/jobs/develop-requirements.job.spec.md)\n  New job  (specs/jobs/manage-requirements.job.spec.md)\n"
 	if code != 0 || out != want || errOut != "" {
 		t.Fatalf("list: %d %q %q", code, out, errOut)
 	}
@@ -102,7 +102,7 @@ func TestJobEmptyMissingUnassociatedAndMalformed(t *testing.T) {
 	if err := os.Remove(filepath.Join(dir, ".git")); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, "work.job.spec.md"), []byte("invalid"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "specs", "jobs", "work.job.spec.md"), []byte("invalid"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	for _, args := range [][]string{{"job", "show", "work", "--path", dir}, {"job", "list", "--path", dir}} {

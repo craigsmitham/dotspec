@@ -1,7 +1,12 @@
 // Package system reads and discovers system specifications.
 package system
 
-import "github.com/craigsmitham/dotspec/internal/specfile"
+import (
+	"fmt"
+	"path/filepath"
+
+	"github.com/craigsmitham/dotspec/internal/specfile"
+)
 
 const Filename = "system.spec.md"
 
@@ -28,6 +33,12 @@ type System struct {
 }
 
 func Read(path string) (*System, error) {
+	if filepath.Base(path) != Filename {
+		return nil, fmt.Errorf("%s: expected a %s filename", path, Filename)
+	}
+	if _, err := specfile.Owner(path, ""); err != nil {
+		return nil, err
+	}
 	doc, err := specfile.Read(path, "system", "Purpose", "Scope")
 	if err != nil {
 		return nil, err

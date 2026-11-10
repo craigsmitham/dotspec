@@ -36,11 +36,14 @@ Keep this text and its **formatting**.
 
 func TestStructuredJobCommands(t *testing.T) {
 	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, "specs", "jobs"), 0o755); err != nil {
+		t.Fatal(err)
+	}
 	t.Chdir(dir)
 	if err := os.Mkdir(".git", 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile("change.job.spec.md", []byte(viewFixture), 0o644); err != nil {
+	if err := os.WriteFile("specs/jobs/change.job.spec.md", []byte(viewFixture), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	tests := []struct {
@@ -75,7 +78,7 @@ func TestStructuredJobCommands(t *testing.T) {
 			t.Errorf("expected error: %v: %d %q %q", args, code, out, errOut)
 		}
 	}
-	if err := os.WriteFile("change.job.spec.md", []byte(viewFixture+"\n[Broken](#missing)\n"), 0o644); err != nil {
+	if err := os.WriteFile("specs/jobs/change.job.spec.md", []byte(viewFixture+"\n[Broken](#missing)\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	if code, out, errOut := invoke("job", "check", "change"); code == 0 || out != "" || !strings.Contains(errOut, "unresolved local reference") {
@@ -85,7 +88,10 @@ func TestStructuredJobCommands(t *testing.T) {
 
 func TestEmptyMapsAndNewCommandHelp(t *testing.T) {
 	dir := t.TempDir()
-	if err := os.WriteFile(filepath.Join(dir, "draft.job.spec.md"), []byte("---\ntype: job\n---\n# Draft\n"), 0o644); err != nil {
+	if err := os.MkdirAll(filepath.Join(dir, "specs", "jobs"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "specs", "jobs", "draft.job.spec.md"), []byte("---\ntype: job\n---\n# Draft\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	for _, args := range [][]string{{"job", "map"}, {"job", "step", "list"}, {"job", "outcome", "list"}} {
@@ -145,8 +151,11 @@ func TestOutcomeScopes(t *testing.T) {
 
 func TestJobMapWithoutSteps(t *testing.T) {
 	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, "specs", "jobs"), 0o755); err != nil {
+		t.Fatal(err)
+	}
 	for _, outcome := range []string{"", "\n## Outcomes\n\n- **O1:** Minimize the likelihood of missed needs.\n"} {
-		if err := os.WriteFile(filepath.Join(dir, "draft.job.spec.md"), []byte("---\ntype: job\n---\n# Draft\n"+outcome), 0o644); err != nil {
+		if err := os.WriteFile(filepath.Join(dir, "specs", "jobs", "draft.job.spec.md"), []byte("---\ntype: job\n---\n# Draft\n"+outcome), 0o644); err != nil {
 			t.Fatal(err)
 		}
 		for _, format := range []string{"text", "mermaid"} {

@@ -14,15 +14,25 @@ func invoke(args ...string) (int, string, string) {
 	return code, stdout.String(), stderr.String()
 }
 
+func writeFixture(t *testing.T, path, contents string) {
+	t.Helper()
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, []byte(contents), 0o644); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestSystemWorkflow(t *testing.T) {
 	dir := t.TempDir()
 	t.Chdir(dir)
 	code, out, errOut := invoke("system", "init")
-	if code != 0 || !strings.Contains(out, "Created system.spec.md") || errOut != "" {
+	if code != 0 || !strings.Contains(out, "Created specs/system.spec.md") || errOut != "" {
 		t.Fatalf("init: %d %q %q", code, out, errOut)
 	}
 	code, out, errOut = invoke("system", "show")
-	for _, want := range []string{"New system", "Purpose", "Scope", "Parent system: None", "Source: system.spec.md"} {
+	for _, want := range []string{"New system", "Purpose", "Scope", "Parent system: None", "Source: specs/system.spec.md"} {
 		if code != 0 || !strings.Contains(out, want) || errOut != "" {
 			t.Fatalf("show missing %q: %d %q %q", want, code, out, errOut)
 		}
@@ -35,12 +45,12 @@ func TestSystemWorkflow(t *testing.T) {
 		t.Fatal(errOut)
 	}
 	code, out, errOut = invoke("system", "list")
-	want := "Systems\n└── New system  (system.spec.md)\n    └── New system  (child/system.spec.md)\n"
+	want := "Systems\n└── New system  (specs/system.spec.md)\n    └── New system  (child/specs/system.spec.md)\n"
 	if code != 0 || out != want || errOut != "" {
 		t.Fatalf("list: %d %q %q", code, out, errOut)
 	}
 	code, out, errOut = invoke("system", "show", "--path", child)
-	if code != 0 || !strings.Contains(out, "Parent system: New system (system.spec.md)") || errOut != "" {
+	if code != 0 || !strings.Contains(out, "Parent system: New system (specs/system.spec.md)") || errOut != "" {
 		t.Fatalf("child show: %d %q %q", code, out, errOut)
 	}
 	code, out, errOut = invoke("system", "init")
@@ -74,11 +84,9 @@ func TestMissingAndMalformedSystems(t *testing.T) {
 	if code == 0 || out != "" || !strings.Contains(errOut, "no system spec") {
 		t.Fatalf("missing: %d %q %q", code, out, errOut)
 	}
-	if err := os.WriteFile(filepath.Join(dir, "system.spec.md"), []byte("broken"), 0o644); err != nil {
-		t.Fatal(err)
-	}
+	writeFixture(t, filepath.Join(dir, "specs", "system.spec.md"), "broken")
 	code, out, errOut = invoke("system", "show", "--path", dir)
-	if code == 0 || out != "" || !strings.Contains(errOut, "system.spec.md") {
+	if code == 0 || out != "" || !strings.Contains(errOut, "specs/system.spec.md") {
 		t.Fatalf("malformed: %d %q %q", code, out, errOut)
 	}
 }

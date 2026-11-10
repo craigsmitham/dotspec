@@ -14,7 +14,7 @@ import (
 const jobUsage = `Usage: dotspec job <command> [slug] [--path DIR]
 
 Commands:
-  init <slug>          Create a job template
+  init <slug>          Create specs/jobs/<slug>.job.spec.md
   show <slug>          Show all authored sections and the associated system
   list                 Discover jobs, grouped by associated system
   step list <slug>     List the job's steps in document order
@@ -23,7 +23,8 @@ Commands:
   check <slug>         Check structure and suggest writing improvements
 
 Slugs use lowercase letters or digits separated by single hyphens.
---path defaults to the current directory and can precede or follow the slug.
+--path selects a project directory and defaults to the current directory.
+It can precede or follow the slug. Jobs live at DIR/specs/jobs/<slug>.job.spec.md.
 Use --help for command help.
 `
 
@@ -68,7 +69,7 @@ func runJobArgs(args []string, out io.Writer) error {
 	flags := flag.NewFlagSet("dotspec job "+command, flag.ContinueOnError)
 	flags.SetOutput(io.Discard)
 	options := jobOptions{format: "text"}
-	flags.StringVar(&options.path, "path", ".", "directory containing the job")
+	flags.StringVar(&options.path, "path", ".", "project directory containing specs/jobs/")
 	if command == "map" {
 		flags.StringVar(&options.format, "format", "text", "text or mermaid")
 		flags.BoolVar(&options.outcomes, "outcomes", false, "include job and step outcomes")

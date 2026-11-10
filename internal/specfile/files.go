@@ -18,6 +18,26 @@ func Create(path, filename, template string) (string, error) {
 		return "", err
 	}
 	target := filepath.Join(dir, filename)
+	// Create only real directories beneath the selected scope. In particular,
+	// init must not write through a symlinked specs/ or collection directory.
+	relative, err := filepath.Rel(dir, filepath.Dir(target))
+	if err != nil {
+		return "", err
+	}
+	parent := dir
+	for _, component := range strings.Split(relative, string(filepath.Separator)) {
+		parent = filepath.Join(parent, component)
+		if err := os.Mkdir(parent, 0o755); err != nil && !errors.Is(err, fs.ErrExist) {
+			return "", err
+		}
+		info, err := os.Lstat(parent)
+		if err != nil {
+			return "", err
+		}
+		if !info.IsDir() {
+			return "", fmt.Errorf("%s must be a directory, not a file or symlink", parent)
+		}
+	}
 	file, err := os.OpenFile(target, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
 	if errors.Is(err, fs.ErrExist) {
 		return "", fmt.Errorf("%s already exists; refusing to overwrite it", target)
