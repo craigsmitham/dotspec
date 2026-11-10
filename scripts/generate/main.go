@@ -151,6 +151,7 @@ func outputGallery() (result string, err error) {
 		{"requirement", "show", "reject-existing-target", "--json"},
 		{"requirement", "list", "--json"},
 		{"requirement", "check", "reject-existing-target", "--json"},
+		{"sources", "--json"},
 	} {
 		var out, errOut bytes.Buffer
 		if code := cli.Run(args, &out, &errOut); code != 0 {

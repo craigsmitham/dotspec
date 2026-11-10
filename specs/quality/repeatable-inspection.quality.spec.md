@@ -31,6 +31,9 @@ JSON object key order and insignificant whitespace do not affect equivalence.
 This comparison does not equate reports from different paths, builds, or
 environments.
 
+The [CLI quality-contract tests](../../internal/cli/quality_contracts_test.go)
+check this criterion. The obligation remains defined in this document.
+
 ## Rationale
 
 Stable reports make changes in findings easier to identify during review and

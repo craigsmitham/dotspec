@@ -574,3 +574,67 @@ dotspec requirement check reject-existing-target --json
 }
 ````
 
+## sources --json
+
+```sh
+dotspec sources --json
+```
+
+````text
+{
+  "schema_version": 1,
+  "scope": {
+    "path": "$PROJECT",
+    "types": [
+      "system",
+      "job",
+      "use-case",
+      "concept",
+      "quality",
+      "requirement"
+    ],
+    "discovery": "git"
+  },
+  "complete": true,
+  "files": [
+    {
+      "path": "$PROJECT/specs/concepts/job-map.concept.spec.md",
+      "referenced_by": []
+    },
+    {
+      "path": "$PROJECT/specs/jobs/develop-requirements.job.spec.md",
+      "referenced_by": []
+    },
+    {
+      "path": "$PROJECT/specs/quality/diagnostic-severity.quality.spec.md",
+      "referenced_by": []
+    },
+    {
+      "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
+      "referenced_by": []
+    },
+    {
+      "path": "$PROJECT/specs/system.spec.md",
+      "referenced_by": []
+    },
+    {
+      "path": "$PROJECT/specs/use-cases/check-specifications.use-case.spec.md",
+      "referenced_by": []
+    }
+  ],
+  "diagnostics": [
+    {
+      "rule": "job.boundary",
+      "severity": "advice",
+      "message": "Consider clarifying the execution boundary; no context marker such as 'for', 'when', or 'during' was found.",
+      "location": {
+        "path": "$PROJECT/specs/jobs/develop-requirements.job.spec.md",
+        "line": 7,
+        "column": 1,
+        "element": "Job"
+      }
+    }
+  ]
+}
+````
+

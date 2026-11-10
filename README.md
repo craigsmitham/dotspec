@@ -1,6 +1,7 @@
 # dotspec
 
-A framework and CLI for managing software product requirements in `*.spec.md` files.
+A framework and CLI for managing software product requirements in `*.spec.md` files
+and discovering other specification sources through ordinary file references.
 
 System specs describe a system's name, purpose, and scope. Subsystems use the
 same format, placed in a `specs/` directory within the part of the project they
@@ -21,6 +22,25 @@ The [CLI reference](docs/cli.md) and [command examples](docs/examples.md) are
 generated from the implementation. See [Contributing](CONTRIBUTING.md) for the
 local/CI checks and [Releasing](docs/releasing.md) for distribution.
 
+## Design principle: keep meaning in the source; keep connections simple
+
+Connect specification sources through ordinary file references, preserving their
+native form. Dotspec provides discovery and reference checking. Consuming projects
+determine which sources carry specification weight and ensure those sources are
+discoverable; readers and agents interpret their meaning.
+
+This principle guides dotspec's design to reduce duplicate maintenance and keep
+sources useful to people and tools. Prefer ordinary files, Markdown links, and
+explanatory prose. Add machine-readable structure only when a demonstrated
+operation cannot reasonably work without it.
+
+An executable specification can own its required examples: link to it rather
+than copying assertions into Markdown. When a test checks a requirement already
+stated in prose, retain that definition and explain the test's verification role.
+A passing implementation test does not acquire authority merely by being linked.
+File discovery makes sources available together; deciding whether they adequately
+specify a system remains an authoring and review task.
+
 ## Run
 
 With Go 1.27.3 or later installed:
@@ -36,6 +56,7 @@ go run . concept list
 go run . concept show job-map
 go run . requirement list
 go run . requirement show reject-existing-target
+go run . sources
 go run . check
 ```
 
@@ -234,10 +255,77 @@ The current rules are:
 There is one check command rather than a separate lint command. It is read-only:
 it does not move files, rewrite prose, assign IDs, or apply fixes.
 
+## Discover specification sources
+
+```sh
+dotspec sources
+dotspec sources --path internal/integration --json
+```
+
+`sources` inventories discovered dotspec files, consulted system context, and
+existing files directly referenced by those specs. Ordinary Markdown links work
+in every spec type and in any prose section; no special heading or metadata is
+required. For example, a module's concept can contain:
+
+```markdown
+## Related specifications
+
+These scripts specify required outcomes for the illustrated command inputs:
+
+- [Create and inspect specifications](../../testdata/workflow.txtar)
+- [Discovery behavior](../../testdata/discovery.txtar)
+```
+
+The [CLI Interaction concept](internal/integration/specs/concepts/cli-interaction.concept.spec.md)
+is a working example beside its executable acceptance scripts. The
+[source-preservation quality requirement](specs/quality/inspection-preserves-source.quality.spec.md)
+instead links to tests that check its prose criterion. Dotspec exposes both
+links without assigning either file a semantic role.
+
+The command uses the same scan, diagnostics, reference rules, and exit statuses
+as `check`, including advisory findings. Results go to stdout even when the scan
+fails. Invocation and output errors go to stderr. `--path` selects a directory
+subtree, not a declaration that every source applies to one system.
+
+The version-1 JSON result has these fields:
+
+| Field | Meaning |
+| --- | --- |
+| `schema_version` | `1` |
+| `scope` | The same resolved path, supported types, and discovery mode as `check`. |
+| `complete` | Whether the scan completed, independently of structural findings. |
+| `files` | Existing regular files, sorted by absolute path, each with `path` and `referenced_by`. |
+| `diagnostics` | The same findings and location format as `check`. |
+
+Each `referenced_by` entry is the referring spec's location, including its path,
+line, column, and authored link destination in `element`. Entries are sorted by
+path and source position. Files appear once even if several specs reference them;
+multiple authored link locations are retained. Empty collections are `[]`.
+Discovered specs and consulted context can have an empty `referenced_by` array.
+Malformed but existing spec files remain listed; missing targets appear in
+diagnostics rather than as existing files. Do not treat a partial or failed
+inventory as proof of coverage.
+
+The inventory follows one reference edge from discovered specs and their system
+context. Referenced documents do not start a recursive scan. Directory links do
+not include their contents; ignored files can be explicitly referenced within
+the existing repository boundaries. URLs and absolute-path links remain external
+navigation. Images and links in code samples are excluded. Native files are not
+parsed or executed, and native fragments are not resolved by dotspec. Markdown
+heading and declared spec-ID fragments retain the existing reference checks.
+
+Projects can compare their expected specification sources with `files[].path`
+and use the paths to read or assemble original content. Our
+[coverage script](scripts/check-spec-sources/main.go) invokes this command and
+requires links to the repository's designated acceptance and quality-verification
+tests. It intentionally does not select every test file. See
+[Specification tests and implementation tests](CONTRIBUTING.md#specification-tests-and-implementation-tests)
+for this repository's policy and the CI task that enforces file coverage.
+
 ## Output and automation
 
-All system, job, use-case, concept, requirement, and quality commands, including
-`init`, accept `--json`
+The system, job, use-case, concept, requirement, and quality commands (including
+`init`), as well as `sources`, accept `--json`
 or `--format json`. Use one of these flags, not both. The default is `--format text`; `job map` also
 accepts `--format mermaid` and emits standalone diagram source. Redirecting output
 does not change its format. JSON, Mermaid, and redirected output contain no ANSI
@@ -249,6 +337,7 @@ above. Other results contain:
 | Command | Result fields |
 | --- | --- |
 | `system init`, `job init`, `use-case init`, `concept init`, `requirement init`, `quality init` | `path` of the created specification |
+| `sources` | `scope`, `complete`, `files`, and `diagnostics` as described above |
 | `system show` | `system` and its nullable `parent` |
 | `system list` | `systems`, a tree of `system` objects and `children` arrays |
 | `job show` | `job`, including its authored Markdown, steps, outcomes, and nullable `system` |

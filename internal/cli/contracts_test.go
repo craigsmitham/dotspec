@@ -96,7 +96,7 @@ func TestReadmeQuickStart(t *testing.T) {
 func TestStructuredReadContracts(t *testing.T) {
 	prepareExample(t, "read")
 	for _, args := range [][]string{
-		{"system", "show"}, {"system", "list"}, {"job", "show", "develop-requirements"},
+		{"sources"}, {"system", "show"}, {"system", "list"}, {"job", "show", "develop-requirements"},
 		{"job", "list"}, {"job", "step", "list", "develop-requirements"},
 		{"use-case", "show", "check-specifications"}, {"use-case", "list"},
 		{"concept", "show", "job-map"}, {"concept", "list"},
@@ -151,7 +151,7 @@ func TestStructuredReadContracts(t *testing.T) {
 func TestOutputFailuresAcrossCommands(t *testing.T) {
 	prepareExample(t, "output")
 	for _, args := range [][]string{
-		{"--help"}, {"--version"}, {"completion", "bash"}, {"man"},
+		{"--help"}, {"--version"}, {"completion", "bash"}, {"man"}, {"sources"}, {"sources", "--json"},
 		{"system", "show"}, {"system", "list", "--json"}, {"job", "show", "develop-requirements"},
 		{"job", "check", "develop-requirements", "--json"},
 		{"use-case", "show", "check-specifications"}, {"use-case", "list", "--json"},

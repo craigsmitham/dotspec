@@ -165,7 +165,7 @@ func NewRoot() *cobra.Command {
 		Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error { return cmd.Help() },
 	}
 	root.SetVersionTemplate("dotspec {{.Version}}\n")
-	root.AddCommand(newSystemCommand(), newJobCommand(), newUseCaseCommand(), newConceptCommand(), newQualityCommand(), newRequirementCommand(), newCheckCommand(), newManCommand(), newCompletionCommand())
+	root.AddCommand(newSystemCommand(), newJobCommand(), newUseCaseCommand(), newConceptCommand(), newQualityCommand(), newRequirementCommand(), newCheckCommand(), newSourcesCommand(), newManCommand(), newCompletionCommand())
 	root.InitDefaultHelpFlag()
 	root.InitDefaultVersionFlag()
 	root.InitDefaultHelpCmd()
@@ -186,9 +186,9 @@ func projectPath(cmd *cobra.Command) (string, error) {
 	if err != nil {
 		return path, err
 	}
-	// Checks include scope failures in their reports. Other commands report an
+	// Checks and inventories include scope failures in reports. Other commands report an
 	// invalid project selector as an invocation error rather than a spec finding.
-	if cmd.Name() != "check" {
+	if cmd.Name() != "check" && cmd.Name() != "sources" {
 		resolved, scopeErr := specfile.Scope(path)
 		if scopeErr != nil {
 			return path, &exitError{code: 2, err: scopeErr}

@@ -615,6 +615,30 @@ dotspec requirement show reject-existing-target --path .
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
 
+## dotspec sources
+
+List specification files, system context, and directly referenced files
+
+```sh
+dotspec sources [flags]
+```
+
+Inventory sources using the same scan and reference checks as check. File references do not assign authority or classify their contents.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+```sh
+dotspec sources
+dotspec sources --path internal --json
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for sources |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
 ## dotspec system
 
 Describe systems and discover their hierarchy

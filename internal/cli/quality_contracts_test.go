@@ -43,6 +43,7 @@ func TestInspectionQualityContracts(t *testing.T) {
 		code  int
 	}{
 		{"empty", []string{"check"}, func(t *testing.T) { prepareExample(t, "dotspec") }, 0},
+		{"source inventory", []string{"sources"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
 		{"valid", []string{"check"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
 		{"advice", []string{"check"}, func(t *testing.T) {
 			prepareExample(t, "read")

@@ -11,7 +11,8 @@ they describe.
 
 ## Scope
 
-The system includes the `dotspec` CLI and the `*.spec.md` files it manages.
+The system includes the `dotspec` CLI, the `*.spec.md` files it manages, and
+discovery of other specification sources through ordinary file references.
 
 ## Goals
 

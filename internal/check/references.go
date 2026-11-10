@@ -126,6 +126,7 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 				continue
 			}
 			count(target)
+			r.collectFile(target, &location)
 			targetKind := findType(target, types)
 			markdown := strings.EqualFold(filepath.Ext(target), ".md") || strings.EqualFold(filepath.Ext(target), ".markdown")
 			// Native non-Markdown formats own their fragment semantics.

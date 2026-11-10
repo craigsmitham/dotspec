@@ -18,7 +18,8 @@ integration tests. The same check task runs on Linux, macOS, and Windows in CI.
 | `mise run run -- job list` | Run the CLI from source |
 | `mise run fmt` | Format Go source |
 | `mise run test` | Run unit tests and process-level testscript scenarios |
-| `mise run check` | Check formatting, module tidiness, lint, tests, generated artifacts, specs, and release configuration |
+| `mise run check` | Check formatting, module tidiness, lint, tests, generated artifacts, specs, specification-source coverage, and release configuration |
+| `mise run spec-sources-check` | Check that designated specification-test files appear in the public source inventory |
 | `mise run generate` | Regenerate command reference, output examples, and starter specs |
 | `mise run fuzz` | Fuzz each Markdown parser for ten seconds; also runs in CI |
 | `mise run snapshot` | Build the complete release matrix locally without publishing |
@@ -33,7 +34,8 @@ includes errcheck, govet, ineffassign, staticcheck, and unused.
 - `main.go` owns process exit. `internal/cli` defines Cobra commands and handles
   presentation, JSON encoding, Fang terminal help, Lip Gloss errors, and status mapping.
 - `internal/check` scans explicitly supplied type integrations and produces typed
-  reports. It owns report accounting and context deduplication, without importing
+  reports and the source inventory. Both operations share discovery, context, and
+  reference resolution. It owns report accounting and context deduplication, without importing
   the concrete specification types. Checks do not print or exit.
 - `internal/system`, `internal/job`, `internal/usecase`, `internal/concept`,
   `internal/quality` and `internal/requirement` own type-specific parsing and validation,
@@ -96,6 +98,47 @@ Follow [CLI design](docs/cli-design.md). Declare commands, flags, and examples i
 the Cobra tree. `scripts/generate` reads that tree without executing it for the
 reference; its output gallery runs real commands in a temporary project. Templates
 come from the type packages. Edit those sources, then run `mise run generate`.
+
+## Specification tests and implementation tests
+
+This repository adopts the [design principle](README.md#design-principle-keep-meaning-in-the-source-keep-connections-simple)
+by linking to native sources and enforcing file coverage with a small consumer
+script. Test roles are an authoring decision, not a classification inferred by
+dotspec or a consequence of using a particular test framework.
+
+- `internal/integration/testdata/*.txtar` are designated executable specification
+  examples. Their assertions define required CLI outcomes for the illustrated
+  inputs and conditions. Sequences are representative unless a required ordering
+  is explicitly stated. New cases belong here only when reviewers intend to
+  preserve their behavior across changes in implementation.
+- `internal/cli/quality_contracts_test.go` verifies the quality obligations
+  stated in the linked Markdown quality specs. Those prose criteria retain
+  authority; a test passing is evidence for its exercised cases.
+- Other Go tests and the integration harness remain development artifacts by
+  default. They can test private structure, parser mechanics, and regressions
+  without making every expectation a product obligation. A unit test may be
+  deliberately adopted as a specification test; an integration test may instead
+  be implementation-specific. Choose by intent and scope, not test level.
+
+When a new test only freezes incidental behavior, keep it outside the designated
+collection. When a test file mixes normative examples and implementation checks,
+separate those concerns before designating the file. Review changes to designated
+assertions as specification changes, including fixtures that determine expected
+results. Existing general rules and executable examples can constrain the same
+behavior; resolve disagreements explicitly rather than treating a green run as
+precedence.
+
+The [CLI Interaction concept](internal/integration/specs/concepts/cli-interaction.concept.spec.md)
+links to the acceptance scripts. Quality specs explain their verification links.
+Use ordinary file links from the relevant specs, with prose stating the role.
+An entire directory link does not provide file coverage.
+
+`mise run spec-sources-check` runs `scripts/check-spec-sources`, a repository-owned
+consumer of `dotspec sources --json`. It selects the two sets above, requires a
+successful complete inventory, and fails with the missing paths. The same task
+runs in `mise run check` locally and in CI. The script checks file coverage, not
+assertion adequacy or whether a link's prose correctly explains its role. Adapt
+its selection rules in other projects; dotspec has no built-in test-file policy.
 
 Tests in `internal/integration/testdata/*.txtar` describe real subprocess workflows
 and their files together. `status CODE COMMAND ...` asserts the exact process exit

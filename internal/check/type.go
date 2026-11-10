@@ -67,6 +67,7 @@ func (r *Report) inspectContexts(requests []contextRequest, discovered map[strin
 		}
 		contextOK := result.err == nil
 		for _, path := range result.paths {
+			r.collectFile(path, nil)
 			if path != "" && !discovered[path] && !counted[path] {
 				counted[path] = true
 				r.ContextFiles = append(r.ContextFiles, path)

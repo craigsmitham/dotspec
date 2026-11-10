@@ -25,6 +25,9 @@ including with color disabled. Verify that each diagnostic contains the text
 label corresponding to its reported severity. Retain captured output on test
 failure.
 
+The [CLI quality-contract tests](../../internal/cli/quality_contracts_test.go)
+check this criterion. The obligation remains defined in this document.
+
 ## Rationale
 
 Contributors need to distinguish diagnostic severities when reading plain-text

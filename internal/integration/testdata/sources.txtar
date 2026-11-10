@@ -1,0 +1,89 @@
+# Ordinary links expose native specification sources without translating them.
+mkdir project
+cd project
+exec git init -q
+status 0 dotspec sources --json
+stdout '"files": \[\]'
+stdout '"complete": true'
+! stderr .
+status 0 dotspec system init
+status 0 dotspec concept init cli
+status 0 dotspec quality init preservation
+cp ../concept.md specs/concepts/cli.concept.spec.md
+cp ../quality.md specs/quality/preservation.quality.spec.md
+cp ../native.tla native.tla
+mkdir more-tests
+cp ../native.tla more-tests/not-included.tla
+status 0 dotspec sources --path . --json
+stdout 'native.tla'
+stdout '"referenced_by": \['
+stdout '"line":'
+stdout '"complete": true'
+! stdout 'not-included'
+! stderr .
+cp stdout report.json
+status 0 dotspec sources --json
+cmp stdout report.json
+cmp specs/concepts/cli.concept.spec.md ../concept.md
+cmp specs/quality/preservation.quality.spec.md ../quality.md
+cmp native.tla ../native.tla
+status 0 dotspec sources
+stdout 'Referenced by specs/concepts/cli.concept.spec.md'
+stdout 'Referenced by specs/quality/preservation.quality.spec.md'
+stdout 'Source files: 4.'
+stdout 'Scan complete.'
+! stderr .
+
+# Missing references are findings; an unavailable scope is an incomplete scan.
+rm native.tla
+status 1 dotspec sources --json
+stdout 'reference.unresolved'
+stdout '"complete": true'
+! stderr .
+status 2 dotspec sources --path absent --json
+stdout '"complete": false'
+! stderr .
+status 2 dotspec sources --path specs --json
+stdout '"complete": false'
+! stderr .
+status 2 dotspec sources --format mermaid
+! stdout .
+stderr 'unknown output format'
+status 2 dotspec sources unexpected
+! stdout .
+status 2 dotspec sources --json --format text
+! stdout .
+-- concept.md --
+---
+type: concept
+---
+# Native example
+## Purpose
+Find the executable specification.
+## State
+Referenced project sources.
+## Actions
+Read the native definition.
+## Operational principle
+Follow the link for required behavior.
+[Native definition](../../native.tla)
+[Directory](../../more-tests/)
+-- quality.md --
+---
+type: quality
+---
+# Preserve source
+## Applies to
+Read commands.
+## Criterion
+Source files remain unchanged.
+## Measurement
+Compare before and after bytes.
+[Supporting material](../../native.tla)
+## Rationale
+Preserve authored work.
+-- native.tla --
+---- MODULE Example ----
+\* Native syntax stays native; dotspec does not interpret this as Markdown.
+\* [Not a specification link](absent.txt)
+====

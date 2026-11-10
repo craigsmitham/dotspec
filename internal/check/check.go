@@ -25,6 +25,7 @@ type Summary struct {
 }
 
 type Report struct {
+	files         map[string]*SourceFile
 	SchemaVersion int                     `json:"schema_version"`
 	Scope         Scope                   `json:"scope"`
 	Complete      bool                    `json:"complete"`
@@ -47,7 +48,13 @@ func (r Report) ExitCode() int {
 // repository, no ignore rules otherwise, and no symlinks or nested repositories.
 // A malformed file blocks only its dependent checks, not the rest of the scan.
 func Project(path string, types ...Type) Report {
+	return project(path, nil, types...)
+}
+
+// The optional inventory collects files during the same scan used by check.
+func project(path string, files map[string]*SourceFile, types ...Type) Report {
 	r := newReport(path, "unavailable", types)
+	r.files = files
 	match := func(name string) bool { return findType(name, types) != nil }
 	dir, err := specfile.Scope(path)
 	if err != nil {
@@ -74,6 +81,7 @@ func Project(path string, types ...Type) Report {
 	var contexts []contextRequest
 	var referenceSources []string
 	for _, path := range paths {
+		r.collectFile(path, nil)
 		discovered[path] = true
 		r.Summary.FilesChecked++
 		kind := findType(path, types) // Discovery returned only matching paths.

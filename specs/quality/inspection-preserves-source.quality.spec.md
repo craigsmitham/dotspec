@@ -30,6 +30,9 @@ Retain the differing paths and contents on test failure.
 
 Filesystem access-time changes are not changes to source contents or paths.
 
+The [CLI quality-contract tests](../../internal/cli/quality_contracts_test.go)
+check this criterion. The obligation remains defined in this document.
+
 ## Rationale
 
 Contributors must be able to inspect unfinished work without inspection

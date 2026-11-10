@@ -43,9 +43,13 @@ run = "go run ./scripts/generate -check"
 description = "Check this repository's specifications"
 run = "go run . check"
 
+[tasks.spec-sources-check]
+description = "Verify that designated specification tests are discoverable"
+run = "go run ./scripts/check-spec-sources"
+
 [tasks.check]
 description = "Run the same complete gate locally and in CI"
-depends = ["fmt-check", "tidy-check", "lint", "test", "generated-check", "spec-check", "release-check"]
+depends = ["fmt-check", "tidy-check", "lint", "test", "generated-check", "spec-check", "spec-sources-check", "release-check"]
 
 [tasks.fuzz]
 description = "Exercise all Markdown parsers with bounded fuzzing"
