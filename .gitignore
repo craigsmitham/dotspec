@@ -1,0 +1,6 @@
+/.axm/
+*.axm-staging/
+*.axm-backup/
+# axm:instruction-aliases
+/CLAUDE.md
+# /axm:instruction-aliases
