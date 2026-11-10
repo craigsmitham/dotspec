@@ -13,7 +13,16 @@ import (
 	"github.com/craigsmitham/dotspec/internal/system"
 )
 
-const usage = `Usage: dotspec system <command> [--path DIR]
+const usage = `Usage: dotspec <concept> <command> [--path DIR]
+
+Concepts:
+  system   Describe systems and discover their hierarchy
+  job      Define and discover jobs to be done (JTBDs)
+
+Use dotspec <concept> --help for commands.
+`
+
+const systemUsage = `Usage: dotspec system <command> [--path DIR]
 
 Commands:
   init   Create a system.spec.md template in the selected directory
@@ -36,42 +45,87 @@ func run(args []string, out io.Writer) error {
 		_, err := fmt.Fprint(out, usage)
 		return err
 	}
-	if args[0] != "system" {
+	kind := args[0]
+	if kind == "job" {
+		return runJobArgs(args[1:], out)
+	}
+	if kind != "system" {
 		return fmt.Errorf("unknown command %q; use dotspec --help", args[0])
 	}
 	if len(args) == 1 || isHelp(args[1]) {
-		_, err := fmt.Fprint(out, usage)
+		_, err := fmt.Fprint(out, systemUsage)
 		return err
 	}
 	command := args[1]
 	if command != "init" && command != "show" && command != "list" {
-		return fmt.Errorf("unknown system command %q; use dotspec system --help", command)
+		return fmt.Errorf("unknown %s command %q; use dotspec %s --help", kind, command, kind)
 	}
-	flags := flag.NewFlagSet("dotspec system "+command, flag.ContinueOnError)
-	flags.SetOutput(io.Discard)
-	path := flags.String("path", ".", "directory to inspect or initialize")
-	if err := flags.Parse(args[2:]); errors.Is(err, flag.ErrHelp) {
+	path, operands, err := parseOptions(args[2:])
+	if errors.Is(err, flag.ErrHelp) {
 		_, err := fmt.Fprintf(out, "Usage: dotspec system %s [--path DIR]\n\n--path defaults to the current directory.\n", command)
 		return err
-	} else if err != nil {
+	}
+	if err != nil {
 		return err
 	}
-	if flags.NArg() != 0 {
-		return fmt.Errorf("unexpected argument %q; select a directory with --path DIR", flags.Arg(0))
+	if len(operands) != 0 {
+		return fmt.Errorf("unexpected argument %q; select a directory with --path DIR", operands[0])
 	}
-	if strings.TrimSpace(*path) == "" {
+	if strings.TrimSpace(path) == "" {
 		return fmt.Errorf("--path must not be empty")
 	}
+	return runSystem(command, path, out)
+}
+
+// parseOptions preserves the system command's directory-only interface.
+func parseOptions(args []string) (string, []string, error) {
+	flags := flag.NewFlagSet("dotspec", flag.ContinueOnError)
+	flags.SetOutput(io.Discard)
+	path := flags.String("path", ".", "directory to inspect or initialize")
+	operands, err := parseFlagArgs(flags, args)
+	return *path, operands, err
+}
+
+// parseFlagArgs accepts flags before or after positional arguments.
+func parseFlagArgs(flags *flag.FlagSet, args []string) ([]string, error) {
+	var operands []string
+	for len(args) > 0 {
+		if args[0] == "--" {
+			operands = append(operands, args[1:]...)
+			break
+		}
+		if !strings.HasPrefix(args[0], "-") || args[0] == "-" {
+			operands = append(operands, args[0])
+			args = args[1:]
+			continue
+		}
+		name, _, hasValue := strings.Cut(strings.TrimLeft(args[0], "-"), "=")
+		n := 1
+		if option := flags.Lookup(name); option != nil && !hasValue {
+			boolean, ok := option.Value.(interface{ IsBoolFlag() bool })
+			if (!ok || !boolean.IsBoolFlag()) && len(args) > 1 {
+				n = 2
+			}
+		}
+		if err := flags.Parse(args[:n]); err != nil {
+			return nil, err
+		}
+		args = args[n:]
+	}
+	return operands, nil
+}
+
+func runSystem(command, path string, out io.Writer) error {
 	switch command {
 	case "init":
-		target, err := system.Init(*path)
+		target, err := system.Init(path)
 		if err != nil {
 			return err
 		}
 		_, err = fmt.Fprintf(out, "Created %s\nEdit the system name, Purpose, and Scope.\n", displayPath(target))
 		return err
 	case "show":
-		spec, parent, err := system.Show(*path)
+		spec, parent, err := system.Show(path)
 		if err != nil {
 			return err
 		}
@@ -83,7 +137,7 @@ func run(args []string, out io.Writer) error {
 			spec.Name, indent(spec.Purpose), indent(spec.Scope), parentText, displayPath(spec.Path))
 		return err
 	case "list":
-		nodes, err := system.List(*path)
+		nodes, err := system.List(path)
 		if err != nil {
 			return err
 		}
