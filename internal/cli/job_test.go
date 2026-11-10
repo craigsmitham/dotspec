@@ -20,10 +20,13 @@ func TestJobWorkflow(t *testing.T) {
 		}
 	}
 	code, out, errOut := invoke("job", "show", "develop-requirements")
-	for _, want := range []string{"New job", "Situation", "Motivation", "Desired outcome", "System: New system (system.spec.md)", "Source: develop-requirements.job.spec.md"} {
+	for _, want := range []string{"New job", "Situation", "Motivation", "Intended progress", "System: New system (system.spec.md)", "Source: develop-requirements.job.spec.md"} {
 		if code != 0 || errOut != "" || !strings.Contains(out, want) {
 			t.Fatalf("show missing %q: %d %q %q", want, code, out, errOut)
 		}
+	}
+	if strings.Contains(out, "## Desired outcome") {
+		t.Fatalf("new template uses the legacy heading: %s", out)
 	}
 	code, out, errOut = invoke("job", "list")
 	want := "Jobs\n\nSystem: New system (system.spec.md)\n  New job  (develop-requirements.job.spec.md)\n  New job  (manage-requirements.job.spec.md)\n"

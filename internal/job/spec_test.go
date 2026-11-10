@@ -10,6 +10,7 @@ const validJob = "---\ntype: job\n---\n\n# Develop Requirements\n\n## Situation\
 func TestParseJob(t *testing.T) {
 	for _, source := range []string{
 		validJob,
+		strings.Replace(validJob, "## Desired outcome", "## Intended progress", 1),
 		"\xef\xbb\xbf" + strings.ReplaceAll(validJob, "\n", "\r\n"),
 		strings.Replace(validJob, "type: job", "type: 'job' # JTBD", 1),
 		validJob + "\n## Notes\nAn additional section.\n",
@@ -18,9 +19,33 @@ func TestParseJob(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if got.Name != "Develop Requirements" || got.Situation != "A capability is changing." || got.Motivation != "Understand stakeholder needs." || got.DesiredOutcome != "Agree on what to build." {
+		if got.Name != "Develop Requirements" || got.Situation != "A capability is changing." || got.Motivation != "Understand stakeholder needs." || got.IntendedProgress != "Agree on what to build." {
 			t.Fatalf("unexpected job: %+v", got)
 		}
+	}
+}
+
+func TestIntendedProgressAliases(t *testing.T) {
+	for _, heading := range []string{"Intended progress", "Desired outcome"} {
+		t.Run(heading, func(t *testing.T) {
+			body := "# A job\n\n## " + heading + "\n\nConfidence in the agreed change.\n\n## Notes\n\nSee [the progress](#" + strings.ReplaceAll(strings.ToLower(heading), " ", "-") + ").\n"
+			got, err := Parse([]byte("---\ntype: job\n---\n" + body))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got.IntendedProgress != "Confidence in the agreed change." || got.Markdown != strings.TrimSpace(body) {
+				t.Fatalf("progress or authored Markdown changed: %+v", got)
+			}
+			if len(got.Outcomes) != 0 {
+				t.Fatalf("narrative progress became an outcome: %+v", got.Outcomes)
+			}
+			for _, duplicate := range []string{"Intended progress", "Desired outcome"} {
+				_, err := Parse([]byte("---\ntype: job\n---\n" + body + "\n## " + duplicate + "\n"))
+				if err == nil || !strings.Contains(err.Error(), "duplicate Intended progress section") {
+					t.Fatalf("%s + %s: expected duplicate error even for an empty section, got %v", heading, duplicate, err)
+				}
+			}
+		})
 	}
 }
 

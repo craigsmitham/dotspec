@@ -101,6 +101,85 @@ func TestEmptyMapsAndNewCommandHelp(t *testing.T) {
 	}
 }
 
+func TestOutcomeScopes(t *testing.T) {
+	spec, err := job.Parse([]byte(viewFixture))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var out bytes.Buffer
+	if err := listOutcomes(spec, "", &out); err != nil {
+		t.Fatal(err)
+	}
+	want := "Outcomes: Prepare a change\n\nOverall job outcomes\n  OUT-001: Minimize the likelihood of missed needs.\n\nOutcomes for step: Gather needs [gather] (locate)\n  OUT-002: Minimize the time needed to identify stakeholders.\n"
+	if out.String() != want {
+		t.Fatalf("outcome scopes:\n%s\nwant:\n%s", out.String(), want)
+	}
+	for _, format := range []string{"text", "mermaid"} {
+		out.Reset()
+		if err := writeJobMap(spec, jobOptions{format: format, outcomes: true}, &out); err != nil {
+			t.Fatal(err)
+		}
+		text := out.String()
+		for _, label := range []string{"Overall job outcomes", "Outcomes for step: Gather needs", "Authored step order"} {
+			if !strings.Contains(text, label) {
+				t.Errorf("%s map missing %q: %s", format, label, text)
+			}
+		}
+		for _, id := range []string{"OUT-001", "OUT-002"} {
+			if strings.Count(text, id) != 1 {
+				t.Errorf("%s map should display %s once in its own scope: %s", format, id, text)
+			}
+		}
+		if format == "mermaid" {
+			if !strings.Contains(text, "job -.-> jo1") || !strings.Contains(text, "s1 -.-> o1_1") || strings.Contains(text, "s2 -.->") {
+				t.Errorf("incorrect outcome associations: %s", text)
+			}
+			if !strings.Contains(text, "not a required sequence; completeness not assessed") {
+				t.Errorf("map must explain the scope of ordering: %s", text)
+			}
+		} else if !strings.Contains(text, "arrows do not require this execution sequence.\nCompleteness is not assessed.") {
+			t.Errorf("map must explain the scope of ordering: %s", text)
+		}
+	}
+}
+
+func TestJobMapWithoutSteps(t *testing.T) {
+	dir := t.TempDir()
+	for _, outcome := range []string{"", "\n## Outcomes\n\n- **O1:** Minimize the likelihood of missed needs.\n"} {
+		if err := os.WriteFile(filepath.Join(dir, "draft.job.spec.md"), []byte("---\ntype: job\n---\n# Draft\n"+outcome), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		for _, format := range []string{"text", "mermaid"} {
+			for _, includeOutcomes := range []bool{false, true} {
+				args := []string{"job", "map", "draft", "--path", dir, "--format", format}
+				if includeOutcomes {
+					args = append(args, "--outcomes")
+				}
+				code, out, errOut := invoke(args...)
+				if code != 0 || errOut != "" || !strings.Contains(out, "Draft") || !strings.Contains(out, "No steps defined.") {
+					t.Fatalf("map without steps: %v: %d %q %q", args, code, out, errOut)
+				}
+				showOutcome := includeOutcomes && outcome != ""
+				if strings.Contains(out, "O1:") != showOutcome || strings.Contains(out, "Overall job outcomes") != showOutcome {
+					t.Errorf("outcomes with no steps: %v: %s", args, out)
+				}
+				if format == "mermaid" && (!strings.HasPrefix(out, "flowchart TD\n") || strings.Contains(out, "s1")) {
+					t.Errorf("expected Mermaid without invented step nodes: %s", out)
+				}
+			}
+		}
+	}
+}
+
+func TestStepSelectionExplainsMissingIdentity(t *testing.T) {
+	spec := &job.Job{Name: "Prepare a change", Steps: []job.Step{{Name: "Locate commitments"}}}
+	var out bytes.Buffer
+	err := listOutcomes(spec, "locate", &out)
+	if err == nil || !strings.Contains(err.Error(), "add **ID:** to that step") || out.Len() != 0 {
+		t.Fatalf("selection should explain how to address an unidentified step: %v, %q", err, out.String())
+	}
+}
+
 func TestMermaidEscapesAuthorContent(t *testing.T) {
 	spec := &job.Job{Name: "A job", Steps: []job.Step{
 		{Name: `Close "] --> injected["node <script>`},

@@ -59,7 +59,7 @@ func listOutcomes(spec *job.Job, stepID string, out io.Writer) error {
 	}
 	fmt.Fprintf(&output, "Outcomes: %s\n", spec.Name)
 	if stepID == "" {
-		write("Job", spec.Outcomes)
+		write("Overall job outcomes", spec.Outcomes)
 	}
 	found := stepID == ""
 	for _, step := range spec.Steps {
@@ -67,9 +67,14 @@ func listOutcomes(spec *job.Job, stepID string, out io.Writer) error {
 			continue
 		}
 		found = true
-		write("Step: "+stepLabel(step), step.Outcomes)
+		write("Outcomes for step: "+stepLabel(step), step.Outcomes)
 	}
 	if !found {
+		for _, step := range spec.Steps {
+			if step.ID == "" {
+				return fmt.Errorf("step %q not found in job %s; to select a step without an ID, add **ID:** to that step", stepID, spec.Name)
+			}
+		}
 		return fmt.Errorf("step %q not found in job %s", stepID, spec.Name)
 	}
 	if count == 0 {
@@ -81,38 +86,58 @@ func listOutcomes(spec *job.Job, stepID string, out io.Writer) error {
 }
 
 func writeJobMap(spec *job.Job, options jobOptions, out io.Writer) error {
-	if len(spec.Steps) == 0 {
-		_, err := fmt.Fprintln(out, "No steps defined.")
-		return err
-	}
 	var output strings.Builder
 	if options.format == "mermaid" {
 		output.WriteString("flowchart TD\n")
+		fmt.Fprintf(&output, "  job[\"%s\"]\n", mermaidLabel(spec.Name))
+		if len(spec.Steps) == 0 {
+			output.WriteString("  no_steps[\"No steps defined.\"]\n  job --- no_steps\n")
+		} else {
+			output.WriteString("  subgraph steps[\"Authored step order (not a required sequence; completeness not assessed)\"]\n")
+			for i, step := range spec.Steps {
+				fmt.Fprintf(&output, "    s%d[\"%s\"]\n", i+1, mermaidLabel(stepLabel(step)))
+				if i > 0 {
+					fmt.Fprintf(&output, "    s%d --> s%d\n", i, i+1)
+				}
+			}
+			output.WriteString("  end\n  job --- s1\n")
+		}
 		// Internal node names avoid interpreting author IDs as Mermaid syntax.
 		for i, step := range spec.Steps {
-			fmt.Fprintf(&output, "  s%d[\"%s\"]\n", i+1, mermaidLabel(stepLabel(step)))
-			if i > 0 {
-				fmt.Fprintf(&output, "  s%d --> s%d\n", i, i+1)
-			}
-			if options.outcomes {
+			if options.outcomes && len(step.Outcomes) > 0 {
+				fmt.Fprintf(&output, "  subgraph step_outcomes_%d[\"%s\"]\n", i+1, mermaidLabel("Outcomes for step: "+stepLabel(step)))
 				for j, outcome := range step.Outcomes {
-					fmt.Fprintf(&output, "  o%d_%d[\"%s\"]\n  s%d -.-> o%d_%d\n", i+1, j+1, mermaidLabel(outcomeLabel(outcome)), i+1, i+1, j+1)
+					fmt.Fprintf(&output, "    o%d_%d[\"%s\"]\n", i+1, j+1, mermaidLabel(outcomeLabel(outcome)))
+				}
+				output.WriteString("  end\n")
+				for j := range step.Outcomes {
+					fmt.Fprintf(&output, "  s%d -.-> o%d_%d\n", i+1, i+1, j+1)
 				}
 			}
 		}
 		if options.outcomes && len(spec.Outcomes) > 0 {
-			fmt.Fprintf(&output, "  job[\"%s\"]\n  job --> s1\n", mermaidLabel(spec.Name))
+			output.WriteString("  subgraph overall_outcomes[\"Overall job outcomes\"]\n")
 			for i, outcome := range spec.Outcomes {
-				fmt.Fprintf(&output, "  jo%d[\"%s\"]\n  job -.-> jo%d\n", i+1, mermaidLabel(outcomeLabel(outcome)), i+1)
+				fmt.Fprintf(&output, "    jo%d[\"%s\"]\n", i+1, mermaidLabel(outcomeLabel(outcome)))
+			}
+			output.WriteString("  end\n")
+			for i := range spec.Outcomes {
+				fmt.Fprintf(&output, "  job -.-> jo%d\n", i+1)
 			}
 		}
 	} else {
 		fmt.Fprintf(&output, "Job map: %s\n", spec.Name)
+		if len(spec.Steps) > 0 {
+			output.WriteString("Authored step order; arrows do not require this execution sequence.\nCompleteness is not assessed.\n")
+		}
 		if options.outcomes && len(spec.Outcomes) > 0 {
-			output.WriteString("\nJob outcomes\n")
+			output.WriteString("\nOverall job outcomes\n")
 			for _, outcome := range spec.Outcomes {
 				fmt.Fprintln(&output, indent(outcomeLabel(outcome)))
 			}
+		}
+		if len(spec.Steps) == 0 {
+			output.WriteString("\nNo steps defined.\n")
 		}
 		for i, step := range spec.Steps {
 			if i == 0 {
@@ -121,9 +146,10 @@ func writeJobMap(spec *job.Job, options jobOptions, out io.Writer) error {
 				output.WriteString("   |\n   v\n")
 			}
 			fmt.Fprintf(&output, "%d. %s\n", i+1, stepLabel(step))
-			if options.outcomes {
+			if options.outcomes && len(step.Outcomes) > 0 {
+				fmt.Fprintln(&output, indent("Outcomes for step: "+stepLabel(step)))
 				for _, outcome := range step.Outcomes {
-					fmt.Fprintln(&output, indent(outcomeLabel(outcome)))
+					fmt.Fprintln(&output, indent(indent(outcomeLabel(outcome))))
 				}
 			}
 		}

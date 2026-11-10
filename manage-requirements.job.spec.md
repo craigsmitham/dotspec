@@ -24,7 +24,7 @@ The product, its implementation, or stakeholder needs are changing.
 I want to understand which requirements are affected and keep them consistent
 and current.
 
-## Desired outcome
+## Intended progress
 
 The team can make changes while preserving its commitments and continue
 to trust the requirements.
@@ -164,4 +164,5 @@ To be established through interviews.
 
 The map, outcomes, and progress case are working hypotheses based on dotspec's
 intended purpose. No interview or outcome research has validated them yet.
-The map includes decisions and collaboration performed outside the CLI.
+The map's completeness has not been established. It includes decisions and
+collaboration performed outside the CLI.

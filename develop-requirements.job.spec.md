@@ -22,7 +22,7 @@ I’m defining a new product or changing an existing capability.
 
 I want to turn stakeholder needs and product intent into clear requirements.
 
-## Desired outcome
+## Intended progress
 
 The team can agree on what to build and how to determine whether it meets
 those needs.
@@ -139,5 +139,5 @@ responsible for implementation and verification.
 
 This job map and its outcomes are working hypotheses based on the intended
 purpose of dotspec. They have not been validated through interviews or outcome
-research. The steps describe the performer's full job, including collaboration
-and judgment that dotspec may only support.
+research, and the map's completeness has not been established. The proposed
+steps include collaboration and judgment that dotspec may only support.

@@ -32,7 +32,6 @@ func Check(job *Job) []Suggestion {
 			label := outcome.ID
 			if label == "" {
 				label = fmt.Sprintf("outcome %d", i+1)
-				add(location+" / "+label, "Add a stable ID so this success criterion can be referenced.")
 			}
 			if strings.TrimSpace(outcome.Statement) == "" {
 				add(location+" / "+label, "Describe the success criterion.")
@@ -41,16 +40,9 @@ func Check(job *Job) []Suggestion {
 			}
 		}
 	}
-	checkOutcomes(job.Outcomes, "Job")
+	checkOutcomes(job.Outcomes, "Overall job outcomes")
 	for _, step := range job.Steps {
-		location := "Step: " + step.Name
-		if step.ID == "" {
-			add(location, "Add **ID:** with a stable identifier; order and title can then change without breaking references.")
-		}
-		if len(step.Outcomes) == 0 {
-			add(location, "Consider adding outcomes to describe how success is judged for this step.")
-		}
-		checkOutcomes(step.Outcomes, location)
+		checkOutcomes(step.Outcomes, "Outcomes for step: "+step.Name)
 	}
 	return suggestions
 }

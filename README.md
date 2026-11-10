@@ -141,15 +141,18 @@ Use `dotspec job <command> --help` for command-specific options.
   `System: None`. An empty list is successful.
 - `step list <slug>` displays steps in document order with their IDs, optional
   stages, and descriptions.
-- `outcome list <slug>` displays job-level and step-level success criteria under
-  separate labels. `--step ID` selects just one step's outcomes. An unknown step
-  is an error; an existing step without outcomes is a successful empty result.
-- `map <slug>` generates a sequential text map from the documented steps.
+- `outcome list <slug>` displays success criteria under `Overall job outcomes`
+  and `Outcomes for step: ...`. `--step ID` selects just that step's outcomes,
+  excluding overall job outcomes. An unknown step is an error; an existing step
+  without outcomes is a successful empty result.
+- `map <slug>` displays the job and its documented steps in authored order.
   `--format mermaid` emits standalone Mermaid flowchart source for a renderer
   or a fenced `mermaid` block. `--outcomes` includes the whole job's outcomes and
-  attaches each step's outcomes to that step. Without steps, the command reports
-  `No steps defined.`; it does not invent a map. Loops and branches are not
-  modeled in this first version.
+  attaches each step's outcomes to that step, with scope labels in both formats.
+  Without steps, the command displays the job, any requested overall outcomes,
+  and `No steps defined.`. Arrows show authored step order; they do not require
+  that execution sequence. Neither format assesses the map's completeness.
+  Loops and branches are not modeled in this first version.
 - `check <slug>` reports structural errors and offers advisory writing suggestions.
   Suggestions do not produce a failure exit status. Ordinary reading and mapping
   commands do not emit writing advice.
@@ -199,7 +202,7 @@ I’m defining a new product or changing an existing capability.
 
 I want to turn stakeholder needs and product intent into clear requirements.
 
-## Desired outcome
+## Intended progress
 
 The team can agree on what to build and how to determine whether it meets
 those needs.
@@ -222,25 +225,70 @@ Identify people whose needs or responsibilities may be affected.
 
 - **OUT-002:** Minimize the time needed to identify affected stakeholders.
 
+### Locate existing commitments
+
+**Stage:** locate
+
+Find the commitments that may constrain the proposed change.
+
 ## Evidence
 
 This partial map and its outcomes are hypotheses awaiting research.
 ```
 
 The conventional H2 sections are `Job`, `Performer`, `Situation`, `Motivation`,
-`Desired outcome`, `Outcomes`, `Steps`, `Progress cases`, and `Evidence`. All are
+`Intended progress`, `Outcomes`, `Steps`, `Progress cases`, and `Evidence`. All are
 optional, may be empty in a draft, and can be developed incrementally. Their
 names are case-sensitive, and duplicate conventional sections are errors.
 Additional sections and ordinary Markdown are retained. Existing three-section
 job stories remain valid.
 
-`Desired outcome` is the job story's narrative result. The plural `Outcomes`
-section contains individually addressable success criteria. Each direct list
-item defines an outcome; use a bold ID followed by a colon, as in
-`- **OUT-001:** Minimize ...`. Continuation lines and paragraphs are supported.
-Unidentified or unfinished outcome statements are allowed in drafts and receive
-suggestions from `check`. Nested bullets are preserved in `show` as additional
-prose and do not define separate outcomes.
+`Intended progress` is the job story's narrative result. The previous heading,
+`Desired outcome`, remains a supported alias. Using both headings, or repeating
+either one, is a duplicate-section error even if a section is empty. `show`
+preserves the authored heading and Markdown; existing documents need no migration.
+
+`Outcomes` contains success criteria. A job's H2 `Outcomes` section describes
+success for the overall job; each step's H4 `Outcomes` section describes success
+at that step. These are separate collections: overall outcomes are not inherited
+by steps, and step success does not establish overall job success. Either
+collection can be absent or empty, meaning no outcomes are recorded at that scope.
+Narrative progress does not create an outcome entry.
+
+Each direct list item defines an outcome; use a bold ID followed by a colon, as in
+`- **OUT-001:** Minimize ...`, when the outcome needs to be referenced.
+IDs are optional. Continuation lines and paragraphs are supported.
+Unidentified and unfinished outcome statements remain readable; `check` offers
+wording advice for empty statements or statements without recognizable direction
+and measurement terms. Nested bullets are preserved in `show` as additional prose
+and do not define separate outcomes.
+
+A job can have overall outcomes without any steps or IDs, for example:
+
+```markdown
+---
+type: job
+---
+
+# Assess a proposed change
+
+## Job
+
+Assess a proposed product change from receiving the proposal to deciding
+whether to accept it.
+
+## Performer
+
+A reviewer responsible for the affected product commitments.
+
+## Outcomes
+
+- Minimize the likelihood of accepting a change that violates an applicable commitment.
+
+## Evidence
+
+This job and outcome are hypotheses awaiting research. No job map is recorded.
+```
 
 Under `Steps`, each H3 introduces a step. Its `**ID:**` and optional `**Stage:**`
 fields belong in the introductory prose. A step's H4 `Outcomes` section contains
@@ -248,16 +296,24 @@ only that step's success criteria. Headings in code fences and blockquotes do
 not define steps or outcomes. Progress cases and evidence are currently retained
 as Markdown; their subsections are not interpreted as job-map structure.
 
-Step order in the document defines map order. IDs remain independent of names
-and positions. Explicit IDs use ASCII letters or digits followed by letters,
-digits, hyphens, or underscores, and are case-sensitive. Job, step, and outcome
+Step order in the document defines the displayed map order, not a required
+execution sequence. Mark partial maps in the introductory prose under `Steps`
+or in `Evidence`; these notes remain authored Markdown available through `show`.
+IDs remain independent of names and positions. Explicit IDs use ASCII letters
+or digits followed by letters, digits, hyphens, or underscores, and are
+case-sensitive. Job, step, and outcome
 IDs share a namespace inside one job document. Duplicate explicit IDs are errors;
-IDs may be reused in other job documents. Missing step IDs are valid drafts but
-cannot be used with `--step` until assigned.
+IDs may be reused in other job documents. Add an ID when a step or outcome needs
+stable references, or when selecting a step with `--step`. Missing IDs are valid;
+if a selection fails and the job contains unidentified steps, the diagnostic
+explains how to assign one.
 
 `Stage` is an optional label. The eight ODI stages are useful conventions:
 `define`, `locate`, `prepare`, `confirm`, `execute`, `monitor`, `modify`, and
-`conclude`. Custom stage labels are accepted without configuration.
+`conclude`. Custom stage labels are accepted without configuration. Stages can
+repeat or be omitted; they are elicitation aids rather than required slots.
+The partial example above includes two `locate` steps, one with no recorded
+outcomes or ID.
 
 Local Markdown links such as `[the criterion](#OUT-002)` are checked against
 explicit IDs and document heading anchors. An unresolved local fragment is an
@@ -274,9 +330,10 @@ nonzero exit status. Missing sections and unfinished content remain readable.
 
 Writing checks are simple, explained heuristics: they suggest a job statement
 and performer when absent; suggest clarifying the execution boundary when a
-statement has no marker such as “for,” “when,” or “during”; suggest step IDs and
-outcomes when absent; and look for an improvement direction and a measurement
-word in outcome statements. These checks are advisory, not proof of clarity,
+statement has no marker such as “for,” “when,” or “during”; and look for an
+improvement direction and a measurement word in authored outcome statements.
+Missing IDs, maps, stages, and outcome collections do not produce completion
+suggestions. These checks are advisory, not proof of clarity,
 completeness, measurability, or research validation. They do not assess whether a
 custom stage is correct or make missing evidence an error.
 

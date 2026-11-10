@@ -39,9 +39,10 @@ Describe the circumstances in which this job arises.
 
 Describe why someone wants to act in this situation.
 
-## Desired outcome
+## Intended progress
 
 Describe the progress or result they want to achieve.
+Use an optional Outcomes section for individual success criteria.
 `
 
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
@@ -56,18 +57,20 @@ type Outcome struct {
 
 type Step struct {
 	ID, Name, Stage, Description string
-	Outcomes                     []Outcome
+	// Outcomes describe success at this step, independently of overall job outcomes.
+	Outcomes []Outcome
 }
 
 type Job struct {
-	ID, Slug, Name                                              string
-	Statement, Performer, Situation, Motivation, DesiredOutcome string
-	ProgressCases, Evidence                                     string
-	Steps                                                       []Step
-	Outcomes                                                    []Outcome
-	Markdown                                                    string
-	Path                                                        string
-	System                                                      *system.System
+	ID, Slug, Name                                                string
+	Statement, Performer, Situation, Motivation, IntendedProgress string
+	ProgressCases, Evidence                                       string
+	Steps                                                         []Step
+	// Outcomes describe success for the whole job; they are not inherited by steps.
+	Outcomes []Outcome
+	Markdown string
+	Path     string
+	System   *system.System
 }
 
 func ValidateSlug(slug string) error {
@@ -125,20 +128,24 @@ func Parse(data []byte) (*Job, error) {
 	}
 	sections := make(map[string]*specfile.Section)
 	for _, section := range doc.Sections {
-		switch section.Title {
-		case "Job", "Performer", "Situation", "Motivation", "Desired outcome", "Outcomes", "Steps", "Progress cases", "Evidence":
+		name := section.Title
+		if name == "Desired outcome" {
+			name = "Intended progress"
+		}
+		switch name {
+		case "Job", "Performer", "Situation", "Motivation", "Intended progress", "Outcomes", "Steps", "Progress cases", "Evidence":
 			if section.Level != 2 {
 				return nil, fmt.Errorf("%s must use a level-two heading (## %s)", section.Title, section.Title)
 			}
-			if _, exists := sections[section.Title]; exists {
-				return nil, fmt.Errorf("duplicate %s section", section.Title)
+			if _, exists := sections[name]; exists {
+				return nil, fmt.Errorf("duplicate %s section", name)
 			}
-			sections[section.Title] = section
+			sections[name] = section
 		}
 	}
 	for name, target := range map[string]*string{
 		"Job": &job.Statement, "Performer": &job.Performer, "Situation": &job.Situation,
-		"Motivation": &job.Motivation, "Desired outcome": &job.DesiredOutcome,
+		"Motivation": &job.Motivation, "Intended progress": &job.IntendedProgress,
 		"Progress cases": &job.ProgressCases, "Evidence": &job.Evidence,
 	} {
 		if s := sections[name]; s != nil {

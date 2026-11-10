@@ -185,8 +185,27 @@ func TestCheckExplainsHeuristics(t *testing.T) {
 		t.Fatal(err)
 	}
 	suggestions := Check(got)
-	if len(suggestions) != 5 {
-		t.Fatalf("want boundary, performer, outcome, step ID, step outcomes suggestions; got %+v", suggestions)
+	if len(suggestions) != 3 {
+		t.Fatalf("want boundary, performer, and authored outcome suggestions; got %+v", suggestions)
+	}
+}
+
+func TestCheckAllowsOptionalStructure(t *testing.T) {
+	base := "---\ntype: job\n---\n# Prepare a change\n\n## Job\n\nPrepare a product change from proposal to review.\n\n## Performer\n\nA product engineer.\n"
+	for _, optional := range []string{
+		"",
+		"\n## Outcomes\n\n## Steps\n",
+		"\n## Outcomes\n\n- Minimize the time needed to assess the proposed change.\n",
+		"\n## Steps\n\n### Locate commitments\n\n**Stage:** locate\n\n### Locate supporting evidence\n\n**Stage:** locate\n\n#### Outcomes\n",
+		"\n## Steps\n\n### Locate commitments\n\n#### Outcomes\n\n- Minimize the likelihood of overlooking an applicable commitment.\n",
+	} {
+		got, err := Parse([]byte(base + optional))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if suggestions := Check(got); len(suggestions) != 0 {
+			t.Fatalf("optional structure should not prompt completion: %q: %+v", optional, suggestions)
+		}
 	}
 }
 
