@@ -73,7 +73,7 @@ func runConcept(command, path, slug, format string, out io.Writer) error {
 		return err
 	}
 	if command == "check" {
-		return emitCheckReport(out, check.Focused(path, slug, concept.CheckType()), format)
+		return emitCheckReport(out, check.Focused(path, slug, concept.CheckType(), supportedTypes()...), format)
 	}
 	spec, err := concept.Show(path, slug)
 	if err != nil {

@@ -6,10 +6,11 @@ import (
 
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
 func CheckType() check.Type {
-	return check.Type{Layout: Layout, Inspect: inspect}
+	return check.Type{Layout: Layout, References: readReferences, Inspect: inspect}
 }
 
 func inspect(path string) ([]diagnostic.Diagnostic, error) {
@@ -43,3 +44,11 @@ var CheckContext = &check.ContextProvider{Inspect: inspect, Resolve: func(owner 
 	}
 	return []string{spec.Path}, nil
 }}
+
+func readReferences(path string) (*specfile.ReferenceDocument, error) {
+	spec, err := Read(path)
+	if err != nil {
+		return nil, err
+	}
+	return spec.References, nil
+}

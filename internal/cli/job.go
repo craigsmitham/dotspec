@@ -122,7 +122,7 @@ func runJob(command, slug string, options jobOptions, out io.Writer) error {
 		return err
 	}
 	if command == "check" {
-		return emitCheckReport(out, check.Focused(options.path, slug, job.CheckType()), options.format)
+		return emitCheckReport(out, check.Focused(options.path, slug, job.CheckType(), supportedTypes()...), options.format)
 	}
 	spec, err := job.Show(options.path, slug)
 	if err != nil {

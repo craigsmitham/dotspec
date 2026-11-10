@@ -3,8 +3,8 @@ package check
 import "github.com/craigsmitham/dotspec/internal/specfile"
 
 // Focused checks one local specification and the context requested by its type.
-// It uses the same reporting rules as Project, without inspecting siblings.
-func Focused(path, slug string, kind Type) Report {
+// It uses the same reporting rules as Project, without discovering siblings.
+func Focused(path, slug string, kind Type, referenceTypes ...Type) Report {
 	r := newReport(path, "direct", []Type{kind})
 	dir, err := specfile.Scope(path)
 	if err != nil {
@@ -35,5 +35,6 @@ func Focused(path, slug string, kind Type) Report {
 	if kind.Context != nil {
 		r.inspectContexts([]contextRequest{{contextKey{kind.Context, dir}, source, kind.InspectContext}}, map[string]bool{source: true})
 	}
+	r.inspectReferences([]string{source}, map[string]bool{source: true}, append([]Type{kind}, referenceTypes...))
 	return r.finish()
 }

@@ -73,7 +73,7 @@ func runUseCase(command, path, slug, format string, out io.Writer) error {
 		return err
 	}
 	if command == "check" {
-		return emitCheckReport(out, check.Focused(path, slug, usecase.CheckType()), format)
+		return emitCheckReport(out, check.Focused(path, slug, usecase.CheckType(), supportedTypes()...), format)
 	}
 	spec, err := usecase.Show(path, slug)
 	if err != nil {

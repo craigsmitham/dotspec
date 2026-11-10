@@ -10,6 +10,8 @@ import (
 // Inspect validates placement, reads the file, and returns writing advice only
 // after structural validation succeeds. Context is optional.
 type Type struct {
+	// References reads validated targets and outgoing links without following them.
+	References   func(path string) (*specfile.ReferenceDocument, error)
 	Layout       specfile.Layout
 	ValidateSlug func(string) error
 	Inspect      func(path string) ([]diagnostic.Diagnostic, error)

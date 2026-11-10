@@ -12,8 +12,8 @@ affected by a proposed change before committing it.
 
 ## System boundary
 
-The dotspec CLI, reading specifications from the selected project subtree and
-any enclosing system specifications needed as context.
+The dotspec CLI, reading specifications from the selected project subtree,
+enclosing system specifications, and direct reference targets needed as context.
 
 ## Primary actor
 
@@ -35,7 +35,7 @@ available when discovery takes place inside a Git repository.
 ## Success criterion
 
 The contributor receives a complete report identifying the inspected scope,
-structural errors, advisory findings, and any additional system context. The
+structural errors, advisory findings, and any additional context. The
 report distinguishes a completed scan from an operational failure. A report
 with structural errors still completes this information-gathering goal.
 
@@ -48,20 +48,23 @@ requirements are complete, validated, or satisfied.
 1. The contributor selects the project subtree to inspect and requests a check.
 2. Dotspec discovers supported specifications and reads the system context
    needed to interpret them.
-3. Dotspec checks structure and local references and gathers writing advice.
+3. Dotspec checks structure and references and gathers writing advice.
 4. Dotspec presents the report, including source locations and scan completion,
    so the contributor can decide what to revise before committing.
 
 ## Extensions
 
 - A specification is malformed: report its structural error, skip dependent
-  checks for that file, and continue inspecting other discovered files.
+  checks for that file, and follow the
+  [continued-inspection requirement](../requirements/continue-after-invalid-spec.requirement.spec.md).
 - A file cannot be read or discovery fails: report the operational failure and
   mark the scan incomplete. The contributor can repair access and retry.
 - No supported specifications are found: explicitly report an empty, completed
   scan.
 - Content is unfinished: retain readable drafts and report applicable writing
-  advice without treating omissions as structural errors.
+  advice. The
+  [advice-permits-success requirement](../requirements/advice-permits-success.requirement.spec.md)
+  governs the exit status.
 
 ## Sequence
 

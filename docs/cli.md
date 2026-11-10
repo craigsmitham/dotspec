@@ -33,7 +33,7 @@ Check all supported specifications in a project subtree
 dotspec check [flags]
 ```
 
-Check system, job, use-case, concept, and quality specifications using the same discovery rules as list.
+Check system, job, use-case, concept, requirement, and quality specifications using the same discovery rules as list.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
@@ -513,6 +513,99 @@ dotspec quality show <slug> [flags]
 
 ```sh
 dotspec quality show diagnostic-severity --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for show |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec requirement
+
+Specify required results, rules, properties, and restrictions
+
+```sh
+dotspec requirement [flags]
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for requirement |
+
+## dotspec requirement check
+
+Check requirement specifications and attribute references
+
+```sh
+dotspec requirement check <slug> [flags]
+```
+
+Check requirement specifications and attribute references.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+```sh
+dotspec requirement check reject-existing-target --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for check |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec requirement init
+
+Create a requirement specification without overwriting an existing file
+
+```sh
+dotspec requirement init <slug> [flags]
+```
+
+```sh
+dotspec requirement init reject-existing-target --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for init |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec requirement list
+
+Discover general and quality requirements, grouped by associated system
+
+```sh
+dotspec requirement list [flags]
+```
+
+```sh
+dotspec requirement list --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--attribute` | `` | Include requirements with this attribute or a narrower attribute in their system's model |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for list |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec requirement show
+
+Show authored Markdown and the associated system
+
+```sh
+dotspec requirement show <slug> [flags]
+```
+
+```sh
+dotspec requirement show reject-existing-target --path .
 ```
 
 | Flag | Default | Description |

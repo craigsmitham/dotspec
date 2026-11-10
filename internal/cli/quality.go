@@ -90,7 +90,7 @@ func runQuality(command, path, slug, format string, out io.Writer) error {
 		return err
 	}
 	if command == "check" {
-		return emitCheckReport(out, check.Focused(path, slug, quality.CheckType()), format)
+		return emitCheckReport(out, check.Focused(path, slug, quality.CheckType(), supportedTypes()...), format)
 	}
 	spec, err := quality.Show(path, slug)
 	if err != nil {

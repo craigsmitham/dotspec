@@ -73,6 +73,7 @@ type Step struct {
 }
 
 type Job struct {
+	References       *specfile.ReferenceDocument    `json:"-"`
 	ID               string                         `json:"id,omitempty"`
 	Slug             string                         `json:"slug"`
 	Name             string                         `json:"name"`
@@ -208,6 +209,7 @@ func Parse(data []byte) (*Job, error) {
 			job.Steps[i].Outcomes = []Outcome{}
 		}
 	}
+	job.References = doc.References()
 	return job, nil
 }
 

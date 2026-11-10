@@ -35,13 +35,15 @@ includes errcheck, govet, ineffassign, staticcheck, and unused.
 - `internal/check` scans explicitly supplied type integrations and produces typed
   reports. It owns report accounting and context deduplication, without importing
   the concrete specification types. Checks do not print or exit.
-- `internal/system`, `internal/job`, `internal/usecase`, `internal/concept`, and
-  `internal/quality` own type-specific parsing and validation,
+- `internal/system`, `internal/job`, `internal/usecase`, `internal/concept`,
+  `internal/quality` and `internal/requirement` own type-specific parsing and validation,
   metadata schemas, layouts, templates, and repository operations. Their `CheckType`
   functions supply inspection behavior; the CLI registers the supported types.
   Parsing functions accept bytes without I/O.
+- `internal/obligation` shares general and quality requirement content parsing
+  and quality-attribute classification.
 - `internal/specfile` owns common frontmatter, Goldmark outlines, source locations,
-  document-local identifiers, local references, and shared filesystem/discovery
+  document-local identifiers, reference extraction, and shared filesystem/discovery
   behavior. All specification types use the same Markdown extraction path.
 - `internal/diagnostic` owns stable findings and source locations.
 
@@ -66,14 +68,20 @@ before validating local references. Preserve authored Markdown and source locati
 Expose a `CheckType` integration supplying the layout, slug validation, and an
 inspector that reads the file and returns writing advice only after structural
 validation succeeds. Attach a context provider only when the type needs other
-sources. Jobs, use cases, concepts, and quality requirements share
+sources. Jobs, use cases, concepts, general requirements, and quality requirements share
 `system.CheckContext`; other types need not
 depend on system specifications. Providers report attempted source paths even
 when reads fail, and the checker distinguishes structural findings from incomplete
 scans. Sharing a provider instance resolves it once per owning directory. Its optional
 `Inspect` function contributes findings from context files. A type can supply
+`References` to expose validated identities and authored links, and
 `InspectContext` to check relationships against those resolved sources after
-context validation succeeds; quality requirements use this for attribute labels.
+context validation succeeds; general and quality requirements use this for attribute labels.
+
+The checker follows one reference edge from selected specs and their system
+context. Pass the supported target types to `check.Focused` so target parsers
+can expose type-specific IDs. Targets contribute structural diagnostics and
+context accounting, but do not recursively expand the scan.
 
 Register the type in the CLI's project check and pass the same integration to any
 focused check command. Preserve the existing command and report contracts.

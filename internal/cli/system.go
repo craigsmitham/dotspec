@@ -77,8 +77,13 @@ func runSystem(command, path, format string, out io.Writer) error {
 			parentText = fmt.Sprintf("%s (%s)", result.Parent.Name, displayPath(result.Parent.Path))
 		}
 		modelText := ""
+		for _, field := range []struct{ name, value string }{{"Goals", spec.Goals}, {"Environment", spec.Environment}, {"Assumptions", spec.Assumptions}, {"Constraints", spec.Constraints}, {"Glossary", spec.Glossary}} {
+			if field.value != "" {
+				modelText += "\n\n" + field.name + "\n" + indent(field.value)
+			}
+		}
 		if spec.QualityModel != nil {
-			modelText = "\n\nQuality attributes\n" + indent(spec.QualityModel.Markdown)
+			modelText += "\n\nQuality attributes\n" + indent(spec.QualityModel.Markdown)
 		}
 		_, err = fmt.Fprintf(out, "%s\n\nPurpose\n%s\n\nScope\n%s%s\n\nParent system: %s\nSource: %s\n",
 			result.System.Name, indent(result.System.Purpose), indent(result.System.Scope), modelText, parentText, displayPath(result.System.Path))

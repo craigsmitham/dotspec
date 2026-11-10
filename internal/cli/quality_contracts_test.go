@@ -60,6 +60,7 @@ func TestInspectionQualityContracts(t *testing.T) {
 		{"focused job", []string{"job", "check", "develop-requirements"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
 		{"focused use case", []string{"use-case", "check", "check-specifications"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
 		{"focused concept", []string{"concept", "check", "job-map"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
+		{"focused general requirement", []string{"requirement", "check", "reject-existing-target"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
 		{"focused quality requirement", []string{"quality", "check", "diagnostic-severity"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
 		{"missing input", []string{"quality", "check", "missing"}, func(t *testing.T) { prepareExample(t, "read") }, 2},
 		{"unavailable context", []string{"quality", "check", "diagnostic-severity"}, func(t *testing.T) {

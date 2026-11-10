@@ -54,6 +54,7 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 // Concept retains section bodies as Markdown. State and actions have no imposed
 // language; system association does not imply an implementation boundary.
 type Concept struct {
+	References           *specfile.ReferenceDocument    `json:"-"`
 	ID                   string                         `json:"id,omitempty"`
 	Slug                 string                         `json:"slug"`
 	Name                 string                         `json:"name"`
@@ -100,7 +101,7 @@ func Read(path string) (*Concept, error) {
 }
 
 // Parse accepts unfinished content, but rejects ambiguous document structure
-// and unresolved same-document references. Other links remain navigation.
+// and unresolved same-document references. Check commands resolve file links.
 func Parse(data []byte) (*Concept, error) {
 	var meta metadata
 	doc, err := specfile.ParseOutline(data, Layout.Kind, &meta)
@@ -135,5 +136,6 @@ func Parse(data []byte) (*Concept, error) {
 	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
 		return nil, err
 	}
+	spec.References = doc.References()
 	return spec, nil
 }

@@ -9,8 +9,8 @@ import (
 	"github.com/yuin/goldmark/ast"
 )
 
-// ValidateReferences checks only same-document fragments. File and remote links
-// remain navigation; this function does not infer cross-file identity.
+// ValidateReferences checks only same-document fragments. Check commands
+// resolve relative file links separately, with repository context.
 func ValidateReferences(source, body []byte, doc ast.Node, anchors map[string]bool) error {
 	return ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {

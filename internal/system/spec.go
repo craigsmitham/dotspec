@@ -34,11 +34,17 @@ Describe the system's boundary and what it includes.
 `
 
 type System struct {
-	Name         string        `json:"name"`
-	Purpose      string        `json:"purpose"`
-	Scope        string        `json:"scope"`
-	Path         string        `json:"path"`
-	QualityModel *QualityModel `json:"quality_model"`
+	References   *specfile.ReferenceDocument `json:"-"`
+	Name         string                      `json:"name"`
+	Purpose      string                      `json:"purpose"`
+	Scope        string                      `json:"scope"`
+	Goals        string                      `json:"goals,omitempty"`
+	Environment  string                      `json:"environment,omitempty"`
+	Assumptions  string                      `json:"assumptions,omitempty"`
+	Constraints  string                      `json:"constraints,omitempty"`
+	Glossary     string                      `json:"glossary,omitempty"`
+	Path         string                      `json:"path"`
+	QualityModel *QualityModel               `json:"quality_model"`
 }
 
 func Read(path string) (*System, error) {
@@ -71,18 +77,18 @@ func Parse(data []byte) (*System, error) {
 		return nil, err
 	}
 	spec := &System{Name: doc.Name}
-	fields := map[string]*string{"Purpose": &spec.Purpose, "Scope": &spec.Scope}
+	fields := map[string]*string{"Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary}
 	locations := make(map[string]diagnostic.Location)
 	var ids specfile.Identifiers
 	for _, section := range doc.Sections {
 		if section.Level != 2 {
-			if section.Title == "Quality attributes" {
-				return nil, diagnostic.Error("structure.section-level", "quality attributes must use ## Quality attributes", doc.Location(section.Start, section.Title))
+			if _, known := fields[section.Title]; known || section.Title == "Quality attributes" {
+				return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), doc.Location(section.Start, section.Title))
 			}
 			continue
 		}
-		target, required := fields[section.Title]
-		if !required && section.Title != "Quality attributes" {
+		target, known := fields[section.Title]
+		if !known && section.Title != "Quality attributes" {
 			continue
 		}
 		location := doc.Location(section.Start, section.Title)
@@ -90,7 +96,7 @@ func Parse(data []byte) (*System, error) {
 			return nil, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", section.Title), location, previous)
 		}
 		locations[section.Title] = location
-		if required {
+		if known {
 			*target = doc.Body(section)
 			continue
 		}
@@ -113,5 +119,6 @@ func Parse(data []byte) (*System, error) {
 	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
 		return nil, err
 	}
+	spec.References = doc.References()
 	return spec, nil
 }

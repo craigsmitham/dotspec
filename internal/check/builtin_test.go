@@ -5,6 +5,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/quality"
+	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
 )
@@ -12,7 +13,7 @@ import (
 // Exercise the same built-in composition as the CLI against the existing
 // behavior contracts, independently of tests for other type integrations.
 func checkProject(path string) check.Report {
-	return check.Project(path, system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), quality.CheckType())
+	return check.Project(path, system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), quality.CheckType(), requirement.CheckType())
 }
 
 func checkJob(path, slug string) check.Report {

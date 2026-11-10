@@ -13,6 +13,44 @@ they describe.
 
 The system includes the `dotspec` CLI and the `*.spec.md` files it manages.
 
+## Goals
+
+Reduce the effort of finding structural problems and missing specification
+content during authoring and review.
+
+## Environment
+
+Contributors edit Markdown in ordinary text editors. Git repositories provide
+version history and discovery rules. The CLI communicates through process
+arguments, standard streams, and exit statuses.
+
+## Assumptions
+
+The execution conditions required for repeatability comparisons are defined in
+[Repeated inspections](quality/repeatable-inspection.quality.spec.md#applies-to).
+
+## Constraints
+
+Repository development and contribution rules are maintained in
+[Contributing](../CONTRIBUTING.md). They describe the development process rather
+than implying additional product obligations.
+
+## Glossary
+
+### Complete scan
+
+An inspection that finished its selected scope and required context without an
+operational failure. A complete scan can contain structural error findings.
+
+### Structural error
+
+A finding that a specification violates a supported structural rule.
+
+### Writing advice
+
+A suggestion about specification content. Its exit-status consequences are
+specified by [Advice permits success](requirements/advice-permits-success.requirement.spec.md).
+
 ## Quality attributes
 
 This is dotspec's local vocabulary. The definitions identify concerns;

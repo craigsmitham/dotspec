@@ -17,6 +17,8 @@ func TestMisplacedSpecsFailLocalCommands(t *testing.T) {
 		{"system collection", "system", "specs/systems/system.spec.md", "specs/system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
 		{"nested system", "system", "specs/child/specs/system.spec.md", "specs/system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
 		{"adjacent use case", "use-case", "work.use-case.spec.md", "specs/use-cases/work.use-case.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
+		{"adjacent requirement", "requirement", "work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
+		{"nested requirement", "requirement", "specs/requirements/group/work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"adjacent quality", "quality", "work.quality.spec.md", "specs/quality/work.quality.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"plural quality folder", "quality", "specs/qualities/work.quality.spec.md", "specs/quality/work.quality.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"nested quality", "quality", "specs/quality/group/work.quality.spec.md", "specs/quality/work.quality.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},

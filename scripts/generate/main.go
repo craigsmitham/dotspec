@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -16,6 +17,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/quality"
+	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
 	"github.com/spf13/cobra"
@@ -50,6 +52,7 @@ func run(check bool) error {
 		{"examples/starter/specs/use-cases/check-specifications.use-case.spec.md", usecase.Template},
 		{"examples/starter/specs/concepts/job-map.concept.spec.md", concept.Template},
 		{"examples/starter/specs/quality/diagnostic-severity.quality.spec.md", quality.Template},
+		{"examples/starter/specs/requirements/reject-existing-target.requirement.spec.md", requirement.Template},
 		{"docs/examples.md", gallery},
 	}
 	var stale []string
@@ -122,9 +125,9 @@ func outputGallery() (result string, err error) {
 		return "", err
 	}
 	defer func() { err = errors.Join(err, os.Chdir(original)) }()
-	// Bound ancestor lookup without requiring a Git installation.
-	if err := os.Mkdir(".git", 0o755); err != nil {
-		return "", err
+	// Inventory examples exercise Git discovery as well as bounded context lookup.
+	if output, err := exec.Command("git", "init", "--quiet", "--template=", ".").CombinedOutput(); err != nil {
+		return "", fmt.Errorf("initialize example repository: %w: %s", err, output)
 	}
 	var gallery strings.Builder
 	gallery.WriteString("# Command examples\n\nGenerated from the CLI and its starter templates. `$PROJECT` stands for the absolute project directory.\n\n")
@@ -144,6 +147,10 @@ func outputGallery() (result string, err error) {
 		{"quality", "init", "diagnostic-severity"},
 		{"quality", "show", "diagnostic-severity", "--json"},
 		{"quality", "check", "diagnostic-severity", "--json"},
+		{"requirement", "init", "reject-existing-target"},
+		{"requirement", "show", "reject-existing-target", "--json"},
+		{"requirement", "list", "--json"},
+		{"requirement", "check", "reject-existing-target", "--json"},
 	} {
 		var out, errOut bytes.Buffer
 		if code := cli.Run(args, &out, &errOut); code != 0 {

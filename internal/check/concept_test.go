@@ -22,7 +22,7 @@ func TestConceptProjectAndFocusedReports(t *testing.T) {
 	if focused.ExitCode() != 0 || !focused.Complete || focused.Summary.FilesChecked != 1 || focused.Summary.ContextFilesChecked != 1 || focused.Summary.Advice != 3 {
 		t.Fatalf("focused accounting: %+v", focused)
 	}
-	if !reflect.DeepEqual(focused.Scope.Types, []string{"concept"}) || focused.Scope.Discovery != "direct" || !reflect.DeepEqual(project.Scope.Types, []string{"system", "job", "use-case", "concept", "quality"}) {
+	if !reflect.DeepEqual(focused.Scope.Types, []string{"concept"}) || focused.Scope.Discovery != "direct" || !reflect.DeepEqual(project.Scope.Types, []string{"system", "job", "use-case", "concept", "quality", "requirement"}) {
 		t.Fatalf("scope: %+v; %+v", focused.Scope, project.Scope)
 	}
 	// A job and concept sharing an ancestor report that context only once.

@@ -72,6 +72,7 @@ func Project(path string, types ...Type) Report {
 	r.Summary.FilesDiscovered = len(paths)
 	discovered := make(map[string]bool)
 	var contexts []contextRequest
+	var referenceSources []string
 	for _, path := range paths {
 		discovered[path] = true
 		r.Summary.FilesChecked++
@@ -82,6 +83,7 @@ func Project(path string, types ...Type) Report {
 			continue
 		}
 		r.Diagnostics = append(r.Diagnostics, findings...)
+		referenceSources = append(referenceSources, path)
 		if kind.Context != nil {
 			owner, err := kind.Layout.Owner(path)
 			if err != nil {
@@ -92,6 +94,7 @@ func Project(path string, types ...Type) Report {
 		}
 	}
 	r.inspectContexts(contexts, discovered)
+	r.inspectReferences(referenceSources, discovered, types)
 	return r.finish()
 }
 

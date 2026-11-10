@@ -80,6 +80,7 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 // UseCase retains section bodies as Markdown. Scenario steps and extensions
 // are not separate records, and file ownership does not set the system boundary.
 type UseCase struct {
+	References          *specfile.ReferenceDocument    `json:"-"`
 	ID                  string                         `json:"id,omitempty"`
 	Slug                string                         `json:"slug"`
 	Name                string                         `json:"name"`
@@ -133,7 +134,7 @@ func Read(path string) (*UseCase, error) {
 }
 
 // Parse accepts unfinished content, but rejects ambiguous document structure
-// and unresolved same-document references. Other links remain navigation.
+// and unresolved same-document references. Check commands resolve file links.
 func Parse(data []byte) (*UseCase, error) {
 	var meta metadata
 	doc, err := specfile.ParseOutline(data, Layout.Kind, &meta)
@@ -171,5 +172,6 @@ func Parse(data []byte) (*UseCase, error) {
 	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
 		return nil, err
 	}
+	spec.References = doc.References()
 	return spec, nil
 }

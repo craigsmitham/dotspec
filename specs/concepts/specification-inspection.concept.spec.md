@@ -32,24 +32,27 @@ and [source preservation](../quality/inspection-preserves-source.quality.spec.md
 ### Inspect a project
 
 Select an existing project directory and inspect supported specifications in its
-subtree, consulting enclosing system specifications when needed. Report findings
-and scan completion. An empty completed scan explicitly reports that no
+subtree, consulting enclosing system specifications and direct reference targets
+when needed. Report findings and scan completion. An empty completed scan explicitly reports that no
 supported specifications were found.
 
 ### Inspect one specification
 
 Select a supported specification by type, local slug, and project directory.
-Inspect it and its required system context using the same diagnostic rules as
-the project check. Other well-placed sibling specifications are outside this
-focused inspection.
+Inspect it and its required system and reference context using the same
+diagnostic rules as the project check. Sibling specifications are consulted only
+when referenced by the selected specification or its system context.
 
 ### Read findings and inspect again
 
 Use source locations to find problems, edit the source, and request another
 inspection. Within a malformed file, only the first structural error is
-reported and dependent checks are skipped; other discovered files continue to
-be inspected. Fixing one error can therefore expose another on the next run.
-Advice does not fail a check. An access or discovery failure leaves the scan
+reported and dependent checks are skipped.
+[Continued inspection](../requirements/continue-after-invalid-spec.requirement.spec.md)
+governs progress through the other files. Fixing one error can expose another
+on the next run.
+[Advice permits success](../requirements/advice-permits-success.requirement.spec.md)
+governs the effect of advisory findings on exit status. An access or discovery failure leaves the scan
 incomplete, separately from structural findings in readable files.
 
 ## Operational principle

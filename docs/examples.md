@@ -342,8 +342,6 @@ dotspec quality show diagnostic-severity --json
     "slug": "diagnostic-severity",
     "name": "New quality requirement",
     "applies_to": "Identify the subject and the conditions, workload, or population covered by this requirement.",
-    "criterion": "State one coherent obligation, including its measure, comparison, and target where applicable.\nIf a target is unknown, record the open decision and the evidence needed to choose it.",
-    "measurement": "Describe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.",
     "rationale": "Explain why this quality matters and any relevant tradeoffs.",
     "attributes": [],
     "classification": {
@@ -366,7 +364,9 @@ dotspec quality show diagnostic-severity --json
       "line": 5,
       "column": 1,
       "element": "New quality requirement"
-    }
+    },
+    "criterion": "State one coherent obligation, including its measure, comparison, and target where applicable.\nIf a target is unknown, record the open decision and the evidence needed to choose it.",
+    "measurement": "Describe how to assess the criterion, including sampling, measurement conditions, and evidence to retain."
   }
 }
 ````
@@ -384,6 +384,178 @@ dotspec quality check diagnostic-severity --json
     "path": "$PROJECT",
     "types": [
       "quality"
+    ],
+    "discovery": "direct"
+  },
+  "complete": true,
+  "context_files": [
+    "$PROJECT/specs/system.spec.md"
+  ],
+  "summary": {
+    "files_discovered": 1,
+    "files_checked": 1,
+    "context_files_checked": 1,
+    "errors": 0,
+    "advice": 0
+  },
+  "diagnostics": []
+}
+````
+
+## requirement init reject-existing-target
+
+```sh
+dotspec requirement init reject-existing-target
+```
+
+````text
+Created specs/requirements/reject-existing-target.requirement.spec.md
+Describe the scope, statement, rationale, and verification as they become known.
+````
+
+## requirement show reject-existing-target --json
+
+```sh
+dotspec requirement show reject-existing-target --json
+```
+
+````text
+{
+  "schema_version": 1,
+  "requirement": {
+    "type": "requirement",
+    "slug": "reject-existing-target",
+    "name": "New requirement",
+    "applies_to": "Identify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.",
+    "rationale": "Explain why this obligation is needed and reference its source or governing goal.",
+    "attributes": [],
+    "classification": {
+      "model_path": "",
+      "resolved": [],
+      "broader": [],
+      "undefined": []
+    },
+    "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification\n\nDescribe how to establish that the obligation holds, including success criteria and evidence to retain.",
+    "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
+    "system": {
+      "name": "New system",
+      "purpose": "Describe why this system exists and whom it serves.",
+      "scope": "Describe the system's boundary and what it includes.",
+      "path": "$PROJECT/specs/system.spec.md",
+      "quality_model": null
+    },
+    "location": {
+      "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
+      "line": 5,
+      "column": 1,
+      "element": "New requirement"
+    },
+    "statement": "State one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.",
+    "verification": "Describe how to establish that the obligation holds, including success criteria and evidence to retain."
+  }
+}
+````
+
+## requirement list --json
+
+```sh
+dotspec requirement list --json
+```
+
+````text
+{
+  "schema_version": 1,
+  "groups": [
+    {
+      "system": {
+        "name": "New system",
+        "purpose": "Describe why this system exists and whom it serves.",
+        "scope": "Describe the system's boundary and what it includes.",
+        "path": "$PROJECT/specs/system.spec.md",
+        "quality_model": null
+      },
+      "requirements": [
+        {
+          "type": "quality",
+          "slug": "diagnostic-severity",
+          "name": "New quality requirement",
+          "applies_to": "Identify the subject and the conditions, workload, or population covered by this requirement.",
+          "rationale": "Explain why this quality matters and any relevant tradeoffs.",
+          "attributes": [],
+          "classification": {
+            "model_path": "",
+            "resolved": [],
+            "broader": [],
+            "undefined": []
+          },
+          "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and the conditions, workload, or population covered by this requirement.\n\n## Criterion\n\nState one coherent obligation, including its measure, comparison, and target where applicable.\nIf a target is unknown, record the open decision and the evidence needed to choose it.\n\n## Measurement\n\nDescribe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.",
+          "path": "$PROJECT/specs/quality/diagnostic-severity.quality.spec.md",
+          "system": {
+            "name": "New system",
+            "purpose": "Describe why this system exists and whom it serves.",
+            "scope": "Describe the system's boundary and what it includes.",
+            "path": "$PROJECT/specs/system.spec.md",
+            "quality_model": null
+          },
+          "location": {
+            "path": "$PROJECT/specs/quality/diagnostic-severity.quality.spec.md",
+            "line": 5,
+            "column": 1,
+            "element": "New quality requirement"
+          },
+          "statement": "State one coherent obligation, including its measure, comparison, and target where applicable.\nIf a target is unknown, record the open decision and the evidence needed to choose it.",
+          "verification": "Describe how to assess the criterion, including sampling, measurement conditions, and evidence to retain."
+        },
+        {
+          "type": "requirement",
+          "slug": "reject-existing-target",
+          "name": "New requirement",
+          "applies_to": "Identify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.",
+          "rationale": "Explain why this obligation is needed and reference its source or governing goal.",
+          "attributes": [],
+          "classification": {
+            "model_path": "",
+            "resolved": [],
+            "broader": [],
+            "undefined": []
+          },
+          "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification\n\nDescribe how to establish that the obligation holds, including success criteria and evidence to retain.",
+          "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
+          "system": {
+            "name": "New system",
+            "purpose": "Describe why this system exists and whom it serves.",
+            "scope": "Describe the system's boundary and what it includes.",
+            "path": "$PROJECT/specs/system.spec.md",
+            "quality_model": null
+          },
+          "location": {
+            "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
+            "line": 5,
+            "column": 1,
+            "element": "New requirement"
+          },
+          "statement": "State one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.",
+          "verification": "Describe how to establish that the obligation holds, including success criteria and evidence to retain."
+        }
+      ]
+    }
+  ]
+}
+````
+
+## requirement check reject-existing-target --json
+
+```sh
+dotspec requirement check reject-existing-target --json
+```
+
+````text
+{
+  "schema_version": 1,
+  "scope": {
+    "path": "$PROJECT",
+    "types": [
+      "requirement"
     ],
     "discovery": "direct"
   },

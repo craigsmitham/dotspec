@@ -1,0 +1,150 @@
+# General requirements and quality share an inventory and attribute model.
+mkdir project
+cd project
+exec git init -q
+status 0 dotspec requirement list --json
+stdout '"groups": \[\]'
+status 0 dotspec requirement init work --json
+stdout '"path":'
+! stderr .
+status 0 dotspec requirement show work --json
+stdout '"type": "requirement"'
+stdout '"statement":'
+cp ../system.md specs/system.spec.md
+cp ../rule.md specs/requirements/work.requirement.spec.md
+mkdir specs/quality
+cp ../quality.md specs/quality/work.quality.spec.md
+status 0 dotspec requirement list --attribute reliability --json
+stdout '"type": "requirement"'
+stdout '"type": "quality"'
+stdout '"attribute": "reliability"'
+status 0 dotspec system show --json
+stdout '"goals": "Inspect drafts before review."'
+stdout '"glossary":'
+
+# Explicit links add bounded context. Checks do not change source files.
+status 0 dotspec requirement check work --json
+stdout '"context_files_checked": 2'
+stdout '"errors": 0'
+! stderr .
+cmp specs/requirements/work.requirement.spec.md ../rule.md
+cmp specs/quality/work.quality.spec.md ../quality.md
+status 2 dotspec requirement init work
+! stdout .
+stderr 'refusing to overwrite'
+cmp specs/requirements/work.requirement.spec.md ../rule.md
+status 2 dotspec requirement init bad --format mermaid
+! exists specs/requirements/bad.requirement.spec.md
+status 2 dotspec requirement list --attribute ''
+! stdout .
+status 2 dotspec requirement show work --path specs/requirements
+status 2 dotspec requirement check missing --json
+stdout '"complete": false'
+! stderr .
+
+# Draft omissions are advice and preserve successful status.
+cp ../draft.md specs/requirements/draft.requirement.spec.md
+status 0 dotspec requirement check draft --json
+stdout 'requirement.statement'
+stdout '"advice": 4'
+stdout '"complete": true'
+! stderr .
+
+# Malformed files do not prevent findings in the rest of the scan.
+cp ../broken.md specs/requirements/broken.requirement.spec.md
+cp ../duplicate.md specs/requirements/duplicate.requirement.spec.md
+status 1 dotspec check --json
+stdout 'metadata.frontmatter'
+stdout 'structure.duplicate-section'
+stdout 'requirement.statement'
+stdout '"complete": true'
+! stderr .
+
+# A broken cross-file target is a structural finding, not a scan failure.
+cp ../bad-link.md specs/requirements/work.requirement.spec.md
+status 1 dotspec requirement check work --json
+stdout 'reference.unresolved'
+stdout '"complete": true'
+! stderr .
+-- system.md --
+---
+type: system
+---
+# Inspector
+## Purpose
+Help reviewers.
+## Scope
+CLI.
+## Goals
+Inspect drafts before review.
+## Environment
+Markdown files.
+## Assumptions
+Sources are stable during comparisons.
+## Constraints
+Ordinary files.
+## Glossary
+### Scan
+An inspection of selected source files.
+## Quality attributes
+### Reliability
+**ID:** reliability
+Consistent operation.
+### Preservation
+**ID:** preservation
+**Broader:** reliability
+Unchanged source content.
+-- rule.md --
+---
+type: requirement
+id: preserve
+attributes: [preservation]
+---
+# Preserve source
+## Applies to
+Inspection of source files.
+## Statement
+Inspection must leave source bytes unchanged.
+## Rationale
+Preserve authored work.
+## Verification
+Compare before and after bytes.
+## Related specifications
+[Quality](../quality/work.quality.spec.md#criterion)
+[Term](../system.spec.md#scan)
+-- quality.md --
+---
+type: quality
+attributes: [preservation]
+---
+# Repeatable inspection
+## Applies to
+Unchanged sources and environment.
+## Criterion
+Repeated inspections yield equivalent findings.
+## Measurement
+Repeat the same inspection and compare results.
+## Rationale
+Support meaningful comparisons.
+-- draft.md --
+---
+type: requirement
+---
+# Draft
+-- broken.md --
+Broken document.
+-- duplicate.md --
+---
+type: requirement
+---
+# Duplicate
+## Statement
+First obligation.
+## Statement
+Another obligation.
+-- bad-link.md --
+---
+type: requirement
+---
+# Bad link
+[Missing](../quality/work.quality.spec.md#missing)
