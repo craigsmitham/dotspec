@@ -42,7 +42,7 @@ func TestProjectCheckTextAndJSON(t *testing.T) {
 	}
 	// The focused command still reports the same rule and both definitions.
 	code, out, errOut = invoke("job", "check", "duplicate", "--path", dir)
-	if code != 1 || out != "" || !strings.Contains(errOut, "[identity.duplicate]") || !strings.Contains(errOut, "Related:") || !strings.Contains(errOut, ":3:5") {
+	if code != 1 || errOut != "" || !strings.Contains(out, "[identity.duplicate]") || !strings.Contains(out, "Related:") || !strings.Contains(out, ":3:5") {
 		t.Fatalf("focused check lost shared diagnostics: %d %q %q", code, out, errOut)
 	}
 }

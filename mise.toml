@@ -1,0 +1,60 @@
+[tools]
+go = "1.27.3"
+golangci-lint = "2.15.0"
+goreleaser = "2.20.0"
+
+[tasks.build]
+description = "Build the host CLI"
+run = "go build -trimpath -o dist/dotspec ."
+
+[tasks.run]
+description = "Run dotspec from source"
+run = "go run ."
+
+[tasks.fmt]
+description = "Format Go source"
+run = "gofmt -w main.go internal scripts"
+
+[tasks.fmt-check]
+description = "Check Go source formatting"
+run = "go run ./scripts/check-format"
+
+[tasks.tidy-check]
+description = "Verify module metadata without writing"
+run = "go mod tidy -diff"
+
+[tasks.lint]
+description = "Run the standard Go linters (including vet and staticcheck)"
+run = "golangci-lint run"
+
+[tasks.test]
+description = "Run unit and process-level CLI tests"
+run = "go test ./..."
+
+[tasks.generate]
+description = "Regenerate the CLI reference, examples, and starter specs"
+run = "go run ./scripts/generate"
+
+[tasks.generated-check]
+description = "Verify generated docs and examples without writing"
+run = "go run ./scripts/generate -check"
+
+[tasks.spec-check]
+description = "Check this repository's specifications"
+run = "go run . check"
+
+[tasks.check]
+description = "Run the same complete gate locally and in CI"
+depends = ["fmt-check", "tidy-check", "lint", "test", "generated-check", "spec-check", "release-check"]
+
+[tasks.fuzz]
+description = "Exercise both Markdown parsers with bounded fuzzing"
+run = ["go test ./internal/system -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/job -run=^$ -fuzz=FuzzStructuredJob -fuzztime=10s -parallel=2"]
+
+[tasks.release-check]
+description = "Validate the release configuration"
+run = "goreleaser check"
+
+[tasks.snapshot]
+description = "Build all release archives and checksums without publishing"
+run = "goreleaser release --snapshot --clean"

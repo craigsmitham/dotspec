@@ -31,8 +31,14 @@ type Outline struct {
 
 // ParseOutline retains document structure for types with nested sections.
 func ParseOutline(data []byte, kind string) (*Outline, error) {
+	return parseOutline(data, kind, true)
+}
+
+// parseOutline is the one Markdown extraction path for all specification types.
+// Frontmatter permissions and semantic section requirements remain type-specific.
+func parseOutline(data []byte, kind string, allowID bool) (*Outline, error) {
 	data = Normalize(data)
-	id, body, err := frontmatter(data, kind, true)
+	id, body, err := frontmatter(data, kind, allowID)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +53,7 @@ func ParseOutline(data []byte, kind string) (*Outline, error) {
 		if !ok {
 			continue
 		}
-		name := strings.TrimSpace(string(h.Text(body)))
+		name := strings.TrimSpace(inlineText(h, body))
 		location := out.Location(lineStart(body, h.Pos()), name)
 		if anchor, ok := h.AttributeString("id"); ok {
 			out.Anchors[string(anchor.([]byte))] = true
@@ -110,4 +116,32 @@ func (o *Outline) Nodes(s *Section) []ast.Node {
 		}
 	}
 	return nodes
+}
+
+// inlineText extracts labels without formatting markers, preserving the source
+// spelling of text and HTML. This replaces Goldmark's deprecated Node.Text API.
+func inlineText(node ast.Node, source []byte) string {
+	var out strings.Builder
+	var write func(ast.Node)
+	write = func(node ast.Node) {
+		switch n := node.(type) {
+		case *ast.Text:
+			out.Write(n.Value(source))
+			if n.SoftLineBreak() {
+				out.WriteByte('\n')
+			}
+		case *ast.String:
+			out.Write(n.Value)
+		case *ast.AutoLink:
+			out.Write(n.Label(source))
+		case *ast.RawHTML:
+			out.Write(n.Segments.Value(source))
+		default:
+			for child := node.FirstChild(); child != nil; child = child.NextSibling() {
+				write(child)
+			}
+		}
+	}
+	write(node)
+	return out.String()
 }

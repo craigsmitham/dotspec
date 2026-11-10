@@ -1,121 +1,128 @@
 package cli
 
 import (
-	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"strings"
 
+	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/spf13/cobra"
 )
-
-const jobUsage = `Usage: dotspec job <command> [slug] [--path DIR]
-
-Commands:
-  init <slug>          Create specs/jobs/<slug>.job.spec.md
-  show <slug>          Show all authored sections and the associated system
-  list                 Discover jobs, grouped by associated system
-  step list <slug>     List the job's steps in document order
-  outcome list <slug>  List job and step outcomes; optionally --step ID
-  map <slug>           Generate a job map; --format text|mermaid, --outcomes
-  check <slug>         Check structure and suggest writing improvements
-
-Slugs use lowercase letters or digits separated by single hyphens.
---path selects a project directory and defaults to the current directory.
-It can precede or follow the slug. Jobs live at DIR/specs/jobs/<slug>.job.spec.md.
-Use --help for command help.
-`
 
 type jobOptions struct {
 	path, format, step string
 	outcomes           bool
 }
+type jobResult struct {
+	SchemaVersion int      `json:"schema_version"`
+	Job           *job.Job `json:"job"`
+}
+type jobsResult struct {
+	SchemaVersion int          `json:"schema_version"`
+	Groups        []*job.Group `json:"groups"`
+}
+type stepsResult struct {
+	SchemaVersion int        `json:"schema_version"`
+	Name          string     `json:"name"`
+	Path          string     `json:"path"`
+	Steps         []job.Step `json:"steps"`
+}
+type outcomesResult struct {
+	SchemaVersion int           `json:"schema_version"`
+	Name          string        `json:"name"`
+	Path          string        `json:"path"`
+	Overall       []job.Outcome `json:"overall"`
+	Steps         []job.Step    `json:"steps"`
+}
 
-func runJobArgs(args []string, out io.Writer) error {
-	if len(args) == 0 || isHelp(args[0]) {
-		_, err := fmt.Fprint(out, jobUsage)
-		return err
-	}
-	command := args[0]
-	args = args[1:]
-	if command == "step" || command == "outcome" {
-		if len(args) == 0 || isHelp(args[0]) {
-			_, err := fmt.Fprintf(out, "Usage: dotspec job %s list <slug> [--path DIR]", command)
-			if err != nil {
-				return err
-			}
-			if command == "outcome" {
-				_, err = fmt.Fprint(out, " [--step ID]")
-			}
-			if err != nil {
-				return err
-			}
-			_, err = fmt.Fprintln(out)
-			return err
+func newJobCommand() *cobra.Command {
+	root := group("job", "Define and discover jobs to be done (JTBDs)")
+	for _, action := range []struct{ name, short string }{
+		{"init", "Create a job specification without overwriting an existing file"},
+		{"show", "Show authored Markdown and the associated system"},
+		{"list", "Discover jobs, grouped by associated system"},
+		{"map", "Map authored step order (text, JSON, or Mermaid)"},
+		{"check", "Check structure and suggest writing improvements"},
+		{"step", "List the job's steps in authored order"},
+		{"outcome", "List overall and step outcomes"},
+	} {
+		use := action.name + " <slug>"
+		if action.name == "list" {
+			use = "list"
 		}
-		if args[0] != "list" {
-			return fmt.Errorf("unknown job %s command %q; use dotspec job --help", command, args[0])
+		cmd := &cobra.Command{Use: use, Short: action.short,
+			Example: "dotspec job " + action.name + " develop-requirements --path ."}
+		command := action.name
+		if command == "step" || command == "outcome" {
+			parent := group(command, action.short)
+			cmd.Use = "list <slug>"
+			command += " list"
+			cmd.Example = "dotspec job " + command + " develop-requirements --path ."
+			parent.AddCommand(cmd)
+			root.AddCommand(parent)
+		} else {
+			root.AddCommand(cmd)
 		}
-		command += " list"
-		args = args[1:]
-	}
-	switch command {
-	case "init", "show", "list", "map", "check", "step list", "outcome list":
-	default:
-		return fmt.Errorf("unknown job command %q; use dotspec job --help", command)
-	}
-	flags := flag.NewFlagSet("dotspec job "+command, flag.ContinueOnError)
-	flags.SetOutput(io.Discard)
-	options := jobOptions{format: "text"}
-	flags.StringVar(&options.path, "path", ".", "project directory containing specs/jobs/")
-	if command == "map" {
-		flags.StringVar(&options.format, "format", "text", "text or mermaid")
-		flags.BoolVar(&options.outcomes, "outcomes", false, "include job and step outcomes")
-	}
-	if command == "outcome list" {
-		flags.StringVar(&options.step, "step", "", "select a step by its ID")
-	}
-	operands, err := parseFlagArgs(flags, args)
-	if errors.Is(err, flag.ErrHelp) {
-		slug := " <slug>"
+		cmd.Args = cobra.ExactArgs(1)
 		if command == "list" {
-			slug = ""
+			cmd.Args = cobra.NoArgs
+			cmd.Example = "dotspec job list --path ."
 		}
-		if _, err := fmt.Fprintf(out, "Usage: dotspec job %s%s [options]\n\n", command, slug); err != nil {
-			return err
+		if command == "check" {
+			cmd.Long = action.short + ".\n\n" + exitPolicy
 		}
-		flags.SetOutput(out)
-		flags.PrintDefaults()
-		return nil
-	}
-	if err != nil {
-		return err
-	}
-	if strings.TrimSpace(options.path) == "" {
-		return fmt.Errorf("--path must not be empty")
-	}
-	if options.format != "text" && options.format != "mermaid" {
-		return fmt.Errorf("unknown map format %q; use text or mermaid", options.format)
-	}
-	if command == "list" {
-		if len(operands) != 0 {
-			return fmt.Errorf("job list does not take a slug; select a directory with --path DIR")
+		cmd.RunE = func(cmd *cobra.Command, args []string) error {
+			path, err := projectPath(cmd)
+			if err != nil {
+				return err
+			}
+			format, err := outputFormat(cmd)
+			if err != nil {
+				return err
+			}
+			options := jobOptions{path: path, format: format}
+			if command == "map" {
+				options.outcomes, _ = cmd.Flags().GetBool("outcomes")
+			}
+			if command == "outcome list" {
+				options.step, _ = cmd.Flags().GetString("step")
+			}
+			if command == "list" {
+				return listJobs(path, format, cmd.OutOrStdout())
+			}
+			if err := job.ValidateSlug(args[0]); err != nil {
+				return err
+			}
+			return runJob(command, args[0], options, cmd.OutOrStdout())
 		}
-		return listJobs(options.path, out)
+		addPath(cmd)
+		addOutput(cmd, command == "map")
+		if command == "map" {
+			cmd.Flags().Bool("outcomes", false, "include job and step outcomes")
+		}
+		if command == "outcome list" {
+			cmd.Flags().String("step", "", "select a step by its explicit ID")
+		}
 	}
-	if len(operands) != 1 {
-		return fmt.Errorf("dotspec job %s requires exactly one slug; use dotspec job --help", command)
-	}
-	slug := operands[0]
+	return root
+}
+
+func runJob(command, slug string, options jobOptions, out io.Writer) error {
 	if command == "init" {
 		target, err := job.Init(options.path, slug)
 		if err != nil {
 			return err
 		}
+		if options.format == "json" {
+			return writeJSON(out, createdResult{1, target})
+		}
 		_, err = fmt.Fprintf(out, "Created %s\nEdit the job statement and performer; add context, steps, and outcomes as they become known.\n", displayPath(target))
 		return err
+	}
+	if command == "check" {
+		return emitCheckReport(out, check.FocusedJob(options.path, slug), options.format)
 	}
 	spec, err := job.Show(options.path, slug)
 	if err != nil {
@@ -123,46 +130,66 @@ func runJobArgs(args []string, out io.Writer) error {
 	}
 	switch command {
 	case "show":
-		_, err = fmt.Fprintf(out, "%s\n\nSystem: %s\nSource: %s\n", spec.Markdown, systemLabel(spec.System), displayPath(spec.Path))
+		result := jobResult{1, spec}
+		if options.format == "json" {
+			return writeJSON(out, result)
+		}
+		_, err = fmt.Fprintf(out, "%s\n\nSystem: %s\nSource: %s\n", result.Job.Markdown, systemLabel(result.Job.System), displayPath(result.Job.Path))
 	case "step list":
+		if options.format == "json" {
+			return writeJSON(out, stepsResult{1, spec.Name, spec.Path, nonnil(spec.Steps)})
+		}
 		err = listSteps(spec, out)
 	case "outcome list":
-		err = listOutcomes(spec, options.step, out)
-	case "map":
-		err = writeJobMap(spec, options, out)
-	case "check":
-		suggestions := job.Check(spec)
-		if _, err = fmt.Fprintf(out, "No structural errors in %s.\n", displayPath(spec.Path)); err != nil {
-			return err
+		result, selectionErr := selectOutcomes(spec, options.step)
+		if selectionErr != nil {
+			return selectionErr
 		}
-		if len(suggestions) == 0 {
-			_, err = fmt.Fprintln(out, "No writing suggestions from the current checks.")
-		} else {
-			if _, err = fmt.Fprintf(out, "%d writing suggestions (advisory):\n", len(suggestions)); err != nil {
-				return err
-			}
-			for _, suggestion := range suggestions {
-				if _, err = fmt.Fprintf(out, "- %s [%s] %s: %s\n", suggestion.Location, suggestion.Rule, suggestion.Location.Element, suggestion.Message); err != nil {
-					return err
+		if options.format == "json" {
+			return writeJSON(out, result)
+		}
+		err = renderOutcomes(result, out)
+	case "map":
+		if options.format == "json" {
+			steps := append([]job.Step{}, spec.Steps...)
+			overall := []job.Outcome{}
+			if options.outcomes {
+				overall = nonnil(spec.Outcomes)
+			} else {
+				for i := range steps {
+					steps[i].Outcomes = []job.Outcome{}
 				}
 			}
+			return writeJSON(out, outcomesResult{1, spec.Name, spec.Path, overall, steps})
 		}
+		err = writeJobMap(spec, options, out)
 	}
 	return err
 }
 
-func listJobs(path string, out io.Writer) error {
+func nonnil[T any](values []T) []T {
+	if values == nil {
+		return []T{}
+	}
+	return values
+}
+
+func listJobs(path, format string, out io.Writer) error {
 	groups, err := job.List(path)
 	if err != nil {
 		return err
 	}
-	if len(groups) == 0 {
-		_, err := fmt.Fprintln(out, "No jobs found in the selected subtree.")
+	result := jobsResult{1, nonnil(groups)}
+	if format == "json" {
+		return writeJSON(out, result)
+	}
+	if len(result.Groups) == 0 {
+		_, err = fmt.Fprintln(out, "No jobs found in the selected subtree.")
 		return err
 	}
 	var output strings.Builder
 	output.WriteString("Jobs\n")
-	for _, group := range groups {
+	for _, group := range result.Groups {
 		fmt.Fprintf(&output, "\nSystem: %s\n", systemLabel(group.System))
 		for _, spec := range group.Jobs {
 			fmt.Fprintf(&output, "  %s  (%s)\n", spec.Name, displayPath(spec.Path))

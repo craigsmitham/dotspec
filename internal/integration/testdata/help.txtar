@@ -1,0 +1,29 @@
+# Piped help and artifacts stay plain even under a color-requesting environment.
+env FORCE_COLOR=1
+env TERM=xterm-256color
+exec dotspec --help
+stdout 'Usage:'
+stdout 'completion'
+stdout 'Exit codes:'
+! stdout '\x1b'
+! stderr .
+env NO_COLOR=1
+exec dotspec job outcome list --help
+stdout 'dotspec job outcome list'
+stdout '\-\-step'
+exec dotspec --version
+stdout '^dotspec '
+! stderr .
+exec dotspec completion bash
+stdout 'bash completion'
+! stderr .
+exec dotspec completion zsh
+stdout '#compdef dotspec'
+exec dotspec completion fish
+stdout 'fish completion'
+exec dotspec completion powershell
+stdout 'Register-ArgumentCompleter'
+exec dotspec man
+stdout '\.TH'
+stdout 'DOTSPEC'
+! stderr .

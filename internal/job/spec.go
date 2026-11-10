@@ -51,30 +51,39 @@ var fieldPattern = regexp.MustCompile(`^\*\*(ID|Stage):\*\*\s*(.*?)\s*$`)
 var outcomePattern = regexp.MustCompile(`^\*\*([^*]+):\*\*\s*`)
 
 type Outcome struct {
-	ID        string
-	Statement string
-	Location  diagnostic.Location
+	ID        string              `json:"id,omitempty"`
+	Statement string              `json:"statement"`
+	Location  diagnostic.Location `json:"location"`
 }
 
 type Step struct {
-	ID, Name, Stage, Description string
-	Location, IDLocation         diagnostic.Location
-	// Outcomes describe success at this step, independently of overall job outcomes.
-	Outcomes []Outcome
+	ID          string              `json:"id,omitempty"`
+	Name        string              `json:"name"`
+	Stage       string              `json:"stage,omitempty"`
+	Description string              `json:"description"`
+	Location    diagnostic.Location `json:"location"`
+	IDLocation  diagnostic.Location `json:"-"`
+	Outcomes    []Outcome           `json:"outcomes"`
 }
 
 type Job struct {
-	ID, Slug, Name                                                string
-	Statement, Performer, Situation, Motivation, IntendedProgress string
-	ProgressCases, Evidence                                       string
-	Steps                                                         []Step
-	// Outcomes describe success for the whole job; they are not inherited by steps.
-	Outcomes         []Outcome
-	Markdown         string
-	Path             string
-	System           *system.System
-	Location         diagnostic.Location
-	SectionLocations map[string]diagnostic.Location
+	ID               string                         `json:"id,omitempty"`
+	Slug             string                         `json:"slug"`
+	Name             string                         `json:"name"`
+	Statement        string                         `json:"statement"`
+	Performer        string                         `json:"performer"`
+	Situation        string                         `json:"situation"`
+	Motivation       string                         `json:"motivation"`
+	IntendedProgress string                         `json:"intended_progress"`
+	ProgressCases    string                         `json:"progress_cases"`
+	Evidence         string                         `json:"evidence"`
+	Steps            []Step                         `json:"steps"`
+	Outcomes         []Outcome                      `json:"outcomes"`
+	Markdown         string                         `json:"markdown"`
+	Path             string                         `json:"path"`
+	System           *system.System                 `json:"system"`
+	Location         diagnostic.Location            `json:"location"`
+	SectionLocations map[string]diagnostic.Location `json:"-"`
 }
 
 func ValidateSlug(slug string) error {
@@ -115,7 +124,7 @@ func Parse(data []byte) (*Job, error) {
 	if err != nil {
 		return nil, err
 	}
-	job := &Job{ID: doc.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
+	job := &Job{Steps: []Step{}, Outcomes: []Outcome{}, ID: doc.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
 	ids := make(map[string]diagnostic.Location)
 	register := func(id, element string, location diagnostic.Location) error {
 		if id == "" {
@@ -200,11 +209,19 @@ func Parse(data []byte) (*Job, error) {
 	if err != nil {
 		return nil, err
 	}
+	if job.Outcomes == nil {
+		job.Outcomes = []Outcome{}
+	}
+	for i := range job.Steps {
+		if job.Steps[i].Outcomes == nil {
+			job.Steps[i].Outcomes = []Outcome{}
+		}
+	}
 	return job, nil
 }
 
 func parseStep(doc *specfile.Outline, section *specfile.Section) (Step, error) {
-	step := Step{Name: section.Title, Location: doc.Location(section.Start, section.Title)}
+	step := Step{Outcomes: []Outcome{}, Name: section.Title, Location: doc.Location(section.Start, section.Title)}
 	fields := make(map[string]string)
 	fieldLocations := make(map[string]diagnostic.Location)
 	fieldLines := make(map[int]bool)

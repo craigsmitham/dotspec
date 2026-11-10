@@ -44,7 +44,39 @@ func listSteps(spec *job.Job, out io.Writer) error {
 	return err
 }
 
+func selectOutcomes(spec *job.Job, stepID string) (outcomesResult, error) {
+	result := outcomesResult{SchemaVersion: 1, Name: spec.Name, Path: spec.Path, Overall: []job.Outcome{}, Steps: []job.Step{}}
+	if stepID == "" {
+		result.Overall = nonnil(spec.Outcomes)
+	}
+	found := stepID == ""
+	for _, step := range spec.Steps {
+		if stepID != "" && step.ID != stepID {
+			continue
+		}
+		found = true
+		result.Steps = append(result.Steps, step)
+	}
+	if !found {
+		for _, step := range spec.Steps {
+			if step.ID == "" {
+				return result, fmt.Errorf("step %q not found in job %s; to select a step without an ID, add **ID:** to that step", stepID, spec.Name)
+			}
+		}
+		return result, fmt.Errorf("step %q not found in job %s", stepID, spec.Name)
+	}
+	return result, nil
+}
+
 func listOutcomes(spec *job.Job, stepID string, out io.Writer) error {
+	result, err := selectOutcomes(spec, stepID)
+	if err != nil {
+		return err
+	}
+	return renderOutcomes(result, out)
+}
+
+func renderOutcomes(result outcomesResult, out io.Writer) error {
 	var output strings.Builder
 	count := 0
 	write := func(label string, outcomes []job.Outcome) {
@@ -57,25 +89,10 @@ func listOutcomes(spec *job.Job, stepID string, out io.Writer) error {
 			count++
 		}
 	}
-	fmt.Fprintf(&output, "Outcomes: %s\n", spec.Name)
-	if stepID == "" {
-		write("Overall job outcomes", spec.Outcomes)
-	}
-	found := stepID == ""
-	for _, step := range spec.Steps {
-		if stepID != "" && step.ID != stepID {
-			continue
-		}
-		found = true
+	fmt.Fprintf(&output, "Outcomes: %s\n", result.Name)
+	write("Overall job outcomes", result.Overall)
+	for _, step := range result.Steps {
 		write("Outcomes for step: "+stepLabel(step), step.Outcomes)
-	}
-	if !found {
-		for _, step := range spec.Steps {
-			if step.ID == "" {
-				return fmt.Errorf("step %q not found in job %s; to select a step without an ID, add **ID:** to that step", stepID, spec.Name)
-			}
-		}
-		return fmt.Errorf("step %q not found in job %s", stepID, spec.Name)
 	}
 	if count == 0 {
 		_, err := fmt.Fprintln(out, "No outcomes defined for the selection.")

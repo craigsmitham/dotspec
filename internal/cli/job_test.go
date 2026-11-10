@@ -62,7 +62,7 @@ func TestJobFlagsBeforeAndAfterSlug(t *testing.T) {
 func TestJobHelpAndUsageErrors(t *testing.T) {
 	for _, args := range [][]string{{"job"}, {"job", "--help"}, {"job", "init", "--help"}, {"job", "show", "slug", "--help"}, {"job", "list", "--help"}} {
 		code, out, errOut := invoke(args...)
-		if code != 0 || !strings.Contains(out, "Usage: dotspec job") || errOut != "" {
+		if code != 0 || (!strings.Contains(out, "Usage:") || !strings.Contains(out, "dotspec job")) || errOut != "" {
 			t.Errorf("help %v: %d %q %q", args, code, out, errOut)
 		}
 	}

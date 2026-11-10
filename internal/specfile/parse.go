@@ -8,13 +8,9 @@ import (
 	"os"
 	"regexp"
 	"strconv"
-	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
-	"github.com/yuin/goldmark/parser"
-	"github.com/yuin/goldmark/text"
 	"go.yaml.in/yaml/v3"
 )
 
@@ -40,78 +36,40 @@ func Read(path, kind string, required ...string) (*Document, error) {
 // Parse validates a spec type and its required H2 sections. Section bodies
 // retain their original Markdown; headings in code and blockquotes are ignored.
 func Parse(data []byte, kind string, required ...string) (*Document, error) {
-	data = Normalize(data)
-	_, body, err := frontmatter(data, kind, false)
+	outline, err := parseOutline(data, kind, false)
 	if err != nil {
 		return nil, err
 	}
-	md := goldmark.New(goldmark.WithParserOptions(parser.WithAutoHeadingID()))
-	doc := md.Parser().Parse(text.NewReader(body))
-	anchors := make(map[string]bool)
-	var headings []*ast.Heading
-	for node := doc.FirstChild(); node != nil; node = node.NextSibling() {
-		if h, ok := node.(*ast.Heading); ok {
-			if anchor, ok := h.AttributeString("id"); ok {
-				anchors[string(anchor.([]byte))] = true
-			}
-			if h.Level <= 2 {
-				headings = append(headings, h)
-			}
-		}
-	}
-	spec := &Document{}
+	spec := &Document{Name: outline.Name, Sections: make(map[string]string)}
 	wanted := make(map[string]bool, len(required))
 	for _, name := range required {
 		wanted[name] = true
 	}
-	titles := 0
-	var titleLocation diagnostic.Location
-	sections := make(map[string]string)
 	locations := make(map[string]diagnostic.Location)
-	for i, h := range headings {
-		name := strings.TrimSpace(string(h.Text(body)))
-		location := BodyLocation(data, body, lineStart(body, h.Pos()))
-		location.Element = name
-		if h.Level == 1 {
-			if titles > 0 || name == "" {
-				return nil, diagnostic.Error("structure.title", fmt.Sprintf("expected exactly one nonempty top-level heading naming the %s", kind), location, titleLocation)
-			}
-			titles++
-			titleLocation = location
-			spec.Name = name
+	for _, section := range outline.Sections {
+		if section.Level != 2 || !wanted[section.Title] {
 			continue
 		}
-		if !wanted[name] {
-			continue
+		name := section.Title
+		location := outline.Location(section.Start, name)
+		if previous, exists := locations[name]; exists {
+			return nil, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", name), location, previous)
 		}
-		if titles == 0 {
-			return nil, diagnostic.Error("structure.section-order", fmt.Sprintf("%s name heading must precede %s", kind, name), location)
-		}
-		if _, exists := sections[name]; exists {
-			return nil, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", name), location, locations[name])
-		}
-		stop := len(body)
-		if i+1 < len(headings) {
-			stop = lineStart(body, headings[i+1].Pos())
-		}
-		sections[name] = strings.TrimSpace(string(body[headingEnd(body, h):stop]))
+		spec.Sections[name] = outline.Body(section)
 		locations[name] = location
 	}
-	if titles != 1 || spec.Name == "" {
-		return nil, diagnostic.Error("structure.title", fmt.Sprintf("expected exactly one nonempty top-level heading naming the %s", kind), BodyLocation(data, body, 0))
-	}
 	for _, name := range required {
-		if sections[name] == "" {
-			location, exists := locations[name]
-			if !exists {
-				location = titleLocation
-				location.Element = name
-			}
-			return nil, diagnostic.Error("structure.required-section", fmt.Sprintf("missing or empty %s section (use ## %s)", name, name), location)
+		if spec.Sections[name] != "" {
+			continue
 		}
+		location, exists := locations[name]
+		if !exists {
+			location = outline.NameLocation
+			location.Element = name
+		}
+		return nil, diagnostic.Error("structure.required-section", fmt.Sprintf("missing or empty %s section (use ## %s)", name, name), location)
 	}
-	spec.Sections = sections
-	if err := ValidateReferences(data, body, doc, anchors); err != nil {
+	if err := ValidateReferences(outline.Original, outline.Source, outline.AST, outline.Anchors); err != nil {
 		return nil, err
 	}
 	return spec, nil

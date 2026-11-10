@@ -1,0 +1,39 @@
+# Structural findings and unavailable files use distinct exit statuses.
+exec git init -q
+status 1 dotspec check --json
+stdout '"rule": "identity.duplicate"'
+stdout '"complete": true'
+stdout '"files_checked": 2'
+! stderr .
+status 1 dotspec job check invalid --json
+stdout '"rule": "identity.duplicate"'
+stdout '"files_checked": 1'
+! stderr .
+status 0 dotspec job check draft --json
+stdout '"severity": "advice"'
+stdout '"complete": true'
+! stderr .
+status 2 dotspec job check absent --json
+stdout '"complete": false'
+stdout '"rule": "scan.read"'
+! stderr .
+status 2 dotspec check --path absent --json
+stdout '"complete": false'
+! stderr .
+status 2 dotspec check --format unknown
+! stdout .
+stderr 'unknown output format'
+-- specs/jobs/invalid.job.spec.md --
+---
+type: job
+id: repeated
+---
+# Invalid
+## Steps
+### Gather
+**ID:** repeated
+-- specs/jobs/draft.job.spec.md --
+---
+type: job
+---
+# Draft

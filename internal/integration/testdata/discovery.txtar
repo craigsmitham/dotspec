@@ -1,0 +1,58 @@
+# Git ignores untracked specs; tracked specs remain visible. Nested repositories
+# and symlinks never become accidental parts of a scan.
+exec git init -q
+exec git add specs/system.spec.md ignored/specs/system.spec.md
+cp ignore.txt .gitignore
+exec git init -q nested
+exec dotspec system list --json
+stdout 'Root'
+stdout 'Tracked'
+! stdout 'Untracked'
+! stdout 'Nested'
+[symlink] symlink linked -> ignored
+exec dotspec check --json
+stdout '"files_discovered": 2'
+! stderr .
+cd nested
+exec dotspec system show
+stdout 'Nested'
+stdout 'Parent system: None'
+-- ignore.txt --
+ignored/
+untracked/
+-- specs/system.spec.md --
+---
+type: system
+---
+# Root
+## Purpose
+Support the root project.
+## Scope
+The root scope.
+-- ignored/specs/system.spec.md --
+---
+type: system
+---
+# Tracked
+## Purpose
+Remain visible when tracked.
+## Scope
+An ignored directory.
+-- untracked/specs/system.spec.md --
+---
+type: system
+---
+# Untracked
+## Purpose
+Remain invisible when ignored.
+## Scope
+An untracked directory.
+-- nested/specs/system.spec.md --
+---
+type: system
+---
+# Nested
+## Purpose
+Bound its own project.
+## Scope
+A separate repository.

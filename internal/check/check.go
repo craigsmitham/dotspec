@@ -52,60 +52,17 @@ func (r Report) ExitCode() int {
 // A malformed file blocks only its dependent checks, not the rest of the scan.
 func Project(path string) Report {
 	r := Report{SchemaVersion: 1, Scope: Scope{Path: path, Types: []string{"system", "job"}, Discovery: "unavailable"}, Complete: true, ContextFiles: []string{}, Diagnostics: []diagnostic.Diagnostic{}}
-	seen := make(map[string]bool)
-	record := func(err error, rule, path string) {
-		var finding *diagnostic.Diagnostic
-		if !errors.As(err, &finding) {
-			r.Complete = false
-			var pathError *os.PathError
-			if errors.As(err, &pathError) {
-				path = pathError.Path
-			}
-			finding = diagnostic.Error(rule, err.Error(), diagnostic.Location{Path: path})
-		}
-		key := finding.Rule + "\x00" + finding.Location.String() + "\x00" + finding.Message
-		if !seen[key] {
-			seen[key] = true
-			r.Diagnostics = append(r.Diagnostics, *finding)
-		}
-	}
-	finish := func() Report {
-		sort.Strings(r.ContextFiles)
-		sort.SliceStable(r.Diagnostics, func(i, j int) bool {
-			a, b := r.Diagnostics[i], r.Diagnostics[j]
-			if a.Location.Path != b.Location.Path {
-				return a.Location.Path < b.Location.Path
-			}
-			if a.Location.Line != b.Location.Line {
-				return a.Location.Line < b.Location.Line
-			}
-			if a.Location.Column != b.Location.Column {
-				return a.Location.Column < b.Location.Column
-			}
-			if a.Rule != b.Rule {
-				return a.Rule < b.Rule
-			}
-			return a.Message < b.Message
-		})
-		for _, d := range r.Diagnostics {
-			if d.Severity == "error" {
-				r.Summary.Errors++
-			} else {
-				r.Summary.Advice++
-			}
-		}
-		return r
-	}
 	dir, err := specfile.Scope(path)
 	if err != nil {
-		record(err, "scan.scope", path)
-		return finish()
+		r.Complete = false
+		r.record(err, "scan.scope", path)
+		return r.finish()
 	}
 	r.Scope.Path = dir
 	root, err := specfile.RepositoryRoot(dir)
 	if err != nil {
-		record(err, "scan.discovery", dir)
-		return finish()
+		r.record(err, "scan.discovery", dir)
+		return r.finish()
 	}
 	r.Scope.Discovery = "filesystem"
 	if root != "" {
@@ -113,7 +70,7 @@ func Project(path string) Report {
 	}
 	paths, err := specfile.Discover(dir, supported)
 	if err != nil {
-		record(err, "scan.discovery", dir)
+		r.record(err, "scan.discovery", dir)
 	}
 	r.Summary.FilesDiscovered = len(paths)
 	discovered := make(map[string]bool)
@@ -123,13 +80,13 @@ func Project(path string) Report {
 		r.Summary.FilesChecked++
 		if filepath.Base(path) == system.Filename {
 			if _, err := system.Read(path); err != nil {
-				record(err, "scan.read", path)
+				r.record(err, "scan.read", path)
 			}
 			continue
 		}
 		spec, err := job.Read(path)
 		if err != nil {
-			record(err, "scan.read", path)
+			r.record(err, "scan.read", path)
 			continue
 		}
 		r.Diagnostics = append(r.Diagnostics, job.Check(spec)...)
@@ -142,7 +99,7 @@ func Project(path string) Report {
 	for _, spec := range jobs {
 		owner, err := specfile.Owner(spec.Path, "jobs")
 		if err != nil {
-			record(err, "scan.context", spec.Path)
+			r.record(err, "scan.context", spec.Path)
 			continue
 		}
 		if owners[owner] {
@@ -152,7 +109,7 @@ func Project(path string) Report {
 		associated, err := system.Enclosing(owner)
 		contextPath := ""
 		if err != nil {
-			record(err, "scan.context", owner)
+			r.record(err, "scan.context", owner)
 			var finding *diagnostic.Diagnostic
 			var pathError *os.PathError
 			if errors.As(err, &finding) && supported(finding.Location.Path) {
@@ -169,10 +126,65 @@ func Project(path string) Report {
 			r.Summary.ContextFilesChecked++
 		}
 	}
-	return finish()
+	return r.finish()
 }
 
 func supported(path string) bool {
 	name := filepath.Base(path)
 	return name == system.Filename || strings.HasSuffix(name, job.Suffix)
+}
+
+// record and finish keep report accounting, error identity, and deterministic
+// ordering identical for project-wide and focused checks.
+func (r *Report) record(err error, rule, path string) {
+	var finding *diagnostic.Diagnostic
+	if !errors.As(err, &finding) {
+		r.Complete = false
+		var pathError *os.PathError
+		if errors.As(err, &pathError) {
+			path = pathError.Path
+		}
+		finding = diagnostic.Error(rule, err.Error(), diagnostic.Location{Path: path})
+	}
+	r.Diagnostics = append(r.Diagnostics, *finding)
+}
+
+func (r Report) finish() Report {
+	sort.Strings(r.ContextFiles)
+	sort.SliceStable(r.Diagnostics, func(i, j int) bool {
+		a, b := r.Diagnostics[i], r.Diagnostics[j]
+		if a.Location.Path != b.Location.Path {
+			return a.Location.Path < b.Location.Path
+		}
+		if a.Location.Line != b.Location.Line {
+			return a.Location.Line < b.Location.Line
+		}
+		if a.Location.Column != b.Location.Column {
+			return a.Location.Column < b.Location.Column
+		}
+		if a.Rule != b.Rule {
+			return a.Rule < b.Rule
+		}
+		return a.Message < b.Message
+	})
+	seen := make(map[string]bool)
+	findings := r.Diagnostics[:0]
+	for _, d := range r.Diagnostics {
+		key := d.Rule + "\x00" + d.Location.String() + "\x00" + d.Message
+		if seen[key] {
+			continue
+		}
+		seen[key] = true
+		findings = append(findings, d)
+	}
+	r.Diagnostics = findings
+	r.Summary.Errors, r.Summary.Advice = 0, 0
+	for _, d := range r.Diagnostics {
+		if d.Severity == "error" {
+			r.Summary.Errors++
+		} else {
+			r.Summary.Advice++
+		}
+	}
+	return r
 }

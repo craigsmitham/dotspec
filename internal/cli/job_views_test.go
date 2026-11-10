@@ -59,7 +59,7 @@ func TestStructuredJobCommands(t *testing.T) {
 		{[]string{"job", "map", "change", "--outcomes"}, "OUT-001", "advisory"},
 		{[]string{"job", "map", "change", "--format", "mermaid"}, "s1 --> s2", "OUT-001"},
 		{[]string{"job", "map", "change", "--format=mermaid", "--outcomes"}, "job -.-> jo1", "advisory"},
-		{[]string{"job", "check", "change"}, "writing suggestions (advisory)", "dotspec:"},
+		{[]string{"job", "check", "change"}, "advisory findings: 2", "dotspec:"},
 	}
 	for _, tt := range tests {
 		code, out, errOut := invoke(tt.args...)
@@ -81,7 +81,7 @@ func TestStructuredJobCommands(t *testing.T) {
 	if err := os.WriteFile("specs/jobs/change.job.spec.md", []byte(viewFixture+"\n[Broken](#missing)\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if code, out, errOut := invoke("job", "check", "change"); code == 0 || out != "" || !strings.Contains(errOut, "unresolved local reference") {
+	if code, out, errOut := invoke("job", "check", "change"); code != 1 || errOut != "" || !strings.Contains(out, "unresolved local reference") {
 		t.Fatalf("structural error: %d %q %q", code, out, errOut)
 	}
 }

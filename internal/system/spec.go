@@ -27,10 +27,10 @@ Describe the system's boundary and what it includes.
 `
 
 type System struct {
-	Name    string
-	Purpose string
-	Scope   string
-	Path    string
+	Name    string `json:"name"`
+	Purpose string `json:"purpose"`
+	Scope   string `json:"scope"`
+	Path    string `json:"path"`
 }
 
 func Read(path string) (*System, error) {

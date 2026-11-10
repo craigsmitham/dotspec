@@ -9,6 +9,10 @@ Job specs describe jobs to be done (JTBDs): the accomplishment someone seeks,
 their context, the steps involved, and how success is judged. Jobs are associated
 with the nearest enclosing system.
 
+The [CLI reference](docs/cli.md) and [command examples](docs/examples.md) are
+generated from the implementation. See [Contributing](CONTRIBUTING.md) for the
+local/CI checks and [Releasing](docs/releasing.md) for distribution.
+
 ## Run
 
 With Go 1.27.3 or later installed:
@@ -122,27 +126,32 @@ from discovery by an ignore rule. Such files are listed as additional context
 and counted separately; shared findings appear once. Context lookup stops at
 the repository or worktree root, or the filesystem root outside Git.
 
-The project-wide command uses these exit codes:
+All commands use these exit codes:
 
 | Code | Meaning |
 | --- | --- |
-| `0` | Scan completed with no structural errors; advice may be present. |
-| `1` | Scan completed with structural findings. |
-| `2` | Invalid invocation, failed discovery or file access, or output failure. The scan or report could not be completed. |
+| `0` | Command completed successfully; check advice may be present. |
+| `1` | Specification findings prevented success. |
+| `2` | Invalid invocation, missing input, failed discovery or file access, or output failure. |
 
 Text and JSON reports are written to standard output, including reports with
 findings or an incomplete scan. Argument and output errors go to standard error.
 Use the exit status as well as the report; a partial report is not a clean check.
 For example, a CI step can run `dotspec check --format json > check-report.json`.
-The focused `job check <slug>` retains its existing single-job interface and
-`0`/`1` exit behavior, using the same validation rules and diagnostic IDs.
+The focused `job check <slug>` uses the same report, diagnostic IDs, and `0`/`1`/`2`
+exit behavior. It inspects one selected job and its enclosing system, with
+`scope.discovery: "direct"` and `scope.types: ["job"]`. A missing job is an
+incomplete check (exit `2`). Its file counts represent the selected candidate and
+attempted read, including a missing file. Both check commands send their reports to stdout;
+ordinary read-command errors go to stderr. This replaces the earlier focused
+check behavior that mixed findings into stderr and used only `0`/`1`.
 
 JSON schema version `1` contains:
 
 | Field | Meaning |
 | --- | --- |
 | `schema_version` | Report schema version for consumers. |
-| `scope` | Absolute resolved project path, supported `types`, and `discovery` mode (`git`, `filesystem`, or `unavailable`). An unresolved scope retains the supplied path. |
+| `scope` | Absolute resolved project path, supported `types`, and `discovery` mode (`git`, `filesystem`, or `unavailable`). An unresolved scope retains the supplied path; focused checks use `direct` discovery. |
 | `complete` | Whether discovery and all attempted file checks completed, independently of structural findings. |
 | `context_files` | Additional source paths consulted outside the discovered set. |
 | `summary` | `files_discovered`, `files_checked`, `context_files_checked`, `errors`, and `advice`. Checked counts include attempted checks of invalid or unreadable files. |
@@ -167,6 +176,38 @@ The current rules are:
 There is one check command rather than a separate lint command. It is read-only:
 it does not move files, rewrite prose, assign IDs, or apply fixes.
 
+## Output and automation
+
+All system and job commands, including `init`, accept `--json` or `--format json`.
+Use one of these flags, not both. The default is `--format text`; `job map` also
+accepts `--format mermaid` and emits standalone diagram source. Redirecting output
+does not change its format. JSON, Mermaid, and redirected output contain no ANSI
+styling. `NO_COLOR` disables terminal styling, including help and errors.
+
+Every JSON result has `schema_version: 1`. Check results use the report documented
+above. Other results contain:
+
+| Command | Result fields |
+| --- | --- |
+| `system init`, `job init` | `path` of the created specification |
+| `system show` | `system` and its nullable `parent` |
+| `system list` | `systems`, a tree of `system` objects and `children` arrays |
+| `job show` | `job`, including its authored Markdown, steps, outcomes, and nullable `system` |
+| `job list` | `groups`, each with a nullable `system` and a `jobs` array |
+| `job step list` | `name`, `path`, and `steps` in authored order |
+| `job outcome list` | `name`, `path`, `overall` outcomes, and selected `steps` with their outcomes |
+| `job map` | `name`, `path`, `overall`, and `steps`; outcomes are included only with `--outcomes` |
+
+Object keys use snake case. Empty collections are arrays; absent system associations
+are `null`. Paths are absolute in JSON and relative where possible in text. Source
+locations use one-based lines and Unicode-code-point columns. Step descriptions and
+Markdown remain authored content. Overall outcomes are never inherited by steps.
+`--step ID` leaves `overall` empty and selects only that step.
+
+Use `dotspec --version` for build metadata, `dotspec completion bash|zsh|fish|powershell`
+for shell completion scripts, and `dotspec man` for the root manual in roff format.
+See the generated [CLI reference](docs/cli.md) for flags and examples.
+
 ## System commands
 
 ```sh
@@ -180,7 +221,7 @@ dotspec system list --path internal
 Use `./dotspec` for a local build, or replace `dotspec` with `go run .` when
 running from the repository root.
 
-Every command accepts `--path DIR`, defaulting to the current project directory.
+Every system command accepts `--path DIR`, defaulting to the current project directory.
 The project directory must already exist. Use `dotspec system <command> --help`
 for usage.
 
@@ -292,12 +333,13 @@ Use `dotspec job <command> --help` for command-specific options.
 - `map <slug>` displays the job and its documented steps in authored order.
   `--format mermaid` emits standalone Mermaid flowchart source for a renderer
   or a fenced `mermaid` block. `--outcomes` includes the whole job's outcomes and
-  attaches each step's outcomes to that step, with scope labels in both formats.
+  attaches each step's outcomes to that step, with scope labels in text and Mermaid.
   Without steps, the command displays the job, any requested overall outcomes,
   and `No steps defined.`. Arrows show authored step order; they do not require
-  that execution sequence. Neither format assesses the map's completeness.
+  that execution sequence. No format assesses the map's completeness.
   Loops and branches are not modeled in this first version.
-- `check <slug>` reports structural errors and offers advisory writing suggestions.
+- `check <slug>` reports structural errors and advisory writing suggestions on
+  stdout. Use `--json` for the same structured report as the project-wide check.
   Suggestions do not produce a failure exit status. Ordinary reading and mapping
   commands do not emit writing advice.
 

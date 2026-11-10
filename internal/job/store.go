@@ -11,8 +11,8 @@ import (
 )
 
 type Group struct {
-	System *system.System
-	Jobs   []*Job
+	System *system.System `json:"system"`
+	Jobs   []*Job         `json:"jobs"`
 }
 
 func Init(path, slug string) (string, error) {

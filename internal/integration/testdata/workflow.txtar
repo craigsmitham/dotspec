@@ -1,0 +1,44 @@
+# A complete workflow from a different working directory, including exact output.
+mkdir project
+cd project
+exec git init -q
+exec dotspec system init
+cmp stdout ../created.txt
+! stderr .
+exec dotspec job init plan-work
+! stderr .
+exec dotspec job show --path . -- plan-work
+stdout '# New job'
+stdout 'System: New system'
+exec dotspec system list --json
+stdout '"schema_version": 1'
+stdout '"children": \[\]'
+! stderr .
+exec dotspec job step list plan-work --json
+stdout '"steps": \[\]'
+exec dotspec job outcome list plan-work --json
+stdout '"overall": \[\]'
+exec dotspec job map plan-work --format mermaid
+cmp stdout ../map.txt
+exec dotspec job check plan-work --json
+stdout '"complete": true'
+stdout '"errors": 0'
+! stderr .
+status 2 dotspec job init plan-work
+stderr 'refusing to overwrite'
+! stdout .
+status 2 dotspec job show plan-work --json --format text
+stderr 'json format'
+! stdout .
+status 2 dotspec job show ../escape
+! stdout .
+status 2 dotspec unknown
+! stdout .
+-- created.txt --
+Created specs/system.spec.md
+Edit the system name, Purpose, and Scope.
+-- map.txt --
+flowchart TD
+  job["New job"]
+  no_steps["No steps defined."]
+  job --- no_steps

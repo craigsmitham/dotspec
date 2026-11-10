@@ -2,171 +2,205 @@
 package cli
 
 import (
+	"context"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"strings"
 
+	"charm.land/lipgloss/v2"
+	"github.com/charmbracelet/fang"
+	"github.com/charmbracelet/x/term"
+	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/spf13/cobra"
 )
 
-const usage = `Usage: dotspec check [--path DIR] [--format text|json]
-       dotspec <concept> <command> [--path DIR]
+// Release builds set these through GoReleaser's ldflags.
+var version = "dev"
+var commit = ""
 
-Commands:
-  check    Check all supported specifications in a project subtree
+const exitPolicy = "Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure."
 
-Concepts:
-  system   Describe systems and discover their hierarchy
-  job      Define and discover jobs to be done (JTBDs)
+type exitError struct {
+	code int
+	err  error
+}
 
-Use dotspec <concept> --help for commands.
-`
+func (e *exitError) Error() string {
+	if e.err != nil {
+		return e.err.Error()
+	}
+	return "specification findings"
+}
+func (e *exitError) Unwrap() error { return e.err }
 
-const systemUsage = `Usage: dotspec system <command> [--path DIR]
-
-Commands:
-  init   Create specs/system.spec.md in the selected project directory
-  show   Describe the nearest enclosing system and identify its parent
-  list   Display the hierarchy of systems within the selected subtree
-
---path selects a project directory and defaults to the current directory.
-Use --help for command help.
-`
-
+// Run owns process output and status; handlers never exit the process.
 func Run(args []string, stdout, stderr io.Writer) int {
-	if err := run(args, stdout); err != nil {
-		var status *exitError
-		if errors.As(err, &status) {
-			if status.err != nil {
-				fmt.Fprintf(stderr, "dotspec: %v\n", status.err)
+	return RunContext(context.Background(), args, stdout, stderr)
+}
+
+func RunContext(ctx context.Context, args []string, stdout, stderr io.Writer) int {
+	out, errOut := &checkedWriter{Writer: stdout}, &checkedWriter{Writer: stderr}
+	root := NewRoot()
+	root.SetArgs(args)
+	root.SetOut(out)
+	root.SetErr(errOut)
+	// Fang is used only to render requested help. Its error path probes the
+	// process stdout for colors, which would contaminate a terminal JSON report.
+	if terminal(stdout) {
+		root.SetHelpFunc(func(cmd *cobra.Command, _ []string) {
+			help := NewRoot()
+			help.SetOut(out)
+			help.SetErr(errOut)
+			help.SetArgs(append(strings.Fields(cmd.CommandPath())[1:], "--help"))
+			if err := fang.Execute(ctx, help, fang.WithoutManpage(), fang.WithVersion(help.Version),
+				fang.WithErrorHandler(func(_ io.Writer, _ fang.Styles, _ error) {})); err != nil && out.err == nil {
+				out.err = err
 			}
-			return status.code
+		})
+	}
+	err := root.ExecuteContext(ctx)
+	if out.err != nil {
+		err = &exitError{code: 2, err: out.err}
+	}
+	code := status(err)
+	if err != nil {
+		var coded *exitError
+		if !errors.As(err, &coded) || coded.err != nil {
+			message := err.Error()
+			if terminal(stderr) {
+				message = lipgloss.NewStyle().Foreground(lipgloss.ANSIColor(1)).Render(message)
+			}
+			_, _ = fmt.Fprintf(errOut, "dotspec: %s\n", message)
 		}
-		fmt.Fprintf(stderr, "dotspec: %v\n", err)
+	}
+	if errOut.err != nil {
+		return 2
+	}
+	return code
+}
+
+func status(err error) int {
+	if err == nil {
+		return 0
+	}
+	var coded *exitError
+	if errors.As(err, &coded) {
+		return coded.code
+	}
+	var finding *diagnostic.Diagnostic
+	if errors.As(err, &finding) {
 		return 1
 	}
-	return 0
+	return 2
 }
 
-func run(args []string, out io.Writer) error {
-	if len(args) == 0 || isHelp(args[0]) {
-		_, err := fmt.Fprint(out, usage)
-		return err
-	}
-	kind := args[0]
-	if kind == "check" {
-		return runCheckArgs(args[1:], out)
-	}
-	if kind == "job" {
-		return runJobArgs(args[1:], out)
-	}
-	if kind != "system" {
-		return fmt.Errorf("unknown command %q; use dotspec --help", args[0])
-	}
-	if len(args) == 1 || isHelp(args[1]) {
-		_, err := fmt.Fprint(out, systemUsage)
-		return err
-	}
-	command := args[1]
-	if command != "init" && command != "show" && command != "list" {
-		return fmt.Errorf("unknown %s command %q; use dotspec %s --help", kind, command, kind)
-	}
-	path, operands, err := parseOptions(args[2:])
-	if errors.Is(err, flag.ErrHelp) {
-		_, err := fmt.Fprintf(out, "Usage: dotspec system %s [--path DIR]\n\n--path selects a project directory and defaults to the current directory.\nSystem specs live at DIR/specs/system.spec.md.\n", command)
-		return err
-	}
-	if err != nil {
-		return err
-	}
-	if len(operands) != 0 {
-		return fmt.Errorf("unexpected argument %q; select a directory with --path DIR", operands[0])
-	}
-	if strings.TrimSpace(path) == "" {
-		return fmt.Errorf("--path must not be empty")
-	}
-	return runSystem(command, path, out)
+// checkedWriter catches output failures even in upstream help/completion paths
+// whose callback interfaces cannot return an error.
+type checkedWriter struct {
+	io.Writer
+	err error
 }
 
-// parseOptions preserves the system command's directory-only interface.
-func parseOptions(args []string) (string, []string, error) {
-	flags := flag.NewFlagSet("dotspec", flag.ContinueOnError)
-	flags.SetOutput(io.Discard)
-	path := flags.String("path", ".", "project directory to inspect or initialize")
-	operands, err := parseFlagArgs(flags, args)
-	return *path, operands, err
+func (w *checkedWriter) Write(p []byte) (int, error) {
+	n, err := w.Writer.Write(p)
+	if err == nil && n != len(p) {
+		err = io.ErrShortWrite
+	}
+	if err != nil && w.err == nil {
+		w.err = err
+	}
+	return n, err
 }
 
-// parseFlagArgs accepts flags before or after positional arguments.
-func parseFlagArgs(flags *flag.FlagSet, args []string) ([]string, error) {
-	var operands []string
-	for len(args) > 0 {
-		if args[0] == "--" {
-			operands = append(operands, args[1:]...)
-			break
+func (w *checkedWriter) Fd() uintptr {
+	if f, ok := w.Writer.(interface{ Fd() uintptr }); ok {
+		return f.Fd()
+	}
+	return ^uintptr(0)
+}
+
+func terminal(w io.Writer) bool {
+	if _, disabled := os.LookupEnv("NO_COLOR"); disabled {
+		return false
+	}
+	f, ok := w.(interface{ Fd() uintptr })
+	return ok && term.IsTerminal(f.Fd())
+}
+
+func buildVersion() string {
+	v, revision := version, commit
+	if info, ok := debug.ReadBuildInfo(); ok {
+		if v == "dev" && info.Main.Version != "" && info.Main.Version != "(devel)" {
+			v = info.Main.Version
 		}
-		if !strings.HasPrefix(args[0], "-") || args[0] == "-" {
-			operands = append(operands, args[0])
-			args = args[1:]
-			continue
-		}
-		name, _, hasValue := strings.Cut(strings.TrimLeft(args[0], "-"), "=")
-		n := 1
-		if option := flags.Lookup(name); option != nil && !hasValue {
-			boolean, ok := option.Value.(interface{ IsBoolFlag() bool })
-			if (!ok || !boolean.IsBoolFlag()) && len(args) > 1 {
-				n = 2
+		if revision == "" {
+			for _, setting := range info.Settings {
+				if setting.Key == "vcs.revision" {
+					revision = setting.Value
+				}
 			}
 		}
-		if err := flags.Parse(args[:n]); err != nil {
-			return nil, err
-		}
-		args = args[n:]
 	}
-	return operands, nil
+	if len(revision) > 7 {
+		revision = revision[:7]
+	}
+	if revision != "" {
+		v += " (" + revision + ")"
+	}
+	return v
 }
 
-func runSystem(command, path string, out io.Writer) error {
-	switch command {
-	case "init":
-		target, err := system.Init(path)
-		if err != nil {
-			return err
-		}
-		_, err = fmt.Fprintf(out, "Created %s\nEdit the system name, Purpose, and Scope.\n", displayPath(target))
-		return err
-	case "show":
-		spec, parent, err := system.Show(path)
-		if err != nil {
-			return err
-		}
-		parentText := "None"
-		if parent != nil {
-			parentText = fmt.Sprintf("%s (%s)", parent.Name, displayPath(parent.Path))
-		}
-		_, err = fmt.Fprintf(out, "%s\n\nPurpose\n%s\n\nScope\n%s\n\nParent system: %s\nSource: %s\n",
-			spec.Name, indent(spec.Purpose), indent(spec.Scope), parentText, displayPath(spec.Path))
-		return err
-	case "list":
-		nodes, err := system.List(path)
-		if err != nil {
-			return err
-		}
-		if len(nodes) == 0 {
-			_, err := fmt.Fprintln(out, "No systems found in the selected subtree.")
-			return err
-		}
-		var output strings.Builder
-		output.WriteString("Systems\n")
-		writeTree(&output, nodes, "")
-		_, err = io.WriteString(out, output.String())
-		return err
+// NewRoot is side-effect free: documentation and execution share this tree.
+func NewRoot() *cobra.Command {
+	root := &cobra.Command{Use: "dotspec", Short: "Manage software requirements alongside your code",
+		Long:    "Manage human-readable software requirements in *.spec.md files.\n\n" + exitPolicy,
+		Example: "dotspec system init\ndotspec job init develop-requirements\ndotspec check",
+		Version: buildVersion(), SilenceUsage: true, SilenceErrors: true,
+		Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error { return cmd.Help() },
 	}
-	return nil
+	root.SetVersionTemplate("dotspec {{.Version}}\n")
+	root.AddCommand(newSystemCommand(), newJobCommand(), newCheckCommand(), newManCommand(), newCompletionCommand())
+	root.InitDefaultHelpFlag()
+	root.InitDefaultVersionFlag()
+	root.InitDefaultHelpCmd()
+	root.InitDefaultCompletionCmd()
+	return root
+}
+
+func group(use, short string) *cobra.Command {
+	return &cobra.Command{Use: use, Short: short, Args: cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, _ []string) error { return cmd.Help() }}
+}
+
+func projectPath(cmd *cobra.Command) (string, error) {
+	path, err := cmd.Flags().GetString("path")
+	if err == nil && strings.TrimSpace(path) == "" {
+		err = fmt.Errorf("--path must not be empty")
+	}
+	if err != nil {
+		return path, err
+	}
+	// Checks include scope failures in their reports. Other commands report an
+	// invalid project selector as an invocation error rather than a spec finding.
+	if cmd.Name() != "check" {
+		resolved, scopeErr := specfile.Scope(path)
+		if scopeErr != nil {
+			return path, &exitError{code: 2, err: scopeErr}
+		}
+		path = resolved
+	}
+	return path, nil
+}
+
+func addPath(cmd *cobra.Command) {
+	cmd.Flags().String("path", ".", "project directory to inspect or initialize")
+	_ = cmd.MarkFlagDirname("path")
 }
 
 func writeTree(out *strings.Builder, nodes []*system.Node, prefix string) {
@@ -194,8 +228,4 @@ func displayPath(path string) string {
 
 func indent(value string) string {
 	return "  " + strings.ReplaceAll(value, "\n", "\n  ")
-}
-
-func isHelp(arg string) bool {
-	return arg == "--help" || arg == "-h" || arg == "help"
 }

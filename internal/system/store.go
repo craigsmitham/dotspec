@@ -10,8 +10,8 @@ import (
 )
 
 type Node struct {
-	System   *System
-	Children []*Node
+	System   *System `json:"system"`
+	Children []*Node `json:"children"`
 }
 
 func Init(path string) (string, error) {
@@ -100,7 +100,7 @@ func List(path string) ([]*Node, error) {
 		if err != nil {
 			return nil, err
 		}
-		node := &Node{System: spec}
+		node := &Node{System: spec, Children: []*Node{}}
 		nodes = append(nodes, node)
 		owner, err := specfile.Owner(path, "")
 		if err != nil {

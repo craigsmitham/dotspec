@@ -29,6 +29,9 @@ func TestMisplacedSpecsFailLocalCommands(t *testing.T) {
 				args := append([]string{tt.kind}, command...)
 				args = append(args, "--path", dir)
 				code, out, errOut := invoke(args...)
+				if command[0] == "check" {
+					out, errOut = errOut, out
+				}
 				if code == 0 || out != "" || !strings.Contains(errOut, "misplaced spec") || !strings.Contains(errOut, tt.expected) {
 					t.Errorf("%v: %d %q %q", args, code, out, errOut)
 				}

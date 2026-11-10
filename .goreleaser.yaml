@@ -1,0 +1,33 @@
+version: 2
+project_name: dotspec
+builds:
+  - id: dotspec
+    main: .
+    binary: dotspec
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X github.com/craigsmitham/dotspec/internal/cli.version={{ .Version }}
+      - -X github.com/craigsmitham/dotspec/internal/cli.commit={{ .Commit }}
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+archives:
+  - formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - README.md
+      - docs/cli.md
+checksum:
+  name_template: checksums.txt
+release:
+  github:
+    owner: craigsmitham
+    name: dotspec
+changelog:
+  sort: asc

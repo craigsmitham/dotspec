@@ -1,56 +1,38 @@
 package cli
 
 import (
-	"encoding/json"
-	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/spf13/cobra"
 )
 
-type exitError struct {
-	code int
-	err  error
+func newCheckCommand() *cobra.Command {
+	cmd := &cobra.Command{Use: "check", Short: "Check all supported specifications in a project subtree",
+		Long:    "Check system and job specifications using the same discovery rules as list.\n\n" + exitPolicy,
+		Example: "dotspec check\ndotspec check --path internal --json", Args: cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			path, err := projectPath(cmd)
+			if err != nil {
+				return err
+			}
+			format, err := outputFormat(cmd)
+			if err != nil {
+				return err
+			}
+			return emitCheckReport(cmd.OutOrStdout(), check.Project(path), format)
+		},
+	}
+	addPath(cmd)
+	addOutput(cmd, false)
+	return cmd
 }
 
-func (e *exitError) Error() string {
-	if e.err != nil {
-		return e.err.Error()
-	}
-	return "check reported findings"
-}
-
-func runCheckArgs(args []string, out io.Writer) error {
-	flags := flag.NewFlagSet("dotspec check", flag.ContinueOnError)
-	flags.SetOutput(io.Discard)
-	path := flags.String("path", ".", "project directory whose subtree is checked")
-	format := flags.String("format", "text", "text or json")
-	operands, err := parseFlagArgs(flags, args)
-	if errors.Is(err, flag.ErrHelp) {
-		_, err = fmt.Fprintln(out, "Usage: dotspec check [--path DIR] [--format text|json]\n\nChecks system and job specifications using the same discovery rules as list.\nWriting advice is nonfatal; optional job structure may remain absent.\nExit codes: 0 no structural errors, 1 structural findings, 2 invalid invocation or incomplete scan.")
-		if err != nil {
-			return &exitError{code: 2, err: err}
-		}
-		return nil
-	}
-	if err == nil && len(operands) != 0 {
-		err = fmt.Errorf("unexpected argument %q; select a project directory with --path DIR", operands[0])
-	}
-	if err == nil && strings.TrimSpace(*path) == "" {
-		err = fmt.Errorf("--path must not be empty")
-	}
-	if err == nil && *format != "text" && *format != "json" {
-		err = fmt.Errorf("unknown check format %q; use text or json", *format)
-	}
-	if err != nil {
-		return &exitError{code: 2, err: err}
-	}
-	report := check.Project(*path)
-	if err := writeCheckReport(out, report, *format); err != nil {
+func emitCheckReport(out io.Writer, report check.Report, format string) error {
+	if err := writeCheckReport(out, report, format); err != nil {
 		return &exitError{code: 2, err: err}
 	}
 	if code := report.ExitCode(); code != 0 {
@@ -61,12 +43,10 @@ func runCheckArgs(args []string, out io.Writer) error {
 
 func writeCheckReport(out io.Writer, report check.Report, format string) error {
 	if format == "json" {
-		encoder := json.NewEncoder(out)
-		encoder.SetIndent("", "  ")
-		return encoder.Encode(report)
+		return writeJSON(out, report)
 	}
 	var text strings.Builder
-	fmt.Fprintf(&text, "Checking %s (system, job; %s discovery)\n", displayPath(report.Scope.Path), report.Scope.Discovery)
+	fmt.Fprintf(&text, "Checking %s (%s; %s discovery)\n", displayPath(report.Scope.Path), strings.Join(report.Scope.Types, ", "), report.Scope.Discovery)
 	for _, path := range report.ContextFiles {
 		fmt.Fprintf(&text, "Context: %s\n", displayPath(path))
 	}
@@ -84,7 +64,7 @@ func writeCheckReport(out io.Writer, report check.Report, format string) error {
 			text.WriteByte('\n')
 		}
 	}
-	if report.Complete && report.Summary.FilesDiscovered == 0 {
+	if report.Complete && report.Summary.FilesDiscovered == 0 && report.Summary.Errors == 0 {
 		text.WriteString("\nNo supported specifications found.\n")
 	}
 	fmt.Fprintf(&text, "\nChecked %d of %d discovered specifications; additional context files: %d.\nErrors: %d; advisory findings: %d.\n",
