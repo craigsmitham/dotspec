@@ -1,11 +1,9 @@
-# dotspec - software product requirements engineering framework and toolkit
+# dotspec — Software product requirements framework and toolkit
 
-dotspec helps developing and managing requirements from elicitation, analysis, specification, validation, verification, to the maintenance of software product requirements.
+dotspec helps teams develop and manage software product requirements throughout their lifecycle: elicitation, analysis, specification, validation, verification, and maintenance.
 
-The desired outcome is a set of high-quality requirements that are easy and low cost to validate, verify, and change.
+The goal is to produce high-quality requirements that are easy and inexpensive to validate, verify, and change.
 
-dotspec consists primarily of a set of markdown files suffixed with *.spec.md co-located with various parts of the software system within a repository. 
+Requirements live primarily in Markdown files named `*.spec.md`, co-located with the relevant parts of the software system in the repository. Together, these files form the product’s specification layer, capturing intent across business, user, and quality requirements.
 
-Altother, these files comprise the spec/intent/requirements layer for the software product, including business, user, and quality requirements. 
-
-A companion `dotspec` CLI helps manage and introspect these files to aid in the specification, validation, and verification of the requirements.
+A companion `dotspec` CLI helps teams manage and inspect these files, supporting the specification, validation, and verification of requirements.
