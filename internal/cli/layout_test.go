@@ -16,6 +16,10 @@ func TestMisplacedSpecsFailLocalCommands(t *testing.T) {
 		{"adjacent system", "system", "system.spec.md", "specs/system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
 		{"system collection", "system", "specs/systems/system.spec.md", "specs/system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
 		{"nested system", "system", "specs/child/specs/system.spec.md", "specs/system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
+		{"adjacent use case", "use-case", "work.use-case.spec.md", "specs/use-cases/work.use-case.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
+		{"singular use-case folder", "use-case", "specs/use-case/work.use-case.spec.md", "specs/use-cases/work.use-case.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
+		{"nested use cases", "use-case", "specs/use-cases/group/work.use-case.spec.md", "specs/use-cases/work.use-case.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
+		{"wrong use-case collection", "use-case", "specs/jobs/work.use-case.spec.md", "specs/use-cases/work.use-case.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"adjacent job", "job", "work.job.spec.md", "specs/jobs/work.job.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"map", "work"}, {"check", "work"}}},
 		{"ungrouped job", "job", "specs/work.job.spec.md", "specs/jobs/work.job.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}}},
 		{"singular jobs folder", "job", "specs/job/work.job.spec.md", "specs/jobs/work.job.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}}},
@@ -78,12 +82,12 @@ func TestDiscoveryRejectsLegacyFilesAlongsideCanonicalSpecs(t *testing.T) {
 
 func TestMetadataDirectoriesCannotBecomeProjectScopes(t *testing.T) {
 	dir := t.TempDir()
-	for _, subdir := range []string{"specs", "specs/jobs", "specs/jobs/extra"} {
+	for _, subdir := range []string{"specs", "specs/jobs", "specs/jobs/extra", "specs/use-cases"} {
 		path := filepath.Join(dir, subdir)
 		if err := os.MkdirAll(path, 0o755); err != nil {
 			t.Fatal(err)
 		}
-		for _, args := range [][]string{{"system", "init"}, {"system", "show"}, {"system", "list"}, {"job", "init", "work"}, {"job", "show", "work"}, {"job", "list"}} {
+		for _, args := range [][]string{{"system", "init"}, {"system", "show"}, {"system", "list"}, {"job", "init", "work"}, {"job", "show", "work"}, {"job", "list"}, {"use-case", "init", "work"}, {"use-case", "show", "work"}, {"use-case", "list"}} {
 			args = append(args, "--path", path)
 			if code, out, errOut := invoke(args...); code == 0 || out != "" || !strings.Contains(errOut, "--path selects a project directory") {
 				t.Errorf("metadata scope: %v: %d %q %q", args, code, out, errOut)
@@ -124,7 +128,10 @@ func TestMisplacedAssociatedSystemDoesNotFallBackToAncestor(t *testing.T) {
 	if code, _, errOut := invoke("job", "init", "work", "--path", child); code != 0 {
 		t.Fatal(errOut)
 	}
-	for _, args := range [][]string{{"system", "show"}, {"job", "show", "work"}, {"job", "list"}} {
+	if code, _, errOut := invoke("use-case", "init", "work", "--path", child); code != 0 {
+		t.Fatal(errOut)
+	}
+	for _, args := range [][]string{{"system", "show"}, {"job", "show", "work"}, {"job", "list"}, {"use-case", "show", "work"}, {"use-case", "list"}} {
 		args = append(args, "--path", child)
 		if code, out, errOut := invoke(args...); code == 0 || out != "" || !strings.Contains(errOut, "misplaced spec") {
 			t.Errorf("legacy child system: %v: %d %q %q", args, code, out, errOut)

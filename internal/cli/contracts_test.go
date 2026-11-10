@@ -11,6 +11,7 @@ import (
 
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/craigsmitham/dotspec/internal/usecase"
 	"github.com/spf13/cobra"
 )
 
@@ -30,6 +31,7 @@ func prepareExample(t *testing.T, command string) {
 		t.Fatal(err)
 	}
 	writeFixture(t, "specs/jobs/develop-requirements.job.spec.md", viewFixture)
+	writeFixture(t, "specs/use-cases/check-specifications.use-case.spec.md", usecase.Template)
 }
 
 func TestDeclaredCommandExamples(t *testing.T) {
@@ -90,6 +92,7 @@ func TestStructuredReadContracts(t *testing.T) {
 	for _, args := range [][]string{
 		{"system", "show"}, {"system", "list"}, {"job", "show", "develop-requirements"},
 		{"job", "list"}, {"job", "step", "list", "develop-requirements"},
+		{"use-case", "show", "check-specifications"}, {"use-case", "list"},
 		{"job", "outcome", "list", "develop-requirements"}, {"job", "map", "develop-requirements", "--outcomes"},
 	} {
 		code, out, errOut := invoke(append(args, "--json")...)
@@ -142,6 +145,8 @@ func TestOutputFailuresAcrossCommands(t *testing.T) {
 		{"--help"}, {"--version"}, {"completion", "bash"}, {"man"},
 		{"system", "show"}, {"system", "list", "--json"}, {"job", "show", "develop-requirements"},
 		{"job", "check", "develop-requirements", "--json"},
+		{"use-case", "show", "check-specifications"}, {"use-case", "list", "--json"},
+		{"use-case", "check", "check-specifications", "--json"},
 	} {
 		var stderr bytes.Buffer
 		if code := Run(args, failedOutput{}, &stderr); code != 2 || !strings.Contains(stderr.String(), "output unavailable") {

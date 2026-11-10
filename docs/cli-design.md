@@ -7,7 +7,7 @@ and the lessons from quality.md.
 ## Commands and input
 
 Use Cobra command definitions as the source of command names, flags, help, and
-examples. Keep the tree organized by singular concept (`system`, `job`) and action.
+examples. Keep the tree organized by singular concept (`system`, `job`, `use-case`) and action.
 Each leaf operation validates its arguments before filesystem access. `--path`
 selects an existing project directory; flags may precede or follow positional
 arguments. `--` ends flag parsing. Commands must work without interactive prompts.

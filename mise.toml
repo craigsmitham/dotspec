@@ -48,8 +48,8 @@ description = "Run the same complete gate locally and in CI"
 depends = ["fmt-check", "tidy-check", "lint", "test", "generated-check", "spec-check", "release-check"]
 
 [tasks.fuzz]
-description = "Exercise both Markdown parsers with bounded fuzzing"
-run = ["go test ./internal/system -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/job -run=^$ -fuzz=FuzzStructuredJob -fuzztime=10s -parallel=2"]
+description = "Exercise all Markdown parsers with bounded fuzzing"
+run = ["go test ./internal/system -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/job -run=^$ -fuzz=FuzzStructuredJob -fuzztime=10s -parallel=2", "go test ./internal/usecase -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2"]
 
 [tasks.release-check]
 description = "Validate the release configuration"

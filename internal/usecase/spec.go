@@ -1,0 +1,169 @@
+// Package usecase reads and discovers actor-goal use cases.
+package usecase
+
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/craigsmitham/dotspec/internal/system"
+)
+
+const Suffix = ".use-case.spec.md"
+const Collection = "use-cases"
+
+const Template = `---
+type: use-case
+---
+
+# New use case
+
+## Goal
+
+Describe what the primary actor wants to accomplish through this interaction.
+
+## System boundary
+
+Name the system whose behavior this use case describes.
+
+## Primary actor
+
+Describe the role pursuing the goal.
+
+## Goal level
+
+Identify the level: summary, user task, or subfunction.
+
+## Trigger
+
+Describe the action or time event that starts the interaction.
+
+## Preconditions
+
+Describe the state expected to be true before the interaction, or state that none is assumed.
+
+## Success criterion
+
+State or link to the observable condition that completes the actor's goal.
+
+## Main success scenario
+
+1. Describe the actor's action.
+2. Describe the system's response and how the actor reaches the goal.
+
+## Extensions
+
+Describe exceptional conditions and their responses, linking to governing rules.
+
+## Sequence
+
+State whether the scenario's order is representative or required; link to the governing rule for required order.
+
+## Related jobs
+
+Link to the jobs, steps, or desired outcomes this use case supports.
+`
+
+var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
+var identifierPattern = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9_-]*$`)
+
+// UseCase retains section bodies as Markdown. Scenario steps and extensions
+// are not separate records, and file ownership does not set the system boundary.
+type UseCase struct {
+	ID                  string                         `json:"id,omitempty"`
+	Slug                string                         `json:"slug"`
+	Name                string                         `json:"name"`
+	Goal                string                         `json:"goal"`
+	SystemBoundary      string                         `json:"system_boundary"`
+	PrimaryActor        string                         `json:"primary_actor"`
+	GoalLevel           string                         `json:"goal_level"`
+	Trigger             string                         `json:"trigger"`
+	Preconditions       string                         `json:"preconditions"`
+	SuccessCriterion    string                         `json:"success_criterion"`
+	MainSuccessScenario string                         `json:"main_success_scenario"`
+	Extensions          string                         `json:"extensions"`
+	Sequence            string                         `json:"sequence"`
+	RelatedJobs         string                         `json:"related_jobs"`
+	Markdown            string                         `json:"markdown"`
+	Path                string                         `json:"path"`
+	System              *system.System                 `json:"system"`
+	Location            diagnostic.Location            `json:"location"`
+	SectionLocations    map[string]diagnostic.Location `json:"-"`
+}
+
+func ValidateSlug(slug string) error {
+	if !slugPattern.MatchString(slug) {
+		return fmt.Errorf("invalid use-case slug %q: use lowercase letters or digits separated by single hyphens (for example, check-specifications)", slug)
+	}
+	return nil
+}
+
+func Read(path string) (*UseCase, error) {
+	name := filepath.Base(path)
+	if !strings.HasSuffix(name, Suffix) {
+		return nil, diagnostic.Error("layout.use-case-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
+	}
+	slug := strings.TrimSuffix(name, Suffix)
+	if err := ValidateSlug(slug); err != nil {
+		return nil, diagnostic.Error("layout.use-case-name", err.Error(), diagnostic.Location{Path: path})
+	}
+	if _, err := specfile.Owner(path, Collection); err != nil {
+		return nil, err
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	spec, err := Parse(data)
+	if err != nil {
+		return nil, diagnostic.WithPath(err, path)
+	}
+	spec.Slug, spec.Path = slug, path
+	return spec, nil
+}
+
+// Parse accepts unfinished content, but rejects ambiguous document structure
+// and unresolved same-document references. Other links remain navigation.
+func Parse(data []byte) (*UseCase, error) {
+	doc, err := specfile.ParseOutline(data, "use-case")
+	if err != nil {
+		return nil, err
+	}
+	spec := &UseCase{ID: doc.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
+	if spec.ID != "" {
+		if !identifierPattern.MatchString(spec.ID) {
+			return nil, diagnostic.Error("identity.invalid", fmt.Sprintf("use case: invalid ID %q; use letters, digits, hyphens, or underscores", spec.ID), specfile.MetadataLocation(data, "id"))
+		}
+		doc.Anchors[spec.ID] = true
+	}
+	fields := map[string]*string{
+		"Goal": &spec.Goal, "System boundary": &spec.SystemBoundary,
+		"Primary actor": &spec.PrimaryActor, "Goal level": &spec.GoalLevel,
+		"Trigger": &spec.Trigger, "Preconditions": &spec.Preconditions,
+		"Success criterion": &spec.SuccessCriterion, "Main success scenario": &spec.MainSuccessScenario,
+		"Extensions": &spec.Extensions, "Sequence": &spec.Sequence, "Related jobs": &spec.RelatedJobs,
+	}
+	for _, section := range doc.Sections {
+		target, known := fields[section.Title]
+		if !known {
+			continue
+		}
+		location := doc.Location(section.Start, section.Title)
+		if section.Level != 2 {
+			return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), location)
+		}
+		if previous, exists := spec.SectionLocations[section.Title]; exists {
+			return nil, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", section.Title), location, previous)
+		}
+		spec.SectionLocations[section.Title] = location
+		*target = doc.Body(section)
+	}
+	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
+		return nil, err
+	}
+	return spec, nil
+}

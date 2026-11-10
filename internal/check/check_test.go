@@ -33,12 +33,12 @@ func git(t *testing.T, dir string, args ...string) {
 func TestProjectContinuesAcrossMalformedFiles(t *testing.T) {
 	dir := t.TempDir()
 	sources := map[string]string{
-		"adjacent.job.spec.md":                         validJob,
-		"specs/system.spec.md":                         "---\ntype: [\n---\n# Broken\n",
-		"specs/jobs/duplicate.job.spec.md":             "---\ntype: job\nid: shared\n---\n# Duplicate\n\n## Steps\n\n### Gather\n**ID:** shared\n",
-		"specs/jobs/advice.job.spec.md":                "---\ntype: job\n---\n# Draft\n",
-		"specs/jobs/valid.job.spec.md":                 validJob,
-		"specs/use-cases/unsupported.use-case.spec.md": "ignored unsupported type",
+		"adjacent.job.spec.md":                 validJob,
+		"specs/system.spec.md":                 "---\ntype: [\n---\n# Broken\n",
+		"specs/jobs/duplicate.job.spec.md":     "---\ntype: job\nid: shared\n---\n# Duplicate\n\n## Steps\n\n### Gather\n**ID:** shared\n",
+		"specs/jobs/advice.job.spec.md":        "---\ntype: job\n---\n# Draft\n",
+		"specs/jobs/valid.job.spec.md":         validJob,
+		"specs/terms/unsupported.term.spec.md": "ignored unsupported type",
 	}
 	for path, source := range sources {
 		write(t, filepath.Join(dir, path), source)

@@ -33,7 +33,7 @@ Check all supported specifications in a project subtree
 dotspec check [flags]
 ```
 
-Check system and job specifications using the same discovery rules as list.
+Check system, job, and use-case specifications using the same discovery rules as list.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
@@ -397,6 +397,98 @@ dotspec system show [flags]
 
 ```sh
 dotspec system show --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for show |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec use-case
+
+Describe actor goals and interactions with a system
+
+```sh
+dotspec use-case [flags]
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for use-case |
+
+## dotspec use-case check
+
+Check structure and suggest missing use-case content
+
+```sh
+dotspec use-case check <slug> [flags]
+```
+
+Check structure and suggest missing use-case content.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+```sh
+dotspec use-case check check-specifications --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for check |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec use-case init
+
+Create a use-case specification without overwriting an existing file
+
+```sh
+dotspec use-case init <slug> [flags]
+```
+
+```sh
+dotspec use-case init check-specifications --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for init |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec use-case list
+
+Discover use cases, grouped by associated system
+
+```sh
+dotspec use-case list [flags]
+```
+
+```sh
+dotspec use-case list --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for list |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec use-case show
+
+Show authored Markdown and the associated system
+
+```sh
+dotspec use-case show <slug> [flags]
+```
+
+```sh
+dotspec use-case show check-specifications --path .
 ```
 
 | Flag | Default | Description |

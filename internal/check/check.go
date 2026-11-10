@@ -12,6 +12,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/craigsmitham/dotspec/internal/usecase"
 )
 
 type Scope struct {
@@ -51,7 +52,7 @@ func (r Report) ExitCode() int {
 // repository, no ignore rules otherwise, and no symlinks or nested repositories.
 // A malformed file blocks only its dependent checks, not the rest of the scan.
 func Project(path string) Report {
-	r := Report{SchemaVersion: 1, Scope: Scope{Path: path, Types: []string{"system", "job"}, Discovery: "unavailable"}, Complete: true, ContextFiles: []string{}, Diagnostics: []diagnostic.Diagnostic{}}
+	r := Report{SchemaVersion: 1, Scope: Scope{Path: path, Types: []string{"system", "job", "use-case"}, Discovery: "unavailable"}, Complete: true, ContextFiles: []string{}, Diagnostics: []diagnostic.Diagnostic{}}
 	dir, err := specfile.Scope(path)
 	if err != nil {
 		r.Complete = false
@@ -74,7 +75,7 @@ func Project(path string) Report {
 	}
 	r.Summary.FilesDiscovered = len(paths)
 	discovered := make(map[string]bool)
-	var jobs []*job.Job
+	var contexts []string
 	for _, path := range paths {
 		discovered[path] = true
 		r.Summary.FilesChecked++
@@ -84,24 +85,35 @@ func Project(path string) Report {
 			}
 			continue
 		}
-		spec, err := job.Read(path)
+		collection := "jobs"
+		if strings.HasSuffix(path, usecase.Suffix) {
+			collection = usecase.Collection
+			spec, err := usecase.Read(path)
+			if err != nil {
+				r.record(err, "scan.read", path)
+				continue
+			}
+			r.Diagnostics = append(r.Diagnostics, usecase.Check(spec)...)
+		} else {
+			spec, err := job.Read(path)
+			if err != nil {
+				r.record(err, "scan.read", path)
+				continue
+			}
+			r.Diagnostics = append(r.Diagnostics, job.Check(spec)...)
+		}
+		owner, err := specfile.Owner(path, collection)
 		if err != nil {
-			r.record(err, "scan.read", path)
+			r.record(err, "scan.context", path)
 			continue
 		}
-		r.Diagnostics = append(r.Diagnostics, job.Check(spec)...)
-		jobs = append(jobs, spec)
+		contexts = append(contexts, owner)
 	}
-	// Match job show/list's association semantics, including ancestor systems
+	// Match job and use-case show/list association semantics, including systems
 	// outside the selected subtree. Report that supplemental scope explicitly.
 	owners := make(map[string]bool)
 	context := make(map[string]bool)
-	for _, spec := range jobs {
-		owner, err := specfile.Owner(spec.Path, "jobs")
-		if err != nil {
-			r.record(err, "scan.context", spec.Path)
-			continue
-		}
+	for _, owner := range contexts {
 		if owners[owner] {
 			continue
 		}
@@ -131,7 +143,7 @@ func Project(path string) Report {
 
 func supported(path string) bool {
 	name := filepath.Base(path)
-	return name == system.Filename || strings.HasSuffix(name, job.Suffix)
+	return name == system.Filename || strings.HasSuffix(name, job.Suffix) || strings.HasSuffix(name, usecase.Suffix)
 }
 
 // record and finish keep report accounting, error identity, and deterministic

@@ -53,8 +53,11 @@ func Owner(path, collection string) (string, error) {
 
 func misplaced(path, expected, collection string) error {
 	kind := "system"
-	if collection == "jobs" {
+	switch collection {
+	case "jobs":
 		kind = "job"
+	case "use-cases":
+		kind = "use-case"
 	}
 	return diagnostic.Error("layout."+kind+"-location", fmt.Sprintf("misplaced spec: expected %s", expected), diagnostic.Location{Path: path})
 }

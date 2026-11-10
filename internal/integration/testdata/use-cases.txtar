@@ -1,0 +1,62 @@
+# Use-case commands compose with existing commands and retain exit/channel rules.
+mkdir project
+cd project
+exec git init -q
+status 0 dotspec use-case list --json
+stdout '"groups": \[\]'
+! stderr .
+status 0 dotspec use-case init --path . -- check-specifications
+stdout 'Created specs/use-cases/check-specifications.use-case.spec.md'
+! stderr .
+status 0 dotspec use-case show check-specifications --json
+stdout '"system": null'
+stdout '"main_success_scenario":'
+status 0 dotspec system init
+status 0 dotspec use-case show check-specifications
+stdout '# New use case'
+stdout 'System: New system'
+status 0 dotspec use-case list --json
+stdout '"use_cases": \['
+stdout '"slug": "check-specifications"'
+status 0 dotspec use-case check check-specifications --json
+stdout '"complete": true'
+stdout '"discovery": "direct"'
+stdout '"context_files_checked": 1'
+! stderr .
+status 2 dotspec use-case init check-specifications
+stderr 'refusing to overwrite'
+! stdout .
+status 2 dotspec use-case init invalid --format mermaid
+! stdout .
+! exists specs/use-cases/invalid.use-case.spec.md
+status 2 dotspec use-case show check-specifications --path specs/use-cases
+stderr 'selects a project directory'
+status 2 dotspec use-case check absent --json
+stdout '"complete": false'
+! stderr .
+
+# A focused check ignores malformed siblings; a project scan reports all files.
+cp ../draft.md specs/use-cases/draft.use-case.spec.md
+cp ../broken.md specs/use-cases/broken.use-case.spec.md
+status 0 dotspec use-case check draft
+stdout 'advice \[use-case.goal\]'
+stdout 'Scan complete.'
+! stderr .
+status 1 dotspec use-case check broken --json
+stdout '"rule": "metadata.frontmatter"'
+! stderr .
+status 1 dotspec check --json
+stdout '"files_checked": 4'
+stdout '"errors": 1'
+stdout '"complete": true'
+! stderr .
+status 1 dotspec use-case list
+stderr 'metadata.frontmatter'
+! stdout .
+-- draft.md --
+---
+type: use-case
+---
+# An unfinished interaction
+-- broken.md --
+This is not a specification.

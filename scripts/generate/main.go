@@ -15,6 +15,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/cli"
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/craigsmitham/dotspec/internal/usecase"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -44,6 +45,7 @@ func run(check bool) error {
 		{"docs/cli.md", reference.String()},
 		{"examples/starter/specs/system.spec.md", system.Template},
 		{"examples/starter/specs/jobs/develop-requirements.job.spec.md", job.Template},
+		{"examples/starter/specs/use-cases/check-specifications.use-case.spec.md", usecase.Template},
 		{"docs/examples.md", gallery},
 	}
 	var stale []string
@@ -129,6 +131,9 @@ func outputGallery() (result string, err error) {
 		{"job", "outcome", "list", "develop-requirements", "--json"},
 		{"job", "map", "develop-requirements", "--format", "mermaid"},
 		{"job", "check", "develop-requirements", "--json"},
+		{"use-case", "init", "check-specifications"},
+		{"use-case", "show", "check-specifications", "--json"},
+		{"use-case", "check", "check-specifications", "--json"},
 	} {
 		var out, errOut bytes.Buffer
 		if code := cli.Run(args, &out, &errOut); code != 0 {

@@ -12,7 +12,7 @@ import (
 
 func newCheckCommand() *cobra.Command {
 	cmd := &cobra.Command{Use: "check", Short: "Check all supported specifications in a project subtree",
-		Long:    "Check system and job specifications using the same discovery rules as list.\n\n" + exitPolicy,
+		Long:    "Check system, job, and use-case specifications using the same discovery rules as list.\n\n" + exitPolicy,
 		Example: "dotspec check\ndotspec check --path internal --json", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)

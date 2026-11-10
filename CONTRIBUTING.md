@@ -33,10 +33,10 @@ includes errcheck, govet, ineffassign, staticcheck, and unused.
 - `main.go` owns process exit. `internal/cli` defines Cobra commands and handles
   presentation, JSON encoding, Fang terminal help, Lip Gloss errors, and status mapping.
 - `internal/check` produces typed reports. Checks do not print or exit.
-- `internal/system` and `internal/job` own type-specific parsing and validation,
+- `internal/system`, `internal/job`, and `internal/usecase` own type-specific parsing and validation,
   templates, and repository operations. Parsing functions accept bytes without I/O.
 - `internal/specfile` owns common frontmatter, Goldmark outlines, source locations,
-  local references, and shared filesystem/discovery behavior. Both specification
+  local references, and shared filesystem/discovery behavior. All specification
   types use the same Markdown extraction path.
 - `internal/diagnostic` owns stable findings and source locations.
 
