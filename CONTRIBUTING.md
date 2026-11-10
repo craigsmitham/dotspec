@@ -11,6 +11,8 @@ mise run check
 `mise.toml` pins Go, golangci-lint, and GoReleaser. Runtime and test dependencies
 are pinned in `go.mod` and `go.sum`. Git is required for repository discovery and
 integration tests. The same check task runs on Linux, macOS, and Windows in CI.
+Git attributes keep text files at LF line endings on every platform so formatting
+and generated-file checks compare the same bytes.
 
 | Task | Purpose |
 | --- | --- |
