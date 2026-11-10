@@ -76,8 +76,12 @@ func runSystem(command, path, format string, out io.Writer) error {
 		if result.Parent != nil {
 			parentText = fmt.Sprintf("%s (%s)", result.Parent.Name, displayPath(result.Parent.Path))
 		}
-		_, err = fmt.Fprintf(out, "%s\n\nPurpose\n%s\n\nScope\n%s\n\nParent system: %s\nSource: %s\n",
-			result.System.Name, indent(result.System.Purpose), indent(result.System.Scope), parentText, displayPath(result.System.Path))
+		modelText := ""
+		if spec.QualityModel != nil {
+			modelText = "\n\nQuality attributes\n" + indent(spec.QualityModel.Markdown)
+		}
+		_, err = fmt.Fprintf(out, "%s\n\nPurpose\n%s\n\nScope\n%s%s\n\nParent system: %s\nSource: %s\n",
+			result.System.Name, indent(result.System.Purpose), indent(result.System.Scope), modelText, parentText, displayPath(result.System.Path))
 		return err
 	case "list":
 		nodes, err := system.List(path)

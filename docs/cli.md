@@ -33,7 +33,7 @@ Check all supported specifications in a project subtree
 dotspec check [flags]
 ```
 
-Check system, job, and use-case specifications using the same discovery rules as list.
+Check system, job, use-case, concept, and quality specifications using the same discovery rules as list.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
@@ -130,6 +130,98 @@ dotspec completion zsh
 | --- | --- | --- |
 | `--help, -h` | `false` | help for zsh |
 | `--no-descriptions` | `false` | omit completion descriptions |
+
+## dotspec concept
+
+Describe purposeful product behavior through state and actions
+
+```sh
+dotspec concept [flags]
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for concept |
+
+## dotspec concept check
+
+Check structure and suggest missing concept content
+
+```sh
+dotspec concept check <slug> [flags]
+```
+
+Check structure and suggest missing concept content.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+```sh
+dotspec concept check job-map --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for check |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec concept init
+
+Create a concept specification without overwriting an existing file
+
+```sh
+dotspec concept init <slug> [flags]
+```
+
+```sh
+dotspec concept init job-map --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for init |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec concept list
+
+Discover concepts, grouped by associated system
+
+```sh
+dotspec concept list [flags]
+```
+
+```sh
+dotspec concept list --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for list |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec concept show
+
+Show authored Markdown and the associated system
+
+```sh
+dotspec concept show <slug> [flags]
+```
+
+```sh
+dotspec concept show job-map --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for show |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
 
 ## dotspec help
 
@@ -336,6 +428,99 @@ dotspec man
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--help, -h` | `false` | help for man |
+
+## dotspec quality
+
+Specify assessable quality obligations and their attributes
+
+```sh
+dotspec quality [flags]
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for quality |
+
+## dotspec quality check
+
+Check quality specifications and attribute references
+
+```sh
+dotspec quality check <slug> [flags]
+```
+
+Check quality specifications and attribute references.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+```sh
+dotspec quality check diagnostic-severity --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for check |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec quality init
+
+Create a quality specification without overwriting an existing file
+
+```sh
+dotspec quality init <slug> [flags]
+```
+
+```sh
+dotspec quality init diagnostic-severity --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for init |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec quality list
+
+Discover quality requirements, grouped by associated system
+
+```sh
+dotspec quality list [flags]
+```
+
+```sh
+dotspec quality list --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--attribute` | `` | Include requirements with this attribute or a narrower attribute in their system's model |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for list |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec quality show
+
+Show authored Markdown and the associated system
+
+```sh
+dotspec quality show <slug> [flags]
+```
+
+```sh
+dotspec quality show diagnostic-severity --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for show |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
 
 ## dotspec system
 

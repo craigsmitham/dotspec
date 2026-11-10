@@ -13,7 +13,9 @@ import (
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/cli"
+	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
+	"github.com/craigsmitham/dotspec/internal/quality"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
 	"github.com/spf13/cobra"
@@ -46,6 +48,8 @@ func run(check bool) error {
 		{"examples/starter/specs/system.spec.md", system.Template},
 		{"examples/starter/specs/jobs/develop-requirements.job.spec.md", job.Template},
 		{"examples/starter/specs/use-cases/check-specifications.use-case.spec.md", usecase.Template},
+		{"examples/starter/specs/concepts/job-map.concept.spec.md", concept.Template},
+		{"examples/starter/specs/quality/diagnostic-severity.quality.spec.md", quality.Template},
 		{"docs/examples.md", gallery},
 	}
 	var stale []string
@@ -134,6 +138,12 @@ func outputGallery() (result string, err error) {
 		{"use-case", "init", "check-specifications"},
 		{"use-case", "show", "check-specifications", "--json"},
 		{"use-case", "check", "check-specifications", "--json"},
+		{"concept", "init", "job-map"},
+		{"concept", "show", "job-map", "--json"},
+		{"concept", "check", "job-map", "--json"},
+		{"quality", "init", "diagnostic-severity"},
+		{"quality", "show", "diagnostic-severity", "--json"},
+		{"quality", "check", "diagnostic-severity", "--json"},
 	} {
 		var out, errOut bytes.Buffer
 		if code := cli.Run(args, &out, &errOut); code != 0 {

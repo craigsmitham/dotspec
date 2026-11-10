@@ -17,7 +17,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/usecase"
 )
 
-const qualitySource = "---\ntype: quality-requirement\nid: QR-1\nunit: milliseconds\n---\n# Response time\n\n## Criterion\n95% of requests finish in 200 milliseconds. See [requirement](#QR-1).\n\n## Evidence\nRetain this **authored prose** and [criterion](#criterion).\n"
+const qualitySource = "---\ntype: quality\nid: QR-1\nunit: milliseconds\n---\n# Response time\n\n## Criterion\n95% of requests finish in 200 milliseconds. See [requirement](#QR-1).\n\n## Evidence\nRetain this **authored prose** and [criterion](#criterion).\n"
 
 func testScope(t *testing.T) string {
 	t.Helper()
@@ -34,7 +34,7 @@ func TestIndependentTypeIntegration(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if source != filepath.Join(dir, "specs/quality-requirements/response-time.quality-requirement.spec.md") {
+	if source != filepath.Join(dir, "specs/quality/response-time.quality.spec.md") {
 		t.Fatalf("unexpected created path: %s", source)
 	}
 	if _, err := quality.Layout.Create(dir, "response-time", "replacement"); err == nil {
@@ -49,7 +49,7 @@ func TestIndependentTypeIntegration(t *testing.T) {
 		if !report.Complete || report.ExitCode() != 0 || report.Summary.FilesChecked != 1 || report.Summary.ContextFilesChecked != 0 || len(report.Diagnostics) != 0 {
 			t.Fatalf("type acquired unrelated dependencies: %+v", report)
 		}
-		if !reflect.DeepEqual(report.Scope.Types, []string{"quality-requirement"}) {
+		if !reflect.DeepEqual(report.Scope.Types, []string{"quality"}) {
 			t.Fatalf("wrong registered scope: %+v", report.Scope)
 		}
 	}
@@ -81,7 +81,7 @@ func TestTypeOwnsMetadataSchemaAndIdentity(t *testing.T) {
 	}{
 		{"unknown field", strings.Replace(qualitySource, "unit:", "unknown:", 1), "metadata.invalid", 4},
 		{"wrong scalar", strings.Replace(qualitySource, "unit: milliseconds", "unit: [milliseconds]", 1), "metadata.invalid", 4},
-		{"wrong kind", strings.Replace(qualitySource, "type: quality-requirement", "type: another", 1), "metadata.type", 2},
+		{"wrong kind", strings.Replace(qualitySource, "type: quality", "type: another", 1), "metadata.type", 2},
 		{"invalid ID", strings.Replace(qualitySource, "id: QR-1", "id: QR 1", 1), "identity.invalid", 3},
 		{"unresolved ID", strings.Replace(qualitySource, "(#QR-1)", "(#QR-2)", 1), "reference.unresolved", 9},
 	} {
@@ -111,7 +111,7 @@ func TestIndependentTypeLayoutAndAdvice(t *testing.T) {
 	misplaced := filepath.Join(dir, "specs", "misplaced"+quality.Layout.Suffix)
 	write(t, misplaced, qualitySource)
 	for _, report := range []check.Report{check.Project(dir, kind), check.Focused(dir, "response-time", kind)} {
-		if report.ExitCode() != 1 || !report.Complete || report.Diagnostics[0].Rule != "layout.quality-requirement-location" || report.Diagnostics[0].Location.Path != misplaced {
+		if report.ExitCode() != 1 || !report.Complete || report.Diagnostics[0].Rule != "layout.quality-location" || report.Diagnostics[0].Location.Path != misplaced {
 			t.Fatalf("layout inferred another type's identity: %+v", report)
 		}
 	}
@@ -205,6 +205,37 @@ func TestMalformedTypeSkipsDependentContext(t *testing.T) {
 		if !report.Complete || report.ExitCode() != 1 || report.Summary.ContextFilesChecked != 0 || report.Summary.Advice != 0 {
 			t.Fatalf("dependent checks were not skipped: %+v", report)
 		}
+	}
+}
+
+func TestContextInspectionAndDependentChecks(t *testing.T) {
+	dir := testScope(t)
+	kind := quality.CheckType()
+	write(t, quality.Layout.Path(dir, "first"), qualitySource)
+	write(t, quality.Layout.Path(dir, "second"), qualitySource)
+	path := filepath.Join(dir, "model.txt")
+	resolveCalls, inspectCalls, dependentCalls := 0, 0, 0
+	var inspectionError error
+	kind.Context = &check.ContextProvider{
+		Resolve: func(string) ([]string, error) { resolveCalls++; return []string{path}, nil },
+		Inspect: func(string) ([]diagnostic.Diagnostic, error) { inspectCalls++; return nil, inspectionError },
+	}
+	kind.InspectContext = func(source string, paths []string) ([]diagnostic.Diagnostic, error) {
+		dependentCalls++
+		if !reflect.DeepEqual(paths, []string{path}) {
+			t.Fatalf("resolved paths: %v", paths)
+		}
+		return []diagnostic.Diagnostic{diagnostic.Advice("test.context", "Resolved.", diagnostic.Location{Path: source})}, nil
+	}
+	report := check.Project(dir, kind)
+	if resolveCalls != 1 || inspectCalls != 1 || dependentCalls != 2 || report.Summary.Advice != 2 {
+		t.Fatalf("context calls: %d %d %d; %+v", resolveCalls, inspectCalls, dependentCalls, report)
+	}
+	resolveCalls, inspectCalls, dependentCalls = 0, 0, 0
+	inspectionError = &os.PathError{Op: "open", Path: path, Err: os.ErrNotExist}
+	report = check.Project(dir, kind)
+	if report.ExitCode() != 2 || inspectCalls != 1 || dependentCalls != 0 || report.Summary.Errors != 1 {
+		t.Fatalf("failed context leaked to dependents: %d %d %+v", inspectCalls, dependentCalls, report)
 	}
 }
 

@@ -9,7 +9,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
+	"github.com/craigsmitham/dotspec/internal/quality"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
 	"github.com/spf13/cobra"
@@ -32,6 +34,8 @@ func prepareExample(t *testing.T, command string) {
 	}
 	writeFixture(t, "specs/jobs/develop-requirements.job.spec.md", viewFixture)
 	writeFixture(t, "specs/use-cases/check-specifications.use-case.spec.md", usecase.Template)
+	writeFixture(t, "specs/concepts/job-map.concept.spec.md", concept.Template)
+	writeFixture(t, "specs/quality/diagnostic-severity.quality.spec.md", quality.Template)
 }
 
 func TestDeclaredCommandExamples(t *testing.T) {
@@ -93,6 +97,8 @@ func TestStructuredReadContracts(t *testing.T) {
 		{"system", "show"}, {"system", "list"}, {"job", "show", "develop-requirements"},
 		{"job", "list"}, {"job", "step", "list", "develop-requirements"},
 		{"use-case", "show", "check-specifications"}, {"use-case", "list"},
+		{"concept", "show", "job-map"}, {"concept", "list"},
+		{"quality", "show", "diagnostic-severity"}, {"quality", "list"},
 		{"job", "outcome", "list", "develop-requirements"}, {"job", "map", "develop-requirements", "--outcomes"},
 	} {
 		code, out, errOut := invoke(append(args, "--json")...)
@@ -147,6 +153,8 @@ func TestOutputFailuresAcrossCommands(t *testing.T) {
 		{"job", "check", "develop-requirements", "--json"},
 		{"use-case", "show", "check-specifications"}, {"use-case", "list", "--json"},
 		{"use-case", "check", "check-specifications", "--json"},
+		{"concept", "show", "job-map"}, {"concept", "list", "--json"}, {"concept", "check", "job-map", "--json"},
+		{"quality", "show", "diagnostic-severity"}, {"quality", "list", "--json"}, {"quality", "check", "diagnostic-severity", "--json"},
 	} {
 		var stderr bytes.Buffer
 		if code := Run(args, failedOutput{}, &stderr); code != 2 || !strings.Contains(stderr.String(), "output unavailable") {

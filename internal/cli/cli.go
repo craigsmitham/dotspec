@@ -165,7 +165,7 @@ func NewRoot() *cobra.Command {
 		Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error { return cmd.Help() },
 	}
 	root.SetVersionTemplate("dotspec {{.Version}}\n")
-	root.AddCommand(newSystemCommand(), newJobCommand(), newUseCaseCommand(), newCheckCommand(), newManCommand(), newCompletionCommand())
+	root.AddCommand(newSystemCommand(), newJobCommand(), newUseCaseCommand(), newConceptCommand(), newQualityCommand(), newCheckCommand(), newManCommand(), newCompletionCommand())
 	root.InitDefaultHelpFlag()
 	root.InitDefaultVersionFlag()
 	root.InitDefaultHelpCmd()

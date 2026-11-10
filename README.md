@@ -10,6 +10,10 @@ their context, the steps involved, and how success is judged. Jobs are associate
 with the nearest enclosing system.
 Use-case specs describe an actor’s goal and interaction with a stated system
 boundary, including success criteria and exceptional conditions.
+Concept specs describe a coherent piece of product behavior through its purpose,
+abstract state, actions, and operational principle.
+Quality requirements describe assessable obligations. Optional quality attributes
+in a system spec define the vocabulary used to classify those requirements.
 
 The [CLI reference](docs/cli.md) and [command examples](docs/examples.md) are
 generated from the implementation. See [Contributing](CONTRIBUTING.md) for the
@@ -26,6 +30,8 @@ go run . job list
 go run . job show develop-requirements
 go run . use-case list
 go run . use-case show check-specifications
+go run . concept list
+go run . concept show job-map
 go run . check
 ```
 
@@ -39,7 +45,7 @@ go build -o dotspec .
 ## Project layout
 
 Each part of the project can have a `specs/` directory. It describes its parent
-project directory; folders inside `specs/` organize concepts and do not create
+project directory; folders inside `specs/` organize specifications and do not create
 subsystems or new scopes.
 
 ```text
@@ -50,6 +56,13 @@ specs/
     manage-requirements.job.spec.md
   use-cases/
     check-specifications.use-case.spec.md
+  concepts/
+    job-map.concept.spec.md
+    specification-inspection.concept.spec.md
+  quality/
+    diagnostic-severity.quality.spec.md
+    repeatable-inspection.quality.spec.md
+    inspection-preserves-source.quality.spec.md
 internal/
   parser/
     parser.go
@@ -65,10 +78,15 @@ The layout is required:
 - Jobs are `specs/jobs/<slug>.job.spec.md`, directly inside the plural `jobs/` folder.
 - Use cases are `specs/use-cases/<slug>.use-case.spec.md`, directly inside the
   plural `use-cases/` folder.
+- Concepts are `specs/concepts/<slug>.concept.spec.md`, directly inside the
+  plural `concepts/` folder.
+- Quality requirements are `specs/quality/<slug>.quality.spec.md`,
+  directly inside the `quality/` folder.
 - CLI namespaces and file type suffixes remain singular: `dotspec job` and
-  `.job.spec.md`, or `dotspec use-case` and `.use-case.spec.md`. Collection
-  directories are plural. Future types will follow the same convention, for
-  example `quality-requirements/`; quality-requirement specs are not implemented yet.
+  `.job.spec.md`, `dotspec use-case` and `.use-case.spec.md`, `dotspec concept`
+  and `.concept.spec.md`, or `dotspec quality` and
+  `.quality.spec.md`. Collections use plural names such as `jobs` and `concepts`,
+  or the mass noun `quality`.
 - Create folders only when needed. `init` creates the required spec directories;
   the selected project directory must already exist.
 
@@ -97,8 +115,8 @@ dotspec check --format json
 dotspec job check develop-requirements
 ```
 
-`check` discovers system, job, and use-case specifications using the same Git ignore,
-repository-boundary, and symlink rules as `list`. Outside Git, ignore files do
+`check` discovers system, job, use-case, concept, and quality specifications using the same
+Git ignore, repository-boundary, and symlink rules as `list`. Outside Git, ignore files do
 not affect discovery. It reports the selected scope, supported types, discovery
 mode, files examined, and whether the scan completed. Other specification types
 are not inspected. An empty completed scan succeeds and explicitly reports
@@ -107,11 +125,12 @@ are not inspected. An empty completed scan succeeds and explicitly reports
 Structural errors fail the check: misplaced files, invalid metadata, missing
 required system sections, duplicate IDs or conventional sections, malformed
 step structure, and unresolved same-document references. All supported types
-check Markdown heading references; jobs and use cases also resolve their explicit
-IDs. File and remote links are not checked.
+check Markdown heading references. Jobs, use cases, concepts, quality requirements,
+and system quality attributes also resolve their explicit document-local IDs.
+Quality models check broader-attribute references and reject cycles. File and remote links are not checked.
 
-Writing advice is nonfatal. It uses the job-writing and use-case checks below;
-missing maps, outcomes, optional IDs, and stages remain valid. Repeated stage
+Writing advice is nonfatal. It uses the type-specific content checks
+below; missing maps, outcomes, optional IDs, and stages remain valid. Repeated stage
 labels and jobs without an associated system also remain valid. A successful
 check makes no claim about completeness, research validation, or whether
 desired outcomes are achieved.
@@ -126,12 +145,21 @@ line numbers. YAML errors use the reported line with a column at its start.
 The checker continues across malformed files. Within a file, it reports the
 first structural error and skips dependent checks, including writing advice.
 Repairing that error may reveal another on the next run. Findings are sorted
-by path, line, column, rule, and message for repeatable output.
+by path, line, column, rule, and message. The
+[repeatability requirement](specs/quality/repeatable-inspection.quality.spec.md)
+defines equivalence across repeated inspections.
+The [diagnostic-severity requirement](specs/quality/diagnostic-severity.quality.spec.md)
+governs text presentation of severity, and the
+[source-preservation requirement](specs/quality/inspection-preserves-source.quality.spec.md)
+governs the effect of inspection on source files.
 
-Jobs and use cases also need their enclosing system inspected. As with
-`job show` and `use-case show`, this direct lookup can read an ancestor system
-outside the selected subtree or one excluded
-from discovery by an ignore rule. Such files are listed as additional context
+Jobs, use cases, concepts, and quality requirements also need their enclosing
+system inspected. Quality requirements resolve attributes only after that
+system passes structural validation; an invalid model does not trigger
+cascading undefined-attribute advice. As with
+`job show`, `use-case show`, and `concept show`, this direct lookup can read an
+ancestor system outside the selected subtree or one excluded from discovery by
+an ignore rule. Such files are listed as additional context
 and counted separately; shared findings appear once. Context lookup stops at
 the repository or worktree root, or the filesystem root outside Git.
 Failures to inspect a context directory are reported but do not count that
@@ -149,11 +177,12 @@ Text and JSON reports are written to standard output, including reports with
 findings or an incomplete scan. Argument and output errors go to standard error.
 Use the exit status as well as the report; a partial report is not a clean check.
 For example, a CI step can run `dotspec check --format json > check-report.json`.
-The focused `job check <slug>` and `use-case check <slug>` commands use the same
-report, diagnostic IDs, and `0`/`1`/`2` exit behavior. Each inspects one selected
+The focused `job check <slug>`, `use-case check <slug>`,
+`concept check <slug>`, and `quality check <slug>` commands use the same report, diagnostic IDs, and
+`0`/`1`/`2` exit behavior. Each inspects one selected
 specification and its enclosing system, with `scope.discovery: "direct"` and
-`scope.types: ["job"]` or `["use-case"]`. A missing specification is an incomplete
-check (exit `2`). File counts represent the selected candidate and attempted read,
+`scope.types: ["job"]`, `["use-case"]`, `["concept"]`, or `["quality"]`. A missing specification
+is an incomplete check (exit `2`). File counts represent the selected candidate and attempted read,
 including a missing file. All check commands send their reports to stdout;
 ordinary read-command errors go to stderr. This replaces the earlier focused
 check behavior that mixed findings into stderr and used only `0`/`1`.
@@ -177,13 +206,14 @@ The current rules are:
 
 | Rule IDs | Meaning |
 | --- | --- |
-| `layout.system-location`, `layout.job-location`, `layout.job-name`, `layout.use-case-location`, `layout.use-case-name`, `layout.directory` | File placement, filenames, or spec-directory structure. |
+| `layout.system-location`, `layout.job-location`, `layout.job-name`, `layout.use-case-location`, `layout.use-case-name`, `layout.concept-location`, `layout.concept-name`, `layout.directory` | File placement, filenames, or spec-directory structure. |
 | `metadata.frontmatter`, `metadata.invalid`, `metadata.type` | Frontmatter fences, valid YAML and accepted fields, or the declared type. |
 | `structure.title`, `structure.section-order`, `structure.required-section`, `structure.duplicate-section`, `structure.section-level`, `structure.step-heading`, `structure.duplicate-field` | Required document structure and unambiguous definitions. |
-| `identity.invalid`, `identity.duplicate` | Explicit job/use-case ID syntax and uniqueness within one job document. |
+| `identity.invalid`, `identity.duplicate` | Explicit ID syntax and uniqueness within one document. |
 | `reference.invalid`, `reference.unresolved` | Same-document fragment syntax and resolution. |
 | `job.statement`, `job.performer`, `job.boundary`, `job.outcome-empty`, `job.outcome-measure` | Advisory job-writing suggestions. |
 | `use-case.goal`, `use-case.system-boundary`, `use-case.primary-actor`, `use-case.goal-level`, `use-case.success-criterion`, `use-case.main-success-scenario`, `use-case.sequence` | Advice about missing use-case content or scenario order. |
+| `concept.purpose`, `concept.state`, `concept.actions`, `concept.operational-principle` | Advice about missing concept content. |
 | `scan.scope`, `scan.discovery`, `scan.read`, `scan.context` | Operational failures that prevent a complete project check. |
 
 There is one check command rather than a separate lint command. It is read-only:
@@ -191,8 +221,9 @@ it does not move files, rewrite prose, assign IDs, or apply fixes.
 
 ## Output and automation
 
-All system, job, and use-case commands, including `init`, accept `--json` or `--format json`.
-Use one of these flags, not both. The default is `--format text`; `job map` also
+All system, job, use-case, concept, and quality commands, including
+`init`, accept `--json`
+or `--format json`. Use one of these flags, not both. The default is `--format text`; `job map` also
 accepts `--format mermaid` and emits standalone diagram source. Redirecting output
 does not change its format. JSON, Mermaid, and redirected output contain no ANSI
 styling. `NO_COLOR` disables terminal styling, including help and errors.
@@ -202,13 +233,15 @@ above. Other results contain:
 
 | Command | Result fields |
 | --- | --- |
-| `system init`, `job init`, `use-case init` | `path` of the created specification |
+| `system init`, `job init`, `use-case init`, `concept init` | `path` of the created specification |
 | `system show` | `system` and its nullable `parent` |
 | `system list` | `systems`, a tree of `system` objects and `children` arrays |
 | `job show` | `job`, including its authored Markdown, steps, outcomes, and nullable `system` |
 | `job list` | `groups`, each with a nullable `system` and a `jobs` array |
 | `use-case show` | `use_case`, including its authored Markdown, conventional section bodies, and nullable `system` |
 | `use-case list` | `groups`, each with a nullable `system` and a `use_cases` array |
+| `concept show` | `concept`, including its authored Markdown, four conventional section bodies, and nullable `system` |
+| `concept list` | `groups`, each with a nullable `system` and a `concepts` array |
 | `job step list` | `name`, `path`, and `steps` in authored order |
 | `job outcome list` | `name`, `path`, `overall` outcomes, and selected `steps` with their outcomes |
 | `job map` | `name`, `path`, `overall`, and `steps`; outcomes are included only with `--outcomes` |
@@ -251,8 +284,10 @@ for usage.
   outside that subtree. An empty result is successful and reports that no
   systems were found.
 
-For `system list`, `job list`, and `use-case list`, discovery in Git repositories uses Git's
-ignore rules, including nested `.gitignore` files and local exclusions.
+For `system list`, `job list`, `use-case list`, `concept list`, and
+`quality list`, discovery in Git
+repositories uses Git's ignore rules, including nested `.gitignore` files and
+local exclusions.
 Tracked files remain visible even if
 an ignore rule matches them. Git must be installed for discovery in a repository.
 Outside Git, discovery walks the directory tree without applying ignore rules.
@@ -262,8 +297,8 @@ an explicitly selected symlink directory is resolved before the command runs.
 Missing specs for `show`, invalid paths, malformed specs, and command errors
 produce a diagnostic on standard error and a nonzero exit status. A malformed
 discovered spec makes `list` fail rather than silently omit it. Each list command
-reads only its own spec type; `job list` and `use-case list` also read the systems
-associated with their specifications.
+reads only its own spec type; all non-system list commands also
+read the systems associated with their specifications.
 
 ## System spec format
 
@@ -289,8 +324,10 @@ The frontmatter currently accepts only `type: system`. The Markdown body must
 contain exactly one nonempty document-level H1 naming the system, followed by
 nonempty `Purpose` and `Scope` H2 sections. Section names are case-sensitive.
 Section bodies can contain Markdown, including lists, code blocks, and deeper
-headings. Other sections are allowed but are not displayed by `system show`.
-There is no requirements section or requirement inheritance behavior.
+headings. The optional `Quality attributes` section is also displayed by
+`system show`
+and interpreted as described below. Other sections remain authored Markdown.
+There is no requirement inheritance behavior.
 
 The nearest ancestor project directory containing `specs/system.spec.md` defines
 the parent system:
@@ -302,6 +339,63 @@ internal/parser/specs/system.spec.md  # Spec parser, a subsystem of dotspec
 
 Moving a spec can therefore change its parent. Source paths in command output
 are relative to the current directory.
+
+## System quality attributes
+
+A system may define its local quality vocabulary in a `Quality attributes` H2
+section. Omit the section when a vocabulary is not needed. Its H3 headings
+introduce attributes; deeper headings belong to their definitions.
+
+```markdown
+## Quality attributes
+
+### Usability
+
+**ID:** usability
+
+How effectively contributors can author, inspect, and maintain specifications.
+
+### Diagnosability
+
+**ID:** diagnosability
+**Broader:** usability
+
+How effectively findings help contributors understand and locate problems.
+
+### Accessibility
+
+**ID:** accessibility
+**Broader:** usability
+
+How effectively people with differing abilities and ways of accessing output
+can use the CLI.
+```
+
+Each attribute needs a nonempty, document-unique `ID`. IDs begin with an ASCII
+letter or digit and otherwise contain letters, digits, hyphens, or underscores.
+They do not encode hierarchy: renaming or regrouping an attribute can preserve
+its ID. Same-document links can target these IDs as well as heading anchors.
+
+`Broader` is optional. When present it is a comma-separated list of distinct
+attribute IDs in this model; forward references are allowed. Several broader
+attributes are allowed. Unknown references, self-references, cycles, duplicate
+fields, and duplicate IDs are structural errors. Heading depth does not imply
+an attribute relationship. A missing definition produces nonfatal advice.
+
+Only `ID` and `Broader` lines in the attribute's introductory paragraphs are
+fields. Examples in code blocks, blockquotes, lists, and deeper subsections remain
+prose. Definitions retain their Markdown, including subsections and examples.
+
+`system show` displays the authored model. System JSON adds `quality_model`,
+which is `null` when the section is absent. A declared model contains `markdown`
+and an `attributes` array, including when that array is empty. Each attribute
+exposes `id`, `name`, `definition`, `broader`, and source `location`.
+
+The model belongs to this system. A subsystem does not inherit or merge its
+parent's definitions. Attribute grouping imposes no obligations or thresholds.
+External models, imports, and automatic edition mappings are not implemented.
+The repository's [system spec](specs/system.spec.md#quality-attributes) provides
+a local example, including concerns that do not yet have requirements.
 
 ## Job commands
 
@@ -676,6 +770,122 @@ The repository's [Check specifications before committing](specs/use-cases/check-
 example connects this interaction to the Develop Requirements job and references
 the governing check report contract.
 
+## Concept commands
+
+```sh
+dotspec concept init job-map
+dotspec concept show job-map
+dotspec concept list
+dotspec concept check job-map --json
+```
+
+Use concepts to describe a coherent piece of product behavior. Each concept
+explains its purpose, abstract state, available actions, and an operational
+principle: a characteristic story showing how the behavior fulfills the purpose.
+Concept descriptions are optional; a project does not need one for every noun,
+specification type, or implementation component.
+
+Every command accepts `--path DIR`, selecting an existing project directory,
+and `--json` or `--format json`.
+
+- `init <slug>` creates `specs/concepts/<slug>.concept.spec.md` from an editable
+  template. It creates missing metadata folders but never overwrites a file or
+  writes through a symlinked metadata directory.
+- `show <slug>` selects the concept in that project's `specs/concepts/` folder,
+  without searching ancestor projects for the slug. Text includes the complete
+  authored Markdown, associated system, and source path. JSON also exposes
+  `purpose`, `state`, `actions`, and `operational_principle` as Markdown strings.
+- `list` discovers concepts in the selected subtree, grouped by enclosing system.
+  Groups are ordered by system name and source path, with unassociated concepts
+  last; concepts within each group are ordered by source path. An empty list
+  succeeds.
+- `check <slug>` checks the selected concept and its enclosing system, reporting
+  structural errors and missing-content advice through the shared check report.
+  The project-wide `dotspec check` includes concepts as well.
+
+Slugs use lowercase ASCII letters or digits separated by single hyphens.
+Different project directories can reuse a slug. The nearest enclosing system
+is an association for organization, not a service boundary, inheritance rule,
+or statement of exclusive implementation ownership. A concept without an
+associated system is valid.
+
+## Concept spec format
+
+Only `type: concept` frontmatter and one nonempty document-level H1 are required.
+An optional `id` follows the same document-local identifier rules as jobs and use
+cases: begin with an ASCII letter or digit, followed by letters, digits, hyphens,
+or underscores. Dots are not allowed. IDs are not resolved across files, and
+repository-wide uniqueness is not checked. Unknown frontmatter fields are errors.
+
+```markdown
+---
+type: concept
+id: task
+---
+
+# Task
+
+## Purpose
+
+Track a piece of work through completion.
+
+## State
+
+Each task has an identity, text, and an active or completed status.
+
+## Actions
+
+### Create
+
+Given text, create a new active task.
+
+### Complete
+
+For an existing task, set its status to completed.
+Completing an already completed task leaves it unchanged.
+
+### Reopen
+
+For an existing task, set its status to active.
+
+## Operational principle
+
+Create a task to remember work. Complete it when the work is finished.
+If more work is needed, reopen the same task and complete it again.
+```
+
+The four conventional section names are case-sensitive H2 headings. Their order
+is flexible, and each may appear at most once. Missing or empty sections produce
+advice, so unfinished concepts remain readable. Additional sections and nested
+headings remain authored Markdown. A nested heading named `State`, for example,
+belongs to its containing section and does not replace the concept's H2 `State`.
+
+State describes the information needed to explain behavior; it need not match a
+database schema. Actions can use prose, tables, code blocks, or links to governing
+artifacts. Action subheadings have ordinary Markdown anchors, but are not separate
+records. Describe inputs, outputs, conditions, rejection behavior, and effects
+where relevant. Distinguish caller assumptions from enforced guards explicitly;
+no heading or notation automatically selects contract semantics.
+
+The operational principle explains how the design serves its purpose. Checking
+its presence does not establish complete behavior, preserved invariants, or
+requirement satisfaction. Checks resolve same-document heading and ID references;
+file links and remote links remain navigation and are not checked. A link alone
+does not designate an authoritative definition or associate a test result.
+
+Use cases can reference concept actions. Product-level rules composing several
+concepts belong in a shared composition description, linked from the participating
+views. Generic bindings such as `TaskLists = Collection<TaskId>` can be described
+in an additional section with a link to the generic definition. Typed bindings,
+synchronization records, cross-file identity, and executable authority are not
+part of this format.
+
+See [Job Map](specs/concepts/job-map.concept.spec.md) and
+[Specification Inspection](specs/concepts/specification-inspection.concept.spec.md)
+for concepts describing dotspec itself. The
+[check-before-committing use case](specs/use-cases/check-specifications.use-case.spec.md)
+shows Specification Inspection in a contributor's workflow.
+
 ## Development
 
 ```sh
@@ -684,3 +894,124 @@ go vet ./...
 ```
 
 Tests that exercise Git ignore rules and repository boundaries require Git.
+
+## Quality commands
+
+```sh
+dotspec quality init diagnostic-severity
+dotspec quality show diagnostic-severity
+dotspec quality list
+dotspec quality list --attribute usability --json
+dotspec quality check diagnostic-severity --json
+```
+
+Every command accepts `--path DIR`, selecting an existing project directory,
+and `--json` or `--format json`.
+
+- `init <slug>` creates `specs/quality/<slug>.quality.spec.md`
+  without overwriting an existing file or following symlinked metadata directories.
+- `show <slug>` reads the requirement in that project, displays its authored
+  Markdown and classifications, and reports its associated system and source.
+  Slug lookup does not search ancestor projects.
+- `list` discovers requirements in the selected subtree, grouped by associated
+  system. `--attribute ID` includes exact labels and attributes narrower than
+  that ID in each requirement's own model. Each matching requirement appears
+  once. Without a model, only exact labels match. Same-named attributes in
+  different systems remain separate definitions.
+- `check <slug>` checks the requirement and its system context with the shared
+  report format and exit behavior. Project-wide `dotspec check` includes this type.
+
+## Quality format
+
+A quality spec states one assessable quality requirement. The shorter `quality`
+name is used for the type, commands, folder, and file suffix.
+
+```markdown
+---
+type: quality
+id: diagnostic-severity
+attributes:
+  - diagnosability
+  - accessibility
+---
+
+# Diagnostic severity is available without styling
+
+## Applies to
+
+Human-readable reports from project-wide and focused specification checks.
+
+## Criterion
+
+Every diagnostic must identify its severity using a text label independently
+of terminal styling.
+
+## Measurement
+
+Capture output containing each severity, including with color disabled.
+Compare the labels with the reported severities and retain failures.
+
+## Rationale
+
+Contributors need to distinguish severities without relying on color.
+```
+
+Only `type: quality` and one nonempty document H1 are required.
+`id` is optional and follows the document-local ID rules. `attributes` is an
+optional list of unique, nonempty string IDs; an empty list is allowed. A scalar,
+null, non-string element, invalid ID, or duplicate label is a structural error.
+Unknown metadata fields are rejected.
+
+`Applies to`, `Criterion`, `Measurement`, and `Rationale` are optional H2 sections.
+Missing or empty sections produce advice; repeated conventional sections are
+errors. Deeper headings belong to their enclosing sections. Additional sections,
+links, and other authored Markdown are preserved. File and remote links remain
+navigation and are not validated.
+
+The nearest enclosing system supplies the model for label resolution. This is
+independent of the subject and conditions stated in `Applies to`. If no model
+exists, labels remain unbound without advice. With a model, each undefined label
+produces `quality.undefined-attribute` advice at its source location.
+An explicitly empty model consequently reports every used label as undefined.
+
+JSON retains `attributes` exactly as authored. The separate `classification`
+object exposes `model_path`, `resolved` attribute definitions, `broader` ancestor
+IDs in model declaration order, and `undefined` IDs in authored order. With no
+model, `model_path` is empty and all three arrays are empty. Broader groups are
+computed navigation, not additional authored labels or inherited requirements.
+The show envelope uses `quality`; list groups use `requirements`.
+Both envelopes include `schema_version: 1`. Empty collections are arrays.
+
+Use multiple attributes when they classify the same coherent obligation. Split
+obligations that need independent management, even if they share an attribute.
+Choose the most specific applicable labels; broad attributes can also be used.
+Grouping beneath an attribute does not establish that the attribute is satisfied.
+
+State the relevant subject, conditions, measure, target, and assessment method.
+For quantitative criteria include units, sampling, aggregation, and observation
+windows where applicable. If a target is unknown, explicitly record the open
+decision and the evidence needed to choose it. The checker does not evaluate
+prose, invent thresholds, assess test results, or decide requirement satisfaction.
+
+The repository examples are
+[diagnostic severity](specs/quality/diagnostic-severity.quality.spec.md),
+[repeatable inspection](specs/quality/repeatable-inspection.quality.spec.md),
+and [source preservation](specs/quality/inspection-preserves-source.quality.spec.md).
+They own their criteria; the report-format reference and inspection concept link
+to them. Responsiveness has a model definition but no adopted threshold.
+
+Additional rules for these formats:
+
+| Rule ID | Meaning |
+| --- | --- |
+| `layout.quality-location`, `layout.quality-name` | Required layout and slug |
+| `structure.attribute-heading` | Quality attributes must use nonempty H3 headings |
+| `identity.required` | Attribute definition needs an explicit ID |
+| `quality.broader` | Broader list is empty or contains an undefined reference |
+| `quality.cycle` | Broader graph contains a cycle |
+| `quality.definition` | Attribute definition is missing (advice) |
+| `quality.attributes` | Attribute list has an invalid shape or element |
+| `quality.undefined-attribute` | Label is absent from the selected model (advice) |
+| `quality.applies-to`, `quality.criterion`, `quality.measurement`, `quality.rationale` | Missing section content (advice) |
+
+Existing identity, duplicate-field, section, and reference rules also apply.

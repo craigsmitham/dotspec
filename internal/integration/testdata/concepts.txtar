@@ -1,0 +1,62 @@
+# Concept commands compose with existing commands and retain exit/channel rules.
+mkdir project
+cd project
+exec git init -q
+status 0 dotspec concept list --json
+stdout '"groups": \[\]'
+! stderr .
+status 0 dotspec concept init --path . -- job-map
+stdout 'Created specs/concepts/job-map.concept.spec.md'
+! stderr .
+status 0 dotspec concept show job-map --json
+stdout '"system": null'
+stdout '"operational_principle":'
+status 0 dotspec system init
+status 0 dotspec concept show job-map
+stdout '# New concept'
+stdout 'System: New system'
+status 0 dotspec concept list --json
+stdout '"concepts": \['
+stdout '"slug": "job-map"'
+status 0 dotspec concept check job-map --json
+stdout '"complete": true'
+stdout '"discovery": "direct"'
+stdout '"context_files_checked": 1'
+! stderr .
+status 2 dotspec concept init job-map
+stderr 'refusing to overwrite'
+! stdout .
+status 2 dotspec concept init invalid --format mermaid
+! stdout .
+! exists specs/concepts/invalid.concept.spec.md
+status 2 dotspec concept show job-map --path specs/concepts
+stderr 'selects a project directory'
+status 2 dotspec concept check absent --json
+stdout '"complete": false'
+! stderr .
+
+# A focused check ignores malformed siblings; a project scan reports all files.
+cp ../draft.md specs/concepts/draft.concept.spec.md
+cp ../broken.md specs/concepts/broken.concept.spec.md
+status 0 dotspec concept check draft
+stdout 'advice \[concept.purpose\]'
+stdout 'Scan complete.'
+! stderr .
+status 1 dotspec concept check broken --json
+stdout '"rule": "metadata.frontmatter"'
+! stderr .
+status 1 dotspec check --json
+stdout '"files_checked": 4'
+stdout '"errors": 1'
+stdout '"complete": true'
+! stderr .
+status 1 dotspec concept list
+stderr 'metadata.frontmatter'
+! stdout .
+-- draft.md --
+---
+type: concept
+---
+# An unfinished concept
+-- broken.md --
+This is not a specification.

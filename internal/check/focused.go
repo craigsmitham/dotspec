@@ -33,7 +33,7 @@ func Focused(path, slug string, kind Type) Report {
 	}
 	r.Diagnostics = append(r.Diagnostics, findings...)
 	if kind.Context != nil {
-		r.inspectContexts([]contextRequest{{kind.Context, dir}}, map[string]bool{source: true})
+		r.inspectContexts([]contextRequest{{contextKey{kind.Context, dir}, source, kind.InspectContext}}, map[string]bool{source: true})
 	}
 	return r.finish()
 }

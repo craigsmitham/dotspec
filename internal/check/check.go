@@ -88,7 +88,7 @@ func Project(path string, types ...Type) Report {
 				r.record(err, "scan.context", path)
 				continue
 			}
-			contexts = append(contexts, contextRequest{kind.Context, owner})
+			contexts = append(contexts, contextRequest{contextKey{kind.Context, owner}, path, kind.InspectContext})
 		}
 	}
 	r.inspectContexts(contexts, discovered)

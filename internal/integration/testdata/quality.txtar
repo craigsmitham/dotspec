@@ -1,0 +1,104 @@
+# An inline model resolves classifications without changing authored labels.
+mkdir project
+cd project
+exec git init -q
+status 0 dotspec quality init work --json
+stdout '"schema_version": 1'
+! stderr .
+status 0 dotspec quality show work --json
+stdout '"attributes": \[\]'
+stdout '"system": null'
+cp ../model.md specs/system.spec.md
+cp ../requirement.md specs/quality/work.quality.spec.md
+status 0 dotspec system show --json
+stdout '"quality_model":'
+stdout '"broader":'
+status 0 dotspec quality list --attribute usability --json
+stdout '"name": "Accessible diagnostics"'
+stdout '"attribute": "usability"'
+status 0 dotspec quality show work
+stdout 'Attributes: diagnostics, accessibility'
+stdout 'Broader groups: usability'
+status 0 dotspec quality check work --json
+stdout '"context_files_checked": 1'
+stdout '"advice": 0'
+! stderr .
+status 0 dotspec check --json
+stdout '"files_checked": 2'
+stdout '"context_files_checked": 0'
+cmp specs/quality/work.quality.spec.md ../requirement.md
+cmp specs/system.spec.md ../model.md
+status 2 dotspec quality init work
+stderr 'refusing to overwrite'
+! stdout .
+
+# Unknown labels are advice; an invalid model is a structural error.
+cp ../unknown.md specs/quality/unknown.quality.spec.md
+status 0 dotspec quality check unknown --json
+stdout 'quality.undefined-attribute'
+! stderr .
+cp ../cycle.md specs/system.spec.md
+status 1 dotspec quality check work --json
+stdout 'quality.cycle'
+! stdout 'undefined-attribute'
+! stderr .
+status 2 dotspec quality check missing --json
+stdout '"complete": false'
+! stderr .
+-- model.md --
+---
+type: system
+---
+# Project
+## Purpose
+Help contributors.
+## Scope
+CLI.
+## Quality attributes
+### Usability
+**ID:** usability
+Effective use.
+### Diagnostics
+**ID:** diagnostics
+**Broader:** usability
+Understandable findings.
+### Accessibility
+**ID:** accessibility
+**Broader:** usability
+Accessible output.
+-- requirement.md --
+---
+type: quality
+attributes: [diagnostics, accessibility]
+---
+# Accessible diagnostics
+## Applies to
+Human-readable check reports.
+## Criterion
+Every diagnostic identifies its severity in text.
+## Measurement
+Capture output for every severity.
+## Rationale
+Contributors can distinguish severities without color.
+-- unknown.md --
+---
+type: quality
+attributes: [unknown]
+---
+# Unknown classification
+-- cycle.md --
+---
+type: system
+---
+# Project
+## Purpose
+Help contributors.
+## Scope
+CLI.
+## Quality attributes
+### A
+**ID:** a
+**Broader:** b
+### B
+**ID:** b
+**Broader:** a

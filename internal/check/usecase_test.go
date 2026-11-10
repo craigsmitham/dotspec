@@ -22,7 +22,7 @@ func TestUseCaseProjectAndFocusedReports(t *testing.T) {
 	if focused.ExitCode() != 0 || !focused.Complete || focused.Summary.FilesChecked != 1 || focused.Summary.ContextFilesChecked != 1 || focused.Summary.Advice != 5 {
 		t.Fatalf("focused accounting: %+v", focused)
 	}
-	if !reflect.DeepEqual(focused.Scope.Types, []string{"use-case"}) || focused.Scope.Discovery != "direct" || !reflect.DeepEqual(project.Scope.Types, []string{"system", "job", "use-case"}) {
+	if !reflect.DeepEqual(focused.Scope.Types, []string{"use-case"}) || focused.Scope.Discovery != "direct" || !reflect.DeepEqual(project.Scope.Types, []string{"system", "job", "use-case", "concept", "quality"}) {
 		t.Fatalf("scope: %+v; %+v", focused.Scope, project.Scope)
 	}
 	// A job and use case sharing an ancestor report that context only once.

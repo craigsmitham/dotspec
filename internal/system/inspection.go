@@ -9,15 +9,20 @@ import (
 )
 
 func CheckType() check.Type {
-	return check.Type{Layout: Layout, Inspect: func(path string) ([]diagnostic.Diagnostic, error) {
-		_, err := Read(path)
+	return check.Type{Layout: Layout, Inspect: inspect}
+}
+
+func inspect(path string) ([]diagnostic.Diagnostic, error) {
+	spec, err := Read(path)
+	if err != nil {
 		return nil, err
-	}}
+	}
+	return Check(spec), nil
 }
 
 // CheckContext preserves the same nearest-system lookup as Show and List,
 // including ignored systems or ancestors outside the selected subtree.
-var CheckContext = &check.ContextProvider{Resolve: func(owner string) ([]string, error) {
+var CheckContext = &check.ContextProvider{Inspect: inspect, Resolve: func(owner string) ([]string, error) {
 	spec, err := Enclosing(owner)
 	if err != nil {
 		path := ""

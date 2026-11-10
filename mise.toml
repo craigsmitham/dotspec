@@ -49,7 +49,7 @@ depends = ["fmt-check", "tidy-check", "lint", "test", "generated-check", "spec-c
 
 [tasks.fuzz]
 description = "Exercise all Markdown parsers with bounded fuzzing"
-run = ["go test ./internal/system -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/job -run=^$ -fuzz=FuzzStructuredJob -fuzztime=10s -parallel=2", "go test ./internal/usecase -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2"]
+run = ["go test ./internal/system -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/job -run=^$ -fuzz=FuzzStructuredJob -fuzztime=10s -parallel=2", "go test ./internal/usecase -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/concept -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/quality -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2"]
 
 [tasks.release-check]
 description = "Validate the release configuration"

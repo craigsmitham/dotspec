@@ -6,8 +6,10 @@ import (
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/check"
+	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/job"
+	"github.com/craigsmitham/dotspec/internal/quality"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
 	"github.com/spf13/cobra"
@@ -15,7 +17,7 @@ import (
 
 func newCheckCommand() *cobra.Command {
 	cmd := &cobra.Command{Use: "check", Short: "Check all supported specifications in a project subtree",
-		Long:    "Check system, job, and use-case specifications using the same discovery rules as list.\n\n" + exitPolicy,
+		Long:    "Check system, job, use-case, concept, and quality specifications using the same discovery rules as list.\n\n" + exitPolicy,
 		Example: "dotspec check\ndotspec check --path internal --json", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
@@ -26,7 +28,7 @@ func newCheckCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return emitCheckReport(cmd.OutOrStdout(), check.Project(path, system.CheckType(), job.CheckType(), usecase.CheckType()), format)
+			return emitCheckReport(cmd.OutOrStdout(), check.Project(path, system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), quality.CheckType()), format)
 		},
 	}
 	addPath(cmd)

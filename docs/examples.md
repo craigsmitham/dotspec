@@ -199,7 +199,8 @@ dotspec use-case show check-specifications --json
       "name": "New system",
       "purpose": "Describe why this system exists and whom it serves.",
       "scope": "Describe the system's boundary and what it includes.",
-      "path": "$PROJECT/specs/system.spec.md"
+      "path": "$PROJECT/specs/system.spec.md",
+      "quality_model": null
     },
     "location": {
       "line": 5,
@@ -223,6 +224,166 @@ dotspec use-case check check-specifications --json
     "path": "$PROJECT",
     "types": [
       "use-case"
+    ],
+    "discovery": "direct"
+  },
+  "complete": true,
+  "context_files": [
+    "$PROJECT/specs/system.spec.md"
+  ],
+  "summary": {
+    "files_discovered": 1,
+    "files_checked": 1,
+    "context_files_checked": 1,
+    "errors": 0,
+    "advice": 0
+  },
+  "diagnostics": []
+}
+````
+
+## concept init job-map
+
+```sh
+dotspec concept init job-map
+```
+
+````text
+Created specs/concepts/job-map.concept.spec.md
+Describe the purpose, state, actions, and operational principle as they become known.
+````
+
+## concept show job-map --json
+
+```sh
+dotspec concept show job-map --json
+```
+
+````text
+{
+  "schema_version": 1,
+  "concept": {
+    "slug": "job-map",
+    "name": "New concept",
+    "purpose": "Describe the benefit this concept provides and why it exists.",
+    "state": "Describe the abstract information needed to explain the behavior, independently of its storage representation.",
+    "actions": "Describe or reference the available actions, their inputs and outputs, conditions, and effects.\nDistinguish caller assumptions from enforced guards, and state rejection behavior where it matters.\nUse subheadings for individual actions when useful.",
+    "operational_principle": "Tell a characteristic story showing how the actions and state fulfill the purpose.\nThe story explains the design; it does not establish exhaustive behavior or verification.",
+    "markdown": "# New concept\n\n## Purpose\n\nDescribe the benefit this concept provides and why it exists.\n\n## State\n\nDescribe the abstract information needed to explain the behavior, independently of its storage representation.\n\n## Actions\n\nDescribe or reference the available actions, their inputs and outputs, conditions, and effects.\nDistinguish caller assumptions from enforced guards, and state rejection behavior where it matters.\nUse subheadings for individual actions when useful.\n\n## Operational principle\n\nTell a characteristic story showing how the actions and state fulfill the purpose.\nThe story explains the design; it does not establish exhaustive behavior or verification.",
+    "path": "$PROJECT/specs/concepts/job-map.concept.spec.md",
+    "system": {
+      "name": "New system",
+      "purpose": "Describe why this system exists and whom it serves.",
+      "scope": "Describe the system's boundary and what it includes.",
+      "path": "$PROJECT/specs/system.spec.md",
+      "quality_model": null
+    },
+    "location": {
+      "line": 5,
+      "column": 1,
+      "element": "New concept"
+    }
+  }
+}
+````
+
+## concept check job-map --json
+
+```sh
+dotspec concept check job-map --json
+```
+
+````text
+{
+  "schema_version": 1,
+  "scope": {
+    "path": "$PROJECT",
+    "types": [
+      "concept"
+    ],
+    "discovery": "direct"
+  },
+  "complete": true,
+  "context_files": [
+    "$PROJECT/specs/system.spec.md"
+  ],
+  "summary": {
+    "files_discovered": 1,
+    "files_checked": 1,
+    "context_files_checked": 1,
+    "errors": 0,
+    "advice": 0
+  },
+  "diagnostics": []
+}
+````
+
+## quality init diagnostic-severity
+
+```sh
+dotspec quality init diagnostic-severity
+```
+
+````text
+Created specs/quality/diagnostic-severity.quality.spec.md
+Describe the scope, criterion, measurement, and rationale as they become known.
+````
+
+## quality show diagnostic-severity --json
+
+```sh
+dotspec quality show diagnostic-severity --json
+```
+
+````text
+{
+  "schema_version": 1,
+  "quality": {
+    "slug": "diagnostic-severity",
+    "name": "New quality requirement",
+    "applies_to": "Identify the subject and the conditions, workload, or population covered by this requirement.",
+    "criterion": "State one coherent obligation, including its measure, comparison, and target where applicable.\nIf a target is unknown, record the open decision and the evidence needed to choose it.",
+    "measurement": "Describe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.",
+    "rationale": "Explain why this quality matters and any relevant tradeoffs.",
+    "attributes": [],
+    "classification": {
+      "model_path": "",
+      "resolved": [],
+      "broader": [],
+      "undefined": []
+    },
+    "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and the conditions, workload, or population covered by this requirement.\n\n## Criterion\n\nState one coherent obligation, including its measure, comparison, and target where applicable.\nIf a target is unknown, record the open decision and the evidence needed to choose it.\n\n## Measurement\n\nDescribe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.",
+    "path": "$PROJECT/specs/quality/diagnostic-severity.quality.spec.md",
+    "system": {
+      "name": "New system",
+      "purpose": "Describe why this system exists and whom it serves.",
+      "scope": "Describe the system's boundary and what it includes.",
+      "path": "$PROJECT/specs/system.spec.md",
+      "quality_model": null
+    },
+    "location": {
+      "path": "$PROJECT/specs/quality/diagnostic-severity.quality.spec.md",
+      "line": 5,
+      "column": 1,
+      "element": "New quality requirement"
+    }
+  }
+}
+````
+
+## quality check diagnostic-severity --json
+
+```sh
+dotspec quality check diagnostic-severity --json
+```
+
+````text
+{
+  "schema_version": 1,
+  "scope": {
+    "path": "$PROJECT",
+    "types": [
+      "quality"
     ],
     "discovery": "direct"
   },

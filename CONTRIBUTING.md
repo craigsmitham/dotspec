@@ -35,7 +35,8 @@ includes errcheck, govet, ineffassign, staticcheck, and unused.
 - `internal/check` scans explicitly supplied type integrations and produces typed
   reports. It owns report accounting and context deduplication, without importing
   the concrete specification types. Checks do not print or exit.
-- `internal/system`, `internal/job`, and `internal/usecase` own type-specific parsing and validation,
+- `internal/system`, `internal/job`, `internal/usecase`, `internal/concept`, and
+  `internal/quality` own type-specific parsing and validation,
   metadata schemas, layouts, templates, and repository operations. Their `CheckType`
   functions supply inspection behavior; the CLI registers the supported types.
   Parsing functions accept bytes without I/O.
@@ -65,16 +66,21 @@ before validating local references. Preserve authored Markdown and source locati
 Expose a `CheckType` integration supplying the layout, slug validation, and an
 inspector that reads the file and returns writing advice only after structural
 validation succeeds. Attach a context provider only when the type needs other
-sources. Jobs and use cases share `system.CheckContext`; other types need not
+sources. Jobs, use cases, concepts, and quality requirements share
+`system.CheckContext`; other types need not
 depend on system specifications. Providers report attempted source paths even
 when reads fail, and the checker distinguishes structural findings from incomplete
-scans. Sharing a provider instance resolves it once per owning directory.
+scans. Sharing a provider instance resolves it once per owning directory. Its optional
+`Inspect` function contributes findings from context files. A type can supply
+`InspectContext` to check relationships against those resolved sources after
+context validation succeeds; quality requirements use this for attribute labels.
 
 Register the type in the CLI's project check and pass the same integration to any
 focused check command. Preserve the existing command and report contracts.
 `internal/check/testdata/quality` is a minimal integration fixture demonstrating
 another type with its own metadata and no dependency on existing domain packages;
-it does not define a supported quality-requirement format.
+its deliberately different metadata is test-only. The supported quality
+format belongs to `internal/quality`.
 
 ## CLI changes and generated artifacts
 

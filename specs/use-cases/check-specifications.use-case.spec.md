@@ -77,3 +77,11 @@ in the Develop Requirements job, including its conflict-detection outcome
 (`OUT-009`).
 Structural findings can inform that evaluation; human review still determines
 whether the requirements accurately represent stakeholder needs.
+
+## Related concepts
+
+[Specification Inspection](../concepts/specification-inspection.concept.spec.md)
+describes the report and inspection behavior used in this interaction.
+
+Its [quality obligations](../concepts/specification-inspection.concept.spec.md#state)
+cover diagnostic severity, report repeatability, and source preservation.

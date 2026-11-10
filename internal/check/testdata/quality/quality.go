@@ -14,7 +14,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
-var Layout = specfile.Layout{Kind: "quality-requirement", Collection: "quality-requirements", Suffix: ".quality-requirement.spec.md"}
+var Layout = specfile.Layout{Kind: "quality", Collection: "quality", Suffix: ".quality.spec.md"}
 
 type metadata struct {
 	specfile.Metadata `yaml:",inline"`
@@ -48,7 +48,7 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 
 func validateSlug(slug string) error {
 	if !slugPattern.MatchString(slug) {
-		return fmt.Errorf("invalid quality-requirement slug %q", slug)
+		return fmt.Errorf("invalid quality slug %q", slug)
 	}
 	return nil
 }
@@ -56,7 +56,7 @@ func validateSlug(slug string) error {
 func CheckType() check.Type {
 	return check.Type{Layout: Layout, ValidateSlug: validateSlug, Inspect: func(path string) ([]diagnostic.Diagnostic, error) {
 		if err := validateSlug(strings.TrimSuffix(filepath.Base(path), Layout.Suffix)); err != nil {
-			return nil, diagnostic.Error("layout.quality-requirement-name", err.Error(), diagnostic.Location{Path: path})
+			return nil, diagnostic.Error("layout.quality-name", err.Error(), diagnostic.Location{Path: path})
 		}
 		if _, err := Layout.Owner(path); err != nil {
 			return nil, err
@@ -72,7 +72,7 @@ func CheckType() check.Type {
 		if requirement.Unit == "" {
 			location := requirement.Location
 			location.Path = path
-			return []diagnostic.Diagnostic{diagnostic.Advice("quality-requirement.unit", "Identify the unit of measurement.", location)}, nil
+			return []diagnostic.Diagnostic{diagnostic.Advice("quality.unit", "Identify the unit of measurement.", location)}, nil
 		}
 		return nil, nil
 	}}
