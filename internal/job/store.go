@@ -2,9 +2,7 @@ package job
 
 import (
 	"fmt"
-	"path/filepath"
 	"sort"
-	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
@@ -23,13 +21,11 @@ func Init(path, slug string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if err := specfile.ValidateLocal(dir, "jobs", isSpec); err != nil {
+	if err := Layout.ValidateLocal(dir); err != nil {
 		return "", err
 	}
-	return specfile.Create(dir, filepath.Join(specfile.Folder, "jobs", slug+Suffix), Template)
+	return Layout.Create(dir, slug, Template)
 }
-
-func isSpec(name string) bool { return strings.HasSuffix(name, Suffix) }
 
 // Show selects exactly one job in the requested directory, without searching
 // ancestor directories for a matching slug.
@@ -41,10 +37,10 @@ func Show(path, slug string) (*Job, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := specfile.ValidateLocal(dir, "jobs", isSpec); err != nil {
+	if err := Layout.ValidateLocal(dir); err != nil {
 		return nil, err
 	}
-	job, err := Read(specfile.Path(dir, "jobs", slug+Suffix))
+	job, err := Read(Layout.Path(dir, slug))
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +59,7 @@ func List(path string) ([]*Group, error) {
 	if err != nil {
 		return nil, err
 	}
-	paths, err := specfile.Discover(dir, isSpec)
+	paths, err := specfile.Discover(dir, Layout.Match)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +71,7 @@ func List(path string) ([]*Group, error) {
 		if err != nil {
 			return nil, err
 		}
-		dir, err := specfile.Owner(path, "jobs")
+		dir, err := Layout.Owner(path)
 		if err != nil {
 			return nil, err
 		}

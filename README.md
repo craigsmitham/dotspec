@@ -134,6 +134,8 @@ outside the selected subtree or one excluded
 from discovery by an ignore rule. Such files are listed as additional context
 and counted separately; shared findings appear once. Context lookup stops at
 the repository or worktree root, or the filesystem root outside Git.
+Failures to inspect a context directory are reported but do not count that
+directory as a context file.
 
 All commands use these exit codes:
 

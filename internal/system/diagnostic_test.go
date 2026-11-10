@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
 func TestSystemDiagnosticLocations(t *testing.T) {
@@ -20,7 +19,7 @@ func TestSystemDiagnosticLocations(t *testing.T) {
 		{"---\ntype: system\n---\n# Example\n## Purpose\nHelp.\n## Scope\n[Missing](#absent)\n", "reference.unresolved", 8},
 	} {
 		for _, source := range []string{tt.source, "\ufeff" + strings.ReplaceAll(tt.source, "\n", "\r\n")} {
-			_, err := specfile.Parse([]byte(source), "system", "Purpose", "Scope")
+			_, err := Parse([]byte(source))
 			var d *diagnostic.Diagnostic
 			if !errors.As(err, &d) || d.Rule != tt.rule || d.Location.Line != tt.line || d.Location.Column < 1 {
 				t.Errorf("%s: expected source line %d, got %+v (%v)", tt.rule, tt.line, d, err)
@@ -31,7 +30,7 @@ func TestSystemDiagnosticLocations(t *testing.T) {
 
 func TestSystemHeadingReferences(t *testing.T) {
 	source := "---\ntype: system\n---\n# Example\n## Purpose\nSee [scope](#scope) and [details](#details).\n## Scope\nThe product.\n### Details\n[External](https://example.com) and [file](other.md#other) stay unchecked.\n```markdown\n[Example](#not-an-actual-link)\n```\n"
-	if _, err := specfile.Parse([]byte(source), "system", "Purpose", "Scope"); err != nil {
+	if _, err := Parse([]byte(source)); err != nil {
 		t.Fatal(err)
 	}
 }

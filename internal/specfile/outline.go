@@ -20,7 +20,7 @@ type Section struct {
 }
 
 type Outline struct {
-	Name, ID     string
+	Name         string
 	NameLocation diagnostic.Location
 	Source       []byte
 	Original     []byte
@@ -29,22 +29,18 @@ type Outline struct {
 	Anchors      map[string]bool
 }
 
-// ParseOutline retains document structure for types with nested sections.
-func ParseOutline(data []byte, kind string) (*Outline, error) {
-	return parseOutline(data, kind, true)
-}
-
-// parseOutline is the one Markdown extraction path for all specification types.
-// Frontmatter permissions and semantic section requirements remain type-specific.
-func parseOutline(data []byte, kind string, allowID bool) (*Outline, error) {
+// ParseOutline is the shared Markdown extraction path. The caller supplies a
+// fresh metadata destination defining its accepted fields and interprets the
+// resulting sections and metadata, including any explicit identifiers.
+func ParseOutline(data []byte, kind string, metadata TypedMetadata) (*Outline, error) {
 	data = Normalize(data)
-	id, body, err := frontmatter(data, kind, allowID)
+	body, err := frontmatter(data, kind, metadata)
 	if err != nil {
 		return nil, err
 	}
 	md := goldmark.New(goldmark.WithParserOptions(parser.WithAutoHeadingID()))
 	doc := md.Parser().Parse(text.NewReader(body))
-	out := &Outline{ID: id, Source: body, Original: data, AST: doc, Anchors: make(map[string]bool)}
+	out := &Outline{Source: body, Original: data, AST: doc, Anchors: make(map[string]bool)}
 	var stack []*Section
 	titles := 0
 	var titleLocation diagnostic.Location

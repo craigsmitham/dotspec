@@ -17,6 +17,13 @@ import (
 
 const Suffix = ".job.spec.md"
 
+var Layout = specfile.Layout{Kind: "job", Collection: "jobs", Suffix: Suffix}
+
+type metadata struct {
+	specfile.Metadata `yaml:",inline"`
+	ID                string `yaml:"id"`
+}
+
 const Template = `---
 type: job
 ---
@@ -46,7 +53,6 @@ Use an optional Outcomes section for individual success criteria.
 `
 
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
-var identifierPattern = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9_-]*$`)
 var fieldPattern = regexp.MustCompile(`^\*\*(ID|Stage):\*\*\s*(.*?)\s*$`)
 var outcomePattern = regexp.MustCompile(`^\*\*([^*]+):\*\*\s*`)
 
@@ -102,7 +108,7 @@ func Read(path string) (*Job, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.job-name", err.Error(), diagnostic.Location{Path: path})
 	}
-	if _, err := specfile.Owner(path, "jobs"); err != nil {
+	if _, err := Layout.Owner(path); err != nil {
 		return nil, err
 	}
 	data, err := os.ReadFile(path)
@@ -120,27 +126,14 @@ func Read(path string) (*Job, error) {
 // Parse recognizes structured sections but keeps all Markdown for display.
 // Missing content is a draft, while conflicting identities and structure are errors.
 func Parse(data []byte) (*Job, error) {
-	doc, err := specfile.ParseOutline(data, "job")
+	var meta metadata
+	doc, err := specfile.ParseOutline(data, Layout.Kind, &meta)
 	if err != nil {
 		return nil, err
 	}
-	job := &Job{Steps: []Step{}, Outcomes: []Outcome{}, ID: doc.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
-	ids := make(map[string]diagnostic.Location)
-	register := func(id, element string, location diagnostic.Location) error {
-		if id == "" {
-			return nil
-		}
-		location.Element = element
-		if !identifierPattern.MatchString(id) {
-			return diagnostic.Error("identity.invalid", fmt.Sprintf("%s: invalid ID %q; use letters, digits, hyphens, or underscores", element, id), location)
-		}
-		if previous, exists := ids[id]; exists {
-			return diagnostic.Error("identity.duplicate", fmt.Sprintf("duplicate ID %q in %s and %s; assign distinct IDs", id, previous.Element, element), location, previous)
-		}
-		ids[id] = location
-		return nil
-	}
-	if err := register(job.ID, "job", specfile.MetadataLocation(data, "id")); err != nil {
+	job := &Job{Steps: []Step{}, Outcomes: []Outcome{}, ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
+	var ids specfile.Identifiers
+	if err := ids.Register(job.ID, "job", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err
 	}
 	sections := make(map[string]*specfile.Section)
@@ -177,7 +170,7 @@ func Parse(data []byte) (*Job, error) {
 			return nil, err
 		}
 		for _, outcome := range job.Outcomes {
-			if err := register(outcome.ID, "job outcomes", outcome.Location); err != nil {
+			if err := ids.Register(outcome.ID, "job outcomes", outcome.Location); err != nil {
 				return nil, err
 			}
 		}
@@ -191,20 +184,18 @@ func Parse(data []byte) (*Job, error) {
 			if err != nil {
 				return nil, err
 			}
-			if err := register(step.ID, "step "+step.Name, step.IDLocation); err != nil {
+			if err := ids.Register(step.ID, "step "+step.Name, step.IDLocation); err != nil {
 				return nil, err
 			}
 			for _, outcome := range step.Outcomes {
-				if err := register(outcome.ID, "outcomes for step "+step.Name, outcome.Location); err != nil {
+				if err := ids.Register(outcome.ID, "outcomes for step "+step.Name, outcome.Location); err != nil {
 					return nil, err
 				}
 			}
 			job.Steps = append(job.Steps, step)
 		}
 	}
-	for id := range ids {
-		doc.Anchors[id] = true
-	}
+	ids.AddAnchors(doc.Anchors)
 	err = specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors)
 	if err != nil {
 		return nil, err

@@ -19,13 +19,11 @@ func Init(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if err := specfile.ValidateLocal(dir, "", isSpec); err != nil {
+	if err := Layout.ValidateLocal(dir); err != nil {
 		return "", err
 	}
-	return specfile.Create(dir, filepath.Join(specfile.Folder, Filename), Template)
+	return Layout.Create(dir, "", Template)
 }
-
-func isSpec(name string) bool { return name == Filename }
 
 // Enclosing returns the nearest system, or nil when none exists. Malformed
 // enclosing specs remain errors. Lookup stops at the repository boundary.
@@ -63,10 +61,10 @@ func enclosing(path string, limit int) ([]*System, error) {
 	}
 	var specs []*System
 	for current := dir; ; current = filepath.Dir(current) {
-		if err := specfile.ValidateLocal(current, "", isSpec); err != nil {
+		if err := Layout.ValidateLocal(current); err != nil {
 			return nil, err
 		}
-		candidate, err := Read(specfile.Path(current, "", Filename))
+		candidate, err := Read(Layout.Path(current, ""))
 		if err == nil {
 			specs = append(specs, candidate)
 			if len(specs) == limit {
@@ -89,7 +87,7 @@ func List(path string) ([]*Node, error) {
 	if err != nil {
 		return nil, err
 	}
-	paths, err := specfile.Discover(dir, isSpec)
+	paths, err := specfile.Discover(dir, Layout.Match)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +100,7 @@ func List(path string) ([]*Node, error) {
 		}
 		node := &Node{System: spec, Children: []*Node{}}
 		nodes = append(nodes, node)
-		owner, err := specfile.Owner(path, "")
+		owner, err := Layout.Owner(path)
 		if err != nil {
 			return nil, err
 		}
@@ -111,7 +109,7 @@ func List(path string) ([]*Node, error) {
 	var roots []*Node
 	for _, node := range nodes {
 		var parent *Node
-		owner, _ := specfile.Owner(node.System.Path, "") // Read already validated placement.
+		owner, _ := Layout.Owner(node.System.Path) // Read already validated placement.
 		for current := owner; current != dir; {
 			current = filepath.Dir(current)
 			if parent = byDir[current]; parent != nil {

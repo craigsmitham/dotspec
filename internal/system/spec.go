@@ -11,6 +11,12 @@ import (
 
 const Filename = "system.spec.md"
 
+var Layout = specfile.Layout{Kind: "system", Filename: Filename}
+
+type metadata struct {
+	specfile.Metadata `yaml:",inline"`
+}
+
 const Template = `---
 type: system
 ---
@@ -37,10 +43,10 @@ func Read(path string) (*System, error) {
 	if filepath.Base(path) != Filename {
 		return nil, diagnostic.Error("layout.system-location", fmt.Sprintf("expected a %s filename", Filename), diagnostic.Location{Path: path})
 	}
-	if _, err := specfile.Owner(path, ""); err != nil {
+	if _, err := Layout.Owner(path); err != nil {
 		return nil, err
 	}
-	doc, err := specfile.Read(path, "system", "Purpose", "Scope")
+	doc, err := specfile.Read(path, Layout.Kind, &metadata{}, "Purpose", "Scope")
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +54,7 @@ func Read(path string) (*System, error) {
 }
 
 func Parse(data []byte) (*System, error) {
-	doc, err := specfile.Parse(data, "system", "Purpose", "Scope")
+	doc, err := specfile.Parse(data, Layout.Kind, &metadata{}, "Purpose", "Scope")
 	if err != nil {
 		return nil, err
 	}

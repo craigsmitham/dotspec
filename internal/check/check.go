@@ -4,15 +4,10 @@ package check
 import (
 	"errors"
 	"os"
-	"path/filepath"
 	"sort"
-	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/craigsmitham/dotspec/internal/system"
-	"github.com/craigsmitham/dotspec/internal/usecase"
 )
 
 type Scope struct {
@@ -51,8 +46,9 @@ func (r Report) ExitCode() int {
 // Project uses the same discovery policy as list: Git's ignore rules when in a
 // repository, no ignore rules otherwise, and no symlinks or nested repositories.
 // A malformed file blocks only its dependent checks, not the rest of the scan.
-func Project(path string) Report {
-	r := Report{SchemaVersion: 1, Scope: Scope{Path: path, Types: []string{"system", "job", "use-case"}, Discovery: "unavailable"}, Complete: true, ContextFiles: []string{}, Diagnostics: []diagnostic.Diagnostic{}}
+func Project(path string, types ...Type) Report {
+	r := newReport(path, "unavailable", types)
+	match := func(name string) bool { return findType(name, types) != nil }
 	dir, err := specfile.Scope(path)
 	if err != nil {
 		r.Complete = false
@@ -69,81 +65,51 @@ func Project(path string) Report {
 	if root != "" {
 		r.Scope.Discovery = "git"
 	}
-	paths, err := specfile.Discover(dir, supported)
+	paths, err := specfile.Discover(dir, match)
 	if err != nil {
 		r.record(err, "scan.discovery", dir)
 	}
 	r.Summary.FilesDiscovered = len(paths)
 	discovered := make(map[string]bool)
-	var contexts []string
+	var contexts []contextRequest
 	for _, path := range paths {
 		discovered[path] = true
 		r.Summary.FilesChecked++
-		if filepath.Base(path) == system.Filename {
-			if _, err := system.Read(path); err != nil {
-				r.record(err, "scan.read", path)
-			}
+		kind := findType(path, types) // Discovery returned only matching paths.
+		findings, err := kind.Inspect(path)
+		if err != nil {
+			r.record(err, "scan.read", path)
 			continue
 		}
-		collection := "jobs"
-		if strings.HasSuffix(path, usecase.Suffix) {
-			collection = usecase.Collection
-			spec, err := usecase.Read(path)
+		r.Diagnostics = append(r.Diagnostics, findings...)
+		if kind.Context != nil {
+			owner, err := kind.Layout.Owner(path)
 			if err != nil {
-				r.record(err, "scan.read", path)
+				r.record(err, "scan.context", path)
 				continue
 			}
-			r.Diagnostics = append(r.Diagnostics, usecase.Check(spec)...)
-		} else {
-			spec, err := job.Read(path)
-			if err != nil {
-				r.record(err, "scan.read", path)
-				continue
-			}
-			r.Diagnostics = append(r.Diagnostics, job.Check(spec)...)
-		}
-		owner, err := specfile.Owner(path, collection)
-		if err != nil {
-			r.record(err, "scan.context", path)
-			continue
-		}
-		contexts = append(contexts, owner)
-	}
-	// Match job and use-case show/list association semantics, including systems
-	// outside the selected subtree. Report that supplemental scope explicitly.
-	owners := make(map[string]bool)
-	context := make(map[string]bool)
-	for _, owner := range contexts {
-		if owners[owner] {
-			continue
-		}
-		owners[owner] = true
-		associated, err := system.Enclosing(owner)
-		contextPath := ""
-		if err != nil {
-			r.record(err, "scan.context", owner)
-			var finding *diagnostic.Diagnostic
-			var pathError *os.PathError
-			if errors.As(err, &finding) && supported(finding.Location.Path) {
-				contextPath = finding.Location.Path
-			} else if errors.As(err, &pathError) && supported(pathError.Path) {
-				contextPath = pathError.Path
-			}
-		} else if associated != nil {
-			contextPath = associated.Path
-		}
-		if contextPath != "" && !discovered[contextPath] && !context[contextPath] {
-			context[contextPath] = true
-			r.ContextFiles = append(r.ContextFiles, contextPath)
-			r.Summary.ContextFilesChecked++
+			contexts = append(contexts, contextRequest{kind.Context, owner})
 		}
 	}
+	r.inspectContexts(contexts, discovered)
 	return r.finish()
 }
 
-func supported(path string) bool {
-	name := filepath.Base(path)
-	return name == system.Filename || strings.HasSuffix(name, job.Suffix) || strings.HasSuffix(name, usecase.Suffix)
+func findType(path string, types []Type) *Type {
+	for i := range types {
+		if types[i].Layout.Match(path) {
+			return &types[i]
+		}
+	}
+	return nil
+}
+
+func newReport(path, discovery string, types []Type) Report {
+	names := make([]string, 0, len(types))
+	for _, kind := range types {
+		names = append(names, kind.Layout.Kind)
+	}
+	return Report{SchemaVersion: 1, Scope: Scope{Path: path, Types: names, Discovery: discovery}, Complete: true, ContextFiles: []string{}, Diagnostics: []diagnostic.Diagnostic{}}
 }
 
 // record and finish keep report accounting, error identity, and deterministic

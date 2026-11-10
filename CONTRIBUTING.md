@@ -32,18 +32,49 @@ includes errcheck, govet, ineffassign, staticcheck, and unused.
 
 - `main.go` owns process exit. `internal/cli` defines Cobra commands and handles
   presentation, JSON encoding, Fang terminal help, Lip Gloss errors, and status mapping.
-- `internal/check` produces typed reports. Checks do not print or exit.
+- `internal/check` scans explicitly supplied type integrations and produces typed
+  reports. It owns report accounting and context deduplication, without importing
+  the concrete specification types. Checks do not print or exit.
 - `internal/system`, `internal/job`, and `internal/usecase` own type-specific parsing and validation,
-  templates, and repository operations. Parsing functions accept bytes without I/O.
+  metadata schemas, layouts, templates, and repository operations. Their `CheckType`
+  functions supply inspection behavior; the CLI registers the supported types.
+  Parsing functions accept bytes without I/O.
 - `internal/specfile` owns common frontmatter, Goldmark outlines, source locations,
-  local references, and shared filesystem/discovery behavior. All specification
-  types use the same Markdown extraction path.
+  document-local identifiers, local references, and shared filesystem/discovery
+  behavior. All specification types use the same Markdown extraction path.
 - `internal/diagnostic` owns stable findings and source locations.
 
 Keep CLI dependencies out of the parser and checker. Preserve authored Markdown
 and locations; semantic validation must not silently rewrite files. Test a new
 specification construct with valid, invalid, and source-location examples. Preserve
 unknown prose and distinguish draft omissions from structural errors.
+
+### Adding a specification type
+
+Define a `specfile.Layout` in the owning type package with its kind, collection,
+and either a singleton filename or a slug suffix. Use that layout for discovery,
+placement validation, creation, and direct lookup so those operations agree.
+Keep slug rules and filename diagnostics in the type package.
+
+Define a metadata struct embedding `specfile.Metadata` with `yaml:",inline"` and
+pass a fresh pointer to `specfile.ParseOutline` (or `Parse` for required-section
+extraction). The shared decoder rejects fields outside that schema. Interpret
+sections in the type package; register any explicit IDs with `specfile.Identifiers`
+before validating local references. Preserve authored Markdown and source locations.
+
+Expose a `CheckType` integration supplying the layout, slug validation, and an
+inspector that reads the file and returns writing advice only after structural
+validation succeeds. Attach a context provider only when the type needs other
+sources. Jobs and use cases share `system.CheckContext`; other types need not
+depend on system specifications. Providers report attempted source paths even
+when reads fail, and the checker distinguishes structural findings from incomplete
+scans. Sharing a provider instance resolves it once per owning directory.
+
+Register the type in the CLI's project check and pass the same integration to any
+focused check command. Preserve the existing command and report contracts.
+`internal/check/testdata/quality` is a minimal integration fixture demonstrating
+another type with its own metadata and no dependency on existing domain packages;
+it does not define a supported quality-requirement format.
 
 ## CLI changes and generated artifacts
 

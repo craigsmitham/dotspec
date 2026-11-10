@@ -1,4 +1,4 @@
-package check
+package check_test
 
 import (
 	"os"
@@ -43,7 +43,7 @@ func TestProjectContinuesAcrossMalformedFiles(t *testing.T) {
 	for path, source := range sources {
 		write(t, filepath.Join(dir, path), source)
 	}
-	r := Project(dir)
+	r := checkProject(dir)
 	if !r.Complete || r.ExitCode() != 1 || r.Summary.FilesDiscovered != 5 || r.Summary.FilesChecked != 5 || r.Summary.Errors != 3 || r.Summary.Advice != 2 {
 		t.Fatalf("report: %+v", r)
 	}
@@ -60,7 +60,7 @@ func TestProjectContinuesAcrossMalformedFiles(t *testing.T) {
 	if !reflect.DeepEqual(rules, want) {
 		t.Fatalf("unexpected or cascading findings: %v", rules)
 	}
-	if next := Project(dir); !reflect.DeepEqual(r, next) {
+	if next := checkProject(dir); !reflect.DeepEqual(r, next) {
 		t.Fatal("unchanged inputs produced a different report")
 	}
 	for path, source := range sources {
@@ -87,7 +87,7 @@ func TestSubtreeReportsAncestorContext(t *testing.T) {
 		if broken {
 			write(t, ancestor, "not a spec")
 		}
-		r := Project(child)
+		r := checkProject(child)
 		if !r.Complete || r.Summary.FilesChecked != 2 || r.Summary.ContextFilesChecked != 1 || !reflect.DeepEqual(r.ContextFiles, []string{ancestor}) {
 			t.Fatalf("subtree context: %+v", r)
 		}
@@ -116,26 +116,26 @@ func TestDiscoveryUsesGitVisibility(t *testing.T) {
 	if err := os.Symlink(outside, filepath.Join(dir, "linked")); err != nil {
 		t.Fatal(err)
 	}
-	r := Project(dir)
+	r := checkProject(dir)
 	if r.Scope.Discovery != "git" || !r.Complete || r.Summary.FilesChecked != 2 || r.Summary.Errors != 1 || r.Diagnostics[0].Rule != "metadata.frontmatter" {
 		t.Fatalf("Git visibility changed: %+v", r)
 	}
 	plain := t.TempDir()
 	write(t, filepath.Join(plain, ".gitignore"), "ignored/\n")
 	write(t, filepath.Join(plain, "ignored/bad.job.spec.md"), "not ignored outside Git")
-	if r := Project(plain); r.Scope.Discovery != "filesystem" || r.Summary.FilesChecked != 1 || r.ExitCode() != 1 {
+	if r := checkProject(plain); r.Scope.Discovery != "filesystem" || r.Summary.FilesChecked != 1 || r.ExitCode() != 1 {
 		t.Fatalf("filesystem visibility changed: %+v", r)
 	}
 }
 
 func TestEmptyAndAdvisoryOnlyProjectsSucceed(t *testing.T) {
 	dir := t.TempDir()
-	r := Project(dir)
+	r := checkProject(dir)
 	if !r.Complete || r.ExitCode() != 0 || r.Summary.FilesChecked != 0 || r.Diagnostics == nil {
 		t.Fatalf("empty project: %+v", r)
 	}
 	write(t, filepath.Join(dir, "specs/jobs/draft.job.spec.md"), "---\ntype: job\n---\n# Draft\n")
-	r = Project(dir)
+	r = checkProject(dir)
 	if !r.Complete || r.ExitCode() != 0 || r.Summary.Errors != 0 || r.Summary.Advice != 2 {
 		t.Fatalf("advisory-only project: %+v", r)
 	}
@@ -145,7 +145,7 @@ func TestIncompleteScanIsNotAValidationFailure(t *testing.T) {
 	dir := t.TempDir()
 	git(t, dir, "init", "-q")
 	t.Setenv("PATH", t.TempDir()) // Git discovery cannot run.
-	r := Project(dir)
+	r := checkProject(dir)
 	if r.Complete || r.ExitCode() != 2 || len(r.Diagnostics) != 1 || r.Diagnostics[0].Rule != "scan.discovery" {
 		t.Fatalf("failed discovery must not look like an empty successful scan: %+v", r)
 	}
@@ -155,7 +155,7 @@ func TestIncompleteScanIsNotAValidationFailure(t *testing.T) {
 				t.Fatal(err)
 			}
 		}
-		r = Project(path)
+		r = checkProject(path)
 		if r.Complete || r.ExitCode() != 2 || r.Diagnostics[0].Rule != "scan.scope" {
 			t.Fatalf("invalid scope: %+v", r)
 		}
@@ -174,7 +174,7 @@ func TestUnreadableSpecDoesNotPreventOtherChecks(t *testing.T) {
 	if _, err := os.ReadFile(unreadable); err == nil {
 		t.Skip("this user can read files despite permissions")
 	}
-	r := Project(dir)
+	r := checkProject(dir)
 	if r.Complete || r.ExitCode() != 2 || r.Summary.FilesChecked != 2 || r.Summary.Advice != 2 || r.Summary.Errors != 1 {
 		t.Fatalf("file access failure prevented independent checks: %+v", r)
 	}

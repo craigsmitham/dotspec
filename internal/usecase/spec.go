@@ -16,6 +16,13 @@ import (
 const Suffix = ".use-case.spec.md"
 const Collection = "use-cases"
 
+var Layout = specfile.Layout{Kind: "use-case", Collection: Collection, Suffix: Suffix}
+
+type metadata struct {
+	specfile.Metadata `yaml:",inline"`
+	ID                string `yaml:"id"`
+}
+
 const Template = `---
 type: use-case
 ---
@@ -69,7 +76,6 @@ Link to the jobs, steps, or desired outcomes this use case supports.
 `
 
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
-var identifierPattern = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9_-]*$`)
 
 // UseCase retains section bodies as Markdown. Scenario steps and extensions
 // are not separate records, and file ownership does not set the system boundary.
@@ -111,7 +117,7 @@ func Read(path string) (*UseCase, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.use-case-name", err.Error(), diagnostic.Location{Path: path})
 	}
-	if _, err := specfile.Owner(path, Collection); err != nil {
+	if _, err := Layout.Owner(path); err != nil {
 		return nil, err
 	}
 	data, err := os.ReadFile(path)
@@ -129,17 +135,17 @@ func Read(path string) (*UseCase, error) {
 // Parse accepts unfinished content, but rejects ambiguous document structure
 // and unresolved same-document references. Other links remain navigation.
 func Parse(data []byte) (*UseCase, error) {
-	doc, err := specfile.ParseOutline(data, "use-case")
+	var meta metadata
+	doc, err := specfile.ParseOutline(data, Layout.Kind, &meta)
 	if err != nil {
 		return nil, err
 	}
-	spec := &UseCase{ID: doc.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
-	if spec.ID != "" {
-		if !identifierPattern.MatchString(spec.ID) {
-			return nil, diagnostic.Error("identity.invalid", fmt.Sprintf("use case: invalid ID %q; use letters, digits, hyphens, or underscores", spec.ID), specfile.MetadataLocation(data, "id"))
-		}
-		doc.Anchors[spec.ID] = true
+	spec := &UseCase{ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
+	var ids specfile.Identifiers
+	if err := ids.Register(spec.ID, "use case", specfile.MetadataLocation(data, "id")); err != nil {
+		return nil, err
 	}
+	ids.AddAnchors(doc.Anchors)
 	fields := map[string]*string{
 		"Goal": &spec.Goal, "System boundary": &spec.SystemBoundary,
 		"Primary actor": &spec.PrimaryActor, "Goal level": &spec.GoalLevel,

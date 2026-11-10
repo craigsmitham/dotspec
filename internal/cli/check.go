@@ -7,6 +7,9 @@ import (
 
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/craigsmitham/dotspec/internal/job"
+	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/craigsmitham/dotspec/internal/usecase"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +26,7 @@ func newCheckCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return emitCheckReport(cmd.OutOrStdout(), check.Project(path), format)
+			return emitCheckReport(cmd.OutOrStdout(), check.Project(path, system.CheckType(), job.CheckType(), usecase.CheckType()), format)
 		},
 	}
 	addPath(cmd)

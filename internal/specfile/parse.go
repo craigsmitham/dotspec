@@ -20,12 +20,25 @@ type Document struct {
 	Path     string
 }
 
-func Read(path, kind string, required ...string) (*Document, error) {
+// Metadata is the common type declaration. Type packages embed it with
+// yaml:",inline" to define their own strictly decoded frontmatter schema.
+type Metadata struct {
+	Type string `yaml:"type"`
+}
+
+func (m Metadata) SpecType() string { return m.Type }
+
+// TypedMetadata must be a pointer to the type's metadata destination.
+type TypedMetadata interface {
+	SpecType() string
+}
+
+func Read(path, kind string, metadata TypedMetadata, required ...string) (*Document, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	spec, err := Parse(data, kind, required...)
+	spec, err := Parse(data, kind, metadata, required...)
 	if err != nil {
 		return nil, diagnostic.WithPath(err, path)
 	}
@@ -35,8 +48,8 @@ func Read(path, kind string, required ...string) (*Document, error) {
 
 // Parse validates a spec type and its required H2 sections. Section bodies
 // retain their original Markdown; headings in code and blockquotes are ignored.
-func Parse(data []byte, kind string, required ...string) (*Document, error) {
-	outline, err := parseOutline(data, kind, false)
+func Parse(data []byte, kind string, metadata TypedMetadata, required ...string) (*Document, error) {
+	outline, err := ParseOutline(data, kind, metadata)
 	if err != nil {
 		return nil, err
 	}
@@ -130,51 +143,37 @@ func MetadataLocation(data []byte, key string) diagnostic.Location {
 
 var yamlLine = regexp.MustCompile(`line (\d+)`)
 
-func frontmatter(data []byte, kind string, allowID bool) (string, []byte, error) {
+func frontmatter(data []byte, kind string, metadata TypedMetadata) ([]byte, error) {
 	data = Normalize(data)
 	lines := bytes.Split(data, []byte("\n"))
 	if len(lines) == 0 || string(bytes.TrimSpace(lines[0])) != "---" {
-		return "", nil, diagnostic.Error("metadata.frontmatter", "expected YAML frontmatter beginning with ---", diagnostic.At(data, 0))
+		return nil, diagnostic.Error("metadata.frontmatter", "expected YAML frontmatter beginning with ---", diagnostic.At(data, 0))
 	}
 	end := 1
 	for end < len(lines) && string(bytes.TrimSpace(lines[end])) != "---" {
 		end++
 	}
 	if end == len(lines) {
-		return "", nil, diagnostic.Error("metadata.frontmatter", "YAML frontmatter must end with ---", diagnostic.At(data, 0))
-	}
-	var metadata struct {
-		Type string `yaml:"type"`
-		ID   string `yaml:"id"`
+		return nil, diagnostic.Error("metadata.frontmatter", "YAML frontmatter must end with ---", diagnostic.At(data, 0))
 	}
 	decoder := yaml.NewDecoder(bytes.NewReader(bytes.Join(lines[1:end], []byte("\n"))))
 	decoder.KnownFields(true)
-	var systemMetadata struct {
-		Type string `yaml:"type"`
-	}
-	var target any = &metadata
-	if !allowID {
-		target = &systemMetadata
-	}
-	if err := decoder.Decode(target); err != nil {
+	if err := decoder.Decode(metadata); err != nil {
 		location := diagnostic.Location{Line: 2, Column: 1}
 		if match := yamlLine.FindStringSubmatch(err.Error()); match != nil {
 			line, _ := strconv.Atoi(match[1])
 			location.Line = line + 1
 		}
-		return "", nil, diagnostic.Error("metadata.invalid", fmt.Sprintf("invalid YAML frontmatter: %v", err), location)
+		return nil, diagnostic.Error("metadata.invalid", fmt.Sprintf("invalid YAML frontmatter: %v", err), location)
 	}
-	if !allowID {
-		metadata.Type = systemMetadata.Type
-	}
-	if metadata.Type != kind {
-		return "", nil, diagnostic.Error("metadata.type", fmt.Sprintf("frontmatter must declare type: %s", kind), MetadataLocation(data, "type"))
+	if metadata.SpecType() != kind {
+		return nil, diagnostic.Error("metadata.type", fmt.Sprintf("frontmatter must declare type: %s", kind), MetadataLocation(data, "type"))
 	}
 	var extra any
 	if err := decoder.Decode(&extra); err != io.EOF {
-		return "", nil, diagnostic.Error("metadata.invalid", "frontmatter must contain exactly one YAML document", diagnostic.Location{Line: 2, Column: 1})
+		return nil, diagnostic.Error("metadata.invalid", "frontmatter must contain exactly one YAML document", diagnostic.Location{Line: 2, Column: 1})
 	}
 
 	body := bytes.Join(lines[end+1:], []byte("\n"))
-	return metadata.ID, body, nil
+	return body, nil
 }

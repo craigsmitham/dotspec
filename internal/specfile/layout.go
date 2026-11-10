@@ -6,11 +6,49 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 )
 
 const Folder = "specs"
+
+// Layout describes either a singleton filename or a collection of slug-named
+// files. The owning type supplies its kind; layout never infers domain identity
+// from a directory name. Slug validation remains the type's responsibility.
+type Layout struct {
+	Kind       string
+	Collection string
+	Filename   string
+	Suffix     string
+}
+
+func (l Layout) Match(name string) bool {
+	name = filepath.Base(name)
+	if l.Filename != "" {
+		return name == l.Filename
+	}
+	return strings.HasSuffix(name, l.Suffix)
+}
+
+func (l Layout) filename(slug string) string {
+	if l.Filename != "" {
+		return l.Filename
+	}
+	return slug + l.Suffix
+}
+
+func (l Layout) Path(owner, slug string) string {
+	return l.path(owner, l.filename(slug))
+}
+
+func (l Layout) path(owner, filename string) string {
+	return filepath.Join(owner, Folder, l.Collection, filename)
+}
+
+func (l Layout) Create(owner, slug, template string) (string, error) {
+	return Create(owner, filepath.Join(Folder, l.Collection, l.filename(slug)), template)
+}
 
 // Scope resolves a project directory. The reserved specs tree contains metadata,
 // so it cannot introduce another project scope.
@@ -29,49 +67,38 @@ func Scope(path string) (string, error) {
 	return dir, nil
 }
 
-func Path(owner, collection, filename string) string {
-	return filepath.Join(owner, Folder, collection, filename)
-}
-
 // Owner validates a spec's placement and returns the directory it describes.
-// An empty collection denotes the singleton system spec directly under specs/.
-func Owner(path, collection string) (string, error) {
+// An empty collection places a spec directly under specs/.
+func (l Layout) Owner(path string) (string, error) {
 	dir := filepath.Dir(path)
 	metadata, err := metadataDirectory(dir)
 	if err != nil {
 		return "", err
 	}
-	if metadata != "" && dir == filepath.Join(metadata, collection) {
+	if metadata != "" && dir == filepath.Join(metadata, l.Collection) {
 		return filepath.Dir(metadata), nil
 	}
-	expected := Path("<project-dir>", collection, filepath.Base(path))
+	expected := l.path("<project-dir>", filepath.Base(path))
 	if metadata != "" {
-		expected = Path(filepath.Dir(metadata), collection, filepath.Base(path))
+		expected = l.path(filepath.Dir(metadata), filepath.Base(path))
 	}
-	return "", misplaced(path, expected, collection)
+	return "", l.misplaced(path, expected)
 }
 
-func misplaced(path, expected, collection string) error {
-	kind := "system"
-	switch collection {
-	case "jobs":
-		kind = "job"
-	case "use-cases":
-		kind = "use-case"
-	}
-	return diagnostic.Error("layout."+kind+"-location", fmt.Sprintf("misplaced spec: expected %s", expected), diagnostic.Location{Path: path})
+func (l Layout) misplaced(path, expected string) error {
+	return diagnostic.Error("layout."+l.Kind+"-location", fmt.Sprintf("misplaced spec: expected %s", expected), diagnostic.Location{Path: path})
 }
 
 // ValidateLocal rejects misplaced specs in this scope, including adjacent files
 // and singular collection folders. Child project scopes are checked separately.
-func ValidateLocal(owner, collection string, match func(string) bool) error {
+func (l Layout) ValidateLocal(owner string) error {
 	entries, err := os.ReadDir(owner)
 	if err != nil {
 		return err
 	}
 	for _, entry := range entries {
-		if entry.Type().IsRegular() && match(entry.Name()) {
-			return misplaced(filepath.Join(owner, entry.Name()), Path(owner, collection, entry.Name()), collection)
+		if entry.Type().IsRegular() && l.Match(entry.Name()) {
+			return l.misplaced(filepath.Join(owner, entry.Name()), l.path(owner, entry.Name()))
 		}
 	}
 	metadata := filepath.Join(owner, Folder)
@@ -85,8 +112,8 @@ func ValidateLocal(owner, collection string, match func(string) bool) error {
 	if !info.IsDir() {
 		return diagnostic.Error("layout.directory", "must be a directory, not a file or symlink", diagnostic.Location{Path: metadata})
 	}
-	if collection != "" {
-		dir := filepath.Join(metadata, collection)
+	if l.Collection != "" {
+		dir := filepath.Join(metadata, l.Collection)
 		info, err := os.Lstat(dir)
 		if err != nil && !errors.Is(err, fs.ErrNotExist) {
 			return err
@@ -97,12 +124,12 @@ func ValidateLocal(owner, collection string, match func(string) bool) error {
 	}
 	// Like direct reads, local validation does not need Git or apply ignore
 	// rules. Discovery retains its separate Git-aware visibility rules.
-	paths, err := walkPaths(metadata, match)
+	paths, err := walkPaths(metadata, l.Match)
 	if err != nil {
 		return err
 	}
 	for _, path := range paths {
-		if _, err := Owner(path, collection); err != nil {
+		if _, err := l.Owner(path); err != nil {
 			return err
 		}
 	}

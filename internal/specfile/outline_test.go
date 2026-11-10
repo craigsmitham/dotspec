@@ -8,11 +8,11 @@ import (
 func TestSharedOutlinePreservesProseAndLocations(t *testing.T) {
 	source := "---\ntype: system\n---\n# **Café** `parser`\n\n## Purpose\nAuthored *prose*.\n\n### Detail\nKeep [this](#detail).\n\n```md\n# Example only\n```\n\n> ## Quoted section\n\n## Scope\nOne project.\n"
 	for _, data := range []string{source, "\ufeff" + strings.ReplaceAll(source, "\n", "\r\n")} {
-		outline, err := ParseOutline([]byte(data), "system")
+		outline, err := ParseOutline([]byte(data), "system", &Metadata{})
 		if err != nil {
 			t.Fatal(err)
 		}
-		document, err := Parse([]byte(data), "system", "Purpose", "Scope")
+		document, err := Parse([]byte(data), "system", &Metadata{}, "Purpose", "Scope")
 		if err != nil {
 			t.Fatal(err)
 		}
