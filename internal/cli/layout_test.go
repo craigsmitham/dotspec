@@ -46,7 +46,7 @@ func TestMisplacedSpecsFailLocalCommands(t *testing.T) {
 				if command[0] == "check" {
 					out, errOut = errOut, out
 				}
-				if code == 0 || out != "" || !strings.Contains(errOut, "misplaced spec") || !strings.Contains(errOut, tt.expected) {
+				if code == 0 || out != "" || !strings.Contains(errOut, "misplaced spec") || !strings.Contains(filepath.ToSlash(errOut), tt.expected) {
 					t.Errorf("%v: %d %q %q", args, code, out, errOut)
 				}
 			}

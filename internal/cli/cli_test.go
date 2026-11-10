@@ -86,7 +86,7 @@ func TestMissingAndMalformedSystems(t *testing.T) {
 	}
 	writeFixture(t, filepath.Join(dir, "specs", "system.spec.md"), "broken")
 	code, out, errOut = invoke("system", "show", "--path", dir)
-	if code == 0 || out != "" || !strings.Contains(errOut, "specs/system.spec.md") {
+	if code == 0 || out != "" || !strings.Contains(filepath.ToSlash(errOut), "specs/system.spec.md") {
 		t.Fatalf("malformed: %d %q %q", code, out, errOut)
 	}
 }
