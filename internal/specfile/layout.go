@@ -6,6 +6,8 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+
+	"github.com/craigsmitham/dotspec/internal/diagnostic"
 )
 
 const Folder = "specs"
@@ -46,7 +48,15 @@ func Owner(path, collection string) (string, error) {
 	if metadata != "" {
 		expected = Path(filepath.Dir(metadata), collection, filepath.Base(path))
 	}
-	return "", fmt.Errorf("misplaced spec %s: expected %s", path, expected)
+	return "", misplaced(path, expected, collection)
+}
+
+func misplaced(path, expected, collection string) error {
+	kind := "system"
+	if collection == "jobs" {
+		kind = "job"
+	}
+	return diagnostic.Error("layout."+kind+"-location", fmt.Sprintf("misplaced spec: expected %s", expected), diagnostic.Location{Path: path})
 }
 
 // ValidateLocal rejects misplaced specs in this scope, including adjacent files
@@ -58,7 +68,7 @@ func ValidateLocal(owner, collection string, match func(string) bool) error {
 	}
 	for _, entry := range entries {
 		if entry.Type().IsRegular() && match(entry.Name()) {
-			return fmt.Errorf("misplaced spec %s: expected %s", filepath.Join(owner, entry.Name()), Path(owner, collection, entry.Name()))
+			return misplaced(filepath.Join(owner, entry.Name()), Path(owner, collection, entry.Name()), collection)
 		}
 	}
 	metadata := filepath.Join(owner, Folder)
@@ -70,7 +80,7 @@ func ValidateLocal(owner, collection string, match func(string) bool) error {
 		return err
 	}
 	if !info.IsDir() {
-		return fmt.Errorf("%s must be a directory, not a file or symlink", metadata)
+		return diagnostic.Error("layout.directory", "must be a directory, not a file or symlink", diagnostic.Location{Path: metadata})
 	}
 	if collection != "" {
 		dir := filepath.Join(metadata, collection)
@@ -79,7 +89,7 @@ func ValidateLocal(owner, collection string, match func(string) bool) error {
 			return err
 		}
 		if err == nil && !info.IsDir() {
-			return fmt.Errorf("%s must be a directory, not a file or symlink", dir)
+			return diagnostic.Error("layout.directory", "must be a directory, not a file or symlink", diagnostic.Location{Path: dir})
 		}
 	}
 	// Like direct reads, local validation does not need Git or apply ignore

@@ -142,7 +142,7 @@ func runJobArgs(args []string, out io.Writer) error {
 				return err
 			}
 			for _, suggestion := range suggestions {
-				if _, err = fmt.Fprintf(out, "- %s: %s\n", suggestion.Location, suggestion.Message); err != nil {
+				if _, err = fmt.Fprintf(out, "- %s [%s] %s: %s\n", suggestion.Location, suggestion.Rule, suggestion.Location.Element, suggestion.Message); err != nil {
 					return err
 				}
 			}

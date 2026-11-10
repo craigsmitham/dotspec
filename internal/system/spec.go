@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
@@ -34,7 +35,7 @@ type System struct {
 
 func Read(path string) (*System, error) {
 	if filepath.Base(path) != Filename {
-		return nil, fmt.Errorf("%s: expected a %s filename", path, Filename)
+		return nil, diagnostic.Error("layout.system-location", fmt.Sprintf("expected a %s filename", Filename), diagnostic.Location{Path: path})
 	}
 	if _, err := specfile.Owner(path, ""); err != nil {
 		return nil, err

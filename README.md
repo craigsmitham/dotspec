@@ -18,6 +18,7 @@ go run . system show
 go run . system list
 go run . job list
 go run . job show develop-requirements
+go run . check
 ```
 
 ## Build
@@ -72,6 +73,99 @@ and initialization also reject misplaced specs of that type directly in the
 selected project directory or anywhere within its `specs/` tree. Having both
 old and new locations is an error; there is no location precedence or automatic
 migration. Revise any relative file links when moving documents.
+
+## Check specifications
+
+Before committing specification changes, check the selected project subtree:
+
+```sh
+dotspec check
+dotspec check --path internal/parser
+dotspec check --format json
+dotspec job check develop-requirements
+```
+
+`check` discovers system and job specifications using the same Git ignore,
+repository-boundary, and symlink rules as `list`. Outside Git, ignore files do
+not affect discovery. It reports the selected scope, supported types, discovery
+mode, files examined, and whether the scan completed. Other specification types
+are not inspected. An empty completed scan succeeds and explicitly reports
+`No supported specifications found.`
+
+Structural errors fail the check: misplaced files, invalid metadata, missing
+required system sections, duplicate IDs or conventional sections, malformed
+step structure, and unresolved same-document references. Both system and job
+specifications check Markdown heading references; jobs also resolve their
+explicit IDs. File and remote links are not checked.
+
+Writing advice is nonfatal. It uses the existing job-writing heuristics below;
+missing maps, outcomes, optional IDs, and stages remain valid. Repeated stage
+labels and jobs without an associated system also remain valid. A successful
+check makes no claim about completeness, research validation, or whether
+desired outcomes are achieved.
+
+Each finding includes a stable rule ID, severity (`error` or `advice`), message,
+and source path. Findings include a section or element, line, and column when
+available; duplicate definitions include the earlier source location too.
+Lines and columns are one-based, columns count Unicode code points, and line
+numbers include frontmatter. Layout errors have file locations without invented
+line numbers. YAML errors use the reported line with a column at its start.
+
+The checker continues across malformed files. Within a file, it reports the
+first structural error and skips dependent checks, including writing advice.
+Repairing that error may reveal another on the next run. Findings are sorted
+by path, line, column, rule, and message for repeatable output.
+
+Jobs also need their enclosing system inspected. As with `job show`, this direct
+lookup can read an ancestor system outside the selected subtree or one excluded
+from discovery by an ignore rule. Such files are listed as additional context
+and counted separately; shared findings appear once. Context lookup stops at
+the repository or worktree root, or the filesystem root outside Git.
+
+The project-wide command uses these exit codes:
+
+| Code | Meaning |
+| --- | --- |
+| `0` | Scan completed with no structural errors; advice may be present. |
+| `1` | Scan completed with structural findings. |
+| `2` | Invalid invocation, failed discovery or file access, or output failure. The scan or report could not be completed. |
+
+Text and JSON reports are written to standard output, including reports with
+findings or an incomplete scan. Argument and output errors go to standard error.
+Use the exit status as well as the report; a partial report is not a clean check.
+For example, a CI step can run `dotspec check --format json > check-report.json`.
+The focused `job check <slug>` retains its existing single-job interface and
+`0`/`1` exit behavior, using the same validation rules and diagnostic IDs.
+
+JSON schema version `1` contains:
+
+| Field | Meaning |
+| --- | --- |
+| `schema_version` | Report schema version for consumers. |
+| `scope` | Absolute resolved project path, supported `types`, and `discovery` mode (`git`, `filesystem`, or `unavailable`). An unresolved scope retains the supplied path. |
+| `complete` | Whether discovery and all attempted file checks completed, independently of structural findings. |
+| `context_files` | Additional source paths consulted outside the discovered set. |
+| `summary` | `files_discovered`, `files_checked`, `context_files_checked`, `errors`, and `advice`. Checked counts include attempted checks of invalid or unreadable files. |
+| `diagnostics` | Findings with `rule`, `severity`, `message`, `location`, and optional `related` locations. Empty findings are an empty array. |
+
+Locations contain `path` and optional `line`, `column`, and `element`. Report
+source paths are absolute; text displays them relative to the current directory
+when possible. Use rule IDs rather than matching message text in automation.
+
+The current rules are:
+
+| Rule IDs | Meaning |
+| --- | --- |
+| `layout.system-location`, `layout.job-location`, `layout.job-name`, `layout.directory` | File placement, job filename, or spec-directory structure. |
+| `metadata.frontmatter`, `metadata.invalid`, `metadata.type` | Frontmatter fences, valid YAML and accepted fields, or the declared type. |
+| `structure.title`, `structure.section-order`, `structure.required-section`, `structure.duplicate-section`, `structure.section-level`, `structure.step-heading`, `structure.duplicate-field` | Required document structure and unambiguous definitions. |
+| `identity.invalid`, `identity.duplicate` | Explicit ID syntax and uniqueness within one job document. |
+| `reference.invalid`, `reference.unresolved` | Same-document fragment syntax and resolution. |
+| `job.statement`, `job.performer`, `job.boundary`, `job.outcome-empty`, `job.outcome-measure` | Advisory job-writing suggestions. |
+| `scan.scope`, `scan.discovery`, `scan.read`, `scan.context` | Operational failures that prevent a complete project check. |
+
+There is one check command rather than a separate lint command. It is read-only:
+it does not move files, rewrite prose, assign IDs, or apply fixes.
 
 ## System commands
 

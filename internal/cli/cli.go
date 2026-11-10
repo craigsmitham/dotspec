@@ -13,7 +13,11 @@ import (
 	"github.com/craigsmitham/dotspec/internal/system"
 )
 
-const usage = `Usage: dotspec <concept> <command> [--path DIR]
+const usage = `Usage: dotspec check [--path DIR] [--format text|json]
+       dotspec <concept> <command> [--path DIR]
+
+Commands:
+  check    Check all supported specifications in a project subtree
 
 Concepts:
   system   Describe systems and discover their hierarchy
@@ -35,6 +39,13 @@ Use --help for command help.
 
 func Run(args []string, stdout, stderr io.Writer) int {
 	if err := run(args, stdout); err != nil {
+		var status *exitError
+		if errors.As(err, &status) {
+			if status.err != nil {
+				fmt.Fprintf(stderr, "dotspec: %v\n", status.err)
+			}
+			return status.code
+		}
 		fmt.Fprintf(stderr, "dotspec: %v\n", err)
 		return 1
 	}
@@ -47,6 +58,9 @@ func run(args []string, out io.Writer) error {
 		return err
 	}
 	kind := args[0]
+	if kind == "check" {
+		return runCheckArgs(args[1:], out)
+	}
 	if kind == "job" {
 		return runJobArgs(args[1:], out)
 	}

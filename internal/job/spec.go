@@ -4,12 +4,12 @@ package job
 import (
 	"bytes"
 	"fmt"
-	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 
+	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/yuin/goldmark/ast"
@@ -53,10 +53,12 @@ var outcomePattern = regexp.MustCompile(`^\*\*([^*]+):\*\*\s*`)
 type Outcome struct {
 	ID        string
 	Statement string
+	Location  diagnostic.Location
 }
 
 type Step struct {
 	ID, Name, Stage, Description string
+	Location, IDLocation         diagnostic.Location
 	// Outcomes describe success at this step, independently of overall job outcomes.
 	Outcomes []Outcome
 }
@@ -67,10 +69,12 @@ type Job struct {
 	ProgressCases, Evidence                                       string
 	Steps                                                         []Step
 	// Outcomes describe success for the whole job; they are not inherited by steps.
-	Outcomes []Outcome
-	Markdown string
-	Path     string
-	System   *system.System
+	Outcomes         []Outcome
+	Markdown         string
+	Path             string
+	System           *system.System
+	Location         diagnostic.Location
+	SectionLocations map[string]diagnostic.Location
 }
 
 func ValidateSlug(slug string) error {
@@ -83,11 +87,11 @@ func ValidateSlug(slug string) error {
 func Read(path string) (*Job, error) {
 	name := filepath.Base(path)
 	if !strings.HasSuffix(name, Suffix) {
-		return nil, fmt.Errorf("%s: expected a <slug>%s filename", path, Suffix)
+		return nil, diagnostic.Error("layout.job-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
 	}
 	slug := strings.TrimSuffix(name, Suffix)
 	if err := ValidateSlug(slug); err != nil {
-		return nil, fmt.Errorf("%s: %w", path, err)
+		return nil, diagnostic.Error("layout.job-name", err.Error(), diagnostic.Location{Path: path})
 	}
 	if _, err := specfile.Owner(path, "jobs"); err != nil {
 		return nil, err
@@ -98,7 +102,7 @@ func Read(path string) (*Job, error) {
 	}
 	job, err := Parse(data)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", path, err)
+		return nil, diagnostic.WithPath(err, path)
 	}
 	job.Slug, job.Path = slug, path
 	return job, nil
@@ -111,22 +115,23 @@ func Parse(data []byte) (*Job, error) {
 	if err != nil {
 		return nil, err
 	}
-	job := &Job{ID: doc.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source))}
-	ids := make(map[string]string)
-	register := func(id, location string) error {
+	job := &Job{ID: doc.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
+	ids := make(map[string]diagnostic.Location)
+	register := func(id, element string, location diagnostic.Location) error {
 		if id == "" {
 			return nil
 		}
+		location.Element = element
 		if !identifierPattern.MatchString(id) {
-			return fmt.Errorf("%s: invalid ID %q; use letters, digits, hyphens, or underscores", location, id)
+			return diagnostic.Error("identity.invalid", fmt.Sprintf("%s: invalid ID %q; use letters, digits, hyphens, or underscores", element, id), location)
 		}
 		if previous, exists := ids[id]; exists {
-			return fmt.Errorf("duplicate ID %q in %s and %s", id, previous, location)
+			return diagnostic.Error("identity.duplicate", fmt.Sprintf("duplicate ID %q in %s and %s; assign distinct IDs", id, previous.Element, element), location, previous)
 		}
 		ids[id] = location
 		return nil
 	}
-	if err := register(job.ID, "job"); err != nil {
+	if err := register(job.ID, "job", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err
 	}
 	sections := make(map[string]*specfile.Section)
@@ -137,13 +142,15 @@ func Parse(data []byte) (*Job, error) {
 		}
 		switch name {
 		case "Job", "Performer", "Situation", "Motivation", "Intended progress", "Outcomes", "Steps", "Progress cases", "Evidence":
+			location := doc.Location(section.Start, name)
 			if section.Level != 2 {
-				return nil, fmt.Errorf("%s must use a level-two heading (## %s)", section.Title, section.Title)
+				return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), location)
 			}
 			if _, exists := sections[name]; exists {
-				return nil, fmt.Errorf("duplicate %s section", name)
+				return nil, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", name), location, job.SectionLocations[name])
 			}
 			sections[name] = section
+			job.SectionLocations[name] = location
 		}
 	}
 	for name, target := range map[string]*string{
@@ -161,7 +168,7 @@ func Parse(data []byte) (*Job, error) {
 			return nil, err
 		}
 		for _, outcome := range job.Outcomes {
-			if err := register(outcome.ID, "job outcomes"); err != nil {
+			if err := register(outcome.ID, "job outcomes", outcome.Location); err != nil {
 				return nil, err
 			}
 		}
@@ -169,17 +176,17 @@ func Parse(data []byte) (*Job, error) {
 	if section := sections["Steps"]; section != nil {
 		for _, s := range section.Children {
 			if s.Level != 3 || s.Title == "" {
-				return nil, fmt.Errorf("each step must have a nonempty level-three heading (### Step name)")
+				return nil, diagnostic.Error("structure.step-heading", "each step must have a nonempty level-three heading (### Step name)", doc.Location(s.Start, s.Title))
 			}
 			step, err := parseStep(doc, s)
 			if err != nil {
 				return nil, err
 			}
-			if err := register(step.ID, "step "+step.Name); err != nil {
+			if err := register(step.ID, "step "+step.Name, step.IDLocation); err != nil {
 				return nil, err
 			}
 			for _, outcome := range step.Outcomes {
-				if err := register(outcome.ID, "outcomes for step "+step.Name); err != nil {
+				if err := register(outcome.ID, "outcomes for step "+step.Name, outcome.Location); err != nil {
 					return nil, err
 				}
 			}
@@ -189,27 +196,7 @@ func Parse(data []byte) (*Job, error) {
 	for id := range ids {
 		doc.Anchors[id] = true
 	}
-	err = ast.Walk(doc.AST, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
-		if !entering {
-			return ast.WalkContinue, nil
-		}
-		link, ok := n.(*ast.Link)
-		if !ok {
-			return ast.WalkContinue, nil
-		}
-		destination := string(link.Destination)
-		if !strings.HasPrefix(destination, "#") || destination == "#" {
-			return ast.WalkContinue, nil
-		}
-		fragment, err := url.PathUnescape(destination[1:])
-		if err != nil {
-			return ast.WalkStop, fmt.Errorf("invalid local reference %q", destination)
-		}
-		if !doc.Anchors[fragment] {
-			return ast.WalkStop, fmt.Errorf("unresolved local reference %q; use a declared ID or a Markdown heading anchor", destination)
-		}
-		return ast.WalkContinue, nil
-	})
+	err = specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors)
 	if err != nil {
 		return nil, err
 	}
@@ -217,8 +204,9 @@ func Parse(data []byte) (*Job, error) {
 }
 
 func parseStep(doc *specfile.Outline, section *specfile.Section) (Step, error) {
-	step := Step{Name: section.Title}
+	step := Step{Name: section.Title, Location: doc.Location(section.Start, section.Title)}
 	fields := make(map[string]string)
+	fieldLocations := make(map[string]diagnostic.Location)
 	fieldLines := make(map[int]bool)
 	for _, node := range doc.Nodes(section) {
 		if _, ok := node.(*ast.Paragraph); !ok {
@@ -231,13 +219,15 @@ func parseStep(doc *specfile.Outline, section *specfile.Section) (Step, error) {
 				continue
 			}
 			if _, exists := fields[match[1]]; exists {
-				return step, fmt.Errorf("step %s: duplicate %s field", step.Name, match[1])
+				return step, diagnostic.Error("structure.duplicate-field", fmt.Sprintf("step %s: duplicate %s field", step.Name, match[1]), doc.Location(segment.Start, step.Name+" / "+match[1]), fieldLocations[match[1]])
 			}
 			fields[match[1]] = match[2]
+			fieldLocations[match[1]] = doc.Location(segment.Start, step.Name+" / "+match[1])
 			fieldLines[bytes.LastIndexByte(doc.Source[:segment.Start], '\n')+1] = true
 		}
 	}
 	step.ID, step.Stage = fields["ID"], fields["Stage"]
+	step.IDLocation = fieldLocations["ID"]
 	intro := string(doc.Source[section.ContentStart:doc.IntroEnd(section)])
 	// Remove only metadata lines that were recognized in actual paragraphs.
 	// Code fences and other examples remain in the original Markdown.
@@ -251,17 +241,19 @@ func parseStep(doc *specfile.Outline, section *specfile.Section) (Step, error) {
 	}
 	step.Description = strings.TrimSpace(strings.Join(description, "\n"))
 	seen := false
+	var outcomesLocation diagnostic.Location
 	for _, child := range section.Children {
 		if child.Title != "Outcomes" {
 			continue
 		}
 		if child.Level != 4 {
-			return step, fmt.Errorf("step %s: outcomes must use #### Outcomes", step.Name)
+			return step, diagnostic.Error("structure.section-level", fmt.Sprintf("step %s: outcomes must use #### Outcomes", step.Name), doc.Location(child.Start, step.Name+" / Outcomes"))
 		}
 		if seen {
-			return step, fmt.Errorf("step %s: duplicate Outcomes section", step.Name)
+			return step, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("step %s: duplicate Outcomes section", step.Name), doc.Location(child.Start, step.Name+" / Outcomes"), outcomesLocation)
 		}
 		seen = true
+		outcomesLocation = doc.Location(child.Start, step.Name+" / Outcomes")
 		var err error
 		step.Outcomes, err = parseOutcomes(doc, child)
 		if err != nil {
@@ -279,6 +271,7 @@ func parseOutcomes(doc *specfile.Outline, section *specfile.Section) ([]Outcome,
 			continue
 		}
 		for item := list.FirstChild(); item != nil; item = item.NextSibling() {
+			location := doc.Location(item.Pos(), section.Title)
 			var paragraphs []string
 			for block := item.FirstChild(); block != nil; block = block.NextSibling() {
 				switch block.(type) {
@@ -287,7 +280,7 @@ func parseOutcomes(doc *specfile.Outline, section *specfile.Section) ([]Outcome,
 				}
 			}
 			statement := strings.TrimSpace(strings.Join(paragraphs, "\n\n"))
-			outcome := Outcome{Statement: statement}
+			outcome := Outcome{Statement: statement, Location: location}
 			if match := outcomePattern.FindStringSubmatch(statement); match != nil {
 				outcome.ID = match[1]
 				outcome.Statement = strings.TrimSpace(strings.TrimPrefix(statement, match[0]))

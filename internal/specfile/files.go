@@ -130,7 +130,7 @@ func gitPaths(dir, root string, match func(string) bool) ([]string, error) {
 		seen[path] = true
 		usable, err := regularPath(path, dir)
 		if err != nil {
-			return nil, err
+			return paths, err
 		}
 		if usable {
 			paths = append(paths, path)
