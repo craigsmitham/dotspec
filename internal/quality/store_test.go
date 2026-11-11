@@ -42,7 +42,7 @@ Stable results.
 Understandable findings.
 `
 
-func TestResolutionGroupingAndNoModelInheritance(t *testing.T) {
+func TestResolutionGroupingAndNoAttributeInheritance(t *testing.T) {
 	dir, err := filepath.EvalSymlinks(t.TempDir())
 	if err != nil {
 		t.Fatal(err)
@@ -58,7 +58,7 @@ func TestResolutionGroupingAndNoModelInheritance(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(spec.Classification.Resolved) != 2 || !reflect.DeepEqual(spec.Classification.Broader, []string{"reliability"}) || spec.Classification.ModelPath != filepath.Join(dir, "specs/system.spec.md") {
+	if len(spec.Classification.Resolved) != 2 || !reflect.DeepEqual(spec.Classification.Broader, []string{"reliability"}) || spec.Classification.SystemPath != filepath.Join(dir, "specs/system.spec.md") {
 		t.Fatalf("resolution: %+v", spec)
 	}
 	groups, err := List(dir)
@@ -72,21 +72,21 @@ func TestResolutionGroupingAndNoModelInheritance(t *testing.T) {
 	if len(groups[0].Requirements) != 2 || len(Filter(groups, "unknown")) != 0 {
 		t.Fatal("filter modified original groups or matched unknown attribute")
 	}
-	// The child system deliberately has no model. It must not acquire the
-	// parent's model simply because the attribute labels happen to match.
+	// The child system deliberately has no attribute declarations. It must not acquire the
+	// parent's attributes simply because the attribute labels happen to match.
 	write(t, filepath.Join(child, "specs/system.spec.md"), strings.Split(model, "## Quality attributes")[0])
 	spec, err = Show(child, "work")
-	if err != nil || spec.Classification.ModelPath != "" || len(spec.Classification.Resolved) != 0 || len(spec.Classification.Undefined) != 0 {
-		t.Fatalf("inherited model: %+v %v", spec, err)
+	if err != nil || spec.Classification.SystemPath != "" || len(spec.Classification.Resolved) != 0 || len(spec.Classification.Undefined) != 0 {
+		t.Fatalf("inherited attributes: %+v %v", spec, err)
 	}
 	groups, err = List(dir)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if len(Filter(groups, "reliability")) != 1 || len(Filter(groups, "repeatability")) != 2 {
-		t.Fatalf("model grouping crossed system boundary: %+v", groups)
+		t.Fatalf("attribute grouping crossed system boundary: %+v", groups)
 	}
-	// Declaring an empty local model changes unbound labels to undefined ones.
+	// Declaring an empty local attribute list changes unbound labels to undefined ones.
 	write(t, filepath.Join(child, "specs/system.spec.md"), strings.Split(model, "## Quality attributes")[0]+"## Quality attributes\n")
 	spec, err = Show(child, "work")
 	if err != nil || len(spec.Classification.Undefined) != 2 {

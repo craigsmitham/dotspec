@@ -2,7 +2,7 @@
 id: https://github.com/craigsmitham/dotspec/model/dotspec.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.2.0-draft
+version: 0.3.0-draft
 description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
   is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
   and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
@@ -20,24 +20,62 @@ annotations:
   runtime_target: Generated JSON Schema plus explicit graph checks; no generated-Go reliance.
   graph_rules: Identifier uniqueness; referential integrity and typed endpoints; containment ownership and
     cycle rules; source-byte digest, offset-map and span fidelity; ordered syntax-tree and membership consistency;
-    complete content-binding accounting; scope and resolution consistency; vocabulary-local identity/broader
-    cycles; honest optional decomposition; assertion provenance and consistency are explicit graph checks,
+    complete content-binding accounting; scope and resolution consistency; system-local attribute identity/broader
+    cycles; paired quality attribute declarations and section content; honest optional decomposition; assertion provenance and consistency are explicit graph checks,
     not implied by JSON Schema generation.
+subsets:
+  business-requirements:
+    title: Business requirements
+    description: Business objectives, scope, assumptions, and rules governing permissible business activity.
+    annotations:
+      classification: core
+  user-requirements:
+    title: User requirements
+    description: The progress people seek, their circumstances, work, and desired outcomes.
+    annotations:
+      classification: core
+  software-requirements:
+    title: Software requirements
+    description: Software interactions, concept behavior, obligations, quality classifications, and verification guidance.
+    annotations:
+      classification: core
+  specification-traceability:
+    title: Specification traceability
+    description: Explicit connections between specification meaning, authored occurrences, and resolved relationships.
+    annotations:
+      classification: core
+  inspection-and-coverage:
+    title: Inspection and coverage
+    description: The scope, completion, diagnostics, and mapping coverage of an inspection.
+    annotations:
+      classification: supporting
+  document-content:
+    title: Document content
+    description: Ordered document syntax, rich text, and preserved extension content.
+    annotations:
+      classification: generic
+  source-artifacts:
+    title: Source artifacts
+    description: Source identities, exact payloads, revisions, fragments, and locations.
+    annotations:
+      classification: generic
 classes:
   Record:
+    in_subset: [source-artifacts]
     description: An addressable record in one snapshot. All IDs are unique across snapshot collections.
     abstract: true
     slots:
     - id
     - kind
   Snapshot:
+    in_subset: [inspection-and-coverage]
     description: A bounded and potentially incomplete observation of source documents and their mapped domain
       content.
     attributes:
       model_version:
         range: string
         required: true
-        equals_string: 0.2.0-draft
+        equals_string: 0.3.0-draft
       mapping_profile:
         range: string
         description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
@@ -113,6 +151,7 @@ classes:
         inlined_as_list: true
     tree_root: true
   ScanScope:
+    in_subset: [inspection-and-coverage]
     description: Declared scan boundary and completion, independently of whether individual documents are valid.
     attributes:
       roots:
@@ -150,10 +189,12 @@ classes:
         required: true
         inlined: true
   SourceResource:
+    in_subset: [source-artifacts]
     description: An addressable source; only SourceDocument implies locally acquired bytes.
     is_a: Record
     abstract: true
   SourceDocument:
+    in_subset: [source-artifacts]
     description: A discovered Markdown or related file. A failed read retains identity, locator, status and
       diagnostics.
     is_a: SourceResource
@@ -190,6 +231,7 @@ classes:
           payload:
             required: true
   ExternalResource:
+    in_subset: [source-artifacts]
     description: An external address explicitly mentioned by source; no implied fetch or trust.
     is_a: SourceResource
     slot_usage:
@@ -202,6 +244,7 @@ classes:
       media_type:
         range: string
   SourcePayload:
+    in_subset: [source-artifacts]
     description: Exact original bytes before Goldmark/specfile normalization, including BOM, CRLF, trailing
       newlines and invalid encodings.
     attributes:
@@ -245,6 +288,7 @@ classes:
           immutable_locator:
             required: true
   ByteSpan:
+    in_subset: [source-artifacts]
     description: Half-open [start,end) offsets into ORIGINAL bytes of one SourceDocument. Graph checks enforce
       bounds and start <= end.
     attributes:
@@ -260,6 +304,7 @@ classes:
         required: true
         minimum_value: 0
   OffsetMapSegment:
+    in_subset: [document-content]
     description: Maps a normalized parser buffer interval to original bytes; segments must be monotone and
       account for removals/replacements such as BOM and CRLF.
     attributes:
@@ -284,6 +329,7 @@ classes:
         description: Identity, BOM removal, line-ending normalization, or another declared transformation.
         required: true
   Document:
+    in_subset: [document-content]
     description: Syntax and interpretation state for an acquired document, separate from its SourceDocument
       read state.
     is_a: Record
@@ -342,6 +388,7 @@ classes:
         range: Diagnostic
         multivalued: true
   ContentNode:
+    in_subset: [document-content]
     description: An ordered source syntax node. Raw spans preserve exact syntax; typed properties expose parsed
       structure without requiring every dialect to be understood.
     is_a: Record
@@ -420,6 +467,7 @@ classes:
         description: Required by graph checks for opaque nodes; distinguish unsupported, malformed, and unparsed
           syntax.
   SyntaxProperty:
+    in_subset: [document-content]
     description: A typed syntax extension property, retained without asserting domain meaning.
     attributes:
       name:
@@ -431,6 +479,7 @@ classes:
       value_type:
         range: ScalarKind
   SourceFragment:
+    in_subset: [source-artifacts]
     description: An addressable heading, explicit anchor, or occurrence in a source document, without implying
       domain-element identity.
     is_a: Record
@@ -453,6 +502,7 @@ classes:
       anchor_rule:
         range: string
   RichContent:
+    in_subset: [document-content]
     description: A typed domain value backed by ordered syntax nodes. Omitted slot means absent; presence=empty
       means an explicitly present empty field. Narrative remains valid without fabricated atomic assertions.
     attributes:
@@ -499,6 +549,7 @@ classes:
         cardinality. Preserve these formal rules and enforce empty/authored node cardinality in the graph/content
         checker; do not claim JSON Schema alone enforces them.
   ContentBinding:
+    in_subset: [specification-traceability]
     description: Auditable mapping from source syntax to a named domain field, metadata, structural support,
       unknown extension, or uninterpreted fallback.
     is_a: Record
@@ -540,6 +591,7 @@ classes:
           remains separately diagnosable.
         minimum_value: 0
   CoverageReport:
+    in_subset: [inspection-and-coverage]
     description: A checked accounting of representation and named-role mapping, not a claim that every prose
       proposition was formalized.
     attributes:
@@ -570,6 +622,7 @@ classes:
         range: string
         multivalued: true
   UnmappedRole:
+    in_subset: [inspection-and-coverage]
     description: A known domain field or item whose source content has not yet been mapped.
     attributes:
       role:
@@ -584,6 +637,7 @@ classes:
         range: string
         required: true
   DomainElement:
+    in_subset: [business-requirements, user-requirements, software-requirements]
     description: A source-backed semantic record. Snapshot IDs are required; authored IDs remain optional except
       where the source format requires them.
     is_a: Record
@@ -616,6 +670,7 @@ classes:
     annotations:
       owned_memberships: DomainElement.extension_sections
   SpecificationElement:
+    in_subset: [business-requirements, user-requirements, software-requirements]
     description: Common content of system, job, use-case, concept and requirement documents; narrative authority/evidence
       does not create executable authority assertions.
     is_a: DomainElement
@@ -648,6 +703,10 @@ classes:
         range: RichContent
         description: Authored content between the title and the first named section.
         inlined: true
+      business_rules:
+        description: Contextual references to governing business rules; does not assert enforcement or compliance.
+        range: ContextualReferences
+        inlined: true
       related_use_cases:
         range: ContextualReferences
         description: Contextual citations of related use cases; no implicit inclusion, refinement or support
@@ -655,9 +714,32 @@ classes:
         inlined: true
     annotations:
       owned_memberships: SpecificationElement.evidence.statements
+  BusinessRule:
+    in_subset: [business-requirements]
+    description: A declarative business constraint independent of the software or process that enforces it.
+    is_a: SpecificationElement
+    slot_usage:
+      kind:
+        equals_string: BusinessRule
+    attributes:
+      statement:
+        description: The rule expressed in business language, independently of enforcement.
+        range: RichContent
+        inlined: true
+      applies_to:
+        range: Applicability
+        inlined: true
+      rationale:
+        range: RichContent
+        inlined: true
+      exceptions:
+        description: Authored qualifications or references to exception rules; no inferred exemption.
+        range: RichContent
+        inlined: true
   System:
+    in_subset: [business-requirements, software-requirements]
     description: The system described by a system document; subordinate systems retain their own boundaries
-      and vocabulary.
+      and quality attributes.
     is_a: SpecificationElement
     slot_usage:
       kind:
@@ -687,13 +769,20 @@ classes:
       glossary:
         range: Glossary
         inlined: true
-      quality_model:
-        range: QualityVocabulary
-        description: Absent means no declared vocabulary; a present empty vocabulary is distinct.
+      quality_attributes:
+        range: QualityAttribute
+        description: Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. Must be present together with quality_attributes_content.
+        multivalued: true
+        list_elements_ordered: true
+      quality_attributes_content:
+        range: RichContent
+        description: Authored Quality attributes section content, including narrative and attribute subsections. Present even when the section is empty.
+        inlined: true
     annotations:
       owned_memberships: System.goals.items or System.assumptions.items or System.constraints.items or System.glossary.terms
-        or System.quality_model
+        or System.quality_attributes
   GoalCollection:
+    in_subset: [business-requirements]
     description: Goals section narrative and optional explicitly authored goal records.
     attributes:
       content:
@@ -705,6 +794,7 @@ classes:
         multivalued: true
         list_elements_ordered: true
   AssumptionCollection:
+    in_subset: [business-requirements, software-requirements]
     description: Assumptions section narrative and optional explicitly authored assumptions.
     attributes:
       content:
@@ -716,6 +806,7 @@ classes:
         multivalued: true
         list_elements_ordered: true
   ConstraintCollection:
+    in_subset: [business-requirements, software-requirements]
     description: Constraints section narrative and optional explicitly authored constraints.
     attributes:
       content:
@@ -727,6 +818,7 @@ classes:
         multivalued: true
         list_elements_ordered: true
   Glossary:
+    in_subset: [business-requirements, software-requirements]
     description: Glossary section introduction and explicitly named terms.
     attributes:
       content:
@@ -738,6 +830,7 @@ classes:
         multivalued: true
         list_elements_ordered: true
   EnvironmentDescription:
+    in_subset: [business-requirements, software-requirements]
     description: System environment, retaining narrative and explicitly separated participants or contextual
       boundaries.
     attributes:
@@ -753,6 +846,7 @@ classes:
         range: RichContent
         inlined: true
   SystemGoal:
+    in_subset: [business-requirements]
     description: An explicitly distinguished system goal.
     is_a: DomainElement
     slot_usage:
@@ -766,6 +860,7 @@ classes:
         range: RichContent
         inlined: true
   Assumption:
+    in_subset: [business-requirements, software-requirements]
     description: An explicitly distinguished system assumption; no inferred truth assertion.
     is_a: DomainElement
     slot_usage:
@@ -779,6 +874,7 @@ classes:
         range: RichContent
         inlined: true
   Constraint:
+    in_subset: [business-requirements, software-requirements]
     description: An explicitly distinguished system constraint.
     is_a: DomainElement
     slot_usage:
@@ -792,6 +888,7 @@ classes:
         range: RichContent
         inlined: true
   GlossaryTerm:
+    in_subset: [business-requirements, software-requirements]
     description: An explicitly named term and its definition in a system glossary.
     is_a: DomainElement
     slot_usage:
@@ -815,29 +912,9 @@ classes:
       related_terms:
         range: ContextualReferences
         inlined: true
-  QualityVocabulary:
-    description: A system-owned quality vocabulary with its own section content; an empty vocabulary is meaningful.
-    is_a: DomainElement
-    slot_usage:
-      kind:
-        equals_string: QualityVocabulary
-    attributes:
-      owner:
-        range: System
-        required: true
-      description:
-        range: RichContent
-        description: Quality model introductory content.
-        inlined: true
-        required: true
-      attributes:
-        range: QualityAttribute
-        multivalued: true
-        list_elements_ordered: true
-    annotations:
-      owned_memberships: QualityVocabulary.attributes
   QualityAttribute:
-    description: A named quality classification owned by one declared vocabulary. Broader is multi-parent;
+    in_subset: [software-requirements]
+    description: A named quality attribute declared and owned by one system. Broader is multi-parent;
       hierarchy alone does not inherit quantitative thresholds.
     is_a: DomainElement
     slot_usage:
@@ -847,7 +924,7 @@ classes:
         required: true
     attributes:
       owner:
-        range: QualityVocabulary
+        range: System
         required: true
       definition:
         range: RichContent
@@ -862,6 +939,7 @@ classes:
         description: Successfully resolved broader targets only; preserve original occurrence and provenance.
         multivalued: true
   Job:
+    in_subset: [user-requirements]
     description: A performer seeks progress in a situation, independent of a chosen implementation.
     is_a: SpecificationElement
     slot_usage:
@@ -896,6 +974,7 @@ classes:
     annotations:
       owned_memberships: Job.steps.steps or Job.outcomes.outcomes or Job.progress_cases.cases
   JobMap:
+    in_subset: [user-requirements]
     description: Steps section narrative, including partialness notes, and explicitly authored ordered job-step
       records.
     attributes:
@@ -909,6 +988,7 @@ classes:
         multivalued: true
         list_elements_ordered: true
   OutcomeCollection:
+    in_subset: [user-requirements]
     description: Outcomes section body and items; preserve introductory prose, nested lists and item support
       content.
     attributes:
@@ -921,6 +1001,7 @@ classes:
         multivalued: true
         list_elements_ordered: true
   ProgressCaseCollection:
+    in_subset: [user-requirements]
     description: Progress cases section body and explicitly named cases.
     attributes:
       content:
@@ -932,6 +1013,7 @@ classes:
         multivalued: true
         list_elements_ordered: true
   JobStep:
+    in_subset: [user-requirements]
     description: A meaningful part of a job; repeated or custom stage labels are allowed.
     is_a: DomainElement
     slot_usage:
@@ -954,6 +1036,7 @@ classes:
     annotations:
       owned_memberships: JobStep.outcomes.outcomes
   Outcome:
+    in_subset: [user-requirements]
     description: A desired outcome owned directly by a job or step. Ownership does not imply inheritance.
     is_a: DomainElement
     slot_usage:
@@ -974,6 +1057,7 @@ classes:
         description: Explicit support prose or nested bullets belonging to the outcome.
         inlined: true
   ProgressCase:
+    in_subset: [user-requirements]
     description: An explicitly authored example or hypothesis about progress; do not invent cases from unsegmented
       prose.
     is_a: DomainElement
@@ -1005,6 +1089,7 @@ classes:
     annotations:
       owned_memberships: ProgressCase.evidence.statements
   ForceCollection:
+    in_subset: [user-requirements]
     description: Forces section narrative and optional explicitly identified forces.
     attributes:
       content:
@@ -1017,6 +1102,7 @@ classes:
         inlined_as_list: true
         list_elements_ordered: true
   Force:
+    in_subset: [user-requirements]
     description: An explicitly described progress force; a kind is assigned only when authored or deterministically
       marked.
     attributes:
@@ -1026,6 +1112,7 @@ classes:
         range: RichContent
         inlined: true
   Timeline:
+    in_subset: [user-requirements]
     description: Authored temporal narrative, including unknown or research-pending timelines; no required
       dates.
     attributes:
@@ -1039,6 +1126,7 @@ classes:
         inlined_as_list: true
         list_elements_ordered: true
   TimelineEvent:
+    in_subset: [user-requirements]
     description: An explicitly distinguished event in a progress timeline.
     attributes:
       label:
@@ -1051,6 +1139,7 @@ classes:
         range: RichContent
         inlined: true
   EvidenceCollection:
+    in_subset: [business-requirements, user-requirements, software-requirements]
     description: Evidence narrative and explicitly distinguished evidence statements, research basis and limitations.
     attributes:
       content:
@@ -1068,6 +1157,7 @@ classes:
         range: RichContent
         inlined: true
   EvidenceStatement:
+    in_subset: [business-requirements, user-requirements, software-requirements]
     description: An explicitly identified source claim, hypothesis, observation or research limitation. Classification
       and confidence are not inferred.
     is_a: DomainElement
@@ -1094,6 +1184,7 @@ classes:
         range: SourceReference
         multivalued: true
   UseCase:
+    in_subset: [software-requirements]
     description: An actor goal and its interactions at a stated system boundary, with alternative paths and
       protections.
     is_a: SpecificationElement
@@ -1146,6 +1237,7 @@ classes:
     annotations:
       owned_memberships: UseCase.main_success_scenario or UseCase.extensions.branches
   ActorMention:
+    in_subset: [software-requirements]
     description: An actor role as authored in this context; no global actor identity or fabricated role extraction.
     attributes:
       content:
@@ -1162,6 +1254,7 @@ classes:
         range: SourceReference
         multivalued: true
   ActorCollection:
+    in_subset: [software-requirements]
     description: Supporting actors narrative and explicitly separated mentions.
     attributes:
       content:
@@ -1174,6 +1267,7 @@ classes:
         inlined_as_list: true
         list_elements_ordered: true
   GoalLevel:
+    in_subset: [software-requirements]
     description: Authored goal-level content with optional explicit canonical classification.
     attributes:
       content:
@@ -1183,6 +1277,7 @@ classes:
       level:
         range: GoalLevelValue
   ConditionCollection:
+    in_subset: [software-requirements]
     description: Authored conditions or guarantees, with optional explicitly distinguished items.
     attributes:
       content:
@@ -1195,6 +1290,7 @@ classes:
         inlined_as_list: true
         list_elements_ordered: true
   Condition:
+    in_subset: [software-requirements]
     description: An explicitly distinguished condition; prose remains authoritative.
     attributes:
       statement:
@@ -1204,6 +1300,7 @@ classes:
         range: SourceReference
         multivalued: true
   StakeholderInterestCollection:
+    in_subset: [software-requirements]
     description: Stakeholder section narrative and optional explicit interest entries.
     attributes:
       content:
@@ -1216,6 +1313,7 @@ classes:
         inlined_as_list: true
         list_elements_ordered: true
   StakeholderInterest:
+    in_subset: [software-requirements]
     description: A stakeholder and interests explicitly distinguished in source, including nonparticipants.
     attributes:
       content:
@@ -1229,6 +1327,7 @@ classes:
         range: RichContent
         inlined: true
   Scenario:
+    in_subset: [software-requirements]
     description: An addressable scenario body and its explicitly authored ordered steps. Narrative-only scenarios
       remain valid.
     is_a: DomainElement
@@ -1251,6 +1350,7 @@ classes:
     annotations:
       owned_memberships: Scenario.steps
   ScenarioStep:
+    in_subset: [software-requirements]
     description: An explicitly distinguished interaction step; do not manufacture actor/action/result clauses
       from free prose.
     is_a: DomainElement
@@ -1286,6 +1386,7 @@ classes:
         range: SourceReference
         multivalued: true
   ExtensionCollection:
+    in_subset: [software-requirements]
     description: Extensions section introduction, undecomposed narrative, and explicitly authored branches.
     attributes:
       content:
@@ -1297,6 +1398,7 @@ classes:
         multivalued: true
         list_elements_ordered: true
   Extension:
+    in_subset: [software-requirements]
     description: An explicitly distinguished alternative or failure branch. Condition-only entries and expressly
       unresolved handling are valid.
     is_a: DomainElement
@@ -1350,6 +1452,7 @@ classes:
     annotations:
       owned_memberships: Extension.flow or Extension.branches
   SequenceStatement:
+    in_subset: [software-requirements]
     description: An explicit statement about which ordering is representative or required; array order alone
       creates no constraint.
     attributes:
@@ -1365,6 +1468,7 @@ classes:
         inlined_as_list: true
         list_elements_ordered: true
   SequenceConstraint:
+    in_subset: [software-requirements]
     description: An explicitly authored ordering requirement, optionally linked to resolvable steps and governing
       rules.
     attributes:
@@ -1381,6 +1485,7 @@ classes:
         range: SourceReference
         multivalued: true
   Concept:
+    in_subset: [software-requirements]
     description: A behavior-bearing concept described by purpose, abstract state, actions and an operational
       principle.
     is_a: SpecificationElement
@@ -1403,6 +1508,7 @@ classes:
     annotations:
       owned_memberships: Concept.actions.actions
   StateDescription:
+    in_subset: [software-requirements]
     description: The State section as narrative and optional explicitly named state components/invariants;
       no reverse-engineered implementation model.
     attributes:
@@ -1421,6 +1527,7 @@ classes:
         inlined_as_list: true
         list_elements_ordered: true
   StateElement:
+    in_subset: [software-requirements]
     description: An explicitly named abstract state component.
     attributes:
       name:
@@ -1433,6 +1540,7 @@ classes:
         range: RichContent
         inlined: true
   ActionCollection:
+    in_subset: [software-requirements]
     description: Actions section narrative plus explicit named action records; an unsegmented Actions section
       is valid.
     attributes:
@@ -1445,6 +1553,7 @@ classes:
         multivalued: true
         list_elements_ordered: true
   ConceptAction:
+    in_subset: [software-requirements]
     description: An explicitly named concept action. Caller assumptions and enforced guards are different authored
       claims.
     is_a: DomainElement
@@ -1477,6 +1586,7 @@ classes:
         range: RichContent
         inlined: true
   Requirement:
+    in_subset: [software-requirements]
     description: Shared obligation content, applicability, rationale and source classification labels.
     is_a: SpecificationElement
     abstract: true
@@ -1497,6 +1607,7 @@ classes:
         description: Only resolved classifications; original occurrences remain separately addressable.
         multivalued: true
   GeneralRequirement:
+    in_subset: [software-requirements]
     description: A general obligation with authored verification guidance.
     is_a: Requirement
     slot_usage:
@@ -1510,6 +1621,7 @@ classes:
         range: VerificationPlan
         inlined: true
   QualityRequirement:
+    in_subset: [software-requirements]
     description: A quality obligation with authored criterion and measurement guidance; quantitative targets
       are optional.
     is_a: Requirement
@@ -1524,6 +1636,7 @@ classes:
         range: MeasurementPlan
         inlined: true
   Applicability:
+    in_subset: [business-requirements, software-requirements]
     description: Applies to section narrative plus explicitly separated scope dimensions; no applicability
       inferred from a link or directory.
     attributes:
@@ -1547,6 +1660,7 @@ classes:
         range: RichContent
         inlined: true
   VerificationPlan:
+    in_subset: [software-requirements]
     description: Verification section content with optional explicit plan components, including evidence retention.
     attributes:
       content:
@@ -1571,6 +1685,7 @@ classes:
         range: RichContent
         inlined: true
   VerificationCase:
+    in_subset: [software-requirements]
     description: An explicitly distinguished verification case.
     attributes:
       name:
@@ -1589,6 +1704,7 @@ classes:
         range: RichContent
         inlined: true
   QualityCriterion:
+    in_subset: [software-requirements]
     description: Criterion narrative and optional explicit measurement clauses. A label or broader hierarchy
       does not supply an omitted threshold.
     attributes:
@@ -1630,6 +1746,7 @@ classes:
         range: RichContent
         inlined: true
   MeasurementPlan:
+    in_subset: [software-requirements]
     description: Measurement narrative and optional explicit procedure clauses.
     attributes:
       content:
@@ -1658,6 +1775,7 @@ classes:
         range: RichContent
         inlined: true
   OpenDecision:
+    in_subset: [business-requirements, user-requirements, software-requirements]
     description: An explicitly authored unresolved decision; do not infer every omitted field to be an open
       decision.
     attributes:
@@ -1668,6 +1786,7 @@ classes:
         range: RichContent
         inlined: true
   ContextualReferences:
+    in_subset: [specification-traceability]
     description: Related specifications/concepts/jobs or explicit scoped targets, including the prose explaining
       their context. Links alone do not imply authority, support or verification relations.
     attributes:
@@ -1685,6 +1804,7 @@ classes:
         inlined_as_list: true
         list_elements_ordered: true
   ContextualReference:
+    in_subset: [specification-traceability]
     description: An explicitly distinguished contextual citation with its explanation.
     attributes:
       description:
@@ -1695,6 +1815,7 @@ classes:
         multivalued: true
         list_elements_ordered: true
   ExtensionSection:
+    in_subset: [document-content]
     description: An unknown domain section retained with its original heading and body. This is explicit representation,
       not a claim that its domain semantics have been modeled.
     is_a: DomainElement
@@ -1727,6 +1848,7 @@ classes:
     annotations:
       owned_memberships: ExtensionSection.children
   SourceReference:
+    in_subset: [specification-traceability]
     description: An authored reference occurrence, independent of whether it resolves or carries semantic intent.
     is_a: Record
     slot_usage:
@@ -1756,6 +1878,7 @@ classes:
       resolution:
         range: Resolution
   LabelOccurrence:
+    in_subset: [specification-traceability]
     description: An authored semantic classification or broader label, preserved even when no target can be
       bound.
     is_a: Record
@@ -1780,10 +1903,8 @@ classes:
       system_context:
         range: System
         description: System in whose scope this label was interpreted, if established.
-      vocabulary_context:
-        range: QualityVocabulary
-        description: Declared vocabulary used for lookup; absent when no vocabulary is bound.
   Resolution:
+    in_subset: [specification-traceability]
     description: The recorded outcome of resolving one authored reference or label; targets need not be domain
       entities.
     is_a: Record
@@ -1828,6 +1949,7 @@ classes:
           target:
             required: true
   Diagnostic:
+    in_subset: [inspection-and-coverage]
     description: A parser, mapper, resolver, coverage or graph-check finding. It may identify a source without
       any line, element or parsed document.
     is_a: Record
@@ -1871,6 +1993,7 @@ classes:
         list_elements_ordered: true
         description: Related native source locations, preserving their original order and optional coordinates.
   Assertion:
+    in_subset: [specification-traceability]
     description: A materialized typed semantic relation with explicit provenance. Ordinary source links remain
       SourceReference occurrences and do not automatically become assertions.
     is_a: Record
@@ -1897,6 +2020,7 @@ classes:
     - subject
     - object
   ParentSystem:
+    in_subset: [specification-traceability]
     description: Directory-derived system containment; no semantic inheritance.
     is_a: Assertion
     slot_usage:
@@ -1909,6 +2033,7 @@ classes:
     annotations:
       projection_of: System.parent_system
   OwnedBySystem:
+    in_subset: [specification-traceability]
     description: Directory ownership of a specification, independent of system boundary and applicability.
     is_a: Assertion
     slot_usage:
@@ -1921,6 +2046,7 @@ classes:
     annotations:
       projection_of: SpecificationElement.owning_system
   HasJobStep:
+    in_subset: [specification-traceability]
     description: A job contains an explicitly authored step.
     is_a: Assertion
     slot_usage:
@@ -1933,6 +2059,7 @@ classes:
     annotations:
       projection_of: Job.steps.steps
   HasOutcome:
+    in_subset: [specification-traceability]
     description: An outcome belongs directly to a job or step.
     is_a: Assertion
     slot_usage:
@@ -1948,6 +2075,7 @@ classes:
     annotations:
       projection_of: Job.outcomes.outcomes or JobStep.outcomes.outcomes
   HasProgressCase:
+    in_subset: [specification-traceability]
     description: A job has an explicitly authored progress case.
     is_a: Assertion
     slot_usage:
@@ -1960,6 +2088,7 @@ classes:
     annotations:
       projection_of: Job.progress_cases.cases
   HasScenario:
+    in_subset: [specification-traceability]
     description: A use case has its main scenario.
     is_a: Assertion
     slot_usage:
@@ -1972,6 +2101,7 @@ classes:
     annotations:
       projection_of: UseCase.main_success_scenario
   HasScenarioStep:
+    in_subset: [specification-traceability]
     description: A scenario or extension contains an explicit step, with source order retained on its typed
       collection.
     is_a: Assertion
@@ -1988,6 +2118,7 @@ classes:
     annotations:
       projection_of: Scenario.steps or Extension.flow
   HasExtension:
+    in_subset: [specification-traceability]
     description: A use case or parent branch contains an explicitly authored extension.
     is_a: Assertion
     slot_usage:
@@ -2003,6 +2134,7 @@ classes:
     annotations:
       projection_of: UseCase.extensions.branches or Extension.branches
   HasConceptAction:
+    in_subset: [specification-traceability]
     description: A concept declares an explicit action.
     is_a: Assertion
     slot_usage:
@@ -2014,31 +2146,21 @@ classes:
         range: ConceptAction
     annotations:
       projection_of: Concept.actions.actions
-  DeclaresVocabulary:
-    description: A system declares its own quality vocabulary.
-    is_a: Assertion
-    slot_usage:
-      kind:
-        equals_string: DeclaresVocabulary
-      subject:
-        range: System
-      object:
-        range: QualityVocabulary
-    annotations:
-      projection_of: System.quality_model
   DeclaresQualityAttribute:
-    description: A declared vocabulary owns an attribute.
+    in_subset: [specification-traceability]
+    description: A system declares and owns a quality attribute.
     is_a: Assertion
     slot_usage:
       kind:
         equals_string: DeclaresQualityAttribute
       subject:
-        range: QualityVocabulary
+        range: System
       object:
         range: QualityAttribute
     annotations:
-      projection_of: QualityVocabulary.attributes
+      projection_of: System.quality_attributes
   BroaderAttribute:
+    in_subset: [specification-traceability]
     description: An explicitly authored and resolved broader attribute relation.
     is_a: Assertion
     slot_usage:
@@ -2051,7 +2173,8 @@ classes:
     annotations:
       projection_of: QualityAttribute.broader
   QualityClassification:
-    description: A requirement is explicitly classified by a resolved vocabulary attribute.
+    in_subset: [specification-traceability]
+    description: A requirement is explicitly classified by a resolved quality attribute.
     is_a: Assertion
     slot_usage:
       kind:
@@ -2063,6 +2186,7 @@ classes:
     annotations:
       projection_of: Requirement.attributes
   SupportsJob:
+    in_subset: [specification-traceability]
     description: An explicitly authored semantic support relation; a Related jobs link alone is insufficient.
     is_a: Assertion
     slot_usage:
@@ -2077,6 +2201,7 @@ classes:
         - range: JobStep
         - range: Outcome
   AppliesTo:
+    in_subset: [specification-traceability]
     description: An explicitly authored applicability relation to a domain element; links remain citations
       unless meaning is explicit.
     is_a: Assertion
@@ -2088,6 +2213,7 @@ classes:
       object:
         range: DomainElement
   BoundaryIs:
+    in_subset: [specification-traceability]
     description: An explicitly identified and resolved system boundary, never derived from directory ownership.
     is_a: Assertion
     slot_usage:
@@ -2098,6 +2224,7 @@ classes:
       object:
         range: System
   DiscoveryPolicy:
+    in_subset: [inspection-and-coverage]
     description: Recorded discovery bounds. Current dotspec uses git or filesystem mode and excludes symlinks
       and nested repositories.
     attributes:
@@ -2115,6 +2242,7 @@ classes:
         range: boolean
         required: true
   ReferenceTraversal:
+    in_subset: [inspection-and-coverage]
     description: Recorded reference traversal, independent of file discovery and domain semantic relations.
     attributes:
       mode:
@@ -2136,6 +2264,7 @@ classes:
         range: string
         required: true
   ContextSource:
+    in_subset: [inspection-and-coverage]
     description: A consulted context source and the reason it entered the snapshot.
     attributes:
       source:
@@ -2154,6 +2283,7 @@ classes:
         range: string
         required: true
   SourceRevision:
+    in_subset: [source-artifacts]
     description: Optional known source-revision context, without claiming a clean working tree or immutable
       path.
     attributes:
@@ -2171,6 +2301,7 @@ classes:
         range: boolean
         description: Omit when unknown; payload digest identifies the observed bytes regardless.
   SourceDirectory:
+    in_subset: [source-artifacts]
     description: An addressable local directory referenced by Markdown. It is a resource target, not a document
       and has no source payload.
     is_a: SourceResource
@@ -2182,6 +2313,7 @@ classes:
         range: string
         required: true
   SourceLocation:
+    in_subset: [source-artifacts]
     description: A diagnostic source location, including path-only or external-to-snapshot locations without
       invented coordinates.
     attributes:
@@ -2201,6 +2333,7 @@ classes:
         range: ByteSpan
         inlined: true
   OpenDecisionCollection:
+    in_subset: [business-requirements, user-requirements, software-requirements]
     description: Open-decision section narrative and explicitly distinguished question/evidence entries.
     attributes:
       content:
@@ -2449,10 +2582,10 @@ enums:
       unresolved:
         description: An authored target was recognized but not found.
       undefined_label:
-        description: A reference-style label lacks a definition, or a declared quality vocabulary lacks the
+        description: A reference-style label lacks a definition, or a system's declared quality attributes lack the
           authored member label.
       unbound_label:
-        description: A recognized semantic label has no governing vocabulary binding.
+        description: A recognized semantic label has no governing quality attribute declaration.
       ambiguous:
         description: More than one target matches.
       external:
@@ -2530,6 +2663,7 @@ enums:
         description: System.
       job:
         description: Job.
+      business-rule:
       use-case:
         description: Use case.
       concept:

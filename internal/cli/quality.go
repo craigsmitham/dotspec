@@ -99,11 +99,11 @@ func runQuality(command, path, slug, format string, out io.Writer) error {
 	if format == "json" {
 		return writeJSON(out, qualityResult{1, spec})
 	}
-	model := "None (labels are unbound)"
-	if spec.Classification.ModelPath != "" {
-		model = displayPath(spec.Classification.ModelPath)
+	attributeSource := "None (labels are unbound)"
+	if spec.Classification.SystemPath != "" {
+		attributeSource = displayPath(spec.Classification.SystemPath)
 	}
-	_, err = fmt.Fprintf(out, "%s\n\nAttributes: %s\nBroader groups: %s\nUndefined attributes: %s\nQuality model: %s\nSystem: %s\nSource: %s\n", spec.Markdown, labelList(spec.Attributes), labelList(spec.Classification.Broader), labelList(spec.Classification.Undefined), model, systemLabel(spec.System), displayPath(spec.Path))
+	_, err = fmt.Fprintf(out, "%s\n\nAttributes: %s\nBroader groups: %s\nUndefined attributes: %s\nAttribute declarations: %s\nSystem: %s\nSource: %s\n", spec.Markdown, labelList(spec.Attributes), labelList(spec.Classification.Broader), labelList(spec.Classification.Undefined), attributeSource, systemLabel(spec.System), displayPath(spec.Path))
 	return err
 }
 

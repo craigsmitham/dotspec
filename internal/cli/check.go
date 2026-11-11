@@ -5,6 +5,7 @@ import (
 	"io"
 	"strings"
 
+	"github.com/craigsmitham/dotspec/internal/businessrule"
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
@@ -18,7 +19,7 @@ import (
 
 func newCheckCommand() *cobra.Command {
 	cmd := &cobra.Command{Use: "check", Short: "Check all supported specifications in a project subtree",
-		Long:    "Check system, job, use-case, concept, requirement, and quality specifications using the same discovery rules as list.\n\n" + exitPolicy,
+		Long:    "Check business-rule, system, job, use-case, concept, requirement, and quality specifications using the same discovery rules as list.\n\n" + exitPolicy,
 		Example: "dotspec check\ndotspec check --path internal --json", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
@@ -90,5 +91,5 @@ func diagnosticPath(location diagnostic.Location) string {
 }
 
 func supportedTypes() []check.Type {
-	return []check.Type{system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), quality.CheckType(), requirement.CheckType()}
+	return []check.Type{businessrule.CheckType(), system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), quality.CheckType(), requirement.CheckType()}
 }

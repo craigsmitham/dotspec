@@ -261,13 +261,11 @@ func (b *snapshotBuilder) resolveLabels() {
 	for _, label := range b.snapshot.LabelOccurrences {
 		owner := b.elements[String(label, "owner")]
 		path, _ := b.documentForSource(String(owner, "source_document"))
-		vocabulary, sys := "", ""
+		sys := ""
 		if String(label, "role") == "broader_attribute" {
-			vocabulary = String(owner, "owner")
-			sys = String(b.elements[vocabulary], "owner")
+			sys = String(owner, "owner")
 		} else {
 			sys = String(owner, "owning_system")
-			vocabulary = String(b.elements[sys], "quality_model")
 			if sys == "" && !b.contextOK[path] {
 				b.resolution(label, "not_attempted", "", "uninspected-quality-context/1")
 				continue
@@ -276,24 +274,23 @@ func (b *snapshotBuilder) resolveLabels() {
 		if sys != "" {
 			label["system_context"] = sys
 		}
-		if vocabulary == "" {
-			b.resolution(label, "unbound_label", "", "no-quality-vocabulary/1")
+		if _, declared := b.elements[sys]["quality_attributes"]; !declared {
+			b.resolution(label, "unbound_label", "", "no-quality-attributes/1")
 			continue
 		}
-		label["vocabulary_context"] = vocabulary
-		matches := attributes[vocabulary][String(label, "label")]
+		matches := attributes[sys][String(label, "label")]
 		switch len(matches) {
 		case 0:
-			b.resolution(label, "undefined_label", "", "quality-vocabulary/1")
+			b.resolution(label, "undefined_label", "", "quality-attributes/1")
 		case 1:
-			b.resolution(label, "resolved", matches[0], "quality-vocabulary/1")
+			b.resolution(label, "resolved", matches[0], "quality-attributes/1")
 			field := "attributes"
 			if String(label, "role") == "broader_attribute" {
 				field = "broader"
 			}
 			owner[field] = appendUnique(Strings(owner[field]), matches[0])
 		default:
-			r := b.resolution(label, "ambiguous", "", "quality-vocabulary/1")
+			r := b.resolution(label, "ambiguous", "", "quality-attributes/1")
 			r["candidates"] = matches
 		}
 	}

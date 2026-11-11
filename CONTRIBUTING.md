@@ -47,7 +47,7 @@ includes errcheck, govet, ineffassign, staticcheck, and unused.
   reports and the source inventory. Both operations share discovery, context, and
   reference resolution. It owns report accounting and context deduplication, without importing
   the concrete specification types. Checks do not print or exit.
-- `internal/system`, `internal/job`, `internal/usecase`, `internal/concept`,
+- `internal/businessrule`, `internal/system`, `internal/job`, `internal/usecase`, `internal/concept`,
   `internal/quality` and `internal/requirement` own type-specific parsing and validation,
   metadata schemas, layouts, templates, and repository operations. Their `CheckType`
   functions supply inspection behavior; the CLI registers the supported types.
@@ -166,5 +166,9 @@ edge cases in package-local Go tests and seed relevant cases into the fuzz targe
 
 Tests also execute the examples declared on the command tree and the quick-start
 commands in the README, so documentation syntax cannot silently drift.
+
+The model generation pipeline also validates subset classifications, explicit class
+memberships, and the focused documentation view. Edit `model/views/core-domain.yaml`
+for presentation choices; keep types and relationship semantics in `model/dotspec.yaml`.
 
 See [Releasing](docs/releasing.md) for snapshot and publication procedures.

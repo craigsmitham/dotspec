@@ -433,6 +433,109 @@
             "title": "BroaderAttribute",
             "type": "object"
         },
+        "BusinessRule": {
+            "additionalProperties": false,
+            "description": "A declarative business constraint independent of the software or process that enforces it.",
+            "properties": {
+                "applies_to": {
+                    "$ref": "#/$defs/Applicability"
+                },
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "authority_and_evidence": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "evidence": {
+                    "$ref": "#/$defs/EvidenceCollection"
+                },
+                "exceptions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored qualifications or references to exception rules; no inferred exemption."
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "BusinessRule",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Recognized Notes content."
+                },
+                "open_decisions": {
+                    "$ref": "#/$defs/OpenDecisionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owning_system": {
+                    "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
+                    "type": "string"
+                },
+                "preamble": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored content between the title and the first named section."
+                },
+                "rationale": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "related_concepts": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_specifications": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_use_cases": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
+                },
+                "slug": {
+                    "description": "Path-derived current slug where applicable.",
+                    "type": "string"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "statement": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "The rule expressed in business language, independently of enforcement."
+                }
+            },
+            "required": [
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "BusinessRule",
+            "type": "object"
+        },
         "ByteSpan": {
             "additionalProperties": false,
             "description": "Half-open [start,end) offsets into ORIGINAL bytes of one SourceDocument. Graph checks enforce bounds and start <= end.",
@@ -474,6 +577,10 @@
                 "authority_and_evidence": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -1077,7 +1184,7 @@
         },
         "DeclaresQualityAttribute": {
             "additionalProperties": false,
-            "description": "A declared vocabulary owns an attribute.",
+            "description": "A system declares and owns a quality attribute.",
             "properties": {
                 "id": {
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
@@ -1130,63 +1237,6 @@
                 "kind"
             ],
             "title": "DeclaresQualityAttribute",
-            "type": "object"
-        },
-        "DeclaresVocabulary": {
-            "additionalProperties": false,
-            "description": "A system declares its own quality vocabulary.",
-            "properties": {
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "kind": {
-                    "const": "DeclaresVocabulary",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
-                    "type": "string"
-                },
-                "object": {
-                    "type": "string"
-                },
-                "origin": {
-                    "$ref": "#/$defs/AssertionOrigin"
-                },
-                "source_nodes": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "source_spans": {
-                    "items": {
-                        "$ref": "#/$defs/ByteSpan"
-                    },
-                    "type": "array"
-                },
-                "subject": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "subject",
-                "object",
-                "origin",
-                "id",
-                "kind"
-            ],
-            "title": "DeclaresVocabulary",
             "type": "object"
         },
         "DecompositionStatus": {
@@ -1878,6 +1928,10 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
                 },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
+                },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
@@ -2536,6 +2590,10 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
                 },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
+                },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
@@ -2752,10 +2810,6 @@
                 },
                 "system_context": {
                     "description": "System in whose scope this label was interpreted, if established.",
-                    "type": "string"
-                },
-                "vocabulary_context": {
-                    "description": "Declared vocabulary used for lookup; absent when no vocabulary is bound.",
                     "type": "string"
                 }
             },
@@ -3257,7 +3311,7 @@
         },
         "QualityAttribute": {
             "additionalProperties": false,
-            "description": "A named quality classification owned by one declared vocabulary. Broader is multi-parent; hierarchy alone does not inherit quantitative thresholds.",
+            "description": "A named quality attribute declared and owned by one system. Broader is multi-parent; hierarchy alone does not inherit quantitative thresholds.",
             "properties": {
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -3331,7 +3385,7 @@
         },
         "QualityClassification": {
             "additionalProperties": false,
-            "description": "A requirement is explicitly classified by a resolved vocabulary attribute.",
+            "description": "A requirement is explicitly classified by a resolved quality attribute.",
             "properties": {
                 "id": {
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
@@ -3462,6 +3516,10 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
                 },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
+                },
                 "criterion": {
                     "$ref": "#/$defs/QualityCriterion"
                 },
@@ -3542,73 +3600,6 @@
                 "kind"
             ],
             "title": "QualityRequirement",
-            "type": "object"
-        },
-        "QualityVocabulary": {
-            "additionalProperties": false,
-            "description": "A system-owned quality vocabulary with its own section content; an empty vocabulary is meaningful.",
-            "properties": {
-                "attributes": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "authored_id": {
-                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
-                    "type": "string"
-                },
-                "decomposition": {
-                    "$ref": "#/$defs/DecompositionStatus"
-                },
-                "description": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Quality model introductory content."
-                },
-                "extension_sections": {
-                    "description": "Only unknown sections, not a substitute for known domain fields.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "kind": {
-                    "const": "QualityVocabulary",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "name": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored title or item name, if present."
-                },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
-                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
-                },
-                "owner": {
-                    "type": "string"
-                },
-                "source_document": {
-                    "type": "string"
-                },
-                "source_fragment": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "owner",
-                "description",
-                "source_document",
-                "decomposition",
-                "id",
-                "kind"
-            ],
-            "title": "QualityVocabulary",
             "type": "object"
         },
         "ReadStatus": {
@@ -3731,6 +3722,10 @@
                 "authority_and_evidence": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -4309,9 +4304,6 @@
                                 "$ref": "#/$defs/HasConceptAction"
                             },
                             {
-                                "$ref": "#/$defs/DeclaresVocabulary"
-                            },
-                            {
                                 "$ref": "#/$defs/DeclaresQualityAttribute"
                             },
                             {
@@ -4382,9 +4374,6 @@
                                 "$ref": "#/$defs/GlossaryTerm"
                             },
                             {
-                                "$ref": "#/$defs/QualityVocabulary"
-                            },
-                            {
                                 "$ref": "#/$defs/QualityAttribute"
                             },
                             {
@@ -4413,6 +4402,9 @@
                             },
                             {
                                 "$ref": "#/$defs/ExtensionSection"
+                            },
+                            {
+                                "$ref": "#/$defs/BusinessRule"
                             },
                             {
                                 "$ref": "#/$defs/System"
@@ -4453,7 +4445,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.2.0-draft",
+                    "const": "0.3.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -4856,6 +4848,10 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
                 },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
+                },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
@@ -4933,6 +4929,7 @@
             "enum": [
                 "system",
                 "job",
+                "business-rule",
                 "use-case",
                 "concept",
                 "requirement",
@@ -5109,7 +5106,7 @@
         },
         "System": {
             "additionalProperties": false,
-            "description": "The system described by a system document; subordinate systems retain their own boundaries and vocabulary.",
+            "description": "The system described by a system document; subordinate systems retain their own boundaries and quality attributes.",
             "properties": {
                 "assumptions": {
                     "$ref": "#/$defs/AssumptionCollection"
@@ -5121,6 +5118,10 @@
                 "authority_and_evidence": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
                 },
                 "constraints": {
                     "$ref": "#/$defs/ConstraintCollection"
@@ -5184,9 +5185,16 @@
                 "purpose": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "quality_model": {
-                    "description": "Absent means no declared vocabulary; a present empty vocabulary is distinct.",
-                    "type": "string"
+                "quality_attributes": {
+                    "description": "Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. Must be present together with quality_attributes_content.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "quality_attributes_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored Quality attributes section content, including narrative and attribute subsections. Present even when the section is empty."
                 },
                 "related_concepts": {
                     "$ref": "#/$defs/ContextualReferences"
@@ -5353,6 +5361,10 @@
                 "authority_and_evidence": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -5564,9 +5576,6 @@
                         "$ref": "#/$defs/HasConceptAction"
                     },
                     {
-                        "$ref": "#/$defs/DeclaresVocabulary"
-                    },
-                    {
                         "$ref": "#/$defs/DeclaresQualityAttribute"
                     },
                     {
@@ -5637,9 +5646,6 @@
                         "$ref": "#/$defs/GlossaryTerm"
                     },
                     {
-                        "$ref": "#/$defs/QualityVocabulary"
-                    },
-                    {
                         "$ref": "#/$defs/QualityAttribute"
                     },
                     {
@@ -5668,6 +5674,9 @@
                     },
                     {
                         "$ref": "#/$defs/ExtensionSection"
+                    },
+                    {
+                        "$ref": "#/$defs/BusinessRule"
                     },
                     {
                         "$ref": "#/$defs/System"
@@ -5708,7 +5717,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.2.0-draft",
+            "const": "0.3.0-draft",
             "type": "string"
         },
         "references": {
@@ -5762,5 +5771,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.2.0-draft"
+    "version": "0.3.0-draft"
 }

@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "graph_rules": "Identifier uniqueness; referential integrity and typed endpoints; containment ownership and cycle rules; source-byte digest, offset-map and span fidelity; ordered syntax-tree and membership consistency; complete content-binding accounting; scope and resolution consistency; vocabulary-local identity/broader cycles; honest optional decomposition; assertion provenance and consistency are explicit graph checks, not implied by JSON Schema generation.",
+    "graph_rules": "Identifier uniqueness; referential integrity and typed endpoints; containment ownership and cycle rules; source-byte digest, offset-map and span fidelity; ordered syntax-tree and membership consistency; complete content-binding accounting; scope and resolution consistency; system-local attribute identity/broader cycles; paired quality attribute declarations and section content; honest optional decomposition; assertion provenance and consistency are explicit graph checks, not implied by JSON Schema generation.",
     "runtime_target": "Generated JSON Schema plus explicit graph checks; no generated-Go reliance.",
     "status": "experimental"
   },
@@ -47,7 +47,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "ActorCollection": {
       "abstract": false,
@@ -90,7 +93,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "ActorMention": {
       "abstract": false,
@@ -165,7 +171,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "Applicability": {
       "abstract": false,
@@ -272,7 +281,11 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "software-requirements"
+      ]
     },
     "AppliesTo": {
       "abstract": false,
@@ -428,7 +441,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "Assertion": {
       "abstract": true,
@@ -582,7 +598,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "Assumption": {
       "abstract": false,
@@ -773,7 +792,11 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "software-requirements"
+      ]
     },
     "AssumptionCollection": {
       "abstract": false,
@@ -816,7 +839,11 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "software-requirements"
+      ]
     },
     "BoundaryIs": {
       "abstract": false,
@@ -972,7 +999,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "BroaderAttribute": {
       "abstract": false,
@@ -1130,7 +1160,395 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
+    },
+    "BusinessRule": {
+      "abstract": false,
+      "ancestors": [
+        "BusinessRule",
+        "SpecificationElement",
+        "DomainElement",
+        "Record"
+      ],
+      "annotations": {},
+      "description": "A declarative business constraint independent of the software or process that enforces it.",
+      "is_a": "SpecificationElement",
+      "rules": [],
+      "slots": {
+        "applies_to": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "Applicability"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Applicability",
+          "reference_ranges": [],
+          "required": false
+        },
+        "authored_id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "An explicitly authored ID when present; no manufactured global identifier.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "authority_and_evidence": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "business_rules": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Contextual references to governing business rules; does not assert enforcement or compliance.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "decomposition": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "not_attempted",
+            "unsegmented",
+            "partial",
+            "complete",
+            "failed"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "DecompositionStatus",
+          "reference_ranges": [],
+          "required": true
+        },
+        "evidence": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "EvidenceCollection"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "EvidenceCollection",
+          "reference_ranges": [],
+          "required": false
+        },
+        "exceptions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored qualifications or references to exception rules; no inferred exemption.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "extension_sections": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Only unknown sections, not a substitute for known domain fields.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "ExtensionSection",
+          "reference_ranges": [
+            "ExtensionSection"
+          ],
+          "required": false
+        },
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "BusinessRule",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "name": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored title or item name, if present.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Recognized Notes content.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "open_decisions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions.",
+          "identifier": false,
+          "inline_ranges": [
+            "OpenDecisionCollection"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "OpenDecisionCollection",
+          "reference_ranges": [],
+          "required": false
+        },
+        "owning_system": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": false
+        },
+        "preamble": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored content between the title and the first named section.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "rationale": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "related_concepts": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "related_specifications": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "related_use_cases": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "slug": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Path-derived current slug where applicable.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "source_document": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceDocument",
+          "reference_ranges": [
+            "SourceDocument"
+          ],
+          "required": true
+        },
+        "source_fragment": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceFragment",
+          "reference_ranges": [
+            "SourceFragment"
+          ],
+          "required": false
+        },
+        "statement": {
+          "annotations": {},
+          "any_of": [],
+          "description": "The rule expressed in business language, independently of enforcement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        }
+      },
+      "subsets": [
+        "business-requirements"
+      ]
     },
     "ByteSpan": {
       "abstract": false,
@@ -1187,7 +1605,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "source-artifacts"
+      ]
     },
     "Concept": {
       "abstract": false,
@@ -1263,6 +1684,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "business_rules": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Contextual references to governing business rules; does not assert enforcement or compliance.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
         },
@@ -1555,7 +1992,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "ConceptAction": {
       "abstract": false,
@@ -1842,7 +2282,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "Condition": {
       "abstract": false,
@@ -1885,7 +2328,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "ConditionCollection": {
       "abstract": false,
@@ -1928,7 +2374,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "Constraint": {
       "abstract": false,
@@ -2119,7 +2568,11 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "software-requirements"
+      ]
     },
     "ConstraintCollection": {
       "abstract": false,
@@ -2162,7 +2615,11 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "software-requirements"
+      ]
     },
     "ContentBinding": {
       "abstract": false,
@@ -2349,7 +2806,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "ContentNode": {
       "abstract": false,
@@ -2818,7 +3278,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "document-content"
+      ]
     },
     "ContextSource": {
       "abstract": false,
@@ -2910,7 +3373,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "inspection-and-coverage"
+      ]
     },
     "ContextualReference": {
       "abstract": false,
@@ -2953,7 +3419,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "ContextualReferences": {
       "abstract": false,
@@ -3012,7 +3481,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "CoverageReport": {
       "abstract": false,
@@ -3134,7 +3606,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "inspection-and-coverage"
+      ]
     },
     "DeclaresQualityAttribute": {
       "abstract": false,
@@ -3144,9 +3619,9 @@
         "Record"
       ],
       "annotations": {
-        "projection_of": "QualityVocabulary.attributes"
+        "projection_of": "System.quality_attributes"
       },
-      "description": "A declared vocabulary owns an attribute.",
+      "description": "A system declares and owns a quality attribute.",
       "is_a": "Assertion",
       "rules": [],
       "slots": {
@@ -3286,171 +3761,16 @@
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "QualityVocabulary",
-          "reference_ranges": [
-            "QualityVocabulary"
-          ],
-          "required": true
-        }
-      }
-    },
-    "DeclaresVocabulary": {
-      "abstract": false,
-      "ancestors": [
-        "DeclaresVocabulary",
-        "Assertion",
-        "Record"
-      ],
-      "annotations": {
-        "projection_of": "System.quality_model"
-      },
-      "description": "A system declares its own quality vocabulary.",
-      "is_a": "Assertion",
-      "rules": [],
-      "slots": {
-        "id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-          "identifier": true,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "pattern": "[\\s\\S]+",
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "inputs": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Source occurrences and/or typed records supporting this assertion.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "Record",
-          "reference_ranges": [
-            "Record"
-          ],
-          "required": false
-        },
-        "kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Concrete record type discriminator.",
-          "equals_string": "DeclaresVocabulary",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "mapping_rule": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "object": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "QualityVocabulary",
-          "reference_ranges": [
-            "QualityVocabulary"
-          ],
-          "required": true
-        },
-        "origin": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "enum_values": [
-            "authored",
-            "derived"
-          ],
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssertionOrigin",
-          "reference_ranges": [],
-          "required": true
-        },
-        "source_nodes": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "ContentNode",
-          "reference_ranges": [
-            "ContentNode"
-          ],
-          "required": false
-        },
-        "source_spans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "ByteSpan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": false,
-          "range": "ByteSpan",
-          "reference_ranges": [],
-          "required": false
-        },
-        "subject": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
           "range": "System",
           "reference_ranges": [
             "System"
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "Diagnostic": {
       "abstract": false,
@@ -3663,7 +3983,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "inspection-and-coverage"
+      ]
     },
     "DiscoveryPolicy": {
       "abstract": false,
@@ -3736,7 +4059,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "inspection-and-coverage"
+      ]
     },
     "Document": {
       "abstract": false,
@@ -4010,7 +4336,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "document-content"
+      ]
     },
     "DomainElement": {
       "abstract": true,
@@ -4169,7 +4498,12 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "user-requirements",
+        "software-requirements"
+      ]
     },
     "EnvironmentDescription": {
       "abstract": false,
@@ -4228,7 +4562,11 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "software-requirements"
+      ]
     },
     "EvidenceCollection": {
       "abstract": false,
@@ -4303,7 +4641,12 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "user-requirements",
+        "software-requirements"
+      ]
     },
     "EvidenceStatement": {
       "abstract": false,
@@ -4558,7 +4901,12 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "user-requirements",
+        "software-requirements"
+      ]
     },
     "Extension": {
       "abstract": false,
@@ -4901,7 +5249,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "ExtensionCollection": {
       "abstract": false,
@@ -4944,7 +5295,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "ExtensionSection": {
       "abstract": false,
@@ -5187,7 +5541,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "document-content"
+      ]
     },
     "ExternalResource": {
       "abstract": false,
@@ -5259,7 +5616,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "source-artifacts"
+      ]
     },
     "Force": {
       "abstract": false,
@@ -5306,7 +5666,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "user-requirements"
+      ]
     },
     "ForceCollection": {
       "abstract": false,
@@ -5349,7 +5712,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "user-requirements"
+      ]
     },
     "GeneralRequirement": {
       "abstract": false,
@@ -5440,6 +5806,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "business_rules": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Contextual references to governing business rules; does not assert enforcement or compliance.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
         },
@@ -5748,7 +6130,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "Glossary": {
       "abstract": false,
@@ -5791,7 +6176,11 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "software-requirements"
+      ]
     },
     "GlossaryTerm": {
       "abstract": false,
@@ -6030,7 +6419,11 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "software-requirements"
+      ]
     },
     "GoalCollection": {
       "abstract": false,
@@ -6073,7 +6466,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements"
+      ]
     },
     "GoalLevel": {
       "abstract": false,
@@ -6119,7 +6515,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "HasConceptAction": {
       "abstract": false,
@@ -6277,7 +6676,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "HasExtension": {
       "abstract": false,
@@ -6439,7 +6841,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "HasJobStep": {
       "abstract": false,
@@ -6597,7 +7002,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "HasOutcome": {
       "abstract": false,
@@ -6759,7 +7167,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "HasProgressCase": {
       "abstract": false,
@@ -6917,7 +7328,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "HasScenario": {
       "abstract": false,
@@ -7075,7 +7489,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "HasScenarioStep": {
       "abstract": false,
@@ -7237,7 +7654,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "Job": {
       "abstract": false,
@@ -7281,6 +7701,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "business_rules": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Contextual references to governing business rules; does not assert enforcement or compliance.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
         },
@@ -7669,7 +8105,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "user-requirements"
+      ]
     },
     "JobMap": {
       "abstract": false,
@@ -7712,7 +8151,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "user-requirements"
+      ]
     },
     "JobStep": {
       "abstract": false,
@@ -7937,7 +8379,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "user-requirements"
+      ]
     },
     "LabelOccurrence": {
       "abstract": false,
@@ -8075,24 +8520,11 @@
             "System"
           ],
           "required": false
-        },
-        "vocabulary_context": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Declared vocabulary used for lookup; absent when no vocabulary is bound.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "QualityVocabulary",
-          "reference_ranges": [
-            "QualityVocabulary"
-          ],
-          "required": false
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "MeasurementPlan": {
       "abstract": false,
@@ -8231,7 +8663,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "OffsetMapSegment": {
       "abstract": false,
@@ -8316,7 +8751,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "document-content"
+      ]
     },
     "OpenDecision": {
       "abstract": false,
@@ -8359,7 +8797,12 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "user-requirements",
+        "software-requirements"
+      ]
     },
     "OpenDecisionCollection": {
       "abstract": false,
@@ -8402,7 +8845,12 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "user-requirements",
+        "software-requirements"
+      ]
     },
     "Outcome": {
       "abstract": false,
@@ -8613,7 +9061,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "user-requirements"
+      ]
     },
     "OutcomeCollection": {
       "abstract": false,
@@ -8656,7 +9107,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "user-requirements"
+      ]
     },
     "OwnedBySystem": {
       "abstract": false,
@@ -8814,7 +9268,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "ParentSystem": {
       "abstract": false,
@@ -8972,7 +9429,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "ProgressCase": {
       "abstract": false,
@@ -9245,7 +9705,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "user-requirements"
+      ]
     },
     "ProgressCaseCollection": {
       "abstract": false,
@@ -9288,7 +9751,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "user-requirements"
+      ]
     },
     "QualityAttribute": {
       "abstract": false,
@@ -9298,7 +9764,7 @@
         "Record"
       ],
       "annotations": {},
-      "description": "A named quality classification owned by one declared vocabulary. Broader is multi-parent; hierarchy alone does not inherit quantitative thresholds.",
+      "description": "A named quality attribute declared and owned by one system. Broader is multi-parent; hierarchy alone does not inherit quantitative thresholds.",
       "is_a": "DomainElement",
       "rules": [],
       "slots": {
@@ -9473,9 +9939,9 @@
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "QualityVocabulary",
+          "range": "System",
           "reference_ranges": [
-            "QualityVocabulary"
+            "System"
           ],
           "required": true
         },
@@ -9511,7 +9977,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "QualityClassification": {
       "abstract": false,
@@ -9523,7 +9992,7 @@
       "annotations": {
         "projection_of": "Requirement.attributes"
       },
-      "description": "A requirement is explicitly classified by a resolved vocabulary attribute.",
+      "description": "A requirement is explicitly classified by a resolved quality attribute.",
       "is_a": "Assertion",
       "rules": [],
       "slots": {
@@ -9669,7 +10138,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "QualityCriterion": {
       "abstract": false,
@@ -9872,7 +10344,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "QualityRequirement": {
       "abstract": false,
@@ -9963,6 +10438,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "business_rules": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Contextual references to governing business rules; does not assert enforcement or compliance.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
         },
@@ -10271,216 +10762,10 @@
           ],
           "required": false
         }
-      }
-    },
-    "QualityVocabulary": {
-      "abstract": false,
-      "ancestors": [
-        "QualityVocabulary",
-        "DomainElement",
-        "Record"
-      ],
-      "annotations": {
-        "owned_memberships": "QualityVocabulary.attributes"
       },
-      "description": "A system-owned quality vocabulary with its own section content; an empty vocabulary is meaningful.",
-      "is_a": "DomainElement",
-      "rules": [],
-      "slots": {
-        "attributes": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "QualityAttribute",
-          "reference_ranges": [
-            "QualityAttribute"
-          ],
-          "required": false
-        },
-        "authored_id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "An explicitly authored ID when present; no manufactured global identifier.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "decomposition": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "enum_values": [
-            "not_attempted",
-            "unsegmented",
-            "partial",
-            "complete",
-            "failed"
-          ],
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "DecompositionStatus",
-          "reference_ranges": [],
-          "required": true
-        },
-        "description": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Quality model introductory content.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": true
-        },
-        "extension_sections": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Only unknown sections, not a substitute for known domain fields.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ExtensionSection",
-          "reference_ranges": [
-            "ExtensionSection"
-          ],
-          "required": false
-        },
-        "id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-          "identifier": true,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "pattern": "[\\s\\S]+",
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Concrete record type discriminator.",
-          "equals_string": "QualityVocabulary",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "name": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored title or item name, if present.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_decisions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions.",
-          "identifier": false,
-          "inline_ranges": [
-            "OpenDecisionCollection"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "OpenDecisionCollection",
-          "reference_ranges": [],
-          "required": false
-        },
-        "owner": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "System",
-          "reference_ranges": [
-            "System"
-          ],
-          "required": true
-        },
-        "source_document": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceDocument",
-          "reference_ranges": [
-            "SourceDocument"
-          ],
-          "required": true
-        },
-        "source_fragment": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceFragment",
-          "reference_ranges": [
-            "SourceFragment"
-          ],
-          "required": false
-        }
-      }
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "Record": {
       "abstract": true,
@@ -10520,7 +10805,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "source-artifacts"
+      ]
     },
     "ReferenceTraversal": {
       "abstract": false,
@@ -10621,7 +10909,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "inspection-and-coverage"
+      ]
     },
     "Requirement": {
       "abstract": true,
@@ -10711,6 +11002,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "business_rules": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Contextual references to governing business rules; does not assert enforcement or compliance.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
         },
@@ -10986,7 +11293,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "Resolution": {
       "abstract": false,
@@ -11159,7 +11469,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "RichContent": {
       "abstract": false,
@@ -11266,7 +11579,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "document-content"
+      ]
     },
     "ScanScope": {
       "abstract": false,
@@ -11414,6 +11730,7 @@
           "enum_values": [
             "system",
             "job",
+            "business-rule",
             "use-case",
             "concept",
             "requirement",
@@ -11429,7 +11746,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "inspection-and-coverage"
+      ]
     },
     "Scenario": {
       "abstract": false,
@@ -11638,7 +11958,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "ScenarioStep": {
       "abstract": false,
@@ -11927,7 +12250,10 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "SequenceConstraint": {
       "abstract": false,
@@ -12002,7 +12328,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "SequenceStatement": {
       "abstract": false,
@@ -12064,7 +12393,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "Snapshot": {
       "abstract": false,
@@ -12253,7 +12585,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.2.0-draft",
+          "equals_string": "0.3.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -12343,7 +12675,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "inspection-and-coverage"
+      ]
     },
     "SourceDirectory": {
       "abstract": false,
@@ -12401,7 +12736,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "source-artifacts"
+      ]
     },
     "SourceDocument": {
       "abstract": false,
@@ -12558,7 +12896,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "source-artifacts"
+      ]
     },
     "SourceFragment": {
       "abstract": false,
@@ -12691,7 +13032,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "source-artifacts"
+      ]
     },
     "SourceLocation": {
       "abstract": false,
@@ -12792,7 +13136,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "source-artifacts"
+      ]
     },
     "SourcePayload": {
       "abstract": false,
@@ -12928,7 +13275,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "source-artifacts"
+      ]
     },
     "SourceReference": {
       "abstract": false,
@@ -13105,7 +13455,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "SourceResource": {
       "abstract": true,
@@ -13147,7 +13500,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "source-artifacts"
+      ]
     },
     "SourceRevision": {
       "abstract": false,
@@ -13214,7 +13570,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "source-artifacts"
+      ]
     },
     "SpecificationElement": {
       "abstract": true,
@@ -13257,6 +13616,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "business_rules": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Contextual references to governing business rules; does not assert enforcement or compliance.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
         },
@@ -13516,7 +13891,12 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "user-requirements",
+        "software-requirements"
+      ]
     },
     "StakeholderInterest": {
       "abstract": false,
@@ -13575,7 +13955,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "StakeholderInterestCollection": {
       "abstract": false,
@@ -13618,7 +14001,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "StateDescription": {
       "abstract": false,
@@ -13677,7 +14063,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "StateElement": {
       "abstract": false,
@@ -13736,7 +14125,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "SupportsJob": {
       "abstract": false,
@@ -13898,7 +14290,10 @@
           ],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
     },
     "SyntaxProperty": {
       "abstract": false,
@@ -13961,7 +14356,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "document-content"
+      ]
     },
     "System": {
       "abstract": false,
@@ -13972,9 +14370,9 @@
         "Record"
       ],
       "annotations": {
-        "owned_memberships": "System.goals.items or System.assumptions.items or System.constraints.items or System.glossary.terms or System.quality_model"
+        "owned_memberships": "System.goals.items or System.assumptions.items or System.constraints.items or System.glossary.terms or System.quality_attributes"
       },
-      "description": "The system described by a system document; subordinate systems retain their own boundaries and vocabulary.",
+      "description": "The system described by a system document; subordinate systems retain their own boundaries and quality attributes.",
       "is_a": "SpecificationElement",
       "rules": [],
       "slots": {
@@ -14021,6 +14419,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "business_rules": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Contextual references to governing business rules; does not assert enforcement or compliance.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
         },
@@ -14283,20 +14697,36 @@
           "reference_ranges": [],
           "required": false
         },
-        "quality_model": {
+        "quality_attributes": {
           "annotations": {},
           "any_of": [],
-          "description": "Absent means no declared vocabulary; a present empty vocabulary is distinct.",
+          "description": "Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. Must be present together with quality_attributes_content.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
           "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "QualityAttribute",
+          "reference_ranges": [
+            "QualityAttribute"
+          ],
+          "required": false
+        },
+        "quality_attributes_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored Quality attributes section content, including narrative and attribute subsections. Present even when the section is empty.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "QualityVocabulary",
-          "reference_ranges": [
-            "QualityVocabulary"
-          ],
+          "range": "RichContent",
+          "reference_ranges": [],
           "required": false
         },
         "related_concepts": {
@@ -14409,7 +14839,11 @@
           ],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements",
+        "software-requirements"
+      ]
     },
     "SystemGoal": {
       "abstract": false,
@@ -14600,7 +15034,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "business-requirements"
+      ]
     },
     "Timeline": {
       "abstract": false,
@@ -14643,7 +15080,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "user-requirements"
+      ]
     },
     "TimelineEvent": {
       "abstract": false,
@@ -14702,7 +15142,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "user-requirements"
+      ]
     },
     "UnmappedRole": {
       "abstract": false,
@@ -14757,7 +15200,10 @@
           "reference_ranges": [],
           "required": true
         }
-      }
+      },
+      "subsets": [
+        "inspection-and-coverage"
+      ]
     },
     "UseCase": {
       "abstract": false,
@@ -14801,6 +15247,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "business_rules": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Contextual references to governing business rules; does not assert enforcement or compliance.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
         },
@@ -15285,7 +15747,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "VerificationCase": {
       "abstract": false,
@@ -15376,7 +15841,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     },
     "VerificationPlan": {
       "abstract": false,
@@ -15483,7 +15951,10 @@
           "reference_ranges": [],
           "required": false
         }
-      }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
     }
   },
   "enums": {
@@ -15658,14 +16129,52 @@
     "SpecificationKind": [
       "system",
       "job",
+      "business-rule",
       "use-case",
       "concept",
       "requirement",
       "quality"
     ]
   },
-  "model_version": "0.2.0-draft",
+  "model_version": "0.3.0-draft",
   "representation_version": "0.1.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/dotspec.yaml",
-  "source_sha256": "3d49ed6f4e333d95ac0a815106c15c7b8fb669e4b7492d0ef1111bee2028b27e"
+  "source_sha256": "a4debd9c1a7935a17131b8f9f615c08f9d21f557a6ad3d6cbc7a0d2fe8c38831",
+  "subsets": {
+    "business-requirements": {
+      "classification": "core",
+      "description": "Business objectives, scope, assumptions, and rules governing permissible business activity.",
+      "title": "Business requirements"
+    },
+    "document-content": {
+      "classification": "generic",
+      "description": "Ordered document syntax, rich text, and preserved extension content.",
+      "title": "Document content"
+    },
+    "inspection-and-coverage": {
+      "classification": "supporting",
+      "description": "The scope, completion, diagnostics, and mapping coverage of an inspection.",
+      "title": "Inspection and coverage"
+    },
+    "software-requirements": {
+      "classification": "core",
+      "description": "Software interactions, concept behavior, obligations, quality classifications, and verification guidance.",
+      "title": "Software requirements"
+    },
+    "source-artifacts": {
+      "classification": "generic",
+      "description": "Source identities, exact payloads, revisions, fragments, and locations.",
+      "title": "Source artifacts"
+    },
+    "specification-traceability": {
+      "classification": "core",
+      "description": "Explicit connections between specification meaning, authored occurrences, and resolved relationships.",
+      "title": "Specification traceability"
+    },
+    "user-requirements": {
+      "classification": "core",
+      "description": "The progress people seek, their circumstances, work, and desired outcomes.",
+      "title": "User requirements"
+    }
+  }
 }

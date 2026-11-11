@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/craigsmitham/dotspec/internal/businessrule"
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/job"
@@ -39,6 +40,12 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 	var authoredID string
 	var labels []string
 	switch kind {
+	case "business-rule":
+		var v *businessrule.BusinessRule
+		v, err = businessrule.Parse(doc.Data)
+		if err == nil {
+			authoredID = v.ID
+		}
 	case "system":
 		_, err = system.Parse(doc.Data)
 	case "job":
@@ -78,7 +85,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.parseFailure(err)
 		return m.result
 	}
-	class := map[string]string{"system": "System", "job": "Job", "concept": "Concept", "use-case": "UseCase", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[kind]
+	class := map[string]string{"business-rule": "BusinessRule", "system": "System", "job": "Job", "concept": "Concept", "use-case": "UseCase", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[kind]
 	r := m.record(class, "")
 	m.result.RootID = String(r, "id")
 	if authoredID != "" {
@@ -110,6 +117,8 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		}
 		mapped := false
 		switch kind {
+		case "business-rule":
+			mapped = m.businessRule(r, section)
 		case "system":
 			mapped = m.system(r, section)
 		case "job":
@@ -313,6 +322,9 @@ func (m *domainMapper) authoredFragments() {
 
 func (m *domainMapper) common(r Record, s *Section) bool {
 	switch s.Title {
+	case "Business rules":
+		m.contextField(r, "business_rules", s.Content)
+		m.sectionBindings(r, "business_rules.content", s)
 	case "Related specifications":
 		m.contextField(r, "related_specifications", s.Content)
 		m.sectionBindings(r, "related_specifications.content", s)

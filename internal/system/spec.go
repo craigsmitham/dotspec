@@ -34,17 +34,18 @@ Describe the system's boundary and what it includes.
 `
 
 type System struct {
-	References   *specfile.ReferenceDocument `json:"-"`
-	Name         string                      `json:"name"`
-	Purpose      string                      `json:"purpose"`
-	Scope        string                      `json:"scope"`
-	Goals        string                      `json:"goals,omitempty"`
-	Environment  string                      `json:"environment,omitempty"`
-	Assumptions  string                      `json:"assumptions,omitempty"`
-	Constraints  string                      `json:"constraints,omitempty"`
-	Glossary     string                      `json:"glossary,omitempty"`
-	Path         string                      `json:"path"`
-	QualityModel *QualityModel               `json:"quality_model"`
+	References               *specfile.ReferenceDocument `json:"-"`
+	Name                     string                      `json:"name"`
+	Purpose                  string                      `json:"purpose"`
+	Scope                    string                      `json:"scope"`
+	Goals                    string                      `json:"goals,omitempty"`
+	Environment              string                      `json:"environment,omitempty"`
+	Assumptions              string                      `json:"assumptions,omitempty"`
+	Constraints              string                      `json:"constraints,omitempty"`
+	Glossary                 string                      `json:"glossary,omitempty"`
+	Path                     string                      `json:"path"`
+	QualityAttributes        []Attribute                 `json:"quality_attributes"`
+	QualityAttributesContent *string                     `json:"quality_attributes_content,omitempty"`
 }
 
 func Read(path string) (*System, error) {
@@ -63,10 +64,8 @@ func Read(path string) (*System, error) {
 		return nil, diagnostic.WithPath(err, path)
 	}
 	spec.Path = path
-	if spec.QualityModel != nil {
-		for i := range spec.QualityModel.Attributes {
-			spec.QualityModel.Attributes[i].Location.Path = path
-		}
+	for i := range spec.QualityAttributes {
+		spec.QualityAttributes[i].Location.Path = path
 	}
 	return spec, nil
 }
@@ -100,7 +99,9 @@ func Parse(data []byte) (*System, error) {
 			*target = doc.Body(section)
 			continue
 		}
-		spec.QualityModel, err = parseQualityModel(doc, section, &ids)
+		content := doc.Body(section)
+		spec.QualityAttributesContent = &content
+		spec.QualityAttributes, err = parseQualityAttributes(doc, section, &ids)
 		if err != nil {
 			return nil, err
 		}

@@ -1,0 +1,93 @@
+# A business rule is independently authored and referenced by software specs.
+mkdir project
+cd project
+exec git init -q
+status 0 dotspec business-rule list --json
+stdout '"groups": \[\]'
+status 0 dotspec system init
+status 0 dotspec use-case init purchase
+cp ../purchase.md specs/use-cases/purchase.use-case.spec.md
+status 0 dotspec business-rule init approval --json
+stdout 'approval.business-rule.spec.md'
+status 2 dotspec business-rule init approval
+stderr 'refusing to overwrite'
+cp ../approval.md specs/business-rules/approval.business-rule.spec.md
+status 0 dotspec business-rule show approval --json
+stdout '"business_rule":'
+stdout '"authority": "Purchasing policy approved by the board."'
+stdout '"exceptions": "Emergency purchases follow a separately approved exception rule."'
+status 0 dotspec business-rule list --json
+stdout '"business_rules":'
+stdout 'Manager approval'
+status 0 dotspec business-rule check approval --json
+stdout '"errors": 0'
+status 0 dotspec check --json
+stdout '"errors": 0'
+status 0 dotspec sources --json
+stdout 'approval.business-rule.spec.md'
+status 0 dotspec model export
+stdout '"kind": "BusinessRule"'
+stdout '"business_rules":'
+stdout '"status": "resolved"'
+! stdout '"kind": "EnforcesRule"'
+cp stdout snapshot.json
+status 0 dotspec model validate snapshot.json --json
+stdout '"valid": true'
+cmp specs/business-rules/approval.business-rule.spec.md ../approval.md
+
+# Missing content is advisory; duplicate structure is an error retained by export.
+cp ../draft.md specs/business-rules/draft.business-rule.spec.md
+status 0 dotspec business-rule check draft --json
+stdout 'business-rule.statement'
+cp ../invalid.md specs/business-rules/invalid.business-rule.spec.md
+status 1 dotspec business-rule check invalid --json
+stdout 'structure.duplicate-section'
+status 1 dotspec model export
+stdout '"domain_decomposition": "failed"'
+cp stdout partial.json
+status 0 dotspec model validate partial.json --json
+stdout '"valid": true'
+status 2 dotspec business-rule init ../escape
+status 2 dotspec business-rule show approval --path specs
+-- approval.md --
+---
+type: business-rule
+id: approval
+---
+# Manager approval
+## Statement
+Purchases above $10,000 require approval from a department manager.
+## Applies to
+Purchases by any department.
+## Rationale
+Make expenditure accountable.
+## Authority
+Purchasing policy approved by the board.
+## Exceptions
+Emergency purchases follow a separately approved exception rule.
+## Related specifications
+[Submit a purchase](../use-cases/purchase.use-case.spec.md) describes a software interaction.
+-- purchase.md --
+---
+type: use-case
+---
+# Submit a purchase
+## Goal
+Submit a purchase for approval.
+## Business rules
+[Manager approval](../business-rules/approval.business-rule.spec.md#approval) governs purchases.
+The citation records context; it does not establish software compliance.
+-- draft.md --
+---
+type: business-rule
+---
+# Draft
+-- invalid.md --
+---
+type: business-rule
+---
+# Ambiguous rule
+## Statement
+First rule.
+## Statement
+Second rule.

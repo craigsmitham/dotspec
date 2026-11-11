@@ -208,6 +208,33 @@ func TestValidationAcceptsCompleteSourceBackedExport(t *testing.T) {
 	if len(snapshot.Assertions) == 0 || len(snapshot.Resolutions) == 0 {
 		t.Fatal("fixture did not exercise materialized assertions and resolution")
 	}
+	system := elementKind(t, snapshot, "System")
+	attributeIDs := Strings(system["quality_attributes"])
+	if len(attributeIDs) != 2 {
+		t.Fatalf("system attributes: %v", attributeIDs)
+	}
+	for _, id := range attributeIDs {
+		if String(snapshotRecord(t, snapshot, id), "owner") != String(system, "id") {
+			t.Fatal("attribute is not owned directly by its system")
+		}
+	}
+	declarations := 0
+	for _, assertion := range snapshot.Assertions {
+		if String(assertion, "kind") == "DeclaresQualityAttribute" {
+			declarations++
+			if String(assertion, "subject") != String(system, "id") || !slices.Contains(attributeIDs, String(assertion, "object")) {
+				t.Fatalf("incorrect direct declaration: %+v", assertion)
+			}
+		}
+	}
+	if declarations != len(attributeIDs) {
+		t.Fatalf("declaration count: %d", declarations)
+	}
+	for _, label := range snapshot.LabelOccurrences {
+		if String(label, "system_context") != String(system, "id") {
+			t.Fatalf("label lacks declaring system context: %+v", label)
+		}
+	}
 	data, err := json.Marshal(snapshot)
 	if err != nil {
 		t.Fatal(err)
@@ -224,6 +251,8 @@ func TestValidationRejectsCorruptGraph(t *testing.T) {
 		name, code string
 		mutate     func(*Snapshot)
 	}{
+		{"attribute declaration without section content", "quality.declaration", func(s *Snapshot) { delete(elementKind(t, s, "System"), "quality_attributes_content") }},
+		{"section content without attribute declaration", "quality.declaration", func(s *Snapshot) { delete(elementKind(t, s, "System"), "quality_attributes") }},
 		{"duplicate identity", "identity.duplicate", func(s *Snapshot) { s.Elements = append(s.Elements, s.Elements[0]) }},
 		{"missing typed reference", "reference.missing", func(s *Snapshot) { elementKind(t, s, "UseCase")["main_success_scenario"] = "missing" }},
 		{"wrong reference subtype", "reference.kind", func(s *Snapshot) {
@@ -240,12 +269,11 @@ func TestValidationRejectsCorruptGraph(t *testing.T) {
 			elementKind(t, s, "Scenario")["authored_id"] = "duplicate"
 		}},
 		{"unjustified classification", "label.projection", func(s *Snapshot) { elementKind(t, s, "GeneralRequirement")["attributes"] = []string{} }},
-		{"unbound vocabulary", "label.unbound", func(s *Snapshot) {
+		{"unbound quality attributes", "label.unbound", func(s *Snapshot) {
 			delete(elementKind(t, s, "GeneralRequirement"), "owning_system")
 			for _, label := range s.LabelOccurrences {
 				if String(label, "role") == "quality_classification" {
 					delete(label, "system_context")
-					delete(label, "vocabulary_context")
 				}
 			}
 		}},
@@ -392,7 +420,6 @@ func TestValidationAllowsFaithfulFailuresAndUnboundLabels(t *testing.T) {
 		for _, label := range s.LabelOccurrences {
 			if String(label, "owner") == String(r, "id") {
 				delete(label, "system_context")
-				delete(label, "vocabulary_context")
 				result := snapshotRecord(t, s, String(label, "resolution"))
 				result["status"] = "unbound_label"
 				delete(result, "target")
@@ -425,7 +452,7 @@ func TestValidationPayloadRetainsExactBytes(t *testing.T) {
 	requireValid(t, snapshot)
 }
 
-func TestValidationRejectsDomainCyclesAndVocabularyEscape(t *testing.T) {
+func TestValidationRejectsDomainCyclesAndAttributeScopeEscape(t *testing.T) {
 	original := validationSnapshot(t)
 	t.Run("quality hierarchy cycle", func(t *testing.T) {
 		s := cloneSnapshot(t, original)
@@ -445,7 +472,7 @@ func TestValidationRejectsDomainCyclesAndVocabularyEscape(t *testing.T) {
 		s.Resolutions = append(s.Resolutions, Record{"id": "cycle-resolution", "kind": "Resolution", "occurrence": "cycle-label", "status": "resolved", "target": consistent["id"], "rule": "explicit-test/1"})
 		requireFinding(t, s, "quality.broader-cycle")
 	})
-	t.Run("cross-vocabulary broader", func(t *testing.T) {
+	t.Run("cross-system broader", func(t *testing.T) {
 		s := cloneSnapshot(t, original)
 		var broad Record
 		for _, r := range s.Elements {
@@ -454,10 +481,10 @@ func TestValidationRejectsDomainCyclesAndVocabularyEscape(t *testing.T) {
 			}
 		}
 		old := snapshotRecord(t, s, String(broad, "owner"))
-		old["attributes"] = slices.DeleteFunc(Strings(old["attributes"]), func(id string) bool { return id == String(broad, "id") })
-		s.Elements = append(s.Elements, Record{"id": "other-system", "kind": "System", "source_document": broad["source_document"], "decomposition": "unsegmented", "quality_model": "other-vocabulary"}, Record{"id": "other-vocabulary", "kind": "QualityVocabulary", "source_document": broad["source_document"], "decomposition": "unsegmented", "owner": "other-system", "description": old["description"], "attributes": []string{String(broad, "id")}})
-		broad["owner"] = "other-vocabulary"
-		requireFinding(t, s, "quality.vocabulary")
+		old["quality_attributes"] = slices.DeleteFunc(Strings(old["quality_attributes"]), func(id string) bool { return id == String(broad, "id") })
+		s.Elements = append(s.Elements, Record{"id": "other-system", "kind": "System", "source_document": broad["source_document"], "decomposition": "unsegmented", "quality_attributes_content": old["quality_attributes_content"], "quality_attributes": []string{String(broad, "id")}})
+		broad["owner"] = "other-system"
+		requireFinding(t, s, "quality.scope")
 	})
 	t.Run("nested branch cycle", func(t *testing.T) {
 		s := cloneSnapshot(t, original)

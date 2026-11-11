@@ -76,7 +76,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 			if len(m.Diagnostics) > 0 || m.RootID == "" {
 				t.Errorf("%s: root=%q diagnostics=%#v", path, m.RootID, m.Diagnostics)
 			}
-			expectedClass := map[string]string{"system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[kind]
+			expectedClass := map[string]string{"business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[kind]
 			rootMatches := false
 			for _, element := range m.Elements {
 				if String(element, "id") == m.RootID && String(element, "kind") == expectedClass {
@@ -126,7 +126,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 		}
 	}
 	total := 0
-	for _, kind := range []string{"system", "job", "use-case", "concept", "requirement", "quality"} {
+	for _, kind := range []string{"system", "job", "use-case", "concept", "requirement", "quality", "business-rule"} {
 		if counts[kind] == 0 {
 			t.Errorf("%s family absent from inventory", kind)
 		}
@@ -221,7 +221,7 @@ Unvalidated hypothesis.
 	}
 }
 
-func TestMappingSystemVocabularyAndLabels(t *testing.T) {
+func TestMappingSystemQualityAttributesAndLabels(t *testing.T) {
 	d, m, r := mapped(t, "system", `## Purpose
 
 Describe a system.
@@ -243,7 +243,7 @@ Unfinished material.
 
 ## Quality attributes
 
-A local vocabulary.
+Local quality concerns.
 
 ### Usability
 
@@ -267,8 +267,8 @@ Problems can be explained.
 	if len(recordsOf(m, "SystemGoal")) != 2 || len(recordsOf(m, "GlossaryTerm")) != 1 {
 		t.Error("named system items missing")
 	}
-	if len(recordsOf(m, "QualityVocabulary")) != 1 || len(recordsOf(m, "QualityAttribute")) != 3 {
-		t.Error("quality vocabulary missing")
+	if len(Strings(r["quality_attributes"])) != 3 || len(recordsOf(m, "QualityAttribute")) != 3 {
+		t.Error("quality attributes missing")
 	}
 	if len(m.Labels) != 2 {
 		t.Fatalf("broader labels: %#v", m.Labels)
@@ -278,13 +278,18 @@ Problems can be explained.
 			t.Error("attribute metadata included in definition")
 		}
 	}
-	if String(r, "quality_model") == "" {
-		t.Error("vocabulary ownership missing")
+	if got := richText(d, r["quality_attributes_content"]); !strings.Contains(got, "Local quality concerns.") || !strings.Contains(got, "Problems can be explained.") {
+		t.Errorf("quality section content lost: %s", got)
+	}
+	for _, a := range recordsOf(m, "QualityAttribute") {
+		if String(a, "owner") != String(r, "id") {
+			t.Error("attribute must belong directly to the system")
+		}
 	}
 	_, _, absent := mapped(t, "system", "## Purpose\n\nP.\n\n## Scope\n\nS.\n")
-	_, empty, _ := mapped(t, "system", "## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n")
-	if absent["quality_model"] != nil || len(recordsOf(empty, "QualityVocabulary")) != 1 {
-		t.Error("absent and empty vocabulary conflated")
+	_, _, empty := mapped(t, "system", "## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n")
+	if absent["quality_attributes"] != nil || absent["quality_attributes_content"] != nil || empty["quality_attributes"] == nil || len(Strings(empty["quality_attributes"])) != 0 || empty["quality_attributes_content"] == nil {
+		t.Error("absent and empty attribute declarations conflated")
 	}
 }
 

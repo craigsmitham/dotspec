@@ -72,7 +72,7 @@ Unchanged sources.
 	put(t, Layout.Path(filepath.Join(dir, "child"), "work"), example)
 	put(t, filepath.Join(dir, "child/specs/system.spec.md"), "---\ntype: system\n---\n# Child\n## Purpose\nWork.\n## Scope\nChild.\n")
 	child, err := Show(filepath.Join(dir, "child"), "work")
-	if err != nil || child.Classification.ModelPath != "" || len(child.Classification.Undefined) != 0 {
+	if err != nil || child.Classification.SystemPath != "" || len(child.Classification.Undefined) != 0 {
 		t.Fatalf("model inherited: %+v %v", child, err)
 	}
 }

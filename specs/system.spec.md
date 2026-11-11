@@ -54,7 +54,7 @@ specified by [Advice permits success](requirements/advice-permits-success.requir
 
 ## Quality attributes
 
-This is dotspec's local vocabulary. The definitions identify concerns;
+These are dotspec's declared quality attributes. The definitions identify concerns;
 individual quality requirements establish the obligations.
 
 ### Usability

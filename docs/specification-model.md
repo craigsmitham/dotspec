@@ -7,12 +7,14 @@ The snapshot describes what dotspec read and how it interpreted that material.
 It does not establish that stakeholders agree with it or that a requirement is
 satisfied.
 
+The [core domain reference](reference/model/core.md) groups the principal types
+by business, user, and software requirements, with generated relationship diagrams.
 The canonical [LinkML model](../model/dotspec.yaml) defines the records and their
 relationships. The [generated reference](reference/model/index.md) describes
 every field. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.2.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/1`.
+`model_version` is `0.3.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/2`.
 
 ## Export and validate a snapshot
 
@@ -56,7 +58,7 @@ before a snapshot exists.
 | --- | --- | --- |
 | Source | Locators, read state and exact acquired payloads | Formatting, comments and malformed text survive interpretation. |
 | Document content | Ordered Markdown and YAML syntax, original-byte spans, references and fragments | Consumers can examine a document's structure without accepting a domain interpretation. |
-| Domain | Systems, jobs, steps, outcomes, progress cases, use cases, scenarios, concepts, requirements and quality vocabularies | Named fields and records make domain meaning addressable and checkable. |
+| Domain | Business rules, systems, jobs, steps, outcomes, progress cases, use cases, scenarios, concepts, requirements and quality attributes | Named fields and records make domain meaning addressable and checkable. |
 
 ```mermaid
 flowchart LR
@@ -115,7 +117,7 @@ not durable authored names. Moving a file or changing its content can change
 IDs. The same acquired inputs, scope and mapping profile produce deterministic
 records and output ordering. An explicitly authored `id` is retained separately
 as `authored_id`;
-fragment targets and vocabulary-local IDs keep their own scopes.
+fragment targets and system-local attribute IDs keep their own scopes.
 
 `ContentBinding` records identify the owning record, model field path, source
 node, mapping rule and binding role. A narrative field can have complete named
@@ -128,7 +130,7 @@ value remain distinct and non-overlapping.
 
 A `SourceReference` records an authored occurrence before resolution. A
 `Resolution` records what inspection established: a resolved target, undefined
-label, unbound vocabulary label, ambiguity, unresolved target, external address,
+label, unbound quality attribute label, ambiguity, unresolved target, external address,
 out-of-scope target or resolution not attempted. A file reference can target a
 source record; a fragment can identify a source fragment or a domain element.
 The literal destination or label remains available independently of that result.
@@ -139,11 +141,14 @@ occurrences remain represented, with resolution limited to already available
 context or explicitly marked as not attempted.
 
 Directory ownership does not set a use case's system boundary. An enclosing
-system does not silently supply inherited requirements, assumptions or a
-quality vocabulary through another system. Classification labels retain their
-authored occurrences and vocabulary context; resolved targets populate the
-corresponding typed fields. Broader quality attributes stay within their
-explicitly declared vocabulary.
+system does not silently supply inherited requirements, assumptions or quality
+attributes through another system. Each `QualityAttribute` belongs directly to
+its declaring `System`. Classification labels retain their authored occurrences
+and `system_context`; resolved targets populate the corresponding typed fields.
+Broader quality attributes stay within their declaring system. The system's
+`quality_attributes_content` preserves the section narrative and subsections;
+`quality_attributes` preserves the ordered attribute references. An absent
+section and an explicitly empty section remain distinct.
 
 Assertions are typed relationship views with provenance. The exporter derives
 membership and classification assertions from canonical fields using model

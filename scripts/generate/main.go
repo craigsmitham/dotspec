@@ -14,6 +14,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/craigsmitham/dotspec/internal/businessrule"
 	"github.com/craigsmitham/dotspec/internal/cli"
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
@@ -48,6 +49,7 @@ func run(check bool) error {
 	}
 	files := []struct{ path, content string }{
 		{"docs/cli.md", reference.String()},
+		{"examples/starter/specs/business-rules/purchase-approval.business-rule.spec.md", businessrule.Template},
 		{"examples/starter/specs/system.spec.md", system.Template},
 		{"examples/starter/specs/jobs/develop-requirements.job.spec.md", job.Template},
 		{"examples/starter/specs/use-cases/check-specifications.use-case.spec.md", usecase.Template},

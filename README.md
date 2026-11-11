@@ -16,8 +16,8 @@ Concept specs describe a coherent piece of product behavior through its purpose,
 abstract state, actions, and operational principle.
 Requirement specs state required results, rules, properties, or restrictions directly.
 Quality requirements specialize that model with assessable criteria and
-measurement methods. Optional quality attributes in a system spec define the
-vocabulary used to classify general and quality requirements.
+measurement methods. Optional quality attributes in a system spec declare the
+concerns used to classify general and quality requirements.
 
 The [CLI reference](docs/cli.md) and [command examples](docs/examples.md) are
 generated from the implementation. See [Contributing](CONTRIBUTING.md) for the
@@ -159,7 +159,7 @@ required system sections, duplicate IDs or conventional sections, malformed
 step structure, and unresolved same-document references. All supported types
 check Markdown heading references. Jobs, use cases, concepts, general and quality
 requirements, and system quality attributes also resolve their explicit document-local IDs.
-Quality models check broader-attribute references and reject cycles.
+Quality attribute checks validate broader references and reject cycles.
 Checks also resolve relative file links and Markdown fragments as described in
 [References](#references). Remote URLs remain navigation.
 
@@ -323,6 +323,14 @@ tests. It intentionally does not select every test file. See
 [Specification tests and implementation tests](CONTRIBUTING.md#specification-tests-and-implementation-tests)
 for this repository's policy and the CI task that enforces file coverage.
 
+## Business rules
+
+Business rules state business constraints independently of software enforcement.
+Use `dotspec business-rule init <slug>` to create one under `specs/business-rules/`,
+then `show`, `list`, or `check` to inspect it. A `Business rules` section can link
+software specifications to their governing rules. See the [authoring guide](docs/business-rules.md)
+and [core domain reference](docs/reference/model/core.md).
+
 ## Output and automation
 
 The experimental [specification model](docs/specification-model.md) exposes
@@ -475,8 +483,8 @@ are relative to the current directory.
 
 ## System quality attributes
 
-A system may define its local quality vocabulary in a `Quality attributes` H2
-section. Omit the section when a vocabulary is not needed. Its H3 headings
+A system may declare its quality attributes in a `Quality attributes` H2
+section. Omit the section when attribute declarations are not needed. Its H3 headings
 introduce attributes; deeper headings belong to their definitions.
 
 ```markdown
@@ -510,7 +518,7 @@ They do not encode hierarchy: renaming or regrouping an attribute can preserve
 its ID. Same-document links can target these IDs as well as heading anchors.
 
 `Broader` is optional. When present it is a comma-separated list of distinct
-attribute IDs in this model; forward references are allowed. Several broader
+attribute IDs declared by this system; forward references are allowed. Several broader
 attributes are allowed. Unknown references, self-references, cycles, duplicate
 fields, and duplicate IDs are structural errors. Heading depth does not imply
 an attribute relationship. A missing definition produces nonfatal advice.
@@ -519,14 +527,18 @@ Only `ID` and `Broader` lines in the attribute's introductory paragraphs are
 fields. Examples in code blocks, blockquotes, lists, and deeper subsections remain
 prose. Definitions retain their Markdown, including subsections and examples.
 
-`system show` displays the authored model. System JSON adds `quality_model`,
-which is `null` when the section is absent. A declared model contains `markdown`
-and an `attributes` array, including when that array is empty. Each attribute
-exposes `id`, `name`, `definition`, `broader`, and source `location`.
+`system show` displays the authored quality attributes section. System JSON exposes
+`quality_attributes` directly: `null` when the section is absent, an empty array
+when it declares no attributes, or an ordered array of attributes. When the section
+is present, `quality_attributes_content` preserves its Markdown, including an
+empty string for an empty section. Each attribute exposes `id`, `name`,
+`definition`, `broader`, and source `location`.
 
-The model belongs to this system. A subsystem does not inherit or merge its
+The attributes belong to this system. A subsystem does not inherit or merge its
 parent's definitions. Attribute grouping imposes no obligations or thresholds.
-External models, imports, and automatic edition mappings are not implemented.
+The term *quality model* is reserved for named sets of attributes, such as ISO
+quality models or FURPS. Referencing or importing those models and mapping their
+editions are not implemented.
 The repository's [system spec](specs/system.spec.md#quality-attributes) provides
 a local example, including concerns that do not yet have requirements.
 
@@ -1121,16 +1133,18 @@ errors. Deeper headings belong to their enclosing sections. Additional sections,
 links, and other authored Markdown are preserved. Check commands validate
 relative file links using the shared [reference rules](#references).
 
-The nearest enclosing system supplies the model for label resolution. This is
-independent of the subject and conditions stated in `Applies to`. If no model
-exists, labels remain unbound without advice. With a model, each undefined label
-produces `quality.undefined-attribute` advice at its source location.
-An explicitly empty model consequently reports every used label as undefined.
+The nearest enclosing system supplies quality attributes for label resolution.
+This is independent of the subject and conditions stated in `Applies to`. If that
+system has no `Quality attributes` section, labels remain unbound without advice.
+When the section is present, each undefined label produces
+`quality.undefined-attribute` advice at its source location. An explicitly empty
+section consequently reports every used label as undefined.
 
 JSON retains `attributes` exactly as authored. The separate `classification`
-object exposes `model_path`, `resolved` attribute definitions, `broader` ancestor
-IDs in model declaration order, and `undefined` IDs in authored order. With no
-model, `model_path` is empty and all three arrays are empty. Broader groups are
+object exposes `system_path` for the system supplying attribute declarations,
+`resolved` attribute definitions, `broader` ancestor IDs in declaration order,
+and `undefined` IDs in authored order. Without a quality attributes section,
+`system_path` is empty and all three arrays are empty. Broader groups are
 computed navigation, not additional authored labels or inherited requirements.
 The show envelope uses `quality`; list groups use `requirements`.
 Both envelopes include `schema_version: 1`. Empty collections are arrays.

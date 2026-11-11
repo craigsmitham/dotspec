@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/craigsmitham/dotspec/internal/businessrule"
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/quality"
@@ -36,6 +37,7 @@ func prepareExample(t *testing.T, command string) {
 	writeFixture(t, "specs/jobs/develop-requirements.job.spec.md", viewFixture)
 	writeFixture(t, "specs/use-cases/check-specifications.use-case.spec.md", usecase.Template)
 	writeFixture(t, "specs/concepts/job-map.concept.spec.md", concept.Template)
+	writeFixture(t, "specs/business-rules/purchase-approval.business-rule.spec.md", businessrule.Template)
 	writeFixture(t, "specs/quality/diagnostic-severity.quality.spec.md", quality.Template)
 	writeFixture(t, "specs/requirements/reject-existing-target.requirement.spec.md", requirement.Template)
 }

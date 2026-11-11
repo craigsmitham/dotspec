@@ -62,7 +62,7 @@ func TestQualityCLIResolutionAndFiltering(t *testing.T) {
 	}
 	code, out, errOut = invoke("system", "show", "--json")
 	var sys systemResult
-	if err := json.Unmarshal([]byte(out), &sys); err != nil || code != 0 || errOut != "" || sys.System.QualityModel == nil || len(sys.System.QualityModel.Attributes) != 3 {
+	if err := json.Unmarshal([]byte(out), &sys); err != nil || code != 0 || errOut != "" || sys.System.QualityAttributes == nil || len(sys.System.QualityAttributes) != 3 {
 		t.Fatalf("model JSON: %d %s %s %v", code, out, errOut, err)
 	}
 	code, out, errOut = invoke("system", "show")

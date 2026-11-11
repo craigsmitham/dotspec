@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/craigsmitham/dotspec/internal/businessrule"
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
@@ -18,7 +19,7 @@ import (
 )
 
 func exportTypes() []check.Type {
-	return []check.Type{system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType(), quality.CheckType()}
+	return []check.Type{businessrule.CheckType(), system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType(), quality.CheckType()}
 }
 
 func TestExportEmptyScope(t *testing.T) {
@@ -153,7 +154,7 @@ func TestExportReferencedClassificationDoesNotSkipNearerBoundary(t *testing.T) {
 	label := result.Snapshot.LabelOccurrences[0]
 	for _, resolution := range result.Snapshot.Resolutions {
 		if String(resolution, "id") == String(label, "resolution") && String(resolution, "status") != "not_attempted" {
-			t.Fatalf("classification skipped nearer inaccessible vocabulary: %+v", resolution)
+			t.Fatalf("classification skipped nearer inaccessible attribute declarations: %+v", resolution)
 		}
 	}
 	findings, err := Validate(result.Snapshot)

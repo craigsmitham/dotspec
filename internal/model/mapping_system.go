@@ -70,13 +70,11 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 			appendID(v, "terms", String(x, "id"))
 		}
 	case "Quality attributes":
-		v := m.named("QualityVocabulary", r, s)
-		m.section(v, "description", s)
-		v["attributes"] = []string{}
-		r["quality_model"] = String(v, "id")
-		m.bind(r, "quality_model", []string{s.HeadingID}, "structured_item", "quality-vocabulary")
+		m.section(r, "quality_attributes_content", s)
+		r["quality_attributes"] = []string{}
+		m.bind(r, "quality_attributes", []string{s.HeadingID}, "structural_wrapper", "quality-attributes-heading")
 		for _, child := range s.Children {
-			a := m.named("QualityAttribute", v, child)
+			a := m.named("QualityAttribute", r, child)
 			a["authored_id"] = m.fieldText(child, "ID")
 			definition := m.withoutFields(child, child.Content, "ID", "Broader")
 			a["definition"] = m.doc.Rich(definition)
@@ -93,7 +91,7 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 				m.bind(a, "broader_labels", ids, "named_field", "broader-labels")
 			}
 			m.openDecisions(a, child.Children)
-			appendID(v, "attributes", String(a, "id"))
+			appendID(r, "quality_attributes", String(a, "id"))
 		}
 	default:
 		return false

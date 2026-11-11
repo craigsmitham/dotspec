@@ -1,0 +1,63 @@
+title: Core domain model
+description: >-
+  A focused reference for maintainers and authors understanding business requirements,
+  user requirements, software requirements, and their traceability. Business rules
+  describe business constraints independently of enforcement. Jobs describe user
+  progress; use cases describe software interactions. Supporting and generic model
+  machinery remains available in the complete reference.
+subsets:
+  - business-requirements
+  - user-requirements
+  - software-requirements
+  - specification-traceability
+types:
+  System: [purpose, scope, goals, constraints, quality_attributes, quality_attributes_content]
+  BusinessRule: [statement, applies_to, rationale, authority_and_evidence, exceptions, related_specifications]
+  Job: [statement, performer, situation, intended_progress, steps, outcomes, progress_cases]
+  JobStep: [stage, description, outcomes]
+  Outcome: [statement, supporting_content]
+  ProgressCase: [current_approach, desired_progress, forces, timeline, evidence]
+  UseCase: [goal, system_boundary, primary_actor, preconditions, minimum_guarantees, main_success_scenario, extensions, business_rules]
+  Scenario: [content, steps]
+  Extension: [content, condition, response, continuation, handling_state]
+  Concept: [purpose, abstract_state, actions, operational_principle]
+  ConceptAction: [inputs, outputs, caller_assumptions, guards, effects, rejections]
+  Requirement: [applies_to, rationale, attributes, business_rules]
+  GeneralRequirement: [statement, verification]
+  QualityRequirement: [criterion, measurement]
+  QualityAttribute: [definition, broader]
+  ContentBinding: [owner, field_path, content_node, mapping_rule]
+  SourceReference: [authored_target, context_owner, context_field, resolution]
+  Resolution: [occurrence, status, target, rule]
+diagrams:
+  - title: Specification kinds and system association
+    direction: TB
+    show_cardinality: false
+    description: >-
+      Seven concrete specification kinds can share repository context; system association is optional. General and quality
+      requirements share the abstract Requirement definition. BusinessRule is an
+      independent specification; a contextual citation does not assert enforcement.
+    nodes: [System, BusinessRule, Job, UseCase, Concept, Requirement, GeneralRequirement, QualityRequirement]
+    paths: [BusinessRule.owning_system, Job.owning_system, UseCase.owning_system, Concept.owning_system, Requirement.owning_system]
+    inheritance: true
+  - title: User progress
+    description: Jobs contain ordered steps, overall or per-step outcomes, and progress cases.
+    nodes: [Job, JobStep, Outcome, ProgressCase]
+    paths: [Job.steps.steps, Job.outcomes.outcomes, Job.progress_cases.cases, JobStep.outcomes.outcomes]
+    inheritance: false
+  - title: Software behavior and quality
+    description: >-
+      Use cases contain scenarios and alternatives, concepts describe actions, and
+      requirements can be classified by a system's declared quality attributes. Authored order
+      does not by itself establish mandatory execution order.
+    nodes: [UseCase, Scenario, ScenarioStep, Extension, Concept, ConceptAction, System, QualityAttribute, Requirement]
+    paths: [UseCase.main_success_scenario, UseCase.extensions.branches, Scenario.steps, Extension.flow, Concept.actions.actions, System.quality_attributes, QualityAttribute.broader, Requirement.attributes]
+    inheritance: false
+  - title: Traceability to authored content
+    description: >-
+      Bindings associate model fields with content occurrences; references preserve
+      authored targets and their resolution. Record and ContentNode provide context
+      from the generic subsets. A resolved target does not prove compliance.
+    nodes: [ContentBinding, ContentNode, Record, SourceReference, Resolution, DomainElement, SourceResource, SourceFragment]
+    paths: [ContentBinding.content_node, ContentBinding.owner, SourceReference.resolution, Resolution.target]
+    inheritance: false

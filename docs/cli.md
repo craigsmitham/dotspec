@@ -25,6 +25,98 @@ dotspec check
 | `--help, -h` | `false` | help for dotspec |
 | `--version, -v` | `false` | version for dotspec |
 
+## dotspec business-rule
+
+Describe business constraints independently of their enforcement
+
+```sh
+dotspec business-rule [flags]
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for business-rule |
+
+## dotspec business-rule check
+
+Check structure and suggest missing business-rule content
+
+```sh
+dotspec business-rule check <slug> [flags]
+```
+
+Check structure and suggest missing business-rule content.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+```sh
+dotspec business-rule check purchase-approval --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for check |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec business-rule init
+
+Create a business-rule specification without overwriting an existing file
+
+```sh
+dotspec business-rule init <slug> [flags]
+```
+
+```sh
+dotspec business-rule init purchase-approval --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for init |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec business-rule list
+
+Discover business rules, grouped by associated system
+
+```sh
+dotspec business-rule list [flags]
+```
+
+```sh
+dotspec business-rule list --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for list |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec business-rule show
+
+Show authored Markdown and the associated system
+
+```sh
+dotspec business-rule show <slug> [flags]
+```
+
+```sh
+dotspec business-rule show purchase-approval --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for show |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
 ## dotspec check
 
 Check all supported specifications in a project subtree
@@ -33,7 +125,7 @@ Check all supported specifications in a project subtree
 dotspec check [flags]
 ```
 
-Check system, job, use-case, concept, requirement, and quality specifications using the same discovery rules as list.
+Check business-rule, system, job, use-case, concept, requirement, and quality specifications using the same discovery rules as list.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 

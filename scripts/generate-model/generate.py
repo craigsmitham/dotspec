@@ -17,6 +17,8 @@ import subprocess
 import sys
 from typing import Any
 
+from model_views import validate_declared_memberships, validate_groups, subset_navigation, core_markdown
+
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 MODEL = ROOT / "model/dotspec.yaml"
@@ -60,6 +62,7 @@ def make_catalog(view: Any, raw_model: dict[str, Any], model_bytes: bytes) -> di
     ranges only for identifier references; inline_ranges lists class ranges for
     recursive embedded values. any_of narrows range when it is present.
     """
+    validate_declared_memberships(raw_model)
     classes = view.all_classes()
     enums = view.all_enums()
     result: dict[str, Any] = {
@@ -69,6 +72,9 @@ def make_catalog(view: Any, raw_model: dict[str, Any], model_bytes: bytes) -> di
         "representation_version": view.induced_slot("representation_version", "Snapshot").equals_string,
         "source_sha256": hashlib.sha256(model_bytes).hexdigest(),
         "annotations": annotation_values(view.schema.annotations),
+        "subsets": {str(n): {"title": g.title or str(n), "description": g.description or "",
+                                "classification": annotation_values(g.annotations).get("classification", "")}
+                    for n, g in sorted(view.schema.subsets.items())},
         "classes": {},
         "enums": {
             str(name): [str(value) for value in enum.permissible_values]
@@ -78,6 +84,7 @@ def make_catalog(view: Any, raw_model: dict[str, Any], model_bytes: bytes) -> di
     for name, cls in sorted(classes.items()):
         ancestors = [str(item) for item in view.class_ancestors(name)]
         record: dict[str, Any] = {
+            "subsets": [str(n) for n in cls.in_subset],
             "abstract": bool(cls.abstract),
             "ancestors": ancestors,
             "description": cls.description or "",
@@ -127,6 +134,7 @@ def make_catalog(view: Any, raw_model: dict[str, Any], model_bytes: bytes) -> di
                     shape[field] = value
             record["slots"][str(slot.name)] = shape
         result["classes"][str(name)] = record
+    validate_groups(result)
     validate_annotations(result)
     return result
 
@@ -194,8 +202,10 @@ def reference_markdown(catalog: dict[str, Any], raw_model: dict[str, Any]) -> by
         escape(catalog["annotations"].get("graph_rules", "")), "",
         "## Classes", "",
     ]
+    lines[-2:] = subset_navigation(catalog) + ["## Classes", ""]
     for name, cls in catalog["classes"].items():
         lines += [f"### {name}", "", escape(cls["description"]), ""]
+        lines += ["Subsets: " + ", ".join(f"`{s}`" for s in cls["subsets"]) + ".", ""]
         traits = ["Abstract" if cls["abstract"] else "Concrete"]
         if cls.get("is_a"):
             traits.append(f"inherits [{cls['is_a']}](#{cls['is_a'].lower()})")
@@ -266,7 +276,10 @@ def generate_outputs() -> dict[Path, bytes]:
     schema = json.loads(schema_bytes)
     Draft202012Validator.check_schema(schema)
     catalog = make_catalog(view, raw_model, model_bytes)
+    view_definition = yaml.safe_load((ROOT / "model/views/core-domain.yaml").read_text())
+    core_reference = core_markdown(catalog, view_definition)
     return {
+        ROOT / "docs/reference/model/core.md": core_reference,
         ROOT / "model/generated/schema.json": schema_bytes,
         ROOT / "model/generated/catalog.json": (json.dumps(catalog, indent=2, sort_keys=True) + "\n").encode(),
         ROOT / "docs/reference/model/index.md": reference_markdown(catalog, raw_model),

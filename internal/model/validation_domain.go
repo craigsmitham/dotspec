@@ -35,8 +35,15 @@ func (v *graphValidator) checkDomain() {
 		if kind == "QualityAttribute" {
 			for _, id := range Strings(r["broader"]) {
 				if other := v.records[id].value; other != nil && String(other, "owner") != String(r, "owner") {
-					v.add("quality.vocabulary", path+"/broader", "broader attributes must belong to the same declared vocabulary")
+					v.add("quality.scope", path+"/broader", "broader attributes must belong to the same system")
 				}
+			}
+		}
+		if kind == "System" {
+			_, attributesDeclared := r["quality_attributes"]
+			_, contentDeclared := r["quality_attributes_content"]
+			if attributesDeclared != contentDeclared {
+				v.add("quality.declaration", path+"/quality_attributes", "quality attributes and their section content must be present together or both absent")
 			}
 		}
 		if kind == "System" && String(r, "owning_system") == String(r, "id") {
@@ -46,7 +53,7 @@ func (v *graphValidator) checkDomain() {
 }
 
 func (v *graphValidator) checkAuthoredIDs() {
-	docs, vocabularies := map[string]string{}, map[string]string{}
+	docs, attributeScopes := map[string]string{}, map[string]string{}
 	for _, located := range v.sortedRecords() {
 		r := located.value
 		if !v.isA(String(r, "kind"), "DomainElement") {
@@ -64,10 +71,10 @@ func (v *graphValidator) checkAuthoredIDs() {
 		}
 		if String(r, "kind") == "QualityAttribute" {
 			key = String(r, "owner") + "\x00" + authored
-			if prior, ok := vocabularies[key]; ok {
-				v.add("quality.identity", located.path+"/authored_id", fmt.Sprintf("attribute ID %q also occurs at %s in this vocabulary", authored, prior))
+			if prior, ok := attributeScopes[key]; ok {
+				v.add("quality.identity", located.path+"/authored_id", fmt.Sprintf("attribute ID %q also occurs at %s in this system", authored, prior))
 			} else {
-				vocabularies[key] = located.path
+				attributeScopes[key] = located.path
 			}
 		}
 		if fragment := v.records[String(r, "source_fragment")].value; fragment != nil && String(fragment, "authored_anchor") != "" && String(fragment, "authored_anchor") != authored {
@@ -190,7 +197,7 @@ func (v *graphValidator) checkLabels() {
 			continue
 		}
 		field, targets := "attribute_labels", "attributes"
-		vocabulary, system := "", ""
+		system := ""
 		switch String(label, "role") {
 		case "quality_classification":
 			if !v.isA(String(owner, "kind"), "Requirement") {
@@ -201,15 +208,13 @@ func (v *graphValidator) checkLabels() {
 			if system == "" {
 				system = String(label, "system_context")
 			}
-			vocabulary = String(v.records[system].value, "quality_model")
 		case "broader_attribute":
 			field, targets = "broader_labels", "broader"
 			if String(owner, "kind") != "QualityAttribute" {
 				v.add("label.owner", path+"/owner", "broader labels belong to quality attributes")
 				continue
 			}
-			vocabulary = String(owner, "owner")
-			system = String(v.records[vocabulary].value, "owner")
+			system = String(owner, "owner")
 		}
 		if !slices.Contains(Strings(owner[field]), String(label, "id")) {
 			v.add("label.membership", path+"/owner", "owner must retain this authored label occurrence")
@@ -217,33 +222,30 @@ func (v *graphValidator) checkLabels() {
 		if context := String(label, "system_context"); context != "" && context != system {
 			v.add("label.context", path+"/system_context", "label system context disagrees with its owner")
 		}
-		if context := String(label, "vocabulary_context"); context != "" && context != vocabulary {
-			v.add("label.context", path+"/vocabulary_context", "label vocabulary context disagrees with the declared vocabulary")
-		}
 		result := v.records[String(label, "resolution")].value
 		status := String(result, "status")
 		if result == nil || status == "not_attempted" {
 			continue
 		}
-		if vocabulary == "" {
+		if _, declared := v.records[system].value["quality_attributes"]; !declared {
 			if status != "unbound_label" {
-				v.add("label.unbound", path+"/resolution", "a label with no declared vocabulary must remain unbound")
+				v.add("label.unbound", path+"/resolution", "a label with no declared quality attributes must remain unbound")
 			}
 			continue
 		}
 		matches := []string{}
-		for _, id := range Strings(v.records[vocabulary].value["attributes"]) {
+		for _, id := range Strings(v.records[system].value["quality_attributes"]) {
 			if String(v.records[id].value, "authored_id") == String(label, "label") {
 				matches = append(matches, id)
 			}
 		}
 		if len(matches) == 0 {
 			if status != "undefined_label" {
-				v.add("label.undefined", path+"/resolution", "a label missing from its declared vocabulary must be undefined")
+				v.add("label.undefined", path+"/resolution", "a label missing from its system's declared quality attributes must be undefined")
 			}
 		} else if len(matches) == 1 {
 			if status != "resolved" || String(result, "target") != matches[0] {
-				v.add("label.target", path+"/resolution", "label must resolve to the matching attribute in its declared vocabulary")
+				v.add("label.target", path+"/resolution", "label must resolve to the matching attribute in its system's declared quality attributes")
 			}
 		}
 		if status == "resolved" {

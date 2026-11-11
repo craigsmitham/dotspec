@@ -1,7 +1,7 @@
 # Specification model
 
 [dotspec.yaml](dotspec.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.2.0-draft`; the JSON
+specification snapshots. The model version is `0.3.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
@@ -14,6 +14,7 @@ Generated projections are committed with the model:
   subtype fields.
 - [catalog.json](generated/catalog.json) supplies inherited class/slot definitions
   and typed reference ranges to the runtime graph checker.
+- [Core domain reference](../docs/reference/model/core.md) provides selected domain types and generated Mermaid diagrams.
 - [Specification model reference](../docs/reference/model/index.md) provides a
   complete class, field and enumeration lookup.
 
@@ -86,3 +87,42 @@ those graph/content checks. It also records a specific LinkML 1.12.1 projection
 gap: the conditional `RichContent` rule for empty versus authored node counts
 requires a content check because generated JSON Schema omits those conditional
 array bounds.
+
+## Subsets, classifications, and documentation views
+
+The canonical model declares seven named subsets through LinkML `subsets`.
+Each subset has a description and one `classification` annotation: `core`,
+`supporting`, or `generic`. Classification describes the subset's role in
+**dotspec**, not the strategic importance of an individual authored requirement.
+
+Every class declares explicit `in_subset` membership. Membership can overlap:
+System and shared domain values participate in more than one requirements
+perspective. Membership does not change inheritance, move a definition between
+files, or require a classification field in authored specifications. Embedded
+values and collection wrappers belong with the domain concepts they serve.
+The complete reference lists all memberships by classification and subset.
+
+[core-domain.yaml](views/core-domain.yaml) controls the
+[core domain reference](../docs/reference/model/core.md): selected subsets,
+types, fields, diagram nodes, and canonical field paths. It defines presentation,
+not relationship semantics. The generator resolves paths through embedded
+collection wrappers and derives endpoints and inheritance from the model.
+Associations use plain arrows, without inferred lifecycle or enforcement meaning.
+
+`model-check` validates all declared subset references, allowed classifications,
+class coverage, view selectors and diagram endpoints before comparing generated
+files. Changing the model or the view requires regenerating and committing all
+affected projections. A focused diagram need not show every type in a subset;
+the complete reference remains exhaustive.
+
+The `0.3.0-draft` model adds BusinessRule and the contextual `business_rules` field.
+It also places quality attributes directly on System, removing the former quality
+vocabulary wrapper and its declaration assertion. `DeclaresQualityAttribute`
+now connects System to QualityAttribute; label lookup retains only system context.
+Mapping profile `dotspec-markdown/2` recognizes these mappings and the new family
+and section. The CLI's system JSON likewise exposes `quality_attributes` and
+`quality_attributes_content` directly, and classification output uses `system_path`
+in place of `model_path`. Consumers of these experimental fields must update. Saved
+snapshots retain their declared versions; validation does not silently migrate
+older snapshots. Use the corresponding prior CLI for an older model version,
+or export the source again with the current CLI.

@@ -47,6 +47,7 @@ restating those rules here. A passing example does not settle untested cases.
 - [Use-case commands](../../testdata/use-cases.txtar)
 - [Concept commands](../../testdata/concepts.txtar)
 - [Quality requirements and attributes](../../testdata/quality.txtar)
+- [Business-rule commands](../../testdata/business-rules.txtar)
 - [General requirements](../../testdata/requirements.txtar)
 - [Source discovery through ordinary file references](../../testdata/sources.txtar)
 - [Export and validate source-backed specification models](../../testdata/model.txtar)

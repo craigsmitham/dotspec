@@ -1,4 +1,4 @@
-# An inline model resolves classifications without changing authored labels.
+# System attribute declarations resolve classifications without changing authored labels.
 mkdir project
 cd project
 exec git init -q
@@ -11,7 +11,9 @@ stdout '"system": null'
 cp ../model.md specs/system.spec.md
 cp ../requirement.md specs/quality/work.quality.spec.md
 status 0 dotspec system show --json
-stdout '"quality_model":'
+stdout '"quality_attributes": \['
+stdout '"quality_attributes_content":'
+! stdout '"quality_model":'
 stdout '"broader":'
 status 0 dotspec quality list --attribute usability --json
 stdout '"name": "Accessible diagnostics"'
@@ -32,7 +34,7 @@ status 2 dotspec quality init work
 stderr 'refusing to overwrite'
 ! stdout .
 
-# Unknown labels are advice; an invalid model is a structural error.
+# Unknown labels are advice; invalid attribute declarations is a structural error.
 cp ../unknown.md specs/quality/unknown.quality.spec.md
 status 0 dotspec quality check unknown --json
 stdout 'quality.undefined-attribute'

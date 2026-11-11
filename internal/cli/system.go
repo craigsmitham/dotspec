@@ -82,8 +82,8 @@ func runSystem(command, path, format string, out io.Writer) error {
 				modelText += "\n\n" + field.name + "\n" + indent(field.value)
 			}
 		}
-		if spec.QualityModel != nil {
-			modelText += "\n\nQuality attributes\n" + indent(spec.QualityModel.Markdown)
+		if spec.QualityAttributesContent != nil {
+			modelText += "\n\nQuality attributes\n" + indent(*spec.QualityAttributesContent)
 		}
 		_, err = fmt.Fprintf(out, "%s\n\nPurpose\n%s\n\nScope\n%s%s\n\nParent system: %s\nSource: %s\n",
 			result.System.Name, indent(result.System.Purpose), indent(result.System.Scope), modelText, parentText, displayPath(result.System.Path))

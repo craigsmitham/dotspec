@@ -11,6 +11,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/craigsmitham/dotspec/internal/businessrule"
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
@@ -21,7 +22,7 @@ import (
 )
 
 func conformanceTypes() []check.Type {
-	return []check.Type{system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType(), quality.CheckType()}
+	return []check.Type{businessrule.CheckType(), system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType(), quality.CheckType()}
 }
 
 func conformanceExport(t *testing.T, path string) ExportResult {
@@ -138,7 +139,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 				return err
 			}
 			parsed := ParseContent(absolute, data)
-			class := map[string]string{"system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[String(parsed.Document, "declared_type")]
+			class := map[string]string{"business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[String(parsed.Document, "declared_type")]
 			if class == "" {
 				t.Errorf("%s: unknown specimen family", path)
 			}
@@ -188,7 +189,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 			t.Errorf("%s exported roots: got %d want %d inventoried sources", kind, counts[kind], want)
 		}
 	}
-	for kind, want := range map[string]int{"JobStep": 16, "Outcome": 21, "ProgressCase": 1, "ConceptAction": 6, "GlossaryTerm": 3, "QualityVocabulary": 1, "QualityAttribute": 8} {
+	for kind, want := range map[string]int{"JobStep": 16, "Outcome": 21, "ProgressCase": 1, "ConceptAction": 6, "GlossaryTerm": 3, "QualityAttribute": 8} {
 		if counts[kind] < want {
 			t.Errorf("%s domain records: got %d want at least baseline %d", kind, counts[kind], want)
 		}
@@ -227,8 +228,10 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 	conformanceWrite(t, root, "specs/requirements/undefined.requirement.spec.md", "---\ntype: requirement\nid: reused\nattributes: [unknown]\n---\n# Undefined\n")
 	conformanceWrite(t, root, "sub/specs/system.spec.md", "---\ntype: system\n---\n# Subsystem\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
 	conformanceWrite(t, root, "sub/specs/quality/unbound.quality.spec.md", "---\ntype: quality\nid: reused\nattributes: [narrow]\n---\n# Unbound\n")
-	conformanceWrite(t, root, "empty/specs/system.spec.md", "---\ntype: system\n---\n# Empty vocabulary\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n")
-	conformanceWrite(t, root, "empty/specs/quality/undefined-empty.quality.spec.md", "---\ntype: quality\nattributes: [narrow]\n---\n# Undefined in empty vocabulary\n")
+	conformanceWrite(t, root, "empty/specs/system.spec.md", "---\ntype: system\n---\n# Empty attributes\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n")
+	conformanceWrite(t, root, "empty/specs/quality/undefined-empty.quality.spec.md", "---\ntype: quality\nattributes: [narrow]\n---\n# Undefined in empty attributes\n")
+	conformanceWrite(t, root, "sibling/specs/system.spec.md", "---\ntype: system\n---\n# Sibling\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n### Local narrow\n**ID:** narrow\nA different concern in this system.\n")
+	conformanceWrite(t, root, "sibling/specs/quality/local.quality.spec.md", "---\ntype: quality\nattributes: [narrow]\n---\n# Local classification\n")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
 		t.Errorf("advice-only fixtures exit %d", result.ExitCode)
@@ -243,6 +246,12 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 		resolution := index[String(label, "resolution")]
 		statuses[String(resolution, "status")]++
 		owner := index[String(label, "owner")]
+		if String(resolution, "status") == "resolved" {
+			target := index[String(resolution, "target")]
+			if String(target, "owner") != String(label, "system_context") || String(target, "owner") != String(owner, "owning_system") {
+				t.Fatalf("classification escaped its declaring system: %+v", label)
+			}
+		}
 		if String(resolution, "status") == "resolved" && len(Strings(owner["attributes"])) != 1 {
 			t.Error("broader category was fabricated as a directly authored classification")
 		}
@@ -252,7 +261,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 			reused[String(element, "id")] = true
 		}
 	}
-	if len(reused) != 3 || statuses["resolved"] != 1 || statuses["undefined_label"] != 2 || statuses["unbound_label"] != 1 {
+	if len(reused) != 3 || statuses["resolved"] != 2 || statuses["undefined_label"] != 2 || statuses["unbound_label"] != 1 {
 		t.Errorf("IDs/classification states: ids=%d states=%v", len(reused), statuses)
 	}
 	undefinedAdvice := 0

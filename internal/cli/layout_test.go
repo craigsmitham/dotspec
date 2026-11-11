@@ -13,6 +13,7 @@ func TestMisplacedSpecsFailLocalCommands(t *testing.T) {
 		name, kind, filename, expected string
 		commands                       [][]string
 	}{
+		{"adjacent business rule", "business-rule", "work.business-rule.spec.md", "specs/business-rules/work.business-rule.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"adjacent system", "system", "system.spec.md", "specs/system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
 		{"system collection", "system", "specs/systems/system.spec.md", "specs/system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
 		{"nested system", "system", "specs/child/specs/system.spec.md", "specs/system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},

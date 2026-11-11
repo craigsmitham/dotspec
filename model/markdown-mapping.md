@@ -1,11 +1,11 @@
 # Markdown mapping profile
 
-`dotspec-markdown/1` maps specification Markdown to the
+`dotspec-markdown/2` maps specification Markdown to the
 [canonical model](dotspec.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/specification-model.md).
 
-The profile covers all six specification families: system, job, use case,
+The profile covers all seven specification families: business rule, system, job, use case,
 concept, general requirement and quality requirement. Existing type parsers
 remain authoritative for authoring structure and validity. The exporter retains
 source and syntax before invoking those parsers. Rejection produces diagnostics
@@ -55,6 +55,7 @@ These roles apply to each specification family where authored.
 
 | Section | Domain field or structure |
 | --- | --- |
+| Business rules | `business_rules: ContextualReferences`; a citation does not assert enforcement or compliance |
 | Related specifications | `related_specifications: ContextualReferences` |
 | Related use cases | `related_use_cases: ContextualReferences` |
 | Related concepts | `related_concepts: ContextualReferences` |
@@ -77,6 +78,27 @@ direct list items. Evidence requirements stay in `evidence_needed`; they do not
 replace the question. An explicitly empty question remains empty, and introductory
 prose survives even when the section also contains named entries.
 
+## Business rule
+
+A `business-rule` specification maps to `BusinessRule`, independently of any
+software enforcement. Its optional ID remains document-local. The rule belongs
+to the core business-requirements subset; subset metadata is not an authored
+requirement-level field.
+
+| Section | Domain field |
+| --- | --- |
+| Statement | `statement: RichContent` |
+| Applies to | `applies_to: Applicability`, including the same explicit dimensions as requirements |
+| Rationale | `rationale: RichContent` |
+| Authority; Authority and evidence | Shared `authority_and_evidence: RichContent` |
+| Exceptions | `exceptions: RichContent`, retaining qualifications and references |
+| Related specifications | Shared contextual-reference content |
+
+Absent and empty exceptions remain distinct. Unknown sections remain visible
+extensions. The existing generic Constraint record remains available for
+constraint narrative in system documents; identifying a BusinessRule is an
+explicit authoring decision.
+
 ## System
 
 | Section or item | Mapping |
@@ -89,9 +111,9 @@ prose survives even when the section also contains named entries.
 | Glossary | `Glossary.content`; named subsections become `GlossaryTerm` records with full definitions |
 | Term: Alternative names; Aliases | List-item values, or the unsegmented subsection, populate `alternative_names` |
 | Term: Related terms | `related_terms: ContextualReferences` |
-| Quality attributes | System-owned `QualityVocabulary`, including section narrative and ordered attributes |
-| Named attribute subsection | `QualityAttribute` with title, definition and vocabulary owner |
-| Attribute `**ID:**` | Required vocabulary-local `authored_id` |
+| Quality attributes | `System.quality_attributes_content` preserves the section; `System.quality_attributes` lists its attributes in authored order |
+| Named attribute subsection | `QualityAttribute` with title, definition and declaring `System` owner |
+| Attribute `**ID:**` | Required system-local `authored_id` |
 | Attribute `**Broader:**` | Comma-separated `LabelOccurrence` records; resolutions supply `broader` targets |
 | Attribute: Open decision/question sections | Explicit `OpenDecision` values |
 
@@ -100,7 +122,7 @@ while retaining all other definition content. Subheadings that subdivide a
 quality-attribute or glossary definition remain part of that narrative unless a
 specific rule above assigns a more precise role. Unrecognized headings inside
 structured detail fields, such as a glossary alias list, receive extension
-records. A vocabulary's absence and an explicitly empty vocabulary remain distinct. Directory-derived parent systems
+records. An absent section leaves both system fields absent. An explicitly empty section retains empty content and an empty attribute list. Directory-derived parent systems
 and specification ownership are associations; they introduce no inheritance.
 
 ## Job
@@ -205,7 +227,7 @@ assumptions and enforced guards have separate fields.
 | Applies to: Conditions; Workload; Population; Exclusions | Corresponding applicability fields |
 | Applies to: Subject; Subjects | `subjects: ContextualReferences` |
 | Rationale | `rationale` |
-| Frontmatter `attributes` | Every authored classification label occurrence; resolved vocabulary targets populate `attributes` |
+| Frontmatter `attributes` | Every authored classification label occurrence; resolved quality attribute targets populate `attributes` |
 | General requirement: Statement | `statement` |
 | General requirement: Verification | `VerificationPlan.content` and recognized explicit plan fields |
 | Quality requirement: Criterion | `QualityCriterion.content` and recognized explicit criterion fields |
@@ -229,7 +251,7 @@ qualifications, examples and evidence instructions.
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/1`, an owner and field path, source
+Bindings record a rule under `dotspec-markdown/2`, an owner and field path, source
 occurrence and role. Named-field, record-identity and structured-item bindings
 account for interpreted domain content. Metadata bindings account for frontmatter.
 Structural-wrapper bindings cover headings and syntax support; a document-root

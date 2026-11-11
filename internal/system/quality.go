@@ -11,13 +11,6 @@ import (
 	"github.com/yuin/goldmark/ast"
 )
 
-// QualityModel is a system-local vocabulary. A nil model means no vocabulary
-// was declared; an empty model is an explicit, unfinished vocabulary.
-type QualityModel struct {
-	Markdown   string      `json:"markdown"`
-	Attributes []Attribute `json:"attributes"`
-}
-
 type Attribute struct {
 	ID              string              `json:"id"`
 	Name            string              `json:"name"`
@@ -29,8 +22,8 @@ type Attribute struct {
 
 var attributeField = regexp.MustCompile(`^\*\*(ID|Broader):\*\*\s*(.*?)\s*$`)
 
-func parseQualityModel(doc *specfile.Outline, section *specfile.Section, ids *specfile.Identifiers) (*QualityModel, error) {
-	model := &QualityModel{Markdown: doc.Body(section), Attributes: []Attribute{}}
+func parseQualityAttributes(doc *specfile.Outline, section *specfile.Section, ids *specfile.Identifiers) ([]Attribute, error) {
+	attributes := []Attribute{}
 	for _, child := range section.Children {
 		if child.Level != 3 || child.Title == "" {
 			return nil, diagnostic.Error("structure.attribute-heading", "each quality attribute must have a nonempty level-three heading (### Attribute name)", doc.Location(child.Start, child.Title))
@@ -39,12 +32,12 @@ func parseQualityModel(doc *specfile.Outline, section *specfile.Section, ids *sp
 		if err != nil {
 			return nil, err
 		}
-		model.Attributes = append(model.Attributes, attribute)
+		attributes = append(attributes, attribute)
 	}
-	if err := model.validate(); err != nil {
+	if err := validateQualityAttributes(attributes); err != nil {
 		return nil, err
 	}
-	return model, nil
+	return attributes, nil
 }
 
 func parseAttribute(doc *specfile.Outline, section *specfile.Section, ids *specfile.Identifiers) (Attribute, error) {
@@ -105,16 +98,16 @@ func parseAttribute(doc *specfile.Outline, section *specfile.Section, ids *specf
 	return a, nil
 }
 
-func (m *QualityModel) validate() error {
-	byID := make(map[string]*Attribute, len(m.Attributes))
-	for i := range m.Attributes {
-		byID[m.Attributes[i].ID] = &m.Attributes[i]
+func validateQualityAttributes(attributes []Attribute) error {
+	byID := make(map[string]*Attribute, len(attributes))
+	for i := range attributes {
+		byID[attributes[i].ID] = &attributes[i]
 	}
 	// Iterative topological traversal avoids recursion limits on authored graphs.
 	remaining := make(map[string]int, len(byID))
 	children := make(map[string][]string)
 	var roots []string
-	for _, a := range m.Attributes {
+	for _, a := range attributes {
 		remaining[a.ID] = len(a.Broader)
 		if len(a.Broader) == 0 {
 			roots = append(roots, a.ID)
@@ -134,8 +127,8 @@ func (m *QualityModel) validate() error {
 			}
 		}
 	}
-	if len(roots) != len(m.Attributes) {
-		for _, a := range m.Attributes {
+	if len(roots) != len(attributes) {
+		for _, a := range attributes {
 			if remaining[a.ID] != 0 {
 				return diagnostic.Error("quality.cycle", fmt.Sprintf("attribute %q has a cyclic broader relationship or depends on one", a.ID), a.broaderLocation)
 			}
@@ -144,20 +137,20 @@ func (m *QualityModel) validate() error {
 	return nil
 }
 
-func (m *QualityModel) Find(id string) *Attribute {
-	if m != nil {
-		for i := range m.Attributes {
-			if m.Attributes[i].ID == id {
-				return &m.Attributes[i]
+func (s *System) FindQualityAttribute(id string) *Attribute {
+	if s != nil {
+		for i := range s.QualityAttributes {
+			if s.QualityAttributes[i].ID == id {
+				return &s.QualityAttributes[i]
 			}
 		}
 	}
 	return nil
 }
 
-// Ancestors returns distinct broader IDs in declaration order. It does not
+// QualityAttributeAncestors returns distinct broader IDs in declaration order. It does not
 // turn those classifications into authored labels or inherited obligations.
-func (m *QualityModel) Ancestors(ids []string) []string {
+func (s *System) QualityAttributeAncestors(ids []string) []string {
 	seen := make(map[string]bool)
 	queue := append([]string(nil), ids...)
 	for _, id := range ids {
@@ -165,7 +158,7 @@ func (m *QualityModel) Ancestors(ids []string) []string {
 	}
 	ancestors := make(map[string]bool)
 	for i := 0; i < len(queue); i++ {
-		if a := m.Find(queue[i]); a != nil {
+		if a := s.FindQualityAttribute(queue[i]); a != nil {
 			for _, broader := range a.Broader {
 				ancestors[broader] = true
 				if !seen[broader] {
@@ -176,8 +169,8 @@ func (m *QualityModel) Ancestors(ids []string) []string {
 		}
 	}
 	result := []string{}
-	if m != nil {
-		for _, a := range m.Attributes {
+	if s != nil {
+		for _, a := range s.QualityAttributes {
 			if ancestors[a.ID] {
 				result = append(result, a.ID)
 			}
@@ -188,13 +181,11 @@ func (m *QualityModel) Ancestors(ids []string) []string {
 
 func Check(spec *System) []diagnostic.Diagnostic {
 	var findings []diagnostic.Diagnostic
-	if spec.QualityModel != nil {
-		for _, a := range spec.QualityModel.Attributes {
-			if a.Definition == "" {
-				location := a.Location
-				location.Path = spec.Path
-				findings = append(findings, diagnostic.Advice("quality.definition", "Define what this quality attribute means for the system.", location))
-			}
+	for _, a := range spec.QualityAttributes {
+		if a.Definition == "" {
+			location := a.Location
+			location.Path = spec.Path
+			findings = append(findings, diagnostic.Advice("quality.definition", "Define what this quality attribute means for the system.", location))
 		}
 	}
 	return findings

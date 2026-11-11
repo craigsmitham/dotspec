@@ -1,6 +1,7 @@
 package system
 
 import (
+	"encoding/json"
 	"errors"
 	"reflect"
 	"strings"
@@ -11,7 +12,7 @@ import (
 
 const qualityExample = `
 ## Quality attributes
-This is a local vocabulary, not an acceptance decision.
+These local attributes describe quality concerns.
 
 ### Responsiveness
 **ID:** response
@@ -36,21 +37,21 @@ The user's ability to complete tasks.
 Time before the first useful result.
 `
 
-func TestQualityModelAndStableIDs(t *testing.T) {
+func TestQualityAttributesAndStableIDs(t *testing.T) {
 	source := validSpec + qualityExample + "\n## Notes\nSee [response](#response).\n"
 	spec, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)
 	}
-	m := spec.QualityModel
-	if m == nil || len(m.Attributes) != 4 || !strings.Contains(m.Markdown, "local vocabulary") {
-		t.Fatalf("model: %+v", m)
+	m := spec
+	if m == nil || len(m.QualityAttributes) != 4 || m.QualityAttributesContent == nil || !strings.Contains(*m.QualityAttributesContent, "local attributes") {
+		t.Fatalf("system attributes: %+v", m)
 	}
-	a := m.Find("response")
+	a := m.FindQualityAttribute("response")
 	if a.Name != "Responsiveness" || !reflect.DeepEqual(a.Broader, []string{"performance", "usability"}) || !strings.Contains(a.Definition, "#### Examples") || strings.Contains(a.Definition, "**ID:") {
 		t.Fatalf("attribute: %+v", a)
 	}
-	if got := m.Ancestors([]string{"first-result", "response", "unbound"}); !reflect.DeepEqual(got, []string{"response", "performance", "usability"}) {
+	if got := m.QualityAttributeAncestors([]string{"first-result", "response", "unbound"}); !reflect.DeepEqual(got, []string{"response", "performance", "usability"}) {
 		t.Fatalf("ancestors: %v", got)
 	}
 	if _, err := Parse([]byte(strings.Replace(source, "### Responsiveness", "### Renamed quality", 1))); err != nil {
@@ -58,12 +59,35 @@ func TestQualityModelAndStableIDs(t *testing.T) {
 	}
 	plain, _ := Parse([]byte(validSpec))
 	empty, err := Parse([]byte(validSpec + "\n## Quality attributes\n"))
-	if err != nil || plain.QualityModel != nil || empty.QualityModel == nil || empty.QualityModel.Attributes == nil {
+	if err != nil || plain.QualityAttributes != nil || plain.QualityAttributesContent != nil || empty.QualityAttributes == nil || len(empty.QualityAttributes) != 0 || empty.QualityAttributesContent == nil || *empty.QualityAttributesContent != "" {
 		t.Fatalf("absent vs empty: %+v %+v %v", plain, empty, err)
+	}
+	for _, tc := range []struct {
+		spec       *System
+		attributes string
+		content    bool
+	}{
+		{plain, "null", false}, {empty, "[]", true},
+	} {
+		data, err := json.Marshal(tc.spec)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var fields map[string]json.RawMessage
+		if err := json.Unmarshal(data, &fields); err != nil {
+			t.Fatal(err)
+		}
+		_, hasContent := fields["quality_attributes_content"]
+		if string(fields["quality_attributes"]) != tc.attributes || hasContent != tc.content {
+			t.Fatalf("absent/empty JSON contract: %s", data)
+		}
+		if _, old := fields["quality_model"]; old {
+			t.Fatalf("obsolete wrapper: %s", data)
+		}
 	}
 }
 
-func TestQualityModelStructure(t *testing.T) {
+func TestQualityAttributesStructure(t *testing.T) {
 	for _, tt := range []struct{ name, body, rule string }{
 		{"duplicate section", "## Quality attributes\n## Quality attributes\n", "structure.duplicate-section"},
 		{"wrong attribute level", "## Quality attributes\n#### Usability\n**ID:** usability", "structure.attribute-heading"},
@@ -101,7 +125,7 @@ func TestQualityMetadataOnlyComesFromIntroParagraphs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	a := spec.QualityModel.Attributes[0]
+	a := spec.QualityAttributes[0]
 	if a.ID != "a" || len(a.Broader) != 0 || !strings.Contains(a.Definition, "**ID:** code") || !strings.Contains(a.Definition, "**ID:** documentation") {
 		t.Fatalf("metadata swallowed prose: %+v", a)
 	}

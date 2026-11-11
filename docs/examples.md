@@ -203,7 +203,7 @@ dotspec use-case show check-specifications --json
       "purpose": "Describe why this system exists and whom it serves.",
       "scope": "Describe the system's boundary and what it includes.",
       "path": "$PROJECT/specs/system.spec.md",
-      "quality_model": null
+      "quality_attributes": null
     },
     "location": {
       "line": 5,
@@ -337,7 +337,7 @@ dotspec concept show job-map --json
       "purpose": "Describe why this system exists and whom it serves.",
       "scope": "Describe the system's boundary and what it includes.",
       "path": "$PROJECT/specs/system.spec.md",
-      "quality_model": null
+      "quality_attributes": null
     },
     "location": {
       "line": 5,
@@ -406,7 +406,7 @@ dotspec quality show diagnostic-severity --json
     "rationale": "Explain why this quality matters and any relevant tradeoffs.",
     "attributes": [],
     "classification": {
-      "model_path": "",
+      "system_path": "",
       "resolved": [],
       "broader": [],
       "undefined": []
@@ -418,7 +418,7 @@ dotspec quality show diagnostic-severity --json
       "purpose": "Describe why this system exists and whom it serves.",
       "scope": "Describe the system's boundary and what it includes.",
       "path": "$PROJECT/specs/system.spec.md",
-      "quality_model": null
+      "quality_attributes": null
     },
     "location": {
       "path": "$PROJECT/specs/quality/diagnostic-severity.quality.spec.md",
@@ -491,7 +491,7 @@ dotspec requirement show reject-existing-target --json
     "rationale": "Explain why this obligation is needed and reference its source or governing goal.",
     "attributes": [],
     "classification": {
-      "model_path": "",
+      "system_path": "",
       "resolved": [],
       "broader": [],
       "undefined": []
@@ -503,7 +503,7 @@ dotspec requirement show reject-existing-target --json
       "purpose": "Describe why this system exists and whom it serves.",
       "scope": "Describe the system's boundary and what it includes.",
       "path": "$PROJECT/specs/system.spec.md",
-      "quality_model": null
+      "quality_attributes": null
     },
     "location": {
       "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
@@ -533,7 +533,7 @@ dotspec requirement list --json
         "purpose": "Describe why this system exists and whom it serves.",
         "scope": "Describe the system's boundary and what it includes.",
         "path": "$PROJECT/specs/system.spec.md",
-        "quality_model": null
+        "quality_attributes": null
       },
       "requirements": [
         {
@@ -544,7 +544,7 @@ dotspec requirement list --json
           "rationale": "Explain why this quality matters and any relevant tradeoffs.",
           "attributes": [],
           "classification": {
-            "model_path": "",
+            "system_path": "",
             "resolved": [],
             "broader": [],
             "undefined": []
@@ -556,7 +556,7 @@ dotspec requirement list --json
             "purpose": "Describe why this system exists and whom it serves.",
             "scope": "Describe the system's boundary and what it includes.",
             "path": "$PROJECT/specs/system.spec.md",
-            "quality_model": null
+            "quality_attributes": null
           },
           "location": {
             "path": "$PROJECT/specs/quality/diagnostic-severity.quality.spec.md",
@@ -575,7 +575,7 @@ dotspec requirement list --json
           "rationale": "Explain why this obligation is needed and reference its source or governing goal.",
           "attributes": [],
           "classification": {
-            "model_path": "",
+            "system_path": "",
             "resolved": [],
             "broader": [],
             "undefined": []
@@ -587,7 +587,7 @@ dotspec requirement list --json
             "purpose": "Describe why this system exists and whom it serves.",
             "scope": "Describe the system's boundary and what it includes.",
             "path": "$PROJECT/specs/system.spec.md",
-            "quality_model": null
+            "quality_attributes": null
           },
           "location": {
             "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
@@ -647,6 +647,7 @@ dotspec sources --json
   "scope": {
     "path": "$PROJECT",
     "types": [
+      "business-rule",
       "system",
       "job",
       "use-case",
