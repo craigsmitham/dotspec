@@ -110,7 +110,7 @@ func TestExportDoesNotSkipInaccessibleParentSystem(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, element := range result.Snapshot.Elements {
-		if String(element, "kind") == "System" && element["parent_system"] != nil {
+		if String(element, "kind") == "System" && element["enclosing_system"] != nil {
 			t.Fatalf("parent relation crossed a nearer symlink boundary: %+v", element)
 		}
 	}

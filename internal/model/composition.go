@@ -3,6 +3,7 @@ package model
 import (
 	"encoding/base64"
 	"fmt"
+	"net/url"
 	"slices"
 	"strings"
 )
@@ -84,6 +85,13 @@ func (d *designResolver) resolve(r Record, field, kind string, many bool, accept
 	} else {
 		for _, id := range refs {
 			ref := d.index[id]
+			if field == "specification_system" {
+				u, err := url.Parse(d.referenceDestination(ref))
+				if err != nil || u.RawQuery != "" || u.IsAbs() || u.Host != "" || strings.HasPrefix(u.Path, "/") {
+					d.issue(r, field, "error", "Specification system must link to a repository-local system document.")
+					continue
+				}
+			}
 			if String(ref, "source_document") != String(r, "source_document") {
 				d.issue(r, field, "error", "Reference must be authored in this record's source.")
 				continue
@@ -132,6 +140,7 @@ func (d *designResolver) sameSystem(r Record, candidate Record) bool {
 	return String(candidate, "owner") == String(owner, "owner")
 }
 func (d *designResolver) run() {
+	d.resolveSpecificationSystems()
 	for _, r := range d.elements {
 		if String(r, "kind") == "ConceptUse" {
 			d.resolve(r, "definition", "Concept", false, nil)
@@ -139,6 +148,12 @@ func (d *designResolver) run() {
 	}
 	for _, r := range d.elements {
 		switch String(r, "kind") {
+		case "System":
+			d.resolve(r, "part_of", "System", false, nil)
+		case "Component":
+			d.resolve(r, "part_of", "System or Component", false, nil)
+		case "Feature":
+			d.resolve(r, "groups", "Requirement or ObligationClause or UseCase or Concept or ConceptUse or Synchronization", true, nil)
 		case "UseCase":
 			d.resolve(r, "subject_system", "System", false, nil)
 		case "GeneralRequirement", "QualityRequirement", "BusinessRule", "ObligationClause":
@@ -205,7 +220,7 @@ func (d *designResolver) checkDeclarations() {
 	for _, r := range d.elements {
 		kind := String(r, "kind")
 		switch kind {
-		case "ConceptUse", "ConceptType", "ConceptAction", "ActionParameter", "Synchronization":
+		case "Component", "Feature", "ConceptUse", "ConceptType", "ConceptAction", "ActionParameter", "Synchronization":
 			role := ""
 			if kind == "ActionParameter" && d.isMember(d.index[String(r, "owner")], "output_parameters", r) {
 				role = "output"
@@ -280,9 +295,21 @@ func designKind(actual, expected string) bool {
 }
 func designIssueCode(field string) string {
 	switch field {
-	case "subject_system", "supports", "applies_to", "derived_from", "refines", "relies_on", "involves", "motivation", "verification_plan":
+	case "part_of", "groups", "specification_system", "subject_system", "supports", "applies_to", "derived_from", "refines", "relies_on", "involves", "motivation", "verification_plan":
 		return "relationship." + field
 	default:
 		return "concept." + field
 	}
+}
+
+func (d *designResolver) referenceDestination(ref Record) string {
+	if String(ref, "form") == "reference_link" {
+		if destination := String(d.index[String(ref, "definition_node")], "destination"); destination != "" {
+			return destination
+		}
+		if destination := String(d.index[String(ref, "content_node")], "destination"); destination != "" {
+			return destination
+		}
+	}
+	return String(ref, "authored_target")
 }

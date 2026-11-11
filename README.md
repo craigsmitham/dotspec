@@ -387,8 +387,8 @@ above. Other results contain:
 | --- | --- |
 | `system init`, `job init`, `use-case init`, `concept init`, `requirement init`, `quality init` | `path` of the created specification |
 | `sources` | `scope`, `complete`, `files`, and `diagnostics` as described above |
-| `system show` | `system` and its nullable `parent` |
-| `system list` | `systems`, a tree of `system` objects and `children` arrays |
+| `system show` | `system` and its nullable `enclosing_system` (directory context) |
+| `system list` | `systems`, a directory tree of `system` objects and `children` arrays |
 | `job show` | `job`, including its authored Markdown, steps, outcomes, and nullable `system` |
 | `job list` | `groups`, each with a nullable `system` and a `jobs` array |
 | `use-case show` | `use_case`, including its authored Markdown, conventional section bodies, and nullable `system` |
@@ -479,7 +479,7 @@ Make specifications available to dotspec commands as structured information.
 Reading and interpreting specification files.
 ```
 
-The frontmatter currently accepts only `type: system`. The Markdown body must
+The frontmatter accepts `type: system` and an optional `id` for a stable authored identity. The Markdown body must
 contain exactly one nonempty document-level H1 naming the system, followed by
 nonempty `Purpose` and `Scope` H2 sections. Section names are case-sensitive.
 Section bodies can contain Markdown, including lists, code blocks, and deeper
@@ -488,16 +488,36 @@ headings. The optional `Quality attributes` section is also displayed by
 and interpreted as described below. Other sections remain authored Markdown.
 There is no requirement inheritance behavior.
 
-The nearest ancestor project directory containing `specs/system.spec.md` defines
-the parent system:
+Directory discovery supplies context, not structural parentage:
 
 ```text
-specs/system.spec.md                  # dotspec
-internal/parser/specs/system.spec.md  # Spec parser, a subsystem of dotspec
+specs/system.spec.md                  # enclosing system document
+internal/parser/specs/system.spec.md  # nested document; no part_of inferred
 ```
 
-Moving a spec can therefore change its parent. Source paths in command output
-are relative to the current directory.
+Declare `## Part of` with one system link to identify a subsystem. Add named
+`Components` and `Features` entries to a system document when requirements need
+more precise subjects or capability groupings. Components can identify one system
+or component parent; features group requirements and behavioral specifications
+without owning them. No requirement inheritance or implementation allocation is
+inferred.
+
+Non-system specifications can select a system with `## Specification system` and
+one Markdown link. Without that section, the nearest directory system remains the
+default. An invalid explicit selection never falls back. Moving a file can change
+its directory context and may require updating relative links. Structural parentage
+and explicit system selection follow authored links, never directory nesting. Quality classification uses the selected system, independently
+of `Applies to` targets.
+
+See [structure and feature authoring](docs/develop-relationships.md#describe-systems-components-and-features)
+and the [generated system overview](docs/reference/system-overview-example.md).
+Generate your own with:
+
+```sh
+dotspec model overview --path . --relative-to docs/reference > docs/reference/system-overview.md
+```
+
+Source paths in command output are relative to the current directory.
 
 ## System quality attributes
 

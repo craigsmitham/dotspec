@@ -1,7 +1,7 @@
 # Specification model
 
 [dotspec.yaml](dotspec.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.9.0-draft`; the JSON
+specification snapshots. The model version is `0.10.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
@@ -240,3 +240,28 @@ The `0.9.0-draft` model and `dotspec-markdown/8` unify obligation capabilities:
   with quality classification separated from behavior and source machinery.
 
 There are no compatibility aliases. Re-export Markdown using the current profile.
+
+
+The `0.10.0-draft` model and `dotspec-markdown/9` make specification subjects explicit:
+
+- `System.part_of` and `Component.part_of` identify optional single structural
+  parents. They must be acyclic. `enclosing_system` replaces `parent_system` for
+  directory-discovery context.
+- `System.components` and `System.features` own inline declarations, while
+  `Feature.groups` is non-owning, many-to-many specification membership.
+  A feature belongs to its declaring system. Components reuse `ObligationContainer`.
+- `Specification system` explicitly selects the associated system. The effective
+  `specification_system` and its `explicit` or `directory` origin are separate from
+  `system_context`, which retains discovery provenance. Invalid selections never
+  fall back; quality classification follows the effective association.
+- Systems, components and features support authored IDs. Descriptions and links to
+  native contracts, architecture and implementation artifacts supply context;
+  normative commitments remain requirements or obligation clauses.
+- `dotspec model overview` generates explicit structure, feature membership,
+  directly applicable obligations, concept uses, verification guidance and native
+  references. Component involvement in features is derived through grouped
+  obligations' applicability. It does not assert implementation, allocation,
+  inherited requirements or satisfaction.
+
+See [authoring relationships](../docs/develop-relationships.md#describe-systems-components-and-features)
+and the [generated overview](../docs/reference/system-overview-example.md).

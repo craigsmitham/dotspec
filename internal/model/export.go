@@ -90,6 +90,11 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 		if ownerErr != nil {
 			continue
 		}
+		// An explicit selection makes an unacquired directory default irrelevant.
+		// Already acquired directory context is attached later without extra reads.
+		if _, explicit := b.elements[b.rootByPath[path]]["specification_system_content"]; explicit {
+			continue
+		}
 		contexts, contextErr := kind.Context.Resolve(owner)
 		b.contextOK[path] = contextErr == nil
 		for _, context := range contexts {
@@ -258,7 +263,7 @@ func (b *snapshotBuilder) associateSystems() {
 			candidate := cleanPath(system.Layout.Path(current, ""))
 			if info, _, statErr := check.ReferenceTarget(filepath.FromSlash(candidate), repository); statErr == nil {
 				if parent := b.elements[b.rootByPath[candidate]]; info.Mode().IsRegular() && String(parent, "kind") == "System" {
-					root["parent_system"] = parent["id"]
+					root["enclosing_system"] = parent["id"]
 				}
 				break // An uninspected nearer system must not be skipped.
 			} else if statErr != nil && !errors.Is(statErr, fs.ErrNotExist) {

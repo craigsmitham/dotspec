@@ -1,8 +1,8 @@
 title: Core domain model
 description: A focused reference for maintainers and authors understanding business requirements, user requirements,
-  software requirements, and their traceability. Business rules describe business constraints independently of enforcement.
-  Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery
-  remains available in the complete reference.
+  software requirements, and their traceability. Business rules describe business constraints independently
+  of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic
+  model machinery remains available in the complete reference.
 subsets:
 - business-requirements
 - user-requirements
@@ -36,6 +36,9 @@ types:
   - concept_uses
   - synchronizations
   - quality_attributes
+  - part_of
+  - components
+  - features
   BusinessRule:
   - statement
   - applicability
@@ -203,13 +206,26 @@ types:
   - verification_plan
   - criterion
   - measurement_plan
+  Component:
+  - purpose
+  - responsibilities
+  - boundary_description
+  - part_of
+  - contracts
+  - architecture
+  - implementation
+  - obligations
+  Feature:
+  - purpose
+  - system
+  - groups
 diagrams:
 - title: Specification kinds and system association
   direction: TB
   show_cardinality: false
-  description: Eight concrete specification kinds describe repository intent. Quality models stand independently;
-    other kinds can share optional system context. General and quality requirements share the abstract Requirement
-    definition. BusinessRule is an independent specification; a contextual citation does not assert enforcement.
+  description: Eight document kinds describe repository intent. Quality models stand independently. Other non-System
+    kinds select a specification system explicitly or use the nearest directory system by default; this association
+    does not establish structural parentage.
   nodes:
   - System
   - QualityModel
@@ -221,18 +237,40 @@ diagrams:
   - GeneralRequirement
   - QualityRequirement
   paths:
-  - BusinessRule.system_context
-  - Job.system_context
-  - UseCase.system_context
-  - Concept.system_context
-  - Requirement.system_context
+  - BusinessRule.specification_system
+  - Job.specification_system
+  - UseCase.specification_system
+  - Concept.specification_system
+  - Requirement.specification_system
   inheritance: true
+- title: System structure and feature grouping
+  description: Declaration membership identifies where records are authored. Explicit part_of identifies structural
+    parents independently of directories. Features group specifications without owning them. Applicability
+    identifies subjects; no implementation, allocation, inheritance or satisfaction is inferred.
+  nodes:
+  - System
+  - Component
+  - Feature
+  - Requirement
+  - UseCase
+  - Concept
+  - ObligationClause
+  - ConceptUse
+  - Synchronization
+  - DomainElement
+  paths:
+  - System.part_of
+  - Component.part_of
+  - Feature.system
+  - Feature.groups
+  - Requirement.applies_to
+  inheritance: false
 - title: Shared obligation capabilities
-  description: Both standalone requirement forms and embedded clauses share statement, classification,
-    applicability and assessment plans through Obligation. ObligationContainer separately grants clause
-    ownership to System, BusinessRule, Job, JobStep, UseCase, Concept, ConceptUse, ConceptAction,
-    Synchronization and Requirement. Goals, assumptions and desired outcomes retain traceability without
-    containing clauses. Triangle arrows include explicitly mixed-in capabilities.
+  description: Both standalone requirement forms and embedded clauses share statement, classification, applicability
+    and assessment plans through Obligation. ObligationContainer separately grants clause ownership to System,
+    Component, BusinessRule, Job, JobStep, UseCase, Concept, ConceptUse, ConceptAction, Synchronization and Requirement.
+    Goals, assumptions and desired outcomes retain traceability without containing clauses. Triangle arrows
+    include explicitly mixed-in capabilities.
   direction: TB
   nodes:
   - Obligation
@@ -277,8 +315,8 @@ diagrams:
   inheritance: false
 - title: Quality classification
   description: 'Systems and reusable quality models declare attributes. Each attribute has exactly one declaring
-    owner: a System or a QualityModel. Obligations reference attributes for classification. Sub-attribute of permits
-    multiple parents within the same declaring owner and must be acyclic.'
+    owner: a System or a QualityModel. Obligations reference attributes for classification. Sub-attribute of
+    permits multiple parents within the same declaring owner and must be acyclic.'
   nodes:
   - System
   - QualityModel
@@ -291,9 +329,9 @@ diagrams:
   - QualityAttribute.subattribute_of
   inheritance: false
 - title: Concept definitions and type bindings
-  description: Explicit named uses reference reusable definitions. Bindings distinguish a type declaration from
-    the use supplying its identities. Type parameters and introduced types share a declaration scope but play different
-    roles.
+  description: Explicit named uses reference reusable definitions. Bindings distinguish a type declaration
+    from the use supplying its identities. Type parameters and introduced types share a declaration scope but
+    play different roles.
   nodes:
   - ConceptUse
   - Concept
@@ -309,9 +347,9 @@ diagrams:
   - TypeBinding.supplying_concept_use
   inheritance: false
 - title: System coordination
-  description: Systems explicitly include named uses and own synchronization rules. Each referenced action is qualified
-    by its use and must belong to that use's definition. Application dependencies are separately declared and may
-    cycle. None of these relations implies execution, atomicity or behavioral completeness.
+  description: Systems explicitly include named uses and own synchronization rules. Each referenced action
+    is qualified by its use and must belong to that use's definition. Application dependencies are separately
+    declared and may cycle. None of these relations implies execution, atomicity or behavioral completeness.
   nodes:
   - System
   - ConceptUse
@@ -329,8 +367,8 @@ diagrams:
   inheritance: false
 - title: Explicit requirements relationships
   description: Explicit authoring distinguishes a use case boundary, support for user progress, and applicability
-    from ordinary citations. Applicability may target any domain record; links do not establish enforcement, satisfaction
-    or achieved outcomes.
+    from ordinary citations. Applicability may target any domain record; links do not establish enforcement,
+    satisfaction or achieved outcomes.
   nodes:
   - UseCase
   - System
@@ -348,10 +386,10 @@ diagrams:
   - BusinessRule.applies_to
   inheritance: false
 - title: Motivation, basis and assumptions
-  description: Concern subsets are independent of artifact kind and core/supporting/generic classification. Explicit
-    support describes intended contribution; derivation records a basis rather than entailment. Requirements may
-    link directly to a business rule or design decision without an intervening user record. Assumptions condition
-    validity. These links do not impose authoring order or prove satisfaction.
+  description: Concern subsets are independent of artifact kind and core/supporting/generic classification.
+    Explicit support describes intended contribution; derivation records a basis rather than entailment. Requirements
+    may link directly to a business rule or design decision without an intervening user record. Assumptions
+    condition validity. These links do not impose authoring order or prove satisfaction.
   nodes:
   - TraceableElement
   - SystemGoal
@@ -368,9 +406,9 @@ diagrams:
   inheritance: false
 - title: Obligations and complementary behavioral views
   description: Requirement is the standalone obligation document family, not every normative expression. Explicit
-    clauses identify obligations within existing specifications without duplicating them. Refinement preserves a
-    parent commitment and must be acyclic; multiple parents are permitted. Use cases involve named concept uses
-    many-to-many; neither view is the mandatory parent of the other.
+    clauses identify obligations within existing specifications without duplicating them. Refinement preserves
+    a parent commitment and must be acyclic; multiple parents are permitted. Use cases involve named concept
+    uses many-to-many; neither view is the mandatory parent of the other.
   nodes:
   - TraceableElement
   - ObligationClause
@@ -389,9 +427,9 @@ diagrams:
   - ConceptUse.definition
   inheritance: false
 - title: Traceability to authored content
-  description: Bindings associate model fields with content occurrences; references preserve authored targets and
-    their resolution. Record and ContentNode provide context from the generic subsets. A resolved target does not
-    prove compliance.
+  description: Bindings associate model fields with content occurrences; references preserve authored targets
+    and their resolution. Record and ContentNode provide context from the generic subsets. A resolved target
+    does not prove compliance.
   nodes:
   - ContentBinding
   - ContentNode

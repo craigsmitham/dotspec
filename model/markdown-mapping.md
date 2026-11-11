@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/8` maps specification Markdown to the
+`dotspec-markdown/9` maps specification Markdown to the
 [canonical model](dotspec.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/specification-model.md).
@@ -123,7 +123,17 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 
 | Section or item | Mapping |
 | --- | --- |
+| Frontmatter `id` | Optional System `authored_id`, document-local anchor |
 | Purpose; Scope | `purpose`; `scope` |
+| Part of | `part_of_content`, explicit `part_of_references`, resolved scalar System `part_of`; no inferred parent |
+| Components; Features | Paired section content and ordered declaration membership in `components` or `features` |
+| Named Component/Feature | `name`, complete `content`, declaring System `owner`, optional introductory `**ID:**`; Feature `system` is the declaring System |
+| Component/Feature: Purpose | `purpose` |
+| Component: Responsibilities; Boundary | `responsibilities`; `boundary_description` |
+| Component: Part of | Narrative and explicit references; resolved scalar System or Component `part_of` |
+| Component: Contracts; Architecture; Implementation | `ContextualReferences` preserving narrative and links to native artifacts |
+| Component: Obligations | Shared named `ObligationClause` declarations; no implicit applicability |
+| Feature: Groups | Narrative and explicit references; resolved non-owning `groups` membership in requirements, clauses, use cases, concepts, concept uses or synchronizations |
 | Environment | `EnvironmentDescription.content` |
 | Goals | `GoalCollection.content`; direct list items and named subsections become `SystemGoal` records |
 | Assumptions | `AssumptionCollection.content`; direct list items and named subsections become `Assumption` records |
@@ -142,7 +152,7 @@ while retaining all other definition content. Subheadings that subdivide a
 quality-attribute or glossary definition remain part of that narrative unless a
 specific rule above assigns a more precise role. Unrecognized headings inside
 structured detail fields, such as a glossary alias list, receive extension
-records. An absent section leaves both system fields absent. An explicitly empty section retains empty content and an empty attribute list. Directory-derived parent systems
+records. An absent section leaves both system fields absent. An explicitly empty section retains empty content and an empty attribute list. Directory-derived enclosing system documents
 and specification ownership are associations; they introduce no inheritance.
 
 ## Job
@@ -331,7 +341,7 @@ qualifications, examples and evidence instructions.
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/8`, an owner and field path, source
+Bindings record a rule under `dotspec-markdown/9`, an owner and field path, source
 occurrence and role. Named-field, record-identity and structured-item bindings
 account for interpreted domain content. Metadata bindings account for frontmatter.
 Structural-wrapper bindings cover headings and syntax support; a document-root
@@ -368,8 +378,10 @@ including malformed multiple references; an invalid draft must remain representa
 Only successfully resolved, compatible relationships populate semantic targets.
 Unknown declaring scope defers dependent resolution rather than inventing a scope
 error. Requirements, business rules, jobs, use cases and concepts may have a
-`system_context` derived from directory discovery. Systems use `parent_system`;
-QualityModels are standalone.
+`system_context` derived from directory discovery. An explicit Specification system
+section overrides that default through `specification_system`; its origin is
+`explicit` or `directory`. Systems use `enclosing_system` for discovery context
+and explicit `part_of` for structural parentage; QualityModels are standalone.
 
 Typed fields are canonical. Assertions are optional derived views with a required
 `projection_path`, subject and object. HasSubjectSystem, Supports and AppliesTo now
@@ -432,3 +444,24 @@ shape failures or claims of missing required behavior.
 change-review and verification-guidance views. It makes no implementation,
 satisfaction, validation or execution-evidence claims. Type-level diagrams remain
 in the generated core model reference.
+
+
+## Explicit specification-system selection
+
+On SystemContextSpecification document kinds, a `Specification system` H2 maps to
+`specification_system_content` and `specification_system_references`. Exactly one
+Markdown link must identify a repository-local System, using its file, title
+heading or authored ID. Images and footnotes remain content references, not
+selection links. Empty, ambiguous or invalid selections remain explicit and never
+fall back. Resolved selections populate scalar `specification_system`; when the
+section is absent, an acquired directory `system_context` supplies that value.
+`specification_system_origin` is `explicit` when a selection was authored, otherwise
+`directory` when a default was acquired, otherwise absent.
+
+Directory context is recorded only when acquired within the scan boundary. An
+explicit selection does not require reading an unselected directory default.
+Quality labels follow the effective association. Embedded clauses follow their
+declaration chain to the selected specification system or declaring System, not
+`applies_to`, `part_of` or feature membership. Structural and feature projections
+are replayed during offline validation; retained source occurrences remain
+available even when invalid semantic edges are withheld.

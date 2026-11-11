@@ -4,7 +4,7 @@ Generated from [the canonical model](../../../model/dotspec.yaml) and [the view 
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.9.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.10.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
@@ -12,7 +12,7 @@ Model version: `0.9.0-draft`. See the [complete reference](index.md) for all fie
 | --- | --- | --- |
 | Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [TraceableElement](index.md#traceableelement), [SystemGoal](index.md#systemgoal), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [BusinessRule](index.md#businessrule), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation) |
 | User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [TraceableElement](index.md#traceableelement), [ObligationClause](index.md#obligationclause), [Job](index.md#job), [JobStep](index.md#jobstep), [DesiredOutcome](index.md#desiredoutcome), [ProgressCase](index.md#progresscase), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation) |
-| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptType](index.md#concepttype), [ConceptUse](index.md#conceptuse), [TypeBinding](index.md#typebinding), [Synchronization](index.md#synchronization), [SynchronizationAction](index.md#synchronizationaction), [StateDescription](index.md#statedescription), [StateElement](index.md#stateelement), [ActionParameter](index.md#actionparameter), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [GeneralRequirement](index.md#generalrequirement), [QualityRequirement](index.md#qualityrequirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation) |
+| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptType](index.md#concepttype), [ConceptUse](index.md#conceptuse), [TypeBinding](index.md#typebinding), [Synchronization](index.md#synchronization), [SynchronizationAction](index.md#synchronizationaction), [StateDescription](index.md#statedescription), [StateElement](index.md#stateelement), [ActionParameter](index.md#actionparameter), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [GeneralRequirement](index.md#generalrequirement), [QualityRequirement](index.md#qualityrequirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Component](index.md#component), [Feature](index.md#feature) |
 | Specification traceability (`core`) | Explicit connections between specification meaning, authored occurrences, and resolved relationships. | [ContentBinding](index.md#contentbinding), [SourceReference](index.md#sourcereference), [Resolution](index.md#resolution) |
 
 Subset membership organizes model definitions; it does not infer the level or importance of an authored instance. Shared types can appear in several subsets. Supporting and generic types appear as context where a diagram needs them.
@@ -25,7 +25,7 @@ Arrows use schema-owned relationship labels; reference tables retain exact canon
 
 ### Specification kinds and system association
 
-Eight concrete specification kinds describe repository intent. Quality models stand independently; other kinds can share optional system context. General and quality requirements share the abstract Requirement definition. BusinessRule is an independent specification; a contextual citation does not assert enforcement.
+Eight document kinds describe repository intent. Quality models stand independently. Other non-System kinds select a specification system explicitly or use the nearest directory system by default; this association does not establish structural parentage.
 
 ```mermaid
 classDiagram
@@ -42,16 +42,48 @@ classDiagram
     class QualityRequirement
     Requirement <|-- GeneralRequirement
     Requirement <|-- QualityRequirement
-    BusinessRule ..> System : system context
-    Job ..> System : system context
-    UseCase ..> System : system context
-    Concept ..> System : system context
-    Requirement ..> System : system context
+    BusinessRule --> System : specification system
+    Job --> System : specification system
+    UseCase --> System : specification system
+    Concept --> System : specification system
+    Requirement --> System : specification system
+```
+
+### System structure and feature grouping
+
+Declaration membership identifies where records are authored. Explicit part_of identifies structural parents independently of directories. Features group specifications without owning them. Applicability identifies subjects; no implementation, allocation, inheritance or satisfaction is inferred.
+
+```mermaid
+classDiagram
+    direction LR
+    class System
+    class Component
+    class Feature
+    class Requirement
+    <<abstract>> Requirement
+    class UseCase
+    class Concept
+    class ObligationClause
+    class ConceptUse
+    class Synchronization
+    class DomainElement
+    <<abstract>> DomainElement
+    System --> "0..1" System : part of
+    Component --> "0..1" System : part of
+    Component --> "0..1" Component : part of
+    Feature --> "1" System : feature of
+    Feature --> "0..*" Requirement : groups
+    Feature --> "0..*" ObligationClause : groups
+    Feature --> "0..*" UseCase : groups
+    Feature --> "0..*" Concept : groups
+    Feature --> "0..*" ConceptUse : groups
+    Feature --> "0..*" Synchronization : groups
+    Requirement --> "0..*" DomainElement : applies to
 ```
 
 ### Shared obligation capabilities
 
-Both standalone requirement forms and embedded clauses share statement, classification, applicability and assessment plans through Obligation. ObligationContainer separately grants clause ownership to System, BusinessRule, Job, JobStep, UseCase, Concept, ConceptUse, ConceptAction, Synchronization and Requirement. Goals, assumptions and desired outcomes retain traceability without containing clauses. Triangle arrows include explicitly mixed-in capabilities.
+Both standalone requirement forms and embedded clauses share statement, classification, applicability and assessment plans through Obligation. ObligationContainer separately grants clause ownership to System, Component, BusinessRule, Job, JobStep, UseCase, Concept, ConceptUse, ConceptAction, Synchronization and Requirement. Goals, assumptions and desired outcomes retain traceability without containing clauses. Triangle arrows include explicitly mixed-in capabilities.
 
 ```mermaid
 classDiagram
@@ -357,6 +389,9 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 | `concept_uses` | [ConceptUse](index.md#conceptuse) | optional; ordered list |  |
 | `synchronizations` | [Synchronization](index.md#synchronization) | optional; ordered list |  |
 | `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; ordered list | Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. Must be present together with quality_attributes_content. |
+| `part_of` | [System](index.md#system) | optional | Optional explicit parent System. Directory context does not supply this relationship. |
+| `components` | [Component](index.md#component) | optional; ordered list | Named component declarations in authored order; membership does not establish structural parentage. |
+| `features` | [Feature](index.md#feature) | optional; ordered list | Named feature declarations in authored order; each feature belongs to this System. |
 
 ### BusinessRule
 
@@ -756,3 +791,32 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `verification_plan` | [VerificationPlan](index.md#verificationplan) | optional |  |
 | `criterion` | [QualityCriterion](index.md#qualitycriterion) | optional |  |
 | `measurement_plan` | [MeasurementPlan](index.md#measurementplan) | optional |  |
+
+### Component
+
+A named part of a system with a described responsibility and boundary. Neither its declaration nor code location establishes structural parentage.
+
+Subsets: `software-requirements`. [Component](index.md#component) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `purpose` | [RichContent](index.md#richcontent) | optional | Benefit or reason for this component to exist. |
+| `responsibilities` | [RichContent](index.md#richcontent) | optional | Authored responsibilities identifying what this component is expected to do. |
+| `boundary_description` | [RichContent](index.md#richcontent) | optional | What the component includes, excludes and delegates; normative commitments remain obligations. |
+| `part_of` | [System](index.md#system) or [Component](index.md#component) | optional | Optional single structural parent System or Component, independent of declaration ownership. Must be acyclic. |
+| `contracts` | [ContextualReferences](index.md#contextualreferences) | optional | Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred. |
+| `architecture` | [ContextualReferences](index.md#contextualreferences) | optional | Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred. |
+| `implementation` | [ContextualReferences](index.md#contextualreferences) | optional | Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred. |
+| `obligations` | [ObligationClause](index.md#obligationclause) | optional; ordered list |  |
+
+### Feature
+
+A stakeholder-valued capability grouping specifications independently of component structure. Membership does not duplicate or own obligations.
+
+Subsets: `software-requirements`. [Feature](index.md#feature) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `purpose` | [RichContent](index.md#richcontent) | optional | Stakeholder-valued capability or benefit expressed by this feature. |
+| `system` | [System](index.md#system) | required | System whose capability this feature describes; the explicitly declaring System. |
+| `groups` | [Requirement](index.md#requirement) or [ObligationClause](index.md#obligationclause) or [UseCase](index.md#usecase) or [Concept](index.md#concept) or [ConceptUse](index.md#conceptuse) or [Synchronization](index.md#synchronization) | optional; list | Non-owning specification membership; the same record may participate in several features. |

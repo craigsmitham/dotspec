@@ -113,7 +113,7 @@ def relationships_markdown(catalog: dict[str, Any]) -> bytes:
         'Relationship categories describe edges. They are independent of the core/supporting/generic classifications of model subsets.', '',
         '## Relationship categories', '', '| Category | Scope |', '| --- | --- |',
         '| Declaration containment | A declaration and its owned members; source-local, with checked owner backlinks. |',
-        '| Structural context | Directory-derived association and system hierarchy; no semantic inheritance. |',
+        '| Structural context | Directory-derived discovery context; no structural decomposition or semantic inheritance. |',
         '| Semantic association | Explicit domain claims with typed targets and relationship-specific scope. |',
         '| Contextual citation | Authored reference occurrences; citations alone do not establish domain claims. |',
         '| Derived projection | Optional assertion endpoints projected from canonical fields. |',

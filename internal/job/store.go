@@ -44,7 +44,7 @@ func Show(path, slug string) (*Job, error) {
 	if err != nil {
 		return nil, err
 	}
-	job.System, err = associatedSystem(dir)
+	job.System, err = associatedSystem(dir, job.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,6 @@ func List(path string) ([]*Group, error) {
 		return nil, err
 	}
 	bySystem := make(map[string]*Group)
-	byDirectory := make(map[string]*system.System)
 	var groups []*Group
 	for _, path := range paths {
 		job, err := Read(path)
@@ -75,13 +74,9 @@ func List(path string) ([]*Group, error) {
 		if err != nil {
 			return nil, err
 		}
-		associated, found := byDirectory[dir]
-		if !found {
-			associated, err = associatedSystem(dir)
-			if err != nil {
-				return nil, err
-			}
-			byDirectory[dir] = associated
+		associated, err := associatedSystem(dir, path)
+		if err != nil {
+			return nil, err
 		}
 		job.System = associated
 		key := ""
@@ -112,8 +107,8 @@ func List(path string) ([]*Group, error) {
 	return groups, nil
 }
 
-func associatedSystem(dir string) (*system.System, error) {
-	associated, err := system.Enclosing(dir)
+func associatedSystem(dir, source string) (*system.System, error) {
+	associated, err := system.Associated(dir, source)
 	if err != nil {
 		return nil, fmt.Errorf("resolve associated system for jobs in %s: %w", dir, err)
 	}

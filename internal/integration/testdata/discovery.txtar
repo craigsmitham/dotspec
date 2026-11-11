@@ -16,7 +16,7 @@ stdout '"files_discovered": 2'
 cd nested
 exec dotspec system show
 stdout 'Nested'
-stdout 'Parent system: None'
+stdout 'Enclosing system document: None'
 -- ignore.txt --
 ignored/
 untracked/

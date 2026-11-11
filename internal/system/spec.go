@@ -16,6 +16,7 @@ var Layout = specfile.Layout{Kind: "system", Filename: Filename}
 
 type metadata struct {
 	specfile.Metadata `yaml:",inline"`
+	ID                string `yaml:"id,omitempty"`
 }
 
 const Template = `---
@@ -34,6 +35,10 @@ Describe the system's boundary and what it includes.
 `
 
 type System struct {
+	ID                       string                      `json:"id,omitempty"`
+	Components               string                      `json:"components,omitempty"`
+	Features                 string                      `json:"features,omitempty"`
+	PartOf                   string                      `json:"part_of,omitempty"`
 	ConceptUses              string                      `json:"concept_uses,omitempty"`
 	Synchronizations         string                      `json:"synchronizations,omitempty"`
 	References               *specfile.ReferenceDocument `json:"-"`
@@ -73,14 +78,21 @@ func Read(path string) (*System, error) {
 }
 
 func Parse(data []byte) (*System, error) {
-	doc, err := specfile.ParseOutline(data, Layout.Kind, &metadata{})
+	var meta metadata
+	doc, err := specfile.ParseOutline(data, Layout.Kind, &meta)
 	if err != nil {
 		return nil, err
 	}
-	spec := &System{Name: doc.Name}
-	fields := map[string]*string{"Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
+	spec := &System{Name: doc.Name, ID: meta.ID}
+	fields := map[string]*string{"Components": &spec.Components, "Features": &spec.Features, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
 	locations := make(map[string]diagnostic.Location)
 	var ids specfile.Identifiers
+	if err := ids.Register(meta.ID, "system", specfile.MetadataLocation(data, "id")); err != nil {
+		return nil, err
+	}
+	if err := ids.RegisterDeclarations(doc, "Components", "Features"); err != nil {
+		return nil, err
+	}
 	for _, section := range doc.Sections {
 		if section.Level != 2 {
 			if _, known := fields[section.Title]; known || section.Title == "Quality attributes" {

@@ -577,6 +577,26 @@ dotspec model export --path internal
 | `--help, -h` | `false` | help for export |
 | `--path` | `.` | project directory to inspect or initialize |
 
+## dotspec model overview
+
+Generate system structure, features, and applicable obligations as Markdown
+
+```sh
+dotspec model overview [flags]
+```
+
+Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and verification guidance. Directory context remains separate; no implementation or requirement inheritance is inferred.
+
+```sh
+dotspec model overview --path . --relative-to docs/reference
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for overview |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
+
 ## dotspec model schema
 
 Print the embedded snapshot JSON Schema
@@ -962,7 +982,7 @@ dotspec sources --path internal --json
 
 ## dotspec system
 
-Describe systems and discover their hierarchy
+Describe systems and discover their directory context
 
 ```sh
 dotspec system [flags]
@@ -1012,7 +1032,7 @@ dotspec system list --path .
 
 ## dotspec system show
 
-Describe the nearest enclosing system and its parent
+Describe the nearest system and its enclosing system document
 
 ```sh
 dotspec system show [flags]

@@ -2,7 +2,7 @@
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.9.0-draft`; mapping `dotspec-markdown/8`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
+Model `0.10.0-draft`; mapping `dotspec-markdown/9`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
 
 ## Concepts
 

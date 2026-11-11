@@ -215,7 +215,7 @@ func (b *snapshotBuilder) resolveLabels() {
 		if b.elements[b.rootByPath[path]] == nil {
 			continue
 		}
-		if b.primary[path] || b.contextOK[path] {
+		if _, explicit := b.elements[b.rootByPath[path]]["specification_system_content"]; !explicit && (b.primary[path] || b.contextOK[path]) {
 			continue
 		}
 		kind := b.kind(path)
@@ -247,6 +247,7 @@ func (b *snapshotBuilder) resolveLabels() {
 			}
 		}
 	}
+	b.associateSpecificationSystems()
 	attributes := map[string]map[string][]string{}
 	for _, element := range b.snapshot.Elements {
 		if String(element, "kind") != "QualityAttribute" {

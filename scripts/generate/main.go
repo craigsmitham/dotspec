@@ -107,6 +107,25 @@ func run(check bool) error {
 		return err
 	}
 	files = append(files, struct{ path, content string }{"docs/reference/requirements-traceability-example.md", trace})
+	overviewResult, err := model.Export(filepath.Join(root, "examples/system-structure"), system.CheckType(), concept.CheckType(), job.CheckType(), usecase.CheckType(), businessrule.CheckType(), requirement.CheckType(), quality.CheckType())
+	if err != nil {
+		return err
+	}
+	if overviewResult.ExitCode != 0 {
+		return fmt.Errorf("system structure example has authoring findings: %v", overviewResult.Snapshot.Diagnostics)
+	}
+	overviewFindings, err := model.Validate(overviewResult.Snapshot)
+	if err != nil {
+		return err
+	}
+	if len(overviewFindings) > 0 {
+		return fmt.Errorf("system structure example model: %v", overviewFindings)
+	}
+	overview, err := model.OverviewMarkdown(overviewResult.Snapshot, filepath.Join(root, "docs/reference"))
+	if err != nil {
+		return err
+	}
+	files = append(files, struct{ path, content string }{"docs/reference/system-overview-example.md", overview})
 	var stale []string
 	for _, file := range files {
 		path := filepath.Join(root, file.path)

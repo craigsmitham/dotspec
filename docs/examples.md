@@ -39,7 +39,7 @@ Purpose
 Scope
   Describe the system's boundary and what it includes.
 
-Parent system: None
+Enclosing system document: None
 Source: specs/system.spec.md
 ````
 

@@ -80,13 +80,14 @@ containing record's member list and source document. It does not describe runtim
 object lifetime or business ownership.
 
 `system_context` associates a non-system specification with the enclosing system
-found through directory discovery. Systems use `parent_system` for their hierarchy.
-Standalone QualityModels have neither association. Neither relationship supplies
-inherited requirements or establishes a use case boundary.
+found through directory discovery. `specification_system` selects the effective
+association, explicitly or by directory default. Systems retain directory context
+in `enclosing_system`. Standalone QualityModels have neither association. These
+relationships supply no inherited requirements or use-case boundary.
 
 For explicit concept inclusion, type bindings, dependencies and coordination, use
 [Develop concepts](develop-concepts.md). Mutual application dependencies are valid;
-containment, system hierarchy and quality sub-attribute hierarchy must be acyclic.
+containment, explicit `part_of` structure and quality sub-attribute hierarchy must be acyclic.
 
 ## Check and consume the result
 
@@ -242,3 +243,131 @@ not an execution result, and a path through the graph does not prove satisfactio
 The [generated recovery example](reference/requirements-traceability-example.md)
 shows the complete flow; [Requirements layers](requirements-layers.md) explains
 why these distinctions matter.
+
+
+## Describe systems, components and features
+
+Use a System for the whole being specified, a Component for a named structural
+part, and a Feature for a stakeholder-valued capability grouping. These are
+partial specification subjects, not an inventory of runtime architecture. Start
+with named entries in `system.spec.md`; no new file family is required.
+
+```markdown
+---
+type: system
+id: online-store
+---
+# Online Store
+
+## Purpose
+Let customers buy products.
+
+## Scope
+Order submission and stock reservation.
+
+## Components
+
+### Checkout
+**ID:** checkout
+
+#### Purpose
+Accept customer orders.
+
+#### Part of
+[Online Store](#online-store)
+
+#### Responsibilities
+Calculate totals and coordinate submission.
+
+#### Boundary
+Owns order submission; Inventory owns stock availability.
+
+#### Contracts
+[Submission contract](../contracts/orders.md)
+
+#### Architecture
+[Coordination decision](../decisions/order-coordination.md)
+
+#### Implementation
+[Checkout source](../src/checkout/)
+
+## Features
+
+### Place an order
+**ID:** place-order
+
+#### Purpose
+Let a customer buy available products.
+
+#### Groups
+- [Reserve stock](requirements/reserve-stock.requirement.spec.md)
+```
+
+`Part of` takes one link to a System or Component for component entries. A System's
+own `## Part of` takes one System link. Omit it while parentage is undecided; no
+parent is inferred from the declaring document or its directory. Structural cycles
+and multiple parent links are errors. Components are declared as sibling entries;
+express nesting through links, not deeper heading levels.
+
+`Groups` can reference requirements, obligation clauses, use cases, concepts,
+named concept uses and synchronizations. Several features can group the same
+record. Membership leaves that record's declaration ownership unchanged. Each
+feature belongs to the System declaring it. There is no separate feature/component
+implementation edge to maintain.
+
+In a requirement or embedded obligation, explicitly target a component:
+
+```markdown
+## Applies to
+
+**Targets:** [Checkout](../system.spec.md#checkout)
+```
+
+Components can also contain an `#### Obligations` section with named clauses,
+using the existing obligation authoring conventions at the corresponding heading
+levels. Declaration alone does not supply an applicability target. Purpose,
+Responsibilities and Boundary explain a component; put normative commitments in
+requirements or clauses so they can carry rationale and verification guidance.
+Contracts, Architecture and Implementation are ordinary narrative and references
+to authoritative native artifacts, not separately modeled architecture definitions.
+
+### Select a specification system
+
+In a business rule, job, use case, concept, or either requirement form:
+
+```markdown
+## Specification system
+
+[Online Store](../../store/specs/system.spec.md#online-store)
+```
+
+Use one repository-local link identifying a system document, its title heading,
+or its authored System ID. An omitted section uses the nearest directory system;
+a broken, external, non-system, empty or ambiguous explicit selection does not
+fall back. Relative links obey the existing repository and direct-reference
+boundaries; external systems are not fetched. The association governs grouping
+and quality classification in show, list, check and model export. It does not set
+`subject_system` for a use case or change an obligation's `applies_to` targets.
+
+### Review the overview
+
+```sh
+dotspec model overview --path . --relative-to docs/reference > docs/reference/system-overview.md
+```
+
+The [generated example](reference/system-overview-example.md) shows explicit part
+relationships, feature groups, directly applicable obligations, verification and
+measurement guidance, concept uses, descriptions and native references. Feature
+involvement is derived only from direct applicability on grouped obligations;
+transitive membership or component parentage does not invent additional links.
+The overview distinguishes declaration location, selected system and directory
+context, and retains unresolved authored references in the descriptions and
+inspection findings. It makes no completeness, allocation or satisfaction claim.
+
+This scope follows Meyer's distinction between identifying components and their
+responsibilities (*Handbook of Requirements and Business Analysis*, §§1.8, 3.6,
+8.1) and the separate PEGS treatment of components, functionality, interfaces and
+scenarios. It also supports Fowler's emphasis on durable specification and
+boundary intent while allowing implementation structure to change:
+[Phoenix Primitives](https://chadfowler.com/regenerative-software/3mjfruwwuck2d/),
+[Compile to Architecture](https://chadfowler.com/regenerative-software/3mgfsrk75ac2l/).

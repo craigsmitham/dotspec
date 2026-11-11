@@ -54,7 +54,11 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 			authoredID = v.ID
 		}
 	case "system":
-		_, err = system.Parse(doc.Data)
+		var v *system.System
+		v, err = system.Parse(doc.Data)
+		if err == nil {
+			authoredID = v.ID
+		}
 	case "job":
 		var v *job.Job
 		v, err = job.Parse(doc.Data)
@@ -339,6 +343,11 @@ func (m *domainMapper) common(r Record, s *Section) bool {
 		return true
 	}
 	switch s.Title {
+	case "Specification system":
+		if _, ok := compiledModel().catalog.Classes[String(r, "kind")].Slots["specification_system"]; !ok {
+			return false
+		}
+		m.structureReference(r, "specification_system", s)
 	case "Business rules":
 		m.contextField(r, "business_rules", s.Content)
 		m.sectionBindings(r, "business_rules.content", s)

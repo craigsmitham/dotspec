@@ -13,8 +13,8 @@ The canonical [LinkML model](../model/dotspec.yaml) defines the records and thei
 relationships. The [generated reference](reference/model/index.md) describes
 every field. The [relationship reference](reference/model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.9.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/8`.
+`model_version` is `0.10.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/9`.
 
 ## Export and validate a snapshot
 
@@ -263,12 +263,15 @@ to be read. Links in those targets do not recursively expand the scan. Their
 occurrences remain represented, with resolution limited to already available
 context or explicitly marked as not attempted.
 
-Directory-derived `system_context` does not set a use case's system boundary. It is available on non-system specifications through SystemContextSpecification. Systems use only `parent_system`; standalone QualityModels have neither field. An enclosing
+Directory-derived `system_context` does not set a use case's system boundary. It is available on non-system specifications through SystemContextSpecification. Systems use `enclosing_system` for directory context and explicit `part_of` for structural parentage; standalone QualityModels have neither field. An enclosing
 system does not silently supply inherited requirements, assumptions or quality
 attributes through another system. Each `QualityAttribute` belongs directly to
 its declaring `System` or standalone `QualityModel`. Model definitions can be
-copied into systems as independent declarations with ordinary source links. Classification labels retain their authored occurrences
-and `system_context`; resolved targets populate the corresponding typed fields.
+copied into systems as independent declarations with ordinary source links. The effective `specification_system` is an explicit link when supplied, otherwise
+the directory default. `specification_system_origin` records this provenance.
+Invalid explicit links never fall back. Quality classification follows this
+selection, independently of applicability. Classification labels retain their authored occurrences
+and the selected system as label `system_context`; resolved targets populate the corresponding typed fields.
 Sub-attribute references stay within their declaring owner. Reusable-model
 grouping labels use `quality_model_context`; requirement labels use system context.
 The system's

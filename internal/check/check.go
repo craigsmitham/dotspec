@@ -98,7 +98,7 @@ func project(path string, files map[string]*SourceFile, types ...Type) Report {
 				r.record(err, "scan.context", path)
 				continue
 			}
-			contexts = append(contexts, contextRequest{contextKey{kind.Context, owner}, path, kind.InspectContext})
+			contexts = append(contexts, contextRequest{contextKey{provider: kind.Context, owner: owner}, path, kind.InspectContext})
 		}
 	}
 	r.inspectContexts(contexts, discovered)

@@ -35,7 +35,7 @@ func Enclosing(path string) (*System, error) {
 	return specs[0], nil
 }
 
-// Show resolves the nearest enclosing system and its nearest parent.
+// Show resolves the nearest system document and its enclosing directory context.
 func Show(path string) (spec, parent *System, err error) {
 	specs, err := enclosing(path, 2)
 	if err != nil {
@@ -80,8 +80,8 @@ func enclosing(path string, limit int) ([]*System, error) {
 	return specs, nil
 }
 
-// List returns a forest of systems contained in path, in source-path order.
-// Parents outside the selected subtree are intentionally absent from the forest.
+// List returns directory nesting in source-path order, not declared part_of structure.
+// Enclosing documents outside the selected subtree are absent from the forest.
 func List(path string) ([]*Node, error) {
 	dir, err := specfile.Scope(path)
 	if err != nil {

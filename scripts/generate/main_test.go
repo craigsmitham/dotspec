@@ -10,11 +10,10 @@ import (
 
 func TestGeneratedArtifactsAndReadOnlyDriftCheck(t *testing.T) {
 	dir := t.TempDir()
-	if err := os.CopyFS(filepath.Join(dir, "examples/concept-design"), os.DirFS("../../examples/concept-design")); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.CopyFS(filepath.Join(dir, "examples/requirements-traceability"), os.DirFS("../../examples/requirements-traceability")); err != nil {
-		t.Fatal(err)
+	for _, fixture := range []string{"concept-design", "requirements-traceability", "system-structure"} {
+		if err := os.CopyFS(filepath.Join(dir, "examples", fixture), os.DirFS(filepath.Join("../../examples", fixture))); err != nil {
+			t.Fatal(err)
+		}
 	}
 	t.Chdir(dir)
 	if err := run(false); err != nil {

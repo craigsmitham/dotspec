@@ -25,9 +25,12 @@ type Type struct {
 // ContextProvider inspects additional sources needed by a type. Resolve returns
 // their absolute paths, including attempted reads that failed, alongside any
 // error. Paths identify files, not directories where lookup failed.
-// Share a provider between types to resolve it once per owner in a project scan.
+// Directory providers are shared per owner; source-aware providers resolve each
+// source independently so adjacent files may select different systems.
 type ContextProvider struct {
 	Resolve func(owner string) ([]string, error)
+	// ResolveSource optionally selects context per source, overriding the directory default.
+	ResolveSource func(owner, source string) ([]string, error)
 	// Inspect optionally contributes findings from each resolved context file.
 	Inspect func(path string) ([]diagnostic.Diagnostic, error)
 }
@@ -35,6 +38,7 @@ type ContextProvider struct {
 type contextKey struct {
 	provider *ContextProvider
 	owner    string
+	source   string
 }
 
 type contextRequest struct {
@@ -57,9 +61,16 @@ func (r *Report) inspectContexts(requests []contextRequest, discovered map[strin
 	inspected := make(map[inspectionKey]error)
 	for _, request := range requests {
 		key := request.key
+		if key.provider.ResolveSource != nil {
+			key.source = request.source
+		}
 		result, found := resolved[key]
 		if !found {
-			result.paths, result.err = key.provider.Resolve(key.owner)
+			if key.provider.ResolveSource != nil {
+				result.paths, result.err = key.provider.ResolveSource(key.owner, request.source)
+			} else {
+				result.paths, result.err = key.provider.Resolve(key.owner)
+			}
 			resolved[key] = result
 			if result.err != nil {
 				r.record(result.err, "scan.context", key.owner)

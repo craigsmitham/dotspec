@@ -42,9 +42,6 @@ func TestParseRejectsMalformedSpecs(t *testing.T) {
 		{"invalid YAML", strings.Replace(validSpec, "type: system", "type: [", 1), "invalid YAML"},
 		{"duplicate YAML key", strings.Replace(validSpec, "type: system", "type: system\ntype: system", 1), "invalid YAML"},
 		{"unknown metadata", strings.Replace(validSpec, "type: system", "type: system\nparent: root", 1), "invalid YAML"},
-		{"job ID metadata", strings.Replace(validSpec, "type: system", "type: system\nid: root", 1), "invalid YAML"},
-		{"empty job ID metadata", strings.Replace(validSpec, "type: system", "type: system\nid: ''", 1), "invalid YAML"},
-		{"null job ID metadata", strings.Replace(validSpec, "type: system", "type: system\nid: null", 1), "invalid YAML"},
 		{"wrong type", strings.Replace(validSpec, "type: system", "type: job", 1), "type: system"},
 		{"missing type", strings.Replace(validSpec, "type: system", "{}", 1), "type: system"},
 		{"no title", strings.Replace(validSpec, "# Parser", "Parser", 1), "name heading"},
@@ -75,4 +72,25 @@ func FuzzParse(f *testing.F) {
 	f.Fuzz(func(t *testing.T, data []byte) {
 		_, _ = Parse(data)
 	})
+}
+
+func TestSystemAndDeclarationIdentities(t *testing.T) {
+	source := strings.Replace(validSpec, "type: system", "type: system\nid: parser", 1) + "\n## Components\n### Scanner\n**ID:** scanner\n#### Part of\n[Parser](#parser)\n## Features\n### Scan files\n**ID:** scan-files\n#### Notes\n[Scanner heading](#scanner)\n"
+	spec, err := Parse([]byte(source))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if spec.ID != "parser" || !spec.References.Anchors["scanner"] || !spec.References.Anchors["scan-files"] {
+		t.Fatal(spec)
+	}
+	for _, bad := range []string{
+		strings.Replace(source, "**ID:** scanner", "**ID:** parser", 1),
+		strings.Replace(source, "**ID:** scanner", "**ID:**", 1),
+		strings.Replace(source, "**ID:** scanner", "**ID:** bad.id", 1),
+		strings.Replace(source, "**ID:** scanner", "**ID:** scanner\n**ID:** another", 1),
+	} {
+		if _, err := Parse([]byte(bad)); err == nil {
+			t.Fatal("accepted invalid declaration identity", bad)
+		}
+	}
 }

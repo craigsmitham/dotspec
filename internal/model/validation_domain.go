@@ -198,9 +198,6 @@ func (v *graphValidator) checkLabels() {
 				index[id] = record.value
 			}
 			system = obligationSystem(owner, index)
-			if system == "" {
-				system = String(label, "system_context")
-			}
 		case "subattribute_of":
 			field, targets = "subattribute_of_labels", "subattribute_of"
 			if String(owner, "kind") != "QualityAttribute" {
@@ -382,8 +379,8 @@ func (v *graphValidator) checkRelationshipCycles() {
 		switch field {
 		case "owner":
 			code = "ownership.cycle"
-		case "parent_system":
-			code = "system.parent-cycle"
+		case "enclosing_system":
+			code = "system.enclosing-cycle"
 		case "subattribute_of":
 			code = "quality.subattribute-cycle"
 		}

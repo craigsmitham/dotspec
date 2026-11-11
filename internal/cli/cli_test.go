@@ -32,7 +32,7 @@ func TestSystemWorkflow(t *testing.T) {
 		t.Fatalf("init: %d %q %q", code, out, errOut)
 	}
 	code, out, errOut = invoke("system", "show")
-	for _, want := range []string{"New system", "Purpose", "Scope", "Parent system: None", "Source: specs/system.spec.md"} {
+	for _, want := range []string{"New system", "Purpose", "Scope", "Enclosing system document: None", "Source: specs/system.spec.md"} {
 		if code != 0 || !strings.Contains(out, want) || errOut != "" {
 			t.Fatalf("show missing %q: %d %q %q", want, code, out, errOut)
 		}
@@ -45,12 +45,12 @@ func TestSystemWorkflow(t *testing.T) {
 		t.Fatal(errOut)
 	}
 	code, out, errOut = invoke("system", "list")
-	want := "Systems\n└── New system  (specs/system.spec.md)\n    └── New system  (child/specs/system.spec.md)\n"
+	want := "Systems by directory\n└── New system  (specs/system.spec.md)\n    └── New system  (child/specs/system.spec.md)\n"
 	if code != 0 || out != want || errOut != "" {
 		t.Fatalf("list: %d %q %q", code, out, errOut)
 	}
 	code, out, errOut = invoke("system", "show", "--path", child)
-	if code != 0 || !strings.Contains(out, "Parent system: New system (specs/system.spec.md)") || errOut != "" {
+	if code != 0 || !strings.Contains(out, "Enclosing system document: New system (specs/system.spec.md)") || errOut != "" {
 		t.Fatalf("child show: %d %q %q", code, out, errOut)
 	}
 	code, out, errOut = invoke("system", "init")

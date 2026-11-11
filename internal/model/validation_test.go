@@ -271,6 +271,8 @@ func TestValidationRejectsCorruptGraph(t *testing.T) {
 		{"unjustified classification", "label.projection", func(s *Snapshot) { elementKind(t, s, "GeneralRequirement")["quality_attributes"] = []string{} }},
 		{"unbound quality attributes", "label.unbound", func(s *Snapshot) {
 			delete(elementKind(t, s, "GeneralRequirement"), "system_context")
+			delete(elementKind(t, s, "GeneralRequirement"), "specification_system")
+			delete(elementKind(t, s, "GeneralRequirement"), "specification_system_origin")
 			for _, label := range s.LabelOccurrences {
 				if String(label, "role") == "quality_classification" {
 					delete(label, "system_context")
@@ -416,6 +418,8 @@ func TestValidationAllowsFaithfulFailuresAndUnboundLabels(t *testing.T) {
 		s := cloneSnapshot(t, original)
 		r := elementKind(t, s, "GeneralRequirement")
 		delete(r, "system_context")
+		delete(r, "specification_system")
+		delete(r, "specification_system_origin")
 		delete(r, "quality_attributes")
 		for _, label := range s.LabelOccurrences {
 			if String(label, "owner") == String(r, "id") {
@@ -499,9 +503,9 @@ func TestValidationRejectsDomainCyclesAndAttributeScopeEscape(t *testing.T) {
 	t.Run("system containment cycle", func(t *testing.T) {
 		s := cloneSnapshot(t, original)
 		sys := elementKind(t, s, "System")
-		sys["parent_system"] = "second-system"
-		s.Elements = append(s.Elements, Record{"id": "second-system", "kind": "System", "source_document": sys["source_document"], "decomposition": "unsegmented", "parent_system": sys["id"]})
-		requireFinding(t, s, "system.parent-cycle")
+		sys["enclosing_system"] = "second-system"
+		s.Elements = append(s.Elements, Record{"id": "second-system", "kind": "System", "source_document": sys["source_document"], "decomposition": "unsegmented", "enclosing_system": sys["id"]})
+		requireFinding(t, s, "system.enclosing-cycle")
 	})
 }
 

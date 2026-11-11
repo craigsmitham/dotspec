@@ -636,6 +636,23 @@
                 "source_fragment": {
                     "type": "string"
                 },
+                "specification_system": {
+                    "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+                    "type": "string"
+                },
+                "specification_system_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "specification_system_origin": {
+                    "$ref": "#/$defs/SystemAssociationOrigin",
+                    "description": "Records whether the association was explicitly selected or supplied by directory discovery."
+                },
+                "specification_system_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "statement": {
                     "$ref": "#/$defs/RichContent",
                     "description": "The rule expressed in business language, independently of enforcement."
@@ -663,7 +680,7 @@
                     "type": "array"
                 },
                 "system_context": {
-                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
                 }
             },
@@ -698,6 +715,178 @@
                 "end"
             ],
             "title": "ByteSpan",
+            "type": "object"
+        },
+        "Component": {
+            "additionalProperties": false,
+            "description": "A named part of a system with a described responsibility and boundary. Neither its declaration nor code location establishes structural parentage.",
+            "properties": {
+                "architecture": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred."
+                },
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "boundary_description": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "What the component includes, excludes and delegates; normative commitments remain obligations."
+                },
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "contracts": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred."
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "implementation": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred."
+                },
+                "kind": {
+                    "const": "Component",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "part_of": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Optional single structural parent System or Component, independent of declaration ownership. Must be acyclic.",
+                    "type": "string"
+                },
+                "part_of_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "part_of_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "purpose": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Benefit or reason for this component to exist."
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "responsibilities": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored responsibilities identifying what this component is expected to do."
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "owner",
+                "content",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "Component",
             "type": "object"
         },
         "Concept": {
@@ -844,6 +1033,23 @@
                 "source_fragment": {
                     "type": "string"
                 },
+                "specification_system": {
+                    "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+                    "type": "string"
+                },
+                "specification_system_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "specification_system_origin": {
+                    "$ref": "#/$defs/SystemAssociationOrigin",
+                    "description": "Records whether the association was explicitly selected or supplied by directory discovery."
+                },
+                "specification_system_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "supports": {
                     "description": "Intended contribution to a goal or user progress; does not assert achievement.",
                     "items": {
@@ -867,7 +1073,7 @@
                     "type": "array"
                 },
                 "system_context": {
-                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
                 },
                 "type_parameters": {
@@ -1845,6 +2051,68 @@
             "title": "CoverageStatus",
             "type": "string"
         },
+        "DeclaresComponent": {
+            "additionalProperties": false,
+            "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "DeclaresComponent",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "DeclaresComponent",
+            "type": "object"
+        },
         "DeclaresQualityAttribute": {
             "additionalProperties": false,
             "description": "A system or reusable quality model declares and owns a quality attribute.",
@@ -2365,6 +2633,68 @@
             "title": "DomainElement",
             "type": "object"
         },
+        "EnclosingSystem": {
+            "additionalProperties": false,
+            "description": "Directory-discovery context, not system decomposition.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "EnclosingSystem",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "EnclosingSystem",
+            "type": "object"
+        },
         "EnvironmentDescription": {
             "additionalProperties": false,
             "description": "System environment, retaining narrative and explicitly separated participants or contextual boundaries.",
@@ -2616,6 +2946,219 @@
             "title": "ExternalResource",
             "type": "object"
         },
+        "Feature": {
+            "additionalProperties": false,
+            "description": "A stakeholder-valued capability grouping specifications independently of component structure. Membership does not duplicate or own obligations.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "groups": {
+                    "description": "Non-owning specification membership; the same record may participate in several features.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "groups_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "groups_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "Feature",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "purpose": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Stakeholder-valued capability or benefit expressed by this feature."
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "system": {
+                    "description": "System whose capability this feature describes; the explicitly declaring System.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "owner",
+                "content",
+                "system",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "Feature",
+            "type": "object"
+        },
+        "FeatureOf": {
+            "additionalProperties": false,
+            "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "FeatureOf",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "FeatureOf",
+            "type": "object"
+        },
         "Force": {
             "additionalProperties": false,
             "description": "An explicitly described progress force; a kind is assigned only when authored or deterministically marked.",
@@ -2844,6 +3387,23 @@
                 "source_fragment": {
                     "type": "string"
                 },
+                "specification_system": {
+                    "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+                    "type": "string"
+                },
+                "specification_system_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "specification_system_origin": {
+                    "$ref": "#/$defs/SystemAssociationOrigin",
+                    "description": "Records whether the association was explicitly selected or supplied by directory discovery."
+                },
+                "specification_system_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "statement": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -2870,7 +3430,7 @@
                     "type": "array"
                 },
                 "system_context": {
-                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
                 },
                 "verification_plan": {
@@ -3026,6 +3586,68 @@
             ],
             "title": "GoalLevelValue",
             "type": "string"
+        },
+        "GroupsSpecifications": {
+            "additionalProperties": false,
+            "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "GroupsSpecifications",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "GroupsSpecifications",
+            "type": "object"
         },
         "HasConceptAction": {
             "additionalProperties": false,
@@ -3278,6 +3900,68 @@
                 "kind"
             ],
             "title": "HasExtension",
+            "type": "object"
+        },
+        "HasFeature": {
+            "additionalProperties": false,
+            "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "HasFeature",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "HasFeature",
             "type": "object"
         },
         "HasJobStep": {
@@ -4113,6 +4797,23 @@
                 "source_fragment": {
                     "type": "string"
                 },
+                "specification_system": {
+                    "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+                    "type": "string"
+                },
+                "specification_system_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "specification_system_origin": {
+                    "$ref": "#/$defs/SystemAssociationOrigin",
+                    "description": "Records whether the association was explicitly selected or supplied by directory discovery."
+                },
+                "specification_system_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "statement": {
                     "$ref": "#/$defs/RichContent",
                     "description": "The Job section, including existing job-statement phrasing."
@@ -4143,7 +4844,7 @@
                     "type": "array"
                 },
                 "system_context": {
-                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
                 }
             },
@@ -5024,9 +5725,20 @@
             "title": "OutcomeCollection",
             "type": "object"
         },
-        "ParentSystem": {
+        "ParseStatus": {
+            "description": "Syntax or frontmatter parse state, independent of domain decomposition.",
+            "enum": [
+                "parsed",
+                "partial",
+                "failed",
+                "not_attempted"
+            ],
+            "title": "ParseStatus",
+            "type": "string"
+        },
+        "PartOf": {
             "additionalProperties": false,
-            "description": "Directory-derived system containment; no semantic inheritance.",
+            "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
             "properties": {
                 "id": {
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
@@ -5041,7 +5753,7 @@
                     "type": "array"
                 },
                 "kind": {
-                    "const": "ParentSystem",
+                    "const": "PartOf",
                     "description": "Concrete record type discriminator.",
                     "type": "string"
                 },
@@ -5083,19 +5795,8 @@
                 "id",
                 "kind"
             ],
-            "title": "ParentSystem",
+            "title": "PartOf",
             "type": "object"
-        },
-        "ParseStatus": {
-            "description": "Syntax or frontmatter parse state, independent of domain decomposition.",
-            "enum": [
-                "parsed",
-                "partial",
-                "failed",
-                "not_attempted"
-            ],
-            "title": "ParseStatus",
-            "type": "string"
         },
         "PayloadStorage": {
             "description": "Where the exact original bytes can be recovered.",
@@ -5743,6 +6444,23 @@
                 "source_fragment": {
                     "type": "string"
                 },
+                "specification_system": {
+                    "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+                    "type": "string"
+                },
+                "specification_system_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "specification_system_origin": {
+                    "$ref": "#/$defs/SystemAssociationOrigin",
+                    "description": "Records whether the association was explicitly selected or supplied by directory discovery."
+                },
+                "specification_system_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "statement": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -5769,7 +6487,7 @@
                     "type": "array"
                 },
                 "system_context": {
-                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
                 },
                 "verification_plan": {
@@ -6188,6 +6906,23 @@
                 "source_fragment": {
                     "type": "string"
                 },
+                "specification_system": {
+                    "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+                    "type": "string"
+                },
+                "specification_system_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "specification_system_origin": {
+                    "$ref": "#/$defs/SystemAssociationOrigin",
+                    "description": "Records whether the association was explicitly selected or supplied by directory discovery."
+                },
+                "specification_system_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "statement": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -6214,7 +6949,7 @@
                     "type": "array"
                 },
                 "system_context": {
-                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
                 },
                 "verification_plan": {
@@ -6712,9 +7447,6 @@
                                 "$ref": "#/$defs/HasObligation"
                             },
                             {
-                                "$ref": "#/$defs/ParentSystem"
-                            },
-                            {
                                 "$ref": "#/$defs/InSystemContext"
                             },
                             {
@@ -6770,6 +7502,27 @@
                             },
                             {
                                 "$ref": "#/$defs/HasSubjectSystem"
+                            },
+                            {
+                                "$ref": "#/$defs/EnclosingSystem"
+                            },
+                            {
+                                "$ref": "#/$defs/PartOf"
+                            },
+                            {
+                                "$ref": "#/$defs/GroupsSpecifications"
+                            },
+                            {
+                                "$ref": "#/$defs/HasFeature"
+                            },
+                            {
+                                "$ref": "#/$defs/DeclaresComponent"
+                            },
+                            {
+                                "$ref": "#/$defs/FeatureOf"
+                            },
+                            {
+                                "$ref": "#/$defs/SpecificationSystem"
                             }
                         ]
                     },
@@ -6875,6 +7628,12 @@
                                 "$ref": "#/$defs/ObligationClause"
                             },
                             {
+                                "$ref": "#/$defs/Component"
+                            },
+                            {
+                                "$ref": "#/$defs/Feature"
+                            },
+                            {
                                 "$ref": "#/$defs/GeneralRequirement"
                             },
                             {
@@ -6919,7 +7678,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.9.0-draft",
+                    "const": "0.10.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -7470,6 +8229,68 @@
             "title": "SpecificationKind",
             "type": "string"
         },
+        "SpecificationSystem": {
+            "additionalProperties": false,
+            "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "SpecificationSystem",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "SpecificationSystem",
+            "type": "object"
+        },
         "StakeholderInterest": {
             "additionalProperties": false,
             "description": "A stakeholder and interests explicitly distinguished in source, including nonparticipants.",
@@ -7966,6 +8787,16 @@
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
                 },
+                "components": {
+                    "description": "Named component declarations in authored order; membership does not establish structural parentage.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "components_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "concept_uses": {
                     "items": {
                         "type": "string"
@@ -8003,6 +8834,10 @@
                     },
                     "type": "array"
                 },
+                "enclosing_system": {
+                    "description": "Nearest discovered enclosing system document; not a declared part-of relationship.",
+                    "type": "string"
+                },
                 "environment": {
                     "$ref": "#/$defs/EnvironmentDescription"
                 },
@@ -8015,6 +8850,16 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "features": {
+                    "description": "Named feature declarations in authored order; each feature belongs to this System.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "features_content": {
+                    "$ref": "#/$defs/RichContent"
                 },
                 "glossary": {
                     "$ref": "#/$defs/Glossary"
@@ -8053,9 +8898,18 @@
                     "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
-                "parent_system": {
-                    "description": "Directory-derived containment; no inheritance of requirements, labels, or thresholds.",
+                "part_of": {
+                    "description": "Optional explicit parent System. Directory context does not supply this relationship.",
                     "type": "string"
+                },
+                "part_of_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "part_of_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
@@ -8156,9 +9010,18 @@
             "title": "System",
             "type": "object"
         },
+        "SystemAssociationOrigin": {
+            "description": "",
+            "enum": [
+                "explicit",
+                "directory"
+            ],
+            "title": "SystemAssociationOrigin",
+            "type": "string"
+        },
         "SystemContextSpecification": {
             "additionalProperties": false,
-            "description": "A non-system specification with optional directory-derived system context. Systems use parent_system; reusable quality models stand independently.",
+            "description": "A non-system specification with directory discovery context and an independently selected specification system.",
             "properties": {
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -8269,6 +9132,23 @@
                 "source_fragment": {
                     "type": "string"
                 },
+                "specification_system": {
+                    "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+                    "type": "string"
+                },
+                "specification_system_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "specification_system_origin": {
+                    "$ref": "#/$defs/SystemAssociationOrigin",
+                    "description": "Records whether the association was explicitly selected or supplied by directory discovery."
+                },
+                "specification_system_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "supports": {
                     "description": "Intended contribution to a goal or user progress; does not assert achievement.",
                     "items": {
@@ -8292,7 +9172,7 @@
                     "type": "array"
                 },
                 "system_context": {
-                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
                 }
             },
@@ -8860,6 +9740,23 @@
                 "source_fragment": {
                     "type": "string"
                 },
+                "specification_system": {
+                    "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+                    "type": "string"
+                },
+                "specification_system_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "specification_system_origin": {
+                    "$ref": "#/$defs/SystemAssociationOrigin",
+                    "description": "Records whether the association was explicitly selected or supplied by directory discovery."
+                },
+                "specification_system_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "stakeholder_interests": {
                     "$ref": "#/$defs/StakeholderInterestCollection"
                 },
@@ -8901,7 +9798,7 @@
                     "type": "array"
                 },
                 "system_context": {
-                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
                 },
                 "trigger": {
@@ -9164,9 +10061,6 @@
                         "$ref": "#/$defs/HasObligation"
                     },
                     {
-                        "$ref": "#/$defs/ParentSystem"
-                    },
-                    {
                         "$ref": "#/$defs/InSystemContext"
                     },
                     {
@@ -9222,6 +10116,27 @@
                     },
                     {
                         "$ref": "#/$defs/HasSubjectSystem"
+                    },
+                    {
+                        "$ref": "#/$defs/EnclosingSystem"
+                    },
+                    {
+                        "$ref": "#/$defs/PartOf"
+                    },
+                    {
+                        "$ref": "#/$defs/GroupsSpecifications"
+                    },
+                    {
+                        "$ref": "#/$defs/HasFeature"
+                    },
+                    {
+                        "$ref": "#/$defs/DeclaresComponent"
+                    },
+                    {
+                        "$ref": "#/$defs/FeatureOf"
+                    },
+                    {
+                        "$ref": "#/$defs/SpecificationSystem"
                     }
                 ]
             },
@@ -9327,6 +10242,12 @@
                         "$ref": "#/$defs/ObligationClause"
                     },
                     {
+                        "$ref": "#/$defs/Component"
+                    },
+                    {
+                        "$ref": "#/$defs/Feature"
+                    },
+                    {
                         "$ref": "#/$defs/GeneralRequirement"
                     },
                     {
@@ -9371,7 +10292,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.9.0-draft",
+            "const": "0.10.0-draft",
             "type": "string"
         },
         "references": {
@@ -9425,5 +10346,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.9.0-draft"
+    "version": "0.10.0-draft"
 }

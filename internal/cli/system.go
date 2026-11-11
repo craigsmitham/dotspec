@@ -10,9 +10,9 @@ import (
 )
 
 type systemResult struct {
-	SchemaVersion int            `json:"schema_version"`
-	System        *system.System `json:"system"`
-	Parent        *system.System `json:"parent"`
+	SchemaVersion   int            `json:"schema_version"`
+	System          *system.System `json:"system"`
+	EnclosingSystem *system.System `json:"enclosing_system"`
 }
 type systemsResult struct {
 	SchemaVersion int            `json:"schema_version"`
@@ -24,10 +24,10 @@ type createdResult struct {
 }
 
 func newSystemCommand() *cobra.Command {
-	root := group("system", "Describe systems and discover their hierarchy")
+	root := group("system", "Describe systems and discover their directory context")
 	for _, action := range []struct{ name, short string }{
 		{"init", "Create specs/system.spec.md without overwriting an existing file"},
-		{"show", "Describe the nearest enclosing system and its parent"},
+		{"show", "Describe the nearest system and its enclosing system document"},
 		{"list", "Display systems in the selected subtree"},
 	} {
 		cmd := &cobra.Command{Use: action.name, Short: action.short, Args: cobra.NoArgs,
@@ -73,11 +73,11 @@ func runSystem(command, path, format string, out io.Writer) error {
 			return writeJSON(out, result)
 		}
 		parentText := "None"
-		if result.Parent != nil {
-			parentText = fmt.Sprintf("%s (%s)", result.Parent.Name, displayPath(result.Parent.Path))
+		if result.EnclosingSystem != nil {
+			parentText = fmt.Sprintf("%s (%s)", result.EnclosingSystem.Name, displayPath(result.EnclosingSystem.Path))
 		}
 		modelText := ""
-		for _, field := range []struct{ name, value string }{{"Goals", spec.Goals}, {"Environment", spec.Environment}, {"Assumptions", spec.Assumptions}, {"Constraints", spec.Constraints}, {"Glossary", spec.Glossary}, {"Concept uses", spec.ConceptUses}, {"Synchronizations", spec.Synchronizations}} {
+		for _, field := range []struct{ name, value string }{{"Goals", spec.Goals}, {"Environment", spec.Environment}, {"Assumptions", spec.Assumptions}, {"Constraints", spec.Constraints}, {"Glossary", spec.Glossary}, {"Part of", spec.PartOf}, {"Components", spec.Components}, {"Features", spec.Features}, {"Concept uses", spec.ConceptUses}, {"Synchronizations", spec.Synchronizations}} {
 			if field.value != "" {
 				modelText += "\n\n" + field.name + "\n" + indent(field.value)
 			}
@@ -85,7 +85,7 @@ func runSystem(command, path, format string, out io.Writer) error {
 		if spec.QualityAttributesContent != nil {
 			modelText += "\n\nQuality attributes\n" + indent(*spec.QualityAttributesContent)
 		}
-		_, err = fmt.Fprintf(out, "%s\n\nPurpose\n%s\n\nScope\n%s%s\n\nParent system: %s\nSource: %s\n",
+		_, err = fmt.Fprintf(out, "%s\n\nPurpose\n%s\n\nScope\n%s%s\n\nEnclosing system document: %s\nSource: %s\n",
 			result.System.Name, indent(result.System.Purpose), indent(result.System.Scope), modelText, parentText, displayPath(result.System.Path))
 		return err
 	case "list":
@@ -105,7 +105,7 @@ func runSystem(command, path, format string, out io.Writer) error {
 			return err
 		}
 		var output strings.Builder
-		output.WriteString("Systems\n")
+		output.WriteString("Systems by directory\n")
 		writeTree(&output, result.Systems, "")
 		_, err = io.WriteString(out, output.String())
 		return err

@@ -21,10 +21,14 @@ func inspect(path string) ([]diagnostic.Diagnostic, error) {
 	return Check(spec), nil
 }
 
-// CheckContext preserves the same nearest-system lookup as Show and List,
-// including ignored systems or ancestors outside the selected subtree.
-var CheckContext = &check.ContextProvider{Inspect: inspect, Resolve: func(owner string) ([]string, error) {
-	spec, err := Enclosing(owner)
+// CheckContext preserves the same explicit selection or directory default as
+// Show and List, including ignored systems outside the selected subtree.
+var CheckContext = &check.ContextProvider{Inspect: inspect,
+	Resolve:       func(owner string) ([]string, error) { return contextPaths(Enclosing(owner)) },
+	ResolveSource: func(owner, source string) ([]string, error) { return contextPaths(Associated(owner, source)) },
+}
+
+func contextPaths(spec *System, err error) ([]string, error) {
 	if err != nil {
 		path := ""
 		var finding *diagnostic.Diagnostic
@@ -43,7 +47,7 @@ var CheckContext = &check.ContextProvider{Inspect: inspect, Resolve: func(owner 
 		return nil, nil
 	}
 	return []string{spec.Path}, nil
-}}
+}
 
 func readReferences(path string) (*specfile.ReferenceDocument, error) {
 	spec, err := Read(path)

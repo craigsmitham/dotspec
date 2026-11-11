@@ -164,3 +164,19 @@ func TestRequirementsTraceCommand(t *testing.T) {
 		t.Fatalf("trace findings: %d %s %s", code, output, errOut)
 	}
 }
+
+func TestSystemOverviewCommand(t *testing.T) {
+	root := t.TempDir()
+	if err := os.CopyFS(root, os.DirFS("../../examples/system-structure")); err != nil {
+		t.Fatal(err)
+	}
+	t.Chdir(root)
+	code, output, errOut := invoke("model", "overview", "--relative-to", "docs")
+	if code != 0 || errOut != "" || !strings.Contains(output, "# System specification overview") || !strings.Contains(output, "../specs/system.spec.md#checkout") || !strings.Contains(output, "## Features") {
+		t.Fatalf("overview: %d %s %s", code, output, errOut)
+	}
+	var stderr bytes.Buffer
+	if code := Run([]string{"model", "overview"}, modelBrokenWriter{}, &stderr); code != 2 || !strings.Contains(stderr.String(), "broken output") {
+		t.Fatal(code, &stderr)
+	}
+}

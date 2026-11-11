@@ -2207,6 +2207,90 @@
           ],
           "required": false
         },
+        "specification_system": {
+          "annotations": {
+            "relationship_basis": "Explicit Specification system reference when present; otherwise directory-derived system_context.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Explicit selection, or nearest enclosing system when no selection was authored.",
+            "relationship_source": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": false
+        },
+        "specification_system_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Records whether the association was explicitly selected or supplied by directory discovery.",
+          "enum_values": [
+            "explicit",
+            "directory"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SystemAssociationOrigin",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_references": {
+          "annotations": {
+            "relationship_basis": "Explicit source syntax; unresolved targets are retained.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system references",
+            "relationship_ordering": "authored occurrence order; no execution order implied",
+            "relationship_scope": "Authored occurrences in the declaring record source.",
+            "requires_content": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
         "statement": {
           "annotations": {},
           "any_of": [],
@@ -2310,7 +2394,7 @@
             "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
           },
           "any_of": [],
-          "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+          "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -2395,6 +2479,663 @@
       },
       "subsets": [
         "source-artifacts"
+      ]
+    },
+    "Component": {
+      "abstract": false,
+      "ancestors": [
+        "Component",
+        "ObligationContainer",
+        "TraceableElement",
+        "DomainElement",
+        "Record"
+      ],
+      "annotations": {},
+      "description": "A named part of a system with a described responsibility and boundary. Neither its declaration nor code location establishes structural parentage.",
+      "is_a": "TraceableElement",
+      "mixins": [
+        "ObligationContainer"
+      ],
+      "rules": [],
+      "slots": {
+        "architecture": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "authored_id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "An explicitly authored ID when present; no manufactured global identifier.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "boundary_description": {
+          "annotations": {},
+          "any_of": [],
+          "description": "What the component includes, excludes and delegates; normative commitments remain obligations.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": true
+        },
+        "contracts": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "decomposition": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "not_attempted",
+            "unsegmented",
+            "partial",
+            "complete",
+            "failed"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "DecompositionStatus",
+          "reference_ranges": [],
+          "required": true
+        },
+        "derived_from": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "derived from",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "derived_from_content",
+            "trace_heading": "Derived from",
+            "trace_targets": "DomainElement or SourceFragment"
+          },
+          "any_of": [
+            "DomainElement",
+            "SourceFragment"
+          ],
+          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "DomainElement",
+            "SourceFragment"
+          ],
+          "required": false
+        },
+        "derived_from_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Complete authored relationship section, including rationale and unresolved references.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "derived_from_references": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "derived from references",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "derived_from_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
+        "extension_sections": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "ExtensionSection.owner",
+            "relationship_label": "extension sections",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Only unknown sections, not a substitute for known domain fields.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "ExtensionSection",
+          "reference_ranges": [
+            "ExtensionSection"
+          ],
+          "required": false
+        },
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "implementation": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "Component",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "name": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored title or item name, if present.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "obligations": {
+          "annotations": {
+            "paired_with": "obligations_content",
+            "relationship_basis": "Explicit authored clause declarations; no semantic inference from prose.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "ObligationClause.owner",
+            "relationship_label": "obligations",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "ObligationClause",
+          "reference_ranges": [
+            "ObligationClause"
+          ],
+          "required": false
+        },
+        "obligations_content": {
+          "annotations": {
+            "paired_with": "obligations"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "open_questions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions.",
+          "identifier": false,
+          "inline_ranges": [
+            "OpenQuestionCollection"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "OpenQuestionCollection",
+          "reference_ranges": [],
+          "required": false
+        },
+        "owner": {
+          "annotations": {
+            "relationship_basis": "Checked inverse of canonical declaration membership.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "System.components",
+            "relationship_label": "declared by",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Exactly one declaring System in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": true
+        },
+        "part_of": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored reference occurrences.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "none",
+            "relationship_label": "part of",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Explicit structural parent, independent of the System that declares this record.",
+            "relationship_source": "part_of_content",
+            "requires_content": "part_of_content"
+          },
+          "any_of": [
+            "System",
+            "Component"
+          ],
+          "description": "Optional single structural parent System or Component, independent of declaration ownership. Must be acyclic.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "DomainElement",
+          "reference_ranges": [
+            "System",
+            "Component"
+          ],
+          "required": false
+        },
+        "part_of_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "part_of_references": {
+          "annotations": {
+            "relationship_basis": "Explicit source syntax; unresolved targets are retained.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "part of references",
+            "relationship_ordering": "authored occurrence order; no execution order implied",
+            "relationship_scope": "Authored occurrences in the declaring record source.",
+            "requires_content": "part_of_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
+        "purpose": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Benefit or reason for this component to exist.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "relies_on": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "relies on",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "relies_on_content",
+            "trace_heading": "Relies on",
+            "trace_targets": "Assumption"
+          },
+          "any_of": [],
+          "description": "Assumptions on which the validity of this element depends.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Assumption",
+          "reference_ranges": [
+            "Assumption"
+          ],
+          "required": false
+        },
+        "relies_on_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Complete authored relationship section, including rationale and unresolved references.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "relies_on_references": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "relies on references",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "relies_on_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
+        "responsibilities": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored responsibilities identifying what this component is expected to do.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "source_document": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source document",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceDocument",
+          "reference_ranges": [
+            "SourceDocument"
+          ],
+          "required": true
+        },
+        "source_fragment": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source fragment",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceFragment",
+          "reference_ranges": [
+            "SourceFragment"
+          ],
+          "required": false
+        },
+        "supports": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "supports",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "supports_content",
+            "trace_heading": "Supports",
+            "trace_targets": "SystemGoal or Job or JobStep or DesiredOutcome"
+          },
+          "any_of": [
+            "SystemGoal",
+            "Job",
+            "JobStep",
+            "DesiredOutcome"
+          ],
+          "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "SystemGoal",
+            "Job",
+            "JobStep",
+            "DesiredOutcome"
+          ],
+          "required": false
+        },
+        "supports_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Complete authored relationship section, including rationale and unresolved references.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "supports_references": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "supports references",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "supports_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        }
+      },
+      "subsets": [
+        "software-requirements"
       ]
     },
     "Concept": {
@@ -3019,6 +3760,90 @@
           ],
           "required": false
         },
+        "specification_system": {
+          "annotations": {
+            "relationship_basis": "Explicit Specification system reference when present; otherwise directory-derived system_context.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Explicit selection, or nearest enclosing system when no selection was authored.",
+            "relationship_source": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": false
+        },
+        "specification_system_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Records whether the association was explicitly selected or supplied by directory discovery.",
+          "enum_values": [
+            "explicit",
+            "directory"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SystemAssociationOrigin",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_references": {
+          "annotations": {
+            "relationship_basis": "Explicit source syntax; unresolved targets are retained.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system references",
+            "relationship_ordering": "authored occurrence order; no execution order implied",
+            "relationship_scope": "Authored occurrences in the declaring record source.",
+            "requires_content": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
         "supports": {
           "annotations": {
             "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
@@ -3106,7 +3931,7 @@
             "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
           },
           "any_of": [],
-          "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+          "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -6614,6 +7439,211 @@
         "inspection-and-coverage"
       ]
     },
+    "DeclaresComponent": {
+      "abstract": false,
+      "ancestors": [
+        "DeclaresComponent",
+        "Assertion",
+        "Record"
+      ],
+      "annotations": {
+        "projection_of": "System.components"
+      },
+      "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
+      "is_a": "Assertion",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "inputs": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "inputs",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "Source occurrences and/or typed records supporting this assertion.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "Record"
+          ],
+          "required": false
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "DeclaresComponent",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "mapping_rule": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "object": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Component",
+          "reference_ranges": [
+            "Component"
+          ],
+          "required": true
+        },
+        "origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "derived"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "AssertionOrigin",
+          "reference_ranges": [],
+          "required": true
+        },
+        "projection_path": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "source_nodes": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source nodes",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ContentNode",
+          "reference_ranges": [
+            "ContentNode"
+          ],
+          "required": false
+        },
+        "source_spans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ByteSpan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ByteSpan",
+          "reference_ranges": [],
+          "required": false
+        },
+        "subject": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
+    },
     "DeclaresQualityAttribute": {
       "abstract": false,
       "ancestors": [
@@ -8321,6 +9351,211 @@
         "software-requirements"
       ]
     },
+    "EnclosingSystem": {
+      "abstract": false,
+      "ancestors": [
+        "EnclosingSystem",
+        "Assertion",
+        "Record"
+      ],
+      "annotations": {
+        "projection_of": "System.enclosing_system"
+      },
+      "description": "Directory-discovery context, not system decomposition.",
+      "is_a": "Assertion",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "inputs": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "inputs",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "Source occurrences and/or typed records supporting this assertion.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "Record"
+          ],
+          "required": false
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "EnclosingSystem",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "mapping_rule": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "object": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": true
+        },
+        "origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "derived"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "AssertionOrigin",
+          "reference_ranges": [],
+          "required": true
+        },
+        "projection_path": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "source_nodes": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source nodes",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ContentNode",
+          "reference_ranges": [
+            "ContentNode"
+          ],
+          "required": false
+        },
+        "source_spans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ByteSpan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ByteSpan",
+          "reference_ranges": [],
+          "required": false
+        },
+        "subject": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
+    },
     "EnvironmentDescription": {
       "abstract": false,
       "ancestors": [
@@ -9193,6 +10428,774 @@
         "source-artifacts"
       ]
     },
+    "Feature": {
+      "abstract": false,
+      "ancestors": [
+        "Feature",
+        "TraceableElement",
+        "DomainElement",
+        "Record"
+      ],
+      "annotations": {},
+      "description": "A stakeholder-valued capability grouping specifications independently of component structure. Membership does not duplicate or own obligations.",
+      "is_a": "TraceableElement",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "authored_id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "An explicitly authored ID when present; no manufactured global identifier.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": true
+        },
+        "decomposition": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "not_attempted",
+            "unsegmented",
+            "partial",
+            "complete",
+            "failed"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "DecompositionStatus",
+          "reference_ranges": [],
+          "required": true
+        },
+        "derived_from": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "derived from",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "derived_from_content",
+            "trace_heading": "Derived from",
+            "trace_targets": "DomainElement or SourceFragment"
+          },
+          "any_of": [
+            "DomainElement",
+            "SourceFragment"
+          ],
+          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "DomainElement",
+            "SourceFragment"
+          ],
+          "required": false
+        },
+        "derived_from_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Complete authored relationship section, including rationale and unresolved references.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "derived_from_references": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "derived from references",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "derived_from_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
+        "extension_sections": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "ExtensionSection.owner",
+            "relationship_label": "extension sections",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Only unknown sections, not a substitute for known domain fields.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "ExtensionSection",
+          "reference_ranges": [
+            "ExtensionSection"
+          ],
+          "required": false
+        },
+        "groups": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored reference occurrences.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "groups",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Authored specification membership; many-to-many and independent of ownership.",
+            "relationship_source": "groups_content",
+            "requires_content": "groups_content"
+          },
+          "any_of": [
+            "Requirement",
+            "ObligationClause",
+            "UseCase",
+            "Concept",
+            "ConceptUse",
+            "Synchronization"
+          ],
+          "description": "Non-owning specification membership; the same record may participate in several features.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "DomainElement",
+          "reference_ranges": [
+            "Requirement",
+            "ObligationClause",
+            "UseCase",
+            "Concept",
+            "ConceptUse",
+            "Synchronization"
+          ],
+          "required": false
+        },
+        "groups_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "groups_references": {
+          "annotations": {
+            "relationship_basis": "Explicit source syntax; unresolved targets are retained.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "groups references",
+            "relationship_ordering": "authored occurrence order; no execution order implied",
+            "relationship_scope": "Authored occurrences in the declaring record source.",
+            "requires_content": "groups_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "Feature",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "name": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored title or item name, if present.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "open_questions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions.",
+          "identifier": false,
+          "inline_ranges": [
+            "OpenQuestionCollection"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "OpenQuestionCollection",
+          "reference_ranges": [],
+          "required": false
+        },
+        "owner": {
+          "annotations": {
+            "relationship_basis": "Checked inverse of canonical declaration membership.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "System.features",
+            "relationship_label": "declared by",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Exactly one declaring System in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": true
+        },
+        "purpose": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Stakeholder-valued capability or benefit expressed by this feature.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "relies_on": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "relies on",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "relies_on_content",
+            "trace_heading": "Relies on",
+            "trace_targets": "Assumption"
+          },
+          "any_of": [],
+          "description": "Assumptions on which the validity of this element depends.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Assumption",
+          "reference_ranges": [
+            "Assumption"
+          ],
+          "required": false
+        },
+        "relies_on_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Complete authored relationship section, including rationale and unresolved references.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "relies_on_references": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "relies on references",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "relies_on_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
+        "source_document": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source document",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceDocument",
+          "reference_ranges": [
+            "SourceDocument"
+          ],
+          "required": true
+        },
+        "source_fragment": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source fragment",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceFragment",
+          "reference_ranges": [
+            "SourceFragment"
+          ],
+          "required": false
+        },
+        "supports": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "supports",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "supports_content",
+            "trace_heading": "Supports",
+            "trace_targets": "SystemGoal or Job or JobStep or DesiredOutcome"
+          },
+          "any_of": [
+            "SystemGoal",
+            "Job",
+            "JobStep",
+            "DesiredOutcome"
+          ],
+          "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "SystemGoal",
+            "Job",
+            "JobStep",
+            "DesiredOutcome"
+          ],
+          "required": false
+        },
+        "supports_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Complete authored relationship section, including rationale and unresolved references.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "supports_references": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "supports references",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "supports_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
+        "system": {
+          "annotations": {
+            "relationship_basis": "Feature declaration in System.features; independent of directories.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "feature of",
+            "relationship_ordering": "single target",
+            "relationship_scope": "The System explicitly declaring this feature."
+          },
+          "any_of": [],
+          "description": "System whose capability this feature describes; the explicitly declaring System.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": true
+        }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
+    },
+    "FeatureOf": {
+      "abstract": false,
+      "ancestors": [
+        "FeatureOf",
+        "Assertion",
+        "Record"
+      ],
+      "annotations": {
+        "projection_of": "Feature.system"
+      },
+      "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
+      "is_a": "Assertion",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "inputs": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "inputs",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "Source occurrences and/or typed records supporting this assertion.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "Record"
+          ],
+          "required": false
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "FeatureOf",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "mapping_rule": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "object": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": true
+        },
+        "origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "derived"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "AssertionOrigin",
+          "reference_ranges": [],
+          "required": true
+        },
+        "projection_path": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "source_nodes": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source nodes",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ContentNode",
+          "reference_ranges": [
+            "ContentNode"
+          ],
+          "required": false
+        },
+        "source_spans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ByteSpan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ByteSpan",
+          "reference_ranges": [],
+          "required": false
+        },
+        "subject": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Feature",
+          "reference_ranges": [
+            "Feature"
+          ],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
+    },
     "Force": {
       "abstract": false,
       "ancestors": [
@@ -10039,6 +12042,90 @@
           ],
           "required": false
         },
+        "specification_system": {
+          "annotations": {
+            "relationship_basis": "Explicit Specification system reference when present; otherwise directory-derived system_context.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Explicit selection, or nearest enclosing system when no selection was authored.",
+            "relationship_source": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": false
+        },
+        "specification_system_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Records whether the association was explicitly selected or supplied by directory discovery.",
+          "enum_values": [
+            "explicit",
+            "directory"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SystemAssociationOrigin",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_references": {
+          "annotations": {
+            "relationship_basis": "Explicit source syntax; unresolved targets are retained.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system references",
+            "relationship_ordering": "authored occurrence order; no execution order implied",
+            "relationship_scope": "Authored occurrences in the declaring record source.",
+            "requires_content": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
         "statement": {
           "annotations": {},
           "any_of": [],
@@ -10142,7 +12229,7 @@
             "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
           },
           "any_of": [],
-          "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+          "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -10619,6 +12706,211 @@
       },
       "subsets": [
         "software-requirements"
+      ]
+    },
+    "GroupsSpecifications": {
+      "abstract": false,
+      "ancestors": [
+        "GroupsSpecifications",
+        "Assertion",
+        "Record"
+      ],
+      "annotations": {
+        "projection_of": "Feature.groups"
+      },
+      "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
+      "is_a": "Assertion",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "inputs": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "inputs",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "Source occurrences and/or typed records supporting this assertion.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "Record"
+          ],
+          "required": false
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "GroupsSpecifications",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "mapping_rule": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "object": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "DomainElement",
+          "reference_ranges": [
+            "DomainElement"
+          ],
+          "required": true
+        },
+        "origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "derived"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "AssertionOrigin",
+          "reference_ranges": [],
+          "required": true
+        },
+        "projection_path": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "source_nodes": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source nodes",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ContentNode",
+          "reference_ranges": [
+            "ContentNode"
+          ],
+          "required": false
+        },
+        "source_spans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ByteSpan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ByteSpan",
+          "reference_ranges": [],
+          "required": false
+        },
+        "subject": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Feature",
+          "reference_ranges": [
+            "Feature"
+          ],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-traceability"
       ]
     },
     "HasConceptAction": {
@@ -11437,6 +13729,211 @@
           "reference_ranges": [
             "UseCase",
             "UseCaseExtension"
+          ],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
+    },
+    "HasFeature": {
+      "abstract": false,
+      "ancestors": [
+        "HasFeature",
+        "Assertion",
+        "Record"
+      ],
+      "annotations": {
+        "projection_of": "System.features"
+      },
+      "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
+      "is_a": "Assertion",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "inputs": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "inputs",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "Source occurrences and/or typed records supporting this assertion.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "Record"
+          ],
+          "required": false
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "HasFeature",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "mapping_rule": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "object": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Feature",
+          "reference_ranges": [
+            "Feature"
+          ],
+          "required": true
+        },
+        "origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "derived"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "AssertionOrigin",
+          "reference_ranges": [],
+          "required": true
+        },
+        "projection_path": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "source_nodes": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source nodes",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ContentNode",
+          "reference_ranges": [
+            "ContentNode"
+          ],
+          "required": false
+        },
+        "source_spans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ByteSpan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ByteSpan",
+          "reference_ranges": [],
+          "required": false
+        },
+        "subject": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
           ],
           "required": true
         }
@@ -14319,6 +16816,90 @@
           ],
           "required": false
         },
+        "specification_system": {
+          "annotations": {
+            "relationship_basis": "Explicit Specification system reference when present; otherwise directory-derived system_context.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Explicit selection, or nearest enclosing system when no selection was authored.",
+            "relationship_source": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": false
+        },
+        "specification_system_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Records whether the association was explicitly selected or supplied by directory discovery.",
+          "enum_values": [
+            "explicit",
+            "directory"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SystemAssociationOrigin",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_references": {
+          "annotations": {
+            "relationship_basis": "Explicit source syntax; unresolved targets are retained.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system references",
+            "relationship_ordering": "authored occurrence order; no execution order implied",
+            "relationship_scope": "Authored occurrences in the declaring record source.",
+            "requires_content": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
         "statement": {
           "annotations": {},
           "any_of": [],
@@ -14438,7 +17019,7 @@
             "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
           },
           "any_of": [],
-          "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+          "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -17441,17 +20022,17 @@
         "user-requirements"
       ]
     },
-    "ParentSystem": {
+    "PartOf": {
       "abstract": false,
       "ancestors": [
-        "ParentSystem",
+        "PartOf",
         "Assertion",
         "Record"
       ],
       "annotations": {
-        "projection_of": "System.parent_system"
+        "projection_of": "System.part_of or Component.part_of"
       },
-      "description": "Directory-derived system containment; no semantic inheritance.",
+      "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
       "is_a": "Assertion",
       "mixins": [],
       "rules": [],
@@ -17499,7 +20080,7 @@
           "annotations": {},
           "any_of": [],
           "description": "Concrete record type discriminator.",
-          "equals_string": "ParentSystem",
+          "equals_string": "PartOf",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -17541,9 +20122,9 @@
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "System",
+          "range": "DomainElement",
           "reference_ranges": [
-            "System"
+            "DomainElement"
           ],
           "required": true
         },
@@ -17635,9 +20216,9 @@
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "System",
+          "range": "DomainElement",
           "reference_ranges": [
-            "System"
+            "DomainElement"
           ],
           "required": true
         }
@@ -20073,6 +22654,90 @@
           ],
           "required": false
         },
+        "specification_system": {
+          "annotations": {
+            "relationship_basis": "Explicit Specification system reference when present; otherwise directory-derived system_context.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Explicit selection, or nearest enclosing system when no selection was authored.",
+            "relationship_source": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": false
+        },
+        "specification_system_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Records whether the association was explicitly selected or supplied by directory discovery.",
+          "enum_values": [
+            "explicit",
+            "directory"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SystemAssociationOrigin",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_references": {
+          "annotations": {
+            "relationship_basis": "Explicit source syntax; unresolved targets are retained.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system references",
+            "relationship_ordering": "authored occurrence order; no execution order implied",
+            "relationship_scope": "Authored occurrences in the declaring record source.",
+            "requires_content": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
         "statement": {
           "annotations": {},
           "any_of": [],
@@ -20176,7 +22841,7 @@
             "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
           },
           "any_of": [],
-          "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+          "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -21524,6 +24189,90 @@
           ],
           "required": false
         },
+        "specification_system": {
+          "annotations": {
+            "relationship_basis": "Explicit Specification system reference when present; otherwise directory-derived system_context.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Explicit selection, or nearest enclosing system when no selection was authored.",
+            "relationship_source": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": false
+        },
+        "specification_system_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Records whether the association was explicitly selected or supplied by directory discovery.",
+          "enum_values": [
+            "explicit",
+            "directory"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SystemAssociationOrigin",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_references": {
+          "annotations": {
+            "relationship_basis": "Explicit source syntax; unresolved targets are retained.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system references",
+            "relationship_ordering": "authored occurrence order; no execution order implied",
+            "relationship_scope": "Authored occurrences in the declaring record source.",
+            "requires_content": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
         "statement": {
           "annotations": {},
           "any_of": [],
@@ -21627,7 +24376,7 @@
             "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
           },
           "any_of": [],
-          "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+          "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -23037,7 +25786,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.9.0-draft",
+          "equals_string": "0.10.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -24654,6 +27403,211 @@
         "business-requirements",
         "user-requirements",
         "software-requirements"
+      ]
+    },
+    "SpecificationSystem": {
+      "abstract": false,
+      "ancestors": [
+        "SpecificationSystem",
+        "Assertion",
+        "Record"
+      ],
+      "annotations": {
+        "projection_of": "SystemContextSpecification.specification_system"
+      },
+      "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
+      "is_a": "Assertion",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "inputs": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "inputs",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "Source occurrences and/or typed records supporting this assertion.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "Record"
+          ],
+          "required": false
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "SpecificationSystem",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "mapping_rule": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "object": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": true
+        },
+        "origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "derived"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "AssertionOrigin",
+          "reference_ranges": [],
+          "required": true
+        },
+        "projection_path": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "source_nodes": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source nodes",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ContentNode",
+          "reference_ranges": [
+            "ContentNode"
+          ],
+          "required": false
+        },
+        "source_spans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ByteSpan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ByteSpan",
+          "reference_ranges": [],
+          "required": false
+        },
+        "subject": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SystemContextSpecification",
+          "reference_ranges": [
+            "SystemContextSpecification"
+          ],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-traceability"
       ]
     },
     "StakeholderInterest": {
@@ -26381,7 +29335,7 @@
         "Record"
       ],
       "annotations": {
-        "owned_memberships": "System.goals.items or System.assumptions.items or System.constraints.items or System.glossary.terms or System.quality_attributes or System.concept_uses or System.synchronizations"
+        "owned_memberships": "System.goals.items or System.assumptions.items or System.constraints.items or System.glossary.terms or System.quality_attributes or System.concept_uses or System.synchronizations or System.components or System.features"
       },
       "description": "The system described by a system document; subordinate systems retain their own boundaries and quality attributes.",
       "is_a": "SpecificationElement",
@@ -26449,6 +29403,49 @@
           "multivalued": false,
           "ordered": false,
           "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "components": {
+          "annotations": {
+            "paired_with": "components_content",
+            "relationship_basis": "Explicit named declarations.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Component.owner",
+            "relationship_label": "declares components",
+            "relationship_ordering": "authored declaration order; no execution order implied",
+            "relationship_scope": "Exactly one declaring System in the same source document."
+          },
+          "any_of": [],
+          "description": "Named component declarations in authored order; membership does not establish structural parentage.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Component",
+          "reference_ranges": [
+            "Component"
+          ],
+          "required": false
+        },
+        "components_content": {
+          "annotations": {
+            "paired_with": "components"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -26604,6 +29601,30 @@
           ],
           "required": false
         },
+        "enclosing_system": {
+          "annotations": {
+            "relationship_basis": "Directory-derived association under the recorded discovery policy.",
+            "relationship_category": "structural-context",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "none",
+            "relationship_label": "enclosing system document",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
+          },
+          "any_of": [],
+          "description": "Nearest discovered enclosing system document; not a declared part-of relationship.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": false
+        },
         "environment": {
           "annotations": {},
           "any_of": [],
@@ -26658,6 +29679,49 @@
           "reference_ranges": [
             "ExtensionSection"
           ],
+          "required": false
+        },
+        "features": {
+          "annotations": {
+            "paired_with": "features_content",
+            "relationship_basis": "Explicit named declarations.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Feature.owner",
+            "relationship_label": "declares features",
+            "relationship_ordering": "authored declaration order; no execution order implied",
+            "relationship_scope": "Exactly one declaring System in the same source document."
+          },
+          "any_of": [],
+          "description": "Named feature declarations in authored order; each feature belongs to this System.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Feature",
+          "reference_ranges": [
+            "Feature"
+          ],
+          "required": false
+        },
+        "features_content": {
+          "annotations": {
+            "paired_with": "features"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
           "required": false
         },
         "glossary": {
@@ -26813,18 +29877,20 @@
           "reference_ranges": [],
           "required": false
         },
-        "parent_system": {
+        "part_of": {
           "annotations": {
-            "relationship_basis": "Directory-derived association under the recorded discovery policy.",
-            "relationship_category": "structural-context",
+            "relationship_basis": "Projection of explicit authored reference occurrences.",
+            "relationship_category": "semantic-association",
             "relationship_cycles": "forbidden",
             "relationship_inverse": "none",
-            "relationship_label": "parent system",
+            "relationship_label": "part of",
             "relationship_ordering": "single target",
-            "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
+            "relationship_scope": "Explicit parent system; independent of declaration ownership and paths.",
+            "relationship_source": "part_of_content",
+            "requires_content": "part_of_content"
           },
           "any_of": [],
-          "description": "Directory-derived containment; no inheritance of requirements, labels, or thresholds.",
+          "description": "Optional explicit parent System. Directory context does not supply this relationship.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -26834,6 +29900,47 @@
           "range": "System",
           "reference_ranges": [
             "System"
+          ],
+          "required": false
+        },
+        "part_of_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "part_of_references": {
+          "annotations": {
+            "relationship_basis": "Explicit source syntax; unresolved targets are retained.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "part of references",
+            "relationship_ordering": "authored occurrence order; no execution order implied",
+            "relationship_scope": "Authored occurrences in the declaring record source.",
+            "requires_content": "part_of_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
           ],
           "required": false
         },
@@ -27241,7 +30348,7 @@
         "Record"
       ],
       "annotations": {},
-      "description": "A non-system specification with optional directory-derived system context. Systems use parent_system; reusable quality models stand independently.",
+      "description": "A non-system specification with directory discovery context and an independently selected specification system.",
       "is_a": "SpecificationElement",
       "mixins": [],
       "rules": [],
@@ -27696,6 +30803,90 @@
           ],
           "required": false
         },
+        "specification_system": {
+          "annotations": {
+            "relationship_basis": "Explicit Specification system reference when present; otherwise directory-derived system_context.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Explicit selection, or nearest enclosing system when no selection was authored.",
+            "relationship_source": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": false
+        },
+        "specification_system_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Records whether the association was explicitly selected or supplied by directory discovery.",
+          "enum_values": [
+            "explicit",
+            "directory"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SystemAssociationOrigin",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_references": {
+          "annotations": {
+            "relationship_basis": "Explicit source syntax; unresolved targets are retained.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system references",
+            "relationship_ordering": "authored occurrence order; no execution order implied",
+            "relationship_scope": "Authored occurrences in the declaring record source.",
+            "requires_content": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
         "supports": {
           "annotations": {
             "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
@@ -27783,7 +30974,7 @@
             "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
           },
           "any_of": [],
-          "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+          "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -29964,6 +33155,90 @@
           ],
           "required": false
         },
+        "specification_system": {
+          "annotations": {
+            "relationship_basis": "Explicit Specification system reference when present; otherwise directory-derived system_context.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Explicit selection, or nearest enclosing system when no selection was authored.",
+            "relationship_source": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "Effective system association for inventory grouping and quality classification; explicit selection takes precedence over the directory default.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": false
+        },
+        "specification_system_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Records whether the association was explicitly selected or supplied by directory discovery.",
+          "enum_values": [
+            "explicit",
+            "directory"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SystemAssociationOrigin",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_references": {
+          "annotations": {
+            "relationship_basis": "Explicit source syntax; unresolved targets are retained.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system references",
+            "relationship_ordering": "authored occurrence order; no execution order implied",
+            "relationship_scope": "Authored occurrences in the declaring record source.",
+            "requires_content": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
         "stakeholder_interests": {
           "annotations": {},
           "any_of": [],
@@ -30148,7 +33423,7 @@
             "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
           },
           "any_of": [],
-          "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+          "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -31134,12 +34409,16 @@
       "concept",
       "requirement",
       "quality"
+    ],
+    "SystemAssociationOrigin": [
+      "explicit",
+      "directory"
     ]
   },
-  "model_version": "0.9.0-draft",
+  "model_version": "0.10.0-draft",
   "representation_version": "0.1.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/dotspec.yaml",
-  "source_sha256": "2fe2f5e55e2cdb72190c6277705a78a3a18079b80ce17dc7bbbb9cbf27cb66f6",
+  "source_sha256": "64c77d154d1ee83802f4494a583168c780f3cf65a9ef51d7972f84777aa09924",
   "subsets": {
     "business-requirements": {
       "classification": "core",

@@ -122,7 +122,7 @@ func (d *designResolver) resolveTraceability() {
 	// Snapshot validation replays the same projection; forged cycles are rejected.
 	for i := range d.projections {
 		p := &d.projections[i]
-		if p.field != "refines" {
+		if p.field != "refines" && p.field != "part_of" {
 			continue
 		}
 		source := String(p.owner, "id")
@@ -138,7 +138,7 @@ func (d *designResolver) resolveTraceability() {
 					return false
 				}
 				seen[id] = true
-				for _, next := range d.values(d.index[id], "refines") {
+				for _, next := range d.values(d.index[id], p.field) {
 					if reaches(next) {
 						return true
 					}
@@ -146,7 +146,7 @@ func (d *designResolver) resolveTraceability() {
 				return false
 			}
 			if reaches(target) {
-				d.issue(p.owner, "refines", "error", "Refinement cycle: no cyclic refinement relationship was projected.")
+				d.issue(p.owner, p.field, "error", "Relationship cycle: no cyclic "+p.field+" relationship was projected.")
 			} else {
 				kept = append(kept, target)
 			}
@@ -177,6 +177,12 @@ func obligationSystem(r Record, index map[string]Record) string {
 		seen[String(r, "id")] = true
 		if String(r, "kind") == "System" {
 			return String(r, "id")
+		}
+		if _, explicit := r["specification_system_content"]; explicit {
+			return String(r, "specification_system")
+		}
+		if id := String(r, "specification_system"); id != "" {
+			return id
 		}
 		if id := String(r, "system_context"); id != "" {
 			return id

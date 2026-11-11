@@ -189,12 +189,12 @@ class ModelViewTests(unittest.TestCase):
     def test_diagram_edges_follow_model_endpoint_changes(self):
         from model_views import core_markdown
         c = copy.deepcopy(self.catalog)
-        c['classes']['BusinessRule']['slots']['system_context']['reference_ranges'] = ['Concept']
+        c['classes']['BusinessRule']['slots']['specification_system']['reference_ranges'] = ['Concept']
         v = copy.deepcopy(self.view)
         v['diagrams'][0]['show_cardinality'] = True
         output = core_markdown(c, v).decode()
-        self.assertIn('BusinessRule ..> "0..1" Concept : system context', output)
-        self.assertNotIn('BusinessRule ..> "0..1" System : system context', output)
+        self.assertIn('BusinessRule --> "0..1" Concept : specification system', output)
+        self.assertNotIn('BusinessRule --> "0..1" System : specification system', output)
         self.assertIn('Requirement <|-- QualityRequirement', output)
         self.assertNotIn('enforces -->', output)
 
