@@ -71,6 +71,7 @@ func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		concepts++
 		fmt.Fprintf(&out, "### %s\n\n[Source](%s).\n\n", d.name(r), sourceLink(r))
 		section("Purpose", r, r["purpose"])
+		section("Validation plan (needs and intended use)", r, Object(r["validation_plan"])["content"])
 		section("Operational principles", r, r["operational_principles"])
 		section("Type parameters", r, r["type_parameters_content"])
 		section("Introduced types", r, r["introduced_types_content"])

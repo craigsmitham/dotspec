@@ -2,7 +2,7 @@
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.12.0-draft`; mapping `dotspec-markdown/11`. This view covers only acquired records within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior or missing implementation.
+Model `0.13.0-draft`; mapping `dotspec-markdown/12`. This view covers only acquired records within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior or missing implementation.
 
 ## System structure
 
@@ -37,7 +37,7 @@ Feature membership is many-to-many and does not own the grouped records. Compone
 
 ## Applicable obligations
 
-Only explicit applicability to acquired systems and components is listed. Declaration inside a component does not implicitly supply an applicability target. Plans describe intended verification; their presence does not prove satisfaction.
+Only explicit applicability to acquired systems and components is listed. Declaration inside a component does not implicitly supply an applicability target. Plans describe intended system verification; their presence does not prove satisfaction.
 
 | Obligation | Subjects | Verification guidance | Measurement guidance |
 | --- | --- | --- | --- |
@@ -168,7 +168,7 @@ Hold stock for orders awaiting confirmation.
 
 ## Environment and boundaries
 
-Operating conditions and constraints describe what the solution must accommodate. Assumptions are premises relied upon and require a justified basis and validation. Explicit exclusions delimit scope. External partners are separate from structural parents.
+Operating conditions and constraints describe what the solution must accommodate. Assumptions are assessed separately for evidence and justified reliance. Explicit exclusions delimit scope. External partners are separate from structural parents.
 
 ### System: [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>)
 
@@ -177,3 +177,7 @@ Operating conditions and constraints describe what the solution must accommodate
 ### Component: [Inventory](<../../examples/system-structure/specs/system.spec.md#inventory>)
 
 ### Component: [Reservations](<../../examples/system-structure/specs/system.spec.md#reservations>)
+
+## Assumptions: evidence and justified reliance
+
+Assess both empirical support in the stated conditions and whether relying on the premise is appropriate for intended use. An observation supports a bounded claim, not a guarantee that the premise always holds.

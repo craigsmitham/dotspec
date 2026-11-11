@@ -38,7 +38,7 @@ Explain why this obligation is needed and reference its source or governing goal
 
 ## Verification plan
 
-Describe how to establish that the obligation holds, including success criteria and evidence to retain.
+Describe how to check a system or process realization against this obligation, including conditions, success criteria and evidence to retain. This plan is not a completed verification result.
 `
 
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)

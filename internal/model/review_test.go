@@ -116,7 +116,7 @@ func TestReviewViewsAreAdvisoryAndRebaseSources(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"No contribution path recorded", "Contribution path recorded", "ScenarioStep 2", "no rule or action relationship recorded", "no native contract reference recorded", "No verification or measurement guidance recorded", "Before acceptance", "no Raised by, Raised on, Resolve by, Importance, Evidence needed recorded", "Review required for **recovery copy**", "../specs/system.spec.md#reduce-retention-cost", "../project-plan.md#retention-boundary-decision", "nonbinding"} {
+	for _, want := range []string{"No contribution path recorded", "Contribution path recorded", "ScenarioStep 2", "no rule or action relationship recorded", "no native contract reference recorded", "No system verification or measurement guidance recorded", "Before acceptance", "no Raised by, Raised on, Resolve by, Importance, Evidence needed recorded", "Review required for **recovery copy**", "../specs/system.spec.md#reduce-retention-cost", "../project-plan.md#retention-boundary-decision", "nonbinding"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("review missing %q", want)
 		}

@@ -73,6 +73,22 @@ Retention calculations in the managed production environment while the platform 
 
 #### Validation plan
 
+##### Subject
+
+The premise that production clock offset stays within the agreed tolerance, and the justification for relying on it at the recovery boundary.
+
+##### Basis
+
+[Clock observation](#clock-observation) and the [recovery window](business-rules/retention.business-rule.spec.md).
+
+##### Participants
+
+Platform operators and the retention reviewer.
+
+##### Conditions
+
+The managed production environment, including clock resynchronization events.
+
 ##### Method
 
 Compare platform time readings to an independent reference before deployment and during operation.
@@ -166,3 +182,47 @@ A member restores a document one day after deletion and resumes editing.
 #### Relies on
 
 [Trusted time](#trusted-time) bounds retention intervals.
+
+## Validation plan
+
+### Subject
+
+The proposed workspace recovery workflow in a prototype, then the identified release build; this assesses intended use rather than only conformance to the written recovery rule.
+
+### Basis
+
+[Recover lost work](jobs/recover.job.spec.md) and [Reduce lost work](#reduce-lost-work).
+
+### Participants
+
+Representative workspace members, including mobile users, and a stakeholder who owns the recovery policy.
+
+### Method
+
+Observe representative users attempting recovery with realistic document collections; discuss where the proposed workflow fails their intended progress.
+
+### Success criteria
+
+Participants recover the intended document and can resume their interrupted task without specialist assistance. Record exceptions and limits rather than generalizing to every user.
+
+### Conditions
+
+Representative desktop and mobile sessions, including reconnection after intermittent connectivity; record prototype or build revision and participant context.
+
+### Cases
+
+#### Resume interrupted work
+
+Ask a participant to recover a mistakenly deleted document and resume the task.
+
+##### Expected result
+
+The participant identifies the intended document, recovers it, and resumes the task.
+
+##### Evidence to retain
+
+Consented observation notes, task outcome, revision, conditions and observed obstacles.
+
+### Evidence to retain
+
+Retain the protocol and observations separately from the assessment of intended-use fitness and any stakeholder acceptance decision. This example records a plan only.

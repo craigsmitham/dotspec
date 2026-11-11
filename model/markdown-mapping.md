@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/11` maps specification Markdown to the
+`dotspec-markdown/12` maps specification Markdown to the
 [canonical model](dotspec.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/specification-model.md).
@@ -61,6 +61,7 @@ These roles apply to each specification family where authored.
 | Related concepts | `related_concepts: ContextualReferences` |
 | Authority; Authority and evidence | `authority_and_evidence: RichContent` |
 | Notes | `notes: RichContent` |
+| Validation plan (TraceableElement) | `validation_plan: AssessmentPlan`; explicit subject and basis distinguish requirements/system validation and assumption assessment |
 | Explanatory notes | `explanatory_notes: RichContent`, including on named domain records |
 | Implementation suggestions; Implementation hints | `implementation_suggestions: RichContent`; nonbinding advice, not endorsement |
 | Illustrative examples | `illustrative_examples: RichContent`, distinct from general obligations |
@@ -150,7 +151,7 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | Environment | `EnvironmentDescription.content` |
 | Goals | `GoalCollection.content`; direct list items and named subsections become `SystemGoal` records |
 | Assumptions | `AssumptionCollection.content`; direct list items and named subsections become `Assumption` records |
-| Assumption: Basis; Applicability; Validation plan | `basis`, prose `applicability`, and `validation_plan: VerificationPlan`; statement contains the named assumption introduction only |
+| Assumption: Basis; Applicability; Validation plan | `basis`, prose `applicability`, and `validation_plan: AssessmentPlan`; statement contains the named assumption introduction only |
 | Constraints | `ConstraintCollection.content`; direct list items and named subsections become `Constraint` records |
 | Glossary | `Glossary.content`; named subsections become `GlossaryTerm` records with full definitions |
 | Term: Alternative names; Aliases | List-item values, or the unsegmented subsection, populate `alternative_names` |
@@ -340,13 +341,21 @@ is inferred. The [authoring guide](../docs/develop-concepts.md) supplies example
 | Rationale | `rationale` |
 | Frontmatter `quality_attributes` | Every authored classification label occurrence; resolved quality attribute targets populate `quality_attributes` |
 | Statement | `statement` |
-| Verification plan | `VerificationPlan.content` and recognized explicit plan fields |
+| Verification plan | `verification_plan: AssessmentPlan` for planned realization conformance |
+| Validation plan | `validation_plan: AssessmentPlan` for needs/intent assessment; also recognized on other traceable records |
 | Criterion (optional assessment details) | `QualityCriterion.content` and recognized explicit criterion fields |
 | Measurement plan | `MeasurementPlan.content` and recognized explicit measurement fields |
 
-Verification plan recognizes Method or Procedure, Success criteria, Conditions, and
-Evidence to retain or Evidence retention. Named Cases subsections supply
-`VerificationCase` values; each can contain Conditions, Procedure, Expected
+Verification plan and Validation plan share `AssessmentPlan`. They recognize Subject,
+Basis (`ContextualReferences`), Participants, Method or Procedure, Success criteria,
+Conditions, and Evidence to retain or Evidence retention. Verification plan on an
+Obligation assesses a realization against the obligation. Validation plan is available
+on TraceableElement records, including requirements, systems, concepts, use cases,
+needs and assumptions; the subject and basis determine the intended-use or premise
+assessment. Assumptions distinguish empirical support from justified reliance.
+Neither field records an execution, verdict or acceptance. Repeated supplementary
+plan content and cases append in authored order. Named Cases subsections supply
+`AssessmentCase` values; each can contain Conditions, Procedure, Expected
 result and Evidence to retain.
 
 Criterion recognizes Measure, Comparison, Target, Units, Aggregation,
@@ -355,14 +364,14 @@ Explicit open-question headings remain distinguishable from an omitted target.
 Qualitative criteria remain valid; classification labels cannot supply missing
 thresholds.
 
-Measurement plan recognizes Sampling, Conditions, Procedure, Evidence to retain or
+Measurement plan recognizes Success criteria, Sampling, Conditions, Procedure, Evidence to retain or
 Evidence retention, Workload, Population and Exclusions. Full measurement
 narrative remains available alongside those components, including procedural
 qualifications, examples and evidence instructions.
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/11`, an owner and field path, source
+Bindings record a rule under `dotspec-markdown/12`, an owner and field path, source
 occurrence and role. Named-field, record-identity and structured-item bindings
 account for interpreted domain content. Metadata bindings account for frontmatter.
 Structural-wrapper bindings cover headings and syntax support; a document-root

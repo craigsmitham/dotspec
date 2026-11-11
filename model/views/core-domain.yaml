@@ -13,6 +13,7 @@ types:
   - supports
   - derived_from
   - relies_on
+  - validation_plan
   SystemGoal:
   - statement
   - supports
@@ -269,6 +270,21 @@ types:
   - rows
   EffectsRow:
   - cells
+  AssessmentPlan:
+  - subject
+  - basis
+  - participants
+  - method
+  - success_criteria
+  - conditions
+  - cases
+  - evidence_to_retain
+  AssessmentCase:
+  - name
+  - conditions
+  - procedure
+  - expected_result
+  - evidence_to_retain
 diagrams:
 - title: Specification kinds and system association
   direction: TB
@@ -527,4 +543,19 @@ diagrams:
   - Capability.supports
   - Capability.depends_on
   - Capability.provided_by
+  inheritance: false
+
+- title: Assessment planning
+  description: Verification and validation retain distinct field roles while sharing plan structure. The authored
+    subject and basis identify what is assessed and against what. Neither plan nor case is an observation,
+    assessment conclusion or acceptance decision.
+  nodes:
+  - TraceableElement
+  - Obligation
+  - AssessmentPlan
+  - AssessmentCase
+  paths:
+  - TraceableElement.validation_plan
+  - Obligation.verification_plan
+  - AssessmentPlan.cases
   inheritance: false

@@ -81,3 +81,33 @@ The workspace declines restoration from retained state and explains that the rec
 ### The member lacks authorization
 
 The workspace declines restoration and leaves the retained document unchanged.
+
+## Validation plan
+
+### Subject
+
+The proposed interaction and alternatives; assess whether they support members in resuming interrupted work.
+
+### Basis
+
+[Recover lost work](../jobs/recover.job.spec.md).
+
+### Participants
+
+Workspace members and the recovery-policy stakeholder.
+
+### Method
+
+Review examples and a prototype with the participants, including counterexamples and unsupported situations.
+
+### Success criteria
+
+The participants can explain how the proposal addresses recovery needs, and unresolved mismatches are recorded for revision.
+
+### Conditions
+
+Representative accidental-deletion situations and the stated recovery-window boundary.
+
+### Evidence to retain
+
+Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.

@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"github.com/craigsmitham/dotspec/internal/obligation"
 	"net/url"
 	"path/filepath"
 	"slices"
@@ -16,9 +17,9 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	v.out.WriteString("# Requirements review\n\nGenerated from acquired specifications. Findings below are advisory review prompts, not completeness, acceptance or implementation claims. Missing links mean **no relationship recorded in this scope**. Drafts remain valid.\n\n")
+	v.out.WriteString("# Requirements review\n\nGenerated from acquired specifications. Findings below are advisory review prompts, not completeness, acceptance or implementation claims. Missing links mean **no relationship recorded in this scope**. Drafts may conform to the authoring format while requirements verification and validation remain unfinished.\n\n")
 	fmt.Fprintf(&v.out, "Model `%s`; mapping `%s`.\n\n", s.ModelVersion, s.MappingProfile)
-	v.out.WriteString("## Goal contribution paths\n\nPaths follow explicit supports, derived-from and refinement links from obligations, concept actions or use cases. A recorded path identifies intent; reviewers must assess whether the behavior is sufficient.\n\n")
+	v.out.WriteString("## Needs and intent\n\nRequirements validation asks whether the specification expresses the right needs. System validation asks whether a proposed or realized solution serves intended use. The relationships below identify review questions, not either conclusion.\n\n### Goal contribution paths\n\nPaths follow explicit supports, derived-from and refinement links from obligations, concept actions or use cases. A recorded path identifies intent; reviewers must assess whether the behavior is sufficient.\n\n")
 	reached := map[string]bool{}
 	var reach func(string, map[string]bool)
 	reach = func(id string, seen map[string]bool) {
@@ -50,7 +51,7 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			fmt.Fprintf(&v.out, "- %s: %s\n", v.link(r), status)
 		}
 	}
-	v.out.WriteString("\n## Scenario grounding\n\nAn Illustrates link identifies a rule or action behind a step. Participation links and ordinary citations do not establish this relationship; not every conversational step needs a separate obligation.\n\n")
+	v.out.WriteString("\n### Scenario grounding\n\nAn Illustrates link identifies a rule or action behind a step. Participation links and ordinary citations do not establish this relationship; not every conversational step needs a separate obligation.\n\n")
 	for _, r := range v.records {
 		switch String(r, "kind") {
 		case "ScenarioStep":
@@ -66,7 +67,9 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 	}
 	v.boundaries()
-	v.out.WriteString("## Obligation verification\n\nPlans are guidance for verification or measurement, not evidence of execution.\n\n")
+	v.assumptions()
+	v.validationPlans()
+	v.out.WriteString("## System verification planning\n\nThese plans assess realizations against obligations. Requirements verification instead assesses the quality of the requirement statements and set. A plan is distinct from an observation, an evidence-based assessment, and an acceptance decision.\n\n")
 	for _, r := range v.records {
 		if designKind(String(r, "kind"), "Obligation") {
 			fmt.Fprintf(&v.out, "### %s\n\n", v.link(r))
@@ -78,11 +81,17 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			}
 			v.body(r, "Criterion", Object(r["criterion"])["content"])
 			if !present {
-				v.out.WriteString("No verification or measurement guidance recorded; review required.\n\n")
+				v.out.WriteString("No system verification or measurement guidance recorded; review required.\n\n")
+			} else {
+				v.out.WriteString("Assessment guidance recorded; its adequacy and any verification result are not evaluated.\n\n")
+			}
+			if missing := v.d.measurementGuidance(r).Missing(); len(missing) > 0 {
+				fmt.Fprintf(&v.out, "Review required: %s\n\n", obligation.MeasurementMessage(missing))
 			}
 		}
 	}
 	v.questions()
+	v.out.WriteString("## Requirements quality\n\nRequirements verification examines individual statements and the set for clarity, consistency and assessability against declared quality criteria. Terminology checks and inspection findings below supply selected review prompts; passing them does not establish complete requirements verification.\n\n")
 	v.glossary()
 	v.out.WriteString("## Explanations and suggestions\n\nThese roles distinguish explanation, nonbinding implementation advice and examples from specified obligations. They do not record stakeholder endorsement.\n\n")
 	for _, r := range v.records {
@@ -94,7 +103,7 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 	}
 	if len(s.Diagnostics) > 0 {
-		v.out.WriteString("## Inspection findings\n\n")
+		v.out.WriteString("## Automated inspection findings\n\n")
 		for _, f := range s.Diagnostics {
 			fmt.Fprintf(&v.out, "- **%s** `%s`: %s\n", String(f, "severity"), String(f, "code"), strings.ReplaceAll(String(f, "message"), "\n", " "))
 		}
@@ -121,6 +130,7 @@ func PEGSMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 	}
 	v.boundaries()
+	v.assumptions()
 	v.out.WriteString("## Goals\n\n")
 	for _, r := range v.records {
 		if !designKind(String(r, "kind"), "SystemGoal or Job or JobStep or DesiredOutcome") {
@@ -149,6 +159,7 @@ func PEGSMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			}
 		}
 	}
+	v.validationPlans()
 	v.questions()
 	return strings.TrimRight(v.out.String(), "\n") + "\n", nil
 }
@@ -242,10 +253,10 @@ func (v *reviewView) body(r Record, label string, value any) bool {
 	return true
 }
 func (v *reviewView) boundaries() {
-	v.out.WriteString("## Environment and boundaries\n\nOperating conditions and constraints describe what the solution must accommodate. Assumptions are premises relied upon and require a justified basis and validation. Explicit exclusions delimit scope. External partners are separate from structural parents.\n\n")
+	v.out.WriteString("## Environment and boundaries\n\nOperating conditions and constraints describe what the solution must accommodate. Assumptions are assessed separately for evidence and justified reliance. Explicit exclusions delimit scope. External partners are separate from structural parents.\n\n")
 	for _, r := range v.records {
 		kind := String(r, "kind")
-		if !designKind(kind, "System or Component or Assumption or Constraint or BusinessRule") {
+		if !designKind(kind, "System or Component or Constraint or BusinessRule") {
 			continue
 		}
 		fmt.Fprintf(&v.out, "### %s: %s\n\n", kind, v.link(r))
@@ -257,22 +268,7 @@ func (v *reviewView) boundaries() {
 			}
 			v.body(r, reviewLabel(f), value)
 		}
-		if kind == "Assumption" {
-			v.body(r, "Validation plan", Object(r["validation_plan"])["content"])
-			missing := []string{}
-			for _, f := range []string{"basis", "applicability", "validation_plan"} {
-				value := r[f]
-				if f == "validation_plan" {
-					value = Object(value)["content"]
-				}
-				if strings.TrimSpace(v.d.text(value)) == "" {
-					missing = append(missing, reviewLabel(f))
-				}
-			}
-			if len(missing) > 0 {
-				fmt.Fprintf(&v.out, "Review required: no %s recorded.\n\n", strings.Join(missing, ", "))
-			}
-		}
+
 		if ids := Strings(r["interacts_with"]); len(ids) > 0 {
 			fmt.Fprintf(&v.out, "Interacts with: %s.\n\n", v.links(ids))
 		}
@@ -294,6 +290,63 @@ func (v *reviewView) boundaries() {
 		}
 	}
 }
+func (v *reviewView) assumptions() {
+	v.out.WriteString("## Assumptions: evidence and justified reliance\n\nAssess both empirical support in the stated conditions and whether relying on the premise is appropriate for intended use. An observation supports a bounded claim, not a guarantee that the premise always holds.\n\n")
+	for _, r := range v.records {
+		if String(r, "kind") != "Assumption" {
+			continue
+		}
+		fmt.Fprintf(&v.out, "### %s\n\n", v.link(r))
+		for _, field := range []string{"statement", "basis", "applicability"} {
+			v.body(r, reviewLabel(field), r[field])
+		}
+		v.body(r, "Assumption validation plan", Object(r["validation_plan"])["content"])
+		missing := []string{}
+		for _, field := range []string{"basis", "applicability", "validation_plan"} {
+			value := r[field]
+			if field == "validation_plan" {
+				value = Object(value)["content"]
+			}
+			if strings.TrimSpace(v.d.text(value)) == "" {
+				missing = append(missing, reviewLabel(field))
+			}
+		}
+		if len(missing) > 0 {
+			fmt.Fprintf(&v.out, "Review required: no %s recorded.\n\n", strings.Join(missing, ", "))
+		}
+	}
+}
+func (v *reviewView) validationPlans() {
+	v.out.WriteString("## Validation planning\n\nIdentify the subject and the needs, intended use or other basis for the assessment. Requirements validation assesses proposed obligations; system validation assesses proposed or realized solutions. A method or supports link alone establishes neither purpose nor a result.\n\n")
+	for _, r := range v.records {
+		if String(r, "kind") == "Assumption" {
+			continue
+		}
+		plan := Object(r["validation_plan"])
+		if plan == nil && !designKind(String(r, "kind"), "System or Concept or UseCase or Obligation") {
+			continue
+		}
+		fmt.Fprintf(&v.out, "### %s: %s\n\n", String(r, "kind"), v.link(r))
+		if !v.body(r, "Validation plan", plan["content"]) {
+			v.out.WriteString("No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.\n\n")
+			continue
+		}
+		missing := []string{}
+		for _, field := range []string{"subject", "basis", "participants", "method", "success_criteria", "conditions", "evidence_to_retain"} {
+			value := plan[field]
+			if field == "basis" {
+				value = Object(value)["content"]
+			}
+			if strings.TrimSpace(v.d.text(value)) == "" {
+				missing = append(missing, reviewLabel(field))
+			}
+		}
+		if len(missing) > 0 {
+			fmt.Fprintf(&v.out, "Review separately identified plan details: %s. The narrative may already address them; no adequacy or completion is inferred.\n\n", strings.Join(missing, ", "))
+		}
+	}
+}
+
 func reviewObjects(value any) []Record {
 	switch values := value.(type) {
 	case []Record:
@@ -335,7 +388,7 @@ func (v *reviewView) questions() {
 	}
 }
 func (v *reviewView) glossary() {
-	v.out.WriteString("## Terminology review\n\nUse one preferred term consistently in specification prose; declared alternative names and synonym entries remain useful. Collisions below are scoped to the declaring System and require human review. This report does not scan prose for undeclared synonyms.\n\n")
+	v.out.WriteString("### Terminology review\n\nUse one preferred term consistently in specification prose; declared alternative names and synonym entries remain useful. Collisions below are scoped to the declaring System and require human review. This report does not scan prose for undeclared synonyms.\n\n")
 	type designation struct {
 		record Record
 		role   string

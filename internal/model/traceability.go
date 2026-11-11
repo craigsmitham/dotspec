@@ -1,6 +1,7 @@
 package model
 
 import (
+	"github.com/craigsmitham/dotspec/internal/obligation"
 	"slices"
 	"strings"
 )
@@ -102,6 +103,7 @@ func (m *domainMapper) nestedTraceability() {
 				for _, child := range s.Children {
 					m.traceSection(r, child)
 					m.explanatory(r, child)
+					m.assessmentSection(r, child)
 				}
 			}
 		}
@@ -165,8 +167,11 @@ func (d *designResolver) traceReview() {
 			d.issue(r, "motivation", "advice", "No explicit motivation or derivation is recorded for this obligation; review its justification.")
 		}
 
+		if missing := d.measurementGuidance(r).Missing(); len(missing) > 0 {
+			d.issue(r, "measurement_basis", "advice", obligation.MeasurementMessage(missing))
+		}
 		if strings.TrimSpace(d.text(Object(r["verification_plan"])["content"])+d.text(Object(r["measurement_plan"])["content"])) == "" {
-			d.issue(r, "verification_plan", "advice", "No verification or measurement plan is recorded for this obligation; review how it will be checked.")
+			d.issue(r, "verification_plan", "advice", "No system verification or measurement plan is recorded for this obligation; review how a realization will be checked.")
 		}
 	}
 }

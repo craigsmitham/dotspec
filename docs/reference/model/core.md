@@ -4,15 +4,15 @@ Generated from [the canonical model](../../../model/dotspec.yaml) and [the view 
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.12.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.13.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
 | Subset | Responsibility | Selected types |
 | --- | --- | --- |
-| Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [TraceableElement](index.md#traceableelement), [SystemGoal](index.md#systemgoal), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [BusinessRule](index.md#businessrule), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion) |
-| User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [TraceableElement](index.md#traceableelement), [ObligationClause](index.md#obligationclause), [Job](index.md#job), [JobStep](index.md#jobstep), [DesiredOutcome](index.md#desiredoutcome), [ProgressCase](index.md#progresscase), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [OpenQuestion](index.md#openquestion) |
-| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptType](index.md#concepttype), [ConceptUse](index.md#conceptuse), [TypeBinding](index.md#typebinding), [Synchronization](index.md#synchronization), [SynchronizationAction](index.md#synchronizationaction), [StateDescription](index.md#statedescription), [StateElement](index.md#stateelement), [ActionParameter](index.md#actionparameter), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [GeneralRequirement](index.md#generalrequirement), [QualityRequirement](index.md#qualityrequirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Component](index.md#component), [Feature](index.md#feature), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [InterfaceCollection](index.md#interfacecollection), [InterfaceDescription](index.md#interfacedescription), [EffectsTable](index.md#effectstable), [EffectsRow](index.md#effectsrow) |
+| Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [TraceableElement](index.md#traceableelement), [SystemGoal](index.md#systemgoal), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [BusinessRule](index.md#businessrule), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [AssessmentPlan](index.md#assessmentplan), [AssessmentCase](index.md#assessmentcase) |
+| User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [TraceableElement](index.md#traceableelement), [ObligationClause](index.md#obligationclause), [Job](index.md#job), [JobStep](index.md#jobstep), [DesiredOutcome](index.md#desiredoutcome), [ProgressCase](index.md#progresscase), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [OpenQuestion](index.md#openquestion), [AssessmentPlan](index.md#assessmentplan), [AssessmentCase](index.md#assessmentcase) |
+| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptType](index.md#concepttype), [ConceptUse](index.md#conceptuse), [TypeBinding](index.md#typebinding), [Synchronization](index.md#synchronization), [SynchronizationAction](index.md#synchronizationaction), [StateDescription](index.md#statedescription), [StateElement](index.md#stateelement), [ActionParameter](index.md#actionparameter), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [GeneralRequirement](index.md#generalrequirement), [QualityRequirement](index.md#qualityrequirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Component](index.md#component), [Feature](index.md#feature), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [InterfaceCollection](index.md#interfacecollection), [InterfaceDescription](index.md#interfacedescription), [EffectsTable](index.md#effectstable), [EffectsRow](index.md#effectsrow), [AssessmentPlan](index.md#assessmentplan), [AssessmentCase](index.md#assessmentcase) |
 | Specification traceability (`core`) | Explicit connections between specification meaning, authored occurrences, and resolved relationships. | [ContentBinding](index.md#contentbinding), [SourceReference](index.md#sourcereference), [Resolution](index.md#resolution) |
 
 Subset membership organizes model definitions; it does not infer the level or importance of an authored instance. Shared types can appear in several subsets. Supporting and generic types appear as context where a diagram needs them.
@@ -358,6 +358,24 @@ classDiagram
     Capability --> "0..*" Component : provided by
 ```
 
+### Assessment planning
+
+Verification and validation retain distinct field roles while sharing plan structure. The authored subject and basis identify what is assessed and against what. Neither plan nor case is an observation, assessment conclusion or acceptance decision.
+
+```mermaid
+classDiagram
+    direction LR
+    class TraceableElement
+    <<abstract>> TraceableElement
+    class Obligation
+    <<abstract>> Obligation
+    class AssessmentPlan
+    class AssessmentCase
+    TraceableElement --> "0..1" AssessmentPlan : validation plan
+    Obligation --> "0..1" AssessmentPlan : verification plan
+    AssessmentPlan --> "0..*" AssessmentCase : cases
+```
+
 ## Selected type reference
 
 ### TraceableElement
@@ -371,6 +389,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `supports` | [SystemGoal](index.md#systemgoal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) | optional; list | Intended contribution to a goal or user progress; does not assert achievement. |
 | `derived_from` | [DomainElement](index.md#domainelement) or [SourceFragment](index.md#sourcefragment) | optional; list | Source or rationale for this element, including rules, decisions and obligations; not logical entailment. |
 | `relies_on` | [Assumption](index.md#assumption) | optional; list | Assumptions on which the validity of this element depends. |
+| `validation_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
 
 ### SystemGoal
 
@@ -394,7 +413,7 @@ Subsets: `business-requirements`, `software-requirements`. [Assumption](index.md
 | `statement` | [RichContent](index.md#richcontent) | optional |  |
 | `basis` | [RichContent](index.md#richcontent) | optional | Why reliance on this statement is justified, including cited evidence. |
 | `applicability` | [RichContent](index.md#richcontent) | optional | Conditions, locations or periods in which this assumption is expected to hold. |
-| `validation_plan` | [VerificationPlan](index.md#verificationplan) | optional | How and when to check the environmental premise; not evidence it is true. |
+| `validation_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan to assess empirical support for the premise in its stated conditions and whether reliance on it is justified for intended use; not a guarantee that it holds. |
 
 ### Constraint
 
@@ -418,7 +437,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; list | Only resolved classifications; original occurrences remain separately addressable. |
 | `refines` | [Requirement](index.md#requirement) or [BusinessRule](index.md#businessrule) or [ObligationClause](index.md#obligationclause) | optional; list | Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted. |
 | `applies_to` | [DomainElement](index.md#domainelement) | optional; list |  |
-| `verification_plan` | [VerificationPlan](index.md#verificationplan) | optional |  |
+| `verification_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
 | `criterion` | [QualityCriterion](index.md#qualitycriterion) | optional |  |
 | `measurement_plan` | [MeasurementPlan](index.md#measurementplan) | optional |  |
 
@@ -747,7 +766,7 @@ Subsets: `software-requirements`. [GeneralRequirement](index.md#generalrequireme
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `statement` | [RichContent](index.md#richcontent) | optional |  |
-| `verification_plan` | [VerificationPlan](index.md#verificationplan) | optional |  |
+| `verification_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
 | `criterion` | [QualityCriterion](index.md#qualitycriterion) | optional |  |
 | `measurement_plan` | [MeasurementPlan](index.md#measurementplan) | optional |  |
 
@@ -760,7 +779,7 @@ Subsets: `software-requirements`. [QualityRequirement](index.md#qualityrequireme
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `statement` | [RichContent](index.md#richcontent) | optional |  |
-| `verification_plan` | [VerificationPlan](index.md#verificationplan) | optional |  |
+| `verification_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
 | `criterion` | [QualityCriterion](index.md#qualitycriterion) | optional |  |
 | `measurement_plan` | [MeasurementPlan](index.md#measurementplan) | optional |  |
 
@@ -852,7 +871,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `applicability` | [Applicability](index.md#applicability) | optional |  |
 | `rationale` | [RichContent](index.md#richcontent) | optional |  |
 | `refines` | [Requirement](index.md#requirement) or [BusinessRule](index.md#businessrule) or [ObligationClause](index.md#obligationclause) | optional; list | Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted. |
-| `verification_plan` | [VerificationPlan](index.md#verificationplan) | optional |  |
+| `verification_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
 | `criterion` | [QualityCriterion](index.md#qualitycriterion) | optional |  |
 | `measurement_plan` | [MeasurementPlan](index.md#measurementplan) | optional |  |
 
@@ -963,3 +982,34 @@ Subsets: `software-requirements`. [EffectsRow](index.md#effectsrow) contains the
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `cells` | [RichContent](index.md#richcontent) | optional; ordered list |  |
+
+### AssessmentPlan
+
+Shared assessment structure. The owning verification_plan or validation_plan field identifies the role; the authored subject and basis identify what is assessed and against what. The method alone does not determine the purpose. A plan is not execution evidence or a verdict.
+
+Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [AssessmentPlan](index.md#assessmentplan) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `subject` | [RichContent](index.md#richcontent) | optional | The proposed requirement, design, prototype, implementation or environmental premise to assess; identify revisions when planning execution. |
+| `basis` | [ContextualReferences](index.md#contextualreferences) | optional | Authored criteria, stakeholder needs, goals, obligations or evidence against which the subject is assessed. Citations do not establish satisfaction. |
+| `participants` | [RichContent](index.md#richcontent) | optional | Relevant users, stakeholders or assessors and their roles; naming them is not endorsement. |
+| `method` | [RichContent](index.md#richcontent) | optional |  |
+| `success_criteria` | [RichContent](index.md#richcontent) | optional |  |
+| `conditions` | [RichContent](index.md#richcontent) | optional |  |
+| `cases` | [AssessmentCase](index.md#assessmentcase) | optional; ordered list |  |
+| `evidence_to_retain` | [RichContent](index.md#richcontent) | optional |  |
+
+### AssessmentCase
+
+An explicitly distinguished assessment case; its parent plan supplies verification or validation purpose. A case definition is not an observation or result.
+
+Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [AssessmentCase](index.md#assessmentcase) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `name` | [RichContent](index.md#richcontent) | optional |  |
+| `conditions` | [RichContent](index.md#richcontent) | optional |  |
+| `procedure` | [RichContent](index.md#richcontent) | optional |  |
+| `expected_result` | [RichContent](index.md#richcontent) | optional |  |
+| `evidence_to_retain` | [RichContent](index.md#richcontent) | optional |  |

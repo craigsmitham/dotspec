@@ -186,7 +186,7 @@ func TestTraceViewIsPortableAndDoesNotClaimProof(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, part := range []string{"## Why:", "## Behavior:", "## Change review", "## Verification guidance", "Not evaluated", "#restore-retained-content", "refines", "supports", "Further review candidates"} {
+	for _, part := range []string{"## Why:", "## Behavior:", "## Change review", "## System verification planning", "Not evaluated", "#restore-retained-content", "refines", "supports", "Further review candidates"} {
 		if !strings.Contains(view, part) {
 			t.Fatal("missing", part)
 		}

@@ -75,6 +75,7 @@ type Step struct {
 }
 
 type Job struct {
+	ValidationPlan   string                         `json:"validation_plan,omitempty"`
 	References       *specfile.ReferenceDocument    `json:"-"`
 	ID               string                         `json:"id,omitempty"`
 	Slug             string                         `json:"slug"`
@@ -144,7 +145,7 @@ func Parse(data []byte) (*Job, error) {
 	for _, section := range doc.Sections {
 		name := section.Title
 		switch name {
-		case "Job", "Performer", "Situation", "Motivation", "Intended progress", "Outcomes", "Steps", "Progress cases", "Evidence":
+		case "Validation plan", "Job", "Performer", "Situation", "Motivation", "Intended progress", "Outcomes", "Steps", "Progress cases", "Evidence":
 			location := doc.Location(section.Start, name)
 			if section.Level != 2 {
 				return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), location)
@@ -157,7 +158,7 @@ func Parse(data []byte) (*Job, error) {
 		}
 	}
 	for name, target := range map[string]*string{
-		"Job": &job.Statement, "Performer": &job.Performer, "Situation": &job.Situation,
+		"Validation plan": &job.ValidationPlan, "Job": &job.Statement, "Performer": &job.Performer, "Situation": &job.Situation,
 		"Motivation": &job.Motivation, "Intended progress": &job.IntendedProgress,
 		"Progress cases": &job.ProgressCases, "Evidence": &job.Evidence,
 	} {

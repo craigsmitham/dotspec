@@ -50,7 +50,7 @@ func newModelCommand() *cobra.Command {
 			return err
 		}}
 	validate := &cobra.Command{Use: "validate SNAPSHOT", Short: "Check a snapshot's shape, references, source fidelity, and coverage", Args: cobra.ExactArgs(1),
-		Long: "Validate a snapshot file, or use - to read standard input. Validation checks the model itself; faithfully represented authoring errors do not make a snapshot invalid. No source paths or external targets are fetched. External payload locators can be checked structurally; their byte availability is not verified offline.\n\n" + exitPolicy,
+		Long: "Validate a snapshot file, or use - to read standard input. Snapshot validation checks representation conformance and integrity, not requirements fitness or system behavior; faithfully represented authoring errors do not make a snapshot invalid. No source paths or external targets are fetched. External payload locators can be checked structurally; their byte availability is not verified offline.\n\n" + exitPolicy,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			format, err := outputFormat(cmd)
 			if err != nil {
@@ -249,7 +249,7 @@ func newModelCommand() *cobra.Command {
 
 func newModelReadingCommand(name, description string, render func(*model.Snapshot, string) (string, error)) *cobra.Command {
 	cmd := &cobra.Command{Use: name, Short: description, Args: cobra.NoArgs,
-		Long:    description + ". Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.\n\n" + exitPolicy,
+		Long:    description + ". Requirements verification concerns specification quality; requirements and system validation concern needs and intended use. Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.\n\n" + exitPolicy,
 		Example: "dotspec model " + name + " --path . --relative-to docs/reference",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)

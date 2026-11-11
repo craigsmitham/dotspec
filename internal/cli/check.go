@@ -20,7 +20,7 @@ import (
 
 func newCheckCommand() *cobra.Command {
 	cmd := &cobra.Command{Use: "check", Short: "Check all supported specifications in a project subtree",
-		Long:    "Check quality-model, business-rule, system, job, use-case, concept, requirement, and quality specifications using the same discovery rules as list.\n\n" + exitPolicy,
+		Long:    "Check quality-model, business-rule, system, job, use-case, concept, requirement, and quality specifications using the same discovery rules as list. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.\n\n" + exitPolicy,
 		Example: "dotspec check\ndotspec check --path internal --json", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)

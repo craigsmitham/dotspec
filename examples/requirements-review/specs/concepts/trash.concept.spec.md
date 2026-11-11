@@ -42,3 +42,33 @@ Blank cells are unspecified; explicit unchanged cells assert preservation.
 ## Implementation hints
 
 An index could accelerate expiration queries without changing the specified effects.
+
+## Validation plan
+
+### Subject
+
+The proposed reversible-deletion concept; assess the operational principle against intended recovery use.
+
+### Basis
+
+[Restore a document](../use-cases/restore.use-case.spec.md).
+
+### Participants
+
+Workspace members and the recovery-policy stakeholder.
+
+### Method
+
+Review examples and a prototype with the participants, including counterexamples and unsupported situations.
+
+### Success criteria
+
+The participants can explain how the proposal addresses recovery needs, and unresolved mismatches are recorded for revision.
+
+### Conditions
+
+Representative accidental-deletion situations and the stated recovery-window boundary.
+
+### Evidence to retain
+
+Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.

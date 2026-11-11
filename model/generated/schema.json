@@ -318,6 +318,73 @@
             "title": "AssertionOrigin",
             "type": "string"
         },
+        "AssessmentCase": {
+            "additionalProperties": false,
+            "description": "An explicitly distinguished assessment case; its parent plan supplies verification or validation purpose. A case definition is not an observation or result.",
+            "properties": {
+                "conditions": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "evidence_to_retain": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "expected_result": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "procedure": {
+                    "$ref": "#/$defs/RichContent"
+                }
+            },
+            "title": "AssessmentCase",
+            "type": "object"
+        },
+        "AssessmentPlan": {
+            "additionalProperties": false,
+            "description": "Shared assessment structure. The owning verification_plan or validation_plan field identifies the role; the authored subject and basis identify what is assessed and against what. The method alone does not determine the purpose. A plan is not execution evidence or a verdict.",
+            "properties": {
+                "basis": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Authored criteria, stakeholder needs, goals, obligations or evidence against which the subject is assessed. Citations do not establish satisfaction."
+                },
+                "cases": {
+                    "items": {
+                        "$ref": "#/$defs/AssessmentCase"
+                    },
+                    "type": "array"
+                },
+                "conditions": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "evidence_to_retain": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "method": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "participants": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Relevant users, stakeholders or assessors and their roles; naming them is not endorsement."
+                },
+                "subject": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "The proposed requirement, design, prototype, implementation or environmental premise to assess; identify revisions when planning execution."
+                },
+                "success_criteria": {
+                    "$ref": "#/$defs/RichContent"
+                }
+            },
+            "required": [
+                "content"
+            ],
+            "title": "AssessmentPlan",
+            "type": "object"
+        },
         "Assumption": {
             "additionalProperties": false,
             "description": "An explicitly distinguished system assumption; no inferred truth assertion.",
@@ -448,8 +515,8 @@
                     "type": "array"
                 },
                 "validation_plan": {
-                    "$ref": "#/$defs/VerificationPlan",
-                    "description": "How and when to check the environmental premise; not evidence it is true."
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess empirical support for the premise in its stated conditions and whether reliance on it is justified for intended use; not a guarantee that it holds."
                 }
             },
             "required": [
@@ -730,6 +797,10 @@
                 "system_context": {
                     "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -937,6 +1008,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -1279,6 +1354,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -1503,6 +1582,10 @@
                 },
                 "type_parameters_content": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -1677,6 +1760,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -1988,6 +2075,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -2158,6 +2249,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -2939,6 +3034,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -3725,6 +3824,10 @@
                 "system": {
                     "description": "System whose capability this feature describes; the explicitly declaring System.",
                     "type": "string"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -4087,8 +4190,13 @@
                     "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
                 },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
+                },
                 "verification_plan": {
-                    "$ref": "#/$defs/VerificationPlan"
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence."
                 }
             },
             "required": [
@@ -5701,6 +5809,10 @@
                 "system_context": {
                     "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -5869,6 +5981,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -5963,6 +6079,10 @@
                 },
                 "sampling": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "success_criteria": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored rule for interpreting measurements against the obligation, including a target or comparison where appropriate. No conformance judgment is inferred."
                 },
                 "workload": {
                     "$ref": "#/$defs/RichContent"
@@ -6198,8 +6318,13 @@
                     },
                     "type": "array"
                 },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
+                },
                 "verification_plan": {
-                    "$ref": "#/$defs/VerificationPlan"
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence."
                 }
             },
             "required": [
@@ -6392,8 +6517,13 @@
                     },
                     "type": "array"
                 },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
+                },
                 "verification_plan": {
-                    "$ref": "#/$defs/VerificationPlan"
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence."
                 }
             },
             "required": [
@@ -6528,6 +6658,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -7225,6 +7359,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -7477,8 +7615,13 @@
                     "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
                 },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
+                },
                 "verification_plan": {
-                    "$ref": "#/$defs/VerificationPlan"
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence."
                 }
             },
             "required": [
@@ -7951,8 +8094,13 @@
                     "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
                 },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
+                },
                 "verification_plan": {
-                    "$ref": "#/$defs/VerificationPlan"
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence."
                 }
             },
             "required": [
@@ -8440,6 +8588,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -8802,7 +8954,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.12.0-draft",
+                    "const": "0.13.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -9339,6 +9491,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -9787,6 +9943,10 @@
                     },
                     "type": "array"
                 },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
+                },
                 "when": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -10219,6 +10379,10 @@
                 },
                 "synchronizations_content": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -10406,6 +10570,10 @@
                 "system_context": {
                     "description": "Nearest enclosing system found by directory discovery. Kept as discovery provenance; specification_system selects the effective specification context.",
                     "type": "string"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -10537,6 +10705,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -10699,6 +10871,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -11083,6 +11259,10 @@
                 },
                 "trigger": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -11266,61 +11446,6 @@
                 "kind"
             ],
             "title": "UsesConcept",
-            "type": "object"
-        },
-        "VerificationCase": {
-            "additionalProperties": false,
-            "description": "An explicitly distinguished verification case.",
-            "properties": {
-                "conditions": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "evidence_to_retain": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "expected_result": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "name": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "procedure": {
-                    "$ref": "#/$defs/RichContent"
-                }
-            },
-            "title": "VerificationCase",
-            "type": "object"
-        },
-        "VerificationPlan": {
-            "additionalProperties": false,
-            "description": "Verification section content with optional explicit plan components, including evidence retention.",
-            "properties": {
-                "cases": {
-                    "items": {
-                        "$ref": "#/$defs/VerificationCase"
-                    },
-                    "type": "array"
-                },
-                "conditions": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "evidence_to_retain": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "method": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "success_criteria": {
-                    "$ref": "#/$defs/RichContent"
-                }
-            },
-            "required": [
-                "content"
-            ],
-            "title": "VerificationPlan",
             "type": "object"
         }
     },
@@ -11602,7 +11727,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.12.0-draft",
+            "const": "0.13.0-draft",
             "type": "string"
         },
         "references": {
@@ -11656,5 +11781,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.12.0-draft"
+    "version": "0.13.0-draft"
 }

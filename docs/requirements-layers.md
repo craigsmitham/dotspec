@@ -93,7 +93,7 @@ ordinary citations and semantic associations also retain distinct meanings.
 - Motivation and basis: follow explicit justification and applicability.
 - Behavior: inspect use cases, participating concept uses and related obligations.
 - Change review: inspect direct and transitive reverse links with their meanings.
-- Verification guidance: find authored check plans and missing guidance.
+- System verification planning: find authored plans for assessing realizations against obligations.
 
 These views are bounded by acquired sources and explicit links. Transitive
 reachability identifies review candidates; it does not prove actual impact.
@@ -142,3 +142,13 @@ BusinessRule, Job, JobStep, UseCase, Concept, ConceptUse, ConceptAction,
 Synchronization and Requirement. Goals, assumptions and desired outcomes can
 participate in traceability without containing clauses. This keeps motivation,
 declaration ownership and normative content distinct.
+
+## Verification and validation across layers
+
+Requirements verification reviews the quality of statements and sets; requirements
+validation reviews their faithfulness to needs and intended use. System verification
+assesses a realization against obligations; system validation assesses its intended-use
+fitness. These distinctions apply across all concern layers, and methods can support
+more than one purpose. See [Verification and validation](verification-and-validation.md)
+for the governing vocabulary and [Review requirements](review-requirements.md) for
+plan authoring. Plan presence, observations, assessments and acceptance are distinct.

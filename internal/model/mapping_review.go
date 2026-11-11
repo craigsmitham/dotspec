@@ -83,7 +83,7 @@ func (m *domainMapper) assumptionDetails(r Record, s *Section) {
 		case "Basis", "Applicability":
 			m.section(r, strings.ToLower(sub.Title), sub)
 		case "Validation plan":
-			m.wrapper(r, "validation_plan", sub, map[string]string{"Method": "method", "Procedure": "method", "Success criteria": "success_criteria", "Conditions": "conditions", "Evidence to retain": "evidence_to_retain"})
+			m.assessmentSection(r, sub)
 		case "Open question", "Open questions":
 			m.openQuestions(r, []*Section{sub})
 		default:

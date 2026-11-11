@@ -35,7 +35,7 @@ If a target is unknown, record the open question and the evidence needed to choo
 
 ## Verification plan
 
-Describe the assessment method, acceptance conditions, and evidence to retain.
+Describe how to check a system or process realization against this obligation, including conditions, success criteria and evidence to retain. This plan is not a completed verification result.
 
 ## Criterion
 

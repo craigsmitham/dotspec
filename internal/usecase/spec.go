@@ -131,6 +131,7 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 // export separately exposes source-backed scenario and extension records. File
 // ownership does not set the system boundary.
 type UseCase struct {
+	ValidationPlan       string                         `json:"validation_plan,omitempty"`
 	References           *specfile.ReferenceDocument    `json:"-"`
 	ID                   string                         `json:"id,omitempty"`
 	Slug                 string                         `json:"slug"`
@@ -205,7 +206,7 @@ func Parse(data []byte) (*UseCase, error) {
 		return nil, err
 	}
 	ids.AddAnchors(doc.Anchors)
-	fields := map[string]*string{
+	fields := map[string]*string{"Validation plan": &spec.ValidationPlan,
 		"Goal": &spec.Goal, "System boundary": &spec.BoundaryDescription,
 		"Primary actor": &spec.PrimaryActor, "Goal level": &spec.GoalLevel,
 		"Trigger": &spec.Trigger, "Preconditions": &spec.Preconditions,

@@ -1,7 +1,7 @@
 # Specification model
 
 [dotspec.yaml](dotspec.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.12.0-draft`; the JSON
+specification snapshots. The model version is `0.13.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
@@ -269,7 +269,7 @@ and the [generated overview](../docs/reference/system-overview-example.md).
 
 ## Jobs, user needs and capabilities
 
-Version `0.12.0-draft` and mapping `dotspec-markdown/11` add:
+Version `0.13.0-draft` and mapping `dotspec-markdown/12` add:
 
 - Shared `DesiredOutcome.applies_to` relationships to jobs and steps, independent
   of the single declaring owner. Named outcomes have short heading labels,

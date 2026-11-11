@@ -13,8 +13,13 @@ The canonical [LinkML model](../model/dotspec.yaml) defines the records and thei
 relationships. The [generated reference](reference/model/index.md) describes
 every field. The [relationship reference](reference/model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.12.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/11`.
+`model_version` is `0.13.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/12`.
+
+The [verification and validation vocabulary](verification-and-validation.md)
+distinguishes requirements quality, requirements fitness, system conformance and
+system fitness. Shared AssessmentPlan/AssessmentCase values keep those plan roles
+separate through their owning fields and explicit subject and basis.
 
 ## Export and validate a snapshot
 

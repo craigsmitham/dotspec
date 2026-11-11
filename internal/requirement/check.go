@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/craigsmitham/dotspec/internal/obligation"
 )
 
 // Check suggests missing content. It does not judge the design's coherence,
@@ -13,7 +14,7 @@ func Check(spec *Requirement) []diagnostic.Diagnostic {
 	for _, field := range []struct{ rule, name, value, message string }{
 		{"requirement.applies-to", "Applies to", spec.Applicability, "Identify the subject and applicable conditions, workload, or population."},
 		{"requirement.statement", "Statement", spec.Statement, "State one required result, rule, property, or restriction."},
-		{"requirement.verification", "Verification plan", spec.VerificationPlan + spec.MeasurementPlan, "Describe how to assess the statement and retain the evidence."},
+		{"requirement.verification", "Verification plan", spec.VerificationPlan + spec.MeasurementPlan, "Record assessment guidance for checking a realization against the obligation; a plan is not a verification result."},
 		{"requirement.rationale", "Rationale", spec.Rationale, "Explain why this obligation is needed and reference its source or governing goal."},
 	} {
 		if strings.TrimSpace(field.value) != "" {
@@ -25,6 +26,11 @@ func Check(spec *Requirement) []diagnostic.Diagnostic {
 		}
 		location.Path, location.Element = spec.Path, field.name
 		suggestions = append(suggestions, diagnostic.Advice(field.rule, field.message, location))
+	}
+	if missing := spec.MeasurementGuidance.Missing(); len(missing) > 0 {
+		location := spec.SectionLocations["Measurement plan"]
+		location.Path, location.Element = spec.Path, "Measurement plan"
+		suggestions = append(suggestions, diagnostic.Advice("requirement.measurement-basis", obligation.MeasurementMessage(missing), location))
 	}
 	return suggestions
 }

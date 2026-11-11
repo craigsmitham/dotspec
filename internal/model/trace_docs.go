@@ -201,7 +201,7 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		fmt.Fprintf(&out, "| %s | %s | %s |\n", link(target), traceList(direct), traceList(further))
 	}
-	out.WriteString("\n## Verification guidance\n\nThis inventory covers standalone requirements and explicitly distinguished obligation clauses. Other normative prose is not automatically decomposed. Guidance is a plan, not an executed check. Revision-bound executions, satisfaction claims and evidence verdicts are not represented by this view.\n\n| Obligation | Authored check guidance | Execution evidence |\n| --- | --- | --- |\n")
+	out.WriteString("\n## System verification planning\n\nThis inventory covers standalone requirements and explicitly distinguished obligation clauses. Other normative prose is not automatically decomposed. Guidance plans assessment of realizations against obligations; it is not an executed check or requirements-quality review. Revision-bound executions, satisfaction claims and evidence verdicts are not represented by this view.\n\n| Obligation | Authored check guidance | Execution evidence |\n| --- | --- | --- |\n")
 	count = 0
 	for _, r := range elements {
 		if !designKind(String(r, "kind"), "Requirement or ObligationClause") {

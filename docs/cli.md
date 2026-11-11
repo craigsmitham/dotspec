@@ -125,7 +125,7 @@ Check all supported specifications in a project subtree
 dotspec check [flags]
 ```
 
-Check quality-model, business-rule, system, job, use-case, concept, requirement, and quality specifications using the same discovery rules as list.
+Check quality-model, business-rule, system, job, use-case, concept, requirement, and quality specifications using the same discovery rules as list. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
@@ -627,7 +627,7 @@ Generate a Project, Environment, Goals, System reading perspective
 dotspec model pegs [flags]
 ```
 
-Generate a Project, Environment, Goals, System reading perspective. Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.
+Generate a Project, Environment, Goals, System reading perspective. Requirements verification concerns specification quality; requirements and system validation concern needs and intended use. Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
@@ -649,7 +649,7 @@ Generate advisory requirements review and open-question inventory
 dotspec model review [flags]
 ```
 
-Generate advisory requirements review and open-question inventory. Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.
+Generate advisory requirements review and open-question inventory. Requirements verification concerns specification quality; requirements and system validation concern needs and intended use. Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
@@ -707,7 +707,7 @@ Check a snapshot's shape, references, source fidelity, and coverage
 dotspec model validate SNAPSHOT [flags]
 ```
 
-Validate a snapshot file, or use - to read standard input. Validation checks the model itself; faithfully represented authoring errors do not make a snapshot invalid. No source paths or external targets are fetched. External payload locators can be checked structurally; their byte availability is not verified offline.
+Validate a snapshot file, or use - to read standard input. Snapshot validation checks representation conformance and integrity, not requirements fitness or system behavior; faithfully represented authoring errors do not make a snapshot invalid. No source paths or external targets are fetched. External payload locators can be checked structurally; their byte availability is not verified offline.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 

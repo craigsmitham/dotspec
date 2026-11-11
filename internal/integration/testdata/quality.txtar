@@ -23,7 +23,9 @@ stdout 'Quality attributes: diagnostics, accessibility'
 stdout 'Ancestor quality attributes: usability'
 status 0 dotspec quality check work --json
 stdout '"context_files_checked": 1'
-stdout '"advice": 0'
+stdout '"advice": 1'
+stdout 'quality.measurement-basis'
+stdout 'no separately identified criterion'
 ! stderr .
 status 0 dotspec check --json
 stdout '"files_checked": 2'

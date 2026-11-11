@@ -3,7 +3,7 @@
 Use this guide when preparing a specification for stakeholder review or checking
 what an evolving draft leaves unresolved. Add only the structures that help a
 reader make a decision, then generate a consolidated review. Missing information
-produces advisory prompts; it does not make an otherwise valid draft invalid.
+produces advisory prompts; it does not make an draft that conforms to the authoring format structurally invalid.
 
 ## Generate the review
 
@@ -18,14 +18,87 @@ Regenerate these files after changing specifications; edit their source document
 
 The [review example](reference/requirements-review-example.md) deliberately
 includes gaps. The report shows recorded goal contribution paths, scenario
-relationships, environment and boundaries, verification guidance, open questions,
-and glossary collisions. Its scope is the export's acquired specifications and
+relationships, environment and boundaries, assumption assessments, validation plans,
+system verification guidance, open questions, and glossary collisions. Requirements
+quality and needs/intent are distinct review purposes; see
+[Verification and validation](verification-and-validation.md) for the terminology. Its scope is the export's acquired specifications and
 direct reference context, not everything that may exist in the organization.
 
 The [PEGS example](reference/pegs-example.md) arranges the same model into Project,
 Environment, Goals and System reading perspectives. Business, user and software
 requirements remain the model's concern subsets. PEGS neither replaces those
 subsets nor introduces a required authoring order.
+
+## Plan verification and validation explicitly
+
+Use Verification plan on an obligation to describe how a realization will be checked
+against it. Use Validation plan on a requirement, system, concept, use case or other
+traceable element to assess its stated subject against needs and intended use.
+Both fields use the neutral `AssessmentPlan` structure, with `AssessmentCase` values
+for named cases. They are plans, not observations, assessment conclusions or acceptance.
+
+```markdown
+## Validation plan
+
+### Subject
+
+The proposed recovery workflow in the prototype, identified by revision.
+
+### Basis
+
+[Recover lost work](jobs/recover.job.spec.md).
+
+### Participants
+
+Representative workspace members and the recovery-policy stakeholder.
+
+### Method
+
+Observe participants attempting recovery, then discuss unmet needs.
+
+### Success criteria
+
+Participants recover the intended document and resume their interrupted work.
+
+### Conditions
+
+Representative mobile and desktop sessions, including reconnection.
+
+### Cases
+
+#### Resume interrupted work
+
+Ask a participant to recover a mistakenly deleted document.
+
+##### Expected result
+
+The participant identifies the intended document and resumes the interrupted task.
+
+### Evidence to retain
+
+Retain observations, revision, conditions and obstacles; record the assessment and
+stakeholder acceptance decision separately.
+```
+
+For requirements validation, identify the proposed requirement as Subject and the
+needs or parent intent as Basis. For system validation, identify the prototype or
+realization and its intended use. A method or `supports` link does not establish
+that either assessment has happened. The examples intentionally record plans only.
+
+Plan details are optional and may remain in prose. The review prompts when Subject,
+Basis, Participants, Method, Success criteria, Conditions or Evidence to retain are
+not separately identified; the narrative may already supply them. Do not create
+new obligations merely to describe assessment activities.
+
+A Measurement plan records how to collect observations. It can provide the whole
+verification approach when the criterion, comparison and context are also recorded;
+a second Verification plan is unnecessary. Put a complete narrative under Criterion,
+use its Comparison and Target subsections, or state Success criteria within the
+Measurement plan. Link the authoritative criterion rather than duplicating a target
+that is already defined elsewhere. Put context under Applies to or Conditions. If measurement-only
+guidance lacks these separately recorded details, checks offer advisory prompts.
+They do not interpret arbitrary prose or certify adequacy. A Validation plan alone
+does not satisfy the need for system-verification guidance.
 
 ## Make questions actionable
 
@@ -111,7 +184,9 @@ The observed offset remains within the agreed tolerance.
 Basis can cite existing Evidence statements or native research artifacts; use
 Derived from for a typed derivation and Relies on to identify consumers of the
 assumption. Applicability here is prose describing conditions, not a duplicate
-requirement `applies_to` relationship. Validation plans describe proposed checks,
+requirement `applies_to` relationship. Assumption validation plans assess both empirical support under the stated conditions
+and whether reliance is justified for intended use. Observations support bounded
+claims, not guarantees that a premise always holds. Plans describe proposed checks,
 not proof that a premise holds. The review prompts for missing basis,
 applicability and validation guidance.
 

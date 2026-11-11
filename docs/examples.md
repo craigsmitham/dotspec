@@ -393,7 +393,7 @@ dotspec quality show diagnostic-severity --json
     "applicability": "Identify the subject and the conditions, workload, or population covered by this requirement.",
     "statement": "State one coherent quality obligation.\nIf a target is unknown, record the open question and the evidence needed to choose it.",
     "criterion": "Record optional measures, comparisons, targets, units and conditions for assessing the statement.",
-    "verification_plan": "Describe the assessment method, acceptance conditions, and evidence to retain.",
+    "verification_plan": "Describe how to check a system or process realization against this obligation, including conditions, success criteria and evidence to retain. This plan is not a completed verification result.",
     "measurement_plan": "Describe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.",
     "rationale": "Explain why this quality matters and any relevant tradeoffs.",
     "quality_attributes": [],
@@ -403,7 +403,7 @@ dotspec quality show diagnostic-severity --json
       "ancestors": [],
       "undefined": []
     },
-    "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and the conditions, workload, or population covered by this requirement.\n\n## Statement\n\nState one coherent quality obligation.\nIf a target is unknown, record the open question and the evidence needed to choose it.\n\n## Verification plan\n\nDescribe the assessment method, acceptance conditions, and evidence to retain.\n\n## Criterion\n\nRecord optional measures, comparisons, targets, units and conditions for assessing the statement.\n\n## Measurement plan\n\nDescribe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.",
+    "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and the conditions, workload, or population covered by this requirement.\n\n## Statement\n\nState one coherent quality obligation.\nIf a target is unknown, record the open question and the evidence needed to choose it.\n\n## Verification plan\n\nDescribe how to check a system or process realization against this obligation, including conditions, success criteria and evidence to retain. This plan is not a completed verification result.\n\n## Criterion\n\nRecord optional measures, comparisons, targets, units and conditions for assessing the statement.\n\n## Measurement plan\n\nDescribe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.",
     "path": "$PROJECT/specs/quality/diagnostic-severity.quality.spec.md",
     "system": {
       "name": "New system",
@@ -479,7 +479,7 @@ dotspec requirement show reject-existing-target --json
     "name": "New requirement",
     "applicability": "Identify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.",
     "statement": "State one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.",
-    "verification_plan": "Describe how to establish that the obligation holds, including success criteria and evidence to retain.",
+    "verification_plan": "Describe how to check a system or process realization against this obligation, including conditions, success criteria and evidence to retain. This plan is not a completed verification result.",
     "rationale": "Explain why this obligation is needed and reference its source or governing goal.",
     "quality_attributes": [],
     "classification": {
@@ -488,7 +488,7 @@ dotspec requirement show reject-existing-target --json
       "ancestors": [],
       "undefined": []
     },
-    "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification plan\n\nDescribe how to establish that the obligation holds, including success criteria and evidence to retain.",
+    "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification plan\n\nDescribe how to check a system or process realization against this obligation, including conditions, success criteria and evidence to retain. This plan is not a completed verification result.",
     "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
     "system": {
       "name": "New system",
@@ -533,7 +533,7 @@ dotspec requirement list --json
           "applicability": "Identify the subject and the conditions, workload, or population covered by this requirement.",
           "statement": "State one coherent quality obligation.\nIf a target is unknown, record the open question and the evidence needed to choose it.",
           "criterion": "Record optional measures, comparisons, targets, units and conditions for assessing the statement.",
-          "verification_plan": "Describe the assessment method, acceptance conditions, and evidence to retain.",
+          "verification_plan": "Describe how to check a system or process realization against this obligation, including conditions, success criteria and evidence to retain. This plan is not a completed verification result.",
           "measurement_plan": "Describe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.",
           "rationale": "Explain why this quality matters and any relevant tradeoffs.",
           "quality_attributes": [],
@@ -543,7 +543,7 @@ dotspec requirement list --json
             "ancestors": [],
             "undefined": []
           },
-          "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and the conditions, workload, or population covered by this requirement.\n\n## Statement\n\nState one coherent quality obligation.\nIf a target is unknown, record the open question and the evidence needed to choose it.\n\n## Verification plan\n\nDescribe the assessment method, acceptance conditions, and evidence to retain.\n\n## Criterion\n\nRecord optional measures, comparisons, targets, units and conditions for assessing the statement.\n\n## Measurement plan\n\nDescribe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.",
+          "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and the conditions, workload, or population covered by this requirement.\n\n## Statement\n\nState one coherent quality obligation.\nIf a target is unknown, record the open question and the evidence needed to choose it.\n\n## Verification plan\n\nDescribe how to check a system or process realization against this obligation, including conditions, success criteria and evidence to retain. This plan is not a completed verification result.\n\n## Criterion\n\nRecord optional measures, comparisons, targets, units and conditions for assessing the statement.\n\n## Measurement plan\n\nDescribe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.",
           "path": "$PROJECT/specs/quality/diagnostic-severity.quality.spec.md",
           "system": {
             "name": "New system",
@@ -565,7 +565,7 @@ dotspec requirement list --json
           "name": "New requirement",
           "applicability": "Identify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.",
           "statement": "State one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.",
-          "verification_plan": "Describe how to establish that the obligation holds, including success criteria and evidence to retain.",
+          "verification_plan": "Describe how to check a system or process realization against this obligation, including conditions, success criteria and evidence to retain. This plan is not a completed verification result.",
           "rationale": "Explain why this obligation is needed and reference its source or governing goal.",
           "quality_attributes": [],
           "classification": {
@@ -574,7 +574,7 @@ dotspec requirement list --json
             "ancestors": [],
             "undefined": []
           },
-          "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification plan\n\nDescribe how to establish that the obligation holds, including success criteria and evidence to retain.",
+          "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification plan\n\nDescribe how to check a system or process realization against this obligation, including conditions, success criteria and evidence to retain. This plan is not a completed verification result.",
           "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
           "system": {
             "name": "New system",

@@ -44,7 +44,7 @@ func TestRequirementPreservesContentAndLabels(t *testing.T) {
 	if spec.ID != "repeatable-inspection" || spec.System != nil || !reflect.DeepEqual(spec.QualityAttributes, []string{"repeatability", "diagnosability"}) || spec.Applicability == "" || spec.Statement == "" || spec.MeasurementPlan == "" || spec.Rationale == "" {
 		t.Fatalf("fields: %+v", spec)
 	}
-	if !strings.Contains(spec.MeasurementPlan, "### Criterion") || strings.Contains(spec.Statement, "measurement subsection") || !strings.Contains(spec.Markdown, "## Related specifications") || len(Check(spec)) != 0 {
+	if !strings.Contains(spec.MeasurementPlan, "### Criterion") || strings.Contains(spec.Statement, "measurement subsection") || !strings.Contains(spec.Markdown, "## Related specifications") || len(Check(spec)) != 1 || Check(spec)[0].Rule != "quality.measurement-basis" {
 		t.Fatalf("Markdown and advice: %+v", spec)
 	}
 	if _, err := Parse([]byte(strings.Replace(example, "# Repeatable inspection", "# A different title", 1))); err != nil {

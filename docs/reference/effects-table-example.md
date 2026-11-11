@@ -2,12 +2,16 @@
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.12.0-draft`; mapping `dotspec-markdown/11`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
+Model `0.13.0-draft`; mapping `dotspec-markdown/12`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
 
 ## Inspection findings
 
-- **advice** `relationship.verification_plan`: No verification or measurement plan is recorded for this obligation; review how it will be checked.
-- **advice** `requirement.verification`: Describe how to assess the statement and retain the evidence.
+- **advice** `relationship.motivation`: No explicit motivation or derivation is recorded for this obligation; review its justification.
+- **advice** `relationship.measurement_basis`: Measurement guidance is recorded, but no separately identified criterion, conditions or applicability is recorded. Review how observations will be compared with the obligation; prose may already supply the information. Guidance presence is not a verification result.
+- **advice** `relationship.verification_plan`: No system verification or measurement plan is recorded for this obligation; review how a realization will be checked.
+- **advice** `quality.applies-to`: Identify the subject and applicable conditions, workload, or population.
+- **advice** `quality.measurement-basis`: Measurement guidance is recorded, but no separately identified criterion, conditions or applicability is recorded. Review how observations will be compared with the obligation; prose may already supply the information. Guidance presence is not a verification result.
+- **advice** `requirement.verification`: Record assessment guidance for checking a realization against the obligation; a plan is not a verification result.
 
 ## Concepts
 
@@ -18,6 +22,36 @@ Model `0.12.0-draft`; mapping `dotspec-markdown/11`. Relationships reflect expli
 #### Purpose
 
 Make deletion reversible until a retained item expires.
+
+#### Validation plan (needs and intended use)
+
+##### Subject
+
+The proposed reversible-deletion concept; assess the operational principle against intended recovery use.
+
+##### Basis
+
+[Restore a document](../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md).
+
+##### Participants
+
+Workspace members and the recovery-policy stakeholder.
+
+##### Method
+
+Review examples and a prototype with the participants, including counterexamples and unsupported situations.
+
+##### Success criteria
+
+The participants can explain how the proposal addresses recovery needs, and unresolved mismatches are recorded for revision.
+
+##### Conditions
+
+Representative accidental-deletion situations and the stated recovery-window boundary.
+
+##### Evidence to retain
+
+Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.
 
 #### Operational principles
 

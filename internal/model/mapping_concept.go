@@ -99,35 +99,13 @@ func (m *domainMapper) requirement(r Record, s *Section) bool {
 		}
 	case "Statement":
 		m.section(r, "statement", s)
-	case "Verification plan":
-		m.wrapper(r, "verification_plan", s, map[string]string{"Method": "method", "Procedure": "method", "Success criteria": "success_criteria", "Conditions": "conditions", "Evidence to retain": "evidence_to_retain", "Evidence retention": "evidence_to_retain"}, "Cases")
-		for _, sub := range s.Children {
-			if sub.Title == "Cases" {
-				cases, _ := Object(r["verification_plan"])["cases"].([]Record)
-				if cases == nil {
-					cases = []Record{}
-				}
-				for _, child := range sub.Children {
-					v := Record{"name": m.doc.Rich([]string{child.HeadingID}), "procedure": m.doc.Rich(child.Intro)}
-					for _, detail := range child.Children {
-						field := map[string]string{"Conditions": "conditions", "Procedure": "procedure", "Expected result": "expected_result", "Evidence to retain": "evidence_to_retain"}[detail.Title]
-						if field != "" {
-							m.setRich(v, field, detail.Content)
-						} else {
-							m.extension(r, detail)
-						}
-					}
-					cases = append(cases, v)
-				}
-				Object(r["verification_plan"])["cases"] = cases
-				m.bind(r, "verification_plan.cases", []string{sub.HeadingID}, "structural_wrapper", "verification-cases")
-			}
-		}
+	case "Verification plan", "Validation plan":
+		return m.assessmentSection(r, s)
 	case "Criterion":
 		m.wrapper(r, "criterion", s, map[string]string{"Measure": "measure", "Comparison": "comparison", "Target": "target", "Units": "units", "Aggregation": "aggregation", "Window": "window", "Observation window": "window", "Conditions": "conditions", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"}, "Open question", "Open questions")
 		m.openQuestions(r, s.Children)
 	case "Measurement plan":
-		m.wrapper(r, "measurement_plan", s, map[string]string{"Sampling": "sampling", "Conditions": "conditions", "Procedure": "procedure", "Evidence to retain": "evidence_to_retain", "Evidence retention": "evidence_to_retain", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"})
+		m.wrapper(r, "measurement_plan", s, map[string]string{"Success criteria": "success_criteria", "Sampling": "sampling", "Conditions": "conditions", "Procedure": "procedure", "Evidence to retain": "evidence_to_retain", "Evidence retention": "evidence_to_retain", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"})
 	default:
 		return false
 	}

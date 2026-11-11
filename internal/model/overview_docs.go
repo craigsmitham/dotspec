@@ -115,7 +115,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		fmt.Fprintf(&out, "| %s | %s | %s | %s |\n", link(String(r, "id")), link(String(r, "system")), links(Strings(r["groups"])), links(components))
 	}
-	out.WriteString("\n## Applicable obligations\n\nOnly explicit applicability to acquired systems and components is listed. Declaration inside a component does not implicitly supply an applicability target. Plans describe intended verification; their presence does not prove satisfaction.\n\n| Obligation | Subjects | Verification guidance | Measurement guidance |\n| --- | --- | --- | --- |\n")
+	out.WriteString("\n## Applicable obligations\n\nOnly explicit applicability to acquired systems and components is listed. Declaration inside a component does not implicitly supply an applicability target. Plans describe intended system verification; their presence does not prove satisfaction.\n\n| Obligation | Subjects | Verification guidance | Measurement guidance |\n| --- | --- | --- | --- |\n")
 	guidance := func(r Record, field string) string {
 		if strings.TrimSpace(d.text(Object(r[field])["content"])) != "" {
 			return "Recorded in source"
@@ -173,9 +173,9 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 				definitions = append(definitions, d.text(Record{"content_nodes": []string{String(n, "id")}}))
 			}
 		}
-		for _, field := range []string{"purpose", "scope", "responsibilities", "boundary_description", "contracts", "architecture", "implementation", "part_of_content", "groups_content", "statement", "verification_plan", "measurement_plan", "criterion"} {
+		for _, field := range []string{"purpose", "scope", "responsibilities", "boundary_description", "contracts", "architecture", "implementation", "part_of_content", "groups_content", "statement", "verification_plan", "validation_plan", "measurement_plan", "criterion"} {
 			value := r[field]
-			if field == "contracts" || field == "architecture" || field == "implementation" || field == "verification_plan" || field == "measurement_plan" || field == "criterion" {
+			if field == "contracts" || field == "architecture" || field == "implementation" || field == "validation_plan" || field == "verification_plan" || field == "measurement_plan" || field == "criterion" {
 				value = Object(value)["content"]
 			}
 			text := d.text(value)
@@ -198,6 +198,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		return "", err
 	}
 	review.boundaries()
+	review.assumptions()
 	out.WriteString(review.out.String())
 	return strings.TrimRight(out.String(), "\n") + "\n", nil
 }

@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/dotspec.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.12.0-draft
+version: 0.13.0-draft
 description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
   is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
   and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
@@ -77,7 +77,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.12.0-draft
+        equals_string: 0.13.0-draft
       mapping_profile:
         range: string
         description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
@@ -891,6 +891,11 @@ classes:
     is_a: DomainElement
     abstract: true
     attributes:
+      validation_plan:
+        range: AssessmentPlan
+        inlined: true
+        description: Plan to assess a proposed requirement, need, concept or solution against stakeholder needs
+          and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.
       supports_content:
         range: RichContent
         inlined: true
@@ -1621,9 +1626,9 @@ classes:
         inlined: true
         description: Conditions, locations or periods in which this assumption is expected to hold.
       validation_plan:
-        range: VerificationPlan
+        range: AssessmentPlan
         inlined: true
-        description: How and when to check the environmental premise; not evidence it is true.
+        description: Plan to assess empirical support for the premise in its stated conditions and whether reliance on it is justified for intended use; not a guarantee that it holds.
       owner:
         range: System
         required: true
@@ -3407,11 +3412,29 @@ classes:
       exclusions:
         range: RichContent
         inlined: true
-  VerificationPlan:
+  AssessmentPlan:
     in_subset:
+    - business-requirements
+    - user-requirements
     - software-requirements
-    description: Verification section content with optional explicit plan components, including evidence retention.
+    description: Shared assessment structure. The owning verification_plan or validation_plan field identifies
+      the role; the authored subject and basis identify what is assessed and against what. The method alone
+      does not determine the purpose. A plan is not execution evidence or a verdict.
     attributes:
+      subject:
+        range: RichContent
+        inlined: true
+        description: The proposed requirement, design, prototype, implementation or environmental premise to assess;
+          identify revisions when planning execution.
+      basis:
+        range: ContextualReferences
+        inlined: true
+        description: Authored criteria, stakeholder needs, goals, obligations or evidence against which the subject
+          is assessed. Citations do not establish satisfaction.
+      participants:
+        range: RichContent
+        inlined: true
+        description: Relevant users, stakeholders or assessors and their roles; naming them is not endorsement.
       content:
         range: RichContent
         inlined: true
@@ -3426,17 +3449,19 @@ classes:
         range: RichContent
         inlined: true
       cases:
-        range: VerificationCase
+        range: AssessmentCase
         multivalued: true
         inlined_as_list: true
         list_elements_ordered: true
       evidence_to_retain:
         range: RichContent
         inlined: true
-  VerificationCase:
+  AssessmentCase:
     in_subset:
+    - business-requirements
+    - user-requirements
     - software-requirements
-    description: An explicitly distinguished verification case.
+    description: An explicitly distinguished assessment case; its parent plan supplies verification or validation purpose. A case definition is not an observation or result.
     attributes:
       name:
         range: RichContent
@@ -3497,6 +3522,11 @@ classes:
     - software-requirements
     description: Measurement narrative and optional explicit procedure clauses.
     attributes:
+      success_criteria:
+        range: RichContent
+        inlined: true
+        description: Authored rule for interpreting measurements against the obligation, including a target or comparison
+          where appropriate. No conformance judgment is inferred.
       content:
         range: RichContent
         inlined: true
@@ -4660,8 +4690,9 @@ classes:
         range: RichContent
         inlined: true
       verification_plan:
-        range: VerificationPlan
+        range: AssessmentPlan
         inlined: true
+        description: Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence.
       criterion:
         range: QualityCriterion
         inlined: true

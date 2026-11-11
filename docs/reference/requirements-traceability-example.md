@@ -2,7 +2,7 @@
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.12.0-draft`; mapping `dotspec-markdown/11`. Business/user/software subsets describe concerns; core/supporting/generic classifies model subsets. Artifact kinds and relationships have separate meanings.
+Model `0.13.0-draft`; mapping `dotspec-markdown/12`. Business/user/software subsets describe concerns; core/supporting/generic classifies model subsets. Artifact kinds and relationships have separate meanings.
 
 This view covers only acquired records and resolved explicit relationships within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior. Review candidates are not proven impacts; paths do not establish satisfaction, achieved outcomes, completeness or normative authority.
 
@@ -91,9 +91,9 @@ Reverse navigation is generated from the same typed fields. Each direct candidat
 | [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) (applies to) | None recorded in acquired scope |
 | [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) (refines) | None recorded in acquired scope |
 
-## Verification guidance
+## System verification planning
 
-This inventory covers standalone requirements and explicitly distinguished obligation clauses. Other normative prose is not automatically decomposed. Guidance is a plan, not an executed check. Revision-bound executions, satisfaction claims and evidence verdicts are not represented by this view.
+This inventory covers standalone requirements and explicitly distinguished obligation clauses. Other normative prose is not automatically decomposed. Guidance plans assessment of realizations against obligations; it is not an executed check or requirements-quality review. Revision-bound executions, satisfaction claims and evidence verdicts are not represented by this view.
 
 | Obligation | Authored check guidance | Execution evidence |
 | --- | --- | --- |

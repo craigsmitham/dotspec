@@ -1,17 +1,21 @@
 # Requirements review
 
-Generated from acquired specifications. Findings below are advisory review prompts, not completeness, acceptance or implementation claims. Missing links mean **no relationship recorded in this scope**. Drafts remain valid.
+Generated from acquired specifications. Findings below are advisory review prompts, not completeness, acceptance or implementation claims. Missing links mean **no relationship recorded in this scope**. Drafts may conform to the authoring format while requirements verification and validation remain unfinished.
 
-Model `0.12.0-draft`; mapping `dotspec-markdown/11`.
+Model `0.13.0-draft`; mapping `dotspec-markdown/12`.
 
-## Goal contribution paths
+## Needs and intent
+
+Requirements validation asks whether the specification expresses the right needs. System validation asks whether a proposed or realized solution serves intended use. The relationships below identify review questions, not either conclusion.
+
+### Goal contribution paths
 
 Paths follow explicit supports, derived-from and refinement links from obligations, concept actions or use cases. A recorded path identifies intent; reviewers must assess whether the behavior is sufficient.
 
 - [Reduce lost work](<../../examples/requirements-review/specs/system.spec.md#reduce-lost-work>): Contribution path recorded; sufficiency requires review.
 - [Reduce retention cost](<../../examples/requirements-review/specs/system.spec.md#reduce-retention-cost>): No contribution path recorded from specified behavior; review required.
 
-## Scenario grounding
+### Scenario grounding
 
 An Illustrates link identifies a rule or action behind a step. Participation links and ordinary citations do not establish this relationship; not every conversational step needs a separate obligation.
 
@@ -20,7 +24,7 @@ An Illustrates link identifies a rule or action behind a step. Participation lin
 - [Main success scenario / ScenarioStep 3](<../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md>): no rule or action relationship recorded; review required.
 ## Environment and boundaries
 
-Operating conditions and constraints describe what the solution must accommodate. Assumptions are premises relied upon and require a justified basis and validation. Explicit exclusions delimit scope. External partners are separate from structural parents.
+Operating conditions and constraints describe what the solution must accommodate. Assumptions are assessed separately for evidence and justified reliance. Explicit exclusions delimit scope. External partners are separate from structural parents.
 
 ### System: [Platform clock](<../../examples/requirements-review/clock/specs/system.spec.md#platform-clock>)
 
@@ -70,7 +74,11 @@ Accept restoration requests from authorized clients. The native contract remains
 
 Review required: Provided interfaces Restoration requests has no native contract reference recorded.
 
-### Assumption: [Trusted time](<../../examples/requirements-review/specs/system.spec.md#trusted-time>)
+## Assumptions: evidence and justified reliance
+
+Assess both empirical support in the stated conditions and whether relying on the premise is appropriate for intended use. An observation supports a bounded claim, not a guarantee that the premise always holds.
+
+### [Trusted time](<../../examples/requirements-review/specs/system.spec.md#trusted-time>)
 
 **Statement**
 
@@ -84,7 +92,23 @@ The [clock observation](../../examples/requirements-review/specs/system.spec.md#
 
 Retention calculations in the managed production environment while the platform clock service meets its stated operating conditions.
 
-**Validation plan**
+**Assumption validation plan**
+
+#### Subject
+
+The premise that production clock offset stays within the agreed tolerance, and the justification for relying on it at the recovery boundary.
+
+#### Basis
+
+[Clock observation](../../examples/requirements-review/specs/system.spec.md#clock-observation) and the [recovery window](../../examples/requirements-review/specs/business-rules/retention.business-rule.spec.md).
+
+#### Participants
+
+Platform operators and the retention reviewer.
+
+#### Conditions
+
+The managed production environment, including clock resynchronization events.
 
 #### Method
 
@@ -94,19 +118,195 @@ Compare platform time readings to an independent reference before deployment and
 
 Offset remains within the retention boundary's agreed tolerance. The tolerance is still an open question.
 
-## Obligation verification
+## Validation planning
 
-Plans are guidance for verification or measurement, not evidence of execution.
+Identify the subject and the needs, intended use or other basis for the assessment. Requirements validation assesses proposed obligations; system validation assesses proposed or realized solutions. A method or supports link alone establishes neither purpose nor a result.
+
+### System: [Platform clock](<../../examples/requirements-review/clock/specs/system.spec.md#platform-clock>)
+
+No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
+
+### Concept: [Trash](<../../examples/requirements-review/specs/concepts/trash.concept.spec.md#trash>)
+
+**Validation plan**
+
+#### Subject
+
+The proposed reversible-deletion concept; assess the operational principle against intended recovery use.
+
+#### Basis
+
+[Restore a document](../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md).
+
+#### Participants
+
+Workspace members and the recovery-policy stakeholder.
+
+#### Method
+
+Review examples and a prototype with the participants, including counterexamples and unsupported situations.
+
+#### Success criteria
+
+The participants can explain how the proposal addresses recovery needs, and unresolved mismatches are recorded for revision.
+
+#### Conditions
+
+Representative accidental-deletion situations and the stated recovery-window boundary.
+
+#### Evidence to retain
+
+Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.
+
+### QualityRequirement: [Timely recovery feedback](<../../examples/requirements-review/specs/quality/recovery-feedback.quality.spec.md#timely-recovery-feedback>)
+
+No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
+
+### GeneralRequirement: [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
+
+**Validation plan**
+
+#### Subject
+
+The proposed obligation to preserve all four metadata fields; assess whether it correctly expresses recovery needs.
+
+#### Basis
+
+[Recover lost work](../../examples/requirements-review/specs/jobs/recover.job.spec.md).
+
+#### Participants
+
+Workspace members and the recovery-policy stakeholder.
+
+#### Method
+
+Review examples and a prototype with the participants, including counterexamples and unsupported situations.
+
+#### Success criteria
+
+The participants can explain how the proposal addresses recovery needs, and unresolved mismatches are recorded for revision.
+
+#### Conditions
+
+Representative accidental-deletion situations and the stated recovery-window boundary.
+
+#### Evidence to retain
+
+Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.
+
+### System: [Document workspace](<../../examples/requirements-review/specs/system.spec.md#document-workspace>)
+
+**Validation plan**
+
+#### Subject
+
+The proposed workspace recovery workflow in a prototype, then the identified release build; this assesses intended use rather than only conformance to the written recovery rule.
+
+#### Basis
+
+[Recover lost work](../../examples/requirements-review/specs/jobs/recover.job.spec.md) and [Reduce lost work](../../examples/requirements-review/specs/system.spec.md#reduce-lost-work).
+
+#### Participants
+
+Representative workspace members, including mobile users, and a stakeholder who owns the recovery policy.
+
+#### Method
+
+Observe representative users attempting recovery with realistic document collections; discuss where the proposed workflow fails their intended progress.
+
+#### Success criteria
+
+Participants recover the intended document and can resume their interrupted task without specialist assistance. Record exceptions and limits rather than generalizing to every user.
+
+#### Conditions
+
+Representative desktop and mobile sessions, including reconnection after intermittent connectivity; record prototype or build revision and participant context.
+
+#### Cases
+
+##### Resume interrupted work
+
+Ask a participant to recover a mistakenly deleted document and resume the task.
+
+###### Expected result
+
+The participant identifies the intended document, recovers it, and resumes the task.
+
+###### Evidence to retain
+
+Consented observation notes, task outcome, revision, conditions and observed obstacles.
+
+#### Evidence to retain
+
+Retain the protocol and observations separately from the assessment of intended-use fitness and any stakeholder acceptance decision. This example records a plan only.
+
+### UseCase: [Restore a document](<../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md#restore-a-document>)
+
+**Validation plan**
+
+#### Subject
+
+The proposed interaction and alternatives; assess whether they support members in resuming interrupted work.
+
+#### Basis
+
+[Recover lost work](../../examples/requirements-review/specs/jobs/recover.job.spec.md).
+
+#### Participants
+
+Workspace members and the recovery-policy stakeholder.
+
+#### Method
+
+Review examples and a prototype with the participants, including counterexamples and unsupported situations.
+
+#### Success criteria
+
+The participants can explain how the proposal addresses recovery needs, and unresolved mismatches are recorded for revision.
+
+#### Conditions
+
+Representative accidental-deletion situations and the stated recovery-window boundary.
+
+#### Evidence to retain
+
+Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.
+
+### ObligationClause: [Restore retained content](<../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md#restore-retained-content>)
+
+No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
+
+## System verification planning
+
+These plans assess realizations against obligations. Requirements verification instead assesses the quality of the requirement statements and set. A plan is distinct from an observation, an evidence-based assessment, and an acceptance decision.
+
+### [Timely recovery feedback](<../../examples/requirements-review/specs/quality/recovery-feedback.quality.spec.md#timely-recovery-feedback>)
+
+**Measurement plan**
+
+#### Procedure
+
+Measure elapsed time from submitting a recovery request to visible feedback.
+
+#### Sampling
+
+Collect observations for representative recovery requests.
+
+Assessment guidance recorded; its adequacy and any verification result are not evaluated.
+
+Review required: Measurement guidance is recorded, but no separately identified criterion, conditions or applicability is recorded. Review how observations will be compared with the obligation; prose may already supply the information. Guidance presence is not a verification result.
 
 ### [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
 
-No verification or measurement guidance recorded; review required.
+No system verification or measurement guidance recorded; review required.
 
 ### [Restore retained content](<../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md#restore-retained-content>)
 
 **Verification plan**
 
 Exercise restoration with retained content and metadata; compare both to their pre-deletion values. Include requests immediately before the recovery deadline.
+
+Assessment guidance recorded; its adequacy and any verification result are not evaluated.
 
 ## Open questions
 
@@ -154,7 +354,11 @@ Who owns the handoff after retained copies expire?
 
 Review required: no Raised by, Raised on, Resolve by, Importance, Evidence needed recorded.
 
-## Terminology review
+## Requirements quality
+
+Requirements verification examines individual statements and the set for clarity, consistency and assessability against declared quality criteria. Terminology checks and inspection findings below supply selected review prompts; passing them does not establish complete requirements verification.
+
+### Terminology review
 
 Use one preferred term consistently in specification prose; declared alternative names and synonym entries remain useful. Collisions below are scoped to the declaring System and require human review. This report does not scan prose for undeclared synonyms.
 
@@ -180,7 +384,11 @@ A background worker could expire retained copies. This suggestion does not presc
 
 A member restores a document one day after deletion and resumes editing.
 
-## Inspection findings
+## Automated inspection findings
 
-- **advice** `relationship.verification_plan`: No verification or measurement plan is recorded for this obligation; review how it will be checked.
-- **advice** `requirement.verification`: Describe how to assess the statement and retain the evidence.
+- **advice** `relationship.motivation`: No explicit motivation or derivation is recorded for this obligation; review its justification.
+- **advice** `relationship.measurement_basis`: Measurement guidance is recorded, but no separately identified criterion, conditions or applicability is recorded. Review how observations will be compared with the obligation; prose may already supply the information. Guidance presence is not a verification result.
+- **advice** `relationship.verification_plan`: No system verification or measurement plan is recorded for this obligation; review how a realization will be checked.
+- **advice** `quality.applies-to`: Identify the subject and applicable conditions, workload, or population.
+- **advice** `quality.measurement-basis`: Measurement guidance is recorded, but no separately identified criterion, conditions or applicability is recorded. Review how observations will be compared with the obligation; prose may already supply the information. Guidance presence is not a verification result.
+- **advice** `requirement.verification`: Record assessment guidance for checking a realization against the obligation; a plan is not a verification result.
