@@ -2,7 +2,7 @@
 id: https://github.com/craigsmitham/dotspec/model/dotspec.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.4.0-draft
+version: 0.5.0-draft
 description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
   is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
   and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
@@ -75,7 +75,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.4.0-draft
+        equals_string: 0.5.0-draft
       mapping_profile:
         range: string
         description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
@@ -1382,8 +1382,8 @@ classes:
       owned_memberships: Scenario.steps
   ScenarioStep:
     in_subset: [software-requirements]
-    description: An explicitly distinguished interaction step; do not manufacture actor/action/result clauses
-      from free prose.
+    description: An explicitly distinguished interaction step, expressed as a label and narrative.
+      Actor, action and result wording remains in the narrative.
     is_a: DomainElement
     slot_usage:
       kind:
@@ -1401,19 +1401,8 @@ classes:
       content:
         range: RichContent
         inlined: true
-      actor:
-        range: ActorMention
-        inlined: true
-      action:
-        range: RichContent
-        inlined: true
-      response:
-        range: RichContent
-        inlined: true
-      outcome:
-        range: RichContent
-        inlined: true
-      governing_references:
+        required: true
+      references:
         range: SourceReference
         multivalued: true
   ExtensionCollection:
@@ -1430,8 +1419,8 @@ classes:
         list_elements_ordered: true
   Extension:
     in_subset: [software-requirements]
-    description: An explicitly distinguished alternative or failure branch. Condition-only entries and expressly
-      unresolved handling are valid.
+    description: An explicitly distinguished alternative or failure branch. Full narrative is retained;
+      condition, location and handling are optional decompositions. Condition-only entries are valid.
     is_a: DomainElement
     slot_usage:
       kind:
@@ -1443,6 +1432,9 @@ classes:
         any_of:
         - range: UseCase
         - range: Extension
+      authored_label:
+        range: string
+        description: Optional authored branch label, including nested or relative labels; not a durable ID.
       content:
         range: RichContent
         inlined: true
@@ -1454,25 +1446,16 @@ classes:
         range: RichContent
         description: Authored branch point, including free prose or labels; no automatic step-number interpretation.
         inlined: true
-      at_step:
-        range: ScenarioStep
-        description: Only when an explicit, resolved step reference exists.
-      response:
+      handling:
         range: RichContent
+        description: Authored handling narrative, including any resumption, conclusion or unresolved question.
         inlined: true
-      flow:
+      steps:
         range: ScenarioStep
-        description: Explicit alternate flow steps; order remains representational.
+        description: Explicit handling steps in source order; no execution semantics are inferred.
         multivalued: true
         list_elements_ordered: true
-      continuation:
-        range: RichContent
-        description: Authored resumption, alternate success or failure conclusion; preserve prose.
-        inlined: true
-      handling_state:
-        range: HandlingState
-        description: Omission means no explicit handling classification; not the same as explicitly unresolved.
-      governing_references:
+      references:
         range: SourceReference
         multivalued: true
       branches:
@@ -1481,7 +1464,7 @@ classes:
         multivalued: true
         list_elements_ordered: true
     annotations:
-      owned_memberships: Extension.flow or Extension.branches
+      owned_memberships: Extension.steps or Extension.branches
   SequenceStatement:
     in_subset: [software-requirements]
     description: An explicit statement about which ordering is representative or required; array order alone
@@ -2150,7 +2133,7 @@ classes:
       object:
         range: ScenarioStep
     annotations:
-      projection_of: Scenario.steps or Extension.flow
+      projection_of: Scenario.steps or Extension.steps
   HasExtension:
     in_subset: [specification-traceability]
     description: A use case or parent branch contains an explicitly authored extension.
@@ -2668,13 +2651,6 @@ enums:
         description: Anxiety.
       habit:
         description: Habit.
-  HandlingState:
-    description: Explicit branch-handling statement, separate from extraction state.
-    permissible_values:
-      specified:
-        description: The author specifies handling.
-      unresolved:
-        description: The author explicitly leaves handling unresolved.
   SequenceMode:
     description: Only populate when explicitly authored.
     permissible_values:

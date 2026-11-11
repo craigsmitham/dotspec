@@ -13,8 +13,8 @@ The canonical [LinkML model](../model/dotspec.yaml) defines the records and thei
 relationships. The [generated reference](reference/model/index.md) describes
 every field. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.4.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/3`.
+`model_version` is `0.5.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/4`.
 
 ## Export and validate a snapshot
 
@@ -51,6 +51,40 @@ structural findings (`0`), specification findings (`1`), and invocation or
 operational failure (`2`). Keep the JSON and inspect its diagnostics and scope
 flags when an export returns a nonzero status. An unusable invocation can fail
 before a snapshot exists.
+
+## Use-case narratives
+
+The core use-case structure is a goal and context, a main success scenario, and
+extensions. An extension retains its full narrative, with optional `condition`,
+`location`, `handling`, handling `steps`, and nested `branches`. A step is a label
+and narrative. Shared source bindings, identity and ordinary references provide
+traceability without prescribing a separate writing form.
+
+This deliberately supports Cockburn's progressive precision: list extension
+conditions first, investigate handling later, and develop only the detail needed
+for the next decision. A handling narrative can say what happens, where the
+interaction resumes, how it concludes, or what remains unresolved. Separate
+response, continuation and handling-status fields add distinctions the author
+need not maintain. Step actor/action/result fields similarly overstructure prose.
+No direct step target is inferred from a branch label; location can be a range,
+a phrase such as “at any time,” or an explicit label.
+
+Nested alternatives remain useful because handling can itself fail. Export
+recognizes explicit nested labels or an Extensions grouping while keeping a Notes
+heading as explanatory content. The source tree preserves all prose, including
+casual narratives that are not decomposed. See the
+[authoring guide](develop-use-cases.md#sketch-the-interaction-then-investigate-alternatives)
+for examples and the [mapping profile](../model/markdown-mapping.md#use-case) for
+precise recognition rules.
+
+The rationale draws on Cockburn's *The Mini-Book on Use Cases*, v1.1b,
+§§1.1, 1.3, 3.2 and 4.1, and *Unifying User Stories, Use Cases, and Story Maps*,
+second edition, §3.2 and its “fine print” on nesting and relaxed numbering.
+Jacobson and Cockburn's public
+[Use Case Foundation](https://alistaircockburn.com/Use%20Case%20Foundation.pdf),
+pp. 3–4, also describes variable precision, from named extensions to elaborated
+steps, branch points and returns. The schema and recognition conventions are
+dotspec design choices, not a claim that his method requires this metamodel.
 
 ## Three connected representations
 

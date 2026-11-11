@@ -2,6 +2,7 @@ package model
 
 import (
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -76,15 +77,10 @@ func (m *domainMapper) useCase(r Record, s *Section) bool {
 		m.bind(r, "main_success_scenario", []string{s.HeadingID}, "structured_item", "main-scenario")
 	case "Extensions":
 		v := m.collection(r, "extensions", "branches", s)
+		v["branches"] = append(Strings(v["branches"]), m.listBranches(r, s.Intro)...)
 		for _, sub := range s.Children {
 			x := m.branch(r, sub)
 			appendID(v, "branches", String(x, "id"))
-		}
-		for _, id := range m.listItems(s.Intro, false) {
-			if explicitBranch.MatchString(m.doc.Text(id)) {
-				x := m.listBranch(r, id)
-				appendID(v, "branches", String(x, "id"))
-			}
 		}
 	case "Sequence":
 		v := Record{"content": m.doc.Rich(s.Content)}
@@ -153,7 +149,7 @@ func (m *domainMapper) scenarioSteps(owner Record, nodes []string) []string {
 	for _, id := range nodes {
 		n := m.doc.NodeByID[id]
 		ordered, _ := n["list_ordered"].(bool)
-		if String(n, "node_kind") != "list" || !ordered {
+		if String(n, "node_kind") != "list" {
 			continue
 		}
 		index := Number(n["list_start"])
@@ -164,30 +160,24 @@ func (m *domainMapper) scenarioSteps(owner Record, nodes []string) []string {
 			if String(m.doc.NodeByID[item], "node_kind") != "list_item" {
 				continue
 			}
-			x := m.record("ScenarioStep", String(owner, "id"))
-			x["authored_label"] = strconv.Itoa(index)
-			if match := orderedMarker.FindStringSubmatch(m.doc.Raw(item)); len(match) > 1 {
-				x["authored_label"] = match[1]
+			text := m.doc.Text(item)
+			label := authoredLabel(explicitStep, text)
+			if authoredLabel(explicitBranch, text) != "" || (!ordered && label == "") {
+				index++
+				continue
 			}
-			index++
-			x["content"] = m.doc.Rich([]string{item})
-			x["governing_references"] = m.references([]string{item})
-			m.bind(x, "content", []string{item}, "structured_item", "ordered-scenario-step")
-			// Labels are explicit Markdown fields inside this step, not guesses
-			// about the grammatical actor/action in its prose sentence.
-			s := &Section{Intro: Strings(m.doc.NodeByID[item]["children"])}
-			for _, pair := range [][2]string{{"Action", "action"}, {"Response", "response"}, {"Outcome", "outcome"}} {
-				if body := m.fieldNodes(s, pair[0]); body != nil {
-					x[pair[1]] = m.doc.Rich(body)
-					m.bind(x, pair[1], body, "named_field", "step-field/"+pair[0])
-					m.bind(x, pair[1], m.fieldLabelNodes(s, pair[0]), "structural_wrapper", "step-field-label/"+pair[0])
+			if label == "" {
+				label = strconv.Itoa(index)
+				if match := orderedMarker.FindStringSubmatch(m.doc.Raw(item)); len(match) > 1 {
+					label = match[1]
 				}
 			}
-			if body := m.fieldNodes(s, "Actor"); body != nil {
-				x["actor"] = m.actor(body)
-				m.bind(x, "actor.content", body, "named_field", "step-actor")
-				m.bind(x, "actor.content", m.fieldLabelNodes(s, "Actor"), "structural_wrapper", "step-actor-label")
-			}
+			index++
+			x := m.record("ScenarioStep", String(owner, "id"))
+			x["authored_label"] = label
+			x["content"] = m.doc.Rich([]string{item})
+			x["references"] = m.references([]string{item})
+			m.bind(x, "content", []string{item}, "structured_item", "labelled-scenario-step")
 			steps = append(steps, String(x, "id"))
 		}
 	}
@@ -195,93 +185,106 @@ func (m *domainMapper) scenarioSteps(owner Record, nodes []string) []string {
 }
 
 var orderedMarker = regexp.MustCompile(`^\s*([0-9]+)[.)]\s+`)
-var explicitBranch = regexp.MustCompile(`^\s*(?:[-+*]|[0-9]+[.)])?\s*(?:\*\*)?(?:[0-9]+[a-z]|\*[a-z])(?:[.:)]|\s|\*\*)`)
+
+// Labels are cues for explicitly distinguished items, not a control-flow grammar.
+// Markdown containment determines ownership; label digits do not resolve steps.
+var explicitBranch = regexp.MustCompile(`^\s*(?:[-+*]|[0-9]+[.)])?\s*(?:\*\*)?((?:[0-9]+[a-z])+|\.[0-9]+[a-z]|\*[a-z])(?:[.:)]|\s|\*\*|$)`)
+var explicitStep = regexp.MustCompile(`^\s*(?:[-+*]|[0-9]+[.)])?\s*(?:\*\*)?((?:[0-9]+[a-z])+[0-9]+|\.[0-9]+)(?:[.:)]|\s|\*\*|$)`)
+
+func authoredLabel(pattern *regexp.Regexp, text string) string {
+	if match := pattern.FindStringSubmatch(text); len(match) > 1 {
+		return match[1]
+	}
+	return ""
+}
 
 func (m *domainMapper) branch(owner Record, s *Section) Record {
 	x := m.named("Extension", owner, s)
 	m.section(x, "content", s)
-	x["governing_references"] = m.references(s.Content)
-	if flow := m.scenarioSteps(x, s.Intro); len(flow) > 0 {
-		x["flow"] = flow
+	if label := authoredLabel(explicitBranch, s.Title); label != "" {
+		x["authored_label"] = label
 	}
-	for _, sub := range s.Children {
-		field := map[string]string{"Condition": "condition", "Location": "location", "At step": "location", "Point of occurrence": "location", "Response": "response", "Continuation": "continuation"}[sub.Title]
-		if field != "" {
-			m.section(x, field, sub)
-			continue
-		}
-		switch sub.Title {
-		case "Unresolved handling":
-			x["handling_state"] = "unresolved"
-			m.sectionBindings(x, "handling_state", sub)
-		case "Handling":
-			value := strings.ToLower(strings.TrimSpace(m.contentText(sub.Content)))
-			if value == "specified" || value == "unresolved" {
-				x["handling_state"] = value
-				m.sectionBindings(x, "handling_state", sub)
-			}
-		case "Flow":
-			x["flow"] = append(Strings(x["flow"]), m.scenarioSteps(x, sub.Intro)...)
-			for _, detail := range sub.Children {
-				m.extension(x, detail)
-			}
-		case "Governing references":
-			x["governing_references"] = appendUniqueReferences(Strings(x["governing_references"]), m.references(sub.Content))
-		default:
-			b := m.branch(x, sub)
-			appendID(x, "branches", String(b, "id"))
-		}
-	}
-	for _, pair := range [][2]string{{"Condition", "condition"}, {"At step", "location"}, {"Response", "response"}, {"Continuation", "continuation"}} {
+	x["references"] = m.references(s.Content)
+	x["steps"] = m.scenarioSteps(x, s.Intro)
+	x["branches"] = m.listBranches(x, s.Intro)
+	for _, pair := range [][2]string{{"Condition", "condition"}, {"Location", "location"}, {"At step", "location"}, {"Point of occurrence", "location"}, {"Handling", "handling"}, {"Response", "handling"}, {"Continuation", "handling"}} {
 		if nodes := m.fieldNodes(s, pair[0]); nodes != nil {
 			m.setRich(x, pair[1], nodes)
 			m.bind(x, pair[1], nodes, "named_field", "extension-field/"+pair[0])
 			m.bind(x, pair[1], m.fieldLabelNodes(s, pair[0]), "structural_wrapper", "extension-field-label/"+pair[0])
 		}
 	}
-	if handling := strings.ToLower(m.fieldText(s, "Handling")); handling == "specified" || handling == "unresolved" {
-		x["handling_state"] = handling
-		m.bind(x, "handling_state", m.fieldNodes(s, "Handling"), "named_field", "extension-handling")
+	for _, sub := range s.Children {
+		field := map[string]string{"Condition": "condition", "Location": "location", "At step": "location", "Point of occurrence": "location", "Handling": "handling", "Response": "handling", "Flow": "handling", "Continuation": "handling", "Unresolved handling": "handling"}[sub.Title]
+		if field != "" {
+			m.section(x, field, sub)
+			if field == "handling" {
+				// Retain the explicit qualification instead of inventing a status enum.
+				if sub.Title == "Unresolved handling" {
+					m.setRich(x, field, []string{sub.HeadingID})
+				}
+				x["steps"] = append(Strings(x["steps"]), m.scenarioSteps(x, sub.Intro)...)
+				x["branches"] = append(Strings(x["branches"]), m.listBranches(x, sub.Intro)...)
+			}
+			for _, detail := range sub.Children {
+				m.branchDetail(x, detail)
+			}
+			continue
+		}
+		m.branchDetail(x, sub)
 	}
-	for _, id := range m.listItems(s.Intro, false) {
-		if explicitBranch.MatchString(m.doc.Text(id)) {
-			b := m.listBranch(x, id)
-			appendID(x, "branches", String(b, "id"))
+	// Explicit fields may be authored in any order. Preserve source order when
+	// several old Response/Flow/Continuation fields contribute to one narrative.
+	for _, field := range []string{"condition", "location", "handling"} {
+		if value := Object(x[field]); value != nil {
+			nodes := Strings(value["content_nodes"])
+			sort.SliceStable(nodes, func(i, j int) bool {
+				return Number(Object(m.doc.NodeByID[nodes[i]]["span"])["start"]) < Number(Object(m.doc.NodeByID[nodes[j]]["span"])["start"])
+			})
+			x[field] = m.doc.Rich(nodes)
 		}
 	}
 	return x
 }
 
-func appendUniqueReferences(existing, more []string) []string {
-	for _, value := range more {
-		found := false
-		for _, old := range existing {
-			if old == value {
-				found = true
-				break
-			}
+func (m *domainMapper) branchDetail(owner Record, s *Section) {
+	switch {
+	case s.Title == "Extensions":
+		owner["branches"] = append(Strings(owner["branches"]), m.listBranches(owner, s.Intro)...)
+		for _, sub := range s.Children {
+			x := m.branch(owner, sub)
+			appendID(owner, "branches", String(x, "id"))
 		}
-		if !found {
-			existing = append(existing, value)
+	case authoredLabel(explicitBranch, s.Title) != "":
+		x := m.branch(owner, s)
+		appendID(owner, "branches", String(x, "id"))
+	default:
+		m.extension(owner, s)
+	}
+}
+
+func (m *domainMapper) listBranches(owner Record, nodes []string) []string {
+	branches := []string{}
+	for _, id := range m.listItems(nodes, false) {
+		if authoredLabel(explicitBranch, m.doc.Text(id)) != "" {
+			x := m.listBranch(owner, id)
+			branches = append(branches, String(x, "id"))
+		} else {
+			// An error within a handling step belongs to the enclosing branch.
+			branches = append(branches, m.listBranches(owner, Strings(m.doc.NodeByID[id]["children"]))...)
 		}
 	}
-	return existing
+	return branches
 }
 
 func (m *domainMapper) listBranch(owner Record, id string) Record {
 	x := m.record("Extension", String(owner, "id"))
+	x["authored_label"] = authoredLabel(explicitBranch, m.doc.Text(id))
 	x["content"] = m.doc.Rich([]string{id})
-	x["governing_references"] = m.references([]string{id})
+	x["references"] = m.references([]string{id})
 	m.bind(x, "content", []string{id}, "structured_item", "labelled-extension-item")
 	children := Strings(m.doc.NodeByID[id]["children"])
-	if flow := m.scenarioSteps(x, children); len(flow) > 0 {
-		x["flow"] = flow
-	}
-	for _, sub := range m.listItems(children, false) {
-		if explicitBranch.MatchString(m.doc.Text(sub)) {
-			b := m.listBranch(x, sub)
-			appendID(x, "branches", String(b, "id"))
-		}
-	}
+	x["steps"] = m.scenarioSteps(x, children)
+	x["branches"] = m.listBranches(x, children)
 	return x
 }

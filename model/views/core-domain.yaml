@@ -19,7 +19,8 @@ types:
   ProgressCase: [current_approach, desired_progress, forces, timeline, evidence]
   UseCase: [goal, system_boundary, primary_actor, preconditions, minimum_guarantees, main_success_scenario, extensions, business_rules]
   Scenario: [content, steps]
-  Extension: [content, condition, response, continuation, handling_state]
+  ScenarioStep: [authored_label, content]
+  Extension: [content, condition, location, handling, steps, branches]
   Concept: [purpose, abstract_state, actions, operational_principle]
   ConceptAction: [inputs, outputs, caller_assumptions, guards, effects, rejections]
   Requirement: [applies_to, rationale, attributes, business_rules]
@@ -52,7 +53,7 @@ diagrams:
       requirements can be classified by a system's declared quality attributes. Reusable models define separate attributes for copying into systems. Authored order
       does not by itself establish mandatory execution order.
     nodes: [UseCase, Scenario, ScenarioStep, Extension, Concept, ConceptAction, System, QualityModel, QualityAttribute, Requirement]
-    paths: [UseCase.main_success_scenario, UseCase.extensions.branches, Scenario.steps, Extension.flow, Concept.actions.actions, System.quality_attributes, QualityModel.quality_attributes, QualityAttribute.subattribute_of, Requirement.attributes]
+    paths: [UseCase.main_success_scenario, UseCase.extensions.branches, Scenario.steps, Extension.steps, Extension.branches, Concept.actions.actions, System.quality_attributes, QualityModel.quality_attributes, QualityAttribute.subattribute_of, Requirement.attributes]
     inheritance: false
   - title: Traceability to authored content
     description: >-

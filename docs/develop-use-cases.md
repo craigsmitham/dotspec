@@ -67,6 +67,33 @@ Use nested prose when a response itself can fail. If branches become hard to rea
 link a decision table, state model, or substantial subfunction. Avoid enumerating
 all interleavings merely to make the narrative appear complete.
 
+For a nested branch that model export should distinguish, use a labelled heading
+or list item, or group descriptive headings under an `Extensions` subsection:
+
+```markdown
+### 1a. Equipment unavailable
+
+Offer an alternative.
+
+#### 1a1a. Alternative declined
+
+End the request without a reservation.
+
+#### Notes
+
+The equipment catalogue remains the source of availability information.
+```
+
+Here the labelled child is a branch and Notes is explanatory content. Labels such
+as `1a2a` and relative `.1a` are optional reading aids. Markdown nesting determines
+branch ownership. For casual prose, simply indent and keep writing; it remains
+fully represented even when it is not decomposed into branch records.
+
+Use `Condition`, `Location` and `Handling` subsections only when that separation
+helps the reader. Handling can be a paragraph or steps, including where the
+interaction resumes or ends. Write unresolved questions in prose. There is no
+required handling status or actor/action/result form for each step.
+
 ## Add context where it changes the promise
 
 For a new document needing more prompts, use:
@@ -108,7 +135,8 @@ A work item, requirement, or test description can link to
 use `#payment-result-unknown`. Keep the heading stable while references rely on it;
 if it changes, update links and run `dotspec check`. Labels such as `3a` can help
 readers locate a branch, but they are not durable identities. Dotspec does not
-parse step numbering into a control-flow graph or create separate branch records.
+parse step numbering into a control-flow graph. You do not need separate files
+or authored IDs for branches; model export creates source-backed branch records.
 
 Choose where each obligation is defined. Accepted use-case prose can carry a
 behavioral obligation directly; it need not be duplicated in a requirement file.

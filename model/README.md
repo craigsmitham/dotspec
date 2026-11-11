@@ -1,7 +1,7 @@
 # Specification model
 
 [dotspec.yaml](dotspec.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.4.0-draft`; the JSON
+specification snapshots. The model version is `0.5.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
@@ -140,3 +140,17 @@ multi-valued and acyclic; the inverse sub-attributes and transitive ancestors ar
 derived. Markdown uses `Sub-attribute of`; the older `Broader` and provisional
 `Parents` spellings produce a migration diagnostic. CLI classification JSON uses
 `ancestors` instead of `broader`. See the [grouping rationale](../docs/specification-model.md#quality-attribute-grouping).
+
+The `0.5.0-draft` model and mapping profile `dotspec-markdown/4` simplify use-case
+narratives. Extension `handling` replaces `response` and `continuation`, `steps`
+replaces `flow`, and `at_step` and `handling_state` are removed along with the
+HandlingState enum. ScenarioStep retains label, content and references; separate
+actor, action, response and outcome fields are removed. Both types use ordinary
+`references` instead of `governing_references`. Extensions also retain explicit
+`authored_label` values. Re-export Markdown to migrate; saved JSON is not silently
+rewritten. Existing Response/Flow/Continuation Markdown remains supported.
+
+Nested branches now require explicit branch labels or an Extensions grouping;
+ordinary detail headings remain extension sections. See the
+[use-case rationale](../docs/specification-model.md#use-case-narratives) and
+[mapping rules](markdown-mapping.md#use-case).

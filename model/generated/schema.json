@@ -1569,14 +1569,14 @@
         },
         "Extension": {
             "additionalProperties": false,
-            "description": "An explicitly distinguished alternative or failure branch. Condition-only entries and expressly unresolved handling are valid.",
+            "description": "An explicitly distinguished alternative or failure branch. Full narrative is retained; condition, location and handling are optional decompositions. Condition-only entries are valid.",
             "properties": {
-                "at_step": {
-                    "description": "Only when an explicit, resolved step reference exists.",
-                    "type": "string"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "authored_label": {
+                    "description": "Optional authored branch label, including nested or relative labels; not a durable ID.",
                     "type": "string"
                 },
                 "branches": {
@@ -1592,10 +1592,6 @@
                 "content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "continuation": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored resumption, alternate success or failure conclusion; preserve prose."
-                },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
@@ -1606,22 +1602,9 @@
                     },
                     "type": "array"
                 },
-                "flow": {
-                    "description": "Explicit alternate flow steps; order remains representational.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "governing_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "handling_state": {
-                    "$ref": "#/$defs/HandlingState",
-                    "description": "Omission means no explicit handling classification; not the same as explicitly unresolved."
+                "handling": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored handling narrative, including any resumption, conclusion or unresolved question."
                 },
                 "id": {
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
@@ -1653,14 +1636,24 @@
                     ],
                     "type": "string"
                 },
-                "response": {
-                    "$ref": "#/$defs/RichContent"
+                "references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "source_document": {
                     "type": "string"
                 },
                 "source_fragment": {
                     "type": "string"
+                },
+                "steps": {
+                    "description": "Explicit handling steps in source order; no execution semantics are inferred.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -2101,15 +2094,6 @@
                 "subfunction"
             ],
             "title": "GoalLevelValue",
-            "type": "string"
-        },
-        "HandlingState": {
-            "description": "Explicit branch-handling statement, separate from extraction state.",
-            "enum": [
-                "specified",
-                "unresolved"
-            ],
-            "title": "HandlingState",
             "type": "string"
         },
         "HasConceptAction": {
@@ -4177,14 +4161,8 @@
         },
         "ScenarioStep": {
             "additionalProperties": false,
-            "description": "An explicitly distinguished interaction step; do not manufacture actor/action/result clauses from free prose.",
+            "description": "An explicitly distinguished interaction step, expressed as a label and narrative. Actor, action and result wording remains in the narrative.",
             "properties": {
-                "action": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "actor": {
-                    "$ref": "#/$defs/ActorMention"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -4201,12 +4179,6 @@
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "governing_references": {
                     "items": {
                         "type": "string"
                     },
@@ -4230,9 +4202,6 @@
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
-                "outcome": {
-                    "$ref": "#/$defs/RichContent"
-                },
                 "owner": {
                     "anyOf": [
                         {
@@ -4241,8 +4210,11 @@
                     ],
                     "type": "string"
                 },
-                "response": {
-                    "$ref": "#/$defs/RichContent"
+                "references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "source_document": {
                     "type": "string"
@@ -4253,6 +4225,7 @@
             },
             "required": [
                 "owner",
+                "content",
                 "source_document",
                 "decomposition",
                 "id",
@@ -4514,7 +4487,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.4.0-draft",
+                    "const": "0.5.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -5847,7 +5820,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.4.0-draft",
+            "const": "0.5.0-draft",
             "type": "string"
         },
         "references": {
@@ -5901,5 +5874,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.4.0-draft"
+    "version": "0.5.0-draft"
 }

@@ -4,7 +4,7 @@ Generated from [the canonical model](../../../model/dotspec.yaml) and [the view 
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.4.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.5.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
@@ -12,7 +12,7 @@ Model version: `0.4.0-draft`. See the [complete reference](index.md) for all fie
 | --- | --- | --- |
 | Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [System](index.md#system), [BusinessRule](index.md#businessrule) |
 | User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [Job](index.md#job), [JobStep](index.md#jobstep), [Outcome](index.md#outcome), [ProgressCase](index.md#progresscase) |
-| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [Extension](index.md#extension), [Concept](index.md#concept), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [GeneralRequirement](index.md#generalrequirement), [QualityRequirement](index.md#qualityrequirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute) |
+| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [Extension](index.md#extension), [Concept](index.md#concept), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [GeneralRequirement](index.md#generalrequirement), [QualityRequirement](index.md#qualityrequirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute) |
 | Specification traceability (`core`) | Explicit connections between specification meaning, authored occurrences, and resolved relationships. | [ContentBinding](index.md#contentbinding), [SourceReference](index.md#sourcereference), [Resolution](index.md#resolution) |
 
 Subset membership organizes model definitions; it does not infer the level or importance of an authored instance. Shared types can appear in several subsets. Supporting and generic types appear as context where a diagram needs them.
@@ -85,7 +85,8 @@ classDiagram
     UseCase --> "0..1" Scenario : main_success_scenario
     UseCase --> "*" Extension : extensions.branches
     Scenario --> "*" ScenarioStep : steps
-    Extension --> "*" ScenarioStep : flow
+    Extension --> "*" ScenarioStep : steps
+    Extension --> "*" Extension : branches
     Concept --> "*" ConceptAction : actions.actions
     System --> "*" QualityAttribute : quality_attributes
     QualityModel --> "*" QualityAttribute : quality_attributes
@@ -232,9 +233,20 @@ Subsets: `software-requirements`. [Scenario](index.md#scenario) contains the com
 | `content` | [RichContent](index.md#richcontent) | required |  |
 | `steps` | [ScenarioStep](index.md#scenariostep) | optional; ordered list | Source order only. Required sequencing belongs in SequenceStatement. |
 
+### ScenarioStep
+
+An explicitly distinguished interaction step, expressed as a label and narrative. Actor, action and result wording remains in the narrative.
+
+Subsets: `software-requirements`. [ScenarioStep](index.md#scenariostep) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `authored_label` | `string` | optional | Original number or label; snapshot ID supplies addressability. |
+| `content` | [RichContent](index.md#richcontent) | required |  |
+
 ### Extension
 
-An explicitly distinguished alternative or failure branch. Condition-only entries and expressly unresolved handling are valid.
+An explicitly distinguished alternative or failure branch. Full narrative is retained; condition, location and handling are optional decompositions. Condition-only entries are valid.
 
 Subsets: `software-requirements`. [Extension](index.md#extension) contains the complete definition.
 
@@ -242,9 +254,10 @@ Subsets: `software-requirements`. [Extension](index.md#extension) contains the c
 | --- | --- | --- | --- |
 | `content` | [RichContent](index.md#richcontent) | required |  |
 | `condition` | [RichContent](index.md#richcontent) | optional |  |
-| `response` | [RichContent](index.md#richcontent) | optional |  |
-| `continuation` | [RichContent](index.md#richcontent) | optional | Authored resumption, alternate success or failure conclusion; preserve prose. |
-| `handling_state` | `HandlingState` | optional | Omission means no explicit handling classification; not the same as explicitly unresolved. |
+| `location` | [RichContent](index.md#richcontent) | optional | Authored branch point, including free prose or labels; no automatic step-number interpretation. |
+| `handling` | [RichContent](index.md#richcontent) | optional | Authored handling narrative, including any resumption, conclusion or unresolved question. |
+| `steps` | [ScenarioStep](index.md#scenariostep) | optional; ordered list | Explicit handling steps in source order; no execution semantics are inferred. |
+| `branches` | [Extension](index.md#extension) | optional; ordered list | Explicitly authored nested branches, in document order. |
 
 ### Concept
 

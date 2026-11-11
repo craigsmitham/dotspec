@@ -9,9 +9,9 @@ import (
 	"go.yaml.in/yaml/v3"
 )
 
-const ModelVersion = "0.4.0-draft"
+const ModelVersion = "0.5.0-draft"
 const RepresentationVersion = "0.1.0"
-const MappingProfile = "dotspec-markdown/3"
+const MappingProfile = "dotspec-markdown/4"
 
 // Record is a schema-validated tagged record or an embedded model value.
 // Values remain JSON-compatible and are never decoded through a base class

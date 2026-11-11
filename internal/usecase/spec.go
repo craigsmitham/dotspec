@@ -127,8 +127,9 @@ Link to the jobs, steps, or desired outcomes this use case supports.
 
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 
-// UseCase retains section bodies as Markdown. Scenario steps and extensions
-// are not separate records, and file ownership does not set the system boundary.
+// UseCase retains section bodies as Markdown for the authoring commands. Model
+// export separately exposes source-backed scenario and extension records. File
+// ownership does not set the system boundary.
 type UseCase struct {
 	References           *specfile.ReferenceDocument    `json:"-"`
 	ID                   string                         `json:"id,omitempty"`

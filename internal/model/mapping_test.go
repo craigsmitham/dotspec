@@ -344,7 +344,7 @@ Report the error.
 
 Resume reporting.
 
-#### A nested alternative
+#### 1a. A nested alternative
 
 An additional explicitly headed branch.
 
@@ -363,7 +363,7 @@ See [another case](another.use-case.spec.md).
 	if len(branches) != 2 {
 		t.Fatalf("branches: %#v", branches)
 	}
-	if branches[0]["condition"] == nil || branches[0]["continuation"] == nil {
+	if branches[0]["condition"] == nil || branches[0]["handling"] == nil {
 		t.Error("explicit branch detail absent")
 	}
 	if branches[0]["handling_state"] != nil {

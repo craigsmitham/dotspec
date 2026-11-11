@@ -4759,32 +4759,30 @@
         "Record"
       ],
       "annotations": {
-        "owned_memberships": "Extension.flow or Extension.branches"
+        "owned_memberships": "Extension.steps or Extension.branches"
       },
-      "description": "An explicitly distinguished alternative or failure branch. Condition-only entries and expressly unresolved handling are valid.",
+      "description": "An explicitly distinguished alternative or failure branch. Full narrative is retained; condition, location and handling are optional decompositions. Condition-only entries are valid.",
       "is_a": "DomainElement",
       "rules": [],
       "slots": {
-        "at_step": {
+        "authored_id": {
           "annotations": {},
           "any_of": [],
-          "description": "Only when an explicit, resolved step reference exists.",
+          "description": "An explicitly authored ID when present; no manufactured global identifier.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "ScenarioStep",
-          "reference_ranges": [
-            "ScenarioStep"
-          ],
+          "range": "string",
+          "reference_ranges": [],
           "required": false
         },
-        "authored_id": {
+        "authored_label": {
           "annotations": {},
           "any_of": [],
-          "description": "An explicitly authored ID when present; no manufactured global identifier.",
+          "description": "Optional authored branch label, including nested or relative labels; not a durable ID.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -4843,22 +4841,6 @@
           "reference_ranges": [],
           "required": true
         },
-        "continuation": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored resumption, alternate success or failure conclusion; preserve prose.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
         "decomposition": {
           "annotations": {},
           "any_of": [],
@@ -4896,53 +4878,19 @@
           ],
           "required": false
         },
-        "flow": {
+        "handling": {
           "annotations": {},
           "any_of": [],
-          "description": "Explicit alternate flow steps; order remains representational.",
+          "description": "Authored handling narrative, including any resumption, conclusion or unresolved question.",
           "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ScenarioStep",
-          "reference_ranges": [
-            "ScenarioStep"
+          "inline_ranges": [
+            "RichContent"
           ],
-          "required": false
-        },
-        "governing_references": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "SourceReference",
-          "reference_ranges": [
-            "SourceReference"
-          ],
-          "required": false
-        },
-        "handling_state": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Omission means no explicit handling classification; not the same as explicitly unresolved.",
-          "enum_values": [
-            "specified",
-            "unresolved"
-          ],
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
+          "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "HandlingState",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -5044,20 +4992,20 @@
           ],
           "required": true
         },
-        "response": {
+        "references": {
           "annotations": {},
           "any_of": [],
           "description": "",
           "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
+          "inline_ranges": [],
+          "inlined": false,
           "inlined_as_list": false,
-          "multivalued": false,
+          "multivalued": true,
           "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
           "required": false
         },
         "source_document": {
@@ -5089,6 +5037,22 @@
           "range": "SourceFragment",
           "reference_ranges": [
             "SourceFragment"
+          ],
+          "required": false
+        },
+        "steps": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicit handling steps in source order; no execution semantics are inferred.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "ScenarioStep",
+          "reference_ranges": [
+            "ScenarioStep"
           ],
           "required": false
         }
@@ -7345,7 +7309,7 @@
         "Record"
       ],
       "annotations": {
-        "projection_of": "Scenario.steps or Extension.flow"
+        "projection_of": "Scenario.steps or Extension.steps"
       },
       "description": "A scenario or extension contains an explicit step, with source order retained on its typed collection.",
       "is_a": "Assertion",
@@ -12238,42 +12202,10 @@
         "Record"
       ],
       "annotations": {},
-      "description": "An explicitly distinguished interaction step; do not manufacture actor/action/result clauses from free prose.",
+      "description": "An explicitly distinguished interaction step, expressed as a label and narrative. Actor, action and result wording remains in the narrative.",
       "is_a": "DomainElement",
       "rules": [],
       "slots": {
-        "action": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "actor": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "ActorMention"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ActorMention",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -12316,7 +12248,7 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
-          "required": false
+          "required": true
         },
         "decomposition": {
           "annotations": {},
@@ -12352,22 +12284,6 @@
           "range": "ExtensionSection",
           "reference_ranges": [
             "ExtensionSection"
-          ],
-          "required": false
-        },
-        "governing_references": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "SourceReference",
-          "reference_ranges": [
-            "SourceReference"
           ],
           "required": false
         },
@@ -12433,22 +12349,6 @@
           "reference_ranges": [],
           "required": false
         },
-        "outcome": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
         "owner": {
           "annotations": {},
           "any_of": [
@@ -12469,20 +12369,20 @@
           ],
           "required": true
         },
-        "response": {
+        "references": {
           "annotations": {},
           "any_of": [],
           "description": "",
           "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
+          "inline_ranges": [],
+          "inlined": false,
           "inlined_as_list": false,
-          "multivalued": false,
+          "multivalued": true,
           "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
           "required": false
         },
         "source_document": {
@@ -12852,7 +12752,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.4.0-draft",
+          "equals_string": "0.5.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -16437,10 +16337,6 @@
       "user_task",
       "subfunction"
     ],
-    "HandlingState": [
-      "specified",
-      "unresolved"
-    ],
     "LabelRole": [
       "quality_classification",
       "subattribute_of"
@@ -16565,10 +16461,10 @@
       "quality"
     ]
   },
-  "model_version": "0.4.0-draft",
+  "model_version": "0.5.0-draft",
   "representation_version": "0.1.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/dotspec.yaml",
-  "source_sha256": "d61fec0af32456c69d739b405c637ceef71a9fbfcf061381f7d0fa67ac3d3b85",
+  "source_sha256": "1168e3ddf1e792f1bc5e6ce79bf0239f79a0beee8f9df44f2e86ef8c99d6cb9e",
   "subsets": {
     "business-requirements": {
       "classification": "core",

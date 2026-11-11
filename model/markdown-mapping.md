@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/3` maps specification Markdown to the
+`dotspec-markdown/4` maps specification Markdown to the
 [canonical model](dotspec.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/specification-model.md).
@@ -183,29 +183,39 @@ A timeline saying “to be established” remains authored content. Overall outc
 | Supporting actors | `ActorCollection` with full content and list-item or named actor mentions; named Services subsections populate `services` |
 | Stakeholder interests | Full collection content and explicit list-item or named stakeholder-interest entries |
 | Main success scenario | `Scenario` with full narrative; direct ordered-list items become `ScenarioStep` records |
-| Step `**Actor:**`, `**Action:**`, `**Response:**`, `**Outcome:**` | The corresponding explicit step fields, when authored |
+| Step `**Actor:**`, `**Action:**`, `**Response:**`, `**Outcome:**` | Preserved in step `content`, without separate semantic fields |
 | Extensions | Full `ExtensionCollection.content` and named or explicitly labelled branch records |
 | Sequence | `SequenceStatement.content`; explicit Mode and list-item constraints as described below |
 | Related jobs | `related_jobs: ContextualReferences` |
 
-Scenario steps retain their authored numbers or labels and source order. A
-paragraph-only scenario remains a valid scenario narrative with no invented
-steps. Actor, action and result clauses are never inferred from the grammar of
-a prose sentence.
+Scenario steps retain their authored numbers or labels, narrative, ordinary
+references and source order. Ordered-list items and explicitly labelled handling
+steps such as `2a1` or `.1` become `ScenarioStep` records. A paragraph-only scenario
+remains valid without invented steps. Actor, action and result wording remains
+in the narrative, including explicitly labelled fields from older documents.
 
-Each extension retains its full content and contextual references. Named
-subsections or introductory explicit fields can supply Condition, At step,
-Response and Continuation. Location and Point of occurrence headings also map
-to location content. Location wording remains authored content; phrases such as
-“during steps 2–3” do not automatically become resolved step targets.
+Each extension retains its full `content` and ordinary `references`. Optional
+Condition and Location subsections or introductory fields populate `condition`
+and `location`. At step and Point of occurrence are aliases for Location. Location
+wording remains authored content; “during steps 2–3” does not resolve a step target.
 
-A Flow subsection supplies ordered alternate steps. A Handling subsection or
-`**Handling:**` field can explicitly state `specified` or `unresolved`; an
-Unresolved handling heading also records the latter state. Omission means no
-explicit handling classification. It does not mean that the author declared
-handling unresolved. Other named branch subsections and explicit branch-labelled
-list items retain nested branch ownership. Branch labels include forms such as
-`2a` and `*a`.
+Handling subsections or `**Handling:**` fields supply `handling` narrative.
+Response and Continuation fields or subsections, and Flow subsections, also
+contribute to that narrative in source order. An Unresolved handling subsection
+retains its heading and content; no handling-status enum is inferred. Direct
+ordered or explicitly labelled steps in the branch introduction or handling
+subsections populate `steps`. Unlabelled prose remains in full `content` without
+inferring condition, handling or completion. References can appear anywhere;
+no Governing references subsection is required.
+
+Direct headings in the use case's Extensions section distinguish branches.
+Inside a branch, a nested branch must have an explicit label (for example,
+`1a2a` or `.1a`) or appear under an Extensions subsection. Other detail headings,
+such as Notes, become `ExtensionSection` records. Explicitly branch-labelled list
+items also create branches, including nested items under a handling step. Labels
+include `2a`, `*a`, `1a2a` and `.1a`; `authored_label` preserves the label while
+Markdown containment establishes ownership. Labels do not determine control-flow
+edges, durable identity or return targets. Sibling branches retain source order.
 
 A Sequence section's `**Mode:**` field recognizes `representative`, `required`
 and `partially_constrained`. Direct list items can carry explicit sequence
@@ -271,7 +281,7 @@ qualifications, examples and evidence instructions.
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/3`, an owner and field path, source
+Bindings record a rule under `dotspec-markdown/4`, an owner and field path, source
 occurrence and role. Named-field, record-identity and structured-item bindings
 account for interpreted domain content. Metadata bindings account for frontmatter.
 Structural-wrapper bindings cover headings and syntax support; a document-root

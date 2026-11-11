@@ -527,22 +527,25 @@ Unmapped protocol detail.
 				t.Error("empty action inputs lost")
 			}
 		case "Extension":
-			for _, field := range []string{"condition", "response"} {
-				if Object(element[field])["presence"] != "empty" {
-					t.Errorf("empty extension %s lost: %#v", field, element[field])
-				}
+			if Object(element["condition"])["presence"] != "empty" {
+				t.Error("empty extension condition lost")
+			}
+			if !strings.Contains(conformanceRichText(s, element["handling"]), "Report a failure.") {
+				t.Error("flow narrative missing from handling")
+			}
+			if !strings.Contains(conformanceRichText(s, element["content"]), "**Response:**") {
+				t.Error("empty response field lost from source narrative")
 			}
 		case "ScenarioStep":
 			if String(index[String(element, "owner")], "kind") == "Scenario" {
-				for _, field := range []string{"action", "response"} {
-					if Object(element[field])["presence"] != "empty" {
-						t.Errorf("empty scenario %s lost", field)
+				text := conformanceRichText(s, element["content"])
+				for _, label := range []string{"**Actor:**", "**Action:**", "**Response:**"} {
+					if !strings.Contains(text, label) {
+						t.Errorf("empty step field %s lost from narrative", label)
 					}
 				}
-				if Object(Object(element["actor"])["content"])["presence"] != "empty" {
-					t.Error("empty scenario actor lost")
-				}
 			}
+
 		case "GlossaryTerm":
 			if len(records(element["alternative_names"])) != 2 {
 				t.Error("alias sections overwritten")
@@ -563,5 +566,126 @@ Unmapped protocol detail.
 	}
 	if len(Strings(s.Coverage["extension_sections"])) != len(extensions) {
 		t.Error("unknown nested sections missing from coverage inventory")
+	}
+}
+
+func TestExportUseCaseNarrativesAndExplicitNesting(t *testing.T) {
+	root := t.TempDir()
+	conformanceWrite(t, root, "specs/use-cases/reserve.use-case.spec.md", `---
+type: use-case
+---
+# Reserve equipment
+## Main success scenario
+A contributor requests equipment and the system confirms the reservation.
+## Extensions
+- 1a. Equipment unavailable:
+  - 1a1. Offer an alternative.
+    - 1a1a. Alternative unavailable:
+      - .1. Ask the contributor to return later.
+      - .1a. Contributor cannot return:
+        Handling unresolved.
+- *a. Contributor cancels.
+
+### Service unavailable
+**Continuation:** End without a reservation.
+**Response:** Explain the service outage.
+**At step:** At any time.
+#### Handling
+1. Preserve the request.
+2. Consult [the guide](../../guide.md).
+##### 2a. Guide unavailable
+Ask a colleague.
+#### Flow
+1. Report the result.
+#### Unresolved handling
+Can another service accept the request?
+#### Notes
+This explanatory heading is not an alternative path.
+#### Extensions
+##### Colleague unavailable
+Ask the contributor to return later.
+`)
+	conformanceWrite(t, root, "guide.md", "# Guide\n\nTry another service.\n")
+	result := conformanceExport(t, root)
+	if result.ExitCode != 0 {
+		t.Fatalf("export exit %d", result.ExitCode)
+	}
+	s := result.Snapshot
+	conformancePayloads(t, s)
+	index := conformanceIndex(s)
+	labels := map[string]Record{}
+	var useCase, service, notes Record
+	counts := map[string]int{}
+	for _, e := range s.Elements {
+		kind := String(e, "kind")
+		counts[kind]++
+		switch kind {
+		case "UseCase":
+			useCase = e
+		case "Scenario":
+			if len(Strings(e["steps"])) != 0 {
+				t.Error("paragraph scenario acquired invented steps")
+			}
+		case "Extension":
+			labels[String(e, "authored_label")] = e
+			if strings.Contains(conformanceRichText(s, e["name"]), "Service unavailable") {
+				service = e
+			}
+			for _, removed := range []string{"at_step", "response", "flow", "continuation", "handling_state", "governing_references"} {
+				if e[removed] != nil {
+					t.Errorf("obsolete extension field %s", removed)
+				}
+			}
+		case "ScenarioStep":
+			for _, removed := range []string{"actor", "action", "response", "outcome", "governing_references"} {
+				if e[removed] != nil {
+					t.Errorf("obsolete step field %s", removed)
+				}
+			}
+		case "ExtensionSection":
+			if strings.Contains(conformanceRichText(s, e["heading"]), "Notes") {
+				notes = e
+			}
+		}
+	}
+	if counts["Extension"] != 7 || counts["ScenarioStep"] != 5 || counts["ExtensionSection"] != 1 {
+		t.Fatalf("unexpected decomposition: %v", counts)
+	}
+	if service == nil || notes == nil || String(notes, "owner") != String(service, "id") {
+		t.Fatal("Notes should belong to its enclosing branch as an extension section")
+	}
+	rootBranches := Strings(Object(useCase["extensions"])["branches"])
+	if len(rootBranches) != 3 || rootBranches[0] != String(labels["1a"], "id") || rootBranches[1] != String(labels["*a"], "id") || rootBranches[2] != String(service, "id") {
+		t.Fatalf("branch source order lost: %v", rootBranches)
+	}
+	if String(labels["1a1a"], "owner") != String(labels["1a"], "id") || String(labels[".1a"], "owner") != String(labels["1a1a"], "id") {
+		t.Error("nested labels should follow Markdown containment, including branches under steps")
+	}
+	for label, want := range map[string]string{"1a": "1a1", "1a1a": ".1"} {
+		steps := Strings(labels[label]["steps"])
+		if len(steps) != 1 || String(index[steps[0]], "authored_label") != want {
+			t.Errorf("branch %s handling step label lost: %v", label, steps)
+		}
+	}
+	if labels["*a"]["handling"] != nil || labels["*a"]["condition"] != nil || labels["*a"]["location"] != nil {
+		t.Error("condition-only prose acquired inferred semantic fields")
+	}
+	if len(Strings(service["branches"])) != 2 || len(Strings(service["steps"])) != 3 {
+		t.Error("explicit nested heading/grouping or handling steps missing")
+	}
+	handling := conformanceRichText(s, service["handling"])
+	previous := -1
+	for _, part := range []string{"End without a reservation.", "Explain the service outage.", "Preserve the request.", "Report the result.", "Unresolved handling", "Can another service accept the request?"} {
+		position := strings.Index(handling, part)
+		if position <= previous {
+			t.Errorf("handling absent or out of source order: %q in %q", part, handling)
+		}
+		previous = position
+	}
+	if !strings.Contains(conformanceRichText(s, service["location"]), "At any time.") {
+		t.Error("free-prose location lost")
+	}
+	if len(Strings(service["references"])) != 1 {
+		t.Error("ordinary inline reference missing")
 	}
 }
