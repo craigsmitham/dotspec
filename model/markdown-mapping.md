@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/12` maps specification Markdown to the
+`dotspec-markdown/13` maps specification Markdown to the
 [canonical model](dotspec.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/specification-model.md).
@@ -134,8 +134,8 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | Purpose; Scope | `purpose`; `scope` |
 | System or Component: Out of scope | `out_of_scope: RichContent` |
 | System or Component: Interacts with | Authored content and reference occurrences; resolved `interacts_with` System/Component targets, independent of `part_of` |
-| System or Component: Required interfaces; Provided interfaces | Separate `InterfaceCollection` values with full content and ordered named `InterfaceDescription` entries |
-| Named interface | Heading `name`, introductory `description`; Contracts and Counterpart subsections are contextual references |
+| System or Component: Required interfaces; Provided interfaces | `RequiredInterfaceCollection` / `ProvidedInterfaceCollection` values with full content and ordered references to owned `Interface` specifications |
+| Named interface | Heading `name`, complete `content`, introductory `description` and `preamble`, declaring System/Component `owner`, optional introductory `**ID:**`; Contracts and Counterpart subsections are contextual references; shared specification sections and Obligations are supported |
 | Project context | `project_context: ContextualReferences`; authoritative project artifacts remain external |
 | Part of | `part_of_content`, explicit `part_of_references`, resolved scalar System `part_of`; no inferred parent |
 | Components; Features; Capabilities | Paired section content and ordered declaration membership in `components`, `features` or `capabilities` |
@@ -145,7 +145,7 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | Component: Part of | Narrative and explicit references; resolved scalar System or Component `part_of` |
 | Component: Contracts; Architecture; Implementation | `ContextualReferences` preserving narrative and links to native artifacts |
 | Component: Obligations | Shared named `ObligationClause` declarations; no implicit applicability |
-| Feature: Groups | Narrative and explicit references; resolved non-owning `groups` membership in requirements, clauses, use cases, concepts, concept uses or synchronizations |
+| Feature: Groups | Narrative and explicit references; resolved non-owning `groups` membership in requirements, clauses, use cases, concepts, concept uses, synchronizations or interfaces |
 | Capability: Supports; Depends on; Provided by | Explicit semantic associations to user needs/goals, Capability dependencies, and System/Component providers; declaration does not imply provision |
 | Capability: Enablers | `enablers` narrative, including human/procedural providers and external references |
 | Environment | `EnvironmentDescription.content` |
@@ -371,7 +371,7 @@ qualifications, examples and evidence instructions.
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/12`, an owner and field path, source
+Bindings record a rule under `dotspec-markdown/13`, an owner and field path, source
 occurrence and role. Named-field, record-identity and structured-item bindings
 account for interpreted domain content. Metadata bindings account for frontmatter.
 Structural-wrapper bindings cover headings and syntax support; a document-root
@@ -428,9 +428,17 @@ and applicability occurrences likewise require their narrative sections.
 ## Layered traceability and obligation clauses
 
 `TraceableElement` supplies explicit Supports, Derived from and Relies on sections.
-It is the base of SpecificationElement and of named SystemGoal, Assumption,
-Constraint, JobStep, DesiredOutcome, ConceptUse, ConceptAction, Synchronization and
-ObligationClause records. The exact heading annotations `trace_heading` and
+It is the base of Specification and of named SystemGoal, Assumption,
+Constraint, JobStep, DesiredOutcome, ConceptAction and ObligationClause records.
+Specification includes document roots and inline Component, Feature, Capability,
+ConceptUse, Synchronization and Interface definitions. Common Notes, Evidence,
+Authority, Related specifications/concepts/use cases, Business rules and Validation
+plan sections work at the appropriate level beneath each inline definition.
+Heading anchors and optional introductory IDs identify these records. Interface
+ownership is exactly one required or provided declaration under one System or
+Component; RequiredInterface and ProvidedInterface assertions project those
+memberships. Native Contracts and Counterpart citations do not establish typed
+implementation or compatibility edges. The exact heading annotations `trace_heading` and
 `trace_targets` in the canonical schema drive mapping and endpoint resolution.
 The mapper also recognizes these sections directly beneath named nested records.
 It never interprets arbitrary prose or ordinary citations as semantic links.

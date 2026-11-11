@@ -153,7 +153,7 @@ func (d *designResolver) run() {
 		case "Component":
 			d.resolve(r, "part_of", "System or Component", false, nil)
 		case "Feature":
-			d.resolve(r, "groups", "Requirement or ObligationClause or UseCase or Concept or ConceptUse or Synchronization", true, nil)
+			d.resolve(r, "groups", "Requirement or ObligationClause or UseCase or Concept or ConceptUse or Synchronization or Interface", true, nil)
 		case "UseCase":
 			d.resolve(r, "subject_system", "System", false, nil)
 		case "GeneralRequirement", "QualityRequirement", "BusinessRule", "ObligationClause":
@@ -220,7 +220,7 @@ func (d *designResolver) checkDeclarations() {
 	for _, r := range d.elements {
 		kind := String(r, "kind")
 		switch kind {
-		case "Component", "Feature", "Capability", "ConceptUse", "ConceptType", "ConceptAction", "ActionParameter", "Synchronization":
+		case "Interface", "Component", "Feature", "Capability", "ConceptUse", "ConceptType", "ConceptAction", "ActionParameter", "Synchronization":
 			role := ""
 			if kind == "ActionParameter" && d.isMember(d.index[String(r, "owner")], "output_parameters", r) {
 				role = "output"

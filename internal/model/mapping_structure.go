@@ -29,11 +29,6 @@ func (m *domainMapper) systemDeclarations(system Record, s *Section) {
 	for _, child := range s.Children {
 		r := m.named(kind, system, child)
 		m.section(r, "content", child)
-		if id := m.fieldText(child, "ID"); id != "" {
-			r["authored_id"] = id
-			m.bind(r, "authored_id", m.fieldNodes(child, "ID"), "record_identity", "structure-id")
-			m.bind(r, "authored_id", m.fieldLabelNodes(child, "ID"), "structural_wrapper", "structure-id-label")
-		}
 		if kind == "Feature" {
 			r["system"] = system["id"]
 		}

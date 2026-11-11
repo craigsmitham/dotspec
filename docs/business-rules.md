@@ -90,7 +90,7 @@ Stronger relationships require a separately defined authoring convention.
 
 ## Model representation
 
-`BusinessRule` is a `SpecificationElement` in the core `business-requirements`
+`BusinessRule` is a `Specification` in the core `business-requirements`
 subset. Statement, applicability, rationale, authority, and exceptions have
 named source-backed model fields. The rule's constraint is independent of any
 software requirement that implements it.

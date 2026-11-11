@@ -149,7 +149,7 @@ Empty sections are valid drafts. No links are inferred from prose.
 
 ## Identify an obligation without creating another document
 
-Use an Obligations section within a System, BusinessRule, Job, JobStep, UseCase, Concept,
+Use an Obligations section within a System, Component, Interface, BusinessRule, Job, JobStep, UseCase, Concept,
 ConceptUse, ConceptAction, Synchronization or standalone Requirement when a rule needs its own identity:
 
 ```markdown
@@ -310,7 +310,7 @@ and multiple parent links are errors. Components are declared as sibling entries
 express nesting through links, not deeper heading levels.
 
 `Groups` can reference requirements, obligation clauses, use cases, concepts,
-named concept uses and synchronizations. Several features can group the same
+named concept uses, synchronizations and interfaces. Several features can group the same
 record. Membership leaves that record's declaration ownership unchanged. Each
 feature belongs to the System declaring it. There is no separate feature/component
 implementation edge to maintain.

@@ -42,32 +42,24 @@ func (m *domainMapper) boundarySection(r Record, s *Section) bool {
 		if s.Title == "Provided interfaces" {
 			field = "provided_interfaces"
 		}
-		v := Object(r[field])
-		if v == nil {
-			v = Record{"interfaces": []Record{}}
-			r[field] = v
-		}
-		m.setRich(v, "content", s.Content)
-		m.sectionBindings(r, field+".content", s)
-		items := reviewObjects(v["interfaces"])
+		v := m.collection(r, field, "interfaces", s)
 		for _, child := range s.Children {
-			item := Record{"name": m.doc.Rich([]string{child.HeadingID}), "description": m.doc.Rich(child.Intro)}
-			path := fmt.Sprintf("%s.interfaces.%d", field, len(items))
-			m.bind(r, path+".name", []string{child.HeadingID}, "named_field", "interface-name")
-			m.bind(r, path+".description", child.Intro, "named_field", "interface-description")
+			item := m.named("Interface", r, child)
+			m.section(item, "content", child)
+			m.setRich(item, "description", child.Intro)
+			m.bind(item, "description", child.Intro, "named_field", "interface-description")
 			for _, detail := range child.Children {
 				switch detail.Title {
 				case "Contracts", "Counterpart":
 					f := strings.ToLower(detail.Title)
 					m.contextField(item, f, detail.Content)
-					m.sectionBindings(r, path+"."+f+".content", detail)
+					m.sectionBindings(item, f+".content", detail)
 				default:
-					m.extension(r, detail)
+					m.extension(item, detail)
 				}
 			}
-			items = append(items, item)
+			appendID(v, "interfaces", String(item, "id"))
 		}
-		v["interfaces"] = items
 	default:
 		return false
 	}

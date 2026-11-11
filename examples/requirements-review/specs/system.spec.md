@@ -41,6 +41,8 @@ Recovering documents after their retained copies expire. External backup restora
 
 ### Time readings
 
+**ID:** time-readings
+
 Read UTC time for retention comparisons.
 
 #### Counterpart
@@ -55,7 +57,29 @@ Read UTC time for retention comparisons.
 
 ### Restoration requests
 
+**ID:** restoration-requests
+
 Accept restoration requests from authorized clients. The native contract remains to be selected.
+
+#### Obligations
+
+##### Preserve request identity
+
+**ID:** request-identity
+
+A retried restoration request must retain its original request identifier.
+
+###### Applies to
+
+**Targets:** [Restoration requests](#restoration-requests).
+
+###### Verification plan
+
+Repeat a request after an interrupted response and inspect the retained identifier.
+
+#### Notes
+
+The interaction contract covers retries; the native protocol remains to be selected.
 
 ## Assumptions
 

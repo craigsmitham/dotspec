@@ -208,6 +208,8 @@ Restoring documents from external backups after their retained copies expire.
 
 ### Time readings
 
+**ID:** time-readings
+
 Read UTC time for retention comparisons.
 
 #### Counterpart
@@ -228,8 +230,18 @@ Accept requests from authorized clients.
 Interacts with resolves explicit System or Component links. It does not imply
 Part of, and it need not be repeated in the partner's specification. The two
 interface collections express direction relative to the owning subject; named
-entries carry descriptions, optional counterpart context and contract links.
-Counterpart links are contextual; they do not create a second partner relation.
+entries are independently addressable Interface specifications, with heading
+anchors and optional introductory `**ID:**` values. Each belongs to one required
+or provided collection under one System or Component. Entries carry descriptions,
+optional counterpart context and contract links, plus the shared specification
+sections such as Notes, Evidence and Validation plan.
+
+An interface may contain an Obligations section. Requirements can target it using
+`**Targets:** [Time readings](#time-readings)` under Applies to, and features may
+include it under Groups. Counterpart links are contextual; they do not establish
+implementation or compatibility between declarations. Two declarations can cite
+the same native contract without sharing identity. See the
+[worked example](../examples/requirements-review/specs/system.spec.md#restoration-requests).
 
 Keep wire formats, protocol definitions and detailed architecture in their native
 artifacts. The review flags interfaces without contract references, but a link

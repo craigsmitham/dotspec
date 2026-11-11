@@ -86,7 +86,7 @@ func TestStructuralErrorsPreserveSourceWithoutInventingParents(t *testing.T) {
 	}
 }
 
-func TestStructurePreservesUnrecognizedDetailWithoutInventingFields(t *testing.T) {
+func TestInlineSpecificationsMapCommonContent(t *testing.T) {
 	root := structureFixture(t)
 	traceEdit(t, root, "specs/system.spec.md", "### Inventory", "#### Notes\n\nA component note.\n\n#### Evidence\n\nEvidence to review.\n\n#### Related specifications\n\n[Reservation](concepts/reservation.concept.spec.md)\n\n### Inventory")
 	result := conformanceExport(t, root)
@@ -94,8 +94,8 @@ func TestStructurePreservesUnrecognizedDetailWithoutInventingFields(t *testing.T
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	checkout := designRecord(t, result.Snapshot, "Component", "Checkout")
-	if len(Strings(checkout["extension_sections"])) != 3 {
-		t.Fatal("unrecognized component detail lost", checkout)
+	if checkout["extension_sections"] != nil || checkout["notes"] == nil || checkout["evidence"] == nil || checkout["related_specifications"] == nil {
+		t.Fatal("common specification detail not mapped", checkout)
 	}
 	conformancePayloads(t, result.Snapshot)
 }

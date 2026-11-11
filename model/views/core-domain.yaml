@@ -9,6 +9,10 @@ subsets:
 - software-requirements
 - specification-traceability
 types:
+  Specification:
+  - notes
+  - evidence
+  - related_specifications
   TraceableElement:
   - supports
   - derived_from
@@ -260,7 +264,10 @@ types:
   InterfaceCollection:
   - content
   - interfaces
-  InterfaceDescription:
+  Interface:
+  - owner
+  - obligations
+  - validation_plan
   - name
   - description
   - contracts
@@ -286,14 +293,22 @@ types:
   - expected_result
   - evidence_to_retain
 diagrams:
-- title: Specification kinds and system association
+- title: Specification kinds
   direction: TB
   show_cardinality: false
-  description: Eight document kinds describe repository intent. Quality models stand independently. Other
-    non-System kinds select a specification system explicitly or use the nearest directory system by default;
-    this association does not establish structural parentage.
+  description: Specification is a cohesive definition independent of document placement. Eight document families
+    supply roots; Component, Feature, Capability, ConceptUse, Synchronization and Interface are named inline
+    specifications. Subsets classify concerns separately from this hierarchy.
   nodes:
+  - Specification
+  - SystemContextSpecification
   - System
+  - Feature
+  - Component
+  - Capability
+  - ConceptUse
+  - Synchronization
+  - Interface
   - QualityModel
   - BusinessRule
   - Job
@@ -302,13 +317,42 @@ diagrams:
   - Requirement
   - GeneralRequirement
   - QualityRequirement
+  paths: []
+  inheritance: true
+- title: Specification system association
+  direction: TB
+  show_cardinality: false
+  description: Document families derived from SystemContextSpecification select a specification system explicitly
+    or use the nearest directory system by default. Inline specifications have declaring owners instead.
+    Neither association establishes structural parentage. Quality models stand independently.
+  nodes:
+  - System
+  - BusinessRule
+  - Job
+  - UseCase
+  - Concept
+  - Requirement
   paths:
   - BusinessRule.specification_system
   - Job.specification_system
   - UseCase.specification_system
   - Concept.specification_system
   - Requirement.specification_system
-  inheritance: true
+  inheritance: false
+- title: Boundary interfaces
+  description: Required and provided are relative to the declaring System or Component. Each Interface is an
+    addressable specification with one declaration membership. Requirements can apply to it and it may own
+    obligation clauses. Native contract references do not establish implementation or compatibility.
+  nodes:
+  - System
+  - Component
+  - Interface
+  paths:
+  - System.required_interfaces.interfaces
+  - System.provided_interfaces.interfaces
+  - Component.required_interfaces.interfaces
+  - Component.provided_interfaces.interfaces
+  inheritance: false
 - title: System structure and feature grouping
   description: Declaration membership identifies where records are authored. Explicit part_of identifies structural
     parents independently of directories. Features group specifications without owning them. Applicability
@@ -324,6 +368,7 @@ diagrams:
   - ObligationClause
   - ConceptUse
   - Synchronization
+  - Interface
   - DomainElement
   paths:
   - System.part_of
@@ -337,7 +382,7 @@ diagrams:
 - title: Shared obligation capabilities
   description: Both standalone requirement forms and embedded clauses share statement, classification, applicability
     and assessment plans through Obligation. ObligationContainer separately grants clause ownership to System,
-    Component, BusinessRule, Job, JobStep, UseCase, Concept, ConceptUse, ConceptAction, Synchronization and
+    Component, Interface, BusinessRule, Job, JobStep, UseCase, Concept, ConceptUse, ConceptAction, Synchronization and
     Requirement. Goals, assumptions and desired outcomes retain traceability without containing clauses. Triangle
     arrows include explicitly mixed-in capabilities.
   direction: TB

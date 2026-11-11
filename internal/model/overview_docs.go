@@ -96,6 +96,14 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			fmt.Fprintf(&out, "| %s | %s | %s |\n", link(String(r, "id")), link(String(r, "part_of")), declared)
 		}
 	}
+	out.WriteString("\n## Interfaces\n\nRequired and provided are relative to the declaring subject. Each entry is an addressable specification; native contract references do not prove implementation or compatibility.\n\n| Subject | Direction | Interface |\n| --- | --- | --- |\n")
+	for _, r := range elements {
+		for _, field := range []string{"required_interfaces", "provided_interfaces"} {
+			for _, id := range Strings(Object(r[field])["interfaces"]) {
+				fmt.Fprintf(&out, "| %s | %s | %s |\n", link(String(r, "id")), strings.TrimSuffix(field, "_interfaces"), link(id))
+			}
+		}
+	}
 	out.WriteString("\n## Features\n\nFeature membership is many-to-many and does not own the grouped records. Component involvement below is derived only from the direct `applies_to` targets of grouped requirements or obligation clauses. It is not an implementation or allocation claim.\n\n| Feature | System | Grouped specifications | Components involved (derived) |\n| --- | --- | --- | --- |\n")
 	for _, r := range elements {
 		if String(r, "kind") != "Feature" {
@@ -157,7 +165,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	}
 	out.WriteString("\n## Descriptions and native references\n\nLinked contracts, architecture decisions, and implementation artifacts retain their own authority. Normative commitments belong in requirements or obligation clauses.\n\n")
 	for _, r := range elements {
-		included := designKind(String(r, "kind"), "System or Component or Feature")
+		included := designKind(String(r, "kind"), "System or Component or Feature or Interface")
 		if designKind(String(r, "kind"), "Obligation") {
 			for _, target := range Strings(r["applies_to"]) {
 				included = included || ids[target] != ""
@@ -173,9 +181,9 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 				definitions = append(definitions, d.text(Record{"content_nodes": []string{String(n, "id")}}))
 			}
 		}
-		for _, field := range []string{"purpose", "scope", "responsibilities", "boundary_description", "contracts", "architecture", "implementation", "part_of_content", "groups_content", "statement", "verification_plan", "validation_plan", "measurement_plan", "criterion"} {
+		for _, field := range []string{"description", "purpose", "scope", "responsibilities", "boundary_description", "contracts", "counterpart", "architecture", "implementation", "part_of_content", "groups_content", "statement", "verification_plan", "validation_plan", "measurement_plan", "criterion"} {
 			value := r[field]
-			if field == "contracts" || field == "architecture" || field == "implementation" || field == "validation_plan" || field == "verification_plan" || field == "measurement_plan" || field == "criterion" {
+			if field == "counterpart" || field == "contracts" || field == "architecture" || field == "implementation" || field == "validation_plan" || field == "verification_plan" || field == "measurement_plan" || field == "criterion" {
 				value = Object(value)["content"]
 			}
 			text := d.text(value)

@@ -2,7 +2,7 @@
 
 Generated PEGS reading perspective. This view complements business, user and software requirements subsets; it does not replace them or impose a dependency order. It covers only acquired specifications. Referenced project plans and native contracts remain authoritative.
 
-Model `0.13.0-draft`; mapping `dotspec-markdown/12`.
+Model `0.14.0-draft`; mapping `dotspec-markdown/13`.
 
 ## Project
 
@@ -50,6 +50,8 @@ Interacts with: [Platform clock](<../../examples/requirements-review/clock/specs
 
 #### Time readings
 
+**ID:** time-readings
+
 Read UTC time for retention comparisons.
 
 ##### Counterpart
@@ -64,7 +66,29 @@ Read UTC time for retention comparisons.
 
 #### Restoration requests
 
+**ID:** restoration-requests
+
 Accept restoration requests from authorized clients. The native contract remains to be selected.
+
+##### Obligations
+
+###### Preserve request identity
+
+**ID:** request-identity
+
+A retried restoration request must retain its original request identifier.
+
+**Applies to**
+
+**Targets:** [Restoration requests](../../examples/requirements-review/specs/system.spec.md#restoration-requests).
+
+**Verification plan**
+
+Repeat a request after an interrupted response and inspect the retained identifier.
+
+##### Notes
+
+The interaction contract covers retries; the native protocol remains to be selected.
 
 Review required: Provided interfaces Restoration requests has no native contract reference recorded.
 
@@ -185,6 +209,44 @@ Help teams preserve and recover valuable work.
 Document deletion and restoration within a workspace.
 
 Interacts with: [Platform clock](<../../examples/requirements-review/clock/specs/system.spec.md#platform-clock>).
+
+### ObligationClause: [Preserve request identity](<../../examples/requirements-review/specs/system.spec.md#preserve-request-identity>)
+
+**Statement**
+
+A retried restoration request must retain its original request identifier.
+
+Applies to: [Restoration requests](<../../examples/requirements-review/specs/system.spec.md#restoration-requests>).
+
+### ConceptUse: [DocumentTrash](<../../examples/requirements-review/specs/system.spec.md#documenttrash>)
+
+Definition: [Trash](<../../examples/requirements-review/specs/concepts/trash.concept.spec.md#trash>).
+
+Supports: [Recover lost work](<../../examples/requirements-review/specs/jobs/recover.job.spec.md#recover-lost-work>).
+
+### Interface: [Time readings](<../../examples/requirements-review/specs/system.spec.md#time-readings>)
+
+**Description**
+
+**ID:** time-readings
+
+Read UTC time for retention comparisons.
+
+**Contracts**
+
+[Time API](../../examples/requirements-review/contracts/time.openapi.yaml) is the authoritative wire contract.
+
+**Counterpart**
+
+[Platform clock](../../examples/requirements-review/clock/specs/system.spec.md).
+
+### Interface: [Restoration requests](<../../examples/requirements-review/specs/system.spec.md#restoration-requests>)
+
+**Description**
+
+**ID:** restoration-requests
+
+Accept restoration requests from authorized clients. The native contract remains to be selected.
 
 ### UseCase: [Restore a document](<../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md#restore-a-document>)
 
@@ -327,6 +389,10 @@ Consented observation notes, task outcome, revision, conditions and observed obs
 #### Evidence to retain
 
 Retain the protocol and observations separately from the assessment of intended-use fitness and any stakeholder acceptance decision. This example records a plan only.
+
+### ObligationClause: [Preserve request identity](<../../examples/requirements-review/specs/system.spec.md#preserve-request-identity>)
+
+No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
 
 ### UseCase: [Restore a document](<../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md#restore-a-document>)
 

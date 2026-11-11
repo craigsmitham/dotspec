@@ -201,7 +201,7 @@ A supporting note, not an action.
 	if rule["semantics"] != nil || rule["when_actions"] != nil || rule["then_actions"] != nil {
 		t.Fatal("semantics or actions inferred from prose")
 	}
-	if len(Strings(rule["extension_sections"])) != 1 {
+	if rule["extension_sections"] != nil || !strings.Contains(newDesignResolver(result.Snapshot).text(rule["notes"]), "supporting note") {
 		t.Fatal("supporting notes lost")
 	}
 }

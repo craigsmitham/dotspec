@@ -33,9 +33,9 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 	if d.text(sys["out_of_scope"]) == "" || d.text(Object(sys["project_context"])["content"]) == "" {
 		t.Fatal("unmapped system context")
 	}
-	required := reviewObjects(Object(sys["required_interfaces"])["interfaces"])
-	provided := reviewObjects(Object(sys["provided_interfaces"])["interfaces"])
-	if len(required) != 1 || len(provided) != 1 || len(Strings(Object(required[0]["contracts"])["references"])) != 1 || provided[0]["contracts"] != nil {
+	required := Strings(Object(sys["required_interfaces"])["interfaces"])
+	provided := Strings(Object(sys["provided_interfaces"])["interfaces"])
+	if len(required) != 1 || len(provided) != 1 || len(Strings(Object(d.index[required[0]]["contracts"])["references"])) != 1 || d.index[provided[0]]["contracts"] != nil {
 		t.Fatal("interface direction/contract information lost")
 	}
 	assumption := designRecord(t, s, "Assumption", "Trusted time")
@@ -188,6 +188,8 @@ func TestRepeatedComponentInterfaceSectionsRetainAllEntries(t *testing.T) {
 
 ##### Time readings
 
+**ID:** component-time
+
 Read the current time.
 
 ###### Contracts
@@ -206,7 +208,7 @@ Read retained items.
 
 #### Implementation hints
 
-A batch worker is one implementation option.
+A batch worker can use [Time readings](#component-time).
 
 ## Concept uses`)
 	result := conformanceExport(t, root)
@@ -215,11 +217,11 @@ A batch worker is one implementation option.
 	}
 	conformancePayloads(t, result.Snapshot)
 	component := designRecord(t, result.Snapshot, "Component", "Retention worker")
-	items := reviewObjects(Object(component["required_interfaces"])["interfaces"])
-	if len(items) != 2 || len(Strings(Object(items[0]["contracts"])["references"])) != 2 {
+	d := newDesignResolver(result.Snapshot)
+	items := Strings(Object(component["required_interfaces"])["interfaces"])
+	if len(items) != 2 || len(Strings(Object(d.index[items[0]]["contracts"])["references"])) != 2 {
 		t.Fatal("repeated interface content overwritten", items)
 	}
-	d := newDesignResolver(result.Snapshot)
 	if strings.Count(d.text(component["implementation_suggestions"]), "A batch worker") != 1 {
 		t.Fatal("nested explanation duplicated")
 	}

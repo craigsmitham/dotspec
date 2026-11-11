@@ -137,7 +137,7 @@ Standalone general requirements, quality requirements and embedded clauses share
 verification plan and optional criterion and measurement plan. Their authoring
 location does not limit their quality classification or assessment detail.
 
-Clause containment is an explicit `ObligationContainer` capability on System,
+Clause containment is an explicit `ObligationContainer` capability on System, Component, Interface,
 BusinessRule, Job, JobStep, UseCase, Concept, ConceptUse, ConceptAction,
 Synchronization and Requirement. Goals, assumptions and desired outcomes can
 participate in traceability without containing clauses. This keeps motivation,

@@ -31,6 +31,14 @@ func (v *graphValidator) checkDomain() {
 	for _, located := range v.sortedRecords() {
 		r, path := located.value, located.path
 		kind := String(r, "kind")
+		if kind == "System" || kind == "Component" {
+			required := Strings(Object(r["required_interfaces"])["interfaces"])
+			for _, id := range Strings(Object(r["provided_interfaces"])["interfaces"]) {
+				if slices.Contains(required, id) {
+					v.add("interface.direction", path+"/provided_interfaces/interfaces", "an interface declaration must have one direction relative to its owner")
+				}
+			}
+		}
 		if kind == "QualityAttribute" {
 			for _, id := range valuesAt(r, "subattribute_of") {
 				if other := v.records[id].value; other != nil && String(other, "owner") != String(r, "owner") {

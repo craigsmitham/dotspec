@@ -2,7 +2,7 @@
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.13.0-draft`; mapping `dotspec-markdown/12`. This view covers only acquired records within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior or missing implementation.
+Model `0.14.0-draft`; mapping `dotspec-markdown/13`. This view covers only acquired records within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior or missing implementation.
 
 ## System structure
 
@@ -25,6 +25,14 @@ flowchart BT
 | [Inventory](<../../examples/system-structure/specs/system.spec.md#inventory>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) |
 | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | Unresolved or undeclared | System document |
 | [Reservations](<../../examples/system-structure/specs/system.spec.md#reservations>) | [Inventory](<../../examples/system-structure/specs/system.spec.md#inventory>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) |
+
+## Interfaces
+
+Required and provided are relative to the declaring subject. Each entry is an addressable specification; native contract references do not prove implementation or compatibility.
+
+| Subject | Direction | Interface |
+| --- | --- | --- |
+| [Checkout](<../../examples/system-structure/specs/system.spec.md#checkout>) | provided | [Order submission](<../../examples/system-structure/specs/system.spec.md#order-submission>) |
 
 ## Features
 
@@ -90,10 +98,6 @@ Calculate totals and coordinate order submission.
 
 Owns order submission; stock availability remains Inventory's responsibility.
 
-#### Contracts
-
-[Order submission contract](../../examples/system-structure/order-contract.md)
-
 #### Architecture
 
 [Order coordination decision](../../examples/system-structure/order-coordination.md)
@@ -129,6 +133,20 @@ Let customers buy available products.
 #### Scope
 
 Order placement, stock reservation, and confirmation. Payment processing is external.
+
+### Interface: Order submission
+
+[Order submission](<../../examples/system-structure/specs/system.spec.md#order-submission>)
+
+#### Description
+
+**ID:** order-submission
+
+Accept a priced order and return its submission identity.
+
+#### Contracts
+
+[Order submission contract](../../examples/system-structure/order-contract.md) defines the interaction contract.
 
 ### Feature: Place an order
 
@@ -172,11 +190,27 @@ Operating conditions and constraints describe what the solution must accommodate
 
 ### System: [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>)
 
-### Component: [Checkout](<../../examples/system-structure/specs/system.spec.md#checkout>)
-
 ### Component: [Inventory](<../../examples/system-structure/specs/system.spec.md#inventory>)
 
 ### Component: [Reservations](<../../examples/system-structure/specs/system.spec.md#reservations>)
+
+### Component: [Checkout](<../../examples/system-structure/specs/system.spec.md#checkout>)
+
+**Provided interfaces**
+
+#### Order submission
+
+**ID:** order-submission
+
+Accept a priced order and return its submission identity.
+
+##### Contracts
+
+[Order submission contract](../../examples/system-structure/order-contract.md) defines the interaction contract.
+
+##### Notes
+
+The declaration specifies the boundary interaction; it is not a deployed endpoint.
 
 ## Assumptions: evidence and justified reliance
 

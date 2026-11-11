@@ -844,6 +844,14 @@
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
                 },
+                "authority_and_evidence": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
+                },
                 "content": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -898,6 +906,9 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Human, procedural or other enabling context, including external references. Typed providers describe only explicitly linked systems and components."
                 },
+                "evidence": {
+                    "$ref": "#/$defs/EvidenceCollection"
+                },
                 "explanatory_notes": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Explanation of the specification; not a separate obligation or endorsement."
@@ -931,12 +942,20 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
+                "notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Recognized Notes content."
+                },
                 "open_questions": {
                     "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
                     "type": "string"
+                },
+                "preamble": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored content between the title and the first named section."
                 },
                 "provided_by": {
                     "description": "Explicitly identified system or component providers. Optional and non-exhaustive: human and procedural providers can be described in enablers. Does not assert verified implementation or satisfaction.",
@@ -964,6 +983,16 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "What this ability enables and why it matters."
                 },
+                "related_concepts": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_specifications": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_use_cases": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
+                },
                 "relies_on": {
                     "description": "Assumptions on which the validity of this element depends.",
                     "items": {
@@ -980,6 +1009,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "slug": {
+                    "description": "Path-derived current slug where applicable.",
+                    "type": "string"
                 },
                 "source_document": {
                     "type": "string"
@@ -1161,9 +1194,17 @@
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
                 },
+                "authority_and_evidence": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
                 "boundary_description": {
                     "$ref": "#/$defs/RichContent",
                     "description": "What the component includes, excludes and delegates; normative commitments remain obligations."
+                },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
                 },
                 "content": {
                     "$ref": "#/$defs/RichContent"
@@ -1196,6 +1237,9 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "evidence": {
+                    "$ref": "#/$defs/EvidenceCollection"
                 },
                 "explanatory_notes": {
                     "$ref": "#/$defs/RichContent",
@@ -1256,6 +1300,10 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
+                "notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Recognized Notes content."
+                },
                 "obligations": {
                     "items": {
                         "type": "string"
@@ -1294,13 +1342,27 @@
                     },
                     "type": "array"
                 },
+                "preamble": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored content between the title and the first named section."
+                },
                 "provided_interfaces": {
-                    "$ref": "#/$defs/InterfaceCollection",
+                    "$ref": "#/$defs/ProvidedInterfaceCollection",
                     "description": "Services this subject exposes to its environment."
                 },
                 "purpose": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Benefit or reason for this component to exist."
+                },
+                "related_concepts": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_specifications": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_use_cases": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
                 },
                 "relies_on": {
                     "description": "Assumptions on which the validity of this element depends.",
@@ -1320,12 +1382,16 @@
                     "type": "array"
                 },
                 "required_interfaces": {
-                    "$ref": "#/$defs/InterfaceCollection",
+                    "$ref": "#/$defs/RequiredInterfaceCollection",
                     "description": "Services this subject expects from its environment."
                 },
                 "responsibilities": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored responsibilities identifying what this component is expected to do."
+                },
+                "slug": {
+                    "description": "Path-derived current slug where applicable.",
+                    "type": "string"
                 },
                 "source_document": {
                     "type": "string"
@@ -1918,6 +1984,10 @@
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
                 },
+                "authority_and_evidence": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
                 "bindings": {
                     "items": {
                         "type": "string"
@@ -1926,6 +1996,10 @@
                 },
                 "bindings_content": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
                 },
                 "configuration": {
                     "$ref": "#/$defs/RichContent"
@@ -1982,6 +2056,9 @@
                     },
                     "type": "array"
                 },
+                "evidence": {
+                    "$ref": "#/$defs/EvidenceCollection"
+                },
                 "explanatory_notes": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Explanation of the specification; not a separate obligation or endorsement."
@@ -2015,6 +2092,10 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
+                "notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Recognized Notes content."
+                },
                 "obligations": {
                     "items": {
                         "type": "string"
@@ -2030,6 +2111,20 @@
                 },
                 "owner": {
                     "type": "string"
+                },
+                "preamble": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored content between the title and the first named section."
+                },
+                "related_concepts": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_specifications": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_use_cases": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
                 },
                 "relies_on": {
                     "description": "Assumptions on which the validity of this element depends.",
@@ -2047,6 +2142,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "slug": {
+                    "description": "Path-derived current slug where applicable.",
+                    "type": "string"
                 },
                 "source_document": {
                     "type": "string"
@@ -3683,6 +3782,14 @@
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
                 },
+                "authority_and_evidence": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
+                },
                 "content": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -3710,6 +3817,9 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "evidence": {
+                    "$ref": "#/$defs/EvidenceCollection"
                 },
                 "explanatory_notes": {
                     "$ref": "#/$defs/RichContent",
@@ -3765,6 +3875,10 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
+                "notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Recognized Notes content."
+                },
                 "open_questions": {
                     "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
@@ -3772,9 +3886,23 @@
                 "owner": {
                     "type": "string"
                 },
+                "preamble": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored content between the title and the first named section."
+                },
                 "purpose": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Stakeholder benefit expressed by this feature."
+                },
+                "related_concepts": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_specifications": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_use_cases": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
                 },
                 "relies_on": {
                     "description": "Assumptions on which the validity of this element depends.",
@@ -3792,6 +3920,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "slug": {
+                    "description": "Path-derived current slug where applicable.",
+                    "type": "string"
                 },
                 "source_document": {
                     "type": "string"
@@ -5507,42 +5639,217 @@
             "title": "InteractsWith",
             "type": "object"
         },
+        "Interface": {
+            "additionalProperties": false,
+            "description": "An independently addressable specification of interaction at a System or Component boundary. Required or provided membership states direction relative to the declaring subject. Native protocol contracts retain their authority; neither declaration nor citation proves implementation or compatibility.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "authority_and_evidence": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
+                },
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "contracts": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "References to authoritative native contracts; no conformance claim is inferred."
+                },
+                "counterpart": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to participants or corresponding interfaces; no compatibility claim is inferred."
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "description": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Introductory description of the boundary interaction."
+                },
+                "evidence": {
+                    "$ref": "#/$defs/EvidenceCollection"
+                },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
+                },
+                "kind": {
+                    "const": "Interface",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Recognized Notes content."
+                },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "string"
+                },
+                "preamble": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored content between the title and the first named section."
+                },
+                "related_concepts": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_specifications": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_use_cases": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "slug": {
+                    "description": "Path-derived current slug where applicable.",
+                    "type": "string"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
+                }
+            },
+            "required": [
+                "owner",
+                "content",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "Interface",
+            "type": "object"
+        },
         "InterfaceCollection": {
             "additionalProperties": false,
-            "description": "An authored required or provided interface section. Native contracts remain authoritative.",
+            "description": "Authored required or provided interface declarations, relative to the declaring System or Component.",
             "properties": {
                 "content": {
                     "$ref": "#/$defs/RichContent"
                 },
                 "interfaces": {
                     "items": {
-                        "$ref": "#/$defs/InterfaceDescription"
+                        "type": "string"
                     },
                     "type": "array"
                 }
             },
             "title": "InterfaceCollection",
-            "type": "object"
-        },
-        "InterfaceDescription": {
-            "additionalProperties": false,
-            "description": "A lightweight boundary service description, not an architectural interface definition.",
-            "properties": {
-                "contracts": {
-                    "$ref": "#/$defs/ContextualReferences"
-                },
-                "counterpart": {
-                    "$ref": "#/$defs/ContextualReferences",
-                    "description": "Authored participant context; typed partner relationships belong on the subject."
-                },
-                "description": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "name": {
-                    "$ref": "#/$defs/RichContent"
-                }
-            },
-            "title": "InterfaceDescription",
             "type": "object"
         },
         "Involves": {
@@ -6995,6 +7302,90 @@
             "title": "ProgressCaseCollection",
             "type": "object"
         },
+        "ProvidedInterface": {
+            "additionalProperties": false,
+            "description": "Projection of an interface provided by its declaring System or Component.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "ProvidedInterface",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "ProvidedInterface",
+            "type": "object"
+        },
+        "ProvidedInterfaceCollection": {
+            "additionalProperties": false,
+            "description": "Interface specifications provided by the declaring subject.",
+            "properties": {
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "interfaces": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "title": "ProvidedInterfaceCollection",
+            "type": "object"
+        },
         "QualityAttribute": {
             "additionalProperties": false,
             "description": "A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit obligations, thresholds, or satisfaction.",
@@ -7852,6 +8243,90 @@
                 "kind"
             ],
             "title": "ReliesOn",
+            "type": "object"
+        },
+        "RequiredInterface": {
+            "additionalProperties": false,
+            "description": "Projection of an interface required by its declaring System or Component.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "RequiredInterface",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "RequiredInterface",
+            "type": "object"
+        },
+        "RequiredInterfaceCollection": {
+            "additionalProperties": false,
+            "description": "Interface specifications required by the declaring subject.",
+            "properties": {
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "interfaces": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "title": "RequiredInterfaceCollection",
             "type": "object"
         },
         "Requirement": {
@@ -8792,6 +9267,12 @@
                                 "$ref": "#/$defs/CapabilityProvider"
                             },
                             {
+                                "$ref": "#/$defs/RequiredInterface"
+                            },
+                            {
+                                "$ref": "#/$defs/ProvidedInterface"
+                            },
+                            {
                                 "$ref": "#/$defs/InteractsWith"
                             },
                             {
@@ -8892,22 +9373,7 @@
                                 "$ref": "#/$defs/ConceptAction"
                             },
                             {
-                                "$ref": "#/$defs/ConceptUse"
-                            },
-                            {
-                                "$ref": "#/$defs/Synchronization"
-                            },
-                            {
                                 "$ref": "#/$defs/ObligationClause"
-                            },
-                            {
-                                "$ref": "#/$defs/Component"
-                            },
-                            {
-                                "$ref": "#/$defs/Feature"
-                            },
-                            {
-                                "$ref": "#/$defs/Capability"
                             },
                             {
                                 "$ref": "#/$defs/GeneralRequirement"
@@ -8931,7 +9397,25 @@
                                 "$ref": "#/$defs/Concept"
                             },
                             {
+                                "$ref": "#/$defs/ConceptUse"
+                            },
+                            {
+                                "$ref": "#/$defs/Synchronization"
+                            },
+                            {
+                                "$ref": "#/$defs/Component"
+                            },
+                            {
+                                "$ref": "#/$defs/Interface"
+                            },
+                            {
                                 "$ref": "#/$defs/QualityModel"
+                            },
+                            {
+                                "$ref": "#/$defs/Feature"
+                            },
+                            {
+                                "$ref": "#/$defs/Capability"
                             }
                         ]
                     },
@@ -8954,7 +9438,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.13.0-draft",
+                    "const": "0.14.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -9345,9 +9829,9 @@
             "title": "SourceRevision",
             "type": "object"
         },
-        "SpecificationElement": {
+        "Specification": {
             "additionalProperties": false,
-            "description": "Common content of system, job, use-case, concept and requirement documents; narrative authority/evidence does not create executable authority assertions.",
+            "description": "A cohesive definition of a subject, behavior, obligation or classification scheme. Specification kind is independent of document placement; a named inline definition is also a specification. Narrative authority and evidence do not create executable authority assertions.",
             "properties": {
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -9503,7 +9987,7 @@
                 "id",
                 "kind"
             ],
-            "title": "SpecificationElement",
+            "title": "Specification",
             "type": "object"
         },
         "SpecificationKind": {
@@ -9809,6 +10293,14 @@
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
                 },
+                "authority_and_evidence": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
+                },
                 "content": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -9836,6 +10328,9 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "evidence": {
+                    "$ref": "#/$defs/EvidenceCollection"
                 },
                 "explanatory_notes": {
                     "$ref": "#/$defs/RichContent",
@@ -9870,6 +10365,10 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
+                "notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Recognized Notes content."
+                },
                 "obligations": {
                     "items": {
                         "type": "string"
@@ -9885,6 +10384,20 @@
                 },
                 "owner": {
                     "type": "string"
+                },
+                "preamble": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored content between the title and the first named section."
+                },
+                "related_concepts": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_specifications": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_use_cases": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
                 },
                 "relies_on": {
                     "description": "Assumptions on which the validity of this element depends.",
@@ -9905,6 +10418,10 @@
                 },
                 "semantics": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "slug": {
+                    "description": "Path-derived current slug where applicable.",
+                    "type": "string"
                 },
                 "source_document": {
                     "type": "string"
@@ -10288,7 +10805,7 @@
                     "description": "Project context and links to authoritative schedules, risks, responsibilities and workflows; not a project-management model."
                 },
                 "provided_interfaces": {
-                    "$ref": "#/$defs/InterfaceCollection",
+                    "$ref": "#/$defs/ProvidedInterfaceCollection",
                     "description": "Services this subject exposes to its environment."
                 },
                 "purpose": {
@@ -10333,7 +10850,7 @@
                     "type": "array"
                 },
                 "required_interfaces": {
-                    "$ref": "#/$defs/InterfaceCollection",
+                    "$ref": "#/$defs/RequiredInterfaceCollection",
                     "description": "Services this subject expects from its environment."
                 },
                 "scope": {
@@ -10405,7 +10922,7 @@
         },
         "SystemContextSpecification": {
             "additionalProperties": false,
-            "description": "A non-system specification with directory discovery context and an independently selected specification system.",
+            "description": "A non-System document-root specification with directory discovery context and an independently selected specification system. Inline specifications use their explicit declaring owner instead.",
             "properties": {
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -11565,6 +12082,12 @@
                         "$ref": "#/$defs/CapabilityProvider"
                     },
                     {
+                        "$ref": "#/$defs/RequiredInterface"
+                    },
+                    {
+                        "$ref": "#/$defs/ProvidedInterface"
+                    },
+                    {
                         "$ref": "#/$defs/InteractsWith"
                     },
                     {
@@ -11665,22 +12188,7 @@
                         "$ref": "#/$defs/ConceptAction"
                     },
                     {
-                        "$ref": "#/$defs/ConceptUse"
-                    },
-                    {
-                        "$ref": "#/$defs/Synchronization"
-                    },
-                    {
                         "$ref": "#/$defs/ObligationClause"
-                    },
-                    {
-                        "$ref": "#/$defs/Component"
-                    },
-                    {
-                        "$ref": "#/$defs/Feature"
-                    },
-                    {
-                        "$ref": "#/$defs/Capability"
                     },
                     {
                         "$ref": "#/$defs/GeneralRequirement"
@@ -11704,7 +12212,25 @@
                         "$ref": "#/$defs/Concept"
                     },
                     {
+                        "$ref": "#/$defs/ConceptUse"
+                    },
+                    {
+                        "$ref": "#/$defs/Synchronization"
+                    },
+                    {
+                        "$ref": "#/$defs/Component"
+                    },
+                    {
+                        "$ref": "#/$defs/Interface"
+                    },
+                    {
                         "$ref": "#/$defs/QualityModel"
+                    },
+                    {
+                        "$ref": "#/$defs/Feature"
+                    },
+                    {
+                        "$ref": "#/$defs/Capability"
                     }
                 ]
             },
@@ -11727,7 +12253,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.13.0-draft",
+            "const": "0.14.0-draft",
             "type": "string"
         },
         "references": {
@@ -11781,5 +12307,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.13.0-draft"
+    "version": "0.14.0-draft"
 }

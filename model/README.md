@@ -1,7 +1,7 @@
 # Specification model
 
 [dotspec.yaml](dotspec.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.13.0-draft`; the JSON
+specification snapshots. The model version is `0.14.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
@@ -269,7 +269,7 @@ and the [generated overview](../docs/reference/system-overview-example.md).
 
 ## Jobs, user needs and capabilities
 
-Version `0.13.0-draft` and mapping `dotspec-markdown/12` add:
+Version `0.14.0-draft` and mapping `dotspec-markdown/13` add:
 
 - Shared `DesiredOutcome.applies_to` relationships to jobs and steps, independent
   of the single declaring owner. Named outcomes have short heading labels,
@@ -288,3 +288,16 @@ Version `0.13.0-draft` and mapping `dotspec-markdown/12` add:
 The legacy singular `Desired outcome` job heading is extension content rather
 than an alias for `Intended progress`. Research assessments remain dated evidence,
 not outcome properties. See [Jobs and user needs](../docs/jobs-and-user-needs.md).
+
+## Specification kinds independent of document placement
+
+`0.14.0-draft` / `dotspec-markdown/13` names the common base `Specification`
+(previously SpecificationElement) and includes Component, Feature, Capability,
+ConceptUse and Synchronization alongside the existing document-root types.
+Their common sections map to named fields even when authored inline.
+
+Interface is a specification with an identity, declaring System or Component,
+traceability, shared content and optional obligation clauses. Required/provided
+collections retain narrative and reference Interface records; graph projections
+retain direction. Native contracts and counterpart references remain contextual.
+The existing eight file families remain unchanged. See [the authoring model](../docs/specification-model.md#specification-kinds-and-document-placement).

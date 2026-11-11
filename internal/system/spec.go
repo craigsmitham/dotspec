@@ -97,7 +97,10 @@ func Parse(data []byte) (*System, error) {
 	if err := ids.Register(meta.ID, "system", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err
 	}
-	if err := ids.RegisterDeclarations(doc, "Components", "Features", "Capabilities"); err != nil {
+	if err := ids.RegisterDeclarations(doc, "Components", "Features", "Capabilities", "Concept uses", "Synchronizations"); err != nil {
+		return nil, err
+	}
+	if err := ids.RegisterInterfaces(doc); err != nil {
 		return nil, err
 	}
 	for _, section := range doc.Sections {

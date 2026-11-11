@@ -13,13 +13,51 @@ The canonical [LinkML model](../model/dotspec.yaml) defines the records and thei
 relationships. The [generated reference](reference/model/index.md) describes
 every field. The [relationship reference](reference/model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.13.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/12`.
+`model_version` is `0.14.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/13`.
 
 The [verification and validation vocabulary](verification-and-validation.md)
 distinguishes requirements quality, requirements fitness, system conformance and
 system fitness. Shared AssessmentPlan/AssessmentCase values keep those plan roles
 separate through their owning fields and explicit subject and basis.
+
+## Specification kinds and document placement
+
+`Specification` is the abstract base for a cohesive definition of a subject,
+behavior, obligation or classification scheme. It includes System, Feature,
+Component, Capability, Job, UseCase, Concept, ConceptUse, Synchronization,
+Interface, BusinessRule, Requirement and QualityModel. GeneralRequirement and
+QualityRequirement specialize Requirement.
+
+A System record describes the system within the specification; it is not a
+running system or deployment inventory. The same distinction applies to a
+Component, Feature or Interface record. We do not require a second
+“SystemSpecification” record to repeat that definition.
+
+Specification kind, concern subset, and document placement are independent:
+
+- The existing eight document families provide document roots.
+- Component, Feature, Capability, ConceptUse and Synchronization are named inline
+  specifications in a System document. Interface is declared under a System or
+  Component's Required interfaces or Provided interfaces section.
+- All inherit common notes, evidence, contextual references and validation
+  planning, alongside traceability. Heading anchors and optional introductory
+  `**ID:**` fields make inline specifications addressable without separate files.
+- Business/user/software subsets describe concerns. Core/supporting/generic
+  classifies those subsets; neither classification follows from inheritance.
+
+Goals, assumptions, quality attributes, scenario steps and action parameters
+remain constituent domain elements. Plans, evidence and open questions support
+specification work without becoming specification kinds themselves. An unknown
+section remains preserved as extension content.
+
+An Interface specifies a boundary interaction. Its declaration has one owner and
+one direction relative to that owner; requirements can apply to it, features can
+group it, and it can own obligation clauses. References to counterpart interfaces
+or native contracts do not assert compatibility or implementation. Separate
+required and provided declarations may cite the same native contract without
+claiming they are the same specification. See [boundary authoring](review-requirements.md#delimit-the-boundary-and-its-interfaces)
+and the [generated kind hierarchy](reference/model/core.md#specification-kinds).
 
 ## Export and validate a snapshot
 

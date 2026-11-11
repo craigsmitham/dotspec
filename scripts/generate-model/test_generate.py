@@ -191,7 +191,8 @@ class ModelViewTests(unittest.TestCase):
         c = copy.deepcopy(self.catalog)
         c['classes']['BusinessRule']['slots']['specification_system']['reference_ranges'] = ['Concept']
         v = copy.deepcopy(self.view)
-        v['diagrams'][0]['show_cardinality'] = True
+        diagram = next(d for d in v['diagrams'] if 'BusinessRule.specification_system' in d['paths'])
+        diagram['show_cardinality'] = True
         output = core_markdown(c, v).decode()
         self.assertIn('BusinessRule --> "0..1" Concept : specification system', output)
         self.assertNotIn('BusinessRule --> "0..1" System : specification system', output)

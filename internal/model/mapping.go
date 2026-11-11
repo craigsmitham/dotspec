@@ -226,6 +226,17 @@ func (m *domainMapper) named(kind string, owner Record, s *Section) Record {
 	r := m.record(kind, String(owner, "id"))
 	r["name"] = m.doc.Rich([]string{s.HeadingID})
 	m.bind(r, "name", []string{s.HeadingID}, "record_identity", "item-heading")
+	if designKind(kind, "Specification") {
+		if len(s.Intro) > 0 {
+			m.setRich(r, "preamble", s.Intro)
+			m.bind(r, "preamble", s.Intro, "named_field", "preamble")
+		}
+		if id := m.fieldText(s, "ID"); id != "" {
+			r["authored_id"] = id
+			m.bind(r, "authored_id", m.fieldNodes(s, "ID"), "record_identity", "specification-id")
+			m.bind(r, "authored_id", m.fieldLabelNodes(s, "ID"), "structural_wrapper", "specification-id-label")
+		}
+	}
 	return r
 }
 
@@ -289,6 +300,9 @@ func diagnosticSourceLocation(location diagnostic.Location, source string) Recor
 }
 
 func (m *domainMapper) extension(owner Record, s *Section) Record {
+	if designKind(String(owner, "kind"), "Specification") && m.common(owner, s) {
+		return nil
+	}
 	if m.traceSection(owner, s) || m.explanatory(owner, s) || m.boundarySection(owner, s) || m.assessmentSection(owner, s) {
 		return nil
 	}

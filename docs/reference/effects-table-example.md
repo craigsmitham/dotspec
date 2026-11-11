@@ -2,13 +2,14 @@
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.13.0-draft`; mapping `dotspec-markdown/12`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
+Model `0.14.0-draft`; mapping `dotspec-markdown/13`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
 
 ## Inspection findings
 
 - **advice** `relationship.motivation`: No explicit motivation or derivation is recorded for this obligation; review its justification.
 - **advice** `relationship.measurement_basis`: Measurement guidance is recorded, but no separately identified criterion, conditions or applicability is recorded. Review how observations will be compared with the obligation; prose may already supply the information. Guidance presence is not a verification result.
 - **advice** `relationship.verification_plan`: No system verification or measurement plan is recorded for this obligation; review how a realization will be checked.
+- **advice** `relationship.motivation`: No explicit motivation or derivation is recorded for this obligation; review its justification.
 - **advice** `quality.applies-to`: Identify the subject and applicable conditions, workload, or population.
 - **advice** `quality.measurement-basis`: Measurement guidance is recorded, but no separately identified criterion, conditions or applicability is recorded. Review how observations will be compared with the obligation; prose may already supply the information. Guidance presence is not a verification result.
 - **advice** `requirement.verification`: Record assessment guidance for checking a realization against the obligation; a plan is not a verification result.

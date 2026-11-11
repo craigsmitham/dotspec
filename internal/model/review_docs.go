@@ -146,12 +146,18 @@ func PEGSMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	}
 	v.out.WriteString("## System\n\nSpecifications below describe the solution's subjects, concepts, interactions and obligations. Declaration, structural parentage, applicability and behavioral relationships retain their distinct meanings.\n\n")
 	for _, r := range v.records {
-		if !designKind(String(r, "kind"), "System or Component or Feature or Capability or Concept or UseCase or Obligation") {
+		if !designKind(String(r, "kind"), "System or Component or Feature or Capability or Concept or ConceptUse or Synchronization or Interface or UseCase or Obligation") {
 			continue
 		}
 		fmt.Fprintf(&v.out, "### %s: %s\n\n", String(r, "kind"), v.link(r))
-		for _, f := range []string{"purpose", "scope", "responsibilities", "statement", "goal"} {
+		for _, f := range []string{"description", "purpose", "scope", "responsibilities", "statement", "goal", "configuration", "when", "where", "then", "semantics"} {
 			v.body(r, reviewLabel(f), r[f])
+		}
+		if definition := String(r, "definition"); definition != "" {
+			fmt.Fprintf(&v.out, "Definition: %s.\n\n", v.link(v.d.index[definition]))
+		}
+		for _, f := range []string{"contracts", "counterpart"} {
+			v.body(r, reviewLabel(f), Object(r[f])["content"])
 		}
 		for _, f := range []string{"supports", "applies_to", "involves", "groups", "interacts_with"} {
 			if ids := Strings(r[f]); len(ids) > 0 {
@@ -278,11 +284,12 @@ func (v *reviewView) boundaries() {
 				continue
 			}
 			v.body(r, reviewLabel(field), collection["content"])
-			items := reviewObjects(collection["interfaces"])
+			items := Strings(collection["interfaces"])
 			if len(items) == 0 {
-				v.out.WriteString("Review required: no named interface descriptions recorded.\n\n")
+				v.out.WriteString("Review required: no named interface specifications recorded.\n\n")
 			}
-			for _, item := range items {
+			for _, id := range items {
+				item := v.d.index[id]
 				if len(Strings(Object(item["contracts"])["references"])) == 0 {
 					fmt.Fprintf(&v.out, "Review required: %s %s has no native contract reference recorded.\n\n", reviewLabel(field), v.d.name(item))
 				}

@@ -2,7 +2,7 @@
 
 Generated from acquired specifications. Findings below are advisory review prompts, not completeness, acceptance or implementation claims. Missing links mean **no relationship recorded in this scope**. Drafts may conform to the authoring format while requirements verification and validation remain unfinished.
 
-Model `0.13.0-draft`; mapping `dotspec-markdown/12`.
+Model `0.14.0-draft`; mapping `dotspec-markdown/13`.
 
 ## Needs and intent
 
@@ -56,6 +56,8 @@ Interacts with: [Platform clock](<../../examples/requirements-review/clock/specs
 
 #### Time readings
 
+**ID:** time-readings
+
 Read UTC time for retention comparisons.
 
 ##### Counterpart
@@ -70,7 +72,29 @@ Read UTC time for retention comparisons.
 
 #### Restoration requests
 
+**ID:** restoration-requests
+
 Accept restoration requests from authorized clients. The native contract remains to be selected.
+
+##### Obligations
+
+###### Preserve request identity
+
+**ID:** request-identity
+
+A retried restoration request must retain its original request identifier.
+
+**Applies to**
+
+**Targets:** [Restoration requests](../../examples/requirements-review/specs/system.spec.md#restoration-requests).
+
+**Verification plan**
+
+Repeat a request after an interrupted response and inspect the retained identifier.
+
+##### Notes
+
+The interaction contract covers retries; the native protocol remains to be selected.
 
 Review required: Provided interfaces Restoration requests has no native contract reference recorded.
 
@@ -240,6 +264,10 @@ Consented observation notes, task outcome, revision, conditions and observed obs
 
 Retain the protocol and observations separately from the assessment of intended-use fitness and any stakeholder acceptance decision. This example records a plan only.
 
+### ObligationClause: [Preserve request identity](<../../examples/requirements-review/specs/system.spec.md#preserve-request-identity>)
+
+No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
+
 ### UseCase: [Restore a document](<../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md#restore-a-document>)
 
 **Validation plan**
@@ -299,6 +327,14 @@ Review required: Measurement guidance is recorded, but no separately identified 
 ### [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
 
 No system verification or measurement guidance recorded; review required.
+
+### [Preserve request identity](<../../examples/requirements-review/specs/system.spec.md#preserve-request-identity>)
+
+**Verification plan**
+
+Repeat a request after an interrupted response and inspect the retained identifier.
+
+Assessment guidance recorded; its adequacy and any verification result are not evaluated.
 
 ### [Restore retained content](<../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md#restore-retained-content>)
 
@@ -389,6 +425,7 @@ A member restores a document one day after deletion and resumes editing.
 - **advice** `relationship.motivation`: No explicit motivation or derivation is recorded for this obligation; review its justification.
 - **advice** `relationship.measurement_basis`: Measurement guidance is recorded, but no separately identified criterion, conditions or applicability is recorded. Review how observations will be compared with the obligation; prose may already supply the information. Guidance presence is not a verification result.
 - **advice** `relationship.verification_plan`: No system verification or measurement plan is recorded for this obligation; review how a realization will be checked.
+- **advice** `relationship.motivation`: No explicit motivation or derivation is recorded for this obligation; review its justification.
 - **advice** `quality.applies-to`: Identify the subject and applicable conditions, workload, or population.
 - **advice** `quality.measurement-basis`: Measurement guidance is recorded, but no separately identified criterion, conditions or applicability is recorded. Review how observations will be compared with the obligation; prose may already supply the information. Guidance presence is not a verification result.
 - **advice** `requirement.verification`: Record assessment guidance for checking a realization against the obligation; a plan is not a verification result.

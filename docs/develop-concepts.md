@@ -6,6 +6,12 @@ together. Start with purpose and a characteristic story; add structure where it
 helps people make a design decision. The [format reference](../README.md#concept-spec-format)
 defines the basic file contract.
 
+ConceptUse and Synchronization are specifications in the same abstract hierarchy
+as Concept, even though they are authored inline in a System document. They can
+carry shared Notes, Evidence, Related specifications and Validation plan sections,
+and optional introductory `**ID:**` values. This classification does not imply a
+separate file or an execution guarantee. See [specification kinds](specification-model.md#specification-kinds-and-document-placement).
+
 ## Find a purposeful boundary
 
 A concept is a unit of behavior people can understand and use: Shorthand, Trash,

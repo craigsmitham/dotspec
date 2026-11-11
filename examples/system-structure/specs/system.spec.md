@@ -35,9 +35,21 @@ Calculate totals and coordinate order submission.
 
 Owns order submission; stock availability remains Inventory's responsibility.
 
-#### Contracts
+#### Provided interfaces
 
-[Order submission contract](../order-contract.md)
+##### Order submission
+
+**ID:** order-submission
+
+Accept a priced order and return its submission identity.
+
+###### Contracts
+
+[Order submission contract](../order-contract.md) defines the interaction contract.
+
+###### Notes
+
+The declaration specifies the boundary interaction; it is not a deployed endpoint.
 
 #### Architecture
 

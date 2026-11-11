@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/dotspec.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.13.0-draft
+version: 0.14.0-draft
 description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
   is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
   and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
@@ -77,7 +77,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.13.0-draft
+        equals_string: 0.14.0-draft
       mapping_profile:
         range: string
         description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
@@ -1001,13 +1001,14 @@ classes:
           trace_targets: Assumption
           requires_content: relies_on_content
           relationship_label: relies on
-  SpecificationElement:
+  Specification:
     in_subset:
     - business-requirements
     - user-requirements
     - software-requirements
-    description: Common content of system, job, use-case, concept and requirement documents; narrative authority/evidence
-      does not create executable authority assertions.
+    description: A cohesive definition of a subject, behavior, obligation or classification scheme. Specification
+      kind is independent of document placement; a named inline definition is also a specification. Narrative
+      authority and evidence do not create executable authority assertions.
     is_a: TraceableElement
     abstract: true
     attributes:
@@ -1045,15 +1046,15 @@ classes:
           relation.
         inlined: true
     annotations:
-      owned_memberships: SpecificationElement.evidence.statements
+      owned_memberships: Specification.evidence.statements
   SystemContextSpecification:
     in_subset:
     - business-requirements
     - user-requirements
     - software-requirements
-    description: A non-system specification with directory discovery context and an independently selected
-      specification system.
-    is_a: SpecificationElement
+    description: A non-System document-root specification with directory discovery context and an independently
+      selected specification system. Inline specifications use their explicit declaring owner instead.
+    is_a: Specification
     abstract: true
     attributes:
       system_context:
@@ -1195,7 +1196,7 @@ classes:
     - software-requirements
     description: A standalone reusable set of quality attribute definitions. Copying creates independent system
       declarations; no live inheritance or synchronization.
-    is_a: SpecificationElement
+    is_a: Specification
     slot_usage:
       kind:
         equals_string: QualityModel
@@ -1237,7 +1238,7 @@ classes:
     - software-requirements
     description: The system described by a system document; subordinate systems retain their own boundaries
       and quality attributes.
-    is_a: SpecificationElement
+    is_a: Specification
     slot_usage:
       kind:
         equals_string: System
@@ -1252,11 +1253,11 @@ classes:
         inlined: true
         description: Explicit boundary exclusions; absence is not a statement of scope.
       required_interfaces:
-        range: InterfaceCollection
+        range: RequiredInterfaceCollection
         inlined: true
         description: Services this subject expects from its environment.
       provided_interfaces:
-        range: InterfaceCollection
+        range: ProvidedInterfaceCollection
         inlined: true
         description: Services this subject exposes to its environment.
       interacts_with_content:
@@ -1476,7 +1477,7 @@ classes:
     annotations:
       owned_memberships: System.goals.items or System.assumptions.items or System.constraints.items or System.glossary.terms
         or System.quality_attributes or System.concept_uses or System.synchronizations or System.components
-        or System.features or System.capabilities
+        or System.features or System.capabilities or System.required_interfaces.interfaces or System.provided_interfaces.interfaces
     mixins:
     - ObligationContainer
   GoalCollection:
@@ -1726,7 +1727,7 @@ classes:
         required: true
     attributes:
       owner:
-        range: SpecificationElement
+        range: Specification
         any_of:
         - range: System
         - range: QualityModel
@@ -2145,7 +2146,7 @@ classes:
           relationship_scope: Exactly one declaring owner in the same source document.
           relationship_cycles: forbidden
           relationship_basis: Checked inverse of canonical membership fields.
-          relationship_inverse: SpecificationElement.evidence.statements or ProgressCase.evidence.statements
+          relationship_inverse: Specification.evidence.statements or ProgressCase.evidence.statements
           relationship_ordering: single target
           relationship_label: owner
       statement:
@@ -2986,7 +2987,7 @@ classes:
     - software-requirements
     description: An explicitly named design-time inclusion of a concept in a system. Multiple uses of one definition
       remain distinct; directory association creates no use.
-    is_a: TraceableElement
+    is_a: Specification
     slot_usage:
       kind:
         equals_string: ConceptUse
@@ -3192,7 +3193,7 @@ classes:
     - software-requirements
     description: A system-owned composition rule. Narrative and action references describe coordination; no
       atomicity, execution or completeness is inferred.
-    is_a: TraceableElement
+    is_a: Specification
     slot_usage:
       kind:
         equals_string: Synchronization
@@ -4329,7 +4330,7 @@ classes:
       kind:
         equals_string: DeclaresQualityAttribute
       subject:
-        range: SpecificationElement
+        range: Specification
         any_of:
         - range: System
         - range: QualityModel
@@ -4730,7 +4731,7 @@ classes:
   Component:
     in_subset:
     - software-requirements
-    is_a: TraceableElement
+    is_a: Specification
     description: A named part of a system with a described responsibility and boundary. Neither its declaration
       nor code location establishes structural parentage.
     slot_usage:
@@ -4742,11 +4743,11 @@ classes:
         inlined: true
         description: Explicit boundary exclusions; absence is not a statement of scope.
       required_interfaces:
-        range: InterfaceCollection
+        range: RequiredInterfaceCollection
         inlined: true
         description: Services this subject expects from its environment.
       provided_interfaces:
-        range: InterfaceCollection
+        range: ProvidedInterfaceCollection
         inlined: true
         description: Services this subject exposes to its environment.
       interacts_with_content:
@@ -4859,12 +4860,14 @@ classes:
         inlined: true
         description: Links and narrative; external native artifacts remain authoritative. No implementation
           or satisfaction claim is inferred.
+    annotations:
+      owned_memberships: Component.required_interfaces.interfaces or Component.provided_interfaces.interfaces
     mixins:
     - ObligationContainer
   Feature:
     in_subset:
     - software-requirements
-    is_a: TraceableElement
+    is_a: Specification
     description: A recognizable grouping of specified product behavior valued by stakeholders, independent
       of component structure. Membership does not duplicate or own obligations.
     slot_usage:
@@ -4937,6 +4940,7 @@ classes:
         - range: Concept
         - range: ConceptUse
         - range: Synchronization
+        - range: Interface
         multivalued: true
         description: Non-owning specification membership; the same record may participate in several features.
   PartOf:
@@ -5027,7 +5031,7 @@ classes:
     in_subset:
     - business-requirements
     - software-requirements
-    is_a: TraceableElement
+    is_a: Specification
     description: An ability needed to deliver value, potentially combining people, procedures and technology.
       Distinct from a product feature or structural component; its declaration does not establish a provider.
     slot_usage:
@@ -5176,34 +5180,130 @@ classes:
   InterfaceCollection:
     in_subset:
     - software-requirements
-    description: An authored required or provided interface section. Native contracts remain authoritative.
+    description: Authored required or provided interface declarations, relative to the declaring System or Component.
     attributes:
       content:
         range: RichContent
         inlined: true
       interfaces:
-        range: InterfaceDescription
+        range: Interface
         multivalued: true
-        inlined_as_list: true
         list_elements_ordered: true
-  InterfaceDescription:
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring System or Component in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Explicit named interface declarations under Required interfaces or Provided interfaces.
+          relationship_inverse: Interface.owner
+          relationship_ordering: authored declaration order; no execution order implied
+          relationship_label: declares interfaces
+  RequiredInterfaceCollection:
     in_subset:
     - software-requirements
-    description: A lightweight boundary service description, not an architectural interface definition.
+    is_a: InterfaceCollection
+    description: Interface specifications required by the declaring subject.
+    slot_usage:
+      interfaces:
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring System or Component in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Explicit named interface declarations under Required interfaces or Provided interfaces.
+          relationship_inverse: Interface.owner
+          relationship_ordering: authored declaration order; no execution order implied
+          relationship_label: requires interface
+  ProvidedInterfaceCollection:
+    in_subset:
+    - software-requirements
+    is_a: InterfaceCollection
+    description: Interface specifications provided by the declaring subject.
+    slot_usage:
+      interfaces:
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring System or Component in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Explicit named interface declarations under Required interfaces or Provided interfaces.
+          relationship_inverse: Interface.owner
+          relationship_ordering: authored declaration order; no execution order implied
+          relationship_label: provides interface
+  Interface:
+    in_subset:
+    - software-requirements
+    is_a: Specification
+    description: An independently addressable specification of interaction at a System or Component boundary.
+      Required or provided membership states direction relative to the declaring subject. Native protocol
+      contracts retain their authority; neither declaration nor citation proves implementation or compatibility.
+    mixins:
+    - ObligationContainer
+    slot_usage:
+      kind:
+        equals_string: Interface
     attributes:
-      name:
+      owner:
+        range: DomainElement
+        any_of:
+        - range: System
+        - range: Component
+        required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring System or Component in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Checked inverse of canonical declaration membership.
+          relationship_inverse: System.required_interfaces.interfaces or System.provided_interfaces.interfaces or Component.required_interfaces.interfaces or Component.provided_interfaces.interfaces
+          relationship_ordering: single target
+          relationship_label: declared by
+      content:
         range: RichContent
         inlined: true
+        required: true
       description:
         range: RichContent
         inlined: true
+        description: Introductory description of the boundary interaction.
       contracts:
         range: ContextualReferences
         inlined: true
+        description: References to authoritative native contracts; no conformance claim is inferred.
       counterpart:
         range: ContextualReferences
         inlined: true
-        description: Authored participant context; typed partner relationships belong on the subject.
+        description: Contextual references to participants or corresponding interfaces; no compatibility claim is inferred.
+  RequiredInterface:
+    in_subset:
+    - specification-traceability
+    is_a: Assertion
+    description: Projection of an interface required by its declaring System or Component.
+    slot_usage:
+      kind:
+        equals_string: RequiredInterface
+      subject:
+        range: DomainElement
+        any_of:
+        - range: System
+        - range: Component
+      object:
+        range: Interface
+    annotations:
+      projection_of: System.required_interfaces.interfaces or Component.required_interfaces.interfaces
+  ProvidedInterface:
+    in_subset:
+    - specification-traceability
+    is_a: Assertion
+    description: Projection of an interface provided by its declaring System or Component.
+    slot_usage:
+      kind:
+        equals_string: ProvidedInterface
+      subject:
+        range: DomainElement
+        any_of:
+        - range: System
+        - range: Component
+      object:
+        range: Interface
+    annotations:
+      projection_of: System.provided_interfaces.interfaces or Component.provided_interfaces.interfaces
   EffectsTable:
     in_subset:
     - software-requirements
