@@ -94,11 +94,29 @@ func conformancePayloads(t *testing.T, snapshot *Snapshot) {
 }
 
 func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
-	result := conformanceExport(t, "../..")
-	if result.ExitCode != 0 {
-		t.Errorf("checked-in corpus exit %d", result.ExitCode)
+	// Verify each project independently, then collect a deduplicated inventory for
+	// the corpus assertions below. This is not a merged exported snapshot.
+	result := ExportResult{Snapshot: &Snapshot{}}
+	seenElements := map[string]bool{}
+	snapshots := []*Snapshot{}
+	for _, path := range []string{"../..", "../../examples/starter", "../../examples/concept-design", "../../examples/requirements-traceability"} {
+		project := conformanceExport(t, path)
+		snapshots = append(snapshots, project.Snapshot)
+		if project.ExitCode != 0 {
+			t.Errorf("checked-in project %s exit %d", path, project.ExitCode)
+		}
+		conformancePayloads(t, project.Snapshot)
+		result.Snapshot.Sources = append(result.Snapshot.Sources, project.Snapshot.Sources...)
+		result.Snapshot.Documents = append(result.Snapshot.Documents, project.Snapshot.Documents...)
+		result.Snapshot.ContentNodes = append(result.Snapshot.ContentNodes, project.Snapshot.ContentNodes...)
+		result.Snapshot.ContentBindings = append(result.Snapshot.ContentBindings, project.Snapshot.ContentBindings...)
+		for _, element := range project.Snapshot.Elements {
+			if !seenElements[String(element, "id")] {
+				result.Snapshot.Elements = append(result.Snapshot.Elements, element)
+				seenElements[String(element, "id")] = true
+			}
+		}
 	}
-	conformancePayloads(t, result.Snapshot)
 	index := conformanceIndex(result.Snapshot)
 	docs := map[string]Record{}
 	for _, document := range result.Snapshot.Documents {
@@ -195,30 +213,37 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 			t.Errorf("%s domain records: got %d want at least baseline %d", kind, counts[kind], want)
 		}
 	}
-	if len(result.Snapshot.ContextSources) == 0 || len(result.Snapshot.Resolutions) == 0 {
-		t.Error("actual export did not inspect context and direct references")
+	contexts, resolutions := 0, 0
+	for _, snapshot := range snapshots {
+		contexts += len(snapshot.ContextSources)
+		resolutions += len(snapshot.Resolutions)
 	}
-	encoded, err := json.Marshal(result.Snapshot)
-	if err != nil {
-		t.Fatal(err)
+	if contexts == 0 || resolutions == 0 {
+		t.Error("actual corpus exports did not inspect context and direct references")
 	}
-	var roundtrip Snapshot
-	if err := json.Unmarshal(encoded, &roundtrip); err != nil {
-		t.Fatal(err)
-	}
-	again, err := json.Marshal(&roundtrip)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(encoded, again) {
-		t.Error("snapshot JSON roundtrip loses subtype or rich-content fields")
-	}
-	findings, err := Validate(&roundtrip)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(findings) > 0 {
-		t.Errorf("roundtripped snapshot invalid: %#v", findings)
+	for _, snapshot := range snapshots {
+		encoded, err := json.Marshal(snapshot)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var roundtrip Snapshot
+		if err := json.Unmarshal(encoded, &roundtrip); err != nil {
+			t.Fatal(err)
+		}
+		again, err := json.Marshal(&roundtrip)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !bytes.Equal(encoded, again) {
+			t.Error("snapshot JSON roundtrip loses subtype or rich-content fields")
+		}
+		findings, err := Validate(&roundtrip)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(findings) > 0 {
+			t.Errorf("roundtripped snapshot invalid: %#v", findings)
+		}
 	}
 }
 

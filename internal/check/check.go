@@ -11,9 +11,11 @@ import (
 )
 
 type Scope struct {
-	Path      string   `json:"path"`
-	Types     []string `json:"types"`
-	Discovery string   `json:"discovery"`
+	Project   *specfile.Project `json:"project,omitempty"`
+	Workspace string            `json:"workspace,omitempty"`
+	Path      string            `json:"path"`
+	Types     []string          `json:"types"`
+	Discovery string            `json:"discovery"`
 }
 
 type Summary struct {
@@ -63,6 +65,7 @@ func project(path string, files map[string]*SourceFile, types ...Type) Report {
 		return r.finish()
 	}
 	r.Scope.Path = dir
+	r.collectWorkspace()
 	root, err := specfile.RepositoryRoot(dir)
 	if err != nil {
 		r.record(err, "scan.discovery", dir)
@@ -120,7 +123,12 @@ func newReport(path, discovery string, types []Type) Report {
 	for _, kind := range types {
 		names = append(names, kind.Layout.Kind)
 	}
-	return Report{SchemaVersion: 1, Scope: Scope{Path: path, Types: names, Discovery: discovery}, Complete: true, ContextFiles: []string{}, Diagnostics: []diagnostic.Diagnostic{}}
+	scope := Scope{Path: path, Types: names, Discovery: discovery}
+	if w, p, err := specfile.ProjectContext(path); err == nil && w != nil {
+		scope.Project = &p
+		scope.Workspace = w.Path
+	}
+	return Report{SchemaVersion: 1, Scope: scope, Complete: true, ContextFiles: []string{}, Diagnostics: []diagnostic.Diagnostic{}}
 }
 
 // record and finish keep report accounting, error identity, and deterministic
@@ -176,4 +184,12 @@ func (r Report) finish() Report {
 		}
 	}
 	return r
+}
+
+func (r *Report) collectWorkspace() {
+	if r.Scope.Workspace != "" {
+		r.ContextFiles = append(r.ContextFiles, r.Scope.Workspace)
+		r.Summary.ContextFilesChecked++
+		r.collectFile(r.Scope.Workspace, nil)
+	}
 }

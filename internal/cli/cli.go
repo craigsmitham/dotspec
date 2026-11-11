@@ -186,6 +186,10 @@ func projectPath(cmd *cobra.Command) (string, error) {
 	if err != nil {
 		return path, err
 	}
+	path, err = selectProject(cmd, path)
+	if err != nil {
+		return "", err
+	}
 	// Checks and inventories include scope failures in reports. Other commands report an
 	// invalid project selector as an invocation error rather than a spec finding.
 	if cmd.Name() != "check" && cmd.Name() != "sources" {
@@ -201,6 +205,7 @@ func projectPath(cmd *cobra.Command) (string, error) {
 func addPath(cmd *cobra.Command) {
 	cmd.Flags().String("path", ".", "project directory to inspect or initialize")
 	_ = cmd.MarkFlagDirname("path")
+	addProjectSelection(cmd)
 }
 
 func writeTree(out *strings.Builder, nodes []*system.Node, prefix string) {

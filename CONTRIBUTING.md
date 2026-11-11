@@ -58,7 +58,7 @@ includes errcheck, govet, ineffassign, staticcheck, and unused.
   document-local identifiers, reference extraction, and shared filesystem/discovery
   behavior. All specification types use the same Markdown extraction path.
 - `internal/diagnostic` owns stable findings and source locations.
-- `model/dotspec.yaml` owns the experimental specification metamodel. Generated
+- `model/metamodel.yaml` owns the experimental specification metamodel. Generated
   JSON Schema and the inherited range catalog are embedded by the `model` Go
   package. [Model maintenance](model/README.md) describes the pinned toolchain.
 - `internal/model` captures original bytes and ordered document content, maps
@@ -169,7 +169,7 @@ commands in the README, so documentation syntax cannot silently drift.
 
 The model generation pipeline also validates subset classifications, explicit class
 memberships, and the focused documentation view. Edit `model/views/core-domain.yaml`
-for presentation choices; keep types and relationship semantics in `model/dotspec.yaml`.
+for presentation choices; keep types and relationship semantics in `model/metamodel.yaml`.
 
 See [Releasing](docs/releasing.md) for snapshot and publication procedures.
 

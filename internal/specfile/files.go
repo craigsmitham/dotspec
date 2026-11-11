@@ -63,11 +63,22 @@ func Discover(path string, match func(string) bool) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	w, project, projectErr := ProjectContext(dir)
+	if projectErr != nil {
+		return nil, projectErr
+	}
+	include := func(path string) bool {
+		if w == nil {
+			return true
+		}
+		owner, ok := w.Containing(path)
+		return ok && owner.Name == project.Name
+	}
 	var paths []string
 	if root != "" {
-		paths, err = gitPaths(dir, root, match)
+		paths, err = gitPaths(dir, root, match, include)
 	} else {
-		paths, err = walkPaths(dir, match)
+		paths, err = walkSelectedPaths(dir, match, include)
 	}
 	sort.Strings(paths)
 	return paths, err
@@ -109,7 +120,7 @@ func RepositoryRoot(dir string) (string, error) {
 
 // Let Git apply its own ignore rules, including nested .gitignore files, local
 // exclusions, and negations. Tracked files remain visible even if now ignored.
-func gitPaths(dir, root string, match func(string) bool) ([]string, error) {
+func gitPaths(dir, root string, match func(string) bool, include func(string) bool) ([]string, error) {
 	cmd := exec.Command("git", "-C", dir, "ls-files", "--cached", "--others", "--exclude-standard", "--full-name", "-z", "--", ".")
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
@@ -124,7 +135,7 @@ func gitPaths(dir, root string, match func(string) bool) ([]string, error) {
 			continue
 		}
 		path := filepath.Join(root, filepath.FromSlash(string(entry)))
-		if !match(filepath.Base(path)) || seen[path] {
+		if !include(path) || !match(filepath.Base(path)) || seen[path] {
 			continue
 		}
 		seen[path] = true
@@ -168,12 +179,18 @@ func regularPath(path, boundary string) (bool, error) {
 }
 
 func walkPaths(dir string, match func(string) bool) ([]string, error) {
+	return walkSelectedPaths(dir, match, func(string) bool { return true })
+}
+func walkSelectedPaths(dir string, match func(string) bool, include func(string) bool) ([]string, error) {
 	var paths []string
 	err := filepath.WalkDir(dir, func(path string, entry fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		if entry.IsDir() {
+			if !include(path) {
+				return filepath.SkipDir
+			}
 			if entry.Name() == ".git" {
 				return filepath.SkipDir
 			}

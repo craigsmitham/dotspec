@@ -9,11 +9,11 @@ satisfied.
 
 The [core domain reference](reference/model/core.md) groups the principal types
 by business, user, and software requirements, with generated relationship diagrams.
-The canonical [LinkML model](../model/dotspec.yaml) defines the records and their
+The canonical [LinkML model](../model/metamodel.yaml) defines the records and their
 relationships. The [generated reference](reference/model/index.md) describes
 every field. The [relationship reference](reference/model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.14.0-draft`, `representation_version` is `0.1.0`, and
+`model_version` is `0.15.0-draft`, `representation_version` is `0.1.0`, and
 `mapping_profile` is `dotspec-markdown/13`.
 
 The [verification and validation vocabulary](verification-and-validation.md)
@@ -59,6 +59,20 @@ required and provided declarations may cite the same native contract without
 claiming they are the same specification. See [boundary authoring](review-requirements.md#delimit-the-boundary-and-its-interfaces)
 and the [generated kind hierarchy](reference/model/core.md#specification-kinds).
 
+## Specification projects and workspace exports
+
+A registered specification project bounds discovery and implicit System context;
+it is tooling metadata, not a Specification subclass. `scope.project` identifies
+the selected project and acquired sources record their registered project. The
+workspace manifest is retained as source context. Explicit cross-project links
+remain context acquisition rather than recursive discovery.
+
+`model export --all` returns a workspace envelope containing separate snapshots.
+`model validate` accepts this envelope as well as a single snapshot;
+`model schema --workspace` describes complete workspace exports. Reading views
+identify project scope and any acquired domain context from other projects.
+See [workspaces](workspaces.md) for selection, boundary and output rules.
+
 ## Export and validate a snapshot
 
 ```sh
@@ -81,7 +95,7 @@ invocation or operational error, including an unreadable snapshot file.
 
 Export uses the selected directory, supported specification layouts, enclosing
 system context and direct reference boundary used by the existing inspection
-commands. In a Git repository, discovery follows Git ignore rules. Filesystem
+commands. Registered child projects are excluded from the selected partition. In a Git repository, discovery follows Git ignore rules. Filesystem
 discovery is used outside Git. Symlinks and nested repositories remain outside
 the discovery boundary. Ordinary referenced Markdown receives a content model;
 other acquired files retain their bytes and media type. Directory references

@@ -9602,6 +9602,7 @@
           "any_of": [],
           "description": "",
           "enum_values": [
+            "workspace_configuration",
             "system_context",
             "reference_target",
             "other"
@@ -30756,6 +30757,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "project": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Selected tooling project, independent of domain System relationships.",
+          "identifier": false,
+          "inline_ranges": [
+            "SpecificationProject"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SpecificationProject",
+          "reference_ranges": [],
+          "required": false
+        },
         "reads_complete": {
           "annotations": {},
           "any_of": [],
@@ -32109,7 +32126,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.14.0-draft",
+          "equals_string": "0.15.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -32392,6 +32409,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "SourcePayload",
+          "reference_ranges": [],
+          "required": false
+        },
+        "project": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Registered project containing this acquired source; may differ from the selected project.",
+          "identifier": false,
+          "inline_ranges": [
+            "SpecificationProject"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SpecificationProject",
           "reference_ranges": [],
           "required": false
         },
@@ -33790,6 +33823,63 @@
         "business-requirements",
         "user-requirements",
         "software-requirements"
+      ]
+    },
+    "SpecificationProject": {
+      "abstract": false,
+      "ancestors": [
+        "SpecificationProject"
+      ],
+      "annotations": {},
+      "description": "A tooling partition declared in a workspace manifest, not a domain specification or System.",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "name": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "root": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "workspace": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "inspection-and-coverage"
       ]
     },
     "SpecificationSystem": {
@@ -41285,6 +41375,7 @@
       "subtree"
     ],
     "ContextSourceRole": [
+      "workspace_configuration",
       "system_context",
       "reference_target",
       "other"
@@ -41446,10 +41537,10 @@
       "directory"
     ]
   },
-  "model_version": "0.14.0-draft",
+  "model_version": "0.15.0-draft",
   "representation_version": "0.1.0",
-  "schema_id": "https://github.com/craigsmitham/dotspec/model/dotspec.yaml",
-  "source_sha256": "ddeb593d7bfc4501a398f0fb759ccfedb8734ab3d2be571480897adc08e6438f",
+  "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
+  "source_sha256": "1cd499c06934c8258be59975febfc59bf79a0956bef43b5890abddf04839f5a0",
   "subsets": {
     "business-requirements": {
       "classification": "core",

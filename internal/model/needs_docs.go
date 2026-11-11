@@ -155,5 +155,5 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			fmt.Fprintf(&out, "- **%s** `%s`: %s\n", String(f, "severity"), String(f, "code"), strings.ReplaceAll(String(f, "message"), "\n", " "))
 		}
 	}
-	return strings.TrimRight(out.String(), "\n") + "\n", nil
+	return projectReading(s, strings.TrimRight(out.String(), "\n")+"\n"), nil
 }

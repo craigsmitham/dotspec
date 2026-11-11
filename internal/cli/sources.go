@@ -41,9 +41,15 @@ func writeSources(out io.Writer, r check.SourceReport, format string) error {
 		return writeJSON(out, r)
 	}
 	var text strings.Builder
+	if r.Scope.Project != nil {
+		fmt.Fprintf(&text, "Project: %s\n", r.Scope.Project.Name)
+	}
 	fmt.Fprintf(&text, "Sources in %s (%s discovery)\n", displayPath(r.Scope.Path), r.Scope.Discovery)
 	for _, file := range r.Files {
 		fmt.Fprintf(&text, "\n%s\n", displayPath(file.Path))
+		if file.Project != nil {
+			fmt.Fprintf(&text, "  Project: %s\n", file.Project.Name)
+		}
 		for _, location := range file.ReferencedBy {
 			fmt.Fprintf(&text, "  Referenced by %s", diagnosticPath(location))
 			if location.Element != "" {

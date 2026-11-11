@@ -173,7 +173,7 @@ func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	if systems == 0 {
 		out.WriteString("No explicit system compositions were acquired. Directory association alone does not declare a concept use.\n\n")
 	}
-	return strings.TrimSpace(out.String()) + "\n", nil
+	return projectReading(s, strings.TrimSpace(out.String())+"\n"), nil
 }
 func designCell(s string) string { return strings.NewReplacer("|", "\\|", "\n", " ").Replace(s) }
 func designDiagramLabel(s string) string {

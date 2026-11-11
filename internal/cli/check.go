@@ -54,6 +54,9 @@ func writeCheckReport(out io.Writer, report check.Report, format string) error {
 		return writeJSON(out, report)
 	}
 	var text strings.Builder
+	if report.Scope.Project != nil {
+		fmt.Fprintf(&text, "Project: %s\n", report.Scope.Project.Name)
+	}
 	fmt.Fprintf(&text, "Checking %s (%s; %s discovery)\n", displayPath(report.Scope.Path), strings.Join(report.Scope.Types, ", "), report.Scope.Discovery)
 	for _, path := range report.ContextFiles {
 		fmt.Fprintf(&text, "Context: %s\n", displayPath(path))

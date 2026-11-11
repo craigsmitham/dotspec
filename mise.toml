@@ -58,7 +58,7 @@ run = "python scripts/generate-model/run.py test"
 
 [tasks.spec-check]
 description = "Check this repository's specifications"
-run = "go run . check"
+run = "go run . check --all"
 
 [tasks.spec-sources-check]
 description = "Verify that designated specification tests are discoverable"

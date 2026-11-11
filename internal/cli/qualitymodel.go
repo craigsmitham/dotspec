@@ -7,6 +7,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	qualityapply "github.com/craigsmitham/dotspec/internal/qualitymodel/apply"
+	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/spf13/cobra"
 )
 
@@ -133,6 +134,18 @@ func newQualityModelCommand() *cobra.Command {
 		target, _ := cmd.Flags().GetString("system")
 		if !filepath.IsAbs(target) {
 			target = filepath.Join(path, target)
+		}
+		if w, p, err := specfile.ProjectContext(path); err != nil {
+			return err
+		} else if w != nil {
+			targetDir, err := specfile.Directory(filepath.Dir(target))
+			if err != nil {
+				return err
+			}
+			owner, ok := w.Containing(targetDir)
+			if !ok || owner.Name != p.Name {
+				return fmt.Errorf("--system must remain within the selected project %s", p.Name)
+			}
 		}
 		selected, _ := cmd.Flags().GetStringSlice("attributes")
 		if cmd.Flags().Changed("attributes") && len(selected) == 0 {

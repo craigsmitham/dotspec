@@ -59,6 +59,7 @@ dotspec business-rule check purchase-approval --path .
 | `--help, -h` | `false` | help for check |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec business-rule init
 
@@ -78,6 +79,7 @@ dotspec business-rule init purchase-approval --path .
 | `--help, -h` | `false` | help for init |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec business-rule list
 
@@ -93,10 +95,12 @@ dotspec business-rule list --path .
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec business-rule show
 
@@ -116,6 +120,7 @@ dotspec business-rule show purchase-approval --path .
 | `--help, -h` | `false` | help for show |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec check
 
@@ -136,10 +141,12 @@ dotspec check --path internal --json
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for check |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec completion
 
@@ -257,6 +264,7 @@ dotspec concept check job-map --path .
 | `--help, -h` | `false` | help for check |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec concept init
 
@@ -276,6 +284,7 @@ dotspec concept init job-map --path .
 | `--help, -h` | `false` | help for init |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec concept list
 
@@ -291,10 +300,12 @@ dotspec concept list --path .
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec concept show
 
@@ -314,6 +325,7 @@ dotspec concept show job-map --path .
 | `--help, -h` | `false` | help for show |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec help
 
@@ -365,6 +377,7 @@ dotspec job check develop-requirements --path .
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
 | `--preset` | `general` | JTBD authoring guidance: general, odi, progress, or job-story |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec job init
 
@@ -385,6 +398,7 @@ dotspec job init develop-requirements --path .
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
 | `--preset` | `general` | JTBD authoring guidance: general, odi, progress, or job-story |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec job list
 
@@ -400,10 +414,12 @@ dotspec job list --path .
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec job map
 
@@ -424,6 +440,7 @@ dotspec job map develop-requirements --path .
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--outcomes` | `false` | include job and step outcomes |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec job outcome
 
@@ -455,6 +472,7 @@ dotspec job outcome list develop-requirements --path .
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 | `--step` | `` | select the declaring step by its explicit ID |
 
 ## dotspec job show
@@ -475,6 +493,7 @@ dotspec job show develop-requirements --path .
 | `--help, -h` | `false` | help for show |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec job step
 
@@ -506,6 +525,7 @@ dotspec job step list develop-requirements --path .
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec man
 
@@ -553,8 +573,10 @@ dotspec model docs --path . --relative-to docs/reference
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--help, -h` | `false` | help for docs |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 | `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
 
 ## dotspec model export
@@ -576,8 +598,10 @@ dotspec model export --path internal
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--help, -h` | `false` | help for export |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec model needs
 
@@ -595,8 +619,10 @@ dotspec model needs --path . --relative-to docs/reference
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--help, -h` | `false` | help for needs |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 | `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
 
 ## dotspec model overview
@@ -615,8 +641,10 @@ dotspec model overview --path . --relative-to docs/reference
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--help, -h` | `false` | help for overview |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 | `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
 
 ## dotspec model pegs
@@ -637,8 +665,10 @@ dotspec model pegs --path . --relative-to docs/reference
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--help, -h` | `false` | help for pegs |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 | `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
 
 ## dotspec model review
@@ -659,8 +689,10 @@ dotspec model review --path . --relative-to docs/reference
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--help, -h` | `false` | help for review |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 | `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
 
 ## dotspec model schema
@@ -678,6 +710,7 @@ dotspec model schema
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--help, -h` | `false` | help for schema |
+| `--workspace` | `false` | print the schema for a complete model export --all envelope |
 
 ## dotspec model trace
 
@@ -695,8 +728,10 @@ dotspec model trace --path . --relative-to docs/reference
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--help, -h` | `false` | help for trace |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 | `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
 
 ## dotspec model validate
@@ -751,6 +786,7 @@ dotspec quality check diagnostic-severity --path .
 | `--help, -h` | `false` | help for check |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec quality init
 
@@ -770,6 +806,7 @@ dotspec quality init diagnostic-severity --path .
 | `--help, -h` | `false` | help for init |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec quality list
 
@@ -785,11 +822,13 @@ dotspec quality list --path .
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--attribute` | `` | Include requirements with this attribute or a sub-attribute in their system's model |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec quality show
 
@@ -809,6 +848,7 @@ dotspec quality show diagnostic-severity --path .
 | `--help, -h` | `false` | help for show |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec quality-model
 
@@ -846,6 +886,7 @@ dotspec quality-model apply --system specs/system.spec.md --dry-run
 | `--help, -h` | `false` | help for apply |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 | `--system` | `` | Target system.spec.md path, relative to --path |
 
 ## dotspec quality-model check
@@ -870,6 +911,7 @@ dotspec quality-model check furps --path .
 | `--help, -h` | `false` | help for check |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec quality-model init
 
@@ -890,6 +932,7 @@ dotspec quality-model init organization-quality --path .
 | `--help, -h` | `false` | help for init |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec quality-model list
 
@@ -905,10 +948,12 @@ dotspec quality-model list --path .
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec quality-model show
 
@@ -928,6 +973,7 @@ dotspec quality-model show furps --path .
 | `--help, -h` | `false` | help for show |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec requirement
 
@@ -963,6 +1009,7 @@ dotspec requirement check reject-existing-target --path .
 | `--help, -h` | `false` | help for check |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec requirement init
 
@@ -982,6 +1029,7 @@ dotspec requirement init reject-existing-target --path .
 | `--help, -h` | `false` | help for init |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec requirement list
 
@@ -997,11 +1045,13 @@ dotspec requirement list --path .
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--attribute` | `` | Include requirements with this attribute or a sub-attribute in their system's model |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec requirement show
 
@@ -1021,6 +1071,7 @@ dotspec requirement show reject-existing-target --path .
 | `--help, -h` | `false` | help for show |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec sources
 
@@ -1041,10 +1092,12 @@ dotspec sources --path internal --json
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for sources |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec system
 
@@ -1076,6 +1129,7 @@ dotspec system init --path .
 | `--help, -h` | `false` | help for init |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec system list
 
@@ -1091,10 +1145,12 @@ dotspec system list --path .
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec system show
 
@@ -1114,6 +1170,7 @@ dotspec system show --path .
 | `--help, -h` | `false` | help for show |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec use-case
 
@@ -1149,6 +1206,7 @@ dotspec use-case check check-specifications --path .
 | `--help, -h` | `false` | help for check |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec use-case init
 
@@ -1169,6 +1227,7 @@ dotspec use-case init review-change --template expanded --path .
 | `--help, -h` | `false` | help for init |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 | `--template` | `brief` | Writing prompts: brief or expanded (same document format) |
 
 ## dotspec use-case list
@@ -1186,11 +1245,13 @@ dotspec use-case list --overview --path .
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--all` | `false` | inspect all registered workspace projects separately |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--overview` | `false` | Show actor, goal, level, and stated boundary in text; JSON retains the full records |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec use-case show
 
@@ -1210,4 +1271,5 @@ dotspec use-case show check-specifications --path .
 | `--help, -h` | `false` | help for show |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 

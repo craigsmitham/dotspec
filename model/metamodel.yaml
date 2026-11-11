@@ -1,7 +1,7 @@
-id: https://github.com/craigsmitham/dotspec/model/dotspec.yaml
+id: https://github.com/craigsmitham/dotspec/model/metamodel.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.14.0-draft
+version: 0.15.0-draft
 description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
   is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
   and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
@@ -77,7 +77,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.14.0-draft
+        equals_string: 0.15.0-draft
       mapping_profile:
         range: string
         description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
@@ -152,11 +152,29 @@ classes:
         multivalued: true
         inlined_as_list: true
     tree_root: true
+  SpecificationProject:
+    in_subset:
+    - inspection-and-coverage
+    description: A tooling partition declared in a workspace manifest, not a domain specification or System.
+    attributes:
+      name:
+        range: string
+        required: true
+      root:
+        range: string
+        required: true
+      workspace:
+        range: string
+        required: true
   ScanScope:
     in_subset:
     - inspection-and-coverage
     description: Declared scan boundary and completion, independently of whether individual documents are valid.
     attributes:
+      project:
+        range: SpecificationProject
+        inlined: true
+        description: Selected tooling project, independent of domain System relationships.
       roots:
         range: string
         required: true
@@ -207,6 +225,10 @@ classes:
       kind:
         equals_string: SourceDocument
     attributes:
+      project:
+        range: SpecificationProject
+        inlined: true
+        description: Registered project containing this acquired source; may differ from the selected project.
       locator:
         range: string
         required: true
@@ -5724,6 +5746,8 @@ enums:
   ContextSourceRole:
     description: Why a source outside the selected candidates was consulted.
     permissible_values:
+      workspace_configuration:
+        description: Workspace manifest used to select and bound specification projects.
       system_context:
         description: Enclosing-system context required for inspection.
       reference_target:

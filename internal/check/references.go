@@ -19,7 +19,12 @@ var referenceScheme = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9+.-]*:`)
 // inspectReferences follows one edge from each successfully parsed source and
 // its system context. Referenced documents supply targets, not another scan.
 func (r *Report) inspectReferences(sources []string, discovered map[string]bool, types []Type) {
-	sources = append(append([]string{}, sources...), r.ContextFiles...)
+	sources = append([]string{}, sources...)
+	for _, path := range r.ContextFiles {
+		if path != r.Scope.Workspace {
+			sources = append(sources, path)
+		}
+	}
 	// Parsing and context lookup have already reported failed sources. Their
 	// identities and links are unavailable; do not repeat those failures here.
 	failed := make(map[string]bool)

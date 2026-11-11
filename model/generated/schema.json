@@ -2600,6 +2600,7 @@
         "ContextSourceRole": {
             "description": "Why a source outside the selected candidates was consulted.",
             "enum": [
+                "workspace_configuration",
                 "system_context",
                 "reference_target",
                 "other"
@@ -8796,6 +8797,10 @@
                     },
                     "type": "array"
                 },
+                "project": {
+                    "$ref": "#/$defs/SpecificationProject",
+                    "description": "Selected tooling project, independent of domain System relationships."
+                },
                 "reads_complete": {
                     "type": "boolean"
                 },
@@ -9438,7 +9443,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.14.0-draft",
+                    "const": "0.15.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -9558,6 +9563,10 @@
                 "payload": {
                     "$ref": "#/$defs/SourcePayload",
                     "description": "Present only after successful read; graph rule requires it for read_status=read."
+                },
+                "project": {
+                    "$ref": "#/$defs/SpecificationProject",
+                    "description": "Registered project containing this acquired source; may differ from the selected project."
                 },
                 "read_status": {
                     "$ref": "#/$defs/ReadStatus"
@@ -10004,6 +10013,28 @@
             ],
             "title": "SpecificationKind",
             "type": "string"
+        },
+        "SpecificationProject": {
+            "additionalProperties": false,
+            "description": "A tooling partition declared in a workspace manifest, not a domain specification or System.",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "root": {
+                    "type": "string"
+                },
+                "workspace": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "root",
+                "workspace"
+            ],
+            "title": "SpecificationProject",
+            "type": "object"
         },
         "SpecificationSystem": {
             "additionalProperties": false,
@@ -11966,7 +11997,7 @@
             "type": "object"
         }
     },
-    "$id": "https://github.com/craigsmitham/dotspec/model/dotspec.yaml",
+    "$id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
     "$schema": "https://json-schema.org/draft/2019-09/schema",
     "additionalProperties": false,
     "description": "A bounded and potentially incomplete observation of source documents and their mapped domain content.",
@@ -12253,7 +12284,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.14.0-draft",
+            "const": "0.15.0-draft",
             "type": "string"
         },
         "references": {
@@ -12307,5 +12338,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.14.0-draft"
+    "version": "0.15.0-draft"
 }

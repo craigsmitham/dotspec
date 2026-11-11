@@ -1,7 +1,9 @@
 package check
 
 import (
+	"github.com/craigsmitham/dotspec/internal/specfile"
 	"os"
+	"path/filepath"
 	"slices"
 	"sort"
 
@@ -11,6 +13,7 @@ import (
 // SourceFile records a file and its authored incoming links, without assigning
 // authority or interpreting the meaning of its contents.
 type SourceFile struct {
+	Project      *specfile.Project     `json:"project,omitempty"`
 	Path         string                `json:"path"`
 	ReferencedBy []diagnostic.Location `json:"referenced_by"`
 }
@@ -75,6 +78,9 @@ func (r *Report) collectFile(path string, reference *diagnostic.Location) {
 	file := r.files[path]
 	if file == nil {
 		file = &SourceFile{Path: path, ReferencedBy: []diagnostic.Location{}}
+		if _, p, err := specfile.ProjectContext(filepath.Dir(path)); err == nil && p.Name != "" {
+			file.Project = &p
+		}
 		r.files[path] = file
 	}
 	if reference != nil {

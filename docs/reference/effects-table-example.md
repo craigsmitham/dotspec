@@ -1,8 +1,10 @@
 # Concept design reference
 
+Specification project: **requirements-review**. Project membership does not imply a System relationship.
+
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.14.0-draft`; mapping `dotspec-markdown/13`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
+Model `0.15.0-draft`; mapping `dotspec-markdown/13`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
 
 ## Inspection findings
 

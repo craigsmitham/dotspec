@@ -13,6 +13,7 @@ func Focused(path, slug string, kind Type, referenceTypes ...Type) Report {
 		return r.finish()
 	}
 	r.Scope.Path = dir
+	r.collectWorkspace()
 	if kind.ValidateSlug != nil {
 		if err := kind.ValidateSlug(slug); err != nil {
 			r.record(err, "scan.scope", path)

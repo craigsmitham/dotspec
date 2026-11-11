@@ -1,8 +1,10 @@
 # Requirements review
 
+Specification project: **requirements-review**. Project membership does not imply a System relationship.
+
 Generated from acquired specifications. Findings below are advisory review prompts, not completeness, acceptance or implementation claims. Missing links mean **no relationship recorded in this scope**. Drafts may conform to the authoring format while requirements verification and validation remain unfinished.
 
-Model `0.14.0-draft`; mapping `dotspec-markdown/13`.
+Model `0.15.0-draft`; mapping `dotspec-markdown/13`.
 
 ## Needs and intent
 

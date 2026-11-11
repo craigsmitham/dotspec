@@ -208,5 +208,5 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	review.boundaries()
 	review.assumptions()
 	out.WriteString(review.out.String())
-	return strings.TrimRight(out.String(), "\n") + "\n", nil
+	return projectReading(s, strings.TrimRight(out.String(), "\n")+"\n"), nil
 }

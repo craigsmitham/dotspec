@@ -117,6 +117,16 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 	if repoErr != nil {
 		b.addError("scan.repository", repoErr, dir)
 	}
+	if w, p, err := specfile.ProjectContext(dir); err == nil && w != nil {
+		b.snapshot.Scope["project"] = Record{"name": p.Name, "root": cleanPath(p.Root), "workspace": cleanPath(w.Path)}
+		b.load(cleanPath(w.Path))
+		b.context(cleanPath(w.Path), "workspace_configuration", "", "")
+		for _, source := range b.snapshot.Sources {
+			if p, ok := w.Containing(filepath.FromSlash(String(source, "locator"))); ok {
+				source["project"] = Record{"name": p.Name, "root": cleanPath(p.Root), "workspace": cleanPath(w.Path)}
+			}
+		}
+	}
 	b.materializeAssertions()
 	b.finishCoverage()
 	b.snapshot.Scope["reads_complete"] = !b.readFailed
@@ -255,7 +265,10 @@ func (b *snapshotBuilder) associateSystems() {
 		if err != nil {
 			continue
 		}
-		repository, _ := specfile.RepositoryRoot(owner)
+		repository, boundaryErr := specfile.ContextRoot(owner)
+		if boundaryErr != nil {
+			continue
+		}
 		if owner == repository {
 			continue
 		}

@@ -46,9 +46,18 @@ func newModelCommand() *cobra.Command {
 	schema := &cobra.Command{Use: "schema", Short: "Print the embedded snapshot JSON Schema", Args: cobra.NoArgs,
 		Example: "dotspec model schema",
 		RunE: func(cmd *cobra.Command, _ []string) error {
+			workspace, _ := cmd.Flags().GetBool("workspace")
+			if workspace {
+				schema, err := workspaceExportSchema()
+				if err != nil {
+					return err
+				}
+				return writeJSON(cmd.OutOrStdout(), schema)
+			}
 			_, err := cmd.OutOrStdout().Write(modelschema.SchemaJSON)
 			return err
 		}}
+	schema.Flags().Bool("workspace", false, "print the schema for a complete model export --all envelope")
 	validate := &cobra.Command{Use: "validate SNAPSHOT", Short: "Check a snapshot's shape, references, source fidelity, and coverage", Args: cobra.ExactArgs(1),
 		Long: "Validate a snapshot file, or use - to read standard input. Snapshot validation checks representation conformance and integrity, not requirements fitness or system behavior; faithfully represented authoring errors do not make a snapshot invalid. No source paths or external targets are fetched. External payload locators can be checked structurally; their byte availability is not verified offline.\n\n" + exitPolicy,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -65,7 +74,7 @@ func newModelCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			findings, err := model.ValidateJSON(data)
+			findings, err := validateExportJSON(data)
 			if err != nil {
 				return err
 			}

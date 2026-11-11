@@ -163,6 +163,18 @@ selected project directory or anywhere within its `specs/` tree. Having both
 old and new locations is an error; there is no location precedence or automatic
 migration. Revise any relative file links when moving documents.
 
+## Independent projects and monorepos
+
+Register specification-project roots in `dotspec.yaml` to keep unrelated products
+and examples separate. Default commands select the containing project; use
+`--project NAME` to select another and `--all` for separate workspace-wide results.
+Implicit System context stops at project boundaries; explicit cross-project links
+remain available. See [workspace configuration and selection](docs/workspaces.md).
+
+This repository registers dotspec and its example collections separately. Use
+`dotspec check --all` to check both the product and examples. The LinkML definition
+is `model/metamodel.yaml`; it is not a workspace configuration.
+
 ## Check specifications
 
 Before committing specification changes, check the selected project subtree:
@@ -225,7 +237,8 @@ cascading undefined-attribute advice. As with
 ancestor system outside the selected subtree or one excluded from discovery by
 an ignore rule. Such files are listed as additional context
 and counted separately; shared findings appear once. Context lookup stops at
-the repository or worktree root, or the filesystem root outside Git.
+the registered project root, or at the repository/worktree root (filesystem root
+outside Git) when there is no workspace manifest.
 Failures to inspect a context directory are reported but do not count that
 directory as a context file.
 

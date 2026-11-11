@@ -10,10 +10,15 @@ import (
 
 func TestGeneratedArtifactsAndReadOnlyDriftCheck(t *testing.T) {
 	dir := t.TempDir()
-	for _, fixture := range []string{"concept-design", "requirements-traceability", "system-structure", "user-needs", "requirements-review"} {
-		if err := os.CopyFS(filepath.Join(dir, "examples", fixture), os.DirFS(filepath.Join("../../examples", fixture))); err != nil {
-			t.Fatal(err)
-		}
+	if err := os.CopyFS(filepath.Join(dir, "examples"), os.DirFS("../../examples")); err != nil {
+		t.Fatal(err)
+	}
+	manifest, err := os.ReadFile("../../dotspec.yaml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "dotspec.yaml"), manifest, 0600); err != nil {
+		t.Fatal(err)
 	}
 	t.Chdir(dir)
 	if err := run(false); err != nil {

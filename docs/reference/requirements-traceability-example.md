@@ -1,8 +1,10 @@
 # Requirements traceability
 
+Specification project: **requirements-traceability**. Project membership does not imply a System relationship.
+
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.14.0-draft`; mapping `dotspec-markdown/13`. Business/user/software subsets describe concerns; core/supporting/generic classifies model subsets. Artifact kinds and relationships have separate meanings.
+Model `0.15.0-draft`; mapping `dotspec-markdown/13`. Business/user/software subsets describe concerns; core/supporting/generic classifies model subsets. Artifact kinds and relationships have separate meanings.
 
 This view covers only acquired records and resolved explicit relationships within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior. Review candidates are not proven impacts; paths do not establish satisfaction, achieved outcomes, completeness or normative authority.
 

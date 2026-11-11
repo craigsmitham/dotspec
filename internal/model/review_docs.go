@@ -108,7 +108,7 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			fmt.Fprintf(&v.out, "- **%s** `%s`: %s\n", String(f, "severity"), String(f, "code"), strings.ReplaceAll(String(f, "message"), "\n", " "))
 		}
 	}
-	return strings.TrimRight(v.out.String(), "\n") + "\n", nil
+	return projectReading(s, strings.TrimRight(v.out.String(), "\n")+"\n"), nil
 }
 
 // PEGSMarkdown is a reader perspective, independent of model concern subsets.
@@ -167,7 +167,7 @@ func PEGSMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	}
 	v.validationPlans()
 	v.questions()
-	return strings.TrimRight(v.out.String(), "\n") + "\n", nil
+	return projectReading(s, strings.TrimRight(v.out.String(), "\n")+"\n"), nil
 }
 
 type reviewView struct {

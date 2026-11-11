@@ -1,7 +1,7 @@
 # Specification model
 
-[dotspec.yaml](dotspec.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.14.0-draft`; the JSON
+[metamodel.yaml](metamodel.yaml) is the canonical LinkML model for experimental
+specification snapshots. The model version is `0.15.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
@@ -269,7 +269,7 @@ and the [generated overview](../docs/reference/system-overview-example.md).
 
 ## Jobs, user needs and capabilities
 
-Version `0.14.0-draft` and mapping `dotspec-markdown/13` add:
+Version `0.15.0-draft` and mapping `dotspec-markdown/13` add:
 
 - Shared `DesiredOutcome.applies_to` relationships to jobs and steps, independent
   of the single declaring owner. Named outcomes have short heading labels,
@@ -301,3 +301,11 @@ traceability, shared content and optional obligation clauses. Required/provided
 collections retain narrative and reference Interface records; graph projections
 retain direction. Native contracts and counterpart references remain contextual.
 The existing eight file families remain unchanged. See [the authoring model](../docs/specification-model.md#specification-kinds-and-document-placement).
+
+## Workspace acquisition boundaries
+
+`0.15.0-draft` adds SpecificationProject metadata to ScanScope and SourceDocument,
+and retains the consulted workspace configuration as source context. This is a
+tooling partition, not a core Specification kind. `model/metamodel.yaml` is the
+renamed canonical LinkML source; root `dotspec.yaml` configures the workspace.
+Markdown domain mapping remains `dotspec-markdown/13`.

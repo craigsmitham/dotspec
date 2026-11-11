@@ -2,7 +2,7 @@
 
 Dotspec represents requirements as a layered traceability graph. This explanation
 is for authors and model maintainers deciding where an element belongs and what
-its relationships mean. The [canonical model](../model/dotspec.yaml) defines the
+its relationships mean. The [canonical model](../model/metamodel.yaml) defines the
 types; [Declare relationships](develop-relationships.md) gives the Markdown forms.
 
 ## Separate concern, kind and classification

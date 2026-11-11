@@ -1,7 +1,7 @@
 # Markdown mapping profile
 
 `dotspec-markdown/13` maps specification Markdown to the
-[canonical model](dotspec.yaml). This reference defines the recognized syntax
+[canonical model](metamodel.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/specification-model.md).
 

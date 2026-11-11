@@ -1,8 +1,10 @@
 # System specification overview
 
+Specification project: **system-structure**. Project membership does not imply a System relationship.
+
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.14.0-draft`; mapping `dotspec-markdown/13`. This view covers only acquired records within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior or missing implementation.
+Model `0.15.0-draft`; mapping `dotspec-markdown/13`. This view covers only acquired records within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior or missing implementation.
 
 ## System structure
 

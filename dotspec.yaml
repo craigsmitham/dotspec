@@ -1,0 +1,9 @@
+projects:
+  dotspec: .
+  concept-design: examples/concept-design
+  jtbd-presets: examples/jtbd-presets
+  requirements-review: examples/requirements-review
+  requirements-traceability: examples/requirements-traceability
+  starter: examples/starter
+  system-structure: examples/system-structure
+  user-needs: examples/user-needs

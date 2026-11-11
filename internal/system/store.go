@@ -55,7 +55,7 @@ func enclosing(path string, limit int) ([]*System, error) {
 	if err != nil {
 		return nil, err
 	}
-	root, err := specfile.RepositoryRoot(dir)
+	root, err := specfile.ContextRoot(dir)
 	if err != nil {
 		return nil, err
 	}

@@ -235,7 +235,7 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		fmt.Fprintf(&out, "- **%s** `%s`: %s%s\n", String(f, "severity"), String(f, "code"), prefix, designCell(String(f, "message")))
 	}
-	return out.String(), nil
+	return projectReading(s, out.String()), nil
 }
 func traceList(values []string) string {
 	if len(values) == 0 {
