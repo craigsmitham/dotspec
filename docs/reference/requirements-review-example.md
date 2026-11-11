@@ -4,7 +4,7 @@ Specification project: **requirements-review**. Project membership does not impl
 
 Generated from acquired specifications. Findings below are advisory review prompts, not completeness, acceptance or implementation claims. Missing links mean **no relationship recorded in this scope**. Drafts may conform to the authoring format while requirements verification and validation remain unfinished.
 
-Model `0.15.0-draft`; mapping `dotspec-markdown/13`.
+Model `0.16.0-draft`; mapping `dotspec-markdown/13`.
 
 ## Needs and intent
 
@@ -188,6 +188,10 @@ Keep example responses and observations, the reviewed revision, the assessment r
 
 No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
 
+### QualityRequirement: [Unassisted recovery](<../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#unassisted-recovery>)
+
+No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
+
 ### GeneralRequirement: [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
 
 **Validation plan**
@@ -324,7 +328,70 @@ Collect observations for representative recovery requests.
 
 Assessment guidance recorded; its adequacy and any verification result are not evaluated.
 
-Review required: Measurement guidance is recorded, but no separately identified criterion, conditions or applicability is recorded. Review how observations will be compared with the obligation; prose may already supply the information. Guidance presence is not a verification result.
+Review required: A measure or measurement plan is recorded, but no separately identified criterion, conditions or applicability is recorded for the obligation. Define or reference the required comparison under Criterion and its operating context under Applies to or Criterion. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result.
+
+### [Unassisted recovery](<../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#unassisted-recovery>)
+
+**Verification plan**
+
+#### Subject
+
+The candidate recovery workflow, with implementation revision recorded before the study.
+
+#### Basis
+
+[Statement](../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#statement), [Criterion](../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#criterion), and [Applies to](../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#applies-to).
+
+#### Participants
+
+Members matching the specified population, observed by a facilitator who does not
+provide recovery instructions.
+
+#### Method
+
+Recruit 30 eligible members, each attempting one recovery in a seeded workspace.
+Balance recruitment across supported desktop browsers and include members with
+different levels of general workspace experience. Record all attempts and compute
+the proportion using the criterion's definition. Report the sample size, uncertainty,
+and recruitment limitations alongside the comparison; the sample is not proof of
+success for every user or environment.
+
+#### Success criteria
+
+Compare the observed proportion with the required bound in [Criterion](../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#criterion).
+Retain the comparison and its limitations for the assessment decision.
+
+#### Conditions
+
+Use a working network and supported browsers, with normal in-product help enabled.
+Give each member a recognizable document to delete before the recovery task.
+Explain how the seeded task represents the context in [Applies to](../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#applies-to)
+and record deviations without silently changing the requirement's scope.
+
+#### Evidence to retain
+
+Retain the implementation revision, recruitment criteria, browser and task setup,
+attempt outcomes, interventions, calculation and assessment limitations. Record
+the assessment conclusion separately from this plan.
+
+**Criterion**
+
+#### Measure
+
+The proportion of eligible task attempts in which the member restores the intended
+document and opens the recovered contents without external assistance. Count one
+attempt per member; an abandoned attempt or facilitator intervention is a failure.
+Divide successful attempts by all eligible attempts, including failures.
+
+#### Comparison
+
+At least.
+
+#### Target
+
+90%.
+
+Assessment guidance recorded; its adequacy and any verification result are not evaluated.
 
 ### [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
 
@@ -425,9 +492,9 @@ A member restores a document one day after deletion and resumes editing.
 ## Automated inspection findings
 
 - **advice** `relationship.motivation`: No explicit motivation or derivation is recorded for this obligation; review its justification.
-- **advice** `relationship.measurement_basis`: Measurement guidance is recorded, but no separately identified criterion, conditions or applicability is recorded. Review how observations will be compared with the obligation; prose may already supply the information. Guidance presence is not a verification result.
+- **advice** `relationship.measurement_basis`: A measure or measurement plan is recorded, but no separately identified criterion, conditions or applicability is recorded for the obligation. Define or reference the required comparison under Criterion and its operating context under Applies to or Criterion. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result.
 - **advice** `relationship.verification_plan`: No system verification or measurement plan is recorded for this obligation; review how a realization will be checked.
 - **advice** `relationship.motivation`: No explicit motivation or derivation is recorded for this obligation; review its justification.
 - **advice** `quality.applies-to`: Identify the subject and applicable conditions, workload, or population.
-- **advice** `quality.measurement-basis`: Measurement guidance is recorded, but no separately identified criterion, conditions or applicability is recorded. Review how observations will be compared with the obligation; prose may already supply the information. Guidance presence is not a verification result.
+- **advice** `quality.measurement-basis`: A measure or measurement plan is recorded, but no separately identified criterion, conditions or applicability is recorded for the obligation. Define or reference the required comparison under Criterion and its operating context under Applies to or Criterion. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result.
 - **advice** `requirement.verification`: Record assessment guidance for checking a realization against the obligation; a plan is not a verification result.

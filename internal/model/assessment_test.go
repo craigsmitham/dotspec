@@ -122,9 +122,15 @@ func TestMeasurementReviewAgreesAcrossCommandsAndModel(t *testing.T) {
 		{"measurement only", "## Measurement plan\nCollect timings.\n", []string{"criterion", "conditions or applicability"}},
 		{"measure without comparison", "## Measurement plan\nCollect timings.\n## Applies to\nManaged production requests.\n## Criterion\n### Measure\nElapsed time.\n", []string{"comparison rule and target"}},
 		{"complete narrative criterion", "## Measurement plan\nCollect timings.\n## Applies to\nManaged production requests.\n## Criterion\nThe 95th percentile is at most 100 ms.\n", nil},
-		{"structured criterion", "## Measurement plan\nCollect timings.\n### Conditions\nProduction requests.\n## Criterion\n### Comparison\nAt most.\n### Target\n100 ms at the 95th percentile.\n", nil},
-		{"measurement success criteria", "## Measurement plan\n### Procedure\nCollect timings.\n### Conditions\nProduction requests.\n### Success criteria\nThe 95th percentile is at most 100 ms.\n", nil},
-		{"explicit verification guidance", "## Measurement plan\nCollect timings.\n## Verification plan\nCompare timings to the externally defined criterion for the stated workload.\n", nil},
+		{"structured criterion", "## Measurement plan\nCollect timings.\n## Criterion\n### Conditions\nProduction requests.\n### Comparison\nAt most.\n### Target\n100 ms at the 95th percentile.\n", nil},
+		{"measurement success criteria are assessment guidance", "## Measurement plan\n### Procedure\nCollect timings.\n### Conditions\nProduction requests.\n### Success criteria\nThe 95th percentile is at most 100 ms.\n", []string{"criterion", "conditions or applicability"}},
+		{"verification guidance does not exempt measurement", "## Measurement plan\nCollect timings.\n## Verification plan\nCompare timings to the externally defined criterion for the stated workload.\n", []string{"criterion", "conditions or applicability"}},
+		{"empty verification plan", "## Measurement plan\nCollect timings.\n## Verification plan\n", []string{"criterion", "conditions or applicability"}},
+		{"assessment conditions do not define applicability", "## Measurement plan\n### Conditions\nTest with ten synthetic requests.\n## Criterion\nThe 95th percentile is at most 100 ms.\n", []string{"conditions or applicability"}},
+		{"criterion references authoritative statement", "## Applies to\nManaged production requests.\n## Criterion\nUse the bound defined in [Statement](#statement).\n## Measurement plan\nCollect timings and compare them to [Criterion](#criterion).\n## Verification plan\nInspect the retained evidence against [Criterion](#criterion).\n", nil},
+		{"measure without measurement plan", "## Criterion\n### Measure\nElapsed time.\n## Verification plan\nRun the tests.\n", []string{"comparison rule and target", "conditions or applicability"}},
+		{"measure with complete criterion and verification plan", "## Applies to\nManaged production requests.\n## Criterion\n### Measure\nElapsed time.\n### Comparison\nAt most.\n### Target\n100 ms at the 95th percentile.\n## Verification plan\nCollect timings and compare to [Criterion](#criterion).\n", nil},
+		{"no explicitly recorded measurement", "## Applies to\nManaged production requests.\n## Verification plan\nInspect compliance with the specified response behavior.\n", nil},
 		{"validation is distinct", "## Validation plan\nObserve whether the proposed latency serves user needs.\n## Measurement plan\nCollect timings.\n", []string{"criterion", "conditions or applicability"}},
 	}
 	for _, kind := range []string{"requirement", "quality"} {
@@ -164,6 +170,9 @@ func TestMeasurementReviewAgreesAcrossCommandsAndModel(t *testing.T) {
 					}
 					for _, f := range quality.Check(q) {
 						hasAdvice = hasAdvice || f.Rule == "quality.measurement-basis"
+						if f.Rule == "quality.measurement-basis" && (f.Location.Line == 0 || (q.MeasurementPlan == "" && f.Location.Element != "Criterion")) {
+							t.Fatalf("measurement advice has wrong source location: %+v", f.Location)
+						}
 					}
 				} else {
 					q, err := requirement.Parse([]byte(source))
@@ -172,6 +181,9 @@ func TestMeasurementReviewAgreesAcrossCommandsAndModel(t *testing.T) {
 					}
 					for _, f := range requirement.Check(q) {
 						hasAdvice = hasAdvice || f.Rule == "requirement.measurement-basis"
+						if f.Rule == "requirement.measurement-basis" && (f.Location.Line == 0 || (q.MeasurementPlan == "" && f.Location.Element != "Criterion")) {
+							t.Fatalf("measurement advice has wrong source location: %+v", f.Location)
+						}
 					}
 				}
 				if hasAdvice != (len(tc.missing) > 0) {

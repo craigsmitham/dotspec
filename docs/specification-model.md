@@ -13,7 +13,7 @@ The canonical [LinkML model](../model/metamodel.yaml) defines the records and th
 relationships. The [generated reference](reference/model/index.md) describes
 every field. The [relationship reference](reference/model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.15.0-draft`, `representation_version` is `0.1.0`, and
+`model_version` is `0.16.0-draft`, `representation_version` is `0.1.0`, and
 `mapping_profile` is `dotspec-markdown/13`.
 
 The [verification and validation vocabulary](verification-and-validation.md)

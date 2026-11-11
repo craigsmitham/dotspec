@@ -554,7 +554,7 @@
         "Applicability"
       ],
       "annotations": {},
-      "description": "Applies to section narrative plus explicitly separated scope dimensions; no applicability inferred from a link or directory.",
+      "description": "Subject and operating context covered by an obligation, with optional explicit scope dimensions. For outcomes of use, identify users, tasks, available assistance and environment. Assessment setup is recorded in the plan, separately from required operating context; no applicability is inferred from a link or directory.",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -1214,7 +1214,7 @@
         "conditions": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "Conditions of the assessment, including how the setup represents the obligation's operating context or the intended context of use. These do not redefine applicability.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -1310,7 +1310,7 @@
         "success_criteria": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "How to interpret the assessment against its basis. Verification refers to the obligation's statement or criterion for required bounds rather than defining competing thresholds; validation identifies the needs or intended outcomes against which the subject is assessed.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -14696,16 +14696,16 @@
         "criterion": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it.",
           "identifier": false,
           "inline_ranges": [
-            "QualityCriterion"
+            "ObligationCriterion"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "QualityCriterion",
+          "range": "ObligationCriterion",
           "reference_ranges": [],
           "required": false
         },
@@ -22556,14 +22556,14 @@
         "MeasurementPlan"
       ],
       "annotations": {},
-      "description": "Measurement narrative and optional explicit procedure clauses.",
+      "description": "Optional measurement procedure for obtaining evidence against an obligation's statement or criterion. It may supply the whole verification approach; a second verification plan is not required. Required bounds belong to the statement or criterion, not to a competing measurement target.",
       "mixins": [],
       "rules": [],
       "slots": {
         "conditions": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "Measurement setup and its relationship to the required operating context. This does not redefine the obligation's applicability or criterion conditions.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -22611,7 +22611,7 @@
         "exclusions": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "Exclusions from evidence collection or analysis; justify their relationship to the obligation's scope rather than silently narrowing it.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -22627,7 +22627,7 @@
         "population": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "Observed or sampled population and how it represents the population covered by the obligation.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -22675,7 +22675,7 @@
         "success_criteria": {
           "annotations": {},
           "any_of": [],
-          "description": "Authored rule for interpreting measurements against the obligation, including a target or comparison where appropriate. No conformance judgment is inferred.",
+          "description": "How observations will be compared with the obligation's statement or criterion. Reference required bounds rather than duplicate them. This field records assessment guidance, not a substitute obligation criterion or a conformance judgment.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -22691,7 +22691,7 @@
         "workload": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "Workload used to collect observations and how it represents the required workload.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -22718,7 +22718,7 @@
         "Record"
       ],
       "annotations": {},
-      "description": "Shared obligation content independent of standalone or embedded expression. Quality criteria and measurement are optional assessment details; verification plans are not execution evidence.",
+      "description": "Shared obligation content independent of standalone or embedded expression. An optional explicit criterion defines or references the satisfaction rule; assessment plans describe how to obtain and interpret evidence against it. Verification plans are not execution evidence.",
       "is_a": "TraceableElement",
       "mixins": [],
       "rules": [],
@@ -22805,16 +22805,16 @@
         "criterion": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it.",
           "identifier": false,
           "inline_ranges": [
-            "QualityCriterion"
+            "ObligationCriterion"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "QualityCriterion",
+          "range": "ObligationCriterion",
           "reference_ranges": [],
           "required": false
         },
@@ -23544,16 +23544,16 @@
         "criterion": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it.",
           "identifier": false,
           "inline_ranges": [
-            "QualityCriterion"
+            "ObligationCriterion"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "QualityCriterion",
+          "range": "ObligationCriterion",
           "reference_ranges": [],
           "required": false
         },
@@ -24720,6 +24720,197 @@
       "subsets": [
         "business-requirements",
         "user-requirements",
+        "software-requirements"
+      ]
+    },
+    "ObligationCriterion": {
+      "abstract": false,
+      "ancestors": [
+        "ObligationCriterion"
+      ],
+      "annotations": {},
+      "description": "Optional explicit rule for satisfaction of any obligation, including qualitative rules or measures, comparisons and required bounds. Define each bound once or reference its authoritative statement or source; assessment plans refer to this rule. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "aggregation": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "comparison": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "conditions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Operating conditions qualifying this criterion within the obligation's applicability; not the conditions of an assessment run.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": true
+        },
+        "exclusions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "measure": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Property observed and its operational definition or reference, including calculation, population and denominator where needed. Assessment guidance supplies the collection procedure.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "population": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "target": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required value, bound or acceptable range used with comparison. Preferred targets belong in explanatory or rationale content and must be identified as nonbinding.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "units": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "window": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "workload": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        }
+      },
+      "subsets": [
         "software-requirements"
       ]
     },
@@ -26540,197 +26731,6 @@
         "specification-traceability"
       ]
     },
-    "QualityCriterion": {
-      "abstract": false,
-      "ancestors": [
-        "QualityCriterion"
-      ],
-      "annotations": {},
-      "description": "Optional assessment details for an obligation statement, including measures, targets and conditions.",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "aggregation": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "comparison": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "conditions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": true
-        },
-        "exclusions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "measure": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "population": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "target": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "units": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "window": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "workload": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        }
-      },
-      "subsets": [
-        "software-requirements"
-      ]
-    },
     "QualityModel": {
       "abstract": false,
       "ancestors": [
@@ -27568,16 +27568,16 @@
         "criterion": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it.",
           "identifier": false,
           "inline_ranges": [
-            "QualityCriterion"
+            "ObligationCriterion"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "QualityCriterion",
+          "range": "ObligationCriterion",
           "reference_ranges": [],
           "required": false
         },
@@ -29434,16 +29434,16 @@
         "criterion": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it.",
           "identifier": false,
           "inline_ranges": [
-            "QualityCriterion"
+            "ObligationCriterion"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "QualityCriterion",
+          "range": "ObligationCriterion",
           "reference_ranges": [],
           "required": false
         },
@@ -32126,7 +32126,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.15.0-draft",
+          "equals_string": "0.16.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -41537,10 +41537,10 @@
       "directory"
     ]
   },
-  "model_version": "0.15.0-draft",
+  "model_version": "0.16.0-draft",
   "representation_version": "0.1.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "1cd499c06934c8258be59975febfc59bf79a0956bef43b5890abddf04839f5a0",
+  "source_sha256": "fbb062d802062ed9a56dc43c39eec633414af60cadbc2804971bea15e6e2b89a",
   "subsets": {
     "business-requirements": {
       "classification": "core",

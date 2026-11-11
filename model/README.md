@@ -1,7 +1,7 @@
 # Specification model
 
 [metamodel.yaml](metamodel.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.15.0-draft`; the JSON
+specification snapshots. The model version is `0.16.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
@@ -309,3 +309,17 @@ and retains the consulted workspace configuration as source context. This is a
 tooling partition, not a core Specification kind. `model/metamodel.yaml` is the
 renamed canonical LinkML source; root `dotspec.yaml` configures the workspace.
 Markdown domain mapping remains `dotspec-markdown/13`.
+
+## Obligation criteria and assessment guidance
+
+`0.16.0-draft` renames QualityCriterion to ObligationCriterion to reflect its use
+by general requirements, quality requirements and embedded obligation clauses.
+It clarifies that required bounds are defined once in the statement or criterion
+(or referenced from an authoritative source), while assessment plans explain how
+to collect and interpret evidence against them. Applicability and criterion
+conditions describe required operating context; plan conditions describe the
+assessment setup and its relationship to that context.
+
+The Markdown mapping remains `dotspec-markdown/13`; field paths and headings are
+unchanged. Re-export source specifications for the new model version. See
+[Develop requirements](../docs/develop-requirements.md) for authoring guidance.

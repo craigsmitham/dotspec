@@ -343,7 +343,7 @@ is inferred. The [authoring guide](../docs/develop-concepts.md) supplies example
 | Statement | `statement` |
 | Verification plan | `verification_plan: AssessmentPlan` for planned realization conformance |
 | Validation plan | `validation_plan: AssessmentPlan` for needs/intent assessment; also recognized on other traceable records |
-| Criterion (optional assessment details) | `QualityCriterion.content` and recognized explicit criterion fields |
+| Criterion (optional explicit satisfaction rule) | `ObligationCriterion.content` and recognized explicit criterion fields |
 | Measurement plan | `MeasurementPlan.content` and recognized explicit measurement fields |
 
 Verification plan and Validation plan share `AssessmentPlan`. They recognize Subject,
@@ -362,12 +362,30 @@ Criterion recognizes Measure, Comparison, Target, Units, Aggregation,
 Window or Observation window, Conditions, Workload, Population and Exclusions.
 Explicit open-question headings remain distinguishable from an omitted target.
 Qualitative criteria remain valid; classification labels cannot supply missing
-thresholds.
+thresholds. Define each required bound once in Statement or Criterion, or reference
+its authoritative source. Criterion may reference Statement instead of restating
+it. Target is a required bound or acceptable range, not an aspirational preference.
+Keep preferred targets explicitly nonbinding in Rationale or Explanatory notes.
 
 Measurement plan recognizes Success criteria, Sampling, Conditions, Procedure, Evidence to retain or
 Evidence retention, Workload, Population and Exclusions. Full measurement
 narrative remains available alongside those components, including procedural
 qualifications, examples and evidence instructions.
+
+Applicability and criterion conditions describe required operating context.
+For outcomes of use, record users, tasks, assistance and environment in Applies to;
+existing subject references, population and conditions preserve this context without
+a new context-of-use type. Plan conditions describe the assessment setup and its
+relationship to that context. Plan Success criteria explain how observations are
+interpreted against the obligation; reference its required bounds rather than
+introducing competing thresholds. The mapper preserves authored content even when
+it does not follow this guidance; it does not relocate or infer requirements.
+
+Measurement-basis advice considers an explicit Measure or Measurement plan even
+when Verification plan is present. Missing separately recorded obligation criteria,
+comparison rules or operating context remain advisory; prose may already supply
+them. Plan Success criteria and Conditions do not substitute for obligation
+criteria and applicability. See [Develop requirements](../docs/develop-requirements.md).
 
 ## Bindings, fallback and completeness
 

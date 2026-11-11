@@ -155,7 +155,7 @@
         },
         "Applicability": {
             "additionalProperties": false,
-            "description": "Applies to section narrative plus explicitly separated scope dimensions; no applicability inferred from a link or directory.",
+            "description": "Subject and operating context covered by an obligation, with optional explicit scope dimensions. For outcomes of use, identify users, tasks, available assistance and environment. Assessment setup is recorded in the plan, separately from required operating context; no applicability is inferred from a link or directory.",
             "properties": {
                 "conditions": {
                     "$ref": "#/$defs/RichContent"
@@ -356,7 +356,8 @@
                     "type": "array"
                 },
                 "conditions": {
-                    "$ref": "#/$defs/RichContent"
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Conditions of the assessment, including how the setup represents the obligation's operating context or the intended context of use. These do not redefine applicability."
                 },
                 "content": {
                     "$ref": "#/$defs/RichContent"
@@ -376,7 +377,8 @@
                     "description": "The proposed requirement, design, prototype, implementation or environmental premise to assess; identify revisions when planning execution."
                 },
                 "success_criteria": {
-                    "$ref": "#/$defs/RichContent"
+                    "$ref": "#/$defs/RichContent",
+                    "description": "How to interpret the assessment against its basis. Verification refers to the obligation's statement or criterion for required bounds rather than defining competing thresholds; validation identifies the needs or intended outcomes against which the subject is assessed."
                 }
             },
             "required": [
@@ -4114,7 +4116,8 @@
                     "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
                 },
                 "criterion": {
-                    "$ref": "#/$defs/QualityCriterion"
+                    "$ref": "#/$defs/ObligationCriterion",
+                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -6365,10 +6368,11 @@
         },
         "MeasurementPlan": {
             "additionalProperties": false,
-            "description": "Measurement narrative and optional explicit procedure clauses.",
+            "description": "Optional measurement procedure for obtaining evidence against an obligation's statement or criterion. It may supply the whole verification approach; a second verification plan is not required. Required bounds belong to the statement or criterion, not to a competing measurement target.",
             "properties": {
                 "conditions": {
-                    "$ref": "#/$defs/RichContent"
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Measurement setup and its relationship to the required operating context. This does not redefine the obligation's applicability or criterion conditions."
                 },
                 "content": {
                     "$ref": "#/$defs/RichContent"
@@ -6377,10 +6381,12 @@
                     "$ref": "#/$defs/RichContent"
                 },
                 "exclusions": {
-                    "$ref": "#/$defs/RichContent"
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Exclusions from evidence collection or analysis; justify their relationship to the obligation's scope rather than silently narrowing it."
                 },
                 "population": {
-                    "$ref": "#/$defs/RichContent"
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Observed or sampled population and how it represents the population covered by the obligation."
                 },
                 "procedure": {
                     "$ref": "#/$defs/RichContent"
@@ -6390,10 +6396,11 @@
                 },
                 "success_criteria": {
                     "$ref": "#/$defs/RichContent",
-                    "description": "Authored rule for interpreting measurements against the obligation, including a target or comparison where appropriate. No conformance judgment is inferred."
+                    "description": "How observations will be compared with the obligation's statement or criterion. Reference required bounds rather than duplicate them. This field records assessment guidance, not a substitute obligation criterion or a conformance judgment."
                 },
                 "workload": {
-                    "$ref": "#/$defs/RichContent"
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Workload used to collect observations and how it represents the required workload."
                 }
             },
             "required": [
@@ -6451,7 +6458,7 @@
         },
         "Obligation": {
             "additionalProperties": false,
-            "description": "Shared obligation content independent of standalone or embedded expression. Quality criteria and measurement are optional assessment details; verification plans are not execution evidence.",
+            "description": "Shared obligation content independent of standalone or embedded expression. An optional explicit criterion defines or references the satisfaction rule; assessment plans describe how to obtain and interpret evidence against it. Verification plans are not execution evidence.",
             "properties": {
                 "applicability": {
                     "$ref": "#/$defs/Applicability"
@@ -6473,7 +6480,8 @@
                     "type": "string"
                 },
                 "criterion": {
-                    "$ref": "#/$defs/QualityCriterion"
+                    "$ref": "#/$defs/ObligationCriterion",
+                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -6668,7 +6676,8 @@
                     "type": "string"
                 },
                 "criterion": {
-                    "$ref": "#/$defs/QualityCriterion"
+                    "$ref": "#/$defs/ObligationCriterion",
+                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -6979,6 +6988,53 @@
                 "kind"
             ],
             "title": "ObligationContainer",
+            "type": "object"
+        },
+        "ObligationCriterion": {
+            "additionalProperties": false,
+            "description": "Optional explicit rule for satisfaction of any obligation, including qualitative rules or measures, comparisons and required bounds. Define each bound once or reference its authoritative statement or source; assessment plans refer to this rule. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.",
+            "properties": {
+                "aggregation": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "comparison": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "conditions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Operating conditions qualifying this criterion within the obligation's applicability; not the conditions of an assessment run."
+                },
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "exclusions": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "measure": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Property observed and its operational definition or reference, including calculation, population and denominator where needed. Assessment guidance supplies the collection procedure."
+                },
+                "population": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "target": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Required value, bound or acceptable range used with comparison. Preferred targets belong in explanatory or rationale content and must be identified as nonbinding."
+                },
+                "units": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "window": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "workload": {
+                    "$ref": "#/$defs/RichContent"
+                }
+            },
+            "required": [
+                "content"
+            ],
+            "title": "ObligationCriterion",
             "type": "object"
         },
         "OffsetMapSegment": {
@@ -7540,50 +7596,6 @@
             "title": "QualityClassification",
             "type": "object"
         },
-        "QualityCriterion": {
-            "additionalProperties": false,
-            "description": "Optional assessment details for an obligation statement, including measures, targets and conditions.",
-            "properties": {
-                "aggregation": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "comparison": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "conditions": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "exclusions": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "measure": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "population": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "target": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "units": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "window": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "workload": {
-                    "$ref": "#/$defs/RichContent"
-                }
-            },
-            "required": [
-                "content"
-            ],
-            "title": "QualityCriterion",
-            "type": "object"
-        },
         "QualityModel": {
             "additionalProperties": false,
             "description": "A standalone reusable set of quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.",
@@ -7798,7 +7810,8 @@
                     "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
                 },
                 "criterion": {
-                    "$ref": "#/$defs/QualityCriterion"
+                    "$ref": "#/$defs/ObligationCriterion",
+                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -8362,7 +8375,8 @@
                     "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
                 },
                 "criterion": {
-                    "$ref": "#/$defs/QualityCriterion"
+                    "$ref": "#/$defs/ObligationCriterion",
+                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -9443,7 +9457,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.15.0-draft",
+                    "const": "0.16.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -12284,7 +12298,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.15.0-draft",
+            "const": "0.16.0-draft",
             "type": "string"
         },
         "references": {
@@ -12338,5 +12352,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.15.0-draft"
+    "version": "0.16.0-draft"
 }

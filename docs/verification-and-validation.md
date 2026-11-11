@@ -85,7 +85,8 @@ uses validation for instance constraint checks.
 | `model review` | Review material for requirements quality, needs and intent, assumptions, validation plans, and system verification planning. It does not execute plans. |
 | `verification_plan` on an obligation | A plan to assess a realization against that obligation, not a review of the requirement's wording. |
 | `validation_plan` on a traceable element | A plan to assess the stated subject against needs, intended use or, for an assumption, empirical support and justified reliance. |
-| `measurement_plan` | How to obtain observations. A criterion, comparison and applicable conditions give observations their bearing on an obligation. |
+| `criterion` | An optional explicit satisfaction rule (`ObligationCriterion`), defining or referencing required bounds for any obligation. |
+| `measurement_plan` | How to obtain and interpret observations against the obligation's statement or criterion. It may supply the whole verification approach. |
 
 A well-formed snapshot can faithfully represent a malformed or incomplete source.
 A source that passes authoring checks can still express the wrong requirements.
@@ -97,6 +98,13 @@ being assessed and against what. Participants, Method, Conditions, Success crite
 Cases and Evidence to retain provide optional detail. Basis links are contextual
 citations, not additional satisfaction or validation assertions. Ordinary `supports`
 relationships remain contribution claims.
+
+Define each required bound once in the statement or criterion, or reference its
+authoritative source. Plan Success criteria explain interpretation against that
+basis; they should refer to its bounds rather than redefine them. Applicability
+and criterion conditions describe required operating context, while plan Conditions
+describe the assessment setup and how it represents that context. See
+[Develop requirements](develop-requirements.md) for examples.
 
 Validation plans can concern the quality of a proposed solution's fit, a requirement's
 faithfulness to needs, or a job/outcome hypothesis. The method does not assign that

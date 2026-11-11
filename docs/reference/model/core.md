@@ -4,7 +4,7 @@ Generated from [the canonical model](../../../model/metamodel.yaml) and [the vie
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.15.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.16.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
@@ -508,7 +508,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `refines` | [Requirement](index.md#requirement) or [BusinessRule](index.md#businessrule) or [ObligationClause](index.md#obligationclause) | optional; list | Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted. |
 | `applies_to` | [DomainElement](index.md#domainelement) | optional; list |  |
 | `verification_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
-| `criterion` | [QualityCriterion](index.md#qualitycriterion) | optional |  |
+| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it. |
 | `measurement_plan` | [MeasurementPlan](index.md#measurementplan) | optional |  |
 
 ### System
@@ -837,7 +837,7 @@ Subsets: `software-requirements`. [GeneralRequirement](index.md#generalrequireme
 | --- | --- | --- | --- |
 | `statement` | [RichContent](index.md#richcontent) | optional |  |
 | `verification_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
-| `criterion` | [QualityCriterion](index.md#qualitycriterion) | optional |  |
+| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it. |
 | `measurement_plan` | [MeasurementPlan](index.md#measurementplan) | optional |  |
 
 ### QualityRequirement
@@ -850,7 +850,7 @@ Subsets: `software-requirements`. [QualityRequirement](index.md#qualityrequireme
 | --- | --- | --- | --- |
 | `statement` | [RichContent](index.md#richcontent) | optional |  |
 | `verification_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
-| `criterion` | [QualityCriterion](index.md#qualitycriterion) | optional |  |
+| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it. |
 | `measurement_plan` | [MeasurementPlan](index.md#measurementplan) | optional |  |
 
 ### QualityModel
@@ -929,7 +929,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 
 ### Obligation
 
-Shared obligation content independent of standalone or embedded expression. Quality criteria and measurement are optional assessment details; verification plans are not execution evidence.
+Shared obligation content independent of standalone or embedded expression. An optional explicit criterion defines or references the satisfaction rule; assessment plans describe how to obtain and interpret evidence against it. Verification plans are not execution evidence.
 
 Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [Obligation](index.md#obligation) contains the complete definition.
 
@@ -942,7 +942,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `rationale` | [RichContent](index.md#richcontent) | optional |  |
 | `refines` | [Requirement](index.md#requirement) or [BusinessRule](index.md#businessrule) or [ObligationClause](index.md#obligationclause) | optional; list | Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted. |
 | `verification_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
-| `criterion` | [QualityCriterion](index.md#qualitycriterion) | optional |  |
+| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it. |
 | `measurement_plan` | [MeasurementPlan](index.md#measurementplan) | optional |  |
 
 ### Component
@@ -1068,8 +1068,8 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `basis` | [ContextualReferences](index.md#contextualreferences) | optional | Authored criteria, stakeholder needs, goals, obligations or evidence against which the subject is assessed. Citations do not establish satisfaction. |
 | `participants` | [RichContent](index.md#richcontent) | optional | Relevant users, stakeholders or assessors and their roles; naming them is not endorsement. |
 | `method` | [RichContent](index.md#richcontent) | optional |  |
-| `success_criteria` | [RichContent](index.md#richcontent) | optional |  |
-| `conditions` | [RichContent](index.md#richcontent) | optional |  |
+| `success_criteria` | [RichContent](index.md#richcontent) | optional | How to interpret the assessment against its basis. Verification refers to the obligation's statement or criterion for required bounds rather than defining competing thresholds; validation identifies the needs or intended outcomes against which the subject is assessed. |
+| `conditions` | [RichContent](index.md#richcontent) | optional | Conditions of the assessment, including how the setup represents the obligation's operating context or the intended context of use. These do not redefine applicability. |
 | `cases` | [AssessmentCase](index.md#assessmentcase) | optional; ordered list |  |
 | `evidence_to_retain` | [RichContent](index.md#richcontent) | optional |  |
 

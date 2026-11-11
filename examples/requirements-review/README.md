@@ -13,3 +13,9 @@ system intended use, and empirical support plus justified reliance for the clock
 They record no completed observations, assessments or acceptance. The feedback quality
 requirement deliberately supplies measurement-only guidance without a defined criterion
 or operating context, demonstrating advisory measurement-basis findings.
+
+The [unassisted recovery requirement](specs/quality/unassisted-recovery.quality.spec.md)
+provides a contrasting example: explicit users, task, assistance and environment;
+one operationally defined measure and required bound; and a verification plan that
+references the criterion. Study values and targets are illustrative. Sampling
+limitations remain visible, and no study has been executed.

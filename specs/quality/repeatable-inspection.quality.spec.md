@@ -20,16 +20,19 @@ structural errors or writing advice.
 Repeated inspections must produce equivalent structured reports, including the
 ordering of array elements.
 
+## Criterion
+
+For the equivalence required by [Statement](#statement), parsed JSON values must
+be equal, preserving array order. JSON object key order and insignificant whitespace
+do not affect equivalence. The comparison applies only within the operating context
+in [Applies to](#applies-to).
+
 ## Measurement plan
 
 Run each fixture repeatedly without changing its inputs or execution
-conditions. Compare parsed JSON reports for equal values, preserving array
-order. Cover empty scans, valid specifications, writing advice, structural
+conditions. Compare reports using [Criterion](#criterion).
+Cover empty scans, valid specifications, writing advice, structural
 errors, and shared system context. Retain differing reports on test failure.
-
-JSON object key order and insignificant whitespace do not affect equivalence.
-This comparison does not equate reports from different paths, builds, or
-environments.
 
 The [CLI quality-contract tests](../../internal/cli/quality_contracts_test.go)
 check this criterion. The obligation remains defined in this document.

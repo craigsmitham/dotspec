@@ -4,7 +4,7 @@ Specification project: **requirements-review**. Project membership does not impl
 
 Generated PEGS reading perspective. This view complements business, user and software requirements subsets; it does not replace them or impose a dependency order. It covers only acquired specifications. Referenced project plans and native contracts remain authoritative.
 
-Model `0.15.0-draft`; mapping `dotspec-markdown/13`.
+Model `0.16.0-draft`; mapping `dotspec-markdown/13`.
 
 ## Project
 
@@ -192,6 +192,17 @@ Make deletion reversible until a retained item expires.
 
 The workspace must provide recovery feedback promptly enough for members to continue their task.
 
+### QualityRequirement: [Unassisted recovery](<../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#unassisted-recovery>)
+
+**Statement**
+
+Members in the stated context must be able to recover the intended document
+without external assistance at the success rate defined in [Criterion](../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#criterion).
+
+Supports: [Recover lost work](<../../examples/requirements-review/specs/jobs/recover.job.spec.md#recover-lost-work>).
+
+Applies to: [Restore a document](<../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md#restore-a-document>).
+
 ### GeneralRequirement: [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
 
 **Statement**
@@ -311,6 +322,10 @@ Representative accidental-deletion situations and the stated recovery-window bou
 Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.
 
 ### QualityRequirement: [Timely recovery feedback](<../../examples/requirements-review/specs/quality/recovery-feedback.quality.spec.md#timely-recovery-feedback>)
+
+No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
+
+### QualityRequirement: [Unassisted recovery](<../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#unassisted-recovery>)
 
 No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
 

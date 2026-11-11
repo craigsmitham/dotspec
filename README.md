@@ -15,9 +15,11 @@ See [Develop use cases](docs/develop-use-cases.md) for a progressive authoring w
 Concept specs describe a coherent piece of product behavior through its purpose,
 abstract state, actions, and operational principle.
 Requirement specs state required results, rules, properties, or restrictions directly.
-Quality requirements specialize that model with assessable criteria and
-measurement methods. Optional quality attributes in a system spec declare the
+Quality requirements provide quality-focused authoring guidance with the same
+criterion and assessment capabilities. Optional quality attributes in a system spec declare the
 concerns used to classify general and quality requirements.
+See [Develop requirements](docs/develop-requirements.md) for scope, criteria,
+context of use, and verification guidance.
 
 The [CLI reference](docs/cli.md) and [command examples](docs/examples.md) are
 generated from the implementation. See [Contributing](CONTRIBUTING.md) for the

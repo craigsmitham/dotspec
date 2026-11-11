@@ -20,15 +20,20 @@ the caller's output redirection are outside this criterion.
 Inspection must leave source-file contents and paths unchanged, without
 creating, deleting, or renaming source files.
 
+## Criterion
+
+Apply the preservation rule in [Statement](#statement) to the files covered by
+[Applies to](#applies-to). Filesystem access-time changes are not changes to source
+contents or paths.
+
 ## Measurement plan
 
 Snapshot the relative paths and byte contents of project files and any system
 context outside the selected subtree. Capture command output separately from
 that snapshot. Compare snapshots before and after each check, covering valid
-and malformed specifications, missing input, and unavailable context.
+and malformed specifications, missing input, and unavailable context. Evaluate
+differences against [Criterion](#criterion).
 Retain the differing paths and contents on test failure.
-
-Filesystem access-time changes are not changes to source contents or paths.
 
 The [CLI quality-contract tests](../../internal/cli/quality_contracts_test.go)
 check this criterion. The obligation remains defined in this document.

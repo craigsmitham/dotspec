@@ -9,7 +9,7 @@ import (
 	"go.yaml.in/yaml/v3"
 )
 
-const ModelVersion = "0.15.0-draft"
+const ModelVersion = "0.16.0-draft"
 const RepresentationVersion = "0.1.0"
 const MappingProfile = "dotspec-markdown/13"
 

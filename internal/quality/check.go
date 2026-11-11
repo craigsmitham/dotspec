@@ -28,8 +28,12 @@ func Check(spec *Requirement) []diagnostic.Diagnostic {
 		suggestions = append(suggestions, diagnostic.Advice(field.rule, field.message, location))
 	}
 	if missing := spec.MeasurementGuidance.Missing(); len(missing) > 0 {
-		location := spec.SectionLocations["Measurement plan"]
-		location.Path, location.Element = spec.Path, "Measurement plan"
+		section := "Measurement plan"
+		if strings.TrimSpace(spec.MeasurementPlan) == "" {
+			section = "Criterion"
+		}
+		location := spec.SectionLocations[section]
+		location.Path, location.Element = spec.Path, section
 		suggestions = append(suggestions, diagnostic.Advice("quality.measurement-basis", obligation.MeasurementMessage(missing), location))
 	}
 	return suggestions

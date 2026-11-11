@@ -86,6 +86,9 @@ changes reviewable before writing.
 After copying, edit definitions to explain their meaning for your system. Add
 quality requirements separately when you know the actual obligations, conditions,
 and measures. Copying does not create requirements, thresholds, or evidence.
+Use [Develop requirements](develop-requirements.md) to turn selected concerns into
+scoped obligations with criteria and assessment guidance. Product properties and
+outcomes for users in a context of use need different evidence.
 
 ## Define or customize a model
 

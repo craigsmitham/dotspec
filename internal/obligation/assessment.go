@@ -7,14 +7,16 @@ import (
 )
 
 // MeasurementGuidance describes recorded sections, never their adequacy.
-// Narrative criteria may carry the complete comparison; structured criteria
-// identify a comparison and target separately. Neither requires duplication.
+// Narrative criteria may carry or reference the complete comparison; structured
+// criteria identify a comparison and target separately. Plans collect evidence
+// against those criteria; their presence never substitutes for an obligation's
+// criterion or applicability.
 type MeasurementGuidance struct {
-	Measurement, Verification, Criterion, Comparison, Conditions bool
+	Measurement, Criterion, Comparison, Conditions bool
 }
 
 func (g MeasurementGuidance) Missing() []string {
-	if !g.Measurement || g.Verification {
+	if !g.Measurement {
 		return nil
 	}
 	missing := []string{}
@@ -29,7 +31,7 @@ func (g MeasurementGuidance) Missing() []string {
 	return missing
 }
 func MeasurementMessage(missing []string) string {
-	return "Measurement guidance is recorded, but no separately identified " + strings.Join(missing, ", ") + " is recorded. Review how observations will be compared with the obligation; prose may already supply the information. Guidance presence is not a verification result."
+	return "A measure or measurement plan is recorded, but no separately identified " + strings.Join(missing, ", ") + " is recorded for the obligation. Define or reference the required comparison under Criterion and its operating context under Applies to or Criterion. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result."
 }
 func measurementGuidance(doc *specfile.Outline) MeasurementGuidance {
 	sections := map[string]*specfile.Section{}
@@ -61,11 +63,10 @@ func measurementGuidance(doc *specfile.Outline) MeasurementGuidance {
 		return strings.TrimSpace(strings.Join(values, "\n"))
 	}
 	measurement, criterion, applicability := sections["Measurement plan"], sections["Criterion"], sections["Applies to"]
-	success := child(measurement, "Success criteria") != ""
 	return MeasurementGuidance{
-		Measurement: body(measurement) != "", Verification: body(sections["Verification plan"]) != "",
-		Criterion:  body(criterion) != "" || success,
-		Comparison: intro(criterion) != "" || success || (child(criterion, "Comparison") != "" && child(criterion, "Target") != ""),
-		Conditions: intro(applicability) != "" || child(applicability, "Conditions") != "" || child(criterion, "Conditions") != "" || child(measurement, "Conditions") != "",
+		Measurement: body(measurement) != "" || child(criterion, "Measure") != "",
+		Criterion:   body(criterion) != "",
+		Comparison:  intro(criterion) != "" || (child(criterion, "Comparison") != "" && child(criterion, "Target") != ""),
+		Conditions:  intro(applicability) != "" || child(applicability, "Conditions") != "" || child(criterion, "Conditions") != "",
 	}
 }

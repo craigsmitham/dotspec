@@ -91,14 +91,20 @@ not separately identified; the narrative may already supply them. Do not create
 new obligations merely to describe assessment activities.
 
 A Measurement plan records how to collect observations. It can provide the whole
-verification approach when the criterion, comparison and context are also recorded;
-a second Verification plan is unnecessary. Put a complete narrative under Criterion,
-use its Comparison and Target subsections, or state Success criteria within the
-Measurement plan. Link the authoritative criterion rather than duplicating a target
-that is already defined elsewhere. Put context under Applies to or Conditions. If measurement-only
-guidance lacks these separately recorded details, checks offer advisory prompts.
-They do not interpret arbitrary prose or certify adequacy. A Validation plan alone
-does not satisfy the need for system-verification guidance.
+verification approach when the criterion, comparison and operating context are also
+recorded; a second Verification plan is unnecessary. Define or reference the
+satisfaction rule under Criterion, using narrative or its Comparison and Target
+subsections. Plan Success criteria refer to that rule rather than define competing
+bounds. Put required operating context under Applies to or Criterion; plan Conditions
+describe the assessment setup and how it represents that context.
+
+Checks offer advisory prompts for an explicit Measure or Measurement plan missing
+these separately identified details, even when Verification plan is present. They
+do not interpret arbitrary prose or certify adequacy. A Validation plan alone does
+not satisfy the need for system-verification guidance. See
+[Develop requirements](develop-requirements.md) for the authoring workflow and the
+[unassisted recovery example](../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md)
+for one bound, explicit context of use, and one assessment plan.
 
 ## Make questions actionable
 

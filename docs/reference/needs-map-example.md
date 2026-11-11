@@ -4,7 +4,7 @@ Specification project: **user-needs**. Project membership does not imply a Syste
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.15.0-draft`; mapping `dotspec-markdown/13`. Only acquired records and explicit relationships are shown. Missing links do not establish missing needs, capabilities or implementation.
+Model `0.16.0-draft`; mapping `dotspec-markdown/13`. Only acquired records and explicit relationships are shown. Missing links do not establish missing needs, capabilities or implementation.
 
 `declares` locates a record; `applies to` identifies its explicit scope. For an outcome, that scope identifies where it is a success criterion; for an obligation, where the commitment applies. `supports` records intended contribution, not achievement. Capability dependencies are distinct from structural `part of` links. Providers are optional and non-exhaustive; human and procedural enablers remain in the descriptions. Step order and switching timelines are not dependency edges. The diagram focuses on semantic relationships; declaration ownership and progress cases appear in the table and definitions below.
 
