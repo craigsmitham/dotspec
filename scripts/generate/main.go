@@ -126,6 +126,32 @@ func run(check bool) error {
 		return err
 	}
 	files = append(files, struct{ path, content string }{"docs/reference/system-overview-example.md", overview})
+	for _, preset := range []string{"odi", "progress", "job-story"} {
+		template, err := job.TemplateFor(preset)
+		if err != nil {
+			return err
+		}
+		files = append(files, struct{ path, content string }{"examples/jtbd-presets/specs/jobs/" + preset + ".job.spec.md", template})
+	}
+	needsResult, err := model.Export(filepath.Join(root, "examples/user-needs"), system.CheckType(), job.CheckType(), requirement.CheckType())
+	if err != nil {
+		return err
+	}
+	if needsResult.ExitCode != 0 {
+		return fmt.Errorf("user needs example: %v", needsResult.Snapshot.Diagnostics)
+	}
+	needsFindings, err := model.Validate(needsResult.Snapshot)
+	if err != nil {
+		return err
+	}
+	if len(needsFindings) > 0 {
+		return fmt.Errorf("user needs example model: %v", needsFindings)
+	}
+	needs, err := model.NeedsMarkdown(needsResult.Snapshot, filepath.Join(root, "docs/reference"))
+	if err != nil {
+		return err
+	}
+	files = append(files, struct{ path, content string }{"docs/reference/needs-map-example.md", needs})
 	var stale []string
 	for _, file := range files {
 		path := filepath.Join(root, file.path)

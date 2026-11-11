@@ -114,8 +114,12 @@ func TestStructuredReadContracts(t *testing.T) {
 		if err := json.Unmarshal([]byte(out), &result); err != nil {
 			t.Fatal(err)
 		}
-		if result["schema_version"] != float64(1) {
-			t.Fatalf("missing version: %s", out)
+		wantVersion := float64(1)
+		if len(args) > 1 && args[0] == "job" && (args[1] == "map" || args[1] == "outcome") {
+			wantVersion = 2
+		}
+		if result["schema_version"] != wantVersion {
+			t.Fatalf("wrong version: %s", out)
 		}
 		if strings.Contains(out, "\x1b") {
 			t.Fatalf("styled JSON: %s", out)
@@ -138,14 +142,14 @@ func TestStructuredReadContracts(t *testing.T) {
 	if err := json.Unmarshal([]byte(output), &outcomes); err != nil {
 		t.Fatal(err)
 	}
-	if len(outcomes.Overall) != 0 || len(outcomes.Steps) != 1 || outcomes.Steps[0].ID != "gather" || outcomes.Steps[0].Outcomes[0].ID != "OUT-002" {
+	if len(outcomes.DeclaredByJob) != 0 || len(outcomes.Steps) != 1 || outcomes.Steps[0].ID != "gather" || outcomes.Steps[0].Outcomes[0].ID != "OUT-002" {
 		t.Fatalf("wrong selected scope: %+v", outcomes)
 	}
 	_, output, _ = invoke("job", "map", "develop-requirements", "--json")
 	if err := json.Unmarshal([]byte(output), &outcomes); err != nil {
 		t.Fatal(err)
 	}
-	if len(outcomes.Overall) != 0 || len(outcomes.Steps[0].Outcomes) != 0 {
+	if len(outcomes.DeclaredByJob) != 0 || len(outcomes.Steps[0].Outcomes) != 0 {
 		t.Fatalf("unrequested outcomes: %s", output)
 	}
 }

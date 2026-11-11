@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/9` maps specification Markdown to the
+`dotspec-markdown/10` maps specification Markdown to the
 [canonical model](dotspec.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/specification-model.md).
@@ -126,14 +126,16 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | Frontmatter `id` | Optional System `authored_id`, document-local anchor |
 | Purpose; Scope | `purpose`; `scope` |
 | Part of | `part_of_content`, explicit `part_of_references`, resolved scalar System `part_of`; no inferred parent |
-| Components; Features | Paired section content and ordered declaration membership in `components` or `features` |
-| Named Component/Feature | `name`, complete `content`, declaring System `owner`, optional introductory `**ID:**`; Feature `system` is the declaring System |
-| Component/Feature: Purpose | `purpose` |
+| Components; Features; Capabilities | Paired section content and ordered declaration membership in `components`, `features` or `capabilities` |
+| Named Component/Feature/Capability | `name`, complete `content`, declaring System `owner`, optional introductory `**ID:**`; Feature `system` is the declaring System |
+| Component/Feature/Capability: Purpose | `purpose` |
 | Component: Responsibilities; Boundary | `responsibilities`; `boundary_description` |
 | Component: Part of | Narrative and explicit references; resolved scalar System or Component `part_of` |
 | Component: Contracts; Architecture; Implementation | `ContextualReferences` preserving narrative and links to native artifacts |
 | Component: Obligations | Shared named `ObligationClause` declarations; no implicit applicability |
 | Feature: Groups | Narrative and explicit references; resolved non-owning `groups` membership in requirements, clauses, use cases, concepts, concept uses or synchronizations |
+| Capability: Supports; Depends on; Provided by | Explicit semantic associations to user needs/goals, Capability dependencies, and System/Component providers; declaration does not imply provision |
+| Capability: Enablers | `enablers` narrative, including human/procedural providers and external references |
 | Environment | `EnvironmentDescription.content` |
 | Goals | `GoalCollection.content`; direct list items and named subsections become `SystemGoal` records |
 | Assumptions | `AssumptionCollection.content`; direct list items and named subsections become `Assumption` records |
@@ -161,14 +163,19 @@ and specification ownership are associations; they introduce no inheritance.
 | --- | --- |
 | Job | `statement` |
 | Performer; Situation; Motivation | `performer`; `situation`; `motivation` |
-| Intended progress; Desired outcome | `intended_progress`, preserving the authored heading and existing duplicate-section validation |
+| Intended progress | `intended_progress`; the old singular Desired outcome heading is extension content |
 | Steps | `JobMap.content`; named subsections become ordered `JobStep` records |
 | Step `**ID:**`; `**Stage:**` | Optional `authored_id`; source-backed `stage` |
 | Step introduction | `description`, excluding its explicit ID and Stage metadata lines |
 | Outcomes under the job or a step | `OutcomeCollection` and direct list-item `DesiredOutcome` records with that actual owner |
 | DesiredOutcome `**identifier:**` prefix | Optional outcome `authored_id`; complete item remains available as its statement |
+| Named outcome with introductory `**ID:**` | `name` from its heading, `authored_id`, and full `statement` from introductory prose excluding ID; headings without IDs remain extensions |
+| Named outcome: Applies to | `applies_to_content`, authored reference occurrences, and resolved Job/JobStep `applies_to` targets, independently of declaration owner |
+| Named outcome: Supporting content | `supporting_content` |
 | Nested outcome support content | `supporting_content` on the outcome |
 | Progress cases | `ProgressCaseCollection.content`; named subsections become `ProgressCase` records |
+| Case: Circumstances; Struggling moment; Participants | `circumstances`; `struggling_moment`; `participants` |
+| Case: Alternatives considered; Trade-offs and selection criteria | `alternatives_considered`; `tradeoffs_and_selection_criteria` |
 | Case: Current approach; Desired progress | `current_approach`; `desired_progress` |
 | Case: Forces | `ForceCollection` with full narrative and explicit list-item or headed force values |
 | Case: Timeline | `Timeline.content`; direct list items or named events supply `TimelineEvent` values |
@@ -341,7 +348,7 @@ qualifications, examples and evidence instructions.
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/9`, an owner and field path, source
+Bindings record a rule under `dotspec-markdown/10`, an owner and field path, source
 occurrence and role. Named-field, record-identity and structured-item bindings
 account for interpreted domain content. Metadata bindings account for frontmatter.
 Structural-wrapper bindings cover headings and syntax support; a document-root

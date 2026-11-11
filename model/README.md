@@ -1,7 +1,7 @@
 # Specification model
 
 [dotspec.yaml](dotspec.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.10.0-draft`; the JSON
+specification snapshots. The model version is `0.11.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
@@ -242,7 +242,7 @@ The `0.9.0-draft` model and `dotspec-markdown/8` unify obligation capabilities:
 There are no compatibility aliases. Re-export Markdown using the current profile.
 
 
-The `0.10.0-draft` model and `dotspec-markdown/9` make specification subjects explicit:
+The `0.10.0-draft` model and `dotspec-markdown/9` introduced explicit specification subjects:
 
 - `System.part_of` and `Component.part_of` identify optional single structural
   parents. They must be acyclic. `enclosing_system` replaces `parent_system` for
@@ -265,3 +265,26 @@ The `0.10.0-draft` model and `dotspec-markdown/9` make specification subjects ex
 
 See [authoring relationships](../docs/develop-relationships.md#describe-systems-components-and-features)
 and the [generated overview](../docs/reference/system-overview-example.md).
+
+
+## Jobs, user needs and capabilities
+
+Version `0.11.0-draft` and mapping `dotspec-markdown/10` add:
+
+- Shared `DesiredOutcome.applies_to` relationships to jobs and steps, independent
+  of the single declaring owner. Named outcomes have short heading labels,
+  explicit IDs and full statements; ordinary list outcomes remain supported.
+- Case-specific circumstances, struggling moments, participants, alternatives,
+  and trade-offs/selection criteria on `ProgressCase`, reusing existing evidence.
+- Optional System-owned `Capability` declarations with explicit `supports`,
+  `depends_on`, and `provided_by` relationships and narrative `enablers`.
+  Capability dependencies are distinct from structural part-of relationships;
+  declaring systems are not inferred providers.
+- General, ODI, progress and job-story authoring/check presets. These are CLI
+  guidance, not domain classes or a method classification stored on jobs.
+- `dotspec model needs`, a generated needs-to-specification diagram and source
+  reference with full statements and evidence.
+
+The legacy singular `Desired outcome` job heading is extension content rather
+than an alias for `Intended progress`. Research assessments remain dated evidence,
+not outcome properties. See [Jobs and user needs](../docs/jobs-and-user-needs.md).

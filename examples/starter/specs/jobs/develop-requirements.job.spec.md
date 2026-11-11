@@ -6,7 +6,7 @@ type: job
 
 ## Job
 
-Describe what someone wants to accomplish, including where this job begins and ends.
+Describe what someone seeks to accomplish or change, independent of the chosen solution.
 
 ## Performer
 

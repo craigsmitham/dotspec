@@ -364,6 +364,7 @@ dotspec job check develop-requirements --path .
 | `--help, -h` | `false` | help for check |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--preset` | `general` | JTBD authoring guidance: general, odi, progress, or job-story |
 
 ## dotspec job init
 
@@ -383,6 +384,7 @@ dotspec job init develop-requirements --path .
 | `--help, -h` | `false` | help for init |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--preset` | `general` | JTBD authoring guidance: general, odi, progress, or job-story |
 
 ## dotspec job list
 
@@ -425,7 +427,7 @@ dotspec job map develop-requirements --path .
 
 ## dotspec job outcome
 
-List overall and step outcomes
+List outcomes by declaration owner
 
 ```sh
 dotspec job outcome [flags]
@@ -437,7 +439,7 @@ dotspec job outcome [flags]
 
 ## dotspec job outcome list
 
-List overall and step outcomes
+List outcomes by declaration owner
 
 ```sh
 dotspec job outcome list <slug> [flags]
@@ -453,7 +455,7 @@ dotspec job outcome list develop-requirements --path .
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
-| `--step` | `` | select a step by its explicit ID |
+| `--step` | `` | select the declaring step by its explicit ID |
 
 ## dotspec job show
 
@@ -576,6 +578,26 @@ dotspec model export --path internal
 | --- | --- | --- |
 | `--help, -h` | `false` | help for export |
 | `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec model needs
+
+Generate a needs-to-specification map with capability dependencies
+
+```sh
+dotspec model needs [flags]
+```
+
+Show jobs, shared outcomes, progress cases, features, obligations and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.
+
+```sh
+dotspec model needs --path . --relative-to docs/reference
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for needs |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
 
 ## dotspec model overview
 

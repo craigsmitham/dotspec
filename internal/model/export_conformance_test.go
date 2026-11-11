@@ -283,7 +283,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 func TestExportConformanceInvalidAndNativeSources(t *testing.T) {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/jobs/valid.job.spec.md", "---\ntype: job\n---\n# Valid\n\n## Job\n\nInspect from request to report.\n\n## Performer\n\nContributor.\n\n## Related specifications\n\n[Native](../../reference.md#native) and [Broken](../../missing.md).\n")
-	badPath := conformanceWrite(t, root, "specs/jobs/bad.job.spec.md", "---\ntype: job\n---\n# Bad\n\n## Intended progress\n\nFirst.\n\n## Desired outcome\n\nDuplicate.\n")
+	badPath := conformanceWrite(t, root, "specs/jobs/bad.job.spec.md", "---\ntype: job\n---\n# Bad\n\n## Intended progress\n\nFirst.\n\n## Intended progress\n\nDuplicate.\n")
 	conformanceWrite(t, root, "reference.md", "\xef\xbb\xbf# Native\r\n\r\n<!-- retain comment -->\r\n\r\n## Custom material\r\n\r\nA [second hop](second.md) must remain uninspected.  \r\n")
 	second := conformanceWrite(t, root, "second.md", "# Second hop\n")
 	result := conformanceExport(t, root)

@@ -12,8 +12,8 @@ import (
 )
 
 type jobOptions struct {
-	path, format, step string
-	outcomes           bool
+	path, format, step, preset string
+	outcomes                   bool
 }
 type jobResult struct {
 	SchemaVersion int      `json:"schema_version"`
@@ -33,7 +33,7 @@ type outcomesResult struct {
 	SchemaVersion int                  `json:"schema_version"`
 	Name          string               `json:"name"`
 	Path          string               `json:"path"`
-	Overall       []job.DesiredOutcome `json:"overall"`
+	DeclaredByJob []job.DesiredOutcome `json:"declared_by_job"`
 	Steps         []job.Step           `json:"steps"`
 }
 
@@ -46,7 +46,7 @@ func newJobCommand() *cobra.Command {
 		{"map", "Map authored step order (text, JSON, or Mermaid)"},
 		{"check", "Check structure and suggest writing improvements"},
 		{"step", "List the job's steps in authored order"},
-		{"outcome", "List overall and step outcomes"},
+		{"outcome", "List outcomes by declaration owner"},
 	} {
 		use := action.name + " <slug>"
 		if action.name == "list" {
@@ -83,6 +83,12 @@ func newJobCommand() *cobra.Command {
 				return err
 			}
 			options := jobOptions{path: path, format: format}
+			if command == "init" || command == "check" {
+				options.preset, _ = cmd.Flags().GetString("preset")
+				if err := job.ValidatePreset(options.preset); err != nil {
+					return err
+				}
+			}
 			if command == "map" {
 				options.outcomes, _ = cmd.Flags().GetBool("outcomes")
 			}
@@ -97,13 +103,16 @@ func newJobCommand() *cobra.Command {
 			}
 			return runJob(command, args[0], options, cmd.OutOrStdout())
 		}
+		if command == "init" || command == "check" {
+			cmd.Flags().String("preset", "general", "JTBD authoring guidance: general, odi, progress, or job-story")
+		}
 		addPath(cmd)
 		addOutput(cmd, command == "map")
 		if command == "map" {
 			cmd.Flags().Bool("outcomes", false, "include job and step outcomes")
 		}
 		if command == "outcome list" {
-			cmd.Flags().String("step", "", "select a step by its explicit ID")
+			cmd.Flags().String("step", "", "select the declaring step by its explicit ID")
 		}
 	}
 	return root
@@ -111,7 +120,7 @@ func newJobCommand() *cobra.Command {
 
 func runJob(command, slug string, options jobOptions, out io.Writer) error {
 	if command == "init" {
-		target, err := job.Init(options.path, slug)
+		target, err := job.InitWithPreset(options.path, slug, options.preset)
 		if err != nil {
 			return err
 		}
@@ -122,7 +131,7 @@ func runJob(command, slug string, options jobOptions, out io.Writer) error {
 		return err
 	}
 	if command == "check" {
-		return emitCheckReport(out, check.Focused(options.path, slug, job.CheckType(), supportedTypes()...), options.format)
+		return emitCheckReport(out, check.Focused(options.path, slug, job.CheckTypeWithPreset(options.preset), supportedTypes()...), options.format)
 	}
 	spec, err := job.Show(options.path, slug)
 	if err != nil {
@@ -160,7 +169,7 @@ func runJob(command, slug string, options jobOptions, out io.Writer) error {
 					steps[i].Outcomes = []job.DesiredOutcome{}
 				}
 			}
-			return writeJSON(out, outcomesResult{1, spec.Name, spec.Path, overall, steps})
+			return writeJSON(out, outcomesResult{2, spec.Name, spec.Path, overall, steps})
 		}
 		err = writeJobMap(spec, options, out)
 	}

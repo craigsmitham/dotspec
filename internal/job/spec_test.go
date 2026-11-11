@@ -5,12 +5,11 @@ import (
 	"testing"
 )
 
-const validJob = "---\ntype: job\n---\n\n# Develop Requirements\n\n## Situation\n\nA capability is changing.\n\n## Motivation\n\nUnderstand stakeholder needs.\n\n## Desired outcome\n\nAgree on what to build.\n"
+const validJob = "---\ntype: job\n---\n\n# Develop Requirements\n\n## Situation\n\nA capability is changing.\n\n## Motivation\n\nUnderstand stakeholder needs.\n\n## Intended progress\n\nAgree on what to build.\n"
 
 func TestParseJob(t *testing.T) {
 	for _, source := range []string{
 		validJob,
-		strings.Replace(validJob, "## Desired outcome", "## Intended progress", 1),
 		"\xef\xbb\xbf" + strings.ReplaceAll(validJob, "\n", "\r\n"),
 		strings.Replace(validJob, "type: job", "type: 'job' # JTBD", 1),
 		validJob + "\n## Notes\nAn additional section.\n",
@@ -25,32 +24,23 @@ func TestParseJob(t *testing.T) {
 	}
 }
 
-func TestIntendedProgressAliases(t *testing.T) {
-	for _, heading := range []string{"Intended progress", "Desired outcome"} {
-		t.Run(heading, func(t *testing.T) {
-			body := "# A job\n\n## " + heading + "\n\nConfidence in the agreed change.\n\n## Notes\n\nSee [the progress](#" + strings.ReplaceAll(strings.ToLower(heading), " ", "-") + ").\n"
-			got, err := Parse([]byte("---\ntype: job\n---\n" + body))
-			if err != nil {
-				t.Fatal(err)
-			}
-			if got.IntendedProgress != "Confidence in the agreed change." || got.Markdown != strings.TrimSpace(body) {
-				t.Fatalf("progress or authored Markdown changed: %+v", got)
-			}
-			if len(got.Outcomes) != 0 {
-				t.Fatalf("narrative progress became an outcome: %+v", got.Outcomes)
-			}
-			for _, duplicate := range []string{"Intended progress", "Desired outcome"} {
-				_, err := Parse([]byte("---\ntype: job\n---\n" + body + "\n## " + duplicate + "\n"))
-				if err == nil || !strings.Contains(err.Error(), "duplicate Intended progress section") {
-					t.Fatalf("%s + %s: expected duplicate error even for an empty section, got %v", heading, duplicate, err)
-				}
-			}
-		})
+func TestIntendedProgressHasOneSpelling(t *testing.T) {
+	source := "---\ntype: job\n---\n# A job\n## Intended progress\nConfidence in the change.\n## Desired outcome\nLegacy narrative.\n"
+	got, err := Parse([]byte(source))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.IntendedProgress != "Confidence in the change." || !strings.Contains(got.Markdown, "Legacy narrative.") {
+		t.Fatal(got)
+	}
+	_, err = Parse([]byte(source + "\n## Intended progress\n"))
+	if err == nil {
+		t.Fatal("duplicate intended progress accepted")
 	}
 }
 
 func TestParseJobPreservesMarkdown(t *testing.T) {
-	body := "- Understand needs.\n\n### Details\n\n```markdown\n# Not a title\n## Desired outcome\n```\n\n> ## Situation\n> Quoted example."
+	body := "- Understand needs.\n\n### Details\n\n```markdown\n# Not a title\n## Intended progress\n```\n\n> ## Situation\n> Quoted example."
 	source := strings.Replace(validJob, "Understand stakeholder needs.", body, 1)
 	got, err := Parse([]byte(source))
 	if err != nil {
@@ -62,7 +52,7 @@ func TestParseJobPreservesMarkdown(t *testing.T) {
 }
 
 func TestParseJobRejectsMalformedContent(t *testing.T) {
-	for _, section := range []string{"Situation", "Motivation", "Desired outcome"} {
+	for _, section := range []string{"Situation", "Motivation", "Intended progress"} {
 		if _, err := Parse([]byte(validJob + "\n## " + section + "\nDuplicate.\n")); err == nil || !strings.Contains(err.Error(), "duplicate") {
 			t.Fatalf("expected duplicate section error, got %v", err)
 		}

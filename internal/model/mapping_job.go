@@ -3,7 +3,7 @@ package model
 import "strings"
 
 func (m *domainMapper) job(r Record, s *Section) bool {
-	fields := map[string]string{"Job": "statement", "Performer": "performer", "Situation": "situation", "Motivation": "motivation", "Intended progress": "intended_progress", "Desired outcome": "intended_progress"}
+	fields := map[string]string{"Job": "statement", "Performer": "performer", "Situation": "situation", "Motivation": "motivation", "Intended progress": "intended_progress"}
 	if field, ok := fields[s.Title]; ok {
 		m.section(r, field, s)
 		return true
@@ -40,9 +40,13 @@ func (m *domainMapper) job(r Record, s *Section) bool {
 		v := m.collection(r, "progress_cases", "cases", s)
 		for _, child := range s.Children {
 			x := m.named("ProgressCase", r, child)
-			m.section(x, "description", child)
+			x["description"] = m.doc.Rich(child.Intro)
+			m.bind(x, "description", child.Intro, "named_field", "progress-case-description")
 			for _, sub := range child.Children {
 				switch sub.Title {
+				case "Circumstances", "Struggling moment", "Participants", "Alternatives considered", "Trade-offs and selection criteria":
+					field := map[string]string{"Circumstances": "circumstances", "Struggling moment": "struggling_moment", "Participants": "participants", "Alternatives considered": "alternatives_considered", "Trade-offs and selection criteria": "tradeoffs_and_selection_criteria"}[sub.Title]
+					m.section(x, field, sub)
 				case "Current approach":
 					m.section(x, "current_approach", sub)
 				case "Desired progress":
@@ -83,7 +87,30 @@ func (m *domainMapper) outcomes(owner Record, s *Section) {
 		appendID(v, "outcomes", String(x, "id"))
 	}
 	for _, sub := range s.Children {
-		m.extension(owner, sub)
+		if m.fieldText(sub, "ID") == "" {
+			m.extension(owner, sub)
+			continue
+		}
+		x := m.named("DesiredOutcome", owner, sub)
+		if id := m.fieldText(sub, "ID"); id != "" {
+			x["authored_id"] = id
+			m.bind(x, "authored_id", m.fieldNodes(sub, "ID"), "record_identity", "outcome-id")
+			m.bind(x, "authored_id", m.fieldLabelNodes(sub, "ID"), "structural_wrapper", "outcome-id-label")
+		}
+		nodes := m.withoutFields(sub, sub.Intro, "ID")
+		x["statement"] = m.doc.Rich(nodes)
+		m.bind(x, "statement", nodes, "named_field", "outcome-statement")
+		for _, detail := range sub.Children {
+			if m.traceSection(x, detail) {
+				continue
+			}
+			if detail.Title == "Supporting content" {
+				m.section(x, "supporting_content", detail)
+			} else {
+				m.extension(x, detail)
+			}
+		}
+		appendID(v, "outcomes", String(x, "id"))
 	}
 }
 

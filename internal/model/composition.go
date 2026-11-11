@@ -220,7 +220,7 @@ func (d *designResolver) checkDeclarations() {
 	for _, r := range d.elements {
 		kind := String(r, "kind")
 		switch kind {
-		case "Component", "Feature", "ConceptUse", "ConceptType", "ConceptAction", "ActionParameter", "Synchronization":
+		case "Component", "Feature", "Capability", "ConceptUse", "ConceptType", "ConceptAction", "ActionParameter", "Synchronization":
 			role := ""
 			if kind == "ActionParameter" && d.isMember(d.index[String(r, "owner")], "output_parameters", r) {
 				role = "output"
@@ -295,7 +295,7 @@ func designKind(actual, expected string) bool {
 }
 func designIssueCode(field string) string {
 	switch field {
-	case "part_of", "groups", "specification_system", "subject_system", "supports", "applies_to", "derived_from", "refines", "relies_on", "involves", "motivation", "verification_plan":
+	case "depends_on", "provided_by", "part_of", "groups", "specification_system", "subject_system", "supports", "applies_to", "derived_from", "refines", "relies_on", "involves", "motivation", "verification_plan":
 		return "relationship." + field
 	default:
 		return "concept." + field

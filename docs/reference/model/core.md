@@ -4,15 +4,15 @@ Generated from [the canonical model](../../../model/dotspec.yaml) and [the view 
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.10.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.11.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
 | Subset | Responsibility | Selected types |
 | --- | --- | --- |
-| Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [TraceableElement](index.md#traceableelement), [SystemGoal](index.md#systemgoal), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [BusinessRule](index.md#businessrule), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation) |
+| Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [TraceableElement](index.md#traceableelement), [SystemGoal](index.md#systemgoal), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [BusinessRule](index.md#businessrule), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Capability](index.md#capability) |
 | User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [TraceableElement](index.md#traceableelement), [ObligationClause](index.md#obligationclause), [Job](index.md#job), [JobStep](index.md#jobstep), [DesiredOutcome](index.md#desiredoutcome), [ProgressCase](index.md#progresscase), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation) |
-| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptType](index.md#concepttype), [ConceptUse](index.md#conceptuse), [TypeBinding](index.md#typebinding), [Synchronization](index.md#synchronization), [SynchronizationAction](index.md#synchronizationaction), [StateDescription](index.md#statedescription), [StateElement](index.md#stateelement), [ActionParameter](index.md#actionparameter), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [GeneralRequirement](index.md#generalrequirement), [QualityRequirement](index.md#qualityrequirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Component](index.md#component), [Feature](index.md#feature) |
+| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptType](index.md#concepttype), [ConceptUse](index.md#conceptuse), [TypeBinding](index.md#typebinding), [Synchronization](index.md#synchronization), [SynchronizationAction](index.md#synchronizationaction), [StateDescription](index.md#statedescription), [StateElement](index.md#stateelement), [ActionParameter](index.md#actionparameter), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [GeneralRequirement](index.md#generalrequirement), [QualityRequirement](index.md#qualityrequirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Component](index.md#component), [Feature](index.md#feature), [Capability](index.md#capability) |
 | Specification traceability (`core`) | Explicit connections between specification meaning, authored occurrences, and resolved relationships. | [ContentBinding](index.md#contentbinding), [SourceReference](index.md#sourcereference), [Resolution](index.md#resolution) |
 
 Subset membership organizes model definitions; it does not infer the level or importance of an authored instance. Shared types can appear in several subsets. Supporting and generic types appear as context where a diagram needs them.
@@ -107,7 +107,7 @@ classDiagram
 
 ### User progress
 
-Jobs contain ordered steps, overall or per-step outcomes, and progress cases.
+Jobs optionally declare functional steps, outcomes and progress cases. These edges describe declaration ownership; step order is presentation order.
 
 ```mermaid
 classDiagram
@@ -120,6 +120,20 @@ classDiagram
     Job *-- "0..*" DesiredOutcome : outcomes
     Job *-- "0..*" ProgressCase : cases
     JobStep *-- "0..*" DesiredOutcome : outcomes
+```
+
+### Outcome applicability
+
+An outcome can explicitly apply to several jobs or steps independently of its single declaration owner. Applicability does not assert achievement.
+
+```mermaid
+classDiagram
+    direction LR
+    class DesiredOutcome
+    class Job
+    class JobStep
+    DesiredOutcome --> "0..*" Job : applies to
+    DesiredOutcome --> "0..*" JobStep : applies to
 ```
 
 ### Software behavior
@@ -313,6 +327,29 @@ classDiagram
     Resolution --> "0..1" SourceFragment : target
 ```
 
+### Enabling capabilities
+
+Capabilities connect user needs to enabling abilities and explicit system or component providers. Dependency is not structural containment; providers are optional and non-exhaustive.
+
+```mermaid
+classDiagram
+    direction LR
+    class Capability
+    class System
+    class Component
+    class SystemGoal
+    class Job
+    class JobStep
+    class DesiredOutcome
+    Capability --> "0..*" SystemGoal : supports
+    Capability --> "0..*" Job : supports
+    Capability --> "0..*" JobStep : supports
+    Capability --> "0..*" DesiredOutcome : supports
+    Capability --> "0..*" Capability : depends on
+    Capability --> "0..*" System : provided by
+    Capability --> "0..*" Component : provided by
+```
+
 ## Selected type reference
 
 ### TraceableElement
@@ -392,6 +429,7 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 | `part_of` | [System](index.md#system) | optional | Optional explicit parent System. Directory context does not supply this relationship. |
 | `components` | [Component](index.md#component) | optional; ordered list | Named component declarations in authored order; membership does not establish structural parentage. |
 | `features` | [Feature](index.md#feature) | optional; ordered list | Named feature declarations in authored order; each feature belongs to this System. |
+| `capabilities` | [Capability](index.md#capability) | optional; ordered list | Capability declarations; the declaring System is a documentation home, not an inferred provider. |
 
 ### BusinessRule
 
@@ -411,7 +449,7 @@ Subsets: `business-requirements`. [BusinessRule](index.md#businessrule) contains
 
 ### Job
 
-A performer seeks progress in a situation, independent of a chosen implementation.
+What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps, progress cases and job-story phrasing are optional complementary perspectives.
 
 Subsets: `user-requirements`. [Job](index.md#job) contains the complete definition.
 
@@ -427,7 +465,7 @@ Subsets: `user-requirements`. [Job](index.md#job) contains the complete definiti
 
 ### JobStep
 
-A meaningful part of a job; repeated or custom stage labels are allowed.
+A meaningful accomplishment within a functional job map; not a prescribed software interaction or execution sequence.
 
 Subsets: `user-requirements`. [JobStep](index.md#jobstep) contains the complete definition.
 
@@ -439,7 +477,7 @@ Subsets: `user-requirements`. [JobStep](index.md#jobstep) contains the complete 
 
 ### DesiredOutcome
 
-A desired outcome owned directly by a job or step. Ownership does not imply inheritance.
+A desired result or criterion by which a person judges success. Declaration ownership, explicit applicability and evidence of achievement are distinct. ODI measurable wording is optional authoring guidance.
 
 Subsets: `user-requirements`. [DesiredOutcome](index.md#desiredoutcome) contains the complete definition.
 
@@ -447,6 +485,9 @@ Subsets: `user-requirements`. [DesiredOutcome](index.md#desiredoutcome) contains
 | --- | --- | --- | --- |
 | `statement` | [RichContent](index.md#richcontent) | optional |  |
 | `supporting_content` | [RichContent](index.md#richcontent) | optional | Explicit support prose or nested bullets belonging to the outcome. |
+| `name` | [RichContent](index.md#richcontent) | optional | Authored title or item name, if present. |
+| `owner` | [Job](index.md#job) or [JobStep](index.md#jobstep) | required |  |
+| `applies_to` | [Job](index.md#job) or [JobStep](index.md#jobstep) | optional; list | Jobs and steps for which this outcome is a criterion for success. Explicit, many-to-many applicability, independent of its single declaration owner; no inherited applicability or achievement is inferred. |
 
 ### ProgressCase
 
@@ -461,6 +502,11 @@ Subsets: `user-requirements`. [ProgressCase](index.md#progresscase) contains the
 | `forces` | [ForceCollection](index.md#forcecollection) | optional |  |
 | `timeline` | [Timeline](index.md#timeline) | optional |  |
 | `evidence` | [EvidenceCollection](index.md#evidencecollection) | optional |  |
+| `circumstances` | [RichContent](index.md#richcontent) | optional | Case-specific circumstances, distinct from the general job situation. |
+| `struggling_moment` | [RichContent](index.md#richcontent) | optional | The event or difficulty that made change worth considering. |
+| `participants` | [RichContent](index.md#richcontent) | optional | People and roles in this case; distinguish performer, buyer and decision maker where relevant. |
+| `alternatives_considered` | [RichContent](index.md#richcontent) | optional | Approaches considered, including doing nothing or continuing the current approach. |
+| `tradeoffs_and_selection_criteria` | [RichContent](index.md#richcontent) | optional | Trade-offs and criteria for choosing, hiring or rejecting an approach. |
 
 ### UseCase
 
@@ -811,12 +857,26 @@ Subsets: `software-requirements`. [Component](index.md#component) contains the c
 
 ### Feature
 
-A stakeholder-valued capability grouping specifications independently of component structure. Membership does not duplicate or own obligations.
+A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own obligations.
 
 Subsets: `software-requirements`. [Feature](index.md#feature) contains the complete definition.
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
-| `purpose` | [RichContent](index.md#richcontent) | optional | Stakeholder-valued capability or benefit expressed by this feature. |
+| `purpose` | [RichContent](index.md#richcontent) | optional | Stakeholder benefit expressed by this feature. |
 | `system` | [System](index.md#system) | required | System whose capability this feature describes; the explicitly declaring System. |
 | `groups` | [Requirement](index.md#requirement) or [ObligationClause](index.md#obligationclause) or [UseCase](index.md#usecase) or [Concept](index.md#concept) or [ConceptUse](index.md#conceptuse) or [Synchronization](index.md#synchronization) | optional; list | Non-owning specification membership; the same record may participate in several features. |
+
+### Capability
+
+An ability needed to deliver value, potentially combining people, procedures and technology. Distinct from a product feature or structural component; its declaration does not establish a provider.
+
+Subsets: `business-requirements`, `software-requirements`. [Capability](index.md#capability) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `purpose` | [RichContent](index.md#richcontent) | optional | What this ability enables and why it matters. |
+| `supports` | [SystemGoal](index.md#systemgoal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) | optional; list | Intended contribution to a goal or user progress; does not assert achievement. |
+| `depends_on` | [Capability](index.md#capability) | optional; list | Capabilities required by this capability; many-to-many dependencies may be cyclic. Not structural containment or an inferred execution sequence. |
+| `provided_by` | [System](index.md#system) or [Component](index.md#component) | optional; list | Explicitly identified system or component providers. Optional and non-exhaustive: human and procedural providers can be described in enablers. Does not assert verified implementation or satisfaction. |
+| `enablers` | [RichContent](index.md#richcontent) | optional | Human, procedural or other enabling context, including external references. Typed providers describe only explicitly linked systems and components. |

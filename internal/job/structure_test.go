@@ -90,7 +90,7 @@ func TestStructuredJob(t *testing.T) {
 	if !strings.Contains(got.ProgressCases, "CASE-NOTE") || !strings.Contains(got.Markdown, "CASE-NOTE") {
 		t.Fatal("case prose lost")
 	}
-	if suggestions := Check(got); len(suggestions) != 0 {
+	if suggestions := CheckWithPreset(got, "odi"); len(suggestions) != 0 {
 		t.Fatalf("unexpected suggestions: %+v", suggestions)
 	}
 }
@@ -184,7 +184,7 @@ func TestCheckExplainsHeuristics(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	suggestions := Check(got)
+	suggestions := CheckWithPreset(got, "odi")
 	if len(suggestions) != 3 {
 		t.Fatalf("want boundary, performer, and authored outcome suggestions; got %+v", suggestions)
 	}

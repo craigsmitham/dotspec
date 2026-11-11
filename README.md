@@ -622,14 +622,15 @@ Use `dotspec job <command> --help` for command-specific options.
   `System: None`. An empty list is successful.
 - `step list <slug>` displays steps in document order with their IDs, optional
   stages, and descriptions.
-- `outcome list <slug>` displays success criteria under `Overall job outcomes`
-  and `Outcomes for step: ...`. `--step ID` selects just that step's outcomes,
-  excluding overall job outcomes. An unknown step is an error; an existing step
+- `outcome list <slug>` displays success criteria under `Outcomes declared by job`
+  and `Outcomes declared by step: ...`. `--step ID` selects outcomes declared by that step. Use `model needs` to inspect
+  explicit applicability across declaration owners. An unknown step is an error; an existing step
   without outcomes is a successful empty result.
 - `map <slug>` displays the job and its documented steps in authored order.
   `--format mermaid` emits standalone Mermaid flowchart source for a renderer
   or a fenced `mermaid` block. `--outcomes` includes the whole job's outcomes and
-  attaches each step's outcomes to that step, with scope labels in text and Mermaid.
+  attaches declared outcomes to their owner, with declaration labels in text and Mermaid.
+  This view describes declaration structure; `model needs` shows explicit applicability.
   Without steps, the command displays the job, any requested overall outcomes,
   and `No steps defined.`. Arrows show authored step order; they do not require
   that execution sequence. No format assesses the map's completeness.
@@ -726,25 +727,45 @@ names are case-sensitive, and duplicate conventional sections are errors.
 Additional sections and ordinary Markdown are retained. Existing three-section
 job stories remain valid.
 
-`Intended progress` is the job story's narrative result. The previous heading,
-`Desired outcome`, remains a supported alias. Using both headings, or repeating
-either one, is a duplicate-section error even if a section is empty. `show`
-preserves the authored heading and Markdown; existing documents need no migration.
+`Intended progress` describes the narrative result the person seeks. Use that
+heading consistently: the old singular `Desired outcome` heading is now ordinary
+extension content and does not populate intended progress.
 
-`Outcomes` contains success criteria. A job's H2 `Outcomes` section describes
-success for the overall job; each step's H4 `Outcomes` section describes success
-at that step. These are separate collections: overall outcomes are not inherited
-by steps, and step success does not establish overall job success. Either
-collection can be absent or empty, meaning no outcomes are recorded at that scope.
-Narrative progress does not create an outcome entry.
+`Outcomes` contains desired results or criteria for judging success. Each outcome
+has one declaration owner: the job or a step. Declaration ownership does not
+establish applicability or inheritance. A shared outcome can explicitly apply to
+several jobs or steps; declare it once and link its subjects with `Applies to`.
+Step success does not establish overall job success.
 
 Each direct list item defines an outcome; use a bold ID followed by a colon, as in
-`- **OUT-001:** Minimize ...`, when the outcome needs to be referenced.
-IDs are optional. Continuation lines and paragraphs are supported.
-Unidentified and unfinished outcome statements remain readable; `check` offers
-wording advice for empty statements or statements without recognizable direction
-and measurement terms. Nested bullets are preserved in `show` as additional prose
-and do not define separate outcomes.
+`- **OUT-001:** Minimize ...`, when it needs a reference. IDs are optional for list
+items. Continuation paragraphs and nested support bullets remain prose.
+
+For a concise map label and explicit applicability, use a named outcome under
+`Outcomes`, with an introductory `**ID:**` and full statement:
+
+```markdown
+### Timely awareness
+
+**ID:** timely-awareness
+
+Minimize the time before recognizing that the journey plan needs attention.
+
+#### Applies to
+
+[Monitor the journey](#monitor-journey)
+[Adapt travel plans](#adapt-plans)
+```
+
+Under a step's `#### Outcomes`, use H5 outcome names and H6 `Applies to` headings.
+A heading without an explicit ID remains supporting extension content; it does
+not silently become another outcome. The statement is separate from the short
+heading label. `Supporting content`, `Supports`, and `Derived from` sections can
+retain qualifications and provenance. Ordinary links elsewhere remain citations.
+
+Empty statements receive advisory guidance. ODI direction/measurement wording
+advice is enabled only by `job check --preset odi`; qualitative emotional and
+social outcomes are accepted by the default check.
 
 A job can have overall outcomes without any steps or IDs, for example:
 
@@ -775,9 +796,9 @@ This job and outcome are hypotheses awaiting research. No job map is recorded.
 
 Under `Steps`, each H3 introduces a step. Its `**ID:**` and optional `**Stage:**`
 fields belong in the introductory prose. A step's H4 `Outcomes` section contains
-only that step's success criteria. Headings in code fences and blockquotes do
-not define steps or outcomes. Progress cases and evidence are currently retained
-as Markdown; their subsections are not interpreted as job-map structure.
+outcomes declared by that step. Headings in code fences and blockquotes do
+not define steps or outcomes. Progress cases and evidence retain their full
+Markdown and named model fields; they are not interpreted as job-map steps.
 
 Step order in the document defines the displayed map order, not a required
 execution sequence. Mark partial maps in the introductory prose under `Steps`
@@ -812,14 +833,31 @@ Malformed metadata, duplicate IDs or conventional sections, invalid step heading
 structure, duplicate step metadata, and unresolved local references fail with a
 nonzero exit status. Missing sections and unfinished content remain readable.
 
-Writing checks are simple, explained heuristics: they suggest a job statement
-and performer when absent; suggest clarifying the execution boundary when a
-statement has no marker such as “for,” “when,” or “during”; and look for an
-improvement direction and a measurement word in authored outcome statements.
-Missing IDs, maps, stages, and outcome collections do not produce completion
-suggestions. These checks are advisory, not proof of clarity,
-completeness, measurability, or research validation. They do not assess whether a
-custom stage is correct or make missing evidence an error.
+The default writing check suggests a missing job statement, performer, or empty
+outcome statement. Missing IDs, maps, stages and outcome collections are valid.
+Optional `--preset odi`, `--preset progress`, and `--preset job-story` guidance
+adds method-specific suggestions. ODI prompts for a functional boundary, an
+optional map, and measurable wording. Progress prompts for cases, circumstances,
+participants, struggling moments, alternatives and trade-offs. Job-story guidance
+prompts for situation, motivation and intended progress. All are advisory;
+none establishes completeness, correctness or research validation.
+
+Job-map and outcome-list JSON use `schema_version: 2` and `declared_by_job`
+for outcomes declared by the job. The name describes ownership, not inferred scope.
+
+The same presets work with `job init`. `general` is the default, and the selection
+is authoring guidance rather than a classification stored on the job:
+
+```sh
+dotspec job init reach-work --preset progress
+dotspec job check reach-work --preset odi
+dotspec model needs --path . --relative-to docs/reference > docs/reference/needs.md
+```
+
+See [Jobs and user needs](docs/jobs-and-user-needs.md) for the method distinctions,
+progress-case fields, optional capabilities, and research evidence boundaries.
+The [generated needs map](docs/reference/needs-map-example.md) demonstrates shared
+outcomes, capability dependencies, providers, feature groups and requirements.
 
 The repository's [Develop Requirements](specs/jobs/develop-requirements.job.spec.md) and
 [Manage Requirements](specs/jobs/manage-requirements.job.spec.md) examples each contain a

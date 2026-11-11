@@ -116,7 +116,7 @@ func TestOutcomeScopes(t *testing.T) {
 	if err := listOutcomes(spec, "", &out); err != nil {
 		t.Fatal(err)
 	}
-	want := "Outcomes: Prepare a change\n\nOverall job outcomes\n  OUT-001: Minimize the likelihood of missed needs.\n\nOutcomes for step: Gather needs [gather] (locate)\n  OUT-002: Minimize the time needed to identify stakeholders.\n"
+	want := "Outcomes: Prepare a change\n\nOutcomes declared by job\n  OUT-001: Minimize the likelihood of missed needs.\n\nOutcomes declared by step: Gather needs [gather] (locate)\n  OUT-002: Minimize the time needed to identify stakeholders.\n"
 	if out.String() != want {
 		t.Fatalf("outcome scopes:\n%s\nwant:\n%s", out.String(), want)
 	}
@@ -126,7 +126,7 @@ func TestOutcomeScopes(t *testing.T) {
 			t.Fatal(err)
 		}
 		text := out.String()
-		for _, label := range []string{"Overall job outcomes", "Outcomes for step: Gather needs", "Authored step order"} {
+		for _, label := range []string{"Outcomes declared by job", "Outcomes declared by step: Gather needs", "Authored step order"} {
 			if !strings.Contains(text, label) {
 				t.Errorf("%s map missing %q: %s", format, label, text)
 			}
@@ -169,7 +169,7 @@ func TestJobMapWithoutSteps(t *testing.T) {
 					t.Fatalf("map without steps: %v: %d %q %q", args, code, out, errOut)
 				}
 				showOutcome := includeOutcomes && outcome != ""
-				if strings.Contains(out, "O1:") != showOutcome || strings.Contains(out, "Overall job outcomes") != showOutcome {
+				if strings.Contains(out, "O1:") != showOutcome || strings.Contains(out, "Outcomes declared by job") != showOutcome {
 					t.Errorf("outcomes with no steps: %v: %s", args, out)
 				}
 				if format == "mermaid" && (!strings.HasPrefix(out, "flowchart TD\n") || strings.Contains(out, "s1")) {

@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/dotspec.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.10.0-draft
+version: 0.11.0-draft
 description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
   is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
   and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
@@ -77,7 +77,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.10.0-draft
+        equals_string: 0.11.0-draft
       mapping_profile:
         range: string
         description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
@@ -1248,8 +1248,8 @@ classes:
         inlined: true
       quality_attributes:
         range: QualityAttribute
-        description: Attributes declared by this system, in authored order. Absent means no declaration; a
-          present empty list is distinct. Must be present together with quality_attributes_content.
+        description: Attributes declared by this system, in authored order. Absent means no declaration;
+          a present empty list is distinct. Must be present together with quality_attributes_content.
         multivalued: true
         list_elements_ordered: true
         annotations:
@@ -1384,10 +1384,30 @@ classes:
           relationship_label: declares features
           paired_with: features_content
         description: Named feature declarations in authored order; each feature belongs to this System.
+      capabilities_content:
+        range: RichContent
+        inlined: true
+        annotations:
+          paired_with: capabilities
+      capabilities:
+        range: Capability
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring System in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Explicit named declarations.
+          relationship_inverse: Capability.owner
+          relationship_ordering: authored declaration order; no execution order implied
+          relationship_label: declares capabilities
+          paired_with: capabilities_content
+        description: Capability declarations; the declaring System is a documentation home, not an inferred
+          provider.
     annotations:
       owned_memberships: System.goals.items or System.assumptions.items or System.constraints.items or System.glossary.terms
         or System.quality_attributes or System.concept_uses or System.synchronizations or System.components
-        or System.features
+        or System.features or System.capabilities
     mixins:
     - ObligationContainer
   GoalCollection:
@@ -1671,7 +1691,9 @@ classes:
   Job:
     in_subset:
     - user-requirements
-    description: A performer seeks progress in a situation, independent of a chosen implementation.
+    description: What a performer seeks to accomplish or change in particular circumstances, independent
+      of the chosen solution. Functional maps, progress cases and job-story phrasing are optional complementary
+      perspectives.
     is_a: SystemContextSpecification
     slot_usage:
       kind:
@@ -1732,8 +1754,9 @@ classes:
   OutcomeCollection:
     in_subset:
     - user-requirements
-    description: Outcomes section body and items; preserve introductory prose, nested lists and item support
-      content.
+    description: Outcomes section with list items or named outcomes. Named headings provide concise display
+      labels while statements preserve full meaning. Shared outcomes are declared once and have explicit
+      applicability references.
     attributes:
       content:
         range: RichContent
@@ -1775,7 +1798,8 @@ classes:
   JobStep:
     in_subset:
     - user-requirements
-    description: A meaningful part of a job; repeated or custom stage labels are allowed.
+    description: A meaningful accomplishment within a functional job map; not a prescribed software interaction
+      or execution sequence.
     is_a: TraceableElement
     slot_usage:
       kind:
@@ -1809,7 +1833,9 @@ classes:
   DesiredOutcome:
     in_subset:
     - user-requirements
-    description: A desired outcome owned directly by a job or step. Ownership does not imply inheritance.
+    description: A desired result or criterion by which a person judges success. Declaration ownership,
+      explicit applicability and evidence of achievement are distinct. ODI measurable wording is optional
+      authoring guidance.
     is_a: TraceableElement
     slot_usage:
       kind:
@@ -1836,6 +1862,43 @@ classes:
         range: RichContent
         description: Explicit support prose or nested bullets belonging to the outcome.
         inlined: true
+      applies_to_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored relationship section, including rationale and unresolved references.
+      applies_to_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: not-applicable
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          requires_content: applies_to_content
+          relationship_label: applies to references
+      applies_to:
+        range: Record
+        multivalued: true
+        description: Jobs and steps for which this outcome is a criterion for success. Explicit, many-to-many
+          applicability, independent of its single declaration owner; no inherited applicability or achievement
+          is inferred.
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: unordered
+          trace_heading: Applies to
+          trace_targets: Job or JobStep
+          requires_content: applies_to_content
+          relationship_label: applies to
+        any_of:
+        - range: Job
+        - range: JobStep
   ProgressCase:
     in_subset:
     - user-requirements
@@ -1875,6 +1938,27 @@ classes:
       evidence:
         range: EvidenceCollection
         inlined: true
+      circumstances:
+        range: RichContent
+        inlined: true
+        description: Case-specific circumstances, distinct from the general job situation.
+      struggling_moment:
+        range: RichContent
+        inlined: true
+        description: The event or difficulty that made change worth considering.
+      participants:
+        range: RichContent
+        inlined: true
+        description: People and roles in this case; distinguish performer, buyer and decision maker where
+          relevant.
+      alternatives_considered:
+        range: RichContent
+        inlined: true
+        description: Approaches considered, including doing nothing or continuing the current approach.
+      tradeoffs_and_selection_criteria:
+        range: RichContent
+        inlined: true
+        description: Trade-offs and criteria for choosing, hiring or rejecting an approach.
     annotations:
       owned_memberships: ProgressCase.evidence.statements
   ForceCollection:
@@ -1905,8 +1989,8 @@ classes:
   Timeline:
     in_subset:
     - user-requirements
-    description: Authored temporal narrative, including unknown or research-pending timelines; no required
-      dates.
+    description: Authored timeline of progress or switching decisions, distinct from a functional job map;
+      unknown dates and research-pending narratives are allowed.
     attributes:
       content:
         range: RichContent
@@ -4127,7 +4211,7 @@ classes:
       unless meaning is explicit.
     is_a: Assertion
     annotations:
-      projection_of: Obligation.applies_to or BusinessRule.applies_to
+      projection_of: Obligation.applies_to or BusinessRule.applies_to or DesiredOutcome.applies_to
     slot_usage:
       kind:
         equals_string: AppliesTo
@@ -4136,6 +4220,7 @@ classes:
         any_of:
         - range: Obligation
         - range: BusinessRule
+        - range: DesiredOutcome
       object:
         range: DomainElement
   DiscoveryPolicy:
@@ -4570,8 +4655,8 @@ classes:
     in_subset:
     - software-requirements
     is_a: TraceableElement
-    description: A stakeholder-valued capability grouping specifications independently of component structure.
-      Membership does not duplicate or own obligations.
+    description: A recognizable grouping of specified product behavior valued by stakeholders, independent
+      of component structure. Membership does not duplicate or own obligations.
     slot_usage:
       kind:
         equals_string: Feature
@@ -4594,7 +4679,7 @@ classes:
       purpose:
         range: RichContent
         inlined: true
-        description: Stakeholder-valued capability or benefit expressed by this feature.
+        description: Stakeholder benefit expressed by this feature.
       system:
         range: System
         required: true
@@ -4728,6 +4813,156 @@ classes:
         range: SystemContextSpecification
       object:
         range: System
+  Capability:
+    in_subset:
+    - business-requirements
+    - software-requirements
+    is_a: TraceableElement
+    description: An ability needed to deliver value, potentially combining people, procedures and technology.
+      Distinct from a product feature or structural component; its declaration does not establish a provider.
+    slot_usage:
+      kind:
+        equals_string: Capability
+    attributes:
+      owner:
+        range: System
+        required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring System in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Checked inverse of canonical declaration membership.
+          relationship_inverse: System.capabilities
+          relationship_ordering: single target
+          relationship_label: declared by
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      purpose:
+        range: RichContent
+        inlined: true
+        description: What this ability enables and why it matters.
+      enablers:
+        range: RichContent
+        inlined: true
+        description: Human, procedural or other enabling context, including external references. Typed providers
+          describe only explicitly linked systems and components.
+      depends_on_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored relationship section, including rationale and unresolved references.
+      depends_on_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: not-applicable
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          requires_content: depends_on_content
+          relationship_label: depends on references
+      depends_on:
+        range: Record
+        multivalued: true
+        description: Capabilities required by this capability; many-to-many dependencies may be cyclic.
+          Not structural containment or an inferred execution sequence.
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: unordered
+          trace_heading: Depends on
+          trace_targets: Capability
+          requires_content: depends_on_content
+          relationship_label: depends on
+        any_of:
+        - range: Capability
+      provided_by_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored relationship section, including rationale and unresolved references.
+      provided_by_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: not-applicable
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          requires_content: provided_by_content
+          relationship_label: provided by references
+      provided_by:
+        range: Record
+        multivalued: true
+        description: 'Explicitly identified system or component providers. Optional and non-exhaustive:
+          human and procedural providers can be described in enablers. Does not assert verified implementation
+          or satisfaction.'
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: unordered
+          trace_heading: Provided by
+          trace_targets: System or Component
+          requires_content: provided_by_content
+          relationship_label: provided by
+        any_of:
+        - range: System
+        - range: Component
+  DeclaresCapability:
+    in_subset:
+    - specification-traceability
+    description: Projection of the canonical relationship; does not introduce a separately editable edge.
+    is_a: Assertion
+    annotations:
+      projection_of: System.capabilities
+    slot_usage:
+      kind:
+        equals_string: DeclaresCapability
+      subject:
+        range: System
+      object:
+        range: Capability
+  CapabilityDependency:
+    in_subset:
+    - specification-traceability
+    description: Projection of the canonical relationship; does not introduce a separately editable edge.
+    is_a: Assertion
+    annotations:
+      projection_of: Capability.depends_on
+    slot_usage:
+      kind:
+        equals_string: CapabilityDependency
+      subject:
+        range: Capability
+      object:
+        range: Capability
+  CapabilityProvider:
+    in_subset:
+    - specification-traceability
+    description: Projection of the canonical relationship; does not introduce a separately editable edge.
+    is_a: Assertion
+    annotations:
+      projection_of: Capability.provided_by
+    slot_usage:
+      kind:
+        equals_string: CapabilityProvider
+      subject:
+        range: Capability
+      object:
+        range: DomainElement
+
 slots:
   id:
     range: string

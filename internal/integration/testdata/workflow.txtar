@@ -17,7 +17,7 @@ stdout '"children": \[\]'
 exec dotspec job step list plan-work --json
 stdout '"steps": \[\]'
 exec dotspec job outcome list plan-work --json
-stdout '"overall": \[\]'
+stdout '"declared_by_job": \[\]'
 exec dotspec job map plan-work --format mermaid
 cmp stdout ../map.txt
 exec dotspec job check plan-work --json

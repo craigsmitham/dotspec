@@ -138,7 +138,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 }
 
 func TestMappingProgressCaseAndJobIdentity(t *testing.T) {
-	d, m, r := mapped(t, "job", `## Desired outcome
+	d, m, r := mapped(t, "job", `## Intended progress
 
 Agreed work.
 
@@ -188,7 +188,7 @@ To be established through interviews.
 Unvalidated hypothesis.
 `)
 	if _, ok := r["intended_progress"]; !ok {
-		t.Error("alias lost")
+		t.Error("intended progress lost")
 	}
 	steps := recordsOf(m, "JobStep")
 	if len(steps) != 1 || String(steps[0], "authored_id") != "locate" {
@@ -460,7 +460,7 @@ func TestMappingPresentEmptyUnknownAndInvalid(t *testing.T) {
 	if len(recordsOf(m, "ExtensionSection")) != 1 {
 		t.Error("unknown domain gap not explicit")
 	}
-	bad := ParseContent("bad.job.spec.md", []byte("---\ntype: job\n---\n# Bad\n\n## Intended progress\n\nA.\n\n## Desired outcome\n\nB.\n"))
+	bad := ParseContent("bad.job.spec.md", []byte("---\ntype: job\n---\n# Bad\n\n## Intended progress\n\nA.\n\n## Intended progress\n\nB.\n"))
 	invalid := MapDomain(bad, "job")
 	if invalid.RootID != "" || len(invalid.Elements) != 0 || len(invalid.Diagnostics) != 1 {
 		t.Fatalf("invalid source fabricated a domain object: %#v", invalid)

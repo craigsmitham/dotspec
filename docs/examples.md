@@ -54,7 +54,7 @@ dotspec job show develop-requirements
 
 ## Job
 
-Describe what someone wants to accomplish, including where this job begins and ends.
+Describe what someone seeks to accomplish or change, independent of the chosen solution.
 
 ## Performer
 
@@ -95,10 +95,10 @@ dotspec job outcome list develop-requirements --json
 
 ````text
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "name": "New job",
   "path": "$PROJECT/specs/jobs/develop-requirements.job.spec.md",
-  "overall": [],
+  "declared_by_job": [],
   "steps": []
 }
 ````
@@ -141,21 +141,9 @@ dotspec job check develop-requirements --json
     "files_checked": 1,
     "context_files_checked": 1,
     "errors": 0,
-    "advice": 1
+    "advice": 0
   },
-  "diagnostics": [
-    {
-      "rule": "job.boundary",
-      "severity": "advice",
-      "message": "Consider clarifying the execution boundary; no context marker such as 'for', 'when', or 'during' was found.",
-      "location": {
-        "path": "$PROJECT/specs/jobs/develop-requirements.job.spec.md",
-        "line": 7,
-        "column": 1,
-        "element": "Job"
-      }
-    }
-  ]
+  "diagnostics": []
 }
 ````
 
@@ -694,17 +682,6 @@ dotspec sources --json
     }
   ],
   "diagnostics": [
-    {
-      "rule": "job.boundary",
-      "severity": "advice",
-      "message": "Consider clarifying the execution boundary; no context marker such as 'for', 'when', or 'during' was found.",
-      "location": {
-        "path": "$PROJECT/specs/jobs/develop-requirements.job.spec.md",
-        "line": 7,
-        "column": 1,
-        "element": "Job"
-      }
-    },
     {
       "rule": "use-case.sequence",
       "severity": "advice",

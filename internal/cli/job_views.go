@@ -21,6 +21,17 @@ func stepLabel(step job.Step) string {
 }
 
 func outcomeLabel(outcome job.DesiredOutcome) string {
+	if outcome.Name != "" {
+		label := outcome.Name
+		if outcome.ID != "" {
+			label += " [" + outcome.ID + "]"
+		}
+		label += ": " + outcome.Statement
+		if outcome.AppliesTo != "" {
+			label += "\nApplies to: " + outcome.AppliesTo
+		}
+		return label
+	}
 	if outcome.ID == "" {
 		return outcome.Statement
 	}
@@ -45,9 +56,9 @@ func listSteps(spec *job.Job, out io.Writer) error {
 }
 
 func selectOutcomes(spec *job.Job, stepID string) (outcomesResult, error) {
-	result := outcomesResult{SchemaVersion: 1, Name: spec.Name, Path: spec.Path, Overall: []job.DesiredOutcome{}, Steps: []job.Step{}}
+	result := outcomesResult{SchemaVersion: 2, Name: spec.Name, Path: spec.Path, DeclaredByJob: []job.DesiredOutcome{}, Steps: []job.Step{}}
 	if stepID == "" {
-		result.Overall = nonnil(spec.Outcomes)
+		result.DeclaredByJob = nonnil(spec.Outcomes)
 	}
 	found := stepID == ""
 	for _, step := range spec.Steps {
@@ -90,9 +101,9 @@ func renderOutcomes(result outcomesResult, out io.Writer) error {
 		}
 	}
 	fmt.Fprintf(&output, "Outcomes: %s\n", result.Name)
-	write("Overall job outcomes", result.Overall)
+	write("Outcomes declared by job", result.DeclaredByJob)
 	for _, step := range result.Steps {
-		write("Outcomes for step: "+stepLabel(step), step.Outcomes)
+		write("Outcomes declared by step: "+stepLabel(step), step.Outcomes)
 	}
 	if count == 0 {
 		_, err := fmt.Fprintln(out, "No outcomes defined for the selection.")
@@ -122,9 +133,9 @@ func writeJobMap(spec *job.Job, options jobOptions, out io.Writer) error {
 		// Internal node names avoid interpreting author IDs as Mermaid syntax.
 		for i, step := range spec.Steps {
 			if options.outcomes && len(step.Outcomes) > 0 {
-				fmt.Fprintf(&output, "  subgraph step_outcomes_%d[\"%s\"]\n", i+1, mermaidLabel("Outcomes for step: "+stepLabel(step)))
+				fmt.Fprintf(&output, "  subgraph step_outcomes_%d[\"%s\"]\n", i+1, mermaidLabel("Outcomes declared by step: "+stepLabel(step)))
 				for j, outcome := range step.Outcomes {
-					fmt.Fprintf(&output, "    o%d_%d[\"%s\"]\n", i+1, j+1, mermaidLabel(outcomeLabel(outcome)))
+					fmt.Fprintf(&output, "    o%d_%d[\"%s\"]\n", i+1, j+1, mermaidLabel(outcomeMapLabel(outcome)))
 				}
 				output.WriteString("  end\n")
 				for j := range step.Outcomes {
@@ -133,9 +144,9 @@ func writeJobMap(spec *job.Job, options jobOptions, out io.Writer) error {
 			}
 		}
 		if options.outcomes && len(spec.Outcomes) > 0 {
-			output.WriteString("  subgraph overall_outcomes[\"Overall job outcomes\"]\n")
+			output.WriteString("  subgraph overall_outcomes[\"Outcomes declared by job\"]\n")
 			for i, outcome := range spec.Outcomes {
-				fmt.Fprintf(&output, "    jo%d[\"%s\"]\n", i+1, mermaidLabel(outcomeLabel(outcome)))
+				fmt.Fprintf(&output, "    jo%d[\"%s\"]\n", i+1, mermaidLabel(outcomeMapLabel(outcome)))
 			}
 			output.WriteString("  end\n")
 			for i := range spec.Outcomes {
@@ -148,7 +159,7 @@ func writeJobMap(spec *job.Job, options jobOptions, out io.Writer) error {
 			output.WriteString("Authored step order; arrows do not require this execution sequence.\nCompleteness is not assessed.\n")
 		}
 		if options.outcomes && len(spec.Outcomes) > 0 {
-			output.WriteString("\nOverall job outcomes\n")
+			output.WriteString("\nOutcomes declared by job\n")
 			for _, outcome := range spec.Outcomes {
 				fmt.Fprintln(&output, indent(outcomeLabel(outcome)))
 			}
@@ -164,7 +175,7 @@ func writeJobMap(spec *job.Job, options jobOptions, out io.Writer) error {
 			}
 			fmt.Fprintf(&output, "%d. %s\n", i+1, stepLabel(step))
 			if options.outcomes && len(step.Outcomes) > 0 {
-				fmt.Fprintln(&output, indent("Outcomes for step: "+stepLabel(step)))
+				fmt.Fprintln(&output, indent("Outcomes declared by step: "+stepLabel(step)))
 				for _, outcome := range step.Outcomes {
 					fmt.Fprintln(&output, indent(indent(outcomeLabel(outcome))))
 				}
@@ -173,6 +184,13 @@ func writeJobMap(spec *job.Job, options jobOptions, out io.Writer) error {
 	}
 	_, err := io.WriteString(out, output.String())
 	return err
+}
+
+func outcomeMapLabel(outcome job.DesiredOutcome) string {
+	if outcome.Name != "" {
+		return outcome.Name
+	}
+	return outcomeLabel(outcome)
 }
 
 // Mermaid's decimal entity notation prevents labels from becoming diagram syntax.

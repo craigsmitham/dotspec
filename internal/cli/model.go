@@ -198,12 +198,49 @@ func newModelCommand() *cobra.Command {
 			}
 			return nil
 		}}
+	needs := &cobra.Command{Use: "needs", Short: "Generate a needs-to-specification map with capability dependencies", Args: cobra.NoArgs,
+		Long:    "Show jobs, shared outcomes, progress cases, features, obligations and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.",
+		Example: "dotspec model needs --path . --relative-to docs/reference",
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			path, err := projectPath(cmd)
+			if err != nil {
+				return err
+			}
+			base, err := cmd.Flags().GetString("relative-to")
+			if err != nil {
+				return err
+			}
+			result, err := model.Export(path, supportedTypes()...)
+			if err != nil {
+				return err
+			}
+			findings, err := model.Validate(result.Snapshot)
+			if err != nil {
+				return err
+			}
+			if len(findings) > 0 {
+				return fmt.Errorf("exported model violates %d invariants; first: %s", len(findings), findings[0].Message)
+			}
+			text, err := model.NeedsMarkdown(result.Snapshot, base)
+			if err != nil {
+				return err
+			}
+			if _, err = io.WriteString(cmd.OutOrStdout(), text); err != nil {
+				return err
+			}
+			if result.ExitCode != 0 {
+				return &exitError{code: result.ExitCode}
+			}
+			return nil
+		}}
 	addPath(docs)
 	docs.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
 	addPath(trace)
 	trace.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
 	addPath(overview)
 	overview.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
-	cmd.AddCommand(export, schema, validate, docs, trace, overview)
+	addPath(needs)
+	needs.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
+	cmd.AddCommand(export, schema, validate, docs, trace, overview, needs)
 	return cmd
 }

@@ -13,8 +13,8 @@ The canonical [LinkML model](../model/dotspec.yaml) defines the records and thei
 relationships. The [generated reference](reference/model/index.md) describes
 every field. The [relationship reference](reference/model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.10.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/9`.
+`model_version` is `0.11.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/10`.
 
 ## Export and validate a snapshot
 
@@ -402,3 +402,21 @@ state the product behavior. The [content tests](../internal/model/content_test.g
 cases. The [model command examples](../internal/integration/testdata/model.txtar)
 exercise the installed CLI, including validation after the source files are
 removed, retained authoring errors, invalid JSON and I/O failures. Their success does not establish every semantic claim in the input.
+
+
+## Needs, contributions and capabilities
+
+Generate a source-linked view of jobs, shared outcomes, progress cases, features,
+requirements and optional capabilities:
+
+```sh
+dotspec model needs --path . --relative-to docs/reference > docs/reference/needs.md
+```
+
+The diagram separates declaration from applicability, contribution from
+achievement, and capability dependency from structural containment. Full
+statements and evidence accompany concise labels. Provider links describe only
+explicitly identified systems and components and are non-exhaustive.
+
+See [Jobs and user needs](jobs-and-user-needs.md) for authoring and method
+boundaries, and the [generated example](reference/needs-map-example.md).

@@ -38,7 +38,7 @@ func (m *domainMapper) traceSection(r Record, s *Section) bool {
 	}
 	if field != "" {
 		m.section(r, field+"_content", s)
-		r[field+"_references"] = append(Strings(r[field+"_references"]), m.references(s.Content)...)
+		r[field+"_references"] = append(append([]string{}, Strings(r[field+"_references"])...), m.references(s.Content)...)
 		m.bindDesignReferences(r, field+"_references")
 		return true
 	}

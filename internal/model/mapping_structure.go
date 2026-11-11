@@ -21,6 +21,9 @@ func (m *domainMapper) systemDeclarations(system Record, s *Section) {
 	if s.Title == "Features" {
 		kind, field = "Feature", "features"
 	}
+	if s.Title == "Capabilities" {
+		kind, field = "Capability", "capabilities"
+	}
 	m.section(system, field+"_content", s)
 	system[field] = []string{}
 	for _, child := range s.Children {
@@ -43,6 +46,8 @@ func (m *domainMapper) systemDeclarations(system Record, s *Section) {
 				m.openQuestions(r, []*Section{sub})
 			case sub.Title == "Purpose":
 				m.section(r, "purpose", sub)
+			case kind == "Capability" && sub.Title == "Enablers":
+				m.section(r, "enablers", sub)
 			case kind == "Feature" && sub.Title == "Groups":
 				m.structureReference(r, "groups", sub)
 			case kind == "Component" && sub.Title == "Part of":

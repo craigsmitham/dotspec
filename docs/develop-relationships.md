@@ -248,7 +248,7 @@ why these distinctions matter.
 ## Describe systems, components and features
 
 Use a System for the whole being specified, a Component for a named structural
-part, and a Feature for a stakeholder-valued capability grouping. These are
+part, and a Feature for a recognizable grouping of specified product behavior. These are
 partial specification subjects, not an inventory of runtime architecture. Start
 with named entries in `system.spec.md`; no new file family is required.
 
@@ -371,3 +371,10 @@ scenarios. It also supports Fowler's emphasis on durable specification and
 boundary intent while allowing implementation structure to change:
 [Phoenix Primitives](https://chadfowler.com/regenerative-software/3mjfruwwuck2d/),
 [Compile to Architecture](https://chadfowler.com/regenerative-software/3mgfsrk75ac2l/).
+
+
+For enabling abilities that may combine people, procedures and technology, use
+the optional [Capability model](jobs-and-user-needs.md#connect-needs-to-capabilities-and-specifications).
+Its dependencies and providers are distinct from feature membership and structural
+parentage. The [needs map](reference/needs-map-example.md) connects those
+relationships with user jobs and desired outcomes.

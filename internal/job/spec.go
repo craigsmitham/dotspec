@@ -32,7 +32,7 @@ type: job
 
 ## Job
 
-Describe what someone wants to accomplish, including where this job begins and ends.
+Describe what someone seeks to accomplish or change, independent of the chosen solution.
 
 ## Performer
 
@@ -57,6 +57,8 @@ var fieldPattern = regexp.MustCompile(`^\*\*(ID|Stage):\*\*\s*(.*?)\s*$`)
 var outcomePattern = regexp.MustCompile(`^\*\*([^*]+):\*\*\s*`)
 
 type DesiredOutcome struct {
+	Name      string              `json:"name,omitempty"`
+	AppliesTo string              `json:"applies_to,omitempty"`
 	ID        string              `json:"id,omitempty"`
 	Statement string              `json:"statement"`
 	Location  diagnostic.Location `json:"location"`
@@ -82,6 +84,7 @@ type Job struct {
 	Situation        string                         `json:"situation"`
 	Motivation       string                         `json:"motivation"`
 	IntendedProgress string                         `json:"intended_progress"`
+	Cases            []ProgressCase                 `json:"cases,omitempty"`
 	ProgressCases    string                         `json:"progress_cases"`
 	Evidence         string                         `json:"evidence"`
 	Steps            []Step                         `json:"steps"`
@@ -140,9 +143,6 @@ func Parse(data []byte) (*Job, error) {
 	sections := make(map[string]*specfile.Section)
 	for _, section := range doc.Sections {
 		name := section.Title
-		if name == "Desired outcome" {
-			name = "Intended progress"
-		}
 		switch name {
 		case "Job", "Performer", "Situation", "Motivation", "Intended progress", "Outcomes", "Steps", "Progress cases", "Evidence":
 			location := doc.Location(section.Start, name)
@@ -163,6 +163,18 @@ func Parse(data []byte) (*Job, error) {
 	} {
 		if s := sections[name]; s != nil {
 			*target = doc.Body(s)
+		}
+	}
+	if section := sections["Progress cases"]; section != nil {
+		for _, child := range section.Children {
+			c := ProgressCase{Name: child.Title}
+			fields := map[string]*string{"Circumstances": &c.Circumstances, "Struggling moment": &c.StrugglingMoment, "Participants": &c.Participants, "Alternatives considered": &c.AlternativesConsidered, "Trade-offs and selection criteria": &c.TradeoffsAndSelectionCriteria}
+			for _, sub := range child.Children {
+				if dest := fields[sub.Title]; dest != nil {
+					*dest = doc.Body(sub)
+				}
+			}
+			job.Cases = append(job.Cases, c)
 		}
 	}
 	if section := sections["Outcomes"]; section != nil {
@@ -300,6 +312,53 @@ func parseOutcomes(doc *specfile.Outline, section *specfile.Section) ([]DesiredO
 			}
 			outcomes = append(outcomes, outcome)
 		}
+	}
+	for _, child := range section.Children {
+		outcome := DesiredOutcome{Name: child.Title, Location: doc.Location(child.Start, child.Title)}
+		removed := map[int]bool{}
+		for _, node := range doc.Nodes(child) {
+			if _, ok := node.(*ast.Paragraph); !ok {
+				continue
+			}
+			for i := 0; i < node.Lines().Len(); i++ {
+				segment := node.Lines().At(i)
+				match := fieldPattern.FindStringSubmatch(strings.TrimSpace(string(segment.Value(doc.Source))))
+				if match == nil || match[1] != "ID" {
+					continue
+				}
+				if outcome.ID != "" {
+					return nil, diagnostic.Error("structure.duplicate-field", "duplicate outcome ID", doc.Location(segment.Start, child.Title))
+				}
+				outcome.ID = match[2]
+				removed[bytes.LastIndexByte(doc.Source[:segment.Start], '\n')+1] = true
+			}
+		}
+		var lines []string
+		offset := child.ContentStart
+		for _, line := range strings.Split(string(doc.Source[child.ContentStart:doc.IntroEnd(child)]), "\n") {
+			if !removed[offset] {
+				lines = append(lines, line)
+			}
+			offset += len(line) + 1
+		}
+		if outcome.ID == "" {
+			continue
+		}
+		if child.Level != section.Level+1 || child.Title == "" {
+			return nil, diagnostic.Error("structure.outcome-heading", "each named outcome must use the next heading level", doc.Location(child.Start, child.Title))
+		}
+		outcome.Statement = strings.TrimSpace(strings.Join(lines, "\n"))
+		seenAppliesTo := false
+		for _, sub := range child.Children {
+			if sub.Title == "Applies to" {
+				if seenAppliesTo {
+					return nil, diagnostic.Error("structure.duplicate-section", "duplicate outcome Applies to section", doc.Location(sub.Start, child.Title))
+				}
+				seenAppliesTo = true
+				outcome.AppliesTo = doc.Body(sub)
+			}
+		}
+		outcomes = append(outcomes, outcome)
 	}
 	return outcomes, nil
 }

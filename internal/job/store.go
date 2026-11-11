@@ -13,7 +13,13 @@ type Group struct {
 	Jobs   []*Job         `json:"jobs"`
 }
 
-func Init(path, slug string) (string, error) {
+func Init(path, slug string) (string, error) { return InitWithPreset(path, slug, "general") }
+
+func InitWithPreset(path, slug, preset string) (string, error) {
+	template, err := TemplateFor(preset)
+	if err != nil {
+		return "", err
+	}
 	if err := ValidateSlug(slug); err != nil {
 		return "", err
 	}
@@ -24,7 +30,7 @@ func Init(path, slug string) (string, error) {
 	if err := Layout.ValidateLocal(dir); err != nil {
 		return "", err
 	}
-	return Layout.Create(dir, slug, Template)
+	return Layout.Create(dir, slug, template)
 }
 
 // Show selects exactly one job in the requested directory, without searching

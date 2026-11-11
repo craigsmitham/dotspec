@@ -717,6 +717,303 @@
             "title": "ByteSpan",
             "type": "object"
         },
+        "Capability": {
+            "additionalProperties": false,
+            "description": "An ability needed to deliver value, potentially combining people, procedures and technology. Distinct from a product feature or structural component; its declaration does not establish a provider.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "depends_on": {
+                    "description": "Capabilities required by this capability; many-to-many dependencies may be cyclic. Not structural containment or an inferred execution sequence.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "depends_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "depends_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "enablers": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Human, procedural or other enabling context, including external references. Typed providers describe only explicitly linked systems and components."
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "Capability",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "provided_by": {
+                    "description": "Explicitly identified system or component providers. Optional and non-exhaustive: human and procedural providers can be described in enablers. Does not assert verified implementation or satisfaction.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "provided_by_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "provided_by_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "purpose": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "What this ability enables and why it matters."
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "owner",
+                "content",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "Capability",
+            "type": "object"
+        },
+        "CapabilityDependency": {
+            "additionalProperties": false,
+            "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "CapabilityDependency",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "CapabilityDependency",
+            "type": "object"
+        },
+        "CapabilityProvider": {
+            "additionalProperties": false,
+            "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "CapabilityProvider",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "CapabilityProvider",
+            "type": "object"
+        },
         "Component": {
             "additionalProperties": false,
             "description": "A named part of a system with a described responsibility and boundary. Neither its declaration nor code location establishes structural parentage.",
@@ -2051,6 +2348,68 @@
             "title": "CoverageStatus",
             "type": "string"
         },
+        "DeclaresCapability": {
+            "additionalProperties": false,
+            "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "DeclaresCapability",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "DeclaresCapability",
+            "type": "object"
+        },
         "DeclaresComponent": {
             "additionalProperties": false,
             "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
@@ -2261,8 +2620,30 @@
         },
         "DesiredOutcome": {
             "additionalProperties": false,
-            "description": "A desired outcome owned directly by a job or step. Ownership does not imply inheritance.",
+            "description": "A desired result or criterion by which a person judges success. Declaration ownership, explicit applicability and evidence of achievement are distinct. ODI measurable wording is optional authoring guidance.",
             "properties": {
+                "applies_to": {
+                    "description": "Jobs and steps for which this outcome is a criterion for success. Explicit, many-to-many applicability, independent of its single declaration owner; no inherited applicability or achievement is inferred.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "applies_to_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "applies_to_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -2948,7 +3329,7 @@
         },
         "Feature": {
             "additionalProperties": false,
-            "description": "A stakeholder-valued capability grouping specifications independently of component structure. Membership does not duplicate or own obligations.",
+            "description": "A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own obligations.",
             "properties": {
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -3033,7 +3414,7 @@
                 },
                 "purpose": {
                     "$ref": "#/$defs/RichContent",
-                    "description": "Stakeholder-valued capability or benefit expressed by this feature."
+                    "description": "Stakeholder benefit expressed by this feature."
                 },
                 "relies_on": {
                     "description": "Assumptions on which the validity of this element depends.",
@@ -4658,7 +5039,7 @@
         },
         "Job": {
             "additionalProperties": false,
-            "description": "A performer seeks progress in a situation, independent of a chosen implementation.",
+            "description": "What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps, progress cases and job-story phrasing are optional complementary perspectives.",
             "properties": {
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -4880,7 +5261,7 @@
         },
         "JobStep": {
             "additionalProperties": false,
-            "description": "A meaningful part of a job; repeated or custom stage labels are allowed.",
+            "description": "A meaningful accomplishment within a functional job map; not a prescribed software interaction or execution sequence.",
             "properties": {
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -5707,7 +6088,7 @@
         },
         "OutcomeCollection": {
             "additionalProperties": false,
-            "description": "Outcomes section body and items; preserve introductory prose, nested lists and item support content.",
+            "description": "Outcomes section with list items or named outcomes. Named headings provide concise display labels while statements preserve full meaning. Shared outcomes are declared once and have explicit applicability references.",
             "properties": {
                 "content": {
                     "$ref": "#/$defs/RichContent"
@@ -5820,9 +6201,17 @@
             "additionalProperties": false,
             "description": "An explicitly authored example or hypothesis about progress; do not invent cases from unsegmented prose.",
             "properties": {
+                "alternatives_considered": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Approaches considered, including doing nothing or continuing the current approach."
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
+                },
+                "circumstances": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Case-specific circumstances, distinct from the general job situation."
                 },
                 "current_approach": {
                     "$ref": "#/$defs/RichContent"
@@ -5870,14 +6259,26 @@
                 "owner": {
                     "type": "string"
                 },
+                "participants": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "People and roles in this case; distinguish performer, buyer and decision maker where relevant."
+                },
                 "source_document": {
                     "type": "string"
                 },
                 "source_fragment": {
                     "type": "string"
                 },
+                "struggling_moment": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "The event or difficulty that made change worth considering."
+                },
                 "timeline": {
                     "$ref": "#/$defs/Timeline"
+                },
+                "tradeoffs_and_selection_criteria": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Trade-offs and criteria for choosing, hiring or rejecting an approach."
                 }
             },
             "required": [
@@ -7523,6 +7924,15 @@
                             },
                             {
                                 "$ref": "#/$defs/SpecificationSystem"
+                            },
+                            {
+                                "$ref": "#/$defs/DeclaresCapability"
+                            },
+                            {
+                                "$ref": "#/$defs/CapabilityDependency"
+                            },
+                            {
+                                "$ref": "#/$defs/CapabilityProvider"
                             }
                         ]
                     },
@@ -7634,6 +8044,9 @@
                                 "$ref": "#/$defs/Feature"
                             },
                             {
+                                "$ref": "#/$defs/Capability"
+                            },
+                            {
                                 "$ref": "#/$defs/GeneralRequirement"
                             },
                             {
@@ -7678,7 +8091,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.10.0-draft",
+                    "const": "0.11.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -8787,6 +9200,16 @@
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
                 },
+                "capabilities": {
+                    "description": "Capability declarations; the declaring System is a documentation home, not an inferred provider.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "capabilities_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "components": {
                     "description": "Named component declarations in authored order; membership does not establish structural parentage.",
                     "items": {
@@ -9307,7 +9730,7 @@
         },
         "Timeline": {
             "additionalProperties": false,
-            "description": "Authored temporal narrative, including unknown or research-pending timelines; no required dates.",
+            "description": "Authored timeline of progress or switching decisions, distinct from a functional job map; unknown dates and research-pending narratives are allowed.",
             "properties": {
                 "content": {
                     "$ref": "#/$defs/RichContent"
@@ -10137,6 +10560,15 @@
                     },
                     {
                         "$ref": "#/$defs/SpecificationSystem"
+                    },
+                    {
+                        "$ref": "#/$defs/DeclaresCapability"
+                    },
+                    {
+                        "$ref": "#/$defs/CapabilityDependency"
+                    },
+                    {
+                        "$ref": "#/$defs/CapabilityProvider"
                     }
                 ]
             },
@@ -10248,6 +10680,9 @@
                         "$ref": "#/$defs/Feature"
                     },
                     {
+                        "$ref": "#/$defs/Capability"
+                    },
+                    {
                         "$ref": "#/$defs/GeneralRequirement"
                     },
                     {
@@ -10292,7 +10727,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.10.0-draft",
+            "const": "0.11.0-draft",
             "type": "string"
         },
         "references": {
@@ -10346,5 +10781,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.10.0-draft"
+    "version": "0.11.0-draft"
 }

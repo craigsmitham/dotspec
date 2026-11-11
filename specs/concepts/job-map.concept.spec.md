@@ -12,13 +12,14 @@ discuss what the work involves and how success is judged.
 
 ## State
 
-A job description, steps in authored order, optional stage labels, overall job
-outcomes, and outcomes associated with individual steps. Steps and outcomes can
+A job description, steps in authored order, optional stage labels, outcomes declared by the job,
+and outcomes declared by individual steps. Steps and outcomes can
 have explicit IDs for reference and selection.
 
 This state is authored in a job specification. The
 [job format](../../README.md#job-spec-format) defines its representation.
-An overall outcome belongs to the whole job and is not inherited by its steps.
+Declaration ownership is separate from explicit outcome applicability; shared
+outcomes can apply to multiple jobs or steps without duplication.
 
 ## Actions
 
@@ -37,8 +38,9 @@ that execution sequence or establish completeness.
 
 ### Inspect a step's outcomes
 
-Select a step by its explicit ID and display that step's outcomes. Overall job
-outcomes are excluded from this selection. An existing step without outcomes
+Select a step by its explicit ID and display outcomes it declares. Outcomes
+declared elsewhere are excluded from this selection; the needs map shows their
+explicit applicability. An existing step without outcomes
 returns an empty result; an unknown step is an error.
 
 The [job commands](../../README.md#job-commands) define the CLI operations and

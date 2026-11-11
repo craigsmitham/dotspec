@@ -36,6 +36,7 @@ Describe the system's boundary and what it includes.
 
 type System struct {
 	ID                       string                      `json:"id,omitempty"`
+	Capabilities             string                      `json:"capabilities,omitempty"`
 	Components               string                      `json:"components,omitempty"`
 	Features                 string                      `json:"features,omitempty"`
 	PartOf                   string                      `json:"part_of,omitempty"`
@@ -84,13 +85,13 @@ func Parse(data []byte) (*System, error) {
 		return nil, err
 	}
 	spec := &System{Name: doc.Name, ID: meta.ID}
-	fields := map[string]*string{"Components": &spec.Components, "Features": &spec.Features, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
+	fields := map[string]*string{"Capabilities": &spec.Capabilities, "Components": &spec.Components, "Features": &spec.Features, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
 	locations := make(map[string]diagnostic.Location)
 	var ids specfile.Identifiers
 	if err := ids.Register(meta.ID, "system", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err
 	}
-	if err := ids.RegisterDeclarations(doc, "Components", "Features"); err != nil {
+	if err := ids.RegisterDeclarations(doc, "Components", "Features", "Capabilities"); err != nil {
 		return nil, err
 	}
 	for _, section := range doc.Sections {

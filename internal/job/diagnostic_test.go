@@ -25,7 +25,7 @@ func TestStructuralDiagnosticsHaveSourceLocations(t *testing.T) {
 		line       int
 		related    int
 	}{
-		{"## Intended progress\nOne\n## Desired outcome\nTwo\n", "structure.duplicate-section", 7, 5},
+		{"## Intended progress\nOne\n## Intended progress\nTwo\n", "structure.duplicate-section", 7, 5},
 		{"## Outcomes\n- **same:** First\n- **same:** Second\n", "identity.duplicate", 7, 6},
 		{"## Steps\n### Gather\n**Stage:** locate\n**Stage:** execute\n", "structure.duplicate-field", 8, 7},
 		{"## Notes\n[Missing](#unknown)\n", "reference.unresolved", 6, 0},
@@ -48,11 +48,11 @@ func TestAdviceRetainsOutcomeScopeAndLocation(t *testing.T) {
 		t.Fatal(err)
 	}
 	spec.Path = "example.job.spec.md"
-	advice := Check(spec)
+	advice := CheckWithPreset(spec, "odi")
 	if len(advice) != 2 || advice[0].Location.Line != 10 || advice[1].Location.Line != 14 {
 		t.Fatalf("outcome locations: %+v", advice)
 	}
-	if advice[0].Location.Element != "Overall job outcomes / O1" || advice[1].Location.Element != "Outcomes for step: Gather / O2" {
+	if advice[0].Location.Element != "Outcomes declared by job / O1" || advice[1].Location.Element != "Outcomes declared by step: Gather / O2" {
 		t.Fatalf("outcome scopes: %+v", advice)
 	}
 	for _, d := range advice {
