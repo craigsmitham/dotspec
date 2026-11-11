@@ -139,9 +139,9 @@ def core_markdown(catalog: dict[str, Any], view: dict[str, Any]) -> bytes:
     lines += ['', 'Subset membership organizes model definitions; it does not infer the level or importance of an authored instance. '
               'Shared types can appear in several subsets. Supporting and generic types appear as context where a diagram needs them.', '',
               '## Relationships', '', 'See the [relationship reference](relationships.md) for the complete edge contracts.', '',
-              'Arrows name canonical field paths. Diamond arrows represent declaration containment, dashed arrows structural context and citations, and plain arrows semantic associations or provenance; '
+              'Arrows use schema-owned relationship labels; reference tables retain exact canonical field paths. Diamond arrows represent declaration containment, dashed arrows structural context and citations, and plain arrows semantic associations or provenance; '
               'triangle arrows represent declared inheritance. Multiple edges with the same path show alternative target types; cardinality applies to the slot as a whole. '
-              'Collection-wrapper paths are abbreviated, retaining the full field path in the label. '
+              'Collection wrappers are omitted from diagrams; exact paths remain in the reference tables. '
               '`system_context` is a directory-derived association, not a use-case boundary or inherited requirement. '
               'Contextual links to business rules, jobs, and concepts do not assert enforcement, fulfillment, or compliance.', '']
     for diagram in view['diagrams']:
@@ -152,17 +152,19 @@ def core_markdown(catalog: dict[str, Any], view: dict[str, Any]) -> bytes:
                 lines.append(f'    <<abstract>> {node}')
         if diagram['inheritance']:
             for node in diagram['nodes']:
-                parent = catalog['classes'][node].get('is_a')
-                if parent in diagram['nodes']:
-                    lines.append(f'    {parent} <|-- {node}')
+                parents = [catalog['classes'][node].get('is_a')] + catalog['classes'][node].get('mixins', [])
+                for parent in parents:
+                    if parent in diagram['nodes']:
+                        lines.append(f'    {parent} <|-- {node}')
         for path in diagram['paths']:
             source, slot = field(catalog, path)
             for target in slot['reference_ranges'] or slot['inline_ranges']:
-                cardinality = '*' if slot['multivalued'] else ('1' if slot['required'] else '0..1')
+                cardinality = (str(slot.get('minimum_cardinality', 0)) + '..' + str(slot.get('maximum_cardinality', '*'))) if slot['multivalued'] else ('1' if slot['required'] else '0..1')
                 marker = f' "{cardinality}"' if diagram.get('show_cardinality', True) else ''
                 category = slot['annotations'].get('relationship_category')
                 arrow = '*--' if category == 'declaration-containment' else '..>' if category in ('structural-context', 'contextual-citation') else '-->'
-                lines.append(f'    {source} {arrow}{marker} {target} : {path.split(".", 1)[1]}')
+                label = slot['annotations'].get('relationship_label', path.split('.', 1)[1].replace('_', ' '))
+                lines.append(f'    {source} {arrow}{marker} {target} : {label}')
         lines += ['```', '']
     lines += ['## Selected type reference', '']
     for name, paths in view['types'].items():

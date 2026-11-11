@@ -35,7 +35,7 @@ func Classify(ids []string, sys *system.System) Classification {
 
 func CheckAttributes(spec *Content, sys *system.System, kind string) []diagnostic.Diagnostic {
 	var findings []diagnostic.Diagnostic
-	for _, id := range Classify(spec.Attributes, sys).Undefined {
+	for _, id := range Classify(spec.QualityAttributes, sys).Undefined {
 		location := spec.AttributeLocations[id]
 		location.Path = spec.Path
 		findings = append(findings, diagnostic.Advice(kind+".undefined-attribute", fmt.Sprintf("attribute %q is not declared by the associated system (%s)", id, sys.Path), location))

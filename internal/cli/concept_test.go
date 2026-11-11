@@ -31,13 +31,13 @@ func TestConceptCommandsAndJSON(t *testing.T) {
 	var result struct {
 		SchemaVersion int `json:"schema_version"`
 		Concept       *struct {
-			Slug                 string `json:"slug"`
-			Markdown             string `json:"markdown"`
-			Purpose              string `json:"purpose"`
-			State                string `json:"state"`
-			Actions              string `json:"actions"`
-			OperationalPrinciple string `json:"operational_principle"`
-			System               *struct {
+			Slug                  string `json:"slug"`
+			Markdown              string `json:"markdown"`
+			Purpose               string `json:"purpose"`
+			State                 string `json:"state"`
+			Actions               string `json:"actions"`
+			OperationalPrinciples string `json:"operational_principles"`
+			System                *struct {
 				Name string `json:"name"`
 			} `json:"system"`
 		} `json:"concept"`
@@ -45,7 +45,7 @@ func TestConceptCommandsAndJSON(t *testing.T) {
 	if err := json.Unmarshal([]byte(out), &result); err != nil || code != 0 || errOut != "" || result.Concept == nil {
 		t.Fatalf("show JSON: %d %s %s %v", code, out, errOut, err)
 	}
-	if result.SchemaVersion != 1 || result.Concept.Slug != "review" || result.Concept.System == nil || result.Concept.System.Name != "New system" || result.Concept.Purpose == "" || result.Concept.State == "" || result.Concept.Actions == "" || result.Concept.OperationalPrinciple == "" {
+	if result.SchemaVersion != 1 || result.Concept.Slug != "review" || result.Concept.System == nil || result.Concept.System.Name != "New system" || result.Concept.Purpose == "" || result.Concept.State == "" || result.Concept.Actions == "" || result.Concept.OperationalPrinciples == "" {
 		t.Fatalf("lost fields or association: %+v", result)
 	}
 	code, out, errOut = invoke("concept", "show", "review")

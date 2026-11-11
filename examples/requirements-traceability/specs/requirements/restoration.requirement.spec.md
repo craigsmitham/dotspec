@@ -21,7 +21,7 @@ The refinement makes the required metadata explicit without weakening the parent
 
 **Targets:** [Restore a document](../use-cases/restore.use-case.spec.md), [DocumentTrash](../system.spec.md#documenttrash)
 
-## Verification
+## Verification plan
 
 Compare all four metadata fields before deletion and after restoration for each supported document type. Record the implementation revision and test results outside this example.
 

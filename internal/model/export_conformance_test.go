@@ -190,7 +190,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 			t.Errorf("%s exported roots: got %d want %d inventoried sources", kind, counts[kind], want)
 		}
 	}
-	for kind, want := range map[string]int{"JobStep": 16, "Outcome": 21, "ProgressCase": 1, "ConceptAction": 6, "GlossaryTerm": 3, "QualityAttribute": 293} {
+	for kind, want := range map[string]int{"JobStep": 16, "DesiredOutcome": 21, "ProgressCase": 1, "ConceptAction": 6, "GlossaryTerm": 3, "QualityAttribute": 293} {
 		if counts[kind] < want {
 			t.Errorf("%s domain records: got %d want at least baseline %d", kind, counts[kind], want)
 		}
@@ -225,14 +225,14 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system\n---\n# Root\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n\n### Broad\n\n**ID:** broad\n\nA concern.\n\n### Narrow\n\n**ID:** narrow\n**Sub-attribute of:** broad\n\nA narrower concern.\n")
-	conformanceWrite(t, root, "specs/quality/resolved.quality.spec.md", "---\ntype: quality\nid: reused\nattributes: [narrow]\n---\n# Resolved\n")
-	conformanceWrite(t, root, "specs/requirements/undefined.requirement.spec.md", "---\ntype: requirement\nid: reused\nattributes: [unknown]\n---\n# Undefined\n")
+	conformanceWrite(t, root, "specs/quality/resolved.quality.spec.md", "---\ntype: quality\nid: reused\nquality_attributes: [narrow]\n---\n# Resolved\n")
+	conformanceWrite(t, root, "specs/requirements/undefined.requirement.spec.md", "---\ntype: requirement\nid: reused\nquality_attributes: [unknown]\n---\n# Undefined\n")
 	conformanceWrite(t, root, "sub/specs/system.spec.md", "---\ntype: system\n---\n# Subsystem\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
-	conformanceWrite(t, root, "sub/specs/quality/unbound.quality.spec.md", "---\ntype: quality\nid: reused\nattributes: [narrow]\n---\n# Unbound\n")
+	conformanceWrite(t, root, "sub/specs/quality/unbound.quality.spec.md", "---\ntype: quality\nid: reused\nquality_attributes: [narrow]\n---\n# Unbound\n")
 	conformanceWrite(t, root, "empty/specs/system.spec.md", "---\ntype: system\n---\n# Empty attributes\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n")
-	conformanceWrite(t, root, "empty/specs/quality/undefined-empty.quality.spec.md", "---\ntype: quality\nattributes: [narrow]\n---\n# Undefined in empty attributes\n")
+	conformanceWrite(t, root, "empty/specs/quality/undefined-empty.quality.spec.md", "---\ntype: quality\nquality_attributes: [narrow]\n---\n# Undefined in empty attributes\n")
 	conformanceWrite(t, root, "sibling/specs/system.spec.md", "---\ntype: system\n---\n# Sibling\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n### Local narrow\n**ID:** narrow\nA different concern in this system.\n")
-	conformanceWrite(t, root, "sibling/specs/quality/local.quality.spec.md", "---\ntype: quality\nattributes: [narrow]\n---\n# Local classification\n")
+	conformanceWrite(t, root, "sibling/specs/quality/local.quality.spec.md", "---\ntype: quality\nquality_attributes: [narrow]\n---\n# Local classification\n")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
 		t.Errorf("advice-only fixtures exit %d", result.ExitCode)
@@ -253,7 +253,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 				t.Fatalf("classification escaped its declaring system: %+v", label)
 			}
 		}
-		if String(resolution, "status") == "resolved" && len(Strings(owner["attributes"])) != 1 {
+		if String(resolution, "status") == "resolved" && len(Strings(owner["quality_attributes"])) != 1 {
 			t.Error("parent category was fabricated as a directly authored classification")
 		}
 	}
@@ -334,7 +334,7 @@ func TestExportConformanceInvalidAndNativeSources(t *testing.T) {
 func TestExportConformanceDeterminismAndContext(t *testing.T) {
 	root := t.TempDir()
 	context := conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system\n---\n# Context\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
-	conformanceWrite(t, root, "module/specs/use-cases/example.use-case.spec.md", "---\ntype: use-case\n---\n# Example\n\n## Main success scenario\n\n1. **Actor:** Contributor\n   **Action:** Inspect\n   **Response:** Report\n   **Outcome:** Informed\n\n## Extensions\n\n### Failure\n\n**Condition:** Unreadable source\n**At step:** 1\n**Response:** Report a failure\n**Continuation:** End\n")
+	conformanceWrite(t, root, "module/specs/use-cases/example.use-case.spec.md", "---\ntype: use-case\n---\n# Example\n\n## Main success scenario\n\n1. **Actor:** Contributor\n   **Action:** Inspect\n   **Response:** Report\n   **DesiredOutcome:** Informed\n\n## Extensions\n\n### Failure\n\n**Condition:** Unreadable source\n**At step:** 1\n**Response:** Report a failure\n**Continuation:** End\n")
 	selected := filepath.Join(root, "module")
 	first := conformanceExport(t, selected)
 	encoded, err := json.Marshal(first.Snapshot)
@@ -402,7 +402,7 @@ A definition.
 A definition.
 #### Definition example
 Ordinary nested definition prose remains part of the definition.
-#### Open decision
+#### Open question
 Which threshold?
 ##### Evidence needed
 Measure the baseline.
@@ -434,7 +434,7 @@ Second timeline.
 - **Pull:** Second attraction.
 #### Custom case detail
 Unmapped case detail.
-## Open decision
+## Open question
 Which option?
 ### Evidence needed
 Collect evidence.
@@ -473,7 +473,7 @@ type: quality
 # Measure
 ## Criterion
 A qualitative criterion.
-## Measurement
+## Measurement plan
 Measure the criterion.
 ### Custom protocol
 Unmapped protocol detail.
@@ -493,9 +493,9 @@ Unmapped protocol detail.
 		case "ExtensionSection":
 			extensions[strings.TrimSpace(conformanceRichText(s, element["heading"]))] = String(index[String(element, "owner")], "kind")
 		case "Job":
-			decisions := records(Object(element["open_decisions"])["decisions"])
+			decisions := records(Object(element["open_questions"])["questions"])
 			if len(decisions) != 1 || !strings.Contains(conformanceRichText(s, decisions[0]["question"]), "Which option?") || !strings.Contains(conformanceRichText(s, decisions[0]["evidence_needed"]), "Collect evidence") {
-				t.Errorf("direct decision/evidence misbound: %#v", element["open_decisions"])
+				t.Errorf("direct decision/evidence misbound: %#v", element["open_questions"])
 			}
 		case "JobStep":
 			if Object(element["stage"])["presence"] != "empty" {
@@ -526,7 +526,7 @@ Unmapped protocol detail.
 			if Object(element["inputs"])["presence"] != "empty" {
 				t.Error("empty action inputs lost")
 			}
-		case "Extension":
+		case "UseCaseExtension":
 			if Object(element["condition"])["presence"] != "empty" {
 				t.Error("empty extension condition lost")
 			}
@@ -556,13 +556,13 @@ Unmapped protocol detail.
 			}
 		}
 	}
-	for heading, owner := range map[string]string{"#### Surprises": "JobStep", "#### Custom case detail": "ProgressCase", "#### Implementation details": "ConceptAction", "##### Flow caveat": "Extension", "### Supporting notes": "Job", "### Custom protocol": "QualityRequirement", "##### Decision caveat": "QualityAttribute"} {
+	for heading, owner := range map[string]string{"#### Surprises": "JobStep", "#### Custom case detail": "ProgressCase", "#### Implementation details": "ConceptAction", "##### Flow caveat": "UseCaseExtension", "### Supporting notes": "Job", "### Custom protocol": "QualityRequirement", "##### Decision caveat": "QualityAttribute"} {
 		if extensions[heading] != owner {
 			t.Errorf("unknown section %q owner=%q want %q; extensions=%v", heading, extensions[heading], owner, extensions)
 		}
 	}
-	if counts["Outcome"] != 1 || counts["ScenarioStep"] != 2 {
-		t.Errorf("supporting lists fabricated domain items: outcomes=%d steps=%d", counts["Outcome"], counts["ScenarioStep"])
+	if counts["DesiredOutcome"] != 1 || counts["ScenarioStep"] != 2 {
+		t.Errorf("supporting lists fabricated domain items: outcomes=%d steps=%d", counts["DesiredOutcome"], counts["ScenarioStep"])
 	}
 	if len(Strings(s.Coverage["extension_sections"])) != len(extensions) {
 		t.Error("unknown nested sections missing from coverage inventory")
@@ -626,7 +626,7 @@ Ask the contributor to return later.
 			if len(Strings(e["steps"])) != 0 {
 				t.Error("paragraph scenario acquired invented steps")
 			}
-		case "Extension":
+		case "UseCaseExtension":
 			labels[String(e, "authored_label")] = e
 			if strings.Contains(conformanceRichText(s, e["name"]), "Service unavailable") {
 				service = e
@@ -648,7 +648,7 @@ Ask the contributor to return later.
 			}
 		}
 	}
-	if counts["Extension"] != 7 || counts["ScenarioStep"] != 5 || counts["ExtensionSection"] != 1 {
+	if counts["UseCaseExtension"] != 7 || counts["ScenarioStep"] != 5 || counts["ExtensionSection"] != 1 {
 		t.Fatalf("unexpected decomposition: %v", counts)
 	}
 	if service == nil || notes == nil || String(notes, "owner") != String(service, "id") {

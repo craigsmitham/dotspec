@@ -1,7 +1,7 @@
 ---
 type: quality
 id: repeatable-inspection
-attributes:
+quality_attributes:
   - repeatability
 ---
 
@@ -15,12 +15,12 @@ state, permissions, and environment. Source files and execution conditions
 remain unchanged during and between runs. Completed scans can contain
 structural errors or writing advice.
 
-## Criterion
+## Statement
 
 Repeated inspections must produce equivalent structured reports, including the
 ordering of array elements.
 
-## Measurement
+## Measurement plan
 
 Run each fixture repeatedly without changing its inputs or execution
 conditions. Compare parsed JSON reports for equal values, preserving array

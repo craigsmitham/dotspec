@@ -12,7 +12,7 @@ types; [Declare relationships](develop-relationships.md) gives the Markdown form
 | Concern subset | Whose concerns and which level of abstraction the model serves | business-requirements, user-requirements, software-requirements |
 | Subset classification | The subset's role in dotspec's domain | core, supporting, generic |
 | Artifact kind | What a record represents | SystemGoal, BusinessRule, Job, UseCase, Concept, Requirement |
-| Relationship | Why or how two particular elements are connected | supports, derived_from, refines, relies_on, applies_to, involves |
+| Relationship | Why or how two particular elements are connected | supports, derived_from, refines, relies_on, applicability, involves |
 
 Subset membership may overlap. It does not make every member an obligation,
 assign priority, determine acceptance, or impose a creation order. A reusable
@@ -73,7 +73,7 @@ assumed to enumerate all required behavior.
 | derived_from | Source or rationale for the element | Logical entailment or refinement |
 | refines | More precise obligation preserving a parent commitment | Replacement, supersession or a proof of consistency |
 | relies_on | Validity conditioned on a named assumption | That the assumption is true |
-| applies_to | Subject governed by an obligation or business rule | Implementation satisfaction |
+| applicability | Subject governed by an obligation or business rule | Implementation satisfaction |
 | involves | Named concept uses participating in a use case | Calls, service boundaries or required execution order |
 
 Refinement may have several parents and must be acyclic. Children may collectively
@@ -128,3 +128,17 @@ This is dotspec's synthesis, not a schema prescribed by any one source.
 - Daniel Jackson's [Operational principles](https://essenceofsoftware.com/tutorials/concept-basics/principle/)
   distinguishes purpose-explaining stories, use cases and fuller state/action
   specifications. The sibling view and `involves` relationship are dotspec's synthesis.
+
+
+## Common obligation capabilities
+
+Standalone general requirements, quality requirements and embedded clauses share
+`Obligation`: statement, quality attributes, applicability, rationale, refinement,
+verification plan and optional criterion and measurement plan. Their authoring
+location does not limit their quality classification or assessment detail.
+
+Clause containment is an explicit `ObligationContainer` capability on System,
+BusinessRule, Job, JobStep, UseCase, Concept, ConceptUse, ConceptAction,
+Synchronization and Requirement. Goals, assumptions and desired outcomes can
+participate in traceability without containing clauses. This keeps motivation,
+declaration ownership and normative content distinct.

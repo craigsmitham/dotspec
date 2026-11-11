@@ -1,7 +1,7 @@
 ---
 type: quality
 id: inspection-preserves-source
-attributes:
+quality_attributes:
   - source-preservation
 ---
 
@@ -15,12 +15,12 @@ includes specifications, consulted system context, and other existing project
 files. Concurrent edits by other processes and files explicitly written by
 the caller's output redirection are outside this criterion.
 
-## Criterion
+## Statement
 
 Inspection must leave source-file contents and paths unchanged, without
 creating, deleting, or renaming source files.
 
-## Measurement
+## Measurement plan
 
 Snapshot the relative paths and byte contents of project files and any system
 context outside the selected subtree. Capture command output separately from

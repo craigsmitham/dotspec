@@ -123,6 +123,11 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 	if compositionErrors && code == 0 {
 		code = 1
 	}
+	for _, finding := range b.snapshot.Diagnostics {
+		if String(finding, "severity") == "error" && code == 0 {
+			code = 1
+		}
+	}
 	if b.readFailed || discoverErr != nil || repoErr != nil {
 		code = 2
 	}

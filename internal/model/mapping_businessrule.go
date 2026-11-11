@@ -7,7 +7,7 @@ func (m *domainMapper) businessRule(r Record, s *Section) bool {
 	case "Exceptions":
 		m.section(r, "exceptions", s)
 	case "Applies to", "Rationale":
-		return m.requirement(r, s, "business-rule")
+		return m.requirement(r, s)
 	default:
 		return false
 	}

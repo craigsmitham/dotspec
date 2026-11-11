@@ -21,10 +21,10 @@ type: use-case
 ## Goal
 Deliver an address to the recipient.
 ## System boundary
-**System:** [Delivery](../../external/specs/system.spec.md)
+**Subject system:** [Delivery](../../external/specs/system.spec.md)
 
 The actor submits the address through the delivery service.
-## Supports jobs
+## Supports
 [Sharing](../jobs/share.job.spec.md) and [sending](../jobs/share.job.spec.md#send-a-link).
 ## Related jobs
 [Sharing](../jobs/share.job.spec.md) provides research context.
@@ -69,15 +69,15 @@ func TestExplicitSemanticRelationships(t *testing.T) {
 	uc := elementKind(t, s, "UseCase")
 	context := designRecord(t, s, "System", "Authoring context")
 	boundary := designRecord(t, s, "System", "Delivery system")
-	if uc["system_context"] != context["id"] || uc["boundary"] != boundary["id"] {
+	if uc["system_context"] != context["id"] || uc["subject_system"] != boundary["id"] {
 		t.Fatalf("directory context conflated with explicit boundary: %+v", uc)
 	}
-	if len(Strings(uc["supported_jobs"])) != 2 {
+	if len(Strings(uc["supports"])) != 2 {
 		t.Fatal("missing supported job/step", uc)
 	}
 	for _, kind := range []string{"BusinessRule", "GeneralRequirement"} {
 		r := elementKind(t, s, kind)
-		if !slices.Equal(Strings(r["applicability_targets"]), []string{String(uc, "id")}) {
+		if !slices.Equal(Strings(r["applies_to"]), []string{String(uc, "id")}) {
 			t.Fatal(r)
 		}
 	}
@@ -85,13 +85,13 @@ func TestExplicitSemanticRelationships(t *testing.T) {
 	for _, a := range s.Assertions {
 		projections[String(a, "projection_path")]++
 	}
-	for path, count := range map[string]int{"UseCase.boundary": 1, "UseCase.supported_jobs": 2, "BusinessRule.applicability_targets": 1, "Requirement.applicability_targets": 1} {
+	for path, count := range map[string]int{"UseCase.subject_system": 1, "TraceableElement.supports": 2, "BusinessRule.applies_to": 1, "Obligation.applies_to": 1} {
 		if projections[path] != count {
 			t.Fatalf("projection %s: %d, want %d", path, projections[path], count)
 		}
 	}
 	forged := cloneSnapshot(t, s)
-	elementKind(t, forged, "UseCase")["boundary"] = context["id"]
+	elementKind(t, forged, "UseCase")["subject_system"] = context["id"]
 	requireFinding(t, forged, "concept.projection")
 	conformancePayloads(t, s)
 }
@@ -104,14 +104,14 @@ func TestContextualLinksDoNotAssertSemanticRelations(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		text := strings.NewReplacer("**System:** ", "", "**Targets:** ", "", "## Supports jobs", "## Notes").Replace(string(data))
+		text := strings.NewReplacer("**Subject system:** ", "", "**Targets:** ", "", "## Supports", "## Notes").Replace(string(data))
 		if err := os.WriteFile(p, []byte(text), 0644); err != nil {
 			t.Fatal(err)
 		}
 	}
 	s := conformanceExport(t, root).Snapshot
 	for _, a := range s.Assertions {
-		if slices.Contains([]string{"BoundaryIs", "SupportsJob", "AppliesTo"}, String(a, "kind")) {
+		if slices.Contains([]string{"HasSubjectSystem", "Supports", "AppliesTo"}, String(a, "kind")) {
 			t.Fatal("citation inferred a domain claim", a)
 		}
 	}

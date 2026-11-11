@@ -185,15 +185,19 @@ func (v *graphValidator) checkLabels() {
 		if owner == nil {
 			continue
 		}
-		field, targets := "attribute_labels", "attributes"
+		field, targets := "quality_attribute_labels", "quality_attributes"
 		system := ""
 		switch String(label, "role") {
 		case "quality_classification":
-			if !v.isA(String(owner, "kind"), "Requirement") {
+			if !v.isA(String(owner, "kind"), "Obligation") {
 				v.add("label.owner", path+"/owner", "quality-classification labels belong to requirements")
 				continue
 			}
-			system = String(owner, "system_context")
+			index := map[string]Record{}
+			for id, record := range v.records {
+				index[id] = record.value
+			}
+			system = obligationSystem(owner, index)
 			if system == "" {
 				system = String(label, "system_context")
 			}
@@ -248,8 +252,8 @@ func (v *graphValidator) checkLabels() {
 	for _, located := range v.sortedRecords() {
 		r := located.value
 		field, labelField := "", ""
-		if v.isA(String(r, "kind"), "Requirement") {
-			field, labelField = "attributes", "attribute_labels"
+		if v.isA(String(r, "kind"), "Obligation") {
+			field, labelField = "quality_attributes", "quality_attribute_labels"
 		} else if String(r, "kind") == "QualityAttribute" {
 			field, labelField = "subattribute_of", "subattribute_of_labels"
 		}

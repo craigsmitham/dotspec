@@ -8,8 +8,8 @@ func (m *domainMapper) concept(r Record, s *Section) bool {
 		m.conceptTypes(r, s, "type_parameters")
 	case "Introduced types":
 		m.conceptTypes(r, s, "introduced_types")
-	case "Operational principle", "Operational principles":
-		m.section(r, "operational_principle", s)
+	case "Operational principles":
+		m.section(r, "operational_principles", s)
 	case "State":
 		v := Record{"content": m.doc.Rich(s.Content)}
 		r["abstract_state"] = v
@@ -68,12 +68,12 @@ func (m *domainMapper) concept(r Record, s *Section) bool {
 				case "Guards":
 					m.conditionField(x, "guards", detail)
 				default:
-					if !openDecisionHeading(detail.Title) {
+					if !openQuestionHeading(detail.Title) {
 						m.extension(x, detail)
 					}
 				}
 			}
-			m.openDecisions(x, sub.Children)
+			m.openQuestions(x, sub.Children)
 			appendID(v, "actions", String(x, "id"))
 		}
 	default:
@@ -82,32 +82,26 @@ func (m *domainMapper) concept(r Record, s *Section) bool {
 	return true
 }
 
-func (m *domainMapper) requirement(r Record, s *Section, kind string) bool {
+func (m *domainMapper) requirement(r Record, s *Section) bool {
 	switch s.Title {
 	case "Rationale":
 		m.section(r, "rationale", s)
 	case "Applies to":
-		m.designField(r, "applicability_targets", s, "Targets")
-		m.wrapper(r, "applies_to", s, map[string]string{"Conditions": "conditions", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"}, "Subject", "Subjects")
+		m.designField(r, "applies_to", s, "Targets")
+		m.wrapper(r, "applicability", s, map[string]string{"Conditions": "conditions", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"}, "Subject", "Subjects")
 		for _, sub := range s.Children {
 			if sub.Title == "Subjects" || sub.Title == "Subject" {
-				m.contextField(Object(r["applies_to"]), "subjects", sub.Content)
-				m.sectionBindings(r, "applies_to.subjects.content", sub)
+				m.contextField(Object(r["applicability"]), "subjects", sub.Content)
+				m.sectionBindings(r, "applicability.subjects.content", sub)
 			}
 		}
 	case "Statement":
-		if kind != "requirement" {
-			return false
-		}
 		m.section(r, "statement", s)
-	case "Verification":
-		if kind != "requirement" {
-			return false
-		}
-		m.wrapper(r, "verification", s, map[string]string{"Method": "method", "Procedure": "method", "Success criteria": "success_criteria", "Conditions": "conditions", "Evidence to retain": "evidence_to_retain", "Evidence retention": "evidence_to_retain"}, "Cases")
+	case "Verification plan":
+		m.wrapper(r, "verification_plan", s, map[string]string{"Method": "method", "Procedure": "method", "Success criteria": "success_criteria", "Conditions": "conditions", "Evidence to retain": "evidence_to_retain", "Evidence retention": "evidence_to_retain"}, "Cases")
 		for _, sub := range s.Children {
 			if sub.Title == "Cases" {
-				cases, _ := Object(r["verification"])["cases"].([]Record)
+				cases, _ := Object(r["verification_plan"])["cases"].([]Record)
 				if cases == nil {
 					cases = []Record{}
 				}
@@ -123,21 +117,15 @@ func (m *domainMapper) requirement(r Record, s *Section, kind string) bool {
 					}
 					cases = append(cases, v)
 				}
-				Object(r["verification"])["cases"] = cases
-				m.bind(r, "verification.cases", []string{sub.HeadingID}, "structural_wrapper", "verification-cases")
+				Object(r["verification_plan"])["cases"] = cases
+				m.bind(r, "verification_plan.cases", []string{sub.HeadingID}, "structural_wrapper", "verification-cases")
 			}
 		}
 	case "Criterion":
-		if kind != "quality" {
-			return false
-		}
-		m.wrapper(r, "criterion", s, map[string]string{"Statement": "statement", "Measure": "measure", "Comparison": "comparison", "Target": "target", "Units": "units", "Aggregation": "aggregation", "Window": "window", "Observation window": "window", "Conditions": "conditions", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"}, "Open decision", "Open decisions", "Open question", "Open questions")
-		m.openDecisions(r, s.Children)
-	case "Measurement":
-		if kind != "quality" {
-			return false
-		}
-		m.wrapper(r, "measurement", s, map[string]string{"Sampling": "sampling", "Conditions": "conditions", "Procedure": "procedure", "Evidence to retain": "evidence_to_retain", "Evidence retention": "evidence_to_retain", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"})
+		m.wrapper(r, "criterion", s, map[string]string{"Measure": "measure", "Comparison": "comparison", "Target": "target", "Units": "units", "Aggregation": "aggregation", "Window": "window", "Observation window": "window", "Conditions": "conditions", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"}, "Open question", "Open questions")
+		m.openQuestions(r, s.Children)
+	case "Measurement plan":
+		m.wrapper(r, "measurement_plan", s, map[string]string{"Sampling": "sampling", "Conditions": "conditions", "Procedure": "procedure", "Evidence to retain": "evidence_to_retain", "Evidence retention": "evidence_to_retain", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"})
 	default:
 		return false
 	}

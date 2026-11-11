@@ -49,7 +49,7 @@ func setup(t *testing.T) string {
 
 func TestCoverageUsesOnlyDesignatedFilesAndPublicInventory(t *testing.T) {
 	dir := setup(t)
-	spec := concept.Template + "\n[Example](../../internal/integration/testdata/workflow.txtar)\n[Verification](../../internal/cli/quality_contracts_test.go)\n"
+	spec := concept.Template + "\n[Example](../../internal/integration/testdata/workflow.txtar)\n[VerificationPlan](../../internal/cli/quality_contracts_test.go)\n"
 	put(t, dir, "specs/concepts/cli.concept.spec.md", spec)
 	if count, err := run(dir, cliSources); err != nil || count != 2 {
 		t.Fatalf("coverage: %d %v", count, err)

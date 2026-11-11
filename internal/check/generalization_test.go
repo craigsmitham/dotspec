@@ -171,14 +171,14 @@ func TestContextProvidersAreExplicitAndShared(t *testing.T) {
 func TestContextFailuresKeepFileIdentityAndCompletion(t *testing.T) {
 	dir := testScope(t)
 	write(t, quality.Layout.Path(dir, "response-time"), qualitySource)
-	contextPath := filepath.Join(dir, "measurement.csv")
+	contextPath := filepath.Join(dir, "measurement_plan.csv")
 	for _, tt := range []struct {
 		name     string
 		err      error
 		complete bool
 		code     int
 	}{
-		{"invalid", diagnostic.Error("measurement.invalid", "Invalid measurement.", diagnostic.Location{Path: contextPath, Line: 2, Column: 1}), true, 1},
+		{"invalid", diagnostic.Error("measurement_plan.invalid", "Invalid measurement.", diagnostic.Location{Path: contextPath, Line: 2, Column: 1}), true, 1},
 		{"missing", &os.PathError{Op: "open", Path: contextPath, Err: os.ErrNotExist}, false, 2},
 	} {
 		t.Run(tt.name, func(t *testing.T) {

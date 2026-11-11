@@ -77,7 +77,7 @@ func TestResolutionGroupingAndNoAttributeInheritance(t *testing.T) {
 	write(t, filepath.Join(child, "specs/system.spec.md"), strings.Split(model, "## Quality attributes")[0])
 	spec, err = Show(child, "work")
 	if err != nil || spec.Classification.SystemPath != "" || len(spec.Classification.Resolved) != 0 || len(spec.Classification.Undefined) != 0 {
-		t.Fatalf("inherited attributes: %+v %v", spec, err)
+		t.Fatalf("inherited quality_attributes: %+v %v", spec, err)
 	}
 	groups, err = List(dir)
 	if err != nil {

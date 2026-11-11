@@ -70,7 +70,7 @@ func TestInitializationAndLocalLookup(t *testing.T) {
 	}
 	writeUseCase(t, child, "check-specifications")
 	got, err = Show(child, "check-specifications")
-	if err != nil || got.System == nil || got.System.Name != "Child" || got.SystemBoundary != "The dotspec CLI." {
+	if err != nil || got.System == nil || got.System.Name != "Child" || got.BoundaryDescription != "The dotspec CLI." {
 		t.Fatalf("association must not rewrite the stated boundary: %+v, %v", got, err)
 	}
 }

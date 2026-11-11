@@ -65,7 +65,7 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	}
 	edges := []traceEdge{}
 	// These relationships have distinct, documented change-review meanings.
-	fields := []string{"supports", "supported_jobs", "derived_from", "refines", "relies_on", "involves", "applicability_targets", "definition", "dependencies"}
+	fields := []string{"supports", "derived_from", "refines", "relies_on", "involves", "applies_to", "definition", "dependencies"}
 	nodes := map[string]bool{}
 	for _, r := range elements {
 		for _, field := range fields {
@@ -84,9 +84,9 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	}
 	label := func(field string) string {
 		switch field {
-		case "supported_jobs":
-			return "supports jobs"
-		case "applicability_targets":
+		case "supports":
+			return "supports"
+		case "applies_to":
 			return "applies to"
 		default:
 			return strings.ReplaceAll(field, "_", " ")
@@ -163,7 +163,7 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			obligations = append(obligations, link(id)+" (declared here)")
 		}
 		for _, e := range edges {
-			if e.target == String(r, "id") && e.field == "applicability_targets" {
+			if e.target == String(r, "id") && e.field == "applies_to" {
 				obligations = append(obligations, link(e.source))
 			}
 		}
@@ -208,14 +208,17 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			continue
 		}
 		count++
-		field := "verification"
-		if String(r, "kind") == "QualityRequirement" {
-			field = "measurement"
+		guidanceParts := []string{}
+		for _, field := range []string{"verification_plan", "measurement_plan"} {
+			if strings.TrimSpace(d.text(Object(r[field])["content"])) != "" {
+				guidanceParts = append(guidanceParts, strings.ReplaceAll(field, "_", " "))
+			}
 		}
 		guidance := "Not recorded"
-		if strings.TrimSpace(d.text(Object(r[field])["content"])) != "" {
-			guidance = "Recorded in source (" + field + ")"
+		if len(guidanceParts) > 0 {
+			guidance = "Recorded in source (" + strings.Join(guidanceParts, ", ") + ")"
 		}
+
 		fmt.Fprintf(&out, "| %s | %s | Not evaluated |\n", link(String(r, "id")), guidance)
 	}
 	if count == 0 {

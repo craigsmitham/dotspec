@@ -43,7 +43,7 @@ Inspect it and its required system and reference context using the same
 diagnostic rules as the project check. Sibling specifications are consulted only
 when referenced by the selected specification or its system context.
 
-## Operational principle
+## Operational principles
 
 Before committing a change, inspect the project and read the findings. Correct
 an invalid specification and inspect again to see the current findings. A

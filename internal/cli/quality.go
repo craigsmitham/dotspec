@@ -103,7 +103,7 @@ func runQuality(command, path, slug, format string, out io.Writer) error {
 	if spec.Classification.SystemPath != "" {
 		attributeSource = displayPath(spec.Classification.SystemPath)
 	}
-	_, err = fmt.Fprintf(out, "%s\n\nAttributes: %s\nAncestor attributes: %s\nUndefined attributes: %s\nAttribute declarations: %s\nSystem: %s\nSource: %s\n", spec.Markdown, labelList(spec.Attributes), labelList(spec.Classification.Ancestors), labelList(spec.Classification.Undefined), attributeSource, systemLabel(spec.System), displayPath(spec.Path))
+	_, err = fmt.Fprintf(out, "%s\n\nQuality attributes: %s\nAncestor quality attributes: %s\nUndefined quality attributes: %s\nAttribute declarations: %s\nSystem: %s\nSource: %s\n", spec.Markdown, labelList(spec.QualityAttributes), labelList(spec.Classification.Ancestors), labelList(spec.Classification.Undefined), attributeSource, systemLabel(spec.System), displayPath(spec.Path))
 	return err
 }
 
@@ -128,7 +128,7 @@ func listQuality(path, format, attribute string, out io.Writer) error {
 	for _, group := range result.Groups {
 		fmt.Fprintf(&output, "\nSystem: %s\n", systemLabel(group.System))
 		for _, spec := range group.Requirements {
-			fmt.Fprintf(&output, "  %s  (%s)\n    Attributes: %s\n", spec.Name, displayPath(spec.Path), labelList(spec.Attributes))
+			fmt.Fprintf(&output, "  %s  (%s)\n    Quality attributes: %s\n", spec.Name, displayPath(spec.Path), labelList(spec.QualityAttributes))
 		}
 	}
 	_, err = io.WriteString(out, output.String())

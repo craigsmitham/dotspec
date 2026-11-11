@@ -43,7 +43,7 @@ Describe or reference the available actions, their inputs and outputs, condition
 Distinguish caller assumptions from enforced guards, and state rejection behavior where it matters.
 Use subheadings for individual actions when useful.
 
-## Operational principle
+## Operational principles
 
 Tell a characteristic story showing how the actions and state fulfill the purpose.
 Use multiple stories when needed to explain the essential behavior.
@@ -55,21 +55,21 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 // Concept retains section bodies as Markdown. State and actions have no imposed
 // language; system association does not imply an implementation boundary.
 type Concept struct {
-	TypeParameters       string                         `json:"type_parameters,omitempty"`
-	IntroducedTypes      string                         `json:"introduced_types,omitempty"`
-	References           *specfile.ReferenceDocument    `json:"-"`
-	ID                   string                         `json:"id,omitempty"`
-	Slug                 string                         `json:"slug"`
-	Name                 string                         `json:"name"`
-	Purpose              string                         `json:"purpose"`
-	State                string                         `json:"state"`
-	Actions              string                         `json:"actions"`
-	OperationalPrinciple string                         `json:"operational_principle"`
-	Markdown             string                         `json:"markdown"`
-	Path                 string                         `json:"path"`
-	System               *system.System                 `json:"system"`
-	Location             diagnostic.Location            `json:"location"`
-	SectionLocations     map[string]diagnostic.Location `json:"-"`
+	TypeParameters        string                         `json:"type_parameters,omitempty"`
+	IntroducedTypes       string                         `json:"introduced_types,omitempty"`
+	References            *specfile.ReferenceDocument    `json:"-"`
+	ID                    string                         `json:"id,omitempty"`
+	Slug                  string                         `json:"slug"`
+	Name                  string                         `json:"name"`
+	Purpose               string                         `json:"purpose"`
+	State                 string                         `json:"state"`
+	Actions               string                         `json:"actions"`
+	OperationalPrinciples string                         `json:"operational_principles"`
+	Markdown              string                         `json:"markdown"`
+	Path                  string                         `json:"path"`
+	System                *system.System                 `json:"system"`
+	Location              diagnostic.Location            `json:"location"`
+	SectionLocations      map[string]diagnostic.Location `json:"-"`
 }
 
 func ValidateSlug(slug string) error {
@@ -123,13 +123,10 @@ func Parse(data []byte) (*Concept, error) {
 	fields := map[string]*string{
 		"Purpose": &spec.Purpose, "State": &spec.State,
 		"Type parameters": &spec.TypeParameters, "Introduced types": &spec.IntroducedTypes,
-		"Actions": &spec.Actions, "Operational principle": &spec.OperationalPrinciple,
+		"Actions": &spec.Actions, "Operational principles": &spec.OperationalPrinciples,
 	}
 	for _, section := range doc.Sections {
 		title := section.Title
-		if title == "Operational principles" {
-			title = "Operational principle"
-		}
 		target, known := fields[title]
 		if !known {
 			continue

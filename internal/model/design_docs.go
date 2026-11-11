@@ -71,7 +71,7 @@ func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		concepts++
 		fmt.Fprintf(&out, "### %s\n\n[Source](%s).\n\n", d.name(r), sourceLink(r))
 		section("Purpose", r, r["purpose"])
-		section("Operational principles", r, r["operational_principle"])
+		section("Operational principles", r, r["operational_principles"])
 		section("Type parameters", r, r["type_parameters_content"])
 		section("Introduced types", r, r["introduced_types_content"])
 		section("State", r, Object(r["abstract_state"])["content"])
@@ -112,7 +112,7 @@ func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
 					}
 					target := String(b, "primitive")
 					if target == "" {
-						target = d.name(d.index[String(b, "type_use")]) + "." + d.name(d.index[String(b, "type")])
+						target = d.name(d.index[String(b, "supplying_concept_use")]) + "." + d.name(d.index[String(b, "bound_type")])
 						if target == "." {
 							target = "Unresolved type"
 						}

@@ -914,7 +914,7 @@ their names do not create additional conventional sections. Code examples and
 blockquotes do not define sections. Additional prose and sections are retained.
 
 JSON exposes conventional section bodies as Markdown strings in `goal`,
-`system_boundary`, `primary_actor`, `goal_level`, `trigger`, `preconditions`,
+`boundary_description`, `primary_actor`, `goal_level`, `trigger`, `preconditions`,
 `success_criterion`, `main_success_scenario`, `extensions`, `sequence`, and
 `related_jobs`, `supporting_actors`, `stakeholder_interests`, and
 `minimum_guarantees`. Missing bodies are empty strings. The object also includes
@@ -980,7 +980,7 @@ and `--json` or `--format json`.
 - `show <slug>` selects the concept in that project's `specs/concepts/` folder,
   without searching ancestor projects for the slug. Text includes the complete
   authored Markdown, associated system, and source path. JSON also exposes
-  `purpose`, `state`, `actions`, and `operational_principle` as Markdown strings.
+  `purpose`, `state`, `actions`, and `operational_principles` as Markdown strings.
 - `list` discovers concepts in the selected subtree, grouped by enclosing system.
   Groups are ordered by system name and source path, with unassociated concepts
   last; concepts within each group are ordered by source path. An empty list
@@ -1034,14 +1034,14 @@ Completing an already completed task leaves it unchanged.
 
 For an existing task, set its status to active.
 
-## Operational principle
+## Operational principles
 
 Create a task to remember work. Complete it when the work is finished.
 If more work is needed, reopen the same task and complete it again.
 ```
 
-The four basic section names are case-sensitive H2 headings. `Operational principles`
-is an alias for `Operational principle`; use either spelling, once. Optional
+The four basic section names are case-sensitive H2 headings. Use
+`Operational principles` once, with optional named subsections for individual stories. Optional
 `Type parameters` and `Introduced types` sections declare named types. Their order
 is flexible, and each may appear at most once. Missing or empty sections produce
 advice, so unfinished concepts remain readable. Additional sections and nested
@@ -1131,7 +1131,7 @@ name is used for the type, commands, folder, and file suffix.
 ---
 type: quality
 id: diagnostic-severity
-attributes:
+quality_attributes:
   - diagnosability
   - accessibility
 ---
@@ -1142,12 +1142,12 @@ attributes:
 
 Human-readable reports from project-wide and focused specification checks.
 
-## Criterion
+## Statement
 
 Every diagnostic must identify its severity using a text label independently
 of terminal styling.
 
-## Measurement
+## Measurement plan
 
 Capture output containing each severity, including with color disabled.
 Compare the labels with the reported severities and retain failures.
@@ -1158,14 +1158,16 @@ Contributors need to distinguish severities without relying on color.
 ```
 
 Only `type: quality` and one nonempty document H1 are required.
-`id` is optional and follows the document-local ID rules. `attributes` is an
+`id` is optional and follows the document-local ID rules. `quality_attributes` is an
 optional list of unique, nonempty string IDs; an empty list is allowed. A scalar,
 null, non-string element, invalid ID, or duplicate label is a structural error.
 Unknown metadata fields are rejected.
 
-`Applies to`, `Criterion`, `Measurement`, and `Rationale` are optional H2 sections.
-Missing or empty sections produce advice; repeated conventional sections are
-errors. Deeper headings belong to their enclosing sections. Additional sections,
+`Applies to`, `Statement`, `Verification plan`, `Measurement plan`, `Criterion`
+and `Rationale` are optional H2 sections. Missing statement, applicability, rationale
+or both assessment plans produces advice. Criterion and Measurement plan provide
+optional assessment detail. Repeated conventional sections are errors. Deeper
+headings belong to their enclosing sections. Additional sections,
 links, and other authored Markdown are preserved. Check commands validate
 relative file links using the shared [reference rules](#references).
 
@@ -1176,7 +1178,7 @@ When the section is present, each undefined label produces
 `quality.undefined-attribute` advice at its source location. An explicitly empty
 section consequently reports every used label as undefined.
 
-JSON retains `attributes` exactly as authored. The separate `classification`
+JSON retains `quality_attributes` exactly as authored. The separate `classification`
 object exposes `system_path` for the system supplying attribute declarations,
 `resolved` attribute definitions, `ancestors` IDs in declaration order,
 and `undefined` IDs in authored order. Without a quality attributes section,
@@ -1216,7 +1218,7 @@ Additional rules for these formats:
 | `quality.definition` | Attribute definition is missing (advice) |
 | `quality.attributes` | Attribute list has an invalid shape or element |
 | `quality.undefined-attribute` | Label is absent from the selected model (advice) |
-| `quality.applies-to`, `quality.criterion`, `quality.measurement`, `quality.rationale` | Missing section content (advice) |
+| `quality.applies-to`, `quality.statement`, `quality.verification-plan`, `quality.rationale` | Missing section content (advice) |
 
 Existing identity, duplicate-field, section, and reference rules also apply.
 
@@ -1242,9 +1244,9 @@ slug, output, and initialization conventions as other types.
 
 `requirement list` is the common inventory of general and quality requirements,
 grouped by their associated system. Every entry includes its authored `type`,
-source path, and Markdown. In this inventory, quality `Criterion` and
-`Measurement` become `statement` and `verification`; the source file remains
-unchanged. `quality list` remains the specialized inventory of quality specs.
+source path, Markdown and the shared obligation fields, including `statement`,
+`verification_plan`, `criterion` and `measurement_plan`. `quality list` remains the
+specialized inventory of quality specs.
 Attribute filtering applies equally to both forms and includes narrower
 attributes in the selected system's model.
 
@@ -1252,7 +1254,7 @@ attributes in the selected system's model.
 ---
 type: requirement
 id: continue-after-invalid-spec
-attributes: [diagnosability]
+quality_attributes: [diagnosability]
 ---
 
 # Continue checking after a structural error
@@ -1270,22 +1272,22 @@ continue inspecting the remaining discovered specifications.
 
 One malformed specification must not hide problems in other files.
 
-## Verification
+## Verification plan
 
 Check two files with distinct structural errors and verify that both appear
 in the report.
 ```
 
-Only the type and one nonempty H1 are required. Optional `id` and `attributes`
+Only the type and one nonempty H1 are required. Optional `id` and `quality_attributes`
 follow the same rules as quality specs. `Applies to`, `Statement`, `Rationale`,
-and `Verification` are optional H2 sections: omissions produce advice, duplicate
+and `Verification plan` are optional H2 sections: omissions produce advice, duplicate
 sections or invalid levels produce structural errors. Nested headings, contract
 notation, tables, and additional prose are retained. No sentence pattern or
 particular verification technique is required.
 
 The show envelope uses `requirement`; the inventory uses `groups` containing
 `requirements`. Both include `schema_version: 1`. Each requirement exposes its
-`type`, `statement`, `verification`, `applies_to`, `rationale`, `attributes`,
+`type`, `statement`, `verification_plan`, `applicability`, `rationale`, `quality_attributes`,
 `classification`, `markdown`, source identity, and associated system.
 
 Keep one authoritative statement of each obligation. Concepts organize related

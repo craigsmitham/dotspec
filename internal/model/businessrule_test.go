@@ -27,7 +27,7 @@ func TestBusinessRuleExportBindingsAndContextualReferences(t *testing.T) {
 	if String(Object(rule["exceptions"]), "presence") != "empty" {
 		t.Fatalf("empty exceptions lost: %+v", rule)
 	}
-	for _, name := range []string{"statement", "applies_to", "rationale", "authority_and_evidence", "exceptions", "related_specifications"} {
+	for _, name := range []string{"statement", "applicability", "rationale", "authority_and_evidence", "exceptions", "related_specifications"} {
 		if _, ok := rule[name]; !ok {
 			t.Errorf("missing named field %s", name)
 		}

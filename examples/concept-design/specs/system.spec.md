@@ -42,8 +42,8 @@ Tracks lifetimes for codes registered by PublicLinks.
 ##### Public resources
 
 **Parameter:** [Resource](concepts/expiry.concept.spec.md#resource)
-**Type:** [Code](concepts/shorthand.concept.spec.md#code)
-**Use:** [PublicLinks](#publiclinks)
+**Bound type:** [Code](concepts/shorthand.concept.spec.md#code)
+**Supplying concept use:** [PublicLinks](#publiclinks)
 
 #### Dependencies
 
@@ -82,8 +82,8 @@ Tracks lifetimes for codes registered by InternalLinks.
 ##### Internal resources
 
 **Parameter:** [Resource](concepts/expiry.concept.spec.md#resource)
-**Type:** [Code](concepts/shorthand.concept.spec.md#code)
-**Use:** [InternalLinks](#internallinks)
+**Bound type:** [Code](concepts/shorthand.concept.spec.md#code)
+**Supplying concept use:** [InternalLinks](#internallinks)
 
 #### Dependencies
 
@@ -102,7 +102,7 @@ The application allocates each registration a lifetime of 1 day.
 
 ##### Completed action
 
-**Use:** [PublicLinks](#publiclinks)
+**Concept use:** [PublicLinks](#publiclinks)
 **Action:** [Register](concepts/shorthand.concept.spec.md#register)
 
 ###### Result
@@ -117,7 +117,7 @@ Only successful completions participate. An error is not a successful result.
 
 ##### Invoke action
 
-**Use:** [PublicExpiry](#publicexpiry)
+**Concept use:** [PublicExpiry](#publicexpiry)
 **Action:** [Allocate](concepts/expiry.concept.spec.md#allocate)
 
 ###### Arguments
@@ -140,7 +140,7 @@ coincide. These are requirements for an implementation, not guarantees from dots
 
 ##### Completed action
 
-**Use:** [PublicExpiry](#publicexpiry)
+**Concept use:** [PublicExpiry](#publicexpiry)
 **Action:** [Expire](concepts/expiry.concept.spec.md#expire)
 
 ###### Result
@@ -155,7 +155,7 @@ Only successful completions participate. An error is not a successful result.
 
 ##### Invoke action
 
-**Use:** [PublicLinks](#publiclinks)
+**Concept use:** [PublicLinks](#publiclinks)
 **Action:** [Unregister](concepts/shorthand.concept.spec.md#unregister)
 
 ###### Arguments
@@ -178,7 +178,7 @@ coincide. These are requirements for an implementation, not guarantees from dots
 
 ##### Completed action
 
-**Use:** [InternalLinks](#internallinks)
+**Concept use:** [InternalLinks](#internallinks)
 **Action:** [Register](concepts/shorthand.concept.spec.md#register)
 
 ###### Result
@@ -193,7 +193,7 @@ Only successful completions participate. An error is not a successful result.
 
 ##### Invoke action
 
-**Use:** [InternalExpiry](#internalexpiry)
+**Concept use:** [InternalExpiry](#internalexpiry)
 **Action:** [Allocate](concepts/expiry.concept.spec.md#allocate)
 
 ###### Arguments
@@ -216,7 +216,7 @@ coincide. These are requirements for an implementation, not guarantees from dots
 
 ##### Completed action
 
-**Use:** [InternalExpiry](#internalexpiry)
+**Concept use:** [InternalExpiry](#internalexpiry)
 **Action:** [Expire](concepts/expiry.concept.spec.md#expire)
 
 ###### Result
@@ -231,7 +231,7 @@ Only successful completions participate. An error is not a successful result.
 
 ##### Invoke action
 
-**Use:** [InternalLinks](#internallinks)
+**Concept use:** [InternalLinks](#internallinks)
 **Action:** [Unregister](concepts/shorthand.concept.spec.md#unregister)
 
 ###### Arguments

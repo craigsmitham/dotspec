@@ -20,7 +20,7 @@ func stepLabel(step job.Step) string {
 	return label
 }
 
-func outcomeLabel(outcome job.Outcome) string {
+func outcomeLabel(outcome job.DesiredOutcome) string {
 	if outcome.ID == "" {
 		return outcome.Statement
 	}
@@ -45,7 +45,7 @@ func listSteps(spec *job.Job, out io.Writer) error {
 }
 
 func selectOutcomes(spec *job.Job, stepID string) (outcomesResult, error) {
-	result := outcomesResult{SchemaVersion: 1, Name: spec.Name, Path: spec.Path, Overall: []job.Outcome{}, Steps: []job.Step{}}
+	result := outcomesResult{SchemaVersion: 1, Name: spec.Name, Path: spec.Path, Overall: []job.DesiredOutcome{}, Steps: []job.Step{}}
 	if stepID == "" {
 		result.Overall = nonnil(spec.Outcomes)
 	}
@@ -79,7 +79,7 @@ func listOutcomes(spec *job.Job, stepID string, out io.Writer) error {
 func renderOutcomes(result outcomesResult, out io.Writer) error {
 	var output strings.Builder
 	count := 0
-	write := func(label string, outcomes []job.Outcome) {
+	write := func(label string, outcomes []job.DesiredOutcome) {
 		if len(outcomes) == 0 {
 			return
 		}

@@ -9,37 +9,37 @@ edge categories, cardinalities, scopes and projections.
 ## Identify a use case's system boundary
 
 Keep the boundary explanation in the use case's System boundary section. When the
-boundary has a system specification, identify it with an explicit System field:
+boundary has a system specification, identify it with an explicit Subject system field:
 
 ```markdown
 ## System boundary
 
-**System:** [Delivery service](../system.spec.md)
+**Subject system:** [Delivery service](../system.spec.md)
 
 The actor submits an address through this service; the recipient's mail client
 is outside the boundary.
 ```
 
-The narrative maps to `system_boundary`. The field retains its source reference
-in `boundary_references`; a resolved System populates `boundary`. A plain link
+The narrative maps to `boundary_description`. The field retains its source reference
+in `subject_system_references`; a resolved System populates `subject_system`. A plain link
 elsewhere in the narrative is only a citation. The boundary may differ from the
 use case's directory-derived `system_context`.
 
 ## State which user progress a use case supports
 
-Use a Supports jobs section to declare a support relationship:
+Use a Supports section to declare a support relationship:
 
 ```markdown
-## Supports jobs
+## Supports
 
 [Share information](../jobs/share-information.job.spec.md) and its
 [Send a link step](../jobs/share-information.job.spec.md#send-a-link).
 ```
 
-Every link in this section declares a target: a Job, JobStep or Outcome. A file
+Every link in this section declares a target: a SystemGoal, Job, JobStep or DesiredOutcome. A file
 link identifies the job; a fragment identifies the explicitly mapped step or
-outcome. The section is preserved as `supported_jobs_content`, its occurrences as
-`supported_jobs_references`, and resolved targets as `supported_jobs`.
+outcome. The section is preserved as `supports_content`, its occurrences as
+`supports_references`, and resolved targets as `supports`.
 
 This is an authored design claim, not proof that the use case achieves the job's
 outcomes. Put research citations and loosely related jobs in Related jobs instead.
@@ -65,9 +65,9 @@ Both general and quality requirements, and business rules, use this form. Target
 may identify any acquired domain record, including a system, concept use, use case
 or explicitly named step. Cross-system applicability is permitted.
 
-The complete section remains `applies_to: Applicability`. Source occurrences and
-resolved domain targets are retained on the root record as
-`applicability_targets_references` and `applicability_targets`. A Subject or
+The complete section remains `applicability: Applicability`. Source occurrences and
+resolved domain targets are retained on the obligation or business-rule record as
+`applies_to_references` and `applies_to`. A Subject or
 Subjects subsection remains contextual; its links do not silently become Targets.
 Conditions, exclusions, workloads and populations remain authored explanations.
 A target link does not establish enforcement, satisfaction or compliance.
@@ -103,7 +103,7 @@ use is unknown, dependent scope checks are deferred. Unknown is not incompatible
 The snapshot retains the authored references and diagnostics in either case.
 
 Consumers should read the typed fields as authoritative. The optional `assertions`
-collection provides derived views such as BoundaryIs, SupportsJob and AppliesTo.
+collection provides derived views such as HasSubjectSystem, Supports and AppliesTo.
 Every assertion has both endpoints, source-backed inputs, and a `projection_path`
 identifying its canonical field. That path also distinguishes concept parameters
 from introduced types when both project as HasConceptType. Assertions are a partial
@@ -130,8 +130,7 @@ retention interval.
 ```
 
 Use the appropriate deeper heading level inside a named element. Supports accepts
-SystemGoal, Job, JobStep and Outcome targets. The existing Supports jobs form stays
-available on use cases with its narrower Job/JobStep/Outcome range. These are
+SystemGoal, Job, JobStep and DesiredOutcome targets. These are
 intended contributions, not achieved outcomes.
 
 Derived from accepts an acquired domain record or a source fragment, including an
@@ -149,8 +148,8 @@ Empty sections are valid drafts. No links are inferred from prose.
 
 ## Identify an obligation without creating another document
 
-Use an Obligations section within a specification, concept action or other
-traceable element when a rule needs its own identity:
+Use an Obligations section within a System, BusinessRule, Job, JobStep, UseCase, Concept,
+ConceptUse, ConceptAction, Synchronization or standalone Requirement when a rule needs its own identity:
 
 ```markdown
 ## Obligations
@@ -158,9 +157,10 @@ traceable element when a rule needs its own identity:
 ### Restore retained content
 
 **ID:** restore-content
+**Quality attributes:** recoverability
 
 The workspace must restore retained document content and metadata when an
- authorized member requests restoration within the recovery window.
+authorized member requests restoration within the recovery window.
 
 #### Derived from
 
@@ -170,13 +170,16 @@ The workspace must restore retained document content and metadata when an
 
 **Targets:** [DocumentTrash](../system.spec.md#documenttrash)
 
-#### Verification
+#### Verification plan
 
 Compare content and metadata before deletion and after restoration.
 ```
 
 The introductory prose becomes the clause's statement. Applies to, Rationale and
-Verification use the same forms as standalone general requirements. Relationship
+Verification plan use the same forms as standalone requirements. Optional Criterion
+and Measurement plan sections provide assessment details. The optional comma-separated
+Quality attributes field classifies the clause against its declaring system; it uses
+the same IDs as standalone `quality_attributes` metadata. Relationship
 headings can appear beneath the clause. An optional ID must be nonempty and unique
 among declared IDs in the document; otherwise link to the generated heading anchor.
 IDs and anchors work in same-file and cross-file links. Generated reader links use

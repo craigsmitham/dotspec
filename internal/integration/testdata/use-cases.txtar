@@ -78,7 +78,7 @@ stdout 'Customer'
 stdout 'Rental business'
 stdout 'User task'
 status 0 dotspec use-case list --overview --json
-stdout '"system_boundary": "Rental business"'
+stdout '"boundary_description": "Rental business"'
 status 0 dotspec use-case check reserve --json
 ! stdout '"rule": "use-case.extensions"'
 ! stderr .

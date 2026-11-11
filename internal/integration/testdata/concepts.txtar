@@ -10,7 +10,7 @@ stdout 'Created specs/concepts/job-map.concept.spec.md'
 ! stderr .
 status 0 dotspec concept show job-map --json
 stdout '"system": null'
-stdout '"operational_principle":'
+stdout '"operational_principles":'
 status 0 dotspec system init
 status 0 dotspec concept show job-map
 stdout '# New concept'

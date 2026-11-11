@@ -25,7 +25,7 @@ func Filter(groups []*Group, attribute string) []*Group {
 	for _, group := range groups {
 		selected := &Group{System: group.System, Requirements: []*Requirement{}}
 		for _, spec := range group.Requirements {
-			if slices.Contains(spec.Attributes, attribute) || slices.Contains(spec.Classification.Ancestors, attribute) {
+			if slices.Contains(spec.QualityAttributes, attribute) || slices.Contains(spec.Classification.Ancestors, attribute) {
 				selected.Requirements = append(selected.Requirements, spec)
 			}
 		}

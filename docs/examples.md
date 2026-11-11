@@ -183,7 +183,7 @@ dotspec use-case show check-specifications --json
     "slug": "check-specifications",
     "name": "New use case",
     "goal": "Name what the primary actor wants to accomplish, using an active verb phrase.",
-    "system_boundary": "Name the system whose external behavior this use case describes.",
+    "boundary_description": "Name the system whose external behavior this use case describes.",
     "primary_actor": "Identify the role pursuing the goal.",
     "goal_level": "Identify the level: summary (kite), user task (sea), or subfunction (fish).",
     "trigger": "",
@@ -329,8 +329,8 @@ dotspec concept show job-map --json
     "purpose": "Describe the benefit this concept provides and why it exists.",
     "state": "Describe the abstract information needed to explain the behavior, independently of its storage representation.",
     "actions": "Describe or reference the available actions, their inputs and outputs, conditions, and effects.\nDistinguish caller assumptions from enforced guards, and state rejection behavior where it matters.\nUse subheadings for individual actions when useful.",
-    "operational_principle": "Tell a characteristic story showing how the actions and state fulfill the purpose.\nUse multiple stories when needed to explain the essential behavior.\nThe story explains the design; it does not establish exhaustive behavior or verification.",
-    "markdown": "# New concept\n\n## Purpose\n\nDescribe the benefit this concept provides and why it exists.\n\n## State\n\nDescribe the abstract information needed to explain the behavior, independently of its storage representation.\n\n## Actions\n\nDescribe or reference the available actions, their inputs and outputs, conditions, and effects.\nDistinguish caller assumptions from enforced guards, and state rejection behavior where it matters.\nUse subheadings for individual actions when useful.\n\n## Operational principle\n\nTell a characteristic story showing how the actions and state fulfill the purpose.\nUse multiple stories when needed to explain the essential behavior.\nThe story explains the design; it does not establish exhaustive behavior or verification.",
+    "operational_principles": "Tell a characteristic story showing how the actions and state fulfill the purpose.\nUse multiple stories when needed to explain the essential behavior.\nThe story explains the design; it does not establish exhaustive behavior or verification.",
+    "markdown": "# New concept\n\n## Purpose\n\nDescribe the benefit this concept provides and why it exists.\n\n## State\n\nDescribe the abstract information needed to explain the behavior, independently of its storage representation.\n\n## Actions\n\nDescribe or reference the available actions, their inputs and outputs, conditions, and effects.\nDistinguish caller assumptions from enforced guards, and state rejection behavior where it matters.\nUse subheadings for individual actions when useful.\n\n## Operational principles\n\nTell a characteristic story showing how the actions and state fulfill the purpose.\nUse multiple stories when needed to explain the essential behavior.\nThe story explains the design; it does not establish exhaustive behavior or verification.",
     "path": "$PROJECT/specs/concepts/job-map.concept.spec.md",
     "system": {
       "name": "New system",
@@ -402,16 +402,20 @@ dotspec quality show diagnostic-severity --json
   "quality": {
     "slug": "diagnostic-severity",
     "name": "New quality requirement",
-    "applies_to": "Identify the subject and the conditions, workload, or population covered by this requirement.",
+    "applicability": "Identify the subject and the conditions, workload, or population covered by this requirement.",
+    "statement": "State one coherent quality obligation.\nIf a target is unknown, record the open question and the evidence needed to choose it.",
+    "criterion": "Record optional measures, comparisons, targets, units and conditions for assessing the statement.",
+    "verification_plan": "Describe the assessment method, acceptance conditions, and evidence to retain.",
+    "measurement_plan": "Describe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.",
     "rationale": "Explain why this quality matters and any relevant tradeoffs.",
-    "attributes": [],
+    "quality_attributes": [],
     "classification": {
       "system_path": "",
       "resolved": [],
       "ancestors": [],
       "undefined": []
     },
-    "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and the conditions, workload, or population covered by this requirement.\n\n## Criterion\n\nState one coherent obligation, including its measure, comparison, and target where applicable.\nIf a target is unknown, record the open decision and the evidence needed to choose it.\n\n## Measurement\n\nDescribe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.",
+    "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and the conditions, workload, or population covered by this requirement.\n\n## Statement\n\nState one coherent quality obligation.\nIf a target is unknown, record the open question and the evidence needed to choose it.\n\n## Verification plan\n\nDescribe the assessment method, acceptance conditions, and evidence to retain.\n\n## Criterion\n\nRecord optional measures, comparisons, targets, units and conditions for assessing the statement.\n\n## Measurement plan\n\nDescribe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.",
     "path": "$PROJECT/specs/quality/diagnostic-severity.quality.spec.md",
     "system": {
       "name": "New system",
@@ -425,9 +429,7 @@ dotspec quality show diagnostic-severity --json
       "line": 5,
       "column": 1,
       "element": "New quality requirement"
-    },
-    "criterion": "State one coherent obligation, including its measure, comparison, and target where applicable.\nIf a target is unknown, record the open decision and the evidence needed to choose it.",
-    "measurement": "Describe how to assess the criterion, including sampling, measurement conditions, and evidence to retain."
+    }
   }
 }
 ````
@@ -487,16 +489,18 @@ dotspec requirement show reject-existing-target --json
     "type": "requirement",
     "slug": "reject-existing-target",
     "name": "New requirement",
-    "applies_to": "Identify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.",
+    "applicability": "Identify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.",
+    "statement": "State one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.",
+    "verification_plan": "Describe how to establish that the obligation holds, including success criteria and evidence to retain.",
     "rationale": "Explain why this obligation is needed and reference its source or governing goal.",
-    "attributes": [],
+    "quality_attributes": [],
     "classification": {
       "system_path": "",
       "resolved": [],
       "ancestors": [],
       "undefined": []
     },
-    "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification\n\nDescribe how to establish that the obligation holds, including success criteria and evidence to retain.",
+    "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification plan\n\nDescribe how to establish that the obligation holds, including success criteria and evidence to retain.",
     "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
     "system": {
       "name": "New system",
@@ -510,9 +514,7 @@ dotspec requirement show reject-existing-target --json
       "line": 5,
       "column": 1,
       "element": "New requirement"
-    },
-    "statement": "State one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.",
-    "verification": "Describe how to establish that the obligation holds, including success criteria and evidence to retain."
+    }
   }
 }
 ````
@@ -540,16 +542,20 @@ dotspec requirement list --json
           "type": "quality",
           "slug": "diagnostic-severity",
           "name": "New quality requirement",
-          "applies_to": "Identify the subject and the conditions, workload, or population covered by this requirement.",
+          "applicability": "Identify the subject and the conditions, workload, or population covered by this requirement.",
+          "statement": "State one coherent quality obligation.\nIf a target is unknown, record the open question and the evidence needed to choose it.",
+          "criterion": "Record optional measures, comparisons, targets, units and conditions for assessing the statement.",
+          "verification_plan": "Describe the assessment method, acceptance conditions, and evidence to retain.",
+          "measurement_plan": "Describe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.",
           "rationale": "Explain why this quality matters and any relevant tradeoffs.",
-          "attributes": [],
+          "quality_attributes": [],
           "classification": {
             "system_path": "",
             "resolved": [],
             "ancestors": [],
             "undefined": []
           },
-          "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and the conditions, workload, or population covered by this requirement.\n\n## Criterion\n\nState one coherent obligation, including its measure, comparison, and target where applicable.\nIf a target is unknown, record the open decision and the evidence needed to choose it.\n\n## Measurement\n\nDescribe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.",
+          "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and the conditions, workload, or population covered by this requirement.\n\n## Statement\n\nState one coherent quality obligation.\nIf a target is unknown, record the open question and the evidence needed to choose it.\n\n## Verification plan\n\nDescribe the assessment method, acceptance conditions, and evidence to retain.\n\n## Criterion\n\nRecord optional measures, comparisons, targets, units and conditions for assessing the statement.\n\n## Measurement plan\n\nDescribe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.",
           "path": "$PROJECT/specs/quality/diagnostic-severity.quality.spec.md",
           "system": {
             "name": "New system",
@@ -563,24 +569,24 @@ dotspec requirement list --json
             "line": 5,
             "column": 1,
             "element": "New quality requirement"
-          },
-          "statement": "State one coherent obligation, including its measure, comparison, and target where applicable.\nIf a target is unknown, record the open decision and the evidence needed to choose it.",
-          "verification": "Describe how to assess the criterion, including sampling, measurement conditions, and evidence to retain."
+          }
         },
         {
           "type": "requirement",
           "slug": "reject-existing-target",
           "name": "New requirement",
-          "applies_to": "Identify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.",
+          "applicability": "Identify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.",
+          "statement": "State one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.",
+          "verification_plan": "Describe how to establish that the obligation holds, including success criteria and evidence to retain.",
           "rationale": "Explain why this obligation is needed and reference its source or governing goal.",
-          "attributes": [],
+          "quality_attributes": [],
           "classification": {
             "system_path": "",
             "resolved": [],
             "ancestors": [],
             "undefined": []
           },
-          "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification\n\nDescribe how to establish that the obligation holds, including success criteria and evidence to retain.",
+          "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification plan\n\nDescribe how to establish that the obligation holds, including success criteria and evidence to retain.",
           "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
           "system": {
             "name": "New system",
@@ -594,9 +600,7 @@ dotspec requirement list --json
             "line": 5,
             "column": 1,
             "element": "New requirement"
-          },
-          "statement": "State one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.",
-          "verification": "Describe how to establish that the obligation holds, including success criteria and evidence to retain."
+          }
         }
       ]
     }

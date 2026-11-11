@@ -200,7 +200,7 @@ Unvalidated hypothesis.
 	if got := richText(d, steps[0]["description"]); strings.Contains(got, "**ID:") || strings.Contains(got, "Outcomes") {
 		t.Errorf("step description includes metadata or outcomes: %q", got)
 	}
-	if len(recordsOf(m, "Outcome")) != 1 {
+	if len(recordsOf(m, "DesiredOutcome")) != 1 {
 		t.Fatal("nested supporting bullets became outcomes")
 	}
 	cases := recordsOf(m, "ProgressCase")
@@ -214,7 +214,7 @@ Unvalidated hypothesis.
 	if Object(Object(cases[0]["timeline"])["content"])["presence"] != "authored" {
 		t.Error("unknown timeline was erased")
 	}
-	for _, x := range recordsOf(m, "Outcome") {
+	for _, x := range recordsOf(m, "DesiredOutcome") {
 		if String(x, "owner") != String(steps[0], "id") {
 			t.Error("step outcome assigned to job")
 		}
@@ -359,7 +359,7 @@ See [another case](another.use-case.spec.md).
 	if len(recordsOf(m, "Scenario")) != 1 || len(recordsOf(m, "ScenarioStep")) != 4 {
 		t.Errorf("scenarios/steps: %#v", m.Elements)
 	}
-	branches := recordsOf(m, "Extension")
+	branches := recordsOf(m, "UseCaseExtension")
 	if len(branches) != 2 {
 		t.Fatalf("branches: %#v", branches)
 	}
@@ -425,7 +425,7 @@ Concurrent edits.
 
 Files remain unchanged.
 
-## Measurement
+## Measurement plan
 
 Compare snapshots.
 
@@ -441,7 +441,7 @@ Retain changed paths.
 
 Access times do not count.
 `)
-	if Object(r["applies_to"])["exclusions"] == nil || Object(r["measurement"])["evidence_to_retain"] == nil {
+	if Object(r["applicability"])["exclusions"] == nil || Object(r["measurement_plan"])["evidence_to_retain"] == nil {
 		t.Error("plan subfields missing")
 	}
 	if Object(r["criterion"])["target"] != nil {
@@ -477,7 +477,7 @@ func TestMappingPresentEmptyUnknownAndInvalid(t *testing.T) {
 }
 
 func TestMappingMetadataLabelsHaveSourceOccurrences(t *testing.T) {
-	data := []byte("---\ntype: quality\nid: sample\nattributes: [usability, reliability]\n---\n# Sample\n")
+	data := []byte("---\ntype: quality\nid: sample\nquality_attributes: [usability, reliability]\n---\n# Sample\n")
 	d := ParseContent("sample.quality.spec.md", data)
 	m := MapDomain(d, "quality")
 	if len(m.Labels) != 2 {

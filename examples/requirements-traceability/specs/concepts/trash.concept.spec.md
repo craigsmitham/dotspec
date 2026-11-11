@@ -7,7 +7,7 @@ type: concept
 
 Make deletion reversible until a retained item expires.
 
-## Operational principle
+## Operational principles
 
 If an item is deleted and then restored before it expires, it becomes available again with its retained content.
 

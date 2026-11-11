@@ -47,10 +47,10 @@ func TestConceptCompositionExport(t *testing.T) {
 	for _, label := range []string{"Public", "Internal"} {
 		expiry := designRecord(t, s, "ConceptUse", label+"Expiry")
 		binding := index[Strings(expiry["bindings"])[0]]
-		if d := index[String(binding, "type_use")]; newDesignResolver(s).name(d) != label+"Links" {
+		if d := index[String(binding, "supplying_concept_use")]; newDesignResolver(s).name(d) != label+"Links" {
 			t.Fatal("binding lost its specific supplying use", binding)
 		}
-		if newDesignResolver(s).name(index[String(binding, "type")]) != "Code" {
+		if newDesignResolver(s).name(index[String(binding, "bound_type")]) != "Code" {
 			t.Fatal("binding type unresolved", binding)
 		}
 	}
@@ -99,7 +99,7 @@ func TestConceptCompositionExport(t *testing.T) {
 	t.Run("offline forged use rejected", func(t *testing.T) {
 		forged := cloneSnapshot(t, s)
 		binding := designRecord(t, forged, "TypeBinding", "Public resources")
-		binding["type_use"] = designRecord(t, forged, "ConceptUse", "InternalLinks")["id"]
+		binding["supplying_concept_use"] = designRecord(t, forged, "ConceptUse", "InternalLinks")["id"]
 		requireFinding(t, forged, "concept.projection")
 	})
 	t.Run("offline forged action rejected", func(t *testing.T) {
@@ -117,9 +117,9 @@ func TestCompositionAuthoringErrorsRemainFaithful(t *testing.T) {
 	cases := []struct{ name, old, replacement, code string }{
 		{"wrong definition kind", "[Shorthand](concepts/shorthand.concept.spec.md).", "[System](system.spec.md).", "concept.definition"},
 		{"action from another definition", "[Register](concepts/shorthand.concept.spec.md#register)", "[Allocate](concepts/expiry.concept.spec.md#allocate)", "concept.action"},
-		{"type from wrong use", "**Use:** [PublicLinks](#publiclinks)", "**Use:** [PublicExpiry](#publicexpiry)", "concept.type"},
+		{"type from wrong use", "**Supplying concept use:** [PublicLinks](#publiclinks)", "**Supplying concept use:** [PublicExpiry](#publicexpiry)", "concept.bound_type"},
 		{"duplicate parameter binding", "### PublicExpiry", "##### Duplicate target binding\n\n**Parameter:** [Target](concepts/shorthand.concept.spec.md#target)\n**Primitive:** URL\n\n### PublicExpiry", "concept.parameter"},
-		{"primitive and type", "**Type:** [Code](concepts/shorthand.concept.spec.md#code)", "**Primitive:** URL\n**Type:** [Code](concepts/shorthand.concept.spec.md#code)", "concept.type"},
+		{"primitive and type", "**Bound type:** [Code](concepts/shorthand.concept.spec.md#code)", "**Primitive:** URL\n**Bound type:** [Code](concepts/shorthand.concept.spec.md#code)", "concept.bound_type"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {

@@ -87,6 +87,7 @@ def make_catalog(view: Any, raw_model: dict[str, Any], model_bytes: bytes) -> di
         record: dict[str, Any] = {
             "subsets": [str(n) for n in cls.in_subset],
             "abstract": bool(cls.abstract),
+            "mixins": [str(x) for x in cls.mixins],
             "ancestors": ancestors,
             "description": cls.description or "",
             "annotations": annotation_values(cls.annotations),
@@ -215,6 +216,8 @@ def reference_markdown(catalog: dict[str, Any], raw_model: dict[str, Any]) -> by
         lines += [f"### {name}", "", escape(cls["description"]), ""]
         lines += ["Subsets: " + ", ".join(f"`{s}`" for s in cls["subsets"]) + ".", ""]
         traits = ["Abstract" if cls["abstract"] else "Concrete"]
+        if cls.get("mixins"):
+            traits.append("capabilities " + ", ".join(f"[{m}](#{m.lower()})" for m in cls["mixins"]))
         if cls.get("is_a"):
             traits.append(f"inherits [{cls['is_a']}](#{cls['is_a'].lower()})")
         lines += ["; ".join(traits) + ".", ""]

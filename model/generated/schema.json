@@ -55,8 +55,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -360,17 +360,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "obligations": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "obligations_content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -478,86 +469,24 @@
             "title": "BindingScope",
             "type": "string"
         },
-        "BoundaryIs": {
-            "additionalProperties": false,
-            "description": "An explicitly identified and resolved system boundary, never derived from directory ownership.",
-            "properties": {
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "kind": {
-                    "const": "BoundaryIs",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
-                    "type": "string"
-                },
-                "object": {
-                    "type": "string"
-                },
-                "origin": {
-                    "$ref": "#/$defs/AssertionOrigin"
-                },
-                "projection_path": {
-                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
-                    "type": "string"
-                },
-                "source_nodes": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "source_spans": {
-                    "items": {
-                        "$ref": "#/$defs/ByteSpan"
-                    },
-                    "type": "array"
-                },
-                "subject": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "subject",
-                "object",
-                "projection_path",
-                "origin",
-                "id",
-                "kind"
-            ],
-            "title": "BoundaryIs",
-            "type": "object"
-        },
         "BusinessRule": {
             "additionalProperties": false,
             "description": "A declarative business constraint independent of the software or process that enforces it.",
             "properties": {
-                "applicability_targets": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "applicability_targets_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
+                "applicability": {
+                    "$ref": "#/$defs/Applicability"
                 },
                 "applies_to": {
-                    "$ref": "#/$defs/Applicability"
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "applies_to_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -637,8 +566,8 @@
                 "obligations_content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "preamble": {
@@ -864,11 +793,11 @@
                 "obligations_content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
-                "operational_principle": {
+                "operational_principles": {
                     "$ref": "#/$defs/RichContent"
                 },
                 "preamble": {
@@ -1048,8 +977,8 @@
                 "obligations_content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "output_parameters": {
@@ -1220,8 +1149,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -1347,8 +1276,8 @@
                 "obligations_content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -1502,17 +1431,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "obligations": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "obligations_content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -2071,6 +1991,135 @@
             "title": "DerivedFrom",
             "type": "object"
         },
+        "DesiredOutcome": {
+            "additionalProperties": false,
+            "description": "A desired outcome owned directly by a job or step. Ownership does not imply inheritance.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "DesiredOutcome",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "string"
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "statement": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "supporting_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explicit support prose or nested bullets belonging to the outcome."
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "owner",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "DesiredOutcome",
+            "type": "object"
+        },
         "Diagnostic": {
             "additionalProperties": false,
             "description": "A parser, mapper, resolver, coverage or graph-check finding. It may identify a source without any line, element or parsed document.",
@@ -2296,8 +2345,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "source_document": {
@@ -2403,8 +2452,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -2437,106 +2486,6 @@
                 "kind"
             ],
             "title": "EvidenceStatement",
-            "type": "object"
-        },
-        "Extension": {
-            "additionalProperties": false,
-            "description": "An explicitly distinguished alternative or failure branch. Full narrative is retained; condition, location and handling are optional decompositions. Condition-only entries are valid.",
-            "properties": {
-                "authored_id": {
-                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
-                    "type": "string"
-                },
-                "authored_label": {
-                    "description": "Optional authored branch label, including nested or relative labels; not a durable ID.",
-                    "type": "string"
-                },
-                "branches": {
-                    "description": "Explicitly authored nested branches, in document order.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "condition": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "decomposition": {
-                    "$ref": "#/$defs/DecompositionStatus"
-                },
-                "extension_sections": {
-                    "description": "Only unknown sections, not a substitute for known domain fields.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "handling": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored handling narrative, including any resumption, conclusion or unresolved question."
-                },
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "kind": {
-                    "const": "Extension",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "location": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored branch point, including free prose or labels; no automatic step-number interpretation."
-                },
-                "name": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored title or item name, if present."
-                },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
-                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
-                },
-                "owner": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "type": "string"
-                },
-                "references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "source_document": {
-                    "type": "string"
-                },
-                "source_fragment": {
-                    "type": "string"
-                },
-                "steps": {
-                    "description": "Explicit handling steps in source order; no execution semantics are inferred.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                }
-            },
-            "required": [
-                "owner",
-                "content",
-                "source_document",
-                "decomposition",
-                "id",
-                "kind"
-            ],
-            "title": "Extension",
             "type": "object"
         },
         "ExtensionCollection": {
@@ -2603,8 +2552,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -2714,32 +2663,18 @@
         },
         "GeneralRequirement": {
             "additionalProperties": false,
-            "description": "A general obligation with authored verification guidance.",
+            "description": "Default standalone obligation authoring form; may express behavior, quality or constraints.",
             "properties": {
-                "applicability_targets": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "applicability_targets_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "applies_to": {
+                "applicability": {
                     "$ref": "#/$defs/Applicability"
                 },
-                "attribute_labels": {
-                    "description": "Every authored attribute label, including undefined or unbound labels.",
+                "applies_to": {
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
-                "attributes": {
-                    "description": "Only resolved classifications; original occurrences remain separately addressable.",
+                "applies_to_references": {
                     "items": {
                         "type": "string"
                     },
@@ -2756,6 +2691,9 @@
                 "business_rules": {
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
+                },
+                "criterion": {
+                    "$ref": "#/$defs/QualityCriterion"
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -2802,6 +2740,9 @@
                     "description": "Concrete record type discriminator.",
                     "type": "string"
                 },
+                "measurement_plan": {
+                    "$ref": "#/$defs/MeasurementPlan"
+                },
                 "name": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
@@ -2819,13 +2760,27 @@
                 "obligations_content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored content between the title and the first named section."
+                },
+                "quality_attribute_labels": {
+                    "description": "Every authored attribute label, including undefined or unbound labels.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "quality_attributes": {
+                    "description": "Only resolved classifications; original occurrences remain separately addressable.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "rationale": {
                     "$ref": "#/$defs/RichContent"
@@ -2918,7 +2873,7 @@
                     "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
                     "type": "string"
                 },
-                "verification": {
+                "verification_plan": {
                     "$ref": "#/$defs/VerificationPlan"
                 }
             },
@@ -2992,8 +2947,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -3707,6 +3662,68 @@
             "title": "HasScenarioStep",
             "type": "object"
         },
+        "HasSubjectSystem": {
+            "additionalProperties": false,
+            "description": "Explicit subject system of a use case, independent of directory-derived context.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "HasSubjectSystem",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "HasSubjectSystem",
+            "type": "object"
+        },
         "HasSynchronization": {
             "additionalProperties": false,
             "description": "Projection of the explicitly declared System.synchronizations relationship.",
@@ -4039,8 +4056,8 @@
                 "obligations_content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "outcomes": {
@@ -4226,8 +4243,8 @@
                 "obligations_content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "outcomes": {
@@ -4436,28 +4453,31 @@
             "title": "NodeKind",
             "type": "string"
         },
-        "ObligationClause": {
+        "Obligation": {
             "additionalProperties": false,
-            "description": "An explicitly distinguished obligation within an existing specification or behavioral model. Its content is the authored expression, not a duplicate requirement document. Project authority determines acceptance; declaration alone does not.",
+            "description": "Shared obligation content independent of standalone or embedded expression. Quality criteria and measurement are optional assessment details; verification plans are not execution evidence.",
             "properties": {
-                "applicability_targets": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "applicability_targets_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
+                "applicability": {
+                    "$ref": "#/$defs/Applicability"
                 },
                 "applies_to": {
-                    "$ref": "#/$defs/Applicability"
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "applies_to_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
+                },
+                "criterion": {
+                    "$ref": "#/$defs/QualityCriterion"
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -4497,29 +4517,33 @@
                     "type": "string"
                 },
                 "kind": {
-                    "const": "ObligationClause",
                     "description": "Concrete record type discriminator.",
                     "type": "string"
+                },
+                "measurement_plan": {
+                    "$ref": "#/$defs/MeasurementPlan"
                 },
                 "name": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "obligations": {
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "quality_attribute_labels": {
+                    "description": "Every authored attribute label, including undefined or unbound labels.",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
-                "obligations_content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
-                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
-                },
-                "owner": {
-                    "type": "string"
+                "quality_attributes": {
+                    "description": "Only resolved classifications; original occurrences remain separately addressable.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "rationale": {
                     "$ref": "#/$defs/RichContent"
@@ -4594,7 +4618,189 @@
                     },
                     "type": "array"
                 },
-                "verification": {
+                "verification_plan": {
+                    "$ref": "#/$defs/VerificationPlan"
+                }
+            },
+            "required": [
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "Obligation",
+            "type": "object"
+        },
+        "ObligationClause": {
+            "additionalProperties": false,
+            "description": "An explicitly distinguished obligation within an existing specification or behavioral model. Its content is the authored expression, not a duplicate requirement document. Project authority determines acceptance; declaration alone does not.",
+            "properties": {
+                "applicability": {
+                    "$ref": "#/$defs/Applicability"
+                },
+                "applies_to": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "applies_to_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "criterion": {
+                    "$ref": "#/$defs/QualityCriterion"
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "ObligationClause",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "measurement_plan": {
+                    "$ref": "#/$defs/MeasurementPlan"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "quality_attribute_labels": {
+                    "description": "Every authored attribute label, including undefined or unbound labels.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "quality_attributes": {
+                    "description": "Only resolved classifications; original occurrences remain separately addressable.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "rationale": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "refines": {
+                    "description": "Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "refines_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "refines_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "statement": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "verification_plan": {
                     "$ref": "#/$defs/VerificationPlan"
                 }
             },
@@ -4608,78 +4814,9 @@
             "title": "ObligationClause",
             "type": "object"
         },
-        "OffsetMapSegment": {
+        "ObligationContainer": {
             "additionalProperties": false,
-            "description": "Maps a normalized parser buffer interval to original bytes; segments must be monotone and account for removals/replacements such as BOM and CRLF.",
-            "properties": {
-                "normalized_end": {
-                    "minimum": 0,
-                    "type": "integer"
-                },
-                "normalized_start": {
-                    "minimum": 0,
-                    "type": "integer"
-                },
-                "original_end": {
-                    "minimum": 0,
-                    "type": "integer"
-                },
-                "original_start": {
-                    "minimum": 0,
-                    "type": "integer"
-                },
-                "transformation": {
-                    "description": "Identity, BOM removal, line-ending normalization, or another declared transformation.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "normalized_start",
-                "normalized_end",
-                "original_start",
-                "original_end",
-                "transformation"
-            ],
-            "title": "OffsetMapSegment",
-            "type": "object"
-        },
-        "OpenDecision": {
-            "additionalProperties": false,
-            "description": "An explicitly authored unresolved decision; do not infer every omitted field to be an open decision.",
-            "properties": {
-                "evidence_needed": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "question": {
-                    "$ref": "#/$defs/RichContent"
-                }
-            },
-            "title": "OpenDecision",
-            "type": "object"
-        },
-        "OpenDecisionCollection": {
-            "additionalProperties": false,
-            "description": "Open-decision section narrative and explicitly distinguished question/evidence entries.",
-            "properties": {
-                "content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "decisions": {
-                    "items": {
-                        "$ref": "#/$defs/OpenDecision"
-                    },
-                    "type": "array"
-                }
-            },
-            "required": [
-                "content"
-            ],
-            "title": "OpenDecisionCollection",
-            "type": "object"
-        },
-        "Outcome": {
-            "additionalProperties": false,
-            "description": "A desired outcome owned directly by a job or step. Ownership does not imply inheritance.",
+            "description": "Explicit declaration container for embedded obligation clauses. Traceability alone does not confer containment.",
             "properties": {
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -4723,7 +4860,6 @@
                     "type": "string"
                 },
                 "kind": {
-                    "const": "Outcome",
                     "description": "Concrete record type discriminator.",
                     "type": "string"
                 },
@@ -4740,17 +4876,9 @@
                 "obligations_content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
-                },
-                "owner": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "type": "string"
                 },
                 "relies_on": {
                     "description": "Assumptions on which the validity of this element depends.",
@@ -4774,13 +4902,6 @@
                 },
                 "source_fragment": {
                     "type": "string"
-                },
-                "statement": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "supporting_content": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Explicit support prose or nested bullets belonging to the outcome."
                 },
                 "supports": {
                     "description": "Intended contribution to a goal or user progress; does not assert achievement.",
@@ -4806,13 +4927,81 @@
                 }
             },
             "required": [
-                "owner",
                 "source_document",
                 "decomposition",
                 "id",
                 "kind"
             ],
-            "title": "Outcome",
+            "title": "ObligationContainer",
+            "type": "object"
+        },
+        "OffsetMapSegment": {
+            "additionalProperties": false,
+            "description": "Maps a normalized parser buffer interval to original bytes; segments must be monotone and account for removals/replacements such as BOM and CRLF.",
+            "properties": {
+                "normalized_end": {
+                    "minimum": 0,
+                    "type": "integer"
+                },
+                "normalized_start": {
+                    "minimum": 0,
+                    "type": "integer"
+                },
+                "original_end": {
+                    "minimum": 0,
+                    "type": "integer"
+                },
+                "original_start": {
+                    "minimum": 0,
+                    "type": "integer"
+                },
+                "transformation": {
+                    "description": "Identity, BOM removal, line-ending normalization, or another declared transformation.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "normalized_start",
+                "normalized_end",
+                "original_start",
+                "original_end",
+                "transformation"
+            ],
+            "title": "OffsetMapSegment",
+            "type": "object"
+        },
+        "OpenQuestion": {
+            "additionalProperties": false,
+            "description": "An explicitly authored unresolved question; do not infer every omitted field to be an open question.",
+            "properties": {
+                "evidence_needed": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "question": {
+                    "$ref": "#/$defs/RichContent"
+                }
+            },
+            "title": "OpenQuestion",
+            "type": "object"
+        },
+        "OpenQuestionCollection": {
+            "additionalProperties": false,
+            "description": "Open-decision section narrative and explicitly distinguished question/evidence entries.",
+            "properties": {
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "questions": {
+                    "items": {
+                        "$ref": "#/$defs/OpenQuestion"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "content"
+            ],
+            "title": "OpenQuestionCollection",
             "type": "object"
         },
         "OutcomeCollection": {
@@ -4973,8 +5162,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -5055,8 +5244,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -5163,7 +5352,7 @@
         },
         "QualityCriterion": {
             "additionalProperties": false,
-            "description": "Criterion narrative and optional explicit measurement clauses. A label or parent hierarchy does not supply an omitted threshold.",
+            "description": "Optional assessment details for an obligation statement, including measures, targets and conditions.",
             "properties": {
                 "aggregation": {
                     "$ref": "#/$defs/RichContent"
@@ -5184,9 +5373,6 @@
                     "$ref": "#/$defs/RichContent"
                 },
                 "population": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "statement": {
                     "$ref": "#/$defs/RichContent"
                 },
                 "target": {
@@ -5283,17 +5469,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Recognized Notes content."
                 },
-                "obligations": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "obligations_content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "preamble": {
@@ -5385,32 +5562,18 @@
         },
         "QualityRequirement": {
             "additionalProperties": false,
-            "description": "A quality obligation with authored criterion and measurement guidance; quantitative targets are optional.",
+            "description": "Quality-focused standalone obligation authoring form with the same statement, classification and assessment capabilities as other obligations.",
             "properties": {
-                "applicability_targets": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "applicability_targets_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "applies_to": {
+                "applicability": {
                     "$ref": "#/$defs/Applicability"
                 },
-                "attribute_labels": {
-                    "description": "Every authored attribute label, including undefined or unbound labels.",
+                "applies_to": {
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
-                "attributes": {
-                    "description": "Only resolved classifications; original occurrences remain separately addressable.",
+                "applies_to_references": {
                     "items": {
                         "type": "string"
                     },
@@ -5476,7 +5639,7 @@
                     "description": "Concrete record type discriminator.",
                     "type": "string"
                 },
-                "measurement": {
+                "measurement_plan": {
                     "$ref": "#/$defs/MeasurementPlan"
                 },
                 "name": {
@@ -5496,13 +5659,27 @@
                 "obligations_content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored content between the title and the first named section."
+                },
+                "quality_attribute_labels": {
+                    "description": "Every authored attribute label, including undefined or unbound labels.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "quality_attributes": {
+                    "description": "Only resolved classifications; original occurrences remain separately addressable.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "rationale": {
                     "$ref": "#/$defs/RichContent"
@@ -5566,6 +5743,9 @@
                 "source_fragment": {
                     "type": "string"
                 },
+                "statement": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "supports": {
                     "description": "Intended contribution to a goal or user progress; does not assert achievement.",
                     "items": {
@@ -5591,6 +5771,9 @@
                 "system_context": {
                     "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
                     "type": "string"
+                },
+                "verification_plan": {
+                    "$ref": "#/$defs/VerificationPlan"
                 }
             },
             "required": [
@@ -5827,30 +6010,16 @@
             "additionalProperties": false,
             "description": "A standalone obligation specification. Obligations can also be expressed in use cases and concept contracts; this document family is not the superclass of every normative expression.",
             "properties": {
-                "applicability_targets": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "applicability_targets_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "applies_to": {
+                "applicability": {
                     "$ref": "#/$defs/Applicability"
                 },
-                "attribute_labels": {
-                    "description": "Every authored attribute label, including undefined or unbound labels.",
+                "applies_to": {
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
-                "attributes": {
-                    "description": "Only resolved classifications; original occurrences remain separately addressable.",
+                "applies_to_references": {
                     "items": {
                         "type": "string"
                     },
@@ -5867,6 +6036,9 @@
                 "business_rules": {
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
+                },
+                "criterion": {
+                    "$ref": "#/$defs/QualityCriterion"
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -5912,6 +6084,9 @@
                     "description": "Concrete record type discriminator.",
                     "type": "string"
                 },
+                "measurement_plan": {
+                    "$ref": "#/$defs/MeasurementPlan"
+                },
                 "name": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
@@ -5929,13 +6104,27 @@
                 "obligations_content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored content between the title and the first named section."
+                },
+                "quality_attribute_labels": {
+                    "description": "Every authored attribute label, including undefined or unbound labels.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "quality_attributes": {
+                    "description": "Only resolved classifications; original occurrences remain separately addressable.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "rationale": {
                     "$ref": "#/$defs/RichContent"
@@ -5999,6 +6188,9 @@
                 "source_fragment": {
                     "type": "string"
                 },
+                "statement": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "supports": {
                     "description": "Intended contribution to a goal or user progress; does not assert achievement.",
                     "items": {
@@ -6024,6 +6216,9 @@
                 "system_context": {
                     "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
                     "type": "string"
+                },
+                "verification_plan": {
+                    "$ref": "#/$defs/VerificationPlan"
                 }
             },
             "required": [
@@ -6310,8 +6505,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -6381,8 +6576,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -6571,13 +6766,10 @@
                                 "$ref": "#/$defs/QualityClassification"
                             },
                             {
-                                "$ref": "#/$defs/SupportsJob"
-                            },
-                            {
                                 "$ref": "#/$defs/AppliesTo"
                             },
                             {
-                                "$ref": "#/$defs/BoundaryIs"
+                                "$ref": "#/$defs/HasSubjectSystem"
                             }
                         ]
                     },
@@ -6638,7 +6830,7 @@
                                 "$ref": "#/$defs/ScenarioStep"
                             },
                             {
-                                "$ref": "#/$defs/Extension"
+                                "$ref": "#/$defs/UseCaseExtension"
                             },
                             {
                                 "$ref": "#/$defs/ConceptType"
@@ -6668,7 +6860,7 @@
                                 "$ref": "#/$defs/JobStep"
                             },
                             {
-                                "$ref": "#/$defs/Outcome"
+                                "$ref": "#/$defs/DesiredOutcome"
                             },
                             {
                                 "$ref": "#/$defs/ConceptAction"
@@ -6683,13 +6875,16 @@
                                 "$ref": "#/$defs/ObligationClause"
                             },
                             {
-                                "$ref": "#/$defs/QualityModel"
+                                "$ref": "#/$defs/GeneralRequirement"
                             },
                             {
-                                "$ref": "#/$defs/System"
+                                "$ref": "#/$defs/QualityRequirement"
                             },
                             {
                                 "$ref": "#/$defs/BusinessRule"
+                            },
+                            {
+                                "$ref": "#/$defs/System"
                             },
                             {
                                 "$ref": "#/$defs/Job"
@@ -6701,10 +6896,7 @@
                                 "$ref": "#/$defs/Concept"
                             },
                             {
-                                "$ref": "#/$defs/GeneralRequirement"
-                            },
-                            {
-                                "$ref": "#/$defs/QualityRequirement"
+                                "$ref": "#/$defs/QualityModel"
                             }
                         ]
                     },
@@ -6727,7 +6919,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.8.0-draft",
+                    "const": "0.9.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -7186,17 +7378,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Recognized Notes content."
                 },
-                "obligations": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "obligations_content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "preamble": {
@@ -7505,73 +7688,6 @@
             "title": "Supports",
             "type": "object"
         },
-        "SupportsJob": {
-            "additionalProperties": false,
-            "description": "An explicitly authored semantic support relation; a Related jobs link alone is insufficient.",
-            "properties": {
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "kind": {
-                    "const": "SupportsJob",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
-                    "type": "string"
-                },
-                "object": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "type": "string"
-                },
-                "origin": {
-                    "$ref": "#/$defs/AssertionOrigin"
-                },
-                "projection_path": {
-                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
-                    "type": "string"
-                },
-                "source_nodes": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "source_spans": {
-                    "items": {
-                        "$ref": "#/$defs/ByteSpan"
-                    },
-                    "type": "array"
-                },
-                "subject": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "subject",
-                "object",
-                "projection_path",
-                "origin",
-                "id",
-                "kind"
-            ],
-            "title": "SupportsJob",
-            "type": "object"
-        },
         "Synchronization": {
             "additionalProperties": false,
             "description": "A system-owned composition rule. Narrative and action references describe coordination; no atomicity, execution or completeness is inferred.",
@@ -7638,8 +7754,8 @@
                 "obligations_content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -7782,8 +7898,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -7933,8 +8049,8 @@
                 "obligations_content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "parent_system": {
@@ -8108,17 +8224,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Recognized Notes content."
                 },
-                "obligations": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "obligations_content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "preamble": {
@@ -8252,17 +8359,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "obligations": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "obligations_content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -8417,17 +8515,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "obligations": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "obligations_content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "relies_on": {
@@ -8493,6 +8582,15 @@
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
                 },
+                "bound_type": {
+                    "type": "string"
+                },
+                "bound_type_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "content": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -8520,8 +8618,8 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
@@ -8545,19 +8643,10 @@
                 "source_fragment": {
                     "type": "string"
                 },
-                "type": {
+                "supplying_concept_use": {
                     "type": "string"
                 },
-                "type_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "type_use": {
-                    "type": "string"
-                },
-                "type_use_references": {
+                "supplying_concept_use_references": {
                     "items": {
                         "type": "string"
                     },
@@ -8612,14 +8701,9 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
                 },
-                "boundary": {
-                    "type": "string"
-                },
-                "boundary_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
+                "boundary_description": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Boundary description is independent of directory ownership."
                 },
                 "business_rules": {
                     "$ref": "#/$defs/ContextualReferences",
@@ -8719,8 +8803,8 @@
                 "obligations_content": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "open_decisions": {
-                    "$ref": "#/$defs/OpenDecisionCollection",
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "preamble": {
@@ -8779,28 +8863,17 @@
                 "stakeholder_interests": {
                     "$ref": "#/$defs/StakeholderInterestCollection"
                 },
+                "subject_system": {
+                    "type": "string"
+                },
+                "subject_system_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "success_criterion": {
                     "$ref": "#/$defs/RichContent"
-                },
-                "supported_jobs": {
-                    "items": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            }
-                        ],
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "supported_jobs_content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "supported_jobs_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
                 },
                 "supporting_actors": {
                     "$ref": "#/$defs/ActorCollection"
@@ -8827,10 +8900,6 @@
                     },
                     "type": "array"
                 },
-                "system_boundary": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Boundary description is independent of directory ownership."
-                },
                 "system_context": {
                     "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
                     "type": "string"
@@ -8846,6 +8915,106 @@
                 "kind"
             ],
             "title": "UseCase",
+            "type": "object"
+        },
+        "UseCaseExtension": {
+            "additionalProperties": false,
+            "description": "An explicitly distinguished alternative or failure branch. Full narrative is retained; condition, location and handling are optional decompositions. Condition-only entries are valid.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "authored_label": {
+                    "description": "Optional authored branch label, including nested or relative labels; not a durable ID.",
+                    "type": "string"
+                },
+                "branches": {
+                    "description": "Explicitly authored nested branches, in document order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "condition": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "handling": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored handling narrative, including any resumption, conclusion or unresolved question."
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "UseCaseExtension",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "location": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored branch point, including free prose or labels; no automatic step-number interpretation."
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "open_questions": {
+                    "$ref": "#/$defs/OpenQuestionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "string"
+                },
+                "references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "steps": {
+                    "description": "Explicit handling steps in source order; no execution semantics are inferred.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "owner",
+                "content",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "UseCaseExtension",
             "type": "object"
         },
         "UsesConcept": {
@@ -9049,13 +9218,10 @@
                         "$ref": "#/$defs/QualityClassification"
                     },
                     {
-                        "$ref": "#/$defs/SupportsJob"
-                    },
-                    {
                         "$ref": "#/$defs/AppliesTo"
                     },
                     {
-                        "$ref": "#/$defs/BoundaryIs"
+                        "$ref": "#/$defs/HasSubjectSystem"
                     }
                 ]
             },
@@ -9116,7 +9282,7 @@
                         "$ref": "#/$defs/ScenarioStep"
                     },
                     {
-                        "$ref": "#/$defs/Extension"
+                        "$ref": "#/$defs/UseCaseExtension"
                     },
                     {
                         "$ref": "#/$defs/ConceptType"
@@ -9146,7 +9312,7 @@
                         "$ref": "#/$defs/JobStep"
                     },
                     {
-                        "$ref": "#/$defs/Outcome"
+                        "$ref": "#/$defs/DesiredOutcome"
                     },
                     {
                         "$ref": "#/$defs/ConceptAction"
@@ -9161,13 +9327,16 @@
                         "$ref": "#/$defs/ObligationClause"
                     },
                     {
-                        "$ref": "#/$defs/QualityModel"
+                        "$ref": "#/$defs/GeneralRequirement"
                     },
                     {
-                        "$ref": "#/$defs/System"
+                        "$ref": "#/$defs/QualityRequirement"
                     },
                     {
                         "$ref": "#/$defs/BusinessRule"
+                    },
+                    {
+                        "$ref": "#/$defs/System"
                     },
                     {
                         "$ref": "#/$defs/Job"
@@ -9179,10 +9348,7 @@
                         "$ref": "#/$defs/Concept"
                     },
                     {
-                        "$ref": "#/$defs/GeneralRequirement"
-                    },
-                    {
-                        "$ref": "#/$defs/QualityRequirement"
+                        "$ref": "#/$defs/QualityModel"
                     }
                 ]
             },
@@ -9205,7 +9371,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.8.0-draft",
+            "const": "0.9.0-draft",
             "type": "string"
         },
         "references": {
@@ -9259,5 +9425,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.8.0-draft"
+    "version": "0.9.0-draft"
 }

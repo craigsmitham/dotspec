@@ -1,7 +1,7 @@
 ---
 type: requirement
 id: reject-existing-target
-attributes:
+quality_attributes:
   - source-preservation
 ---
 
@@ -21,7 +21,7 @@ unsuccessful exit status.
 Contributors must not mistake an existing specification for a newly created one.
 An existing target requires an explicit editing decision.
 
-## Verification
+## Verification plan
 
 For each supported specification type, invoke initialization with an existing
 target. Verify the unsuccessful exit status. Cover a regular file, directory,

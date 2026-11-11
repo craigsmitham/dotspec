@@ -34,7 +34,7 @@ Read the output and error streams and the exit status when the process completes
 A successful invocation reports exit status 0; specification findings and invocation
 or operational errors use the distinct outcomes defined by the output contract.
 
-## Operational principle
+## Operational principles
 
 Invoke an operation, read its result, and use the exit status to distinguish success
 from findings or an operational failure. A program can make its next decision from

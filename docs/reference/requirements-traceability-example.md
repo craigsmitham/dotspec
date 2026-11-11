@@ -2,7 +2,7 @@
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.8.0-draft`; mapping `dotspec-markdown/7`. Business/user/software subsets describe concerns; core/supporting/generic classifies model subsets. Artifact kinds and relationships have separate meanings.
+Model `0.9.0-draft`; mapping `dotspec-markdown/8`. Business/user/software subsets describe concerns; core/supporting/generic classifies model subsets. Artifact kinds and relationships have separate meanings.
 
 This view covers only acquired records and resolved explicit relationships within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior. Review candidates are not proven impacts; paths do not establish satisfaction, achieved outcomes, completeness or normative authority.
 
@@ -20,7 +20,7 @@ This view covers only acquired records and resolved explicit relationships withi
 | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) | supports | [Recover lost work](<../../examples/requirements-traceability/specs/jobs/recover.job.spec.md#recover-lost-work>) |
 | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) | relies on | [Trusted time](<../../examples/requirements-traceability/specs/system.spec.md#trusted-time>) |
 | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) | definition | [Trash](<../../examples/requirements-traceability/specs/concepts/trash.concept.spec.md#trash>) |
-| [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) | supports jobs | [Recover lost work](<../../examples/requirements-traceability/specs/jobs/recover.job.spec.md#recover-lost-work>) |
+| [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) | supports | [Recover lost work](<../../examples/requirements-traceability/specs/jobs/recover.job.spec.md#recover-lost-work>) |
 | [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) | involves | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) |
 | [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) | supports | [Recover lost work](<../../examples/requirements-traceability/specs/jobs/recover.job.spec.md#recover-lost-work>) |
 | [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) | derived from | [Recovery window](<../../examples/requirements-traceability/specs/business-rules/retention.business-rule.spec.md#recovery-window>) |
@@ -60,7 +60,7 @@ flowchart BT
     n5 -->|"supports"| n2
     n5 -->|"relies on"| n7
     n5 -->|"definition"| n1
-    n8 -->|"supports jobs"| n2
+    n8 -->|"supports"| n2
     n8 -->|"involves"| n5
     n9 -->|"supports"| n2
     n9 -->|"derived from"| n0
@@ -83,7 +83,7 @@ Reverse navigation is generated from the same typed fields. Each direct candidat
 | --- | --- | --- |
 | [Recovery window](<../../examples/requirements-traceability/specs/business-rules/retention.business-rule.spec.md#recovery-window>) | [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) (derived from) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) |
 | [Trash](<../../examples/requirements-traceability/specs/concepts/trash.concept.spec.md#trash>) | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) (definition) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>); [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>); [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) |
-| [Recover lost work](<../../examples/requirements-traceability/specs/jobs/recover.job.spec.md#recover-lost-work>) | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) (supports); [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) (supports jobs); [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) (supports) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) |
+| [Recover lost work](<../../examples/requirements-traceability/specs/jobs/recover.job.spec.md#recover-lost-work>) | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) (supports); [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) (supports); [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) (supports) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) |
 | [Document workspace](<../../examples/requirements-traceability/specs/system.spec.md#document-workspace>) | [Recovery window](<../../examples/requirements-traceability/specs/business-rules/retention.business-rule.spec.md#recovery-window>) (applies to) | [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>); [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) |
 | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) (applies to); [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) (involves); [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) (applies to) | None recorded in acquired scope |
 | [Reduce lost work](<../../examples/requirements-traceability/specs/system.spec.md#reduce-lost-work>) | [Recovery window](<../../examples/requirements-traceability/specs/business-rules/retention.business-rule.spec.md#recovery-window>) (supports); [Recover lost work](<../../examples/requirements-traceability/specs/jobs/recover.job.spec.md#recover-lost-work>) (supports) | [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>); [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>); [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>); [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) |
@@ -97,8 +97,8 @@ This inventory covers standalone requirements and explicitly distinguished oblig
 
 | Obligation | Authored check guidance | Execution evidence |
 | --- | --- | --- |
-| [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) | Recorded in source (verification) | Not evaluated |
-| [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) | Recorded in source (verification) | Not evaluated |
+| [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) | Recorded in source (verification plan) | Not evaluated |
+| [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) | Recorded in source (verification plan) | Not evaluated |
 
 ## Review findings
 

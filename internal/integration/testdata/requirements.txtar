@@ -98,7 +98,7 @@ Unchanged source content.
 ---
 type: requirement
 id: preserve
-attributes: [preservation]
+quality_attributes: [preservation]
 ---
 # Preserve source
 ## Applies to
@@ -107,22 +107,22 @@ Inspection of source files.
 Inspection must leave source bytes unchanged.
 ## Rationale
 Preserve authored work.
-## Verification
+## Verification plan
 Compare before and after bytes.
 ## Related specifications
-[Quality](../quality/work.quality.spec.md#criterion)
+[Quality](../quality/work.quality.spec.md#statement)
 [Term](../system.spec.md#scan)
 -- quality.md --
 ---
 type: quality
-attributes: [preservation]
+quality_attributes: [preservation]
 ---
 # Repeatable inspection
 ## Applies to
 Unchanged sources and environment.
-## Criterion
+## Statement
 Repeated inspections yield equivalent findings.
-## Measurement
+## Measurement plan
 Repeat the same inspection and compare results.
 ## Rationale
 Support meaningful comparisons.

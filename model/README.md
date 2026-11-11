@@ -1,7 +1,7 @@
 # Specification model
 
 [dotspec.yaml](dotspec.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.8.0-draft`; the JSON
+specification snapshots. The model version is `0.9.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
@@ -63,7 +63,9 @@ hand-maintained endpoint table.
 
 For each class:
 
-- `ancestors` includes the class itself followed by its base classes.
+- `ancestors` includes the class itself, base classes and mixed-in capabilities.
+- `mixins` records explicitly declared reusable capabilities; `is_a` records the
+  primary superclass.
 - `abstract`, `description` and `annotations` retain model declarations. Typed
   assertion classes use the `projection_of` annotation where a relation is a
   materialized view of canonical fields. `owned_memberships` identifies canonical
@@ -143,7 +145,7 @@ derived. Markdown uses `Sub-attribute of`; the older `Broader` and provisional
 `ancestors` instead of `broader`. See the [grouping rationale](../docs/specification-model.md#quality-attribute-grouping).
 
 The `0.5.0-draft` model and mapping profile `dotspec-markdown/4` simplify use-case
-narratives. Extension `handling` replaces `response` and `continuation`, `steps`
+narratives. UseCaseExtension `handling` replaces `response` and `continuation`, `steps`
 replaces `flow`, and `at_step` and `handling_state` are removed along with the
 HandlingState enum. ScenarioStep retains label, content and references; separate
 actor, action, response and outcome fields are removed. Both types use ordinary
@@ -160,7 +162,7 @@ The `0.6.0-draft` model and mapping profile `dotspec-markdown/5` add explicit
 concept types, named system uses, type bindings, synchronizations, qualified action
 references, and application dependencies. Dependencies may cycle. Concepts retain
 optional initial and derived state, named action parameters/results and initiation
-narrative. Singular and plural Operational principle headings map to the same rich
+narrative. Singular and plural Operational principles headings map to the same rich
 content field; they cannot both appear in one document. Existing prose remains
 valid and no synchronization semantics are inferred.
 
@@ -180,7 +182,7 @@ The `0.7.0-draft` model and `dotspec-markdown/6` consolidate relationships:
 - Every concrete assertion is a projection with required endpoints and
   `projection_path`. Canonical typed fields remain authoritative, including when
   assertion views are omitted. Existing snapshots must be re-exported.
-- BoundaryIs, SupportsJob and AppliesTo have explicit Markdown authoring forms and
+- BoundaryIs, Supports and AppliesTo have explicit Markdown authoring forms and
   canonical fields. AppliesTo accepts BusinessRule as well as Requirement subjects.
 - Record-reference slots declare relationship categories, scope, inverse, ordering,
   cycle policy and provenance basis. These edge categories do not alter subset
@@ -217,3 +219,24 @@ Re-export source with this version; saved snapshots are not silently migrated.
 See [Requirements layers](../docs/requirements-layers.md),
 [authoring relationships](../docs/develop-relationships.md), and the
 [generated traceability example](../docs/reference/requirements-traceability-example.md).
+
+
+The `0.9.0-draft` model and `dotspec-markdown/8` unify obligation capabilities:
+
+- `Obligation` gives both standalone requirement forms and embedded clauses a
+  statement, quality classification, applicability, refinement and assessment plans.
+  Criterion and Measurement plan are optional assessment detail; Statement carries
+  the obligation itself.
+- `ObligationContainer` explicitly grants clause containment, separately from
+  `TraceableElement`. Goals, assumptions and desired outcomes retain trace links
+  without gaining nested obligations.
+- Canonical names distinguish meaning: `quality_attributes`, `applies_to` targets
+  versus `applicability` narrative, `subject_system` versus `boundary_description`,
+  `verification_plan`, `measurement_plan`, `operational_principles`, `DesiredOutcome`,
+  `UseCaseExtension`, `OpenQuestion`, `bound_type` and `supplying_concept_use`.
+- Use cases use the shared Supports heading and relationship. Type bindings use
+  Bound type and Supplying concept use fields; synchronization entries use Concept use.
+- Generated diagrams use schema-owned human labels and explicit cardinalities,
+  with quality classification separated from behavior and source machinery.
+
+There are no compatibility aliases. Re-export Markdown using the current profile.

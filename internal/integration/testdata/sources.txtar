@@ -64,7 +64,7 @@ Find the executable specification.
 Referenced project sources.
 ## Actions
 Read the native definition.
-## Operational principle
+## Operational principles
 Follow the link for required behavior.
 [Native definition](../../native.tla)
 [Directory](../../more-tests/)
@@ -75,9 +75,9 @@ type: quality
 # Preserve source
 ## Applies to
 Read commands.
-## Criterion
+## Statement
 Source files remain unchanged.
-## Measurement
+## Measurement plan
 Compare before and after bytes.
 [Supporting material](../../native.tla)
 ## Rationale

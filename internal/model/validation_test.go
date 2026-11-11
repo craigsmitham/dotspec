@@ -102,14 +102,14 @@ A set of source files.
 ## Actions
 ### Inspect
 Return the authored content and findings.
-## Operational principle
+## Operational principles
 Inspection preserves original sources.
 ## Additional
 Keep this authored content even though its domain role is unknown.
 `,
 		"specs/requirements/preserve.requirement.spec.md": `---
 type: requirement
-attributes:
+quality_attributes:
 - reliable
 ---
 # Preserve source
@@ -117,7 +117,7 @@ attributes:
 Inspection preserves the original source bytes.
 ## Applies to
 Source inspection.
-## Verification
+## Verification plan
 Compare the bytes before and after inspection.
 `,
 	}
@@ -211,7 +211,7 @@ func TestValidationAcceptsCompleteSourceBackedExport(t *testing.T) {
 	system := elementKind(t, snapshot, "System")
 	attributeIDs := Strings(system["quality_attributes"])
 	if len(attributeIDs) != 2 {
-		t.Fatalf("system attributes: %v", attributeIDs)
+		t.Fatalf("system quality_attributes: %v", attributeIDs)
 	}
 	for _, id := range attributeIDs {
 		if String(snapshotRecord(t, snapshot, id), "owner") != String(system, "id") {
@@ -268,7 +268,7 @@ func TestValidationRejectsCorruptGraph(t *testing.T) {
 			elementKind(t, s, "UseCase")["authored_id"] = "duplicate"
 			elementKind(t, s, "Scenario")["authored_id"] = "duplicate"
 		}},
-		{"unjustified classification", "label.projection", func(s *Snapshot) { elementKind(t, s, "GeneralRequirement")["attributes"] = []string{} }},
+		{"unjustified classification", "label.projection", func(s *Snapshot) { elementKind(t, s, "GeneralRequirement")["quality_attributes"] = []string{} }},
 		{"unbound quality attributes", "label.unbound", func(s *Snapshot) {
 			delete(elementKind(t, s, "GeneralRequirement"), "system_context")
 			for _, label := range s.LabelOccurrences {
@@ -416,7 +416,7 @@ func TestValidationAllowsFaithfulFailuresAndUnboundLabels(t *testing.T) {
 		s := cloneSnapshot(t, original)
 		r := elementKind(t, s, "GeneralRequirement")
 		delete(r, "system_context")
-		delete(r, "attributes")
+		delete(r, "quality_attributes")
 		for _, label := range s.LabelOccurrences {
 			if String(label, "owner") == String(r, "id") {
 				delete(label, "system_context")
@@ -488,8 +488,8 @@ func TestValidationRejectsDomainCyclesAndAttributeScopeEscape(t *testing.T) {
 	})
 	t.Run("nested branch cycle", func(t *testing.T) {
 		s := cloneSnapshot(t, original)
-		branch := elementKind(t, s, "Extension")
-		second := Record{"id": "second-branch", "kind": "Extension", "source_document": branch["source_document"], "decomposition": "unsegmented", "owner": branch["id"], "content": branch["content"], "branches": []string{String(branch, "id")}}
+		branch := elementKind(t, s, "UseCaseExtension")
+		second := Record{"id": "second-branch", "kind": "UseCaseExtension", "source_document": branch["source_document"], "decomposition": "unsegmented", "owner": branch["id"], "content": branch["content"], "branches": []string{String(branch, "id")}}
 		branch["owner"] = "second-branch"
 		branch["branches"] = []string{"second-branch"}
 		s.Elements = append(s.Elements, second)
@@ -508,7 +508,7 @@ func TestValidationRejectsDomainCyclesAndAttributeScopeEscape(t *testing.T) {
 func TestValidationAllowsUndefinedQualityLabel(t *testing.T) {
 	s := validationSnapshot(t)
 	requirement := elementKind(t, s, "GeneralRequirement")
-	requirement["attributes"] = []string{}
+	requirement["quality_attributes"] = []string{}
 	for _, label := range s.LabelOccurrences {
 		if String(label, "owner") == String(requirement, "id") {
 			label["label"] = "unavailable"

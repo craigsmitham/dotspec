@@ -77,13 +77,13 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		var v *requirement.Requirement
 		v, err = requirement.Parse(doc.Data)
 		if err == nil {
-			authoredID, labels = v.ID, v.Attributes
+			authoredID, labels = v.ID, v.QualityAttributes
 		}
 	case "quality":
 		var v *quality.Requirement
 		v, err = quality.Parse(doc.Data)
 		if err == nil {
-			authoredID, labels = v.ID, v.Attributes
+			authoredID, labels = v.ID, v.QualityAttributes
 		}
 	default:
 		err = fmt.Errorf("no domain mapping for specification type %q", kind)
@@ -137,7 +137,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		case "use-case":
 			mapped = m.useCase(r, section)
 		case "requirement", "quality":
-			mapped = m.requirement(r, section, kind)
+			mapped = m.requirement(r, section)
 		}
 		if !mapped {
 			m.extension(r, section)
@@ -357,8 +357,8 @@ func (m *domainMapper) common(r Record, s *Section) bool {
 		m.section(r, "notes", s)
 	case "Evidence":
 		m.evidence(r, "evidence", s)
-	case "Open decision", "Open decisions", "Open question", "Open questions":
-		m.openDecisions(r, []*Section{s})
+	case "Open question", "Open questions":
+		m.openQuestions(r, []*Section{s})
 	default:
 		return false
 	}
@@ -595,18 +595,18 @@ func (m *domainMapper) metadataNode(key, value string) string {
 }
 
 func (m *domainMapper) classification(r Record, labels []string) {
-	if yamlValue(m.doc.Metadata, "attributes") == nil {
+	if yamlValue(m.doc.Metadata, "quality_attributes") == nil {
 		return
 	}
-	r["attribute_labels"] = []string{}
+	r["quality_attribute_labels"] = []string{}
 	for _, label := range labels {
-		node := m.metadataNode("attributes", label)
+		node := m.metadataNode("quality_attributes", label)
 		if node == "" {
 			continue
 		}
 		id := m.label(r, label, node, "quality_classification")
-		appendID(r, "attribute_labels", id)
-		m.bind(r, "attribute_labels", []string{node}, "named_field", "quality-label")
+		appendID(r, "quality_attribute_labels", id)
+		m.bind(r, "quality_attribute_labels", []string{node}, "named_field", "quality-label")
 	}
 }
 

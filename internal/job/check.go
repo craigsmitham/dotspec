@@ -34,7 +34,7 @@ func Check(job *Job) []diagnostic.Diagnostic {
 	if strings.TrimSpace(job.Performer) == "" {
 		add("job.performer", "Performer", "Identify who is trying to accomplish the job.", sectionLocation("Performer"))
 	}
-	checkOutcomes := func(outcomes []Outcome, location string) {
+	checkOutcomes := func(outcomes []DesiredOutcome, location string) {
 		for i, outcome := range outcomes {
 			label := outcome.ID
 			if label == "" {

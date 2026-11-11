@@ -28,8 +28,8 @@ func (m *domainMapper) composition(r Record, s *Section) bool {
 						v := m.named("TypeBinding", x, binding)
 						m.section(v, "content", binding)
 						m.designField(v, "parameter", binding, "Parameter")
-						m.designField(v, "type", binding, "Type")
-						m.designField(v, "type_use", binding, "Use")
+						m.designField(v, "bound_type", binding, "Bound type")
+						m.designField(v, "supplying_concept_use", binding, "Supplying concept use")
 						m.primitive(v, binding)
 						for _, detail := range binding.Children {
 							m.extension(v, detail)
@@ -62,13 +62,13 @@ func (m *domainMapper) composition(r Record, s *Section) bool {
 					}
 					// Only explicit Use/Action fields distinguish an action reference.
 					// Other explanatory headings remain extension sections.
-					if m.fieldNodes(item, "Use") == nil && m.fieldNodes(item, "Action") == nil {
+					if m.fieldNodes(item, "Concept use") == nil && m.fieldNodes(item, "Action") == nil {
 						m.extension(x, item)
 						continue
 					}
 					v := m.named("SynchronizationAction", x, item)
 					m.section(v, "content", item)
-					m.designField(v, "concept_use", item, "Use")
+					m.designField(v, "concept_use", item, "Concept use")
 					m.designField(v, "action", item, "Action")
 					for _, detail := range item.Children {
 						slot := map[string]string{"Arguments": "arguments", "Result": "result"}[detail.Title]

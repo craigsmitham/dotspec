@@ -36,7 +36,7 @@ State one required result, rule, property, or restriction. Use general rules or 
 
 Explain why this obligation is needed and reference its source or governing goal.
 
-## Verification
+## Verification plan
 
 Describe how to establish that the obligation holds, including success criteria and evidence to retain.
 `
@@ -48,8 +48,6 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 type Requirement struct {
 	Type string `json:"type"`
 	*obligation.Content
-	Statement    string `json:"statement"`
-	Verification string `json:"verification"`
 }
 
 func ValidateSlug(slug string) error {
@@ -86,9 +84,9 @@ func Read(path string) (*Requirement, error) {
 
 // Parse interprets the general requirement form without filesystem access.
 func Parse(data []byte) (*Requirement, error) {
-	content, statement, verification, err := obligation.Parse(data, Layout.Kind, "Statement", "Verification")
+	content, err := obligation.Parse(data, Layout.Kind)
 	if err != nil {
 		return nil, err
 	}
-	return &Requirement{Type: Layout.Kind, Content: content, Statement: statement, Verification: verification}, nil
+	return &Requirement{Content: content, Type: Layout.Kind}, nil
 }

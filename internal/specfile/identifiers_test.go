@@ -16,8 +16,8 @@ func TestIdentifiersRetainDefinitionsWithinOneDocument(t *testing.T) {
 	if err := ids.Register("", "unidentified draft", diagnostic.Location{}); err != nil {
 		t.Fatal(err)
 	}
-	second := diagnostic.Location{Line: 12, Column: 1, Element: "measurement"}
-	err := ids.Register("QR-1", "measurement", second)
+	second := diagnostic.Location{Line: 12, Column: 1, Element: "measurement_plan"}
+	err := ids.Register("QR-1", "measurement_plan", second)
 	var finding *diagnostic.Diagnostic
 	if !errors.As(err, &finding) || finding.Rule != "identity.duplicate" || finding.Location != second || len(finding.Related) != 1 || finding.Related[0] != first {
 		t.Fatalf("lost duplicate definitions: %+v (%v)", finding, err)

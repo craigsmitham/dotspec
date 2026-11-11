@@ -64,7 +64,7 @@ type BusinessRule struct {
 	Slug                  string                         `json:"slug"`
 	Name                  string                         `json:"name"`
 	Statement             string                         `json:"statement"`
-	AppliesTo             string                         `json:"applies_to"`
+	Applicability         string                         `json:"applicability"`
 	Rationale             string                         `json:"rationale"`
 	Authority             string                         `json:"authority"`
 	Exceptions            string                         `json:"exceptions"`
@@ -125,7 +125,7 @@ func Parse(data []byte) (*BusinessRule, error) {
 	}
 	ids.AddAnchors(doc.Anchors)
 	fields := map[string]*string{
-		"Statement": &spec.Statement, "Applies to": &spec.AppliesTo,
+		"Statement": &spec.Statement, "Applies to": &spec.Applicability,
 		"Rationale": &spec.Rationale, "Authority": &spec.Authority,
 		"Exceptions": &spec.Exceptions, "Related specifications": &spec.RelatedSpecifications,
 	}

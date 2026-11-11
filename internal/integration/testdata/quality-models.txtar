@@ -91,8 +91,8 @@ stdout 'Added 3 attributes'
 status 0 dotspec quality init resilient-service
 cp ../resilient-service.md specs/quality/resilient-service.quality.spec.md
 status 0 dotspec quality show resilient-service
-stdout 'Attributes: resilience'
-stdout 'Ancestor attributes: reliable, secure'
+stdout 'Quality attributes: resilience'
+stdout 'Ancestor quality attributes: reliable, secure'
 status 0 dotspec quality list --attribute reliable
 stdout 'Resilient service'
 status 0 dotspec quality list --attribute secure
@@ -143,14 +143,14 @@ type: quality-model
 -- resilient-service.md --
 ---
 type: quality
-attributes: [resilience]
+quality_attributes: [resilience]
 ---
 # Resilient service
 ## Applies to
 Loss of one service instance.
-## Criterion
+## Statement
 At least one instance remains able to serve requests.
-## Measurement
+## Measurement plan
 Stop one instance and send a request.
 ## Rationale
 Continue useful service during disruption.

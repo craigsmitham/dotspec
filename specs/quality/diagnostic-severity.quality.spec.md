@@ -1,7 +1,7 @@
 ---
 type: quality
 id: diagnostic-severity
-attributes:
+quality_attributes:
   - diagnosability
   - accessibility
 ---
@@ -12,12 +12,12 @@ attributes:
 
 Human-readable reports from project-wide and focused specification checks.
 
-## Criterion
+## Statement
 
 Every diagnostic must identify its severity using a text label independently
 of terminal styling.
 
-## Measurement
+## Measurement plan
 
 Render reports containing each supported diagnostic severity. Capture output
 with terminal-style environment settings and in redirected-output conditions,

@@ -15,12 +15,8 @@ func (m *domainMapper) useCase(r Record, s *Section) bool {
 	}
 	switch s.Title {
 	case "System boundary":
-		m.section(r, "system_boundary", s)
-		m.designField(r, "boundary", s, "System")
-	case "Supports jobs":
-		m.section(r, "supported_jobs_content", s)
-		r["supported_jobs_references"] = m.references(s.Content)
-		m.bindDesignReferences(r, "supported_jobs_references")
+		m.section(r, "boundary_description", s)
+		m.designField(r, "subject_system", s, "Subject system")
 	case "Primary actor":
 		r["primary_actor"] = m.actor(s.Content)
 		m.sectionBindings(r, "primary_actor.content", s)
@@ -206,7 +202,7 @@ func authoredLabel(pattern *regexp.Regexp, text string) string {
 }
 
 func (m *domainMapper) branch(owner Record, s *Section) Record {
-	x := m.named("Extension", owner, s)
+	x := m.named("UseCaseExtension", owner, s)
 	m.section(x, "content", s)
 	if label := authoredLabel(explicitBranch, s.Title); label != "" {
 		x["authored_label"] = label
@@ -285,7 +281,7 @@ func (m *domainMapper) listBranches(owner Record, nodes []string) []string {
 }
 
 func (m *domainMapper) listBranch(owner Record, id string) Record {
-	x := m.record("Extension", String(owner, "id"))
+	x := m.record("UseCaseExtension", String(owner, "id"))
 	x["authored_label"] = authoredLabel(explicitBranch, m.doc.Text(id))
 	x["content"] = m.doc.Rich([]string{id})
 	x["references"] = m.references([]string{id})

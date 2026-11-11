@@ -7,7 +7,7 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 	source := "---\r\ntype: quality-model\r\nid: team\r\n---\r\n# Team\r\n## Description\r\nA reusable model.\r\n## Edition\r\nOne\r\n## Sources\r\n[Original](https://example.test/model).\r\n## Quality attributes\r\nSection narrative.\r\n### Broad\r\n**ID:** broad\r\nA concern.\r\n### Narrow\r\n**ID:** narrow\r\n**Sub-attribute of:** broad, second\r\nA specific concern.\r\n### Second\r\n**ID:** second\r\nAnother grouping.\r\n## Custom\r\nRetain me.\r\n"
 	conformanceWrite(t, root, "specs/quality-models/team.quality-model.spec.md", "\ufeff"+source)
 	conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n### Broad\n**ID:** broad\nA distinct local concern.\n")
-	conformanceWrite(t, root, "specs/quality/obligation.quality.spec.md", "---\ntype: quality\nattributes: [broad, narrow]\n---\n# Obligation\n")
+	conformanceWrite(t, root, "specs/quality/obligation.quality.spec.md", "---\ntype: quality\nquality_attributes: [broad, narrow]\n---\n# Obligation\n")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
 		t.Fatalf("exit %d", result.ExitCode)

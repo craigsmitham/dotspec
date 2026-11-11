@@ -56,7 +56,7 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 var fieldPattern = regexp.MustCompile(`^\*\*(ID|Stage):\*\*\s*(.*?)\s*$`)
 var outcomePattern = regexp.MustCompile(`^\*\*([^*]+):\*\*\s*`)
 
-type Outcome struct {
+type DesiredOutcome struct {
 	ID        string              `json:"id,omitempty"`
 	Statement string              `json:"statement"`
 	Location  diagnostic.Location `json:"location"`
@@ -69,7 +69,7 @@ type Step struct {
 	Description string              `json:"description"`
 	Location    diagnostic.Location `json:"location"`
 	IDLocation  diagnostic.Location `json:"-"`
-	Outcomes    []Outcome           `json:"outcomes"`
+	Outcomes    []DesiredOutcome    `json:"outcomes"`
 }
 
 type Job struct {
@@ -85,7 +85,7 @@ type Job struct {
 	ProgressCases    string                         `json:"progress_cases"`
 	Evidence         string                         `json:"evidence"`
 	Steps            []Step                         `json:"steps"`
-	Outcomes         []Outcome                      `json:"outcomes"`
+	Outcomes         []DesiredOutcome               `json:"outcomes"`
 	Markdown         string                         `json:"markdown"`
 	Path             string                         `json:"path"`
 	System           *system.System                 `json:"system"`
@@ -132,7 +132,7 @@ func Parse(data []byte) (*Job, error) {
 	if err != nil {
 		return nil, err
 	}
-	job := &Job{Steps: []Step{}, Outcomes: []Outcome{}, ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
+	job := &Job{Steps: []Step{}, Outcomes: []DesiredOutcome{}, ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
 	var ids specfile.Identifiers
 	if err := ids.Register(job.ID, "job", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err
@@ -205,11 +205,11 @@ func Parse(data []byte) (*Job, error) {
 		return nil, err
 	}
 	if job.Outcomes == nil {
-		job.Outcomes = []Outcome{}
+		job.Outcomes = []DesiredOutcome{}
 	}
 	for i := range job.Steps {
 		if job.Steps[i].Outcomes == nil {
-			job.Steps[i].Outcomes = []Outcome{}
+			job.Steps[i].Outcomes = []DesiredOutcome{}
 		}
 	}
 	job.References = doc.References()
@@ -217,7 +217,7 @@ func Parse(data []byte) (*Job, error) {
 }
 
 func parseStep(doc *specfile.Outline, section *specfile.Section) (Step, error) {
-	step := Step{Outcomes: []Outcome{}, Name: section.Title, Location: doc.Location(section.Start, section.Title)}
+	step := Step{Outcomes: []DesiredOutcome{}, Name: section.Title, Location: doc.Location(section.Start, section.Title)}
 	fields := make(map[string]string)
 	fieldLocations := make(map[string]diagnostic.Location)
 	fieldLines := make(map[int]bool)
@@ -276,8 +276,8 @@ func parseStep(doc *specfile.Outline, section *specfile.Section) (Step, error) {
 	return step, nil
 }
 
-func parseOutcomes(doc *specfile.Outline, section *specfile.Section) ([]Outcome, error) {
-	var outcomes []Outcome
+func parseOutcomes(doc *specfile.Outline, section *specfile.Section) ([]DesiredOutcome, error) {
+	var outcomes []DesiredOutcome
 	for _, node := range doc.Nodes(section) {
 		list, ok := node.(*ast.List)
 		if !ok {
@@ -293,7 +293,7 @@ func parseOutcomes(doc *specfile.Outline, section *specfile.Section) ([]Outcome,
 				}
 			}
 			statement := strings.TrimSpace(strings.Join(paragraphs, "\n\n"))
-			outcome := Outcome{Statement: statement, Location: location}
+			outcome := DesiredOutcome{Statement: statement, Location: location}
 			if match := outcomePattern.FindStringSubmatch(statement); match != nil {
 				outcome.ID = match[1]
 				outcome.Statement = strings.TrimSpace(strings.TrimPrefix(statement, match[0]))

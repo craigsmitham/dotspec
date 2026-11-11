@@ -44,7 +44,7 @@ returns an empty result; an unknown step is an error.
 The [job commands](../../README.md#job-commands) define the CLI operations and
 output formats for these views.
 
-## Operational principle
+## Operational principles
 
 Describe a job such as
 [Develop Requirements](../jobs/develop-requirements.job.spec.md), then add steps

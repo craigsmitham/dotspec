@@ -81,7 +81,7 @@ func TestParsePreservesUseCaseAndDistinctFields(t *testing.T) {
 		"preconditions":     "The selected project directory exists and is readable.",
 		"success criterion": "The contributor receives a complete report for the selected scope.",
 	}
-	actual := map[string]string{"goal": got.Goal, "system boundary": got.SystemBoundary, "primary actor": got.PrimaryActor, "goal level": got.GoalLevel, "trigger": got.Trigger, "preconditions": got.Preconditions, "success criterion": got.SuccessCriterion}
+	actual := map[string]string{"goal": got.Goal, "system boundary": got.BoundaryDescription, "primary actor": got.PrimaryActor, "goal level": got.GoalLevel, "trigger": got.Trigger, "preconditions": got.Preconditions, "success criterion": got.SuccessCriterion}
 	if !reflect.DeepEqual(actual, want) {
 		t.Fatalf("fields: %v; want %v", actual, want)
 	}

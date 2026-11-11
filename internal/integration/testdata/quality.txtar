@@ -6,7 +6,7 @@ status 0 dotspec quality init work --json
 stdout '"schema_version": 1'
 ! stderr .
 status 0 dotspec quality show work --json
-stdout '"attributes": \[\]'
+stdout '"quality_attributes": \[\]'
 stdout '"system": null'
 cp ../model.md specs/system.spec.md
 cp ../requirement.md specs/quality/work.quality.spec.md
@@ -19,8 +19,8 @@ status 0 dotspec quality list --attribute usability --json
 stdout '"name": "Accessible diagnostics"'
 stdout '"attribute": "usability"'
 status 0 dotspec quality show work
-stdout 'Attributes: diagnostics, accessibility'
-stdout 'Ancestor attributes: usability'
+stdout 'Quality attributes: diagnostics, accessibility'
+stdout 'Ancestor quality attributes: usability'
 status 0 dotspec quality check work --json
 stdout '"context_files_checked": 1'
 stdout '"advice": 0'
@@ -71,21 +71,21 @@ Accessible output.
 -- requirement.md --
 ---
 type: quality
-attributes: [diagnostics, accessibility]
+quality_attributes: [diagnostics, accessibility]
 ---
 # Accessible diagnostics
 ## Applies to
 Human-readable check reports.
-## Criterion
+## Statement
 Every diagnostic identifies its severity in text.
-## Measurement
+## Measurement plan
 Capture output for every severity.
 ## Rationale
 Contributors can distinguish severities without color.
 -- unknown.md --
 ---
 type: quality
-attributes: [unknown]
+quality_attributes: [unknown]
 ---
 # Unknown classification
 -- cycle.md --

@@ -20,7 +20,7 @@ the benefit requires several independent purposes, consider separate concepts an
 a composition rule.
 
 Create a draft with `dotspec concept init shorthand`. Purpose, State, Actions and
-Operational principle are conventional sections; unfinished descriptions remain
+Operational principles are conventional sections; unfinished descriptions remain
 valid. Model export preserves every section, including unknown details.
 
 ## Write the operational principles
@@ -29,8 +29,7 @@ Tell one or a few short stories explaining why the design works. Use actions and
 observable state, without prescribing buttons or screen layouts. Include enough
 history to reveal the benefit, and any conditions on which the story depends.
 
-Both `## Operational principle` and `## Operational principles` are supported;
-use one spelling per document. Named subsections distinguish stories without
+Use `## Operational principles` once per document. Named subsections distinguish stories without
 requiring scenario records. For Trash, recovery and permanent removal can be two
 stories. The stories need not all be successful actor-goal tasks.
 
@@ -118,8 +117,8 @@ In a system specification, explicitly name each inclusion under `## Concept uses
 ##### Resources
 
 **Parameter:** [Resource](concepts/expiry.concept.spec.md#resource)
-**Type:** [Code](concepts/shorthand.concept.spec.md#code)
-**Use:** [PublicLinks](#publiclinks)
+**Bound type:** [Code](concepts/shorthand.concept.spec.md#code)
+**Supplying concept use:** [PublicLinks](#publiclinks)
 ```
 
 Here PublicExpiry's resource type comes specifically from PublicLinks. An
@@ -141,7 +140,7 @@ Add `## Synchronizations` to the system specification and give each rule an H3
 heading. When, Where, Then and Semantics are H4 subsections. Start in prose.
 
 To distinguish action references, add H5 entries under When or Then with explicit
-Use and Action fields:
+Concept use and Action fields:
 
 ```markdown
 ### Start a lifetime
@@ -150,7 +149,7 @@ Use and Action fields:
 
 ##### Registration completed
 
-**Use:** [PublicLinks](#publiclinks)
+**Concept use:** [PublicLinks](#publiclinks)
 **Action:** [Register](concepts/shorthand.concept.spec.md#register)
 
 ###### Result
@@ -161,7 +160,7 @@ Successful completion returning the newly registered code.
 
 ##### Allocate lifetime
 
-**Use:** [PublicExpiry](#publicexpiry)
+**Concept use:** [PublicExpiry](#publicexpiry)
 **Action:** [Allocate](concepts/expiry.concept.spec.md#allocate)
 
 ###### Arguments

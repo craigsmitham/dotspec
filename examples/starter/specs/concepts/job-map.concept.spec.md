@@ -18,7 +18,7 @@ Describe or reference the available actions, their inputs and outputs, condition
 Distinguish caller assumptions from enforced guards, and state rejection behavior where it matters.
 Use subheadings for individual actions when useful.
 
-## Operational principle
+## Operational principles
 
 Tell a characteristic story showing how the actions and state fulfill the purpose.
 Use multiple stories when needed to explain the essential behavior.

@@ -37,7 +37,7 @@ This subsection describes the action's state; it is not another concept section.
 ### View a map
 Display steps in authored order. This does not require that execution order.
 
-## Operational principle
+## Operational principles
 Describe the steps, attach outcomes, and view the map to see how they fit together.
 
 ## Instantiation
@@ -57,10 +57,10 @@ func TestParsePreservesConceptAndDistinctFields(t *testing.T) {
 	if spec.Markdown != strings.TrimSpace(body) || spec.ID != "job-map" || spec.Name != "Job Map" || spec.System != nil {
 		t.Fatalf("authored content or identity changed: %+v", spec)
 	}
-	if spec.Purpose != "Understand an accomplishment and its success criteria." || !strings.Contains(spec.State, "| Step |") || !strings.Contains(spec.Actions, "#### State") || !strings.HasPrefix(spec.OperationalPrinciple, "Describe the steps") {
+	if spec.Purpose != "Understand an accomplishment and its success criteria." || !strings.Contains(spec.State, "| Step |") || !strings.Contains(spec.Actions, "#### State") || !strings.HasPrefix(spec.OperationalPrinciples, "Describe the steps") {
 		t.Fatalf("lost section content: %+v", spec)
 	}
-	if strings.Contains(spec.State, "This subsection") || strings.Contains(spec.OperationalPrinciple, "JobMap<StepId>") || len(Check(spec)) != 0 {
+	if strings.Contains(spec.State, "This subsection") || strings.Contains(spec.OperationalPrinciples, "JobMap<StepId>") || len(Check(spec)) != 0 {
 		t.Fatalf("section boundaries or advice: %+v; %+v", spec, Check(spec))
 	}
 }
@@ -124,7 +124,7 @@ func TestStructureAndSourceLocations(t *testing.T) {
 }
 
 func TestEveryConventionalSectionRejectsDuplicates(t *testing.T) {
-	for _, name := range []string{"Purpose", "State", "Actions", "Operational principle"} {
+	for _, name := range []string{"Purpose", "State", "Actions", "Operational principles"} {
 		_, err := Parse([]byte(draft + "## " + name + "\n\n## " + name + "\n"))
 		var d *diagnostic.Diagnostic
 		if !errors.As(err, &d) || d.Rule != "structure.duplicate-section" {
@@ -165,10 +165,10 @@ func TestOperationalPrinciplesAliasAndDuplicate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if spec.TypeParameters == "" || spec.IntroducedTypes == "" || !strings.Contains(spec.OperationalPrinciple, "Second story") {
+	if spec.TypeParameters == "" || spec.IntroducedTypes == "" || !strings.Contains(spec.OperationalPrinciples, "Second story") {
 		t.Fatal("plural stories or declarations lost")
 	}
-	if _, err = Parse([]byte(source + "\n## Operational principle\nDuplicate.\n")); err == nil {
+	if _, err = Parse([]byte(source + "\n## Operational principles\nDuplicate.\n")); err == nil {
 		t.Fatal("singular/plural duplicate accepted")
 	}
 }

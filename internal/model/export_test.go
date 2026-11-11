@@ -45,7 +45,7 @@ func TestExportDirectoryImageAndNativeFragments(t *testing.T) {
 		}
 	}
 	files := map[string][]byte{
-		"specs/concepts/media.concept.spec.md": []byte("---\ntype: concept\n---\n# Media\n## Purpose\nInspect sources.\n## State\n![Image](../../assets/pixel.bin)\n[Directory](../../assets/)\n[Native selector](../../contract.txt#rule)\n## Actions\nRead.\n## Operational principle\nFollow links.\n"),
+		"specs/concepts/media.concept.spec.md": []byte("---\ntype: concept\n---\n# Media\n## Purpose\nInspect sources.\n## State\n![Image](../../assets/pixel.bin)\n[Directory](../../assets/)\n[Native selector](../../contract.txt#rule)\n## Actions\nRead.\n## Operational principles\nFollow links.\n"),
 		"assets/pixel.bin":                     {0, 1, 0xff, 0x0d, 0x0a},
 		"contract.txt":                         []byte("native selector semantics\n"),
 	}
@@ -127,8 +127,8 @@ func TestExportReferencedClassificationDoesNotSkipNearerBoundary(t *testing.T) {
 	}
 	files := map[string]string{
 		"specs/system.spec.md":                              "---\ntype: system\n---\n# Root\n## Purpose\nRead.\n## Scope\nLocal.\n## Quality attributes\n### Useful\n**ID:** useful\nA concern.\n",
-		"consumer/specs/concepts/entry.concept.spec.md":     "---\ntype: concept\n---\n# Entry\n## Purpose\nRead.\n## State\n[Target](../../../middle/child/specs/quality/target.quality.spec.md)\n## Actions\nRead.\n## Operational principle\nRead a target.\n",
-		"middle/child/specs/quality/target.quality.spec.md": "---\ntype: quality\nattributes: [useful]\n---\n# Target\n## Criterion\nA criterion.\n",
+		"consumer/specs/concepts/entry.concept.spec.md":     "---\ntype: concept\n---\n# Entry\n## Purpose\nRead.\n## State\n[Target](../../../middle/child/specs/quality/target.quality.spec.md)\n## Actions\nRead.\n## Operational principles\nRead a target.\n",
+		"middle/child/specs/quality/target.quality.spec.md": "---\ntype: quality\nquality_attributes: [useful]\n---\n# Target\n## Criterion\nA criterion.\n",
 	}
 	for path, data := range files {
 		full := filepath.Join(dir, path)

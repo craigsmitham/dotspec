@@ -140,22 +140,21 @@ func (d *designResolver) run() {
 	for _, r := range d.elements {
 		switch String(r, "kind") {
 		case "UseCase":
-			d.resolve(r, "boundary", "System", false, nil)
-			d.resolve(r, "supported_jobs", "Job or JobStep or Outcome", true, nil)
+			d.resolve(r, "subject_system", "System", false, nil)
 		case "GeneralRequirement", "QualityRequirement", "BusinessRule", "ObligationClause":
-			d.resolve(r, "applicability_targets", "DomainElement", true, nil)
+			d.resolve(r, "applies_to", "DomainElement", true, nil)
 		case "ConceptUse":
 			d.resolve(r, "dependencies", "ConceptUse", true, func(t Record) bool { return d.sameSystem(r, t) })
 		case "TypeBinding":
 			use := d.index[String(r, "owner")]
 			definition := d.target(use, "definition")
 			d.resolve(r, "parameter", "ConceptType", false, func(t Record) bool { return d.isMember(definition, "type_parameters", t) }, definition)
-			d.resolve(r, "type_use", "ConceptUse", false, func(t Record) bool { return d.sameSystem(r, t) })
-			typeUse := d.target(r, "type_use")
+			d.resolve(r, "supplying_concept_use", "ConceptUse", false, func(t Record) bool { return d.sameSystem(r, t) })
+			typeUse := d.target(r, "supplying_concept_use")
 			typeDefinition := d.target(typeUse, "definition")
-			d.resolve(r, "type", "ConceptType", false, func(t Record) bool { return d.isMember(typeDefinition, "introduced_types", t) }, typeDefinition)
-			if String(r, "primitive") != "" && (len(Strings(r["type_references"])) > 0 || len(Strings(r["type_use_references"])) > 0) {
-				d.issue(r, "type", "error", "Choose a primitive or a type from a concept use, not both.")
+			d.resolve(r, "bound_type", "ConceptType", false, func(t Record) bool { return d.isMember(typeDefinition, "introduced_types", t) }, typeDefinition)
+			if String(r, "primitive") != "" && (len(Strings(r["bound_type_references"])) > 0 || len(Strings(r["supplying_concept_use_references"])) > 0) {
+				d.issue(r, "bound_type", "error", "Choose a primitive or a type from a concept use, not both.")
 			}
 		case "ActionParameter":
 			action := d.index[String(r, "owner")]
@@ -231,7 +230,7 @@ func (d *designResolver) checkDeclarations() {
 					d.issue(binding, "parameter", "error", "This parameter already has a binding in the same concept use.")
 				}
 				seen[key] = true
-				if parameter == nil || (String(binding, "primitive") == "" && (d.target(binding, "type") == nil || d.target(binding, "type_use") == nil)) {
+				if parameter == nil || (String(binding, "primitive") == "" && (d.target(binding, "bound_type") == nil || d.target(binding, "supplying_concept_use") == nil)) {
 					d.issue(binding, "parameter", "advice", "Complete the parameter and its primitive or named-use type binding.")
 				}
 			}
@@ -281,7 +280,7 @@ func designKind(actual, expected string) bool {
 }
 func designIssueCode(field string) string {
 	switch field {
-	case "boundary", "supported_jobs", "applicability_targets", "supports", "derived_from", "refines", "relies_on", "involves", "motivation", "verification":
+	case "subject_system", "supports", "applies_to", "derived_from", "refines", "relies_on", "involves", "motivation", "verification_plan":
 		return "relationship." + field
 	default:
 		return "concept." + field

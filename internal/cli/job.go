@@ -30,11 +30,11 @@ type stepsResult struct {
 	Steps         []job.Step `json:"steps"`
 }
 type outcomesResult struct {
-	SchemaVersion int           `json:"schema_version"`
-	Name          string        `json:"name"`
-	Path          string        `json:"path"`
-	Overall       []job.Outcome `json:"overall"`
-	Steps         []job.Step    `json:"steps"`
+	SchemaVersion int                  `json:"schema_version"`
+	Name          string               `json:"name"`
+	Path          string               `json:"path"`
+	Overall       []job.DesiredOutcome `json:"overall"`
+	Steps         []job.Step           `json:"steps"`
 }
 
 func newJobCommand() *cobra.Command {
@@ -152,12 +152,12 @@ func runJob(command, slug string, options jobOptions, out io.Writer) error {
 	case "map":
 		if options.format == "json" {
 			steps := append([]job.Step{}, spec.Steps...)
-			overall := []job.Outcome{}
+			overall := []job.DesiredOutcome{}
 			if options.outcomes {
 				overall = nonnil(spec.Outcomes)
 			} else {
 				for i := range steps {
-					steps[i].Outcomes = []job.Outcome{}
+					steps[i].Outcomes = []job.DesiredOutcome{}
 				}
 			}
 			return writeJSON(out, outcomesResult{1, spec.Name, spec.Path, overall, steps})

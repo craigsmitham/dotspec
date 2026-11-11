@@ -14,7 +14,7 @@ func Check(spec *Concept) []diagnostic.Diagnostic {
 		{"concept.purpose", "Purpose", spec.Purpose, "Describe the benefit this concept provides and why it exists."},
 		{"concept.state", "State", spec.State, "Describe or reference the abstract information needed to explain the behavior."},
 		{"concept.actions", "Actions", spec.Actions, "Describe or reference the actions, their conditions, and effects."},
-		{"concept.operational-principle", "Operational principle", spec.OperationalPrinciple, "Tell a characteristic story showing how the behavior fulfills the purpose."},
+		{"concept.operational-principle", "Operational principles", spec.OperationalPrinciples, "Tell a characteristic story showing how the behavior fulfills the purpose."},
 	} {
 		if strings.TrimSpace(field.value) != "" {
 			continue

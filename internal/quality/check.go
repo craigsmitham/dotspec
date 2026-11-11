@@ -11,9 +11,9 @@ import (
 func Check(spec *Requirement) []diagnostic.Diagnostic {
 	var suggestions []diagnostic.Diagnostic
 	for _, field := range []struct{ rule, name, value, message string }{
-		{"quality.applies-to", "Applies to", spec.AppliesTo, "Identify the subject and applicable conditions, workload, or population."},
-		{"quality.criterion", "Criterion", spec.Criterion, "State one coherent, assessable quality obligation."},
-		{"quality.measurement", "Measurement", spec.Measurement, "Describe how to assess the criterion and retain the evidence."},
+		{"quality.applies-to", "Applies to", spec.Applicability, "Identify the subject and applicable conditions, workload, or population."},
+		{"quality.statement", "Statement", spec.Statement, "State one coherent, assessable quality obligation."},
+		{"quality.verification-plan", "Verification plan", spec.VerificationPlan + spec.MeasurementPlan, "Describe how to assess the criterion and retain the evidence."},
 		{"quality.rationale", "Rationale", spec.Rationale, "Explain why this quality matters and any relevant tradeoffs."},
 	} {
 		if strings.TrimSpace(field.value) != "" {

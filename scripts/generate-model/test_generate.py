@@ -26,14 +26,14 @@ class CatalogTests(unittest.TestCase):
     def test_inherited_and_narrowed_reference_ranges(self):
         # Abstract Requirement must accept either concrete requirement subtype.
         subject = self.slot("QualityClassification", "subject")
-        self.assertEqual(subject["reference_ranges"], ["Requirement"])
+        self.assertEqual(subject["reference_ranges"], ["Obligation"])
         self.assertTrue(subject["required"])
         self.assertIn("Requirement", self.catalog["classes"]["QualityRequirement"]["ancestors"])
         self.assertIn("Requirement", self.catalog["classes"]["GeneralRequirement"]["ancestors"])
         # A union must not silently reopen the broad DomainElement parent range.
         owner = self.slot("ScenarioStep", "owner")
         self.assertEqual(owner["range"], "DomainElement")
-        self.assertEqual(owner["reference_ranges"], ["Scenario", "Extension"])
+        self.assertEqual(owner["reference_ranges"], ["Scenario", "UseCaseExtension"])
         self.assertNotIn("DomainElement", owner["reference_ranges"])
         self.assertEqual(self.slot("QualityAttribute", "owner")["reference_ranges"], ["System", "QualityModel"])
         self.assertEqual(self.slot("DeclaresQualityAttribute", "subject")["reference_ranges"], ["System", "QualityModel"])
@@ -97,7 +97,7 @@ class CatalogTests(unittest.TestCase):
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].pop('relationship_scope'), 'missing relationship metadata'),
             (lambda c: c['classes']['ConceptUse']['slots']['bindings']['annotations'].update(paired_with='missing'), 'reciprocal peer'),
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].update(relationship_cycles='guess'), 'cycle policy'),
-            (lambda c: c['classes']['SupportsJob']['annotations'].pop('projection_of'), 'canonical projection fields'),
+            (lambda c: c['classes']['Supports']['annotations'].pop('projection_of'), 'canonical projection fields'),
             (lambda c: c['classes']['UseCase']['slots']['involves']['annotations'].update(trace_targets='Concept'), 'canonical endpoint ranges'),
             (lambda c: c['classes']['Requirement']['slots']['refines']['annotations'].pop('trace_heading'), 'paired and unique'),
             (lambda c: c['classes']['UseCase']['slots']['supports']['annotations'].update(trace_heading='Involves'), 'paired and unique'),
@@ -193,8 +193,8 @@ class ModelViewTests(unittest.TestCase):
         v = copy.deepcopy(self.view)
         v['diagrams'][0]['show_cardinality'] = True
         output = core_markdown(c, v).decode()
-        self.assertIn('BusinessRule ..> "0..1" Concept : system_context', output)
-        self.assertNotIn('BusinessRule ..> "0..1" System : system_context', output)
+        self.assertIn('BusinessRule ..> "0..1" Concept : system context', output)
+        self.assertNotIn('BusinessRule ..> "0..1" System : system context', output)
         self.assertIn('Requirement <|-- QualityRequirement', output)
         self.assertNotIn('enforces -->', output)
 

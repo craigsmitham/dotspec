@@ -20,7 +20,7 @@ exit status zero.
 Unfinished specifications remain useful working material. Suggestions should
 not prevent contributors from checking a draft.
 
-## Verification
+## Verification plan
 
 Check structurally valid drafts that produce advisory findings. Verify exit
 status zero and the presence of the advice in both text and JSON reports.

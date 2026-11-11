@@ -16,6 +16,6 @@ State one required result, rule, property, or restriction. Use general rules or 
 
 Explain why this obligation is needed and reference its source or governing goal.
 
-## Verification
+## Verification plan
 
 Describe how to establish that the obligation holds, including success criteria and evidence to retain.

@@ -68,7 +68,7 @@ func (m *domainMapper) job(r Record, s *Section) bool {
 func (m *domainMapper) outcomes(owner Record, s *Section) {
 	v := m.collection(owner, "outcomes", "outcomes", s)
 	for _, item := range m.listItems(s.Intro, false) {
-		x := m.record("Outcome", String(owner, "id"))
+		x := m.record("DesiredOutcome", String(owner, "id"))
 		x["statement"] = m.doc.Rich([]string{item})
 		m.bind(x, "statement", []string{item}, "structured_item", "outcome-list-item")
 		if match := outcomeID.FindStringSubmatch(m.doc.Text(item)); len(match) > 1 {

@@ -144,7 +144,7 @@ func TestRefinementCycleRetainsSourceWithoutCyclicClaim(t *testing.T) {
 func TestTraceCitationsAndDrafts(t *testing.T) {
 	root := traceFixture(t)
 	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "## Refines", "## Related specifications")
-	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "## Verification", "## Notes")
+	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "## Verification plan", "## Notes")
 	r := conformanceExport(t, root)
 	if r.ExitCode != 0 {
 		t.Fatal(r.Snapshot.Diagnostics)
@@ -159,7 +159,7 @@ func TestTraceCitationsAndDrafts(t *testing.T) {
 		}
 		codes[String(f, "code")] = true
 	}
-	if !codes["relationship.motivation"] || !codes["relationship.verification"] {
+	if !codes["relationship.motivation"] || !codes["relationship.verification_plan"] {
 		t.Fatal("missing draft advice", codes)
 	}
 	// A selected subtree does not traverse references from its direct targets.
@@ -186,7 +186,7 @@ func TestTraceViewIsPortableAndDoesNotClaimProof(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, part := range []string{"## Why:", "## Behavior:", "## Change review", "## Verification guidance", "Not evaluated", "#restore-retained-content", "refines", "supports jobs", "Further review candidates"} {
+	for _, part := range []string{"## Why:", "## Behavior:", "## Change review", "## Verification guidance", "Not evaluated", "#restore-retained-content", "refines", "supports", "Further review candidates"} {
 		if !strings.Contains(view, part) {
 			t.Fatal("missing", part)
 		}
@@ -219,7 +219,7 @@ func TestSeveralRefinementParentsAndNestedConceptObligation(t *testing.T) {
 Restoration must preserve the item identity.
 ###### Derived from
 [Recovery](../use-cases/restore.use-case.spec.md#restore-content)
-###### Verification
+###### Verification plan
 Compare the item identity before deletion and after restoration.
 
 ### Expire`)

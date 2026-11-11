@@ -136,7 +136,7 @@ type UseCase struct {
 	Slug                 string                         `json:"slug"`
 	Name                 string                         `json:"name"`
 	Goal                 string                         `json:"goal"`
-	SystemBoundary       string                         `json:"system_boundary"`
+	BoundaryDescription  string                         `json:"boundary_description"`
 	PrimaryActor         string                         `json:"primary_actor"`
 	GoalLevel            string                         `json:"goal_level"`
 	Trigger              string                         `json:"trigger"`
@@ -149,7 +149,7 @@ type UseCase struct {
 	StakeholderInterests string                         `json:"stakeholder_interests"`
 	MinimumGuarantees    string                         `json:"minimum_guarantees"`
 	RelatedJobs          string                         `json:"related_jobs"`
-	SupportedJobs        string                         `json:"supported_jobs,omitempty"`
+	Supports             string                         `json:"supports,omitempty"`
 	Markdown             string                         `json:"markdown"`
 	Path                 string                         `json:"path"`
 	System               *system.System                 `json:"system"`
@@ -206,13 +206,13 @@ func Parse(data []byte) (*UseCase, error) {
 	}
 	ids.AddAnchors(doc.Anchors)
 	fields := map[string]*string{
-		"Goal": &spec.Goal, "System boundary": &spec.SystemBoundary,
+		"Goal": &spec.Goal, "System boundary": &spec.BoundaryDescription,
 		"Primary actor": &spec.PrimaryActor, "Goal level": &spec.GoalLevel,
 		"Trigger": &spec.Trigger, "Preconditions": &spec.Preconditions,
 		"Supporting actors": &spec.SupportingActors, "Stakeholder interests": &spec.StakeholderInterests,
 		"Minimum guarantees": &spec.MinimumGuarantees,
 		"Success criterion":  &spec.SuccessCriterion, "Main success scenario": &spec.MainSuccessScenario,
-		"Extensions": &spec.Extensions, "Sequence": &spec.Sequence, "Related jobs": &spec.RelatedJobs, "Supports jobs": &spec.SupportedJobs,
+		"Extensions": &spec.Extensions, "Sequence": &spec.Sequence, "Related jobs": &spec.RelatedJobs, "Supports": &spec.Supports,
 	}
 	for _, section := range doc.Sections {
 		target, known := fields[section.Title]

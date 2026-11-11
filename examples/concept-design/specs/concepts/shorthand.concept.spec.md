@@ -68,7 +68,7 @@ The target to make accessible.
 
 ##### Code result
 
-**Type:** [Code](#code)
+**Bound type:** [Code](#code)
 
 The newly registered code.
 
@@ -84,7 +84,7 @@ For a registered code, return its target. Otherwise return an unknown-code resul
 
 ##### Code input
 
-**Type:** [Code](#code)
+**Bound type:** [Code](#code)
 
 The code to look up.
 

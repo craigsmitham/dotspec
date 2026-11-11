@@ -11,7 +11,7 @@ import (
 const example = `---
 type: requirement
 id: preserve
-attributes: [reliability, source-preservation]
+quality_attributes: [reliability, source-preservation]
 ---
 # Preserve files
 ## Applies to
@@ -24,7 +24,7 @@ The operation must preserve the input state.
 
 ## Rationale
 Inspection must not edit the work being inspected.
-## Verification
+## Verification plan
 Compare snapshots of source-file bytes and paths.
 ## Assumptions
 No concurrent edits by other processes.
@@ -37,7 +37,7 @@ func TestGeneralRequirement(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if r.Type != "requirement" || r.ID != "preserve" || len(r.Attributes) != 2 || !strings.Contains(r.Statement, "state_after = state_before") || !strings.Contains(r.Markdown, "## Assumptions") || r.Rationale == "" || r.Verification == "" || len(Check(r)) != 0 {
+	if r.Type != "requirement" || r.ID != "preserve" || len(r.QualityAttributes) != 2 || !strings.Contains(r.Statement, "state_after = state_before") || !strings.Contains(r.Markdown, "## Assumptions") || r.Rationale == "" || r.VerificationPlan == "" || len(Check(r)) != 0 {
 		t.Fatalf("lost authored content: %+v", r)
 	}
 	if !r.References.Anchors["preserve"] || !r.References.Anchors["postcondition"] {
@@ -47,7 +47,7 @@ func TestGeneralRequirement(t *testing.T) {
 
 func TestDraftAndStructure(t *testing.T) {
 	draft := "---\ntype: requirement\n---\n# Draft\n"
-	r, err := Parse([]byte(draft + "## Verification\n"))
+	r, err := Parse([]byte(draft + "## Verification plan\n"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -78,7 +78,7 @@ func TestDraftAndStructure(t *testing.T) {
 }
 
 func FuzzParse(f *testing.F) {
-	for _, seed := range []string{example, Template, "---\ntype: requirement\nattributes: [null]\n---\n# Draft\n"} {
+	for _, seed := range []string{example, Template, "---\ntype: requirement\nquality_attributes: [null]\n---\n# Draft\n"} {
 		f.Add([]byte(seed))
 	}
 	f.Fuzz(func(t *testing.T, data []byte) {

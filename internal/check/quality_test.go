@@ -18,7 +18,7 @@ func TestQualityContextAndAdvice(t *testing.T) {
 	modelPath := filepath.Join(dir, "specs/system.spec.md")
 	model := validSystem + "\n## Quality attributes\n### Known\n**ID:** known\n"
 	write(t, modelPath, model)
-	source := strings.Replace(quality.Template, "type: quality", "type: quality\nattributes: [known, unknown]", 1)
+	source := strings.Replace(quality.Template, "type: quality", "type: quality\nquality_attributes: [known, unknown]", 1)
 	path := quality.Layout.Path(child, "work")
 	write(t, path, source)
 	focused := check.Focused(child, "work", quality.CheckType())
@@ -70,7 +70,7 @@ func TestQualityDiscoveryAndSourceLocations(t *testing.T) {
 	if r.ExitCode() != 0 || r.Summary.FilesChecked != 1 || r.Summary.ContextFilesChecked != 1 {
 		t.Fatalf("discovery or ignored context: %+v", r)
 	}
-	write(t, path, "---\ntype: quality\nattributes:\n  - known\n  - missing\n---\n# Draft\n")
+	write(t, path, "---\ntype: quality\nquality_attributes:\n  - known\n  - missing\n---\n# Draft\n")
 	r = checkProject(dir)
 	var lines []int
 	for _, d := range r.Diagnostics {

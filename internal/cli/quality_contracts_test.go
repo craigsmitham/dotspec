@@ -113,7 +113,7 @@ func TestDiagnosticSeverityQualityContract(t *testing.T) {
 		if code != 1 || errOut != "" {
 			t.Fatalf("check: %d %s %s", code, out, errOut)
 		}
-		for _, label := range []string{"error [metadata.frontmatter]", "advice [quality.criterion]"} {
+		for _, label := range []string{"error [metadata.frontmatter]", "advice [quality.statement]"} {
 			if !strings.Contains(out, label) {
 				t.Fatalf("missing %q in %s", label, out)
 			}

@@ -142,7 +142,7 @@ func TestRequirementsShareSystemAttributeContext(t *testing.T) {
 	dir := t.TempDir()
 	git(t, dir, "init", "-q")
 	write(t, system.Layout.Path(dir, ""), validSystem+"\n## Quality attributes\n")
-	write(t, requirement.Layout.Path(dir, "rule"), strings.Replace(requirement.Template, "type: requirement", "type: requirement\nattributes: [missing]", 1))
+	write(t, requirement.Layout.Path(dir, "rule"), strings.Replace(requirement.Template, "type: requirement", "type: requirement\nquality_attributes: [missing]", 1))
 	r := referenceCheck(dir)
 	if r.ExitCode() != 0 || r.Summary.Advice != 1 || r.Diagnostics[0].Rule != "requirement.undefined-attribute" || r.Diagnostics[0].Location.Line != 3 {
 		t.Fatalf("attribute advice: %+v", r)

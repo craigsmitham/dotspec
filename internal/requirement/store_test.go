@@ -52,7 +52,7 @@ Unchanged sources.
 		t.Fatal("overwrote target")
 	}
 	put(t, path, example)
-	put(t, quality.Layout.Path(dir, "work"), "---\ntype: quality\nattributes: [source-preservation]\n---\n# Preservation\n## Criterion\nUnchanged sources.\n## Measurement\nCompare snapshots.\n")
+	put(t, quality.Layout.Path(dir, "work"), "---\ntype: quality\nquality_attributes: [source-preservation]\n---\n# Preservation\n## Statement\nUnchanged sources.\n## Measurement plan\nCompare snapshots.\n")
 	groups, err := List(dir)
 	if err != nil {
 		t.Fatal(err)
@@ -62,7 +62,7 @@ Unchanged sources.
 		t.Fatalf("inventory: %+v", filtered)
 	}
 	q := filtered[0].Requirements[0]
-	if q.Type != "quality" || q.Statement != "Unchanged sources." || q.Verification != "Compare snapshots." {
+	if q.Type != "quality" || q.Statement != "Unchanged sources." || q.MeasurementPlan != "Compare snapshots." {
 		t.Fatalf("quality view: %+v", q)
 	}
 	r, err := Show(dir, "work")

@@ -12,7 +12,7 @@ func Check(spec *UseCase) []diagnostic.Diagnostic {
 	var suggestions []diagnostic.Diagnostic
 	for _, field := range []struct{ rule, name, value, message string }{
 		{"use-case.goal", "Goal", spec.Goal, "Describe what the primary actor wants to accomplish through this interaction."},
-		{"use-case.system-boundary", "System boundary", spec.SystemBoundary, "Name the system whose behavior this use case describes; file ownership does not define this boundary."},
+		{"use-case.system-boundary", "System boundary", spec.BoundaryDescription, "Name the system whose behavior this use case describes; file ownership does not define this boundary."},
 		{"use-case.primary-actor", "Primary actor", spec.PrimaryActor, "Identify the role pursuing the goal."},
 		{"use-case.goal-level", "Goal level", spec.GoalLevel, "Identify the goal level, such as summary, user task, or subfunction."},
 		{"use-case.success-criterion", "Success criterion", spec.SuccessCriterion, "State or link to the observable condition that completes the actor's goal."},

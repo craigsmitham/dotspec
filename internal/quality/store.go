@@ -48,7 +48,7 @@ func Show(path, slug string) (*Requirement, error) {
 	if err != nil {
 		return nil, err
 	}
-	spec.Classification = Classify(spec.Attributes, spec.System)
+	spec.Classification = Classify(spec.QualityAttributes, spec.System)
 	return spec, nil
 }
 
@@ -85,7 +85,7 @@ func List(path string) ([]*Group, error) {
 			byDirectory[dir] = associated
 		}
 		spec.System = associated
-		spec.Classification = Classify(spec.Attributes, associated)
+		spec.Classification = Classify(spec.QualityAttributes, associated)
 		key := ""
 		if associated != nil {
 			key = associated.Path

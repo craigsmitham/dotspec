@@ -13,8 +13,8 @@ The canonical [LinkML model](../model/dotspec.yaml) defines the records and thei
 relationships. The [generated reference](reference/model/index.md) describes
 every field. The [relationship reference](reference/model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.8.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/7`.
+`model_version` is `0.9.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/8`.
 
 ## Export and validate a snapshot
 
@@ -60,10 +60,13 @@ Artifact kinds and relationship categories remain separate axes. A software
 obligation can derive directly from a business rule; no intermediate record is
 required to complete a hierarchy. See [Requirements layers](requirements-layers.md).
 
-`TraceableElement` supplies `supports`, `derived_from`, `relies_on` and optional
-owned `ObligationClause` records. `Requirement` means the standalone obligation
+`TraceableElement` supplies `supports`, `derived_from` and `relies_on`.
+The separate `ObligationContainer` capability declares owned `ObligationClause`
+records. Goals, assumptions and desired outcomes are traceable but cannot contain
+clauses. `Obligation` supplies a common statement, quality classification,
+applicability, refinement and assessment plans to standalone requirements and clauses. `Requirement` means the standalone obligation
 family. A clause can identify an obligation in a use case, concept, action or
-other traceable record without copying its statement into another document.
+other explicitly supported container without copying its statement into another document.
 Both clauses and standalone requirements can refine other obligations. Business
 rules can also refine obligations. Refinement is acyclic, may have multiple
 parents, and declares precision preserving the parent commitment; dotspec does
@@ -190,13 +193,13 @@ flowchart LR
     E --> A[Derived relationship assertions]
 ```
 
-A use case's `minimum_guarantees`, a concept's `operational_principle`, and a
+A use case's `minimum_guarantees`, a concept's `operational_principles`, and a
 requirement's `rationale` are named domain values even when each remains a
 paragraph. `RichContent` points to ordered content nodes instead of maintaining
 an independent editable copy of that prose. Explicit structures also receive
 records: job-step headings identify `JobStep` records, ordered scenario items
 identify `ScenarioStep` records, and named concept actions identify
-`ConceptAction` records. An `OpenDecisionCollection` retains a decision section's
+`ConceptAction` records. An `OpenQuestionCollection` retains a decision section's
 full narrative and its explicit question/evidence entries; an omitted field does
 not automatically become an open decision.
 
@@ -280,8 +283,8 @@ The exporter derives these views from model annotations; the assertions collecti
 is not a complete replacement for the typed graph. Reverse navigation is derived,
 except stored owner backlinks which are checked against canonical memberships.
 
-Explicit boundary, support and applicability syntax produces `UseCase.boundary`,
-`UseCase.supported_jobs`, and requirement/business-rule `applicability_targets`.
+Explicit boundary, support and applicability syntax produces `UseCase.subject_system`,
+`UseCase.supports`, and requirement/business-rule `applies_to`.
 See [Declare relationships](develop-relationships.md) for the authoring forms.
 
 Relationship categories describe containment, structural context, semantic

@@ -2,7 +2,7 @@
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.8.0-draft`; mapping `dotspec-markdown/7`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
+Model `0.9.0-draft`; mapping `dotspec-markdown/8`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
 
 ## Concepts
 
@@ -174,7 +174,7 @@ The target to make accessible.
 
 **Code result**
 
-**Type:** [Code](../../examples/concept-design/specs/concepts/shorthand.concept.spec.md#code)
+**Bound type:** [Code](../../examples/concept-design/specs/concepts/shorthand.concept.spec.md#code)
 
 The newly registered code.
 
@@ -190,7 +190,7 @@ For a registered code, return its target. Otherwise return an unknown-code resul
 
 **Code input**
 
-**Type:** [Code](../../examples/concept-design/specs/concepts/shorthand.concept.spec.md#code)
+**Bound type:** [Code](../../examples/concept-design/specs/concepts/shorthand.concept.spec.md#code)
 
 The code to look up.
 
@@ -288,8 +288,8 @@ Tracks lifetimes for codes registered by PublicLinks.
 **Public resources**
 
 **Parameter:** [Resource](../../examples/concept-design/specs/concepts/expiry.concept.spec.md#resource)
-**Type:** [Code](../../examples/concept-design/specs/concepts/shorthand.concept.spec.md#code)
-**Use:** [PublicLinks](../../examples/concept-design/specs/system.spec.md#publiclinks)
+**Bound type:** [Code](../../examples/concept-design/specs/concepts/shorthand.concept.spec.md#code)
+**Supplying concept use:** [PublicLinks](../../examples/concept-design/specs/system.spec.md#publiclinks)
 
 ###### Dependencies
 
@@ -328,8 +328,8 @@ Tracks lifetimes for codes registered by InternalLinks.
 **Internal resources**
 
 **Parameter:** [Resource](../../examples/concept-design/specs/concepts/expiry.concept.spec.md#resource)
-**Type:** [Code](../../examples/concept-design/specs/concepts/shorthand.concept.spec.md#code)
-**Use:** [InternalLinks](../../examples/concept-design/specs/system.spec.md#internallinks)
+**Bound type:** [Code](../../examples/concept-design/specs/concepts/shorthand.concept.spec.md#code)
+**Supplying concept use:** [InternalLinks](../../examples/concept-design/specs/system.spec.md#internallinks)
 
 ###### Dependencies
 
@@ -348,7 +348,7 @@ The application allocates each registration a lifetime of 1 day.
 
 **Completed action**
 
-**Use:** [PublicLinks](../../examples/concept-design/specs/system.spec.md#publiclinks)
+**Concept use:** [PublicLinks](../../examples/concept-design/specs/system.spec.md#publiclinks)
 **Action:** [Register](../../examples/concept-design/specs/concepts/shorthand.concept.spec.md#register)
 
 **Result**
@@ -363,7 +363,7 @@ Only successful completions participate. An error is not a successful result.
 
 **Invoke action**
 
-**Use:** [PublicExpiry](../../examples/concept-design/specs/system.spec.md#publicexpiry)
+**Concept use:** [PublicExpiry](../../examples/concept-design/specs/system.spec.md#publicexpiry)
 **Action:** [Allocate](../../examples/concept-design/specs/concepts/expiry.concept.spec.md#allocate)
 
 **Arguments**
@@ -386,7 +386,7 @@ coincide. These are requirements for an implementation, not guarantees from dots
 
 **Completed action**
 
-**Use:** [PublicExpiry](../../examples/concept-design/specs/system.spec.md#publicexpiry)
+**Concept use:** [PublicExpiry](../../examples/concept-design/specs/system.spec.md#publicexpiry)
 **Action:** [Expire](../../examples/concept-design/specs/concepts/expiry.concept.spec.md#expire)
 
 **Result**
@@ -401,7 +401,7 @@ Only successful completions participate. An error is not a successful result.
 
 **Invoke action**
 
-**Use:** [PublicLinks](../../examples/concept-design/specs/system.spec.md#publiclinks)
+**Concept use:** [PublicLinks](../../examples/concept-design/specs/system.spec.md#publiclinks)
 **Action:** [Unregister](../../examples/concept-design/specs/concepts/shorthand.concept.spec.md#unregister)
 
 **Arguments**
@@ -424,7 +424,7 @@ coincide. These are requirements for an implementation, not guarantees from dots
 
 **Completed action**
 
-**Use:** [InternalLinks](../../examples/concept-design/specs/system.spec.md#internallinks)
+**Concept use:** [InternalLinks](../../examples/concept-design/specs/system.spec.md#internallinks)
 **Action:** [Register](../../examples/concept-design/specs/concepts/shorthand.concept.spec.md#register)
 
 **Result**
@@ -439,7 +439,7 @@ Only successful completions participate. An error is not a successful result.
 
 **Invoke action**
 
-**Use:** [InternalExpiry](../../examples/concept-design/specs/system.spec.md#internalexpiry)
+**Concept use:** [InternalExpiry](../../examples/concept-design/specs/system.spec.md#internalexpiry)
 **Action:** [Allocate](../../examples/concept-design/specs/concepts/expiry.concept.spec.md#allocate)
 
 **Arguments**
@@ -462,7 +462,7 @@ coincide. These are requirements for an implementation, not guarantees from dots
 
 **Completed action**
 
-**Use:** [InternalExpiry](../../examples/concept-design/specs/system.spec.md#internalexpiry)
+**Concept use:** [InternalExpiry](../../examples/concept-design/specs/system.spec.md#internalexpiry)
 **Action:** [Expire](../../examples/concept-design/specs/concepts/expiry.concept.spec.md#expire)
 
 **Result**
@@ -477,7 +477,7 @@ Only successful completions participate. An error is not a successful result.
 
 **Invoke action**
 
-**Use:** [InternalLinks](../../examples/concept-design/specs/system.spec.md#internallinks)
+**Concept use:** [InternalLinks](../../examples/concept-design/specs/system.spec.md#internallinks)
 **Action:** [Unregister](../../examples/concept-design/specs/concepts/shorthand.concept.spec.md#unregister)
 
 **Arguments**

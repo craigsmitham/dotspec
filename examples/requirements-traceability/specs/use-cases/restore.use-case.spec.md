@@ -9,11 +9,11 @@ Recover an accidentally deleted document and resume work.
 
 ## System boundary
 
-**System:** [Document workspace](../system.spec.md)
+**Subject system:** [Document workspace](../system.spec.md)
 
 The workspace owns retention and restoration; external backups are outside this boundary.
 
-## Supports jobs
+## Supports
 
 [Recover lost work](../jobs/recover.job.spec.md).
 
@@ -51,7 +51,7 @@ When an authorized workspace member requests restoration before the 30-day recov
 
 **Targets:** [DocumentTrash](../system.spec.md#documenttrash)
 
-#### Verification
+#### Verification plan
 
 Exercise restoration with retained content and metadata; compare both to their pre-deletion values. Include requests immediately before the recovery deadline.
 

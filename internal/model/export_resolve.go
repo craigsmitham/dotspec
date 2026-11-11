@@ -265,7 +265,7 @@ func (b *snapshotBuilder) resolveLabels() {
 		if String(label, "role") == "subattribute_of" {
 			sys = String(owner, "owner")
 		} else {
-			sys = String(owner, "system_context")
+			sys = obligationSystem(owner, b.elements)
 			if sys == "" && !b.contextOK[path] {
 				b.resolution(label, "not_attempted", "", "uninspected-quality-context/1")
 				continue
@@ -286,9 +286,12 @@ func (b *snapshotBuilder) resolveLabels() {
 		switch len(matches) {
 		case 0:
 			b.resolution(label, "undefined_label", "", "quality-attributes/1")
+			if String(owner, "kind") == "ObligationClause" {
+				b.snapshot.Diagnostics = append(b.snapshot.Diagnostics, Record{"id": b.next("finding"), "kind": "Diagnostic", "code": "obligation.undefined-attribute", "severity": "advice", "message": "Quality attribute " + String(label, "label") + " is not declared by the enclosing system.", "source": owner["source_document"], "record": owner["id"], "phase": "resolve"})
+			}
 		case 1:
 			b.resolution(label, "resolved", matches[0], "quality-attributes/1")
-			field := "attributes"
+			field := "quality_attributes"
 			if String(label, "role") == "subattribute_of" {
 				field = "subattribute_of"
 			}

@@ -13,17 +13,17 @@ const draft = "---\ntype: quality\n---\n# Draft\n"
 const example = `---
 type: quality
 id: repeatable-inspection
-attributes: [repeatability, diagnosability]
+quality_attributes: [repeatability, diagnosability]
 ---
 # Repeatable inspection
 
 ## Applies to
 Completed checks using the same build, arguments, paths, environment and source tree.
 
-## Criterion
+## Statement
 Repeated inspections produce equivalent structured reports, including diagnostic order.
 
-## Measurement
+## Measurement plan
 Compare parsed JSON from repeated fixture runs.
 
 ### Criterion
@@ -33,7 +33,7 @@ This is a measurement subsection, not another requirement criterion.
 Stable findings make changes easier to identify.
 
 ## Related specifications
-See [this requirement](#repeatable-inspection) and [the criterion](#criterion).
+See [this requirement](#repeatable-inspection) and [the statement](#statement).
 `
 
 func TestRequirementPreservesContentAndLabels(t *testing.T) {
@@ -41,10 +41,10 @@ func TestRequirementPreservesContentAndLabels(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if spec.ID != "repeatable-inspection" || spec.System != nil || !reflect.DeepEqual(spec.Attributes, []string{"repeatability", "diagnosability"}) || spec.AppliesTo == "" || spec.Criterion == "" || spec.Measurement == "" || spec.Rationale == "" {
+	if spec.ID != "repeatable-inspection" || spec.System != nil || !reflect.DeepEqual(spec.QualityAttributes, []string{"repeatability", "diagnosability"}) || spec.Applicability == "" || spec.Statement == "" || spec.MeasurementPlan == "" || spec.Rationale == "" {
 		t.Fatalf("fields: %+v", spec)
 	}
-	if !strings.Contains(spec.Measurement, "### Criterion") || strings.Contains(spec.Criterion, "measurement subsection") || !strings.Contains(spec.Markdown, "## Related specifications") || len(Check(spec)) != 0 {
+	if !strings.Contains(spec.MeasurementPlan, "### Criterion") || strings.Contains(spec.Statement, "measurement subsection") || !strings.Contains(spec.Markdown, "## Related specifications") || len(Check(spec)) != 0 {
 		t.Fatalf("Markdown and advice: %+v", spec)
 	}
 	if _, err := Parse([]byte(strings.Replace(example, "# Repeatable inspection", "# A different title", 1))); err != nil {
@@ -53,12 +53,12 @@ func TestRequirementPreservesContentAndLabels(t *testing.T) {
 }
 
 func TestRequirementDraftAdvice(t *testing.T) {
-	spec, err := Parse([]byte(draft + "## Measurement\n"))
+	spec, err := Parse([]byte(draft + "## Verification plan\n"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	spec.Path = "source.spec.md"
-	if spec.Attributes == nil {
+	if spec.QualityAttributes == nil {
 		t.Fatal("empty labels must be an array")
 	}
 	advice := Check(spec)
@@ -69,7 +69,7 @@ func TestRequirementDraftAdvice(t *testing.T) {
 		if d.Severity != "advice" || d.Location.Path != spec.Path || d.Location.Line < 4 {
 			t.Fatalf("location: %+v", d)
 		}
-		if d.Rule == "quality.measurement" && d.Location.Line != 5 {
+		if d.Rule == "quality.verification-plan" && d.Location.Line != 5 {
 			t.Fatalf("missing empty heading location: %+v", d)
 		}
 	}
@@ -77,7 +77,7 @@ func TestRequirementDraftAdvice(t *testing.T) {
 
 func TestRequirementRejectsMalformedLabels(t *testing.T) {
 	for _, value := range []string{"null", "", "performance", "{}", "[null]", "[true]", "[12]", "['']", "[' ']", "[[]]", "[performance, performance]", "[quality.performance]", "[' leading']"} {
-		source := strings.Replace(draft, "type: quality", "type: quality\nattributes: "+value, 1)
+		source := strings.Replace(draft, "type: quality", "type: quality\nquality_attributes: "+value, 1)
 		for _, source := range []string{source, "\ufeff" + strings.ReplaceAll(source, "\n", "\r\n")} {
 			_, err := Parse([]byte(source))
 			var d *diagnostic.Diagnostic
@@ -87,7 +87,7 @@ func TestRequirementRejectsMalformedLabels(t *testing.T) {
 		}
 	}
 	for _, value := range []string{"[]", "[performance]", "\n  - performance\n  - usability"} {
-		if _, err := Parse([]byte(strings.Replace(draft, "type: quality", "type: quality\nattributes: "+value, 1))); err != nil {
+		if _, err := Parse([]byte(strings.Replace(draft, "type: quality", "type: quality\nquality_attributes: "+value, 1))); err != nil {
 			t.Fatalf("valid labels %q: %v", value, err)
 		}
 	}
@@ -109,7 +109,7 @@ func TestRequirementStructure(t *testing.T) {
 			t.Errorf("wanted %s, got %+v %v", tt.rule, d, err)
 		}
 	}
-	for _, section := range []string{"Applies to", "Criterion", "Measurement", "Rationale"} {
+	for _, section := range []string{"Applies to", "Criterion", "Measurement plan", "Rationale"} {
 		_, err := Parse([]byte(draft + "## " + section + "\n\n## " + section + "\n"))
 		var d *diagnostic.Diagnostic
 		if !errors.As(err, &d) || d.Rule != "structure.duplicate-section" || len(d.Related) != 1 {
@@ -119,7 +119,7 @@ func TestRequirementStructure(t *testing.T) {
 }
 
 func FuzzParse(f *testing.F) {
-	for _, seed := range []string{draft, example, Template, strings.Replace(draft, "type: quality", "type: quality\nattributes: [null]", 1)} {
+	for _, seed := range []string{draft, example, Template, strings.Replace(draft, "type: quality", "type: quality\nquality_attributes: [null]", 1)} {
 		f.Add([]byte(seed))
 	}
 	f.Fuzz(func(t *testing.T, data []byte) {

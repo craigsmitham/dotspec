@@ -119,7 +119,7 @@ func listUseCases(path, format string, overview bool, out io.Writer) error {
 				if strings.TrimSpace(goal) == "" {
 					goal = spec.Name
 				}
-				fmt.Fprintf(&output, "\n  %s (%s)\n    Actor: %s\n    Goal: %s\n    Level: %s\n    Stated boundary: %s\n", spec.Name, displayPath(spec.Path), overviewCell(spec.PrimaryActor), overviewCell(goal), overviewCell(spec.GoalLevel), overviewCell(spec.SystemBoundary))
+				fmt.Fprintf(&output, "\n  %s (%s)\n    Actor: %s\n    Goal: %s\n    Level: %s\n    Stated boundary: %s\n", spec.Name, displayPath(spec.Path), overviewCell(spec.PrimaryActor), overviewCell(goal), overviewCell(spec.GoalLevel), overviewCell(spec.BoundaryDescription))
 			}
 			continue
 		}

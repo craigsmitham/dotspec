@@ -93,7 +93,7 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 				}
 				m.bind(a, "subattribute_of_labels", ids, "named_field", "subattribute-labels")
 			}
-			m.openDecisions(a, child.Children)
+			m.openQuestions(a, child.Children)
 			appendID(r, "quality_attributes", String(a, "id"))
 		}
 	default:
@@ -102,32 +102,32 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 	return true
 }
 
-// openDecisions only recognizes explicitly headed decisions. A sentence about
-// missing evidence or a target is not automatically promoted to a decision.
-func (m *domainMapper) openDecisions(owner Record, sections []*Section) {
+// openQuestions only recognizes explicitly headed questions. A sentence about
+// missing evidence or a target is not automatically promoted to a question.
+func (m *domainMapper) openQuestions(owner Record, sections []*Section) {
 	for _, s := range sections {
-		if !openDecisionHeading(s.Title) {
+		if !openQuestionHeading(s.Title) {
 			continue
 		}
-		collection := Object(owner["open_decisions"])
+		collection := Object(owner["open_questions"])
 		if collection == nil {
-			collection = Record{"decisions": []Record{}}
-			owner["open_decisions"] = collection
+			collection = Record{"questions": []Record{}}
+			owner["open_questions"] = collection
 		}
 		m.setRich(collection, "content", s.Content)
-		m.sectionBindings(owner, "open_decisions.content", s)
-		values, _ := collection["decisions"].([]Record)
+		m.sectionBindings(owner, "open_questions.content", s)
+		values, _ := collection["questions"].([]Record)
 		add := func(question []string, item *Section) {
 			v := Record{"question": m.doc.Rich(question)}
 			index := len(values)
 			values = append(values, v)
-			collection["decisions"] = values
-			path := fmt.Sprintf("open_decisions.decisions.%d", index)
-			m.bind(owner, path+".question", question, "named_field", "open-decision-question")
+			collection["questions"] = values
+			path := fmt.Sprintf("open_questions.questions.%d", index)
+			m.bind(owner, path+".question", question, "named_field", "open-question-question")
 			if item == nil {
 				return
 			}
-			m.bind(owner, path+".question", []string{item.HeadingID}, "structural_wrapper", "open-decision-heading")
+			m.bind(owner, path+".question", []string{item.HeadingID}, "structural_wrapper", "open-question-heading")
 			for _, sub := range item.Children {
 				if sub.Title == "Evidence needed" {
 					m.setRich(v, "evidence_needed", sub.Content)
@@ -137,7 +137,7 @@ func (m *domainMapper) openDecisions(owner Record, sections []*Section) {
 				}
 			}
 		}
-		plural := s.Title == "Open decisions" || s.Title == "Open questions"
+		plural := s.Title == "Open questions"
 		namedChildren := []*Section{}
 		for _, child := range s.Children {
 			if child.Title != "Evidence needed" {
@@ -163,6 +163,6 @@ func (m *domainMapper) openDecisions(owner Record, sections []*Section) {
 	}
 }
 
-func openDecisionHeading(title string) bool {
-	return title == "Open decision" || title == "Open decisions" || title == "Open question" || title == "Open questions"
+func openQuestionHeading(title string) bool {
+	return title == "Open question" || title == "Open questions"
 }

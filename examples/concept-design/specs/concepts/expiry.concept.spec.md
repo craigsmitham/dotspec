@@ -82,7 +82,7 @@ execution; this specification does not assume an external user invokes expiratio
 
 The identity whose lifetime ended.
 
-## Operational principle
+## Operational principles
 
 Allocate a resource with a lifetime. Once that time has passed, expiration reports
 the resource identity so the surrounding application can react.

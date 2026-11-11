@@ -46,7 +46,7 @@ func TestQualityAttributesAndStableIDs(t *testing.T) {
 	}
 	m := spec
 	if m == nil || len(m.QualityAttributes) != 4 || m.QualityAttributesContent == nil || !strings.Contains(*m.QualityAttributesContent, "local attributes") {
-		t.Fatalf("system attributes: %+v", m)
+		t.Fatalf("system quality_attributes: %+v", m)
 	}
 	a := m.FindQualityAttribute("response")
 	if a.Name != "Responsiveness" || !reflect.DeepEqual(a.SubattributeOf, []string{"performance", "usability"}) || !strings.Contains(a.Definition, "#### Examples") || strings.Contains(a.Definition, "**ID:") {

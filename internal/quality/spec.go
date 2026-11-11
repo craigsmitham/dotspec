@@ -28,12 +28,20 @@ type: quality
 
 Identify the subject and the conditions, workload, or population covered by this requirement.
 
+## Statement
+
+State one coherent quality obligation.
+If a target is unknown, record the open question and the evidence needed to choose it.
+
+## Verification plan
+
+Describe the assessment method, acceptance conditions, and evidence to retain.
+
 ## Criterion
 
-State one coherent obligation, including its measure, comparison, and target where applicable.
-If a target is unknown, record the open decision and the evidence needed to choose it.
+Record optional measures, comparisons, targets, units and conditions for assessing the statement.
 
-## Measurement
+## Measurement plan
 
 Describe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.
 
@@ -48,8 +56,6 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 // against the associated system without establishing applicability or satisfaction.
 type Requirement struct {
 	*obligation.Content
-	Criterion   string `json:"criterion"`
-	Measurement string `json:"measurement"`
 }
 
 func ValidateSlug(slug string) error {
@@ -86,9 +92,9 @@ func Read(path string) (*Requirement, error) {
 
 // Parse interprets the quality form without filesystem access.
 func Parse(data []byte) (*Requirement, error) {
-	content, criterion, measurement, err := obligation.Parse(data, Layout.Kind, "Criterion", "Measurement")
+	content, err := obligation.Parse(data, Layout.Kind)
 	if err != nil {
 		return nil, err
 	}
-	return &Requirement{Content: content, Criterion: criterion, Measurement: measurement}, nil
+	return &Requirement{Content: content}, nil
 }
