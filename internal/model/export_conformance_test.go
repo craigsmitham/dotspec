@@ -16,13 +16,14 @@ import (
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/quality"
+	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
 )
 
 func conformanceTypes() []check.Type {
-	return []check.Type{businessrule.CheckType(), system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType(), quality.CheckType()}
+	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType(), quality.CheckType()}
 }
 
 func conformanceExport(t *testing.T, path string) ExportResult {
@@ -110,7 +111,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 	selectedSources := map[string]bool{}
 	expectedRoots := map[string]int{}
 	documents, sections := 0, 0
-	for _, root := range []string{"../../specs", "../../examples/starter/specs", "../../internal/integration/specs"} {
+	for _, root := range []string{"../../specs", "../../examples/starter/specs", "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
 		if err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
 			if err != nil {
 				return err
@@ -139,7 +140,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 				return err
 			}
 			parsed := ParseContent(absolute, data)
-			class := map[string]string{"business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[String(parsed.Document, "declared_type")]
+			class := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[String(parsed.Document, "declared_type")]
 			if class == "" {
 				t.Errorf("%s: unknown specimen family", path)
 			}
@@ -189,7 +190,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 			t.Errorf("%s exported roots: got %d want %d inventoried sources", kind, counts[kind], want)
 		}
 	}
-	for kind, want := range map[string]int{"JobStep": 16, "Outcome": 21, "ProgressCase": 1, "ConceptAction": 6, "GlossaryTerm": 3, "QualityAttribute": 8} {
+	for kind, want := range map[string]int{"JobStep": 16, "Outcome": 21, "ProgressCase": 1, "ConceptAction": 6, "GlossaryTerm": 3, "QualityAttribute": 293} {
 		if counts[kind] < want {
 			t.Errorf("%s domain records: got %d want at least baseline %d", kind, counts[kind], want)
 		}
@@ -223,7 +224,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 
 func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system\n---\n# Root\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n\n### Broad\n\n**ID:** broad\n\nA concern.\n\n### Narrow\n\n**ID:** narrow\n**Broader:** broad\n\nA narrower concern.\n")
+	conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system\n---\n# Root\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n\n### Broad\n\n**ID:** broad\n\nA concern.\n\n### Narrow\n\n**ID:** narrow\n**Sub-attribute of:** broad\n\nA narrower concern.\n")
 	conformanceWrite(t, root, "specs/quality/resolved.quality.spec.md", "---\ntype: quality\nid: reused\nattributes: [narrow]\n---\n# Resolved\n")
 	conformanceWrite(t, root, "specs/requirements/undefined.requirement.spec.md", "---\ntype: requirement\nid: reused\nattributes: [unknown]\n---\n# Undefined\n")
 	conformanceWrite(t, root, "sub/specs/system.spec.md", "---\ntype: system\n---\n# Subsystem\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
@@ -253,7 +254,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 			}
 		}
 		if String(resolution, "status") == "resolved" && len(Strings(owner["attributes"])) != 1 {
-			t.Error("broader category was fabricated as a directly authored classification")
+			t.Error("parent category was fabricated as a directly authored classification")
 		}
 	}
 	for _, element := range result.Snapshot.Elements {

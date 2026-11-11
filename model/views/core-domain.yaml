@@ -25,7 +25,8 @@ types:
   Requirement: [applies_to, rationale, attributes, business_rules]
   GeneralRequirement: [statement, verification]
   QualityRequirement: [criterion, measurement]
-  QualityAttribute: [definition, broader]
+  QualityModel: [description, edition, sources, quality_attributes, quality_attributes_content]
+  QualityAttribute: [definition, subattribute_of]
   ContentBinding: [owner, field_path, content_node, mapping_rule]
   SourceReference: [authored_target, context_owner, context_field, resolution]
   Resolution: [occurrence, status, target, rule]
@@ -34,10 +35,10 @@ diagrams:
     direction: TB
     show_cardinality: false
     description: >-
-      Seven concrete specification kinds can share repository context; system association is optional. General and quality
+      Eight concrete specification kinds describe repository intent. Quality models stand independently; other kinds can share optional system context. General and quality
       requirements share the abstract Requirement definition. BusinessRule is an
       independent specification; a contextual citation does not assert enforcement.
-    nodes: [System, BusinessRule, Job, UseCase, Concept, Requirement, GeneralRequirement, QualityRequirement]
+    nodes: [System, QualityModel, BusinessRule, Job, UseCase, Concept, Requirement, GeneralRequirement, QualityRequirement]
     paths: [BusinessRule.owning_system, Job.owning_system, UseCase.owning_system, Concept.owning_system, Requirement.owning_system]
     inheritance: true
   - title: User progress
@@ -48,10 +49,10 @@ diagrams:
   - title: Software behavior and quality
     description: >-
       Use cases contain scenarios and alternatives, concepts describe actions, and
-      requirements can be classified by a system's declared quality attributes. Authored order
+      requirements can be classified by a system's declared quality attributes. Reusable models define separate attributes for copying into systems. Authored order
       does not by itself establish mandatory execution order.
-    nodes: [UseCase, Scenario, ScenarioStep, Extension, Concept, ConceptAction, System, QualityAttribute, Requirement]
-    paths: [UseCase.main_success_scenario, UseCase.extensions.branches, Scenario.steps, Extension.flow, Concept.actions.actions, System.quality_attributes, QualityAttribute.broader, Requirement.attributes]
+    nodes: [UseCase, Scenario, ScenarioStep, Extension, Concept, ConceptAction, System, QualityModel, QualityAttribute, Requirement]
+    paths: [UseCase.main_success_scenario, UseCase.extensions.branches, Scenario.steps, Extension.flow, Concept.actions.actions, System.quality_attributes, QualityModel.quality_attributes, QualityAttribute.subattribute_of, Requirement.attributes]
     inheritance: false
   - title: Traceability to authored content
     description: >-

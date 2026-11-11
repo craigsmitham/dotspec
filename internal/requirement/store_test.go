@@ -41,7 +41,7 @@ This project.
 Consistent operation.
 ### Preservation
 **ID:** source-preservation
-**Broader:** reliability
+**Sub-attribute of:** reliability
 Unchanged sources.
 `)
 	path, err := Init(dir, "work")

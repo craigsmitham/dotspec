@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "graph_rules": "Identifier uniqueness; referential integrity and typed endpoints; containment ownership and cycle rules; source-byte digest, offset-map and span fidelity; ordered syntax-tree and membership consistency; complete content-binding accounting; scope and resolution consistency; system-local attribute identity/broader cycles; paired quality attribute declarations and section content; honest optional decomposition; assertion provenance and consistency are explicit graph checks, not implied by JSON Schema generation.",
+    "graph_rules": "Identifier uniqueness; referential integrity and typed endpoints; containment ownership and cycle rules; source-byte digest, offset-map and span fidelity; ordered syntax-tree and membership consistency; complete content-binding accounting; scope and resolution consistency; owner-local attribute identity/subattribute_of cycles; paired quality attribute declarations and section content; honest optional decomposition; assertion provenance and consistency are explicit graph checks, not implied by JSON Schema generation.",
     "runtime_target": "Generated JSON Schema plus explicit graph checks; no generated-Go reliance.",
     "status": "experimental"
   },
@@ -996,167 +996,6 @@
           "range": "UseCase",
           "reference_ranges": [
             "UseCase"
-          ],
-          "required": true
-        }
-      },
-      "subsets": [
-        "specification-traceability"
-      ]
-    },
-    "BroaderAttribute": {
-      "abstract": false,
-      "ancestors": [
-        "BroaderAttribute",
-        "Assertion",
-        "Record"
-      ],
-      "annotations": {
-        "projection_of": "QualityAttribute.broader"
-      },
-      "description": "An explicitly authored and resolved broader attribute relation.",
-      "is_a": "Assertion",
-      "rules": [],
-      "slots": {
-        "id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-          "identifier": true,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "pattern": "[\\s\\S]+",
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "inputs": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Source occurrences and/or typed records supporting this assertion.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "Record",
-          "reference_ranges": [
-            "Record"
-          ],
-          "required": false
-        },
-        "kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Concrete record type discriminator.",
-          "equals_string": "BroaderAttribute",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "mapping_rule": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "object": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "QualityAttribute",
-          "reference_ranges": [
-            "QualityAttribute"
-          ],
-          "required": true
-        },
-        "origin": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "enum_values": [
-            "authored",
-            "derived"
-          ],
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssertionOrigin",
-          "reference_ranges": [],
-          "required": true
-        },
-        "source_nodes": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "ContentNode",
-          "reference_ranges": [
-            "ContentNode"
-          ],
-          "required": false
-        },
-        "source_spans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "ByteSpan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": false,
-          "range": "ByteSpan",
-          "reference_ranges": [],
-          "required": false
-        },
-        "subject": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "QualityAttribute",
-          "reference_ranges": [
-            "QualityAttribute"
           ],
           "required": true
         }
@@ -3619,9 +3458,9 @@
         "Record"
       ],
       "annotations": {
-        "projection_of": "System.quality_attributes"
+        "projection_of": "System.quality_attributes or QualityModel.quality_attributes"
       },
-      "description": "A system declares and owns a quality attribute.",
+      "description": "A system or reusable quality model declares and owns a quality attribute.",
       "is_a": "Assertion",
       "rules": [],
       "slots": {
@@ -3753,7 +3592,10 @@
         },
         "subject": {
           "annotations": {},
-          "any_of": [],
+          "any_of": [
+            "System",
+            "QualityModel"
+          ],
           "description": "",
           "identifier": false,
           "inline_ranges": [],
@@ -3761,9 +3603,10 @@
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "System",
+          "range": "SpecificationElement",
           "reference_ranges": [
-            "System"
+            "System",
+            "QualityModel"
           ],
           "required": true
         }
@@ -8391,7 +8234,7 @@
         "Record"
       ],
       "annotations": {},
-      "description": "An authored semantic classification or broader label, preserved even when no target can be bound.",
+      "description": "An authored semantic classification or parent label, preserved even when no target can be bound.",
       "is_a": "Record",
       "rules": [],
       "slots": {
@@ -8471,6 +8314,22 @@
           ],
           "required": true
         },
+        "quality_model_context": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Declaring model for parent labels on reusable definitions; never used for requirement classification.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "QualityModel",
+          "reference_ranges": [
+            "QualityModel"
+          ],
+          "required": false
+        },
         "resolution": {
           "annotations": {},
           "any_of": [],
@@ -8493,7 +8352,7 @@
           "description": "",
           "enum_values": [
             "quality_classification",
-            "broader_attribute"
+            "subattribute_of"
           ],
           "identifier": false,
           "inline_ranges": [],
@@ -9764,7 +9623,7 @@
         "Record"
       ],
       "annotations": {},
-      "description": "A named quality attribute declared and owned by one system. Broader is multi-parent; hierarchy alone does not inherit quantitative thresholds.",
+      "description": "A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit obligations, thresholds, or satisfaction.",
       "is_a": "DomainElement",
       "rules": [],
       "slots": {
@@ -9781,38 +9640,6 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
-        },
-        "broader": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Successfully resolved broader targets only; preserve original occurrence and provenance.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "QualityAttribute",
-          "reference_ranges": [
-            "QualityAttribute"
-          ],
-          "required": false
-        },
-        "broader_labels": {
-          "annotations": {},
-          "any_of": [],
-          "description": "All authored Broader labels, including unresolved ones.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "LabelOccurrence",
-          "reference_ranges": [
-            "LabelOccurrence"
-          ],
-          "required": false
         },
         "decomposition": {
           "annotations": {},
@@ -9931,7 +9758,10 @@
         },
         "owner": {
           "annotations": {},
-          "any_of": [],
+          "any_of": [
+            "System",
+            "QualityModel"
+          ],
           "description": "",
           "identifier": false,
           "inline_ranges": [],
@@ -9939,9 +9769,10 @@
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "System",
+          "range": "SpecificationElement",
           "reference_ranges": [
-            "System"
+            "System",
+            "QualityModel"
           ],
           "required": true
         },
@@ -9974,6 +9805,38 @@
           "range": "SourceFragment",
           "reference_ranges": [
             "SourceFragment"
+          ],
+          "required": false
+        },
+        "subattribute_of": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Resolved attributes under which this attribute is directly organized, within the same declaring owner. Derive subattributes by reversing this relation; preserve authored labels and provenance.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "QualityAttribute",
+          "reference_ranges": [
+            "QualityAttribute"
+          ],
+          "required": false
+        },
+        "subattribute_of_labels": {
+          "annotations": {},
+          "any_of": [],
+          "description": "All authored Sub-attribute of labels, including unresolved references.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "LabelOccurrence",
+          "reference_ranges": [
+            "LabelOccurrence"
           ],
           "required": false
         }
@@ -10149,7 +10012,7 @@
         "QualityCriterion"
       ],
       "annotations": {},
-      "description": "Criterion narrative and optional explicit measurement clauses. A label or broader hierarchy does not supply an omitted threshold.",
+      "description": "Criterion narrative and optional explicit measurement clauses. A label or parent hierarchy does not supply an omitted threshold.",
       "rules": [],
       "slots": {
         "aggregation": {
@@ -10341,6 +10204,409 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
+    },
+    "QualityModel": {
+      "abstract": false,
+      "ancestors": [
+        "QualityModel",
+        "SpecificationElement",
+        "DomainElement",
+        "Record"
+      ],
+      "annotations": {
+        "owned_memberships": "QualityModel.quality_attributes"
+      },
+      "description": "A standalone reusable set of quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.",
+      "is_a": "SpecificationElement",
+      "rules": [],
+      "slots": {
+        "authored_id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "An explicitly authored ID when present; no manufactured global identifier.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "authority_and_evidence": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "business_rules": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Contextual references to governing business rules; does not assert enforcement or compliance.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "decomposition": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "not_attempted",
+            "unsegmented",
+            "partial",
+            "complete",
+            "failed"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "DecompositionStatus",
+          "reference_ranges": [],
+          "required": true
+        },
+        "description": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "edition": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "evidence": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "EvidenceCollection"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "EvidenceCollection",
+          "reference_ranges": [],
+          "required": false
+        },
+        "extension_sections": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Only unknown sections, not a substitute for known domain fields.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "ExtensionSection",
+          "reference_ranges": [
+            "ExtensionSection"
+          ],
+          "required": false
+        },
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "QualityModel",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "name": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored title or item name, if present.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Recognized Notes content.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "open_decisions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions.",
+          "identifier": false,
+          "inline_ranges": [
+            "OpenDecisionCollection"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "OpenDecisionCollection",
+          "reference_ranges": [],
+          "required": false
+        },
+        "owning_system": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": false
+        },
+        "preamble": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored content between the title and the first named section.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "quality_attributes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Ordered model definitions; must be present together with quality_attributes_content.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "QualityAttribute",
+          "reference_ranges": [
+            "QualityAttribute"
+          ],
+          "required": false
+        },
+        "quality_attributes_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Complete authored attribute section; absent and empty declarations remain distinct.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "related_concepts": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "related_specifications": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "related_use_cases": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "slug": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Path-derived current slug where applicable.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "source_document": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceDocument",
+          "reference_ranges": [
+            "SourceDocument"
+          ],
+          "required": true
+        },
+        "source_fragment": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceFragment",
+          "reference_ranges": [
+            "SourceFragment"
+          ],
+          "required": false
+        },
+        "sources": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
         }
@@ -11730,6 +11996,7 @@
           "enum_values": [
             "system",
             "job",
+            "quality-model",
             "business-rule",
             "use-case",
             "concept",
@@ -12585,7 +12852,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.3.0-draft",
+          "equals_string": "0.4.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -13380,7 +13647,7 @@
             "fragment",
             "explicit_id",
             "quality_label",
-            "broader_label",
+            "subattribute_label",
             "external_locator"
           ],
           "identifier": false,
@@ -14128,6 +14395,167 @@
       },
       "subsets": [
         "software-requirements"
+      ]
+    },
+    "SubattributeOf": {
+      "abstract": false,
+      "ancestors": [
+        "SubattributeOf",
+        "Assertion",
+        "Record"
+      ],
+      "annotations": {
+        "projection_of": "QualityAttribute.subattribute_of"
+      },
+      "description": "An explicitly authored and resolved attribute grouping; it does not imply exclusive decomposition or inherited obligations.",
+      "is_a": "Assertion",
+      "rules": [],
+      "slots": {
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "inputs": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Source occurrences and/or typed records supporting this assertion.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "Record"
+          ],
+          "required": false
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "SubattributeOf",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "mapping_rule": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "object": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "QualityAttribute",
+          "reference_ranges": [
+            "QualityAttribute"
+          ],
+          "required": true
+        },
+        "origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "authored",
+            "derived"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "AssertionOrigin",
+          "reference_ranges": [],
+          "required": true
+        },
+        "source_nodes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ContentNode",
+          "reference_ranges": [
+            "ContentNode"
+          ],
+          "required": false
+        },
+        "source_spans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ByteSpan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ByteSpan",
+          "reference_ranges": [],
+          "required": false
+        },
+        "subject": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "QualityAttribute",
+          "reference_ranges": [
+            "QualityAttribute"
+          ],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-traceability"
       ]
     },
     "SupportsJob": {
@@ -16015,7 +16443,7 @@
     ],
     "LabelRole": [
       "quality_classification",
-      "broader_attribute"
+      "subattribute_of"
     ],
     "NodeKind": [
       "document",
@@ -16087,7 +16515,7 @@
       "fragment",
       "explicit_id",
       "quality_label",
-      "broader_label",
+      "subattribute_label",
       "external_locator"
     ],
     "ReferenceTraversalMode": [
@@ -16129,6 +16557,7 @@
     "SpecificationKind": [
       "system",
       "job",
+      "quality-model",
       "business-rule",
       "use-case",
       "concept",
@@ -16136,10 +16565,10 @@
       "quality"
     ]
   },
-  "model_version": "0.3.0-draft",
+  "model_version": "0.4.0-draft",
   "representation_version": "0.1.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/dotspec.yaml",
-  "source_sha256": "a4debd9c1a7935a17131b8f9f615c08f9d21f557a6ad3d6cbc7a0d2fe8c38831",
+  "source_sha256": "d61fec0af32456c69d739b405c637ceef71a9fbfcf061381f7d0fa67ac3d3b85",
   "subsets": {
     "business-requirements": {
       "classification": "core",

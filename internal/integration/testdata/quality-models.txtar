@@ -1,0 +1,156 @@
+# Three offline starters; default population is explicit, previewable, and local.
+mkdir project
+cd project
+exec git init -q
+status 0 dotspec quality-model list --json
+stdout '"default": "iso-25010-2023"'
+stdout '"slug": "furps"'
+stdout '"slug": "q42"'
+status 0 dotspec quality-model check iso-25010-2023 --json
+stdout '"errors": 0'
+status 0 dotspec quality-model show furps --json
+stdout '"name": "Supportability"'
+status 2 dotspec quality-model init furps
+stderr 'reserved'
+status 0 dotspec system init
+cp specs/system.spec.md before.md
+status 0 dotspec quality-model apply --system specs/system.spec.md --dry-run
+cp stdout preview.md
+cmp specs/system.spec.md before.md
+stdout 'ID:\*\* functional-suitability'
+stdout 'ID:\*\* safety'
+stdout 'Sub-attribute of:\*\* reliability'
+stdout 'ID:\*\* safe-integration'
+status 0 dotspec quality-model apply --system specs/system.spec.md
+stdout 'Added 49 attributes'
+cmp specs/system.spec.md preview.md
+status 2 dotspec quality-model apply --system specs/system.spec.md
+stderr 'already exists'
+cmp specs/system.spec.md preview.md
+status 2 dotspec quality-model apply furps --system specs/system.spec.md --attributes unknown
+stderr 'unknown attribute'
+cmp specs/system.spec.md preview.md
+
+# Local models share parsing, checking and discovery. Selecting a leaf copies ancestors.
+status 0 dotspec quality-model init organization-quality --from furps --json
+stdout 'organization-quality.quality-model.spec.md'
+status 0 dotspec quality-model show organization-quality --json
+stdout '"id": "organization-quality"'
+stdout '"name": "Supportability"'
+status 2 dotspec quality-model init organization-quality
+stderr 'refusing to overwrite'
+cp ../local.md specs/quality-models/organization-quality.quality-model.spec.md
+status 0 dotspec quality-model check organization-quality --json
+stdout '"errors": 0'
+status 0 dotspec quality-model show organization-quality --json
+stdout '"edition": "Team edition 1"'
+status 0 dotspec quality-model list --json
+stdout '"slug": "organization-quality"'
+status 0 dotspec quality-model apply organization-quality --system specs/system.spec.md --attributes narrow --dry-run
+stdout 'ID:\*\* broad'
+stdout 'ID:\*\* narrow'
+! stdout 'ID:\*\* unselected'
+cp stdout local-preview.md
+status 0 dotspec quality-model apply organization-quality --system specs/system.spec.md --attributes narrow --json
+stdout '"added":'
+cmp specs/system.spec.md local-preview.md
+status 0 dotspec check --json
+stdout '"errors": 0'
+status 0 dotspec sources --json
+stdout 'organization-quality.quality-model.spec.md'
+status 0 dotspec model export
+stdout '"kind": "QualityModel"'
+stdout '"quality_model_context":'
+cp stdout snapshot.json
+status 0 dotspec model validate snapshot.json --json
+stdout '"valid": true'
+
+# Editing the reference model does not synchronize the populated system.
+cp ../draft.md specs/quality-models/organization-quality.quality-model.spec.md
+cmp specs/system.spec.md local-preview.md
+status 0 dotspec quality-model check organization-quality --json
+stdout 'quality-model.attributes'
+cp ../invalid.md specs/quality-models/invalid.quality-model.spec.md
+status 1 dotspec quality-model check invalid --json
+stdout 'structure.duplicate-section'
+status 1 dotspec model export
+cp stdout partial.json
+status 0 dotspec model validate partial.json --json
+stdout '"valid": true'
+status 2 dotspec quality-model init ../escape
+status 2 dotspec quality-model check missing --json
+stdout '"complete": false'
+# A shared Q42 quality navigates through both dimensions without adding authored labels.
+cd ..
+mkdir q42-project
+cd q42-project
+exec git init -q
+status 0 dotspec system init
+status 0 dotspec quality-model apply q42 --system specs/system.spec.md --attributes resilience
+stdout 'Added 3 attributes'
+status 0 dotspec quality init resilient-service
+cp ../resilient-service.md specs/quality/resilient-service.quality.spec.md
+status 0 dotspec quality show resilient-service
+stdout 'Attributes: resilience'
+stdout 'Ancestor attributes: reliable, secure'
+status 0 dotspec quality list --attribute reliable
+stdout 'Resilient service'
+status 0 dotspec quality list --attribute secure
+stdout 'Resilient service'
+status 0 dotspec quality list --attribute safe
+stdout 'No quality requirements found'
+status 0 dotspec model export
+stdout '"kind": "SubattributeOf"'
+cp stdout snapshot.json
+status 0 dotspec model validate snapshot.json --json
+stdout '"valid": true'
+-- local.md --
+---
+type: quality-model
+id: organization-quality
+---
+# Organization quality
+## Description
+Attributes we tailor for our products.
+## Edition
+Team edition 1
+## Sources
+[Model guidance](https://example.test/quality)
+## Quality attributes
+### Broad concern
+**ID:** broad
+Our general concern.
+### Narrow concern
+**ID:** narrow
+**Sub-attribute of:** broad
+Our specific concern.
+### Unselected concern
+**ID:** unselected
+A concern to consider later.
+-- draft.md --
+---
+type: quality-model
+---
+# Draft model
+-- invalid.md --
+---
+type: quality-model
+---
+# Invalid
+## Quality attributes
+## Quality attributes
+
+-- resilient-service.md --
+---
+type: quality
+attributes: [resilience]
+---
+# Resilient service
+## Applies to
+Loss of one service instance.
+## Criterion
+At least one instance remains able to serve requests.
+## Measurement
+Stop one instance and send a request.
+## Rationale
+Continue useful service during disruption.

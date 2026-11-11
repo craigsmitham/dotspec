@@ -101,7 +101,7 @@ func Parse(data []byte) (*System, error) {
 		}
 		content := doc.Body(section)
 		spec.QualityAttributesContent = &content
-		spec.QualityAttributes, err = parseQualityAttributes(doc, section, &ids)
+		spec.QualityAttributes, err = ParseQualityAttributes(doc, section, &ids)
 		if err != nil {
 			return nil, err
 		}

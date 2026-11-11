@@ -34,11 +34,11 @@ This repository.
 Consistent behavior.
 ### Repeatability
 **ID:** repeatability
-**Broader:** reliability
+**Sub-attribute of:** reliability
 Stable results.
 ### Diagnosability
 **ID:** diagnosability
-**Broader:** reliability
+**Sub-attribute of:** reliability
 Understandable findings.
 `
 
@@ -58,7 +58,7 @@ func TestResolutionGroupingAndNoAttributeInheritance(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(spec.Classification.Resolved) != 2 || !reflect.DeepEqual(spec.Classification.Broader, []string{"reliability"}) || spec.Classification.SystemPath != filepath.Join(dir, "specs/system.spec.md") {
+	if len(spec.Classification.Resolved) != 2 || !reflect.DeepEqual(spec.Classification.Ancestors, []string{"reliability"}) || spec.Classification.SystemPath != filepath.Join(dir, "specs/system.spec.md") {
 		t.Fatalf("resolution: %+v", spec)
 	}
 	groups, err := List(dir)

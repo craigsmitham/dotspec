@@ -76,19 +76,19 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 		for _, child := range s.Children {
 			a := m.named("QualityAttribute", r, child)
 			a["authored_id"] = m.fieldText(child, "ID")
-			definition := m.withoutFields(child, child.Content, "ID", "Broader")
+			definition := m.withoutFields(child, child.Content, "ID", "Sub-attribute of")
 			a["definition"] = m.doc.Rich(definition)
 			m.bind(a, "definition", definition, "named_field", "attribute-definition")
 			m.bind(a, "authored_id", m.fieldNodes(child, "ID"), "record_identity", "attribute-id")
-			a["broader_labels"] = []string{}
-			if ids := m.fieldNodes(child, "Broader"); len(ids) > 0 {
-				for _, label := range strings.Split(m.fieldText(child, "Broader"), ",") {
+			a["subattribute_of_labels"] = []string{}
+			if ids := m.fieldNodes(child, "Sub-attribute of"); len(ids) > 0 {
+				for _, label := range strings.Split(m.fieldText(child, "Sub-attribute of"), ",") {
 					label = strings.TrimSpace(label)
 					if label != "" {
-						appendID(a, "broader_labels", m.label(a, label, ids[0], "broader_attribute"))
+						appendID(a, "subattribute_of_labels", m.label(a, label, ids[0], "subattribute_of"))
 					}
 				}
-				m.bind(a, "broader_labels", ids, "named_field", "broader-labels")
+				m.bind(a, "subattribute_of_labels", ids, "named_field", "subattribute-labels")
 			}
 			m.openDecisions(a, child.Children)
 			appendID(r, "quality_attributes", String(a, "id"))

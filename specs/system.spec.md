@@ -66,7 +66,7 @@ How effectively contributors can author, inspect, and maintain specifications.
 ### Diagnosability
 
 **ID:** diagnosability
-**Broader:** usability
+**Sub-attribute of:** usability
 
 How effectively findings help contributors understand and locate specification
 problems.
@@ -74,7 +74,7 @@ problems.
 ### Accessibility
 
 **ID:** accessibility
-**Broader:** usability
+**Sub-attribute of:** usability
 
 How effectively people with differing abilities and ways of accessing output
 can use dotspec.
@@ -89,7 +89,7 @@ conditions.
 ### Repeatability
 
 **ID:** repeatability
-**Broader:** reliability
+**Sub-attribute of:** reliability
 
 Whether equivalent inspections under unchanged conditions produce equivalent
 reports.
@@ -97,7 +97,7 @@ reports.
 ### Source preservation
 
 **ID:** source-preservation
-**Broader:** reliability
+**Sub-attribute of:** reliability
 
 Whether inspection preserves the source material it examines.
 
@@ -111,7 +111,7 @@ workloads.
 ### Responsiveness
 
 **ID:** responsiveness
-**Broader:** performance
+**Sub-attribute of:** performance
 
 The elapsed time before an operation delivers its result.
 

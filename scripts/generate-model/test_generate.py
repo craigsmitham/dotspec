@@ -35,6 +35,9 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(owner["range"], "DomainElement")
         self.assertEqual(owner["reference_ranges"], ["Scenario", "Extension"])
         self.assertNotIn("DomainElement", owner["reference_ranges"])
+        self.assertEqual(self.slot("QualityAttribute", "owner")["reference_ranges"], ["System", "QualityModel"])
+        self.assertEqual(self.slot("DeclaresQualityAttribute", "subject")["reference_ranges"], ["System", "QualityModel"])
+        self.assertEqual(self.slot("LabelOccurrence", "quality_model_context")["reference_ranges"], ["QualityModel"])
 
     def test_embedded_values_and_ordered_references_stay_distinct(self):
         scenario = self.slot("UseCase", "main_success_scenario")

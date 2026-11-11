@@ -92,7 +92,7 @@ An inspection of selected source files.
 Consistent operation.
 ### Preservation
 **ID:** preservation
-**Broader:** reliability
+**Sub-attribute of:** reliability
 Unchanged source content.
 -- rule.md --
 ---

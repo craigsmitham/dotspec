@@ -12,12 +12,12 @@ import (
 type Classification struct {
 	SystemPath string             `json:"system_path"`
 	Resolved   []system.Attribute `json:"resolved"`
-	Broader    []string           `json:"broader"`
+	Ancestors  []string           `json:"ancestors"`
 	Undefined  []string           `json:"undefined"`
 }
 
 func Classify(ids []string, sys *system.System) Classification {
-	c := Classification{Resolved: []system.Attribute{}, Broader: []string{}, Undefined: []string{}}
+	c := Classification{Resolved: []system.Attribute{}, Ancestors: []string{}, Undefined: []string{}}
 	if sys == nil || sys.QualityAttributes == nil {
 		return c
 	}
@@ -29,7 +29,7 @@ func Classify(ids []string, sys *system.System) Classification {
 			c.Undefined = append(c.Undefined, id)
 		}
 	}
-	c.Broader = sys.QualityAttributeAncestors(ids)
+	c.Ancestors = sys.QualityAttributeAncestors(ids)
 	return c
 }
 

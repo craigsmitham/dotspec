@@ -10,7 +10,7 @@ attributes:
 ## Applies to
 
 Specification-model exports and validation of their saved snapshots, including
-all seven supported specification families, malformed specifications, directly
+all eight supported specification families, malformed specifications, directly
 consulted Markdown, and other acquired reference targets.
 
 ## Statement

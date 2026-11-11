@@ -14,13 +14,13 @@ status 0 dotspec system show --json
 stdout '"quality_attributes": \['
 stdout '"quality_attributes_content":'
 ! stdout '"quality_model":'
-stdout '"broader":'
+stdout '"subattribute_of":'
 status 0 dotspec quality list --attribute usability --json
 stdout '"name": "Accessible diagnostics"'
 stdout '"attribute": "usability"'
 status 0 dotspec quality show work
 stdout 'Attributes: diagnostics, accessibility'
-stdout 'Broader groups: usability'
+stdout 'Ancestor attributes: usability'
 status 0 dotspec quality check work --json
 stdout '"context_files_checked": 1'
 stdout '"advice": 0'
@@ -62,11 +62,11 @@ CLI.
 Effective use.
 ### Diagnostics
 **ID:** diagnostics
-**Broader:** usability
+**Sub-attribute of:** usability
 Understandable findings.
 ### Accessibility
 **ID:** accessibility
-**Broader:** usability
+**Sub-attribute of:** usability
 Accessible output.
 -- requirement.md --
 ---
@@ -100,7 +100,7 @@ CLI.
 ## Quality attributes
 ### A
 **ID:** a
-**Broader:** b
+**Sub-attribute of:** b
 ### B
 **ID:** b
-**Broader:** a
+**Sub-attribute of:** a

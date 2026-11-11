@@ -20,11 +20,11 @@ CLI.
 Effective use.
 ### Diagnostics
 **ID:** diagnostics
-**Broader:** usability
+**Sub-attribute of:** usability
 Understandable findings.
 ### Accessibility
 **ID:** accessibility
-**Broader:** usability
+**Sub-attribute of:** usability
 Accessible output.
 `
 
@@ -44,11 +44,11 @@ func TestQualityCLIResolutionAndFiltering(t *testing.T) {
 		t.Fatalf("show: %d %s %s %v", code, out, errOut, err)
 	}
 	r := result.Quality
-	if len(r.Attributes) != 2 || len(r.Classification.Resolved) != 2 || len(r.Classification.Broader) != 1 || r.Classification.Broader[0] != "usability" {
+	if len(r.Attributes) != 2 || len(r.Classification.Resolved) != 2 || len(r.Classification.Ancestors) != 1 || r.Classification.Ancestors[0] != "usability" {
 		t.Fatalf("classification: %+v", r)
 	}
 	code, out, errOut = invoke("quality", "show", "work")
-	if code != 0 || errOut != "" || !strings.Contains(out, "Attributes: diagnostics, accessibility") || !strings.Contains(out, "Broader groups: usability") {
+	if code != 0 || errOut != "" || !strings.Contains(out, "Attributes: diagnostics, accessibility") || !strings.Contains(out, "Ancestor attributes: usability") {
 		t.Fatalf("text: %d %s %s", code, out, errOut)
 	}
 	code, out, errOut = invoke("quality", "list", "--attribute", "usability", "--json")
@@ -66,7 +66,7 @@ func TestQualityCLIResolutionAndFiltering(t *testing.T) {
 		t.Fatalf("model JSON: %d %s %s %v", code, out, errOut, err)
 	}
 	code, out, errOut = invoke("system", "show")
-	if code != 0 || errOut != "" || !strings.Contains(out, "**Broader:** usability") {
+	if code != 0 || errOut != "" || !strings.Contains(out, "**Sub-attribute of:** usability") {
 		t.Fatalf("model text: %d %s %s", code, out, errOut)
 	}
 	writeFixture(t, "specs/quality/work.quality.spec.md", "---\ntype: quality\nattributes: [unknown]\n---\n# Draft\n")

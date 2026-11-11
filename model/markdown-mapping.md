@@ -1,11 +1,11 @@
 # Markdown mapping profile
 
-`dotspec-markdown/2` maps specification Markdown to the
+`dotspec-markdown/3` maps specification Markdown to the
 [canonical model](dotspec.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/specification-model.md).
 
-The profile covers all seven specification families: business rule, system, job, use case,
+The profile covers all eight specification families: quality model, business rule, system, job, use case,
 concept, general requirement and quality requirement. Existing type parsers
 remain authoritative for authoring structure and validity. The exporter retains
 source and syntax before invoking those parsers. Rejection produces diagnostics
@@ -99,6 +99,26 @@ extensions. The existing generic Constraint record remains available for
 constraint narrative in system documents; identifying a BusinessRule is an
 explicit authoring decision.
 
+## Quality model
+
+A `quality-model` specification maps to a standalone `QualityModel`, with no
+implicit enclosing-system association.
+
+| Section or item | Mapping |
+| --- | --- |
+| Description | `description: RichContent` |
+| Edition | `edition: RichContent` |
+| Sources | `sources: ContextualReferences`, preserving prose and source links |
+| Quality attributes | `quality_attributes_content` plus ordered `quality_attributes` |
+| Named attribute subsection | `QualityAttribute` owned by the declaring `QualityModel` |
+| Attribute ID, Sub-attribute of, definition, open decisions | Same syntax and content accounting as system attributes below |
+
+A parent label on a model definition resolves inside that model and records
+`quality_model_context`. Requirement classification continues to resolve only
+against a system's declarations. Both owner types project
+`DeclaresQualityAttribute` assertions. Copy provenance uses ordinary source links;
+no synchronization, equivalence, or satisfaction relationship is inferred.
+
 ## System
 
 | Section or item | Mapping |
@@ -114,10 +134,10 @@ explicit authoring decision.
 | Quality attributes | `System.quality_attributes_content` preserves the section; `System.quality_attributes` lists its attributes in authored order |
 | Named attribute subsection | `QualityAttribute` with title, definition and declaring `System` owner |
 | Attribute `**ID:**` | Required system-local `authored_id` |
-| Attribute `**Broader:**` | Comma-separated `LabelOccurrence` records; resolutions supply `broader` targets |
+| Attribute `**Sub-attribute of:**` | Ordered `subattribute_of_labels` from comma-separated IDs; resolutions supply multi-valued `subattribute_of` targets |
 | Attribute: Open decision/question sections | Explicit `OpenDecision` values |
 
-The attribute definition excludes its introductory ID and Broader metadata lines
+The attribute definition excludes its introductory ID and Sub-attribute of metadata lines
 while retaining all other definition content. Subheadings that subdivide a
 quality-attribute or glossary definition remain part of that narrative unless a
 specific rule above assigns a more precise role. Unrecognized headings inside
@@ -251,7 +271,7 @@ qualifications, examples and evidence instructions.
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/2`, an owner and field path, source
+Bindings record a rule under `dotspec-markdown/3`, an owner and field path, source
 occurrence and role. Named-field, record-identity and structured-item bindings
 account for interpreted domain content. Metadata bindings account for frontmatter.
 Structural-wrapper bindings cover headings and syntax support; a document-root

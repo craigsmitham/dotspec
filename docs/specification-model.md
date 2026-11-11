@@ -13,8 +13,8 @@ The canonical [LinkML model](../model/dotspec.yaml) defines the records and thei
 relationships. The [generated reference](reference/model/index.md) describes
 every field. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.3.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/2`.
+`model_version` is `0.4.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/3`.
 
 ## Export and validate a snapshot
 
@@ -58,7 +58,7 @@ before a snapshot exists.
 | --- | --- | --- |
 | Source | Locators, read state and exact acquired payloads | Formatting, comments and malformed text survive interpretation. |
 | Document content | Ordered Markdown and YAML syntax, original-byte spans, references and fragments | Consumers can examine a document's structure without accepting a domain interpretation. |
-| Domain | Business rules, systems, jobs, steps, outcomes, progress cases, use cases, scenarios, concepts, requirements and quality attributes | Named fields and records make domain meaning addressable and checkable. |
+| Domain | Business rules, systems, jobs, steps, outcomes, progress cases, use cases, scenarios, concepts, requirements, reusable quality models and quality attributes | Named fields and records make domain meaning addressable and checkable. |
 
 ```mermaid
 flowchart LR
@@ -143,9 +143,12 @@ context or explicitly marked as not attempted.
 Directory ownership does not set a use case's system boundary. An enclosing
 system does not silently supply inherited requirements, assumptions or quality
 attributes through another system. Each `QualityAttribute` belongs directly to
-its declaring `System`. Classification labels retain their authored occurrences
+its declaring `System` or standalone `QualityModel`. Model definitions can be
+copied into systems as independent declarations with ordinary source links. Classification labels retain their authored occurrences
 and `system_context`; resolved targets populate the corresponding typed fields.
-Broader quality attributes stay within their declaring system. The system's
+Sub-attribute references stay within their declaring owner. Reusable-model
+grouping labels use `quality_model_context`; requirement labels use system context.
+The system's
 `quality_attributes_content` preserves the section narrative and subsections;
 `quality_attributes` preserves the ordered attribute references. An absent
 section and an explicitly empty section remain distinct.
@@ -155,6 +158,47 @@ membership and classification assertions from canonical fields using model
 annotations. A Related jobs link, verification citation or authority paragraph
 remains authored context; the link alone does not prove support, satisfaction,
 authority or execution evidence.
+
+### Quality attribute grouping
+
+`QualityAttribute.subattribute_of` is an optional, multi-valued reference to other
+attributes under the same declaring system or model. It means **this attribute
+is organized under these attributes**. Markdown authors write `Sub-attribute of`.
+The resulting structure is a directed acyclic graph: a tree is supported, but a
+quality can appear under several groupings. Root attributes omit the Markdown
+field. CLI attribute JSON represents their references as an empty array.
+
+This choice supports the starter models with one relationship:
+
+- [ISO/IEC 25010:2023](https://www.iso.org/standard/78176.html) groups its nine
+  characteristics into sub-characteristics; these use one immediate grouping each.
+- [RUP's FURPS categories](https://galileo.softlab.ntua.gr/rup/process/workflow/requirem/co_req.htm)
+  include accuracy under reliability and performance. One attribute can retain
+  both placements without duplicating its identity.
+- [Q42](https://quality.arc42.org/articles/arc42-quality-model) uses overlapping
+  dimension tags instead of a fixed tree. For example, resilience belongs under
+  reliable and secure. Dotspec represents those tags with the same grouping
+  relation; this does not reinterpret them as exclusive decomposition.
+
+**Decision rationale:** restricting each attribute to one parent would lose
+legitimate groupings or require duplicate attributes. Introducing a second
+classification relationship would add authoring and navigation complexity for
+these same groupings. A single multi-valued relation keeps the model small while
+preserving the source frameworks. `Sub-attribute of` expresses the relationship
+in the author's domain language; the former `Broader` terminology came from
+knowledge-organization conventions but was less clear to requirements authors.
+
+References must be distinct, resolve within the same declaring owner, and form
+no cycles. Direct sub-attributes are derived by reversing the references;
+ancestors are derived by traversal. Neither is a second authored source of truth.
+The exporter preserves each authored label and its resolution separately and
+projects `SubattributeOf` assertions from the resolved references.
+
+Grouping supports discovery and classification. It does **not** imply inherited
+requirements, thresholds, satisfaction, equivalence, or exclusive membership.
+A requirement's authored attribute labels remain unchanged when filtering finds
+it through an ancestor. Copying a selected attribute includes all its grouping
+ancestors once so references remain valid; it does not select every descendant.
 
 ## Read the independent status fields
 

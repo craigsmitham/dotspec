@@ -21,6 +21,7 @@ func TestMisplacedSpecsFailLocalCommands(t *testing.T) {
 		{"adjacent requirement", "requirement", "work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"nested requirement", "requirement", "specs/requirements/group/work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"adjacent quality", "quality", "work.quality.spec.md", "specs/quality/work.quality.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
+		{"singular quality-model folder", "quality-model", "specs/quality-model/work.quality-model.spec.md", "specs/quality-models/work.quality-model.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"plural quality folder", "quality", "specs/qualities/work.quality.spec.md", "specs/quality/work.quality.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"nested quality", "quality", "specs/quality/group/work.quality.spec.md", "specs/quality/work.quality.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"wrong quality collection", "quality", "specs/jobs/work.quality.spec.md", "specs/quality/work.quality.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},

@@ -125,7 +125,7 @@ Check all supported specifications in a project subtree
 dotspec check [flags]
 ```
 
-Check business-rule, system, job, use-case, concept, requirement, and quality specifications using the same discovery rules as list.
+Check quality-model, business-rule, system, job, use-case, concept, requirement, and quality specifications using the same discovery rules as list.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
@@ -659,7 +659,7 @@ dotspec quality list --path .
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--attribute` | `` | Include requirements with this attribute or a narrower attribute in their system's model |
+| `--attribute` | `` | Include requirements with this attribute or a sub-attribute in their system's model |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
@@ -675,6 +675,125 @@ dotspec quality show <slug> [flags]
 
 ```sh
 dotspec quality show diagnostic-severity --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for show |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec quality-model
+
+Define reusable quality attributes and copy them into systems
+
+```sh
+dotspec quality-model [flags]
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for quality-model |
+
+## dotspec quality-model apply
+
+Copy selected model attributes into a system without overwriting declarations
+
+```sh
+dotspec quality-model apply [model] [flags]
+```
+
+Copy attributes from a bundled starter or local quality model. The default model is iso-25010-2023. With no --attributes selection, copy all attributes. Include ancestors automatically; refuse ID conflicts before writing. --dry-run prints the exact resulting document.
+
+Local declarations remain independent of their source model.
+
+```sh
+dotspec quality-model apply --system specs/system.spec.md --dry-run
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--attributes` | `[]` | Comma-separated attribute IDs to copy, including ancestors |
+| `--dry-run` | `false` | Preview the complete resulting document without writing |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for apply |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--system` | `` | Target system.spec.md path, relative to --path |
+
+## dotspec quality-model check
+
+Check quality-model structure and suggest missing content
+
+```sh
+dotspec quality-model check <slug> [flags]
+```
+
+Check quality-model structure and suggest missing content.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+```sh
+dotspec quality-model check furps --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for check |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec quality-model init
+
+Create an editable project quality model
+
+```sh
+dotspec quality-model init <slug> [flags]
+```
+
+```sh
+dotspec quality-model init organization-quality --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--from` | `` | Copy a bundled starter into the new project model |
+| `--help, -h` | `false` | help for init |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec quality-model list
+
+List bundled starters and project quality models
+
+```sh
+dotspec quality-model list [flags]
+```
+
+```sh
+dotspec quality-model list --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for list |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec quality-model show
+
+Show a bundled starter or a local quality model
+
+```sh
+dotspec quality-model show <slug> [flags]
+```
+
+```sh
+dotspec quality-model show furps --path .
 ```
 
 | Flag | Default | Description |
@@ -752,7 +871,7 @@ dotspec requirement list --path .
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--attribute` | `` | Include requirements with this attribute or a narrower attribute in their system's model |
+| `--attribute` | `` | Include requirements with this attribute or a sub-attribute in their system's model |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for list |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |

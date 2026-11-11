@@ -376,63 +376,6 @@
             "title": "BoundaryIs",
             "type": "object"
         },
-        "BroaderAttribute": {
-            "additionalProperties": false,
-            "description": "An explicitly authored and resolved broader attribute relation.",
-            "properties": {
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "kind": {
-                    "const": "BroaderAttribute",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
-                    "type": "string"
-                },
-                "object": {
-                    "type": "string"
-                },
-                "origin": {
-                    "$ref": "#/$defs/AssertionOrigin"
-                },
-                "source_nodes": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "source_spans": {
-                    "items": {
-                        "$ref": "#/$defs/ByteSpan"
-                    },
-                    "type": "array"
-                },
-                "subject": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "subject",
-                "object",
-                "origin",
-                "id",
-                "kind"
-            ],
-            "title": "BroaderAttribute",
-            "type": "object"
-        },
         "BusinessRule": {
             "additionalProperties": false,
             "description": "A declarative business constraint independent of the software or process that enforces it.",
@@ -1184,7 +1127,7 @@
         },
         "DeclaresQualityAttribute": {
             "additionalProperties": false,
-            "description": "A system declares and owns a quality attribute.",
+            "description": "A system or reusable quality model declares and owns a quality attribute.",
             "properties": {
                 "id": {
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
@@ -1226,6 +1169,11 @@
                     "type": "array"
                 },
                 "subject": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
                     "type": "string"
                 }
             },
@@ -2781,7 +2729,7 @@
         },
         "LabelOccurrence": {
             "additionalProperties": false,
-            "description": "An authored semantic classification or broader label, preserved even when no target can be bound.",
+            "description": "An authored semantic classification or parent label, preserved even when no target can be bound.",
             "properties": {
                 "content_node": {
                     "type": "string"
@@ -2800,6 +2748,10 @@
                     "type": "string"
                 },
                 "owner": {
+                    "type": "string"
+                },
+                "quality_model_context": {
+                    "description": "Declaring model for parent labels on reusable definitions; never used for requirement classification.",
                     "type": "string"
                 },
                 "resolution": {
@@ -2828,7 +2780,7 @@
             "description": "Semantic label occurrences preserved before resolution.",
             "enum": [
                 "quality_classification",
-                "broader_attribute"
+                "subattribute_of"
             ],
             "title": "LabelRole",
             "type": "string"
@@ -3311,25 +3263,11 @@
         },
         "QualityAttribute": {
             "additionalProperties": false,
-            "description": "A named quality attribute declared and owned by one system. Broader is multi-parent; hierarchy alone does not inherit quantitative thresholds.",
+            "description": "A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit obligations, thresholds, or satisfaction.",
             "properties": {
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
-                },
-                "broader": {
-                    "description": "Successfully resolved broader targets only; preserve original occurrence and provenance.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "broader_labels": {
-                    "description": "All authored Broader labels, including unresolved ones.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -3363,6 +3301,11 @@
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
                     "type": "string"
                 },
                 "source_document": {
@@ -3370,6 +3313,20 @@
                 },
                 "source_fragment": {
                     "type": "string"
+                },
+                "subattribute_of": {
+                    "description": "Resolved attributes under which this attribute is directly organized, within the same declaring owner. Derive subattributes by reversing this relation; preserve authored labels and provenance.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "subattribute_of_labels": {
+                    "description": "All authored Sub-attribute of labels, including unresolved references.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -3442,7 +3399,7 @@
         },
         "QualityCriterion": {
             "additionalProperties": false,
-            "description": "Criterion narrative and optional explicit measurement clauses. A label or broader hierarchy does not supply an omitted threshold.",
+            "description": "Criterion narrative and optional explicit measurement clauses. A label or parent hierarchy does not supply an omitted threshold.",
             "properties": {
                 "aggregation": {
                     "$ref": "#/$defs/RichContent"
@@ -3485,6 +3442,115 @@
                 "content"
             ],
             "title": "QualityCriterion",
+            "type": "object"
+        },
+        "QualityModel": {
+            "additionalProperties": false,
+            "description": "A standalone reusable set of quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "authority_and_evidence": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "description": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "edition": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "evidence": {
+                    "$ref": "#/$defs/EvidenceCollection"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "QualityModel",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Recognized Notes content."
+                },
+                "open_decisions": {
+                    "$ref": "#/$defs/OpenDecisionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owning_system": {
+                    "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
+                    "type": "string"
+                },
+                "preamble": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored content between the title and the first named section."
+                },
+                "quality_attributes": {
+                    "description": "Ordered model definitions; must be present together with quality_attributes_content.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "quality_attributes_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored attribute section; absent and empty declarations remain distinct."
+                },
+                "related_concepts": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_specifications": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_use_cases": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
+                },
+                "slug": {
+                    "description": "Path-derived current slug where applicable.",
+                    "type": "string"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "sources": {
+                    "$ref": "#/$defs/ContextualReferences"
+                }
+            },
+            "required": [
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "QualityModel",
             "type": "object"
         },
         "QualityRequirement": {
@@ -3644,7 +3710,7 @@
                 "fragment",
                 "explicit_id",
                 "quality_label",
-                "broader_label",
+                "subattribute_label",
                 "external_locator"
             ],
             "title": "ReferenceForm",
@@ -4307,7 +4373,7 @@
                                 "$ref": "#/$defs/DeclaresQualityAttribute"
                             },
                             {
-                                "$ref": "#/$defs/BroaderAttribute"
+                                "$ref": "#/$defs/SubattributeOf"
                             },
                             {
                                 "$ref": "#/$defs/QualityClassification"
@@ -4407,6 +4473,9 @@
                                 "$ref": "#/$defs/BusinessRule"
                             },
                             {
+                                "$ref": "#/$defs/QualityModel"
+                            },
+                            {
                                 "$ref": "#/$defs/System"
                             },
                             {
@@ -4445,7 +4514,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.3.0-draft",
+                    "const": "0.4.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -4929,6 +4998,7 @@
             "enum": [
                 "system",
                 "job",
+                "quality-model",
                 "business-rule",
                 "use-case",
                 "concept",
@@ -5019,6 +5089,63 @@
                 }
             },
             "title": "StateElement",
+            "type": "object"
+        },
+        "SubattributeOf": {
+            "additionalProperties": false,
+            "description": "An explicitly authored and resolved attribute grouping; it does not imply exclusive decomposition or inherited obligations.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "SubattributeOf",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "SubattributeOf",
             "type": "object"
         },
         "SupportsJob": {
@@ -5579,7 +5706,7 @@
                         "$ref": "#/$defs/DeclaresQualityAttribute"
                     },
                     {
-                        "$ref": "#/$defs/BroaderAttribute"
+                        "$ref": "#/$defs/SubattributeOf"
                     },
                     {
                         "$ref": "#/$defs/QualityClassification"
@@ -5679,6 +5806,9 @@
                         "$ref": "#/$defs/BusinessRule"
                     },
                     {
+                        "$ref": "#/$defs/QualityModel"
+                    },
+                    {
                         "$ref": "#/$defs/System"
                     },
                     {
@@ -5717,7 +5847,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.3.0-draft",
+            "const": "0.4.0-draft",
             "type": "string"
         },
         "references": {
@@ -5771,5 +5901,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.3.0-draft"
+    "version": "0.4.0-draft"
 }

@@ -47,7 +47,7 @@ includes errcheck, govet, ineffassign, staticcheck, and unused.
   reports and the source inventory. Both operations share discovery, context, and
   reference resolution. It owns report accounting and context deduplication, without importing
   the concrete specification types. Checks do not print or exit.
-- `internal/businessrule`, `internal/system`, `internal/job`, `internal/usecase`, `internal/concept`,
+- `internal/qualitymodel`, `internal/businessrule`, `internal/system`, `internal/job`, `internal/usecase`, `internal/concept`,
   `internal/quality` and `internal/requirement` own type-specific parsing and validation,
   metadata schemas, layouts, templates, and repository operations. Their `CheckType`
   functions supply inspection behavior; the CLI registers the supported types.
@@ -172,3 +172,17 @@ memberships, and the focused documentation view. Edit `model/views/core-domain.y
 for presentation choices; keep types and relationship semantics in `model/dotspec.yaml`.
 
 See [Releasing](docs/releasing.md) for snapshot and publication procedures.
+
+Bundled quality models are authored Markdown under
+`internal/qualitymodel/specs/quality-models/`. The CLI embeds those files; the
+standard generator produces their reference pages. Add or edit definitions in
+the source files, retain attribution, and run `mise run generate`. The
+`internal/qualitymodel/apply` package uses the source-content parser to relocate
+Markdown references while copying into systems; it validates the entire result
+before replacing a target file.
+
+The Q42 starter is adapted from arc42's CC BY-SA 4.0 catalog at the revision named
+in its Edition section. Preserve the per-attribute source and license notices so
+selective copies retain attribution. Its generated reference has the same license.
+Refresh names and dimension assignments against a pinned upstream revision; use
+original prompts rather than importing third-party quotations from upstream pages.

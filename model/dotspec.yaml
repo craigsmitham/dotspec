@@ -2,7 +2,7 @@
 id: https://github.com/craigsmitham/dotspec/model/dotspec.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.3.0-draft
+version: 0.4.0-draft
 description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
   is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
   and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
@@ -20,7 +20,7 @@ annotations:
   runtime_target: Generated JSON Schema plus explicit graph checks; no generated-Go reliance.
   graph_rules: Identifier uniqueness; referential integrity and typed endpoints; containment ownership and
     cycle rules; source-byte digest, offset-map and span fidelity; ordered syntax-tree and membership consistency;
-    complete content-binding accounting; scope and resolution consistency; system-local attribute identity/broader
+    complete content-binding accounting; scope and resolution consistency; owner-local attribute identity/subattribute_of
     cycles; paired quality attribute declarations and section content; honest optional decomposition; assertion provenance and consistency are explicit graph checks,
     not implied by JSON Schema generation.
 subsets:
@@ -75,7 +75,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.3.0-draft
+        equals_string: 0.4.0-draft
       mapping_profile:
         range: string
         description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
@@ -736,6 +736,34 @@ classes:
         description: Authored qualifications or references to exception rules; no inferred exemption.
         range: RichContent
         inlined: true
+  QualityModel:
+    in_subset: [software-requirements]
+    description: A standalone reusable set of quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.
+    is_a: SpecificationElement
+    slot_usage:
+      kind:
+        equals_string: QualityModel
+    attributes:
+      description:
+        range: RichContent
+        inlined: true
+      edition:
+        range: RichContent
+        inlined: true
+      sources:
+        range: ContextualReferences
+        inlined: true
+      quality_attributes:
+        range: QualityAttribute
+        multivalued: true
+        list_elements_ordered: true
+        description: Ordered model definitions; must be present together with quality_attributes_content.
+      quality_attributes_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored attribute section; absent and empty declarations remain distinct.
+    annotations:
+      owned_memberships: QualityModel.quality_attributes
   System:
     in_subset: [business-requirements, software-requirements]
     description: The system described by a system document; subordinate systems retain their own boundaries
@@ -914,8 +942,8 @@ classes:
         inlined: true
   QualityAttribute:
     in_subset: [software-requirements]
-    description: A named quality attribute declared and owned by one system. Broader is multi-parent;
-      hierarchy alone does not inherit quantitative thresholds.
+    description: A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner.
+      This acyclic grouping supports trees and overlapping classifications; it does not inherit obligations, thresholds, or satisfaction.
     is_a: DomainElement
     slot_usage:
       kind:
@@ -924,19 +952,22 @@ classes:
         required: true
     attributes:
       owner:
-        range: System
+        range: SpecificationElement
+        any_of:
+        - range: System
+        - range: QualityModel
         required: true
       definition:
         range: RichContent
         inlined: true
-      broader_labels:
+      subattribute_of_labels:
         range: LabelOccurrence
-        description: All authored Broader labels, including unresolved ones.
+        description: All authored Sub-attribute of labels, including unresolved references.
         multivalued: true
         list_elements_ordered: true
-      broader:
+      subattribute_of:
         range: QualityAttribute
-        description: Successfully resolved broader targets only; preserve original occurrence and provenance.
+        description: Resolved attributes under which this attribute is directly organized, within the same declaring owner. Derive subattributes by reversing this relation; preserve authored labels and provenance.
         multivalued: true
   Job:
     in_subset: [user-requirements]
@@ -1705,7 +1736,7 @@ classes:
         inlined: true
   QualityCriterion:
     in_subset: [software-requirements]
-    description: Criterion narrative and optional explicit measurement clauses. A label or broader hierarchy
+    description: Criterion narrative and optional explicit measurement clauses. A label or parent hierarchy
       does not supply an omitted threshold.
     attributes:
       content:
@@ -1879,7 +1910,7 @@ classes:
         range: Resolution
   LabelOccurrence:
     in_subset: [specification-traceability]
-    description: An authored semantic classification or broader label, preserved even when no target can be
+    description: An authored semantic classification or parent label, preserved even when no target can be
       bound.
     is_a: Record
     slot_usage:
@@ -1903,6 +1934,9 @@ classes:
       system_context:
         range: System
         description: System in whose scope this label was interpreted, if established.
+      quality_model_context:
+        range: QualityModel
+        description: Declaring model for parent labels on reusable definitions; never used for requirement classification.
   Resolution:
     in_subset: [specification-traceability]
     description: The recorded outcome of resolving one authored reference or label; targets need not be domain
@@ -2148,30 +2182,33 @@ classes:
       projection_of: Concept.actions.actions
   DeclaresQualityAttribute:
     in_subset: [specification-traceability]
-    description: A system declares and owns a quality attribute.
+    description: A system or reusable quality model declares and owns a quality attribute.
     is_a: Assertion
     slot_usage:
       kind:
         equals_string: DeclaresQualityAttribute
       subject:
-        range: System
+        range: SpecificationElement
+        any_of:
+        - range: System
+        - range: QualityModel
       object:
         range: QualityAttribute
     annotations:
-      projection_of: System.quality_attributes
-  BroaderAttribute:
+      projection_of: System.quality_attributes or QualityModel.quality_attributes
+  SubattributeOf:
     in_subset: [specification-traceability]
-    description: An explicitly authored and resolved broader attribute relation.
+    description: An explicitly authored and resolved attribute grouping; it does not imply exclusive decomposition or inherited obligations.
     is_a: Assertion
     slot_usage:
       kind:
-        equals_string: BroaderAttribute
+        equals_string: SubattributeOf
       subject:
         range: QualityAttribute
       object:
         range: QualityAttribute
     annotations:
-      projection_of: QualityAttribute.broader
+      projection_of: QualityAttribute.subattribute_of
   QualityClassification:
     in_subset: [specification-traceability]
     description: A requirement is explicitly classified by a resolved quality attribute.
@@ -2570,8 +2607,8 @@ enums:
         description: Explicit id.
       quality_label:
         description: Quality label.
-      broader_label:
-        description: Broader label.
+      subattribute_label:
+        description: Sub-attribute label.
       external_locator:
         description: External locator.
   ResolutionStatus:
@@ -2599,8 +2636,8 @@ enums:
     permissible_values:
       quality_classification:
         description: A requirement attribute label.
-      broader_attribute:
-        description: A quality attribute broader label.
+      subattribute_of:
+        description: A quality attribute parent label.
   AssertionOrigin:
     description: Evidence for a materialized semantic relation.
     permissible_values:
@@ -2663,6 +2700,7 @@ enums:
         description: System.
       job:
         description: Job.
+      quality-model:
       business-rule:
       use-case:
         description: Use case.

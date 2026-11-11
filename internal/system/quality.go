@@ -12,17 +12,18 @@ import (
 )
 
 type Attribute struct {
-	ID              string              `json:"id"`
-	Name            string              `json:"name"`
-	Definition      string              `json:"definition"`
-	Broader         []string            `json:"broader"`
-	Location        diagnostic.Location `json:"location"`
-	broaderLocation diagnostic.Location
+	ID                   string              `json:"id"`
+	Name                 string              `json:"name"`
+	Definition           string              `json:"definition"`
+	SubattributeOf       []string            `json:"subattribute_of"`
+	Location             diagnostic.Location `json:"location"`
+	subattributeLocation diagnostic.Location
 }
 
-var attributeField = regexp.MustCompile(`^\*\*(ID|Broader):\*\*\s*(.*?)\s*$`)
+var attributeField = regexp.MustCompile(`^\*\*(ID|Sub-attribute of|Broader|Parents):\*\*\s*(.*?)\s*$`)
 
-func parseQualityAttributes(doc *specfile.Outline, section *specfile.Section, ids *specfile.Identifiers) ([]Attribute, error) {
+// ParseQualityAttributes reads the shared attribute section syntax for systems and reusable models.
+func ParseQualityAttributes(doc *specfile.Outline, section *specfile.Section, ids *specfile.Identifiers) ([]Attribute, error) {
 	attributes := []Attribute{}
 	for _, child := range section.Children {
 		if child.Level != 3 || child.Title == "" {
@@ -41,7 +42,7 @@ func parseQualityAttributes(doc *specfile.Outline, section *specfile.Section, id
 }
 
 func parseAttribute(doc *specfile.Outline, section *specfile.Section, ids *specfile.Identifiers) (Attribute, error) {
-	a := Attribute{Name: section.Title, Broader: []string{}, Location: doc.Location(section.Start, section.Title)}
+	a := Attribute{Name: section.Title, SubattributeOf: []string{}, Location: doc.Location(section.Start, section.Title)}
 	fields := make(map[string]string)
 	locations := make(map[string]diagnostic.Location)
 	fieldLines := make(map[int]bool)
@@ -56,6 +57,9 @@ func parseAttribute(doc *specfile.Outline, section *specfile.Section, ids *specf
 				continue
 			}
 			location := doc.Location(segment.Start, a.Name+" / "+match[1])
+			if match[1] == "Broader" || match[1] == "Parents" {
+				return a, diagnostic.Error("quality.legacy-hierarchy", "Replace **"+match[1]+":** with **Sub-attribute of:**; retain the comma-separated attribute IDs", location)
+			}
 			if previous, exists := locations[match[1]]; exists {
 				return a, diagnostic.Error("structure.duplicate-field", fmt.Sprintf("attribute %s: duplicate %s field", a.Name, match[1]), location, previous)
 			}
@@ -70,18 +74,18 @@ func parseAttribute(doc *specfile.Outline, section *specfile.Section, ids *specf
 	if err := ids.Register(a.ID, "attribute "+a.Name, locations["ID"]); err != nil {
 		return a, err
 	}
-	if value, exists := fields["Broader"]; exists {
-		a.broaderLocation = locations["Broader"]
+	if value, exists := fields["Sub-attribute of"]; exists {
+		a.subattributeLocation = locations["Sub-attribute of"]
 		var references specfile.Identifiers
 		for _, id := range strings.Split(value, ",") {
 			id = strings.TrimSpace(id)
 			if id == "" {
-				return a, diagnostic.Error("quality.broader", "Broader must contain a comma-separated list of nonempty attribute IDs; omit the field for a root attribute", a.broaderLocation)
+				return a, diagnostic.Error("quality.subattribute", "Sub-attribute of must contain a comma-separated list of nonempty attribute IDs; omit the field for a root attribute", a.subattributeLocation)
 			}
-			if err := references.Register(id, "broader attribute", a.broaderLocation); err != nil {
+			if err := references.Register(id, "grouping attribute", a.subattributeLocation); err != nil {
 				return a, err
 			}
-			a.Broader = append(a.Broader, id)
+			a.SubattributeOf = append(a.SubattributeOf, id)
 		}
 	}
 	// Remove metadata only from recognized paragraph lines. Preserve examples,
@@ -108,13 +112,13 @@ func validateQualityAttributes(attributes []Attribute) error {
 	children := make(map[string][]string)
 	var roots []string
 	for _, a := range attributes {
-		remaining[a.ID] = len(a.Broader)
-		if len(a.Broader) == 0 {
+		remaining[a.ID] = len(a.SubattributeOf)
+		if len(a.SubattributeOf) == 0 {
 			roots = append(roots, a.ID)
 		}
-		for _, id := range a.Broader {
+		for _, id := range a.SubattributeOf {
 			if byID[id] == nil {
-				return diagnostic.Error("quality.broader", fmt.Sprintf("attribute %q refers to undefined broader attribute %q", a.ID, id), a.broaderLocation)
+				return diagnostic.Error("quality.subattribute", fmt.Sprintf("attribute %q refers to undefined parent attribute %q", a.ID, id), a.subattributeLocation)
 			}
 			children[id] = append(children[id], a.ID)
 		}
@@ -130,7 +134,7 @@ func validateQualityAttributes(attributes []Attribute) error {
 	if len(roots) != len(attributes) {
 		for _, a := range attributes {
 			if remaining[a.ID] != 0 {
-				return diagnostic.Error("quality.cycle", fmt.Sprintf("attribute %q has a cyclic broader relationship or depends on one", a.ID), a.broaderLocation)
+				return diagnostic.Error("quality.cycle", fmt.Sprintf("attribute %q has a cyclic parent relationship or depends on one", a.ID), a.subattributeLocation)
 			}
 		}
 	}
@@ -148,7 +152,7 @@ func (s *System) FindQualityAttribute(id string) *Attribute {
 	return nil
 }
 
-// QualityAttributeAncestors returns distinct broader IDs in declaration order. It does not
+// QualityAttributeAncestors returns distinct ancestor IDs in declaration order. It does not
 // turn those classifications into authored labels or inherited obligations.
 func (s *System) QualityAttributeAncestors(ids []string) []string {
 	seen := make(map[string]bool)
@@ -159,11 +163,11 @@ func (s *System) QualityAttributeAncestors(ids []string) []string {
 	ancestors := make(map[string]bool)
 	for i := 0; i < len(queue); i++ {
 		if a := s.FindQualityAttribute(queue[i]); a != nil {
-			for _, broader := range a.Broader {
-				ancestors[broader] = true
-				if !seen[broader] {
-					seen[broader] = true
-					queue = append(queue, broader)
+			for _, parent := range a.SubattributeOf {
+				ancestors[parent] = true
+				if !seen[parent] {
+					seen[parent] = true
+					queue = append(queue, parent)
 				}
 			}
 		}

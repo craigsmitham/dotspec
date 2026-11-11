@@ -4,7 +4,7 @@ Generated from [the canonical model](../../../model/dotspec.yaml) and [the view 
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.3.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.4.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
@@ -12,7 +12,7 @@ Model version: `0.3.0-draft`. See the [complete reference](index.md) for all fie
 | --- | --- | --- |
 | Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [System](index.md#system), [BusinessRule](index.md#businessrule) |
 | User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [Job](index.md#job), [JobStep](index.md#jobstep), [Outcome](index.md#outcome), [ProgressCase](index.md#progresscase) |
-| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [Extension](index.md#extension), [Concept](index.md#concept), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [GeneralRequirement](index.md#generalrequirement), [QualityRequirement](index.md#qualityrequirement), [QualityAttribute](index.md#qualityattribute) |
+| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [Extension](index.md#extension), [Concept](index.md#concept), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [GeneralRequirement](index.md#generalrequirement), [QualityRequirement](index.md#qualityrequirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute) |
 | Specification traceability (`core`) | Explicit connections between specification meaning, authored occurrences, and resolved relationships. | [ContentBinding](index.md#contentbinding), [SourceReference](index.md#sourcereference), [Resolution](index.md#resolution) |
 
 Subset membership organizes model definitions; it does not infer the level or importance of an authored instance. Shared types can appear in several subsets. Supporting and generic types appear as context where a diagram needs them.
@@ -23,12 +23,13 @@ Arrows name canonical field paths. Plain arrows represent references or embedded
 
 ### Specification kinds and system association
 
-Seven concrete specification kinds can share repository context; system association is optional. General and quality requirements share the abstract Requirement definition. BusinessRule is an independent specification; a contextual citation does not assert enforcement.
+Eight concrete specification kinds describe repository intent. Quality models stand independently; other kinds can share optional system context. General and quality requirements share the abstract Requirement definition. BusinessRule is an independent specification; a contextual citation does not assert enforcement.
 
 ```mermaid
 classDiagram
     direction TB
     class System
+    class QualityModel
     class BusinessRule
     class Job
     class UseCase
@@ -65,7 +66,7 @@ classDiagram
 
 ### Software behavior and quality
 
-Use cases contain scenarios and alternatives, concepts describe actions, and requirements can be classified by a system's declared quality attributes. Authored order does not by itself establish mandatory execution order.
+Use cases contain scenarios and alternatives, concepts describe actions, and requirements can be classified by a system's declared quality attributes. Reusable models define separate attributes for copying into systems. Authored order does not by itself establish mandatory execution order.
 
 ```mermaid
 classDiagram
@@ -77,6 +78,7 @@ classDiagram
     class Concept
     class ConceptAction
     class System
+    class QualityModel
     class QualityAttribute
     class Requirement
     <<abstract>> Requirement
@@ -86,7 +88,8 @@ classDiagram
     Extension --> "*" ScenarioStep : flow
     Concept --> "*" ConceptAction : actions.actions
     System --> "*" QualityAttribute : quality_attributes
-    QualityAttribute --> "*" QualityAttribute : broader
+    QualityModel --> "*" QualityAttribute : quality_attributes
+    QualityAttribute --> "*" QualityAttribute : subattribute_of
     Requirement --> "*" QualityAttribute : attributes
 ```
 
@@ -306,16 +309,30 @@ Subsets: `software-requirements`. [QualityRequirement](index.md#qualityrequireme
 | `criterion` | [QualityCriterion](index.md#qualitycriterion) | optional |  |
 | `measurement` | [MeasurementPlan](index.md#measurementplan) | optional |  |
 
+### QualityModel
+
+A standalone reusable set of quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.
+
+Subsets: `software-requirements`. [QualityModel](index.md#qualitymodel) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `description` | [RichContent](index.md#richcontent) | optional |  |
+| `edition` | [RichContent](index.md#richcontent) | optional |  |
+| `sources` | [ContextualReferences](index.md#contextualreferences) | optional |  |
+| `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; ordered list | Ordered model definitions; must be present together with quality_attributes_content. |
+| `quality_attributes_content` | [RichContent](index.md#richcontent) | optional | Complete authored attribute section; absent and empty declarations remain distinct. |
+
 ### QualityAttribute
 
-A named quality attribute declared and owned by one system. Broader is multi-parent; hierarchy alone does not inherit quantitative thresholds.
+A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit obligations, thresholds, or satisfaction.
 
 Subsets: `software-requirements`. [QualityAttribute](index.md#qualityattribute) contains the complete definition.
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `definition` | [RichContent](index.md#richcontent) | optional |  |
-| `broader` | [QualityAttribute](index.md#qualityattribute) | optional; list | Successfully resolved broader targets only; preserve original occurrence and provenance. |
+| `subattribute_of` | [QualityAttribute](index.md#qualityattribute) | optional; list | Resolved attributes under which this attribute is directly organized, within the same declaring owner. Derive subattributes by reversing this relation; preserve authored labels and provenance. |
 
 ### ContentBinding
 

@@ -42,7 +42,7 @@ The original authored bytes.
 Works as specified.
 ### Consistency
 **ID:** consistent
-**Broader:** reliable
+**Sub-attribute of:** reliable
 Produces the same result from the same source.
 `,
 		"specs/use-cases/check.use-case.spec.md": `---
@@ -466,13 +466,13 @@ func TestValidationRejectsDomainCyclesAndAttributeScopeEscape(t *testing.T) {
 				}
 			}
 		}
-		reliable["broader"] = []string{String(consistent, "id")}
-		reliable["broader_labels"] = []string{"cycle-label"}
-		s.LabelOccurrences = append(s.LabelOccurrences, Record{"id": "cycle-label", "kind": "LabelOccurrence", "owner": reliable["id"], "role": "broader_attribute", "label": consistent["authored_id"], "content_node": Strings(Object(consistent["definition"])["content_nodes"])[0], "resolution": "cycle-resolution"})
+		reliable["subattribute_of"] = []string{String(consistent, "id")}
+		reliable["subattribute_of_labels"] = []string{"cycle-label"}
+		s.LabelOccurrences = append(s.LabelOccurrences, Record{"id": "cycle-label", "kind": "LabelOccurrence", "owner": reliable["id"], "role": "subattribute_of", "label": consistent["authored_id"], "content_node": Strings(Object(consistent["definition"])["content_nodes"])[0], "resolution": "cycle-resolution"})
 		s.Resolutions = append(s.Resolutions, Record{"id": "cycle-resolution", "kind": "Resolution", "occurrence": "cycle-label", "status": "resolved", "target": consistent["id"], "rule": "explicit-test/1"})
-		requireFinding(t, s, "quality.broader-cycle")
+		requireFinding(t, s, "quality.subattribute-cycle")
 	})
-	t.Run("cross-system broader", func(t *testing.T) {
+	t.Run("cross-system parent", func(t *testing.T) {
 		s := cloneSnapshot(t, original)
 		var broad Record
 		for _, r := range s.Elements {

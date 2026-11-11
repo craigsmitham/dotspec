@@ -408,7 +408,7 @@ dotspec quality show diagnostic-severity --json
     "classification": {
       "system_path": "",
       "resolved": [],
-      "broader": [],
+      "ancestors": [],
       "undefined": []
     },
     "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and the conditions, workload, or population covered by this requirement.\n\n## Criterion\n\nState one coherent obligation, including its measure, comparison, and target where applicable.\nIf a target is unknown, record the open decision and the evidence needed to choose it.\n\n## Measurement\n\nDescribe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.",
@@ -493,7 +493,7 @@ dotspec requirement show reject-existing-target --json
     "classification": {
       "system_path": "",
       "resolved": [],
-      "broader": [],
+      "ancestors": [],
       "undefined": []
     },
     "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification\n\nDescribe how to establish that the obligation holds, including success criteria and evidence to retain.",
@@ -546,7 +546,7 @@ dotspec requirement list --json
           "classification": {
             "system_path": "",
             "resolved": [],
-            "broader": [],
+            "ancestors": [],
             "undefined": []
           },
           "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and the conditions, workload, or population covered by this requirement.\n\n## Criterion\n\nState one coherent obligation, including its measure, comparison, and target where applicable.\nIf a target is unknown, record the open decision and the evidence needed to choose it.\n\n## Measurement\n\nDescribe how to assess the criterion, including sampling, measurement conditions, and evidence to retain.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.",
@@ -577,7 +577,7 @@ dotspec requirement list --json
           "classification": {
             "system_path": "",
             "resolved": [],
-            "broader": [],
+            "ancestors": [],
             "undefined": []
           },
           "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and applicable conditions. Distinguish assumptions from conditions the system must enforce.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification\n\nDescribe how to establish that the obligation holds, including success criteria and evidence to retain.",
@@ -647,6 +647,7 @@ dotspec sources --json
   "scope": {
     "path": "$PROJECT",
     "types": [
+      "quality-model",
       "business-rule",
       "system",
       "job",

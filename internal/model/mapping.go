@@ -13,6 +13,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/quality"
+	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
@@ -40,6 +41,12 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 	var authoredID string
 	var labels []string
 	switch kind {
+	case "quality-model":
+		var v *qualitymodel.QualityModel
+		v, err = qualitymodel.Parse(doc.Data)
+		if err == nil {
+			authoredID = v.ID
+		}
 	case "business-rule":
 		var v *businessrule.BusinessRule
 		v, err = businessrule.Parse(doc.Data)
@@ -85,7 +92,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.parseFailure(err)
 		return m.result
 	}
-	class := map[string]string{"business-rule": "BusinessRule", "system": "System", "job": "Job", "concept": "Concept", "use-case": "UseCase", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[kind]
+	class := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "concept": "Concept", "use-case": "UseCase", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[kind]
 	r := m.record(class, "")
 	m.result.RootID = String(r, "id")
 	if authoredID != "" {
@@ -117,6 +124,8 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		}
 		mapped := false
 		switch kind {
+		case "quality-model":
+			mapped = m.qualityModel(r, section)
 		case "business-rule":
 			mapped = m.businessRule(r, section)
 		case "system":

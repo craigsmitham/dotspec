@@ -7,7 +7,7 @@ and the lessons from quality.md.
 ## Commands and input
 
 Use Cobra command definitions as the source of command names, flags, help, and
-examples. Keep the tree organized by singular concept (`system`, `job`, `use-case`, `concept`, `requirement`, `quality`) and action.
+examples. Keep the tree organized by singular concept (`system`, `job`, `use-case`, `concept`, `requirement`, `quality`, `business-rule`, `quality-model`) and action.
 Project-wide `check` and `sources` are direct operations over the selected scope.
 Each leaf operation validates its arguments before filesystem access. `--path`
 selects an existing project directory; flags may precede or follow positional

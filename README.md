@@ -159,7 +159,7 @@ required system sections, duplicate IDs or conventional sections, malformed
 step structure, and unresolved same-document references. All supported types
 check Markdown heading references. Jobs, use cases, concepts, general and quality
 requirements, and system quality attributes also resolve their explicit document-local IDs.
-Quality attribute checks validate broader references and reject cycles.
+Quality attribute checks validate parent references and reject cycles.
 Checks also resolve relative file links and Markdown fragments as described in
 [References](#references). Remote URLs remain navigation.
 
@@ -499,14 +499,14 @@ How effectively contributors can author, inspect, and maintain specifications.
 ### Diagnosability
 
 **ID:** diagnosability
-**Broader:** usability
+**Sub-attribute of:** usability
 
 How effectively findings help contributors understand and locate problems.
 
 ### Accessibility
 
 **ID:** accessibility
-**Broader:** usability
+**Sub-attribute of:** usability
 
 How effectively people with differing abilities and ways of accessing output
 can use the CLI.
@@ -517,13 +517,13 @@ letter or digit and otherwise contain letters, digits, hyphens, or underscores.
 They do not encode hierarchy: renaming or regrouping an attribute can preserve
 its ID. Same-document links can target these IDs as well as heading anchors.
 
-`Broader` is optional. When present it is a comma-separated list of distinct
-attribute IDs declared by this system; forward references are allowed. Several broader
+`Sub-attribute of` is optional. When present it is a comma-separated list of distinct
+attribute IDs declared by this system; forward references are allowed. Several parent
 attributes are allowed. Unknown references, self-references, cycles, duplicate
 fields, and duplicate IDs are structural errors. Heading depth does not imply
 an attribute relationship. A missing definition produces nonfatal advice.
 
-Only `ID` and `Broader` lines in the attribute's introductory paragraphs are
+Only `ID` and `Sub-attribute of` lines in the attribute's introductory paragraphs are
 fields. Examples in code blocks, blockquotes, lists, and deeper subsections remain
 prose. Definitions retain their Markdown, including subsections and examples.
 
@@ -532,13 +532,17 @@ prose. Definitions retain their Markdown, including subsections and examples.
 when it declares no attributes, or an ordered array of attributes. When the section
 is present, `quality_attributes_content` preserves its Markdown, including an
 empty string for an empty section. Each attribute exposes `id`, `name`,
-`definition`, `broader`, and source `location`.
+`definition`, `subattribute_of`, and source `location`.
 
 The attributes belong to this system. A subsystem does not inherit or merge its
 parent's definitions. Attribute grouping imposes no obligations or thresholds.
+See the [grouping rationale](docs/specification-model.md#quality-attribute-grouping)
+for how this supports both trees and overlapping quality dimensions.
 The term *quality model* is reserved for named sets of attributes, such as ISO
-quality models or FURPS. Referencing or importing those models and mapping their
-editions are not implemented.
+quality models or FURPS. Dotspec includes three reusable starters and can copy
+selected definitions into a system. See [Populate system quality attributes](docs/quality-models.md)
+for browsing, previewing, and authoring models. Copied declarations remain local;
+model updates do not synchronize them.
 The repository's [system spec](specs/system.spec.md#quality-attributes) provides
 a local example, including concerns that do not yet have requirements.
 
@@ -1079,7 +1083,7 @@ and `--json` or `--format json`.
   Markdown and classifications, and reports its associated system and source.
   Slug lookup does not search ancestor projects.
 - `list` discovers requirements in the selected subtree, grouped by associated
-  system. `--attribute ID` includes exact labels and attributes narrower than
+  system. `--attribute ID` includes exact labels and sub-attributes of
   that ID in each requirement's own model. Each matching requirement appears
   once. Without a model, only exact labels match. Same-named attributes in
   different systems remain separate definitions.
@@ -1142,9 +1146,9 @@ section consequently reports every used label as undefined.
 
 JSON retains `attributes` exactly as authored. The separate `classification`
 object exposes `system_path` for the system supplying attribute declarations,
-`resolved` attribute definitions, `broader` ancestor IDs in declaration order,
+`resolved` attribute definitions, `ancestors` IDs in declaration order,
 and `undefined` IDs in authored order. Without a quality attributes section,
-`system_path` is empty and all three arrays are empty. Broader groups are
+`system_path` is empty and all three arrays are empty. Ancestor attributes are
 computed navigation, not additional authored labels or inherited requirements.
 The show envelope uses `quality`; list groups use `requirements`.
 Both envelopes include `schema_version: 1`. Empty collections are arrays.
@@ -1174,8 +1178,9 @@ Additional rules for these formats:
 | `layout.quality-location`, `layout.quality-name` | Required layout and slug |
 | `structure.attribute-heading` | Quality attributes must use nonempty H3 headings |
 | `identity.required` | Attribute definition needs an explicit ID |
-| `quality.broader` | Broader list is empty or contains an undefined reference |
-| `quality.cycle` | Broader graph contains a cycle |
+| `quality.subattribute` | Sub-attribute list is empty or contains an undefined reference |
+| `quality.cycle` | Sub-attribute graph contains a cycle |
+| `quality.legacy-hierarchy` | Rename `Broader` or `Parents` to `Sub-attribute of` |
 | `quality.definition` | Attribute definition is missing (advice) |
 | `quality.attributes` | Attribute list has an invalid shape or element |
 | `quality.undefined-attribute` | Label is absent from the selected model (advice) |

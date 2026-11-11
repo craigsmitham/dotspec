@@ -262,7 +262,7 @@ func (b *snapshotBuilder) resolveLabels() {
 		owner := b.elements[String(label, "owner")]
 		path, _ := b.documentForSource(String(owner, "source_document"))
 		sys := ""
-		if String(label, "role") == "broader_attribute" {
+		if String(label, "role") == "subattribute_of" {
 			sys = String(owner, "owner")
 		} else {
 			sys = String(owner, "owning_system")
@@ -272,7 +272,11 @@ func (b *snapshotBuilder) resolveLabels() {
 			}
 		}
 		if sys != "" {
-			label["system_context"] = sys
+			if String(b.elements[sys], "kind") == "QualityModel" {
+				label["quality_model_context"] = sys
+			} else {
+				label["system_context"] = sys
+			}
 		}
 		if _, declared := b.elements[sys]["quality_attributes"]; !declared {
 			b.resolution(label, "unbound_label", "", "no-quality-attributes/1")
@@ -285,8 +289,8 @@ func (b *snapshotBuilder) resolveLabels() {
 		case 1:
 			b.resolution(label, "resolved", matches[0], "quality-attributes/1")
 			field := "attributes"
-			if String(label, "role") == "broader_attribute" {
-				field = "broader"
+			if String(label, "role") == "subattribute_of" {
+				field = "subattribute_of"
 			}
 			owner[field] = appendUnique(Strings(owner[field]), matches[0])
 		default:

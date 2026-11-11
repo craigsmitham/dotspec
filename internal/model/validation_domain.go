@@ -26,20 +26,20 @@ func (v *graphValidator) checkDomain() {
 	v.checkResolutions()
 	v.checkLabels()
 	v.checkAssertions()
-	v.checkCycles("quality.broader-cycle", "QualityAttribute", func(r Record) []string { return Strings(r["broader"]) })
+	v.checkCycles("quality.subattribute-cycle", "QualityAttribute", func(r Record) []string { return valuesAt(r, "subattribute_of") })
 	v.checkCycles("ownership.cycle", "DomainElement", func(r Record) []string { return valuesAt(r, "owner") })
 	v.checkCycles("system.parent-cycle", "System", func(r Record) []string { return valuesAt(r, "parent_system") })
 	for _, located := range v.sortedRecords() {
 		r, path := located.value, located.path
 		kind := String(r, "kind")
 		if kind == "QualityAttribute" {
-			for _, id := range Strings(r["broader"]) {
+			for _, id := range valuesAt(r, "subattribute_of") {
 				if other := v.records[id].value; other != nil && String(other, "owner") != String(r, "owner") {
-					v.add("quality.scope", path+"/broader", "broader attributes must belong to the same system")
+					v.add("quality.scope", path+"/subattribute_of", "parent attributes must belong to the same declaring owner")
 				}
 			}
 		}
-		if kind == "System" {
+		if kind == "System" || kind == "QualityModel" {
 			_, attributesDeclared := r["quality_attributes"]
 			_, contentDeclared := r["quality_attributes_content"]
 			if attributesDeclared != contentDeclared {
@@ -72,7 +72,7 @@ func (v *graphValidator) checkAuthoredIDs() {
 		if String(r, "kind") == "QualityAttribute" {
 			key = String(r, "owner") + "\x00" + authored
 			if prior, ok := attributeScopes[key]; ok {
-				v.add("quality.identity", located.path+"/authored_id", fmt.Sprintf("attribute ID %q also occurs at %s in this system", authored, prior))
+				v.add("quality.identity", located.path+"/authored_id", fmt.Sprintf("attribute ID %q also occurs at %s under this owner", authored, prior))
 			} else {
 				attributeScopes[key] = located.path
 			}
@@ -208,16 +208,19 @@ func (v *graphValidator) checkLabels() {
 			if system == "" {
 				system = String(label, "system_context")
 			}
-		case "broader_attribute":
-			field, targets = "broader_labels", "broader"
+		case "subattribute_of":
+			field, targets = "subattribute_of_labels", "subattribute_of"
 			if String(owner, "kind") != "QualityAttribute" {
-				v.add("label.owner", path+"/owner", "broader labels belong to quality attributes")
+				v.add("label.owner", path+"/owner", "parent labels belong to quality attributes")
 				continue
 			}
 			system = String(owner, "owner")
 		}
-		if !slices.Contains(Strings(owner[field]), String(label, "id")) {
+		if !slices.Contains(valuesAt(owner, field), String(label, "id")) {
 			v.add("label.membership", path+"/owner", "owner must retain this authored label occurrence")
+		}
+		if context := String(label, "quality_model_context"); context != "" && (String(label, "role") != "subattribute_of" || context != system || String(v.records[system].value, "kind") != "QualityModel") {
+			v.add("label.context", path+"/quality_model_context", "model context must identify the declaring model of a parent label")
 		}
 		if context := String(label, "system_context"); context != "" && context != system {
 			v.add("label.context", path+"/system_context", "label system context disagrees with its owner")
@@ -241,11 +244,11 @@ func (v *graphValidator) checkLabels() {
 		}
 		if len(matches) == 0 {
 			if status != "undefined_label" {
-				v.add("label.undefined", path+"/resolution", "a label missing from its system's declared quality attributes must be undefined")
+				v.add("label.undefined", path+"/resolution", "a label missing from its owner's declared quality attributes must be undefined")
 			}
 		} else if len(matches) == 1 {
 			if status != "resolved" || String(result, "target") != matches[0] {
-				v.add("label.target", path+"/resolution", "label must resolve to the matching attribute in its system's declared quality attributes")
+				v.add("label.target", path+"/resolution", "label must resolve to the matching attribute in its owner's declared quality attributes")
 			}
 		}
 		if status == "resolved" {
@@ -259,18 +262,18 @@ func (v *graphValidator) checkLabels() {
 		if v.isA(String(r, "kind"), "Requirement") {
 			field, labelField = "attributes", "attribute_labels"
 		} else if String(r, "kind") == "QualityAttribute" {
-			field, labelField = "broader", "broader_labels"
+			field, labelField = "subattribute_of", "subattribute_of_labels"
 		}
 		if field == "" {
 			continue
 		}
-		for _, id := range Strings(r[labelField]) {
+		for _, id := range valuesAt(r, labelField) {
 			label := v.records[id].value
 			if label != nil && String(label, "owner") != String(r, "id") {
 				v.add("label.membership", located.path+"/"+labelField, "label occurrence names a different owner")
 			}
 		}
-		projected := Strings(r[field])
+		projected := valuesAt(r, field)
 		expected := actual[String(r, "id")+"\x00"+field]
 		if len(uniqueStrings(projected)) != len(projected) || !sameStrings(projected, expected) {
 			v.add("label.projection", located.path+"/"+field, "resolved semantic targets must agree exactly with authored label resolutions")

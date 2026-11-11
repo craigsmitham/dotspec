@@ -13,13 +13,14 @@ import (
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/quality"
+	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
 )
 
 func exportTypes() []check.Type {
-	return []check.Type{businessrule.CheckType(), system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType(), quality.CheckType()}
+	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType(), quality.CheckType()}
 }
 
 func TestExportEmptyScope(t *testing.T) {

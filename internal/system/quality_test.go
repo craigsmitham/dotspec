@@ -3,6 +3,7 @@ package system
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 	"testing"
@@ -16,7 +17,7 @@ These local attributes describe quality concerns.
 
 ### Responsiveness
 **ID:** response
-**Broader:** performance, usability
+**Sub-attribute of:** performance, usability
 
 Time before the user receives a result.
 
@@ -33,7 +34,7 @@ The user's ability to complete tasks.
 
 ### First result
 **ID:** first-result
-**Broader:** response
+**Sub-attribute of:** response
 Time before the first useful result.
 `
 
@@ -48,7 +49,7 @@ func TestQualityAttributesAndStableIDs(t *testing.T) {
 		t.Fatalf("system attributes: %+v", m)
 	}
 	a := m.FindQualityAttribute("response")
-	if a.Name != "Responsiveness" || !reflect.DeepEqual(a.Broader, []string{"performance", "usability"}) || !strings.Contains(a.Definition, "#### Examples") || strings.Contains(a.Definition, "**ID:") {
+	if a.Name != "Responsiveness" || !reflect.DeepEqual(a.SubattributeOf, []string{"performance", "usability"}) || !strings.Contains(a.Definition, "#### Examples") || strings.Contains(a.Definition, "**ID:") {
 		t.Fatalf("attribute: %+v", a)
 	}
 	if got := m.QualityAttributeAncestors([]string{"first-result", "response", "unbound"}); !reflect.DeepEqual(got, []string{"response", "performance", "usability"}) {
@@ -97,12 +98,15 @@ func TestQualityAttributesStructure(t *testing.T) {
 		{"invalid ID", "## Quality attributes\n### Usability\n**ID:** quality.usability", "identity.invalid"},
 		{"duplicate ID", "## Quality attributes\n### A\n**ID:** same\n### B\n**ID:** same", "identity.duplicate"},
 		{"duplicate field", "## Quality attributes\n### A\n**ID:** a\n**ID:** a", "structure.duplicate-field"},
-		{"unknown parent", "## Quality attributes\n### A\n**ID:** a\n**Broader:** missing", "quality.broader"},
-		{"empty parent", "## Quality attributes\n### A\n**ID:** a\n**Broader:**", "quality.broader"},
-		{"trailing comma", "## Quality attributes\n### A\n**ID:** a\n**Broader:** a,", "quality.broader"},
-		{"duplicate parent", "## Quality attributes\n### A\n**ID:** a\n**Broader:** a, a", "identity.duplicate"},
-		{"self cycle", "## Quality attributes\n### A\n**ID:** a\n**Broader:** a", "quality.cycle"},
-		{"cycle", "## Quality attributes\n### A\n**ID:** a\n**Broader:** b\n### B\n**ID:** b\n**Broader:** a", "quality.cycle"},
+		{"legacy broader", "## Quality attributes\n### A\n**ID:** a\n**Broader:** b", "quality.legacy-hierarchy"},
+		{"legacy parents", "## Quality attributes\n### A\n**ID:** a\n**Parents:** b", "quality.legacy-hierarchy"},
+		{"duplicate hierarchy field", "## Quality attributes\n### A\n**ID:** a\n**Sub-attribute of:** b\n**Sub-attribute of:** c", "structure.duplicate-field"},
+		{"unknown parent", "## Quality attributes\n### A\n**ID:** a\n**Sub-attribute of:** missing", "quality.subattribute"},
+		{"empty parent", "## Quality attributes\n### A\n**ID:** a\n**Sub-attribute of:**", "quality.subattribute"},
+		{"trailing comma", "## Quality attributes\n### A\n**ID:** a\n**Sub-attribute of:** a,", "quality.subattribute"},
+		{"duplicate parent", "## Quality attributes\n### A\n**ID:** a\n**Sub-attribute of:** a, a", "identity.duplicate"},
+		{"self cycle", "## Quality attributes\n### A\n**ID:** a\n**Sub-attribute of:** a", "quality.cycle"},
+		{"cycle", "## Quality attributes\n### A\n**ID:** a\n**Sub-attribute of:** b\n### B\n**ID:** b\n**Sub-attribute of:** a", "quality.cycle"},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, source := range []string{validSpec + tt.body, "\ufeff" + strings.ReplaceAll(validSpec+tt.body, "\n", "\r\n")} {
@@ -120,13 +124,13 @@ func TestQualityAttributesStructure(t *testing.T) {
 }
 
 func TestQualityMetadataOnlyComesFromIntroParagraphs(t *testing.T) {
-	body := "\n## Quality attributes\n### A\n**ID:** a\n\n```markdown\n**ID:** code\n**Broader:** absent\n### Fake\n```\n\n> **ID:** quote\n\n- **Broader:** absent\n\n#### Notes\n**ID:** documentation\n"
+	body := "\n## Quality attributes\n### A\n**ID:** a\n\n```markdown\n**ID:** code\n**Sub-attribute of:** absent\n### Fake\n```\n\n> **ID:** quote\n\n- **Sub-attribute of:** absent\n\n#### Notes\n**ID:** documentation\n"
 	spec, err := Parse([]byte(validSpec + body))
 	if err != nil {
 		t.Fatal(err)
 	}
 	a := spec.QualityAttributes[0]
-	if a.ID != "a" || len(a.Broader) != 0 || !strings.Contains(a.Definition, "**ID:** code") || !strings.Contains(a.Definition, "**ID:** documentation") {
+	if a.ID != "a" || len(a.SubattributeOf) != 0 || !strings.Contains(a.Definition, "**ID:** code") || !strings.Contains(a.Definition, "**ID:** documentation") {
 		t.Fatalf("metadata swallowed prose: %+v", a)
 	}
 	blank, err := Parse([]byte(validSpec + "\n## Quality attributes\n### A\n**ID:** a\n"))
@@ -137,5 +141,38 @@ func TestQualityMetadataOnlyComesFromIntroParagraphs(t *testing.T) {
 	advice := Check(blank)
 	if len(advice) != 1 || advice[0].Rule != "quality.definition" || advice[0].Location.Path != blank.Path {
 		t.Fatalf("definition advice: %+v", advice)
+	}
+}
+
+func TestQualityAttributeDeepHierarchy(t *testing.T) {
+	var body strings.Builder
+	body.WriteString(validSpec + "\n## Quality attributes\n")
+	for i := 0; i < 64; i++ {
+		fmt.Fprintf(&body, "### Attribute %d\n**ID:** a%d\n", i, i)
+		if i < 63 {
+			fmt.Fprintf(&body, "**Sub-attribute of:** a%d\n", i+1)
+		}
+		body.WriteString("Definition.\n")
+	}
+	s, err := Parse([]byte(body.String()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := s.QualityAttributeAncestors([]string{"a0"}); len(got) != 63 || got[0] != "a1" || got[62] != "a63" {
+		t.Fatalf("ancestor chain: %v", got)
+	}
+	data, err := json.Marshal(s.FindQualityAttribute("a0"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(data), `"subattribute_of":["a1"]`) {
+		t.Fatalf("references must be an array: %s", data)
+	}
+	data, err = json.Marshal(s.FindQualityAttribute("a63"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(data), `"subattribute_of":[]`) {
+		t.Fatalf("root must have an empty reference array: %s", data)
 	}
 }

@@ -33,9 +33,9 @@ func TestQualityContextAndAdvice(t *testing.T) {
 	if project.Summary.Advice != 3 || project.Summary.ContextFilesChecked != 0 {
 		t.Fatalf("duplicate model advice: %+v", project)
 	}
-	write(t, modelPath, strings.Replace(model, "**ID:** known", "**ID:** known\n**Broader:** missing", 1))
+	write(t, modelPath, strings.Replace(model, "**ID:** known", "**ID:** known\n**Sub-attribute of:** missing", 1))
 	project = checkProject(dir)
-	if !project.Complete || project.Summary.Errors != 1 || project.Summary.Advice != 0 || project.Diagnostics[0].Rule != "quality.broader" {
+	if !project.Complete || project.Summary.Errors != 1 || project.Summary.Advice != 0 || project.Diagnostics[0].Rule != "quality.subattribute" {
 		t.Fatalf("cascading model errors: %+v", project)
 	}
 	// Failure to locate a valid context does not fabricate undefined labels.

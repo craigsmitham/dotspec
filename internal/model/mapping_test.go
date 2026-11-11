@@ -58,7 +58,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 	}
 	schemas := map[string]*jsonschema.Schema{}
 	counts := map[string]int{}
-	for _, root := range []string{"../../specs", "../../examples/starter/specs", "../../internal/integration/specs"} {
+	for _, root := range []string{"../../specs", "../../examples/starter/specs", "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
 		err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
 			if err != nil {
 				return err
@@ -76,7 +76,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 			if len(m.Diagnostics) > 0 || m.RootID == "" {
 				t.Errorf("%s: root=%q diagnostics=%#v", path, m.RootID, m.Diagnostics)
 			}
-			expectedClass := map[string]string{"business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[kind]
+			expectedClass := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[kind]
 			rootMatches := false
 			for _, element := range m.Elements {
 				if String(element, "id") == m.RootID && String(element, "kind") == expectedClass {
@@ -126,7 +126,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 		}
 	}
 	total := 0
-	for _, kind := range []string{"system", "job", "use-case", "concept", "requirement", "quality", "business-rule"} {
+	for _, kind := range []string{"system", "job", "use-case", "concept", "requirement", "quality", "business-rule", "quality-model"} {
 		if counts[kind] == 0 {
 			t.Errorf("%s family absent from inventory", kind)
 		}
@@ -260,7 +260,7 @@ Works consistently.
 ### Diagnosability
 
 **ID:** diagnostic
-**Broader:** usability, reliability
+**Sub-attribute of:** usability
 
 Problems can be explained.
 `)
@@ -270,8 +270,8 @@ Problems can be explained.
 	if len(Strings(r["quality_attributes"])) != 3 || len(recordsOf(m, "QualityAttribute")) != 3 {
 		t.Error("quality attributes missing")
 	}
-	if len(m.Labels) != 2 {
-		t.Fatalf("broader labels: %#v", m.Labels)
+	if len(m.Labels) != 1 {
+		t.Fatalf("parent labels: %#v", m.Labels)
 	}
 	for _, a := range recordsOf(m, "QualityAttribute") {
 		if strings.Contains(richText(d, a["definition"]), "**ID:") {

@@ -35,7 +35,7 @@ func newQualityCommand() *cobra.Command {
 			Example: "dotspec quality " + action.name + " diagnostic-severity --path .", Args: cobra.ExactArgs(1)}
 		if action.name == "list" {
 			cmd.Use, cmd.Example, cmd.Args = "list", "dotspec quality list --path .", cobra.NoArgs
-			cmd.Flags().String("attribute", "", "Include requirements with this attribute or a narrower attribute in their system's model")
+			cmd.Flags().String("attribute", "", "Include requirements with this attribute or a sub-attribute in their system's model")
 		}
 		if action.name == "check" {
 			cmd.Long = action.short + ".\n\n" + exitPolicy
@@ -103,7 +103,7 @@ func runQuality(command, path, slug, format string, out io.Writer) error {
 	if spec.Classification.SystemPath != "" {
 		attributeSource = displayPath(spec.Classification.SystemPath)
 	}
-	_, err = fmt.Fprintf(out, "%s\n\nAttributes: %s\nBroader groups: %s\nUndefined attributes: %s\nAttribute declarations: %s\nSystem: %s\nSource: %s\n", spec.Markdown, labelList(spec.Attributes), labelList(spec.Classification.Broader), labelList(spec.Classification.Undefined), attributeSource, systemLabel(spec.System), displayPath(spec.Path))
+	_, err = fmt.Fprintf(out, "%s\n\nAttributes: %s\nAncestor attributes: %s\nUndefined attributes: %s\nAttribute declarations: %s\nSystem: %s\nSource: %s\n", spec.Markdown, labelList(spec.Attributes), labelList(spec.Classification.Ancestors), labelList(spec.Classification.Undefined), attributeSource, systemLabel(spec.System), displayPath(spec.Path))
 	return err
 }
 
@@ -123,7 +123,7 @@ func listQuality(path, format, attribute string, out io.Writer) error {
 	var output strings.Builder
 	output.WriteString("Quality requirements\n")
 	if attribute != "" {
-		fmt.Fprintf(&output, "Attribute: %s (including narrower attributes)\n", attribute)
+		fmt.Fprintf(&output, "Attribute: %s (including sub-attributes)\n", attribute)
 	}
 	for _, group := range result.Groups {
 		fmt.Fprintf(&output, "\nSystem: %s\n", systemLabel(group.System))

@@ -1,7 +1,7 @@
 # Specification model
 
 [dotspec.yaml](dotspec.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.3.0-draft`; the JSON
+specification snapshots. The model version is `0.4.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
@@ -126,3 +126,17 @@ in place of `model_path`. Consumers of these experimental fields must update. Sa
 snapshots retain their declared versions; validation does not silently migrate
 older snapshots. Use the corresponding prior CLI for an older model version,
 or export the source again with the current CLI.
+
+The `0.4.0-draft` model and mapping profile `dotspec-markdown/3` add standalone
+QualityModel definitions. QualityAttribute ownership and DeclaresQualityAttribute
+support System or QualityModel. Sub-attribute labels on model definitions record
+`quality_model_context`; requirement classifications continue to use system-owned
+attributes exclusively. Model description, edition, sources, attribute narrative,
+and unknown sections retain the same complete-content representation.
+
+This draft also renames quality grouping fields to `subattribute_of_labels` and
+`subattribute_of`, with `SubattributeOf` assertion projections. References remain
+multi-valued and acyclic; the inverse sub-attributes and transitive ancestors are
+derived. Markdown uses `Sub-attribute of`; the older `Broader` and provisional
+`Parents` spellings produce a migration diagnostic. CLI classification JSON uses
+`ancestors` instead of `broader`. See the [grouping rationale](../docs/specification-model.md#quality-attribute-grouping).
