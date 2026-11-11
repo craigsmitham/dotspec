@@ -619,6 +619,50 @@ dotspec model overview --path . --relative-to docs/reference
 | `--path` | `.` | project directory to inspect or initialize |
 | `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
 
+## dotspec model pegs
+
+Generate a Project, Environment, Goals, System reading perspective
+
+```sh
+dotspec model pegs [flags]
+```
+
+Generate a Project, Environment, Goals, System reading perspective. Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+```sh
+dotspec model pegs --path . --relative-to docs/reference
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for pegs |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
+
+## dotspec model review
+
+Generate advisory requirements review and open-question inventory
+
+```sh
+dotspec model review [flags]
+```
+
+Generate advisory requirements review and open-question inventory. Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+```sh
+dotspec model review --path . --relative-to docs/reference
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for review |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
+
 ## dotspec model schema
 
 Print the embedded snapshot JSON Schema

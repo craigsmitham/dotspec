@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/10` maps specification Markdown to the
+`dotspec-markdown/11` maps specification Markdown to the
 [canonical model](dotspec.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/specification-model.md).
@@ -17,7 +17,7 @@ and failed domain decomposition without manufacturing a valid domain object.
 | --- | --- |
 | Original file | `SourceDocument` with original bytes, digest and byte count; all spans address those bytes. |
 | YAML frontmatter | Ordered YAML nodes with parsed scalar values, tags, aliases, anchors, comments and original spelling. Invalid YAML remains opaque content with a diagnostic. |
-| `type` and `id` | Interpreted document metadata; an accepted specification's explicit ID also maps to its root domain record. Systems have no authored-ID field in their authoring format. |
+| `type` and `id` | Interpreted document metadata; an accepted specification's explicit ID also maps to its root domain record. System IDs are optional and document-local. |
 | First level-one title | Root domain `name`, backed by its heading node. |
 | Content before the first body section | Root `preamble`. |
 | Recognized level-two section | Named field described below, with its whole content and a binding for its heading. |
@@ -61,6 +61,9 @@ These roles apply to each specification family where authored.
 | Related concepts | `related_concepts: ContextualReferences` |
 | Authority; Authority and evidence | `authority_and_evidence: RichContent` |
 | Notes | `notes: RichContent` |
+| Explanatory notes | `explanatory_notes: RichContent`, including on named domain records |
+| Implementation suggestions; Implementation hints | `implementation_suggestions: RichContent`; nonbinding advice, not endorsement |
+| Illustrative examples | `illustrative_examples: RichContent`, distinct from general obligations |
 | Evidence | `EvidenceCollection` with full content, direct list-item statements and named `EvidenceStatement` records |
 | Open question; Open questions | `OpenQuestionCollection.content` and ordered `questions` values; each question is distinct from its Evidence needed subsection |
 
@@ -72,8 +75,11 @@ Type, Research status and Limitations. An authored hypothesis remains a claim;
 the mapper does not assign confidence or prove it.
 
 An open-question section retains its complete narrative in the collection. A
-singular heading maps its introductory question and explicit Evidence needed
-subsection into one question. A plural heading can contain named questions or
+singular heading maps its introductory question and explicit detail subsections
+into one question. Raised by, Raised on, Resolve by, Importance and Evidence needed
+map to corresponding rich-content fields; Tracking reference maps to
+`tracking_reference: ContextualReferences`. Dates, milestones, conditions and
+importance labels retain authored wording; no workflow state is inferred. A plural heading can contain named questions or
 direct list items. Evidence requirements stay in `evidence_needed`; they do not
 replace the question. An explicitly empty question remains empty, and introductory
 prose survives even when the section also contains named entries.
@@ -125,6 +131,11 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | --- | --- |
 | Frontmatter `id` | Optional System `authored_id`, document-local anchor |
 | Purpose; Scope | `purpose`; `scope` |
+| System or Component: Out of scope | `out_of_scope: RichContent` |
+| System or Component: Interacts with | Authored content and reference occurrences; resolved `interacts_with` System/Component targets, independent of `part_of` |
+| System or Component: Required interfaces; Provided interfaces | Separate `InterfaceCollection` values with full content and ordered named `InterfaceDescription` entries |
+| Named interface | Heading `name`, introductory `description`; Contracts and Counterpart subsections are contextual references |
+| Project context | `project_context: ContextualReferences`; authoritative project artifacts remain external |
 | Part of | `part_of_content`, explicit `part_of_references`, resolved scalar System `part_of`; no inferred parent |
 | Components; Features; Capabilities | Paired section content and ordered declaration membership in `components`, `features` or `capabilities` |
 | Named Component/Feature/Capability | `name`, complete `content`, declaring System `owner`, optional introductory `**ID:**`; Feature `system` is the declaring System |
@@ -139,6 +150,7 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | Environment | `EnvironmentDescription.content` |
 | Goals | `GoalCollection.content`; direct list items and named subsections become `SystemGoal` records |
 | Assumptions | `AssumptionCollection.content`; direct list items and named subsections become `Assumption` records |
+| Assumption: Basis; Applicability; Validation plan | `basis`, prose `applicability`, and `validation_plan: VerificationPlan`; statement contains the named assumption introduction only |
 | Constraints | `ConstraintCollection.content`; direct list items and named subsections become `Constraint` records |
 | Glossary | `Glossary.content`; named subsections become `GlossaryTerm` records with full definitions |
 | Term: Alternative names; Aliases | List-item values, or the unsegmented subsection, populate `alternative_names` |
@@ -199,6 +211,7 @@ A timeline saying “to be established” remains authored content. Overall outc
 | Preconditions; Minimum guarantees | `ConditionCollection` with full content and explicitly separated list items or headed conditions |
 | Supporting actors | `ActorCollection` with full content and list-item or named actor mentions; named Services subsections populate `services` |
 | Stakeholder interests | Full collection content and explicit list-item or named stakeholder-interest entries |
+| Step: nested `Illustrates:` bullet | `illustrates_content`, source occurrences, resolved `illustrates` Obligation/ConceptAction targets; ordinary step links remain citations |
 | Main success scenario | `Scenario` with full narrative; direct ordered-list items become `ScenarioStep` records |
 | Step `**Actor:**`, `**Action:**`, `**Response:**`, `**Outcome:**` | Preserved in step `content`, without separate semantic fields |
 | Extensions | Full `ExtensionCollection.content` and named or explicitly labelled branch records |
@@ -260,6 +273,7 @@ final period; other wording remains in the source-backed value.
 | State: Invariants | Explicit condition values in `invariants` |
 | State component: Value; Values; Type | `value_description` |
 | State component: Derivation | `derivation` narrative; no computed value is inferred |
+| Effects table | `EffectsTable.content` plus ordered rows and rich-content cells from the first table; first row is the header, first column identifies operations; blank cells remain unspecified |
 | Actions | `ActionCollection.content`; named subsections become `ConceptAction` records |
 | Action: Inputs; Outputs; Initiation; Effects; Rejections; Rejection behavior | Corresponding action fields; both rejection headings map to `rejections` |
 | Action: Caller assumptions; Assumptions | `caller_assumptions: ConditionCollection` |
@@ -348,7 +362,7 @@ qualifications, examples and evidence instructions.
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/10`, an owner and field path, source
+Bindings record a rule under `dotspec-markdown/11`, an owner and field path, source
 occurrence and role. Named-field, record-identity and structured-item bindings
 account for interpreted domain content. Metadata bindings account for frontmatter.
 Structural-wrapper bindings cover headings and syntax support; a document-root

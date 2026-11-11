@@ -289,7 +289,7 @@ func diagnosticSourceLocation(location diagnostic.Location, source string) Recor
 }
 
 func (m *domainMapper) extension(owner Record, s *Section) Record {
-	if m.traceSection(owner, s) {
+	if m.traceSection(owner, s) || m.explanatory(owner, s) || m.boundarySection(owner, s) {
 		return nil
 	}
 	r := m.record("ExtensionSection", String(owner, "id"))
@@ -339,7 +339,7 @@ func (m *domainMapper) authoredFragments() {
 }
 
 func (m *domainMapper) common(r Record, s *Section) bool {
-	if m.traceSection(r, s) {
+	if m.traceSection(r, s) || m.explanatory(r, s) || m.boundarySection(r, s) {
 		return true
 	}
 	switch s.Title {

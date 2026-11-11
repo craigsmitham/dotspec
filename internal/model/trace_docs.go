@@ -65,7 +65,7 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	}
 	edges := []traceEdge{}
 	// These relationships have distinct, documented change-review meanings.
-	fields := []string{"supports", "derived_from", "refines", "relies_on", "involves", "applies_to", "definition", "dependencies"}
+	fields := []string{"supports", "derived_from", "refines", "relies_on", "involves", "applies_to", "definition", "dependencies", "illustrates", "interacts_with"}
 	nodes := map[string]bool{}
 	for _, r := range elements {
 		for _, field := range fields {

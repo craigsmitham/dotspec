@@ -152,6 +152,35 @@ func run(check bool) error {
 		return err
 	}
 	files = append(files, struct{ path, content string }{"docs/reference/needs-map-example.md", needs})
+
+	reviewResult, err := model.Export(filepath.Join(root, "examples/requirements-review"), system.CheckType(), concept.CheckType(), job.CheckType(), usecase.CheckType(), businessrule.CheckType(), requirement.CheckType(), quality.CheckType())
+	if err != nil {
+		return err
+	}
+	if reviewResult.ExitCode != 0 {
+		return fmt.Errorf("requirements review example: %v", reviewResult.Snapshot.Diagnostics)
+	}
+	reviewFindings, err := model.Validate(reviewResult.Snapshot)
+	if err != nil {
+		return err
+	}
+	if len(reviewFindings) > 0 {
+		return fmt.Errorf("requirements review example model: %v", reviewFindings)
+	}
+	for _, view := range []struct {
+		name   string
+		render func(*model.Snapshot, string) (string, error)
+	}{
+		{"requirements-review-example.md", model.ReviewMarkdown},
+		{"pegs-example.md", model.PEGSMarkdown},
+		{"effects-table-example.md", model.DesignMarkdown},
+	} {
+		content, err := view.render(reviewResult.Snapshot, filepath.Join(root, "docs/reference"))
+		if err != nil {
+			return err
+		}
+		files = append(files, struct{ path, content string }{"docs/reference/" + view.name, content})
+	}
 	var stale []string
 	for _, file := range files {
 		path := filepath.Join(root, file.path)

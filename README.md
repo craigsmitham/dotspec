@@ -60,6 +60,12 @@ See [Requirements layers](docs/requirements-layers.md) for the model's meaning,
 [generated traceability example](docs/reference/requirements-traceability-example.md)
 for motivation, behavior, change-review and verification-guidance views.
 
+Use [requirements review](docs/review-requirements.md) to consolidate open questions,
+boundaries, interfaces and verification gaps. `dotspec model review` generates the
+advisory report; `dotspec model pegs` generates a Project, Environment, Goals, System
+reading perspective. Both preserve the existing concern subsets and leave
+endorsement and project workflow in their authoritative tools.
+
 ## Run
 
 With Go 1.27.3 or later installed:

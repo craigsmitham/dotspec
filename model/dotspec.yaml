@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/dotspec.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.11.0-draft
+version: 0.12.0-draft
 description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
   is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
   and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
@@ -77,7 +77,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.11.0-draft
+        equals_string: 0.12.0-draft
       mapping_profile:
         range: string
         description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
@@ -818,6 +818,18 @@ classes:
     is_a: Record
     abstract: true
     attributes:
+      explanatory_notes:
+        range: RichContent
+        inlined: true
+        description: Explanation of the specification; not a separate obligation or endorsement.
+      implementation_suggestions:
+        range: RichContent
+        inlined: true
+        description: Nonbinding implementation advice, distinct from required behavior.
+      illustrative_examples:
+        range: RichContent
+        inlined: true
+        description: Illustrations, not an exhaustive behavioral specification.
       source_document:
         range: SourceDocument
         required: true
@@ -1225,6 +1237,58 @@ classes:
       kind:
         equals_string: System
     attributes:
+      project_context:
+        range: ContextualReferences
+        inlined: true
+        description: Project context and links to authoritative schedules, risks, responsibilities and workflows;
+          not a project-management model.
+      out_of_scope:
+        range: RichContent
+        inlined: true
+        description: Explicit boundary exclusions; absence is not a statement of scope.
+      required_interfaces:
+        range: InterfaceCollection
+        inlined: true
+        description: Services this subject expects from its environment.
+      provided_interfaces:
+        range: InterfaceCollection
+        inlined: true
+        description: Services this subject exposes to its environment.
+      interacts_with_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored relationship section, including rationale and unresolved references.
+      interacts_with_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: not-applicable
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          requires_content: interacts_with_content
+          relationship_label: interacts with references
+      interacts_with:
+        range: Record
+        multivalued: true
+        description: Explicit interaction partners across this subject boundary; does not establish structural containment.
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: unordered
+          trace_heading: Interacts with
+          trace_targets: System or Component
+          requires_content: interacts_with_content
+          relationship_label: interacts with
+        any_of:
+        - range: System
+        - range: Component
       purpose:
         range: RichContent
         inlined: true
@@ -1548,6 +1612,18 @@ classes:
       kind:
         equals_string: Assumption
     attributes:
+      basis:
+        range: RichContent
+        inlined: true
+        description: Why reliance on this statement is justified, including cited evidence.
+      applicability:
+        range: RichContent
+        inlined: true
+        description: Conditions, locations or periods in which this assumption is expected to hold.
+      validation_plan:
+        range: VerificationPlan
+        inlined: true
+        description: How and when to check the environmental premise; not evidence it is true.
       owner:
         range: System
         required: true
@@ -2376,11 +2452,46 @@ classes:
     - software-requirements
     description: An explicitly distinguished interaction step, expressed as a label and narrative. Actor, action
       and result wording remains in the narrative.
-    is_a: DomainElement
+    is_a: TraceableElement
     slot_usage:
       kind:
         equals_string: ScenarioStep
     attributes:
+      illustrates_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored relationship section, including rationale and unresolved references.
+      illustrates_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: not-applicable
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          requires_content: illustrates_content
+          relationship_label: illustrates references
+      illustrates:
+        range: Record
+        multivalued: true
+        description: Rules or actions explicitly illustrated by this step. No completeness or execution assertion.
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: unordered
+          trace_heading: Illustrates
+          trace_targets: Obligation or ConceptAction
+          requires_content: illustrates_content
+          relationship_label: illustrates
+        any_of:
+        - range: Obligation
+        - range: ConceptAction
       owner:
         range: DomainElement
         required: true
@@ -2590,6 +2701,11 @@ classes:
       kind:
         equals_string: Concept
     attributes:
+      effects_table:
+        range: EffectsTable
+        inlined: true
+        description: Optional authored operation-by-observable-property matrix. Empty cells mean unspecified, never
+          unchanged.
       type_parameters_content:
         range: RichContent
         inlined: true
@@ -3414,6 +3530,22 @@ classes:
     description: An explicitly authored unresolved question; do not infer every omitted field to be an open
       question.
     attributes:
+      raised_by:
+        range: RichContent
+        inlined: true
+      raised_on:
+        range: RichContent
+        inlined: true
+      resolve_by:
+        range: RichContent
+        inlined: true
+      importance:
+        range: RichContent
+        inlined: true
+      tracking_reference:
+        range: ContextualReferences
+        inlined: true
+        description: External issue or decision owning resolution workflow.
       question:
         range: RichContent
         inlined: true
@@ -4574,6 +4706,53 @@ classes:
       kind:
         equals_string: Component
     attributes:
+      out_of_scope:
+        range: RichContent
+        inlined: true
+        description: Explicit boundary exclusions; absence is not a statement of scope.
+      required_interfaces:
+        range: InterfaceCollection
+        inlined: true
+        description: Services this subject expects from its environment.
+      provided_interfaces:
+        range: InterfaceCollection
+        inlined: true
+        description: Services this subject exposes to its environment.
+      interacts_with_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored relationship section, including rationale and unresolved references.
+      interacts_with_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: not-applicable
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          requires_content: interacts_with_content
+          relationship_label: interacts with references
+      interacts_with:
+        range: Record
+        multivalued: true
+        description: Explicit interaction partners across this subject boundary; does not establish structural containment.
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: unordered
+          trace_heading: Interacts with
+          trace_targets: System or Component
+          requires_content: interacts_with_content
+          relationship_label: interacts with
+        any_of:
+        - range: System
+        - range: Component
       owner:
         range: System
         required: true
@@ -4962,6 +5141,100 @@ classes:
         range: Capability
       object:
         range: DomainElement
+
+  InterfaceCollection:
+    in_subset:
+    - software-requirements
+    description: An authored required or provided interface section. Native contracts remain authoritative.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+      interfaces:
+        range: InterfaceDescription
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+  InterfaceDescription:
+    in_subset:
+    - software-requirements
+    description: A lightweight boundary service description, not an architectural interface definition.
+    attributes:
+      name:
+        range: RichContent
+        inlined: true
+      description:
+        range: RichContent
+        inlined: true
+      contracts:
+        range: ContextualReferences
+        inlined: true
+      counterpart:
+        range: ContextualReferences
+        inlined: true
+        description: Authored participant context; typed partner relationships belong on the subject.
+  EffectsTable:
+    in_subset:
+    - software-requirements
+    description: Source-backed authored table; no effects, unchanged values or operation classifications are
+      inferred.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+      rows:
+        range: EffectsRow
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+  EffectsRow:
+    in_subset:
+    - software-requirements
+    description: First row is the header. First cell names an operation; subsequent cells describe effects on
+      the header properties. Blank cells remain unspecified.
+    attributes:
+      cells:
+        range: RichContent
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+  InteractsWith:
+    in_subset:
+    - specification-traceability
+    description: Explicit boundary partner, not structural parentage or an interface implementation claim.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: InteractsWith
+      subject:
+        range: DomainElement
+        any_of:
+        - range: System
+        - range: Component
+      object:
+        range: DomainElement
+        any_of:
+        - range: System
+        - range: Component
+    annotations:
+      projection_of: System.interacts_with or Component.interacts_with
+  Illustrates:
+    in_subset:
+    - specification-traceability
+    description: A scenario step explicitly illustrates a rule or action, without proving scenario completeness.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: Illustrates
+      subject:
+        range: ScenarioStep
+      object:
+        range: DomainElement
+        any_of:
+        - range: Obligation
+        - range: ConceptAction
+    annotations:
+      projection_of: ScenarioStep.illustrates
 
 slots:
   id:

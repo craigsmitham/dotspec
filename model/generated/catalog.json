@@ -125,6 +125,22 @@
           "reference_ranges": [],
           "required": true
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -163,6 +179,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -1038,6 +1086,22 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "applicability": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Conditions, locations or periods in which this assumption is expected to hold.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -1049,6 +1113,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "basis": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Why reliance on this statement is justified, including cited evidence.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -1145,6 +1225,22 @@
           ],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -1183,6 +1279,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -1461,6 +1589,22 @@
           "reference_ranges": [
             "SourceReference"
           ],
+          "required": false
+        },
+        "validation_plan": {
+          "annotations": {},
+          "any_of": [],
+          "description": "How and when to check the environmental premise; not evidence it is true.",
+          "identifier": false,
+          "inline_ranges": [
+            "VerificationPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "VerificationPlan",
+          "reference_ranges": [],
           "required": false
         }
       },
@@ -1780,6 +1924,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -1818,6 +1978,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -2706,6 +2898,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -2744,6 +2952,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -3700,6 +3940,22 @@
           ],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -3739,6 +3995,22 @@
           "reference_ranges": [],
           "required": true
         },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "implementation": {
           "annotations": {},
           "any_of": [],
@@ -3753,6 +4025,94 @@
           "ordered": false,
           "range": "ContextualReferences",
           "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "interacts_with": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "interacts with",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "interacts_with_content",
+            "trace_heading": "Interacts with",
+            "trace_targets": "System or Component"
+          },
+          "any_of": [
+            "System",
+            "Component"
+          ],
+          "description": "Explicit interaction partners across this subject boundary; does not establish structural containment.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "System",
+            "Component"
+          ],
+          "required": false
+        },
+        "interacts_with_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Complete authored relationship section, including rationale and unresolved references.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "interacts_with_references": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "interacts with references",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "interacts_with_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
           "required": false
         },
         "kind": {
@@ -3842,6 +4202,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "OpenQuestionCollection",
+          "reference_ranges": [],
+          "required": false
+        },
+        "out_of_scope": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicit boundary exclusions; absence is not a statement of scope.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -3940,6 +4316,22 @@
           ],
           "required": false
         },
+        "provided_interfaces": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Services this subject exposes to its environment.",
+          "identifier": false,
+          "inline_ranges": [
+            "InterfaceCollection"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "InterfaceCollection",
+          "reference_ranges": [],
+          "required": false
+        },
         "purpose": {
           "annotations": {},
           "any_of": [],
@@ -4022,6 +4414,22 @@
           "reference_ranges": [
             "SourceReference"
           ],
+          "required": false
+        },
+        "required_interfaces": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Services this subject expects from its environment.",
+          "identifier": false,
+          "inline_ranges": [
+            "InterfaceCollection"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "InterfaceCollection",
+          "reference_ranges": [],
           "required": false
         },
         "responsibilities": {
@@ -4361,6 +4769,22 @@
           ],
           "required": false
         },
+        "effects_table": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Optional authored operation-by-observable-property matrix. Empty cells mean unspecified, never unchanged.",
+          "identifier": false,
+          "inline_ranges": [
+            "EffectsTable"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "EffectsTable",
+          "reference_ranges": [],
+          "required": false
+        },
         "evidence": {
           "annotations": {},
           "any_of": [],
@@ -4374,6 +4798,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "EvidenceCollection",
+          "reference_ranges": [],
+          "required": false
+        },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -4415,6 +4855,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "introduced_types": {
           "annotations": {
@@ -5197,6 +5669,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -5251,6 +5739,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "initiation": {
           "annotations": {},
@@ -5946,6 +6466,22 @@
           "reference_ranges": [],
           "required": true
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -5984,6 +6520,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -6425,6 +6993,22 @@
           ],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -6463,6 +7047,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -6998,6 +7614,22 @@
           ],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -7036,6 +7668,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -9491,6 +10155,22 @@
           ],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -9529,6 +10209,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -10519,6 +11231,22 @@
           "reference_ranges": [],
           "required": true
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -10557,6 +11285,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -10656,6 +11416,84 @@
       "subsets": [
         "business-requirements",
         "user-requirements",
+        "software-requirements"
+      ]
+    },
+    "EffectsRow": {
+      "abstract": false,
+      "ancestors": [
+        "EffectsRow"
+      ],
+      "annotations": {},
+      "description": "First row is the header. First cell names an operation; subsequent cells describe effects on the header properties. Blank cells remain unspecified.",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "cells": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
+    },
+    "EffectsTable": {
+      "abstract": false,
+      "ancestors": [
+        "EffectsTable"
+      ],
+      "annotations": {},
+      "description": "Source-backed authored table; no effects, unchanged values or operation classifications are inferred.",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "rows": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "EffectsRow"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "EffectsRow",
+          "reference_ranges": [],
+          "required": false
+        }
+      },
+      "subsets": [
         "software-requirements"
       ]
     },
@@ -11081,6 +11919,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -11119,6 +11973,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -11463,6 +12349,22 @@
           "reference_ranges": [],
           "required": true
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -11517,6 +12419,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -11873,6 +12807,22 @@
           ],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -11990,6 +12940,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -12857,6 +13839,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -12895,6 +13893,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -13707,6 +14737,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -13745,6 +14791,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -17103,6 +18181,215 @@
         "specification-traceability"
       ]
     },
+    "Illustrates": {
+      "abstract": false,
+      "ancestors": [
+        "Illustrates",
+        "Assertion",
+        "Record"
+      ],
+      "annotations": {
+        "projection_of": "ScenarioStep.illustrates"
+      },
+      "description": "A scenario step explicitly illustrates a rule or action, without proving scenario completeness.",
+      "is_a": "Assertion",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "inputs": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "inputs",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "Source occurrences and/or typed records supporting this assertion.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "Record"
+          ],
+          "required": false
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "Illustrates",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "mapping_rule": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "object": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [
+            "Obligation",
+            "ConceptAction"
+          ],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "DomainElement",
+          "reference_ranges": [
+            "Obligation",
+            "ConceptAction"
+          ],
+          "required": true
+        },
+        "origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "derived"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "AssertionOrigin",
+          "reference_ranges": [],
+          "required": true
+        },
+        "projection_path": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "source_nodes": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source nodes",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ContentNode",
+          "reference_ranges": [
+            "ContentNode"
+          ],
+          "required": false
+        },
+        "source_spans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ByteSpan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ByteSpan",
+          "reference_ranges": [],
+          "required": false
+        },
+        "subject": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ScenarioStep",
+          "reference_ranges": [
+            "ScenarioStep"
+          ],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
+    },
     "InSystemContext": {
       "abstract": false,
       "ancestors": [
@@ -17306,6 +18593,345 @@
       },
       "subsets": [
         "specification-traceability"
+      ]
+    },
+    "InteractsWith": {
+      "abstract": false,
+      "ancestors": [
+        "InteractsWith",
+        "Assertion",
+        "Record"
+      ],
+      "annotations": {
+        "projection_of": "System.interacts_with or Component.interacts_with"
+      },
+      "description": "Explicit boundary partner, not structural parentage or an interface implementation claim.",
+      "is_a": "Assertion",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "inputs": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "inputs",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "Source occurrences and/or typed records supporting this assertion.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "Record"
+          ],
+          "required": false
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "InteractsWith",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "mapping_rule": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "object": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [
+            "System",
+            "Component"
+          ],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "DomainElement",
+          "reference_ranges": [
+            "System",
+            "Component"
+          ],
+          "required": true
+        },
+        "origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "derived"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "AssertionOrigin",
+          "reference_ranges": [],
+          "required": true
+        },
+        "projection_path": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "source_nodes": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source nodes",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ContentNode",
+          "reference_ranges": [
+            "ContentNode"
+          ],
+          "required": false
+        },
+        "source_spans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ByteSpan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ByteSpan",
+          "reference_ranges": [],
+          "required": false
+        },
+        "subject": {
+          "annotations": {
+            "relationship_basis": "Deterministic projection; assertions are optional views.",
+            "relationship_category": "derived-projection",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Typed endpoints of the canonical relationship identified by projection_path."
+          },
+          "any_of": [
+            "System",
+            "Component"
+          ],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "DomainElement",
+          "reference_ranges": [
+            "System",
+            "Component"
+          ],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-traceability"
+      ]
+    },
+    "InterfaceCollection": {
+      "abstract": false,
+      "ancestors": [
+        "InterfaceCollection"
+      ],
+      "annotations": {},
+      "description": "An authored required or provided interface section. Native contracts remain authoritative.",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "interfaces": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "InterfaceDescription"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "InterfaceDescription",
+          "reference_ranges": [],
+          "required": false
+        }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
+    },
+    "InterfaceDescription": {
+      "abstract": false,
+      "ancestors": [
+        "InterfaceDescription"
+      ],
+      "annotations": {},
+      "description": "A lightweight boundary service description, not an architectural interface definition.",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "contracts": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "counterpart": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored participant context; typed partner relationships belong on the subject.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "description": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "name": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        }
+      },
+      "subsets": [
+        "software-requirements"
       ]
     },
     "Involves": {
@@ -17689,6 +19315,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -17727,6 +19369,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "intended_progress": {
           "annotations": {},
@@ -18542,6 +20216,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -18580,6 +20270,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -19468,6 +21190,22 @@
           ],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -19506,6 +21244,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -20143,6 +21913,22 @@
           ],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -20181,6 +21967,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -20761,6 +22579,22 @@
           ],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -20799,6 +22633,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -21203,6 +23069,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "importance": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "question": {
           "annotations": {},
           "any_of": [],
@@ -21216,6 +23098,70 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "raised_by": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "raised_on": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "resolve_by": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "tracking_reference": {
+          "annotations": {},
+          "any_of": [],
+          "description": "External issue or decision owning resolution workflow.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
         }
@@ -21681,6 +23627,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -21735,6 +23697,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -22043,6 +24037,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -22081,6 +24091,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -22858,6 +24900,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -22896,6 +24954,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -23549,6 +25639,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -23587,6 +25693,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -25085,6 +27223,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -25123,6 +27277,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -26361,6 +28547,22 @@
           "reference_ranges": [],
           "required": true
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -26399,6 +28601,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -26552,12 +28786,13 @@
       "abstract": false,
       "ancestors": [
         "ScenarioStep",
+        "TraceableElement",
         "DomainElement",
         "Record"
       ],
       "annotations": {},
       "description": "An explicitly distinguished interaction step, expressed as a label and narrative. Actor, action and result wording remains in the narrative.",
-      "is_a": "DomainElement",
+      "is_a": "TraceableElement",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -26626,6 +28861,94 @@
           "reference_ranges": [],
           "required": true
         },
+        "derived_from": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "derived from",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "derived_from_content",
+            "trace_heading": "Derived from",
+            "trace_targets": "DomainElement or SourceFragment"
+          },
+          "any_of": [
+            "DomainElement",
+            "SourceFragment"
+          ],
+          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "DomainElement",
+            "SourceFragment"
+          ],
+          "required": false
+        },
+        "derived_from_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Complete authored relationship section, including rationale and unresolved references.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "derived_from_references": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "derived from references",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "derived_from_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -26664,6 +28987,110 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrates": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "illustrates",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "illustrates_content",
+            "trace_heading": "Illustrates",
+            "trace_targets": "Obligation or ConceptAction"
+          },
+          "any_of": [
+            "Obligation",
+            "ConceptAction"
+          ],
+          "description": "Rules or actions explicitly illustrated by this step. No completeness or execution assertion.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "Obligation",
+            "ConceptAction"
+          ],
+          "required": false
+        },
+        "illustrates_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Complete authored relationship section, including rationale and unresolved references.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "illustrates_references": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "illustrates references",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "illustrates_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -26764,6 +29191,74 @@
           ],
           "required": false
         },
+        "relies_on": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "relies on",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "relies_on_content",
+            "trace_heading": "Relies on",
+            "trace_targets": "Assumption"
+          },
+          "any_of": [],
+          "description": "Assumptions on which the validity of this element depends.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Assumption",
+          "reference_ranges": [
+            "Assumption"
+          ],
+          "required": false
+        },
+        "relies_on_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Complete authored relationship section, including rationale and unresolved references.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "relies_on_references": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "relies on references",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "relies_on_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
         "source_document": {
           "annotations": {
             "relationship_basis": "Recorded source or inspection evidence.",
@@ -26809,6 +29304,82 @@
           "range": "SourceFragment",
           "reference_ranges": [
             "SourceFragment"
+          ],
+          "required": false
+        },
+        "supports": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "supports",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "supports_content",
+            "trace_heading": "Supports",
+            "trace_targets": "SystemGoal or Job or JobStep or DesiredOutcome"
+          },
+          "any_of": [
+            "SystemGoal",
+            "Job",
+            "JobStep",
+            "DesiredOutcome"
+          ],
+          "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "SystemGoal",
+            "Job",
+            "JobStep",
+            "DesiredOutcome"
+          ],
+          "required": false
+        },
+        "supports_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Complete authored relationship section, including rationale and unresolved references.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "supports_references": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "supports references",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "supports_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
           ],
           "required": false
         }
@@ -27174,7 +29745,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.11.0-draft",
+          "equals_string": "0.12.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -28415,6 +30986,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -28453,6 +31040,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -29826,6 +32445,22 @@
           ],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -29864,6 +32499,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -30466,6 +33133,22 @@
           "reference_ranges": [],
           "required": true
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -30504,6 +33187,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -31088,6 +33803,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -31202,6 +33933,110 @@
           "reference_ranges": [],
           "required": true
         },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "interacts_with": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "interacts with",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "interacts_with_content",
+            "trace_heading": "Interacts with",
+            "trace_targets": "System or Component"
+          },
+          "any_of": [
+            "System",
+            "Component"
+          ],
+          "description": "Explicit interaction partners across this subject boundary; does not establish structural containment.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "Record",
+          "reference_ranges": [
+            "System",
+            "Component"
+          ],
+          "required": false
+        },
+        "interacts_with_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Complete authored relationship section, including rationale and unresolved references.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "interacts_with_references": {
+          "annotations": {
+            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "interacts with references",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
+            "requires_content": "interacts_with_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": false
+        },
         "kind": {
           "annotations": {},
           "any_of": [],
@@ -31308,6 +34143,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "out_of_scope": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicit boundary exclusions; absence is not a statement of scope.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "part_of": {
           "annotations": {
             "relationship_basis": "Projection of explicit authored reference occurrences.",
@@ -31388,6 +34239,38 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "project_context": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Project context and links to authoritative schedules, risks, responsibilities and workflows; not a project-management model.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "provided_interfaces": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Services this subject exposes to its environment.",
+          "identifier": false,
+          "inline_ranges": [
+            "InterfaceCollection"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "InterfaceCollection",
           "reference_ranges": [],
           "required": false
         },
@@ -31564,6 +34447,22 @@
           "reference_ranges": [
             "SourceReference"
           ],
+          "required": false
+        },
+        "required_interfaces": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Services this subject expects from its environment.",
+          "identifier": false,
+          "inline_ranges": [
+            "InterfaceCollection"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "InterfaceCollection",
+          "reference_ranges": [],
           "required": false
         },
         "scope": {
@@ -31939,6 +34838,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -31977,6 +34892,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -32546,6 +35493,22 @@
           ],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -32584,6 +35547,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -33099,6 +36094,22 @@
           ],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -33137,6 +36148,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -33495,6 +36538,22 @@
           "reference_ranges": [],
           "required": true
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -33533,6 +36592,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -34027,6 +37118,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -34113,6 +37220,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "involves": {
           "annotations": {
@@ -35008,6 +38147,22 @@
           "reference_ranges": [],
           "required": true
         },
+        "explanatory_notes": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explanation of the specification; not a separate obligation or endorsement.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -35062,6 +38217,38 @@
           "range": "string",
           "reference_ranges": [],
           "required": true
+        },
+        "illustrative_examples": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Illustrations, not an exhaustive behavioral specification.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "implementation_suggestions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Nonbinding implementation advice, distinct from required behavior.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "kind": {
           "annotations": {},
@@ -35846,10 +39033,10 @@
       "directory"
     ]
   },
-  "model_version": "0.11.0-draft",
+  "model_version": "0.12.0-draft",
   "representation_version": "0.1.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/dotspec.yaml",
-  "source_sha256": "fa9a6b970a2ba652419e1afb0ac37daa17dc781ea91b4037783ddd6ce02f527b",
+  "source_sha256": "d9907f9a21bea36ff67924242f8b795634e41bc4b98fa76c0247111f56bb59cd",
   "subsets": {
     "business-requirements": {
       "classification": "core",

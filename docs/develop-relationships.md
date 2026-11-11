@@ -378,3 +378,11 @@ the optional [Capability model](jobs-and-user-needs.md#connect-needs-to-capabili
 Its dependencies and providers are distinct from feature membership and structural
 parentage. The [needs map](reference/needs-map-example.md) connects those
 relationships with user jobs and desired outcomes.
+
+## Review boundaries and scenario grounding
+
+Use Interacts with on Systems or Components for explicit boundary partners, separate
+from Part of. Use an Illustrates bullet inside a scenario step to identify its
+underlying obligation or concept action. See [Review requirements](review-requirements.md)
+for these forms, exclusions, required/provided interfaces, assumption validation,
+question resolution metadata and the generated review and PEGS perspectives.

@@ -16,6 +16,9 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 		m.systemDeclarations(r, s)
 	case "Purpose":
 		m.section(r, "purpose", s)
+	case "Project context":
+		m.contextField(r, "project_context", s.Content)
+		m.sectionBindings(r, "project_context.content", s)
 	case "Scope":
 		m.section(r, "scope", s)
 	case "Environment":
@@ -38,7 +41,13 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 		}
 		for _, child := range s.Children {
 			x := m.named(kind, r, child)
-			m.section(x, "statement", child)
+			if kind == "Assumption" {
+				x["statement"] = m.doc.Rich(child.Intro)
+				m.bind(x, "statement", child.Intro, "named_field", "assumption-statement")
+				m.assumptionDetails(x, child)
+			} else {
+				m.section(x, "statement", child)
+			}
 			appendID(v, "items", String(x, "id"))
 		}
 	case "Glossary":
@@ -133,9 +142,14 @@ func (m *domainMapper) openQuestions(owner Record, sections []*Section) {
 			}
 			m.bind(owner, path+".question", []string{item.HeadingID}, "structural_wrapper", "open-question-heading")
 			for _, sub := range item.Children {
-				if sub.Title == "Evidence needed" {
-					m.setRich(v, "evidence_needed", sub.Content)
-					m.sectionBindings(owner, path+".evidence_needed", sub)
+				if field := questionDetails[sub.Title]; field != "" {
+					if field == "tracking_reference" {
+						m.contextField(v, field, sub.Content)
+						m.sectionBindings(owner, path+"."+field+".content", sub)
+					} else {
+						m.setRich(v, field, sub.Content)
+						m.sectionBindings(owner, path+"."+field, sub)
+					}
 				} else {
 					m.extension(owner, sub)
 				}
@@ -144,7 +158,7 @@ func (m *domainMapper) openQuestions(owner Record, sections []*Section) {
 		plural := s.Title == "Open questions"
 		namedChildren := []*Section{}
 		for _, child := range s.Children {
-			if child.Title != "Evidence needed" {
+			if questionDetails[child.Title] == "" {
 				namedChildren = append(namedChildren, child)
 			}
 		}
@@ -153,7 +167,7 @@ func (m *domainMapper) openQuestions(owner Record, sections []*Section) {
 				add(append([]string{child.HeadingID}, child.Intro...), child)
 			}
 			for _, child := range s.Children {
-				if child.Title == "Evidence needed" {
+				if questionDetails[child.Title] != "" {
 					m.extension(owner, child)
 				}
 			}

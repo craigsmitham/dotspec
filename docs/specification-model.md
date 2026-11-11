@@ -13,8 +13,8 @@ The canonical [LinkML model](../model/dotspec.yaml) defines the records and thei
 relationships. The [generated reference](reference/model/index.md) describes
 every field. The [relationship reference](reference/model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.11.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/10`.
+`model_version` is `0.12.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/11`.
 
 ## Export and validate a snapshot
 
@@ -174,6 +174,21 @@ Jacobson and Cockburn's public
 pp. 3–4, also describes variable precision, from named extensions to elaborated
 steps, branch points and returns. The schema and recognition conventions are
 dotspec design choices, not a claim that his method requires this metamodel.
+
+## Requirements review and PEGS
+
+`dotspec model review` consolidates authored questions, environmental premises,
+exclusions and interfaces, then identifies missing recorded goal contributions,
+scenario grounding, verification guidance and glossary collisions. These prompts
+are advisory and do not invalidate drafts. `dotspec model pegs` assembles a
+Project, Environment, Goals, System reading perspective without replacing concern
+subsets or creating a project-management subsystem.
+
+Use the [review authoring guide](review-requirements.md) for syntax and limitations,
+the [review example](reference/requirements-review-example.md) to inspect deliberate
+gaps, and the [PEGS example](reference/pegs-example.md) to see the reading view.
+Optional concept effects matrices are included in `model docs`;
+[their example](reference/effects-table-example.md) preserves blank cells as unspecified.
 
 ## Three connected representations
 

@@ -2,7 +2,7 @@
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.11.0-draft`; mapping `dotspec-markdown/10`. This view covers only acquired records within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior or missing implementation.
+Model `0.12.0-draft`; mapping `dotspec-markdown/11`. This view covers only acquired records within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior or missing implementation.
 
 ## System structure
 
@@ -165,3 +165,15 @@ Hold stock for orders awaiting confirmation.
 #### Part of
 
 [Inventory](../../examples/system-structure/specs/system.spec.md#inventory)
+
+## Environment and boundaries
+
+Operating conditions and constraints describe what the solution must accommodate. Assumptions are premises relied upon and require a justified basis and validation. Explicit exclusions delimit scope. External partners are separate from structural parents.
+
+### System: [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>)
+
+### Component: [Checkout](<../../examples/system-structure/specs/system.spec.md#checkout>)
+
+### Component: [Inventory](<../../examples/system-structure/specs/system.spec.md#inventory>)
+
+### Component: [Reservations](<../../examples/system-structure/specs/system.spec.md#reservations>)

@@ -180,6 +180,7 @@ func (m *domainMapper) scenarioSteps(owner Record, nodes []string) []string {
 			x["authored_label"] = label
 			x["content"] = m.doc.Rich([]string{item})
 			x["references"] = m.references([]string{item})
+			m.stepIllustrates(x, item)
 			m.bind(x, "content", []string{item}, "structured_item", "labelled-scenario-step")
 			steps = append(steps, String(x, "id"))
 		}

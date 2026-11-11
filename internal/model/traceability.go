@@ -101,6 +101,7 @@ func (m *domainMapper) nestedTraceability() {
 			if s := sections[id]; s != nil {
 				for _, child := range s.Children {
 					m.traceSection(r, child)
+					m.explanatory(r, child)
 				}
 			}
 		}

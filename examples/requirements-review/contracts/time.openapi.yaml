@@ -1,0 +1,19 @@
+openapi: 3.1.0
+info:
+  title: Time readings
+  version: 0.1.0
+paths:
+  /time:
+    get:
+      responses:
+        '200':
+          description: Current UTC time
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [utc]
+                properties:
+                  utc:
+                    type: string
+                    format: date-time

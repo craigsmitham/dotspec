@@ -241,6 +241,49 @@ func newModelCommand() *cobra.Command {
 	overview.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
 	addPath(needs)
 	needs.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
-	cmd.AddCommand(export, schema, validate, docs, trace, overview, needs)
+	cmd.AddCommand(export, schema, validate, docs, trace, overview, needs,
+		newModelReadingCommand("review", "Generate advisory requirements review and open-question inventory", model.ReviewMarkdown),
+		newModelReadingCommand("pegs", "Generate a Project, Environment, Goals, System reading perspective", model.PEGSMarkdown))
+	return cmd
+}
+
+func newModelReadingCommand(name, description string, render func(*model.Snapshot, string) (string, error)) *cobra.Command {
+	cmd := &cobra.Command{Use: name, Short: description, Args: cobra.NoArgs,
+		Long:    description + ". Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.\n\n" + exitPolicy,
+		Example: "dotspec model " + name + " --path . --relative-to docs/reference",
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			path, err := projectPath(cmd)
+			if err != nil {
+				return err
+			}
+			base, err := cmd.Flags().GetString("relative-to")
+			if err != nil {
+				return err
+			}
+			result, err := model.Export(path, supportedTypes()...)
+			if err != nil {
+				return err
+			}
+			findings, err := model.Validate(result.Snapshot)
+			if err != nil {
+				return err
+			}
+			if len(findings) > 0 {
+				return fmt.Errorf("exported model violates %d invariants; first: %s", len(findings), findings[0].Message)
+			}
+			output, err := render(result.Snapshot, base)
+			if err != nil {
+				return err
+			}
+			if _, err = io.WriteString(cmd.OutOrStdout(), output); err != nil {
+				return err
+			}
+			if result.ExitCode != 0 {
+				return &exitError{code: result.ExitCode}
+			}
+			return nil
+		}}
+	addPath(cmd)
+	cmd.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
 	return cmd
 }

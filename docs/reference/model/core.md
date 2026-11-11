@@ -4,15 +4,15 @@ Generated from [the canonical model](../../../model/dotspec.yaml) and [the view 
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.11.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.12.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
 | Subset | Responsibility | Selected types |
 | --- | --- | --- |
-| Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [TraceableElement](index.md#traceableelement), [SystemGoal](index.md#systemgoal), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [BusinessRule](index.md#businessrule), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Capability](index.md#capability) |
-| User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [TraceableElement](index.md#traceableelement), [ObligationClause](index.md#obligationclause), [Job](index.md#job), [JobStep](index.md#jobstep), [DesiredOutcome](index.md#desiredoutcome), [ProgressCase](index.md#progresscase), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation) |
-| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptType](index.md#concepttype), [ConceptUse](index.md#conceptuse), [TypeBinding](index.md#typebinding), [Synchronization](index.md#synchronization), [SynchronizationAction](index.md#synchronizationaction), [StateDescription](index.md#statedescription), [StateElement](index.md#stateelement), [ActionParameter](index.md#actionparameter), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [GeneralRequirement](index.md#generalrequirement), [QualityRequirement](index.md#qualityrequirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Component](index.md#component), [Feature](index.md#feature), [Capability](index.md#capability) |
+| Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [TraceableElement](index.md#traceableelement), [SystemGoal](index.md#systemgoal), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [BusinessRule](index.md#businessrule), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion) |
+| User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [TraceableElement](index.md#traceableelement), [ObligationClause](index.md#obligationclause), [Job](index.md#job), [JobStep](index.md#jobstep), [DesiredOutcome](index.md#desiredoutcome), [ProgressCase](index.md#progresscase), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [OpenQuestion](index.md#openquestion) |
+| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptType](index.md#concepttype), [ConceptUse](index.md#conceptuse), [TypeBinding](index.md#typebinding), [Synchronization](index.md#synchronization), [SynchronizationAction](index.md#synchronizationaction), [StateDescription](index.md#statedescription), [StateElement](index.md#stateelement), [ActionParameter](index.md#actionparameter), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [GeneralRequirement](index.md#generalrequirement), [QualityRequirement](index.md#qualityrequirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Component](index.md#component), [Feature](index.md#feature), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [InterfaceCollection](index.md#interfacecollection), [InterfaceDescription](index.md#interfacedescription), [EffectsTable](index.md#effectstable), [EffectsRow](index.md#effectsrow) |
 | Specification traceability (`core`) | Explicit connections between specification meaning, authored occurrences, and resolved relationships. | [ContentBinding](index.md#contentbinding), [SourceReference](index.md#sourcereference), [Resolution](index.md#resolution) |
 
 Subset membership organizes model definitions; it does not infer the level or importance of an authored instance. Shared types can appear in several subsets. Supporting and generic types appear as context where a diagram needs them.
@@ -51,7 +51,7 @@ classDiagram
 
 ### System structure and feature grouping
 
-Declaration membership identifies where records are authored. Explicit part_of identifies structural parents independently of directories. Features group specifications without owning them. Applicability identifies subjects; no implementation, allocation, inheritance or satisfaction is inferred.
+Declaration membership identifies where records are authored. Explicit part_of identifies structural parents independently of directories. Features group specifications without owning them. Applicability identifies subjects; no implementation, allocation, inheritance or satisfaction is inferred. Interacts with identifies boundary partners, independently of structural parentage.
 
 ```mermaid
 classDiagram
@@ -79,6 +79,10 @@ classDiagram
     Feature --> "0..*" ConceptUse : groups
     Feature --> "0..*" Synchronization : groups
     Requirement --> "0..*" DomainElement : applies to
+    System --> "0..*" System : interacts with
+    System --> "0..*" Component : interacts with
+    Component --> "0..*" System : interacts with
+    Component --> "0..*" Component : interacts with
 ```
 
 ### Shared obligation capabilities
@@ -138,7 +142,7 @@ classDiagram
 
 ### Software behavior
 
-Use cases describe interactions and alternatives; concepts describe purposeful state and actions. These are complementary views, with no mandatory authoring or execution order.
+Use cases describe interactions and alternatives; concepts describe purposeful state and actions. These are complementary views, with no mandatory authoring or execution order. Steps may explicitly illustrate obligations or actions; this does not prove completeness.
 
 ```mermaid
 classDiagram
@@ -149,12 +153,16 @@ classDiagram
     class UseCaseExtension
     class Concept
     class ConceptAction
+    class Obligation
+    <<abstract>> Obligation
     UseCase *-- "0..1" Scenario : main success scenario
     UseCase *-- "0..*" UseCaseExtension : branches
     Scenario *-- "0..*" ScenarioStep : steps
     UseCaseExtension *-- "0..*" ScenarioStep : steps
     UseCaseExtension *-- "0..*" UseCaseExtension : branches
     Concept *-- "0..*" ConceptAction : actions
+    ScenarioStep --> "0..*" Obligation : illustrates
+    ScenarioStep --> "0..*" ConceptAction : illustrates
 ```
 
 ### Quality classification
@@ -384,6 +392,9 @@ Subsets: `business-requirements`, `software-requirements`. [Assumption](index.md
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `statement` | [RichContent](index.md#richcontent) | optional |  |
+| `basis` | [RichContent](index.md#richcontent) | optional | Why reliance on this statement is justified, including cited evidence. |
+| `applicability` | [RichContent](index.md#richcontent) | optional | Conditions, locations or periods in which this assumption is expected to hold. |
+| `validation_plan` | [VerificationPlan](index.md#verificationplan) | optional | How and when to check the environmental premise; not evidence it is true. |
 
 ### Constraint
 
@@ -430,6 +441,11 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 | `components` | [Component](index.md#component) | optional; ordered list | Named component declarations in authored order; membership does not establish structural parentage. |
 | `features` | [Feature](index.md#feature) | optional; ordered list | Named feature declarations in authored order; each feature belongs to this System. |
 | `capabilities` | [Capability](index.md#capability) | optional; ordered list | Capability declarations; the declaring System is a documentation home, not an inferred provider. |
+| `out_of_scope` | [RichContent](index.md#richcontent) | optional | Explicit boundary exclusions; absence is not a statement of scope. |
+| `interacts_with` | [System](index.md#system) or [Component](index.md#component) | optional; list | Explicit interaction partners across this subject boundary; does not establish structural containment. |
+| `required_interfaces` | [InterfaceCollection](index.md#interfacecollection) | optional | Services this subject expects from its environment. |
+| `provided_interfaces` | [InterfaceCollection](index.md#interfacecollection) | optional | Services this subject exposes to its environment. |
+| `project_context` | [ContextualReferences](index.md#contextualreferences) | optional | Project context and links to authoritative schedules, risks, responsibilities and workflows; not a project-management model. |
 
 ### BusinessRule
 
@@ -550,6 +566,7 @@ Subsets: `software-requirements`. [ScenarioStep](index.md#scenariostep) contains
 | --- | --- | --- | --- |
 | `authored_label` | `string` | optional | Original number or label; snapshot ID supplies addressability. |
 | `content` | [RichContent](index.md#richcontent) | required |  |
+| `illustrates` | [Obligation](index.md#obligation) or [ConceptAction](index.md#conceptaction) | optional; list | Rules or actions explicitly illustrated by this step. No completeness or execution assertion. |
 
 ### UseCaseExtension
 
@@ -580,6 +597,7 @@ Subsets: `software-requirements`. [Concept](index.md#concept) contains the compl
 | `introduced_types` | [ConceptType](index.md#concepttype) | optional; ordered list |  |
 | `abstract_state` | [StateDescription](index.md#statedescription) | optional |  |
 | `actions` | [ActionCollection](index.md#actioncollection) | optional |  |
+| `effects_table` | [EffectsTable](index.md#effectstable) | optional | Optional authored operation-by-observable-property matrix. Empty cells mean unspecified, never unchanged. |
 
 ### ConceptType
 
@@ -854,6 +872,10 @@ Subsets: `software-requirements`. [Component](index.md#component) contains the c
 | `architecture` | [ContextualReferences](index.md#contextualreferences) | optional | Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred. |
 | `implementation` | [ContextualReferences](index.md#contextualreferences) | optional | Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred. |
 | `obligations` | [ObligationClause](index.md#obligationclause) | optional; ordered list |  |
+| `out_of_scope` | [RichContent](index.md#richcontent) | optional | Explicit boundary exclusions; absence is not a statement of scope. |
+| `interacts_with` | [System](index.md#system) or [Component](index.md#component) | optional; list | Explicit interaction partners across this subject boundary; does not establish structural containment. |
+| `required_interfaces` | [InterfaceCollection](index.md#interfacecollection) | optional | Services this subject expects from its environment. |
+| `provided_interfaces` | [InterfaceCollection](index.md#interfacecollection) | optional | Services this subject exposes to its environment. |
 
 ### Feature
 
@@ -880,3 +902,64 @@ Subsets: `business-requirements`, `software-requirements`. [Capability](index.md
 | `depends_on` | [Capability](index.md#capability) | optional; list | Capabilities required by this capability; many-to-many dependencies may be cyclic. Not structural containment or an inferred execution sequence. |
 | `provided_by` | [System](index.md#system) or [Component](index.md#component) | optional; list | Explicitly identified system or component providers. Optional and non-exhaustive: human and procedural providers can be described in enablers. Does not assert verified implementation or satisfaction. |
 | `enablers` | [RichContent](index.md#richcontent) | optional | Human, procedural or other enabling context, including external references. Typed providers describe only explicitly linked systems and components. |
+
+### OpenQuestion
+
+An explicitly authored unresolved question; do not infer every omitted field to be an open question.
+
+Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [OpenQuestion](index.md#openquestion) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `question` | [RichContent](index.md#richcontent) | optional |  |
+| `raised_by` | [RichContent](index.md#richcontent) | optional |  |
+| `raised_on` | [RichContent](index.md#richcontent) | optional |  |
+| `resolve_by` | [RichContent](index.md#richcontent) | optional |  |
+| `importance` | [RichContent](index.md#richcontent) | optional |  |
+| `evidence_needed` | [RichContent](index.md#richcontent) | optional |  |
+| `tracking_reference` | [ContextualReferences](index.md#contextualreferences) | optional | External issue or decision owning resolution workflow. |
+
+### InterfaceCollection
+
+An authored required or provided interface section. Native contracts remain authoritative.
+
+Subsets: `software-requirements`. [InterfaceCollection](index.md#interfacecollection) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `content` | [RichContent](index.md#richcontent) | optional |  |
+| `interfaces` | [InterfaceDescription](index.md#interfacedescription) | optional; ordered list |  |
+
+### InterfaceDescription
+
+A lightweight boundary service description, not an architectural interface definition.
+
+Subsets: `software-requirements`. [InterfaceDescription](index.md#interfacedescription) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `name` | [RichContent](index.md#richcontent) | optional |  |
+| `description` | [RichContent](index.md#richcontent) | optional |  |
+| `contracts` | [ContextualReferences](index.md#contextualreferences) | optional |  |
+| `counterpart` | [ContextualReferences](index.md#contextualreferences) | optional | Authored participant context; typed partner relationships belong on the subject. |
+
+### EffectsTable
+
+Source-backed authored table; no effects, unchanged values or operation classifications are inferred.
+
+Subsets: `software-requirements`. [EffectsTable](index.md#effectstable) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `content` | [RichContent](index.md#richcontent) | optional |  |
+| `rows` | [EffectsRow](index.md#effectsrow) | optional; ordered list |  |
+
+### EffectsRow
+
+First row is the header. First cell names an operation; subsequent cells describe effects on the header properties. Blank cells remain unspecified.
+
+Subsets: `software-requirements`. [EffectsRow](index.md#effectsrow) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `cells` | [RichContent](index.md#richcontent) | optional; ordered list |  |

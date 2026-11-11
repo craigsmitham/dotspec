@@ -193,5 +193,11 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			fmt.Fprintf(&out, "- **%s** `%s`: %s\n", String(f, "severity"), String(f, "code"), strings.ReplaceAll(String(f, "message"), "\n", " "))
 		}
 	}
+	review, err := newReviewView(s, relativeTo)
+	if err != nil {
+		return "", err
+	}
+	review.boundaries()
+	out.WriteString(review.out.String())
 	return strings.TrimRight(out.String(), "\n") + "\n", nil
 }

@@ -180,3 +180,17 @@ func TestSystemOverviewCommand(t *testing.T) {
 		t.Fatal(code, &stderr)
 	}
 }
+
+func TestModelReviewAndPEGSCommandsKeepAdvisoryDraftsValid(t *testing.T) {
+	root := t.TempDir()
+	if err := os.CopyFS(root, os.DirFS("../../examples/requirements-review")); err != nil {
+		t.Fatal(err)
+	}
+	t.Chdir(root)
+	for _, tc := range []struct{ command, want string }{{"review", "No verification or measurement guidance recorded"}, {"pegs", "## Project"}} {
+		code, output, errOut := invoke("model", tc.command, "--relative-to", "docs")
+		if code != 0 || errOut != "" || !strings.Contains(output, tc.want) || !strings.Contains(output, "../specs/system.spec.md") {
+			t.Fatalf("%s: %d %s %s", tc.command, code, errOut, output)
+		}
+	}
+}

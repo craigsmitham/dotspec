@@ -2,6 +2,8 @@ package model
 
 func (m *domainMapper) concept(r Record, s *Section) bool {
 	switch s.Title {
+	case "Effects table":
+		m.effectsTable(r, s)
 	case "Purpose":
 		m.section(r, "purpose", s)
 	case "Type parameters":

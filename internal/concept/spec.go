@@ -55,6 +55,7 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 // Concept retains section bodies as Markdown. State and actions have no imposed
 // language; system association does not imply an implementation boundary.
 type Concept struct {
+	EffectsTable          string                         `json:"effects_table,omitempty"`
 	TypeParameters        string                         `json:"type_parameters,omitempty"`
 	IntroducedTypes       string                         `json:"introduced_types,omitempty"`
 	References            *specfile.ReferenceDocument    `json:"-"`
@@ -121,7 +122,8 @@ func Parse(data []byte) (*Concept, error) {
 	}
 	ids.AddAnchors(doc.Anchors)
 	fields := map[string]*string{
-		"Purpose": &spec.Purpose, "State": &spec.State,
+		"Effects table": &spec.EffectsTable,
+		"Purpose":       &spec.Purpose, "State": &spec.State,
 		"Type parameters": &spec.TypeParameters, "Introduced types": &spec.IntroducedTypes,
 		"Actions": &spec.Actions, "Operational principles": &spec.OperationalPrinciples,
 	}

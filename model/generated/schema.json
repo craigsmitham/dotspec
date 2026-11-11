@@ -34,6 +34,10 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -45,6 +49,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "ActionParameter",
@@ -310,9 +322,17 @@
             "additionalProperties": false,
             "description": "An explicitly distinguished system assumption; no inferred truth assertion.",
             "properties": {
+                "applicability": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Conditions, locations or periods in which this assumption is expected to hold."
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
+                },
+                "basis": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Why reliance on this statement is justified, including cited evidence."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -339,6 +359,10 @@
                     },
                     "type": "array"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -350,6 +374,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "Assumption",
@@ -414,6 +446,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/VerificationPlan",
+                    "description": "How and when to check the environmental premise; not evidence it is true."
                 }
             },
             "required": [
@@ -532,6 +568,10 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored qualifications or references to exception rules; no inferred exemption."
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -543,6 +583,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "BusinessRule",
@@ -779,6 +827,10 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Human, procedural or other enabling context, including external references. Typed providers describe only explicitly linked systems and components."
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -790,6 +842,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "Capability",
@@ -1062,6 +1122,10 @@
                     },
                     "type": "array"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -1074,9 +1138,39 @@
                     "pattern": "[\\s\\S]+",
                     "type": "string"
                 },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
                 "implementation": {
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
+                },
+                "interacts_with": {
+                    "description": "Explicit interaction partners across this subject boundary; does not establish structural containment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "interacts_with_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "interacts_with_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "kind": {
                     "const": "Component",
@@ -1100,6 +1194,10 @@
                     "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
+                "out_of_scope": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explicit boundary exclusions; absence is not a statement of scope."
+                },
                 "owner": {
                     "type": "string"
                 },
@@ -1121,6 +1219,10 @@
                     },
                     "type": "array"
                 },
+                "provided_interfaces": {
+                    "$ref": "#/$defs/InterfaceCollection",
+                    "description": "Services this subject exposes to its environment."
+                },
                 "purpose": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Benefit or reason for this component to exist."
@@ -1141,6 +1243,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "required_interfaces": {
+                    "$ref": "#/$defs/InterfaceCollection",
+                    "description": "Services this subject expects from its environment."
                 },
                 "responsibilities": {
                     "$ref": "#/$defs/RichContent",
@@ -1233,8 +1339,16 @@
                     },
                     "type": "array"
                 },
+                "effects_table": {
+                    "$ref": "#/$defs/EffectsTable",
+                    "description": "Optional authored operation-by-observable-property matrix. Empty cells mean unspecified, never unchanged."
+                },
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
+                },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -1247,6 +1361,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "introduced_types": {
                     "items": {
@@ -1434,6 +1556,10 @@
                 "effects": {
                     "$ref": "#/$defs/RichContent"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -1448,6 +1574,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "initiation": {
                     "$ref": "#/$defs/RichContent",
@@ -1631,6 +1765,10 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -1642,6 +1780,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "ConceptType",
@@ -1749,6 +1895,10 @@
                     },
                     "type": "array"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -1760,6 +1910,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "ConceptUse",
@@ -1913,6 +2071,10 @@
                     },
                     "type": "array"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -1924,6 +2086,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "Constraint",
@@ -2673,6 +2843,10 @@
                     },
                     "type": "array"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -2684,6 +2858,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "DesiredOutcome",
@@ -2974,6 +3156,10 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -2985,6 +3171,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "description": "Concrete record type discriminator.",
@@ -3012,6 +3206,37 @@
                 "kind"
             ],
             "title": "DomainElement",
+            "type": "object"
+        },
+        "EffectsRow": {
+            "additionalProperties": false,
+            "description": "First row is the header. First cell names an operation; subsequent cells describe effects on the header properties. Blank cells remain unspecified.",
+            "properties": {
+                "cells": {
+                    "items": {
+                        "$ref": "#/$defs/RichContent"
+                    },
+                    "type": "array"
+                }
+            },
+            "title": "EffectsRow",
+            "type": "object"
+        },
+        "EffectsTable": {
+            "additionalProperties": false,
+            "description": "Source-backed authored table; no effects, unchanged values or operation classifications are inferred.",
+            "properties": {
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "rows": {
+                    "items": {
+                        "$ref": "#/$defs/EffectsRow"
+                    },
+                    "type": "array"
+                }
+            },
+            "title": "EffectsTable",
             "type": "object"
         },
         "EnclosingSystem": {
@@ -3139,6 +3364,10 @@
                 "evidence_type": {
                     "$ref": "#/$defs/RichContent"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -3150,6 +3379,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "EvidenceStatement",
@@ -3239,6 +3476,10 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -3253,6 +3494,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "ExtensionSection",
@@ -3363,6 +3612,10 @@
                     },
                     "type": "array"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -3395,6 +3648,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "Feature",
@@ -3647,6 +3908,10 @@
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -3658,6 +3923,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "GeneralRequirement",
@@ -3867,6 +4140,10 @@
                 "definition": {
                     "$ref": "#/$defs/RichContent"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -3878,6 +4155,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "GlossaryTerm",
@@ -4913,6 +5198,73 @@
             "title": "HasTypeBinding",
             "type": "object"
         },
+        "Illustrates": {
+            "additionalProperties": false,
+            "description": "A scenario step explicitly illustrates a rule or action, without proving scenario completeness.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "Illustrates",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "Illustrates",
+            "type": "object"
+        },
         "InSystemContext": {
             "additionalProperties": false,
             "description": "Directory-derived context of a specification, independent of system boundary and applicability.",
@@ -4973,6 +5325,116 @@
                 "kind"
             ],
             "title": "InSystemContext",
+            "type": "object"
+        },
+        "InteractsWith": {
+            "additionalProperties": false,
+            "description": "Explicit boundary partner, not structural parentage or an interface implementation claim.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "InteractsWith",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "InteractsWith",
+            "type": "object"
+        },
+        "InterfaceCollection": {
+            "additionalProperties": false,
+            "description": "An authored required or provided interface section. Native contracts remain authoritative.",
+            "properties": {
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "interfaces": {
+                    "items": {
+                        "$ref": "#/$defs/InterfaceDescription"
+                    },
+                    "type": "array"
+                }
+            },
+            "title": "InterfaceCollection",
+            "type": "object"
+        },
+        "InterfaceDescription": {
+            "additionalProperties": false,
+            "description": "A lightweight boundary service description, not an architectural interface definition.",
+            "properties": {
+                "contracts": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "counterpart": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Authored participant context; typed partner relationships belong on the subject."
+                },
+                "description": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent"
+                }
+            },
+            "title": "InterfaceDescription",
             "type": "object"
         },
         "Involves": {
@@ -5081,6 +5543,10 @@
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -5092,6 +5558,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "intended_progress": {
                     "$ref": "#/$defs/RichContent"
@@ -5295,6 +5769,10 @@
                 "description": {
                     "$ref": "#/$defs/RichContent"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -5306,6 +5784,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "JobStep",
@@ -5586,6 +6072,10 @@
                     },
                     "type": "array"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -5597,6 +6087,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "description": "Concrete record type discriminator.",
@@ -5764,6 +6262,10 @@
                     },
                     "type": "array"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -5775,6 +6277,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "ObligationClause",
@@ -5929,6 +6439,10 @@
                     },
                     "type": "array"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -5940,6 +6454,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "description": "Concrete record type discriminator.",
@@ -6059,8 +6581,24 @@
                 "evidence_needed": {
                     "$ref": "#/$defs/RichContent"
                 },
+                "importance": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "question": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "raised_by": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "raised_on": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "resolve_by": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "tracking_reference": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "External issue or decision owning resolution workflow."
                 }
             },
             "title": "OpenQuestion",
@@ -6228,6 +6766,10 @@
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -6242,6 +6784,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "ProgressCase",
@@ -6325,6 +6875,10 @@
                 "definition": {
                     "$ref": "#/$defs/RichContent"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -6336,6 +6890,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "QualityAttribute",
@@ -6546,6 +7108,10 @@
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -6557,6 +7123,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "QualityModel",
@@ -6724,6 +7298,10 @@
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -6735,6 +7313,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "QualityRequirement",
@@ -7187,6 +7773,10 @@
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -7198,6 +7788,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "description": "Concrete record type discriminator.",
@@ -7620,6 +8218,10 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -7631,6 +8233,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "Scenario",
@@ -7691,6 +8301,32 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -7702,6 +8338,36 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrates": {
+                    "description": "Rules or actions explicitly illustrated by this step. No completeness or execution assertion.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "illustrates_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "illustrates_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "ScenarioStep",
@@ -7730,11 +8396,50 @@
                     },
                     "type": "array"
                 },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "source_document": {
                     "type": "string"
                 },
                 "source_fragment": {
                     "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -7933,6 +8638,12 @@
                             },
                             {
                                 "$ref": "#/$defs/CapabilityProvider"
+                            },
+                            {
+                                "$ref": "#/$defs/InteractsWith"
+                            },
+                            {
+                                "$ref": "#/$defs/Illustrates"
                             }
                         ]
                     },
@@ -7990,9 +8701,6 @@
                                 "$ref": "#/$defs/Scenario"
                             },
                             {
-                                "$ref": "#/$defs/ScenarioStep"
-                            },
-                            {
                                 "$ref": "#/$defs/UseCaseExtension"
                             },
                             {
@@ -8024,6 +8732,9 @@
                             },
                             {
                                 "$ref": "#/$defs/DesiredOutcome"
+                            },
+                            {
+                                "$ref": "#/$defs/ScenarioStep"
                             },
                             {
                                 "$ref": "#/$defs/ConceptAction"
@@ -8091,7 +8802,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.11.0-draft",
+                    "const": "0.12.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -8526,6 +9237,10 @@
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -8537,6 +9252,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "description": "Concrete record type discriminator.",
@@ -8958,6 +9681,10 @@
                     },
                     "type": "array"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -8969,6 +9696,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "Synchronization",
@@ -9111,6 +9846,10 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -9122,6 +9861,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "SynchronizationAction",
@@ -9267,6 +10014,10 @@
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -9295,6 +10046,36 @@
                     "pattern": "[\\s\\S]+",
                     "type": "string"
                 },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
+                },
+                "interacts_with": {
+                    "description": "Explicit interaction partners across this subject boundary; does not establish structural containment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "interacts_with_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "interacts_with_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "kind": {
                     "const": "System",
                     "description": "Concrete record type discriminator.",
@@ -9321,6 +10102,10 @@
                     "$ref": "#/$defs/OpenQuestionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
+                "out_of_scope": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explicit boundary exclusions; absence is not a statement of scope."
+                },
                 "part_of": {
                     "description": "Optional explicit parent System. Directory context does not supply this relationship.",
                     "type": "string"
@@ -9337,6 +10122,14 @@
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored content between the title and the first named section."
+                },
+                "project_context": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Project context and links to authoritative schedules, risks, responsibilities and workflows; not a project-management model."
+                },
+                "provided_interfaces": {
+                    "$ref": "#/$defs/InterfaceCollection",
+                    "description": "Services this subject exposes to its environment."
                 },
                 "purpose": {
                     "$ref": "#/$defs/RichContent"
@@ -9378,6 +10171,10 @@
                         "type": "string"
                     },
                     "type": "array"
+                },
+                "required_interfaces": {
+                    "$ref": "#/$defs/InterfaceCollection",
+                    "description": "Services this subject expects from its environment."
                 },
                 "scope": {
                     "$ref": "#/$defs/RichContent"
@@ -9486,6 +10283,10 @@
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -9497,6 +10298,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "description": "Concrete record type discriminator.",
@@ -9641,6 +10450,10 @@
                     },
                     "type": "array"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -9652,6 +10465,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "SystemGoal",
@@ -9798,6 +10619,10 @@
                     },
                     "type": "array"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -9809,6 +10634,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "description": "Concrete record type discriminator.",
@@ -9900,6 +10733,10 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -9911,6 +10748,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "TypeBinding",
@@ -10040,6 +10885,10 @@
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -10060,6 +10909,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "involves": {
                     "description": "Named concept uses participating in this actor-goal interaction; not a service boundary or mandatory execution order.",
@@ -10265,6 +11122,10 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "explanatory_notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the specification; not a separate obligation or endorsement."
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -10280,6 +11141,14 @@
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
                     "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
                 },
                 "kind": {
                     "const": "UseCaseExtension",
@@ -10569,6 +11438,12 @@
                     },
                     {
                         "$ref": "#/$defs/CapabilityProvider"
+                    },
+                    {
+                        "$ref": "#/$defs/InteractsWith"
+                    },
+                    {
+                        "$ref": "#/$defs/Illustrates"
                     }
                 ]
             },
@@ -10626,9 +11501,6 @@
                         "$ref": "#/$defs/Scenario"
                     },
                     {
-                        "$ref": "#/$defs/ScenarioStep"
-                    },
-                    {
                         "$ref": "#/$defs/UseCaseExtension"
                     },
                     {
@@ -10660,6 +11532,9 @@
                     },
                     {
                         "$ref": "#/$defs/DesiredOutcome"
+                    },
+                    {
+                        "$ref": "#/$defs/ScenarioStep"
                     },
                     {
                         "$ref": "#/$defs/ConceptAction"
@@ -10727,7 +11602,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.11.0-draft",
+            "const": "0.12.0-draft",
             "type": "string"
         },
         "references": {
@@ -10781,5 +11656,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.11.0-draft"
+    "version": "0.12.0-draft"
 }
