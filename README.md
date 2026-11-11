@@ -325,6 +325,28 @@ for this repository's policy and the CI task that enforces file coverage.
 
 ## Output and automation
 
+The experimental [specification model](docs/specification-model.md) exposes
+source bytes, ordered document content, and named domain records together:
+
+```sh
+dotspec model export --path . > specification.json
+dotspec model validate specification.json --json
+dotspec model schema > specification.schema.json
+```
+
+`model export` emits JSON directly. Invalid authored documents retain their source
+and diagnostics. Its exit status follows the authoring/operational findings;
+`model validate` instead checks whether the snapshot faithfully satisfies its
+schema, source, reference, ownership, and coverage invariants. A valid snapshot
+can describe invalid source documents.
+
+The model distinguishes empty fields, absent fields, undecomposed narrative,
+unknown sections, and failed extraction. Unknown content remains available with
+an explicit mapping limitation. `complete_for_profile` reports coverage under
+the declared mapping profile; it does not establish requirements completeness,
+agreement, or satisfaction. See the [canonical model](model/README.md) and
+[mapping reference](model/markdown-mapping.md).
+
 The system, job, use-case, concept, requirement, and quality commands (including
 `init`), as well as `sources`, accept `--json`
 or `--format json`. Use one of these flags, not both. The default is `--format text`; `job map` also

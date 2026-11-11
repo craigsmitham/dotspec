@@ -1,0 +1,63 @@
+# Saved snapshots remain useful independently of their source working tree.
+mkdir project
+cd project
+exec git init -q
+status 0 dotspec system init
+status 0 dotspec requirement init preservation
+status 0 dotspec model export
+stdout '"model_version": "0.2.0-draft"'
+stdout '"kind": "GeneralRequirement"'
+stdout '"content_bindings":'
+stdout '"storage": "inline_base64"'
+! stderr .
+cp stdout snapshot.json
+status 0 dotspec model export
+cmp stdout snapshot.json
+status 0 dotspec model validate snapshot.json --json
+stdout '"valid": true'
+! stderr .
+rm specs
+status 0 dotspec model validate snapshot.json
+stdout 'Snapshot is valid'
+! stderr .
+
+# Source authoring errors remain in a structurally valid exported snapshot.
+status 0 dotspec system init
+mkdir specs/requirements
+cp ../invalid.md specs/requirements/invalid.requirement.spec.md
+status 1 dotspec model export
+stdout '"diagnostics":'
+stdout '"domain_decomposition": "failed"'
+! stderr .
+cp stdout invalid-source.json
+status 0 dotspec model validate invalid-source.json --json
+stdout '"valid": true'
+! stderr .
+
+# Invalid JSON or model shape is a finding; invocation and I/O failures use 2.
+status 1 dotspec model validate ../bad-json.json --json
+stdout '"valid": false'
+stdout 'shape.json'
+! stderr .
+status 1 dotspec model validate ../bad-shape.json --json
+stdout '"valid": false'
+! stderr .
+status 2 dotspec model validate absent.json
+! stdout .
+status 2 dotspec model export extra
+! stdout .
+status 0 dotspec model schema
+stdout '"Snapshot"'
+! stderr .
+-- invalid.md --
+---
+type: requirement
+unsupported_metadata: retained
+---
+# Invalid authored metadata
+## Statement
+Keep this text even though the metadata is invalid.
+-- bad-json.json --
+{"model_version":
+-- bad-shape.json --
+{}

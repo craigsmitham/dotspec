@@ -7,3 +7,4 @@
 # /axm:instruction-aliases
 
 /dist/
+/.venv-model/

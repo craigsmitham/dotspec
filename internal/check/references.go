@@ -152,6 +152,16 @@ type referenceBoundary struct{ reason string }
 
 func (e *referenceBoundary) Error() string { return e.reason }
 
+// ReferenceTarget applies the same filesystem boundary policy as check without
+// reading a target. Snapshot extraction uses it for richer reference forms.
+// allowed is false only for a policy boundary; missing and unreadable targets
+// remain distinct from prohibited traversal.
+func ReferenceTarget(path, root string) (info os.FileInfo, allowed bool, err error) {
+	info, err = referencePath(path, root)
+	var boundary *referenceBoundary
+	return info, !errors.As(err, &boundary), err
+}
+
 // Explicit links may address ignored files and ancestors within a repository,
 // but must not traverse symlinks, Git internals, or another repository. Outside
 // Git the filesystem root is the boundary, matching system context lookup.

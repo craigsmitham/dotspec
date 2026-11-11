@@ -2,6 +2,7 @@
 go = "1.27.3"
 golangci-lint = "2.15.0"
 goreleaser = "2.20.0"
+python = "3.11.15"
 
 [tasks.build]
 description = "Build the host CLI"
@@ -13,7 +14,7 @@ run = "go run ."
 
 [tasks.fmt]
 description = "Format Go source"
-run = "gofmt -w main.go internal scripts"
+run = "gofmt -w main.go internal model scripts"
 
 [tasks.fmt-check]
 description = "Check Go source formatting"
@@ -39,6 +40,22 @@ run = "go run ./scripts/generate"
 description = "Verify generated docs and examples without writing"
 run = "go run ./scripts/generate -check"
 
+[tasks.model-setup]
+description = "Provision the isolated, pinned model-generation environment"
+run = "python scripts/generate-model/run.py setup"
+
+[tasks.model-generate]
+description = "Generate model schema, range catalog, and reference"
+run = "python scripts/generate-model/run.py generate"
+
+[tasks.model-check]
+description = "Verify generated model artifacts without writing"
+run = "python scripts/generate-model/run.py check"
+
+[tasks.model-test]
+description = "Test model projection and catalog generation"
+run = "python scripts/generate-model/run.py test"
+
 [tasks.spec-check]
 description = "Check this repository's specifications"
 run = "go run . check"
@@ -49,11 +66,11 @@ run = "go run ./scripts/check-spec-sources"
 
 [tasks.check]
 description = "Run the same complete gate locally and in CI"
-depends = ["fmt-check", "tidy-check", "lint", "test", "generated-check", "spec-check", "spec-sources-check", "release-check"]
+depends = ["fmt-check", "tidy-check", "lint", "test", "generated-check", "model-check", "model-test", "spec-check", "spec-sources-check", "release-check"]
 
 [tasks.fuzz]
 description = "Exercise all Markdown parsers with bounded fuzzing"
-run = ["go test ./internal/system -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/job -run=^$ -fuzz=FuzzStructuredJob -fuzztime=10s -parallel=2", "go test ./internal/usecase -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/concept -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/quality -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/requirement -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2"]
+run = ["go test ./internal/system -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/job -run=^$ -fuzz=FuzzStructuredJob -fuzztime=10s -parallel=2", "go test ./internal/usecase -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/concept -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/quality -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/requirement -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/model -run=^$ -fuzz=FuzzParseContent -fuzztime=10s -parallel=2"]
 
 [tasks.release-check]
 description = "Validate the release configuration"

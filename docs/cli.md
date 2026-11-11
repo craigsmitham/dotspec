@@ -429,6 +429,76 @@ dotspec man
 | --- | --- | --- |
 | `--help, -h` | `false` | help for man |
 
+## dotspec model
+
+Export and validate complete specification snapshots
+
+```sh
+dotspec model [flags]
+```
+
+Represent original source bytes, document structure, and named domain content in a versioned specification model. Coverage describes the declared mapping profile, not requirements adequacy or satisfaction.
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for model |
+
+## dotspec model export
+
+Export a source-backed specification snapshot as JSON
+
+```sh
+dotspec model export [flags]
+```
+
+Export selected specifications, enclosing systems, and direct reference context as JSON. Preserve invalid documents and original source bytes. Filesystem discovery and authoring findings follow check; external references are not fetched.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+```sh
+dotspec model export
+dotspec model export --path internal
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for export |
+| `--path` | `.` | project directory to inspect or initialize |
+
+## dotspec model schema
+
+Print the embedded snapshot JSON Schema
+
+```sh
+dotspec model schema [flags]
+```
+
+```sh
+dotspec model schema
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for schema |
+
+## dotspec model validate
+
+Check a snapshot's shape, references, source fidelity, and coverage
+
+```sh
+dotspec model validate SNAPSHOT [flags]
+```
+
+Validate a snapshot file, or use - to read standard input. Validation checks the model itself; faithfully represented authoring errors do not make a snapshot invalid. No source paths or external targets are fetched. External payload locators can be checked structurally; their byte availability is not verified offline.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for validate |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+
 ## dotspec quality
 
 Specify assessable quality obligations and their attributes

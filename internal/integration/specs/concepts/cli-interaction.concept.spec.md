@@ -49,6 +49,7 @@ restating those rules here. A passing example does not settle untested cases.
 - [Quality requirements and attributes](../../testdata/quality.txtar)
 - [General requirements](../../testdata/requirements.txtar)
 - [Source discovery through ordinary file references](../../testdata/sources.txtar)
+- [Export and validate source-backed specification models](../../testdata/model.txtar)
 
 The Go test harness executes these scripts; it does not define additional
 product obligations. The repository's [specification-test convention](../../../../CONTRIBUTING.md#specification-tests-and-implementation-tests)

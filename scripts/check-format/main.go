@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	cmd := exec.Command("gofmt", "-l", "main.go", "internal", "scripts")
+	cmd := exec.Command("gofmt", "-l", "main.go", "internal", "model", "scripts")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "gofmt: %v\n%s", err, output)

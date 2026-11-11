@@ -5,10 +5,14 @@ Install [mise](https://mise.jdx.dev), then run these commands from the repositor
 ```sh
 mise trust
 mise install
+mise run model-setup
 mise run check
 ```
 
-`mise.toml` pins Go, golangci-lint, and GoReleaser. Runtime and test dependencies
+`mise.toml` pins Go, golangci-lint, GoReleaser, and the Python version used for
+model generation. `model-setup` explicitly installs the locked LinkML toolchain
+in the ignored `.venv-model/` environment. The CLI itself runs entirely in Go.
+Runtime and test dependencies
 are pinned in `go.mod` and `go.sum`. Git is required for repository discovery and
 integration tests. The same check task runs on Linux, macOS, and Windows in CI.
 Git attributes keep text files at LF line endings on every platform so formatting
@@ -23,6 +27,10 @@ and generated-file checks compare the same bytes.
 | `mise run check` | Check formatting, module tidiness, lint, tests, generated artifacts, specs, specification-source coverage, and release configuration |
 | `mise run spec-sources-check` | Check that designated specification-test files appear in the public source inventory |
 | `mise run generate` | Regenerate command reference, output examples, and starter specs |
+| `mise run model-setup` | Provision the isolated model toolchain from its dependency lock |
+| `mise run model-generate` | Regenerate JSON Schema, reference catalog, and model documentation |
+| `mise run model-check` | Verify generated model projections without writing |
+| `mise run model-test` | Test model and catalog generation |
 | `mise run fuzz` | Fuzz each Markdown parser for ten seconds; also runs in CI |
 | `mise run snapshot` | Build the complete release matrix locally without publishing |
 
@@ -50,6 +58,14 @@ includes errcheck, govet, ineffassign, staticcheck, and unused.
   document-local identifiers, reference extraction, and shared filesystem/discovery
   behavior. All specification types use the same Markdown extraction path.
 - `internal/diagnostic` owns stable findings and source locations.
+- `model/dotspec.yaml` owns the experimental specification metamodel. Generated
+  JSON Schema and the inherited range catalog are embedded by the `model` Go
+  package. [Model maintenance](model/README.md) describes the pinned toolchain.
+- `internal/model` captures original bytes and ordered document content, maps
+  named domain fields, resolves bounded references, and validates snapshots.
+  Schema-backed tagged records preserve subtype fields. The
+  [Markdown mapping profile](model/markdown-mapping.md) defines deterministic
+  extraction; generated catalog ranges own relationship endpoint restrictions.
 
 Keep CLI dependencies out of the parser and checker. Preserve authored Markdown
 and locations; semantic validation must not silently rewrite files. Test a new

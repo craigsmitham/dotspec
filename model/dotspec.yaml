@@ -1,0 +1,2569 @@
+# Canonical experimental model. Regenerate projections; do not edit generated files.
+id: https://github.com/craigsmitham/dotspec/model/dotspec.yaml
+name: dotspec_metamodel
+title: Dotspec specification metamodel
+version: 0.2.0-draft
+description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
+  is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
+  and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
+  and relationships are populated only by explicit syntax or a declared mapping rule, never by unrecorded NLP
+  inference. Raw source alone does not establish domain coverage.
+prefixes:
+  ds: https://github.com/craigsmitham/dotspec/model/
+  linkml: https://w3id.org/linkml/
+default_prefix: ds
+default_range: string
+imports:
+- linkml:types
+annotations:
+  status: experimental
+  runtime_target: Generated JSON Schema plus explicit graph checks; no generated-Go reliance.
+  graph_rules: Identifier uniqueness; referential integrity and typed endpoints; containment ownership and
+    cycle rules; source-byte digest, offset-map and span fidelity; ordered syntax-tree and membership consistency;
+    complete content-binding accounting; scope and resolution consistency; vocabulary-local identity/broader
+    cycles; honest optional decomposition; assertion provenance and consistency are explicit graph checks,
+    not implied by JSON Schema generation.
+classes:
+  Record:
+    description: An addressable record in one snapshot. All IDs are unique across snapshot collections.
+    abstract: true
+    slots:
+    - id
+    - kind
+  Snapshot:
+    description: A bounded and potentially incomplete observation of source documents and their mapped domain
+      content.
+    attributes:
+      model_version:
+        range: string
+        required: true
+        equals_string: 0.2.0-draft
+      mapping_profile:
+        range: string
+        description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
+          rules.
+        required: true
+      scope:
+        range: ScanScope
+        required: true
+        inlined: true
+      sources:
+        range: SourceResource
+        required: true
+        multivalued: true
+        inlined_as_list: true
+      documents:
+        range: Document
+        required: true
+        multivalued: true
+        inlined_as_list: true
+      content_nodes:
+        range: ContentNode
+        required: true
+        multivalued: true
+        inlined_as_list: true
+      fragments:
+        range: SourceFragment
+        multivalued: true
+        inlined_as_list: true
+      elements:
+        range: DomainElement
+        required: true
+        multivalued: true
+        inlined_as_list: true
+      references:
+        range: SourceReference
+        multivalued: true
+        inlined_as_list: true
+      label_occurrences:
+        range: LabelOccurrence
+        multivalued: true
+        inlined_as_list: true
+      resolutions:
+        range: Resolution
+        multivalued: true
+        inlined_as_list: true
+      assertions:
+        range: Assertion
+        description: Optional materialized relation views; derive from typed fields or explicit authored semantic
+          relations, and check consistency.
+        multivalued: true
+        inlined_as_list: true
+      content_bindings:
+        range: ContentBinding
+        required: true
+        multivalued: true
+        inlined_as_list: true
+      diagnostics:
+        range: Diagnostic
+        multivalued: true
+        inlined_as_list: true
+      coverage:
+        range: CoverageReport
+        required: true
+        inlined: true
+      representation_version:
+        range: string
+        description: Version of this serialized snapshot contract, separate from the domain metamodel version.
+        required: true
+        equals_string: 0.1.0
+      context_sources:
+        range: ContextSource
+        multivalued: true
+        inlined_as_list: true
+    tree_root: true
+  ScanScope:
+    description: Declared scan boundary and completion, independently of whether individual documents are valid.
+    attributes:
+      roots:
+        range: string
+        required: true
+        multivalued: true
+      included_patterns:
+        range: string
+        multivalued: true
+      excluded_patterns:
+        range: string
+        multivalued: true
+      discovery_complete:
+        range: boolean
+        required: true
+      reads_complete:
+        range: boolean
+        required: true
+      inspection_complete:
+        range: boolean
+        required: true
+      limitations:
+        range: string
+        multivalued: true
+      selected_spec_kinds:
+        range: SpecificationKind
+        required: true
+        multivalued: true
+      discovery_policy:
+        range: DiscoveryPolicy
+        required: true
+        inlined: true
+      reference_traversal:
+        range: ReferenceTraversal
+        required: true
+        inlined: true
+  SourceResource:
+    description: An addressable source; only SourceDocument implies locally acquired bytes.
+    is_a: Record
+    abstract: true
+  SourceDocument:
+    description: A discovered Markdown or related file. A failed read retains identity, locator, status and
+      diagnostics.
+    is_a: SourceResource
+    slot_usage:
+      kind:
+        equals_string: SourceDocument
+    attributes:
+      locator:
+        range: string
+        required: true
+      read_status:
+        range: ReadStatus
+        required: true
+      media_type:
+        range: string
+      payload:
+        range: SourcePayload
+        description: Present only after successful read; graph rule requires it for read_status=read.
+        inlined: true
+      diagnostics:
+        range: Diagnostic
+        multivalued: true
+      revision:
+        range: SourceRevision
+        inlined: true
+    rules:
+    - description: A successful read includes a source payload.
+      preconditions:
+        slot_conditions:
+          read_status:
+            equals_string: read
+      postconditions:
+        slot_conditions:
+          payload:
+            required: true
+  ExternalResource:
+    description: An external address explicitly mentioned by source; no implied fetch or trust.
+    is_a: SourceResource
+    slot_usage:
+      kind:
+        equals_string: ExternalResource
+    attributes:
+      locator:
+        range: string
+        required: true
+      media_type:
+        range: string
+  SourcePayload:
+    description: Exact original bytes before Goldmark/specfile normalization, including BOM, CRLF, trailing
+      newlines and invalid encodings.
+    attributes:
+      storage:
+        range: PayloadStorage
+        required: true
+      sha256:
+        range: string
+        required: true
+        pattern: ^[a-f0-9]{64}$
+      byte_length:
+        range: integer
+        required: true
+        minimum_value: 0
+      bytes_base64:
+        range: string
+        description: Required for inline_base64 storage; decode and verify digest and byte count.
+      immutable_locator:
+        range: string
+        description: Required for external storage; bytes must remain retrievable and match the digest.
+      text_encoding:
+        range: string
+        description: Detected or declared decoding; original bytes remain authoritative.
+    rules:
+    - description: Inline storage includes the recoverable original bytes.
+      preconditions:
+        slot_conditions:
+          storage:
+            equals_string: inline_base64
+      postconditions:
+        slot_conditions:
+          bytes_base64:
+            required: true
+    - description: External storage identifies recoverable immutable original bytes.
+      preconditions:
+        slot_conditions:
+          storage:
+            equals_string: external
+      postconditions:
+        slot_conditions:
+          immutable_locator:
+            required: true
+  ByteSpan:
+    description: Half-open [start,end) offsets into ORIGINAL bytes of one SourceDocument. Graph checks enforce
+      bounds and start <= end.
+    attributes:
+      source:
+        range: SourceDocument
+        required: true
+      start:
+        range: integer
+        required: true
+        minimum_value: 0
+      end:
+        range: integer
+        required: true
+        minimum_value: 0
+  OffsetMapSegment:
+    description: Maps a normalized parser buffer interval to original bytes; segments must be monotone and
+      account for removals/replacements such as BOM and CRLF.
+    attributes:
+      normalized_start:
+        range: integer
+        required: true
+        minimum_value: 0
+      normalized_end:
+        range: integer
+        required: true
+        minimum_value: 0
+      original_start:
+        range: integer
+        required: true
+        minimum_value: 0
+      original_end:
+        range: integer
+        required: true
+        minimum_value: 0
+      transformation:
+        range: string
+        description: Identity, BOM removal, line-ending normalization, or another declared transformation.
+        required: true
+  Document:
+    description: Syntax and interpretation state for an acquired document, separate from its SourceDocument
+      read state.
+    is_a: Record
+    slot_usage:
+      kind:
+        equals_string: Document
+    attributes:
+      source:
+        range: SourceDocument
+        required: true
+      parse_status:
+        range: ParseStatus
+        required: true
+      parser:
+        range: string
+        description: Parser name/version and dialect, e.g. the current Goldmark-based syntax pipeline.
+        required: true
+      root:
+        range: ContentNode
+        description: Root includes frontmatter, all Markdown, and retained trivia/opaque spans.
+        required: true
+      frontmatter:
+        range: ContentNode
+        description: Frontmatter roots with parsed YAML trees or opaque invalid content.
+        multivalued: true
+        list_elements_ordered: true
+      frontmatter_parse_status:
+        range: ParseStatus
+      declared_type:
+        range: string
+        description: Interpreted known metadata type; original key/value syntax remains in the tree.
+      authored_id:
+        range: string
+        description: Interpreted document ID when available; invalid metadata remains in the tree and diagnostics.
+      metadata_root:
+        range: ContentNode
+        description: Parsed YAML root; ordered mapping entries preserve arbitrary keys, duplicate keys, lists,
+          tags and scalar types.
+      normalization:
+        range: OffsetMapSegment
+        description: Required when parser byte offsets differ from original bytes; no guessed offsets.
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+      domain_decomposition:
+        range: DecompositionStatus
+        required: true
+      elements:
+        range: DomainElement
+        multivalued: true
+      coverage:
+        range: CoverageReport
+        required: true
+        inlined: true
+      diagnostics:
+        range: Diagnostic
+        multivalued: true
+  ContentNode:
+    description: An ordered source syntax node. Raw spans preserve exact syntax; typed properties expose parsed
+      structure without requiring every dialect to be understood.
+    is_a: Record
+    slot_usage:
+      kind:
+        equals_string: ContentNode
+    attributes:
+      document:
+        range: Document
+        required: true
+      node_kind:
+        range: NodeKind
+        required: true
+      span:
+        range: ByteSpan
+        required: true
+        inlined: true
+      children:
+        range: ContentNode
+        description: Ordered direct children. YAML entry children are key then value; repeated mappings are
+          retained, not collapsed.
+        multivalued: true
+        list_elements_ordered: true
+      heading_level:
+        range: integer
+        minimum_value: 1
+        maximum_value: 6
+      list_ordered:
+        range: boolean
+      list_start:
+        range: integer
+      list_delimiter:
+        range: string
+      task_state:
+        range: string
+      code_info:
+        range: string
+      destination:
+        range: string
+        description: Parsed link/image/reference destination; authored spelling stays in the raw span.
+      title:
+        range: string
+      label:
+        range: string
+      decoded_text:
+        range: string
+        description: Optional decoded textual view; never a replacement for source bytes.
+      scalar_kind:
+        range: ScalarKind
+      scalar_tag:
+        range: string
+      scalar_string:
+        range: string
+      scalar_boolean:
+        range: boolean
+      scalar_integer:
+        range: integer
+      scalar_float:
+        range: double
+      scalar_timestamp:
+        range: datetime
+      scalar_binary_base64:
+        range: string
+      anchor_name:
+        range: string
+      alias_name:
+        range: string
+      syntax_properties:
+        range: SyntaxProperty
+        description: Dialect properties not covered by dedicated syntax fields.
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+      opaque_reason:
+        range: string
+        description: Required by graph checks for opaque nodes; distinguish unsupported, malformed, and unparsed
+          syntax.
+  SyntaxProperty:
+    description: A typed syntax extension property, retained without asserting domain meaning.
+    attributes:
+      name:
+        range: string
+        required: true
+      value:
+        range: string
+        required: true
+      value_type:
+        range: ScalarKind
+  SourceFragment:
+    description: An addressable heading, explicit anchor, or occurrence in a source document, without implying
+      domain-element identity.
+    is_a: Record
+    slot_usage:
+      kind:
+        equals_string: SourceFragment
+    attributes:
+      source:
+        range: SourceDocument
+        required: true
+      content_node:
+        range: ContentNode
+      span:
+        range: ByteSpan
+        inlined: true
+      authored_anchor:
+        range: string
+      generated_anchor:
+        range: string
+      anchor_rule:
+        range: string
+  RichContent:
+    description: A typed domain value backed by ordered syntax nodes. Omitted slot means absent; presence=empty
+      means an explicitly present empty field. Narrative remains valid without fabricated atomic assertions.
+    attributes:
+      presence:
+        range: Presence
+        required: true
+      content_nodes:
+        range: ContentNode
+        description: Ordered non-overlapping roots of this field value; an empty field has no body nodes.
+        required: true
+        multivalued: true
+        list_elements_ordered: true
+      decomposition:
+        range: DecompositionStatus
+        description: State of optional finer structure, independent of named-field mapping coverage.
+        required: true
+    rules:
+    - description: An explicitly empty field has no body content nodes; this rule requires the content checker
+        in the selected JSON projection.
+      preconditions:
+        slot_conditions:
+          presence:
+            equals_string: empty
+      postconditions:
+        slot_conditions:
+          content_nodes:
+            maximum_cardinality: 0
+            range: ContentNode
+            multivalued: true
+    - description: An authored field points to at least one source content node; this rule requires the content
+        checker in the selected JSON projection.
+      preconditions:
+        slot_conditions:
+          presence:
+            equals_string: authored
+      postconditions:
+        slot_conditions:
+          content_nodes:
+            minimum_cardinality: 1
+            range: ContentNode
+            multivalued: true
+    annotations:
+      json_schema_projection_gap: LinkML 1.12.1 omits minItems/maxItems for the presence-dependent class-rule
+        cardinality. Preserve these formal rules and enforce empty/authored node cardinality in the graph/content
+        checker; do not claim JSON Schema alone enforces them.
+  ContentBinding:
+    description: Auditable mapping from source syntax to a named domain field, metadata, structural support,
+      unknown extension, or uninterpreted fallback.
+    is_a: Record
+    slot_usage:
+      kind:
+        equals_string: ContentBinding
+    attributes:
+      content_node:
+        range: ContentNode
+        required: true
+      scope:
+        range: BindingScope
+        required: true
+      owner:
+        range: Record
+        description: Owning Document, DomainElement, or other addressable record.
+        required: true
+      field_path:
+        range: string
+        description: Model slot path relative to owner; graph check verifies it exists and points to the represented
+          value.
+        required: true
+      role:
+        range: BindingRole
+        required: true
+      mapping_rule:
+        range: string
+        description: Versioned mapping rule, including recognized heading alias.
+        required: true
+      known_role:
+        range: string
+        description: Recognized domain role, if any; a known role routed to fallback remains unmapped in coverage.
+      reason:
+        range: string
+        description: Required for fallback or extension bindings; explain the interpretive boundary.
+      occurrence_index:
+        range: integer
+        description: Zero-based source occurrence for repeated fields/sections, when needed; duplicate authoring
+          remains separately diagnosable.
+        minimum_value: 0
+  CoverageReport:
+    description: A checked accounting of representation and named-role mapping, not a claim that every prose
+      proposition was formalized.
+    attributes:
+      status:
+        range: CoverageStatus
+        required: true
+      mapping_profile:
+        range: string
+        required: true
+      unbound_content_nodes:
+        range: ContentNode
+        description: Syntax not covered by any applicable binding; prevents complete_for_profile.
+        multivalued: true
+      unmapped_known_roles:
+        range: UnmappedRole
+        description: Recognized content still lacking its named domain mapping; prevents complete_for_profile.
+        multivalued: true
+        inlined_as_list: true
+      extension_sections:
+        range: ExtensionSection
+        description: Unknown domain headings, explicitly retained; not evidence of complete domain semantics.
+        multivalued: true
+      uninterpreted_nodes:
+        range: ContentNode
+        description: Retained opaque or fallback syntax, separate from unknown domain sections.
+        multivalued: true
+      limitations:
+        range: string
+        multivalued: true
+  UnmappedRole:
+    description: A known domain field or item whose source content has not yet been mapped.
+    attributes:
+      role:
+        range: string
+        required: true
+      content_nodes:
+        range: ContentNode
+        required: true
+        multivalued: true
+        list_elements_ordered: true
+      reason:
+        range: string
+        required: true
+  DomainElement:
+    description: A source-backed semantic record. Snapshot IDs are required; authored IDs remain optional except
+      where the source format requires them.
+    is_a: Record
+    abstract: true
+    attributes:
+      source_document:
+        range: SourceDocument
+        required: true
+      name:
+        range: RichContent
+        description: Authored title or item name, if present.
+        inlined: true
+      source_fragment:
+        range: SourceFragment
+      decomposition:
+        range: DecompositionStatus
+        required: true
+      open_decisions:
+        range: OpenDecisionCollection
+        inlined: true
+        description: Explicitly headed unresolved questions, with full section content preserved; omitted fields
+          are not inferred decisions.
+      extension_sections:
+        range: ExtensionSection
+        description: Only unknown sections, not a substitute for known domain fields.
+        multivalued: true
+        list_elements_ordered: true
+    slots:
+    - authored_id
+    annotations:
+      owned_memberships: DomainElement.extension_sections
+  SpecificationElement:
+    description: Common content of system, job, use-case, concept and requirement documents; narrative authority/evidence
+      does not create executable authority assertions.
+    is_a: DomainElement
+    abstract: true
+    attributes:
+      slug:
+        range: string
+        description: Path-derived current slug where applicable.
+      owning_system:
+        range: System
+        description: Derived directory ownership, not use-case boundary or requirement inheritance.
+      related_specifications:
+        range: ContextualReferences
+        inlined: true
+      related_concepts:
+        range: ContextualReferences
+        inlined: true
+      authority_and_evidence:
+        range: RichContent
+        description: Maps both Authority and Authority and evidence headings; retain original heading nodes.
+        inlined: true
+      evidence:
+        range: EvidenceCollection
+        inlined: true
+      notes:
+        range: RichContent
+        description: Recognized Notes content.
+        inlined: true
+      preamble:
+        range: RichContent
+        description: Authored content between the title and the first named section.
+        inlined: true
+      related_use_cases:
+        range: ContextualReferences
+        description: Contextual citations of related use cases; no implicit inclusion, refinement or support
+          relation.
+        inlined: true
+    annotations:
+      owned_memberships: SpecificationElement.evidence.statements
+  System:
+    description: The system described by a system document; subordinate systems retain their own boundaries
+      and vocabulary.
+    is_a: SpecificationElement
+    slot_usage:
+      kind:
+        equals_string: System
+    attributes:
+      parent_system:
+        range: System
+        description: Directory-derived containment; no inheritance of requirements, labels, or thresholds.
+      purpose:
+        range: RichContent
+        inlined: true
+      scope:
+        range: RichContent
+        inlined: true
+      goals:
+        range: GoalCollection
+        inlined: true
+      environment:
+        range: EnvironmentDescription
+        inlined: true
+      assumptions:
+        range: AssumptionCollection
+        inlined: true
+      constraints:
+        range: ConstraintCollection
+        inlined: true
+      glossary:
+        range: Glossary
+        inlined: true
+      quality_model:
+        range: QualityVocabulary
+        description: Absent means no declared vocabulary; a present empty vocabulary is distinct.
+    annotations:
+      owned_memberships: System.goals.items or System.assumptions.items or System.constraints.items or System.glossary.terms
+        or System.quality_model
+  GoalCollection:
+    description: Goals section narrative and optional explicitly authored goal records.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      items:
+        range: SystemGoal
+        multivalued: true
+        list_elements_ordered: true
+  AssumptionCollection:
+    description: Assumptions section narrative and optional explicitly authored assumptions.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      items:
+        range: Assumption
+        multivalued: true
+        list_elements_ordered: true
+  ConstraintCollection:
+    description: Constraints section narrative and optional explicitly authored constraints.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      items:
+        range: Constraint
+        multivalued: true
+        list_elements_ordered: true
+  Glossary:
+    description: Glossary section introduction and explicitly named terms.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      terms:
+        range: GlossaryTerm
+        multivalued: true
+        list_elements_ordered: true
+  EnvironmentDescription:
+    description: System environment, retaining narrative and explicitly separated participants or contextual
+      boundaries.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      participants:
+        range: ActorMention
+        multivalued: true
+        inlined_as_list: true
+      context:
+        range: RichContent
+        inlined: true
+  SystemGoal:
+    description: An explicitly distinguished system goal.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: SystemGoal
+    attributes:
+      owner:
+        range: System
+        required: true
+      statement:
+        range: RichContent
+        inlined: true
+  Assumption:
+    description: An explicitly distinguished system assumption; no inferred truth assertion.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: Assumption
+    attributes:
+      owner:
+        range: System
+        required: true
+      statement:
+        range: RichContent
+        inlined: true
+  Constraint:
+    description: An explicitly distinguished system constraint.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: Constraint
+    attributes:
+      owner:
+        range: System
+        required: true
+      statement:
+        range: RichContent
+        inlined: true
+  GlossaryTerm:
+    description: An explicitly named term and its definition in a system glossary.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: GlossaryTerm
+    attributes:
+      owner:
+        range: System
+        required: true
+      definition:
+        range: RichContent
+        inlined: true
+      alternative_names:
+        range: RichContent
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+      references:
+        range: SourceReference
+        multivalued: true
+      related_terms:
+        range: ContextualReferences
+        inlined: true
+  QualityVocabulary:
+    description: A system-owned quality vocabulary with its own section content; an empty vocabulary is meaningful.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: QualityVocabulary
+    attributes:
+      owner:
+        range: System
+        required: true
+      description:
+        range: RichContent
+        description: Quality model introductory content.
+        inlined: true
+        required: true
+      attributes:
+        range: QualityAttribute
+        multivalued: true
+        list_elements_ordered: true
+    annotations:
+      owned_memberships: QualityVocabulary.attributes
+  QualityAttribute:
+    description: A named quality classification owned by one declared vocabulary. Broader is multi-parent;
+      hierarchy alone does not inherit quantitative thresholds.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: QualityAttribute
+      authored_id:
+        required: true
+    attributes:
+      owner:
+        range: QualityVocabulary
+        required: true
+      definition:
+        range: RichContent
+        inlined: true
+      broader_labels:
+        range: LabelOccurrence
+        description: All authored Broader labels, including unresolved ones.
+        multivalued: true
+        list_elements_ordered: true
+      broader:
+        range: QualityAttribute
+        description: Successfully resolved broader targets only; preserve original occurrence and provenance.
+        multivalued: true
+  Job:
+    description: A performer seeks progress in a situation, independent of a chosen implementation.
+    is_a: SpecificationElement
+    slot_usage:
+      kind:
+        equals_string: Job
+    attributes:
+      statement:
+        range: RichContent
+        description: The Job section, including existing job-statement phrasing.
+        inlined: true
+      performer:
+        range: RichContent
+        inlined: true
+      situation:
+        range: RichContent
+        inlined: true
+      motivation:
+        range: RichContent
+        inlined: true
+      intended_progress:
+        range: RichContent
+        inlined: true
+      steps:
+        range: JobMap
+        inlined: true
+      outcomes:
+        range: OutcomeCollection
+        inlined: true
+      progress_cases:
+        range: ProgressCaseCollection
+        inlined: true
+    annotations:
+      owned_memberships: Job.steps.steps or Job.outcomes.outcomes or Job.progress_cases.cases
+  JobMap:
+    description: Steps section narrative, including partialness notes, and explicitly authored ordered job-step
+      records.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      steps:
+        range: JobStep
+        description: Document order, not a universal lifecycle or required process sequence.
+        multivalued: true
+        list_elements_ordered: true
+  OutcomeCollection:
+    description: Outcomes section body and items; preserve introductory prose, nested lists and item support
+      content.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      outcomes:
+        range: Outcome
+        multivalued: true
+        list_elements_ordered: true
+  ProgressCaseCollection:
+    description: Progress cases section body and explicitly named cases.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      cases:
+        range: ProgressCase
+        multivalued: true
+        list_elements_ordered: true
+  JobStep:
+    description: A meaningful part of a job; repeated or custom stage labels are allowed.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: JobStep
+    attributes:
+      owner:
+        range: Job
+        required: true
+      stage:
+        range: RichContent
+        description: Authored stage value; unrestricted vocabulary and repeated labels are valid.
+        inlined: true
+      description:
+        range: RichContent
+        inlined: true
+      outcomes:
+        range: OutcomeCollection
+        inlined: true
+    annotations:
+      owned_memberships: JobStep.outcomes.outcomes
+  Outcome:
+    description: A desired outcome owned directly by a job or step. Ownership does not imply inheritance.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: Outcome
+    attributes:
+      owner:
+        range: DomainElement
+        required: true
+        any_of:
+        - range: Job
+        - range: JobStep
+      statement:
+        range: RichContent
+        inlined: true
+      supporting_content:
+        range: RichContent
+        description: Explicit support prose or nested bullets belonging to the outcome.
+        inlined: true
+  ProgressCase:
+    description: An explicitly authored example or hypothesis about progress; do not invent cases from unsegmented
+      prose.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: ProgressCase
+    attributes:
+      owner:
+        range: Job
+        required: true
+      description:
+        range: RichContent
+        inlined: true
+      current_approach:
+        range: RichContent
+        inlined: true
+      desired_progress:
+        range: RichContent
+        inlined: true
+      forces:
+        range: ForceCollection
+        inlined: true
+      timeline:
+        range: Timeline
+        inlined: true
+      evidence:
+        range: EvidenceCollection
+        inlined: true
+    annotations:
+      owned_memberships: ProgressCase.evidence.statements
+  ForceCollection:
+    description: Forces section narrative and optional explicitly identified forces.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      items:
+        range: Force
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+  Force:
+    description: An explicitly described progress force; a kind is assigned only when authored or deterministically
+      marked.
+    attributes:
+      kind:
+        range: ForceKind
+      description:
+        range: RichContent
+        inlined: true
+  Timeline:
+    description: Authored temporal narrative, including unknown or research-pending timelines; no required
+      dates.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      events:
+        range: TimelineEvent
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+  TimelineEvent:
+    description: An explicitly distinguished event in a progress timeline.
+    attributes:
+      label:
+        range: RichContent
+        inlined: true
+      time:
+        range: RichContent
+        inlined: true
+      description:
+        range: RichContent
+        inlined: true
+  EvidenceCollection:
+    description: Evidence narrative and explicitly distinguished evidence statements, research basis and limitations.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      statements:
+        range: EvidenceStatement
+        multivalued: true
+        list_elements_ordered: true
+      research_basis:
+        range: RichContent
+        inlined: true
+      limitations:
+        range: RichContent
+        inlined: true
+  EvidenceStatement:
+    description: An explicitly identified source claim, hypothesis, observation or research limitation. Classification
+      and confidence are not inferred.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: EvidenceStatement
+    attributes:
+      owner:
+        range: DomainElement
+        required: true
+      statement:
+        range: RichContent
+        inlined: true
+      evidence_type:
+        range: RichContent
+        inlined: true
+      research_status:
+        range: RichContent
+        inlined: true
+      limitations:
+        range: RichContent
+        inlined: true
+      references:
+        range: SourceReference
+        multivalued: true
+  UseCase:
+    description: An actor goal and its interactions at a stated system boundary, with alternative paths and
+      protections.
+    is_a: SpecificationElement
+    slot_usage:
+      kind:
+        equals_string: UseCase
+    attributes:
+      goal:
+        range: RichContent
+        inlined: true
+      system_boundary:
+        range: RichContent
+        description: Boundary description is independent of directory ownership.
+        inlined: true
+      primary_actor:
+        range: ActorMention
+        inlined: true
+      goal_level:
+        range: GoalLevel
+        inlined: true
+      trigger:
+        range: RichContent
+        inlined: true
+      preconditions:
+        range: ConditionCollection
+        inlined: true
+      supporting_actors:
+        range: ActorCollection
+        inlined: true
+      stakeholder_interests:
+        range: StakeholderInterestCollection
+        inlined: true
+      minimum_guarantees:
+        range: ConditionCollection
+        inlined: true
+      success_criterion:
+        range: RichContent
+        inlined: true
+      main_success_scenario:
+        range: Scenario
+      extensions:
+        range: ExtensionCollection
+        inlined: true
+      sequence:
+        range: SequenceStatement
+        inlined: true
+      related_jobs:
+        range: ContextualReferences
+        inlined: true
+    annotations:
+      owned_memberships: UseCase.main_success_scenario or UseCase.extensions.branches
+  ActorMention:
+    description: An actor role as authored in this context; no global actor identity or fabricated role extraction.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      role_name:
+        range: RichContent
+        inlined: true
+      services:
+        range: RichContent
+        inlined: true
+      references:
+        range: SourceReference
+        multivalued: true
+  ActorCollection:
+    description: Supporting actors narrative and explicitly separated mentions.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      actors:
+        range: ActorMention
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+  GoalLevel:
+    description: Authored goal-level content with optional explicit canonical classification.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      level:
+        range: GoalLevelValue
+  ConditionCollection:
+    description: Authored conditions or guarantees, with optional explicitly distinguished items.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      conditions:
+        range: Condition
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+  Condition:
+    description: An explicitly distinguished condition; prose remains authoritative.
+    attributes:
+      statement:
+        range: RichContent
+        inlined: true
+      references:
+        range: SourceReference
+        multivalued: true
+  StakeholderInterestCollection:
+    description: Stakeholder section narrative and optional explicit interest entries.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      interests:
+        range: StakeholderInterest
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+  StakeholderInterest:
+    description: A stakeholder and interests explicitly distinguished in source, including nonparticipants.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      stakeholder:
+        range: ActorMention
+        inlined: true
+      interest:
+        range: RichContent
+        inlined: true
+  Scenario:
+    description: An addressable scenario body and its explicitly authored ordered steps. Narrative-only scenarios
+      remain valid.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: Scenario
+    attributes:
+      owner:
+        range: UseCase
+        required: true
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      steps:
+        range: ScenarioStep
+        description: Source order only. Required sequencing belongs in SequenceStatement.
+        multivalued: true
+        list_elements_ordered: true
+    annotations:
+      owned_memberships: Scenario.steps
+  ScenarioStep:
+    description: An explicitly distinguished interaction step; do not manufacture actor/action/result clauses
+      from free prose.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: ScenarioStep
+    attributes:
+      owner:
+        range: DomainElement
+        required: true
+        any_of:
+        - range: Scenario
+        - range: Extension
+      authored_label:
+        range: string
+        description: Original number or label; snapshot ID supplies addressability.
+      content:
+        range: RichContent
+        inlined: true
+      actor:
+        range: ActorMention
+        inlined: true
+      action:
+        range: RichContent
+        inlined: true
+      response:
+        range: RichContent
+        inlined: true
+      outcome:
+        range: RichContent
+        inlined: true
+      governing_references:
+        range: SourceReference
+        multivalued: true
+  ExtensionCollection:
+    description: Extensions section introduction, undecomposed narrative, and explicitly authored branches.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      branches:
+        range: Extension
+        multivalued: true
+        list_elements_ordered: true
+  Extension:
+    description: An explicitly distinguished alternative or failure branch. Condition-only entries and expressly
+      unresolved handling are valid.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: Extension
+    attributes:
+      owner:
+        range: DomainElement
+        required: true
+        any_of:
+        - range: UseCase
+        - range: Extension
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      condition:
+        range: RichContent
+        inlined: true
+      location:
+        range: RichContent
+        description: Authored branch point, including free prose or labels; no automatic step-number interpretation.
+        inlined: true
+      at_step:
+        range: ScenarioStep
+        description: Only when an explicit, resolved step reference exists.
+      response:
+        range: RichContent
+        inlined: true
+      flow:
+        range: ScenarioStep
+        description: Explicit alternate flow steps; order remains representational.
+        multivalued: true
+        list_elements_ordered: true
+      continuation:
+        range: RichContent
+        description: Authored resumption, alternate success or failure conclusion; preserve prose.
+        inlined: true
+      handling_state:
+        range: HandlingState
+        description: Omission means no explicit handling classification; not the same as explicitly unresolved.
+      governing_references:
+        range: SourceReference
+        multivalued: true
+      branches:
+        range: Extension
+        description: Explicitly authored nested branches, in document order.
+        multivalued: true
+        list_elements_ordered: true
+    annotations:
+      owned_memberships: Extension.flow or Extension.branches
+  SequenceStatement:
+    description: An explicit statement about which ordering is representative or required; array order alone
+      creates no constraint.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      mode:
+        range: SequenceMode
+      constraints:
+        range: SequenceConstraint
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+  SequenceConstraint:
+    description: An explicitly authored ordering requirement, optionally linked to resolvable steps and governing
+      rules.
+    attributes:
+      statement:
+        range: RichContent
+        inlined: true
+      before:
+        range: ScenarioStep
+        multivalued: true
+      after:
+        range: ScenarioStep
+        multivalued: true
+      governing_references:
+        range: SourceReference
+        multivalued: true
+  Concept:
+    description: A behavior-bearing concept described by purpose, abstract state, actions and an operational
+      principle.
+    is_a: SpecificationElement
+    slot_usage:
+      kind:
+        equals_string: Concept
+    attributes:
+      purpose:
+        range: RichContent
+        inlined: true
+      abstract_state:
+        range: StateDescription
+        inlined: true
+      actions:
+        range: ActionCollection
+        inlined: true
+      operational_principle:
+        range: RichContent
+        inlined: true
+    annotations:
+      owned_memberships: Concept.actions.actions
+  StateDescription:
+    description: The State section as narrative and optional explicitly named state components/invariants;
+      no reverse-engineered implementation model.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      elements:
+        range: StateElement
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+      invariants:
+        range: Condition
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+  StateElement:
+    description: An explicitly named abstract state component.
+    attributes:
+      name:
+        range: RichContent
+        inlined: true
+      description:
+        range: RichContent
+        inlined: true
+      value_description:
+        range: RichContent
+        inlined: true
+  ActionCollection:
+    description: Actions section narrative plus explicit named action records; an unsegmented Actions section
+      is valid.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      actions:
+        range: ConceptAction
+        multivalued: true
+        list_elements_ordered: true
+  ConceptAction:
+    description: An explicitly named concept action. Caller assumptions and enforced guards are different authored
+      claims.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: ConceptAction
+    attributes:
+      owner:
+        range: Concept
+        required: true
+      description:
+        range: RichContent
+        inlined: true
+      inputs:
+        range: RichContent
+        inlined: true
+      outputs:
+        range: RichContent
+        inlined: true
+      caller_assumptions:
+        range: ConditionCollection
+        inlined: true
+      guards:
+        range: ConditionCollection
+        inlined: true
+      effects:
+        range: RichContent
+        inlined: true
+      rejections:
+        range: RichContent
+        inlined: true
+  Requirement:
+    description: Shared obligation content, applicability, rationale and source classification labels.
+    is_a: SpecificationElement
+    abstract: true
+    attributes:
+      applies_to:
+        range: Applicability
+        inlined: true
+      rationale:
+        range: RichContent
+        inlined: true
+      attribute_labels:
+        range: LabelOccurrence
+        description: Every authored attribute label, including undefined or unbound labels.
+        multivalued: true
+        list_elements_ordered: true
+      attributes:
+        range: QualityAttribute
+        description: Only resolved classifications; original occurrences remain separately addressable.
+        multivalued: true
+  GeneralRequirement:
+    description: A general obligation with authored verification guidance.
+    is_a: Requirement
+    slot_usage:
+      kind:
+        equals_string: GeneralRequirement
+    attributes:
+      statement:
+        range: RichContent
+        inlined: true
+      verification:
+        range: VerificationPlan
+        inlined: true
+  QualityRequirement:
+    description: A quality obligation with authored criterion and measurement guidance; quantitative targets
+      are optional.
+    is_a: Requirement
+    slot_usage:
+      kind:
+        equals_string: QualityRequirement
+    attributes:
+      criterion:
+        range: QualityCriterion
+        inlined: true
+      measurement:
+        range: MeasurementPlan
+        inlined: true
+  Applicability:
+    description: Applies to section narrative plus explicitly separated scope dimensions; no applicability
+      inferred from a link or directory.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      subjects:
+        range: ContextualReferences
+        inlined: true
+      conditions:
+        range: RichContent
+        inlined: true
+      workload:
+        range: RichContent
+        inlined: true
+      population:
+        range: RichContent
+        inlined: true
+      exclusions:
+        range: RichContent
+        inlined: true
+  VerificationPlan:
+    description: Verification section content with optional explicit plan components, including evidence retention.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      method:
+        range: RichContent
+        inlined: true
+      success_criteria:
+        range: RichContent
+        inlined: true
+      conditions:
+        range: RichContent
+        inlined: true
+      cases:
+        range: VerificationCase
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+      evidence_to_retain:
+        range: RichContent
+        inlined: true
+  VerificationCase:
+    description: An explicitly distinguished verification case.
+    attributes:
+      name:
+        range: RichContent
+        inlined: true
+      conditions:
+        range: RichContent
+        inlined: true
+      procedure:
+        range: RichContent
+        inlined: true
+      expected_result:
+        range: RichContent
+        inlined: true
+      evidence_to_retain:
+        range: RichContent
+        inlined: true
+  QualityCriterion:
+    description: Criterion narrative and optional explicit measurement clauses. A label or broader hierarchy
+      does not supply an omitted threshold.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      statement:
+        range: RichContent
+        inlined: true
+      measure:
+        range: RichContent
+        inlined: true
+      comparison:
+        range: RichContent
+        inlined: true
+      target:
+        range: RichContent
+        inlined: true
+      units:
+        range: RichContent
+        inlined: true
+      aggregation:
+        range: RichContent
+        inlined: true
+      window:
+        range: RichContent
+        inlined: true
+      conditions:
+        range: RichContent
+        inlined: true
+      workload:
+        range: RichContent
+        inlined: true
+      population:
+        range: RichContent
+        inlined: true
+      exclusions:
+        range: RichContent
+        inlined: true
+  MeasurementPlan:
+    description: Measurement narrative and optional explicit procedure clauses.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      sampling:
+        range: RichContent
+        inlined: true
+      conditions:
+        range: RichContent
+        inlined: true
+      procedure:
+        range: RichContent
+        inlined: true
+      evidence_to_retain:
+        range: RichContent
+        inlined: true
+      workload:
+        range: RichContent
+        inlined: true
+      population:
+        range: RichContent
+        inlined: true
+      exclusions:
+        range: RichContent
+        inlined: true
+  OpenDecision:
+    description: An explicitly authored unresolved decision; do not infer every omitted field to be an open
+      decision.
+    attributes:
+      question:
+        range: RichContent
+        inlined: true
+      evidence_needed:
+        range: RichContent
+        inlined: true
+  ContextualReferences:
+    description: Related specifications/concepts/jobs or explicit scoped targets, including the prose explaining
+      their context. Links alone do not imply authority, support or verification relations.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+      items:
+        range: ContextualReference
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+  ContextualReference:
+    description: An explicitly distinguished contextual citation with its explanation.
+    attributes:
+      description:
+        range: RichContent
+        inlined: true
+      references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+  ExtensionSection:
+    description: An unknown domain section retained with its original heading and body. This is explicit representation,
+      not a claim that its domain semantics have been modeled.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: ExtensionSection
+    attributes:
+      owner:
+        range: Record
+        required: true
+        any_of:
+        - range: Document
+        - range: DomainElement
+        description: Domain owner when mapped; otherwise the Document, including ordinary Markdown or a failed
+          domain extraction.
+      heading:
+        range: RichContent
+        inlined: true
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      children:
+        range: ExtensionSection
+        multivalued: true
+        list_elements_ordered: true
+      reason:
+        range: string
+        required: true
+    annotations:
+      owned_memberships: ExtensionSection.children
+  SourceReference:
+    description: An authored reference occurrence, independent of whether it resolves or carries semantic intent.
+    is_a: Record
+    slot_usage:
+      kind:
+        equals_string: SourceReference
+    attributes:
+      source_document:
+        range: SourceDocument
+        required: true
+      content_node:
+        range: ContentNode
+        required: true
+      form:
+        range: ReferenceForm
+        required: true
+      authored_target:
+        range: string
+        description: Literal destination or label, including fragments; do not replace it with a normalized
+          target.
+        required: true
+      context_owner:
+        range: DomainElement
+      context_field:
+        range: string
+      definition_node:
+        range: ContentNode
+      resolution:
+        range: Resolution
+  LabelOccurrence:
+    description: An authored semantic classification or broader label, preserved even when no target can be
+      bound.
+    is_a: Record
+    slot_usage:
+      kind:
+        equals_string: LabelOccurrence
+    attributes:
+      owner:
+        range: DomainElement
+        required: true
+      role:
+        range: LabelRole
+        required: true
+      label:
+        range: string
+        required: true
+      content_node:
+        range: ContentNode
+        required: true
+      resolution:
+        range: Resolution
+      system_context:
+        range: System
+        description: System in whose scope this label was interpreted, if established.
+      vocabulary_context:
+        range: QualityVocabulary
+        description: Declared vocabulary used for lookup; absent when no vocabulary is bound.
+  Resolution:
+    description: The recorded outcome of resolving one authored reference or label; targets need not be domain
+      entities.
+    is_a: Record
+    slot_usage:
+      kind:
+        equals_string: Resolution
+    attributes:
+      occurrence:
+        range: Record
+        required: true
+        any_of:
+        - range: SourceReference
+        - range: LabelOccurrence
+      status:
+        range: ResolutionStatus
+        required: true
+      target:
+        range: Record
+        description: Only for resolved; target may be a domain element, source resource or source fragment.
+        any_of:
+        - range: DomainElement
+        - range: SourceResource
+        - range: SourceFragment
+      candidates:
+        range: Record
+        description: Candidates for an ambiguous resolution.
+        multivalued: true
+      rule:
+        range: string
+        required: true
+      diagnostics:
+        range: Diagnostic
+        multivalued: true
+    rules:
+    - description: A resolved occurrence names a target; target identity and type are graph checks.
+      preconditions:
+        slot_conditions:
+          status:
+            equals_string: resolved
+      postconditions:
+        slot_conditions:
+          target:
+            required: true
+  Diagnostic:
+    description: A parser, mapper, resolver, coverage or graph-check finding. It may identify a source without
+      any line, element or parsed document.
+    is_a: Record
+    slot_usage:
+      kind:
+        equals_string: Diagnostic
+    attributes:
+      code:
+        range: string
+        required: true
+      severity:
+        range: Severity
+        required: true
+      message:
+        range: string
+        required: true
+      source:
+        range: SourceDocument
+      span:
+        range: ByteSpan
+        inlined: true
+      record:
+        range: Record
+      line:
+        range: integer
+        minimum_value: 1
+      column:
+        range: integer
+        minimum_value: 1
+      phase:
+        range: string
+        description: Read, parse, map, resolve, coverage or graph; retain the producing subsystem.
+        required: true
+      element:
+        range: string
+        description: Authored source element named by the native diagnostic, when available.
+      related:
+        range: SourceLocation
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+        description: Related native source locations, preserving their original order and optional coordinates.
+  Assertion:
+    description: A materialized typed semantic relation with explicit provenance. Ordinary source links remain
+      SourceReference occurrences and do not automatically become assertions.
+    is_a: Record
+    abstract: true
+    attributes:
+      origin:
+        range: AssertionOrigin
+        required: true
+      mapping_rule:
+        range: string
+        description: Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.
+      inputs:
+        range: Record
+        description: Source occurrences and/or typed records supporting this assertion.
+        multivalued: true
+      source_nodes:
+        range: ContentNode
+        multivalued: true
+      source_spans:
+        range: ByteSpan
+        multivalued: true
+        inlined_as_list: true
+    slots:
+    - subject
+    - object
+  ParentSystem:
+    description: Directory-derived system containment; no semantic inheritance.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: ParentSystem
+      subject:
+        range: System
+      object:
+        range: System
+    annotations:
+      projection_of: System.parent_system
+  OwnedBySystem:
+    description: Directory ownership of a specification, independent of system boundary and applicability.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: OwnedBySystem
+      subject:
+        range: SpecificationElement
+      object:
+        range: System
+    annotations:
+      projection_of: SpecificationElement.owning_system
+  HasJobStep:
+    description: A job contains an explicitly authored step.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: HasJobStep
+      subject:
+        range: Job
+      object:
+        range: JobStep
+    annotations:
+      projection_of: Job.steps.steps
+  HasOutcome:
+    description: An outcome belongs directly to a job or step.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: HasOutcome
+      subject:
+        range: DomainElement
+        any_of:
+        - range: Job
+        - range: JobStep
+      object:
+        range: Outcome
+    annotations:
+      projection_of: Job.outcomes.outcomes or JobStep.outcomes.outcomes
+  HasProgressCase:
+    description: A job has an explicitly authored progress case.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: HasProgressCase
+      subject:
+        range: Job
+      object:
+        range: ProgressCase
+    annotations:
+      projection_of: Job.progress_cases.cases
+  HasScenario:
+    description: A use case has its main scenario.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: HasScenario
+      subject:
+        range: UseCase
+      object:
+        range: Scenario
+    annotations:
+      projection_of: UseCase.main_success_scenario
+  HasScenarioStep:
+    description: A scenario or extension contains an explicit step, with source order retained on its typed
+      collection.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: HasScenarioStep
+      subject:
+        range: DomainElement
+        any_of:
+        - range: Scenario
+        - range: Extension
+      object:
+        range: ScenarioStep
+    annotations:
+      projection_of: Scenario.steps or Extension.flow
+  HasExtension:
+    description: A use case or parent branch contains an explicitly authored extension.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: HasExtension
+      subject:
+        range: DomainElement
+        any_of:
+        - range: UseCase
+        - range: Extension
+      object:
+        range: Extension
+    annotations:
+      projection_of: UseCase.extensions.branches or Extension.branches
+  HasConceptAction:
+    description: A concept declares an explicit action.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: HasConceptAction
+      subject:
+        range: Concept
+      object:
+        range: ConceptAction
+    annotations:
+      projection_of: Concept.actions.actions
+  DeclaresVocabulary:
+    description: A system declares its own quality vocabulary.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: DeclaresVocabulary
+      subject:
+        range: System
+      object:
+        range: QualityVocabulary
+    annotations:
+      projection_of: System.quality_model
+  DeclaresQualityAttribute:
+    description: A declared vocabulary owns an attribute.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: DeclaresQualityAttribute
+      subject:
+        range: QualityVocabulary
+      object:
+        range: QualityAttribute
+    annotations:
+      projection_of: QualityVocabulary.attributes
+  BroaderAttribute:
+    description: An explicitly authored and resolved broader attribute relation.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: BroaderAttribute
+      subject:
+        range: QualityAttribute
+      object:
+        range: QualityAttribute
+    annotations:
+      projection_of: QualityAttribute.broader
+  QualityClassification:
+    description: A requirement is explicitly classified by a resolved vocabulary attribute.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: QualityClassification
+      subject:
+        range: Requirement
+      object:
+        range: QualityAttribute
+    annotations:
+      projection_of: Requirement.attributes
+  SupportsJob:
+    description: An explicitly authored semantic support relation; a Related jobs link alone is insufficient.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: SupportsJob
+      subject:
+        range: UseCase
+      object:
+        range: DomainElement
+        any_of:
+        - range: Job
+        - range: JobStep
+        - range: Outcome
+  AppliesTo:
+    description: An explicitly authored applicability relation to a domain element; links remain citations
+      unless meaning is explicit.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: AppliesTo
+      subject:
+        range: Requirement
+      object:
+        range: DomainElement
+  BoundaryIs:
+    description: An explicitly identified and resolved system boundary, never derived from directory ownership.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: BoundaryIs
+      subject:
+        range: UseCase
+      object:
+        range: System
+  DiscoveryPolicy:
+    description: Recorded discovery bounds. Current dotspec uses git or filesystem mode and excludes symlinks
+      and nested repositories.
+    attributes:
+      mode:
+        range: DiscoveryMode
+        required: true
+      rule:
+        range: string
+        description: Versioned discovery policy identifier.
+        required: true
+      follow_symlinks:
+        range: boolean
+        required: true
+      include_nested_repositories:
+        range: boolean
+        required: true
+  ReferenceTraversal:
+    description: Recorded reference traversal, independent of file discovery and domain semantic relations.
+    attributes:
+      mode:
+        range: ReferenceTraversalMode
+        required: true
+      include_system_context:
+        range: boolean
+        required: true
+      follow_external_resources:
+        range: boolean
+        required: true
+      repository_bounded:
+        range: boolean
+        required: true
+      maximum_depth:
+        range: integer
+        minimum_value: 0
+      rule:
+        range: string
+        required: true
+  ContextSource:
+    description: A consulted context source and the reason it entered the snapshot.
+    attributes:
+      source:
+        range: SourceDocument
+        required: true
+      role:
+        range: ContextSourceRole
+        required: true
+      requested_by:
+        range: SourceDocument
+        multivalued: true
+      reference_occurrences:
+        range: SourceReference
+        multivalued: true
+      rule:
+        range: string
+        required: true
+  SourceRevision:
+    description: Optional known source-revision context, without claiming a clean working tree or immutable
+      path.
+    attributes:
+      version_system:
+        range: string
+        description: For example git, a versioned object store or an archive.
+        required: true
+      repository_locator:
+        range: string
+      revision:
+        range: string
+        description: Known source revision or base revision.
+        required: true
+      working_copy_modified:
+        range: boolean
+        description: Omit when unknown; payload digest identifies the observed bytes regardless.
+  SourceDirectory:
+    description: An addressable local directory referenced by Markdown. It is a resource target, not a document
+      and has no source payload.
+    is_a: SourceResource
+    slot_usage:
+      kind:
+        equals_string: SourceDirectory
+    attributes:
+      locator:
+        range: string
+        required: true
+  SourceLocation:
+    description: A diagnostic source location, including path-only or external-to-snapshot locations without
+      invented coordinates.
+    attributes:
+      source:
+        range: SourceDocument
+      locator:
+        range: string
+      line:
+        range: integer
+        minimum_value: 1
+      column:
+        range: integer
+        minimum_value: 1
+      element:
+        range: string
+      span:
+        range: ByteSpan
+        inlined: true
+  OpenDecisionCollection:
+    description: Open-decision section narrative and explicitly distinguished question/evidence entries.
+    attributes:
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      decisions:
+        range: OpenDecision
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+slots:
+  id:
+    range: string
+    description: Required snapshot-local record identity; does not require a globally stable authored ID.
+    required: true
+    identifier: true
+    pattern: '[\s\S]+'
+  kind:
+    range: string
+    description: Concrete record type discriminator.
+    required: true
+  authored_id:
+    range: string
+    description: An explicitly authored ID when present; no manufactured global identifier.
+  subject:
+    range: DomainElement
+    required: true
+  object:
+    range: DomainElement
+    required: true
+enums:
+  ReadStatus:
+    description: Whether original source bytes were acquired.
+    permissible_values:
+      read:
+        description: Original bytes acquired.
+      failed:
+        description: Read attempted but failed; diagnostic retained.
+      not_attempted:
+        description: Source discovered but not read.
+  ParseStatus:
+    description: Syntax or frontmatter parse state, independent of domain decomposition.
+    permissible_values:
+      parsed:
+        description: Supported syntax parsed; opaque unsupported syntax may still exist.
+      partial:
+        description: Some syntax parsed and some malformed or uninterpreted.
+      failed:
+        description: Parsing failed; original bytes and opaque content remain available.
+      not_attempted:
+        description: No syntax parse attempted.
+  Presence:
+    description: Presence of an authored field; omission of the containing slot means absent.
+    permissible_values:
+      empty:
+        description: The field or section is explicitly present without body content.
+      authored:
+        description: The field contains authored content, including placeholders or unknown statements.
+  DecompositionStatus:
+    description: Optional explicit internal structure, not prose truth or completeness.
+    permissible_values:
+      not_attempted:
+        description: No structural decomposition attempted.
+      unsegmented:
+        description: Retained as typed narrative; no finer structure was authored or recognized.
+      partial:
+        description: Some explicit items mapped; remaining content is retained.
+      complete:
+        description: All recognized explicit structures within the declared mapping scope mapped.
+      failed:
+        description: Decomposition attempted but failed; narrative remains retained.
+  CoverageStatus:
+    description: Checked named-domain mapping status. Syntax retention alone is insufficient.
+    permissible_values:
+      not_checked:
+        description: Coverage has not been checked.
+      partial:
+        description: Known domain roles remain unmapped or mapping errors exist.
+      complete_for_profile:
+        description: All known roles in the declared mapping profile are mapped; unknown extensions remain
+          explicitly reported.
+  PayloadStorage:
+    description: Where the exact original bytes can be recovered.
+    permissible_values:
+      inline_base64:
+        description: bytes_base64 stores original bytes including BOM and line endings.
+      external:
+        description: An immutable payload locator plus digest addresses original bytes; a mutable repository
+          path alone is insufficient.
+  NodeKind:
+    description: Ordered source syntax tree kinds, including metadata and opaque fallback.
+    permissible_values:
+      document:
+        description: Document.
+      frontmatter:
+        description: Frontmatter.
+      heading:
+        description: Heading.
+      paragraph:
+        description: Paragraph.
+      list:
+        description: List.
+      list_item:
+        description: List item.
+      block_quote:
+        description: Block quote.
+      fenced_code:
+        description: Fenced code.
+      indented_code:
+        description: Indented code.
+      thematic_break:
+        description: Thematic break.
+      html_block:
+        description: Html block.
+      table:
+        description: Table.
+      table_row:
+        description: Table row.
+      table_cell:
+        description: Table cell.
+      link_definition:
+        description: Link definition.
+      footnote_definition:
+        description: Footnote definition.
+      text:
+        description: Text.
+      emphasis:
+        description: Emphasis.
+      strong:
+        description: Strong.
+      strikethrough:
+        description: Strikethrough.
+      link:
+        description: Link.
+      image:
+        description: Image.
+      autolink:
+        description: Autolink.
+      code_span:
+        description: Code span.
+      soft_break:
+        description: Soft break.
+      hard_break:
+        description: Hard break.
+      inline_html:
+        description: Inline html.
+      footnote_reference:
+        description: Footnote reference.
+      escape:
+        description: Escape.
+      entity:
+        description: Entity.
+      yaml_mapping:
+        description: Yaml mapping.
+      yaml_entry:
+        description: Yaml entry.
+      yaml_sequence:
+        description: Yaml sequence.
+      yaml_scalar:
+        description: Yaml scalar.
+      yaml_alias:
+        description: Yaml alias.
+      yaml_anchor:
+        description: Yaml anchor.
+      comment:
+        description: Comment.
+      trivia:
+        description: Trivia.
+      opaque:
+        description: Opaque.
+      section:
+        description: An explicitly grouped heading and its ordered body/subsections; grouping follows a declared
+          outline mapping.
+  ScalarKind:
+    description: Interpreted metadata scalar type; lexical spelling remains in the source span.
+    permissible_values:
+      string:
+        description: String.
+      boolean:
+        description: Boolean.
+      integer:
+        description: Integer.
+      float:
+        description: Float.
+      'null':
+        description: Null.
+      timestamp:
+        description: Timestamp.
+      binary:
+        description: Binary.
+      custom:
+        description: Custom.
+  BindingRole:
+    description: How a syntax node contributes to an identified domain field or retained fallback.
+    permissible_values:
+      named_field:
+        description: A recognized domain field, including typed narrative.
+      record_identity:
+        description: A title, explicit ID, or another identity-bearing syntax item.
+      structured_item:
+        description: An explicitly authored subrecord or value.
+      structural_wrapper:
+        description: Tree structure or delimiters supporting named mappings.
+      metadata:
+        description: Document metadata with a typed syntax representation.
+      extension:
+        description: Unknown domain section represented by ExtensionSection.
+      fallback:
+        description: Uninterpreted syntax retained with an explicit reason; no claim of domain interpretation.
+  BindingScope:
+    description: The nodes covered by a content binding.
+    permissible_values:
+      node:
+        description: Only the identified node.
+      subtree:
+        description: The node and its ordered descendants, except explicitly overridden bindings.
+  ReferenceForm:
+    description: Authored reference notation.
+    permissible_values:
+      inline_link:
+        description: Inline link.
+      reference_link:
+        description: Reference link.
+      autolink:
+        description: Autolink.
+      image:
+        description: Image.
+      footnote:
+        description: Footnote.
+      fragment:
+        description: Fragment.
+      explicit_id:
+        description: Explicit id.
+      quality_label:
+        description: Quality label.
+      broader_label:
+        description: Broader label.
+      external_locator:
+        description: External locator.
+  ResolutionStatus:
+    description: Resolution results, not extraction/decomposition states.
+    permissible_values:
+      resolved:
+        description: Exactly one inspected target identified.
+      unresolved:
+        description: An authored target was recognized but not found.
+      undefined_label:
+        description: A reference-style label lacks a definition, or a declared quality vocabulary lacks the
+          authored member label.
+      unbound_label:
+        description: A recognized semantic label has no governing vocabulary binding.
+      ambiguous:
+        description: More than one target matches.
+      external:
+        description: Target is external and has not been inspected.
+      out_of_scope:
+        description: Target is known to be outside this snapshot scope.
+      not_attempted:
+        description: Resolution has not been attempted.
+  LabelRole:
+    description: Semantic label occurrences preserved before resolution.
+    permissible_values:
+      quality_classification:
+        description: A requirement attribute label.
+      broader_attribute:
+        description: A quality attribute broader label.
+  AssertionOrigin:
+    description: Evidence for a materialized semantic relation.
+    permissible_values:
+      authored:
+        description: An explicit semantic relation in supported source syntax.
+      derived:
+        description: A declared deterministic mapping rule derives the relation from recorded source/model
+          inputs.
+  Severity:
+    description: Diagnostic severity.
+    permissible_values:
+      error:
+        description: Failure.
+      warning:
+        description: Potential issue.
+      advice:
+        description: Non-failing advice.
+      info:
+        description: Informational result.
+  ForceKind:
+    description: Explicitly described forces in a job progress case.
+    permissible_values:
+      push:
+        description: Push.
+      pull:
+        description: Pull.
+      anxiety:
+        description: Anxiety.
+      habit:
+        description: Habit.
+  HandlingState:
+    description: Explicit branch-handling statement, separate from extraction state.
+    permissible_values:
+      specified:
+        description: The author specifies handling.
+      unresolved:
+        description: The author explicitly leaves handling unresolved.
+  SequenceMode:
+    description: Only populate when explicitly authored.
+    permissible_values:
+      representative:
+        description: An illustrative interaction order.
+      required:
+        description: A required order justified by an authored rule or explanation.
+      partially_constrained:
+        description: Only specified portions of the order are required.
+  GoalLevelValue:
+    description: Optional canonical interpretation of an explicitly authored goal level.
+    permissible_values:
+      summary:
+        description: Summary or kite.
+      user_task:
+        description: User task or sea.
+      subfunction:
+        description: Subfunction or fish.
+  SpecificationKind:
+    description: Current dotspec document families selected for inspection.
+    permissible_values:
+      system:
+        description: System.
+      job:
+        description: Job.
+      use-case:
+        description: Use case.
+      concept:
+        description: Concept.
+      requirement:
+        description: Requirement.
+      quality:
+        description: Quality.
+  DiscoveryMode:
+    description: How candidate files were discovered.
+    permissible_values:
+      git:
+        description: Repository discovery with Git ignore rules.
+      filesystem:
+        description: Filesystem discovery without Git ignore rules.
+      explicit:
+        description: An explicit supplied file inventory.
+      unavailable:
+        description: Discovery policy could not be established.
+  ReferenceTraversalMode:
+    description: Which authored reference edges are inspected.
+    permissible_values:
+      none:
+        description: Do not follow references.
+      direct:
+        description: Follow one edge from selected documents and consulted context.
+      transitive:
+        description: Traverse multiple edges under explicit limits; not current dotspec behavior.
+  ContextSourceRole:
+    description: Why a source outside the selected candidates was consulted.
+    permissible_values:
+      system_context:
+        description: Enclosing-system context required for inspection.
+      reference_target:
+        description: Directly referenced target supplies link/fragment context, not another scan.
+      other:
+        description: Other declared context, explained by rule.
