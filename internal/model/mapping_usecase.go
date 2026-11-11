@@ -8,12 +8,19 @@ import (
 )
 
 func (m *domainMapper) useCase(r Record, s *Section) bool {
-	fields := map[string]string{"Goal": "goal", "System boundary": "system_boundary", "Trigger": "trigger", "Success criterion": "success_criterion"}
+	fields := map[string]string{"Goal": "goal", "Trigger": "trigger", "Success criterion": "success_criterion"}
 	if field, ok := fields[s.Title]; ok {
 		m.section(r, field, s)
 		return true
 	}
 	switch s.Title {
+	case "System boundary":
+		m.section(r, "system_boundary", s)
+		m.designField(r, "boundary", s, "System")
+	case "Supports jobs":
+		m.section(r, "supported_jobs_content", s)
+		r["supported_jobs_references"] = m.references(s.Content)
+		m.bindDesignReferences(r, "supported_jobs_references")
 	case "Primary actor":
 		r["primary_actor"] = m.actor(s.Content)
 		m.sectionBindings(r, "primary_actor.content", s)

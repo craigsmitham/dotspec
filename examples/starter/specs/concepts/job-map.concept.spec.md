@@ -21,4 +21,5 @@ Use subheadings for individual actions when useful.
 ## Operational principle
 
 Tell a characteristic story showing how the actions and state fulfill the purpose.
+Use multiple stories when needed to explain the essential behavior.
 The story explains the design; it does not establish exhaustive behavior or verification.

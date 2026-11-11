@@ -196,6 +196,9 @@ func Parse(data []byte) (*Job, error) {
 			job.Steps = append(job.Steps, step)
 		}
 	}
+	if err := ids.RegisterObligations(doc); err != nil {
+		return nil, err
+	}
 	ids.AddAnchors(doc.Anchors)
 	err = specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors)
 	if err != nil {

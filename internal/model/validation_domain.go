@@ -22,13 +22,12 @@ func modelPaths(expression string) [][2]string {
 
 func (v *graphValidator) checkDomain() {
 	v.checkAuthoredIDs()
+	v.checkComposition()
 	v.checkMemberships()
 	v.checkResolutions()
 	v.checkLabels()
 	v.checkAssertions()
-	v.checkCycles("quality.subattribute-cycle", "QualityAttribute", func(r Record) []string { return valuesAt(r, "subattribute_of") })
-	v.checkCycles("ownership.cycle", "DomainElement", func(r Record) []string { return valuesAt(r, "owner") })
-	v.checkCycles("system.parent-cycle", "System", func(r Record) []string { return valuesAt(r, "parent_system") })
+	v.checkRelationshipCycles()
 	for _, located := range v.sortedRecords() {
 		r, path := located.value, located.path
 		kind := String(r, "kind")
@@ -38,16 +37,6 @@ func (v *graphValidator) checkDomain() {
 					v.add("quality.scope", path+"/subattribute_of", "parent attributes must belong to the same declaring owner")
 				}
 			}
-		}
-		if kind == "System" || kind == "QualityModel" {
-			_, attributesDeclared := r["quality_attributes"]
-			_, contentDeclared := r["quality_attributes_content"]
-			if attributesDeclared != contentDeclared {
-				v.add("quality.declaration", path+"/quality_attributes", "quality attributes and their section content must be present together or both absent")
-			}
-		}
-		if kind == "System" && String(r, "owning_system") == String(r, "id") {
-			v.add("system.self-owner", path+"/owning_system", "a system cannot be its own enclosing system")
 		}
 	}
 }
@@ -204,7 +193,7 @@ func (v *graphValidator) checkLabels() {
 				v.add("label.owner", path+"/owner", "quality-classification labels belong to requirements")
 				continue
 			}
-			system = String(owner, "owning_system")
+			system = String(owner, "system_context")
 			if system == "" {
 				system = String(label, "system_context")
 			}
@@ -289,7 +278,7 @@ func (v *graphValidator) checkAssertions() {
 		if !v.isA(kind, "Assertion") {
 			continue
 		}
-		key := kind + "\x00" + String(r, "subject") + "\x00" + String(r, "object")
+		key := kind + "\x00" + String(r, "projection_path") + "\x00" + String(r, "subject") + "\x00" + String(r, "object")
 		if seen[key] {
 			v.add("assertion.duplicate", path, "a materialized semantic relation is repeated")
 		}
@@ -310,10 +299,13 @@ func (v *graphValidator) checkAssertions() {
 		if expression == "" {
 			continue
 		}
+		if String(r, "origin") != "derived" {
+			v.add("assertion.origin", path+"/origin", "Relationship views must be derived from their canonical fields.")
+		}
 		subject := v.records[String(r, "subject")].value
 		agrees := false
 		for _, projection := range modelPaths(expression) {
-			if v.isA(String(subject, "kind"), projection[0]) && slices.Contains(valuesAt(subject, projection[1]), String(r, "object")) {
+			if String(r, "projection_path") == projection[0]+"."+projection[1] && v.isA(String(subject, "kind"), projection[0]) && slices.Contains(valuesAt(subject, projection[1]), String(r, "object")) {
 				agrees = true
 			}
 		}
@@ -368,4 +360,35 @@ func (v *graphValidator) sourceOf(r Record) string {
 		return String(v.records[String(r, "owner")].value, "source_document")
 	}
 	return ""
+}
+
+// Cycle policies come from each reference slot, independently of the overall graph.
+// Reciprocal provenance and owner/member links do not make the whole graph a DAG.
+func (v *graphValidator) checkRelationshipCycles() {
+	fields := map[string]bool{}
+	for _, cls := range v.catalog.Classes {
+		for field, slot := range cls.Slots {
+			if slot.Annotations["relationship_cycles"] == "forbidden" {
+				fields[field] = true
+			}
+		}
+	}
+	for _, field := range sortedKeys(fields) {
+		code := "relationship.cycle"
+		switch field {
+		case "owner":
+			code = "ownership.cycle"
+		case "parent_system":
+			code = "system.parent-cycle"
+		case "subattribute_of":
+			code = "quality.subattribute-cycle"
+		}
+		v.checkCycles(code, "Record", func(r Record) []string {
+			slot := v.catalog.Classes[String(r, "kind")].Slots[field]
+			if slot.Annotations["relationship_cycles"] != "forbidden" {
+				return nil
+			}
+			return valuesAt(r, field)
+		})
+	}
 }

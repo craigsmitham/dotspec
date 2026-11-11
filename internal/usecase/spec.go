@@ -149,6 +149,7 @@ type UseCase struct {
 	StakeholderInterests string                         `json:"stakeholder_interests"`
 	MinimumGuarantees    string                         `json:"minimum_guarantees"`
 	RelatedJobs          string                         `json:"related_jobs"`
+	SupportedJobs        string                         `json:"supported_jobs,omitempty"`
 	Markdown             string                         `json:"markdown"`
 	Path                 string                         `json:"path"`
 	System               *system.System                 `json:"system"`
@@ -200,6 +201,9 @@ func Parse(data []byte) (*UseCase, error) {
 	if err := ids.Register(spec.ID, "use case", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err
 	}
+	if err := ids.RegisterObligations(doc); err != nil {
+		return nil, err
+	}
 	ids.AddAnchors(doc.Anchors)
 	fields := map[string]*string{
 		"Goal": &spec.Goal, "System boundary": &spec.SystemBoundary,
@@ -208,7 +212,7 @@ func Parse(data []byte) (*UseCase, error) {
 		"Supporting actors": &spec.SupportingActors, "Stakeholder interests": &spec.StakeholderInterests,
 		"Minimum guarantees": &spec.MinimumGuarantees,
 		"Success criterion":  &spec.SuccessCriterion, "Main success scenario": &spec.MainSuccessScenario,
-		"Extensions": &spec.Extensions, "Sequence": &spec.Sequence, "Related jobs": &spec.RelatedJobs,
+		"Extensions": &spec.Extensions, "Sequence": &spec.Sequence, "Related jobs": &spec.RelatedJobs, "Supports jobs": &spec.SupportedJobs,
 	}
 	for _, section := range doc.Sections {
 		target, known := fields[section.Title]

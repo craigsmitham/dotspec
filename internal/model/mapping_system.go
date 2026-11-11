@@ -6,6 +6,9 @@ import (
 )
 
 func (m *domainMapper) system(r Record, s *Section) bool {
+	if m.composition(r, s) {
+		return true
+	}
 	switch s.Title {
 	case "Purpose":
 		m.section(r, "purpose", s)

@@ -535,6 +535,26 @@ Represent original source bytes, document structure, and named domain content in
 | --- | --- | --- |
 | `--help, -h` | `false` | help for model |
 
+## dotspec model docs
+
+Generate concept references, system compositions, and dependency diagrams as Markdown
+
+```sh
+dotspec model docs [flags]
+```
+
+Render purpose and operational principles before state and actions. Show explicit named uses, bindings, synchronization rules and application dependencies. Diagrams contain resolved relationships only; no behavior is executed or inferred.
+
+```sh
+dotspec model docs --path . --relative-to docs/reference
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for docs |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
+
 ## dotspec model export
 
 Export a source-backed specification snapshot as JSON
@@ -572,6 +592,26 @@ dotspec model schema
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--help, -h` | `false` | help for schema |
+
+## dotspec model trace
+
+Generate layered requirements traceability and change-review views as Markdown
+
+```sh
+dotspec model trace [flags]
+```
+
+Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and verification guidance. Resolved explicit relationships only; paths do not establish satisfaction or evidence.
+
+```sh
+dotspec model trace --path . --relative-to docs/reference
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for trace |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
 
 ## dotspec model validate
 

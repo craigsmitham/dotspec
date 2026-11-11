@@ -93,6 +93,80 @@ func newModelCommand() *cobra.Command {
 			return nil
 		}}
 	addOutput(validate, false)
-	cmd.AddCommand(export, schema, validate)
+	docs := &cobra.Command{Use: "docs", Short: "Generate concept references, system compositions, and dependency diagrams as Markdown", Args: cobra.NoArgs,
+		Long:    "Render purpose and operational principles before state and actions. Show explicit named uses, bindings, synchronization rules and application dependencies. Diagrams contain resolved relationships only; no behavior is executed or inferred.",
+		Example: "dotspec model docs --path . --relative-to docs/reference",
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			path, err := projectPath(cmd)
+			if err != nil {
+				return err
+			}
+			base, err := cmd.Flags().GetString("relative-to")
+			if err != nil {
+				return err
+			}
+			result, err := model.Export(path, supportedTypes()...)
+			if err != nil {
+				return err
+			}
+			findings, err := model.Validate(result.Snapshot)
+			if err != nil {
+				return err
+			}
+			if len(findings) > 0 {
+				return fmt.Errorf("exported model violates %d invariants; first: %s", len(findings), findings[0].Message)
+			}
+			text, err := model.DesignMarkdown(result.Snapshot, base)
+			if err != nil {
+				return err
+			}
+			if _, err = io.WriteString(cmd.OutOrStdout(), text); err != nil {
+				return err
+			}
+			if result.ExitCode != 0 {
+				return &exitError{code: result.ExitCode}
+			}
+			return nil
+		}}
+	trace := &cobra.Command{Use: "trace", Short: "Generate layered requirements traceability and change-review views as Markdown", Args: cobra.NoArgs,
+		Long:    "Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and verification guidance. Resolved explicit relationships only; paths do not establish satisfaction or evidence.",
+		Example: "dotspec model trace --path . --relative-to docs/reference",
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			path, err := projectPath(cmd)
+			if err != nil {
+				return err
+			}
+			base, err := cmd.Flags().GetString("relative-to")
+			if err != nil {
+				return err
+			}
+			result, err := model.Export(path, supportedTypes()...)
+			if err != nil {
+				return err
+			}
+			findings, err := model.Validate(result.Snapshot)
+			if err != nil {
+				return err
+			}
+			if len(findings) > 0 {
+				return fmt.Errorf("exported model violates %d invariants; first: %s", len(findings), findings[0].Message)
+			}
+			text, err := model.TraceMarkdown(result.Snapshot, base)
+			if err != nil {
+				return err
+			}
+			if _, err = io.WriteString(cmd.OutOrStdout(), text); err != nil {
+				return err
+			}
+			if result.ExitCode != 0 {
+				return &exitError{code: result.ExitCode}
+			}
+			return nil
+		}}
+	addPath(docs)
+	docs.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
+	addPath(trace)
+	trace.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
+	cmd.AddCommand(export, schema, validate, docs, trace)
 	return cmd
 }

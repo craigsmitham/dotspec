@@ -41,6 +41,22 @@ func natural(value any) (int, bool) {
 }
 
 func (v *graphValidator) checkValue(object Record, class, path string) {
+	for name, slot := range v.catalog.Classes[class].Slots {
+		if content := slot.Annotations["requires_content"]; content != "" {
+			if _, present := object[name]; present {
+				if _, exists := fieldValue(object, content); !exists {
+					v.add("declaration.content", path+"/"+name, "Structured declaration requires its complete section content: "+content)
+				}
+			}
+		}
+		if peer := slot.Annotations["paired_with"]; peer != "" {
+			_, present := object[name]
+			_, paired := object[peer]
+			if present != paired {
+				v.add("declaration.pair", path+"/"+name, "Declaration field and its paired content must be present together: "+peer)
+			}
+		}
+	}
 	switch class {
 	case "SourcePayload":
 		if String(object, "storage") != "inline_base64" {

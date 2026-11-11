@@ -34,6 +34,8 @@ Describe the system's boundary and what it includes.
 `
 
 type System struct {
+	ConceptUses              string                      `json:"concept_uses,omitempty"`
+	Synchronizations         string                      `json:"synchronizations,omitempty"`
 	References               *specfile.ReferenceDocument `json:"-"`
 	Name                     string                      `json:"name"`
 	Purpose                  string                      `json:"purpose"`
@@ -76,7 +78,7 @@ func Parse(data []byte) (*System, error) {
 		return nil, err
 	}
 	spec := &System{Name: doc.Name}
-	fields := map[string]*string{"Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary}
+	fields := map[string]*string{"Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
 	locations := make(map[string]diagnostic.Location)
 	var ids specfile.Identifiers
 	for _, section := range doc.Sections {
@@ -115,6 +117,9 @@ func Parse(data []byte) (*System, error) {
 			}
 			return nil, diagnostic.Error("structure.required-section", fmt.Sprintf("missing or empty %s section (use ## %s)", name, name), location)
 		}
+	}
+	if err := ids.RegisterObligations(doc); err != nil {
+		return nil, err
 	}
 	ids.AddAnchors(doc.Anchors)
 	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {

@@ -3,36 +3,47 @@ type: concept
 id: cli-interaction
 ---
 
-# CLI Interaction
+# Command Invocation
 
 ## Purpose
 
-Let contributors and programs author, inspect, and discover specification
-material through ordinary command invocations.
+Let a person or program submit an operation and determine its outcome through a
+consistent process interface.
 
 ## State
 
-An invocation receives arguments and the selected project files. It produces
-standard output, standard error, and an exit status. Creation commands can add
-specification files; read commands leave source material unchanged.
+One invocation has arguments, an input environment, output and error streams, and
+an eventual exit status. The command reference defines available operations;
+individual concept and requirement specifications define their effects on files.
+The invocation concept does not own those operations' domain behavior.
 
 The [command reference](../../../../docs/cli.md) describes the available inputs.
-The [output contract](../../../../README.md#output-and-automation) describes
-formats and process behavior.
+The [output contract](../../../../README.md#output-and-automation) defines process
+outputs, formats and exit statuses.
 
 ## Actions
 
-Create a specification, read its authored content, inspect a selected scope,
-or inventory its source files. The executable examples below specify required
-outcomes for their illustrated inputs and conditions. Their sequences are
-representative workflows, not a universal ordering constraint on commands.
+### Invoke
+
+Submit a supported operation and its arguments. Invalid invocation syntax produces
+an error result rather than performing the requested operation.
+
+### Observe the result
+
+Read the output and error streams and the exit status when the process completes.
+A successful invocation reports exit status 0; specification findings and invocation
+or operational errors use the distinct outcomes defined by the output contract.
 
 ## Operational principle
 
-Create and edit specifications, then inspect them before sharing a change.
-When connecting other specification sources, add ordinary Markdown links and
-use the source inventory to check what can be found. Read the sources and their
-surrounding prose to understand what they define or verify.
+Invoke an operation, read its result, and use the exit status to distinguish success
+from findings or an operational failure. A program can make its next decision from
+that result without scraping presentation prose for an implied success claim.
+
+The workflow of creating, editing and inspecting specifications spans several
+concepts. The linked executable cases below describe those interactions and their
+expected process outcomes; they do not make every command a separate action of
+this concept.
 
 ## Related specifications
 

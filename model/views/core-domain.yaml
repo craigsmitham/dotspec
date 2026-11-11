@@ -11,19 +11,32 @@ subsets:
   - software-requirements
   - specification-traceability
 types:
-  System: [purpose, scope, goals, constraints, quality_attributes, quality_attributes_content]
-  BusinessRule: [statement, applies_to, rationale, authority_and_evidence, exceptions, related_specifications]
+  TraceableElement: [supports, derived_from, relies_on, obligations]
+  SystemGoal: [statement, supports]
+  Assumption: [statement]
+  Constraint: [statement]
+  ObligationClause: [statement, refines, applicability_targets, verification]
+  System: [purpose, scope, goals, constraints, concept_uses, synchronizations, quality_attributes]
+  BusinessRule: [statement, applies_to, applicability_targets, rationale, authority_and_evidence, exceptions, related_specifications]
   Job: [statement, performer, situation, intended_progress, steps, outcomes, progress_cases]
   JobStep: [stage, description, outcomes]
   Outcome: [statement, supporting_content]
   ProgressCase: [current_approach, desired_progress, forces, timeline, evidence]
-  UseCase: [goal, system_boundary, primary_actor, preconditions, minimum_guarantees, main_success_scenario, extensions, business_rules]
+  UseCase: [involves, obligations, goal, system_boundary, boundary, supported_jobs, primary_actor, preconditions, minimum_guarantees, main_success_scenario, extensions, business_rules]
   Scenario: [content, steps]
   ScenarioStep: [authored_label, content]
   Extension: [content, condition, location, handling, steps, branches]
-  Concept: [purpose, abstract_state, actions, operational_principle]
-  ConceptAction: [inputs, outputs, caller_assumptions, guards, effects, rejections]
-  Requirement: [applies_to, rationale, attributes, business_rules]
+  Concept: [purpose, operational_principle, type_parameters, introduced_types, abstract_state, actions]
+  ConceptType: [content]
+  ConceptUse: [definition, bindings, configuration, dependencies]
+  TypeBinding: [parameter, type, type_use, primitive]
+  Synchronization: [when, where, then, semantics, when_actions, then_actions]
+  SynchronizationAction: [concept_use, action, arguments, result]
+  StateDescription: [content, initial_state, elements, invariants]
+  StateElement: [name, description, value_description, derivation]
+  ActionParameter: [content, type, primitive, type_description]
+  ConceptAction: [inputs, outputs, input_parameters, output_parameters, initiation, caller_assumptions, guards, effects, rejections]
+  Requirement: [refines, derived_from, supports, relies_on, applies_to, applicability_targets, rationale, attributes, business_rules]
   GeneralRequirement: [statement, verification]
   QualityRequirement: [criterion, measurement]
   QualityModel: [description, edition, sources, quality_attributes, quality_attributes_content]
@@ -40,7 +53,7 @@ diagrams:
       requirements share the abstract Requirement definition. BusinessRule is an
       independent specification; a contextual citation does not assert enforcement.
     nodes: [System, QualityModel, BusinessRule, Job, UseCase, Concept, Requirement, GeneralRequirement, QualityRequirement]
-    paths: [BusinessRule.owning_system, Job.owning_system, UseCase.owning_system, Concept.owning_system, Requirement.owning_system]
+    paths: [BusinessRule.system_context, Job.system_context, UseCase.system_context, Concept.system_context, Requirement.system_context]
     inheritance: true
   - title: User progress
     description: Jobs contain ordered steps, overall or per-step outcomes, and progress cases.
@@ -55,6 +68,31 @@ diagrams:
     nodes: [UseCase, Scenario, ScenarioStep, Extension, Concept, ConceptAction, System, QualityModel, QualityAttribute, Requirement]
     paths: [UseCase.main_success_scenario, UseCase.extensions.branches, Scenario.steps, Extension.steps, Extension.branches, Concept.actions.actions, System.quality_attributes, QualityModel.quality_attributes, QualityAttribute.subattribute_of, Requirement.attributes]
     inheritance: false
+  - title: Concept definitions and type bindings
+    description: >-
+      Explicit named uses reference reusable definitions. Bindings distinguish a type
+      declaration from the use supplying its identities. Type parameters and introduced
+      types share a declaration scope but play different roles.
+    nodes: [ConceptUse, Concept, ConceptType, TypeBinding]
+    paths: [ConceptUse.definition, ConceptUse.bindings, Concept.type_parameters, Concept.introduced_types, TypeBinding.parameter, TypeBinding.type, TypeBinding.type_use]
+    inheritance: false
+  - title: System coordination
+    description: >-
+      Systems explicitly include named uses and own synchronization rules. Each referenced
+      action is qualified by its use and must belong to that use's definition. Application
+      dependencies are separately declared and may cycle. None of these relations implies
+      execution, atomicity or behavioral completeness.
+    nodes: [System, ConceptUse, Synchronization, SynchronizationAction, ConceptAction]
+    paths: [System.concept_uses, System.synchronizations, ConceptUse.dependencies, Synchronization.when_actions, Synchronization.then_actions, SynchronizationAction.concept_use, SynchronizationAction.action]
+    inheritance: false
+  - title: Explicit requirements relationships
+    description: >-
+      Explicit authoring distinguishes a use case boundary, support for user progress,
+      and applicability from ordinary citations. Applicability may target any domain
+      record; links do not establish enforcement, satisfaction or achieved outcomes.
+    nodes: [UseCase, System, Job, JobStep, Outcome, Requirement, BusinessRule, DomainElement]
+    paths: [UseCase.boundary, UseCase.supported_jobs, Requirement.applicability_targets, BusinessRule.applicability_targets]
+    inheritance: false
   - title: Traceability to authored content
     description: >-
       Bindings associate model fields with content occurrences; references preserve
@@ -62,4 +100,22 @@ diagrams:
       from the generic subsets. A resolved target does not prove compliance.
     nodes: [ContentBinding, ContentNode, Record, SourceReference, Resolution, DomainElement, SourceResource, SourceFragment]
     paths: [ContentBinding.content_node, ContentBinding.owner, SourceReference.resolution, Resolution.target]
+    inheritance: false
+  - title: Motivation, basis and assumptions
+    description: >-
+      Concern subsets are independent of artifact kind and core/supporting/generic classification.
+      Explicit support describes intended contribution; derivation records a basis rather than entailment.
+      Requirements may link directly to a business rule or design decision without an intervening user record.
+      Assumptions condition validity. These links do not impose authoring order or prove satisfaction.
+    nodes: [TraceableElement, SystemGoal, Job, JobStep, Outcome, DomainElement, SourceFragment, Assumption]
+    paths: [TraceableElement.supports, TraceableElement.derived_from, TraceableElement.relies_on]
+    inheritance: false
+  - title: Obligations and complementary behavioral views
+    description: >-
+      Requirement is the standalone obligation document family, not every normative expression.
+      Explicit clauses identify obligations within existing specifications without duplicating them.
+      Refinement preserves a parent commitment and must be acyclic; multiple parents are permitted.
+      Use cases involve named concept uses many-to-many; neither view is the mandatory parent of the other.
+    nodes: [TraceableElement, ObligationClause, Requirement, BusinessRule, UseCase, ConceptUse, Concept]
+    paths: [TraceableElement.obligations, ObligationClause.refines, Requirement.refines, BusinessRule.refines, UseCase.involves, ConceptUse.definition]
     inheritance: false

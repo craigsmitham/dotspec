@@ -17,6 +17,7 @@ import subprocess
 import sys
 from typing import Any
 
+from relationships import validate_relationships, relationships_markdown
 from model_views import validate_declared_memberships, validate_groups, subset_navigation, core_markdown
 
 HERE = Path(__file__).resolve().parent
@@ -52,7 +53,7 @@ def verify_toolchain() -> None:
 def annotation_values(annotations: Any) -> dict[str, str]:
     from jsonasobj2 import as_dict
 
-    return {str(name): str(item.value) for name, item in sorted(as_dict(annotations).items())}
+    return {str(name): str(item["value"] if isinstance(item, dict) else item.value) for name, item in sorted(as_dict(annotations).items())}
 
 
 def make_catalog(view: Any, raw_model: dict[str, Any], model_bytes: bytes) -> dict[str, Any]:
@@ -136,6 +137,7 @@ def make_catalog(view: Any, raw_model: dict[str, Any], model_bytes: bytes) -> di
         result["classes"][str(name)] = record
     validate_groups(result)
     validate_annotations(result)
+    validate_relationships(result)
     return result
 
 
@@ -176,7 +178,12 @@ def validate_annotations(catalog: dict[str, Any]) -> None:
                 else:
                     if name not in classes[source]["ancestors"]:
                         raise ValueError(f"{name}.{annotation}: membership source must inherit its declaring class")
+                    metadata = slot["annotations"]
+                    if metadata.get("relationship_category") != "declaration-containment" or metadata.get("relationship_cycles") != "forbidden":
+                        raise ValueError(f"{name}.{annotation}: membership must declare containment and forbid cycles")
                     for target in targets:
+                        if f"{target}.owner" not in metadata.get("relationship_inverse", "").split(" or "):
+                            raise ValueError(f"{name}.{annotation}: membership inverse must identify {target}.owner")
                         owner = classes[target]["slots"].get("owner", {})
                         if not permits(source, owner.get("reference_ranges", [])):
                             raise ValueError(f"{name}.{annotation}: {target}.owner does not permit {source}")
@@ -198,6 +205,7 @@ def reference_markdown(catalog: dict[str, Any], raw_model: dict[str, Any]) -> by
         "The [JSON Schema](../../../model/generated/schema.json) checks local shape. "
         "The [runtime catalog](../../../model/generated/catalog.json) supplies inherited "
         "class membership, typed reference ranges and ordered slots for graph checks.", "",
+        "See the [relationship reference](relationships.md) for scopes, inverses, cycle policies and assertion projections.", "",
         "## Model constraints", "",
         escape(catalog["annotations"].get("graph_rules", "")), "",
         "## Classes", "",
@@ -280,6 +288,7 @@ def generate_outputs() -> dict[Path, bytes]:
     core_reference = core_markdown(catalog, view_definition)
     return {
         ROOT / "docs/reference/model/core.md": core_reference,
+        ROOT / "docs/reference/model/relationships.md": relationships_markdown(catalog),
         ROOT / "model/generated/schema.json": schema_bytes,
         ROOT / "model/generated/catalog.json": (json.dumps(catalog, indent=2, sort_keys=True) + "\n").encode(),
         ROOT / "docs/reference/model/index.md": reference_markdown(catalog, raw_model),

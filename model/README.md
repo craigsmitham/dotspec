@@ -1,7 +1,7 @@
 # Specification model
 
 [dotspec.yaml](dotspec.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.5.0-draft`; the JSON
+specification snapshots. The model version is `0.8.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
@@ -14,6 +14,7 @@ Generated projections are committed with the model:
   subtype fields.
 - [catalog.json](generated/catalog.json) supplies inherited class/slot definitions
   and typed reference ranges to the runtime graph checker.
+- [Relationship reference](../docs/reference/model/relationships.md) inventories typed edges, scope, provenance, inverse navigation and cycle rules.
 - [Core domain reference](../docs/reference/model/core.md) provides selected domain types and generated Mermaid diagrams.
 - [Specification model reference](../docs/reference/model/index.md) provides a
   complete class, field and enumeration lookup.
@@ -107,7 +108,7 @@ The complete reference lists all memberships by classification and subset.
 types, fields, diagram nodes, and canonical field paths. It defines presentation,
 not relationship semantics. The generator resolves paths through embedded
 collection wrappers and derives endpoints and inheritance from the model.
-Associations use plain arrows, without inferred lifecycle or enforcement meaning.
+Diagrams distinguish declaration containment (diamond), structural context and citations (dashed), semantic associations (plain), and inheritance (triangle). Containment describes declarations, not runtime lifecycle or enforcement.
 
 `model-check` validates all declared subset references, allowed classifications,
 class coverage, view selectors and diagram endpoints before comparing generated
@@ -154,3 +155,65 @@ Nested branches now require explicit branch labels or an Extensions grouping;
 ordinary detail headings remain extension sections. See the
 [use-case rationale](../docs/specification-model.md#use-case-narratives) and
 [mapping rules](markdown-mapping.md#use-case).
+
+The `0.6.0-draft` model and mapping profile `dotspec-markdown/5` add explicit
+concept types, named system uses, type bindings, synchronizations, qualified action
+references, and application dependencies. Dependencies may cycle. Concepts retain
+optional initial and derived state, named action parameters/results and initiation
+narrative. Singular and plural Operational principle headings map to the same rich
+content field; they cannot both appear in one document. Existing prose remains
+valid and no synchronization semantics are inferred.
+
+`dotspec model docs` generates concept references, system compositions and dependency
+diagrams. `mise run generate` maintains the complete example at
+[Concept design example](../docs/reference/concept-design-example.md). Re-export
+older snapshots with the new CLI; saved JSON is not silently migrated. See
+[concept authoring](../docs/develop-concepts.md) and the
+[concept design rationale](../docs/specification-model.md#concept-definitions-and-composition).
+
+
+The `0.7.0-draft` model and `dotspec-markdown/6` consolidate relationships:
+
+- `system_context` replaces `owning_system` on SystemContextSpecification. System
+  and QualityModel no longer inherit this association; System uses `parent_system`.
+  `InSystemContext` replaces OwnedBySystem.
+- Every concrete assertion is a projection with required endpoints and
+  `projection_path`. Canonical typed fields remain authoritative, including when
+  assertion views are omitted. Existing snapshots must be re-exported.
+- BoundaryIs, SupportsJob and AppliesTo have explicit Markdown authoring forms and
+  canonical fields. AppliesTo accepts BusinessRule as well as Requirement subjects.
+- Record-reference slots declare relationship categories, scope, inverse, ordering,
+  cycle policy and provenance basis. These edge categories do not alter subset
+  classifications. The generated relationship reference presents this contract.
+- Reciprocal `paired_with` annotations govern sibling declaration/content fields;
+  embedded collection wrappers continue to require their full content. Optional
+  decomposition uses `requires_content` so prose does not require invented records. Unknown
+  definition scope defers dependent relationship resolution.
+
+The catalog generator rejects incomplete relationship metadata, missing projection
+paths, optional assertion endpoints and invalid declaration pairs. Runtime checks
+validate realized relationships and source fidelity. See
+[Declare relationships](../docs/develop-relationships.md).
+
+The `0.8.0-draft` model and `dotspec-markdown/7` add layered traceability:
+
+- `TraceableElement` separates motivation, derivation and assumption dependence
+  from document kind and subset classification. `Requirement` continues to mean
+  standalone obligation specifications; use cases and concepts can contain
+  authoritative obligations without inheriting that document family.
+- `supports`, `derived_from`, `relies_on`, obligation `refines`, and UseCase
+  `involves` retain explicit source references and narrative rationale. Refinement
+  cycles are authoring errors; cyclic edges are withheld while their source and
+  diagnostics remain in a valid snapshot. Other semantic associations may cycle.
+- Optional `ObligationClause` records distinguish obligations inside existing
+  specifications. Heading anchors and optional explicit IDs address them. This
+  is deliberate decomposition, not inferred acceptance or NLP extraction.
+- `dotspec model trace` generates motivation, behavioral participation,
+  direct/transitive change-review candidates, and verification-guidance views.
+  Missing motivation and check guidance are advisory. Execution evidence and
+  satisfaction judgments remain outside this implementation.
+
+Re-export source with this version; saved snapshots are not silently migrated.
+See [Requirements layers](../docs/requirements-layers.md),
+[authoring relationships](../docs/develop-relationships.md), and the
+[generated traceability example](../docs/reference/requirements-traceability-example.md).

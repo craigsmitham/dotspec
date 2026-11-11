@@ -138,11 +138,11 @@ def core_markdown(catalog: dict[str, Any], view: dict[str, Any]) -> bytes:
         lines.append(f'| {group["title"]} (`{group["classification"]}`) | {text(group["description"])} | {", ".join(names)} |')
     lines += ['', 'Subset membership organizes model definitions; it does not infer the level or importance of an authored instance. '
               'Shared types can appear in several subsets. Supporting and generic types appear as context where a diagram needs them.', '',
-              '## Relationships', '',
-              'Arrows name canonical field paths. Plain arrows represent references or embedded values; '
+              '## Relationships', '', 'See the [relationship reference](relationships.md) for the complete edge contracts.', '',
+              'Arrows name canonical field paths. Diamond arrows represent declaration containment, dashed arrows structural context and citations, and plain arrows semantic associations or provenance; '
               'triangle arrows represent declared inheritance. Multiple edges with the same path show alternative target types; cardinality applies to the slot as a whole. '
               'Collection-wrapper paths are abbreviated, retaining the full field path in the label. '
-              '`owning_system` is a directory-derived association, not a use-case boundary or inherited requirement. '
+              '`system_context` is a directory-derived association, not a use-case boundary or inherited requirement. '
               'Contextual links to business rules, jobs, and concepts do not assert enforcement, fulfillment, or compliance.', '']
     for diagram in view['diagrams']:
         lines += [f'### {diagram["title"]}', '', text(diagram['description']), '', '```mermaid', 'classDiagram', f'    direction {diagram.get("direction", "LR")}']
@@ -160,7 +160,9 @@ def core_markdown(catalog: dict[str, Any], view: dict[str, Any]) -> bytes:
             for target in slot['reference_ranges'] or slot['inline_ranges']:
                 cardinality = '*' if slot['multivalued'] else ('1' if slot['required'] else '0..1')
                 marker = f' "{cardinality}"' if diagram.get('show_cardinality', True) else ''
-                lines.append(f'    {source} -->{marker} {target} : {path.split(".", 1)[1]}')
+                category = slot['annotations'].get('relationship_category')
+                arrow = '*--' if category == 'declaration-containment' else '..>' if category in ('structural-context', 'contextual-citation') else '-->'
+                lines.append(f'    {source} {arrow}{marker} {target} : {path.split(".", 1)[1]}')
         lines += ['```', '']
     lines += ['## Selected type reference', '']
     for name, paths in view['types'].items():

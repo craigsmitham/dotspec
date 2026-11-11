@@ -233,7 +233,7 @@ func (b *snapshotBuilder) resolveLabels() {
 				b.contextPath[path] = candidate
 				b.contextOK[path] = b.rootByPath[candidate] != ""
 				if sys := b.elements[b.rootByPath[candidate]]; String(sys, "kind") == "System" {
-					b.elements[b.rootByPath[path]]["owning_system"] = sys["id"]
+					b.elements[b.rootByPath[path]]["system_context"] = sys["id"]
 				}
 				break
 			}
@@ -265,7 +265,7 @@ func (b *snapshotBuilder) resolveLabels() {
 		if String(label, "role") == "subattribute_of" {
 			sys = String(owner, "owner")
 		} else {
-			sys = String(owner, "owning_system")
+			sys = String(owner, "system_context")
 			if sys == "" && !b.contextOK[path] {
 				b.resolution(label, "not_attempted", "", "uninspected-quality-context/1")
 				continue
@@ -326,7 +326,7 @@ func (b *snapshotBuilder) materializeAssertions() {
 					continue
 				}
 				for _, object := range valuesAt(subject, path) {
-					assertion := Record{"id": b.next("assertion"), "kind": kind, "subject": subject["id"], "object": object, "origin": "derived", "mapping_rule": MappingProfile + "/projection/" + kind, "inputs": []string{String(subject, "id"), object}}
+					assertion := Record{"id": b.next("assertion"), "kind": kind, "projection_path": expression, "subject": subject["id"], "object": object, "origin": "derived", "mapping_rule": MappingProfile + "/projection/" + kind, "inputs": []string{String(subject, "id"), object}}
 					b.snapshot.Assertions = append(b.snapshot.Assertions, assertion)
 				}
 			}
@@ -344,11 +344,13 @@ func (b *snapshotBuilder) finishCoverage() {
 	for _, path := range sortedKeys(b.byPath) {
 		doc := b.byPath[path]
 		covered := map[string]bool{}
+		expanded := map[string]bool{}
 		var cover func(string)
 		cover = func(id string) {
-			if covered[id] {
+			if expanded[id] {
 				return
 			}
+			expanded[id] = true
 			covered[id] = true
 			for _, child := range Strings(doc.NodeByID[id]["children"]) {
 				cover(child)

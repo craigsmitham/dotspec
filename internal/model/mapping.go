@@ -143,6 +143,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 			m.extension(r, section)
 		}
 	}
+	m.nestedTraceability()
 	doc.Document["domain_decomposition"] = "complete"
 	m.authoredFragments()
 	m.bind(doc.Document, "root", []string{String(doc.Document, "root")}, "structural_wrapper", "document-root")
@@ -155,9 +156,10 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 }
 
 type domainMapper struct {
-	doc    *ParsedDocument
-	result Mapping
-	next   int
+	doc         *ParsedDocument
+	result      Mapping
+	next        int
+	traceMapped map[string]bool
 }
 
 func (m *domainMapper) id(suffix string) string {
@@ -283,6 +285,9 @@ func diagnosticSourceLocation(location diagnostic.Location, source string) Recor
 }
 
 func (m *domainMapper) extension(owner Record, s *Section) Record {
+	if m.traceSection(owner, s) {
+		return nil
+	}
 	r := m.record("ExtensionSection", String(owner, "id"))
 	r["heading"] = m.doc.Rich([]string{s.HeadingID})
 	r["content"] = m.doc.Rich(s.Content)
@@ -330,6 +335,9 @@ func (m *domainMapper) authoredFragments() {
 }
 
 func (m *domainMapper) common(r Record, s *Section) bool {
+	if m.traceSection(r, s) {
+		return true
+	}
 	switch s.Title {
 	case "Business rules":
 		m.contextField(r, "business_rules", s.Content)

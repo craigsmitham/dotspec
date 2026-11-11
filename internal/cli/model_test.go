@@ -90,3 +90,77 @@ func TestModelOutputFailure(t *testing.T) {
 		}
 	}
 }
+
+func TestConceptDesignCommands(t *testing.T) {
+	root := t.TempDir()
+	if err := os.CopyFS(root, os.DirFS("../../examples/concept-design")); err != nil {
+		t.Fatal(err)
+	}
+	t.Chdir(root)
+	code, output, errOut := invoke("model", "docs", "--relative-to", "docs")
+	if code != 0 || errOut != "" {
+		t.Fatalf("docs %d: %s", code, errOut)
+	}
+	for _, part := range []string{"## Concepts", "#### Coordination", "#### Application dependencies", "Resource = PublicLinks.Code", "../specs/concepts/shorthand.concept.spec.md"} {
+		if !strings.Contains(output, part) {
+			t.Fatalf("missing %q", part)
+		}
+	}
+	code, output, errOut = invoke("system", "show", "--json")
+	if code != 0 || errOut != "" || !strings.Contains(output, `"concept_uses":`) || !strings.Contains(output, `"synchronizations":`) {
+		t.Fatalf("system composition omitted: %d %s %s", code, output, errOut)
+	}
+	path := filepath.Join(root, "specs/system.spec.md")
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	data = []byte(strings.Replace(string(data), "[Register](concepts/shorthand.concept.spec.md#register)", "[Expire](concepts/expiry.concept.spec.md#expire)", 1))
+	if err = os.WriteFile(path, data, 0644); err != nil {
+		t.Fatal(err)
+	}
+	code, output, errOut = invoke("model", "docs")
+	if code != 1 || errOut != "" || !strings.Contains(output, "concept.action") || !strings.Contains(output, "#### Synchronization rules") {
+		t.Fatalf("source findings not retained: %d %s %s", code, output, errOut)
+	}
+	code, output, errOut = invoke("model", "export")
+	if code != 1 || errOut != "" {
+		t.Fatalf("export: %d %s", code, errOut)
+	}
+	if err = os.WriteFile("snapshot.json", []byte(output), 0600); err != nil {
+		t.Fatal(err)
+	}
+	code, output, errOut = invoke("model", "validate", "snapshot.json", "--json")
+	if code != 0 || errOut != "" || !strings.Contains(output, `"valid": true`) {
+		t.Fatalf("faithful composition findings rejected: %d %s %s", code, output, errOut)
+	}
+}
+
+func TestRequirementsTraceCommand(t *testing.T) {
+	root := t.TempDir()
+	if err := os.CopyFS(root, os.DirFS("../../examples/requirements-traceability")); err != nil {
+		t.Fatal(err)
+	}
+	t.Chdir(root)
+	code, output, errOut := invoke("model", "trace", "--relative-to", "docs")
+	if code != 0 || errOut != "" || !strings.Contains(output, "## Change review") || !strings.Contains(output, "../specs/use-cases/restore.use-case.spec.md#restore-retained-content") {
+		t.Fatalf("trace: %d %s %s", code, output, errOut)
+	}
+	var stderr bytes.Buffer
+	if code := Run([]string{"model", "trace"}, modelBrokenWriter{}, &stderr); code != 2 || !strings.Contains(stderr.String(), "broken output") {
+		t.Fatalf("trace output failure: %d %s", code, &stderr)
+	}
+	path := filepath.Join(root, "specs/requirements/restoration.requirement.spec.md")
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	data = []byte(strings.Replace(string(data), "[Trusted time](../system.spec.md#trusted-time)", "[Goal](../system.spec.md#reduce-lost-work)", 1))
+	if err = os.WriteFile(path, data, 0644); err != nil {
+		t.Fatal(err)
+	}
+	code, output, errOut = invoke("model", "trace")
+	if code != 1 || errOut != "" || !strings.Contains(output, "relationship.relies_on") {
+		t.Fatalf("trace findings: %d %s %s", code, output, errOut)
+	}
+}

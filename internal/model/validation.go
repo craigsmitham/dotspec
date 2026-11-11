@@ -26,18 +26,20 @@ type Finding struct {
 }
 
 type slotDefinition struct {
-	Range           string   `json:"range"`
-	AnyOf           []string `json:"any_of"`
-	ReferenceRanges []string `json:"reference_ranges"`
-	InlineRanges    []string `json:"inline_ranges"`
-	Required        bool     `json:"required"`
-	Multivalued     bool     `json:"multivalued"`
-	Inlined         bool     `json:"inlined"`
-	InlinedAsList   bool     `json:"inlined_as_list"`
-	Ordered         bool     `json:"ordered"`
+	Annotations     map[string]string `json:"annotations"`
+	Range           string            `json:"range"`
+	AnyOf           []string          `json:"any_of"`
+	ReferenceRanges []string          `json:"reference_ranges"`
+	InlineRanges    []string          `json:"inline_ranges"`
+	Required        bool              `json:"required"`
+	Multivalued     bool              `json:"multivalued"`
+	Inlined         bool              `json:"inlined"`
+	InlinedAsList   bool              `json:"inlined_as_list"`
+	Ordered         bool              `json:"ordered"`
 }
 
 type classDefinition struct {
+	Subsets     []string                  `json:"subsets"`
 	Abstract    bool                      `json:"abstract"`
 	Ancestors   []string                  `json:"ancestors"`
 	Slots       map[string]slotDefinition `json:"slots"`

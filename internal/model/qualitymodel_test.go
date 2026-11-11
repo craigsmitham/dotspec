@@ -15,7 +15,7 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 	s := result.Snapshot
 	conformancePayloads(t, s)
 	m := elementKind(t, s, "QualityModel")
-	if m["owning_system"] != nil {
+	if m["system_context"] != nil {
 		t.Fatal("reusable model acquired system ownership")
 	}
 	for _, field := range []string{"description", "edition", "sources", "quality_attributes_content", "quality_attributes"} {

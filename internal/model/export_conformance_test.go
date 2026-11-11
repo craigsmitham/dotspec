@@ -111,7 +111,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 	selectedSources := map[string]bool{}
 	expectedRoots := map[string]int{}
 	documents, sections := 0, 0
-	for _, root := range []string{"../../specs", "../../examples/starter/specs", "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
+	for _, root := range []string{"../../specs", "../../examples/starter/specs", "../../examples/concept-design/specs", "../../examples/requirements-traceability/specs", "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
 		if err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
 			if err != nil {
 				return err
@@ -249,7 +249,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 		owner := index[String(label, "owner")]
 		if String(resolution, "status") == "resolved" {
 			target := index[String(resolution, "target")]
-			if String(target, "owner") != String(label, "system_context") || String(target, "owner") != String(owner, "owning_system") {
+			if String(target, "owner") != String(label, "system_context") || String(target, "owner") != String(owner, "system_context") {
 				t.Fatalf("classification escaped its declaring system: %+v", label)
 			}
 		}

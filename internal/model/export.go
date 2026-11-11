@@ -102,6 +102,7 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 	b.associateSystems()
 	b.resolveReferences()
 	b.resolveLabels()
+	compositionErrors := b.resolveComposition()
 	for _, finding := range report.Diagnostics {
 		b.addFinding(finding)
 	}
@@ -119,6 +120,9 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 	}
 	b.sort()
 	code := report.ExitCode()
+	if compositionErrors && code == 0 {
+		code = 1
+	}
 	if b.readFailed || discoverErr != nil || repoErr != nil {
 		code = 2
 	}
@@ -231,8 +235,8 @@ func (b *snapshotBuilder) associateSystems() {
 		if root == nil {
 			continue
 		}
-		if context := b.elements[b.rootByPath[b.contextPath[path]]]; String(context, "kind") == "System" {
-			root["owning_system"] = context["id"]
+		if context := b.elements[b.rootByPath[b.contextPath[path]]]; String(context, "kind") == "System" && String(root, "kind") != "System" && String(root, "kind") != "QualityModel" {
+			root["system_context"] = context["id"]
 		}
 		if String(root, "kind") != "System" {
 			continue

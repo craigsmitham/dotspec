@@ -2,7 +2,7 @@
 id: https://github.com/craigsmitham/dotspec/model/dotspec.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.5.0-draft
+version: 0.8.0-draft
 description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
   is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
   and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
@@ -75,7 +75,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.5.0-draft
+        equals_string: 0.8.0-draft
       mapping_profile:
         range: string
         description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
@@ -217,6 +217,13 @@ classes:
       diagnostics:
         range: Diagnostic
         multivalued: true
+        annotations:
+          relationship_category: "representation"
+          relationship_scope: "Diagnostics associated with this source."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Inspection output."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       revision:
         range: SourceRevision
         inlined: true
@@ -295,6 +302,13 @@ classes:
       source:
         range: SourceDocument
         required: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       start:
         range: integer
         required: true
@@ -340,6 +354,13 @@ classes:
       source:
         range: SourceDocument
         required: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       parse_status:
         range: ParseStatus
         required: true
@@ -351,11 +372,25 @@ classes:
         range: ContentNode
         description: Root includes frontmatter, all Markdown, and retained trivia/opaque spans.
         required: true
+        annotations:
+          relationship_category: "representation"
+          relationship_scope: "Same source document; syntax parents and children must agree."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Parsed syntax or mapped element index."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       frontmatter:
         range: ContentNode
         description: Frontmatter roots with parsed YAML trees or opaque invalid content.
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "authored presentation order; no execution order implied"
       frontmatter_parse_status:
         range: ParseStatus
       declared_type:
@@ -368,6 +403,13 @@ classes:
         range: ContentNode
         description: Parsed YAML root; ordered mapping entries preserve arbitrary keys, duplicate keys, lists,
           tags and scalar types.
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       normalization:
         range: OffsetMapSegment
         description: Required when parser byte offsets differ from original bytes; no guessed offsets.
@@ -380,6 +422,13 @@ classes:
       elements:
         range: DomainElement
         multivalued: true
+        annotations:
+          relationship_category: "representation"
+          relationship_scope: "Same source document; syntax parents and children must agree."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Parsed syntax or mapped element index."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       coverage:
         range: CoverageReport
         required: true
@@ -387,6 +436,13 @@ classes:
       diagnostics:
         range: Diagnostic
         multivalued: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
   ContentNode:
     in_subset: [document-content]
     description: An ordered source syntax node. Raw spans preserve exact syntax; typed properties expose parsed
@@ -399,6 +455,13 @@ classes:
       document:
         range: Document
         required: true
+        annotations:
+          relationship_category: "representation"
+          relationship_scope: "Same source document; syntax parents and children must agree."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Parsed syntax or mapped element index."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       node_kind:
         range: NodeKind
         required: true
@@ -412,6 +475,13 @@ classes:
           retained, not collapsed.
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "representation"
+          relationship_scope: "Ordered direct children in the same document; each non-root node has exactly one syntax parent."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Parsed syntax or mapped element index."
+          relationship_inverse: "none"
+          relationship_ordering: "authored presentation order; no execution order implied"
       heading_level:
         range: integer
         minimum_value: 1
@@ -490,8 +560,22 @@ classes:
       source:
         range: SourceDocument
         required: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       content_node:
         range: ContentNode
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       span:
         range: ByteSpan
         inlined: true
@@ -515,6 +599,13 @@ classes:
         required: true
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Ordered, non-overlapping roots in the containing record source document."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "authored presentation order; no execution order implied"
       decomposition:
         range: DecompositionStatus
         description: State of optional finer structure, independent of named-field mapping coverage.
@@ -560,6 +651,13 @@ classes:
       content_node:
         range: ContentNode
         required: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Source syntax represented by owner.field_path in the same source document; role and scope govern coverage."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       scope:
         range: BindingScope
         required: true
@@ -567,6 +665,13 @@ classes:
         range: Record
         description: Owning Document, DomainElement, or other addressable record.
         required: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Record containing field_path; the named field must exist and represent content_node in the same source document."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       field_path:
         range: string
         description: Model slot path relative to owner; graph check verifies it exists and points to the represented
@@ -605,6 +710,13 @@ classes:
         range: ContentNode
         description: Syntax not covered by any applicable binding; prevents complete_for_profile.
         multivalued: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       unmapped_known_roles:
         range: UnmappedRole
         description: Recognized content still lacking its named domain mapping; prevents complete_for_profile.
@@ -614,10 +726,24 @@ classes:
         range: ExtensionSection
         description: Unknown domain headings, explicitly retained; not evidence of complete domain semantics.
         multivalued: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       uninterpreted_nodes:
         range: ContentNode
         description: Retained opaque or fallback syntax, separate from unknown domain sections.
         multivalued: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       limitations:
         range: string
         multivalued: true
@@ -633,6 +759,13 @@ classes:
         required: true
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "authored presentation order; no execution order implied"
       reason:
         range: string
         required: true
@@ -646,12 +779,26 @@ classes:
       source_document:
         range: SourceDocument
         required: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       name:
         range: RichContent
         description: Authored title or item name, if present.
         inlined: true
       source_fragment:
         range: SourceFragment
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       decomposition:
         range: DecompositionStatus
         required: true
@@ -665,23 +812,159 @@ classes:
         description: Only unknown sections, not a substitute for known domain fields.
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "ExtensionSection.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
     slots:
     - authored_id
     annotations:
       owned_memberships: DomainElement.extension_sections
+  TraceableElement:
+    in_subset:
+    - business-requirements
+    - user-requirements
+    - software-requirements
+    description: An element with explicit motivation, derivation and assumptions. Concern subset, artifact kind
+      and core/supporting/generic classification are independent; neither traceability nor document location
+      confers normative authority.
+    is_a: DomainElement
+    abstract: true
+    attributes:
+      supports_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored relationship section, including rationale and unresolved references.
+      supports_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: not-applicable
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          requires_content: supports_content
+      supports:
+        range: Record
+        multivalued: true
+        description: Intended contribution to a goal or user progress; does not assert achievement.
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: unordered
+          trace_heading: Supports
+          trace_targets: SystemGoal or Job or JobStep or Outcome
+          requires_content: supports_content
+        any_of:
+        - range: SystemGoal
+        - range: Job
+        - range: JobStep
+        - range: Outcome
+      derived_from_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored relationship section, including rationale and unresolved references.
+      derived_from_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: not-applicable
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          requires_content: derived_from_content
+      derived_from:
+        range: Record
+        multivalued: true
+        description: Source or rationale for this element, including rules, decisions and obligations; not logical
+          entailment.
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: unordered
+          trace_heading: Derived from
+          trace_targets: DomainElement or SourceFragment
+          requires_content: derived_from_content
+        any_of:
+        - range: DomainElement
+        - range: SourceFragment
+      relies_on_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored relationship section, including rationale and unresolved references.
+      relies_on_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: not-applicable
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          requires_content: relies_on_content
+      relies_on:
+        range: Assumption
+        multivalued: true
+        description: Assumptions on which the validity of this element depends.
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: unordered
+          trace_heading: Relies on
+          trace_targets: Assumption
+          requires_content: relies_on_content
+      obligations_content:
+        range: RichContent
+        inlined: true
+        annotations:
+          paired_with: obligations
+      obligations:
+        range: ObligationClause
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: ObligationClause.owner
+          relationship_ordering: authored presentation order; no execution order implied
+          paired_with: obligations_content
+    annotations:
+      owned_memberships: TraceableElement.obligations
   SpecificationElement:
-    in_subset: [business-requirements, user-requirements, software-requirements]
+    in_subset:
+    - business-requirements
+    - user-requirements
+    - software-requirements
     description: Common content of system, job, use-case, concept and requirement documents; narrative authority/evidence
       does not create executable authority assertions.
-    is_a: DomainElement
+    is_a: TraceableElement
     abstract: true
     attributes:
       slug:
         range: string
         description: Path-derived current slug where applicable.
-      owning_system:
-        range: System
-        description: Derived directory ownership, not use-case boundary or requirement inheritance.
       related_specifications:
         range: ContextualReferences
         inlined: true
@@ -714,10 +997,27 @@ classes:
         inlined: true
     annotations:
       owned_memberships: SpecificationElement.evidence.statements
-  BusinessRule:
-    in_subset: [business-requirements]
-    description: A declarative business constraint independent of the software or process that enforces it.
+  SystemContextSpecification:
+    in_subset: [business-requirements, user-requirements, software-requirements]
+    description: A non-system specification with optional directory-derived system context. Systems use parent_system; reusable quality models stand independently.
     is_a: SpecificationElement
+    abstract: true
+    attributes:
+      system_context:
+        range: System
+        description: Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.
+        annotations:
+          relationship_category: "structural-context"
+          relationship_scope: "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Directory-derived association under the recorded discovery policy."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
+  BusinessRule:
+    in_subset:
+    - business-requirements
+    description: A declarative business constraint independent of the software or process that enforces it.
+    is_a: SystemContextSpecification
     slot_usage:
       kind:
         equals_string: BusinessRule
@@ -726,6 +1026,30 @@ classes:
         description: The rule expressed in business language, independently of enforcement.
         range: RichContent
         inlined: true
+      applicability_targets_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          requires_content: applies_to.content
+          relationship_category: contextual-citation
+          relationship_scope: Authored occurrences in the containing domain record source; targets may remain
+            unresolved.
+          relationship_cycles: not-applicable
+          relationship_basis: Explicit source syntax. Only separately declared semantic fields establish domain
+            associations.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+      applicability_targets:
+        range: DomainElement
+        multivalued: true
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicitly referenced acquired domain records; cross-system links are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored reference or label occurrences.
+          relationship_inverse: none
+          relationship_ordering: unordered
       applies_to:
         range: Applicability
         inlined: true
@@ -736,6 +1060,41 @@ classes:
         description: Authored qualifications or references to exception rules; no inferred exemption.
         range: RichContent
         inlined: true
+      refines_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored relationship section, including rationale and unresolved references.
+      refines_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: not-applicable
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          requires_content: refines_content
+      refines:
+        range: Record
+        multivalued: true
+        description: Adds precision while preserving the referenced obligation; not replacement, duplication
+          or proof. Multiple parents are permitted.
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: forbidden
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: unordered
+          trace_heading: Refines
+          trace_targets: Requirement or BusinessRule or ObligationClause
+          requires_content: refines_content
+        any_of:
+        - range: Requirement
+        - range: BusinessRule
+        - range: ObligationClause
   QualityModel:
     in_subset: [software-requirements]
     description: A standalone reusable set of quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.
@@ -758,10 +1117,20 @@ classes:
         multivalued: true
         list_elements_ordered: true
         description: Ordered model definitions; must be present together with quality_attributes_content.
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "QualityAttribute.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
+          paired_with: "quality_attributes_content"
       quality_attributes_content:
         range: RichContent
         inlined: true
         description: Complete authored attribute section; absent and empty declarations remain distinct.
+        annotations:
+          paired_with: "quality_attributes"
     annotations:
       owned_memberships: QualityModel.quality_attributes
   System:
@@ -776,6 +1145,13 @@ classes:
       parent_system:
         range: System
         description: Directory-derived containment; no inheritance of requirements, labels, or thresholds.
+        annotations:
+          relationship_category: "structural-context"
+          relationship_scope: "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Directory-derived association under the recorded discovery policy."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       purpose:
         range: RichContent
         inlined: true
@@ -802,13 +1178,57 @@ classes:
         description: Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. Must be present together with quality_attributes_content.
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "QualityAttribute.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
+          paired_with: "quality_attributes_content"
       quality_attributes_content:
         range: RichContent
         description: Authored Quality attributes section content, including narrative and attribute subsections. Present even when the section is empty.
         inlined: true
+        annotations:
+          paired_with: "quality_attributes"
+      concept_uses_content:
+        range: RichContent
+        inlined: true
+        annotations:
+          paired_with: "concept_uses"
+      concept_uses:
+        range: ConceptUse
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "ConceptUse.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
+          paired_with: "concept_uses_content"
+      synchronizations_content:
+        range: RichContent
+        inlined: true
+        annotations:
+          paired_with: "synchronizations"
+      synchronizations:
+        range: Synchronization
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "Synchronization.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
+          paired_with: "synchronizations_content"
     annotations:
       owned_memberships: System.goals.items or System.assumptions.items or System.constraints.items or System.glossary.terms
-        or System.quality_attributes
+        or System.quality_attributes or System.concept_uses or System.synchronizations
   GoalCollection:
     in_subset: [business-requirements]
     description: Goals section narrative and optional explicitly authored goal records.
@@ -821,6 +1241,13 @@ classes:
         range: SystemGoal
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "SystemGoal.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
   AssumptionCollection:
     in_subset: [business-requirements, software-requirements]
     description: Assumptions section narrative and optional explicitly authored assumptions.
@@ -833,6 +1260,13 @@ classes:
         range: Assumption
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "Assumption.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
   ConstraintCollection:
     in_subset: [business-requirements, software-requirements]
     description: Constraints section narrative and optional explicitly authored constraints.
@@ -845,6 +1279,13 @@ classes:
         range: Constraint
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "Constraint.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
   Glossary:
     in_subset: [business-requirements, software-requirements]
     description: Glossary section introduction and explicitly named terms.
@@ -857,6 +1298,13 @@ classes:
         range: GlossaryTerm
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "GlossaryTerm.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
   EnvironmentDescription:
     in_subset: [business-requirements, software-requirements]
     description: System environment, retaining narrative and explicitly separated participants or contextual
@@ -874,9 +1322,10 @@ classes:
         range: RichContent
         inlined: true
   SystemGoal:
-    in_subset: [business-requirements]
+    in_subset:
+    - business-requirements
     description: An explicitly distinguished system goal.
-    is_a: DomainElement
+    is_a: TraceableElement
     slot_usage:
       kind:
         equals_string: SystemGoal
@@ -884,13 +1333,22 @@ classes:
       owner:
         range: System
         required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Checked inverse of canonical membership fields.
+          relationship_inverse: System.goals.items
+          relationship_ordering: single target
       statement:
         range: RichContent
         inlined: true
   Assumption:
-    in_subset: [business-requirements, software-requirements]
+    in_subset:
+    - business-requirements
+    - software-requirements
     description: An explicitly distinguished system assumption; no inferred truth assertion.
-    is_a: DomainElement
+    is_a: TraceableElement
     slot_usage:
       kind:
         equals_string: Assumption
@@ -898,13 +1356,22 @@ classes:
       owner:
         range: System
         required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Checked inverse of canonical membership fields.
+          relationship_inverse: System.assumptions.items
+          relationship_ordering: single target
       statement:
         range: RichContent
         inlined: true
   Constraint:
-    in_subset: [business-requirements, software-requirements]
+    in_subset:
+    - business-requirements
+    - software-requirements
     description: An explicitly distinguished system constraint.
-    is_a: DomainElement
+    is_a: TraceableElement
     slot_usage:
       kind:
         equals_string: Constraint
@@ -912,6 +1379,13 @@ classes:
       owner:
         range: System
         required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Checked inverse of canonical membership fields.
+          relationship_inverse: System.constraints.items
+          relationship_ordering: single target
       statement:
         range: RichContent
         inlined: true
@@ -926,6 +1400,13 @@ classes:
       owner:
         range: System
         required: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Checked inverse of canonical membership fields."
+          relationship_inverse: "System.glossary.terms"
+          relationship_ordering: "single target"
       definition:
         range: RichContent
         inlined: true
@@ -937,6 +1418,13 @@ classes:
       references:
         range: SourceReference
         multivalued: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       related_terms:
         range: ContextualReferences
         inlined: true
@@ -957,6 +1445,13 @@ classes:
         - range: System
         - range: QualityModel
         required: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Checked inverse of canonical membership fields."
+          relationship_inverse: "QualityModel.quality_attributes or System.quality_attributes"
+          relationship_ordering: "single target"
       definition:
         range: RichContent
         inlined: true
@@ -965,14 +1460,28 @@ classes:
         description: All authored Sub-attribute of labels, including unresolved references.
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Sub-attribute occurrences owned by this attribute; resolve within the same declaring System or QualityModel."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "LabelOccurrence.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
       subattribute_of:
         range: QualityAttribute
         description: Resolved attributes under which this attribute is directly organized, within the same declaring owner. Derive subattributes by reversing this relation; preserve authored labels and provenance.
         multivalued: true
+        annotations:
+          relationship_category: "semantic-association"
+          relationship_scope: "Attributes of the same declaring System or QualityModel."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Projection of explicit authored reference or label occurrences."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
   Job:
     in_subset: [user-requirements]
     description: A performer seeks progress in a situation, independent of a chosen implementation.
-    is_a: SpecificationElement
+    is_a: SystemContextSpecification
     slot_usage:
       kind:
         equals_string: Job
@@ -1018,6 +1527,13 @@ classes:
         description: Document order, not a universal lifecycle or required process sequence.
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "JobStep.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
   OutcomeCollection:
     in_subset: [user-requirements]
     description: Outcomes section body and items; preserve introductory prose, nested lists and item support
@@ -1031,6 +1547,13 @@ classes:
         range: Outcome
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "Outcome.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
   ProgressCaseCollection:
     in_subset: [user-requirements]
     description: Progress cases section body and explicitly named cases.
@@ -1043,10 +1566,18 @@ classes:
         range: ProgressCase
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "ProgressCase.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
   JobStep:
-    in_subset: [user-requirements]
+    in_subset:
+    - user-requirements
     description: A meaningful part of a job; repeated or custom stage labels are allowed.
-    is_a: DomainElement
+    is_a: TraceableElement
     slot_usage:
       kind:
         equals_string: JobStep
@@ -1054,6 +1585,13 @@ classes:
       owner:
         range: Job
         required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Checked inverse of canonical membership fields.
+          relationship_inverse: Job.steps.steps
+          relationship_ordering: single target
       stage:
         range: RichContent
         description: Authored stage value; unrestricted vocabulary and repeated labels are valid.
@@ -1067,9 +1605,10 @@ classes:
     annotations:
       owned_memberships: JobStep.outcomes.outcomes
   Outcome:
-    in_subset: [user-requirements]
+    in_subset:
+    - user-requirements
     description: A desired outcome owned directly by a job or step. Ownership does not imply inheritance.
-    is_a: DomainElement
+    is_a: TraceableElement
     slot_usage:
       kind:
         equals_string: Outcome
@@ -1080,6 +1619,13 @@ classes:
         any_of:
         - range: Job
         - range: JobStep
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Checked inverse of canonical membership fields.
+          relationship_inverse: Job.outcomes.outcomes or JobStep.outcomes.outcomes
+          relationship_ordering: single target
       statement:
         range: RichContent
         inlined: true
@@ -1099,6 +1645,13 @@ classes:
       owner:
         range: Job
         required: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Checked inverse of canonical membership fields."
+          relationship_inverse: "Job.progress_cases.cases"
+          relationship_ordering: "single target"
       description:
         range: RichContent
         inlined: true
@@ -1181,6 +1734,13 @@ classes:
         range: EvidenceStatement
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "EvidenceStatement.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
       research_basis:
         range: RichContent
         inlined: true
@@ -1199,6 +1759,13 @@ classes:
       owner:
         range: DomainElement
         required: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Checked inverse of canonical membership fields."
+          relationship_inverse: "SpecificationElement.evidence.statements or ProgressCase.evidence.statements"
+          relationship_ordering: "single target"
       statement:
         range: RichContent
         inlined: true
@@ -1214,15 +1781,79 @@ classes:
       references:
         range: SourceReference
         multivalued: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
   UseCase:
-    in_subset: [software-requirements]
-    description: An actor goal and its interactions at a stated system boundary, with alternative paths and
-      protections.
-    is_a: SpecificationElement
+    in_subset:
+    - software-requirements
+    description: An actor goal and its interactions at a stated system boundary, with alternative paths and protections.
+    is_a: SystemContextSpecification
     slot_usage:
       kind:
         equals_string: UseCase
     attributes:
+      boundary_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          requires_content: system_boundary
+          relationship_category: contextual-citation
+          relationship_scope: Authored occurrences in the containing domain record source; targets may remain
+            unresolved.
+          relationship_cycles: not-applicable
+          relationship_basis: Explicit source syntax. Only separately declared semantic fields establish domain
+            associations.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+      boundary:
+        range: System
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Any explicitly referenced acquired System; independent of directory context.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored reference or label occurrences.
+          relationship_inverse: none
+          relationship_ordering: single target
+      supported_jobs_content:
+        range: RichContent
+        inlined: true
+        annotations:
+          paired_with: supported_jobs_references
+      supported_jobs_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Authored occurrences in the containing domain record source; targets may remain
+            unresolved.
+          relationship_cycles: not-applicable
+          relationship_basis: Explicit source syntax. Only separately declared semantic fields establish domain
+            associations.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          paired_with: supported_jobs_content
+      supported_jobs:
+        range: DomainElement
+        multivalued: true
+        any_of:
+        - range: Job
+        - range: JobStep
+        - range: Outcome
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicitly referenced acquired Jobs, JobSteps or Outcomes; cross-system links are
+            permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored reference or label occurrences.
+          relationship_inverse: none
+          relationship_ordering: unordered
       goal:
         range: RichContent
         inlined: true
@@ -1256,6 +1887,13 @@ classes:
         inlined: true
       main_success_scenario:
         range: Scenario
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Explicit Markdown decomposition under the declared mapping profile.
+          relationship_inverse: Scenario.owner
+          relationship_ordering: single target
       extensions:
         range: ExtensionCollection
         inlined: true
@@ -1265,6 +1903,37 @@ classes:
       related_jobs:
         range: ContextualReferences
         inlined: true
+      involves_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored relationship section, including rationale and unresolved references.
+      involves_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: not-applicable
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          requires_content: involves_content
+      involves:
+        range: ConceptUse
+        multivalued: true
+        description: Named concept uses participating in this actor-goal interaction; not a service boundary
+          or mandatory execution order.
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: unordered
+          trace_heading: Involves
+          trace_targets: ConceptUse
+          requires_content: involves_content
     annotations:
       owned_memberships: UseCase.main_success_scenario or UseCase.extensions.branches
   ActorMention:
@@ -1284,6 +1953,13 @@ classes:
       references:
         range: SourceReference
         multivalued: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
   ActorCollection:
     in_subset: [software-requirements]
     description: Supporting actors narrative and explicitly separated mentions.
@@ -1330,6 +2006,13 @@ classes:
       references:
         range: SourceReference
         multivalued: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
   StakeholderInterestCollection:
     in_subset: [software-requirements]
     description: Stakeholder section narrative and optional explicit interest entries.
@@ -1369,6 +2052,13 @@ classes:
       owner:
         range: UseCase
         required: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Checked inverse of canonical membership fields."
+          relationship_inverse: "UseCase.main_success_scenario"
+          relationship_ordering: "single target"
       content:
         range: RichContent
         inlined: true
@@ -1378,6 +2068,13 @@ classes:
         description: Source order only. Required sequencing belongs in SequenceStatement.
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "ScenarioStep.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
     annotations:
       owned_memberships: Scenario.steps
   ScenarioStep:
@@ -1395,6 +2092,13 @@ classes:
         any_of:
         - range: Scenario
         - range: Extension
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Checked inverse of canonical membership fields."
+          relationship_inverse: "Scenario.steps or Extension.steps"
+          relationship_ordering: "single target"
       authored_label:
         range: string
         description: Original number or label; snapshot ID supplies addressability.
@@ -1405,6 +2109,13 @@ classes:
       references:
         range: SourceReference
         multivalued: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
   ExtensionCollection:
     in_subset: [software-requirements]
     description: Extensions section introduction, undecomposed narrative, and explicitly authored branches.
@@ -1417,6 +2128,13 @@ classes:
         range: Extension
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "Extension.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
   Extension:
     in_subset: [software-requirements]
     description: An explicitly distinguished alternative or failure branch. Full narrative is retained;
@@ -1432,6 +2150,13 @@ classes:
         any_of:
         - range: UseCase
         - range: Extension
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Checked inverse of canonical membership fields."
+          relationship_inverse: "UseCase.extensions.branches or Extension.branches"
+          relationship_ordering: "single target"
       authored_label:
         range: string
         description: Optional authored branch label, including nested or relative labels; not a durable ID.
@@ -1455,14 +2180,35 @@ classes:
         description: Explicit handling steps in source order; no execution semantics are inferred.
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "ScenarioStep.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
       references:
         range: SourceReference
         multivalued: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       branches:
         range: Extension
         description: Explicitly authored nested branches, in document order.
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "Extension.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
     annotations:
       owned_memberships: Extension.steps or Extension.branches
   SequenceStatement:
@@ -1492,21 +2238,76 @@ classes:
       before:
         range: ScenarioStep
         multivalued: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       after:
         range: ScenarioStep
         multivalued: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       governing_references:
         range: SourceReference
         multivalued: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
   Concept:
     in_subset: [software-requirements]
     description: A behavior-bearing concept described by purpose, abstract state, actions and an operational
       principle.
-    is_a: SpecificationElement
+    is_a: SystemContextSpecification
     slot_usage:
       kind:
         equals_string: Concept
     attributes:
+      type_parameters_content:
+        range: RichContent
+        inlined: true
+        annotations:
+          paired_with: "type_parameters"
+      type_parameters:
+        range: ConceptType
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "ConceptType.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
+          paired_with: "type_parameters_content"
+      introduced_types_content:
+        range: RichContent
+        inlined: true
+        annotations:
+          paired_with: "introduced_types"
+      introduced_types:
+        range: ConceptType
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "ConceptType.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
+          paired_with: "introduced_types_content"
       purpose:
         range: RichContent
         inlined: true
@@ -1520,7 +2321,7 @@ classes:
         range: RichContent
         inlined: true
     annotations:
-      owned_memberships: Concept.actions.actions
+      owned_memberships: Concept.actions.actions or Concept.type_parameters or Concept.introduced_types
   StateDescription:
     in_subset: [software-requirements]
     description: The State section as narrative and optional explicitly named state components/invariants;
@@ -1530,6 +2331,9 @@ classes:
         range: RichContent
         inlined: true
         required: true
+      initial_state:
+        range: RichContent
+        inlined: true
       elements:
         range: StateElement
         multivalued: true
@@ -1553,6 +2357,9 @@ classes:
       value_description:
         range: RichContent
         inlined: true
+      derivation:
+        range: RichContent
+        inlined: true
   ActionCollection:
     in_subset: [software-requirements]
     description: Actions section narrative plus explicit named action records; an unsegmented Actions section
@@ -1566,11 +2373,19 @@ classes:
         range: ConceptAction
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "ConceptAction.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
   ConceptAction:
-    in_subset: [software-requirements]
+    in_subset:
+    - software-requirements
     description: An explicitly named concept action. Caller assumptions and enforced guards are different authored
       claims.
-    is_a: DomainElement
+    is_a: TraceableElement
     slot_usage:
       kind:
         equals_string: ConceptAction
@@ -1578,6 +2393,13 @@ classes:
       owner:
         range: Concept
         required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Checked inverse of canonical membership fields.
+          relationship_inverse: Concept.actions.actions
+          relationship_ordering: single target
       description:
         range: RichContent
         inlined: true
@@ -1599,12 +2421,543 @@ classes:
       rejections:
         range: RichContent
         inlined: true
-  Requirement:
+      initiation:
+        range: RichContent
+        inlined: true
+        description: Authored initiation conditions, including user or system actions; no scheduler or caller
+          is inferred.
+      input_parameters:
+        range: ActionParameter
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          requires_content: inputs
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Explicit Markdown decomposition under the declared mapping profile.
+          relationship_inverse: ActionParameter.owner
+          relationship_ordering: authored presentation order; no execution order implied
+      output_parameters:
+        range: ActionParameter
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          requires_content: outputs
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Explicit Markdown decomposition under the declared mapping profile.
+          relationship_inverse: ActionParameter.owner
+          relationship_ordering: authored presentation order; no execution order implied
+    annotations:
+      owned_memberships: ConceptAction.input_parameters or ConceptAction.output_parameters
+  ConceptType:
     in_subset: [software-requirements]
-    description: Shared obligation content, applicability, rationale and source classification labels.
-    is_a: SpecificationElement
+    description: A type parameter or introduced identity type, scoped to one concept definition. Membership distinguishes its role.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: ConceptType
+    attributes:
+      owner:
+        range: Concept
+        required: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Checked inverse of canonical membership fields."
+          relationship_inverse: "Concept.type_parameters or Concept.introduced_types"
+          relationship_ordering: "single target"
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+  ActionParameter:
+    in_subset: [software-requirements]
+    description: An explicitly named input or result. Type descriptions can remain prose; linked types and primitive names are optional.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: ActionParameter
+    attributes:
+      owner:
+        range: ConceptAction
+        required: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Checked inverse of canonical membership fields."
+          relationship_inverse: "ConceptAction.input_parameters or ConceptAction.output_parameters"
+          relationship_ordering: "single target"
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      type_description:
+        range: RichContent
+        inlined: true
+      type_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "authored presentation order; no execution order implied"
+      type:
+        range: ConceptType
+        annotations:
+          relationship_category: "semantic-association"
+          relationship_scope: "Type parameters or introduced types of the declaring Concept."
+          relationship_cycles: "permitted"
+          relationship_basis: "Projection of explicit authored reference or label occurrences."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
+      primitive:
+        range: string
+  ConceptUse:
+    in_subset:
+    - software-requirements
+    description: An explicitly named design-time inclusion of a concept in a system. Multiple uses of one definition
+      remain distinct; directory association creates no use.
+    is_a: TraceableElement
+    slot_usage:
+      kind:
+        equals_string: ConceptUse
+    attributes:
+      owner:
+        range: System
+        required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Checked inverse of canonical membership fields.
+          relationship_inverse: System.concept_uses
+          relationship_ordering: single target
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      definition_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Authored occurrences in the containing domain record source; targets may remain
+            unresolved.
+          relationship_cycles: not-applicable
+          relationship_basis: Explicit source syntax. Only separately declared semantic fields establish domain
+            associations.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+      definition:
+        range: Concept
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Any acquired concept definition; directory context does not restrict reuse.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored reference or label occurrences.
+          relationship_inverse: none
+          relationship_ordering: single target
+      configuration:
+        range: RichContent
+        inlined: true
+      bindings_content:
+        range: RichContent
+        inlined: true
+        annotations:
+          paired_with: bindings
+      bindings:
+        range: TypeBinding
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Explicit Markdown decomposition under the declared mapping profile.
+          relationship_inverse: TypeBinding.owner
+          relationship_ordering: authored presentation order; no execution order implied
+          paired_with: bindings_content
+      dependencies_content:
+        range: RichContent
+        inlined: true
+        annotations:
+          paired_with: dependencies_references
+      dependencies_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Authored occurrences in the containing domain record source; targets may remain
+            unresolved.
+          relationship_cycles: not-applicable
+          relationship_basis: Explicit source syntax. Only separately declared semantic fields establish domain
+            associations.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          paired_with: dependencies_content
+      dependencies:
+        range: ConceptUse
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Named uses in the same System; mutual dependencies are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored reference or label occurrences.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+    annotations:
+      owned_memberships: ConceptUse.bindings
+  TypeBinding:
+    in_subset: [software-requirements]
+    description: An explicit binding of a definition parameter to a primitive or a type introduced by a named concept use. Unresolved links remain authored references.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: TypeBinding
+    attributes:
+      owner:
+        range: ConceptUse
+        required: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Checked inverse of canonical membership fields."
+          relationship_inverse: "ConceptUse.bindings"
+          relationship_ordering: "single target"
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      parameter_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "authored presentation order; no execution order implied"
+      parameter:
+        range: ConceptType
+        annotations:
+          relationship_category: "semantic-association"
+          relationship_scope: "Type parameters of owner.definition; unknown definition defers scope validation."
+          relationship_cycles: "permitted"
+          relationship_basis: "Projection of explicit authored reference or label occurrences."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
+      type_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "authored presentation order; no execution order implied"
+      type:
+        range: ConceptType
+        annotations:
+          relationship_category: "semantic-association"
+          relationship_scope: "Introduced types of type_use.definition; unknown supplying definition defers validation."
+          relationship_cycles: "permitted"
+          relationship_basis: "Projection of explicit authored reference or label occurrences."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
+      type_use_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "authored presentation order; no execution order implied"
+      type_use:
+        range: ConceptUse
+        annotations:
+          relationship_category: "semantic-association"
+          relationship_scope: "Named uses in the same System as the owning ConceptUse."
+          relationship_cycles: "permitted"
+          relationship_basis: "Projection of explicit authored reference or label occurrences."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
+      primitive:
+        range: string
+  Synchronization:
+    in_subset:
+    - software-requirements
+    description: A system-owned composition rule. Narrative and action references describe coordination; no atomicity,
+      execution or completeness is inferred.
+    is_a: TraceableElement
+    slot_usage:
+      kind:
+        equals_string: Synchronization
+    attributes:
+      owner:
+        range: System
+        required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Checked inverse of canonical membership fields.
+          relationship_inverse: System.synchronizations
+          relationship_ordering: single target
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      when:
+        range: RichContent
+        inlined: true
+      where:
+        range: RichContent
+        inlined: true
+      then:
+        range: RichContent
+        inlined: true
+      semantics:
+        range: RichContent
+        inlined: true
+      when_actions:
+        range: SynchronizationAction
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          requires_content: when
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Explicit Markdown decomposition under the declared mapping profile.
+          relationship_inverse: SynchronizationAction.owner
+          relationship_ordering: authored presentation order; no execution order implied
+      then_actions:
+        range: SynchronizationAction
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          requires_content: then
+          relationship_category: declaration-containment
+          relationship_scope: Exactly one declaring owner in the same source document.
+          relationship_cycles: forbidden
+          relationship_basis: Explicit Markdown decomposition under the declared mapping profile.
+          relationship_inverse: SynchronizationAction.owner
+          relationship_ordering: authored presentation order; no execution order implied
+    annotations:
+      owned_memberships: Synchronization.when_actions or Synchronization.then_actions
+  SynchronizationAction:
+    in_subset: [software-requirements]
+    description: An authored action occurrence or invocation within a synchronization, qualified by a concept use. Conditions and arguments remain authored content.
+    is_a: DomainElement
+    slot_usage:
+      kind:
+        equals_string: SynchronizationAction
+    attributes:
+      owner:
+        range: Synchronization
+        required: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Checked inverse of canonical membership fields."
+          relationship_inverse: "Synchronization.when_actions or Synchronization.then_actions"
+          relationship_ordering: "single target"
+      content:
+        range: RichContent
+        inlined: true
+        required: true
+      concept_use_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "authored presentation order; no execution order implied"
+      concept_use:
+        range: ConceptUse
+        annotations:
+          relationship_category: "semantic-association"
+          relationship_scope: "Named uses in the owning Synchronization System."
+          relationship_cycles: "permitted"
+          relationship_basis: "Projection of explicit authored reference or label occurrences."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
+      action_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "authored presentation order; no execution order implied"
+      action:
+        range: ConceptAction
+        annotations:
+          relationship_category: "semantic-association"
+          relationship_scope: "Actions declared by concept_use.definition; unknown definition defers validation."
+          relationship_cycles: "permitted"
+          relationship_basis: "Projection of explicit authored reference or label occurrences."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
+      arguments:
+        range: RichContent
+        inlined: true
+      result:
+        range: RichContent
+        inlined: true
+  ObligationClause:
+    in_subset:
+    - business-requirements
+    - software-requirements
+    description: An explicitly distinguished obligation within an existing specification or behavioral model.
+      Its content is the authored expression, not a duplicate requirement document. Project authority determines
+      acceptance; declaration alone does not.
+    is_a: TraceableElement
+    slot_usage:
+      kind:
+        equals_string: ObligationClause
+    attributes:
+      owner:
+        range: TraceableElement
+        required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: forbidden
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: TraceableElement.obligations
+          relationship_ordering: unordered
+      statement:
+        range: RichContent
+        inlined: true
+      verification:
+        range: VerificationPlan
+        inlined: true
+      refines_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored relationship section, including rationale and unresolved references.
+      refines_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: not-applicable
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          requires_content: refines_content
+      refines:
+        range: Record
+        multivalued: true
+        description: Adds precision while preserving the referenced obligation; not replacement, duplication
+          or proof. Multiple parents are permitted.
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: forbidden
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: unordered
+          trace_heading: Refines
+          trace_targets: Requirement or BusinessRule or ObligationClause
+          requires_content: refines_content
+        any_of:
+        - range: Requirement
+        - range: BusinessRule
+        - range: ObligationClause
+      applicability_targets_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          requires_content: applies_to.content
+          relationship_category: contextual-citation
+          relationship_scope: Authored occurrences in the containing domain record source; targets may remain
+            unresolved.
+          relationship_cycles: not-applicable
+          relationship_basis: Explicit source syntax. Only separately declared semantic fields establish domain
+            associations.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+      applicability_targets:
+        range: DomainElement
+        multivalued: true
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicitly referenced acquired domain records; cross-system links are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored reference or label occurrences.
+          relationship_inverse: none
+          relationship_ordering: unordered
+      applies_to:
+        range: Applicability
+        inlined: true
+      rationale:
+        range: RichContent
+        inlined: true
+  Requirement:
+    in_subset:
+    - software-requirements
+    description: A standalone obligation specification. Obligations can also be expressed in use cases and concept
+      contracts; this document family is not the superclass of every normative expression.
+    is_a: SystemContextSpecification
     abstract: true
     attributes:
+      applicability_targets_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          requires_content: applies_to.content
+          relationship_category: contextual-citation
+          relationship_scope: Authored occurrences in the containing domain record source; targets may remain
+            unresolved.
+          relationship_cycles: not-applicable
+          relationship_basis: Explicit source syntax. Only separately declared semantic fields establish domain
+            associations.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+      applicability_targets:
+        range: DomainElement
+        multivalued: true
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicitly referenced acquired domain records; cross-system links are permitted.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored reference or label occurrences.
+          relationship_inverse: none
+          relationship_ordering: unordered
       applies_to:
         range: Applicability
         inlined: true
@@ -1616,10 +2969,61 @@ classes:
         description: Every authored attribute label, including undefined or unbound labels.
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: provenance
+          relationship_scope: Quality-classification occurrences owned by this requirement; resolve within its
+            system context.
+          relationship_cycles: not-applicable
+          relationship_basis: Recorded source or inspection evidence.
+          relationship_inverse: LabelOccurrence.owner
+          relationship_ordering: authored presentation order; no execution order implied
       attributes:
         range: QualityAttribute
         description: Only resolved classifications; original occurrences remain separately addressable.
         multivalued: true
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Attributes declared by system_context, including explicitly recorded label context
+            when the specification association is unavailable.
+          relationship_cycles: permitted
+          relationship_basis: Projection of explicit authored reference or label occurrences.
+          relationship_inverse: none
+          relationship_ordering: unordered
+      refines_content:
+        range: RichContent
+        inlined: true
+        description: Complete authored relationship section, including rationale and unresolved references.
+      refines_references:
+        range: SourceReference
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: contextual-citation
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: not-applicable
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: authored presentation order; no execution order implied
+          requires_content: refines_content
+      refines:
+        range: Record
+        multivalued: true
+        description: Adds precision while preserving the referenced obligation; not replacement, duplication
+          or proof. Multiple parents are permitted.
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: Explicit acquired targets; cross-system references are permitted.
+          relationship_cycles: forbidden
+          relationship_basis: Projection of explicit authored references; no semantic inference from prose.
+          relationship_inverse: none
+          relationship_ordering: unordered
+          trace_heading: Refines
+          trace_targets: Requirement or BusinessRule or ObligationClause
+          requires_content: refines_content
+        any_of:
+        - range: Requirement
+        - range: BusinessRule
+        - range: ObligationClause
   GeneralRequirement:
     in_subset: [software-requirements]
     description: A general obligation with authored verification guidance.
@@ -1812,6 +3216,13 @@ classes:
         range: SourceReference
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "authored presentation order; no execution order implied"
       items:
         range: ContextualReference
         multivalued: true
@@ -1828,6 +3239,13 @@ classes:
         range: SourceReference
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "contextual-citation"
+          relationship_scope: "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Explicit source syntax. Only separately declared semantic fields establish domain associations."
+          relationship_inverse: "none"
+          relationship_ordering: "authored presentation order; no execution order implied"
   ExtensionSection:
     in_subset: [document-content]
     description: An unknown domain section retained with its original heading and body. This is explicit representation,
@@ -1845,6 +3263,13 @@ classes:
         - range: DomainElement
         description: Domain owner when mapped; otherwise the Document, including ordinary Markdown or a failed
           domain extraction.
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Checked inverse of canonical membership fields."
+          relationship_inverse: "DomainElement.extension_sections or ExtensionSection.children or Document.elements"
+          relationship_ordering: "single target"
       heading:
         range: RichContent
         inlined: true
@@ -1856,6 +3281,13 @@ classes:
         range: ExtensionSection
         multivalued: true
         list_elements_ordered: true
+        annotations:
+          relationship_category: "declaration-containment"
+          relationship_scope: "Exactly one declaring owner in the same source document."
+          relationship_cycles: "forbidden"
+          relationship_basis: "Explicit Markdown decomposition under the declared mapping profile."
+          relationship_inverse: "ExtensionSection.owner"
+          relationship_ordering: "authored presentation order; no execution order implied"
       reason:
         range: string
         required: true
@@ -1872,9 +3304,23 @@ classes:
       source_document:
         range: SourceDocument
         required: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       content_node:
         range: ContentNode
         required: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "The authored link occurrence in source_document."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       form:
         range: ReferenceForm
         required: true
@@ -1885,12 +3331,33 @@ classes:
         required: true
       context_owner:
         range: DomainElement
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "The domain record in the reference source_document to which context_field applies."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       context_field:
         range: string
       definition_node:
         range: ContentNode
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       resolution:
         range: Resolution
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "A resolution for this exact authored reference occurrence; reciprocal pointers must agree."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "Resolution.occurrence"
+          relationship_ordering: "single target"
   LabelOccurrence:
     in_subset: [specification-traceability]
     description: An authored semantic classification or parent label, preserved even when no target can be
@@ -1903,6 +3370,13 @@ classes:
       owner:
         range: DomainElement
         required: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Requirement for a quality-classification label, or QualityAttribute for a sub-attribute label; retained in the corresponding occurrence list."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "Requirement.attribute_labels or QualityAttribute.subattribute_of_labels"
+          relationship_ordering: "single target"
       role:
         range: LabelRole
         required: true
@@ -1912,14 +3386,42 @@ classes:
       content_node:
         range: ContentNode
         required: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       resolution:
         range: Resolution
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "A resolution for this exact authored label occurrence; reciprocal pointers must agree."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "Resolution.occurrence"
+          relationship_ordering: "single target"
       system_context:
         range: System
         description: System in whose scope this label was interpreted, if established.
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       quality_model_context:
         range: QualityModel
         description: Declaring model for parent labels on reusable definitions; never used for requirement classification.
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
   Resolution:
     in_subset: [specification-traceability]
     description: The recorded outcome of resolving one authored reference or label; targets need not be domain
@@ -1935,6 +3437,13 @@ classes:
         any_of:
         - range: SourceReference
         - range: LabelOccurrence
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "The authored occurrence whose resolution points back to this record."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "SourceReference.resolution or LabelOccurrence.resolution"
+          relationship_ordering: "single target"
       status:
         range: ResolutionStatus
         required: true
@@ -1945,16 +3454,37 @@ classes:
         - range: DomainElement
         - range: SourceResource
         - range: SourceFragment
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       candidates:
         range: Record
         description: Candidates for an ambiguous resolution.
         multivalued: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       rule:
         range: string
         required: true
       diagnostics:
         range: Diagnostic
         multivalued: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
     rules:
     - description: A resolved occurrence names a target; target identity and type are graph checks.
       preconditions:
@@ -1985,11 +3515,25 @@ classes:
         required: true
       source:
         range: SourceDocument
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       span:
         range: ByteSpan
         inlined: true
       record:
         range: Record
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       line:
         range: integer
         minimum_value: 1
@@ -2011,11 +3555,15 @@ classes:
         description: Related native source locations, preserving their original order and optional coordinates.
   Assertion:
     in_subset: [specification-traceability]
-    description: A materialized typed semantic relation with explicit provenance. Ordinary source links remain
+    description: An optional derived relationship view of canonical typed fields, with required endpoints and explicit provenance. Ordinary source links remain
       SourceReference occurrences and do not automatically become assertions.
     is_a: Record
     abstract: true
     attributes:
+      projection_path:
+        required: true
+        range: string
+        description: Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.
       origin:
         range: AssertionOrigin
         required: true
@@ -2026,9 +3574,23 @@ classes:
         range: Record
         description: Source occurrences and/or typed records supporting this assertion.
         multivalued: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       source_nodes:
         range: ContentNode
         multivalued: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       source_spans:
         range: ByteSpan
         multivalued: true
@@ -2036,6 +3598,102 @@ classes:
     slots:
     - subject
     - object
+  Supports:
+    in_subset:
+    - specification-traceability
+    description: Intended contribution, not achievement.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: Supports
+      subject:
+        range: TraceableElement
+      object:
+        range: Record
+        any_of:
+        - range: SystemGoal
+        - range: Job
+        - range: JobStep
+        - range: Outcome
+    annotations:
+      projection_of: TraceableElement.supports
+  DerivedFrom:
+    in_subset:
+    - specification-traceability
+    description: Explicit basis, not logical entailment.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: DerivedFrom
+      subject:
+        range: TraceableElement
+      object:
+        range: Record
+        any_of:
+        - range: DomainElement
+        - range: SourceFragment
+    annotations:
+      projection_of: TraceableElement.derived_from
+  ReliesOn:
+    in_subset:
+    - specification-traceability
+    description: Conditional validity under an assumption.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: ReliesOn
+      subject:
+        range: TraceableElement
+      object:
+        range: Assumption
+    annotations:
+      projection_of: TraceableElement.relies_on
+  Refines:
+    in_subset:
+    - specification-traceability
+    description: More precise obligation preserving its parent commitment.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: Refines
+      subject:
+        range: TraceableElement
+      object:
+        range: Record
+        any_of:
+        - range: Requirement
+        - range: BusinessRule
+        - range: ObligationClause
+    annotations:
+      projection_of: Requirement.refines or BusinessRule.refines or ObligationClause.refines
+  Involves:
+    in_subset:
+    - specification-traceability
+    description: Participation in an actor-goal interaction.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: Involves
+      subject:
+        range: UseCase
+      object:
+        range: ConceptUse
+    annotations:
+      projection_of: UseCase.involves
+  HasObligation:
+    in_subset:
+    - specification-traceability
+    description: Explicitly distinguished obligation expression.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: HasObligation
+      subject:
+        range: TraceableElement
+      object:
+        range: ObligationClause
+    annotations:
+      projection_of: TraceableElement.obligations
   ParentSystem:
     in_subset: [specification-traceability]
     description: Directory-derived system containment; no semantic inheritance.
@@ -2049,19 +3707,19 @@ classes:
         range: System
     annotations:
       projection_of: System.parent_system
-  OwnedBySystem:
+  InSystemContext:
     in_subset: [specification-traceability]
-    description: Directory ownership of a specification, independent of system boundary and applicability.
+    description: Directory-derived context of a specification, independent of system boundary and applicability.
     is_a: Assertion
     slot_usage:
       kind:
-        equals_string: OwnedBySystem
+        equals_string: InSystemContext
       subject:
-        range: SpecificationElement
+        range: SystemContextSpecification
       object:
         range: System
     annotations:
-      projection_of: SpecificationElement.owning_system
+      projection_of: SystemContextSpecification.system_context
   HasJobStep:
     in_subset: [specification-traceability]
     description: A job contains an explicitly authored step.
@@ -2163,6 +3821,84 @@ classes:
         range: ConceptAction
     annotations:
       projection_of: Concept.actions.actions
+  UsesConcept:
+    in_subset: [specification-traceability]
+    description: Projection of the explicitly declared ConceptUse.definition relationship.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: UsesConcept
+      subject:
+        range: ConceptUse
+      object:
+        range: Concept
+    annotations:
+      projection_of: ConceptUse.definition
+  HasConceptUse:
+    in_subset: [specification-traceability]
+    description: Projection of the explicitly declared System.concept_uses relationship.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: HasConceptUse
+      subject:
+        range: System
+      object:
+        range: ConceptUse
+    annotations:
+      projection_of: System.concept_uses
+  HasSynchronization:
+    in_subset: [specification-traceability]
+    description: Projection of the explicitly declared System.synchronizations relationship.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: HasSynchronization
+      subject:
+        range: System
+      object:
+        range: Synchronization
+    annotations:
+      projection_of: System.synchronizations
+  ConceptDependency:
+    in_subset: [specification-traceability]
+    description: Projection of the explicitly declared ConceptUse.dependencies relationship.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: ConceptDependency
+      subject:
+        range: ConceptUse
+      object:
+        range: ConceptUse
+    annotations:
+      projection_of: ConceptUse.dependencies
+  HasConceptType:
+    in_subset: [specification-traceability]
+    description: Projection of the explicitly declared Concept.type_parameters or Concept.introduced_types relationship.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: HasConceptType
+      subject:
+        range: Concept
+      object:
+        range: ConceptType
+    annotations:
+      projection_of: Concept.type_parameters or Concept.introduced_types
+  HasTypeBinding:
+    in_subset: [specification-traceability]
+    description: Projection of the explicitly declared ConceptUse.bindings relationship.
+    is_a: Assertion
+    slot_usage:
+      kind:
+        equals_string: HasTypeBinding
+      subject:
+        range: ConceptUse
+      object:
+        range: TypeBinding
+    annotations:
+      projection_of: ConceptUse.bindings
   DeclaresQualityAttribute:
     in_subset: [specification-traceability]
     description: A system or reusable quality model declares and owns a quality attribute.
@@ -2209,6 +3945,8 @@ classes:
     in_subset: [specification-traceability]
     description: An explicitly authored semantic support relation; a Related jobs link alone is insufficient.
     is_a: Assertion
+    annotations:
+      projection_of: UseCase.supported_jobs
     slot_usage:
       kind:
         equals_string: SupportsJob
@@ -2221,21 +3959,30 @@ classes:
         - range: JobStep
         - range: Outcome
   AppliesTo:
-    in_subset: [specification-traceability]
-    description: An explicitly authored applicability relation to a domain element; links remain citations
-      unless meaning is explicit.
+    in_subset:
+    - specification-traceability
+    description: An explicitly authored applicability relation to a domain element; links remain citations unless
+      meaning is explicit.
     is_a: Assertion
+    annotations:
+      projection_of: Requirement.applicability_targets or BusinessRule.applicability_targets or ObligationClause.applicability_targets
     slot_usage:
       kind:
         equals_string: AppliesTo
       subject:
-        range: Requirement
+        range: SystemContextSpecification
+        any_of:
+        - range: Requirement
+        - range: BusinessRule
+        - range: ObligationClause
       object:
         range: DomainElement
   BoundaryIs:
     in_subset: [specification-traceability]
     description: An explicitly identified and resolved system boundary, never derived from directory ownership.
     is_a: Assertion
+    annotations:
+      projection_of: UseCase.boundary
     slot_usage:
       kind:
         equals_string: BoundaryIs
@@ -2290,15 +4037,36 @@ classes:
       source:
         range: SourceDocument
         required: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       role:
         range: ContextSourceRole
         required: true
       requested_by:
         range: SourceDocument
         multivalued: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       reference_occurrences:
         range: SourceReference
         multivalued: true
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "unordered"
       rule:
         range: string
         required: true
@@ -2339,6 +4107,13 @@ classes:
     attributes:
       source:
         range: SourceDocument
+        annotations:
+          relationship_category: "provenance"
+          relationship_scope: "Records in this snapshot; source locations retain their original document scope."
+          relationship_cycles: "not-applicable"
+          relationship_basis: "Recorded source or inspection evidence."
+          relationship_inverse: "none"
+          relationship_ordering: "single target"
       locator:
         range: string
       line:
@@ -2382,9 +4157,23 @@ slots:
   subject:
     range: DomainElement
     required: true
+    annotations:
+      relationship_category: "derived-projection"
+      relationship_scope: "Typed endpoints of the canonical relationship identified by projection_path."
+      relationship_cycles: "not-applicable"
+      relationship_basis: "Deterministic projection; assertions are optional views."
+      relationship_inverse: "none"
+      relationship_ordering: "single target"
   object:
     range: DomainElement
     required: true
+    annotations:
+      relationship_category: "derived-projection"
+      relationship_scope: "Typed endpoints of the canonical relationship identified by projection_path."
+      relationship_cycles: "not-applicable"
+      relationship_basis: "Deterministic projection; assertions are optional views."
+      relationship_inverse: "none"
+      relationship_ordering: "single target"
 enums:
   ReadStatus:
     description: Whether original source bytes were acquired.
@@ -2622,10 +4411,8 @@ enums:
       subattribute_of:
         description: A quality attribute parent label.
   AssertionOrigin:
-    description: Evidence for a materialized semantic relation.
+    description: Assertions are derived views; authored claims are represented by canonical domain fields and reference occurrences.
     permissible_values:
-      authored:
-        description: An explicit semantic relation in supported source syntax.
       derived:
         description: A declared deterministic mapping rule derives the relation from recorded source/model
           inputs.

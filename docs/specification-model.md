@@ -11,10 +11,10 @@ The [core domain reference](reference/model/core.md) groups the principal types
 by business, user, and software requirements, with generated relationship diagrams.
 The canonical [LinkML model](../model/dotspec.yaml) defines the records and their
 relationships. The [generated reference](reference/model/index.md) describes
-every field. The [Markdown mapping profile](../model/markdown-mapping.md) defines
+every field. The [relationship reference](reference/model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.5.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/4`.
+`model_version` is `0.8.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/7`.
 
 ## Export and validate a snapshot
 
@@ -51,6 +51,92 @@ structural findings (`0`), specification findings (`1`), and invocation or
 operational failure (`2`). Keep the JSON and inspect its diagnostics and scope
 flags when an export returns a nonzero status. An unusable invocation can fail
 before a snapshot exists.
+
+## Layered requirements traceability
+
+Business, user and software subsets describe concerns, not development stages or
+normative authority. Core/supporting/generic describes the role of model subsets.
+Artifact kinds and relationship categories remain separate axes. A software
+obligation can derive directly from a business rule; no intermediate record is
+required to complete a hierarchy. See [Requirements layers](requirements-layers.md).
+
+`TraceableElement` supplies `supports`, `derived_from`, `relies_on` and optional
+owned `ObligationClause` records. `Requirement` means the standalone obligation
+family. A clause can identify an obligation in a use case, concept, action or
+other traceable record without copying its statement into another document.
+Both clauses and standalone requirements can refine other obligations. Business
+rules can also refine obligations. Refinement is acyclic, may have multiple
+parents, and declares precision preserving the parent commitment; dotspec does
+not prove that preservation from prose.
+
+Use cases and concepts are complementary behavioral views. `UseCase.involves`
+identifies participating `ConceptUse` records; no authoring order or service
+boundary follows from it. Ordinary domain glossary terms are not automatically
+Jackson-style concepts. `applies_to` identifies the subject of an obligation,
+not a satisfying implementation. [Declare relationships](develop-relationships.md)
+provides the authoring forms and endpoint rules.
+
+```sh
+dotspec model trace --path . --relative-to docs/reference > docs/reference/traceability.md
+```
+
+This command generates a Mermaid instance diagram and motivation, behavior,
+reverse change-review, and verification-guidance tables. Inverses are derived
+from canonical fields. Its scope is the acquired snapshot, not the entire world
+of linked material. It preserves unresolved-reference and draft-review findings;
+missing motivation or check guidance is advisory. Checks, execution evidence,
+implementation satisfaction and achieved outcomes are distinct future relations,
+not conclusions inferred from reachability or existing Evidence prose.
+The [generated example](reference/requirements-traceability-example.md) demonstrates
+these views from [authored specifications](../examples/requirements-traceability/README.md).
+
+## Concept definitions and composition
+
+`Concept` describes reusable, purposeful behavior. `ConceptUse` explicitly includes
+that definition under a system-local name; directory association alone creates no
+use. Two uses of one definition have distinct conceptual state. Type parameters and
+introduced identity types are `ConceptType` records owned by their definition.
+`TypeBinding` identifies the parameter and either a primitive or both an introduced
+type and the named use supplying its identities. A type definition alone cannot
+distinguish public and internal registrations of the same Shorthand concept.
+
+`Synchronization` owns coordination at the system level. Its When, Where, Then and
+Semantics narratives remain source-backed content. Explicit action entries identify
+both a `ConceptUse` and a `ConceptAction` offered by that use's definition. Ordinary
+prose remains valid without invented action records. Application dependencies are
+explicit links between uses in one system; cycles are valid. Bindings, directory
+placement and incidental links never infer dependency edges.
+
+This separation follows Jackson's [concept criteria](https://essenceofsoftware.com/tutorials/concept-basics/criteria/)
+and [generic state/type guidance](https://essenceofsoftware.com/tutorials/concept-basics/state/).
+The type and action references are dotspec conventions, not a general expression
+language. Initial state, derived state and system-initiated actions can be described
+without imposing a database schema or scheduler.
+
+Operational principles remain narrative, with multiple stories when needed. They
+explain purpose over a characteristic history; they do not replace complete action
+behavior or actor-goal use cases. See Jackson's
+[operational-principle tutorial](https://essenceofsoftware.com/tutorials/concept-basics/principle/).
+
+Synchronization semantics must be authored. Jackson's
+[original formulation](https://essenceofsoftware.com/tutorials/concept-basics/sync/)
+uses atomic coordination; Meng and Jackson's
+[WYSIWID paper, sections 3–5](https://arxiv.org/html/2508.14511v2)
+introduces event-based rules without a required transaction across the chain.
+Dotspec records either design and claims neither is implemented. Similarly,
+[application dependencies](https://essenceofsoftware.com/tutorials/concept-basics/dependency/)
+express design rationale rather than intrinsic calls, and can be mutual.
+
+All these domain types belong to core `software-requirements`. The reuse sense of
+“generic concept” does not change the DDD classification of a model subset.
+
+`dotspec model docs --path .` generates a reference with purpose and operational
+principles first, then state and actions, followed by system composition and
+application dependency diagrams. Use `--relative-to DIR` for the directory that will
+contain the Markdown; relative source links are rebased there. No files are written
+unless the caller redirects output. The [generated example](reference/concept-design-example.md)
+comes from [authored example specifications](../examples/concept-design/specs/system.spec.md).
+The [authoring guide](develop-concepts.md) explains how to develop these descriptions.
 
 ## Use-case narratives
 
@@ -174,7 +260,7 @@ to be read. Links in those targets do not recursively expand the scan. Their
 occurrences remain represented, with resolution limited to already available
 context or explicitly marked as not attempted.
 
-Directory ownership does not set a use case's system boundary. An enclosing
+Directory-derived `system_context` does not set a use case's system boundary. It is available on non-system specifications through SystemContextSpecification. Systems use only `parent_system`; standalone QualityModels have neither field. An enclosing
 system does not silently supply inherited requirements, assumptions or quality
 attributes through another system. Each `QualityAttribute` belongs directly to
 its declaring `System` or standalone `QualityModel`. Model definitions can be
@@ -187,9 +273,33 @@ The system's
 `quality_attributes` preserves the ordered attribute references. An absent
 section and an explicitly empty section remain distinct.
 
-Assertions are typed relationship views with provenance. The exporter derives
-membership and classification assertions from canonical fields using model
-annotations. A Related jobs link, verification citation or authority paragraph
+Typed relationship fields are authoritative. Assertions are optional derived views
+with required endpoints and provenance. Each assertion records its canonical
+`projection_path`, preserving roles such as type parameters versus introduced types.
+The exporter derives these views from model annotations; the assertions collection
+is not a complete replacement for the typed graph. Reverse navigation is derived,
+except stored owner backlinks which are checked against canonical memberships.
+
+Explicit boundary, support and applicability syntax produces `UseCase.boundary`,
+`UseCase.supported_jobs`, and requirement/business-rule `applicability_targets`.
+See [Declare relationships](develop-relationships.md) for the authoring forms.
+
+Relationship categories describe containment, structural context, semantic
+association, contextual citation and derived projections. Source provenance and
+document representation supply the infrastructure categories. They do not change
+core/supporting/generic subset classifications. Each record-reference slot declares
+its scope, basis, ordering, inverse and cycle policy in the canonical schema.
+Generation rejects incomplete metadata and assertions with optional endpoints.
+Specialized scope predicates are enforced by the graph resolver; unknown scope
+produces advice rather than an incompatibility error.
+
+Section collections retain full narrative alongside any distinguished members.
+Embedded wrappers require their content directly. Sibling declaration/content
+fields declare reciprocal `paired_with` annotations and are validated generically.
+Optional decomposition fields use `requires_content` for one-way prerequisites,
+allowing prose sections without inventing parameter or action records.
+Presence is distinct from cardinality: a present empty declaration is valid, and a
+required list need not contain a member unless its minimum cardinality says so. A Related jobs link, verification citation or authority paragraph
 remains authored context; the link alone does not prove support, satisfaction,
 authority or execution evidence.
 

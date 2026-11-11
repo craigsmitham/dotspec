@@ -251,8 +251,8 @@ func TestValidationRejectsCorruptGraph(t *testing.T) {
 		name, code string
 		mutate     func(*Snapshot)
 	}{
-		{"attribute declaration without section content", "quality.declaration", func(s *Snapshot) { delete(elementKind(t, s, "System"), "quality_attributes_content") }},
-		{"section content without attribute declaration", "quality.declaration", func(s *Snapshot) { delete(elementKind(t, s, "System"), "quality_attributes") }},
+		{"attribute declaration without section content", "declaration.pair", func(s *Snapshot) { delete(elementKind(t, s, "System"), "quality_attributes_content") }},
+		{"section content without attribute declaration", "declaration.pair", func(s *Snapshot) { delete(elementKind(t, s, "System"), "quality_attributes") }},
 		{"duplicate identity", "identity.duplicate", func(s *Snapshot) { s.Elements = append(s.Elements, s.Elements[0]) }},
 		{"missing typed reference", "reference.missing", func(s *Snapshot) { elementKind(t, s, "UseCase")["main_success_scenario"] = "missing" }},
 		{"wrong reference subtype", "reference.kind", func(s *Snapshot) {
@@ -270,7 +270,7 @@ func TestValidationRejectsCorruptGraph(t *testing.T) {
 		}},
 		{"unjustified classification", "label.projection", func(s *Snapshot) { elementKind(t, s, "GeneralRequirement")["attributes"] = []string{} }},
 		{"unbound quality attributes", "label.unbound", func(s *Snapshot) {
-			delete(elementKind(t, s, "GeneralRequirement"), "owning_system")
+			delete(elementKind(t, s, "GeneralRequirement"), "system_context")
 			for _, label := range s.LabelOccurrences {
 				if String(label, "role") == "quality_classification" {
 					delete(label, "system_context")
@@ -415,7 +415,7 @@ func TestValidationAllowsFaithfulFailuresAndUnboundLabels(t *testing.T) {
 	t.Run("unbound classification is not an invalid model", func(t *testing.T) {
 		s := cloneSnapshot(t, original)
 		r := elementKind(t, s, "GeneralRequirement")
-		delete(r, "owning_system")
+		delete(r, "system_context")
 		delete(r, "attributes")
 		for _, label := range s.LabelOccurrences {
 			if String(label, "owner") == String(r, "id") {

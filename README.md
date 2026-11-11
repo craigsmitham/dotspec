@@ -42,6 +42,24 @@ A passing implementation test does not acquire authority merely by being linked.
 File discovery makes sources available together; deciding whether they adequately
 specify a system remains an authoring and review task.
 
+## Follow requirements across layers
+
+Business goals and rules, user jobs and outcomes, and software behavior are
+connected views. Explicit relationships distinguish support, derivation,
+refinement, assumptions, applicability and concept participation. Use cases and
+concepts are complementary; neither requires the other to be authored first.
+An obligation can be identified inside an existing specification without copying
+it to a separate requirement document.
+
+```sh
+dotspec model trace --path . --relative-to docs/reference
+```
+
+See [Requirements layers](docs/requirements-layers.md) for the model's meaning,
+[Declare relationships](docs/develop-relationships.md) for authoring, and the
+[generated traceability example](docs/reference/requirements-traceability-example.md)
+for motivation, behavior, change-review and verification-guidance views.
+
 ## Run
 
 With Go 1.27.3 or later installed:
@@ -375,7 +393,7 @@ above. Other results contain:
 | `job list` | `groups`, each with a nullable `system` and a `jobs` array |
 | `use-case show` | `use_case`, including its authored Markdown, conventional section bodies, and nullable `system` |
 | `use-case list` | `groups`, each with a nullable `system` and a `use_cases` array |
-| `concept show` | `concept`, including its authored Markdown, four conventional section bodies, and nullable `system` |
+| `concept show` | `concept`, including its authored Markdown, conventional section bodies, optional type declarations, and nullable `system` |
 | `concept list` | `groups`, each with a nullable `system` and a `concepts` array |
 | `requirement show` | `requirement`, including its authored Markdown, statement, verification, attributes, and nullable `system` |
 | `requirement list` | `groups`, each with a nullable `system` and a `requirements` array containing general and quality requirements |
@@ -1022,7 +1040,9 @@ Create a task to remember work. Complete it when the work is finished.
 If more work is needed, reopen the same task and complete it again.
 ```
 
-The four conventional section names are case-sensitive H2 headings. Their order
+The four basic section names are case-sensitive H2 headings. `Operational principles`
+is an alias for `Operational principle`; use either spelling, once. Optional
+`Type parameters` and `Introduced types` sections declare named types. Their order
 is flexible, and each may appear at most once. Missing or empty sections produce
 advice, so unfinished concepts remain readable. Additional sections and nested
 headings remain authored Markdown. A nested heading named `State`, for example,
@@ -1030,8 +1050,9 @@ belongs to its containing section and does not replace the concept's H2 `State`.
 
 State describes the information needed to explain behavior; it need not match a
 database schema. Actions can use prose, tables, code blocks, or links to governing
-artifacts. Action subheadings have ordinary Markdown anchors, but are not separate
-records. Describe inputs, outputs, conditions, rejection behavior, and effects
+artifacts. Action subheadings have ordinary Markdown anchors. Authoring commands
+retain their Markdown; model export also creates `ConceptAction` records. Describe
+inputs, outputs, conditions, rejection behavior, and effects
 where relevant. Distinguish caller assumptions from enforced guards explicitly;
 no heading or notation automatically selects contract semantics.
 
@@ -1042,12 +1063,23 @@ relative file links are validated by check commands, while remote links remain
 navigation. A link alone
 does not designate an authoritative definition or associate a test result.
 
-Use cases can reference concept actions. Product-level rules composing several
-concepts belong in a shared composition description, linked from the participating
-views. Generic bindings such as `TaskLists = Collection<TaskId>` can be described
-in an additional section with a link to the generic definition. Typed bindings,
-synchronization records, cross-file identity, and executable authority are not
-part of this format.
+Use cases can reference concept actions. Product-level coordination belongs in
+explicit `Concept uses` and `Synchronizations` sections of a system specification.
+A named use references a reusable concept definition and can bind its type
+parameters to primitives or types introduced by another named use. Synchronization
+actions identify both the use and the action. `Dependencies` on a use describe its
+application-specific role; they do not mean that concepts call one another.
+
+Model export resolves these declarations within the acquired reference scope and
+reports mistyped or incorrectly scoped references. Unresolved drafts retain their
+source. No field or link implies atomicity, execution, full type-expression checking,
+or verified behavior. See [Develop concepts](docs/develop-concepts.md) for the
+complete Markdown conventions and [the generated example](docs/reference/concept-design-example.md)
+for definitions, composition and dependency diagrams.
+
+```sh
+dotspec model docs --path examples/concept-design --relative-to docs/reference
+```
 
 See [Job Map](specs/concepts/job-map.concept.spec.md) and
 [Specification Inspection](specs/concepts/specification-inspection.concept.spec.md)
@@ -1328,3 +1360,8 @@ prohibited paths produce `reference.boundary`. I/O failures produce
 References establish navigation and explicit connections. They do not infer
 normative authority, automatic inheritance, consistency, or requirement
 satisfaction.
+
+For explicit boundary, job-support and applicability links, see
+[Declare relationships between specifications](docs/develop-relationships.md).
+The generated [relationship reference](docs/reference/model/relationships.md)
+documents the metamodel's edge categories, cardinalities, scope and projections.

@@ -4,7 +4,11 @@ func (m *domainMapper) concept(r Record, s *Section) bool {
 	switch s.Title {
 	case "Purpose":
 		m.section(r, "purpose", s)
-	case "Operational principle":
+	case "Type parameters":
+		m.conceptTypes(r, s, "type_parameters")
+	case "Introduced types":
+		m.conceptTypes(r, s, "introduced_types")
+	case "Operational principle", "Operational principles":
 		m.section(r, "operational_principle", s)
 	case "State":
 		v := Record{"content": m.doc.Rich(s.Content)}
@@ -15,6 +19,10 @@ func (m *domainMapper) concept(r Record, s *Section) bool {
 			elements = append(elements, Record{"description": m.doc.Rich([]string{id})})
 		}
 		for _, sub := range s.Children {
+			if sub.Title == "Initial state" {
+				m.setRich(v, "initial_state", sub.Content)
+				continue
+			}
 			if sub.Title == "Invariants" {
 				old, _ := v["invariants"].([]Record)
 				next, _ := Object(m.conditions(sub))["conditions"].([]Record)
@@ -23,9 +31,12 @@ func (m *domainMapper) concept(r Record, s *Section) bool {
 			}
 			x := Record{"name": m.doc.Rich([]string{sub.HeadingID}), "description": m.doc.Rich(sub.Content)}
 			for _, detail := range sub.Children {
-				if detail.Title == "Value" || detail.Title == "Values" || detail.Title == "Type" {
+				switch detail.Title {
+				case "Value", "Values", "Type":
 					m.setRich(x, "value_description", detail.Content)
-				} else {
+				case "Derivation":
+					m.setRich(x, "derivation", detail.Content)
+				default:
 					m.extension(r, detail)
 				}
 			}
@@ -40,9 +51,15 @@ func (m *domainMapper) concept(r Record, s *Section) bool {
 			x := m.named("ConceptAction", r, sub)
 			m.section(x, "description", sub)
 			for _, detail := range sub.Children {
-				field := map[string]string{"Inputs": "inputs", "Outputs": "outputs", "Effects": "effects", "Rejections": "rejections", "Rejection behavior": "rejections"}[detail.Title]
+				field := map[string]string{"Inputs": "inputs", "Outputs": "outputs", "Initiation": "initiation", "Effects": "effects", "Rejections": "rejections", "Rejection behavior": "rejections"}[detail.Title]
 				if field != "" {
 					m.section(x, field, detail)
+					if field == "inputs" {
+						m.actionParameters(x, detail, "input_parameters")
+					}
+					if field == "outputs" {
+						m.actionParameters(x, detail, "output_parameters")
+					}
 					continue
 				}
 				switch detail.Title {
@@ -70,6 +87,7 @@ func (m *domainMapper) requirement(r Record, s *Section, kind string) bool {
 	case "Rationale":
 		m.section(r, "rationale", s)
 	case "Applies to":
+		m.designField(r, "applicability_targets", s, "Targets")
 		m.wrapper(r, "applies_to", s, map[string]string{"Conditions": "conditions", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"}, "Subject", "Subjects")
 		for _, sub := range s.Children {
 			if sub.Title == "Subjects" || sub.Title == "Subject" {

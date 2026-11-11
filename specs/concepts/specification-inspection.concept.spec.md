@@ -43,18 +43,6 @@ Inspect it and its required system and reference context using the same
 diagnostic rules as the project check. Sibling specifications are consulted only
 when referenced by the selected specification or its system context.
 
-### Read findings and inspect again
-
-Use source locations to find problems, edit the source, and request another
-inspection. Within a malformed file, only the first structural error is
-reported and dependent checks are skipped.
-[Continued inspection](../requirements/continue-after-invalid-spec.requirement.spec.md)
-governs progress through the other files. Fixing one error can expose another
-on the next run.
-[Advice permits success](../requirements/advice-permits-success.requirement.spec.md)
-governs the effect of advisory findings on exit status. An access or discovery failure leaves the scan
-incomplete, separately from structural findings in readable files.
-
 ## Operational principle
 
 Before committing a change, inspect the project and read the findings. Correct
@@ -66,3 +54,15 @@ requirements completeness, stakeholder agreement, or satisfaction.
 
 The [check-before-committing use case](../use-cases/check-specifications.use-case.spec.md)
 places this behavior in a contributor's workflow.
+
+### Read findings and inspect again
+
+Use source locations to find problems, edit the source, and request another
+inspection. Within a malformed file, only the first structural error is
+reported and dependent checks are skipped.
+[Continued inspection](../requirements/continue-after-invalid-spec.requirement.spec.md)
+governs progress through the other files. Fixing one error can expose another
+on the next run.
+[Advice permits success](../requirements/advice-permits-success.requirement.spec.md)
+governs the effect of advisory findings on exit status. An access or discovery failure leaves the scan
+incomplete, separately from structural findings in readable files.

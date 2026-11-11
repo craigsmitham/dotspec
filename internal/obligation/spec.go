@@ -51,6 +51,9 @@ func Parse(data []byte, kind, statementHeading, verificationHeading string) (*Co
 	if err := ids.Register(spec.ID, kind, specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, "", "", err
 	}
+	if err := ids.RegisterObligations(doc); err != nil {
+		return nil, "", "", err
+	}
 	ids.AddAnchors(doc.Anchors)
 	var statement, verification string
 	fields := map[string]*string{

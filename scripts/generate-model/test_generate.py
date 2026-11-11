@@ -68,6 +68,10 @@ class CatalogTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "absent field JobMap.missing"):
             generate.validate_annotations(catalog)
         catalog = copy.deepcopy(self.catalog)
+        catalog["classes"]["ActionCollection"]["slots"]["actions"]["annotations"]["relationship_category"] = "semantic-association"
+        with self.assertRaisesRegex(ValueError, "membership must declare containment"):
+            generate.validate_annotations(catalog)
+        catalog = copy.deepcopy(self.catalog)
         catalog["classes"]["HasJobStep"]["annotations"]["projection_of"] = "Concept.actions.actions"
         with self.assertRaisesRegex(ValueError, "projection violates declared assertion endpoints"):
             generate.validate_annotations(catalog)
@@ -77,6 +81,32 @@ class CatalogTests(unittest.TestCase):
         for name in view.all_classes():
             expected = {str(slot.name) for slot in view.class_induced_slots(name)}
             self.assertEqual(set(self.catalog["classes"][name]["slots"]), expected, name)
+
+
+    def test_relationship_contracts_are_complete_and_required(self):
+        from relationships import validate_relationships, relationships_markdown
+        validate_relationships(self.catalog)
+        reference = relationships_markdown(self.catalog).decode()
+        self.assertIn('ConceptUse.definition', reference)
+        self.assertIn('ContextualReferences.references', reference)
+        self.assertIn('projection_path', reference)
+        self.assertNotIn('system_context', self.catalog['classes']['System']['slots'])
+        self.assertNotIn('system_context', self.catalog['classes']['QualityModel']['slots'])
+        for mutate, message in [
+            (lambda c: c['classes']['UsesConcept']['slots']['subject'].update(required=False), 'endpoints must be required'),
+            (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].pop('relationship_scope'), 'missing relationship metadata'),
+            (lambda c: c['classes']['ConceptUse']['slots']['bindings']['annotations'].update(paired_with='missing'), 'reciprocal peer'),
+            (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].update(relationship_cycles='guess'), 'cycle policy'),
+            (lambda c: c['classes']['SupportsJob']['annotations'].pop('projection_of'), 'canonical projection fields'),
+            (lambda c: c['classes']['UseCase']['slots']['involves']['annotations'].update(trace_targets='Concept'), 'canonical endpoint ranges'),
+            (lambda c: c['classes']['Requirement']['slots']['refines']['annotations'].pop('trace_heading'), 'paired and unique'),
+            (lambda c: c['classes']['UseCase']['slots']['supports']['annotations'].update(trace_heading='Involves'), 'paired and unique'),
+            (lambda c: c['classes']['UseCase']['slots']['involves_references'].update(range='Record'), 'source-reference occurrences'),
+        ]:
+            catalog = copy.deepcopy(self.catalog)
+            mutate(catalog)
+            with self.assertRaisesRegex(ValueError, message):
+                validate_relationships(catalog)
 
 
 class GenerationPortabilityTests(unittest.TestCase):
@@ -159,12 +189,12 @@ class ModelViewTests(unittest.TestCase):
     def test_diagram_edges_follow_model_endpoint_changes(self):
         from model_views import core_markdown
         c = copy.deepcopy(self.catalog)
-        c['classes']['BusinessRule']['slots']['owning_system']['reference_ranges'] = ['Concept']
+        c['classes']['BusinessRule']['slots']['system_context']['reference_ranges'] = ['Concept']
         v = copy.deepcopy(self.view)
         v['diagrams'][0]['show_cardinality'] = True
         output = core_markdown(c, v).decode()
-        self.assertIn('BusinessRule --> "0..1" Concept : owning_system', output)
-        self.assertNotIn('BusinessRule --> "0..1" System : owning_system', output)
+        self.assertIn('BusinessRule ..> "0..1" Concept : system_context', output)
+        self.assertNotIn('BusinessRule ..> "0..1" System : system_context', output)
         self.assertIn('Requirement <|-- QualityRequirement', output)
         self.assertNotIn('enforces -->', output)
 

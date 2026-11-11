@@ -20,6 +20,81 @@
             "title": "ActionCollection",
             "type": "object"
         },
+        "ActionParameter": {
+            "additionalProperties": false,
+            "description": "An explicitly named input or result. Type descriptions can remain prose; linked types and primitive names are optional.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "ActionParameter",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "open_decisions": {
+                    "$ref": "#/$defs/OpenDecisionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "primitive": {
+                    "type": "string"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "type_description": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "type_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "owner",
+                "content",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "ActionParameter",
+            "type": "object"
+        },
         "ActorCollection": {
             "additionalProperties": false,
             "description": "Supporting actors narrative and explicitly separated mentions.",
@@ -126,6 +201,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -139,12 +218,18 @@
                     "type": "array"
                 },
                 "subject": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
                     "type": "string"
                 }
             },
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
@@ -154,7 +239,7 @@
         },
         "Assertion": {
             "additionalProperties": false,
-            "description": "A materialized typed semantic relation with explicit provenance. Ordinary source links remain SourceReference occurrences and do not automatically become assertions.",
+            "description": "An optional derived relationship view of canonical typed fields, with required endpoints and explicit provenance. Ordinary source links remain SourceReference occurrences and do not automatically become assertions.",
             "properties": {
                 "id": {
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
@@ -182,6 +267,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -201,6 +290,7 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
@@ -209,9 +299,8 @@
             "type": "object"
         },
         "AssertionOrigin": {
-            "description": "Evidence for a materialized semantic relation.",
+            "description": "Assertions are derived views; authored claims are represented by canonical domain fields and reference occurrences.",
             "enum": [
-                "authored",
                 "derived"
             ],
             "title": "AssertionOrigin",
@@ -227,6 +316,28 @@
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -249,12 +360,38 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
                     "type": "string"
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "source_document": {
                     "type": "string"
@@ -264,6 +401,28 @@
                 },
                 "statement": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -350,6 +509,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -369,6 +532,7 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
@@ -380,6 +544,18 @@
             "additionalProperties": false,
             "description": "A declarative business constraint independent of the software or process that enforces it.",
             "properties": {
+                "applicability_targets": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "applicability_targets_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "applies_to": {
                     "$ref": "#/$defs/Applicability"
                 },
@@ -397,6 +573,28 @@
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
@@ -430,13 +628,18 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Recognized Notes content."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
-                },
-                "owning_system": {
-                    "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
-                    "type": "string"
                 },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
@@ -444,6 +647,28 @@
                 },
                 "rationale": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "refines": {
+                    "description": "Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "refines_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "refines_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "related_concepts": {
                     "$ref": "#/$defs/ContextualReferences"
@@ -454,6 +679,23 @@
                 "related_use_cases": {
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "slug": {
                     "description": "Path-derived current slug where applicable.",
@@ -468,6 +710,32 @@
                 "statement": {
                     "$ref": "#/$defs/RichContent",
                     "description": "The rule expressed in business language, independently of enforcement."
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "system_context": {
+                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "type": "string"
                 }
             },
             "required": [
@@ -528,6 +796,28 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
@@ -543,6 +833,15 @@
                     "pattern": "[\\s\\S]+",
                     "type": "string"
                 },
+                "introduced_types": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "introduced_types_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "kind": {
                     "const": "Concept",
                     "description": "Concrete record type discriminator.",
@@ -556,16 +855,21 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Recognized Notes content."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "operational_principle": {
                     "$ref": "#/$defs/RichContent"
-                },
-                "owning_system": {
-                    "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
-                    "type": "string"
                 },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
@@ -584,6 +888,23 @@
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
                 },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "slug": {
                     "description": "Path-derived current slug where applicable.",
                     "type": "string"
@@ -593,6 +914,41 @@
                 },
                 "source_fragment": {
                     "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "system_context": {
+                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "type": "string"
+                },
+                "type_parameters": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "type_parameters_content": {
+                    "$ref": "#/$defs/RichContent"
                 }
             },
             "required": [
@@ -618,6 +974,28 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "description": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -639,6 +1017,16 @@
                     "pattern": "[\\s\\S]+",
                     "type": "string"
                 },
+                "initiation": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored initiation conditions, including user or system actions; no scheduler or caller is inferred."
+                },
+                "input_parameters": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "inputs": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -651,9 +1039,24 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "output_parameters": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "outputs": {
                     "$ref": "#/$defs/RichContent"
@@ -664,11 +1067,50 @@
                 "rejections": {
                     "$ref": "#/$defs/RichContent"
                 },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "source_document": {
                     "type": "string"
                 },
                 "source_fragment": {
                     "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -679,6 +1121,294 @@
                 "kind"
             ],
             "title": "ConceptAction",
+            "type": "object"
+        },
+        "ConceptDependency": {
+            "additionalProperties": false,
+            "description": "Projection of the explicitly declared ConceptUse.dependencies relationship.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "ConceptDependency",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "ConceptDependency",
+            "type": "object"
+        },
+        "ConceptType": {
+            "additionalProperties": false,
+            "description": "A type parameter or introduced identity type, scoped to one concept definition. Membership distinguishes its role.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "ConceptType",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "open_decisions": {
+                    "$ref": "#/$defs/OpenDecisionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "owner",
+                "content",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "ConceptType",
+            "type": "object"
+        },
+        "ConceptUse": {
+            "additionalProperties": false,
+            "description": "An explicitly named design-time inclusion of a concept in a system. Multiple uses of one definition remain distinct; directory association creates no use.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "bindings": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "bindings_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "configuration": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "definition": {
+                    "type": "string"
+                },
+                "definition_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "dependencies": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "dependencies_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "dependencies_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "ConceptUse",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "open_decisions": {
+                    "$ref": "#/$defs/OpenDecisionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "owner",
+                "content",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "ConceptUse",
             "type": "object"
         },
         "Condition": {
@@ -729,6 +1459,28 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -750,12 +1502,38 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
                     "type": "string"
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "source_document": {
                     "type": "string"
@@ -765,6 +1543,28 @@
                 },
                 "statement": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -1156,6 +1956,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -1180,6 +1984,7 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
@@ -1198,6 +2003,73 @@
             ],
             "title": "DecompositionStatus",
             "type": "string"
+        },
+        "DerivedFrom": {
+            "additionalProperties": false,
+            "description": "Explicit basis, not logical entailment.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "DerivedFrom",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "DerivedFrom",
+            "type": "object"
         },
         "Diagnostic": {
             "additionalProperties": false,
@@ -1844,6 +2716,18 @@
             "additionalProperties": false,
             "description": "A general obligation with authored verification guidance.",
             "properties": {
+                "applicability_targets": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "applicability_targets_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "applies_to": {
                     "$ref": "#/$defs/Applicability"
                 },
@@ -1876,6 +2760,28 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
@@ -1904,13 +2810,18 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Recognized Notes content."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
-                },
-                "owning_system": {
-                    "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
-                    "type": "string"
                 },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
@@ -1918,6 +2829,28 @@
                 },
                 "rationale": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "refines": {
+                    "description": "Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "refines_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "refines_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "related_concepts": {
                     "$ref": "#/$defs/ContextualReferences"
@@ -1928,6 +2861,23 @@
                 "related_use_cases": {
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "slug": {
                     "description": "Path-derived current slug where applicable.",
@@ -1941,6 +2891,32 @@
                 },
                 "statement": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "system_context": {
+                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "type": "string"
                 },
                 "verification": {
                     "$ref": "#/$defs/VerificationPlan"
@@ -2127,6 +3103,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -2146,11 +3126,136 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
             ],
             "title": "HasConceptAction",
+            "type": "object"
+        },
+        "HasConceptType": {
+            "additionalProperties": false,
+            "description": "Projection of the explicitly declared Concept.type_parameters or Concept.introduced_types relationship.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "HasConceptType",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "HasConceptType",
+            "type": "object"
+        },
+        "HasConceptUse": {
+            "additionalProperties": false,
+            "description": "Projection of the explicitly declared System.concept_uses relationship.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "HasConceptUse",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "HasConceptUse",
             "type": "object"
         },
         "HasExtension": {
@@ -2184,6 +3289,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -2208,6 +3317,7 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
@@ -2246,6 +3356,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -2265,11 +3379,74 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
             ],
             "title": "HasJobStep",
+            "type": "object"
+        },
+        "HasObligation": {
+            "additionalProperties": false,
+            "description": "Explicitly distinguished obligation expression.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "HasObligation",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "HasObligation",
             "type": "object"
         },
         "HasOutcome": {
@@ -2303,6 +3480,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -2327,6 +3508,7 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
@@ -2365,6 +3547,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -2384,6 +3570,7 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
@@ -2422,6 +3609,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -2441,6 +3632,7 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
@@ -2479,6 +3671,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -2503,11 +3699,260 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
             ],
             "title": "HasScenarioStep",
+            "type": "object"
+        },
+        "HasSynchronization": {
+            "additionalProperties": false,
+            "description": "Projection of the explicitly declared System.synchronizations relationship.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "HasSynchronization",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "HasSynchronization",
+            "type": "object"
+        },
+        "HasTypeBinding": {
+            "additionalProperties": false,
+            "description": "Projection of the explicitly declared ConceptUse.bindings relationship.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "HasTypeBinding",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "HasTypeBinding",
+            "type": "object"
+        },
+        "InSystemContext": {
+            "additionalProperties": false,
+            "description": "Directory-derived context of a specification, independent of system boundary and applicability.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "InSystemContext",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "InSystemContext",
+            "type": "object"
+        },
+        "Involves": {
+            "additionalProperties": false,
+            "description": "Participation in an actor-goal interaction.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "Involves",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "Involves",
             "type": "object"
         },
         "Job": {
@@ -2528,6 +3973,28 @@
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
@@ -2563,16 +4030,21 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Recognized Notes content."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "outcomes": {
                     "$ref": "#/$defs/OutcomeCollection"
-                },
-                "owning_system": {
-                    "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
-                    "type": "string"
                 },
                 "performer": {
                     "$ref": "#/$defs/RichContent"
@@ -2594,6 +4066,23 @@
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
                 },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "situation": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -2613,6 +4102,32 @@
                 },
                 "steps": {
                     "$ref": "#/$defs/JobMap"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "system_context": {
+                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "type": "string"
                 }
             },
             "required": [
@@ -2656,6 +4171,28 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "description": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -2680,6 +4217,15 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
@@ -2690,6 +4236,23 @@
                 "owner": {
                     "type": "string"
                 },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "source_document": {
                     "type": "string"
                 },
@@ -2699,6 +4262,28 @@
                 "stage": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored stage value; unrestricted vocabulary and repeated labels are valid."
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -2851,6 +4436,178 @@
             "title": "NodeKind",
             "type": "string"
         },
+        "ObligationClause": {
+            "additionalProperties": false,
+            "description": "An explicitly distinguished obligation within an existing specification or behavioral model. Its content is the authored expression, not a duplicate requirement document. Project authority determines acceptance; declaration alone does not.",
+            "properties": {
+                "applicability_targets": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "applicability_targets_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "applies_to": {
+                    "$ref": "#/$defs/Applicability"
+                },
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "ObligationClause",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "open_decisions": {
+                    "$ref": "#/$defs/OpenDecisionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "rationale": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "refines": {
+                    "description": "Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "refines_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "refines_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "statement": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "verification": {
+                    "$ref": "#/$defs/VerificationPlan"
+                }
+            },
+            "required": [
+                "owner",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "ObligationClause",
+            "type": "object"
+        },
         "OffsetMapSegment": {
             "additionalProperties": false,
             "description": "Maps a normalized parser buffer interval to original bytes; segments must be monotone and account for removals/replacements such as BOM and CRLF.",
@@ -2931,6 +4688,28 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -2952,6 +4731,15 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
@@ -2963,6 +4751,23 @@
                         }
                     ],
                     "type": "string"
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "source_document": {
                     "type": "string"
@@ -2976,6 +4781,28 @@
                 "supporting_content": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Explicit support prose or nested bullets belonging to the outcome."
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -3006,63 +4833,6 @@
                 "content"
             ],
             "title": "OutcomeCollection",
-            "type": "object"
-        },
-        "OwnedBySystem": {
-            "additionalProperties": false,
-            "description": "Directory ownership of a specification, independent of system boundary and applicability.",
-            "properties": {
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "kind": {
-                    "const": "OwnedBySystem",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
-                    "type": "string"
-                },
-                "object": {
-                    "type": "string"
-                },
-                "origin": {
-                    "$ref": "#/$defs/AssertionOrigin"
-                },
-                "source_nodes": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "source_spans": {
-                    "items": {
-                        "$ref": "#/$defs/ByteSpan"
-                    },
-                    "type": "array"
-                },
-                "subject": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "subject",
-                "object",
-                "origin",
-                "id",
-                "kind"
-            ],
-            "title": "OwnedBySystem",
             "type": "object"
         },
         "ParentSystem": {
@@ -3096,6 +4866,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -3115,6 +4889,7 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
@@ -3355,6 +5130,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -3374,6 +5153,7 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
@@ -3447,6 +5227,28 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "description": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -3481,13 +5283,18 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Recognized Notes content."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
-                },
-                "owning_system": {
-                    "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
-                    "type": "string"
                 },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
@@ -3514,6 +5321,23 @@
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
                 },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "slug": {
                     "description": "Path-derived current slug where applicable.",
                     "type": "string"
@@ -3526,6 +5350,28 @@
                 },
                 "sources": {
                     "$ref": "#/$defs/ContextualReferences"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -3541,6 +5387,18 @@
             "additionalProperties": false,
             "description": "A quality obligation with authored criterion and measurement guidance; quantitative targets are optional.",
             "properties": {
+                "applicability_targets": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "applicability_targets_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "applies_to": {
                     "$ref": "#/$defs/Applicability"
                 },
@@ -3576,6 +5434,28 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
@@ -3607,13 +5487,18 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Recognized Notes content."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
-                },
-                "owning_system": {
-                    "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
-                    "type": "string"
                 },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
@@ -3621,6 +5506,28 @@
                 },
                 "rationale": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "refines": {
+                    "description": "Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "refines_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "refines_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "related_concepts": {
                     "$ref": "#/$defs/ContextualReferences"
@@ -3632,6 +5539,23 @@
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
                 },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "slug": {
                     "description": "Path-derived current slug where applicable.",
                     "type": "string"
@@ -3640,6 +5564,32 @@
                     "type": "string"
                 },
                 "source_fragment": {
+                    "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "system_context": {
+                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
                     "type": "string"
                 }
             },
@@ -3744,10 +5694,151 @@
             "title": "ReferenceTraversalMode",
             "type": "string"
         },
+        "Refines": {
+            "additionalProperties": false,
+            "description": "More precise obligation preserving its parent commitment.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "Refines",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "Refines",
+            "type": "object"
+        },
+        "ReliesOn": {
+            "additionalProperties": false,
+            "description": "Conditional validity under an assumption.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "ReliesOn",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "ReliesOn",
+            "type": "object"
+        },
         "Requirement": {
             "additionalProperties": false,
-            "description": "Shared obligation content, applicability, rationale and source classification labels.",
+            "description": "A standalone obligation specification. Obligations can also be expressed in use cases and concept contracts; this document family is not the superclass of every normative expression.",
             "properties": {
+                "applicability_targets": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "applicability_targets_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "applies_to": {
                     "$ref": "#/$defs/Applicability"
                 },
@@ -3780,6 +5871,28 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
@@ -3807,13 +5920,18 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Recognized Notes content."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
-                },
-                "owning_system": {
-                    "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
-                    "type": "string"
                 },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
@@ -3821,6 +5939,28 @@
                 },
                 "rationale": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "refines": {
+                    "description": "Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "refines_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "refines_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "related_concepts": {
                     "$ref": "#/$defs/ContextualReferences"
@@ -3832,6 +5972,23 @@
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
                 },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "slug": {
                     "description": "Path-derived current slug where applicable.",
                     "type": "string"
@@ -3840,6 +5997,32 @@
                     "type": "string"
                 },
                 "source_fragment": {
+                    "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "system_context": {
+                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
                     "type": "string"
                 }
             },
@@ -4316,10 +6499,28 @@
                     "items": {
                         "anyOf": [
                             {
+                                "$ref": "#/$defs/Supports"
+                            },
+                            {
+                                "$ref": "#/$defs/DerivedFrom"
+                            },
+                            {
+                                "$ref": "#/$defs/ReliesOn"
+                            },
+                            {
+                                "$ref": "#/$defs/Refines"
+                            },
+                            {
+                                "$ref": "#/$defs/Involves"
+                            },
+                            {
+                                "$ref": "#/$defs/HasObligation"
+                            },
+                            {
                                 "$ref": "#/$defs/ParentSystem"
                             },
                             {
-                                "$ref": "#/$defs/OwnedBySystem"
+                                "$ref": "#/$defs/InSystemContext"
                             },
                             {
                                 "$ref": "#/$defs/HasJobStep"
@@ -4341,6 +6542,24 @@
                             },
                             {
                                 "$ref": "#/$defs/HasConceptAction"
+                            },
+                            {
+                                "$ref": "#/$defs/UsesConcept"
+                            },
+                            {
+                                "$ref": "#/$defs/HasConceptUse"
+                            },
+                            {
+                                "$ref": "#/$defs/HasSynchronization"
+                            },
+                            {
+                                "$ref": "#/$defs/ConceptDependency"
+                            },
+                            {
+                                "$ref": "#/$defs/HasConceptType"
+                            },
+                            {
+                                "$ref": "#/$defs/HasTypeBinding"
                             },
                             {
                                 "$ref": "#/$defs/DeclaresQualityAttribute"
@@ -4401,25 +6620,10 @@
                     "items": {
                         "anyOf": [
                             {
-                                "$ref": "#/$defs/SystemGoal"
-                            },
-                            {
-                                "$ref": "#/$defs/Assumption"
-                            },
-                            {
-                                "$ref": "#/$defs/Constraint"
-                            },
-                            {
                                 "$ref": "#/$defs/GlossaryTerm"
                             },
                             {
                                 "$ref": "#/$defs/QualityAttribute"
-                            },
-                            {
-                                "$ref": "#/$defs/JobStep"
-                            },
-                            {
-                                "$ref": "#/$defs/Outcome"
                             },
                             {
                                 "$ref": "#/$defs/ProgressCase"
@@ -4437,19 +6641,55 @@
                                 "$ref": "#/$defs/Extension"
                             },
                             {
-                                "$ref": "#/$defs/ConceptAction"
+                                "$ref": "#/$defs/ConceptType"
+                            },
+                            {
+                                "$ref": "#/$defs/ActionParameter"
+                            },
+                            {
+                                "$ref": "#/$defs/TypeBinding"
+                            },
+                            {
+                                "$ref": "#/$defs/SynchronizationAction"
                             },
                             {
                                 "$ref": "#/$defs/ExtensionSection"
                             },
                             {
-                                "$ref": "#/$defs/BusinessRule"
+                                "$ref": "#/$defs/SystemGoal"
+                            },
+                            {
+                                "$ref": "#/$defs/Assumption"
+                            },
+                            {
+                                "$ref": "#/$defs/Constraint"
+                            },
+                            {
+                                "$ref": "#/$defs/JobStep"
+                            },
+                            {
+                                "$ref": "#/$defs/Outcome"
+                            },
+                            {
+                                "$ref": "#/$defs/ConceptAction"
+                            },
+                            {
+                                "$ref": "#/$defs/ConceptUse"
+                            },
+                            {
+                                "$ref": "#/$defs/Synchronization"
+                            },
+                            {
+                                "$ref": "#/$defs/ObligationClause"
                             },
                             {
                                 "$ref": "#/$defs/QualityModel"
                             },
                             {
                                 "$ref": "#/$defs/System"
+                            },
+                            {
+                                "$ref": "#/$defs/BusinessRule"
                             },
                             {
                                 "$ref": "#/$defs/Job"
@@ -4487,7 +6727,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.5.0-draft",
+                    "const": "0.8.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -4897,6 +7137,28 @@
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
                 },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
                 },
@@ -4924,13 +7186,18 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Recognized Notes content."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
-                },
-                "owning_system": {
-                    "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
-                    "type": "string"
                 },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
@@ -4946,6 +7213,23 @@
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
                 },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "slug": {
                     "description": "Path-derived current slug where applicable.",
                     "type": "string"
@@ -4955,6 +7239,28 @@
                 },
                 "source_fragment": {
                     "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -5034,6 +7340,9 @@
                     },
                     "type": "array"
                 },
+                "initial_state": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "invariants": {
                     "items": {
                         "$ref": "#/$defs/Condition"
@@ -5051,6 +7360,9 @@
             "additionalProperties": false,
             "description": "An explicitly named abstract state component.",
             "properties": {
+                "derivation": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "description": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -5095,6 +7407,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -5114,11 +7430,79 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
             ],
             "title": "SubattributeOf",
+            "type": "object"
+        },
+        "Supports": {
+            "additionalProperties": false,
+            "description": "Intended contribution, not achievement.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "Supports",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "Supports",
             "type": "object"
         },
         "SupportsJob": {
@@ -5157,6 +7541,10 @@
                 "origin": {
                     "$ref": "#/$defs/AssertionOrigin"
                 },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
                 "source_nodes": {
                     "items": {
                         "type": "string"
@@ -5176,11 +7564,250 @@
             "required": [
                 "subject",
                 "object",
+                "projection_path",
                 "origin",
                 "id",
                 "kind"
             ],
             "title": "SupportsJob",
+            "type": "object"
+        },
+        "Synchronization": {
+            "additionalProperties": false,
+            "description": "A system-owned composition rule. Narrative and action references describe coordination; no atomicity, execution or completeness is inferred.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "Synchronization",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "open_decisions": {
+                    "$ref": "#/$defs/OpenDecisionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "semantics": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "then": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "then_actions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "when": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "when_actions": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "where": {
+                    "$ref": "#/$defs/RichContent"
+                }
+            },
+            "required": [
+                "owner",
+                "content",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "Synchronization",
+            "type": "object"
+        },
+        "SynchronizationAction": {
+            "additionalProperties": false,
+            "description": "An authored action occurrence or invocation within a synchronization, qualified by a concept use. Conditions and arguments remain authored content.",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "action_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "arguments": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "concept_use": {
+                    "type": "string"
+                },
+                "concept_use_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "SynchronizationAction",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "open_decisions": {
+                    "$ref": "#/$defs/OpenDecisionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "result": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "owner",
+                "content",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "SynchronizationAction",
             "type": "object"
         },
         "SyntaxProperty": {
@@ -5223,11 +7850,42 @@
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
                 },
+                "concept_uses": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "concept_uses_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "constraints": {
                     "$ref": "#/$defs/ConstraintCollection"
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "environment": {
                     "$ref": "#/$defs/EnvironmentDescription"
@@ -5266,13 +7924,18 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Recognized Notes content."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
-                },
-                "owning_system": {
-                    "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
-                    "type": "string"
                 },
                 "parent_system": {
                     "description": "Directory-derived containment; no inheritance of requirements, labels, or thresholds.",
@@ -5306,6 +7969,23 @@
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
                 },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "scope": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -5318,6 +7998,37 @@
                 },
                 "source_fragment": {
                     "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "synchronizations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "synchronizations_content": {
+                    "$ref": "#/$defs/RichContent"
                 }
             },
             "required": [
@@ -5327,6 +8038,164 @@
                 "kind"
             ],
             "title": "System",
+            "type": "object"
+        },
+        "SystemContextSpecification": {
+            "additionalProperties": false,
+            "description": "A non-system specification with optional directory-derived system context. Systems use parent_system; reusable quality models stand independently.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "authority_and_evidence": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
+                "business_rules": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "evidence": {
+                    "$ref": "#/$defs/EvidenceCollection"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Recognized Notes content."
+                },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "open_decisions": {
+                    "$ref": "#/$defs/OpenDecisionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "preamble": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored content between the title and the first named section."
+                },
+                "related_concepts": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_specifications": {
+                    "$ref": "#/$defs/ContextualReferences"
+                },
+                "related_use_cases": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "slug": {
+                    "description": "Path-derived current slug where applicable.",
+                    "type": "string"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "system_context": {
+                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "SystemContextSpecification",
             "type": "object"
         },
         "SystemGoal": {
@@ -5339,6 +8208,28 @@
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -5361,12 +8252,38 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored title or item name, if present."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
                     "type": "string"
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "source_document": {
                     "type": "string"
@@ -5376,6 +8293,28 @@
                 },
                 "statement": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -5425,6 +8364,217 @@
             "title": "TimelineEvent",
             "type": "object"
         },
+        "TraceableElement": {
+            "additionalProperties": false,
+            "description": "An element with explicit motivation, derivation and assumptions. Concern subset, artifact kind and core/supporting/generic classification are independent; neither traceability nor document location confers normative authority.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "open_decisions": {
+                    "$ref": "#/$defs/OpenDecisionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "TraceableElement",
+            "type": "object"
+        },
+        "TypeBinding": {
+            "additionalProperties": false,
+            "description": "An explicit binding of a definition parameter to a primitive or a type introduced by a named concept use. Unresolved links remain authored references.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "TypeBinding",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "open_decisions": {
+                    "$ref": "#/$defs/OpenDecisionCollection",
+                    "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "parameter": {
+                    "type": "string"
+                },
+                "parameter_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "primitive": {
+                    "type": "string"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "type_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "type_use": {
+                    "type": "string"
+                },
+                "type_use_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "owner",
+                "content",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "TypeBinding",
+            "type": "object"
+        },
         "UnmappedRole": {
             "additionalProperties": false,
             "description": "A known domain field or item whose source content has not yet been mapped.",
@@ -5462,12 +8612,43 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
                 },
+                "boundary": {
+                    "type": "string"
+                },
+                "boundary_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "business_rules": {
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual references to governing business rules; does not assert enforcement or compliance."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "evidence": {
                     "$ref": "#/$defs/EvidenceCollection"
@@ -5493,6 +8674,23 @@
                     "pattern": "[\\s\\S]+",
                     "type": "string"
                 },
+                "involves": {
+                    "description": "Named concept uses participating in this actor-goal interaction; not a service boundary or mandatory execution order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "involves_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "involves_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "kind": {
                     "const": "UseCase",
                     "description": "Concrete record type discriminator.",
@@ -5512,13 +8710,18 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Recognized Notes content."
                 },
+                "obligations": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "obligations_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
                 "open_decisions": {
                     "$ref": "#/$defs/OpenDecisionCollection",
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
-                },
-                "owning_system": {
-                    "description": "Derived directory ownership, not use-case boundary or requirement inheritance.",
-                    "type": "string"
                 },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
@@ -5543,6 +8746,23 @@
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Contextual citations of related use cases; no implicit inclusion, refinement or support relation."
                 },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "sequence": {
                     "$ref": "#/$defs/SequenceStatement"
                 },
@@ -5562,12 +8782,58 @@
                 "success_criterion": {
                     "$ref": "#/$defs/RichContent"
                 },
+                "supported_jobs": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supported_jobs_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "supported_jobs_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "supporting_actors": {
                     "$ref": "#/$defs/ActorCollection"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal or user progress; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "system_boundary": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Boundary description is independent of directory ownership."
+                },
+                "system_context": {
+                    "description": "Directory-derived association, not declaration ownership, system boundary, applicability or inheritance.",
+                    "type": "string"
                 },
                 "trigger": {
                     "$ref": "#/$defs/RichContent"
@@ -5580,6 +8846,68 @@
                 "kind"
             ],
             "title": "UseCase",
+            "type": "object"
+        },
+        "UsesConcept": {
+            "additionalProperties": false,
+            "description": "Projection of the explicitly declared ConceptUse.definition relationship.",
+            "properties": {
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "inputs": {
+                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "kind": {
+                    "const": "UsesConcept",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "mapping_rule": {
+                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "type": "string"
+                },
+                "object": {
+                    "type": "string"
+                },
+                "origin": {
+                    "$ref": "#/$defs/AssertionOrigin"
+                },
+                "projection_path": {
+                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
+                    "type": "string"
+                },
+                "source_nodes": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "source_spans": {
+                    "items": {
+                        "$ref": "#/$defs/ByteSpan"
+                    },
+                    "type": "array"
+                },
+                "subject": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "subject",
+                "object",
+                "projection_path",
+                "origin",
+                "id",
+                "kind"
+            ],
+            "title": "UsesConcept",
             "type": "object"
         },
         "VerificationCase": {
@@ -5649,10 +8977,28 @@
             "items": {
                 "anyOf": [
                     {
+                        "$ref": "#/$defs/Supports"
+                    },
+                    {
+                        "$ref": "#/$defs/DerivedFrom"
+                    },
+                    {
+                        "$ref": "#/$defs/ReliesOn"
+                    },
+                    {
+                        "$ref": "#/$defs/Refines"
+                    },
+                    {
+                        "$ref": "#/$defs/Involves"
+                    },
+                    {
+                        "$ref": "#/$defs/HasObligation"
+                    },
+                    {
                         "$ref": "#/$defs/ParentSystem"
                     },
                     {
-                        "$ref": "#/$defs/OwnedBySystem"
+                        "$ref": "#/$defs/InSystemContext"
                     },
                     {
                         "$ref": "#/$defs/HasJobStep"
@@ -5674,6 +9020,24 @@
                     },
                     {
                         "$ref": "#/$defs/HasConceptAction"
+                    },
+                    {
+                        "$ref": "#/$defs/UsesConcept"
+                    },
+                    {
+                        "$ref": "#/$defs/HasConceptUse"
+                    },
+                    {
+                        "$ref": "#/$defs/HasSynchronization"
+                    },
+                    {
+                        "$ref": "#/$defs/ConceptDependency"
+                    },
+                    {
+                        "$ref": "#/$defs/HasConceptType"
+                    },
+                    {
+                        "$ref": "#/$defs/HasTypeBinding"
                     },
                     {
                         "$ref": "#/$defs/DeclaresQualityAttribute"
@@ -5734,25 +9098,10 @@
             "items": {
                 "anyOf": [
                     {
-                        "$ref": "#/$defs/SystemGoal"
-                    },
-                    {
-                        "$ref": "#/$defs/Assumption"
-                    },
-                    {
-                        "$ref": "#/$defs/Constraint"
-                    },
-                    {
                         "$ref": "#/$defs/GlossaryTerm"
                     },
                     {
                         "$ref": "#/$defs/QualityAttribute"
-                    },
-                    {
-                        "$ref": "#/$defs/JobStep"
-                    },
-                    {
-                        "$ref": "#/$defs/Outcome"
                     },
                     {
                         "$ref": "#/$defs/ProgressCase"
@@ -5770,19 +9119,55 @@
                         "$ref": "#/$defs/Extension"
                     },
                     {
-                        "$ref": "#/$defs/ConceptAction"
+                        "$ref": "#/$defs/ConceptType"
+                    },
+                    {
+                        "$ref": "#/$defs/ActionParameter"
+                    },
+                    {
+                        "$ref": "#/$defs/TypeBinding"
+                    },
+                    {
+                        "$ref": "#/$defs/SynchronizationAction"
                     },
                     {
                         "$ref": "#/$defs/ExtensionSection"
                     },
                     {
-                        "$ref": "#/$defs/BusinessRule"
+                        "$ref": "#/$defs/SystemGoal"
+                    },
+                    {
+                        "$ref": "#/$defs/Assumption"
+                    },
+                    {
+                        "$ref": "#/$defs/Constraint"
+                    },
+                    {
+                        "$ref": "#/$defs/JobStep"
+                    },
+                    {
+                        "$ref": "#/$defs/Outcome"
+                    },
+                    {
+                        "$ref": "#/$defs/ConceptAction"
+                    },
+                    {
+                        "$ref": "#/$defs/ConceptUse"
+                    },
+                    {
+                        "$ref": "#/$defs/Synchronization"
+                    },
+                    {
+                        "$ref": "#/$defs/ObligationClause"
                     },
                     {
                         "$ref": "#/$defs/QualityModel"
                     },
                     {
                         "$ref": "#/$defs/System"
+                    },
+                    {
+                        "$ref": "#/$defs/BusinessRule"
                     },
                     {
                         "$ref": "#/$defs/Job"
@@ -5820,7 +9205,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.5.0-draft",
+            "const": "0.8.0-draft",
             "type": "string"
         },
         "references": {
@@ -5874,5 +9259,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.5.0-draft"
+    "version": "0.8.0-draft"
 }

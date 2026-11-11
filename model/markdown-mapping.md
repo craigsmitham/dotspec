@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/4` maps specification Markdown to the
+`dotspec-markdown/7` maps specification Markdown to the
 [canonical model](dotspec.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/specification-model.md).
@@ -187,6 +187,8 @@ A timeline saying “to be established” remains authored content. Overall outc
 | Extensions | Full `ExtensionCollection.content` and named or explicitly labelled branch records |
 | Sequence | `SequenceStatement.content`; explicit Mode and list-item constraints as described below |
 | Related jobs | `related_jobs: ContextualReferences` |
+| System boundary: explicit `**System:**` link | `boundary_references`; resolved `boundary: System` |
+| Supports jobs | `supported_jobs_content`, `supported_jobs_references`; resolved `supported_jobs` (Job, JobStep or Outcome) |
 
 Scenario steps retain their authored numbers or labels, narrative, ordinary
 references and source order. Ordered-list items and explicitly labelled handling
@@ -236,18 +238,65 @@ final period; other wording remains in the source-backed value.
 | --- | --- |
 | Purpose | `purpose` |
 | State | `StateDescription.content`; direct list items and named state components retain descriptions |
+| Type parameters; Introduced types | Full section content and named `ConceptType` records in `type_parameters` or `introduced_types` |
+| State: Initial state | `abstract_state.initial_state` narrative |
 | State: Invariants | Explicit condition values in `invariants` |
 | State component: Value; Values; Type | `value_description` |
+| State component: Derivation | `derivation` narrative; no computed value is inferred |
 | Actions | `ActionCollection.content`; named subsections become `ConceptAction` records |
-| Action: Inputs; Outputs; Effects; Rejections; Rejection behavior | Corresponding action fields; both rejection headings map to `rejections` |
+| Action: Inputs; Outputs; Initiation; Effects; Rejections; Rejection behavior | Corresponding action fields; both rejection headings map to `rejections` |
 | Action: Caller assumptions; Assumptions | `caller_assumptions: ConditionCollection` |
 | Action: Guards | `guards: ConditionCollection` |
 | Action: Open decision/question sections | Explicit `OpenDecision` values |
-| Operational principle | `operational_principle` |
+| Operational principle; Operational principles | `operational_principle`; singular and plural are mutually exclusive aliases |
+| Named Inputs/Outputs subsections | `ActionParameter` records in `input_parameters`/`output_parameters`, preserving full content |
 
 An unsegmented Actions paragraph remains complete named actions content. Abstract
 state is a domain description, without an inferred database schema. Caller
 assumptions and enforced guards have separate fields.
+
+An action parameter's introductory `**Type:**` field records reference occurrences
+and, when resolvable, one concept-local `ConceptType` target. `**Primitive:**`
+records an open primitive name. A nested Type subsection is `type_description`
+prose, including compound expressions; links inside it do not assert an atomic
+type. Type declarations share a name scope within their concept; actions have
+another scope. Parameter names are unique within each input or output list.
+
+## System concept composition
+
+| Authored structure | Mapping |
+| --- | --- |
+| Concept uses | `System.concept_uses_content` and explicitly headed `ConceptUse` records |
+| Use: Definition | `definition_references`; resolved `definition: Concept` when one valid reference identifies a definition |
+| Use: Bindings | Full `bindings_content` and named `TypeBinding` records |
+| Binding: Parameter; Type; Use fields | Authored `parameter_references`, `type_references`, `type_use_references`; corresponding resolved targets when valid |
+| Binding: Primitive field | `primitive` string; mutually exclusive with Type/Use references |
+| Use: Configuration | Authored `configuration` narrative |
+| Use: Dependencies | Full `dependencies_content`, reference occurrences and resolved same-system `dependencies` |
+| Synchronizations | `System.synchronizations_content` and explicitly headed `Synchronization` records |
+| Synchronization: When; Where; Then; Semantics | Corresponding narrative fields |
+| Named entries under When/Then with Use or Action fields | `SynchronizationAction` records in `when_actions` or `then_actions` |
+| Entry: Use; Action fields | Reference occurrences and resolved `concept_use`/`action` targets |
+| Entry: Arguments; Result subsections | Corresponding narrative fields |
+
+Reference occurrences retain ordinary source resolution. A file target can identify
+its root Concept; a heading fragment can identify its named domain record. This
+promotion does not change the ordinary reference target or trigger further reads.
+An authored external, missing, ambiguous or unacquired target never becomes an
+invented domain relationship. A scalar relation requires one reference. Resolved
+bindings must name a parameter of the used definition and an introduced type of
+the supplying use's definition. Synchronization actions must belong to their use's
+definition, and uses/dependencies must belong to the same system. Type bindings
+are unique by parameter per use. Named uses and synchronizations have system-local
+name scopes. Unknown headings remain extension sections on their nearest owner.
+
+Composition errors are source diagnostics, not invalid snapshot shape. Export
+returns status 1 while preserving them; offline validation checks that materialized
+relationships agree with explicit references and scope. Incomplete declarations
+produce advice. Full source content remains available regardless of resolution.
+Dependencies may cycle. Neither bindings nor incidental links infer dependency
+edges. No argument-expression checking, execution, timing, atomicity or behavior
+is inferred. The [authoring guide](../docs/develop-concepts.md) supplies examples.
 
 ## General and quality requirements
 
@@ -256,6 +305,7 @@ assumptions and enforced guards have separate fields.
 | Applies to | `Applicability.content` |
 | Applies to: Conditions; Workload; Population; Exclusions | Corresponding applicability fields |
 | Applies to: Subject; Subjects | `subjects: ContextualReferences` |
+| Applies to: explicit `**Targets:**` links | Root `applicability_targets_references`; resolved `applicability_targets: DomainElement` (also on BusinessRule) |
 | Rationale | `rationale` |
 | Frontmatter `attributes` | Every authored classification label occurrence; resolved quality attribute targets populate `attributes` |
 | General requirement: Statement | `statement` |
@@ -281,7 +331,7 @@ qualifications, examples and evidence instructions.
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/4`, an owner and field path, source
+Bindings record a rule under `dotspec-markdown/7`, an owner and field path, source
 occurrence and role. Named-field, record-identity and structured-item bindings
 account for interpreted domain content. Metadata bindings account for frontmatter.
 Structural-wrapper bindings cover headings and syntax support; a document-root
@@ -307,3 +357,76 @@ specification family and explicit structures; the
 [export conformance tests](../internal/model/export_conformance_test.go) check
 whole-snapshot behavior. Model projections are regenerated and checked as
 specified in the [model README](README.md#regeneration).
+
+## Relationship contract
+
+See [Declare relationships](../docs/develop-relationships.md) for complete examples.
+System boundary references are scalar; Supports jobs and Targets may name multiple
+records. Ordinary links outside these explicit forms remain contextual. Definition,
+parameter, type, use and action fields likewise retain all authored occurrences,
+including malformed multiple references; an invalid draft must remain representable.
+Only successfully resolved, compatible relationships populate semantic targets.
+Unknown declaring scope defers dependent resolution rather than inventing a scope
+error. Requirements, business rules, jobs, use cases and concepts may have a
+`system_context` derived from directory discovery. Systems use `parent_system`;
+QualityModels are standalone.
+
+Typed fields are canonical. Assertions are optional derived views with a required
+`projection_path`, subject and object. BoundaryIs, SupportsJob and AppliesTo now
+project the explicit fields above; AppliesTo supports both requirements and business
+rules. Membership projections retain their originating role, including the two
+HasConceptType paths. Section collection wrappers retain required content; sibling
+declaration/content pairs use reciprocal `paired_with` schema annotations.
+
+Optional input/output parameter and synchronization action collections require the
+corresponding complete Inputs/Outputs/When/Then content through `requires_content`.
+The converse is not required: prose-only sections remain valid. Explicit boundary
+and applicability occurrences likewise require their narrative sections.
+
+## Layered traceability and obligation clauses
+
+`TraceableElement` supplies explicit Supports, Derived from and Relies on sections.
+It is the base of SpecificationElement and of named SystemGoal, Assumption,
+Constraint, JobStep, Outcome, ConceptUse, ConceptAction, Synchronization and
+ObligationClause records. The exact heading annotations `trace_heading` and
+`trace_targets` in the canonical schema drive mapping and endpoint resolution.
+The mapper also recognizes these sections directly beneath named nested records.
+It never interprets arbitrary prose or ordinary citations as semantic links.
+
+Each trace section maps to `<field>_content: RichContent` plus ordered
+`<field>_references`. Resolved targets populate the multivalued canonical field.
+Supports targets SystemGoal/Job/JobStep/Outcome; Derived from targets DomainElement
+or SourceFragment; Relies on targets Assumption. UseCase Involves targets ConceptUse.
+Requirement, BusinessRule and ObligationClause Refines targets Requirement,
+BusinessRule or ObligationClause. Every section link is a declared target; rationale
+prose remains in that section, and contextual citations belong elsewhere.
+
+A file reference promotes to a specification's root domain record. A fragment
+promotes to its named domain record where one exists; Derived from alone also
+accepts a source fragment without domain interpretation. External and unacquired
+references are preserved with advice. Incompatible or broken local references are
+errors. Refinement cycles produce errors and withhold every cycle-participating
+edge from the resolved graph; references and source content remain intact. Other
+semantic relationships may cycle. Offline validation replays these projections.
+
+An Obligations section on a TraceableElement maps to `obligations_content` and
+ordered owned `ObligationClause` records, one per immediate child heading. The
+clause's introductory content, excluding an optional **ID:** field, is its
+`statement`; its heading is its `name`. IDs follow the common identifier grammar
+and document-wide uniqueness rule. Same-file and cross-file reference checks
+recognize them. Named clauses can contain trace sections, Rationale, Applies to
+(with the same explicit Targets field as Requirement), and structured Verification.
+Unknown sections remain ExtensionSection records. No obligation is inferred from
+a scenario step, state invariant, sentence, or evidence link.
+
+Typed fields remain authoritative. Supports, DerivedFrom, Refines, ReliesOn,
+Involves and HasObligation assertions are optional projections, and AppliesTo also
+supports clauses. Required `projection_path` identifies the source field. There
+are no stored semantic inverse fields. Missing explicit motivation and verification
+guidance on standalone requirements and clauses produce advisory findings, not
+shape failures or claims of missing required behavior.
+
+`model trace` reads the same snapshot to render motivation, participation,
+change-review and verification-guidance views. It makes no implementation,
+satisfaction, validation or execution-evidence claims. Type-level diagrams remain
+in the generated core model reference.

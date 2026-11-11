@@ -46,6 +46,7 @@ Use subheadings for individual actions when useful.
 ## Operational principle
 
 Tell a characteristic story showing how the actions and state fulfill the purpose.
+Use multiple stories when needed to explain the essential behavior.
 The story explains the design; it does not establish exhaustive behavior or verification.
 `
 
@@ -54,6 +55,8 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 // Concept retains section bodies as Markdown. State and actions have no imposed
 // language; system association does not imply an implementation boundary.
 type Concept struct {
+	TypeParameters       string                         `json:"type_parameters,omitempty"`
+	IntroducedTypes      string                         `json:"introduced_types,omitempty"`
 	References           *specfile.ReferenceDocument    `json:"-"`
 	ID                   string                         `json:"id,omitempty"`
 	Slug                 string                         `json:"slug"`
@@ -113,13 +116,21 @@ func Parse(data []byte) (*Concept, error) {
 	if err := ids.Register(spec.ID, "concept", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err
 	}
+	if err := ids.RegisterObligations(doc); err != nil {
+		return nil, err
+	}
 	ids.AddAnchors(doc.Anchors)
 	fields := map[string]*string{
 		"Purpose": &spec.Purpose, "State": &spec.State,
+		"Type parameters": &spec.TypeParameters, "Introduced types": &spec.IntroducedTypes,
 		"Actions": &spec.Actions, "Operational principle": &spec.OperationalPrinciple,
 	}
 	for _, section := range doc.Sections {
-		target, known := fields[section.Title]
+		title := section.Title
+		if title == "Operational principles" {
+			title = "Operational principle"
+		}
+		target, known := fields[title]
 		if !known {
 			continue
 		}
@@ -127,10 +138,10 @@ func Parse(data []byte) (*Concept, error) {
 		if section.Level != 2 {
 			return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), location)
 		}
-		if previous, exists := spec.SectionLocations[section.Title]; exists {
+		if previous, exists := spec.SectionLocations[title]; exists {
 			return nil, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", section.Title), location, previous)
 		}
-		spec.SectionLocations[section.Title] = location
+		spec.SectionLocations[title] = location
 		*target = doc.Body(section)
 	}
 	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {

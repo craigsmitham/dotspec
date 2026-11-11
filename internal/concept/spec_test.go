@@ -158,3 +158,17 @@ func FuzzParse(f *testing.F) {
 		}
 	})
 }
+
+func TestOperationalPrinciplesAliasAndDuplicate(t *testing.T) {
+	source := "---\ntype: concept\n---\n# Example\n## Type parameters\n### Item\nAn identity.\n## Introduced types\n### Token\nA token.\n## Operational principles\n### First story\nOne.\n### Second story\nTwo.\n"
+	spec, err := Parse([]byte(source))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if spec.TypeParameters == "" || spec.IntroducedTypes == "" || !strings.Contains(spec.OperationalPrinciple, "Second story") {
+		t.Fatal("plural stories or declarations lost")
+	}
+	if _, err = Parse([]byte(source + "\n## Operational principle\nDuplicate.\n")); err == nil {
+		t.Fatal("singular/plural duplicate accepted")
+	}
+}
