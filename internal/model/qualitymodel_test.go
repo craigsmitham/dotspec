@@ -30,7 +30,7 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 	for _, label := range s.LabelOccurrences {
 		r := snapshotRecord(t, s, String(label, "resolution"))
 		if String(label, "role") == "subattribute_of" {
-			if String(label, "quality_model_context") != String(m, "id") || label["system_context"] != nil || String(r, "status") != "resolved" {
+			if String(label, "governing_quality_model") != String(m, "id") || label["governing_system"] != nil || String(r, "status") != "resolved" {
 				t.Fatalf("model parent label: %+v %+v", label, r)
 			}
 		} else if String(label, "label") == "broad" {
@@ -70,7 +70,7 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 		broken := cloneSnapshot(t, s)
 		for _, label := range broken.LabelOccurrences {
 			if String(label, "role") == "quality_classification" {
-				label["quality_model_context"] = m["id"]
+				label["governing_quality_model"] = m["id"]
 			}
 		}
 		requireFinding(t, broken, "label.context")

@@ -146,7 +146,7 @@ func TestOfflineValidationRejectsClassificationWhenExplicitSelectionIsUnresolved
 	r["quality_attributes"] = []string{attribute}
 	index := conformanceIndex(s)
 	label := index[Strings(r["quality_attribute_labels"])[0]]
-	label["system_context"] = selected["id"]
+	label["governing_system"] = selected["id"]
 	resolution := index[String(label, "resolution")]
 	resolution["status"], resolution["target"] = "resolved", attribute
 	requireFinding(t, s, "label.context")

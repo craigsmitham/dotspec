@@ -4,7 +4,7 @@ Generated from [the canonical model](../../../model/metamodel.yaml) and [the vie
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.16.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.17.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
@@ -128,7 +128,7 @@ classDiagram
     System --> "0..1" System : part of
     Component --> "0..1" System : part of
     Component --> "0..1" Component : part of
-    Feature --> "1" System : feature of
+    System *-- "0..*" Feature : declares features
     Feature --> "0..*" Requirement : groups
     Feature --> "0..*" ObligationClause : groups
     Feature --> "0..*" UseCase : groups
@@ -975,7 +975,7 @@ Subsets: `software-requirements`. [Feature](index.md#feature) contains the compl
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `purpose` | [RichContent](index.md#richcontent) | optional | Stakeholder benefit expressed by this feature. |
-| `system` | [System](index.md#system) | required | System whose capability this feature describes; the explicitly declaring System. |
+| `owner` | [System](index.md#system) | required |  |
 | `groups` | [Requirement](index.md#requirement) or [ObligationClause](index.md#obligationclause) or [UseCase](index.md#usecase) or [Concept](index.md#concept) or [ConceptUse](index.md#conceptuse) or [Synchronization](index.md#synchronization) or [Interface](index.md#interface) | optional; list | Non-owning specification membership; the same record may participate in several features. |
 
 ### Capability
@@ -1016,7 +1016,7 @@ Subsets: `software-requirements`. [InterfaceCollection](index.md#interfacecollec
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
-| `content` | [RichContent](index.md#richcontent) | optional |  |
+| `content` | [RichContent](index.md#richcontent) | required |  |
 | `interfaces` | [Interface](index.md#interface) | optional; ordered list |  |
 
 ### Interface
@@ -1043,7 +1043,7 @@ Subsets: `software-requirements`. [EffectsTable](index.md#effectstable) contains
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
-| `content` | [RichContent](index.md#richcontent) | optional |  |
+| `content` | [RichContent](index.md#richcontent) | required |  |
 | `rows` | [EffectsRow](index.md#effectsrow) | optional; ordered list |  |
 
 ### EffectsRow

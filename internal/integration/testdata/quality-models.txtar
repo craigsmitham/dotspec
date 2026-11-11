@@ -60,7 +60,7 @@ status 0 dotspec sources --json
 stdout 'organization-quality.quality-model.spec.md'
 status 0 dotspec model export
 stdout '"kind": "QualityModel"'
-stdout '"quality_model_context":'
+stdout '"governing_quality_model":'
 cp stdout snapshot.json
 status 0 dotspec model validate snapshot.json --json
 stdout '"valid": true'

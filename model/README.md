@@ -1,7 +1,7 @@
 # Specification model
 
 [metamodel.yaml](metamodel.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.16.0-draft`; the JSON
+specification snapshots. The model version is `0.17.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
@@ -323,3 +323,37 @@ assessment setup and its relationship to that context.
 The Markdown mapping remains `dotspec-markdown/13`; field paths and headings are
 unchanged. Re-export source specifications for the new model version. See
 [Develop requirements](../docs/develop-requirements.md) for authoring guidance.
+
+## Model consistency
+
+`0.17.0-draft` removes inconsistencies between the schema, its relationship
+metadata and the rules the graph checker enforces. The Markdown mapping remains
+`dotspec-markdown/13`. Three changes alter exported JSON; re-export source
+specifications, since saved snapshots are not silently migrated:
+
+- `LabelOccurrence.governing_system` and `governing_quality_model` replace
+  `system_context` and `quality_model_context`. The label records the System or
+  QualityModel whose declarations govern it, which for an obligation is the
+  effective specification system rather than directory-derived `system_context`.
+- `Feature.system` and the `FeatureOf` assertion are removed. A feature's system is
+  its declaring `owner`; `HasFeature` projects `System.features`.
+- `ReferenceForm` no longer lists `quality_label` and `subattribute_label`; labels
+  are `LabelOccurrence` records.
+
+The remaining changes tighten the schema to what the exporter already produced:
+
+- Assertions require `mapping_rule` and `inputs`; fallback and extension content
+  bindings require `reason`; interface collections and effects tables require
+  `content`, like every other wrapper.
+- Assertion endpoints, `EvidenceStatement.owner` and `LabelOccurrence.owner` are
+  narrowed to the classes their canonical fields allow. Quality-classification
+  labels belong to any `Obligation`, including embedded clauses, and resolve within
+  the declaring System or effective specification system.
+- An ExtensionSection nests unknown subsections only through `children`, and
+  `Document.elements` names `ExtensionSection.owner` as the inverse for
+  document-owned sections.
+- Concept-use dependencies use `requires_content` and `relationship_source`, like
+  other section-backed relationships, so their references must come from the
+  Dependencies section.
+- Record identity, the kind discriminator, authored IDs and assertion endpoints are
+  declared on their classes instead of as schema-wide slots.

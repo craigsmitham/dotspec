@@ -231,8 +231,8 @@ func TestValidationAcceptsCompleteSourceBackedExport(t *testing.T) {
 		t.Fatalf("declaration count: %d", declarations)
 	}
 	for _, label := range snapshot.LabelOccurrences {
-		if String(label, "system_context") != String(system, "id") {
-			t.Fatalf("label lacks declaring system context: %+v", label)
+		if String(label, "governing_system") != String(system, "id") {
+			t.Fatalf("label lacks its governing system: %+v", label)
 		}
 	}
 	data, err := json.Marshal(snapshot)
@@ -275,7 +275,7 @@ func TestValidationRejectsCorruptGraph(t *testing.T) {
 			delete(elementKind(t, s, "GeneralRequirement"), "specification_system_origin")
 			for _, label := range s.LabelOccurrences {
 				if String(label, "role") == "quality_classification" {
-					delete(label, "system_context")
+					delete(label, "governing_system")
 				}
 			}
 		}},
@@ -293,6 +293,15 @@ func TestValidationRejectsCorruptGraph(t *testing.T) {
 			}
 		}},
 		{"missing derivation input", "assertion.derivation", func(s *Snapshot) { s.Assertions[0]["inputs"] = []string{} }},
+		{"missing derivation rule", "shape.invalid", func(s *Snapshot) { delete(s.Assertions[0], "mapping_rule") }},
+		{"fallback binding without reason", "shape.invalid", func(s *Snapshot) {
+			for _, b := range s.ContentBindings {
+				if String(b, "role") == "named_field" {
+					b["role"] = "fallback"
+					return
+				}
+			}
+		}},
 		{"missing assertion provenance", "assertion.provenance", func(s *Snapshot) {
 			s.Assertions[0]["inputs"] = []string{}
 			delete(s.Assertions[0], "source_nodes")
@@ -423,7 +432,7 @@ func TestValidationAllowsFaithfulFailuresAndUnboundLabels(t *testing.T) {
 		delete(r, "quality_attributes")
 		for _, label := range s.LabelOccurrences {
 			if String(label, "owner") == String(r, "id") {
-				delete(label, "system_context")
+				delete(label, "governing_system")
 				result := snapshotRecord(t, s, String(label, "resolution"))
 				result["status"] = "unbound_label"
 				delete(result, "target")

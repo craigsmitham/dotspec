@@ -121,7 +121,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 				}
 			}
 		}
-		fmt.Fprintf(&out, "| %s | %s | %s | %s |\n", link(String(r, "id")), link(String(r, "system")), links(Strings(r["groups"])), links(components))
+		fmt.Fprintf(&out, "| %s | %s | %s | %s |\n", link(String(r, "id")), link(String(r, "owner")), links(Strings(r["groups"])), links(components))
 	}
 	out.WriteString("\n## Applicable obligations\n\nOnly explicit applicability to acquired systems and components is listed. Declaration inside a component does not implicitly supply an applicability target. Plans describe intended system verification; their presence does not prove satisfaction.\n\n| Obligation | Subjects | Verification guidance | Measurement guidance |\n| --- | --- | --- | --- |\n")
 	guidance := func(r Record, field string) string {

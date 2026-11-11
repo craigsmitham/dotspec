@@ -36,7 +36,7 @@ func TestStructureAndFeatureMembership(t *testing.T) {
 	}
 	for _, name := range []string{"Place an order", "Prevent overselling"} {
 		f := designRecord(t, s, "Feature", name)
-		if f["system"] != store["id"] || len(Strings(f["groups"])) != 1 || Strings(f["groups"])[0] != req["id"] {
+		if f["owner"] != store["id"] || len(Strings(f["groups"])) != 1 || Strings(f["groups"])[0] != req["id"] {
 			t.Fatal(f)
 		}
 	}

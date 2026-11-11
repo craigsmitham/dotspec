@@ -192,7 +192,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -204,10 +204,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -235,14 +236,17 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -259,7 +263,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -270,10 +274,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -296,14 +301,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -863,11 +871,6 @@
                 "depends_on": {
                     "description": "Capabilities required by this capability; many-to-many dependencies may be cyclic. Not structural containment or an inferred execution sequence.",
                     "items": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            }
-                        ],
                         "type": "string"
                     },
                     "type": "array"
@@ -1070,7 +1073,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -1082,10 +1085,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -1108,14 +1112,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -1132,7 +1139,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -1144,10 +1151,16 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -1170,14 +1183,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -1854,7 +1870,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -1866,10 +1882,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -1892,14 +1909,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -2028,7 +2048,8 @@
                     "type": "array"
                 },
                 "dependencies_content": {
-                    "$ref": "#/$defs/RichContent"
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
                 },
                 "dependencies_references": {
                     "items": {
@@ -2388,6 +2409,48 @@
         },
         "ContentBinding": {
             "additionalProperties": false,
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "role": {
+                                "const": "fallback"
+                            }
+                        },
+                        "required": [
+                            "role"
+                        ]
+                    },
+                    "then": {
+                        "properties": {
+                            "reason": {}
+                        },
+                        "required": [
+                            "reason"
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "role": {
+                                "const": "extension"
+                            }
+                        },
+                        "required": [
+                            "role"
+                        ]
+                    },
+                    "then": {
+                        "properties": {
+                            "reason": {}
+                        },
+                        "required": [
+                            "reason"
+                        ]
+                    }
+                }
+            ],
             "description": "Auditable mapping from source syntax to a named domain field, metadata, structural support, unknown extension, or uninterpreted fallback.",
             "properties": {
                 "content_node": {
@@ -2725,7 +2788,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -2737,10 +2800,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -2763,14 +2827,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -2787,7 +2854,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -2799,10 +2866,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -2825,14 +2893,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -2849,7 +2920,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -2861,10 +2932,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -2892,14 +2964,17 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -2928,7 +3003,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -2940,7 +3015,7 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
@@ -2949,6 +3024,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -2971,14 +3047,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -3282,6 +3361,7 @@
                     "$ref": "#/$defs/DecompositionStatus"
                 },
                 "elements": {
+                    "description": "Index of every domain element mapped from this document. Indexing is not ownership, except that a document-owned ExtensionSection names this document as its owner and must appear here.",
                     "items": {
                         "type": "string"
                     },
@@ -3437,6 +3517,9 @@
                     "type": "array"
                 }
             },
+            "required": [
+                "content"
+            ],
             "title": "EffectsTable",
             "type": "object"
         },
@@ -3450,7 +3533,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -3462,10 +3545,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -3488,14 +3572,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -3606,6 +3693,11 @@
                     "description": "Explicitly headed unresolved questions, with full section content preserved; omitted fields are not inferred decisions."
                 },
                 "owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
                     "type": "string"
                 },
                 "references": {
@@ -3682,10 +3774,11 @@
                     "description": "Explanation of the specification; not a separate obligation or endorsement."
                 },
                 "extension_sections": {
-                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "description": "Not used by unknown sections, which nest through children; absent or empty.",
                     "items": {
                         "type": "string"
                     },
+                    "maxItems": 0,
                     "type": "array"
                 },
                 "heading": {
@@ -3956,10 +4049,6 @@
                     },
                     "type": "array"
                 },
-                "system": {
-                    "description": "System whose capability this feature describes; the explicitly declaring System.",
-                    "type": "string"
-                },
                 "validation_plan": {
                     "$ref": "#/$defs/AssessmentPlan",
                     "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
@@ -3968,75 +4057,12 @@
             "required": [
                 "owner",
                 "content",
-                "system",
                 "source_document",
                 "decomposition",
                 "id",
                 "kind"
             ],
             "title": "Feature",
-            "type": "object"
-        },
-        "FeatureOf": {
-            "additionalProperties": false,
-            "description": "Projection of the canonical relationship; does not introduce a separately editable edge.",
-            "properties": {
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "kind": {
-                    "const": "FeatureOf",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
-                    "type": "string"
-                },
-                "object": {
-                    "type": "string"
-                },
-                "origin": {
-                    "$ref": "#/$defs/AssertionOrigin"
-                },
-                "projection_path": {
-                    "description": "Canonical Class.field.path for a derived relationship view; preserves its role when several fields share an assertion kind.",
-                    "type": "string"
-                },
-                "source_nodes": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "source_spans": {
-                    "items": {
-                        "$ref": "#/$defs/ByteSpan"
-                    },
-                    "type": "array"
-                },
-                "subject": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "subject",
-                "object",
-                "projection_path",
-                "origin",
-                "id",
-                "kind"
-            ],
-            "title": "FeatureOf",
             "type": "object"
         },
         "Force": {
@@ -4507,7 +4533,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -4519,10 +4545,16 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -4545,14 +4577,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -4569,7 +4604,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -4581,10 +4616,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -4607,14 +4643,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -4631,7 +4670,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -4643,10 +4682,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -4669,14 +4709,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -4693,7 +4736,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -4705,10 +4748,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -4731,14 +4775,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -4755,7 +4802,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -4767,10 +4814,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -4798,14 +4846,17 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -4822,7 +4873,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -4834,10 +4885,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -4860,14 +4912,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -4884,7 +4939,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -4896,10 +4951,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -4922,14 +4978,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -4946,7 +5005,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -4958,10 +5017,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -4984,14 +5044,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -5008,7 +5071,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -5020,10 +5083,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -5051,14 +5115,17 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -5075,7 +5142,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -5087,10 +5154,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -5113,14 +5181,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -5137,7 +5208,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -5149,10 +5220,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -5175,14 +5247,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -5199,7 +5274,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -5211,10 +5286,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -5242,14 +5318,17 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -5266,7 +5345,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -5278,10 +5357,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -5304,14 +5384,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -5328,7 +5411,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -5340,10 +5423,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -5366,14 +5450,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -5390,7 +5477,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -5402,10 +5489,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -5428,14 +5516,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -5452,7 +5543,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -5464,7 +5555,7 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
@@ -5473,6 +5564,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -5495,14 +5587,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -5519,7 +5614,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -5531,10 +5626,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -5557,14 +5653,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -5581,7 +5680,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -5593,7 +5692,7 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
@@ -5602,6 +5701,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -5629,14 +5729,17 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -5853,6 +5956,9 @@
                     "type": "array"
                 }
             },
+            "required": [
+                "content"
+            ],
             "title": "InterfaceCollection",
             "type": "object"
         },
@@ -5866,7 +5972,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -5878,10 +5984,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -5904,14 +6011,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -6315,6 +6425,14 @@
                 "content_node": {
                     "type": "string"
                 },
+                "governing_quality_model": {
+                    "description": "Quality model whose definitions govern a parent label on a reusable definition; never used for obligation classification.",
+                    "type": "string"
+                },
+                "governing_system": {
+                    "description": "System whose declared quality attributes govern this label, if established. This is the declaring System or effective specification system of a classified obligation, or the System declaring a sub-attribute. Directory-derived system_context does not supply it.",
+                    "type": "string"
+                },
                 "id": {
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
                     "pattern": "[\\s\\S]+",
@@ -6329,10 +6447,11 @@
                     "type": "string"
                 },
                 "owner": {
-                    "type": "string"
-                },
-                "quality_model_context": {
-                    "description": "Declaring model for parent labels on reusable definitions; never used for requirement classification.",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
                     "type": "string"
                 },
                 "resolution": {
@@ -6340,10 +6459,6 @@
                 },
                 "role": {
                     "$ref": "#/$defs/LabelRole"
-                },
-                "system_context": {
-                    "description": "System in whose scope this label was interpreted, if established.",
-                    "type": "string"
                 }
             },
             "required": [
@@ -7163,7 +7278,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -7175,10 +7290,16 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -7201,14 +7322,22 @@
                     "type": "array"
                 },
                 "subject": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -7369,7 +7498,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -7381,10 +7510,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -7412,14 +7542,17 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -7440,6 +7573,9 @@
                     "type": "array"
                 }
             },
+            "required": [
+                "content"
+            ],
             "title": "ProvidedInterfaceCollection",
             "type": "object"
         },
@@ -7536,7 +7672,7 @@
         },
         "QualityClassification": {
             "additionalProperties": false,
-            "description": "A requirement is explicitly classified by a resolved quality attribute.",
+            "description": "An obligation is explicitly classified by a resolved quality attribute.",
             "properties": {
                 "id": {
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
@@ -7544,7 +7680,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -7556,10 +7692,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -7582,14 +7719,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -8079,8 +8219,6 @@
                 "footnote",
                 "fragment",
                 "explicit_id",
-                "quality_label",
-                "subattribute_label",
                 "external_locator"
             ],
             "title": "ReferenceForm",
@@ -8140,7 +8278,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -8152,7 +8290,7 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
@@ -8161,6 +8299,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -8183,14 +8322,22 @@
                     "type": "array"
                 },
                 "subject": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -8207,7 +8354,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -8219,10 +8366,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -8245,14 +8393,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -8269,7 +8420,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -8281,10 +8432,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -8312,14 +8464,17 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -8340,6 +8495,9 @@
                     "type": "array"
                 }
             },
+            "required": [
+                "content"
+            ],
             "title": "RequiredInterfaceCollection",
             "type": "object"
         },
@@ -9104,12 +9262,14 @@
             "description": "An explicitly authored ordering requirement, optionally linked to resolvable steps and governing rules.",
             "properties": {
                 "after": {
+                    "description": "Steps the authored constraint places later; populated only from explicit references.",
                     "items": {
                         "type": "string"
                     },
                     "type": "array"
                 },
                 "before": {
+                    "description": "Steps the authored constraint places earlier; populated only from explicit references.",
                     "items": {
                         "type": "string"
                     },
@@ -9269,9 +9429,6 @@
                             },
                             {
                                 "$ref": "#/$defs/DeclaresComponent"
-                            },
-                            {
-                                "$ref": "#/$defs/FeatureOf"
                             },
                             {
                                 "$ref": "#/$defs/SpecificationSystem"
@@ -9457,7 +9614,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.16.0-draft",
+                    "const": "0.17.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -10060,7 +10217,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -10072,10 +10229,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -10098,14 +10256,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -10211,7 +10372,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -10223,10 +10384,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -10249,14 +10411,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -10273,7 +10438,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -10285,7 +10450,7 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
@@ -10294,6 +10459,7 @@
                             "type": "string"
                         }
                     ],
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -10316,14 +10482,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -10957,7 +11126,7 @@
             "type": "object"
         },
         "SystemAssociationOrigin": {
-            "description": "",
+            "description": "How the effective specification system of a specification was established.",
             "enum": [
                 "explicit",
                 "directory"
@@ -11958,7 +12127,7 @@
                     "type": "string"
                 },
                 "inputs": {
-                    "description": "Source occurrences and/or typed records supporting this assertion.",
+                    "description": "Source occurrences and/or typed records supporting this assertion. A graph check requires at least one.",
                     "items": {
                         "type": "string"
                     },
@@ -11970,10 +12139,11 @@
                     "type": "string"
                 },
                 "mapping_rule": {
-                    "description": "Required for derived assertions; identifies deterministic semantics, not a hidden heuristic.",
+                    "description": "Versioned rule that derived this assertion; identifies deterministic semantics, not a hidden heuristic.",
                     "type": "string"
                 },
                 "object": {
+                    "description": "Record targeted by the projected canonical relationship.",
                     "type": "string"
                 },
                 "origin": {
@@ -11996,14 +12166,17 @@
                     "type": "array"
                 },
                 "subject": {
+                    "description": "Record from which the projected canonical relationship originates.",
                     "type": "string"
                 }
             },
             "required": [
-                "subject",
-                "object",
                 "projection_path",
                 "origin",
+                "mapping_rule",
+                "inputs",
+                "subject",
+                "object",
                 "id",
                 "kind"
             ],
@@ -12110,9 +12283,6 @@
                     },
                     {
                         "$ref": "#/$defs/DeclaresComponent"
-                    },
-                    {
-                        "$ref": "#/$defs/FeatureOf"
                     },
                     {
                         "$ref": "#/$defs/SpecificationSystem"
@@ -12298,7 +12468,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.16.0-draft",
+            "const": "0.17.0-draft",
             "type": "string"
         },
         "references": {
@@ -12352,5 +12522,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.16.0-draft"
+    "version": "0.17.0-draft"
 }

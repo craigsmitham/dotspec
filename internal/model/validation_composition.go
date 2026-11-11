@@ -24,9 +24,6 @@ func (v *graphValidator) checkComposition() {
 		if designKind(String(r, "kind"), "SystemContextSpecification") && String(r, "specification_system_origin") != specificationSystemOrigin(r) {
 			v.add("relationship.system-origin", located.path+"/specification_system_origin", "System association provenance must match the explicit selection or directory default.")
 		}
-		if String(r, "kind") == "Feature" && String(r, "system") != String(r, "owner") {
-			v.add("relationship.feature-system", located.path+"/system", "A feature belongs to its explicitly declaring system.")
-		}
 		for field, slot := range v.catalog.Classes[String(r, "kind")].Slots {
 			if slot.Annotations["trace_targets"] == "" && slot.Annotations["relationship_source"] == "" {
 				continue

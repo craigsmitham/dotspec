@@ -274,7 +274,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 		owner := index[String(label, "owner")]
 		if String(resolution, "status") == "resolved" {
 			target := index[String(resolution, "target")]
-			if String(target, "owner") != String(label, "system_context") || String(target, "owner") != String(owner, "system_context") {
+			if String(target, "owner") != String(label, "governing_system") || String(target, "owner") != String(owner, "system_context") {
 				t.Fatalf("classification escaped its declaring system: %+v", label)
 			}
 		}

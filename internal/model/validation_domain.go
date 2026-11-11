@@ -198,7 +198,7 @@ func (v *graphValidator) checkLabels() {
 		switch String(label, "role") {
 		case "quality_classification":
 			if !v.isA(String(owner, "kind"), "Obligation") {
-				v.add("label.owner", path+"/owner", "quality-classification labels belong to requirements")
+				v.add("label.owner", path+"/owner", "quality-classification labels belong to obligations")
 				continue
 			}
 			index := map[string]Record{}
@@ -217,11 +217,11 @@ func (v *graphValidator) checkLabels() {
 		if !slices.Contains(valuesAt(owner, field), String(label, "id")) {
 			v.add("label.membership", path+"/owner", "owner must retain this authored label occurrence")
 		}
-		if context := String(label, "quality_model_context"); context != "" && (String(label, "role") != "subattribute_of" || context != system || String(v.records[system].value, "kind") != "QualityModel") {
-			v.add("label.context", path+"/quality_model_context", "model context must identify the declaring model of a parent label")
+		if context := String(label, "governing_quality_model"); context != "" && (String(label, "role") != "subattribute_of" || context != system || String(v.records[system].value, "kind") != "QualityModel") {
+			v.add("label.context", path+"/governing_quality_model", "governing quality model must be the declaring model of a parent label")
 		}
-		if context := String(label, "system_context"); context != "" && context != system {
-			v.add("label.context", path+"/system_context", "label system context disagrees with its owner")
+		if context := String(label, "governing_system"); context != "" && context != system {
+			v.add("label.context", path+"/governing_system", "governing system disagrees with the label owner's system")
 		}
 		result := v.records[String(label, "resolution")].value
 		status := String(result, "status")

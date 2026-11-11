@@ -245,7 +245,7 @@ types:
   - provided_interfaces
   Feature:
   - purpose
-  - system
+  - owner
   - groups
   Capability:
   - purpose
@@ -373,7 +373,7 @@ diagrams:
   paths:
   - System.part_of
   - Component.part_of
-  - Feature.system
+  - System.features
   - Feature.groups
   - Requirement.applies_to
   - System.interacts_with

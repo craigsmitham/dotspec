@@ -274,9 +274,9 @@ func (b *snapshotBuilder) resolveLabels() {
 		}
 		if sys != "" {
 			if String(b.elements[sys], "kind") == "QualityModel" {
-				label["quality_model_context"] = sys
+				label["governing_quality_model"] = sys
 			} else {
-				label["system_context"] = sys
+				label["governing_system"] = sys
 			}
 		}
 		if _, declared := b.elements[sys]["quality_attributes"]; !declared {
@@ -288,7 +288,7 @@ func (b *snapshotBuilder) resolveLabels() {
 		case 0:
 			b.resolution(label, "undefined_label", "", "quality-attributes/1")
 			if String(owner, "kind") == "ObligationClause" {
-				b.snapshot.Diagnostics = append(b.snapshot.Diagnostics, Record{"id": b.next("finding"), "kind": "Diagnostic", "code": "obligation.undefined-attribute", "severity": "advice", "message": "Quality attribute " + String(label, "label") + " is not declared by the enclosing system.", "source": owner["source_document"], "record": owner["id"], "phase": "resolve"})
+				b.snapshot.Diagnostics = append(b.snapshot.Diagnostics, Record{"id": b.next("finding"), "kind": "Diagnostic", "code": "obligation.undefined-attribute", "severity": "advice", "message": "Quality attribute " + String(label, "label") + " is not declared by this obligation's system.", "source": owner["source_document"], "record": owner["id"], "phase": "resolve"})
 			}
 		case 1:
 			b.resolution(label, "resolved", matches[0], "quality-attributes/1")

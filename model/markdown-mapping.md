@@ -121,7 +121,7 @@ implicit enclosing-system association.
 | Attribute ID, Sub-attribute of, definition, open questions | Same syntax and content accounting as system attributes below |
 
 A parent label on a model definition resolves inside that model and records
-`quality_model_context`. Requirement classification continues to resolve only
+`governing_quality_model`. Obligation classification continues to resolve only
 against a system's declarations. Both owner types project
 `DeclaresQualityAttribute` assertions. Copy provenance uses ordinary source links;
 no synchronization, equivalence, or satisfaction relationship is inferred.
@@ -139,7 +139,7 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | Project context | `project_context: ContextualReferences`; authoritative project artifacts remain external |
 | Part of | `part_of_content`, explicit `part_of_references`, resolved scalar System `part_of`; no inferred parent |
 | Components; Features; Capabilities | Paired section content and ordered declaration membership in `components`, `features` or `capabilities` |
-| Named Component/Feature/Capability | `name`, complete `content`, declaring System `owner`, optional introductory `**ID:**`; Feature `system` is the declaring System |
+| Named Component/Feature/Capability | `name`, complete `content`, declaring System `owner`, optional introductory `**ID:**` |
 | Component/Feature/Capability: Purpose | `purpose` |
 | Component: Responsibilities; Boundary | `responsibilities`; `boundary_description` |
 | Component: Part of | Narrative and explicit references; resolved scalar System or Component `part_of` |

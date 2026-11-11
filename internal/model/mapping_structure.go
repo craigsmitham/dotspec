@@ -29,9 +29,6 @@ func (m *domainMapper) systemDeclarations(system Record, s *Section) {
 	for _, child := range s.Children {
 		r := m.named(kind, system, child)
 		m.section(r, "content", child)
-		if kind == "Feature" {
-			r["system"] = system["id"]
-		}
 		for _, sub := range child.Children {
 			if m.traceSection(r, sub) {
 				continue

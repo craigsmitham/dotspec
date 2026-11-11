@@ -9,6 +9,9 @@ Requirements live primarily in Markdown files named `*.spec.md`, co-located with
 A companion `dotspec` CLI helps teams manage and inspect these files, supporting the specification, validation, and verification of requirements.
 
 
+Breaking changes are acceptable. Do not introduce backward compatbility mechanisms.
+
+
 # Design principles
 
 * Optimize *.spec.md files for human readability

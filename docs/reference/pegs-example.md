@@ -4,7 +4,7 @@ Specification project: **requirements-review**. Project membership does not impl
 
 Generated PEGS reading perspective. This view complements business, user and software requirements subsets; it does not replace them or impose a dependency order. It covers only acquired specifications. Referenced project plans and native contracts remain authoritative.
 
-Model `0.16.0-draft`; mapping `dotspec-markdown/13`.
+Model `0.17.0-draft`; mapping `dotspec-markdown/13`.
 
 ## Project
 
