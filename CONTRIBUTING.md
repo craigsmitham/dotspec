@@ -30,7 +30,7 @@ and generated-file checks compare the same bytes.
 | `mise run test` | Run unit tests and process-level testscript scenarios |
 | `mise run check` | Check formatting, module tidiness, lint, tests, generated artifacts, specs, specification-source coverage, and release configuration |
 | `mise run spec-sources-check` | Check that designated specification-test files appear in the public source inventory |
-| `mise run generate` | Regenerate command reference, output examples, and starter specs |
+| `mise run generate` | Regenerate the command reference, output gallery, and To-do model views |
 | `mise run model-setup` | Provision the isolated model toolchain from its dependency lock |
 | `mise run model-generate` | Regenerate JSON Schema, reference catalog, and model documentation |
 | `mise run model-check` | Verify generated model projections without writing |

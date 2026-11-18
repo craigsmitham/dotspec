@@ -67,9 +67,8 @@ def build(version, target):
     pages = {}
     for entry in catalog:
         pages.setdefault(entry["page"].split("#")[0], entry["description"])
-    for project in ("todo", "requirements-review"):
-        for file in sorted((ROOT / "examples" / project).rglob("*.spec.md")):
-            pages[file.relative_to(ROOT).as_posix()] = f"Worked specification from {project}."
+    for file in sorted((ROOT / "examples/todo/specs").rglob("*.spec.md")):
+        pages[file.relative_to(ROOT).as_posix()] = "Worked specification from the To-do app."
 
     index = ['---', 'okf_version: "0.2"', '---', '', '# dotspec handbook', '',
              'Start with the authoring handbook or open a topic for the decision at hand.', '',

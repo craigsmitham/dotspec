@@ -272,8 +272,8 @@ dotspec model needs --path . --relative-to docs/reference > docs/reference/needs
 
 See [Jobs and user needs](../jobs-and-user-needs.md) for the method distinctions,
 progress-case fields, optional capabilities, and research evidence boundaries.
-The [generated needs map](needs-map-example.md) demonstrates shared
-outcomes, capability dependencies, providers, feature groups and requirements.
+The [generated needs map](needs-map-example.md) shows how the restart requirement supports the
+outcome of spending less time reconstructing outstanding work.
 
 The repository's [Develop Requirements](../../specs/jobs/develop-requirements.job.spec.md) and
 [Manage Requirements](../../specs/jobs/manage-requirements.job.spec.md) examples each contain a

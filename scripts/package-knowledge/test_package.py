@@ -28,7 +28,5 @@ class KnowledgePackageTest(unittest.TestCase):
                 self.assertEqual(archive.read(matches[0]).decode(), sample)
                 guide = archive.read(root + source).decode()
                 self.assertIn(matches[0].split('handbook/')[1], guide)
-                example = 'examples/requirements-review/specs/requirements/recovery-feedback.requirement.spec.md'
-                self.assertIn('## Criterion', archive.read(root + example).decode())
                 todo = 'examples/todo/specs/requirements/restart.requirement.spec.md'
                 self.assertIn('Keep recorded work available', archive.read(root + todo).decode())

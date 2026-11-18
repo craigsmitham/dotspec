@@ -47,9 +47,9 @@ choice so it is visible in the same review.
    sources so a reviewer can find the relevant diff.
 2. **Review a case that exposes the distinction.** If a contributor proposes
    requiring a numeric target whenever a quality attribute is used, read the
-   [feedback draft](../../examples/requirements-review/specs/requirements/recovery-feedback.requirement.spec.md).
-   Run `go run . requirement check recovery-feedback --path examples/requirements-review`
-   from the repository root. Compare what the advice actually says with the
+   [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md).
+   In a temporary copy of the To-do project, remove its Target subsection and run
+   `dotspec requirement check restart`. Compare the advice with the
    proposed rule. Where would an author get the bound? How should a qualitative
    obligation or an unresolved draft be handled?
 3. **Check what readers receive.** Update the index if a decision or route
@@ -66,23 +66,16 @@ each item. [IREB glossary, attribution appendix](https://hub.ireb.org/media/page
 
 ## Try the guidance from an installation
 
-Give a reader a copy of `examples/requirements-review/` and the installed
-`dotspec` binary in a directory outside the checkout. Let them discover the
-guides from `--help`. Use these prompts without the expected answers:
+Give a reader a copy of `examples/todo/` and the installed CLI outside the
+checkout. Let them discover the guides from `--help` and try these prompts:
 
-- A stakeholder confirms that restoration must preserve the original language
-  tag. Update the relevant specification and explain where the promise lives.
-- A member wants to resume work after accidental deletion. Identify the job
-  and the actor's interaction with the system.
-- Users want “fast” feedback. Review the existing draft with the CLI and record
-  what can be decided from the available evidence.
+- Find the promise that governs a task's identity across restart. Which test would detect a change?
+- Someone wants to pick up unfinished errands after a break. Identify the job and the interaction that supports it.
+- Remove the restart criterion's Target in the copy. Use the CLI to find what the author still needs to decide.
 
-Review the actual diff. The metadata refinement should identify the language
-tag while the use case continues to own the general restore promise. The job
-should describe progress independently of the restore interaction. A reader
-should be able to find the measurement guidance from a check, explain the open
-bound and operating conditions, and leave the decision with the stakeholder.
-Record which guides the reader found and where they had to guess.
+Review the reader's changes. They should be able to distinguish the use case's
+general promise from its restart refinement, and the evidence from the restart
+test from observations of someone using the list. Record where they had to guess.
 
 ## Distribute the same guides
 

@@ -1,3 +1,209 @@
+-- dotspec.yaml --
+name: concept-design
+-- specs/concepts/expiry.concept.spec.md --
+---
+type: concept
+---
+# Expiry
+
+## Purpose
+
+Identify when a resource's explicitly allocated lifetime has ended.
+
+## Type parameters
+
+### Resource
+
+An opaque resource identity; expiry does not inspect or modify the resource itself.
+
+## State
+
+### Initial state
+
+No resources have an allocated deadline or a completed expiration.
+
+### Deadlines
+
+A partial mapping from Resource to deadline. Pending expiration retains the identity
+and deadline until the expiration action completes.
+
+#### Type
+
+Resource → instant.
+
+### Completed resources
+
+The identities whose expiration completed, retained to make replayed allocations
+idempotent even after their deadlines have been removed.
+
+## Actions
+
+### Allocate
+
+Associate the resource with a deadline after the supplied positive lifetime.
+A repeated allocation for a pending resource retains its original deadline.
+An allocation for a completed resource succeeds without adding another deadline.
+
+#### Inputs
+
+##### Resource input
+
+**Type:** [Resource](#resource)
+
+The identity whose lifetime is tracked.
+
+##### Lifetime
+
+**Primitive:** Duration
+
+A positive elapsed duration.
+
+#### Rejections
+
+A nonpositive lifetime returns an error and leaves state unchanged.
+
+### Expire
+
+Complete expiration for a resource whose deadline has passed, remove its deadline,
+add it to Completed resources, and return its identity. An already expired or unknown resource produces no new
+expiration result.
+
+#### Initiation
+
+System-initiated when a deadline has passed. The implementation must arrange timely
+execution; this specification does not assume an external user invokes expiration.
+
+#### Guards
+
+- The resource has an allocated deadline that has passed.
+
+#### Outputs
+
+##### Expired resource
+
+**Type:** [Resource](#resource)
+
+The identity whose lifetime ended.
+
+## Operational principles
+
+Allocate a resource with a lifetime. Once that time has passed, expiration reports
+the resource identity so the surrounding application can react.
+-- specs/concepts/shorthand.concept.spec.md --
+---
+type: concept
+---
+# Shorthand
+
+## Purpose
+
+Let people refer to a target with a short, memorable code.
+
+## Type parameters
+
+### Target
+
+An opaque target identity. The concept makes no assumptions about its structure.
+
+## Introduced types
+
+### Code
+
+An identity for a registered shorthand. Each use maintains its own codes.
+
+## State
+
+### Initial state
+
+No codes are registered and no codes have been issued.
+
+### Issued codes
+
+All identities previously issued by this use, retained even after unregistration.
+
+### Targets
+
+A partial mapping from Code to Target. Registered codes are its domain, a subset
+of Issued codes.
+
+#### Type
+
+Code → Target.
+
+### Registered count
+
+The number of currently registered codes.
+
+#### Derivation
+
+The cardinality of the domain of Targets; no separate counter is required.
+
+### Invariants
+
+- Each registered code identifies exactly one target.
+
+## Actions
+
+### Register
+
+Create a code not in Issued codes for the supplied target. Do not replace an earlier registration.
+
+#### Inputs
+
+##### Target input
+
+**Type:** [Target](#target)
+
+The target to make accessible.
+
+#### Outputs
+
+##### Code result
+
+**Bound type:** [Code](#code)
+
+The newly registered code.
+
+#### Effects
+
+Add the code to Issued codes and add the code-to-target association.
+
+### Lookup
+
+For a registered code, return its target. Otherwise return an unknown-code result.
+
+#### Inputs
+
+##### Code input
+
+**Bound type:** [Code](#code)
+
+The code to look up.
+
+#### Outputs
+
+##### Target result
+
+**Type:** [Target](#target)
+
+Returned on a successful lookup. An unknown code returns no target.
+
+### Unregister
+
+Remove a code's association. Repeated removal succeeds without further changes.
+Never reassign that code to another target in this use.
+
+## Operational principles
+
+### Access through a shorthand
+
+Register a target, retain the returned code, and look it up later to recover the
+same target while the registration remains active.
+
+### End access
+
+Unregister the code. Subsequent lookups report that it is unknown.
+-- specs/system.spec.md --
 ---
 type: system
 ---

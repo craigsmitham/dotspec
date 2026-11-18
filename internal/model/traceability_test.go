@@ -7,15 +7,13 @@ import (
 	"slices"
 	"strings"
 	"testing"
+
+	"github.com/craigsmitham/dotspec/internal/testproject"
 )
 
 func traceFixture(t *testing.T) string {
 	t.Helper()
-	root := t.TempDir()
-	if err := os.CopyFS(root, os.DirFS("../../examples/requirements-traceability")); err != nil {
-		t.Fatal(err)
-	}
-	return root
+	return testproject.Open(t, "requirements-traceability")
 }
 func traceEdit(t *testing.T, root, path, old, replacement string) {
 	t.Helper()

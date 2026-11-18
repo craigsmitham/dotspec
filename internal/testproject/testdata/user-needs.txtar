@@ -1,3 +1,6 @@
+-- dotspec.yaml --
+name: user-needs
+-- specs/jobs/reach-work.job.spec.md --
 ---
 type: job
 id: reach-work
@@ -119,3 +122,109 @@ Illustrative hypothesis for this example, not an interview finding or validated 
 ##### Limitations
 
 No interviews or outcome survey have been conducted. Importance, satisfaction and opportunity assessments would need a dated study and a defined population.
+-- specs/requirements/notify-commuters.requirement.spec.md --
+---
+type: requirement
+---
+# Notify affected commuters
+
+## Statement
+
+The notification service must submit a disruption notification for each affected subscribed commuter within 30 seconds of receiving the disruption event.
+
+## Supports
+
+[Timely awareness](../jobs/reach-work.job.spec.md#timely-awareness)
+
+## Applies to
+
+**Targets:** [Notification service](../system.spec.md#notification-service)
+
+## Verification plan
+
+In a controlled test, record event receipt and notification submission timestamps for each affected subscription. Check that each elapsed duration is at most 30 seconds. This tests submission, not delivery, reading, or improved user confidence.
+-- specs/system.spec.md --
+---
+type: system
+id: journey-service
+---
+# Journey service
+
+## Purpose
+
+Help commuters respond to changing travel conditions.
+
+## Scope
+
+Journey information and disruption notifications. Transport operations remain external.
+
+## Components
+
+### Notification service
+
+**ID:** notification-service
+
+#### Part of
+
+[Journey service](#journey-service)
+
+#### Responsibilities
+
+Deliver relevant disruption information to affected commuters.
+
+## Features
+
+### Disruption alerts
+
+**ID:** disruption-alerts
+
+#### Purpose
+
+Help a commuter discover that their travel plan needs attention.
+
+#### Supports
+
+[Timely awareness](jobs/reach-work.job.spec.md#timely-awareness)
+
+#### Groups
+
+[Notify affected commuters](requirements/notify-commuters.requirement.spec.md)
+
+## Capabilities
+
+### Disruption communication
+
+**ID:** disruption-communication
+
+#### Purpose
+
+Make relevant changes understandable and available to affected travelers.
+
+#### Supports
+
+[Timely awareness](jobs/reach-work.job.spec.md#timely-awareness)
+[Confidence in arrival](jobs/reach-work.job.spec.md#arrival-confidence)
+
+#### Depends on
+
+[Service-change detection](#change-detection)
+
+#### Provided by
+
+[Notification service](#notification-service)
+
+#### Enablers
+
+Transport staff interpret ambiguous reports and provide explanations. The software provider link is non-exhaustive.
+
+### Service-change detection
+
+**ID:** change-detection
+
+#### Purpose
+
+Recognize changes that could affect a planned journey.
+
+#### Enablers
+
+Transport operations staff and external information feeds. No software provider is specified here.

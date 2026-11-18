@@ -1,0 +1,713 @@
+-- clock/specs/system.spec.md --
+---
+type: system
+---
+# Platform clock
+
+## Purpose
+
+Provide time readings to platform clients.
+
+## Scope
+
+The clock service boundary; consumers remain separate systems.
+-- contracts/time.openapi.yaml --
+openapi: 3.1.0
+info:
+  title: Time readings
+  version: 0.1.0
+paths:
+  /time:
+    get:
+      responses:
+        '200':
+          description: Current UTC time
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [utc]
+                properties:
+                  utc:
+                    type: string
+                    format: date-time
+-- dotspec.yaml --
+name: requirements-review
+-- project-plan.md --
+# Workspace delivery plan
+
+This example is an external project artifact, outside the requirements metamodel.
+The team maintains dates, responsibilities and acceptance records here or in its tracker.
+
+## Retention boundary decision
+
+Resolve acceptable clock offset before retention-boundary test acceptance.
+-- specs/business-rules/retention.business-rule.spec.md --
+---
+type: business-rule
+---
+# Recovery window
+
+## Statement
+
+Workspace members may recover accidentally deleted documents during the 30 days following deletion.
+
+## Supports
+
+[Reduce lost work](../system.spec.md#reduce-lost-work).
+
+## Rationale
+
+The organization commits to a bounded recovery period. This business rule does not itself specify the storage implementation.
+
+## Applies to
+
+**Targets:** [Document workspace](../system.spec.md)
+
+Applies to workspace members and documents deleted within that workspace.
+
+## Authority
+
+The workspace team's recovery policy establishes this example rule.
+-- specs/concepts/trash.concept.spec.md --
+---
+type: concept
+---
+# Trash
+
+## Purpose
+
+Make deletion reversible until a retained item expires.
+
+## Operational principles
+
+If an item is deleted and then restored before it expires, it becomes available again with its retained content.
+
+## State
+
+Items are either available, retained after deletion, or expired.
+
+## Actions
+
+### Delete
+
+Move an available item into retained state with its deletion time.
+
+### Restore
+
+Move a retained, unexpired item into available state.
+
+### Expire
+
+Remove an expired item from retained state.
+
+## Effects table
+
+| Operation | Available(item) | Retained(item) | Deletion time(item) |
+| --- | --- | --- | --- |
+| Delete | false | true | current time |
+| Restore | true | false | unchanged |
+| Expire | unchanged | false | |
+
+Blank cells are unspecified; explicit unchanged cells assert preservation.
+
+## Implementation hints
+
+An index could accelerate expiration queries without changing the specified effects.
+
+## Validation plan
+
+### Subject
+
+The proposed reversible-deletion concept; assess the operational principle against intended recovery use.
+
+### Basis
+
+[Restore a document](../use-cases/restore.use-case.spec.md).
+
+### Participants
+
+Workspace members and the recovery-policy stakeholder.
+
+### Method
+
+Review examples and a prototype with the participants, including counterexamples and unsupported situations.
+
+### Success criteria
+
+The participants can explain how the proposal addresses recovery needs, and unresolved mismatches are recorded for revision.
+
+### Conditions
+
+Representative accidental-deletion situations and the stated recovery-window boundary.
+
+### Evidence to retain
+
+Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.
+-- specs/jobs/recover.job.spec.md --
+---
+type: job
+---
+# Recover lost work
+
+## Job
+
+When valuable work is accidentally removed, I want to recover it so I can continue without recreating it.
+
+## Supports
+
+[Reduce lost work](../system.spec.md#reduce-lost-work).
+
+## Outcomes
+
+- Minimize the time required to resume work after recovering an accidentally deleted document.
+
+## Performer
+
+A workspace member who has accidentally deleted valuable work.
+-- specs/requirements/recovery-feedback.requirement.spec.md --
+---
+type: requirement
+---
+# Timely recovery feedback
+
+## Statement
+
+The workspace must provide recovery feedback promptly enough for members to continue their task.
+
+## Criterion
+
+### Measure
+
+Elapsed time from submitting a recovery request to visible feedback.
+
+## Verification plan
+
+### Method
+
+Measure the elapsed time for representative recovery requests.
+
+## Rationale
+
+This deliberately incomplete draft names a measure but leaves the required bound and operating conditions to be established. Measurements alone will not establish conformance or intended-use fitness.
+-- specs/requirements/restoration.requirement.spec.md --
+---
+type: requirement
+---
+# Preserve document metadata on restoration
+
+## Statement
+
+For the restoration required by Restore retained content, the restored metadata must preserve the original title, author identity, creation time and workspace identity.
+
+## Refines
+
+[Restore retained content](../use-cases/restore.use-case.spec.md#restore-content).
+
+The refinement makes the required metadata explicit without weakening the parent's recovery window or authorization condition.
+
+## Relies on
+
+[Trusted time](../system.spec.md#trusted-time).
+
+## Applies to
+
+**Targets:** [Restore a document](../use-cases/restore.use-case.spec.md), [DocumentTrash](../system.spec.md#documenttrash)
+
+## Rationale
+
+Preserving these metadata fields lets members resume work with the same document identity and attribution. The Refines section identifies the governing obligation.
+
+## Validation plan
+
+### Subject
+
+The proposed obligation to preserve all four metadata fields; assess whether it correctly expresses recovery needs.
+
+### Basis
+
+[Recover lost work](../jobs/recover.job.spec.md).
+
+### Participants
+
+Workspace members and the recovery-policy stakeholder.
+
+### Method
+
+Review examples and a prototype with the participants, including counterexamples and unsupported situations.
+
+### Success criteria
+
+The participants can explain how the proposal addresses recovery needs, and unresolved mismatches are recorded for revision.
+
+### Conditions
+
+Representative accidental-deletion situations and the stated recovery-window boundary.
+
+### Evidence to retain
+
+Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.
+-- specs/requirements/unassisted-recovery.requirement.spec.md --
+---
+type: requirement
+id: unassisted-recovery
+---
+# Unassisted recovery
+
+## Applies to
+
+**Targets:** [Restore a document](../use-cases/restore.use-case.spec.md).
+
+### Population
+
+Workspace members who have completed normal onboarding but have never used recovery.
+
+### Conditions
+
+Each member has accidentally deleted a document they recognize and has permission
+to restore it within its retention window. They use a supported desktop browser
+with a working network connection. Ordinary in-product help is available; no
+facilitator or colleague provides recovery instructions.
+
+### Exclusions
+
+Expired copies, unsupported browsers, and recovery during a network interruption.
+These exclusions limit this requirement; other restoration obligations still apply.
+
+## Statement
+
+Members in the stated context must be able to recover the intended document
+without external assistance at the success rate defined in [Criterion](#criterion).
+
+## Criterion
+
+### Measure
+
+The proportion of eligible task attempts in which the member restores the intended
+document and opens the recovered contents without external assistance. Count one
+attempt per member; an abandoned attempt or facilitator intervention is a failure.
+Divide successful attempts by all eligible attempts, including failures.
+
+### Target
+
+At least 90%.
+
+## Supports
+
+[Recover valuable work](../jobs/recover.job.spec.md).
+
+## Rationale
+
+Recovery should let members resume work without waiting for support. This fictional
+example uses an illustrative bound; a real product would justify it through user
+research and stakeholder agreement. A response-time measurement alone would not
+establish successful recovery.
+
+## Verification plan
+
+### Subject
+
+The candidate recovery workflow, with implementation revision recorded before the study.
+
+### Basis
+
+[Statement](#statement), [Criterion](#criterion), and [Applies to](#applies-to).
+
+### Participants
+
+Members matching the specified population, observed by a facilitator who does not
+provide recovery instructions.
+
+### Method
+
+Recruit 30 eligible members, each attempting one recovery in a seeded workspace.
+Balance recruitment across supported desktop browsers and include members with
+different levels of general workspace experience. Record all attempts and compute
+the proportion using the criterion's definition. Report the sample size, uncertainty,
+and recruitment limitations alongside the comparison; the sample is not proof of
+success for every user or environment.
+
+### Success criteria
+
+Compare the observed proportion with the required bound in [Criterion](#criterion).
+Retain the comparison and its limitations for the assessment decision.
+
+### Conditions
+
+Use a working network and supported browsers, with normal in-product help enabled.
+Give each member a recognizable document to delete before the recovery task.
+Explain how the seeded task represents the context in [Applies to](#applies-to)
+and record deviations without silently changing the requirement's scope.
+
+### Evidence to retain
+
+Retain the implementation revision, recruitment criteria, browser and task setup,
+attempt outcomes, interventions, calculation and assessment limitations. Record
+the assessment conclusion separately from this plan.
+-- specs/system.spec.md --
+---
+type: system
+---
+# Document workspace
+
+## Purpose
+
+Help teams preserve and recover valuable work.
+
+## Scope
+
+Document deletion and restoration within a workspace.
+
+## Goals
+
+### Reduce lost work
+
+Reduce the amount of valuable work lost through accidental deletion.
+
+### Reduce retention cost
+
+Reduce unnecessary storage cost without shortening the recovery commitment.
+
+## Environment
+
+Mobile clients sometimes lose connectivity. The service must accommodate retries after reconnection; connectivity loss is an operating condition, not a premise that excuses restoration obligations.
+
+## Out of scope
+
+Recovering documents after their retained copies expire. External backup restoration has a separate boundary.
+
+## Project context
+
+[Delivery and review plan](../project-plan.md) owns milestones and stakeholder review responsibilities.
+
+## Interacts with
+
+[Platform clock](../clock/specs/system.spec.md) supplies time readings across the workspace boundary.
+
+## Required interfaces
+
+### Time readings
+
+**ID:** time-readings
+
+Read UTC time for retention comparisons.
+
+#### Counterpart
+
+[Platform clock](../clock/specs/system.spec.md).
+
+#### Contracts
+
+[Time API](../contracts/time.openapi.yaml) is the authoritative wire contract.
+
+## Provided interfaces
+
+### Restoration requests
+
+**ID:** restoration-requests
+
+Accept restoration requests from authorized clients. The native contract remains to be selected.
+
+#### Obligations
+
+##### Preserve request identity
+
+**ID:** request-identity
+
+A retried restoration request must retain its original request identifier.
+
+###### Applies to
+
+**Targets:** [Restoration requests](#restoration-requests).
+
+###### Verification plan
+
+Repeat a request after an interrupted response and inspect the retained identifier.
+
+#### Notes
+
+The interaction contract covers retries; the native protocol remains to be selected.
+
+## Assumptions
+
+### Trusted time
+
+The platform supplies a trustworthy UTC clock for retention calculations.
+
+#### Basis
+
+The [clock observation](#clock-observation) motivates this premise; it does not establish a permanent guarantee.
+
+#### Applicability
+
+Retention calculations in the managed production environment while the platform clock service meets its stated operating conditions.
+
+#### Validation plan
+
+##### Subject
+
+The premise that production clock offset stays within the agreed tolerance, and the justification for relying on it at the recovery boundary.
+
+##### Basis
+
+[Clock observation](#clock-observation) and the [recovery window](business-rules/retention.business-rule.spec.md).
+
+##### Participants
+
+Platform operators and the retention reviewer.
+
+##### Conditions
+
+The managed production environment, including clock resynchronization events.
+
+##### Method
+
+Compare platform time readings to an independent reference before deployment and during operation.
+
+##### Success criteria
+
+Offset remains within the retention boundary's agreed tolerance. The tolerance is still an open question.
+
+## Evidence
+
+### Clock observation
+
+This example uses an invented observation to illustrate evidence linking. Replace it with actual measurements before relying on the premise.
+
+#### Type
+
+Illustrative hypothesis.
+
+## Open questions
+
+### Clock tolerance
+
+What time offset can the recovery-window boundary tolerate?
+
+#### Raised by
+
+Workspace requirements reviewer.
+
+#### Raised on
+
+2026-11-11.
+
+#### Resolve by
+
+Before acceptance of retention-boundary tests.
+
+#### Importance
+
+Serious: affects decisions near the recovery deadline.
+
+#### Evidence needed
+
+Clock offset measurements and stakeholder agreement on the boundary policy.
+
+#### Tracking reference
+
+[Boundary decision](../project-plan.md#retention-boundary-decision) owns resolution.
+
+### External backup handoff
+
+Who owns the handoff after retained copies expire?
+
+## Glossary
+
+### Retained document
+
+A deleted document kept inside its recovery window.
+
+#### Alternative names
+
+- Recovery copy
+
+### Recovery copy
+
+An external backup copy. This deliberate alias collision needs review.
+
+## Notes
+
+A recovery window limits restoration from retained state; it does not describe external backup guarantees.
+
+## Implementation suggestions
+
+A background worker could expire retained copies. This suggestion does not prescribe a scheduler or database.
+
+## Illustrative examples
+
+A member restores a document one day after deletion and resumes editing.
+
+## Concept uses
+
+### DocumentTrash
+
+#### Definition
+
+[Trash](concepts/trash.concept.spec.md)
+
+#### Supports
+
+[Recover lost work](jobs/recover.job.spec.md).
+
+#### Relies on
+
+[Trusted time](#trusted-time) bounds retention intervals.
+
+## Validation plan
+
+### Subject
+
+The proposed workspace recovery workflow in a prototype, then the identified release build; this assesses intended use rather than only conformance to the written recovery rule.
+
+### Basis
+
+[Recover lost work](jobs/recover.job.spec.md) and [Reduce lost work](#reduce-lost-work).
+
+### Participants
+
+Representative workspace members, including mobile users, and a stakeholder who owns the recovery policy.
+
+### Method
+
+Observe representative users attempting recovery with realistic document collections; discuss where the proposed workflow fails their intended progress.
+
+### Success criteria
+
+Participants recover the intended document and can resume their interrupted task without specialist assistance. Record exceptions and limits rather than generalizing to every user.
+
+### Conditions
+
+Representative desktop and mobile sessions, including reconnection after intermittent connectivity; record prototype or build revision and participant context.
+
+### Cases
+
+#### Resume interrupted work
+
+Ask a participant to recover a mistakenly deleted document and resume the task.
+
+##### Expected result
+
+The participant identifies the intended document, recovers it, and resumes the task.
+
+##### Evidence to retain
+
+Consented observation notes, task outcome, revision, conditions and observed obstacles.
+
+### Evidence to retain
+
+Retain the protocol and observations separately from the assessment of intended-use fitness and any stakeholder acceptance decision. This example records a plan only.
+-- specs/use-cases/restore.use-case.spec.md --
+---
+type: use-case
+---
+# Restore a document
+
+## Goal
+
+Recover an accidentally deleted document and resume work.
+
+## System boundary
+
+**Subject system:** [Document workspace](../system.spec.md)
+
+The workspace owns retention and restoration; external backups are outside this boundary.
+
+## Supports
+
+[Recover lost work](../jobs/recover.job.spec.md).
+
+## Involves
+
+[DocumentTrash](../system.spec.md#documenttrash).
+
+## Main success scenario
+
+1. The member selects a retained document.
+2. The workspace restores it according to [Restore retained content](#restore-content).
+   - **Illustrates:** [Restore retained content](#restore-content), [Restore](../concepts/trash.concept.spec.md#restore).
+3. The member resumes work.
+
+## Success guarantees
+
+The member can resume work on the restored document.
+
+## Obligations
+
+### Restore retained content
+
+**ID:** restore-content
+
+When an authorized workspace member requests restoration before the 30-day recovery period ends, the workspace must restore the retained document content and metadata.
+
+#### Derived from
+
+[Recovery window](../business-rules/retention.business-rule.spec.md) supplies the time boundary.
+
+#### Supports
+
+[Recover lost work](../jobs/recover.job.spec.md).
+
+#### Applies to
+
+**Targets:** [DocumentTrash](../system.spec.md#documenttrash)
+
+#### Verification plan
+
+Exercise restoration with retained content and metadata; compare both to their pre-deletion values. Include requests immediately before the recovery deadline.
+
+## Authority
+
+For this example, the workspace team accepts the named obligation above as the authoritative behavioral expression. The scenario refers to it rather than defining a second rule.
+
+## Primary actor
+
+An authorized workspace member.
+
+## Goal level
+
+User task.
+
+## Sequence
+
+The scenario order is representative; the named obligation governs restoration.
+
+## Extensions
+
+### The recovery deadline has passed
+
+The workspace declines restoration from retained state and explains that the recovery window has ended.
+
+### The member lacks authorization
+
+The workspace declines restoration and leaves the retained document unchanged.
+
+## Validation plan
+
+### Subject
+
+The proposed interaction and alternatives; assess whether they support members in resuming interrupted work.
+
+### Basis
+
+[Recover lost work](../jobs/recover.job.spec.md).
+
+### Participants
+
+Workspace members and the recovery-policy stakeholder.
+
+### Method
+
+Review examples and a prototype with the participants, including counterexamples and unsupported situations.
+
+### Success criteria
+
+The participants can explain how the proposal addresses recovery needs, and unresolved mismatches are recorded for revision.
+
+### Conditions
+
+Representative accidental-deletion situations and the stated recovery-window boundary.
+
+### Evidence to retain
+
+Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.

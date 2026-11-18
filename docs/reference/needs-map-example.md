@@ -1,6 +1,6 @@
 # Needs and specification map
 
-Specification project: **user-needs**. Project membership does not imply a System relationship.
+Specification project: **todo**. Project membership does not imply a System relationship.
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
@@ -10,256 +10,141 @@ Model `0.19.0-draft`; mapping `dotspec-markdown/14`. Only acquired records and e
 
 ```mermaid
 flowchart LR
-  n1["Job: Reach work predictably"]
-  n2["JobStep: Monitor the journey"]
-  n3["JobStep: Adapt travel plans"]
-  n4["DesiredOutcome: Timely awareness"]
-  n5["DesiredOutcome: Confidence in arrival"]
-  n7["Requirement: Notify affected commuters"]
-  n8["System: Journey service"]
-  n9["Capability: Service-change detection"]
-  n10["Component: Notification service"]
-  n11["Feature: Disruption alerts"]
-  n12["Capability: Disruption communication"]
-  n4 -->|applies to| n2
-  n4 -->|applies to| n3
-  n5 -->|applies to| n1
-  n7 -->|supports| n4
-  n7 -->|applies to| n10
-  n10 -->|part of| n8
-  n11 -->|supports| n4
-  n11 -->|groups| n7
-  n12 -->|supports| n4
-  n12 -->|supports| n5
-  n12 -->|depends on| n9
-  n12 -->|provided by| n10
+  n1["Concept: Checklist"]
+  n2["Job: Resume interrupted work"]
+  n3["JobStep: Recall outstanding work"]
+  n4["JobStep: Reconsider finished work"]
+  n5["DesiredOutcome: Less reconstruction"]
+  n6["Requirement: Preserve tasks across restart"]
+  n7["System: Personal task list"]
+  n8["Component: Task service"]
+  n9["Feature: Pick up where I left off"]
+  n10["UseCase: Return to my list"]
+  n11["ObligationClause: Keep recorded work available"]
+  n5 -->|applies to| n3
+  n6 -->|supports| n5
+  n6 -->|applies to| n10
+  n8 -->|part of| n7
+  n9 -->|groups| n10
+  n9 -->|groups| n6
+  n10 -->|supports| n2
 ```
 
 ## Relationships
 
 | From | Relationship | To |
 | --- | --- | --- |
-| [Reach work predictably](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#reach-work-predictably>) | declares | [Monitor the journey](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#monitor-the-journey>) |
-| [Reach work predictably](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#reach-work-predictably>) | declares | [Adapt travel plans](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#adapt-travel-plans>) |
-| [Timely awareness](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#timely-awareness>) | applies to | [Monitor the journey](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#monitor-the-journey>) |
-| [Timely awareness](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#timely-awareness>) | applies to | [Adapt travel plans](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#adapt-travel-plans>) |
-| [Reach work predictably](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#reach-work-predictably>) | declares | [Timely awareness](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#timely-awareness>) |
-| [Confidence in arrival](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#confidence-in-arrival>) | applies to | [Reach work predictably](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#reach-work-predictably>) |
-| [Reach work predictably](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#reach-work-predictably>) | declares | [Confidence in arrival](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#confidence-in-arrival>) |
-| [Reach work predictably](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#reach-work-predictably>) | declares | [Repeated late arrivals](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#repeated-late-arrivals>) |
-| [Notify affected commuters](<../../examples/user-needs/specs/requirements/notify-commuters.requirement.spec.md#notify-affected-commuters>) | supports | [Timely awareness](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#timely-awareness>) |
-| [Notify affected commuters](<../../examples/user-needs/specs/requirements/notify-commuters.requirement.spec.md#notify-affected-commuters>) | applies to | [Notification service](<../../examples/user-needs/specs/system.spec.md#notification-service>) |
-| [Journey service](<../../examples/user-needs/specs/system.spec.md#journey-service>) | declares | [Service-change detection](<../../examples/user-needs/specs/system.spec.md#service-change-detection>) |
-| [Notification service](<../../examples/user-needs/specs/system.spec.md#notification-service>) | part of | [Journey service](<../../examples/user-needs/specs/system.spec.md#journey-service>) |
-| [Journey service](<../../examples/user-needs/specs/system.spec.md#journey-service>) | declares | [Notification service](<../../examples/user-needs/specs/system.spec.md#notification-service>) |
-| [Disruption alerts](<../../examples/user-needs/specs/system.spec.md#disruption-alerts>) | supports | [Timely awareness](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#timely-awareness>) |
-| [Disruption alerts](<../../examples/user-needs/specs/system.spec.md#disruption-alerts>) | groups | [Notify affected commuters](<../../examples/user-needs/specs/requirements/notify-commuters.requirement.spec.md#notify-affected-commuters>) |
-| [Journey service](<../../examples/user-needs/specs/system.spec.md#journey-service>) | declares | [Disruption alerts](<../../examples/user-needs/specs/system.spec.md#disruption-alerts>) |
-| [Disruption communication](<../../examples/user-needs/specs/system.spec.md#disruption-communication>) | supports | [Timely awareness](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#timely-awareness>) |
-| [Disruption communication](<../../examples/user-needs/specs/system.spec.md#disruption-communication>) | supports | [Confidence in arrival](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#confidence-in-arrival>) |
-| [Disruption communication](<../../examples/user-needs/specs/system.spec.md#disruption-communication>) | depends on | [Service-change detection](<../../examples/user-needs/specs/system.spec.md#service-change-detection>) |
-| [Disruption communication](<../../examples/user-needs/specs/system.spec.md#disruption-communication>) | provided by | [Notification service](<../../examples/user-needs/specs/system.spec.md#notification-service>) |
-| [Journey service](<../../examples/user-needs/specs/system.spec.md#journey-service>) | declares | [Disruption communication](<../../examples/user-needs/specs/system.spec.md#disruption-communication>) |
+| [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>) | declares | [Recall outstanding work](<../../examples/todo/specs/jobs/resume.job.spec.md#recall-outstanding-work>) |
+| [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>) | declares | [Reconsider finished work](<../../examples/todo/specs/jobs/resume.job.spec.md#reconsider-finished-work>) |
+| [Less reconstruction](<../../examples/todo/specs/jobs/resume.job.spec.md#less-reconstruction>) | applies to | [Recall outstanding work](<../../examples/todo/specs/jobs/resume.job.spec.md#recall-outstanding-work>) |
+| [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>) | declares | [Less reconstruction](<../../examples/todo/specs/jobs/resume.job.spec.md#less-reconstruction>) |
+| [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) | supports | [Less reconstruction](<../../examples/todo/specs/jobs/resume.job.spec.md#less-reconstruction>) |
+| [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) | applies to | [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>) |
+| [Task service](<../../examples/todo/specs/system.spec.md#task-service>) | part of | [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) |
+| [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) | declares | [Task service](<../../examples/todo/specs/system.spec.md#task-service>) |
+| [Pick up where I left off](<../../examples/todo/specs/system.spec.md#pick-up-where-i-left-off>) | groups | [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>) |
+| [Pick up where I left off](<../../examples/todo/specs/system.spec.md#pick-up-where-i-left-off>) | groups | [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) |
+| [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) | declares | [Pick up where I left off](<../../examples/todo/specs/system.spec.md#pick-up-where-i-left-off>) |
+| [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>) | supports | [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>) |
 
 ## Definitions and evidence
 
 Short diagram labels do not replace full statements. Evidence describes its source and limits; importance, satisfaction and opportunity assessments belong to dated research about a population, not to the outcome itself. Requirements express commitments, separately from desired user results.
 
-### Job: Reach work predictably
+### Concept: Checklist
 
-Source: [Reach work predictably](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#reach-work-predictably>)
+Source: [Checklist](<../../examples/todo/specs/concepts/checklist.concept.spec.md#checklist>)
+
+#### Purpose
+
+Keep track of which commitments still need attention.
+
+### Job: Resume interrupted work
+
+Source: [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>)
 
 #### Statement
 
-Reach work reliably when travel conditions change.
+When I put work down, I want to remember what remains so I can pick it up again.
 
 #### Performer
 
-A commuter. A purchaser of employer travel benefits may be a different person.
+A person managing their own errands or work.
 
-#### Situation
+#### Supports
 
-The commuter has a time-sensitive commitment and uncertain travel conditions.
+[Resume unfinished work](../../examples/todo/specs/system.spec.md#resume-unfinished-work).
 
-#### Motivation
+### JobStep: Recall outstanding work
 
-Keep commitments without repeatedly checking every possible source of travel information.
-
-#### Intended progress
-
-Feel prepared to respond to disruptions and be dependable to colleagues.
-
-### JobStep: Monitor the journey
-
-Source: [Monitor the journey](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#monitor-the-journey>)
+Source: [Recall outstanding work](<../../examples/todo/specs/jobs/resume.job.spec.md#recall-outstanding-work>)
 
 #### Description
 
-Recognize changes that could prevent timely arrival.
+Identify the commitments that still need attention.
 
-### JobStep: Adapt travel plans
+### JobStep: Reconsider finished work
 
-Source: [Adapt travel plans](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#adapt-travel-plans>)
+Source: [Reconsider finished work](<../../examples/todo/specs/jobs/resume.job.spec.md#reconsider-finished-work>)
 
 #### Description
 
-Choose an appropriate response when conditions change.
+Recognize when a previously finished commitment needs another action.
 
-### DesiredOutcome: Timely awareness
+### DesiredOutcome: Less reconstruction
 
-Source: [Timely awareness](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#timely-awareness>)
+Source: [Less reconstruction](<../../examples/todo/specs/jobs/resume.job.spec.md#less-reconstruction>)
 
 #### Statement
 
-Minimize the time between a relevant service disruption and awareness that the travel plan needs attention.
-
-#### Supporting content
-
-This criterion spans two steps and is declared once. A notification delivery target is a separate software commitment.
+Minimize the time spent reconstructing outstanding commitments after an interruption.
 
 #### Applies to
 
-[Monitor the journey](../../examples/user-needs/specs/jobs/reach-work.job.spec.md#monitor-journey)
-[Adapt travel plans](../../examples/user-needs/specs/jobs/reach-work.job.spec.md#adapt-plans)
+[Recall outstanding work](../../examples/todo/specs/jobs/resume.job.spec.md#recall).
 
-### DesiredOutcome: Confidence in arrival
+### Requirement: Preserve tasks across restart
 
-Source: [Confidence in arrival](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#confidence-in-arrival>)
-
-#### Statement
-
-Feel confident about the ability to keep the commitment despite uncertain travel conditions.
-
-#### Applies to
-
-[Reach work predictably](../../examples/user-needs/specs/jobs/reach-work.job.spec.md#reach-work)
-
-### ProgressCase: Repeated late arrivals
-
-Source: [Repeated late arrivals](<../../examples/user-needs/specs/jobs/reach-work.job.spec.md#repeated-late-arrivals>)
-
-#### Current approach
-
-Manually check several sources before departure.
-
-#### Desired progress
-
-Know when to adjust plans without constant checking.
-
-#### Circumstances
-
-A recurring morning commitment coincides with unreliable transport information.
-
-#### Struggling moment
-
-Another unexpected cancellation makes the current checking routine feel inadequate.
-
-#### Participants
-
-The commuter performs the job and chooses a travel-information service. Their employer purchases a travel benefit but does not make this choice.
-
-#### Alternatives considered
-
-Continue manual checking, leave much earlier, or try disruption alerts.
-
-#### Tradeoffs and selection criteria
-
-Accept some notifications in exchange for timely information, but reject irrelevant interruptions.
-
-#### Forces
-
-- Push: Repeated surprises undermine confidence.
-- Pull: Relevant alerts could reduce checking.
-- Anxiety: Alerts may arrive late or be inaccurate.
-- Habit: Manual checking is familiar.
-
-#### Timeline
-
-A cancellation prompts consideration of alternatives; no actual purchase or switching date is asserted.
-
-#### Evidence
-
-##### Research basis
-
-Illustrative hypothesis for this example, not an interview finding or validated customer segment.
-
-##### Limitations
-
-No interviews or outcome survey have been conducted. Importance, satisfaction and opportunity assessments would need a dated study and a defined population.
-
-### Requirement: Notify affected commuters
-
-Source: [Notify affected commuters](<../../examples/user-needs/specs/requirements/notify-commuters.requirement.spec.md#notify-affected-commuters>)
+Source: [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>)
 
 #### Statement
 
-The notification service must submit a disruption notification for each affected subscribed commuter within 30 seconds of receiving the disruption event.
+After the service acknowledges a change, stopping and restarting it on the same
+database must preserve each surviving entry's identity, title and completion state.
+Deleted entries must stay absent.
 
 #### Supports
 
-[Timely awareness](../../examples/user-needs/specs/jobs/reach-work.job.spec.md#timely-awareness)
+[Less reconstruction](../../examples/todo/specs/jobs/resume.job.spec.md#less-reconstruction).
 
-### System: Journey service
+### System: Personal task list
 
-Source: [Journey service](<../../examples/user-needs/specs/system.spec.md#journey-service>)
-
-#### Purpose
-
-Help commuters respond to changing travel conditions.
-
-### Capability: Service-change detection
-
-Source: [Service-change detection](<../../examples/user-needs/specs/system.spec.md#service-change-detection>)
+Source: [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>)
 
 #### Purpose
 
-Recognize changes that could affect a planned journey.
+Help a person pick up unfinished work after an interruption.
 
-#### Enablers
+### Component: Task service
 
-Transport operations staff and external information feeds. No software provider is specified here.
+Source: [Task service](<../../examples/todo/specs/system.spec.md#task-service>)
 
-### Component: Notification service
+### Feature: Pick up where I left off
 
-Source: [Notification service](<../../examples/user-needs/specs/system.spec.md#notification-service>)
+Source: [Pick up where I left off](<../../examples/todo/specs/system.spec.md#pick-up-where-i-left-off>)
 
-### Feature: Disruption alerts
+### UseCase: Return to my list
 
-Source: [Disruption alerts](<../../examples/user-needs/specs/system.spec.md#disruption-alerts>)
-
-#### Purpose
-
-Help a commuter discover that their travel plan needs attention.
+Source: [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>)
 
 #### Supports
 
-[Timely awareness](../../examples/user-needs/specs/jobs/reach-work.job.spec.md#timely-awareness)
+[Resume interrupted work](../../examples/todo/specs/jobs/resume.job.spec.md).
 
-### Capability: Disruption communication
+### ObligationClause: Keep recorded work available
 
-Source: [Disruption communication](<../../examples/user-needs/specs/system.spec.md#disruption-communication>)
+Source: [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>)
 
-#### Purpose
+#### Statement
 
-Make relevant changes understandable and available to affected travelers.
-
-#### Enablers
-
-Transport staff interpret ambiguous reports and provide explanations. The software provider link is non-exhaustive.
-
-#### Supports
-
-[Timely awareness](../../examples/user-needs/specs/jobs/reach-work.job.spec.md#timely-awareness)
-[Confidence in arrival](../../examples/user-needs/specs/jobs/reach-work.job.spec.md#arrival-confidence)
-
-#### Depends on
-
-[Service-change detection](../../examples/user-needs/specs/system.spec.md#change-detection)
-
-#### Provided by
-
-[Notification service](../../examples/user-needs/specs/system.spec.md#notification-service)
-
-## Inspection findings
-
-- **advice** `requirement.rationale`: Explain why this obligation is needed and reference its source or governing goal.
+The list must make previously recorded entries available when the person returns.

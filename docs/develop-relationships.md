@@ -249,7 +249,7 @@ output is redirected. A nonzero authoring exit still produces the review documen
 
 Missing motivation or verification guidance is advisory. A verification plan is
 not an execution result, and a path through the graph does not prove satisfaction.
-The [generated recovery example](reference/requirements-traceability-example.md)
+The [generated To-do example](reference/requirements-traceability-example.md)
 shows the complete flow; [Requirements layers](requirements-layers.md) explains
 why these distinctions matter.
 
@@ -387,8 +387,8 @@ boundary intent while allowing implementation structure to change:
 For enabling abilities that may combine people, procedures and technology, use
 the optional [Capability model](jobs-and-user-needs.md#connect-needs-to-capabilities-and-specifications).
 Its dependencies and providers are distinct from feature membership and structural
-parentage. The [needs map](reference/needs-map-example.md) connects those
-relationships with user jobs and desired outcomes.
+parentage. The [To-do needs map](reference/needs-map-example.md) shows the job,
+its steps and the outcome supported by the restart requirement.
 
 ## Review boundaries and scenario grounding
 

@@ -71,10 +71,9 @@ full statement. Place links under `Applies to`. A named outcome under a job uses
 H3 and H4 headings; under a step it uses H5 and H6. Headings without an ID remain
 supporting extensions. Ordinary links in supporting prose are citations.
 
-See [Reach work predictably](../examples/user-needs/specs/jobs/reach-work.job.spec.md):
-“Timely awareness” applies to both monitoring and adapting a journey, while
-“Confidence in arrival” applies to the whole job. Declaration ownership and
-applicability are separate relationships in the generated map.
+In [Resume interrupted work](../examples/todo/specs/jobs/resume.job.spec.md),
+the job owns “Less reconstruction”. Its Applies to link identifies the particular
+step where the person recalls outstanding work.
 
 `job outcome list --step ID` selects declaration ownership. `job map --outcomes`
 shows the authored map and outcome declarations; it does not resolve shared
@@ -143,7 +142,6 @@ statements retain their meaning. Unresolved references remain in the authored
 narrative and inspection findings rather than becoming invented edges.
 
 Inspect the [generated example](reference/needs-map-example.md) and its
-[source system](../examples/user-needs/specs/system.spec.md). The view combines
-capability dependencies and providers with existing feature groups, requirement
-applicability and contribution links. It covers only acquired records within
+[source system](../examples/todo/specs/system.spec.md). Follow the restart
+requirement to the desired outcome and the step where it applies. It covers only acquired records within
 normal model-export discovery and direct-reference bounds.

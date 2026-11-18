@@ -1,6 +1,6 @@
 # Requirements traceability
 
-Specification project: **requirements-traceability**. Project membership does not imply a System relationship.
+Specification project: **todo**. Project membership does not imply a System relationship.
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
@@ -12,21 +12,22 @@ This view covers only acquired records and resolved explicit relationships withi
 
 | Element | Relationship | Basis or subject |
 | --- | --- | --- |
-| [Recovery window](<../../examples/requirements-traceability/specs/business-rules/retention.business-rule.spec.md#recovery-window>) | supports | [Reduce lost work](<../../examples/requirements-traceability/specs/system.spec.md#reduce-lost-work>) |
-| [Recovery window](<../../examples/requirements-traceability/specs/business-rules/retention.business-rule.spec.md#recovery-window>) | applies to | [Document workspace](<../../examples/requirements-traceability/specs/system.spec.md#document-workspace>) |
-| [Recover lost work](<../../examples/requirements-traceability/specs/jobs/recover.job.spec.md#recover-lost-work>) | supports | [Reduce lost work](<../../examples/requirements-traceability/specs/system.spec.md#reduce-lost-work>) |
-| [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) | refines | [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) |
-| [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) | relies on | [Trusted time](<../../examples/requirements-traceability/specs/system.spec.md#trusted-time>) |
-| [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) | applies to | [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) |
-| [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) | applies to | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) |
-| [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) | supports | [Recover lost work](<../../examples/requirements-traceability/specs/jobs/recover.job.spec.md#recover-lost-work>) |
-| [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) | relies on | [Trusted time](<../../examples/requirements-traceability/specs/system.spec.md#trusted-time>) |
-| [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) | definition | [Trash](<../../examples/requirements-traceability/specs/concepts/trash.concept.spec.md#trash>) |
-| [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) | supports | [Recover lost work](<../../examples/requirements-traceability/specs/jobs/recover.job.spec.md#recover-lost-work>) |
-| [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) | involves | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) |
-| [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) | supports | [Recover lost work](<../../examples/requirements-traceability/specs/jobs/recover.job.spec.md#recover-lost-work>) |
-| [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) | derived from | [Recovery window](<../../examples/requirements-traceability/specs/business-rules/retention.business-rule.spec.md#recovery-window>) |
-| [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) | applies to | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) |
+| [Completion preserves a commitment](<../../examples/todo/specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment>) | applies to | [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) |
+| [Less reconstruction](<../../examples/todo/specs/jobs/resume.job.spec.md#less-reconstruction>) | applies to | [Recall outstanding work](<../../examples/todo/specs/jobs/resume.job.spec.md#recall-outstanding-work>) |
+| [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>) | supports | [Resume unfinished work](<../../examples/todo/specs/system.spec.md#resume-unfinished-work>) |
+| [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) | supports | [Less reconstruction](<../../examples/todo/specs/jobs/resume.job.spec.md#less-reconstruction>) |
+| [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) | refines | [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>) |
+| [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) | relies on | [Same local storage](<../../examples/todo/specs/system.spec.md#same-local-storage>) |
+| [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) | applies to | [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>) |
+| [My checklist](<../../examples/todo/specs/system.spec.md#my-checklist>) | supports | [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>) |
+| [My checklist](<../../examples/todo/specs/system.spec.md#my-checklist>) | definition | [Checklist](<../../examples/todo/specs/concepts/checklist.concept.spec.md#checklist>) |
+| [ScenarioStep](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) | illustrates | [Complete](<../../examples/todo/specs/concepts/checklist.concept.spec.md#complete>) |
+| [ScenarioStep](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) | illustrates | [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>) |
+| [ScenarioStep](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) | illustrates | [Reopen](<../../examples/todo/specs/concepts/checklist.concept.spec.md#reopen>) |
+| [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>) | derived from | [Completion preserves a commitment](<../../examples/todo/specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment>) |
+| [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>) | applies to | [My checklist](<../../examples/todo/specs/system.spec.md#my-checklist>) |
+| [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>) | supports | [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>) |
+| [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>) | involves | [My checklist](<../../examples/todo/specs/system.spec.md#my-checklist>) |
 
 ## Layered relationship diagram
 
@@ -35,38 +36,46 @@ Arrows read from the declaring element to its named target. They do not impose a
 ```mermaid
 flowchart BT
     subgraph g0["Business requirements"]
-        n0["BusinessRule: Recovery window"]
-        n6["Goal: Reduce lost work"]
+        n0["BusinessRule: Completion preserves a commitment"]
+        n10["Goal: Resume unfinished work"]
     end
     subgraph g1["User requirements"]
-        n2["Job: Recover lost work"]
+        n4["DesiredOutcome: Less reconstruction"]
+        n5["JobStep: Recall outstanding work"]
+        n6["Job: Resume interrupted work"]
     end
     subgraph g2["Software requirements"]
-        n1["Concept: Trash"]
-        n3["Requirement: Preserve document metadata on restoration"]
-        n5["ConceptUse: DocumentTrash"]
-        n8["UseCase: Restore a document"]
+        n1["Concept: Checklist"]
+        n2["ConceptAction: Complete"]
+        n3["ConceptAction: Reopen"]
+        n7["Requirement: Preserve tasks across restart"]
+        n8["ConceptUse: My checklist"]
+        n12["ScenarioStep: ScenarioStep"]
+        n13["ScenarioStep: ScenarioStep"]
+        n14["ScenarioStep: ScenarioStep"]
+        n16["UseCase: Return to my list"]
     end
     subgraph g3["Shared concerns and source context"]
-        n4["System: Document workspace"]
-        n7["Assumption: Trusted time"]
-        n9["ObligationClause: Restore retained content"]
+        n9["System: Personal task list"]
+        n11["Assumption: Same local storage"]
+        n15["ObligationClause: Keep recorded work available"]
     end
-    n0 -->|"supports"| n6
-    n0 -->|"applies to"| n4
-    n2 -->|"supports"| n6
-    n3 -->|"refines"| n9
-    n3 -->|"relies on"| n7
-    n3 -->|"applies to"| n8
-    n3 -->|"applies to"| n5
-    n5 -->|"supports"| n2
-    n5 -->|"relies on"| n7
-    n5 -->|"definition"| n1
-    n8 -->|"supports"| n2
-    n8 -->|"involves"| n5
-    n9 -->|"supports"| n2
-    n9 -->|"derived from"| n0
-    n9 -->|"applies to"| n5
+    n0 -->|"applies to"| n9
+    n4 -->|"applies to"| n5
+    n6 -->|"supports"| n10
+    n7 -->|"supports"| n4
+    n7 -->|"refines"| n15
+    n7 -->|"relies on"| n11
+    n7 -->|"applies to"| n16
+    n8 -->|"supports"| n6
+    n8 -->|"definition"| n1
+    n12 -->|"illustrates"| n2
+    n13 -->|"illustrates"| n15
+    n14 -->|"illustrates"| n3
+    n15 -->|"derived from"| n0
+    n15 -->|"applies to"| n8
+    n16 -->|"supports"| n6
+    n16 -->|"involves"| n8
 ```
 
 ## Behavior: use cases and concept uses
@@ -75,7 +84,7 @@ Use cases and concepts are complementary views. Participation is many-to-many an
 
 | Use case | Participating concept uses | Explicit obligations applying to this use case |
 | --- | --- | --- |
-| [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) | [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) (declared here); [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) |
+| [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>) | [My checklist](<../../examples/todo/specs/system.spec.md#my-checklist>) | [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>) (declared here); [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) |
 
 ## Change review
 
@@ -83,15 +92,19 @@ Reverse navigation is generated from the same typed fields. Each direct candidat
 
 | Changed record | Direct review candidates and reasons | Further review candidates |
 | --- | --- | --- |
-| [Recovery window](<../../examples/requirements-traceability/specs/business-rules/retention.business-rule.spec.md#recovery-window>) | [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) (derived from) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) |
-| [Trash](<../../examples/requirements-traceability/specs/concepts/trash.concept.spec.md#trash>) | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) (definition) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>); [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>); [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) |
-| [Recover lost work](<../../examples/requirements-traceability/specs/jobs/recover.job.spec.md#recover-lost-work>) | [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) (supports); [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) (supports); [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) (supports) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) |
-| [Document workspace](<../../examples/requirements-traceability/specs/system.spec.md#document-workspace>) | [Recovery window](<../../examples/requirements-traceability/specs/business-rules/retention.business-rule.spec.md#recovery-window>) (applies to) | [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>); [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) |
-| [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) (applies to); [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) (involves); [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) (applies to) | None recorded in acquired scope |
-| [Reduce lost work](<../../examples/requirements-traceability/specs/system.spec.md#reduce-lost-work>) | [Recovery window](<../../examples/requirements-traceability/specs/business-rules/retention.business-rule.spec.md#recovery-window>) (supports); [Recover lost work](<../../examples/requirements-traceability/specs/jobs/recover.job.spec.md#recover-lost-work>) (supports) | [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>); [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>); [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>); [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) |
-| [Trusted time](<../../examples/requirements-traceability/specs/system.spec.md#trusted-time>) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) (relies on); [DocumentTrash](<../../examples/requirements-traceability/specs/system.spec.md#documenttrash>) (relies on) | [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>); [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) |
-| [Restore a document](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-a-document>) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) (applies to) | None recorded in acquired scope |
-| [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) | [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) (refines) | None recorded in acquired scope |
+| [Completion preserves a commitment](<../../examples/todo/specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment>) | [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>) (derived from) | [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>); [ScenarioStep](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) |
+| [Checklist](<../../examples/todo/specs/concepts/checklist.concept.spec.md#checklist>) | [My checklist](<../../examples/todo/specs/system.spec.md#my-checklist>) (definition) | [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>); [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>); [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>); [ScenarioStep](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) |
+| [Complete](<../../examples/todo/specs/concepts/checklist.concept.spec.md#complete>) | [ScenarioStep](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) (illustrates) | None recorded in acquired scope |
+| [Reopen](<../../examples/todo/specs/concepts/checklist.concept.spec.md#reopen>) | [ScenarioStep](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) (illustrates) | None recorded in acquired scope |
+| [Less reconstruction](<../../examples/todo/specs/jobs/resume.job.spec.md#less-reconstruction>) | [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) (supports) | None recorded in acquired scope |
+| [Recall outstanding work](<../../examples/todo/specs/jobs/resume.job.spec.md#recall-outstanding-work>) | [Less reconstruction](<../../examples/todo/specs/jobs/resume.job.spec.md#less-reconstruction>) (applies to) | [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) |
+| [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>) | [My checklist](<../../examples/todo/specs/system.spec.md#my-checklist>) (supports); [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>) (supports) | [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>); [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>); [ScenarioStep](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) |
+| [My checklist](<../../examples/todo/specs/system.spec.md#my-checklist>) | [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>) (applies to); [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>) (involves) | [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>); [ScenarioStep](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) |
+| [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) | [Completion preserves a commitment](<../../examples/todo/specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment>) (applies to) | [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>); [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>); [ScenarioStep](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) |
+| [Resume unfinished work](<../../examples/todo/specs/system.spec.md#resume-unfinished-work>) | [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>) (supports) | [My checklist](<../../examples/todo/specs/system.spec.md#my-checklist>); [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>); [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>); [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>); [ScenarioStep](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) |
+| [Same local storage](<../../examples/todo/specs/system.spec.md#same-local-storage>) | [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) (relies on) | None recorded in acquired scope |
+| [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>) | [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) (refines); [ScenarioStep](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) (illustrates) | None recorded in acquired scope |
+| [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>) | [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) (applies to) | None recorded in acquired scope |
 
 ## System verification planning
 
@@ -99,8 +112,8 @@ This inventory covers standalone requirements and explicitly distinguished oblig
 
 | Obligation | Authored check guidance | Execution evidence |
 | --- | --- | --- |
-| [Preserve document metadata on restoration](<../../examples/requirements-traceability/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>) | Recorded in source (verification plan) | Not evaluated |
-| [Restore retained content](<../../examples/requirements-traceability/specs/use-cases/restore.use-case.spec.md#restore-retained-content>) | Recorded in source (verification plan) | Not evaluated |
+| [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) | Recorded in source (verification plan) | Not evaluated |
+| [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>) | Recorded in source (verification plan) | Not evaluated |
 
 ## Review findings
 

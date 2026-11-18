@@ -1,6 +1,6 @@
 # System specification overview
 
-Specification project: **system-structure**. Project membership does not imply a System relationship.
+Specification project: **todo**. Project membership does not imply a System relationship.
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
@@ -12,21 +12,15 @@ Arrows read **part of**, from a component or subsystem to its explicit structura
 
 ```mermaid
 flowchart BT
-  n1["Component: Checkout"]
-  n2["Component: Inventory"]
-  n3["System: Online Store"]
-  n4["Component: Reservations"]
-  n1 -->|part of| n3
-  n2 -->|part of| n3
-  n4 -->|part of| n2
+  n1["System: Personal task list"]
+  n2["Component: Task service"]
+  n2 -->|part of| n1
 ```
 
 | Subject | Explicit parent | Declared in |
 | --- | --- | --- |
-| [Checkout](<../../examples/system-structure/specs/system.spec.md#checkout>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) |
-| [Inventory](<../../examples/system-structure/specs/system.spec.md#inventory>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) |
-| [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | Unresolved or undeclared | System document |
-| [Reservations](<../../examples/system-structure/specs/system.spec.md#reservations>) | [Inventory](<../../examples/system-structure/specs/system.spec.md#inventory>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) |
+| [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) | Unresolved or undeclared | System document |
+| [Task service](<../../examples/todo/specs/system.spec.md#task-service>) | [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) | [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) |
 
 ## Interfaces
 
@@ -34,7 +28,7 @@ Required and provided are relative to the declaring subject. Each entry is an ad
 
 | Subject | Direction | Interface |
 | --- | --- | --- |
-| [Checkout](<../../examples/system-structure/specs/system.spec.md#checkout>) | provided | [Order submission](<../../examples/system-structure/specs/system.spec.md#order-submission>) |
+| [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) | provided | [Task list forms](<../../examples/todo/specs/system.spec.md#task-list-forms>) |
 
 ## Features
 
@@ -42,8 +36,7 @@ Feature membership is many-to-many and does not own the grouped records. Compone
 
 | Feature | System | Grouped specifications | Components involved (derived) |
 | --- | --- | --- | --- |
-| [Place an order](<../../examples/system-structure/specs/system.spec.md#place-an-order>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | [Reserve purchased stock](<../../examples/system-structure/specs/requirements/reserve-stock.requirement.spec.md#reserve-purchased-stock>) | [Reservations](<../../examples/system-structure/specs/system.spec.md#reservations>) |
-| [Prevent overselling](<../../examples/system-structure/specs/system.spec.md#prevent-overselling>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | [Reserve purchased stock](<../../examples/system-structure/specs/requirements/reserve-stock.requirement.spec.md#reserve-purchased-stock>) | [Reservations](<../../examples/system-structure/specs/system.spec.md#reservations>) |
+| [Pick up where I left off](<../../examples/todo/specs/system.spec.md#pick-up-where-i-left-off>) | [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) | [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>), [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) | None resolved |
 
 ## Applicable obligations
 
@@ -51,7 +44,6 @@ Only explicit applicability to acquired systems and components is listed. Declar
 
 | Obligation | Subjects | Verification plan | Criterion |
 | --- | --- | --- | --- |
-| [Reserve purchased stock](<../../examples/system-structure/specs/requirements/reserve-stock.requirement.spec.md#reserve-purchased-stock>) | [Reservations](<../../examples/system-structure/specs/system.spec.md#reservations>) | Recorded in source | Not recorded |
 
 ## Specification association and discovery context
 
@@ -59,161 +51,142 @@ An explicit specification system overrides the directory default. These associat
 
 | Specification | System | Origin |
 | --- | --- | --- |
-| [Reservation](<../../examples/system-structure/specs/concepts/reservation.concept.spec.md#reservation>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | directory |
-| [Reserve purchased stock](<../../examples/system-structure/specs/requirements/reserve-stock.requirement.spec.md#reserve-purchased-stock>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | explicit |
+| [Completion preserves a commitment](<../../examples/todo/specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment>) | [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) | directory |
+| [Checklist](<../../examples/todo/specs/concepts/checklist.concept.spec.md#checklist>) | [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) | directory |
+| [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>) | [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) | directory |
+| [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>) | [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) | directory |
+| [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>) | [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) | directory |
 
 ## Concept uses
 
 | System | Named use | Concept definition |
 | --- | --- | --- |
-| [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | [Stock holds](<../../examples/system-structure/specs/system.spec.md#stock-holds>) | [Reservation](<../../examples/system-structure/specs/concepts/reservation.concept.spec.md#reservation>) |
+| [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>) | [My checklist](<../../examples/todo/specs/system.spec.md#my-checklist>) | [Checklist](<../../examples/todo/specs/concepts/checklist.concept.spec.md#checklist>) |
 
 ## Descriptions and native references
 
 Linked contracts, architecture decisions, and implementation artifacts retain their own authority. Normative commitments belong in requirements or obligation clauses.
 
-### Requirement: Reserve purchased stock
+### System: Personal task list
 
-[Reserve purchased stock](<../../examples/system-structure/specs/requirements/reserve-stock.requirement.spec.md#reserve-purchased-stock>)
-
-#### Statement
-
-An accepted order must reserve its purchased quantities before confirmation.
-
-#### Verification plan
-
-Submit concurrent orders against limited stock and verify that accepted quantities never exceed stock.
-
-### Component: Checkout
-
-[Checkout](<../../examples/system-structure/specs/system.spec.md#checkout>)
+[Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>)
 
 #### Purpose
 
-Accept and price customer orders.
-
-#### Responsibilities
-
-Calculate totals and coordinate order submission.
-
-#### Boundary description
-
-Owns order submission; stock availability remains Inventory's responsibility.
-
-#### Architecture
-
-[Order coordination decision](../../examples/system-structure/order-coordination.md)
-
-#### Implementation
-
-Implementation locations can be linked here when they exist.
-
-#### Part of
-
-[Online Store](../../examples/system-structure/specs/system.spec.md#store)
-
-### Component: Inventory
-
-[Inventory](<../../examples/system-structure/specs/system.spec.md#inventory>)
-
-#### Purpose
-
-Track available stock.
-
-#### Part of
-
-[Online Store](../../examples/system-structure/specs/system.spec.md#store)
-
-### System: Online Store
-
-[Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>)
-
-#### Purpose
-
-Let customers buy available products.
+Help a person pick up unfinished work after an interruption.
 
 #### Scope
 
-Order placement, stock reservation, and confirmation. Payment processing is external.
+One person's list on one computer. The browser submits forms to a local service.
 
-### Interface: Order submission
+#### Validation plan
 
-[Order submission](<../../examples/system-structure/specs/system.spec.md#order-submission>)
+##### Subject
+
+A person returning to unfinished work using this build.
+
+##### Method
+
+Invite someone to record two real errands and mark one finished. After a break,
+restart the app with the same database. Ask what still needs attention. Then tell
+them that the finished errand needs a follow-up and ask them to resume it.
+Let them choose the controls without coaching.
+
+##### Success criteria
+
+The participant identifies the outstanding errand and resumes the other without
+entering it again. Ask what they expected to find on returning.
+
+##### Evidence to retain
+
+With consent, record the build, task outcome, any help given and the participant's
+explanation. Review mismatches before deciding whether the workflow meets the need.
+
+### Feature: Pick up where I left off
+
+[Pick up where I left off](<../../examples/todo/specs/system.spec.md#pick-up-where-i-left-off>)
+
+#### Groups
+
+[Return to my list](../../examples/todo/specs/use-cases/resume-list.use-case.spec.md) and
+[Preserve tasks across restart](../../examples/todo/specs/requirements/restart.requirement.spec.md).
+
+### Interface: Task list forms
+
+[Task list forms](<../../examples/todo/specs/system.spec.md#task-list-forms>)
 
 #### Description
 
-**ID:** order-submission
-
-Accept a priced order and return its submission identity.
+The browser presents open and completed tasks and accepts changes through HTML forms.
 
 #### Contracts
 
-[Order submission contract](../../examples/system-structure/order-contract.md) defines the interaction contract.
+[Form template](../../examples/todo/app/list.html) supplies the actions and fields.
 
-### Feature: Place an order
+### Component: Task service
 
-[Place an order](<../../examples/system-structure/specs/system.spec.md#place-an-order>)
+[Task service](<../../examples/todo/specs/system.spec.md#task-service>)
 
-#### Purpose
+#### Responsibilities
 
-Let a customer purchase products with confidence that stock is reserved.
+Accept browser changes and commit them to the local database before confirming them.
 
-#### Groups
+#### Contracts
 
-- [Reserve purchased stock](../../examples/system-structure/specs/requirements/reserve-stock.requirement.spec.md)
+- The browser uses the [HTML forms](../../examples/todo/app/list.html) to submit changes.
 
-### Feature: Prevent overselling
+#### Implementation
 
-[Prevent overselling](<../../examples/system-structure/specs/system.spec.md#prevent-overselling>)
-
-#### Purpose
-
-Keep accepted orders within available stock.
-
-#### Groups
-
-- [Reserve purchased stock](../../examples/system-structure/specs/requirements/reserve-stock.requirement.spec.md)
-
-### Component: Reservations
-
-[Reservations](<../../examples/system-structure/specs/system.spec.md#reservations>)
-
-#### Purpose
-
-Hold stock for orders awaiting confirmation.
+The [Go server](../../examples/todo/app/main.go) owns form handling and storage.
 
 #### Part of
 
-[Inventory](../../examples/system-structure/specs/system.spec.md#inventory)
+[Personal task list](../../examples/todo/specs/system.spec.md#personal-task-list).
 
 ## Environment and boundaries
 
 Operating conditions and constraints describe what the solution must accommodate. Assumptions are assessed separately for evidence and justified reliance. Explicit exclusions delimit scope. External partners are separate from structural parents.
 
-### System: [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>)
+### BusinessRule: [Completion preserves a commitment](<../../examples/todo/specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment>)
 
-### Component: [Inventory](<../../examples/system-structure/specs/system.spec.md#inventory>)
+**Statement**
 
-### Component: [Reservations](<../../examples/system-structure/specs/system.spec.md#reservations>)
+A finished commitment stays on the person's list until they explicitly delete it.
 
-### Component: [Checkout](<../../examples/system-structure/specs/system.spec.md#checkout>)
+**Applicability**
+
+**Targets:** [Personal task list](../../examples/todo/specs/system.spec.md).
+
+### System: [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>)
+
+**Environment**
+
+The person may close the browser or stop the service between work sessions.
+
+**Out of scope**
+
+Sharing lists, synchronizing devices and recovering from loss of the database file.
 
 **Provided interfaces**
 
-#### Order submission
+#### Task list forms
 
-**ID:** order-submission
-
-Accept a priced order and return its submission identity.
+The browser presents open and completed tasks and accepts changes through HTML forms.
 
 ##### Contracts
 
-[Order submission contract](../../examples/system-structure/order-contract.md) defines the interaction contract.
+[Form template](../../examples/todo/app/list.html) supplies the actions and fields.
 
-##### Notes
-
-The declaration specifies the boundary interaction; it is not a deployed endpoint.
+### Component: [Task service](<../../examples/todo/specs/system.spec.md#task-service>)
 
 ## Assumptions: evidence and justified reliance
 
 Assess both empirical support in the stated conditions and whether relying on the premise is appropriate for intended use. An observation supports a bounded claim, not a guarantee that the premise always holds.
+
+### [Same local storage](<../../examples/todo/specs/system.spec.md#same-local-storage>)
+
+**Statement**
+
+The person returns to the same writable database file.
+
+Review required: no Basis, Applicability, Validation plan recorded.

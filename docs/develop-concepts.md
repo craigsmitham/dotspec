@@ -190,8 +190,7 @@ Explain consequential ordering, atomicity, failures, retries and timing. The
 original atomic synchronization model and the newer event-based model make different
 promises. dotspec can document either; omitting Semantics chooses neither.
 A heading without Use or Action fields remains supporting content, not a fabricated
-invocation. The complete [expiring-links example](../examples/concept-design/specs/system.spec.md)
-includes repeated uses, bindings and coordination with explicit delivery limits.
+invocation.
 
 ## Inspect and generate views
 

@@ -1,19 +1,16 @@
 package model
 
 import (
-	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/craigsmitham/dotspec/internal/testproject"
 )
 
 func reviewFixture(t *testing.T) string {
 	t.Helper()
-	root := t.TempDir()
-	if err := os.CopyFS(root, os.DirFS("../../examples/requirements-review")); err != nil {
-		t.Fatal(err)
-	}
-	return root
+	return testproject.Open(t, "requirements-review")
 }
 
 func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {

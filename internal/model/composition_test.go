@@ -6,15 +6,13 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/craigsmitham/dotspec/internal/testproject"
 )
 
 func compositionFixture(t *testing.T) string {
 	t.Helper()
-	root := t.TempDir()
-	if err := os.CopyFS(root, os.DirFS("../../examples/concept-design")); err != nil {
-		t.Fatal(err)
-	}
-	return root
+	return testproject.Open(t, "concept-design")
 }
 func designRecord(t *testing.T, s *Snapshot, kind, name string) Record {
 	t.Helper()

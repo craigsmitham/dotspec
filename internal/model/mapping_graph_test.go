@@ -17,7 +17,7 @@ func TestMappedCorpusGraphIntegrity(t *testing.T) {
 		"reference_traversal": Record{"mode": "none", "include_system_context": false, "follow_external_resources": false, "repository_bounded": true, "rule": "mapping-test/1"},
 	})
 	snapshot.Coverage["status"] = "complete_for_profile"
-	for _, root := range []string{"../../specs", "../../examples/starter/specs", "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
+	for _, root := range []string{"../../specs", "../../examples/todo/specs", "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
 		if err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
 			if err != nil {
 				return err

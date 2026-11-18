@@ -119,10 +119,10 @@ reports mistyped or incorrectly scoped references. Unresolved drafts retain thei
 source. No field or link implies atomicity, execution, full type-expression checking,
 or verified behavior. See [Develop concepts](../develop-concepts.md) for the
 complete Markdown conventions and [the generated example](concept-design-example.md)
-for definitions, composition and dependency diagrams.
+for the checklist definition, effects table and its use in the task list.
 
 ```sh
-dotspec model docs --path examples/concept-design --relative-to docs/reference
+dotspec model docs --path examples/todo --relative-to docs/reference
 ```
 
 See [Job Map](../../specs/concepts/job-map.concept.spec.md) and

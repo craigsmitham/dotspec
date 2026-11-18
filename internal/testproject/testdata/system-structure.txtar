@@ -1,3 +1,79 @@
+-- dotspec.yaml --
+name: system-structure
+-- order-contract.md --
+# Order submission contract
+
+An accepted order identifies the quantities reserved for its customer.
+-- order-coordination.md --
+# Order coordination decision
+
+Keep reservation outcomes explicit so retries can distinguish existing reservations from new requests.
+-- specs/concepts/reservation.concept.spec.md --
+---
+type: concept
+id: reservation
+---
+
+# Reservation
+
+## Purpose
+
+Hold a limited resource for one claimant while a decision is pending.
+
+## Operational principles
+
+A claimant holds available stock, then commits or releases its hold. A release makes the stock available again.
+
+
+## State
+
+Available quantities and active holds, each identifying a claimant and quantity.
+
+## Actions
+
+### Hold
+
+When sufficient stock is available, create a hold and reduce availability.
+
+### Commit
+
+Finalize an existing hold for its claimant.
+
+### Release
+
+Remove an existing hold and restore its quantity to availability.
+-- specs/requirements/reserve-stock.requirement.spec.md --
+---
+type: requirement
+id: reserve-stock
+---
+
+# Reserve purchased stock
+
+## Specification system
+
+[Online Store](../system.spec.md#store)
+
+## Statement
+
+An accepted order must reserve its purchased quantities before confirmation.
+
+## Applies to
+
+**Targets:** [Reservations](../system.spec.md#reservations)
+
+## Rationale
+
+Prevent confirmation of orders that cannot be fulfilled from available stock.
+
+## Derived from
+
+[Order submission contract](../../order-contract.md#order-submission-contract)
+
+## Verification plan
+
+Submit concurrent orders against limited stock and verify that accepted quantities never exceed stock.
+-- specs/system.spec.md --
 ---
 type: system
 id: store

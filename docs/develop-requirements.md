@@ -83,7 +83,10 @@ subsections. Record preferred targets in Rationale or Notes and label them
 nonbinding. An unresolved bound belongs in Open questions with the evidence needed
 to choose it; a draft can remain useful without pretending to be complete.
 
-See the [unfinished recovery feedback requirement](../examples/requirements-review/specs/requirements/recovery-feedback.requirement.spec.md) for a draft that records a measure while the target and operating conditions are open.
+The [restart requirement](../examples/todo/specs/requirements/restart.requirement.spec.md)
+counts discrepancies after a restart, sets the target to zero and names the storage
+conditions. In a temporary copy, remove the Target subsection and run
+`dotspec requirement check restart` to inspect the resulting advice.
 
 ## Describe context of use explicitly
 
@@ -96,10 +99,9 @@ under Applies to. Use existing actor, job and use-case references where helpful;
 the current model does not require a new context-of-use object or perspective
 field. Population and Conditions subsections can make the context easier to find.
 
-See the [unassisted recovery example](../examples/requirements-review/specs/requirements/unassisted-recovery.requirement.spec.md)
-for a quality-in-use obligation with an explicit measure and bound, context of
-use, and one verification plan. Its values illustrate the structure; they are
-not recommended targets for other products.
+The [To-do validation exercise](../examples/todo/specs/system.spec.md#validation-plan)
+gives the participant real errands to resume. Ask what they recognize after
+returning to the app and record where they need help.
 
 Use **Supports** to relate an obligation to a job or desired outcome, **Derived
 from** for its source, and **Refines** only when it adds precision while preserving

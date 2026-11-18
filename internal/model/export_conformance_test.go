@@ -98,7 +98,8 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 	result := ExportResult{Snapshot: &Snapshot{}}
 	seenElements := map[string]bool{}
 	snapshots := []*Snapshot{}
-	for _, path := range []string{"../..", "../../examples/starter", "../../examples/concept-design", "../../examples/requirements-traceability"} {
+	composition, trace := compositionFixture(t), traceFixture(t)
+	for _, path := range []string{"../..", "../../examples/todo", composition, trace} {
 		project := conformanceExport(t, path)
 		snapshots = append(snapshots, project.Snapshot)
 		if project.ExitCode != 0 {
@@ -128,7 +129,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 	selectedSources := map[string]bool{}
 	expectedRoots := map[string]int{}
 	documents, sections := 0, 0
-	for _, root := range []string{"../../specs", "../../examples/starter/specs", "../../examples/concept-design/specs", "../../examples/requirements-traceability/specs", "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
+	for _, root := range []string{"../../specs", "../../examples/todo/specs", filepath.Join(composition, "specs"), filepath.Join(trace, "specs"), "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
 		if err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
 			if err != nil {
 				return err
@@ -137,6 +138,10 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 				return nil
 			}
 			absolute, err := filepath.Abs(path)
+			if err != nil {
+				return err
+			}
+			absolute, err = filepath.EvalSymlinks(absolute)
 			if err != nil {
 				return err
 			}

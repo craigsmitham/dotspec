@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/craigsmitham/dotspec/internal/testproject"
 )
 
 func TestModelExportValidationAndSourcePreservation(t *testing.T) {
@@ -92,10 +93,7 @@ func TestModelOutputFailure(t *testing.T) {
 }
 
 func TestConceptDesignCommands(t *testing.T) {
-	root := t.TempDir()
-	if err := os.CopyFS(root, os.DirFS("../../examples/concept-design")); err != nil {
-		t.Fatal(err)
-	}
+	root := testproject.Open(t, "concept-design")
 	t.Chdir(root)
 	code, output, errOut := invoke("model", "docs", "--relative-to", "docs")
 	if code != 0 || errOut != "" {
@@ -137,10 +135,7 @@ func TestConceptDesignCommands(t *testing.T) {
 }
 
 func TestRequirementsTraceCommand(t *testing.T) {
-	root := t.TempDir()
-	if err := os.CopyFS(root, os.DirFS("../../examples/requirements-traceability")); err != nil {
-		t.Fatal(err)
-	}
+	root := testproject.Open(t, "requirements-traceability")
 	t.Chdir(root)
 	code, output, errOut := invoke("model", "trace", "--relative-to", "docs")
 	if code != 0 || errOut != "" || !strings.Contains(output, "## Change review") || !strings.Contains(output, "../specs/use-cases/restore.use-case.spec.md#restore-retained-content") {
@@ -166,10 +161,7 @@ func TestRequirementsTraceCommand(t *testing.T) {
 }
 
 func TestSystemOverviewCommand(t *testing.T) {
-	root := t.TempDir()
-	if err := os.CopyFS(root, os.DirFS("../../examples/system-structure")); err != nil {
-		t.Fatal(err)
-	}
+	root := testproject.Open(t, "system-structure")
 	t.Chdir(root)
 	code, output, errOut := invoke("model", "overview", "--relative-to", "docs")
 	if code != 0 || errOut != "" || !strings.Contains(output, "# System specification overview") || !strings.Contains(output, "../specs/system.spec.md#checkout") || !strings.Contains(output, "## Features") {
@@ -182,10 +174,7 @@ func TestSystemOverviewCommand(t *testing.T) {
 }
 
 func TestModelReviewAndPEGSCommandsKeepAdvisoryDraftsValid(t *testing.T) {
-	root := t.TempDir()
-	if err := os.CopyFS(root, os.DirFS("../../examples/requirements-review")); err != nil {
-		t.Fatal(err)
-	}
+	root := testproject.Open(t, "requirements-review")
 	t.Chdir(root)
 	for _, tc := range []struct{ command, want string }{{"review", "No verification plan recorded"}, {"pegs", "## Project"}} {
 		code, output, errOut := invoke("model", tc.command, "--relative-to", "docs")

@@ -1,19 +1,16 @@
 package model
 
 import (
-	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/craigsmitham/dotspec/internal/testproject"
 )
 
 func needsFixture(t *testing.T) string {
 	t.Helper()
-	root := t.TempDir()
-	if err := os.CopyFS(root, os.DirFS("../../examples/user-needs")); err != nil {
-		t.Fatal(err)
-	}
-	return root
+	return testproject.Open(t, "user-needs")
 }
 
 func TestNeedsRelationshipsAndEvidence(t *testing.T) {

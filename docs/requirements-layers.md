@@ -111,7 +111,7 @@ Implementation realization, verification definitions and revision-bound executio
 evidence need separate relationships when introduced. Current verification and
 Evidence prose must not be promoted into satisfaction claims or execution results.
 
-The [recovery example](reference/requirements-traceability-example.md) demonstrates
+The [To-do example](reference/requirements-traceability-example.md) demonstrates
 the relationships without requiring a duplicate requirement for every scenario step.
 
 ## Method basis

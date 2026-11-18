@@ -169,7 +169,7 @@ missing motivation or check guidance is advisory. Checks, execution evidence,
 implementation satisfaction and achieved outcomes are distinct future relations,
 not conclusions inferred from reachability or existing Evidence prose.
 The [generated example](reference/requirements-traceability-example.md) demonstrates
-these views from [authored specifications](../examples/requirements-traceability/README.md).
+these views from [authored specifications](../examples/todo/README.md).
 
 ## Concept definitions and composition
 
@@ -216,7 +216,7 @@ principles first, then state and actions, followed by system composition and
 application dependency diagrams. Use `--relative-to DIR` for the directory that will
 contain the Markdown; relative source links are rebased there. No files are written
 unless the caller redirects output. The [generated example](reference/concept-design-example.md)
-comes from [authored example specifications](../examples/concept-design/specs/system.spec.md).
+comes from [authored example specifications](../examples/todo/specs/system.spec.md).
 The [authoring guide](develop-concepts.md) explains how to develop these descriptions.
 
 ## Use-case narratives
@@ -264,10 +264,9 @@ Project, Environment, Goals, System reading perspective without replacing concer
 subsets or creating a project-management subsystem.
 
 Use the [review authoring guide](review-requirements.md) for syntax and limitations,
-the [review example](reference/requirements-review-example.md) to inspect deliberate
-gaps, and the [PEGS example](reference/pegs-example.md) to see the reading view.
+the [review example](reference/requirements-review-example.md) to inspect the task list’s verification and validation plans, and the [PEGS example](reference/pegs-example.md) to see the reading view.
 Optional concept effects matrices are included in `model docs`;
-[their example](reference/effects-table-example.md) preserves blank cells as unspecified.
+the [checklist effects table](reference/concept-design-example.md#effects-table) records which properties reopening preserves.
 
 ## Three connected representations
 

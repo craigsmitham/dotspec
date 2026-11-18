@@ -5,15 +5,13 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/craigsmitham/dotspec/internal/testproject"
 )
 
 func structureFixture(t *testing.T) string {
 	t.Helper()
-	root := t.TempDir()
-	if err := os.CopyFS(root, os.DirFS("../../examples/system-structure")); err != nil {
-		t.Fatal(err)
-	}
-	return root
+	return testproject.Open(t, "system-structure")
 }
 
 func TestStructureAndFeatureMembership(t *testing.T) {

@@ -5,17 +5,16 @@ short paragraph to the project's existing contributor or agent instructions.
 Use paths to actual files and say what authority each carries. For shared
 authoring methods, point to `dotspec guide`.
 
-For example, the document recovery project could use this entry in its
-`AGENTS.md`:
+For example, a contributor working on the To-do app could use this entry in its `AGENTS.md`.
 
 ```markdown
 ## Specifications
 
-Start at [the workspace boundary](specs/system.spec.md). The
-[recovery policy](specs/business-rules/retention.business-rule.spec.md) owns the
-30-day window. The [restore use case](specs/use-cases/restore.use-case.spec.md#restore-content)
-owns the software promise. Link to those statements when introducing a refinement.
-The clock API contract is in `contracts/time.openapi.yaml`.
+Start at [the task list boundary](specs/system.spec.md). The
+[completion policy](specs/business-rules/completion.business-rule.spec.md) explains
+why finished entries stay available. The [return scenario](specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available)
+owns the promise. The [restart requirement](specs/requirements/restart.requirement.spec.md)
+refines it and links to its executable test.
 
 Use `dotspec guide` to choose an authoring form. Run `dotspec check` in this
 project after editing. Record an unresolved target with the evidence needed

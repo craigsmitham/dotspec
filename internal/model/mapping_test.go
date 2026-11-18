@@ -58,7 +58,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 	}
 	schemas := map[string]*jsonschema.Schema{}
 	counts := map[string]int{}
-	for _, root := range []string{"../../specs", "../../examples/starter/specs", "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
+	for _, root := range []string{"../../specs", "../../examples/todo/specs", "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
 		err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
 			if err != nil {
 				return err
