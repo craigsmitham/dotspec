@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{if .Completed}}Completed{{else}}Open{{end}} tasks · To-do</title>
+<style>
+* { box-sizing: border-box }
+body { margin: 0; color: #213628; background: #f7f7ef; font: 1rem/1.5 "DM Sans", system-ui, sans-serif }
+main { max-width: 45rem; margin: 8vh auto; padding: 0 1.25rem }
+nav { display: flex; gap: 1.5rem; border-bottom: 1px solid #bcc6b6 }
+nav a { color: inherit; padding: .65rem 0; text-decoration: none }
+nav [aria-current] { border-bottom: 3px solid #2a6848; font-weight: bold }
+h1 { font: 3rem/1.12 Georgia, serif; margin: 2rem 0 }
+ul { list-style: none; padding: 0 } li { padding: 1rem 0; border-top: 1px solid #c8cec3 }
+input, button, summary { font: inherit }
+input { flex: 1; min-width: 8rem; padding: .5rem; border: 1px solid #869783; border-radius: .3rem }
+button { cursor: pointer; background: #fff; border: 1px solid #869783; color: inherit; padding: .45rem .8rem; border-radius: .3rem }
+.add button { background: #275e41; color: white }
+.row, .actions { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center }
+label { display: block; margin-bottom: .25rem }
+.task { font-size: 1.25rem; overflow-wrap: anywhere; margin: 0 0 .65rem }
+details { margin-top: .5rem } summary { cursor: pointer; width: fit-content }
+details form { margin-top: .5rem }
+</style>
+</head>
+<body><main>
+<nav aria-label="Task lists"><a href="/" {{if not .Completed}}aria-current="page"{{end}}>Open</a><a href="/completed" {{if .Completed}}aria-current="page"{{end}}>Completed</a></nav>
+<h1>{{if .Completed}}Completed{{else}}Open{{end}} tasks</h1>
+{{if not .Completed}}<form class="add" method="post" action="/tasks"><label for="new">New task</label><div class="row"><input id="new" name="title" required><button>Add task</button></div></form>{{end}}
+<ul>{{range .Tasks}}<li>
+<p class="task">{{.Title}}</p>
+<div class="actions">
+{{if $.Completed}}<form method="post" action="/tasks/{{.ID}}/reopen"><input type="hidden" name="view" value="completed"><button>Reopen</button></form>
+{{else}}<form method="post" action="/tasks/{{.ID}}/complete"><button>Complete</button></form>{{end}}
+</div>
+<details><summary>Edit task</summary>
+<form method="post" action="/tasks/{{.ID}}/rename"><label for="name-{{.ID}}">Task name</label><div class="row"><input id="name-{{.ID}}" name="title" value="{{.Title}}" required>{{if $.Completed}}<input type="hidden" name="view" value="completed">{{end}}<button>Rename</button></div></form>
+<form method="post" action="/tasks/{{.ID}}/delete">{{if $.Completed}}<input type="hidden" name="view" value="completed">{{end}}<button>Delete task</button></form></details>
+</li>{{end}}</ul>
+{{if not .Tasks}}<p>No {{if .Completed}}completed{{else}}open{{end}} tasks.</p>{{end}}
+</main></body></html>

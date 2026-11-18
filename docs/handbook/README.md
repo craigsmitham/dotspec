@@ -9,33 +9,31 @@ From an installed CLI, run `dotspec guide` for this index, `dotspec guide use-ca
 for a topic, or `dotspec guide examples` to browse the bundled examples. Adopt
 [project conventions](project-conventions.md) to point contributors at local sources of authority.
 
-## Choose what to write
+## Start with the To-do app
 
-Consider a workspace that lets members recover accidentally deleted documents.
-The same feature raises several questions. Each guide below helps answer one.
+Add an errand, mark it complete, stop the app and return to it tomorrow. What
+would you expect to find? The [runnable walkthrough](../../examples/todo/README.md)
+takes that question from user intent to a real process restart.
 
-| Question | How the recovery example answers it | Authoring guide |
+| Question | Follow it in the app | Authoring guide |
 | --- | --- | --- |
-| What is in scope? | The [workspace system](../../examples/requirements-review/specs/system.spec.md) names its boundary, the clock it depends on and the recovery goal. | [Boundaries and interfaces](../review-requirements.md#delimit-the-boundary-and-its-interfaces) |
-| Which policy governs the service? | The [business rule](../../examples/requirements-review/specs/business-rules/retention.business-rule.spec.md) sets a 30-day recovery window. Authors can discuss that policy independently of storage design. | [Business rules](../business-rules.md) |
-| What progress does a person seek? | The [job](../../examples/requirements-review/specs/jobs/recover.job.spec.md) is to resume work after losing it. Less time spent recovering is a desired outcome. | [Jobs and user needs](../jobs-and-user-needs.md) |
-| What can an actor accomplish with this system? | The [use case](../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md) follows a member restoring a document. It also accounts for an expired window or missing authorization. | [Develop use cases](../develop-use-cases.md) |
-| What makes the behavior intelligible? | [Trash](../../examples/requirements-review/specs/concepts/trash.concept.spec.md) explains how deletion can be reversible. Its operational principle tells the story, and its actions explain what changes. A glossary entry suffices for a term that only needs a definition. | [Develop concepts](../develop-concepts.md) |
-| Where should a promise live? | The use case owns [Restore retained content](../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md#restore-retained-content). A [requirement](../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md) refines which metadata must survive. Link to the governing statement when describing its consequences elsewhere. | [Choose an authoring form](../develop-requirements.md#choose-an-authoring-form) · [Declare relationships](../develop-relationships.md) |
-| Which qualities matter, and how good is good enough? | A quality model provides vocabulary for selecting concerns. The [feedback requirement](../../examples/requirements-review/specs/requirements/recovery-feedback.requirement.spec.md) identifies elapsed time as a measure. The bound and applicable operating conditions are still open. | [Quality models](../quality-models.md) · [Define a criterion](../develop-requirements.md#define-or-reference-the-criterion-once) |
+| What progress does someone seek? | The [job](../../examples/todo/specs/jobs/resume.job.spec.md) describes the effort of reconstructing unfinished work. | [Jobs and user needs](../jobs-and-user-needs.md) |
+| What is in scope? | The [system](../../examples/todo/specs/system.spec.md) serves one person returning to the same computer. | [Boundaries and interfaces](../review-requirements.md#delimit-the-boundary-and-its-interfaces) |
+| Which policy governs completion? | The [business rule](../../examples/todo/specs/business-rules/completion.business-rule.spec.md) explains why a completed errand is still available for follow-up. | [Business rules](../business-rules.md) |
+| How does a person act on that policy? | The [use case](../../examples/todo/specs/use-cases/resume-list.use-case.spec.md) follows a person revisiting a finished errand. The [checklist concept](../../examples/todo/specs/concepts/checklist.concept.spec.md) defines how reopening changes its state. | [Use cases](../develop-use-cases.md) · [Concepts](../develop-concepts.md) |
+| Where should a promise live? | The use case owns [Keep recorded work available](../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available). The [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md) refines what must survive and links to its executable verification. | [Choose an authoring form](../develop-requirements.md#choose-an-authoring-form) · [Declare relationships](../develop-relationships.md) |
+| What does durability mean here? | The [quality model](../../examples/todo/specs/quality-models/personal-data.quality-model.spec.md) names the concern. The requirement supplies the measure and the acceptable result. | [Quality models](../quality-models.md) · [Define a criterion](../develop-requirements.md#define-or-reference-the-criterion-once) |
 
 ## Review what the specification says
 
-Read the promise back to someone who has a stake in it. What would violate it?
-What happens at the boundary? For the recovery window, “before the deadline”
-leaves a reviewer a concrete question about a request arriving at the deadline.
-Review the set as well as the individual statement. A clear recovery rule can
-still conflict with a deletion policy. [Review requirements](../review-requirements.md).
+What would violate the restart requirement? Losing a title, bringing a deleted
+task back or quietly giving a reopened task a different identity would each
+matter. Run the walkthrough to see how the acceptance test compares what the
+person recorded with what the new process serves. [Review requirements](../review-requirements.md).
 
-Choose the assessment by the question it answers. Comparing restored metadata
-with the original can verify a build against the promise. Watching members try
-to resume their work can help validate the solution against their need. Record
-what was assessed, against what basis, and under which conditions.
+To assess whether the workflow helps a person resume work, try the exercise in
+the [system validation plan](../../examples/todo/specs/system.spec.md#validation-plan).
+Record what the participant tried and where they needed help.
 [Verification and validation](../verification-and-validation.md).
 
 ## Find the corresponding tool or definition

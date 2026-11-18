@@ -67,8 +67,9 @@ def build(version, target):
     pages = {}
     for entry in catalog:
         pages.setdefault(entry["page"].split("#")[0], entry["description"])
-    for file in sorted((ROOT / "examples/requirements-review").rglob("*.spec.md")):
-        pages[file.relative_to(ROOT).as_posix()] = "Worked specification from the document recovery project."
+    for project in ("todo", "requirements-review"):
+        for file in sorted((ROOT / "examples" / project).rglob("*.spec.md")):
+            pages[file.relative_to(ROOT).as_posix()] = f"Worked specification from {project}."
 
     index = ['---', 'okf_version: "0.2"', '---', '', '# dotspec handbook', '',
              'Start with the authoring handbook or open a topic for the decision at hand.', '',
@@ -81,7 +82,7 @@ def build(version, target):
             # Native spec metadata belongs to the original example. AXM uses OKF frontmatter.
             _, _, body = body.partition('\n---\n')
             if not examples_started:
-                index.extend(['', '## Document recovery examples', ''])
+                index.extend(['', '## Worked examples', ''])
                 examples_started = True
         title = re.search(r'^# (.+)$', body, re.MULTILINE)[1]
         tags = ['dotspec', 'example' if example else 'authoring', Path(page).stem.split('.')[0].lower()]

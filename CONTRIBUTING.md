@@ -190,3 +190,17 @@ in its Edition section. Preserve the per-attribute source and license notices so
 selective copies retain attribution. Its generated reference has the same license.
 Refresh names and dimension assignments against a pinned upstream revision; use
 original prompts rather than importing third-party quotations from upstream pages.
+
+## Verify the runnable example
+
+Run `mise run example-check` from the repository root. The same read-only task
+runs in CI through `mise run check`. It builds the CLI, checks the public
+capability inventory, tests the app across restart and rejects three deliberately
+broken temporary copies. See the [To-do walkthrough](examples/todo/README.md).
+
+To enable the tracked pre-push hook in this clone, run
+`git config --local core.hooksPath .githooks`. This selects the repository's
+hook directory for the clone. If you already use another hooks directory, add
+`mise run example-check` to its pre-push hook instead. Git must be able to find
+mise on PATH. To undo the local setting, restore its previous value or run
+`git config --local --unset core.hooksPath` if it was previously unset.

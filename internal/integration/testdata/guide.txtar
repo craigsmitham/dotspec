@@ -3,7 +3,9 @@ exec dotspec --help
 stdout 'guide +Read the offline authoring handbook'
 exec dotspec guide
 stdout 'Where should a promise live'
-stdout 'dotspec guide examples/requirements-review/specs/jobs/recover.job.spec.md'
+stdout 'dotspec guide examples/todo/specs/jobs/resume.job.spec.md'
+exec dotspec guide examples/todo/specs/requirements/restart.requirement.spec.md
+stdout 'restart acceptance test'
 exec dotspec guide job
 stdout 'progress'
 exec dotspec guide use-case

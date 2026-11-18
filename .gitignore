@@ -9,3 +9,4 @@
 /dist/
 /.venv-model/
 /.release/
+/examples/todo/app/todo.sqlite*

@@ -28,7 +28,7 @@ and Scope, then run `dotspec check`. Each starter points to its authoring guide.
 
 ## Find guidance
 
-- Choose what to write and see it applied in the document recovery example. [Handbook](docs/handbook/README.md)
+- Choose what to write and follow a user need through the runnable To-do app and its restart test. [Handbook](docs/handbook/README.md)
 - Record where your team keeps specifications and who owns a promise. [Project conventions](docs/handbook/project-conventions.md)
 - Look up file placement, Markdown formats, command options and check reports. [Layout and formats](docs/reference/layout.md) · [CLI](docs/cli.md) · [Inspection](docs/reference/inspection.md)
 - Inspect the types, relationships and mapping into an exported snapshot. [Core domain](docs/reference/model/core.md) · [Specification model](docs/specification-model.md)
