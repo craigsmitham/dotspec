@@ -69,15 +69,15 @@ migration. Revise any relative file links when moving documents.
 
 ## Independent projects and monorepos
 
-Register specification-project roots in `dotspec.yaml` to keep unrelated products
-and examples separate. Default commands select the containing project; use
-`--project NAME` to select another and `--all` for separate workspace-wide results.
-Implicit System context stops at project boundaries; explicit cross-project links
-remain available. See [workspace configuration and selection](../workspaces.md).
+Put a `dotspec.yaml` containing `name: your-project` in each independent
+project's root. Default commands select the nearest enclosing project and skip
+nested projects. Use `--project NAME` to select a project by name or `--all` to
+inspect every project in the Git worktree. Implicit System lookup stops at the
+project root. Explicit links can cross project boundaries.
+See [project discovery and selection](../workspaces.md).
 
-This repository registers dotspec and its example collections separately. Use
-`dotspec check --all` to check both the product and examples. The LinkML definition
-is `model/metamodel.yaml`; it is not a workspace configuration.
+This repository has a root manifest for dotspec and one in each example
+collection. Run `dotspec check --all` to check the product and all seven examples.
 
 ## File formats
 

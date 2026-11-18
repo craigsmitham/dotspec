@@ -44,9 +44,7 @@ func selectProject(cmd *cobra.Command, path string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		if w == nil {
-			return "", fmt.Errorf("--project requires a dotspec.yaml workspace")
-		}
+
 		for _, p := range w.Projects {
 			if p.Name == name {
 				selected := p.Root
@@ -60,32 +58,43 @@ func selectProject(cmd *cobra.Command, path string) (string, error) {
 				if err != nil {
 					return "", err
 				}
-				owner, ok := w.Containing(selected)
-				if !ok || owner.Name != name {
+				owner, err := specfile.FindProject(selected)
+				if err != nil {
+					return "", err
+				}
+				if owner == nil || owner.Root != p.Root {
 					return "", fmt.Errorf("--path must stay within project %s", name)
 				}
 				return selected, nil
 			}
 		}
-		return "", fmt.Errorf("unknown project %q in %s", name, w.Path)
+		return "", fmt.Errorf("unknown project %q in %s", name, w.Root)
 	}
 	// Preserve existing diagnostic reports for invalid path selectors.
 	dir, err := specfile.Directory(path)
 	if err != nil {
 		return path, nil
 	}
-	w, p, err := specfile.ProjectContext(dir)
+	p, err := specfile.FindProject(dir)
 	if err != nil {
 		return "", err
 	}
-	if w != nil && !cmd.Flags().Changed("path") {
+	if p == nil {
+		found, err := specfile.HasProjects(dir)
+		if err != nil {
+			return "", err
+		}
+		if found {
+			return "", fmt.Errorf("%s is outside any specification project; select --project NAME or --all", dir)
+		}
+	} else if !cmd.Flags().Changed("path") {
 		return p.Root, nil
 	}
 	return path, nil
 }
 
 func addProjectSelection(cmd *cobra.Command) {
-	cmd.Flags().String("project", "", "select a project registered in dotspec.yaml; --path is relative to its root")
+	cmd.Flags().String("project", "", "select a project by its dotspec.yaml name (--path is relative to its root)")
 	switch cmd.Name() {
 	case "check", "sources", "list", "export", "docs", "trace", "overview", "needs", "review", "pegs":
 	default:
@@ -94,7 +103,7 @@ func addProjectSelection(cmd *cobra.Command) {
 	if len(strings.Fields(cmd.Use)) != 1 {
 		return
 	}
-	cmd.Flags().Bool("all", false, "inspect all registered workspace projects separately")
+	cmd.Flags().Bool("all", false, "inspect all discovered projects separately")
 	cmd.MarkFlagsMutuallyExclusive("project", "all")
 	cmd.MarkFlagsMutuallyExclusive("path", "all")
 	run := cmd.RunE
@@ -114,8 +123,8 @@ func addProjectSelection(cmd *cobra.Command) {
 		if err != nil {
 			return err
 		}
-		if w == nil {
-			return fmt.Errorf("--all requires a dotspec.yaml workspace")
+		if len(w.Projects) == 0 {
+			return fmt.Errorf("no specification projects found in %s", w.Root)
 		}
 		format := "text"
 		if cmd.Flags().Lookup("format") != nil {
@@ -127,7 +136,7 @@ func addProjectSelection(cmd *cobra.Command) {
 		if cmd.Name() == "export" {
 			format = "json"
 		}
-		result := workspaceResult{SchemaVersion: 1, Workspace: filepath.ToSlash(w.Path), Projects: []projectResult{}}
+		result := workspaceResult{SchemaVersion: 1, Workspace: filepath.ToSlash(w.Root), Projects: []projectResult{}}
 		out, ctx := cmd.OutOrStdout(), cmd.Context()
 		defer func() { cmd.SetOut(out); cmd.SetContext(ctx) }()
 		code := 0

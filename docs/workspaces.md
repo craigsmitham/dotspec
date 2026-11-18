@@ -8,41 +8,42 @@ implementation, ownership or requirement-inheritance relationship between System
 
 ## Declare the boundaries
 
-Create `dotspec.yaml` at the workspace root:
+Place a `dotspec.yaml` in each project's root directory. For a product with a
+reference app and a separate billing project, the layout is:
 
-```yaml
-projects:
-  product: .
-  reference-app: examples/reference-app
-  billing: apps/billing
+```text
+dotspec.yaml                         # name: product
+examples/reference-app/dotspec.yaml  # name: reference-app
+apps/billing/dotspec.yaml            # name: billing
 ```
 
-The directories must already exist. Names start with a letter or digit and contain
-letters, digits, dots, underscores or hyphens. Paths are relative to the manifest;
-`.` registers the root project. Roots must be distinct real directories inside the
-workspace, outside `specs/` metadata trees and nested Git repositories. Unknown
-configuration fields, duplicate names/roots, symlinks and missing roots are errors.
+For example, the entire billing manifest is:
 
-The most specific containing root determines membership. Thus `product` excludes
-both registered child projects. Ordinary subdirectories within a project remain
-available for colocated specs and related subsystem definitions. Each project may
-contain several System specifications. It need not have a System yet.
+```yaml
+name: billing
+```
 
-A workspace-only repository can omit the `.` project. Commands at that root then
-require `--project NAME` or `--all`; dotspec does not invent a root product.
-Without a manifest, the existing repository/filesystem discovery behavior remains.
+The name identifies the project in commands and reports. It starts with a letter
+or digit and can contain letters, digits, dots, underscores and hyphens. Moving a
+directory carries its project name and boundary with it. Use one YAML document
+with a single `name` field. Workspace-wide selection requires unique names.
 
-The workspace manifest is separate from dotspec's canonical LinkML
-[metamodel](../model/metamodel.yaml).
+A spec belongs to its nearest enclosing project. A parent scan skips nested
+project directories. Ordinary subdirectories can contain colocated specs, and
+a project can have zero, one or several System specifications.
+
+For a workspace containing only child projects, leave the repository root
+without a manifest. At that root, use `--project NAME` or `--all`. Repositories
+with no project manifests still support ordinary path-based commands.
 
 ## Select what to inspect
 
 ```sh
-dotspec check                           # current registered project
+dotspec check                           # current project
 dotspec check --project reference-app
 dotspec check --project product --path internal/parser
 dotspec model overview --project billing
-dotspec check --all                     # every registered project separately
+dotspec check --all                     # every discovered project separately
 dotspec model export --all > workspace.json
 dotspec model validate workspace.json
 dotspec model schema --workspace > workspace.schema.json
@@ -56,6 +57,13 @@ relative to the working directory. With `--project`, it is relative to that
 project's root and cannot select another project. Absolute paths within that
 project also work.
 
+For `--project` and `--all`, dotspec searches the entire Git worktree from any
+subdirectory. Tracked and non-ignored manifests participate. Outside Git, the
+search starts at the outermost enclosing project or, if there is none, at the
+working directory. Discovery skips symlinks, `specs/` trees and nested repositories.
+A local manifest still bounds direct lookup and parent scans even when Git ignores
+it. Track it to include that project in worktree-wide commands.
+
 All path-based commands accept `--project`, including initialization and focused
 checks. `--all` is available on collection checks, source inventories, lists and
 model exports/reading views. It cannot be combined with `--project`, `--path`, or
@@ -63,7 +71,8 @@ an individual specification slug. Initialization and other mutations operate on
 one selected project.
 
 Workspace text/Markdown output separates projects with headings. JSON output has
-`schema_version: 1`, `workspace`, and a sorted `projects` array. Each entry contains
+`schema_version: 1`, the searched directory in `workspace`, and a name-sorted
+`projects` array. Each entry contains
 `name`, `root`, `exit_code`, and its command `result`; an operational failure may
 instead supply `error` without a result. All projects are attempted. The aggregate
 exit code is the highest result: 0 success, 1 specification findings, 2 invocation
@@ -87,18 +96,15 @@ symlink and direct-reference rules. For example, a requirement can select anothe
 project's System explicitly, or an Interface can cite a shared native contract.
 These references acquire context, not another recursive project scan.
 
-Snapshot `scope.project` identifies the selected project. Acquired source records
-carry their containing `project` when registered, and the consulted manifest is
-retained as `workspace_configuration` context. Source inventories also identify
-registered project membership. Generated reading views name the selected project
-and identify acquired domain context from other projects. These are recorded
-acquisition facts, not claims that the workspace or requirements are complete.
+Snapshot `scope.project` records the selected name and root. Acquired files carry
+their containing project when one exists. The selected project's `dotspec.yaml`
+is retained as `project_configuration` context and appears in the source inventory.
+Reading views name the selected project and identify acquired domain context
+from other projects.
 
 ## This repository
 
-The root project is `dotspec`. Existing example collections are registered as
-separate projects, such as `system-structure` and `requirements-review`. Default
-commands inspect dotspec; `mise run spec-check` and the full check gate inspect
-all projects. Add a future runnable reference app by creating its directory and
-specs and registering a new project root. No fake subsystem or Git submodule is
-needed for isolation.
+The root manifest declares `dotspec`. Each of the seven example collections has
+its own manifest. From the root, `dotspec check` inspects the product and
+`dotspec check --all` also checks the examples. To add a reference app, place a
+`dotspec.yaml` beside its code and specs.

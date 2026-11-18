@@ -63,22 +63,25 @@ func Discover(path string, match func(string) bool) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	w, project, projectErr := ProjectContext(dir)
-	if projectErr != nil {
-		return nil, projectErr
-	}
-	include := func(path string) bool {
-		if w == nil {
-			return true
+	// Every nested manifest starts another project, even if that project cannot
+	// currently be parsed. A parent scan only needs to know its boundary.
+	boundaries := map[string]bool{}
+	skip := func(child string) (bool, error) {
+		if value, ok := boundaries[child]; ok {
+			return value, nil
 		}
-		owner, ok := w.Containing(path)
-		return ok && owner.Name == project.Name
+		if metadataDirectoryWithin(child, dir) != "" {
+			return false, nil
+		}
+		found, err := hasManifest(child)
+		boundaries[child] = found
+		return found, err
 	}
 	var paths []string
 	if root != "" {
-		paths, err = gitPaths(dir, root, match, include)
+		paths, err = gitPaths(dir, root, ".", match, skip)
 	} else {
-		paths, err = walkSelectedPaths(dir, match, include)
+		paths, err = walkSelectedPaths(dir, match, skip)
 	}
 	sort.Strings(paths)
 	return paths, err
@@ -120,8 +123,8 @@ func RepositoryRoot(dir string) (string, error) {
 
 // Let Git apply its own ignore rules, including nested .gitignore files, local
 // exclusions, and negations. Tracked files remain visible even if now ignored.
-func gitPaths(dir, root string, match func(string) bool, include func(string) bool) ([]string, error) {
-	cmd := exec.Command("git", "-C", dir, "ls-files", "--cached", "--others", "--exclude-standard", "--full-name", "-z", "--", ".")
+func gitPaths(dir, root, pathspec string, match func(string) bool, skip func(string) (bool, error)) ([]string, error) {
+	cmd := exec.Command("git", "-C", dir, "ls-files", "--cached", "--others", "--exclude-standard", "--full-name", "-z", "--", pathspec)
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	output, err := cmd.Output()
@@ -135,11 +138,11 @@ func gitPaths(dir, root string, match func(string) bool, include func(string) bo
 			continue
 		}
 		path := filepath.Join(root, filepath.FromSlash(string(entry)))
-		if !include(path) || !match(filepath.Base(path)) || seen[path] {
+		if !match(filepath.Base(path)) || seen[path] {
 			continue
 		}
 		seen[path] = true
-		usable, err := regularPath(path, dir)
+		usable, err := regularPath(path, dir, skip)
 		if err != nil {
 			return paths, err
 		}
@@ -152,7 +155,7 @@ func gitPaths(dir, root string, match func(string) bool, include func(string) bo
 
 // Check each component: a tracked directory may have been replaced by a symlink
 // since Git's index was written. Also skip deleted tracked files and nested repos.
-func regularPath(path, boundary string) (bool, error) {
+func regularPath(path, boundary string, skip func(string) (bool, error)) (bool, error) {
 	for current := path; current != boundary; current = filepath.Dir(current) {
 		if filepath.Base(current) == ".git" {
 			return false, nil
@@ -168,6 +171,9 @@ func regularPath(path, boundary string) (bool, error) {
 			return false, nil
 		}
 		if current != path {
+			if excluded, err := skip(current); err != nil || excluded {
+				return false, err
+			}
 			if _, err := os.Lstat(filepath.Join(current, ".git")); err == nil {
 				return false, nil
 			} else if !errors.Is(err, fs.ErrNotExist) {
@@ -179,22 +185,26 @@ func regularPath(path, boundary string) (bool, error) {
 }
 
 func walkPaths(dir string, match func(string) bool) ([]string, error) {
-	return walkSelectedPaths(dir, match, func(string) bool { return true })
+	return walkSelectedPaths(dir, match, func(string) (bool, error) { return false, nil })
 }
-func walkSelectedPaths(dir string, match func(string) bool, include func(string) bool) ([]string, error) {
+func walkSelectedPaths(dir string, match func(string) bool, skip func(string) (bool, error)) ([]string, error) {
 	var paths []string
 	err := filepath.WalkDir(dir, func(path string, entry fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		if entry.IsDir() {
-			if !include(path) {
-				return filepath.SkipDir
-			}
 			if entry.Name() == ".git" {
 				return filepath.SkipDir
 			}
 			if path != dir {
+				excluded, err := skip(path)
+				if err != nil {
+					return err
+				}
+				if excluded {
+					return filepath.SkipDir
+				}
 				if _, err := os.Lstat(filepath.Join(path, ".git")); err == nil {
 					return filepath.SkipDir
 				} else if !errors.Is(err, fs.ErrNotExist) {

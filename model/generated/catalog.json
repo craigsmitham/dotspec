@@ -7642,7 +7642,7 @@
           "any_of": [],
           "description": "",
           "enum_values": [
-            "workspace_configuration",
+            "project_configuration",
             "system_context",
             "reference_target",
             "other"
@@ -20541,7 +20541,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.18.0-draft",
+          "equals_string": "0.19.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -20830,7 +20830,7 @@
         "project": {
           "annotations": {},
           "any_of": [],
-          "description": "Registered project containing this acquired source; may differ from the selected project.",
+          "description": "Project whose manifest is nearest to this acquired source.",
           "identifier": false,
           "inline_ranges": [
             "SpecificationProject"
@@ -22048,7 +22048,7 @@
         "SpecificationProject"
       ],
       "annotations": {},
-      "description": "A tooling partition declared in a workspace manifest, not a domain specification or System.",
+      "description": "A tooling partition rooted at the directory containing its dotspec.yaml.",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -22067,20 +22067,6 @@
           "required": true
         },
         "root": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "workspace": {
           "annotations": {},
           "any_of": [],
           "description": "",
@@ -28047,7 +28033,7 @@
       "subtree"
     ],
     "ContextSourceRole": [
-      "workspace_configuration",
+      "project_configuration",
       "system_context",
       "reference_target",
       "other"
@@ -28206,7 +28192,7 @@
       "directory"
     ]
   },
-  "model_version": "0.18.0-draft",
+  "model_version": "0.19.0-draft",
   "projections": [
     "ActionParameter.type",
     "BusinessRule.applies_to",
@@ -28342,7 +28328,7 @@
   },
   "representation_version": "0.1.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "cc3bb5824f57aa58409cfe098ea358c7b3fda869e90ea8f1b3ae94b1150cfa5e",
+  "source_sha256": "4d4426417d242592ce225a07fd4249faac93be65b3615afb1e0c379780bf7765",
   "subsets": {
     "business-requirements": {
       "classification": "core",

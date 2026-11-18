@@ -13,7 +13,7 @@ The canonical [LinkML model](../model/metamodel.yaml) defines the records and th
 relationships. The [generated reference](reference/model/index.md) describes
 every field. The [relationship reference](reference/model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.18.0-draft`, `representation_version` is `0.1.0`, and
+`model_version` is `0.19.0-draft`, `representation_version` is `0.1.0`, and
 `mapping_profile` is `dotspec-markdown/14`.
 
 The [verification and validation vocabulary](verification-and-validation.md)
@@ -80,10 +80,10 @@ and the [generated type hierarchy](reference/model/core.md#specification-types).
 
 ## Specification projects and workspace exports
 
-A registered specification project bounds discovery and the directory-default
+A specification project rooted at a `dotspec.yaml` bounds discovery and the directory-default
 System association; it is tooling metadata, not a Specification subclass.
 `scope.project` identifies the selected project and acquired sources record their
-registered project. The workspace manifest is retained as source context. Explicit
+nearest enclosing project. The selected project manifest is retained as source context. Explicit
 cross-project links remain context acquisition rather than recursive discovery.
 
 `model export --all` returns a workspace envelope containing separate snapshots.
@@ -114,7 +114,7 @@ invocation or operational error, including an unreadable snapshot file.
 
 Export uses the selected directory, supported specification layouts, enclosing
 system context and direct reference boundary used by the existing inspection
-commands. Registered child projects are excluded from the selected partition. In a Git repository, discovery follows Git ignore rules. Filesystem
+commands. Nested projects are excluded from the selected partition. In a Git repository, discovery follows Git ignore rules. Filesystem
 discovery is used outside Git. Symlinks and nested repositories remain outside
 the discovery boundary. Ordinary referenced Markdown receives a content model;
 other acquired files retain their bytes and media type. Directory references

@@ -5,6 +5,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -24,11 +25,12 @@ func workspaceFixture(t *testing.T) string {
 			t.Fatal(err)
 		}
 	}
-	if err := os.WriteFile(filepath.Join(root, WorkspaceFilename), []byte("projects:\n  tool: .\n  demo: apps/demo\n  other: apps/other\n"), 0600); err != nil {
-		t.Fatal(err)
+	for dir, name := range map[string]string{".": "tool", "apps/demo": "demo", "apps/other": "other"} {
+		writeManifest(t, filepath.Join(root, dir), "name: "+name)
 	}
 	return root
 }
+
 func TestWorkspacePartitionsDiscovery(t *testing.T) {
 	for _, git := range []bool{false, true} {
 		t.Run(map[bool]string{false: "filesystem", true: "git"}[git], func(t *testing.T) {
@@ -52,54 +54,74 @@ func TestWorkspacePartitionsDiscovery(t *testing.T) {
 		})
 	}
 }
-func TestWorkspaceRejectsInvalidDeclarations(t *testing.T) {
-	for _, body := range []string{
-		"projects: {}", "projects:\n  one: .\n  two: .", "projects:\n  one: ../outside", "projects:\n  one: missing", "projects:\n  one: specs", "projects:\n  one: .\nunknown: true", "projects:\n  one: .\n  one: apps/demo", "projects:\n  one: .\n---\nprojects:\n  two: .",
-	} {
-		t.Run(body, func(t *testing.T) {
-			root := workspaceFixture(t)
-			if err := os.WriteFile(filepath.Join(root, WorkspaceFilename), []byte(body), 0600); err != nil {
-				t.Fatal(err)
-			}
-			if _, err := FindWorkspace(root); err == nil {
-				t.Fatal("invalid manifest accepted")
-			}
-		})
-	}
-}
-func TestWorkspaceWithoutRootProjectRequiresSelection(t *testing.T) {
-	root := workspaceFixture(t)
-	if err := os.WriteFile(filepath.Join(root, WorkspaceFilename), []byte("projects:\n  demo: apps/demo\n"), 0600); err != nil {
-		t.Fatal(err)
-	}
-	if _, _, err := ProjectContext(root); err == nil {
-		t.Fatal("workspace became an implicit root project")
-	}
-	if _, _, err := ProjectContext(filepath.Join(root, "apps/demo")); err != nil {
+
+func writeManifest(t *testing.T, dir, body string) {
+	t.Helper()
+	if err := os.WriteFile(filepath.Join(dir, ProjectFilename), []byte(body), 0600); err != nil {
 		t.Fatal(err)
 	}
 }
 
-func TestWorkspaceRejectsSymlinksAndNestedRepositories(t *testing.T) {
-	t.Run("symlink", func(t *testing.T) {
-		root := workspaceFixture(t)
-		if err := os.Symlink(filepath.Join(root, "apps/demo"), filepath.Join(root, "alias")); err != nil {
-			t.Skip(err)
-		}
-		if err := os.WriteFile(filepath.Join(root, WorkspaceFilename), []byte("projects:\n  alias: alias\n"), 0600); err != nil {
-			t.Fatal(err)
-		}
-		if _, err := FindWorkspace(root); err == nil {
-			t.Fatal("symlink root accepted")
-		}
-	})
-	t.Run("nested repository", func(t *testing.T) {
-		root := workspaceFixture(t)
-		if err := os.Mkdir(filepath.Join(root, "apps/demo/.git"), 0755); err != nil {
-			t.Fatal(err)
-		}
-		if _, err := FindWorkspace(root); err == nil {
-			t.Fatal("nested repository accepted")
-		}
-	})
+func TestProjectManifestValidation(t *testing.T) {
+	for _, body := range []string{"", "{}", "name: ''", "name: invalid/name", "projects: {tool: .}", "name: demo\nunknown: true", "name: demo\nname: other", "name: demo\n---\nname: other"} {
+		t.Run(body, func(t *testing.T) {
+			root := workspaceFixture(t)
+			child := filepath.Join(root, "apps/demo")
+			writeManifest(t, child, body)
+			if _, err := FindProject(child); err == nil || !strings.Contains(err.Error(), filepath.Join(child, ProjectFilename)) {
+				t.Fatalf("expected error identifying invalid manifest, got %v", err)
+			}
+			if _, err := FindWorkspace(root); err == nil {
+				t.Fatal("invalid manifest accepted")
+			}
+			paths, err := Discover(root, func(name string) bool { return name == "system.spec.md" })
+			if err != nil || !reflect.DeepEqual(paths, []string{filepath.Join(root, "specs/system.spec.md")}) {
+				t.Fatal(paths, err)
+			}
+		})
+	}
+}
+
+func TestWorkspaceDiscoveryBoundaries(t *testing.T) {
+	for _, git := range []bool{false, true} {
+		t.Run(map[bool]string{false: "filesystem", true: "git"}[git], func(t *testing.T) {
+			root := workspaceFixture(t)
+			if git {
+				if output, err := exec.Command("git", "-C", root, "init", "-q").CombinedOutput(); err != nil {
+					t.Fatal(err, string(output))
+				}
+				if err := os.WriteFile(filepath.Join(root, ".gitignore"), []byte("/ignored/\n"), 0600); err != nil {
+					t.Fatal(err)
+				}
+				if err := os.Mkdir(filepath.Join(root, "ignored"), 0755); err != nil {
+					t.Fatal(err)
+				}
+				writeManifest(t, filepath.Join(root, "ignored"), "name: ignored")
+			}
+			other := filepath.Join(root, "apps/other")
+			if err := os.Mkdir(filepath.Join(other, ".git"), 0755); err != nil {
+				t.Fatal(err)
+			}
+			writeManifest(t, filepath.Join(root, "specs"), "name: metadata")
+			if err := os.Symlink(filepath.Join(root, "apps/demo"), filepath.Join(root, "alias")); err != nil {
+				t.Skip(err)
+			}
+			w, err := FindWorkspace(filepath.Join(root, "apps/demo/internal"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			want := []Project{{"demo", filepath.Join(root, "apps/demo")}, {"tool", root}}
+			if w.Root != root || !reflect.DeepEqual(w.Projects, want) {
+				t.Fatal(w)
+			}
+			p, err := FindProject(filepath.Join(root, "specs"))
+			if err != nil || p == nil || p.Root != root {
+				t.Fatal(p, err)
+			}
+			writeManifest(t, filepath.Join(root, "apps/demo"), "name: tool")
+			if _, err := FindWorkspace(root); err == nil || !strings.Contains(err.Error(), "duplicate project name") {
+				t.Fatal(err)
+			}
+		})
+	}
 }

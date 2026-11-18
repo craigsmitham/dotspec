@@ -21,7 +21,7 @@ var referenceScheme = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9+.-]*:`)
 func (r *Report) inspectReferences(sources []string, discovered map[string]bool, types []Type) {
 	sources = append([]string{}, sources...)
 	for _, path := range r.ContextFiles {
-		if path != r.Scope.Workspace {
+		if r.Scope.Project == nil || path != r.Scope.Project.Manifest() {
 			sources = append(sources, path)
 		}
 	}

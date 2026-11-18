@@ -121,14 +121,21 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 	if repoErr != nil {
 		b.addError("scan.repository", repoErr, dir)
 	}
-	if w, p, err := specfile.ProjectContext(dir); err == nil && w != nil {
-		b.snapshot.Scope["project"] = Record{"name": p.Name, "root": cleanPath(p.Root), "workspace": cleanPath(w.Path)}
-		b.load(cleanPath(w.Path))
-		b.context(cleanPath(w.Path), "workspace_configuration", "", "")
-		for _, source := range b.snapshot.Sources {
-			if p, ok := w.Containing(filepath.FromSlash(String(source, "locator"))); ok {
-				source["project"] = Record{"name": p.Name, "root": cleanPath(p.Root), "workspace": cleanPath(w.Path)}
-			}
+	if p := report.Scope.Project; p != nil {
+		b.snapshot.Scope["project"] = Record{"name": p.Name, "root": cleanPath(p.Root)}
+		b.context(cleanPath(p.Manifest()), "project_configuration", "", "")
+	}
+	for _, source := range b.snapshot.Sources {
+		if String(source, "kind") != "SourceDocument" {
+			continue
+		}
+		path := filepath.FromSlash(String(source, "locator"))
+		p, err := specfile.FindProject(filepath.Dir(path))
+		if err != nil {
+			b.readFailed = true
+			b.addError("scan.context", err, path)
+		} else if p != nil {
+			source["project"] = Record{"name": p.Name, "root": cleanPath(p.Root)}
 		}
 	}
 	b.materializeAssertions()

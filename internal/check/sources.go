@@ -1,13 +1,13 @@
 package check
 
 import (
-	"github.com/craigsmitham/dotspec/internal/specfile"
 	"os"
 	"path/filepath"
 	"slices"
 	"sort"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
 // SourceFile records a file and its authored incoming links, without assigning
@@ -78,8 +78,10 @@ func (r *Report) collectFile(path string, reference *diagnostic.Location) {
 	file := r.files[path]
 	if file == nil {
 		file = &SourceFile{Path: path, ReferencedBy: []diagnostic.Location{}}
-		if _, p, err := specfile.ProjectContext(filepath.Dir(path)); err == nil && p.Name != "" {
-			file.Project = &p
+		if p, err := specfile.FindProject(filepath.Dir(path)); err != nil {
+			r.record(err, "scan.context", path)
+		} else {
+			file.Project = p
 		}
 		r.files[path] = file
 	}

@@ -135,15 +135,14 @@ func newQualityModelCommand() *cobra.Command {
 		if !filepath.IsAbs(target) {
 			target = filepath.Join(path, target)
 		}
-		if w, p, err := specfile.ProjectContext(path); err != nil {
+		if p, err := specfile.FindProject(path); err != nil {
 			return err
-		} else if w != nil {
-			targetDir, err := specfile.Directory(filepath.Dir(target))
+		} else if p != nil {
+			owner, err := specfile.FindProject(filepath.Dir(target))
 			if err != nil {
 				return err
 			}
-			owner, ok := w.Containing(targetDir)
-			if !ok || owner.Name != p.Name {
+			if owner == nil || owner.Root != p.Root {
 				return fmt.Errorf("--system must remain within the selected project %s", p.Name)
 			}
 		}

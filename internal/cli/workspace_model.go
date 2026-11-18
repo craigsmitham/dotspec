@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/model"
 	modelschema "github.com/craigsmitham/dotspec/model"
@@ -40,6 +41,9 @@ func validateExportJSON(data []byte) ([]model.Finding, error) {
 		if p.Name == "" || p.Root == "" || names[p.Name] || roots[p.Root] || p.ExitCode < 0 || p.ExitCode > 2 {
 			return fail("project identities must be nonempty and unique, with an exit_code from 0 to 2")
 		}
+		if p.Root != envelope.Workspace && !strings.HasPrefix(p.Root, strings.TrimSuffix(envelope.Workspace, "/")+"/") {
+			return fail("project root must be within the workspace directory")
+		}
 		names[p.Name], roots[p.Root] = true, true
 		if len(p.Result) == 0 {
 			findings = append(findings, model.Finding{Code: "workspace.result", Path: prefix, Message: "project has no exported snapshot"})
@@ -59,7 +63,7 @@ func validateExportJSON(data []byte) ([]model.Finding, error) {
 				return nil, err
 			}
 			project := model.Object(snapshot.Scope["project"])
-			if model.String(project, "name") != p.Name || model.String(project, "root") != p.Root || model.String(project, "workspace") != envelope.Workspace {
+			if model.String(project, "name") != p.Name || model.String(project, "root") != p.Root {
 				findings = append(findings, model.Finding{Code: "workspace.scope", Path: prefix + "/result/scope/project", Message: "snapshot project must match its workspace entry"})
 			}
 		}

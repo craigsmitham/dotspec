@@ -2,11 +2,13 @@ package cli
 
 import (
 	"encoding/json"
-	"github.com/santhosh-tekuri/jsonschema/v6"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/santhosh-tekuri/jsonschema/v6"
 )
 
 func projectFixture(t *testing.T) string {
@@ -18,7 +20,8 @@ func projectFixture(t *testing.T) string {
 		}
 	}
 	files := map[string]string{
-		"dotspec.yaml":                          "projects:\n  tool: .\n  demo: apps/demo\n",
+		"dotspec.yaml":                          "name: tool\n",
+		"apps/demo/dotspec.yaml":                "name: demo\n",
 		"specs/system.spec.md":                  "---\ntype: system\n---\n# Tool\n\n## Purpose\nTool work.\n\n## Scope\nTool only.\n",
 		"apps/demo/specs/system.spec.md":        "---\ntype: system\n---\n# Demo\n\n## Purpose\nDemo work.\n\n## Scope\nDemo only.\n",
 		"apps/demo/specs/jobs/work.job.spec.md": "---\ntype: job\n---\n# Work\n\n## Statement\nWhen I need help, I want to work, so I make progress.\n",
@@ -59,7 +62,7 @@ func TestProjectSelectorsAndSeparateWorkspaceResults(t *testing.T) {
 		t.Fatal(out, errOut)
 	}
 	code, out, errOut = invoke("model", "export", "--project", "demo")
-	if code != 0 || strings.Contains(out, `"enclosing_system"`) || !strings.Contains(out, `"workspace_configuration"`) {
+	if code != 0 || strings.Contains(out, `"enclosing_system"`) || !strings.Contains(out, `"project_configuration"`) {
 		t.Fatal(code, errOut, out)
 	}
 	// A missing System never falls through to the tool's System.
@@ -171,6 +174,9 @@ func TestWorkspaceExportsValidateOffline(t *testing.T) {
 
 func TestWorkspaceRootWithoutProjectAndPathNarrowing(t *testing.T) {
 	root := projectFixture(t)
+	if output, err := exec.Command("git", "-C", root, "init", "-q").CombinedOutput(); err != nil {
+		t.Fatal(err, string(output))
+	}
 	code, out, errOut := invoke("check", "--project", "demo", "--path", "internal", "--json")
 	if code != 0 || !strings.Contains(out, `"files_discovered": 0`) {
 		t.Fatal(code, out, errOut)
@@ -181,7 +187,7 @@ func TestWorkspaceRootWithoutProjectAndPathNarrowing(t *testing.T) {
 		t.Fatal(code, out, errOut)
 	}
 	t.Chdir(root)
-	if err := os.WriteFile(filepath.Join(root, "dotspec.yaml"), []byte("projects:\n  demo: apps/demo\n"), 0600); err != nil {
+	if err := os.Remove(filepath.Join(root, "dotspec.yaml")); err != nil {
 		t.Fatal(err)
 	}
 	code, _, _ = invoke("check")
@@ -192,6 +198,14 @@ func TestWorkspaceRootWithoutProjectAndPathNarrowing(t *testing.T) {
 	if code != 0 {
 		t.Fatal(code, errOut)
 	}
+	if err := os.Rename(filepath.Join(root, "apps/demo"), filepath.Join(root, "apps/moved")); err != nil {
+		t.Fatal(err)
+	}
+	code, out, errOut = invoke("sources", "--project", "demo", "--json")
+	if code != 0 || !strings.Contains(filepath.ToSlash(out), "moved") || strings.Contains(out, "apps/demo") {
+		t.Fatal(code, out, errOut)
+	}
+
 }
 
 func TestWorkspaceMutationCannotTargetAnotherProject(t *testing.T) {

@@ -62,8 +62,8 @@ cascading undefined-attribute advice. As with
 ancestor system outside the selected subtree or one excluded from discovery by
 an ignore rule. Such files are listed as additional context
 and counted separately; shared findings appear once. Context lookup stops at
-the registered project root, or at the repository/worktree root (filesystem root
-outside Git) when there is no workspace manifest.
+the nearest project root, or at the repository/worktree root (filesystem root
+outside Git) when there is no enclosing project manifest.
 Failures to inspect a context directory are reported but do not count that
 directory as a context file.
 

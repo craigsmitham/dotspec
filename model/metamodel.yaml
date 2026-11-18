@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/metamodel.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.18.0-draft
+version: 0.19.0-draft
 description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
   is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
   and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
@@ -89,7 +89,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.18.0-draft
+        equals_string: 0.19.0-draft
       mapping_profile:
         range: string
         description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
@@ -167,15 +167,12 @@ classes:
   SpecificationProject:
     in_subset:
     - inspection-and-coverage
-    description: A tooling partition declared in a workspace manifest, not a domain specification or System.
+    description: A tooling partition rooted at the directory containing its dotspec.yaml.
     attributes:
       name:
         range: string
         required: true
       root:
-        range: string
-        required: true
-      workspace:
         range: string
         required: true
   ScanScope:
@@ -235,7 +232,7 @@ classes:
       project:
         range: SpecificationProject
         inlined: true
-        description: Registered project containing this acquired source; may differ from the selected project.
+        description: Project whose manifest is nearest to this acquired source.
       locator:
         range: string
         required: true
@@ -3942,8 +3939,8 @@ enums:
   ContextSourceRole:
     description: Why a source outside the selected candidates was consulted.
     permissible_values:
-      workspace_configuration:
-        description: Workspace manifest used to select and bound specification projects.
+      project_configuration:
+        description: Local dotspec.yaml declaring the selected project.
       system_context:
         description: Enclosing-system context required for inspection.
       reference_target:

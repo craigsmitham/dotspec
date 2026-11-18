@@ -5,12 +5,15 @@ type: requirement
 
 ## Statement
 
-When a workspace registers distinct specification project roots, dotspec must
-limit a selected project's discovered specifications to its most specific root
-partition and stop implicit System context lookup at that root. Explicit
-references may acquire another project's context without recursively selecting
-its specifications. Workspace-wide operations must preserve project identity and
-separate results, attempt every selected project, and report the highest exit code.
+Each `dotspec.yaml` declares the name of the specification project rooted in
+its directory. A spec belongs to the nearest enclosing project. Discovery must
+exclude nested projects, and implicit System lookup must stop at the project
+root. Explicit references may acquire context across project boundaries.
+
+From anywhere in a Git worktree, contributors must be able to select a project
+by name or inspect all discovered projects, including when the worktree root
+has no manifest. Workspace-wide operations must preserve project identity,
+attempt every selected project, and return the highest exit code.
 
 ## Rationale
 
@@ -21,8 +24,8 @@ explicit domain assertions, independent of tooling partitions.
 ## Applies to
 
 Workspace-aware discovery, System context, source inventories, model exports and
-reading views, and CLI project selection. Repositories without a workspace
-manifest retain their existing discovery behavior.
+reading views, and CLI project selection. Repositories without project
+manifests retain their existing discovery behavior.
 
 ## Verification plan
 

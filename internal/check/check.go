@@ -12,7 +12,6 @@ import (
 
 type Scope struct {
 	Project   *specfile.Project `json:"project,omitempty"`
-	Workspace string            `json:"workspace,omitempty"`
 	Path      string            `json:"path"`
 	Types     []string          `json:"types"`
 	Discovery string            `json:"discovery"`
@@ -65,7 +64,7 @@ func project(path string, files map[string]*SourceFile, types ...Type) Report {
 		return r.finish()
 	}
 	r.Scope.Path = dir
-	r.collectWorkspace()
+	r.collectManifest()
 	root, err := specfile.RepositoryRoot(dir)
 	if err != nil {
 		r.record(err, "scan.discovery", dir)
@@ -124,10 +123,6 @@ func newReport(path, discovery string, types []Type) Report {
 		names = append(names, kind.Layout.Kind)
 	}
 	scope := Scope{Path: path, Types: names, Discovery: discovery}
-	if w, p, err := specfile.ProjectContext(path); err == nil && w != nil {
-		scope.Project = &p
-		scope.Workspace = w.Path
-	}
 	return Report{SchemaVersion: 1, Scope: scope, Complete: true, ContextFiles: []string{}, Diagnostics: []diagnostic.Diagnostic{}}
 }
 
@@ -186,10 +181,17 @@ func (r Report) finish() Report {
 	return r
 }
 
-func (r *Report) collectWorkspace() {
-	if r.Scope.Workspace != "" {
-		r.ContextFiles = append(r.ContextFiles, r.Scope.Workspace)
+func (r *Report) collectManifest() {
+	p, err := specfile.FindProject(r.Scope.Path)
+	if err != nil {
+		r.record(err, "scan.scope", r.Scope.Path)
+		return
+	}
+	r.Scope.Project = p
+	if p != nil {
+		manifest := p.Manifest()
+		r.ContextFiles = append(r.ContextFiles, manifest)
 		r.Summary.ContextFilesChecked++
-		r.collectFile(r.Scope.Workspace, nil)
+		r.collectFile(manifest, nil)
 	}
 }

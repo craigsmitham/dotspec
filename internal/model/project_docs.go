@@ -11,7 +11,7 @@ func projectReading(s *Snapshot, text string) string {
 	if project == nil {
 		return text
 	}
-	// Domain context is distinct from merely acquiring the workspace manifest.
+	// Domain context is distinct from merely acquiring the project manifest.
 	sourceProjects := map[string]string{}
 	for _, source := range s.Sources {
 		sourceProjects[String(source, "id")] = String(Object(source["project"]), "name")

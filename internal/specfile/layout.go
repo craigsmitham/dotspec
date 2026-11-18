@@ -143,6 +143,10 @@ func metadataDirectory(dir string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	return metadataDirectoryWithin(dir, root), nil
+}
+
+func metadataDirectoryWithin(dir, root string) string {
 	var metadata string
 	for current := dir; current != root; current = filepath.Dir(current) {
 		if filepath.Base(current) == Folder {
@@ -152,5 +156,5 @@ func metadataDirectory(dir string) (string, error) {
 			break
 		}
 	}
-	return metadata, nil
+	return metadata
 }
