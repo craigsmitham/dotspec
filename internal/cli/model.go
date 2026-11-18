@@ -104,7 +104,7 @@ func newModelCommand() *cobra.Command {
 	addOutput(validate, false)
 	docs := &cobra.Command{Use: "docs", Short: "Generate concept references, system compositions, and dependency diagrams as Markdown", Args: cobra.NoArgs,
 		Long:    "Render purpose and operational principles before state and actions. Show explicit named uses, bindings, synchronization rules and application dependencies. Diagrams contain resolved relationships only; no behavior is executed or inferred.",
-		Example: "dotspec model docs --path . --relative-to docs/reference",
+		Example: "dotspec model docs --path . --relative-to views",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
 			if err != nil {
@@ -139,7 +139,7 @@ func newModelCommand() *cobra.Command {
 		}}
 	trace := &cobra.Command{Use: "trace", Short: "Generate layered requirements traceability and change-review views as Markdown", Args: cobra.NoArgs,
 		Long:    "Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and verification guidance. Resolved explicit relationships only; paths do not establish satisfaction or evidence.",
-		Example: "dotspec model trace --path . --relative-to docs/reference",
+		Example: "dotspec model trace --path . --relative-to views",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
 			if err != nil {
@@ -174,7 +174,7 @@ func newModelCommand() *cobra.Command {
 		}}
 	overview := &cobra.Command{Use: "overview", Short: "Generate system structure, features, and applicable obligations as Markdown", Args: cobra.NoArgs,
 		Long:    "Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and verification guidance. Directory context remains separate; no implementation or requirement inheritance is inferred.",
-		Example: "dotspec model overview --path . --relative-to docs/reference",
+		Example: "dotspec model overview --path . --relative-to views",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
 			if err != nil {
@@ -209,7 +209,7 @@ func newModelCommand() *cobra.Command {
 		}}
 	needs := &cobra.Command{Use: "needs", Short: "Generate a needs-to-specification map with capability dependencies", Args: cobra.NoArgs,
 		Long:    "Show jobs, shared outcomes, progress cases, features, obligations and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.",
-		Example: "dotspec model needs --path . --relative-to docs/reference",
+		Example: "dotspec model needs --path . --relative-to views",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
 			if err != nil {
@@ -259,7 +259,7 @@ func newModelCommand() *cobra.Command {
 func newModelReadingCommand(name, description string, render func(*model.Snapshot, string) (string, error)) *cobra.Command {
 	cmd := &cobra.Command{Use: name, Short: description, Args: cobra.NoArgs,
 		Long:    description + ". Requirements verification concerns specification quality; requirements and system validation concern needs and intended use. Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.\n\n" + exitPolicy,
-		Example: "dotspec model " + name + " --path . --relative-to docs/reference",
+		Example: "dotspec model " + name + " --path . --relative-to views",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
 			if err != nil {

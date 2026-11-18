@@ -23,6 +23,19 @@ Start with the [job of resuming interrupted work](specs/jobs/resume.job.spec.md)
 
 The [restart requirement](specs/requirements/restart.requirement.spec.md) refines the scenario's promise and classifies it against the system's [durability concern](specs/quality-models/personal-data.quality-model.spec.md#durability). Follow its verification link to the [acceptance test](tests/acceptance.py). Compare the fields it reads through the [forms](app/list.html) with the updates the [server](app/main.go) commits before redirecting.
 
+## Read the model views
+
+These reports are generated from the [To-do specifications](specs). Edit the specifications and run `mise run generate` from the repository root to refresh the reports.
+
+| Question | Report |
+| --- | --- |
+| Which features, interfaces and behaviors does the system expose? | [System overview](views/system-overview.md) |
+| How do the user's goals connect to the specifications? | [Needs map](views/needs-map.md) |
+| What changes when someone reopens a task? | [Concept design](views/concept-design.md) |
+| Which promise does the restart requirement refine? | [Requirements traceability](views/requirements-traceability.md) |
+| Which scenarios and decisions need review? | [Requirements review](views/requirements-review.md) |
+| How do project, environment, goals and system fit together? | [PEGS perspectives](views/pegs.md) |
+
 ## Verify the example
 
 From the repository root, run the acceptance test alone, inspect the authored relationships, or run the whole example gate.

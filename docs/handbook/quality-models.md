@@ -14,9 +14,9 @@ referenced frameworks or compliance checklists.
 
 | Slug | Attributes | Use |
 | --- | --- | --- |
-| [`iso-25010-2023`](reference/quality-models/iso-25010-2023.md) | 49 (9 characteristics + 40 sub-characteristics) | Default: systematic product-quality concerns based on ISO/IEC 25010:2023 |
-| [`furps`](reference/quality-models/furps.md) | 36 (5 categories + 31 distinct subcategories) | RUP FURPS variant; accuracy is grouped under both reliability and performance |
-| [`q42`](reference/quality-models/q42.md) | 200 (9 dimensions + 191 qualities) | Complete distinct-quality inventory and overlapping dimension assignments at the pinned Q42 revision |
+| [`iso-25010-2023`](../reference/quality-models/iso-25010-2023.md) | 49 (9 characteristics + 40 sub-characteristics) | Default: systematic product-quality concerns based on ISO/IEC 25010:2023 |
+| [`furps`](../reference/quality-models/furps.md) | 36 (5 categories + 31 distinct subcategories) | RUP FURPS variant; accuracy is grouped under both reliability and performance |
+| [`q42`](../reference/quality-models/q42.md) | 200 (9 dimensions + 191 qualities) | Complete distinct-quality inventory and overlapping dimension assignments at the pinned Q42 revision |
 
 ```sh
 dotspec quality-model list
@@ -88,7 +88,7 @@ quality requirements separately when you know the actual obligations, conditions
 and measures: a quality requirement is a requirement whose `quality_attributes`
 name these attributes, and `dotspec requirement init <slug> --preset quality`
 starts one. Copying does not create requirements, thresholds, or evidence.
-Use [Develop requirements](develop-requirements.md) to turn selected concerns into
+Use [Develop requirements](requirements.md) to turn selected concerns into
 scoped obligations with criteria and assessment guidance. Product properties and
 outcomes for users in a context of use need different evidence.
 
@@ -158,7 +158,7 @@ Consider continued useful service under adversity.
 ```
 
 Here `reliable` and `secure` must also be declared in the model.
-See [the grouping rationale](specification-model.md#quality-attribute-grouping)
+See [the grouping rationale](../reference/specification-model.md#quality-attribute-grouping)
 for the distinction between organization and inherited obligations.
 
 Older `Broader` or provisional `Parents` fields must be renamed to
@@ -174,5 +174,5 @@ are not automatically inserted into a project's source inventory.
 
 All commands support `--json`. `apply --json` returns source, target, copied IDs,
 dry-run state, and the complete resulting content. See the generated
-[CLI reference](cli.md#dotspec-quality-model) for flags and
-[core domain reference](reference/model/core.md) for model relationships.
+[CLI reference](../reference/cli.md#dotspec-quality-model) for flags and
+[core domain reference](../reference/model/core.md) for model relationships.

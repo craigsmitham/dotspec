@@ -55,6 +55,6 @@ be edited without invoking init.
 
 ## Authority and evidence
 
-The [init commands](../../docs/cli.md) and linked requirement define command behavior.
+The [init commands](../../docs/reference/cli.md) and linked requirement define command behavior.
 The [use-case command examples](../../internal/integration/testdata/use-cases.txtar)
 define the illustrated template-selection and non-overwrite outcomes.

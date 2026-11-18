@@ -7,16 +7,16 @@ The snapshot describes what dotspec read and how it interpreted that material.
 It does not establish that stakeholders agree with it or that a requirement is
 satisfied.
 
-The [core domain reference](reference/model/core.md) groups the principal types
+The [core domain reference](model/core.md) groups the principal types
 by business, user, and software requirements, with generated relationship diagrams.
-The canonical [LinkML model](../model/metamodel.yaml) defines the records and their
-relationships. The [generated reference](reference/model/index.md) describes
-every field. The [relationship reference](reference/model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../model/markdown-mapping.md) defines
+The canonical [LinkML model](../../model/metamodel.yaml) defines the records and their
+relationships. The [generated reference](model/index.md) describes
+every field. The [relationship reference](model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
 `model_version` is `0.19.0-draft`, `representation_version` is `0.1.0`, and
 `mapping_profile` is `dotspec-markdown/14`.
 
-The [verification and validation vocabulary](verification-and-validation.md)
+The [verification and validation vocabulary](../handbook/verification-and-validation.md)
 distinguishes requirements quality, requirements fitness, system conformance and
 system fitness. Shared AssessmentPlan/AssessmentCase values keep those plan roles
 separate through their owning fields and explicit subject and basis.
@@ -75,8 +75,8 @@ one direction relative to that owner; requirements can apply to it, features can
 group it, and it can own obligation clauses. References to counterpart interfaces
 or native contracts do not assert compatibility or implementation. Separate
 required and provided declarations may cite the same native contract without
-claiming they are the same interface. See [boundary authoring](review-requirements.md#delimit-the-boundary-and-its-interfaces)
-and the [generated type hierarchy](reference/model/core.md#specification-types).
+claiming they are the same interface. See [boundary authoring](../handbook/review.md#delimit-the-boundary-and-its-interfaces)
+and the [generated type hierarchy](model/core.md#specification-types).
 
 ## Specification projects and workspace exports
 
@@ -134,7 +134,7 @@ Business, user and software subsets describe concerns, not development stages or
 normative authority. Core/supporting/generic describes the role of model subsets.
 Record kinds and relationship categories remain separate axes. A software
 obligation can derive directly from a business rule; no intermediate record is
-required to complete a hierarchy. See [Requirements layers](requirements-layers.md).
+required to complete a hierarchy. See [Requirements layers](../handbook/requirements-layers.md).
 
 `TraceableElement` supplies `supports`, `derived_from` and `relies_on`.
 The separate `ObligationContainer` capability declares owned `ObligationClause`
@@ -154,11 +154,11 @@ Use cases and concepts are complementary behavioral views. `UseCase.involves`
 identifies participating `ConceptUse` records; no authoring order or service
 boundary follows from it. Ordinary domain glossary terms are not automatically
 Jackson-style concepts. `applies_to` identifies the subject of an obligation,
-not a satisfying implementation. [Declare relationships](develop-relationships.md)
+not a satisfying implementation. [Declare relationships](../handbook/relationships.md)
 provides the authoring forms and endpoint rules.
 
 ```sh
-dotspec model trace --path . --relative-to docs/reference > docs/reference/traceability.md
+dotspec model trace --path . --relative-to views > views/traceability.md
 ```
 
 This command generates a Mermaid instance diagram and motivation, behavior,
@@ -168,8 +168,8 @@ of linked material. It preserves unresolved-reference and draft-review findings;
 missing motivation or check guidance is advisory. Checks, execution evidence,
 implementation satisfaction and achieved outcomes are distinct future relations,
 not conclusions inferred from reachability or existing Evidence prose.
-The [generated example](reference/requirements-traceability-example.md) demonstrates
-these views from [authored specifications](../examples/todo/README.md).
+The [generated example](../../examples/todo/views/requirements-traceability.md) demonstrates
+these views from [authored specifications](../../examples/todo/README.md).
 
 ## Concept definitions and composition
 
@@ -215,9 +215,9 @@ All these domain types belong to core `software-requirements`. The reuse sense o
 principles first, then state and actions, followed by system composition and
 application dependency diagrams. Use `--relative-to DIR` for the directory that will
 contain the Markdown; relative source links are rebased there. No files are written
-unless the caller redirects output. The [generated example](reference/concept-design-example.md)
-comes from [authored example specifications](../examples/todo/specs/system.spec.md).
-The [authoring guide](develop-concepts.md) explains how to develop these descriptions.
+unless the caller redirects output. The [generated example](../../examples/todo/views/concept-design.md)
+comes from [authored example specifications](../../examples/todo/specs/system.spec.md).
+The [authoring guide](../handbook/concepts.md) explains how to develop these descriptions.
 
 ## Use-case narratives
 
@@ -241,8 +241,8 @@ Nested alternatives remain useful because handling can itself fail. Export
 recognizes explicit nested labels or an Extensions grouping, while a Notes
 heading under a branch supplies that branch's `notes`. The source tree preserves
 all prose, including casual narratives that are not decomposed. See the
-[authoring guide](develop-use-cases.md#sketch-the-interaction-then-investigate-alternatives)
-for examples and the [mapping profile](../model/markdown-mapping.md#use-case) for
+[authoring guide](../handbook/use-cases.md#sketch-the-interaction-then-investigate-alternatives)
+for examples and the [mapping profile](../../model/markdown-mapping.md#use-case) for
 precise recognition rules.
 
 The rationale draws on Cockburn's *The Mini-Book on Use Cases*, v1.1b,
@@ -263,10 +263,10 @@ are advisory and do not invalidate drafts. `dotspec model pegs` assembles a
 Project, Environment, Goals, System reading perspective without replacing concern
 subsets or creating a project-management subsystem.
 
-Use the [review authoring guide](review-requirements.md) for syntax and limitations,
-the [review example](reference/requirements-review-example.md) to inspect the task list’s verification and validation plans, and the [PEGS example](reference/pegs-example.md) to see the reading view.
+Use the [review authoring guide](../handbook/review.md) for syntax and limitations,
+the [review example](../../examples/todo/views/requirements-review.md) to inspect the task list’s verification and validation plans, and the [PEGS example](../../examples/todo/views/pegs.md) to see the reading view.
 Optional concept effects matrices are included in `model docs`;
-the [checklist effects table](reference/concept-design-example.md#effects-table) records which properties reopening preserves.
+the [checklist effects table](../../examples/todo/views/concept-design.md#effects-table) records which properties reopening preserves.
 
 ## Three connected representations
 
@@ -392,7 +392,7 @@ memberships.
 
 Explicit boundary, support and applicability syntax produces `UseCase.subject_system`,
 `UseCase.supports`, and requirement/business-rule `applies_to`.
-See [Declare relationships](develop-relationships.md) for the authoring forms.
+See [Declare relationships](../handbook/relationships.md) for the authoring forms.
 
 Relationship categories describe containment, structural context, semantic
 association, contextual citation and derived projections. Source provenance and
@@ -498,17 +498,17 @@ inline as `bytes_base64`.
 
 Python and LinkML are needed only to regenerate the committed model projections.
 The CLI embeds the JSON Schema and class/range catalog and runs entirely in Go.
-See [model generation](../model/README.md#regeneration) for the pinned environment
+See [model generation](../../model/README.md#regeneration) for the pinned environment
 and generation checks. Changes to the canonical model, projections, mapping
 profile and native checks must agree.
 
-The [source-fidelity requirement](../specs/requirements/model-source-fidelity.requirement.spec.md)
-and [export use case](../specs/use-cases/export-specification-model.use-case.spec.md)
-state the product behavior. The [content tests](../internal/model/content_test.go),
-[export tests](../internal/model/export_test.go),
-[export conformance tests](../internal/model/export_conformance_test.go), and
-[CLI tests](../internal/cli/model_test.go) provide evidence for their exercised
-cases. The [model command examples](../internal/integration/testdata/model.txtar)
+The [source-fidelity requirement](../../specs/requirements/model-source-fidelity.requirement.spec.md)
+and [export use case](../../specs/use-cases/export-specification-model.use-case.spec.md)
+state the product behavior. The [content tests](../../internal/model/content_test.go),
+[export tests](../../internal/model/export_test.go),
+[export conformance tests](../../internal/model/export_conformance_test.go), and
+[CLI tests](../../internal/cli/model_test.go) provide evidence for their exercised
+cases. The [model command examples](../../internal/integration/testdata/model.txtar)
 exercise the installed CLI, including validation after the source files are
 removed, retained authoring errors, invalid JSON and I/O failures. Their success does not establish every semantic claim in the input.
 
@@ -519,7 +519,7 @@ Generate a source-linked view of jobs, shared outcomes, progress cases, features
 requirements and optional capabilities:
 
 ```sh
-dotspec model needs --path . --relative-to docs/reference > docs/reference/needs.md
+dotspec model needs --path . --relative-to views > views/needs.md
 ```
 
 The diagram separates declaration from applicability, contribution from
@@ -527,5 +527,5 @@ achievement, and capability dependency from structural containment. Full
 statements and evidence accompany concise labels. Provider links describe only
 explicitly identified systems and components and are non-exhaustive.
 
-See [Jobs and user needs](jobs-and-user-needs.md) for authoring and method
-boundaries, and the [generated example](reference/needs-map-example.md).
+See [Jobs and user needs](../handbook/jobs.md) for authoring and method
+boundaries, and the [generated example](../../examples/todo/views/needs-map.md).

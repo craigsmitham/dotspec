@@ -141,15 +141,15 @@ optional sections and IDs produce no missing-content advice.
 
 Same-document links resolve against heading anchors and the optional document
 ID. Check commands validate relative file links using the shared
-[reference rules](inspection.md#references); references
+[reference rules](../inspection.md#references); references
 such as `Supports` do not establish that an outcome is achieved. Job steps
 and use cases can relate many to many. There is no test-result matching or
 requirement-satisfaction inference in this version.
 
-The repository's [Check specifications before committing](../../specs/use-cases/check-specifications.use-case.spec.md)
+The repository's [Check specifications before committing](../../../specs/use-cases/check-specifications.use-case.spec.md)
 example connects this interaction to the Develop Requirements job and references
 the governing check report contract. The summary use case
-[Prepare specifications for review](../../specs/use-cases/prepare-specifications.use-case.spec.md)
+[Prepare specifications for review](../../../specs/use-cases/prepare-specifications.use-case.spec.md)
 connects it to creating a draft and discovering sources. See
-[Develop use cases](../develop-use-cases.md) for extension links, behavioral
+[Develop use cases](../../handbook/use-cases.md) for extension links, behavioral
 authority, and delivery slices.

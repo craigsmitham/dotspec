@@ -74,13 +74,11 @@ project's root. Default commands select the nearest enclosing project and skip
 nested projects. Use `--project NAME` to select a project by name or `--all` to
 inspect every project in the Git worktree. Implicit System lookup stops at the
 project root. Explicit links can cross project boundaries.
-See [project discovery and selection](../workspaces.md).
+See [project discovery and selection](workspaces.md).
 
-This repository has a root manifest for dotspec and one in each example
-collection. Run `dotspec check --all` to check the product and all seven examples.
+This repository has a root manifest for dotspec and a second manifest for the
+[To-do project](../../examples/todo/README.md). Run `dotspec check --all` to check both.
 
 ## File formats
 
-[Systems](system.md) · [Jobs](job.md) · [Use cases](use-case.md) ·
-[Concepts](concept.md) · [Requirements](requirement.md) ·
-[Business rules](../business-rules.md) · [Quality models](../quality-models.md).
+Look up the recognized sections for each of the seven [specification formats](formats/README.md).

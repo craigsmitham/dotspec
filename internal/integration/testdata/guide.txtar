@@ -6,6 +6,13 @@ stdout 'Where should a promise live'
 stdout 'dotspec guide examples/todo/specs/jobs/resume.job.spec.md'
 exec dotspec guide examples/todo/specs/requirements/restart.requirement.spec.md
 stdout 'restart acceptance test'
+exec dotspec guide --list
+stdout 'Define a criterion and distinguish a measure'
+stdout 'docs/handbook/requirements.md#define-or-reference-the-criterion-once'
+stdout 'examples  Browse the files bundled'
+status 2 dotspec guide --list quality
+exec dotspec guide examples/todo/views/requirements-traceability.md
+stdout 'Requirements traceability'
 exec dotspec guide job
 stdout 'progress'
 exec dotspec guide use-case

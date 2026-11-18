@@ -41,4 +41,4 @@ Minimize the time spent reconstructing outstanding commitments after an interrup
 
 #### Applies to
 
-[Recall outstanding work](#recall).
+[Recall outstanding work](#recall-outstanding-work).

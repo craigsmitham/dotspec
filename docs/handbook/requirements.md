@@ -53,7 +53,7 @@ implementation revision, and before-and-after records.
 
 Conditions the system must accommodate are not assumptions that excuse its
 behavior. Describe any reliance on an environmental premise separately; see
-[requirements review](review-requirements.md#separate-premises-from-operating-conditions).
+[requirements review](review.md#separate-premises-from-operating-conditions).
 
 ## Define or reference the criterion once
 
@@ -83,7 +83,7 @@ subsections. Record preferred targets in Rationale or Notes and label them
 nonbinding. An unresolved bound belongs in Open questions with the evidence needed
 to choose it; a draft can remain useful without pretending to be complete.
 
-The [restart requirement](../examples/todo/specs/requirements/restart.requirement.spec.md)
+The [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md)
 counts discrepancies after a restart, sets the target to zero and names the storage
 conditions. In a temporary copy, remove the Target subsection and run
 `dotspec requirement check restart` to inspect the resulting advice.
@@ -99,7 +99,7 @@ under Applies to. Use existing actor, job and use-case references where helpful;
 the current model does not require a new context-of-use object or perspective
 field. Population and Conditions subsections can make the context easier to find.
 
-The [To-do validation exercise](../examples/todo/specs/system.spec.md#validation-plan)
+The [To-do validation exercise](../../examples/todo/specs/system.spec.md#validation-plan)
 gives the participant real errands to resume. Ask what they recognize after
 returning to the app and record where they need help.
 

@@ -3,7 +3,7 @@
 `dotspec-markdown/14` maps specification Markdown to the
 [canonical model](metamodel.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
-[Specification model](../docs/specification-model.md).
+[Specification model](../docs/reference/specification-model.md).
 
 The profile covers all seven specification types: system, job, quality model,
 business rule, use case, concept and requirement. A specification is one authored
@@ -343,7 +343,7 @@ relationships agree with explicit references and scope. Incomplete declarations
 produce advice. Full source content remains available regardless of resolution.
 Dependencies may cycle. Neither bindings nor incidental links infer dependency
 edges. No argument-expression checking, execution, timing, atomicity or behavior
-is inferred. The [authoring guide](../docs/develop-concepts.md) supplies examples.
+is inferred. The [authoring guide](../docs/handbook/concepts.md) supplies examples.
 
 ## Requirement
 
@@ -402,7 +402,7 @@ Measurement-basis advice considers an explicit Measure even
 when Verification plan is present. A Measure without a separately identified
 target, or without conditions or applicability, produces advice; prose may already supply
 them. Plan Success criteria and Conditions do not substitute for obligation
-criteria and applicability. See [Develop requirements](../docs/develop-requirements.md).
+criteria and applicability. See [Develop requirements](../docs/handbook/requirements.md).
 
 ## Bindings, fallback and completeness
 
@@ -439,7 +439,7 @@ specified in the [model README](README.md#regeneration).
 
 ## Relationship contract
 
-See [Declare relationships](../docs/develop-relationships.md) for complete examples.
+See [Declare relationships](../docs/handbook/relationships.md) for complete examples.
 Subject system references are scalar; Supports and Targets may name multiple
 records. Ordinary links outside these explicit forms remain contextual. Definition,
 parameter, type, use and action fields likewise retain all authored occurrences,

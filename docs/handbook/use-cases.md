@@ -3,7 +3,7 @@
 Use this guide when you need to agree on what an actor can accomplish with a
 system, investigate alternatives, or retain behavior across delivery increments.
 Start with a readable sketch and expand the portions needed for the next decision.
-The [format reference](reference/use-case.md#use-case-spec-format) defines the supported
+The [format reference](../reference/formats/use-case.md#use-case-spec-format) defines the supported
 sections and checks; this guide explains how to use them.
 
 ## Start with actors and goals
@@ -45,7 +45,7 @@ does not yet need its own specification file.
 ## Sketch the interaction, then investigate alternatives
 
 Connect important user tasks with one or a few summary narratives. The repository's
-[Prepare specifications for review](../specs/use-cases/prepare-specifications.use-case.spec.md)
+[Prepare specifications for review](../../specs/use-cases/prepare-specifications.use-case.spec.md)
 links creating a draft, discovering sources, and checking specifications.
 
 For a selected user task, write a short typical success path. State actor intentions
@@ -118,7 +118,7 @@ the use case ends. List items or headed entries in either section are distinguis
 as separate conditions. Supporting actors and stakeholder interests, written as
 prose, can expose promises that the primary actor's success alone misses.
 
-[Check specifications](../specs/use-cases/check-specifications.use-case.spec.md)
+[Check specifications](../../specs/use-cases/check-specifications.use-case.spec.md)
 illustrates this distinction: errors found in specifications can accompany a
 successful complete report; unreadable input can prevent that goal. Source
 preservation applies in either outcome.
@@ -149,14 +149,14 @@ behavioral obligation directly; it need not be duplicated in a requirement file.
 Alternatively, a narrative can explain and link to a rule owned by another source.
 Explain that role around the link. To record which obligation, business rule or
 concept action a scenario step illustrates, add an
-[Illustrates bullet](review-requirements.md#relate-scenarios-to-general-behavior)
+[Illustrates bullet](review.md#relate-scenarios-to-general-behavior)
 under that step. Keep general rules and complementary data specifications or
 quality requirements where they can state obligations more clearly.
 
 Tests may define accepted examples or verify an existing rule. State which role
 they play. Link resolution establishes that a target exists; it does not establish
 execution, branch coverage, completeness, stakeholder agreement, or customer value.
-The project's [source-authority principle](../README.md#design-principle-keep-meaning-in-the-source-keep-connections-simple)
+The project's [source-authority principle](../../README.md#design-principle-keep-meaning-in-the-source-keep-connections-simple)
 governs these choices.
 
 ## Plan growth without weakening promises

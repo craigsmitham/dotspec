@@ -3,7 +3,7 @@
 Use explicit relationships when a reader or tool needs to distinguish an actual
 support, applicability or boundary claim from a related document. Ordinary
 Markdown links remain useful context. They do not automatically make those claims.
-The [relationship reference](reference/model/relationships.md) defines the model's
+The [relationship reference](../reference/model/relationships.md) defines the model's
 edge categories, cardinalities, scopes and projections.
 
 ## Identify a use case's system boundary
@@ -88,7 +88,7 @@ which, as `explicit` or `directory`. Systems retain directory context in
 relationships supply no inherited requirements or use-case boundary.
 
 For explicit concept inclusion, type bindings, dependencies and coordination, use
-[Develop concepts](develop-concepts.md). Mutual application dependencies are valid;
+[Develop concepts](concepts.md). Mutual application dependencies are valid;
 containment, explicit `part_of` structure and quality sub-attribute hierarchy must be acyclic.
 
 ## Check and consume the result
@@ -238,7 +238,7 @@ order. Applicability, application dependencies and participation are separate cl
 ## Generate traceability views
 
 ```sh
-dotspec model trace --path . --relative-to docs/reference > docs/reference/traceability.md
+dotspec model trace --path . --relative-to views > views/traceability.md
 ```
 
 The result includes a layered Mermaid diagram, motivation links, behavioral
@@ -249,7 +249,7 @@ output is redirected. A nonzero authoring exit still produces the review documen
 
 Missing motivation or verification guidance is advisory. A verification plan is
 not an execution result, and a path through the graph does not prove satisfaction.
-The [generated To-do example](reference/requirements-traceability-example.md)
+The [generated To-do example](../../examples/todo/views/requirements-traceability.md)
 shows the complete flow; [Requirements layers](requirements-layers.md) explains
 why these distinctions matter.
 
@@ -362,10 +362,10 @@ and quality classification in show, list, check and model export. It does not se
 ### Review the overview
 
 ```sh
-dotspec model overview --path . --relative-to docs/reference > docs/reference/system-overview.md
+dotspec model overview --path . --relative-to views > views/system-overview.md
 ```
 
-The [generated example](reference/system-overview-example.md) shows explicit part
+The [generated example](../../examples/todo/views/system-overview.md) shows explicit part
 relationships, feature groups, directly applicable obligations, whether
 verification guidance and a criterion are recorded, concept uses, descriptions
 and native references. Feature
@@ -385,15 +385,15 @@ boundary intent while allowing implementation structure to change:
 
 
 For enabling abilities that may combine people, procedures and technology, use
-the optional [Capability model](jobs-and-user-needs.md#connect-needs-to-capabilities-and-specifications).
+the optional [Capability model](jobs.md#connect-needs-to-capabilities-and-specifications).
 Its dependencies and providers are distinct from feature membership and structural
-parentage. The [To-do needs map](reference/needs-map-example.md) shows the job,
+parentage. The [To-do needs map](../../examples/todo/views/needs-map.md) shows the job,
 its steps and the outcome supported by the restart requirement.
 
 ## Review boundaries and scenario grounding
 
 Use Interacts with on Systems or Components for explicit boundary partners, separate
 from Part of. Use an Illustrates bullet inside a scenario step to identify its
-underlying obligation, business rule or concept action. See [Review requirements](review-requirements.md)
+underlying obligation, business rule or concept action. See [Review requirements](review.md)
 for these forms, exclusions, required/provided interfaces, assumption validation,
 question resolution metadata and the generated review and PEGS perspectives.

@@ -13,6 +13,12 @@ func TestGeneratedArtifactsAndReadOnlyDriftCheck(t *testing.T) {
 	if err := os.CopyFS(filepath.Join(dir, "examples"), os.DirFS("../../examples")); err != nil {
 		t.Fatal(err)
 	}
+	if err := os.Mkdir(filepath.Join(dir, "docs"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "docs", "README.md"), []byte("# Documentation map\n\n<!-- Generated topic table -->\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
 	t.Chdir(dir)
 	if err := run(false); err != nil {
 		t.Fatal(err)
@@ -20,7 +26,7 @@ func TestGeneratedArtifactsAndReadOnlyDriftCheck(t *testing.T) {
 	if err := run(true); err != nil {
 		t.Fatalf("fresh generation drifted: %v", err)
 	}
-	path := filepath.Join(dir, "docs", "cli.md")
+	path := filepath.Join(dir, "docs", "reference", "cli.md")
 	original, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
@@ -29,7 +35,7 @@ func TestGeneratedArtifactsAndReadOnlyDriftCheck(t *testing.T) {
 	if err := os.WriteFile(path, changed, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := run(true); err == nil || !strings.Contains(err.Error(), "docs/cli.md") {
+	if err := run(true); err == nil || !strings.Contains(err.Error(), "docs/reference/cli.md") {
 		t.Fatalf("missing drift diagnostic: %v", err)
 	}
 	actual, err := os.ReadFile(path)

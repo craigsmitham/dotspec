@@ -240,7 +240,7 @@ explicit IDs and document heading anchors. An unresolved local fragment is an
 error. Explicit ID links are semantic references understood by dotspec; an
 ordinary Markdown renderer may require an HTML anchor to make those IDs clickable.
 Relative file links and cross-file fragments are checked by check commands;
-see [References](inspection.md#references). Parsing and ordinary show/list commands do not
+see [References](../inspection.md#references). Parsing and ordinary show/list commands do not
 follow those links. Remote URLs remain navigation.
 
 ### Checks and incomplete work
@@ -267,16 +267,16 @@ is authoring guidance rather than a classification stored on the job:
 ```sh
 dotspec job init reach-work --preset progress
 dotspec job check reach-work --preset odi
-dotspec model needs --path . --relative-to docs/reference > docs/reference/needs.md
+dotspec model needs --path . --relative-to views > views/needs.md
 ```
 
-See [Jobs and user needs](../jobs-and-user-needs.md) for the method distinctions,
+See [Jobs and user needs](../../handbook/jobs.md) for the method distinctions,
 progress-case fields, optional capabilities, and research evidence boundaries.
-The [generated needs map](needs-map-example.md) shows how the restart requirement supports the
+The [generated needs map](../../../examples/todo/views/needs-map.md) shows how the restart requirement supports the
 outcome of spending less time reconstructing outstanding work.
 
-The repository's [Develop Requirements](../../specs/jobs/develop-requirements.job.spec.md) and
-[Manage Requirements](../../specs/jobs/manage-requirements.job.spec.md) examples each contain a
+The repository's [Develop Requirements](../../../specs/jobs/develop-requirements.job.spec.md) and
+[Manage Requirements](../../../specs/jobs/manage-requirements.job.spec.md) examples each contain a
 bounded job statement, performer, proposed steps, and outcomes. Both are marked
 as hypotheses pending research. They cover collaboration and judgment outside
 the CLI as well as work dotspec may support.

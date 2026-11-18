@@ -17,7 +17,7 @@ an eventual exit status. The command reference defines available operations;
 individual concept and requirement specifications define their effects on files.
 The invocation concept does not own those operations' domain behavior.
 
-The [command reference](../../../../docs/cli.md) describes the available inputs.
+The [command reference](../../../../docs/reference/cli.md) describes the available inputs.
 The [output contract](../../../../docs/reference/inspection.md#output-and-automation) defines process
 outputs, formats and exit statuses.
 

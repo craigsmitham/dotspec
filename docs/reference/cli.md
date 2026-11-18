@@ -348,10 +348,11 @@ Read the offline authoring handbook and worked examples
 dotspec guide [TOPIC|RULE|PATH] [flags]
 ```
 
-Open guidance from this version of dotspec. With no argument, list topics and help choose an authoring form. Use examples to browse worked specifications or a diagnostic's suggested rule ID to read its guidance.
+Open guidance from this version of dotspec. With no argument, list topics and help choose an authoring form. Use --list to see topic descriptions and source paths. Use examples to browse worked specifications or a diagnostic's suggested rule ID to read its guidance.
 
 ```sh
 dotspec guide
+dotspec guide --list
 dotspec guide obligation
 dotspec guide requirement.measurement-basis
 dotspec guide examples
@@ -360,6 +361,7 @@ dotspec guide examples
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--help, -h` | `false` | help for guide |
+| `--list` | `false` | List guide topics with their descriptions and source paths |
 
 ## dotspec help
 
@@ -608,7 +610,7 @@ dotspec model docs [flags]
 Render purpose and operational principles before state and actions. Show explicit named uses, bindings, synchronization rules and application dependencies. Diagrams contain resolved relationships only; no behavior is executed or inferred.
 
 ```sh
-dotspec model docs --path . --relative-to docs/reference
+dotspec model docs --path . --relative-to views
 ```
 
 | Flag | Default | Description |
@@ -654,7 +656,7 @@ dotspec model needs [flags]
 Show jobs, shared outcomes, progress cases, features, obligations and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.
 
 ```sh
-dotspec model needs --path . --relative-to docs/reference
+dotspec model needs --path . --relative-to views
 ```
 
 | Flag | Default | Description |
@@ -676,7 +678,7 @@ dotspec model overview [flags]
 Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and verification guidance. Directory context remains separate; no implementation or requirement inheritance is inferred.
 
 ```sh
-dotspec model overview --path . --relative-to docs/reference
+dotspec model overview --path . --relative-to views
 ```
 
 | Flag | Default | Description |
@@ -700,7 +702,7 @@ Generate a Project, Environment, Goals, System reading perspective. Requirements
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
 ```sh
-dotspec model pegs --path . --relative-to docs/reference
+dotspec model pegs --path . --relative-to views
 ```
 
 | Flag | Default | Description |
@@ -724,7 +726,7 @@ Generate advisory requirements review and open-question inventory. Requirements 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
 ```sh
-dotspec model review --path . --relative-to docs/reference
+dotspec model review --path . --relative-to views
 ```
 
 | Flag | Default | Description |
@@ -763,7 +765,7 @@ dotspec model trace [flags]
 Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and verification guidance. Resolved explicit relationships only; paths do not establish satisfaction or evidence.
 
 ```sh
-dotspec model trace --path . --relative-to docs/reference
+dotspec model trace --path . --relative-to views
 ```
 
 | Flag | Default | Description |

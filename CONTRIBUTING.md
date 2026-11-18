@@ -1,7 +1,7 @@
 # Contributing
 
 When changing a domain concept, an authoring convention, or a quality check,
-start with [Maintaining the handbook](docs/handbook/maintaining.md). It points
+start with [Maintaining the handbook](docs/maintainers/handbook.md). It points
 to the owning text, the sources behind each choice, and examples for review.
 
 Install [mise](https://mise.jdx.dev), then run these commands from the repository root:
@@ -30,7 +30,7 @@ and generated-file checks compare the same bytes.
 | `mise run test` | Run unit tests and process-level testscript scenarios |
 | `mise run check` | Check formatting, module tidiness, lint, tests, generated artifacts, specs, specification-source coverage, and release configuration |
 | `mise run spec-sources-check` | Check that designated specification-test files appear in the public source inventory |
-| `mise run generate` | Regenerate the command reference, output gallery, and To-do model views |
+| `mise run generate` | Regenerate the guide map, command reference, output gallery, and To-do model views |
 | `mise run model-setup` | Provision the isolated model toolchain from its dependency lock |
 | `mise run model-generate` | Regenerate JSON Schema, reference catalog, and model documentation |
 | `mise run model-check` | Verify generated model projections without writing |
@@ -42,6 +42,10 @@ and generated-file checks compare the same bytes.
 it does not stage changes or install Git hooks. Run focused tests while iterating,
 then the full gate before submitting a change. The standard golangci-lint set
 includes errcheck, govet, ineffassign, staticcheck, and unused.
+
+## Documentation
+
+Use the [documentation map](docs/README.md) to find the source for a CLI guide topic. The [reference index](docs/reference/README.md) identifies the inputs and regeneration commands for published tables, starters and examples.
 
 ## Architecture
 
@@ -116,7 +120,7 @@ specification type.
 
 ## CLI changes and generated artifacts
 
-Follow [CLI design](docs/cli-design.md). Declare commands, flags, and examples in
+Follow [CLI design](docs/maintainers/cli-design.md). Declare commands, flags, and examples in
 the Cobra tree. `scripts/generate` reads that tree without executing it for the
 reference; its output gallery runs real commands in a temporary project. Templates
 come from the type packages. Edit those sources, then run `mise run generate`.
@@ -175,7 +179,7 @@ The model generation pipeline also validates subset classifications, explicit cl
 memberships, and the focused documentation view. Edit `model/views/core-domain.yaml`
 for presentation choices; keep types and relationship semantics in `model/metamodel.yaml`.
 
-See [Releasing](docs/releasing.md) for snapshot and publication procedures.
+See [Releasing](docs/maintainers/releasing.md) for snapshot and publication procedures.
 
 Bundled quality models are authored Markdown under
 `internal/qualitymodel/specs/quality-models/`. The CLI embeds those files; the

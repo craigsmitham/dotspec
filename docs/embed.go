@@ -3,5 +3,5 @@ package docs
 
 import "embed"
 
-//go:embed *.md handbook/*.md handbook/topics.json reference
+//go:embed README.md handbook maintainers reference
 var Files embed.FS

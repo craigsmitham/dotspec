@@ -73,23 +73,22 @@ def build(version, target):
     index = ['---', 'okf_version: "0.2"', '---', '', '# dotspec handbook', '',
              'Start with the authoring handbook or open a topic for the decision at hand.', '',
              '## Guides', '']
-    examples_started = False
+    for entry in catalog:
+        index.append(f'- [{entry["topic"]}]({entry["page"]}) — {entry["description"]}')
+    index.extend(['', '## Worked examples', ''])
     for page, description in pages.items():
         body = (ROOT / page).read_text()
         example = page.startswith('examples/')
         if example:
             # Native spec metadata belongs to the original example. AXM uses OKF frontmatter.
             _, _, body = body.partition('\n---\n')
-            if not examples_started:
-                index.extend(['', '## Worked examples', ''])
-                examples_started = True
-        title = re.search(r'^# (.+)$', body, re.MULTILINE)[1]
+            title = re.search(r'^# (.+)$', body, re.MULTILINE)[1]
+            index.append(f'- [{title}]({page}) — {description}')
         tags = ['dotspec', 'example' if example else 'authoring', Path(page).stem.split('.')[0].lower()]
         metadata = ('---\ntype: ' + ('example' if example else 'guide') +
                     '\ndescription: ' + json.dumps(description) +
                     '\ntags: ' + json.dumps(tags) + '\n---\n\n')
         contents["src/" + page] = metadata + bundle_links(body.lstrip(), page, pages, revision, contents)
-        index.append(f'- [{title}]({page}) — {description}')
     contents["src/index.md"] = '\n'.join(index) + '\n'
 
     target.parent.mkdir(parents=True, exist_ok=True)

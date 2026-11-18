@@ -8,17 +8,17 @@ Model `0.19.0-draft`; mapping `dotspec-markdown/14`.
 
 ## Project
 
-### [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>)
+### [Personal task list](<../specs/system.spec.md#personal-task-list>)
 
 **Project context**
 
-The [walkthrough](../../examples/todo/README.md) identifies the setup, checks and validation exercise.
+The [walkthrough](../README.md) identifies the setup, checks and validation exercise.
 
 ## Environment and boundaries
 
 Operating conditions and constraints describe what the solution must accommodate. Assumptions are assessed separately for evidence and justified reliance. Explicit exclusions delimit scope. External partners are separate from structural parents.
 
-### BusinessRule: [Completion preserves a commitment](<../../examples/todo/specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment>)
+### BusinessRule: [Completion preserves a commitment](<../specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment>)
 
 **Statement**
 
@@ -26,9 +26,9 @@ A finished commitment stays on the person's list until they explicitly delete it
 
 **Applicability**
 
-**Targets:** [Personal task list](../../examples/todo/specs/system.spec.md).
+**Targets:** [Personal task list](../specs/system.spec.md).
 
-### System: [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>)
+### System: [Personal task list](<../specs/system.spec.md#personal-task-list>)
 
 **Environment**
 
@@ -46,15 +46,15 @@ The browser presents open and completed tasks and accepts changes through HTML f
 
 ##### Contracts
 
-[Form template](../../examples/todo/app/list.html) supplies the actions and fields.
+[Form template](../app/list.html) supplies the actions and fields.
 
-### Component: [Task service](<../../examples/todo/specs/system.spec.md#task-service>)
+### Component: [Task service](<../specs/system.spec.md#task-service>)
 
 ## Assumptions: evidence and justified reliance
 
 Assess both empirical support in the stated conditions and whether relying on the premise is appropriate for intended use. An observation supports a bounded claim, not a guarantee that the premise always holds.
 
-### [Same local storage](<../../examples/todo/specs/system.spec.md#same-local-storage>)
+### [Same local storage](<../specs/system.spec.md#same-local-storage>)
 
 **Statement**
 
@@ -64,33 +64,33 @@ Review required: no Basis, Applicability, Validation plan recorded.
 
 ## Goals
 
-### Job: [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>)
+### Job: [Resume interrupted work](<../specs/jobs/resume.job.spec.md#resume-interrupted-work>)
 
 **Statement**
 
 When I put work down, I want to remember what remains so I can pick it up again.
 
-Supports: [Resume unfinished work](<../../examples/todo/specs/system.spec.md#resume-unfinished-work>).
+Supports: [Resume unfinished work](<../specs/system.spec.md#resume-unfinished-work>).
 
-### JobStep: [Recall outstanding work](<../../examples/todo/specs/jobs/resume.job.spec.md#recall-outstanding-work>)
+### JobStep: [Recall outstanding work](<../specs/jobs/resume.job.spec.md#recall-outstanding-work>)
 
 **Description**
 
 Identify the commitments that still need attention.
 
-### JobStep: [Reconsider finished work](<../../examples/todo/specs/jobs/resume.job.spec.md#reconsider-finished-work>)
+### JobStep: [Reconsider finished work](<../specs/jobs/resume.job.spec.md#reconsider-finished-work>)
 
 **Description**
 
 Recognize when a previously finished commitment needs another action.
 
-### DesiredOutcome: [Less reconstruction](<../../examples/todo/specs/jobs/resume.job.spec.md#less-reconstruction>)
+### DesiredOutcome: [Less reconstruction](<../specs/jobs/resume.job.spec.md#less-reconstruction>)
 
 **Statement**
 
 Minimize the time spent reconstructing outstanding commitments after an interruption.
 
-### Goal: [Resume unfinished work](<../../examples/todo/specs/system.spec.md#resume-unfinished-work>)
+### Goal: [Resume unfinished work](<../specs/system.spec.md#resume-unfinished-work>)
 
 **Statement**
 
@@ -100,13 +100,13 @@ Reduce the effort of working out what still needs attention.
 
 Specifications below describe the solution's subjects, concepts, interactions and obligations. Declaration, structural parentage, applicability and behavioral relationships retain their distinct meanings.
 
-### Concept: [Checklist](<../../examples/todo/specs/concepts/checklist.concept.spec.md#checklist>)
+### Concept: [Checklist](<../specs/concepts/checklist.concept.spec.md#checklist>)
 
 **Purpose**
 
 Keep track of which commitments still need attention.
 
-### Requirement: [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>)
+### Requirement: [Preserve tasks across restart](<../specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>)
 
 **Statement**
 
@@ -114,11 +114,11 @@ After the service acknowledges a change, stopping and restarting it on the same
 database must preserve each surviving entry's identity, title and completion state.
 Deleted entries must stay absent.
 
-Supports: [Less reconstruction](<../../examples/todo/specs/jobs/resume.job.spec.md#less-reconstruction>).
+Supports: [Less reconstruction](<../specs/jobs/resume.job.spec.md#less-reconstruction>).
 
-Applies to: [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>).
+Applies to: [Return to my list](<../specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>).
 
-### System: [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>)
+### System: [Personal task list](<../specs/system.spec.md#personal-task-list>)
 
 **Purpose**
 
@@ -128,7 +128,7 @@ Help a person pick up unfinished work after an interruption.
 
 One person's list on one computer. The browser submits forms to a local service.
 
-### Component: [Task service](<../../examples/todo/specs/system.spec.md#task-service>)
+### Component: [Task service](<../specs/system.spec.md#task-service>)
 
 **Responsibilities**
 
@@ -136,19 +136,19 @@ Accept browser changes and commit them to the local database before confirming t
 
 **Contracts**
 
-- The browser uses the [HTML forms](../../examples/todo/app/list.html) to submit changes.
+- The browser uses the [HTML forms](../app/list.html) to submit changes.
 
-### Feature: [Pick up where I left off](<../../examples/todo/specs/system.spec.md#pick-up-where-i-left-off>)
+### Feature: [Pick up where I left off](<../specs/system.spec.md#pick-up-where-i-left-off>)
 
-Groups: [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>), [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>).
+Groups: [Return to my list](<../specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>), [Preserve tasks across restart](<../specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>).
 
-### ConceptUse: [My checklist](<../../examples/todo/specs/system.spec.md#my-checklist>)
+### ConceptUse: [My checklist](<../specs/system.spec.md#my-checklist>)
 
-Definition: [Checklist](<../../examples/todo/specs/concepts/checklist.concept.spec.md#checklist>).
+Definition: [Checklist](<../specs/concepts/checklist.concept.spec.md#checklist>).
 
-Supports: [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>).
+Supports: [Resume interrupted work](<../specs/jobs/resume.job.spec.md#resume-interrupted-work>).
 
-### Interface: [Task list forms](<../../examples/todo/specs/system.spec.md#task-list-forms>)
+### Interface: [Task list forms](<../specs/system.spec.md#task-list-forms>)
 
 **Description**
 
@@ -156,39 +156,39 @@ The browser presents open and completed tasks and accepts changes through HTML f
 
 **Contracts**
 
-[Form template](../../examples/todo/app/list.html) supplies the actions and fields.
+[Form template](../app/list.html) supplies the actions and fields.
 
-### UseCase: [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>)
+### UseCase: [Return to my list](<../specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>)
 
 **Goal**
 
 Pick up an outstanding task and bring a finished one back for follow-up.
 
-Supports: [Resume interrupted work](<../../examples/todo/specs/jobs/resume.job.spec.md#resume-interrupted-work>).
+Supports: [Resume interrupted work](<../specs/jobs/resume.job.spec.md#resume-interrupted-work>).
 
-Involves: [My checklist](<../../examples/todo/specs/system.spec.md#my-checklist>).
+Involves: [My checklist](<../specs/system.spec.md#my-checklist>).
 
-### ObligationClause: [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>)
+### ObligationClause: [Keep recorded work available](<../specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>)
 
 **Statement**
 
 The list must make previously recorded entries available when the person returns.
 
-Applies to: [My checklist](<../../examples/todo/specs/system.spec.md#my-checklist>).
+Applies to: [My checklist](<../specs/system.spec.md#my-checklist>).
 
 ## Validation planning
 
 Identify the subject and the needs, intended use or other basis for the assessment. Requirements validation assesses proposed obligations; system validation assesses proposed or realized solutions. A method or supports link alone establishes neither purpose nor a result.
 
-### Concept: [Checklist](<../../examples/todo/specs/concepts/checklist.concept.spec.md#checklist>)
+### Concept: [Checklist](<../specs/concepts/checklist.concept.spec.md#checklist>)
 
 No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
 
-### Requirement: [Preserve tasks across restart](<../../examples/todo/specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>)
+### Requirement: [Preserve tasks across restart](<../specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>)
 
 No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
 
-### System: [Personal task list](<../../examples/todo/specs/system.spec.md#personal-task-list>)
+### System: [Personal task list](<../specs/system.spec.md#personal-task-list>)
 
 **Validation plan**
 
@@ -215,11 +215,11 @@ explanation. Review mismatches before deciding whether the workflow meets the ne
 
 Review separately identified plan details: Basis, Participants, Conditions. The narrative may already address them; no adequacy or completion is inferred.
 
-### UseCase: [Return to my list](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>)
+### UseCase: [Return to my list](<../specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>)
 
 No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
 
-### ObligationClause: [Keep recorded work available](<../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>)
+### ObligationClause: [Keep recorded work available](<../specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>)
 
 No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
 

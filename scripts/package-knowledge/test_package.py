@@ -18,8 +18,10 @@ class KnowledgePackageTest(unittest.TestCase):
             with ZipFile(target) as archive:
                 self.assertEqual(json.loads(archive.read('dotspec/knowledge.json'))['version'], '1.2.3')
                 root = 'dotspec/src/'
+                index = archive.read(root + 'index.md').decode()
                 for topic in json.loads((ROOT / 'docs/handbook/topics.json').read_text()):
-                    self.assertIn(root + topic['page'].split('#')[0], archive.namelist())
+                    self.assertIn(f'[{topic["topic"]}]({topic["page"]})', index)
+                    self.assertEqual(archive.namelist().count(root + topic['page'].split('#')[0]), 1)
                 source = 'docs/handbook/project-conventions.md'
                 sample = (ROOT / source).read_text().split('```markdown\n')[1].split('```')[0]
                 matches = [name for name in archive.namelist()

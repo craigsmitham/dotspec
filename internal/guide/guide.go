@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/fs"
+	"maps"
 	"net/url"
 	"path"
 	"slices"
@@ -22,34 +23,38 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
+// Topic is a named route into the versioned documentation.
+type Topic struct {
+	Name        string `json:"topic"`
+	Page        string
+	Description string
+	Rules       []string
+}
+
 // The CLI and AXM distributions use the same maintainer-owned catalog.
 var topics, ruleTopics = loadTopics()
 
-func loadTopics() (map[string]string, map[string]string) {
+func loadTopics() (map[string]Topic, map[string]string) {
 	data, err := docs.Files.ReadFile("handbook/topics.json")
 	if err != nil {
 		panic(err)
 	}
-	var catalog []struct {
-		Topic string
-		Page  string
-		Rules []string
-	}
+	var catalog []Topic
 	if err := json.Unmarshal(data, &catalog); err != nil {
 		panic(err)
 	}
-	topics := map[string]string{}
+	topics := map[string]Topic{"examples": {Name: "examples", Description: "Browse the files bundled from the To-do example."}}
 	rules := map[string]string{}
 	for _, entry := range catalog {
-		if _, exists := topics[entry.Topic]; exists {
-			panic("duplicate guide topic: " + entry.Topic)
+		if _, exists := topics[entry.Name]; exists {
+			panic("duplicate guide topic: " + entry.Name)
 		}
-		topics[entry.Topic] = entry.Page
+		topics[entry.Name] = entry
 		for _, rule := range entry.Rules {
 			if _, exists := rules[rule]; exists {
 				panic("duplicate guide rule: " + rule)
 			}
-			rules[rule] = entry.Topic
+			rules[rule] = entry.Name
 		}
 	}
 	return topics, rules
@@ -100,12 +105,13 @@ func section(data []byte, id string) ([]byte, error) {
 	return nil, fmt.Errorf("unknown guide section %q", id)
 }
 
-func names() []string {
-	result := []string{"examples"}
-	for name := range topics {
-		result = append(result, name)
+// Topics returns the available guide routes in alphabetical order.
+// The examples route builds its listing from embedded files and has no source page.
+func Topics() []Topic {
+	var result []Topic
+	for _, name := range slices.Sorted(maps.Keys(topics)) {
+		result = append(result, topics[name])
 	}
-	slices.Sort(result)
 	return result
 }
 
@@ -128,8 +134,8 @@ func Read(query string) (string, error) {
 	}
 	target := key
 	if key == "" {
-		target = topics["handbook"]
-	} else if file := topics[key]; file != "" {
+		target = topics["handbook"].Page
+	} else if file := topics[key].Page; file != "" {
 		target = file
 	}
 	name, fragment, _ := strings.Cut(target, "#")
@@ -150,7 +156,7 @@ func Read(query string) (string, error) {
 
 	var out strings.Builder
 	if query == "" {
-		fmt.Fprintf(&out, "Topics: %s\n\n", strings.Join(names(), ", "))
+		fmt.Fprintf(&out, "Topics: %s\n\n", strings.Join(slices.Sorted(maps.Keys(topics)), ", "))
 	}
 	out.Write(data)
 	seen := map[string]bool{}

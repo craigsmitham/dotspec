@@ -1,8 +1,8 @@
 # Jobs and user needs
 
 Use this guide when documenting user progress, success criteria, or the abilities
-needed to support them. The [job format](reference/job.md#job-spec-format) defines the
-Markdown syntax; the [core model reference](reference/model/core.md) defines the
+needed to support them. The [job format](../reference/formats/job.md#job-spec-format) defines the
+Markdown syntax; the [core model reference](../reference/model/core.md) defines the
 formal types and relationships.
 
 ## Choose a useful perspective
@@ -71,7 +71,7 @@ full statement. Place links under `Applies to`. A named outcome under a job uses
 H3 and H4 headings; under a step it uses H5 and H6. Headings without an ID remain
 supporting extensions. Ordinary links in supporting prose are citations.
 
-In [Resume interrupted work](../examples/todo/specs/jobs/resume.job.spec.md),
+In [Resume interrupted work](../../examples/todo/specs/jobs/resume.job.spec.md),
 the job owns “Less reconstruction”. Its Applies to link identifies the particular
 step where the person recalls outstanding work.
 
@@ -133,7 +133,7 @@ organize model definitions, not the strategic importance of each capability.
 ## Generate a needs-to-specification view
 
 ```sh
-dotspec model needs --path . --relative-to docs/reference > docs/reference/needs.md
+dotspec model needs --path . --relative-to views > views/needs.md
 ```
 
 The generated Markdown includes a Mermaid diagram, linked relationship table,
@@ -141,7 +141,7 @@ full statements and evidence. Short labels keep the graph readable; the
 statements retain their meaning. Unresolved references remain in the authored
 narrative and inspection findings rather than becoming invented edges.
 
-Inspect the [generated example](reference/needs-map-example.md) and its
-[source system](../examples/todo/specs/system.spec.md). Follow the restart
+Inspect the [generated example](../../examples/todo/views/needs-map.md) and its
+[source system](../../examples/todo/specs/system.spec.md). Follow the restart
 requirement to the desired outcome and the step where it applies. It covers only acquired records within
 normal model-export discovery and direct-reference bounds.

@@ -3,7 +3,7 @@
 Use this guide when you need to explain a coherent piece of product behavior,
 reuse that behavior in another setting, or describe how independent concepts work
 together. Start with purpose and a characteristic story; add structure where it
-helps people make a design decision. The [format reference](reference/concept.md#concept-spec-format)
+helps people make a design decision. The [format reference](../reference/formats/concept.md#concept-spec-format)
 defines the basic file contract.
 
 A Concept is a specification with its own document. ConceptUse and Synchronization
@@ -12,7 +12,7 @@ traceable, addressable through heading anchors and optional introductory `**ID:*
 values, and can carry Notes, Open questions, Validation plan and trace sections.
 Evidence, Authority and Related specifications sections belong to specifications;
 under a declared element they are retained as unmodelled extension sections. See
-[specification types and declared elements](specification-model.md#specification-types-and-declared-elements).
+[specification types and declared elements](../reference/specification-model.md#specification-types-and-declared-elements).
 
 ## Find a purposeful boundary
 
@@ -199,7 +199,7 @@ dotspec concept check shorthand
 dotspec check
 dotspec model export --path . > snapshot.json
 dotspec model validate snapshot.json
-dotspec model docs --path . --relative-to docs > docs/concepts.md
+dotspec model docs --path . --relative-to views > views/concept-design.md
 ```
 
 Create the destination directory before redirecting output. Authoring checks handle
@@ -214,7 +214,7 @@ The generated reference presents purpose and operational principles before state
 and actions, then system composition, binding tables and dependency diagrams. Only
 resolved action references produce coordination edges; unresolved declarations and
 findings remain visible in the narrative. `--relative-to` controls source links,
-not which files are inspected. [The generated example](reference/concept-design-example.md)
+not which files are inspected. [The generated example](../../examples/todo/views/concept-design.md)
 is maintained by `mise run generate`.
 
 Review purpose, independence, adequate state, end-to-end behavior and composition
@@ -227,5 +227,5 @@ This guide adapts Daniel Jackson's [concept criteria](https://essenceofsoftware.
 and [dependencies](https://essenceofsoftware.com/tutorials/concept-basics/dependency/),
 and Meng and Jackson's [WYSIWID paper](https://arxiv.org/html/2508.14511v2).
 The Markdown conventions are dotspec choices. See the
-[model rationale](specification-model.md#concept-definitions-and-composition) for
+[model rationale](../reference/specification-model.md#concept-definitions-and-composition) for
 how these ideas map to the core domain.

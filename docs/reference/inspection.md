@@ -188,18 +188,9 @@ tests. It intentionally does not select every test file. See
 [Specification tests and implementation tests](../../CONTRIBUTING.md#specification-tests-and-implementation-tests)
 for this repository's policy and the CI task that enforces file coverage.
 
-## Business rules
-
-Business rules state business constraints independently of software enforcement.
-Use `dotspec business-rule init <slug>` to create one under `specs/business-rules/`,
-then `show`, `list`, or `check` to inspect it. A software specification can cite
-its governing rules under `Related specifications`, or use `Derived from` for a
-typed basis link. See the [authoring guide](../business-rules.md)
-and [core domain reference](model/core.md).
-
 ## Output and automation
 
-The experimental [specification model](../specification-model.md) exposes
+The experimental [specification model](specification-model.md) exposes
 source bytes, ordered document content, and named domain records together:
 
 ```sh
@@ -257,7 +248,7 @@ Markdown remain authored content. Overall outcomes are never inherited by steps.
 
 Use `dotspec --version` for build metadata, `dotspec completion bash|zsh|fish|powershell`
 for shell completion scripts, and `dotspec man` for the root manual in roff format.
-See the generated [CLI reference](../cli.md) for flags and examples.
+See the generated [CLI reference](cli.md) for flags and examples.
 
 ## References
 
@@ -299,6 +290,6 @@ normative authority, automatic inheritance, consistency, or requirement
 satisfaction.
 
 For explicit boundary, job-support and applicability links, see
-[Declare relationships between specifications](../develop-relationships.md).
+[Declare relationships between specifications](../handbook/relationships.md).
 The generated [relationship reference](model/relationships.md)
 documents the metamodel's edge categories, cardinalities, scope and projections.

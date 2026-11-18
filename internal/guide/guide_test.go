@@ -1,10 +1,10 @@
 package guide
 
 import (
+	"io/fs"
 	"net/url"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/craigsmitham/dotspec/internal/specfile"
@@ -23,10 +23,22 @@ func TestPublishedRoutes(t *testing.T) {
 	}
 }
 
-func TestHandbookLinks(t *testing.T) {
-	for _, source := range []string{"README.md", "maintaining.md", "project-conventions.md"} {
-		dir := "../../docs/handbook"
-		body, err := os.ReadFile(filepath.Join(dir, source))
+func TestDocumentationLinks(t *testing.T) {
+	anchors := map[string]map[string]bool{}
+	sources := []string{"../../README.md", "../../CONTRIBUTING.md", "../../examples/todo/README.md"}
+	for _, root := range []string{"../../docs", "../../examples/todo/views"} {
+		err := filepath.WalkDir(root, func(path string, entry fs.DirEntry, err error) error {
+			if err == nil && !entry.IsDir() && filepath.Ext(path) == ".md" {
+				sources = append(sources, path)
+			}
+			return err
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, source := range sources {
+		body, err := os.ReadFile(source)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -38,16 +50,25 @@ func TestHandbookLinks(t *testing.T) {
 			if u.IsAbs() || u.Host != "" {
 				continue
 			}
-			target := filepath.Join(dir, filepath.FromSlash(u.Path))
-			if u.Path == "" {
-				target = filepath.Join(dir, source)
+			target := source
+			if u.Path != "" {
+				target = filepath.Join(filepath.Dir(source), filepath.FromSlash(u.Path))
 			}
-			data, err := os.ReadFile(target)
-			if err != nil {
+			if _, err := os.Stat(target); err != nil {
 				t.Errorf("%s: %v", source, err)
 				continue
 			}
-			if u.Fragment != "" && strings.HasSuffix(target, ".md") && !specfile.MarkdownReferences(data).Anchors[u.Fragment] {
+			if u.Fragment == "" || filepath.Ext(target) != ".md" {
+				continue
+			}
+			if anchors[target] == nil {
+				data, err := os.ReadFile(target)
+				if err != nil {
+					t.Fatal(err)
+				}
+				anchors[target] = specfile.MarkdownReferences(data).Anchors
+			}
+			if !anchors[target][u.Fragment] {
 				t.Errorf("%s: missing heading in %s", source, link.Destination)
 			}
 		}

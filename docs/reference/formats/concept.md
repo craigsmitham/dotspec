@@ -117,16 +117,16 @@ application-specific role; they do not mean that concepts call one another.
 Model export resolves these declarations within the acquired reference scope and
 reports mistyped or incorrectly scoped references. Unresolved drafts retain their
 source. No field or link implies atomicity, execution, full type-expression checking,
-or verified behavior. See [Develop concepts](../develop-concepts.md) for the
-complete Markdown conventions and [the generated example](concept-design-example.md)
+or verified behavior. See [Develop concepts](../../handbook/concepts.md) for the
+complete Markdown conventions and [the generated example](../../../examples/todo/views/concept-design.md)
 for the checklist definition, effects table and its use in the task list.
 
 ```sh
-dotspec model docs --path examples/todo --relative-to docs/reference
+dotspec model docs --path examples/todo --relative-to examples/todo/views
 ```
 
-See [Job Map](../../specs/concepts/job-map.concept.spec.md) and
-[Specification Inspection](../../specs/concepts/specification-inspection.concept.spec.md)
+See [Job Map](../../../specs/concepts/job-map.concept.spec.md) and
+[Specification Inspection](../../../specs/concepts/specification-inspection.concept.spec.md)
 for concepts describing dotspec itself. The
-[check-before-committing use case](../../specs/use-cases/check-specifications.use-case.spec.md)
+[check-before-committing use case](../../../specs/use-cases/check-specifications.use-case.spec.md)
 shows Specification Inspection in a contributor's workflow.

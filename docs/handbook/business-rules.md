@@ -92,7 +92,7 @@ another element names the rule as its basis. `Refines` on a requirement or
 obligation clause adds precision to the rule. The `**Targets:**` field in the
 rule's own `Applies to` section identifies what the rule governs, and an
 `Illustrates:` bullet under a scenario step names a rule that the step illustrates.
-See [Declare relationships](develop-relationships.md). None of these establishes
+See [Declare relationships](relationships.md). None of these establishes
 enforcement or compliance.
 
 ## Model representation
@@ -105,8 +105,8 @@ only other business rules, and a rule does not contain obligation clauses: state
 software enforcement in a requirement or in a clause of the specification that
 describes the behavior.
 
-The [core domain reference](reference/model/core.md) shows its place among the
-specification types. The [complete reference](reference/model/index.md#businessrule)
-and [mapping profile](../model/markdown-mapping.md#business-rule) define its model
-shape and mapping. Use [model export and validation](specification-model.md) to
+The [core domain reference](../reference/model/core.md) shows its place among the
+specification types. The [complete reference](../reference/model/index.md#businessrule)
+and [mapping profile](../../model/markdown-mapping.md#business-rule) define its model
+shape and mapping. Use [model export and validation](../reference/specification-model.md) to
 inspect source retention, references, and coverage.

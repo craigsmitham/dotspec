@@ -28,11 +28,13 @@ and Scope, then run `dotspec check`. Each starter points to its authoring guide.
 
 ## Find guidance
 
+The [documentation map](docs/README.md) connects each CLI guide topic to its source page or section.
+
 - Choose what to write and follow a user need through the runnable To-do app and its restart test. [Handbook](docs/handbook/README.md)
 - Record where your team keeps specifications and who owns a promise. [Project conventions](docs/handbook/project-conventions.md)
-- Look up file placement, Markdown formats, command options and check reports. [Layout and formats](docs/reference/layout.md) · [CLI](docs/cli.md) · [Inspection](docs/reference/inspection.md)
-- Inspect the types, relationships and mapping into an exported snapshot. [Core domain](docs/reference/model/core.md) · [Specification model](docs/specification-model.md)
-- Audit a domain decision or change the toolkit. [Maintainer's guide](docs/handbook/maintaining.md) · [Contributing](CONTRIBUTING.md)
+- Look up file placement, Markdown formats, command options and check reports. [Layout and formats](docs/reference/layout.md) · [CLI](docs/reference/cli.md) · [Inspection](docs/reference/inspection.md)
+- Inspect the types, relationships and mapping into an exported snapshot. [Core domain](docs/reference/model/core.md) · [Specification model](docs/reference/specification-model.md)
+- Audit a domain decision or change the toolkit. [Maintainer's guide](docs/maintainers/handbook.md) · [Contributing](CONTRIBUTING.md)
 
 ## Design principle: keep meaning in the source; keep connections simple
 

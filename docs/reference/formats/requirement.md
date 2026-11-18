@@ -84,7 +84,7 @@ provide optional detail. Duplicate sections or invalid levels produce structural
 errors. Deeper headings belong to their enclosing sections. Contract notation,
 tables, additional sections, links, and other authored Markdown are preserved.
 No sentence pattern or particular verification technique is required. Check
-commands validate relative file links using the shared [reference rules](inspection.md#references).
+commands validate relative file links using the shared [reference rules](../inspection.md#references).
 Model export reports an `Obligations` section inside a requirement as
 `obligation.container`.
 
@@ -152,12 +152,12 @@ the rules that govern them. Preserve required logical dependencies without
 turning a representative sequence into an obligation. Distinguish caller
 assumptions from conditions the system must enforce or reject.
 
-Examples are [existing-target rejection](../../specs/requirements/reject-existing-target.requirement.spec.md),
-[continued inspection](../../specs/requirements/continue-after-invalid-spec.requirement.spec.md),
-and [successful advisory checks](../../specs/requirements/advice-permits-success.requirement.spec.md).
-[Diagnostic severity](../../specs/requirements/diagnostic-severity.requirement.spec.md),
-[repeatable inspection](../../specs/requirements/repeatable-inspection.requirement.spec.md),
-and [source preservation](../../specs/requirements/inspection-preserves-source.requirement.spec.md)
+Examples are [existing-target rejection](../../../specs/requirements/reject-existing-target.requirement.spec.md),
+[continued inspection](../../../specs/requirements/continue-after-invalid-spec.requirement.spec.md),
+and [successful advisory checks](../../../specs/requirements/advice-permits-success.requirement.spec.md).
+[Diagnostic severity](../../../specs/requirements/diagnostic-severity.requirement.spec.md),
+[repeatable inspection](../../../specs/requirements/repeatable-inspection.requirement.spec.md),
+and [source preservation](../../../specs/requirements/inspection-preserves-source.requirement.spec.md)
 also state explicit criteria. They own their criteria; the report-format
 reference and inspection concept link to them. Responsiveness is a declared
 attribute with no adopted threshold. A requirement does not establish fulfillment

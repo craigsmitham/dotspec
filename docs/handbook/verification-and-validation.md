@@ -103,7 +103,7 @@ authoritative source. Plan Success criteria explain interpretation against that
 basis; they should refer to its bounds rather than redefine them. Applicability
 describes the required operating context, while plan Conditions describe the
 assessment setup and how it represents that context. See
-[Develop requirements](develop-requirements.md) for examples.
+[Develop requirements](requirements.md) for examples.
 
 Validation plans can concern the quality of a proposed solution's fit, a requirement's
 faithfulness to needs, or a job/outcome hypothesis. The method does not assign that
@@ -142,6 +142,6 @@ A future evidence model must preserve their subject, basis, revision, context,
 method, result and limits. No `verified` or `validated` boolean is inferred from
 links, a plan, a passing test or a merge.
 
-See [Review requirements](review-requirements.md) for authoring plans and reading
-advisory findings, and the [generated review example](reference/requirements-review-example.md)
+See [Review requirements](review.md) for authoring plans and reading
+advisory findings, and the [generated review example](../../examples/todo/views/requirements-review.md)
 for the distinctions in use.

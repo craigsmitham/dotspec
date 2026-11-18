@@ -2,8 +2,8 @@
 
 dotspec represents requirements as a layered traceability graph. This explanation
 is for authors and model maintainers deciding where an element belongs and what
-its relationships mean. The [canonical model](../model/metamodel.yaml) defines the
-types; [Declare relationships](develop-relationships.md) gives the Markdown forms.
+its relationships mean. The [canonical model](../../model/metamodel.yaml) defines the
+types; [Declare relationships](relationships.md) gives the Markdown forms.
 
 ## Separate concern, kind and classification
 
@@ -111,7 +111,7 @@ Implementation realization, verification definitions and revision-bound executio
 evidence need separate relationships when introduced. Current verification and
 Evidence prose must not be promoted into satisfaction claims or execution results.
 
-The [To-do example](reference/requirements-traceability-example.md) demonstrates
+The [To-do example](../../examples/todo/views/requirements-traceability.md) demonstrates
 the relationships without requiring a duplicate requirement for every scenario step.
 
 ## Method basis
@@ -158,5 +158,5 @@ validation reviews their faithfulness to needs and intended use. System verifica
 assesses a realization against obligations; system validation assesses its intended-use
 fitness. These distinctions apply across all concern layers, and methods can support
 more than one purpose. See [Verification and validation](verification-and-validation.md)
-for the governing vocabulary and [Review requirements](review-requirements.md) for
+for the governing vocabulary and [Review requirements](review.md) for
 plan authoring. Plan presence, observations, assessments and acceptance are distinct.

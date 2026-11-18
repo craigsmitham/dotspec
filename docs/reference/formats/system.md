@@ -19,7 +19,7 @@ for usage.
 
 - `init` creates `specs/system.spec.md` with editable placeholders for the name,
   purpose, and scope. The
-  [existing-target requirement](../../specs/requirements/reject-existing-target.requirement.spec.md)
+  [existing-target requirement](../../../specs/requirements/reject-existing-target.requirement.spec.md)
   governs initialization at an existing path.
 - `show` reads the selected project directory's `specs/system.spec.md`, or the
   nearest ancestor's if there is no local spec. It displays the name, purpose, scope, nearest parent
@@ -96,12 +96,12 @@ its directory context and may require updating relative links. Structural parent
 and explicit system selection follow authored links, never directory nesting. Quality classification uses the selected system, independently
 of `Applies to` targets.
 
-See [structure and feature authoring](../develop-relationships.md#describe-systems-components-and-features)
-and the [generated system overview](system-overview-example.md).
+See [structure and feature authoring](../../handbook/relationships.md#describe-systems-components-and-features)
+and the [generated system overview](../../../examples/todo/views/system-overview.md).
 Generate your own with:
 
 ```sh
-dotspec model overview --path . --relative-to docs/reference > docs/reference/system-overview.md
+dotspec model overview --path . --relative-to views > views/system-overview.md
 ```
 
 Source paths in command output are relative to the current directory.
@@ -165,10 +165,10 @@ See the [grouping rationale](../specification-model.md#quality-attribute-groupin
 for how this supports both trees and overlapping quality dimensions.
 The term *quality model* is reserved for named sets of attributes, such as ISO
 quality models or FURPS. dotspec includes three reusable starters and can copy
-selected definitions into a system. See [Populate system quality attributes](../quality-models.md)
+selected definitions into a system. See [Populate system quality attributes](../../handbook/quality-models.md)
 for browsing, previewing, and authoring models. Copied declarations remain local;
 model updates do not synchronize them.
-The repository's [system spec](../../specs/system.spec.md#quality-attributes) provides
+The repository's [system spec](../../../specs/system.spec.md#quality-attributes) provides
 a local example, including concerns that do not yet have requirements.
 
 ## System context

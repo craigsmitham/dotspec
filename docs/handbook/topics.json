@@ -6,7 +6,7 @@
   },
   {
     "topic": "business-rule",
-    "page": "docs/business-rules.md",
+    "page": "docs/handbook/business-rules.md",
     "description": "State business constraints and link their enforcement.",
     "rules": [
       "business-rule.statement",
@@ -17,7 +17,7 @@
   },
   {
     "topic": "concept",
-    "page": "docs/develop-concepts.md",
+    "page": "docs/handbook/concepts.md",
     "description": "Explain purposeful behavior through state and actions.",
     "rules": [
       "concept.actions",
@@ -33,7 +33,7 @@
   },
   {
     "topic": "job",
-    "page": "docs/jobs-and-user-needs.md",
+    "page": "docs/handbook/jobs.md",
     "description": "Distinguish jobs, steps, outcomes and commitments.",
     "rules": [
       "job.boundary",
@@ -49,12 +49,12 @@
   },
   {
     "topic": "system",
-    "page": "docs/reference/system.md",
+    "page": "docs/reference/formats/system.md",
     "description": "Describe a system, its boundary, goals and quality attributes."
   },
   {
     "topic": "use-case",
-    "page": "docs/develop-use-cases.md",
+    "page": "docs/handbook/use-cases.md",
     "description": "Describe actor goals, boundaries and alternative paths.",
     "rules": [
       "use-case.goal",
@@ -69,7 +69,7 @@
   },
   {
     "topic": "requirement",
-    "page": "docs/develop-requirements.md",
+    "page": "docs/handbook/requirements.md",
     "description": "Author assessable obligations and satisfaction criteria.",
     "rules": [
       "requirement.applies-to",
@@ -79,12 +79,12 @@
   },
   {
     "topic": "obligation",
-    "page": "docs/requirements-layers.md#distinguish-an-obligation-from-its-document",
+    "page": "docs/handbook/requirements-layers.md#distinguish-an-obligation-from-its-document",
     "description": "Locate the authoritative expression of an obligation."
   },
   {
     "topic": "quality-model",
-    "page": "docs/quality-models.md",
+    "page": "docs/handbook/quality-models.md",
     "description": "Select quality attributes and apply them to a system.",
     "rules": [
       "quality-model.attributes",
@@ -98,7 +98,7 @@
   },
   {
     "topic": "quality",
-    "page": "docs/develop-requirements.md#define-or-reference-the-criterion-once",
+    "page": "docs/handbook/requirements.md#define-or-reference-the-criterion-once",
     "description": "Define a criterion and distinguish a measure from its required bound.",
     "rules": [
       "requirement.measurement-basis",
@@ -107,7 +107,7 @@
   },
   {
     "topic": "relationships",
-    "page": "docs/develop-relationships.md",
+    "page": "docs/handbook/relationships.md",
     "description": "Connect specifications through explicit relationships.",
     "rules": [
       "relationship.specification_system"
@@ -115,7 +115,7 @@
   },
   {
     "topic": "verification",
-    "page": "docs/verification-and-validation.md",
+    "page": "docs/handbook/verification-and-validation.md",
     "description": "Distinguish assessment purposes, plans and evidence.",
     "rules": [
       "requirement.verification"
@@ -123,7 +123,7 @@
   },
   {
     "topic": "review",
-    "page": "docs/review-requirements.md",
+    "page": "docs/handbook/review.md",
     "description": "Review a requirement set and surface unresolved decisions."
   },
   {
@@ -158,7 +158,7 @@
   },
   {
     "topic": "maintaining",
-    "page": "docs/handbook/maintaining.md",
+    "page": "docs/maintainers/handbook.md",
     "description": "Audit domain choices, their sources and the effects of a change."
   },
   {

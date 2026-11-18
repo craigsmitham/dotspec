@@ -1,4 +1,4 @@
-// Command generate owns the CLI reference, To-do model views, and output
+// Command generate owns the guide topic table, CLI reference, To-do model views, and output
 // gallery. Check mode compares in memory and never rewrites the working tree.
 package main
 
@@ -17,6 +17,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/businessrule"
 	"github.com/craigsmitham/dotspec/internal/cli"
 	"github.com/craigsmitham/dotspec/internal/concept"
+	"github.com/craigsmitham/dotspec/internal/guide"
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/model"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
@@ -48,9 +49,14 @@ func run(check bool) error {
 	if err != nil {
 		return err
 	}
+	guideMap, err := documentationMap()
+	if err != nil {
+		return err
+	}
 	files := []struct{ path, content string }{
-		{"docs/cli.md", reference.String()},
-		{"docs/examples.md", gallery},
+		{"docs/README.md", guideMap},
+		{"docs/reference/cli.md", reference.String()},
+		{"docs/reference/command-examples.md", gallery},
 	}
 	starters, err := qualitymodel.Builtins()
 	if err != nil {
@@ -77,18 +83,18 @@ func run(check bool) error {
 		name   string
 		render func(*model.Snapshot, string) (string, error)
 	}{
-		{"concept-design-example.md", model.DesignMarkdown},
-		{"requirements-traceability-example.md", model.TraceMarkdown},
-		{"system-overview-example.md", model.OverviewMarkdown},
-		{"needs-map-example.md", model.NeedsMarkdown},
-		{"requirements-review-example.md", model.ReviewMarkdown},
-		{"pegs-example.md", model.PEGSMarkdown},
+		{"concept-design.md", model.DesignMarkdown},
+		{"requirements-traceability.md", model.TraceMarkdown},
+		{"system-overview.md", model.OverviewMarkdown},
+		{"needs-map.md", model.NeedsMarkdown},
+		{"requirements-review.md", model.ReviewMarkdown},
+		{"pegs.md", model.PEGSMarkdown},
 	} {
-		content, err := view.render(result.Snapshot, filepath.Join(root, "docs/reference"))
+		content, err := view.render(result.Snapshot, filepath.Join(root, "examples/todo/views"))
 		if err != nil {
 			return err
 		}
-		files = append(files, struct{ path, content string }{"docs/reference/" + view.name, content})
+		files = append(files, struct{ path, content string }{"examples/todo/views/" + view.name, content})
 	}
 	var stale []string
 	for _, file := range files {
@@ -111,6 +117,33 @@ func run(check bool) error {
 		return fmt.Errorf("generated files are stale: %s; run mise run generate", strings.Join(stale, ", "))
 	}
 	return nil
+}
+
+// Preserve the authored navigation above the generated table.
+func documentationMap() (string, error) {
+	body, err := os.ReadFile("docs/README.md")
+	if err != nil {
+		return "", err
+	}
+	const marker = "<!-- Generated topic table -->"
+	intro, _, ok := strings.Cut(string(body), marker)
+	if !ok {
+		return "", fmt.Errorf("docs/README.md is missing %s", marker)
+	}
+	var out strings.Builder
+	out.WriteString(intro + marker + "\n\n| Topic | Use it to | Source |\n| --- | --- | --- |\n")
+	for _, topic := range guide.Topics() {
+		source := "Listing built from [embedded example files](../examples/embed.go)"
+		if topic.Page != "" {
+			target, err := filepath.Rel("docs", topic.Page)
+			if err != nil {
+				return "", err
+			}
+			source = fmt.Sprintf("[`%s`](%s)", topic.Page, filepath.ToSlash(target))
+		}
+		fmt.Fprintf(&out, "| `%s` | %s | %s |\n", topic.Name, escape(topic.Description), source)
+	}
+	return out.String(), nil
 }
 
 func writeCommand(out *strings.Builder, cmd *cobra.Command) {

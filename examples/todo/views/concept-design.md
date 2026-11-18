@@ -10,7 +10,7 @@ Model `0.19.0-draft`; mapping `dotspec-markdown/14`. Relationships reflect expli
 
 ### Checklist
 
-[Source](../../examples/todo/specs/concepts/checklist.concept.spec.md).
+[Source](../specs/concepts/checklist.concept.spec.md).
 
 #### Purpose
 
@@ -53,7 +53,7 @@ Change an existing entry's title.
 
 **Selected entry**
 
-**Type:** [Entry](../../examples/todo/specs/concepts/checklist.concept.spec.md#entry)
+**Type:** [Entry](../specs/concepts/checklist.concept.spec.md#entry)
 
 **New title**
 
@@ -95,11 +95,11 @@ Blank effects cells are unspecified, not unchanged. This authored matrix is not 
 
 ### Personal task list
 
-[Source](../../examples/todo/specs/system.spec.md).
+[Source](../specs/system.spec.md).
 
 | Use | Definition | Type bindings |
 | --- | --- | --- |
-| My checklist | [Checklist](../../examples/todo/specs/concepts/checklist.concept.spec.md) |  |
+| My checklist | [Checklist](../specs/concepts/checklist.concept.spec.md) |  |
 
 #### Coordination
 
@@ -125,8 +125,8 @@ flowchart LR
 
 ###### Definition
 
-[Checklist](../../examples/todo/specs/concepts/checklist.concept.spec.md)
+[Checklist](../specs/concepts/checklist.concept.spec.md)
 
 ###### Supports
 
-[Resume interrupted work](../../examples/todo/specs/jobs/resume.job.spec.md).
+[Resume interrupted work](../specs/jobs/resume.job.spec.md).

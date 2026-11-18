@@ -8,7 +8,7 @@ Requirements live primarily in Markdown files named `*.spec.md`, co-located with
 
 A companion `dotspec` CLI helps teams manage and inspect these files, supporting the specification, validation, and verification of requirements.
 
-Use the [dotspec handbook](docs/handbook/README.md) to choose an authoring guide or worked example. For changes to domain meaning or authoring advice, consult [Maintaining the handbook](docs/handbook/maintaining.md) for the principles, sources, and review questions.
+Use the [dotspec handbook](docs/handbook/README.md) to choose an authoring guide or worked example. For changes to domain meaning or authoring advice, consult [Maintaining the handbook](docs/maintainers/handbook.md) for the principles, sources, and review questions.
 
 
 Breaking changes are acceptable. Do not introduce backward compatbility mechanisms.

@@ -4,7 +4,7 @@
 specification snapshots. The model version is `0.19.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
-Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
+Markdown authoring checks. See the [consumer guide](../docs/reference/specification-model.md)
 for export and validation, and the [Markdown mapping profile](markdown-mapping.md)
 for recognized domain roles.
 
@@ -158,7 +158,7 @@ This draft also renames quality grouping fields to `subattribute_of_labels` and
 multi-valued and acyclic; the inverse sub-attributes and transitive ancestors are
 derived. Markdown uses `Sub-attribute of`; the older `Broader` and provisional
 `Parents` spellings produce a migration diagnostic. CLI classification JSON uses
-`ancestors` instead of `broader`. See the [grouping rationale](../docs/specification-model.md#quality-attribute-grouping).
+`ancestors` instead of `broader`. See the [grouping rationale](../docs/reference/specification-model.md#quality-attribute-grouping).
 
 The `0.5.0-draft` model and mapping profile `dotspec-markdown/4` simplify use-case
 narratives. UseCaseExtension `handling` replaces `response` and `continuation`, `steps`
@@ -171,7 +171,7 @@ rewritten. Existing Response/Flow/Continuation Markdown remains supported.
 
 Nested branches now require explicit branch labels or an Extensions grouping;
 ordinary detail headings remain extension sections. See the
-[use-case rationale](../docs/specification-model.md#use-case-narratives) and
+[use-case rationale](../docs/reference/specification-model.md#use-case-narratives) and
 [mapping rules](markdown-mapping.md#use-case).
 
 The `0.6.0-draft` model and mapping profile `dotspec-markdown/5` add explicit
@@ -184,10 +184,10 @@ valid and no synchronization semantics are inferred.
 
 `dotspec model docs` generates concept references, system compositions and dependency
 diagrams. `mise run generate` maintains the complete example at
-[Concept design example](../docs/reference/concept-design-example.md). Re-export
+[Concept design example](../examples/todo/views/concept-design.md). Re-export
 older snapshots with the new CLI; saved JSON is not silently migrated. See
-[concept authoring](../docs/develop-concepts.md) and the
-[concept design rationale](../docs/specification-model.md#concept-definitions-and-composition).
+[concept authoring](../docs/handbook/concepts.md) and the
+[concept design rationale](../docs/reference/specification-model.md#concept-definitions-and-composition).
 
 
 The `0.7.0-draft` model and `dotspec-markdown/6` consolidate relationships:
@@ -211,7 +211,7 @@ The `0.7.0-draft` model and `dotspec-markdown/6` consolidate relationships:
 The catalog generator rejects incomplete relationship metadata, missing projection
 paths, optional assertion endpoints and invalid declaration pairs. Runtime checks
 validate realized relationships and source fidelity. See
-[Declare relationships](../docs/develop-relationships.md).
+[Declare relationships](../docs/handbook/relationships.md).
 
 The `0.8.0-draft` model and `dotspec-markdown/7` add layered traceability:
 
@@ -232,9 +232,9 @@ The `0.8.0-draft` model and `dotspec-markdown/7` add layered traceability:
   satisfaction judgments remain outside this implementation.
 
 Re-export source with this version; saved snapshots are not silently migrated.
-See [Requirements layers](../docs/requirements-layers.md),
-[authoring relationships](../docs/develop-relationships.md), and the
-[generated traceability example](../docs/reference/requirements-traceability-example.md).
+See [Requirements layers](../docs/handbook/requirements-layers.md),
+[authoring relationships](../docs/handbook/relationships.md), and the
+[generated traceability example](../examples/todo/views/requirements-traceability.md).
 
 
 The `0.9.0-draft` model and `dotspec-markdown/8` unify obligation capabilities:
@@ -279,8 +279,8 @@ The `0.10.0-draft` model and `dotspec-markdown/9` introduced explicit specificat
   obligations' applicability. It does not assert implementation, allocation,
   inherited requirements or satisfaction.
 
-See [authoring relationships](../docs/develop-relationships.md#describe-systems-components-and-features)
-and the [generated overview](../docs/reference/system-overview-example.md).
+See [authoring relationships](../docs/handbook/relationships.md#describe-systems-components-and-features)
+and the [generated overview](../examples/todo/views/system-overview.md).
 
 
 ## Jobs, user needs and capabilities
@@ -303,7 +303,7 @@ Version `0.11.0-draft` and mapping `dotspec-markdown/10` add:
 
 The legacy singular `Desired outcome` job heading is extension content rather
 than an alias for `Intended progress`. Research assessments remain dated evidence,
-not outcome properties. See [Jobs and user needs](../docs/jobs-and-user-needs.md).
+not outcome properties. See [Jobs and user needs](../docs/handbook/jobs.md).
 
 ## Specification kinds independent of document placement
 
@@ -316,7 +316,7 @@ Interface is a specification with an identity, declaring System or Component,
 traceability, shared content and optional obligation clauses. Required/provided
 collections retain narrative and reference Interface records; graph projections
 retain direction. Native contracts and counterpart references remain contextual.
-The existing eight file families remain unchanged. See [the authoring model](../docs/specification-model.md#specification-types-and-declared-elements).
+The existing eight file families remain unchanged. See [the authoring model](../docs/reference/specification-model.md#specification-types-and-declared-elements).
 
 ## Workspace acquisition boundaries
 
@@ -339,7 +339,7 @@ assessment setup and its relationship to that context.
 
 The Markdown mapping remains `dotspec-markdown/13`; field paths and headings are
 unchanged. Re-export source specifications for the new model version. See
-[Develop requirements](../docs/develop-requirements.md) for authoring guidance.
+[Develop requirements](../docs/handbook/requirements.md) for authoring guidance.
 
 ## Model consistency
 

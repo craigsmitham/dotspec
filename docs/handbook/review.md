@@ -8,20 +8,20 @@ produces advisory prompts; it does not make a draft that conforms to the authori
 ## Generate the review
 
 ```sh
-dotspec model review --path . --relative-to docs/reference > docs/reference/requirements-review.md
-dotspec model pegs --path . --relative-to docs/reference > docs/reference/pegs.md
+dotspec model review --path . --relative-to views > views/requirements-review.md
+dotspec model pegs --path . --relative-to views > views/pegs.md
 ```
 
 Create the output directory first if necessary. `--relative-to` identifies where
 the generated Markdown will be read, so source and contract links work there.
 Regenerate these files after changing specifications; edit their source documents.
 
-The [To-do review](reference/requirements-review-example.md) connects the goal
+The [To-do review](../../examples/todo/views/requirements-review.md) connects the goal
 of resuming unfinished work with the return scenario and its obligations. Follow
 the recorded relationships, then compare the restart verification plan with the
 participant exercise. [Verification and validation](verification-and-validation.md).
 
-The [PEGS example](reference/pegs-example.md) arranges the same model into Project,
+The [PEGS example](../../examples/todo/views/pegs.md) arranges the same model into Project,
 Environment, Goals and System reading perspectives. Business, user and software
 requirements remain the model's concern subsets. PEGS neither replaces those
 subsets nor introduces a required authoring order.
@@ -98,8 +98,8 @@ Checks offer advisory prompts when a Criterion records an explicit Measure witho
 a separately identified target or operating context, even when Verification plan
 is present. They do not interpret arbitrary prose or certify adequacy. A Validation plan alone does
 not satisfy the need for system-verification guidance. See
-[Develop requirements](develop-requirements.md) for the authoring workflow and the
-[restart requirement](../examples/todo/specs/requirements/restart.requirement.spec.md)
+[Develop requirements](requirements.md) for the authoring workflow and the
+[restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md)
 for a bound, its operating conditions and an executable assessment.
 
 ## Make questions actionable
@@ -247,7 +247,7 @@ An interface may contain an Obligations section. Requirements can target it usin
 `**Targets:** [Time readings](#time-readings)` under Applies to, and features may
 include it under Groups. Counterpart links are contextual; they do not establish
 implementation or compatibility between declarations. Two declarations can cite
-the same native contract without sharing identity. The [task list interface](../examples/todo/specs/system.spec.md#task-list-forms) links to its HTML form contract.
+the same native contract without sharing identity. The [task list interface](../../examples/todo/specs/system.spec.md#task-list-forms) links to its HTML form contract.
 
 Keep wire formats, protocol definitions and detailed architecture in their native
 artifacts. The review flags interfaces without contract references, but a link
@@ -295,7 +295,7 @@ The first row names columns and the first column names operations. Cells preserv
 full authored content, including formulas or links. **A blank cell is unspecified;
 it never means unchanged.** Say `unchanged` explicitly where preservation is
 intended. `dotspec model docs` renders the matrix, as in the
-[effects-table example](reference/concept-design-example.md#effects-table).
+[effects-table example](../../examples/todo/views/concept-design.md#effects-table).
 
 This is an optional review aid. dotspec does not infer operations, query
 classifications, formal expressions or matrix entries from prose. The current
