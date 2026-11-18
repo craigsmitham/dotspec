@@ -45,7 +45,7 @@ func TestBusinessRuleExportBindingsAndContextualReferences(t *testing.T) {
 		t.Fatal("authored rule ID did not resolve")
 	}
 	for _, a := range result.Snapshot.Assertions {
-		if strings.Contains(String(a, "kind"), "Enforce") {
+		if strings.Contains(strings.ToLower(String(a, "projection_path")), "enforce") {
 			t.Fatal("citation inferred enforcement")
 		}
 	}

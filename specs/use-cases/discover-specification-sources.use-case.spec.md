@@ -21,7 +21,7 @@ A contributor assembling material for review.
 
 User task (sea).
 
-## Success criterion
+## Success guarantees
 
 The contributor receives a complete source inventory for the selected scope,
 including findings about unresolved references.

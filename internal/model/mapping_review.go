@@ -11,7 +11,7 @@ var questionDetails = map[string]string{
 }
 
 func (m *domainMapper) explanatory(r Record, s *Section) bool {
-	field := map[string]string{"Explanatory notes": "explanatory_notes", "Implementation suggestions": "implementation_suggestions", "Implementation hints": "implementation_suggestions", "Illustrative examples": "illustrative_examples"}[s.Title]
+	field := map[string]string{"Notes": "notes", "Implementation suggestions": "implementation_suggestions", "Implementation hints": "implementation_suggestions", "Illustrative examples": "illustrative_examples"}[s.Title]
 	if field == "" {
 		return false
 	}
@@ -42,7 +42,7 @@ func (m *domainMapper) boundarySection(r Record, s *Section) bool {
 		if s.Title == "Provided interfaces" {
 			field = "provided_interfaces"
 		}
-		v := m.collection(r, field, "interfaces", s)
+		m.declared(r, field, s)
 		for _, child := range s.Children {
 			item := m.named("Interface", r, child)
 			m.section(item, "content", child)
@@ -58,7 +58,7 @@ func (m *domainMapper) boundarySection(r Record, s *Section) bool {
 					m.extension(item, detail)
 				}
 			}
-			appendID(v, "interfaces", String(item, "id"))
+			appendID(r, field, String(item, "id"))
 		}
 	default:
 		return false
@@ -85,9 +85,8 @@ func (m *domainMapper) assumptionDetails(r Record, s *Section) {
 }
 
 func (m *domainMapper) effectsTable(r Record, s *Section) {
-	v := Record{"content": m.doc.Rich(s.Content), "rows": []Record{}}
-	r["effects_table"] = v
-	m.sectionBindings(r, "effects_table.content", s)
+	m.section(r, "effects_table_content", s)
+	r["effects_table"] = []Record{}
 	for _, id := range s.Intro {
 		table := m.doc.NodeByID[id]
 		if String(table, "node_kind") != "table" {
@@ -105,11 +104,11 @@ func (m *domainMapper) effectsTable(r Record, s *Section) {
 					continue
 				}
 				cells = append(cells, m.doc.Rich([]string{cid}))
-				m.bind(r, fmt.Sprintf("effects_table.rows.%d.cells.%d", len(rows), len(cells)-1), []string{cid}, "structured_item", "effects-cell")
+				m.bind(r, fmt.Sprintf("effects_table.%d.cells.%d", len(rows), len(cells)-1), []string{cid}, "structured_item", "effects-cell")
 			}
 			rows = append(rows, Record{"cells": cells})
 		}
-		v["rows"] = rows
+		r["effects_table"] = rows
 		break // One authored matrix; the complete section always remains available.
 	}
 	for _, child := range s.Children {

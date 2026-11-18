@@ -17,6 +17,13 @@ type requirementResult struct {
 	Requirement   *requirement.Requirement `json:"requirement"`
 }
 
+func labelList(labels []string) string {
+	if len(labels) == 0 {
+		return "None"
+	}
+	return strings.Join(labels, ", ")
+}
+
 type requirementListResult struct {
 	SchemaVersion int                  `json:"schema_version"`
 	Groups        []*requirement.Group `json:"groups"`
@@ -28,7 +35,7 @@ func newRequirementCommand() *cobra.Command {
 	for _, action := range []struct{ name, short string }{
 		{"init", "Create a requirement specification without overwriting an existing file"},
 		{"show", "Show authored Markdown and the associated system"},
-		{"list", "Discover general and quality requirements, grouped by associated system"},
+		{"list", "Discover requirements, grouped by associated system"},
 		{"check", "Check requirement specifications and attribute references"},
 	} {
 		cmd := &cobra.Command{Use: action.name + " <slug>", Short: action.short,
@@ -40,6 +47,9 @@ func newRequirementCommand() *cobra.Command {
 		if action.name == "check" {
 			cmd.Long = action.short + ".\n\n" + exitPolicy
 		}
+		if action.name == "init" {
+			cmd.Flags().String("preset", "general", "Authoring template: general, or quality to prompt for an explicit criterion")
+		}
 		cmd.RunE = func(cmd *cobra.Command, args []string) error {
 			path, err := projectPath(cmd)
 			if err != nil {
@@ -48,6 +58,13 @@ func newRequirementCommand() *cobra.Command {
 			format, err := outputFormat(cmd)
 			if err != nil {
 				return err
+			}
+			preset := "general"
+			if action.name == "init" {
+				preset, _ = cmd.Flags().GetString("preset")
+				if err := requirement.ValidatePreset(preset); err != nil {
+					return err
+				}
 			}
 			if action.name == "list" {
 				attribute, err := cmd.Flags().GetString("attribute")
@@ -68,7 +85,7 @@ func newRequirementCommand() *cobra.Command {
 			if err := requirement.ValidateSlug(args[0]); err != nil {
 				return err
 			}
-			return runRequirement(action.name, path, args[0], format, cmd.OutOrStdout())
+			return runRequirement(action.name, path, args[0], format, preset, cmd.OutOrStdout())
 		}
 		addPath(cmd)
 		addOutput(cmd, false)
@@ -77,16 +94,16 @@ func newRequirementCommand() *cobra.Command {
 	return root
 }
 
-func runRequirement(command, path, slug, format string, out io.Writer) error {
+func runRequirement(command, path, slug, format, preset string, out io.Writer) error {
 	if command == "init" {
-		target, err := requirement.Init(path, slug)
+		target, err := requirement.InitWithPreset(path, slug, preset)
 		if err != nil {
 			return err
 		}
 		if format == "json" {
 			return writeJSON(out, createdResult{1, target})
 		}
-		_, err = fmt.Fprintf(out, "Created %s\nDescribe the scope, statement, rationale, and verification as they become known.\n", displayPath(target))
+		_, err = fmt.Fprintf(out, "Created %s\nDescribe the scope, statement, any criterion, rationale, and verification as they become known.\n", displayPath(target))
 		return err
 	}
 	if command == "check" {
@@ -128,7 +145,7 @@ func listRequirement(path, format, attribute string, out io.Writer) error {
 	for _, group := range result.Groups {
 		fmt.Fprintf(&output, "\nSystem: %s\n", systemLabel(group.System))
 		for _, spec := range group.Requirements {
-			fmt.Fprintf(&output, "  %s [%s]  (%s)\n    Quality attributes: %s\n", spec.Name, spec.Type, displayPath(spec.Path), labelList(spec.QualityAttributes))
+			fmt.Fprintf(&output, "  %s  (%s)\n    Quality attributes: %s\n", spec.Name, displayPath(spec.Path), labelList(spec.QualityAttributes))
 		}
 	}
 	_, err = io.WriteString(out, output.String())

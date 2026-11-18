@@ -59,9 +59,6 @@ func (v *graphValidator) checkValue(object Record, class, path string) {
 	}
 	switch class {
 	case "SourcePayload":
-		if String(object, "storage") != "inline_base64" {
-			return // External byte availability is not asserted by offline validation.
-		}
 		data, err := base64.StdEncoding.Strict().DecodeString(String(object, "bytes_base64"))
 		if err != nil {
 			v.add("payload.encoding", path+"/bytes_base64", "payload is not valid base64")
@@ -547,7 +544,7 @@ func (v *graphValidator) checkNormalization(document Record, path string, source
 
 func sourceBytes(source Record) ([]byte, bool) {
 	payload := Object(source["payload"])
-	if String(payload, "storage") != "inline_base64" {
+	if payload == nil {
 		return nil, false
 	}
 	data, err := base64.StdEncoding.Strict().DecodeString(String(payload, "bytes_base64"))

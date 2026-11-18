@@ -4,15 +4,15 @@ Generated from [the canonical model](../../../model/metamodel.yaml) and [the vie
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.17.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.18.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
 | Subset | Responsibility | Selected types |
 | --- | --- | --- |
-| Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [SystemGoal](index.md#systemgoal), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [BusinessRule](index.md#businessrule), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [AssessmentPlan](index.md#assessmentplan), [AssessmentCase](index.md#assessmentcase) |
-| User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [ObligationClause](index.md#obligationclause), [Job](index.md#job), [JobStep](index.md#jobstep), [DesiredOutcome](index.md#desiredoutcome), [ProgressCase](index.md#progresscase), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [OpenQuestion](index.md#openquestion), [AssessmentPlan](index.md#assessmentplan), [AssessmentCase](index.md#assessmentcase) |
-| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [Constraint](index.md#constraint), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptType](index.md#concepttype), [ConceptUse](index.md#conceptuse), [TypeBinding](index.md#typebinding), [Synchronization](index.md#synchronization), [SynchronizationAction](index.md#synchronizationaction), [StateDescription](index.md#statedescription), [StateElement](index.md#stateelement), [ActionParameter](index.md#actionparameter), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [GeneralRequirement](index.md#generalrequirement), [QualityRequirement](index.md#qualityrequirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Component](index.md#component), [Feature](index.md#feature), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [InterfaceCollection](index.md#interfacecollection), [Interface](index.md#interface), [EffectsTable](index.md#effectstable), [EffectsRow](index.md#effectsrow), [AssessmentPlan](index.md#assessmentplan), [AssessmentCase](index.md#assessmentcase) |
+| Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Goal](index.md#goal), [Assumption](index.md#assumption), [ObligationClause](index.md#obligationclause), [System](index.md#system), [BusinessRule](index.md#businessrule), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Applicability](index.md#applicability), [ObligationCriterion](index.md#obligationcriterion), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [AssessmentPlan](index.md#assessmentplan), [AssessmentCase](index.md#assessmentcase) |
+| User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [ObligationClause](index.md#obligationclause), [Job](index.md#job), [JobStep](index.md#jobstep), [DesiredOutcome](index.md#desiredoutcome), [ProgressCase](index.md#progresscase), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Applicability](index.md#applicability), [ObligationCriterion](index.md#obligationcriterion), [OpenQuestion](index.md#openquestion), [AssessmentPlan](index.md#assessmentplan), [AssessmentCase](index.md#assessmentcase) |
+| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptType](index.md#concepttype), [ConceptUse](index.md#conceptuse), [TypeBinding](index.md#typebinding), [Synchronization](index.md#synchronization), [SynchronizationAction](index.md#synchronizationaction), [StateDescription](index.md#statedescription), [StateElement](index.md#stateelement), [ActionParameter](index.md#actionparameter), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Applicability](index.md#applicability), [ObligationCriterion](index.md#obligationcriterion), [Component](index.md#component), [Feature](index.md#feature), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [Interface](index.md#interface), [EffectsRow](index.md#effectsrow), [AssessmentPlan](index.md#assessmentplan), [AssessmentCase](index.md#assessmentcase) |
 | Specification traceability (`core`) | Explicit connections between specification meaning, authored occurrences, and resolved relationships. | [ContentBinding](index.md#contentbinding), [SourceReference](index.md#sourcereference), [Resolution](index.md#resolution) |
 
 Subset membership organizes model definitions; it does not infer the level or importance of an authored instance. Shared types can appear in several subsets. Supporting and generic types appear as context where a diagram needs them.
@@ -21,11 +21,11 @@ Subset membership organizes model definitions; it does not infer the level or im
 
 See the [relationship reference](relationships.md) for the complete edge contracts.
 
-Arrows use schema-owned relationship labels; reference tables retain exact canonical field paths. Diamond arrows represent declaration containment, dashed arrows structural context and citations, and plain arrows semantic associations or provenance; triangle arrows represent declared inheritance. Multiple edges with the same path show alternative target types; cardinality applies to the slot as a whole. Collection wrappers are omitted from diagrams; exact paths remain in the reference tables. `system_context` is a directory-derived association, not a use-case boundary or inherited requirement. Contextual links to business rules, jobs, and concepts do not assert enforcement, fulfillment, or compliance.
+Arrows use schema-owned relationship labels; reference tables retain exact canonical field paths. Diamond arrows represent declaration containment, dashed arrows structural context and citations, and plain arrows semantic associations or provenance; triangle arrows represent declared inheritance. Multiple edges with the same path show alternative target types; cardinality applies to the slot as a whole. Embedded values are omitted from diagrams; exact paths remain in the reference tables. `specification_system` is a grouping association, not a use-case boundary or inherited requirement. Contextual links to related specifications do not assert enforcement, fulfillment, or compliance.
 
-### Specification kinds
+### Specification types
 
-Specification is a cohesive definition independent of document placement. Eight document families supply roots; Component, Feature, Capability, ConceptUse, Synchronization and Interface are named inline specifications. Subsets classify concerns separately from this hierarchy.
+A Specification is the root record of one authored specification document. The seven specification types correspond one-to-one with these concrete classes. Subsets classify concerns separately from this hierarchy.
 
 ```mermaid
 classDiagram
@@ -35,42 +35,50 @@ classDiagram
     class SystemContextSpecification
     <<abstract>> SystemContextSpecification
     class System
-    class Feature
-    class Component
-    class Capability
-    class ConceptUse
-    class Synchronization
-    class Interface
     class QualityModel
     class BusinessRule
     class Job
     class UseCase
     class Concept
     class Requirement
-    <<abstract>> Requirement
-    class GeneralRequirement
-    class QualityRequirement
     Specification <|-- SystemContextSpecification
     Specification <|-- System
-    Specification <|-- Feature
-    Specification <|-- Component
-    Specification <|-- Capability
-    Specification <|-- ConceptUse
-    Specification <|-- Synchronization
-    Specification <|-- Interface
     Specification <|-- QualityModel
     SystemContextSpecification <|-- BusinessRule
     SystemContextSpecification <|-- Job
     SystemContextSpecification <|-- UseCase
     SystemContextSpecification <|-- Concept
     SystemContextSpecification <|-- Requirement
-    Requirement <|-- GeneralRequirement
-    Requirement <|-- QualityRequirement
+```
+
+### Elements declared in a system specification
+
+Components, features, capabilities, concept uses, synchronizations and interfaces are named elements declared inside a System specification, not specifications themselves. Each has one declaring owner; declaration does not establish structural parentage.
+
+```mermaid
+classDiagram
+    direction LR
+    class System
+    class Component
+    class Feature
+    class Capability
+    class ConceptUse
+    class Synchronization
+    class Interface
+    System *-- "0..*" Component : declares components
+    System *-- "0..*" Feature : declares features
+    System *-- "0..*" Capability : declares capabilities
+    System *-- "0..*" ConceptUse : concept uses
+    System *-- "0..*" Synchronization : synchronizations
+    System *-- "0..*" Interface : requires interface
+    System *-- "0..*" Interface : provides interface
+    Component *-- "0..*" Interface : requires interface
+    Component *-- "0..*" Interface : provides interface
 ```
 
 ### Specification system association
 
-Document families derived from SystemContextSpecification select a specification system explicitly or use the nearest directory system by default. Inline specifications have declaring owners instead. Neither association establishes structural parentage. Quality models stand independently.
+Specification types derived from SystemContextSpecification select a specification system explicitly or use the nearest directory system by default. Elements declared inside a specification have declaring owners instead. Neither association establishes structural parentage. Quality models stand independently.
 
 ```mermaid
 classDiagram
@@ -81,7 +89,6 @@ classDiagram
     class UseCase
     class Concept
     class Requirement
-    <<abstract>> Requirement
     BusinessRule --> System : specification system
     Job --> System : specification system
     UseCase --> System : specification system
@@ -91,7 +98,7 @@ classDiagram
 
 ### Boundary interfaces
 
-Required and provided are relative to the declaring System or Component. Each Interface is an addressable specification with one declaration membership. Requirements can apply to it and it may own obligation clauses. Native contract references do not establish implementation or compatibility.
+Required and provided are relative to the declaring System or Component. Each Interface is an addressable element with one declaration membership. Requirements can apply to it and it may own obligation clauses. Native contract references do not establish implementation or compatibility.
 
 ```mermaid
 classDiagram
@@ -116,7 +123,6 @@ classDiagram
     class Component
     class Feature
     class Requirement
-    <<abstract>> Requirement
     class UseCase
     class Concept
     class ObligationClause
@@ -145,7 +151,7 @@ classDiagram
 
 ### Shared obligation capabilities
 
-Both standalone requirement forms and embedded clauses share statement, classification, applicability and assessment plans through Obligation. ObligationContainer separately grants clause ownership to System, Component, Interface, BusinessRule, Job, JobStep, UseCase, Concept, ConceptUse, ConceptAction, Synchronization and Requirement. Goals, assumptions and desired outcomes retain traceability without containing clauses. Triangle arrows include explicitly mixed-in capabilities.
+A Requirement specification and an embedded clause share statement, classification, applicability, criterion and verification plan through Obligation. ObligationContainer separately grants clause ownership to System, Component, Interface, UseCase, Concept, ConceptUse, ConceptAction and Synchronization. A Requirement states one obligation and contains no clauses. Business rules, jobs, goals, assumptions and desired outcomes retain traceability without containing clauses. Triangle arrows include explicitly mixed-in capabilities.
 
 ```mermaid
 classDiagram
@@ -155,14 +161,8 @@ classDiagram
     class ObligationContainer
     <<abstract>> ObligationContainer
     class Requirement
-    <<abstract>> Requirement
-    class GeneralRequirement
-    class QualityRequirement
     class ObligationClause
-    ObligationContainer <|-- Requirement
     Obligation <|-- Requirement
-    Requirement <|-- GeneralRequirement
-    Requirement <|-- QualityRequirement
     Obligation <|-- ObligationClause
     ObligationContainer *-- "0..*" ObligationClause : obligations
 ```
@@ -200,7 +200,7 @@ classDiagram
 
 ### Software behavior
 
-Use cases describe interactions and alternatives; concepts describe purposeful state and actions. These are complementary views, with no mandatory authoring or execution order. Steps may explicitly illustrate obligations or actions; this does not prove completeness.
+Use cases describe interactions and alternatives; concepts describe purposeful state and actions. These are complementary views, with no mandatory authoring or execution order. Steps may explicitly illustrate obligations, business rules or actions; this does not prove completeness.
 
 ```mermaid
 classDiagram
@@ -213,6 +213,7 @@ classDiagram
     class ConceptAction
     class Obligation
     <<abstract>> Obligation
+    class BusinessRule
     UseCase *-- "0..1" Scenario : main success scenario
     UseCase *-- "0..*" UseCaseExtension : branches
     Scenario *-- "0..*" ScenarioStep : steps
@@ -220,6 +221,7 @@ classDiagram
     UseCaseExtension *-- "0..*" UseCaseExtension : branches
     Concept *-- "0..*" ConceptAction : actions
     ScenarioStep --> "0..*" Obligation : illustrates
+    ScenarioStep --> "0..*" BusinessRule : illustrates
     ScenarioStep --> "0..*" ConceptAction : illustrates
 ```
 
@@ -295,16 +297,16 @@ classDiagram
     class JobStep
     class DesiredOutcome
     class Requirement
-    <<abstract>> Requirement
     class BusinessRule
     class DomainElement
     <<abstract>> DomainElement
-    class SystemGoal
+    class Goal
     UseCase --> "0..1" System : has subject system
-    UseCase --> "0..*" SystemGoal : supports
+    UseCase --> "0..*" Goal : supports
     UseCase --> "0..*" Job : supports
     UseCase --> "0..*" JobStep : supports
     UseCase --> "0..*" DesiredOutcome : supports
+    UseCase --> "0..*" UseCase : supports
     Requirement --> "0..*" DomainElement : applies to
     BusinessRule --> "0..*" DomainElement : applies to
 ```
@@ -318,18 +320,20 @@ classDiagram
     direction LR
     class TraceableElement
     <<abstract>> TraceableElement
-    class SystemGoal
+    class Goal
     class Job
     class JobStep
     class DesiredOutcome
+    class UseCase
     class DomainElement
     <<abstract>> DomainElement
     class SourceFragment
     class Assumption
-    TraceableElement --> "0..*" SystemGoal : supports
+    TraceableElement --> "0..*" Goal : supports
     TraceableElement --> "0..*" Job : supports
     TraceableElement --> "0..*" JobStep : supports
     TraceableElement --> "0..*" DesiredOutcome : supports
+    TraceableElement --> "0..*" UseCase : supports
     TraceableElement --> "0..*" DomainElement : derived from
     TraceableElement --> "0..*" SourceFragment : derived from
     TraceableElement --> "0..*" Assumption : relies on
@@ -337,7 +341,7 @@ classDiagram
 
 ### Obligations and complementary behavioral views
 
-Requirement is the standalone obligation document family, not every normative expression. Explicit clauses identify obligations within existing specifications without duplicating them. Refinement preserves a parent commitment and must be acyclic; multiple parents are permitted. Use cases involve named concept uses many-to-many; neither view is the mandatory parent of the other.
+Requirement is the specification type that gives one obligation its own document, not every normative expression. Explicit clauses identify obligations within other specifications without duplicating them. Refinement preserves a parent commitment and must be acyclic; multiple parents are permitted. A business rule refines only another business rule. Use cases involve named concept uses many-to-many; neither view is the mandatory parent of the other.
 
 ```mermaid
 classDiagram
@@ -346,7 +350,6 @@ classDiagram
     <<abstract>> TraceableElement
     class ObligationClause
     class Requirement
-    <<abstract>> Requirement
     class BusinessRule
     class UseCase
     class ConceptUse
@@ -360,9 +363,7 @@ classDiagram
     Requirement --> "0..*" Requirement : refines
     Requirement --> "0..*" BusinessRule : refines
     Requirement --> "0..*" ObligationClause : refines
-    BusinessRule --> "0..*" Requirement : refines
     BusinessRule --> "0..*" BusinessRule : refines
-    BusinessRule --> "0..*" ObligationClause : refines
     UseCase --> "0..*" ConceptUse : involves
     ConceptUse --> "0..1" Concept : definition
 ```
@@ -403,14 +404,16 @@ classDiagram
     class Capability
     class System
     class Component
-    class SystemGoal
+    class Goal
     class Job
     class JobStep
     class DesiredOutcome
-    Capability --> "0..*" SystemGoal : supports
+    class UseCase
+    Capability --> "0..*" Goal : supports
     Capability --> "0..*" Job : supports
     Capability --> "0..*" JobStep : supports
     Capability --> "0..*" DesiredOutcome : supports
+    Capability --> "0..*" UseCase : supports
     Capability --> "0..*" Capability : depends on
     Capability --> "0..*" System : provided by
     Capability --> "0..*" Component : provided by
@@ -436,17 +439,32 @@ classDiagram
 
 ## Selected type reference
 
+### DomainElement
+
+A source-backed semantic record. Snapshot IDs are required; authored IDs remain optional except where the source format requires them.
+
+Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [DomainElement](index.md#domainelement) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `name` | [RichContent](index.md#richcontent) | optional | Authored title or item name, if present. |
+| `authored_id` | `string` | optional | An explicitly authored ID when present; no manufactured global identifier. |
+| `notes` | [RichContent](index.md#richcontent) | optional | Explanation of the element; not a separate obligation or endorsement. |
+| `open_questions` | [OpenQuestion](index.md#openquestion) | optional; ordered list | Explicitly distinguished questions, in authored order. |
+
 ### Specification
 
-A cohesive definition of a subject, behavior, obligation or classification scheme. Specification kind is independent of document placement; a named inline definition is also a specification. Narrative authority and evidence do not create executable authority assertions.
+The root record of one authored specification document. Every specification has exactly one specification type, and specification types correspond one-to-one with concrete Specification classes. Elements declared inside a specification are not specifications. Narrative authority and evidence do not create executable authority assertions.
 
 Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [Specification](index.md#specification) contains the complete definition.
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
-| `notes` | [RichContent](index.md#richcontent) | optional | Recognized Notes content. |
+| `slug` | `string` | optional | Path-derived current slug where applicable. |
+| `preamble` | [RichContent](index.md#richcontent) | optional | Authored content between the title and the first named section. |
 | `evidence` | [EvidenceCollection](index.md#evidencecollection) | optional |  |
-| `related_specifications` | [ContextualReferences](index.md#contextualreferences) | optional |  |
+| `authority_and_evidence` | [RichContent](index.md#richcontent) | optional | Maps both Authority and Authority and evidence headings; retain original heading nodes. |
+| `related_specifications` | [ContextualReferences](index.md#contextualreferences) | optional | Contextual citations of related specifications of any type, with their explanation; no implicit support, refinement, enforcement or compliance relation. |
 
 ### TraceableElement
 
@@ -456,25 +474,25 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
-| `supports` | [SystemGoal](index.md#systemgoal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) | optional; list | Intended contribution to a goal or user progress; does not assert achievement. |
+| `supports` | [Goal](index.md#goal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) or [UseCase](index.md#usecase) | optional; list | Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement. |
 | `derived_from` | [DomainElement](index.md#domainelement) or [SourceFragment](index.md#sourcefragment) | optional; list | Source or rationale for this element, including rules, decisions and obligations; not logical entailment. |
 | `relies_on` | [Assumption](index.md#assumption) | optional; list | Assumptions on which the validity of this element depends. |
 | `validation_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
 
-### SystemGoal
+### Goal
 
-An explicitly distinguished system goal.
+An explicitly distinguished goal: a result that an organization or stakeholder wants the system to help achieve.
 
-Subsets: `business-requirements`. [SystemGoal](index.md#systemgoal) contains the complete definition.
+Subsets: `business-requirements`. [Goal](index.md#goal) contains the complete definition.
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `statement` | [RichContent](index.md#richcontent) | optional |  |
-| `supports` | [SystemGoal](index.md#systemgoal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) | optional; list | Intended contribution to a goal or user progress; does not assert achievement. |
+| `supports` | [Goal](index.md#goal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) or [UseCase](index.md#usecase) | optional; list | Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement. |
 
 ### Assumption
 
-An explicitly distinguished system assumption; no inferred truth assertion.
+An explicitly distinguished premise about the environment on which the specification relies; no inferred truth assertion.
 
 Subsets: `business-requirements`, `software-requirements`. [Assumption](index.md#assumption) contains the complete definition.
 
@@ -485,31 +503,21 @@ Subsets: `business-requirements`, `software-requirements`. [Assumption](index.md
 | `applicability` | [RichContent](index.md#richcontent) | optional | Conditions, locations or periods in which this assumption is expected to hold. |
 | `validation_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan to assess empirical support for the premise in its stated conditions and whether reliance on it is justified for intended use; not a guarantee that it holds. |
 
-### Constraint
-
-An explicitly distinguished system constraint.
-
-Subsets: `business-requirements`, `software-requirements`. [Constraint](index.md#constraint) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `statement` | [RichContent](index.md#richcontent) | optional |  |
-
 ### ObligationClause
 
-An explicitly distinguished obligation within an existing specification or behavioral model. Its content is the authored expression, not a duplicate requirement document. Project authority determines acceptance; declaration alone does not.
+An explicitly distinguished obligation inside another specification or behavioral model. Its content is the authored expression, not a duplicate requirement document. Project authority determines acceptance; declaration alone does not.
 
 Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [ObligationClause](index.md#obligationclause) contains the complete definition.
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
+| `owner` | [ObligationContainer](index.md#obligationcontainer) | required |  |
 | `statement` | [RichContent](index.md#richcontent) | optional |  |
 | `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; list | Only resolved classifications; original occurrences remain separately addressable. |
 | `refines` | [Requirement](index.md#requirement) or [BusinessRule](index.md#businessrule) or [ObligationClause](index.md#obligationclause) | optional; list | Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted. |
 | `applies_to` | [DomainElement](index.md#domainelement) | optional; list |  |
 | `verification_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
-| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it. |
-| `measurement_plan` | [MeasurementPlan](index.md#measurementplan) | optional |  |
+| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. The verification plan refers to it. |
 
 ### System
 
@@ -521,8 +529,12 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 | --- | --- | --- | --- |
 | `purpose` | [RichContent](index.md#richcontent) | optional |  |
 | `scope` | [RichContent](index.md#richcontent) | optional |  |
-| `goals` | [GoalCollection](index.md#goalcollection) | optional |  |
-| `constraints` | [ConstraintCollection](index.md#constraintcollection) | optional |  |
+| `goals` | [Goal](index.md#goal) | optional; ordered list | Explicitly authored goals, in authored order. |
+| `environment` | [RichContent](index.md#richcontent) | optional | Conditions and surroundings the system must accommodate. |
+| `stakeholders` | [RichContent](index.md#richcontent) | optional | People and organizations with an interest in the system, the interests they hold, and sources of requirements; naming them is not endorsement. |
+| `assumptions` | [Assumption](index.md#assumption) | optional; ordered list | Explicitly authored assumptions, in authored order. |
+| `constraints` | [RichContent](index.md#richcontent) | optional | Externally imposed restrictions the system must respect, as narrative. An individually addressable constraint is a Requirement or BusinessRule. |
+| `glossary` | [GlossaryTerm](index.md#glossaryterm) | optional; ordered list | Explicitly named terms, in authored order. |
 | `concept_uses` | [ConceptUse](index.md#conceptuse) | optional; ordered list |  |
 | `synchronizations` | [Synchronization](index.md#synchronization) | optional; ordered list |  |
 | `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; ordered list | Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. Must be present together with quality_attributes_content. |
@@ -532,8 +544,8 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 | `capabilities` | [Capability](index.md#capability) | optional; ordered list | Capability declarations; the declaring System is a documentation home, not an inferred provider. |
 | `out_of_scope` | [RichContent](index.md#richcontent) | optional | Explicit boundary exclusions; absence is not a statement of scope. |
 | `interacts_with` | [System](index.md#system) or [Component](index.md#component) | optional; list | Explicit interaction partners across this subject boundary; does not establish structural containment. |
-| `required_interfaces` | [RequiredInterfaceCollection](index.md#requiredinterfacecollection) | optional | Services this subject expects from its environment. |
-| `provided_interfaces` | [ProvidedInterfaceCollection](index.md#providedinterfacecollection) | optional | Services this subject exposes to its environment. |
+| `required_interfaces` | [Interface](index.md#interface) | optional; ordered list | Services this subject expects from its environment. |
+| `provided_interfaces` | [Interface](index.md#interface) | optional; ordered list | Services this subject exposes to its environment. |
 | `project_context` | [ContextualReferences](index.md#contextualreferences) | optional | Project context and links to authoritative schedules, risks, responsibilities and workflows; not a project-management model. |
 
 ### BusinessRule
@@ -550,7 +562,7 @@ Subsets: `business-requirements`. [BusinessRule](index.md#businessrule) contains
 | `rationale` | [RichContent](index.md#richcontent) | optional |  |
 | `authority_and_evidence` | [RichContent](index.md#richcontent) | optional | Maps both Authority and Authority and evidence headings; retain original heading nodes. |
 | `exceptions` | [RichContent](index.md#richcontent) | optional | Authored qualifications or references to exception rules; no inferred exemption. |
-| `related_specifications` | [ContextualReferences](index.md#contextualreferences) | optional |  |
+| `related_specifications` | [ContextualReferences](index.md#contextualreferences) | optional | Contextual citations of related specifications of any type, with their explanation; no implicit support, refinement, enforcement or compliance relation. |
 
 ### Job
 
@@ -564,9 +576,9 @@ Subsets: `user-requirements`. [Job](index.md#job) contains the complete definiti
 | `performer` | [RichContent](index.md#richcontent) | optional |  |
 | `situation` | [RichContent](index.md#richcontent) | optional |  |
 | `intended_progress` | [RichContent](index.md#richcontent) | optional |  |
-| `steps` | [JobMap](index.md#jobmap) | optional |  |
-| `outcomes` | [OutcomeCollection](index.md#outcomecollection) | optional |  |
-| `progress_cases` | [ProgressCaseCollection](index.md#progresscasecollection) | optional |  |
+| `steps` | [JobStep](index.md#jobstep) | optional; ordered list | Document order, not a universal lifecycle or required process sequence. |
+| `outcomes` | [DesiredOutcome](index.md#desiredoutcome) | optional; ordered list | Outcomes declared here, in authored order. Shared outcomes are declared once and have explicit applicability references. |
+| `progress_cases` | [ProgressCase](index.md#progresscase) | optional; ordered list | Explicitly named progress cases, in authored order. |
 
 ### JobStep
 
@@ -578,7 +590,7 @@ Subsets: `user-requirements`. [JobStep](index.md#jobstep) contains the complete 
 | --- | --- | --- | --- |
 | `stage` | [RichContent](index.md#richcontent) | optional | Authored stage value; unrestricted vocabulary and repeated labels are valid. |
 | `description` | [RichContent](index.md#richcontent) | optional |  |
-| `outcomes` | [OutcomeCollection](index.md#outcomecollection) | optional |  |
+| `outcomes` | [DesiredOutcome](index.md#desiredoutcome) | optional; ordered list | Outcomes declared here, in authored order. Shared outcomes are declared once and have explicit applicability references. |
 
 ### DesiredOutcome
 
@@ -604,8 +616,8 @@ Subsets: `user-requirements`. [ProgressCase](index.md#progresscase) contains the
 | --- | --- | --- | --- |
 | `current_approach` | [RichContent](index.md#richcontent) | optional |  |
 | `desired_progress` | [RichContent](index.md#richcontent) | optional |  |
-| `forces` | [ForceCollection](index.md#forcecollection) | optional |  |
-| `timeline` | [Timeline](index.md#timeline) | optional |  |
+| `forces` | [Force](index.md#force) | optional; ordered list | Explicitly identified forces, in authored order. |
+| `timeline` | [RichContent](index.md#richcontent) | optional | Authored timeline of progress or switching decisions, distinct from a functional job map; unknown dates and research-pending narratives are allowed. |
 | `evidence` | [EvidenceCollection](index.md#evidencecollection) | optional |  |
 | `circumstances` | [RichContent](index.md#richcontent) | optional | Case-specific circumstances, distinct from the general job situation. |
 | `struggling_moment` | [RichContent](index.md#richcontent) | optional | The event or difficulty that made change worth considering. |
@@ -626,13 +638,15 @@ Subsets: `software-requirements`. [UseCase](index.md#usecase) contains the compl
 | `goal` | [RichContent](index.md#richcontent) | optional |  |
 | `boundary_description` | [RichContent](index.md#richcontent) | optional | Boundary description is independent of directory ownership. |
 | `subject_system` | [System](index.md#system) | optional |  |
-| `supports` | [SystemGoal](index.md#systemgoal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) | optional; list | Intended contribution to a goal or user progress; does not assert achievement. |
+| `supports` | [Goal](index.md#goal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) or [UseCase](index.md#usecase) | optional; list | Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement. |
 | `primary_actor` | [ActorMention](index.md#actormention) | optional |  |
-| `preconditions` | [ConditionCollection](index.md#conditioncollection) | optional |  |
-| `minimum_guarantees` | [ConditionCollection](index.md#conditioncollection) | optional |  |
+| `goal_level` | `GoalLevelValue` | optional | Canonical classification, populated only for recognized explicit wording. |
+| `preconditions` | [Condition](index.md#condition) | optional; ordered list | Explicitly distinguished items; prose remains authoritative. |
+| `minimal_guarantees` | [Condition](index.md#condition) | optional; ordered list | Explicitly distinguished items; prose remains authoritative. |
+| `success_guarantees` | [Condition](index.md#condition) | optional; ordered list | Explicitly distinguished items; prose remains authoritative. |
 | `main_success_scenario` | [Scenario](index.md#scenario) | optional |  |
-| `extensions` | [ExtensionCollection](index.md#extensioncollection) | optional |  |
-| `business_rules` | [ContextualReferences](index.md#contextualreferences) | optional | Contextual references to governing business rules; does not assert enforcement or compliance. |
+| `extensions` | [UseCaseExtension](index.md#usecaseextension) | optional; ordered list | Explicitly authored alternative or failure branches, in authored order. |
+| `sequence` | [RichContent](index.md#richcontent) | optional | Authored statement about which ordering is representative or required; scenario step order alone creates no constraint. |
 
 ### Scenario
 
@@ -643,7 +657,7 @@ Subsets: `software-requirements`. [Scenario](index.md#scenario) contains the com
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `content` | [RichContent](index.md#richcontent) | required |  |
-| `steps` | [ScenarioStep](index.md#scenariostep) | optional; ordered list | Source order only. Required sequencing belongs in SequenceStatement. |
+| `steps` | [ScenarioStep](index.md#scenariostep) | optional; ordered list | Source order only. Required sequencing belongs in the Sequence section. |
 
 ### ScenarioStep
 
@@ -655,11 +669,11 @@ Subsets: `software-requirements`. [ScenarioStep](index.md#scenariostep) contains
 | --- | --- | --- | --- |
 | `authored_label` | `string` | optional | Original number or label; snapshot ID supplies addressability. |
 | `content` | [RichContent](index.md#richcontent) | required |  |
-| `illustrates` | [Obligation](index.md#obligation) or [ConceptAction](index.md#conceptaction) | optional; list | Rules or actions explicitly illustrated by this step. No completeness or execution assertion. |
+| `illustrates` | [Obligation](index.md#obligation) or [BusinessRule](index.md#businessrule) or [ConceptAction](index.md#conceptaction) | optional; list | Obligations, business rules or actions explicitly illustrated by this step. No completeness or execution assertion. |
 
 ### UseCaseExtension
 
-An explicitly distinguished alternative or failure branch. Full narrative is retained; condition, location and handling are optional decompositions. Condition-only entries are valid.
+An explicitly distinguished alternative or failure branch. Full narrative is retained; condition and handling are optional decompositions. Where the condition arises is part of the label or narrative. Condition-only entries are valid.
 
 Subsets: `software-requirements`. [UseCaseExtension](index.md#usecaseextension) contains the complete definition.
 
@@ -667,7 +681,6 @@ Subsets: `software-requirements`. [UseCaseExtension](index.md#usecaseextension) 
 | --- | --- | --- | --- |
 | `content` | [RichContent](index.md#richcontent) | required |  |
 | `condition` | [RichContent](index.md#richcontent) | optional |  |
-| `location` | [RichContent](index.md#richcontent) | optional | Authored branch point, including free prose or labels; no automatic step-number interpretation. |
 | `handling` | [RichContent](index.md#richcontent) | optional | Authored handling narrative, including any resumption, conclusion or unresolved question. |
 | `steps` | [ScenarioStep](index.md#scenariostep) | optional; ordered list | Explicit handling steps in source order; no execution semantics are inferred. |
 | `branches` | [UseCaseExtension](index.md#usecaseextension) | optional; ordered list | Explicitly authored nested branches, in document order. |
@@ -685,8 +698,8 @@ Subsets: `software-requirements`. [Concept](index.md#concept) contains the compl
 | `type_parameters` | [ConceptType](index.md#concepttype) | optional; ordered list |  |
 | `introduced_types` | [ConceptType](index.md#concepttype) | optional; ordered list |  |
 | `abstract_state` | [StateDescription](index.md#statedescription) | optional |  |
-| `actions` | [ActionCollection](index.md#actioncollection) | optional |  |
-| `effects_table` | [EffectsTable](index.md#effectstable) | optional | Optional authored operation-by-observable-property matrix. Empty cells mean unspecified, never unchanged. |
+| `actions` | [ConceptAction](index.md#conceptaction) | optional; ordered list | Explicitly named actions, in authored order. |
+| `effects_table` | [EffectsRow](index.md#effectsrow) | optional; ordered list | Rows of the optional authored operation-by-observable-property matrix. Empty cells mean unspecified, never unchanged. |
 
 ### ConceptType
 
@@ -700,7 +713,7 @@ Subsets: `software-requirements`. [ConceptType](index.md#concepttype) contains t
 
 ### ConceptUse
 
-An explicitly named design-time inclusion of a concept in a system. Multiple uses of one definition remain distinct; directory association creates no use.
+An explicitly named design-time inclusion of a concept in a system, declared in the system's specification. Multiple uses of one definition remain distinct; directory association creates no use.
 
 Subsets: `software-requirements`. [ConceptUse](index.md#conceptuse) contains the complete definition.
 
@@ -726,7 +739,7 @@ Subsets: `software-requirements`. [TypeBinding](index.md#typebinding) contains t
 
 ### Synchronization
 
-A system-owned composition rule. Narrative and action references describe coordination; no atomicity, execution or completeness is inferred.
+A composition rule declared in a system's specification. Narrative and action references describe coordination; no atomicity, execution or completeness is inferred.
 
 Subsets: `software-requirements`. [Synchronization](index.md#synchronization) contains the complete definition.
 
@@ -804,54 +817,30 @@ Subsets: `software-requirements`. [ConceptAction](index.md#conceptaction) contai
 | `input_parameters` | [ActionParameter](index.md#actionparameter) | optional; ordered list |  |
 | `output_parameters` | [ActionParameter](index.md#actionparameter) | optional; ordered list |  |
 | `initiation` | [RichContent](index.md#richcontent) | optional | Authored initiation conditions, including user or system actions; no scheduler or caller is inferred. |
-| `caller_assumptions` | [ConditionCollection](index.md#conditioncollection) | optional |  |
-| `guards` | [ConditionCollection](index.md#conditioncollection) | optional |  |
+| `caller_assumptions` | [Condition](index.md#condition) | optional; ordered list | Explicitly distinguished items; prose remains authoritative. |
+| `guards` | [Condition](index.md#condition) | optional; ordered list | Explicitly distinguished items; prose remains authoritative. |
 | `effects` | [RichContent](index.md#richcontent) | optional |  |
 | `rejections` | [RichContent](index.md#richcontent) | optional |  |
 
 ### Requirement
 
-A standalone obligation specification. Obligations can also be expressed in use cases and concept contracts; this document family is not the superclass of every normative expression.
+A specification that gives one obligation its own document. An obligation is what ISO/IEC/IEEE 29148 calls a requirement, wherever it is written; this class names the specification type, not every normative expression. A quality requirement is a requirement classified by a quality attribute, not a separate type.
 
 Subsets: `software-requirements`. [Requirement](index.md#requirement) contains the complete definition.
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
+| `statement` | [RichContent](index.md#richcontent) | optional |  |
 | `refines` | [Requirement](index.md#requirement) or [BusinessRule](index.md#businessrule) or [ObligationClause](index.md#obligationclause) | optional; list | Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted. |
 | `derived_from` | [DomainElement](index.md#domainelement) or [SourceFragment](index.md#sourcefragment) | optional; list | Source or rationale for this element, including rules, decisions and obligations; not logical entailment. |
-| `supports` | [SystemGoal](index.md#systemgoal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) | optional; list | Intended contribution to a goal or user progress; does not assert achievement. |
+| `supports` | [Goal](index.md#goal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) or [UseCase](index.md#usecase) | optional; list | Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement. |
 | `relies_on` | [Assumption](index.md#assumption) | optional; list | Assumptions on which the validity of this element depends. |
 | `applicability` | [Applicability](index.md#applicability) | optional |  |
 | `applies_to` | [DomainElement](index.md#domainelement) | optional; list |  |
 | `rationale` | [RichContent](index.md#richcontent) | optional |  |
 | `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; list | Only resolved classifications; original occurrences remain separately addressable. |
-| `business_rules` | [ContextualReferences](index.md#contextualreferences) | optional | Contextual references to governing business rules; does not assert enforcement or compliance. |
-
-### GeneralRequirement
-
-Default standalone obligation authoring form; may express behavior, quality or constraints.
-
-Subsets: `software-requirements`. [GeneralRequirement](index.md#generalrequirement) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `statement` | [RichContent](index.md#richcontent) | optional |  |
+| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. The verification plan refers to it. |
 | `verification_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
-| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it. |
-| `measurement_plan` | [MeasurementPlan](index.md#measurementplan) | optional |  |
-
-### QualityRequirement
-
-Quality-focused standalone obligation authoring form with the same statement, classification and assessment capabilities as other obligations.
-
-Subsets: `software-requirements`. [QualityRequirement](index.md#qualityrequirement) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `statement` | [RichContent](index.md#richcontent) | optional |  |
-| `verification_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
-| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it. |
-| `measurement_plan` | [MeasurementPlan](index.md#measurementplan) | optional |  |
 
 ### QualityModel
 
@@ -929,7 +918,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 
 ### Obligation
 
-Shared obligation content independent of standalone or embedded expression. An optional explicit criterion defines or references the satisfaction rule; assessment plans describe how to obtain and interpret evidence against it. Verification plans are not execution evidence.
+An obligation, expressed in its own Requirement specification or as a clause inside another specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines or references the satisfaction rule; the verification plan describes how to obtain and interpret evidence against it. Verification plans are not execution evidence.
 
 Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [Obligation](index.md#obligation) contains the complete definition.
 
@@ -942,8 +931,33 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `rationale` | [RichContent](index.md#richcontent) | optional |  |
 | `refines` | [Requirement](index.md#requirement) or [BusinessRule](index.md#businessrule) or [ObligationClause](index.md#obligationclause) | optional; list | Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted. |
 | `verification_plan` | [AssessmentPlan](index.md#assessmentplan) | optional | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
-| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. Available to both general and quality obligations; assessment plans refer to it. |
-| `measurement_plan` | [MeasurementPlan](index.md#measurementplan) | optional |  |
+| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. The verification plan refers to it. |
+
+### Applicability
+
+Operating context covered by an obligation or business rule, with optional explicit dimensions. For outcomes of use, identify users, tasks, equipment or assistance, and environment. Assessment setup is recorded in the plan, separately from required operating context; no applicability is inferred from a link or directory.
+
+Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [Applicability](index.md#applicability) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `content` | [RichContent](index.md#richcontent) | required |  |
+| `conditions` | [RichContent](index.md#richcontent) | optional |  |
+| `workload` | [RichContent](index.md#richcontent) | optional |  |
+| `population` | [RichContent](index.md#richcontent) | optional |  |
+| `exclusions` | [RichContent](index.md#richcontent) | optional |  |
+
+### ObligationCriterion
+
+Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define each bound once or reference its authoritative statement or source; the verification plan refers to this rule. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.
+
+Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [ObligationCriterion](index.md#obligationcriterion) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `content` | [RichContent](index.md#richcontent) | required |  |
+| `measure` | [RichContent](index.md#richcontent) | optional | Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed. The verification plan supplies the collection procedure. |
+| `target` | [RichContent](index.md#richcontent) | optional | Required value, bound or acceptable range, including the comparison. Preferred targets belong in rationale or notes and must be identified as nonbinding. |
 
 ### Component
 
@@ -963,8 +977,8 @@ Subsets: `software-requirements`. [Component](index.md#component) contains the c
 | `obligations` | [ObligationClause](index.md#obligationclause) | optional; ordered list |  |
 | `out_of_scope` | [RichContent](index.md#richcontent) | optional | Explicit boundary exclusions; absence is not a statement of scope. |
 | `interacts_with` | [System](index.md#system) or [Component](index.md#component) | optional; list | Explicit interaction partners across this subject boundary; does not establish structural containment. |
-| `required_interfaces` | [RequiredInterfaceCollection](index.md#requiredinterfacecollection) | optional | Services this subject expects from its environment. |
-| `provided_interfaces` | [ProvidedInterfaceCollection](index.md#providedinterfacecollection) | optional | Services this subject exposes to its environment. |
+| `required_interfaces` | [Interface](index.md#interface) | optional; ordered list | Services this subject expects from its environment. |
+| `provided_interfaces` | [Interface](index.md#interface) | optional; ordered list | Services this subject exposes to its environment. |
 
 ### Feature
 
@@ -987,7 +1001,7 @@ Subsets: `business-requirements`, `software-requirements`. [Capability](index.md
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `purpose` | [RichContent](index.md#richcontent) | optional | What this ability enables and why it matters. |
-| `supports` | [SystemGoal](index.md#systemgoal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) | optional; list | Intended contribution to a goal or user progress; does not assert achievement. |
+| `supports` | [Goal](index.md#goal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) or [UseCase](index.md#usecase) | optional; list | Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement. |
 | `depends_on` | [Capability](index.md#capability) | optional; list | Capabilities required by this capability; many-to-many dependencies may be cyclic. Not structural containment or an inferred execution sequence. |
 | `provided_by` | [System](index.md#system) or [Component](index.md#component) | optional; list | Explicitly identified system or component providers. Optional and non-exhaustive: human and procedural providers can be described in enablers. Does not assert verified implementation or satisfaction. |
 | `enablers` | [RichContent](index.md#richcontent) | optional | Human, procedural or other enabling context, including external references. Typed providers describe only explicitly linked systems and components. |
@@ -1008,20 +1022,9 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `evidence_needed` | [RichContent](index.md#richcontent) | optional |  |
 | `tracking_reference` | [ContextualReferences](index.md#contextualreferences) | optional | External issue or decision owning resolution workflow. |
 
-### InterfaceCollection
-
-Authored required or provided interface declarations, relative to the declaring System or Component.
-
-Subsets: `software-requirements`. [InterfaceCollection](index.md#interfacecollection) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `content` | [RichContent](index.md#richcontent) | required |  |
-| `interfaces` | [Interface](index.md#interface) | optional; ordered list |  |
-
 ### Interface
 
-An independently addressable specification of interaction at a System or Component boundary. Required or provided membership states direction relative to the declaring subject. Native protocol contracts retain their authority; neither declaration nor citation proves implementation or compatibility.
+An independently addressable description of interaction at a System or Component boundary, declared by that System or Component. Required or provided membership states direction relative to the declaring subject. Native protocol contracts retain their authority; neither declaration nor citation proves implementation or compatibility.
 
 Subsets: `software-requirements`. [Interface](index.md#interface) contains the complete definition.
 
@@ -1034,17 +1037,6 @@ Subsets: `software-requirements`. [Interface](index.md#interface) contains the c
 | `description` | [RichContent](index.md#richcontent) | optional | Introductory description of the boundary interaction. |
 | `contracts` | [ContextualReferences](index.md#contextualreferences) | optional | References to authoritative native contracts; no conformance claim is inferred. |
 | `counterpart` | [ContextualReferences](index.md#contextualreferences) | optional | Contextual references to participants or corresponding interfaces; no compatibility claim is inferred. |
-
-### EffectsTable
-
-Source-backed authored table; no effects, unchanged values or operation classifications are inferred.
-
-Subsets: `software-requirements`. [EffectsTable](index.md#effectstable) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `content` | [RichContent](index.md#richcontent) | required |  |
-| `rows` | [EffectsRow](index.md#effectsrow) | optional; ordered list |  |
 
 ### EffectsRow
 
@@ -1067,7 +1059,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `subject` | [RichContent](index.md#richcontent) | optional | The proposed requirement, design, prototype, implementation or environmental premise to assess; identify revisions when planning execution. |
 | `basis` | [ContextualReferences](index.md#contextualreferences) | optional | Authored criteria, stakeholder needs, goals, obligations or evidence against which the subject is assessed. Citations do not establish satisfaction. |
 | `participants` | [RichContent](index.md#richcontent) | optional | Relevant users, stakeholders or assessors and their roles; naming them is not endorsement. |
-| `method` | [RichContent](index.md#richcontent) | optional |  |
+| `method` | [RichContent](index.md#richcontent) | optional | How the assessment is performed, including procedure, sampling and measurement where needed. |
 | `success_criteria` | [RichContent](index.md#richcontent) | optional | How to interpret the assessment against its basis. Verification refers to the obligation's statement or criterion for required bounds rather than defining competing thresholds; validation identifies the needs or intended outcomes against which the subject is assessed. |
 | `conditions` | [RichContent](index.md#richcontent) | optional | Conditions of the assessment, including how the setup represents the obligation's operating context or the intended context of use. These do not redefine applicability. |
 | `cases` | [AssessmentCase](index.md#assessmentcase) | optional; ordered list |  |

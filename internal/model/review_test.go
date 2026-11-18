@@ -33,8 +33,8 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 	if d.text(sys["out_of_scope"]) == "" || d.text(Object(sys["project_context"])["content"]) == "" {
 		t.Fatal("unmapped system context")
 	}
-	required := Strings(Object(sys["required_interfaces"])["interfaces"])
-	provided := Strings(Object(sys["provided_interfaces"])["interfaces"])
+	required := Strings(sys["required_interfaces"])
+	provided := Strings(sys["provided_interfaces"])
 	if len(required) != 1 || len(provided) != 1 || len(Strings(Object(d.index[required[0]]["contracts"])["references"])) != 1 || d.index[provided[0]]["contracts"] != nil {
 		t.Fatal("interface direction/contract information lost")
 	}
@@ -50,7 +50,7 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 	if strings.Contains(d.text(assumption["statement"]), "Validation plan") {
 		t.Fatal("assumption guidance became its premise")
 	}
-	questions := reviewObjects(Object(sys["open_questions"])["questions"])
+	questions := reviewObjects(sys["open_questions"])
 	if len(questions) != 2 {
 		t.Fatal(questions)
 	}
@@ -75,7 +75,7 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 		t.Fatal("ordinary references incorrectly promoted or explicit illustration lost", count)
 	}
 	concept := designRecord(t, s, "Concept", "Trash")
-	rows := reviewObjects(Object(concept["effects_table"])["rows"])
+	rows := reviewObjects(concept["effects_table"])
 	if len(rows) != 4 {
 		t.Fatal("lost effects table rows", rows)
 	}
@@ -88,9 +88,9 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 	}
 	assertions := map[string]int{}
 	for _, a := range s.Assertions {
-		assertions[String(a, "kind")]++
+		assertions[String(a, "projection_path")]++
 	}
-	if assertions["Illustrates"] != 2 || assertions["InteractsWith"] != 1 {
+	if assertions["ScenarioStep.illustrates"] != 2 || assertions["System.interacts_with"] != 1 {
 		t.Fatal(assertions)
 	}
 	forged := cloneSnapshot(t, s)
@@ -116,7 +116,7 @@ func TestReviewViewsAreAdvisoryAndRebaseSources(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"No contribution path recorded", "Contribution path recorded", "ScenarioStep 2", "no rule or action relationship recorded", "no native contract reference recorded", "No system verification or measurement guidance recorded", "Before acceptance", "no Raised by, Raised on, Resolve by, Importance, Evidence needed recorded", "Review required for **recovery copy**", "../specs/system.spec.md#reduce-retention-cost", "../project-plan.md#retention-boundary-decision", "nonbinding"} {
+	for _, want := range []string{"No contribution path recorded", "Contribution path recorded", "ScenarioStep 2", "no rule or action relationship recorded", "no native contract reference recorded", "No verification plan recorded", "Before acceptance", "no Raised by, Raised on, Resolve by, Importance, Evidence needed recorded", "Review required for **recovery copy**", "../specs/system.spec.md#reduce-retention-cost", "../project-plan.md#retention-boundary-decision", "nonbinding"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("review missing %q", want)
 		}
@@ -218,7 +218,7 @@ A batch worker can use [Time readings](#component-time).
 	conformancePayloads(t, result.Snapshot)
 	component := designRecord(t, result.Snapshot, "Component", "Retention worker")
 	d := newDesignResolver(result.Snapshot)
-	items := Strings(Object(component["required_interfaces"])["interfaces"])
+	items := Strings(component["required_interfaces"])
 	if len(items) != 2 || len(Strings(Object(d.index[items[0]]["contracts"])["references"])) != 2 {
 		t.Fatal("repeated interface content overwritten", items)
 	}

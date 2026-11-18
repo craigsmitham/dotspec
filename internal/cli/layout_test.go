@@ -20,11 +20,9 @@ func TestMisplacedSpecsFailLocalCommands(t *testing.T) {
 		{"adjacent use case", "use-case", "work.use-case.spec.md", "specs/use-cases/work.use-case.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"adjacent requirement", "requirement", "work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"nested requirement", "requirement", "specs/requirements/group/work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"adjacent quality", "quality", "work.quality.spec.md", "specs/quality/work.quality.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"singular quality-model folder", "quality-model", "specs/quality-model/work.quality-model.spec.md", "specs/quality-models/work.quality-model.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"plural quality folder", "quality", "specs/qualities/work.quality.spec.md", "specs/quality/work.quality.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"nested quality", "quality", "specs/quality/group/work.quality.spec.md", "specs/quality/work.quality.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"wrong quality collection", "quality", "specs/jobs/work.quality.spec.md", "specs/quality/work.quality.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
+		{"singular requirement folder", "requirement", "specs/requirement/work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
+		{"wrong requirement collection", "requirement", "specs/jobs/work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"adjacent concept", "concept", "work.concept.spec.md", "specs/concepts/work.concept.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"singular use-case folder", "use-case", "specs/use-case/work.use-case.spec.md", "specs/use-cases/work.use-case.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"singular concept folder", "concept", "specs/concept/work.concept.spec.md", "specs/concepts/work.concept.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
@@ -94,12 +92,12 @@ func TestDiscoveryRejectsLegacyFilesAlongsideCanonicalSpecs(t *testing.T) {
 
 func TestMetadataDirectoriesCannotBecomeProjectScopes(t *testing.T) {
 	dir := t.TempDir()
-	for _, subdir := range []string{"specs", "specs/jobs", "specs/jobs/extra", "specs/use-cases", "specs/concepts", "specs/quality"} {
+	for _, subdir := range []string{"specs", "specs/jobs", "specs/jobs/extra", "specs/use-cases", "specs/concepts", "specs/requirements"} {
 		path := filepath.Join(dir, subdir)
 		if err := os.MkdirAll(path, 0o755); err != nil {
 			t.Fatal(err)
 		}
-		for _, args := range [][]string{{"system", "init"}, {"system", "show"}, {"system", "list"}, {"job", "init", "work"}, {"job", "show", "work"}, {"job", "list"}, {"use-case", "init", "work"}, {"use-case", "show", "work"}, {"use-case", "list"}, {"concept", "init", "work"}, {"concept", "show", "work"}, {"concept", "list"}, {"quality", "init", "work"}, {"quality", "show", "work"}, {"quality", "list"}} {
+		for _, args := range [][]string{{"system", "init"}, {"system", "show"}, {"system", "list"}, {"job", "init", "work"}, {"job", "show", "work"}, {"job", "list"}, {"use-case", "init", "work"}, {"use-case", "show", "work"}, {"use-case", "list"}, {"concept", "init", "work"}, {"concept", "show", "work"}, {"concept", "list"}, {"requirement", "init", "work"}, {"requirement", "show", "work"}, {"requirement", "list"}} {
 			args = append(args, "--path", path)
 			if code, out, errOut := invoke(args...); code == 0 || out != "" || !strings.Contains(errOut, "--path selects a project directory") {
 				t.Errorf("metadata scope: %v: %d %q %q", args, code, out, errOut)
@@ -109,7 +107,7 @@ func TestMetadataDirectoriesCannotBecomeProjectScopes(t *testing.T) {
 }
 
 func TestInitDoesNotWriteThroughMetadataSymlinks(t *testing.T) {
-	for _, subdir := range []string{"specs", "specs/jobs", "specs/concepts", "specs/quality"} {
+	for _, subdir := range []string{"specs", "specs/jobs", "specs/concepts", "specs/requirements"} {
 		t.Run(subdir, func(t *testing.T) {
 			dir, outside := t.TempDir(), t.TempDir()
 			link := filepath.Join(dir, subdir)
@@ -120,8 +118,8 @@ func TestInitDoesNotWriteThroughMetadataSymlinks(t *testing.T) {
 				t.Fatal(err)
 			}
 			kind := "job"
-			if subdir == "specs/quality" {
-				kind = "quality"
+			if subdir == "specs/requirements" {
+				kind = "requirement"
 			}
 			if subdir == "specs/concepts" {
 				kind = "concept"

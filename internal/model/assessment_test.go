@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/craigsmitham/dotspec/internal/obligation"
-	"github.com/craigsmitham/dotspec/internal/quality"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 )
 
@@ -23,7 +22,7 @@ func TestAssessmentPlansPreservePurposeSubjectBasisAndCases(t *testing.T) {
 	d := newDesignResolver(s)
 	for _, tc := range []struct{ kind, name string }{
 		{"System", "Document workspace"}, {"Concept", "Trash"}, {"UseCase", "Restore a document"},
-		{"GeneralRequirement", "Preserve document metadata on restoration"}, {"Assumption", "Trusted time"},
+		{"Requirement", "Preserve document metadata on restoration"}, {"Assumption", "Trusted time"},
 	} {
 		r := designRecord(t, s, tc.kind, tc.name)
 		plan := Object(r["validation_plan"])
@@ -48,7 +47,7 @@ func TestAssessmentPlansPreservePurposeSubjectBasisAndCases(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"## Requirements quality", "## Needs and intent", "## Assumptions: evidence and justified reliance", "## Validation planning", "## System verification planning", "No system verification or measurement guidance recorded", "no separately identified criterion, conditions or applicability", "../specs/jobs/recover.job.spec.md", "not a guarantee"} {
+	for _, want := range []string{"## Requirements quality", "## Needs and intent", "## Assumptions: evidence and justified reliance", "## Validation planning", "## System verification planning", "No verification plan recorded", "no separately identified target, conditions or applicability", "../specs/jobs/recover.job.spec.md", "not a guarantee"} {
 		if !strings.Contains(review, want) {
 			t.Errorf("missing review distinction %q", want)
 		}
@@ -104,7 +103,7 @@ Discuss whether the recovery policy is appropriate.
 	if strings.Count(d.text(plan["subject"]), "proposed Delete action") != 1 {
 		t.Fatal("subject duplicated")
 	}
-	req := designRecord(t, result.Snapshot, "GeneralRequirement", "Preserve document metadata on restoration")
+	req := designRecord(t, result.Snapshot, "Requirement", "Preserve document metadata on restoration")
 	if String(Object(Object(req["validation_plan"])["content"]), "presence") != "empty" {
 		t.Fatal("empty plan fabricated", req)
 	}
@@ -119,91 +118,62 @@ func TestMeasurementReviewAgreesAcrossCommandsAndModel(t *testing.T) {
 		name, body string
 		missing    []string
 	}{
-		{"measurement only", "## Measurement plan\nCollect timings.\n", []string{"criterion", "conditions or applicability"}},
-		{"measure without comparison", "## Measurement plan\nCollect timings.\n## Applies to\nManaged production requests.\n## Criterion\n### Measure\nElapsed time.\n", []string{"comparison rule and target"}},
-		{"complete narrative criterion", "## Measurement plan\nCollect timings.\n## Applies to\nManaged production requests.\n## Criterion\nThe 95th percentile is at most 100 ms.\n", nil},
-		{"structured criterion", "## Measurement plan\nCollect timings.\n## Criterion\n### Conditions\nProduction requests.\n### Comparison\nAt most.\n### Target\n100 ms at the 95th percentile.\n", nil},
-		{"measurement success criteria are assessment guidance", "## Measurement plan\n### Procedure\nCollect timings.\n### Conditions\nProduction requests.\n### Success criteria\nThe 95th percentile is at most 100 ms.\n", []string{"criterion", "conditions or applicability"}},
-		{"verification guidance does not exempt measurement", "## Measurement plan\nCollect timings.\n## Verification plan\nCompare timings to the externally defined criterion for the stated workload.\n", []string{"criterion", "conditions or applicability"}},
-		{"empty verification plan", "## Measurement plan\nCollect timings.\n## Verification plan\n", []string{"criterion", "conditions or applicability"}},
-		{"assessment conditions do not define applicability", "## Measurement plan\n### Conditions\nTest with ten synthetic requests.\n## Criterion\nThe 95th percentile is at most 100 ms.\n", []string{"conditions or applicability"}},
-		{"criterion references authoritative statement", "## Applies to\nManaged production requests.\n## Criterion\nUse the bound defined in [Statement](#statement).\n## Measurement plan\nCollect timings and compare them to [Criterion](#criterion).\n## Verification plan\nInspect the retained evidence against [Criterion](#criterion).\n", nil},
-		{"measure without measurement plan", "## Criterion\n### Measure\nElapsed time.\n## Verification plan\nRun the tests.\n", []string{"comparison rule and target", "conditions or applicability"}},
-		{"measure with complete criterion and verification plan", "## Applies to\nManaged production requests.\n## Criterion\n### Measure\nElapsed time.\n### Comparison\nAt most.\n### Target\n100 ms at the 95th percentile.\n## Verification plan\nCollect timings and compare to [Criterion](#criterion).\n", nil},
-		{"no explicitly recorded measurement", "## Applies to\nManaged production requests.\n## Verification plan\nInspect compliance with the specified response behavior.\n", nil},
-		{"validation is distinct", "## Validation plan\nObserve whether the proposed latency serves user needs.\n## Measurement plan\nCollect timings.\n", []string{"criterion", "conditions or applicability"}},
+		{"measure only", "## Criterion\n### Measure\nElapsed time.\n", []string{"target", "conditions or applicability"}},
+		{"measure without target", "## Applies to\nManaged production requests.\n## Criterion\n### Measure\nElapsed time.\n", []string{"target"}},
+		{"complete narrative criterion", "## Applies to\nManaged production requests.\n## Criterion\nThe 95th percentile is at most 100 ms.\n", nil},
+		{"structured criterion", "## Applies to\n### Conditions\nProduction requests.\n## Criterion\n### Measure\nElapsed time.\n### Target\nAt most 100 ms at the 95th percentile.\n", nil},
+		{"plan success criteria are assessment guidance", "## Criterion\n### Measure\nElapsed time.\n## Verification plan\n### Method\nCollect timings.\n### Conditions\nProduction requests.\n### Success criteria\nThe 95th percentile is at most 100 ms.\n", []string{"target", "conditions or applicability"}},
+		{"empty verification plan", "## Criterion\n### Measure\nElapsed time.\n## Verification plan\n", []string{"target", "conditions or applicability"}},
+		{"assessment conditions do not define applicability", "## Criterion\n### Measure\nElapsed time.\n### Target\nAt most 100 ms at the 95th percentile.\n## Verification plan\n### Conditions\nTest with ten synthetic requests.\n", []string{"conditions or applicability"}},
+		{"criterion references authoritative statement", "## Applies to\nManaged production requests.\n## Criterion\nUse the bound defined in [Statement](#statement).\n## Verification plan\nCollect timings and compare them to [Criterion](#criterion).\n", nil},
+		{"no explicitly recorded measure", "## Applies to\nManaged production requests.\n## Verification plan\nInspect compliance with the specified response behavior.\n", nil},
+		{"validation is distinct", "## Validation plan\nObserve whether the proposed latency serves user needs.\n## Criterion\n### Measure\nElapsed time.\n", []string{"target", "conditions or applicability"}},
 	}
-	for _, kind := range []string{"requirement", "quality"} {
-		for _, tc := range cases {
-			t.Run(kind+"/"+tc.name, func(t *testing.T) {
-				root := t.TempDir()
-				dir := filepath.Join(root, "specs", "requirements")
-				if kind == "quality" {
-					dir = filepath.Join(root, "specs", "qualities")
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			root := t.TempDir()
+			dir := filepath.Join(root, "specs", "requirements")
+			if err := os.MkdirAll(dir, 0755); err != nil {
+				t.Fatal(err)
+			}
+			source := "---\ntype: requirement\n---\n# Latency\n## Statement\nThe service must respond within the agreed bound.\n" + tc.body
+			if err := os.WriteFile(filepath.Join(dir, "latency.requirement.spec.md"), []byte(source), 0644); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(root, "specs", "system.spec.md"), []byte("---\ntype: system\n---\n# Service\n## Purpose\nServe requests.\n## Scope\nRequest handling.\n"), 0644); err != nil {
+				t.Fatal(err)
+			}
+			native, err := obligation.Parse([]byte(source), "requirement")
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !slices.Equal(native.MeasurementGuidance.Missing(), tc.missing) {
+				t.Fatalf("native: %v", native.MeasurementGuidance.Missing())
+			}
+			hasAdvice := false
+			q, err := requirement.Parse([]byte(source))
+			if err != nil {
+				t.Fatal(err)
+			}
+			for _, f := range requirement.Check(q) {
+				hasAdvice = hasAdvice || f.Rule == "requirement.measurement-basis"
+				if f.Rule == "requirement.measurement-basis" && (f.Location.Line == 0 || f.Location.Element != "Criterion") {
+					t.Fatalf("measurement advice has wrong source location: %+v", f.Location)
 				}
-				// Quality uses its established collection name.
-				if kind == "quality" {
-					dir = filepath.Join(root, "specs", quality.Collection)
-				}
-				if err := os.MkdirAll(dir, 0755); err != nil {
-					t.Fatal(err)
-				}
-				source := "---\ntype: " + kind + "\n---\n# Latency\n## Statement\nThe service must respond within the agreed bound.\n" + tc.body
-				if err := os.WriteFile(filepath.Join(dir, "latency."+kind+".spec.md"), []byte(source), 0644); err != nil {
-					t.Fatal(err)
-				}
-				if err := os.WriteFile(filepath.Join(root, "specs", "system.spec.md"), []byte("---\ntype: system\n---\n# Service\n## Purpose\nServe requests.\n## Scope\nRequest handling.\n"), 0644); err != nil {
-					t.Fatal(err)
-				}
-				native, err := obligation.Parse([]byte(source), kind)
-				if err != nil {
-					t.Fatal(err)
-				}
-				if !slices.Equal(native.MeasurementGuidance.Missing(), tc.missing) {
-					t.Fatalf("native: %v", native.MeasurementGuidance.Missing())
-				}
-				hasAdvice := false
-				if kind == "quality" {
-					q, err := quality.Parse([]byte(source))
-					if err != nil {
-						t.Fatal(err)
-					}
-					for _, f := range quality.Check(q) {
-						hasAdvice = hasAdvice || f.Rule == "quality.measurement-basis"
-						if f.Rule == "quality.measurement-basis" && (f.Location.Line == 0 || (q.MeasurementPlan == "" && f.Location.Element != "Criterion")) {
-							t.Fatalf("measurement advice has wrong source location: %+v", f.Location)
-						}
-					}
-				} else {
-					q, err := requirement.Parse([]byte(source))
-					if err != nil {
-						t.Fatal(err)
-					}
-					for _, f := range requirement.Check(q) {
-						hasAdvice = hasAdvice || f.Rule == "requirement.measurement-basis"
-						if f.Rule == "requirement.measurement-basis" && (f.Location.Line == 0 || (q.MeasurementPlan == "" && f.Location.Element != "Criterion")) {
-							t.Fatalf("measurement advice has wrong source location: %+v", f.Location)
-						}
-					}
-				}
-				if hasAdvice != (len(tc.missing) > 0) {
-					t.Fatal("native advice disagrees")
-				}
-				result := conformanceExport(t, root)
-				conformancePayloads(t, result.Snapshot)
-				if result.ExitCode != 0 {
-					t.Fatal(result.Snapshot.Diagnostics)
-				}
-				modelKind := "GeneralRequirement"
-				if kind == "quality" {
-					modelKind = "QualityRequirement"
-				}
-				r := designRecord(t, result.Snapshot, modelKind, "Latency")
-				d := newDesignResolver(result.Snapshot)
-				if got := d.measurementGuidance(r).Missing(); !slices.Equal(got, tc.missing) {
-					t.Fatalf("model %v, want %v", got, tc.missing)
-				}
-			})
-		}
+			}
+			if hasAdvice != (len(tc.missing) > 0) {
+				t.Fatal("native advice disagrees")
+			}
+			result := conformanceExport(t, root)
+			conformancePayloads(t, result.Snapshot)
+			if result.ExitCode != 0 {
+				t.Fatal(result.Snapshot.Diagnostics)
+			}
+			r := designRecord(t, result.Snapshot, "Requirement", "Latency")
+			d := newDesignResolver(result.Snapshot)
+			if got := d.measurementGuidance(r).Missing(); !slices.Equal(got, tc.missing) {
+				t.Fatalf("model %v, want %v", got, tc.missing)
+			}
+		})
 	}
 }

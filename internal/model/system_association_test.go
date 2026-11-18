@@ -54,10 +54,10 @@ func TestSpecificationSystemSelectionIsConsistent(t *testing.T) {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	s := result.Snapshot
-	r := designRecord(t, s, "GeneralRequirement", "Explicit")
+	r := designRecord(t, s, "Requirement", "Explicit")
 	selected := designRecord(t, s, "System", "Explicit selection")
 	local := designRecord(t, s, "System", "Directory default")
-	if r["specification_system"] != selected["id"] || r["system_context"] != local["id"] || r["specification_system_origin"] != "explicit" {
+	if r["specification_system"] != selected["id"] || r["specification_system"] == local["id"] || r["specification_system_origin"] != "explicit" {
 		t.Fatal(r)
 	}
 	if len(Strings(r["quality_attributes"])) != 1 || Strings(r["applies_to"])[0] != local["id"] {
@@ -68,7 +68,7 @@ func TestSpecificationSystemSelectionIsConsistent(t *testing.T) {
 		t.Fatal(r)
 	}
 	forged := cloneSnapshot(t, s)
-	designRecord(t, forged, "GeneralRequirement", "Explicit")["specification_system"] = local["id"]
+	designRecord(t, forged, "Requirement", "Explicit")["specification_system"] = local["id"]
 	requireFinding(t, forged, "concept.projection")
 }
 
@@ -84,7 +84,7 @@ func TestInvalidSpecificationSystemNeverFallsBack(t *testing.T) {
 			if result.ExitCode == 0 {
 				t.Fatal("invalid selection accepted")
 			}
-			r := designRecord(t, result.Snapshot, "GeneralRequirement", "Explicit")
+			r := designRecord(t, result.Snapshot, "Requirement", "Explicit")
 			if r["specification_system"] != nil || len(Strings(r["quality_attributes"])) != 0 {
 				t.Fatal("fell back to directory context", r)
 			}
@@ -107,8 +107,8 @@ func TestExplicitSelectionDoesNotRequireUnselectedDirectoryDefault(t *testing.T)
 	if result.ExitCode != 0 {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
-	r := designRecord(t, result.Snapshot, "GeneralRequirement", "Selected client")
-	if r["system_context"] != nil || len(Strings(r["quality_attributes"])) != 1 {
+	r := designRecord(t, result.Snapshot, "Requirement", "Selected client")
+	if r["specification_system_origin"] != "explicit" || len(Strings(r["quality_attributes"])) != 1 {
 		t.Fatal(r)
 	}
 	for _, source := range result.Snapshot.Sources {
@@ -129,7 +129,7 @@ func TestSpecificationSelectionUsesLinkDestinationsNotLabelsOrImages(t *testing.
 	if result.ExitCode != 0 {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
-	r := designRecord(t, result.Snapshot, "GeneralRequirement", "Explicit")
+	r := designRecord(t, result.Snapshot, "Requirement", "Explicit")
 	if len(Strings(r["quality_attributes"])) != 1 || len(Strings(r["specification_system_references"])) != 1 {
 		t.Fatal(r)
 	}
@@ -140,7 +140,7 @@ func TestOfflineValidationRejectsClassificationWhenExplicitSelectionIsUnresolved
 	traceEdit(t, root, "specs/requirements/explicit.requirement.spec.md", "../../remote/specs/system.spec.md#selected-system", "../../missing/specs/system.spec.md")
 	result := conformanceExport(t, root)
 	s := cloneSnapshot(t, result.Snapshot)
-	r := designRecord(t, s, "GeneralRequirement", "Explicit")
+	r := designRecord(t, s, "Requirement", "Explicit")
 	selected := designRecord(t, s, "System", "Explicit selection")
 	attribute := Strings(selected["quality_attributes"])[0]
 	r["quality_attributes"] = []string{attribute}

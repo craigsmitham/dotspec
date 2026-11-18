@@ -37,7 +37,7 @@ func TestGeneralRequirement(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if r.Type != "requirement" || r.ID != "preserve" || len(r.QualityAttributes) != 2 || !strings.Contains(r.Statement, "state_after = state_before") || !strings.Contains(r.Markdown, "## Assumptions") || r.Rationale == "" || r.VerificationPlan == "" || len(Check(r)) != 0 {
+	if r.ID != "preserve" || len(r.QualityAttributes) != 2 || !strings.Contains(r.Statement, "state_after = state_before") || !strings.Contains(r.Markdown, "## Assumptions") || r.Rationale == "" || r.VerificationPlan == "" || len(Check(r)) != 0 {
 		t.Fatalf("lost authored content: %+v", r)
 	}
 	if !r.References.Anchors["preserve"] || !r.References.Anchors["postcondition"] {
@@ -78,7 +78,7 @@ func TestDraftAndStructure(t *testing.T) {
 }
 
 func FuzzParse(f *testing.F) {
-	for _, seed := range []string{example, Template, "---\ntype: requirement\nquality_attributes: [null]\n---\n# Draft\n"} {
+	for _, seed := range []string{example, Template, QualityTemplate, "---\ntype: requirement\nquality_attributes: [null]\n---\n# Draft\n"} {
 		f.Add([]byte(seed))
 	}
 	f.Fuzz(func(t *testing.T, data []byte) {

@@ -1,4 +1,4 @@
-// Package obligation shares the authoring model for general and quality requirements.
+// Package obligation is the authoring model for the obligation a requirement specification states.
 package obligation
 
 import (
@@ -28,7 +28,6 @@ type Content struct {
 	Statement           string                         `json:"statement"`
 	Criterion           string                         `json:"criterion,omitempty"`
 	VerificationPlan    string                         `json:"verification_plan"`
-	MeasurementPlan     string                         `json:"measurement_plan,omitempty"`
 	Rationale           string                         `json:"rationale"`
 	QualityAttributes   []string                       `json:"quality_attributes"`
 	Classification      Classification                 `json:"classification"`
@@ -63,7 +62,7 @@ func Parse(data []byte, kind string) (*Content, error) {
 	ids.AddAnchors(doc.Anchors)
 	fields := map[string]*string{
 		"Applies to": &spec.Applicability, "Statement": &spec.Statement,
-		"Validation plan": &spec.ValidationPlan, "Verification plan": &spec.VerificationPlan, "Measurement plan": &spec.MeasurementPlan,
+		"Validation plan": &spec.ValidationPlan, "Verification plan": &spec.VerificationPlan,
 		"Criterion": &spec.Criterion, "Rationale": &spec.Rationale,
 	}
 	for _, section := range doc.Sections {

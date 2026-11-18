@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/craigsmitham/dotspec/internal/quality"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
 )
@@ -14,7 +13,14 @@ type Group struct {
 	Requirements []*Requirement `json:"requirements"`
 }
 
-func Init(path, slug string) (string, error) {
+func Init(path, slug string) (string, error) { return InitWithPreset(path, slug, "general") }
+
+// InitWithPreset creates a requirement from the selected authoring template.
+func InitWithPreset(path, slug, preset string) (string, error) {
+	template, err := TemplateFor(preset)
+	if err != nil {
+		return "", err
+	}
 	if err := ValidateSlug(slug); err != nil {
 		return "", err
 	}
@@ -25,7 +31,7 @@ func Init(path, slug string) (string, error) {
 	if err := Layout.ValidateLocal(dir); err != nil {
 		return "", err
 	}
-	return Layout.Create(dir, slug, Template)
+	return Layout.Create(dir, slug, template)
 }
 
 // Show selects exactly one requirement spec in the requested directory, without searching
@@ -53,7 +59,7 @@ func Show(path, slug string) (*Requirement, error) {
 	return spec, nil
 }
 
-// List inventories general and quality requirements, grouping them by the identity of their enclosing system (its source path).
+// List inventories requirements, grouping them by the identity of their enclosing system (its source path).
 // Groups are ordered by system name then path, with unassociated requirement specs last.
 // Requirements within a group are ordered by source path.
 func List(path string) ([]*Group, error) {
@@ -61,22 +67,18 @@ func List(path string) ([]*Group, error) {
 	if err != nil {
 		return nil, err
 	}
-	paths, err := specfile.Discover(dir, func(name string) bool { return Layout.Match(name) || quality.Layout.Match(name) })
+	paths, err := specfile.Discover(dir, Layout.Match)
 	if err != nil {
 		return nil, err
 	}
 	bySystem := make(map[string]*Group)
 	var groups []*Group
 	for _, path := range paths {
-		spec, err := readInventory(path)
+		spec, err := Read(path)
 		if err != nil {
 			return nil, err
 		}
-		layout := Layout
-		if spec.Type == quality.Layout.Kind {
-			layout = quality.Layout
-		}
-		dir, err := layout.Owner(path)
+		dir, err := Layout.Owner(path)
 		if err != nil {
 			return nil, err
 		}
@@ -120,17 +122,4 @@ func associatedSystem(dir, source string) (*system.System, error) {
 		return nil, fmt.Errorf("resolve associated system for requirement specs in %s: %w", dir, err)
 	}
 	return associated, nil
-}
-
-// Quality has specialized authoring fields but is the same kind of obligation.
-// The inventory normalizes only its view; source Markdown and type stay intact.
-func readInventory(path string) (*Requirement, error) {
-	if Layout.Match(path) {
-		return Read(path)
-	}
-	q, err := quality.Read(path)
-	if err != nil {
-		return nil, err
-	}
-	return &Requirement{Type: quality.Layout.Kind, Content: q.Content}, nil
 }

@@ -72,7 +72,7 @@ passing does not establish semantic adequacy of arbitrary specifications.
 
 ## Related specifications
 
-[Inspection preserves source material](../quality/inspection-preserves-source.quality.spec.md)
+[Inspection preserves source material](../requirements/inspection-preserves-source.requirement.spec.md)
 defines the existing source-preservation quality obligation.
 [Continue checking after a structural error](continue-after-invalid-spec.requirement.spec.md)
 defines continued inspection. The

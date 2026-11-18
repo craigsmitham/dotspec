@@ -4,7 +4,7 @@ Specification project: **user-needs**. Project membership does not imply a Syste
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.17.0-draft`; mapping `dotspec-markdown/13`. Only acquired records and explicit relationships are shown. Missing links do not establish missing needs, capabilities or implementation.
+Model `0.18.0-draft`; mapping `dotspec-markdown/14`. Only acquired records and explicit relationships are shown. Missing links do not establish missing needs, capabilities or implementation.
 
 `declares` locates a record; `applies to` identifies its explicit scope. For an outcome, that scope identifies where it is a success criterion; for an obligation, where the commitment applies. `supports` records intended contribution, not achievement. Capability dependencies are distinct from structural `part of` links. Providers are optional and non-exhaustive; human and procedural enablers remain in the descriptions. Step order and switching timelines are not dependency edges. The diagram focuses on semantic relationships; declaration ownership and progress cases appear in the table and definitions below.
 
@@ -15,7 +15,7 @@ flowchart LR
   n3["JobStep: Adapt travel plans"]
   n4["DesiredOutcome: Timely awareness"]
   n5["DesiredOutcome: Confidence in arrival"]
-  n7["GeneralRequirement: Notify affected commuters"]
+  n7["Requirement: Notify affected commuters"]
   n8["System: Journey service"]
   n9["Capability: Service-change detection"]
   n10["Component: Notification service"]
@@ -187,7 +187,7 @@ Illustrative hypothesis for this example, not an interview finding or validated 
 
 No interviews or outcome survey have been conducted. Importance, satisfaction and opportunity assessments would need a dated study and a defined population.
 
-### GeneralRequirement: Notify affected commuters
+### Requirement: Notify affected commuters
 
 Source: [Notify affected commuters](<../../examples/user-needs/specs/requirements/notify-commuters.requirement.spec.md#notify-affected-commuters>)
 

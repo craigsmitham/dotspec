@@ -58,7 +58,7 @@ restating those rules here. A passing example does not settle untested cases.
 - [Use-case commands](../../testdata/use-cases.txtar)
 - [Concept commands](../../testdata/concepts.txtar)
 - [Quality models and system population](../../testdata/quality-models.txtar)
-- [Quality requirements and attributes](../../testdata/quality.txtar)
+- [Classified requirements and quality attributes](../../testdata/classified-requirements.txtar)
 - [Business-rule commands](../../testdata/business-rules.txtar)
 - [General requirements](../../testdata/requirements.txtar)
 - [Source discovery through ordinary file references](../../testdata/sources.txtar)

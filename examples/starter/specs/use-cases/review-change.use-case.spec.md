@@ -36,13 +36,13 @@ Name external collaborators and the services or notifications exchanged with the
 
 Identify interests that affect the promised behavior, including those of nonparticipants.
 
-## Minimum guarantees
+## Minimal guarantees
 
 State or link to what remains protected even when the actor's goal is not achieved.
 
-## Success criterion
+## Success guarantees
 
-State or link to the observable condition that completes the actor's goal.
+State or link to what holds when the actor's goal is achieved.
 
 ## Main success scenario
 
@@ -61,6 +61,6 @@ Use descriptive subheadings when other sources need to link to a branch.
 
 State whether the scenario's order is representative or required; link to the governing rule for required order.
 
-## Related jobs
+## Supports
 
-Link to the jobs, steps, or desired outcomes this use case supports.
+Link to the jobs, steps, desired outcomes, or higher-level use cases this use case supports.

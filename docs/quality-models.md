@@ -1,7 +1,7 @@
 # Populate system quality attributes from a model
 
 Use a reusable quality model when you want a starting set of concerns to tailor
-for a system. Dotspec copies selected definitions into the system's existing
+for a system. dotspec copies selected definitions into the system's existing
 `Quality attributes` section. The resulting declarations are ordinary Markdown;
 editing the source model or upgrading dotspec does not change them.
 
@@ -75,7 +75,7 @@ existing system prose, attribute order, file permissions, BOM, and line endings.
 
 Any selected ID already present in the system causes the operation to fail
 without writing, including a second application of the same selection. Unknown
-IDs and an invalid resulting document also leave the file unchanged. Dotspec
+IDs and an invalid resulting document also leave the file unchanged. dotspec
 never merges or replaces an existing declaration automatically.
 
 Each copied definition receives a source link. Relative Markdown links and
@@ -85,7 +85,9 @@ changes reviewable before writing.
 
 After copying, edit definitions to explain their meaning for your system. Add
 quality requirements separately when you know the actual obligations, conditions,
-and measures. Copying does not create requirements, thresholds, or evidence.
+and measures: a quality requirement is a requirement whose `quality_attributes`
+name these attributes, and `dotspec requirement init <slug> --preset quality`
+starts one. Copying does not create requirements, thresholds, or evidence.
 Use [Develop requirements](develop-requirements.md) to turn selected concerns into
 scoped obligations with criteria and assessment guidance. Product properties and
 outcomes for users in a context of use need different evidence.
@@ -167,7 +169,7 @@ computed requirement navigation uses `classification.ancestors`.
 Model definitions are independent of enclosing systems. A system's requirement
 labels resolve only against that system's declarations; they cannot implicitly
 use attributes from a nearby model. Project `check`, `sources`, and `model export`
-include quality-model files alongside other specification kinds. Bundled resources
+include quality-model files alongside other specification types. Bundled resources
 are not automatically inserted into a project's source inventory.
 
 All commands support `--json`. `apply --json` returns source, target, copied IDs,

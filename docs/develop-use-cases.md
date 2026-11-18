@@ -26,8 +26,10 @@ Keep the actor's goal distinct from the broader job or desired outcome it suppor
 
 Use summary (kite) for a larger accomplishment, user task (sea) for a coherent
 user goal, and subfunction (fish) for a complex or reused supporting interaction.
-A button click rarely warrants its own use case. Link related use cases in prose
-rather than forcing them into a strict hierarchy or assuming a code-module boundary.
+A button click rarely warrants its own use case. Use a Supports section to link a
+use case to the higher-level use case, job, step, outcome or goal it contributes to.
+Link other related use cases in prose rather than forcing them into a strict
+hierarchy or assuming a code-module boundary.
 
 Inspect the collection with:
 
@@ -49,8 +51,8 @@ links creating a draft, discovering sources, and checking specifications.
 For a selected user task, write a short typical success path. State actor intentions
 and visible system responsibilities, including exchanges with external collaborators.
 Use a paragraph or numbered steps. Keep data schemas, interface details, and internal
-design in their appropriate sources. Explain whether sequence is representative;
-link any rule that actually requires an order.
+design in their appropriate sources. Explain in prose, under Sequence, whether the
+order is representative; link any rule that actually requires an order.
 
 Brainstorm alternative success paths and failures before solving them all. A
 condition-only extension with “handling unresolved” is useful evidence of a question.
@@ -84,15 +86,17 @@ End the request without a reservation.
 The equipment catalogue remains the source of availability information.
 ```
 
-Here the labelled child is a branch and Notes is explanatory content. Labels such
-as `1a2a` and relative `.1a` are optional reading aids. Markdown nesting determines
-branch ownership. For casual prose, simply indent and keep writing; it remains
-fully represented even when it is not decomposed into branch records.
+Here the labelled child is a nested branch and Notes holds the notes of the `1a`
+branch. Labels such as `1a2a` and relative `.1a` are optional reading aids. Markdown
+nesting determines branch ownership. For casual prose, simply indent and keep
+writing; it remains fully represented even when it is not decomposed into branch
+records.
 
-Use `Condition`, `Location` and `Handling` subsections only when that separation
-helps the reader. Handling can be a paragraph or steps, including where the
-interaction resumes or ends. Write unresolved questions in prose. There is no
-required handling status or actor/action/result form for each step.
+Use `Condition` and `Handling` subsections only when that separation helps the
+reader. Say where the condition arises in the branch label or narrative. Handling
+can be a paragraph or steps, including where the interaction resumes or ends.
+Write unresolved questions in prose. There is no required handling status or
+actor/action/result form for each step.
 
 ## Add context where it changes the promise
 
@@ -108,9 +112,11 @@ than maintaining empty ceremony.
 
 Distinguish the initiating event from preconditions already expected true. If the
 system must handle a condition being false, describe that behavior instead of
-assuming it away. State the success criterion and, when consequential, minimum
-guarantees that survive failure. Supporting actors and stakeholder interests can
-expose promises that the primary actor's success alone misses.
+assuming it away. Under Success guarantees, state what holds when the actor's goal
+is achieved. When consequential, state under Minimal guarantees what holds however
+the use case ends. List items or headed entries in either section are distinguished
+as separate conditions. Supporting actors and stakeholder interests, written as
+prose, can expose promises that the primary actor's success alone misses.
 
 [Check specifications](../specs/use-cases/check-specifications.use-case.spec.md)
 illustrates this distinction: errors found in specifications can accompany a
@@ -134,15 +140,18 @@ A work item, requirement, or test description can link to
 `reserve-equipment.use-case.spec.md#payment-result-unknown`. Within the same file,
 use `#payment-result-unknown`. Keep the heading stable while references rely on it;
 if it changes, update links and run `dotspec check`. Labels such as `3a` can help
-readers locate a branch, but they are not durable identities. Dotspec does not
+readers locate a branch, but they are not durable identities. dotspec does not
 parse step numbering into a control-flow graph. You do not need separate files
 or authored IDs for branches; model export creates source-backed branch records.
 
 Choose where each obligation is defined. Accepted use-case prose can carry a
 behavioral obligation directly; it need not be duplicated in a requirement file.
 Alternatively, a narrative can explain and link to a rule owned by another source.
-Explain that role around the link. Keep general rules and complementary data or
-quality specifications where they can state obligations more clearly.
+Explain that role around the link. To record which obligation, business rule or
+concept action a scenario step illustrates, add an
+[Illustrates bullet](review-requirements.md#relate-scenarios-to-general-behavior)
+under that step. Keep general rules and complementary data specifications or
+quality requirements where they can state obligations more clearly.
 
 Tests may define accepted examples or verify an existing rule. State which role
 they play. Link resolution establishes that a target exists; it does not establish

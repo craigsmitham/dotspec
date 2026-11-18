@@ -23,9 +23,9 @@ there is no stored finding lifecycle or acknowledgement state. The
 fields, diagnostic identifiers, and exit statuses.
 
 Quality obligations are defined by
-[textual diagnostic severity](../quality/diagnostic-severity.quality.spec.md),
-[repeatable reports](../quality/repeatable-inspection.quality.spec.md),
-and [source preservation](../quality/inspection-preserves-source.quality.spec.md).
+[textual diagnostic severity](../requirements/diagnostic-severity.requirement.spec.md),
+[repeatable reports](../requirements/repeatable-inspection.requirement.spec.md),
+and [source preservation](../requirements/inspection-preserves-source.requirement.spec.md).
 
 ## Actions
 

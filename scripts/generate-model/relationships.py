@@ -6,30 +6,20 @@ maintaining another endpoint or semantics table.
 from typing import Any
 from model_views import field, text, link
 
-CATEGORIES = {
-    'declaration-containment': 'Declaration containment',
-    'structural-context': 'Structural context',
-    'semantic-association': 'Semantic association',
-    'contextual-citation': 'Contextual citation',
-    'derived-projection': 'Derived projection',
-    'provenance': 'Source and inspection provenance',
-    'representation': 'Document representation',
-}
 REQUIRED = ('relationship_category', 'relationship_scope', 'relationship_cycles',
             'relationship_basis', 'relationship_inverse', 'relationship_ordering')
 
 
 def validate_relationships(catalog: dict[str, Any]) -> None:
     classes = catalog['classes']
+    categories = catalog['relationship_categories']
+    assertions = [name for name, cls in classes.items() if 'Assertion' in cls['ancestors']]
+    if assertions != ['Assertion'] or classes['Assertion']['abstract']:
+        raise ValueError('Assertion: relationship views use one concrete assertion class')
+    for endpoint in ('subject', 'object', 'projection_path'):
+        if not classes['Assertion']['slots'].get(endpoint, {}).get('required'):
+            raise ValueError(f'Assertion.{endpoint}: assertion endpoints and projection path must be required')
     for name, cls in classes.items():
-        if 'Assertion' in cls['ancestors'] and not cls['abstract']:
-            for endpoint in ('subject', 'object'):
-                if not cls['slots'][endpoint]['required']:
-                    raise ValueError(f'{name}.{endpoint}: assertion endpoints must be required')
-            if not cls['slots'].get('projection_path', {}).get('required'):
-                raise ValueError(f'{name}: assertion projection_path must be required')
-            if not cls['annotations'].get('projection_of'):
-                raise ValueError(f'{name}: assertions must identify canonical projection fields')
         trace_headings = set()
         for prop, slot in cls['slots'].items():
             path = f'{name}.{prop}'
@@ -40,8 +30,8 @@ def validate_relationships(catalog: dict[str, Any]) -> None:
                 if not heading or not targets or heading in trace_headings:
                     raise ValueError(f'{path}: trace headings and targets must be paired and unique')
                 trace_headings.add(heading)
-                if 'TraceableElement' not in cls['ancestors'] or not slot['multivalued']:
-                    raise ValueError(f'{path}: trace relationships require a traceable source and multiple targets')
+                if 'DomainElement' not in cls['ancestors'] or not slot['multivalued']:
+                    raise ValueError(f'{path}: trace relationships require a domain element source and multiple targets')
                 if set(targets.split(' or ')) != set(slot['reference_ranges']):
                     raise ValueError(f'{path}: trace targets must match the canonical endpoint ranges')
                 refs = cls['slots'].get(prop + '_references', {})
@@ -62,7 +52,7 @@ def validate_relationships(catalog: dict[str, Any]) -> None:
             for key in REQUIRED:
                 if not annotations.get(key):
                     raise ValueError(f'{path}: missing relationship metadata {key}')
-            if annotations['relationship_category'] not in CATEGORIES:
+            if annotations['relationship_category'] not in categories:
                 raise ValueError(f'{path}: invalid relationship category')
             if annotations['relationship_cycles'] not in ('forbidden', 'permitted', 'not-applicable'):
                 raise ValueError(f'{path}: invalid relationship cycle policy')
@@ -104,28 +94,28 @@ def relationships_markdown(catalog: dict[str, Any]) -> bytes:
         'including inherited endpoint refinements. Unchanged inherited fields are documented on their base class. '
         'Embedded values and their fields remain in the [complete reference](index.md).', '',
         'Typed fields are authoritative. Assertions are optional derived views, not a complete substitute for those fields. '
-        '`projection_path` retains the canonical field and role of each assertion. Reverse navigation is derived; '
+        '`projection_path` names the canonical field each assertion projects. Reverse navigation is derived; '
         'stored owner backlinks are checked against canonical membership fields.', '',
+        'In the model source a field states its category and only what differs from it. Scope, cycle policy and basis '
+        'default from the category; an unstated inverse is none, an unstated label is the field name, and unstated '
+        'ordering follows the field shape. This reference shows the completed contract.', '',
         'Cardinalities describe snapshots, including unfinished declarations. An optional resolved target does not mean '
         'a complete authored design can omit the definition it needs. Required list presence does not imply a nonempty list. '
         'Ordering preserves authored presentation unless a field explicitly says otherwise; it does not impose execution order. '
         'Cycle policies apply to the named relationship, not the entire graph: owner/member backlinks are intentionally reciprocal.', '',
         'Relationship categories describe edges. They are independent of the core/supporting/generic classifications of model subsets.', '',
-        '## Relationship categories', '', '| Category | Scope |', '| --- | --- |',
-        '| Declaration containment | A declaration and its owned members; source-local, with checked owner backlinks. |',
-        '| Structural context | Directory-derived discovery context; no structural decomposition or semantic inheritance. |',
-        '| Semantic association | Explicit domain claims with typed targets and relationship-specific scope. |',
-        '| Contextual citation | Authored reference occurrences; citations alone do not establish domain claims. |',
-        '| Derived projection | Optional assertion endpoints projected from canonical fields. |',
-        '| Source and inspection provenance | Evidence linking model records, source occurrences and inspection results. |',
-        '| Document representation | Syntax structure and indexes, rather than domain ownership. |', '',
-        '## Fields', '']
+        '## Relationship categories', '', '| Category | Meaning | Default scope | Default cycles | Default basis |', '| --- | --- | --- | --- | --- |']
+    for category in catalog['relationship_categories'].values():
+        defaults = category['defaults']
+        lines.append(f'| {category["title"]} | {text(category["description"])} | {text(defaults.get("relationship_scope", ""))} | '
+                     f'{defaults.get("relationship_cycles", "")} | {text(defaults.get("relationship_basis", ""))} |')
+    lines += ['', '## Fields', '']
     for name, prop, slot in declared_relationships(catalog):
         a = slot['annotations']
         lines += [f'### {name}.{prop}', '',
                   f'{link(name)} → ' + ' or '.join(link(t) for t in slot['reference_ranges']) + '.', '',
                   text(slot['description'] or a['relationship_basis']), '',
-                  f'- Category: {CATEGORIES[a["relationship_category"]]}. Cardinality: `{cardinality(slot)}`.',
+                  f'- Category: {catalog["relationship_categories"][a["relationship_category"]]["title"]}. Cardinality: `{cardinality(slot)}`.',
                   f'- Scope: {text(a["relationship_scope"])}',
                   f'- Basis: {text(a["relationship_basis"])}',
                   f'- Ordering: {text(a["relationship_ordering"])}. Cycles: {a["relationship_cycles"]}.',
@@ -136,10 +126,11 @@ def relationships_markdown(catalog: dict[str, Any]) -> bytes:
             lines.append(f'- Complete section content required when this field is present: `{name}.{a["requires_content"]}`.')
         lines.append('')
     lines += ['## Assertion projections', '',
-              'Every concrete assertion declares its canonical field paths. An assertion must identify one '
-              'of these paths with `projection_path` and agree with that field’s subject, target and provenance.', '',
-              '| Assertion | Canonical paths |', '| --- | --- |']
-    for name, cls in catalog['classes'].items():
-        if cls['annotations'].get('projection_of'):
-            lines.append(f'| {link(name)} | `{cls["annotations"]["projection_of"]}` |')
+              'An ' + link('Assertion') + ' is a derived view of one canonical field. Every declaration membership, '
+              'semantic association and structural context field can be projected; `projection_path` must name one of '
+              'these paths and agree with that field’s subject, target and provenance.', '',
+              '| Projection path | Subject | Object |', '| --- | --- | --- |']
+    for path in catalog['projections']:
+        source, slot = field(catalog, path)
+        lines.append(f'| `{path}` | {link(source)} | ' + ' or '.join(link(t) for t in slot['reference_ranges']) + ' |')
     return ('\n'.join(lines).rstrip()+'\n').encode()

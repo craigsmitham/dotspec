@@ -4,7 +4,7 @@ Specification project: **system-structure**. Project membership does not imply a
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.17.0-draft`; mapping `dotspec-markdown/13`. This view covers only acquired records within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior or missing implementation.
+Model `0.18.0-draft`; mapping `dotspec-markdown/14`. This view covers only acquired records within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior or missing implementation.
 
 ## System structure
 
@@ -30,7 +30,7 @@ flowchart BT
 
 ## Interfaces
 
-Required and provided are relative to the declaring subject. Each entry is an addressable specification; native contract references do not prove implementation or compatibility.
+Required and provided are relative to the declaring subject. Each entry is an addressable element; native contract references do not prove implementation or compatibility.
 
 | Subject | Direction | Interface |
 | --- | --- | --- |
@@ -49,7 +49,7 @@ Feature membership is many-to-many and does not own the grouped records. Compone
 
 Only explicit applicability to acquired systems and components is listed. Declaration inside a component does not implicitly supply an applicability target. Plans describe intended system verification; their presence does not prove satisfaction.
 
-| Obligation | Subjects | Verification guidance | Measurement guidance |
+| Obligation | Subjects | Verification plan | Criterion |
 | --- | --- | --- | --- |
 | [Reserve purchased stock](<../../examples/system-structure/specs/requirements/reserve-stock.requirement.spec.md#reserve-purchased-stock>) | [Reservations](<../../examples/system-structure/specs/system.spec.md#reservations>) | Recorded in source | Not recorded |
 
@@ -57,10 +57,10 @@ Only explicit applicability to acquired systems and components is listed. Declar
 
 An explicit specification system overrides the directory default. These associations do not establish structural parentage.
 
-| Specification | Selected system | Selection origin | Directory context |
-| --- | --- | --- | --- |
-| [Reservation](<../../examples/system-structure/specs/concepts/reservation.concept.spec.md#reservation>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | directory | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) |
-| [Reserve purchased stock](<../../examples/system-structure/specs/requirements/reserve-stock.requirement.spec.md#reserve-purchased-stock>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | explicit | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) |
+| Specification | System | Origin |
+| --- | --- | --- |
+| [Reservation](<../../examples/system-structure/specs/concepts/reservation.concept.spec.md#reservation>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | directory |
+| [Reserve purchased stock](<../../examples/system-structure/specs/requirements/reserve-stock.requirement.spec.md#reserve-purchased-stock>) | [Online Store](<../../examples/system-structure/specs/system.spec.md#online-store>) | explicit |
 
 ## Concept uses
 
@@ -72,7 +72,7 @@ An explicit specification system overrides the directory default. These associat
 
 Linked contracts, architecture decisions, and implementation artifacts retain their own authority. Normative commitments belong in requirements or obligation clauses.
 
-### GeneralRequirement: Reserve purchased stock
+### Requirement: Reserve purchased stock
 
 [Reserve purchased stock](<../../examples/system-structure/specs/requirements/reserve-stock.requirement.spec.md#reserve-purchased-stock>)
 

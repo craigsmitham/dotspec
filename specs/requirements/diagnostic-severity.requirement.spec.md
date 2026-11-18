@@ -1,5 +1,5 @@
 ---
-type: quality
+type: requirement
 id: diagnostic-severity
 quality_attributes:
   - diagnosability
@@ -22,7 +22,7 @@ of terminal styling.
 Use the text-label rule in [Statement](#statement), with supported severity values
 defined by the [check report contract](../../README.md#check-specifications).
 
-## Measurement plan
+## Verification plan
 
 Render reports containing each supported diagnostic severity. Capture output
 with terminal-style environment settings and in redirected-output conditions,

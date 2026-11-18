@@ -1,6 +1,6 @@
 # Verification and validation
 
-Dotspec distinguishes assessments by **subject and basis**, not by whether the
+dotspec distinguishes assessments by **subject and basis**, not by whether the
 method is a test, interview, inspection or proof. This vocabulary applies across
 business, user and software requirements and is independent of the model's
 core/supporting/generic classification.
@@ -61,12 +61,12 @@ its mere presence does not establish it.
 
 Terminology is not uniform. NASA uses **requirements validation** broadly enough
 to include clarity, consistency, verifiability and traceability as well as fit to
-needs. Dotspec distinguishes those quality and fitness questions explicitly.
+needs. dotspec distinguishes those quality and fitness questions explicitly.
 
 Meyer's *Handbook of Requirements and Business Analysis*, terminology note on
 printed page 20, deliberately abbreviates verification and validation together as
 **verification**, including in its requirements-quality chapters. It also describes
-the programming-research use of verification for correctness proofs. Dotspec adopts
+the programming-research use of verification for correctness proofs. dotspec adopts
 useful review practices from the handbook without adopting its umbrella shorthand.
 [Handbook publication](https://doi.org/10.1007/978-3-031-06739-6).
 
@@ -76,17 +76,16 @@ validation in the intended-use sense. The
 [JSON Schema validation specification](https://json-schema.org/draft/2020-12/json-schema-validation)
 uses validation for instance constraint checks.
 
-## Dotspec commands and model roles
+## dotspec commands and model roles
 
 | Surface | Scope of the claim |
 | --- | --- |
 | `model validate` | Snapshot conformance and integrity: schema, typed references, source fidelity and graph invariants. |
 | `check` | Automated authoring and selected requirements-quality checks that support requirements verification. Passing does not complete requirements verification or establish fitness. |
 | `model review` | Review material for requirements quality, needs and intent, assumptions, validation plans, and system verification planning. It does not execute plans. |
-| `verification_plan` on an obligation | A plan to assess a realization against that obligation, not a review of the requirement's wording. |
+| `verification_plan` on an obligation | A plan to assess a realization against that obligation, not a review of the requirement's wording. Its Method covers any measurement procedure and sampling. |
 | `validation_plan` on a traceable element | A plan to assess the stated subject against needs, intended use or, for an assumption, empirical support and justified reliance. |
-| `criterion` | An optional explicit satisfaction rule (`ObligationCriterion`), defining or referencing required bounds for any obligation. |
-| `measurement_plan` | How to obtain and interpret observations against the obligation's statement or criterion. It may supply the whole verification approach. |
+| `criterion` | An optional explicit satisfaction rule (`ObligationCriterion`), defining or referencing required bounds for any obligation, with an optional Measure and Target. |
 
 A well-formed snapshot can faithfully represent a malformed or incomplete source.
 A source that passes authoring checks can still express the wrong requirements.
@@ -102,8 +101,8 @@ relationships remain contribution claims.
 Define each required bound once in the statement or criterion, or reference its
 authoritative source. Plan Success criteria explain interpretation against that
 basis; they should refer to its bounds rather than redefine them. Applicability
-and criterion conditions describe required operating context, while plan Conditions
-describe the assessment setup and how it represents that context. See
+describes the required operating context, while plan Conditions describe the
+assessment setup and how it represents that context. See
 [Develop requirements](develop-requirements.md) for examples.
 
 Validation plans can concern the quality of a proposed solution's fit, a requirement's
@@ -141,8 +140,7 @@ introduce an assessment-result or approval workflow. Revision-bound observations
 assessment rationale and acceptance records remain in referenced native artifacts.
 A future evidence model must preserve their subject, basis, revision, context,
 method, result and limits. No `verified` or `validated` boolean is inferred from
-links, a plan, a passing test or a merge. The sketch's proposed `verified_by` link
-assigns a check; it is not an observation or completed verification judgment.
+links, a plan, a passing test or a merge.
 
 See [Review requirements](review-requirements.md) for authoring plans and reading
 advisory findings, and the [generated review example](reference/requirements-review-example.md)

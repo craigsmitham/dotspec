@@ -56,6 +56,69 @@ def annotation_values(annotations: Any) -> dict[str, str]:
     return {str(name): str(item["value"] if isinstance(item, dict) else item.value) for name, item in sorted(as_dict(annotations).items())}
 
 
+def relationship_categories(raw_model: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """The RelationshipCategory enumeration defines each category and its field defaults."""
+    values = raw_model.get("enums", {}).get("RelationshipCategory", {}).get("permissible_values", {})
+    if not values:
+        raise ValueError("model must declare the RelationshipCategory enumeration")
+    return {
+        str(name): {
+            "title": str(value.get("title") or name),
+            "description": str(value.get("description") or ""),
+            "defaults": {str(k): str(v) for k, v in sorted((value.get("annotations") or {}).items())},
+        }
+        for name, value in values.items()
+    }
+
+
+def apply_relationship_defaults(name: str, shape: dict[str, Any], categories: dict[str, dict[str, Any]]) -> None:
+    """Complete a relationship field from its category so the catalog stays explicit.
+
+    A field states its category and only what differs. Scope, cycle policy and
+    basis come from the category; an unstated inverse is none, an unstated label
+    is the field name, and unstated ordering follows the field shape.
+    """
+    annotations = shape["annotations"]
+    category = annotations.get("relationship_category")
+    if category is None:
+        return
+    for key, value in categories.get(category, {}).get("defaults", {}).items():
+        annotations.setdefault(key, value)
+    annotations.setdefault("relationship_inverse", "none")
+    if not shape["multivalued"]:
+        ordering = "single target"
+    elif shape["ordered"]:
+        ordering = "authored presentation order; no execution order implied"
+    else:
+        ordering = "unordered"
+    annotations.setdefault("relationship_ordering", ordering)
+    annotations.setdefault("relationship_label", name.replace("_", " "))
+
+
+def projection_paths(catalog: dict[str, Any], raw_model: dict[str, Any]) -> list[str]:
+    """Canonical Class.field paths an Assertion may project.
+
+    Every declaration membership (the checked owned_memberships paths) and every
+    semantic-association or structural-context field declared on a record class.
+    """
+    classes = catalog["classes"]
+    paths: set[str] = set()
+    for cls in classes.values():
+        for item in cls["annotations"].get("owned_memberships", "").split(" or "):
+            if item.strip():
+                paths.add(item.strip())
+    for name, definition in raw_model.get("classes", {}).items():
+        if "Record" not in classes[name]["ancestors"]:
+            continue
+        for slot_name in definition.get("attributes") or {}:
+            slot = classes[name]["slots"][slot_name]
+            if slot["reference_ranges"] and slot["annotations"].get("relationship_category") in (
+                "semantic-association", "structural-context",
+            ):
+                paths.add(f"{name}.{slot_name}")
+    return sorted(paths)
+
+
 def make_catalog(view: Any, raw_model: dict[str, Any], model_bytes: bytes) -> dict[str, Any]:
     """Project induced LinkML slots without losing inherited/narrowed ranges.
 
@@ -66,6 +129,7 @@ def make_catalog(view: Any, raw_model: dict[str, Any], model_bytes: bytes) -> di
     validate_declared_memberships(raw_model)
     classes = view.all_classes()
     enums = view.all_enums()
+    categories = relationship_categories(raw_model)
     result: dict[str, Any] = {
         "catalog_version": 1,
         "schema_id": str(view.schema.id),
@@ -73,6 +137,7 @@ def make_catalog(view: Any, raw_model: dict[str, Any], model_bytes: bytes) -> di
         "representation_version": view.induced_slot("representation_version", "Snapshot").equals_string,
         "source_sha256": hashlib.sha256(model_bytes).hexdigest(),
         "annotations": annotation_values(view.schema.annotations),
+        "relationship_categories": categories,
         "subsets": {str(n): {"title": g.title or str(n), "description": g.description or "",
                                 "classification": annotation_values(g.annotations).get("classification", "")}
                     for n, g in sorted(view.schema.subsets.items())},
@@ -134,23 +199,25 @@ def make_catalog(view: Any, raw_model: dict[str, Any], model_bytes: bytes) -> di
                 value = getattr(slot, field)
                 if value is not None:
                     shape[field] = value
+            apply_relationship_defaults(str(slot.name), shape, categories)
             record["slots"][str(slot.name)] = shape
         result["classes"][str(name)] = record
     validate_groups(result)
     validate_annotations(result)
     validate_relationships(result)
+    result["projections"] = projection_paths(result, raw_model)
     return result
 
 
 def validate_annotations(catalog: dict[str, Any]) -> None:
-    """Reject stale projection/ownership paths before they reach the CLI."""
+    """Reject stale ownership paths before they reach the CLI."""
     classes = catalog["classes"]
 
     def permits(actual: str, allowed: list[str]) -> bool:
         return any(parent in classes[actual]["ancestors"] for parent in allowed)
 
     for name, cls in classes.items():
-        for annotation in ("projection_of", "owned_memberships"):
+        for annotation in ("owned_memberships",):
             expression = cls["annotations"].get(annotation)
             if not expression:
                 continue
@@ -171,23 +238,17 @@ def validate_annotations(catalog: dict[str, Any]) -> None:
                 targets = slot["reference_ranges"]
                 if not targets:
                     raise ValueError(f"{name}.{annotation}: final field must contain record references")
-                if annotation == "projection_of":
-                    subject = cls["slots"]["subject"]["reference_ranges"]
-                    objects = cls["slots"]["object"]["reference_ranges"]
-                    if not permits(source, subject) or not all(permits(target, objects) for target in targets):
-                        raise ValueError(f"{name}.{annotation}: projection violates declared assertion endpoints")
-                else:
-                    if name not in classes[source]["ancestors"]:
-                        raise ValueError(f"{name}.{annotation}: membership source must inherit its declaring class")
-                    metadata = slot["annotations"]
-                    if metadata.get("relationship_category") != "declaration-containment" or metadata.get("relationship_cycles") != "forbidden":
-                        raise ValueError(f"{name}.{annotation}: membership must declare containment and forbid cycles")
-                    for target in targets:
-                        if f"{target}.owner" not in metadata.get("relationship_inverse", "").split(" or "):
-                            raise ValueError(f"{name}.{annotation}: membership inverse must identify {target}.owner")
-                        owner = classes[target]["slots"].get("owner", {})
-                        if not permits(source, owner.get("reference_ranges", [])):
-                            raise ValueError(f"{name}.{annotation}: {target}.owner does not permit {source}")
+                if name not in classes[source]["ancestors"]:
+                    raise ValueError(f"{name}.{annotation}: membership source must inherit its declaring class")
+                metadata = slot["annotations"]
+                if metadata.get("relationship_category") != "declaration-containment" or metadata.get("relationship_cycles") != "forbidden":
+                    raise ValueError(f"{name}.{annotation}: membership must declare containment and forbid cycles")
+                for target in targets:
+                    if f"{target}.owner" not in metadata.get("relationship_inverse", "").split(" or "):
+                        raise ValueError(f"{name}.{annotation}: membership inverse must identify {target}.owner")
+                    owner = classes[target]["slots"].get("owner", {})
+                    if not permits(source, owner.get("reference_ranges", [])):
+                        raise ValueError(f"{name}.{annotation}: {target}.owner does not permit {source}")
 
 
 def escape(value: Any) -> str:

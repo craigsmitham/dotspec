@@ -77,7 +77,7 @@ func runSystem(command, path, format string, out io.Writer) error {
 			parentText = fmt.Sprintf("%s (%s)", result.EnclosingSystem.Name, displayPath(result.EnclosingSystem.Path))
 		}
 		modelText := ""
-		for _, field := range []struct{ name, value string }{{"Goals", spec.Goals}, {"Environment", spec.Environment}, {"Assumptions", spec.Assumptions}, {"Constraints", spec.Constraints}, {"Glossary", spec.Glossary}, {"Part of", spec.PartOf}, {"Components", spec.Components}, {"Features", spec.Features}, {"Concept uses", spec.ConceptUses}, {"Synchronizations", spec.Synchronizations}} {
+		for _, field := range []struct{ name, value string }{{"Goals", spec.Goals}, {"Environment", spec.Environment}, {"Stakeholders", spec.Stakeholders}, {"Assumptions", spec.Assumptions}, {"Constraints", spec.Constraints}, {"Glossary", spec.Glossary}, {"Part of", spec.PartOf}, {"Components", spec.Components}, {"Features", spec.Features}, {"Concept uses", spec.ConceptUses}, {"Synchronizations", spec.Synchronizations}} {
 			if field.value != "" {
 				modelText += "\n\n" + field.name + "\n" + indent(field.value)
 			}

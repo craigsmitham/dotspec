@@ -13,7 +13,6 @@ import (
 
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
-	"github.com/craigsmitham/dotspec/internal/quality"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
@@ -134,7 +133,7 @@ Compare the bytes before and after inspection.
 			t.Fatal(err)
 		}
 	}
-	result, err := Export(dir, system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), quality.CheckType(), requirement.CheckType())
+	result, err := Export(dir, system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -220,7 +219,7 @@ func TestValidationAcceptsCompleteSourceBackedExport(t *testing.T) {
 	}
 	declarations := 0
 	for _, assertion := range snapshot.Assertions {
-		if String(assertion, "kind") == "DeclaresQualityAttribute" {
+		if String(assertion, "projection_path") == "System.quality_attributes" {
 			declarations++
 			if String(assertion, "subject") != String(system, "id") || !slices.Contains(attributeIDs, String(assertion, "object")) {
 				t.Fatalf("incorrect direct declaration: %+v", assertion)
@@ -268,11 +267,10 @@ func TestValidationRejectsCorruptGraph(t *testing.T) {
 			elementKind(t, s, "UseCase")["authored_id"] = "duplicate"
 			elementKind(t, s, "Scenario")["authored_id"] = "duplicate"
 		}},
-		{"unjustified classification", "label.projection", func(s *Snapshot) { elementKind(t, s, "GeneralRequirement")["quality_attributes"] = []string{} }},
+		{"unjustified classification", "label.projection", func(s *Snapshot) { elementKind(t, s, "Requirement")["quality_attributes"] = []string{} }},
 		{"unbound quality attributes", "label.unbound", func(s *Snapshot) {
-			delete(elementKind(t, s, "GeneralRequirement"), "system_context")
-			delete(elementKind(t, s, "GeneralRequirement"), "specification_system")
-			delete(elementKind(t, s, "GeneralRequirement"), "specification_system_origin")
+			delete(elementKind(t, s, "Requirement"), "specification_system")
+			delete(elementKind(t, s, "Requirement"), "specification_system_origin")
 			for _, label := range s.LabelOccurrences {
 				if String(label, "role") == "quality_classification" {
 					delete(label, "governing_system")
@@ -286,7 +284,7 @@ func TestValidationRejectsCorruptGraph(t *testing.T) {
 		}},
 		{"assertion field disagreement", "assertion.projection", func(s *Snapshot) {
 			for _, r := range s.Assertions {
-				if String(r, "kind") == "HasScenario" {
+				if String(r, "projection_path") == "UseCase.main_success_scenario" {
 					r["object"] = elementKind(t, s, "UseCase")["id"]
 					return
 				}
@@ -415,18 +413,15 @@ func TestValidationAllowsFaithfulFailuresAndUnboundLabels(t *testing.T) {
 		s.Scope["inspection_complete"] = false
 		requireValid(t, s)
 	})
-	t.Run("external payload can be checked offline", func(t *testing.T) {
+	t.Run("a payload carries its original bytes", func(t *testing.T) {
 		s := cloneSnapshot(t, original)
 		p := Object(snapshotRecord(t, s, String(elementKind(t, s, "UseCase"), "source_document"))["payload"])
-		p["storage"] = "external"
-		p["immutable_locator"] = "urn:sha256:" + String(p, "sha256")
 		delete(p, "bytes_base64")
-		requireValid(t, s)
+		requireFinding(t, s, "shape.invalid")
 	})
 	t.Run("unbound classification is not an invalid model", func(t *testing.T) {
 		s := cloneSnapshot(t, original)
-		r := elementKind(t, s, "GeneralRequirement")
-		delete(r, "system_context")
+		r := elementKind(t, s, "Requirement")
 		delete(r, "specification_system")
 		delete(r, "specification_system_origin")
 		delete(r, "quality_attributes")
@@ -506,7 +501,7 @@ func TestValidationRejectsDomainCyclesAndAttributeScopeEscape(t *testing.T) {
 		branch["owner"] = "second-branch"
 		branch["branches"] = []string{"second-branch"}
 		s.Elements = append(s.Elements, second)
-		Object(elementKind(t, s, "UseCase")["extensions"])["branches"] = []string{}
+		elementKind(t, s, "UseCase")["extensions"] = []string{}
 		requireFinding(t, s, "ownership.cycle")
 	})
 	t.Run("system containment cycle", func(t *testing.T) {
@@ -520,7 +515,7 @@ func TestValidationRejectsDomainCyclesAndAttributeScopeEscape(t *testing.T) {
 
 func TestValidationAllowsUndefinedQualityLabel(t *testing.T) {
 	s := validationSnapshot(t)
-	requirement := elementKind(t, s, "GeneralRequirement")
+	requirement := elementKind(t, s, "Requirement")
 	requirement["quality_attributes"] = []string{}
 	for _, label := range s.LabelOccurrences {
 		if String(label, "owner") == String(requirement, "id") {
@@ -531,7 +526,7 @@ func TestValidationAllowsUndefinedQualityLabel(t *testing.T) {
 		}
 	}
 	s.Assertions = slices.DeleteFunc(s.Assertions, func(r Record) bool {
-		return String(r, "kind") == "QualityClassification" && String(r, "subject") == String(requirement, "id")
+		return String(r, "projection_path") == "Obligation.quality_attributes" && String(r, "subject") == String(requirement, "id")
 	})
 	requireValid(t, s)
 }
@@ -656,7 +651,7 @@ func TestValidationShapeFailureUsesConcreteRecordAndSource(t *testing.T) {
 			if finding.Code != "shape.invalid" || !strings.HasSuffix(finding.Path, test.path) || finding.Path == "/" || len(finding.Message) > 1100 {
 				t.Fatalf("not an actionable field failure: %+v", finding)
 			}
-			if strings.Contains(finding.Message, "GeneralRequirement") || strings.Contains(finding.Message, "QualityAttribute") {
+			if strings.Contains(finding.Message, "Requirement") || strings.Contains(finding.Message, "QualityAttribute") {
 				t.Fatalf("unrelated subtype errors leaked: %s", finding.Message)
 			}
 			if test.name != "missing required identity" && (!strings.HasSuffix(finding.Source, "check.use-case.spec.md") || finding.Line < 1) {
@@ -700,6 +695,7 @@ func TestValidationRejectsDeletedSourceSubtreeDespiteRetainedPayload(t *testing.
 	snapshot.Elements = slices.DeleteFunc(snapshot.Elements, func(r Record) bool { return String(r, "id") == extensionID })
 	snapshot.Fragments = slices.DeleteFunc(snapshot.Fragments, func(r Record) bool { return removed[String(r, "content_node")] })
 	snapshot.ContentBindings = slices.DeleteFunc(snapshot.ContentBindings, func(r Record) bool { return String(r, "owner") == extensionID || removed[String(r, "content_node")] })
+	snapshot.Assertions = slices.DeleteFunc(snapshot.Assertions, func(r Record) bool { return String(r, "subject") == extensionID || String(r, "object") == extensionID })
 	refreshTestCoverage(snapshot)
 	// The original payload, digest and root span still look intact, and all
 	// remaining records are internally bound. Byte partitioning reveals the loss.

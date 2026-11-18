@@ -69,13 +69,13 @@ func TestExplicitSemanticRelationships(t *testing.T) {
 	uc := elementKind(t, s, "UseCase")
 	context := designRecord(t, s, "System", "Authoring context")
 	boundary := designRecord(t, s, "System", "Delivery system")
-	if uc["system_context"] != context["id"] || uc["subject_system"] != boundary["id"] {
-		t.Fatalf("directory context conflated with explicit boundary: %+v", uc)
+	if uc["specification_system"] != context["id"] || uc["specification_system_origin"] != "directory" || uc["subject_system"] != boundary["id"] {
+		t.Fatalf("directory default conflated with explicit boundary: %+v", uc)
 	}
 	if len(Strings(uc["supports"])) != 2 {
 		t.Fatal("missing supported job/step", uc)
 	}
-	for _, kind := range []string{"BusinessRule", "GeneralRequirement"} {
+	for _, kind := range []string{"BusinessRule", "Requirement"} {
 		r := elementKind(t, s, kind)
 		if !slices.Equal(Strings(r["applies_to"]), []string{String(uc, "id")}) {
 			t.Fatal(r)
@@ -111,7 +111,7 @@ func TestContextualLinksDoNotAssertSemanticRelations(t *testing.T) {
 	}
 	s := conformanceExport(t, root).Snapshot
 	for _, a := range s.Assertions {
-		if slices.Contains([]string{"HasSubjectSystem", "Supports", "AppliesTo"}, String(a, "kind")) {
+		if slices.Contains([]string{"UseCase.subject_system", "TraceableElement.supports", "Obligation.applies_to", "BusinessRule.applies_to"}, String(a, "projection_path")) {
 			t.Fatal("citation inferred a domain claim", a)
 		}
 	}
@@ -150,27 +150,25 @@ func TestRelationshipContractsRejectCorruptSnapshots(t *testing.T) {
 	t.Run("assertions retain declaration role", func(t *testing.T) {
 		paths := map[string]bool{}
 		for _, a := range s.Assertions {
-			if String(a, "kind") == "HasConceptType" {
-				paths[String(a, "projection_path")] = true
-			}
+			paths[String(a, "projection_path")] = true
 		}
 		if !paths["Concept.type_parameters"] || !paths["Concept.introduced_types"] {
 			t.Fatal(paths)
 		}
 		forged := cloneSnapshot(t, s)
 		for _, a := range forged.Assertions {
-			if String(a, "kind") == "HasConceptType" {
-				a["projection_path"] = "Concept.actions.actions"
+			if String(a, "projection_path") == "Concept.type_parameters" {
+				a["projection_path"] = "Concept.actions"
 				break
 			}
 		}
 		requireFinding(t, forged, "assertion.projection")
 	})
-	for _, kind := range []string{"UsesConcept", "HasConceptUse", "HasSynchronization", "ConceptDependency", "HasConceptType", "HasTypeBinding"} {
-		t.Run(kind+" requires endpoints", func(t *testing.T) {
+	for _, path := range []string{"ConceptUse.definition", "System.concept_uses", "System.synchronizations", "ConceptUse.dependencies", "Concept.type_parameters", "ConceptUse.bindings"} {
+		t.Run(path+" requires endpoints", func(t *testing.T) {
 			forged := cloneSnapshot(t, s)
 			for _, a := range forged.Assertions {
-				if String(a, "kind") == kind {
+				if String(a, "projection_path") == path {
 					delete(a, "subject")
 					delete(a, "object")
 					break
@@ -182,7 +180,7 @@ func TestRelationshipContractsRejectCorruptSnapshots(t *testing.T) {
 	t.Run("systems have only one hierarchy", func(t *testing.T) {
 		forged := cloneSnapshot(t, s)
 		sys := elementKind(t, forged, "System")
-		sys["system_context"] = sys["id"]
+		sys["specification_system"] = sys["id"]
 		requireFinding(t, forged, "shape.invalid")
 	})
 	t.Run("bindings retain section content", func(t *testing.T) {

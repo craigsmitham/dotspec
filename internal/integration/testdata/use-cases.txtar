@@ -64,7 +64,7 @@ status 0 dotspec use-case show reserve --json
 stdout '"trigger": ""'
 status 0 dotspec use-case init detailed --template expanded
 status 0 dotspec use-case show detailed --json
-stdout '"minimum_guarantees": "State or link'
+stdout '"minimal_guarantees": "State or link'
 stdout '"supporting_actors": "Name external'
 status 2 dotspec use-case init invalid --template unknown
 ! exists specs/use-cases/invalid.use-case.spec.md

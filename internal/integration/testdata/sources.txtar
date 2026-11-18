@@ -8,9 +8,9 @@ stdout '"complete": true'
 ! stderr .
 status 0 dotspec system init
 status 0 dotspec concept init cli
-status 0 dotspec quality init preservation
+status 0 dotspec requirement init preservation --preset quality
 cp ../concept.md specs/concepts/cli.concept.spec.md
-cp ../quality.md specs/quality/preservation.quality.spec.md
+cp ../quality.md specs/requirements/preservation.requirement.spec.md
 cp ../native.tla native.tla
 mkdir more-tests
 cp ../native.tla more-tests/not-included.tla
@@ -25,11 +25,11 @@ cp stdout report.json
 status 0 dotspec sources --json
 cmp stdout report.json
 cmp specs/concepts/cli.concept.spec.md ../concept.md
-cmp specs/quality/preservation.quality.spec.md ../quality.md
+cmp specs/requirements/preservation.requirement.spec.md ../quality.md
 cmp native.tla ../native.tla
 status 0 dotspec sources
 stdout 'Referenced by specs/concepts/cli.concept.spec.md'
-stdout 'Referenced by specs/quality/preservation.quality.spec.md'
+stdout 'Referenced by specs/requirements/preservation.requirement.spec.md'
 stdout 'Source files: 4.'
 stdout 'Scan complete.'
 ! stderr .
@@ -70,14 +70,14 @@ Follow the link for required behavior.
 [Directory](../../more-tests/)
 -- quality.md --
 ---
-type: quality
+type: requirement
 ---
 # Preserve source
 ## Applies to
 Read commands.
 ## Statement
 Source files remain unchanged.
-## Measurement plan
+## Verification plan
 Compare before and after bytes.
 [Supporting material](../../native.tla)
 ## Rationale

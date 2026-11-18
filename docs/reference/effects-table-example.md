@@ -4,16 +4,16 @@ Specification project: **requirements-review**. Project membership does not impl
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.17.0-draft`; mapping `dotspec-markdown/13`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
+Model `0.18.0-draft`; mapping `dotspec-markdown/14`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
 
 ## Inspection findings
 
 - **advice** `relationship.motivation`: No explicit motivation or derivation is recorded for this obligation; review its justification.
-- **advice** `relationship.measurement_basis`: A measure or measurement plan is recorded, but no separately identified criterion, conditions or applicability is recorded for the obligation. Define or reference the required comparison under Criterion and its operating context under Applies to or Criterion. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result.
-- **advice** `relationship.verification_plan`: No system verification or measurement plan is recorded for this obligation; review how a realization will be checked.
+- **advice** `relationship.measurement_basis`: A measure is recorded, but no separately identified target, conditions or applicability is recorded for the obligation. Define or reference the required bound under Criterion and its operating context under Applies to. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result.
+- **advice** `relationship.verification_plan`: No verification plan is recorded for this obligation; review how a realization will be checked.
 - **advice** `relationship.motivation`: No explicit motivation or derivation is recorded for this obligation; review its justification.
-- **advice** `quality.applies-to`: Identify the subject and applicable conditions, workload, or population.
-- **advice** `quality.measurement-basis`: A measure or measurement plan is recorded, but no separately identified criterion, conditions or applicability is recorded for the obligation. Define or reference the required comparison under Criterion and its operating context under Applies to or Criterion. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result.
+- **advice** `requirement.applies-to`: Identify the subject and applicable conditions, workload, or population.
+- **advice** `requirement.measurement-basis`: A measure is recorded, but no separately identified target, conditions or applicability is recorded for the obligation. Define or reference the required bound under Criterion and its operating context under Applies to. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result.
 - **advice** `requirement.verification`: Record assessment guidance for checking a realization against the obligation; a plan is not a verification result.
 
 ## Concepts

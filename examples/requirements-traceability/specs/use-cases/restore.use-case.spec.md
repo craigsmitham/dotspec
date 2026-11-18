@@ -27,7 +27,7 @@ The workspace owns retention and restoration; external backups are outside this 
 2. The workspace restores it according to [Restore retained content](#restore-content).
 3. The member resumes work.
 
-## Success criterion
+## Success guarantees
 
 The member can resume work on the restored document.
 

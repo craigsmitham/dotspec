@@ -1,4 +1,4 @@
-# Develop general and quality requirements
+# Develop requirements
 
 Use this guide when turning a need, rule, or quality concern into an obligation
 that people can understand and assess. Start with a short statement, identify its
@@ -7,10 +7,11 @@ scope, and add assessment detail where it resolves ambiguity.
 ## Choose an authoring form
 
 Use `dotspec requirement init <slug>` for a required result, rule, property, or
-restriction. Use `dotspec quality init <slug>` when quality-focused prompts help.
-Both forms support the same applicability, quality attributes, criteria,
-traceability, verification and validation plans. General requirements may express
-quality properties; quality requirements may require behavior.
+restriction. Add `--preset quality` when quality-focused prompts help; that
+template also prompts for a Criterion. Both presets create the same requirement
+type, with the same applicability, quality attributes, criteria, traceability,
+verification and validation plans. A quality requirement is a requirement
+classified by `quality_attributes`; it may also require behavior.
 
 An obligation can also live inside a concept or use case. Keep one authoritative
 definition and link to it from scenarios or other specifications. A separate file
@@ -28,7 +29,7 @@ Ask what observable situation would violate it. A general rule can apply across
 many use-case paths without enumerating all of them. Prescribe ordering only when
 the order is itself required.
 
-For example, this general requirement is assessable without a numeric target:
+For example, this requirement is assessable without a numeric target:
 
 ```markdown
 ## Applies to
@@ -66,19 +67,19 @@ bound that already has an authoritative definition.
 | Quality attributes | Classify the concern; they do not establish thresholds. |
 | Applies to | Defines the subject and operating context covered by the obligation. |
 | Statement and optional Criterion | State the obligation and define or reference its satisfaction rule. |
-| Verification plan | Describes how to obtain and assess evidence against the obligation. |
-| Optional Measurement plan | Gives measurement procedures when they need separate detail. |
+| Verification plan | Describes how to obtain and assess evidence against the obligation, including any measurement procedure and sampling. |
 | Validation plan | Assesses the stated subject against stakeholder needs or intended use. |
 
-For a measured property, identify the measure, comparison and required bound, then
-add units, aggregation, observation window and scope where needed. Define the
+For a measured property, identify the measure and the required bound. The measure
+carries its units, aggregation and observation window where needed. Define the
 population, numerator, denominator and success event for a rate. A label such as
 "fast" or "95% successful" leaves too much open on its own.
 
-Recognized Criterion subsections are Measure, Comparison, Target, Units,
-Aggregation, Window (or Observation window), Conditions, Workload, Population and
-Exclusions. **Target** means the required value, bound or acceptable range.
-Record preferred targets in Rationale or Explanatory notes and label them
+Recognized Criterion subsections are Measure and Target, alongside prose and Open
+questions. **Target** means the required value, bound or acceptable range,
+including the comparison, such as "At least 90%". Operating context belongs only
+under Applies to, which recognizes Conditions, Workload, Population and Exclusions
+subsections. Record preferred targets in Rationale or Notes and label them
 nonbinding. An unresolved bound belongs in Open questions with the evidence needed
 to choose it; a draft can remain useful without pretending to be complete.
 
@@ -93,7 +94,7 @@ under Applies to. Use existing actor, job and use-case references where helpful;
 the current model does not require a new context-of-use object or perspective
 field. Population and Conditions subsections can make the context easier to find.
 
-See the [unassisted recovery example](../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md)
+See the [unassisted recovery example](../examples/requirements-review/specs/requirements/unassisted-recovery.requirement.spec.md)
 for a quality-in-use obligation with an explicit measure and bound, context of
 use, and one verification plan. Its values illustrate the structure; they are
 not recommended targets for other products.
@@ -105,37 +106,33 @@ a user-task completion requirement. See [requirements layers](requirements-layer
 
 ## Plan the assessment without repeating the obligation
 
-The generated quality template includes **Verification plan**. Describe the
-realization and revision, method, assessment conditions, sampling where needed,
-and evidence to retain. Compare observations with the existing statement or
-criterion. A **Success criteria** subsection may reference that rule rather than
-repeat its bounds.
+Both generated templates include **Verification plan**. Describe the realization
+and revision, method, assessment conditions and evidence to retain. Put the
+measurement procedure and sampling, where needed, under the plan's **Method**
+subsection. Compare observations with the existing statement or criterion. A
+**Success criteria** subsection may reference that rule rather than repeat its
+bounds.
 
 Keep operating context and assessment setup distinct. Applies to says when the
 obligation holds; plan Conditions explains the test or study setup and how it
 represents that context. A small test sample or an omitted failure mode must not
 silently narrow the obligation. Record limitations of the resulting evidence.
 
-Add **Measurement plan** only when separate measurement detail is useful. It
-recognizes Procedure, Sampling, Conditions, Workload, Population, Exclusions,
-Success criteria and Evidence to retain. It may supply the whole verification
-approach, so a second Verification plan is unnecessary. If both are present, link
-the verification plan to the measurement procedure rather than repeat it. Keep
-required bounds in Statement or Criterion and refer to them from either plan.
-
 Use **Validation plan** to assess whether the requirement captures the right need
 or whether a proposed solution serves intended use. Identify the subject and
-basis explicitly. Neither kind of plan records execution evidence or a verdict;
+basis explicitly. Neither plan records execution evidence or a verdict;
 see [verification and validation](verification-and-validation.md).
 
 ## Check the draft and review the set
 
-Run `dotspec requirement check <slug>` or `dotspec quality check <slug>`, then
-`dotspec model review` for the acquired set. Measurement-basis advice applies when
-an explicit Measure or Measurement plan is recorded. It prompts for a separately
-identified criterion, comparison rule and operating context even if a Verification
-plan exists. A complete narrative or reference under Criterion is sufficient to
-record the comparison; dotspec does not interpret it or judge its adequacy.
+Run `dotspec requirement check <slug>`, then `dotspec model review` for the
+acquired set. Measurement-basis advice (`requirement.measurement-basis`) applies
+when a Criterion records an explicit Measure. It prompts for a separately
+identified target and operating context even if a Verification plan exists.
+Introductory narrative under Criterion, including a reference, is sufficient to
+record the target. Introductory narrative or a Conditions subsection under Applies
+to is sufficient to record the operating context. Neither is interpreted or judged
+for adequacy.
 
 Plan Success criteria and assessment Conditions do not substitute for the
 obligation's criterion and operating context. Advice can be resolved by identifying
@@ -160,5 +157,5 @@ in use. Built-in model editions remain explicit.
 
 Meyer's [Handbook of Requirements and Business Analysis](https://doi.org/10.1007/978-3-031-06739-6)
 §4.12 motivates the violation question; §8.6 motivates general rules and contracts
-without premature execution ordering. Dotspec's field names and authoring forms
+without premature execution ordering. dotspec's field names and authoring forms
 are design choices, not prescribed standard formats or conformance claims.

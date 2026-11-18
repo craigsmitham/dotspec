@@ -1,10 +1,12 @@
 package model
 
+// An explicit selection is identified by its authored section. Any other
+// association is the directory default recorded at export.
 func specificationSystemOrigin(r Record) string {
 	if _, explicit := r["specification_system_content"]; explicit {
 		return "explicit"
 	}
-	if String(r, "system_context") != "" {
+	if String(r, "specification_system") != "" {
 		return "directory"
 	}
 	return ""
@@ -19,7 +21,8 @@ func (d *designResolver) resolveSpecificationSystems() {
 		}
 		d.resolve(r, "specification_system", "System", false, nil)
 		if specificationSystemOrigin(r) == "directory" {
-			values := []string{String(r, "system_context")}
+			// The directory default has no authored reference to replay.
+			values := []string{String(r, "specification_system")}
 			d.projections[len(d.projections)-1].values = values
 			d.projected[String(r, "id")]["specification_system"] = values
 		} else if specificationSystemOrigin(r) == "explicit" && len(Strings(r["specification_system_references"])) == 0 {
@@ -29,6 +32,15 @@ func (d *designResolver) resolveSpecificationSystems() {
 }
 
 func (b *snapshotBuilder) associateSpecificationSystems() {
+	// The nearest enclosing system applies only where no selection was authored;
+	// an invalid explicit selection never falls back to it.
+	for id, system := range b.directorySystem {
+		if r := b.elements[id]; r != nil {
+			if _, explicit := r["specification_system_content"]; !explicit {
+				r["specification_system"] = system
+			}
+		}
+	}
 	d := newDesignResolver(b.snapshot)
 	d.resolveSpecificationSystems()
 	for _, p := range d.projections {

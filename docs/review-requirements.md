@@ -3,7 +3,7 @@
 Use this guide when preparing a specification for stakeholder review or checking
 what an evolving draft leaves unresolved. Add only the structures that help a
 reader make a decision, then generate a consolidated review. Missing information
-produces advisory prompts; it does not make an draft that conforms to the authoring format structurally invalid.
+produces advisory prompts; it does not make a draft that conforms to the authoring format structurally invalid.
 
 ## Generate the review
 
@@ -90,20 +90,19 @@ Basis, Participants, Method, Success criteria, Conditions or Evidence to retain 
 not separately identified; the narrative may already supply them. Do not create
 new obligations merely to describe assessment activities.
 
-A Measurement plan records how to collect observations. It can provide the whole
-verification approach when the criterion, comparison and operating context are also
-recorded; a second Verification plan is unnecessary. Define or reference the
-satisfaction rule under Criterion, using narrative or its Comparison and Target
-subsections. Plan Success criteria refer to that rule rather than define competing
-bounds. Put required operating context under Applies to or Criterion; plan Conditions
-describe the assessment setup and how it represents that context.
+A Verification plan's Method records how to collect observations, including any
+measurement procedure and sampling. Define or reference the satisfaction rule
+under Criterion, using narrative or its Measure and Target subsections. Plan
+Success criteria refer to that rule rather than define competing bounds. Put
+required operating context under Applies to; plan Conditions describe the
+assessment setup and how it represents that context.
 
-Checks offer advisory prompts for an explicit Measure or Measurement plan missing
-these separately identified details, even when Verification plan is present. They
-do not interpret arbitrary prose or certify adequacy. A Validation plan alone does
+Checks offer advisory prompts when a Criterion records an explicit Measure without
+a separately identified target or operating context, even when Verification plan
+is present. They do not interpret arbitrary prose or certify adequacy. A Validation plan alone does
 not satisfy the need for system-verification guidance. See
 [Develop requirements](develop-requirements.md) for the authoring workflow and the
-[unassisted recovery example](../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md)
+[unassisted recovery example](../examples/requirements-review/specs/requirements/unassisted-recovery.requirement.spec.md)
 for one bound, explicit context of use, and one assessment plan.
 
 ## Make questions actionable
@@ -148,14 +147,17 @@ Importance preserves the author's wording, including Meyer's show-stopper,
 serious or desirable categories if useful. The review inventory identifies
 missing resolution metadata without inventing questions from every omitted field.
 Tracking reference is optional and points to the issue or decision that owns
-resolution workflow. Dotspec does not copy that workflow into a question status.
+resolution workflow. dotspec does not copy that workflow into a question status.
 
 ## Separate premises from operating conditions
 
-Use Environment for conditions the solution must accommodate, Constraints or
-Business rules for relevant restrictions, and Assumptions for premises on which
-the specification relies. A fact being outside the software's control does not
-by itself make it an assumption that excuses required behavior.
+Use Environment for conditions the solution must accommodate, Constraints for
+externally imposed restrictions, and Assumptions for premises on which the
+specification relies. Environment and Constraints are narrative, as is a
+Stakeholders section naming the people and organizations with an interest in the
+system. Write a restriction that needs its own identity as a requirement or
+business rule. A fact being outside the software's control does not by itself
+make it an assumption that excuses required behavior.
 
 For example, intermittent connectivity is an operating condition if reconnecting
 clients are supported. An assumption that the platform supplies sufficiently
@@ -235,12 +237,14 @@ Accept requests from authorized clients.
 
 Interacts with resolves explicit System or Component links. It does not imply
 Part of, and it need not be repeated in the partner's specification. The two
-interface collections express direction relative to the owning subject; named
-entries are independently addressable Interface specifications, with heading
+interface sections express direction relative to the owning subject; named
+entries are independently addressable Interface elements, with heading
 anchors and optional introductory `**ID:**` values. Each belongs to one required
-or provided collection under one System or Component. Entries carry descriptions,
-optional counterpart context and contract links, plus the shared specification
-sections such as Notes, Evidence and Validation plan.
+or provided list under one System or Component. Entries carry descriptions,
+optional counterpart context and contract links, plus Notes, Open questions,
+Validation plan and trace sections. An Interface is not a specification: Evidence,
+Authority and Related specifications sections under it are retained as unmodelled
+extension sections.
 
 An interface may contain an Obligations section. Requirements can target it using
 `**Targets:** [Time readings](#time-readings)` under Applies to, and features may
@@ -256,9 +260,10 @@ system overview also includes exclusions, partners and interface descriptions.
 
 ## Relate scenarios to general behavior
 
-A scenario illustrates particular interactions; general obligations and concept
-actions describe behavior that should apply beyond that one sequence. Identify
-a relevant rule or action with an explicit nested bullet:
+A scenario illustrates particular interactions; general obligations, business
+rules and concept actions describe behavior that should apply beyond that one
+sequence. Identify a relevant obligation, business rule or action with an explicit
+nested bullet:
 
 ```markdown
 ## Main success scenario
@@ -296,7 +301,7 @@ it never means unchanged.** Say `unchanged` explicitly where preservation is
 intended. `dotspec model docs` renders the matrix, as in the
 [effects-table example](reference/effects-table-example.md).
 
-This is an optional review aid. Dotspec does not infer operations, query
+This is an optional review aid. dotspec does not infer operations, query
 classifications, formal expressions or matrix entries from prose. The current
 mapping decomposes the first table in the section and preserves the whole section;
 keep one matrix there. General obligations and action contracts still own their
@@ -304,7 +309,7 @@ behavioral statements.
 
 ## Distinguish explanation and review authority
 
-Use Explanatory notes for explanation, Implementation suggestions (or
+Use Notes for explanation, Implementation suggestions (or
 Implementation hints) for nonbinding design advice, and Illustrative examples
 for examples. These are separate model fields, including on named domain records.
 The review presents them separately; concept documentation also labels suggestions

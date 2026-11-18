@@ -88,19 +88,19 @@ exec git init -q
 status 0 dotspec system init
 status 0 dotspec quality-model apply q42 --system specs/system.spec.md --attributes resilience
 stdout 'Added 3 attributes'
-status 0 dotspec quality init resilient-service
-cp ../resilient-service.md specs/quality/resilient-service.quality.spec.md
-status 0 dotspec quality show resilient-service
+status 0 dotspec requirement init resilient-service --preset quality
+cp ../resilient-service.md specs/requirements/resilient-service.requirement.spec.md
+status 0 dotspec requirement show resilient-service
 stdout 'Quality attributes: resilience'
 stdout 'Ancestor quality attributes: reliable, secure'
-status 0 dotspec quality list --attribute reliable
+status 0 dotspec requirement list --attribute reliable
 stdout 'Resilient service'
-status 0 dotspec quality list --attribute secure
+status 0 dotspec requirement list --attribute secure
 stdout 'Resilient service'
-status 0 dotspec quality list --attribute safe
-stdout 'No quality requirements found'
+status 0 dotspec requirement list --attribute safe
+stdout 'No requirements found'
 status 0 dotspec model export
-stdout '"kind": "SubattributeOf"'
+stdout '"projection_path": "QualityAttribute.subattribute_of"'
 cp stdout snapshot.json
 status 0 dotspec model validate snapshot.json --json
 stdout '"valid": true'
@@ -142,7 +142,7 @@ type: quality-model
 
 -- resilient-service.md --
 ---
-type: quality
+type: requirement
 quality_attributes: [resilience]
 ---
 # Resilient service
@@ -150,7 +150,7 @@ quality_attributes: [resilience]
 Loss of one service instance.
 ## Statement
 At least one instance remains able to serve requests.
-## Measurement plan
+## Verification plan
 Stop one instance and send a request.
 ## Rationale
 Continue useful service during disruption.

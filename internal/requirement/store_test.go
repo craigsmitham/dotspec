@@ -4,9 +4,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
-
-	"github.com/craigsmitham/dotspec/internal/quality"
 )
 
 func put(t *testing.T, path, content string) {
@@ -19,7 +18,7 @@ func put(t *testing.T, path, content string) {
 	}
 }
 
-func TestInventoryIncludesQualityAndLocalModel(t *testing.T) {
+func TestInventoryClassifiesAgainstLocalModel(t *testing.T) {
 	dir, err := filepath.EvalSymlinks(t.TempDir())
 	if err != nil {
 		t.Fatal(err)
@@ -52,7 +51,7 @@ Unchanged sources.
 		t.Fatal("overwrote target")
 	}
 	put(t, path, example)
-	put(t, quality.Layout.Path(dir, "work"), "---\ntype: quality\nquality_attributes: [source-preservation]\n---\n# Preservation\n## Statement\nUnchanged sources.\n## Measurement plan\nCompare snapshots.\n")
+	put(t, Layout.Path(dir, "preservation"), "---\ntype: requirement\nquality_attributes: [source-preservation]\n---\n# Preservation\n## Statement\nUnchanged sources.\n## Verification plan\nCompare snapshots.\n")
 	groups, err := List(dir)
 	if err != nil {
 		t.Fatal(err)
@@ -62,11 +61,11 @@ Unchanged sources.
 		t.Fatalf("inventory: %+v", filtered)
 	}
 	q := filtered[0].Requirements[0]
-	if q.Type != "quality" || q.Statement != "Unchanged sources." || q.MeasurementPlan != "Compare snapshots." {
-		t.Fatalf("quality view: %+v", q)
+	if q.Statement != "Unchanged sources." || q.VerificationPlan != "Compare snapshots." {
+		t.Fatalf("classified requirement: %+v", q)
 	}
 	r, err := Show(dir, "work")
-	if err != nil || r.Type != "requirement" || len(r.Classification.Resolved) != 2 {
+	if err != nil || len(r.Classification.Resolved) != 2 {
 		t.Fatalf("show: %+v %v", r, err)
 	}
 	put(t, Layout.Path(filepath.Join(dir, "child"), "work"), example)
@@ -74,5 +73,47 @@ Unchanged sources.
 	child, err := Show(filepath.Join(dir, "child"), "work")
 	if err != nil || child.Classification.SystemPath != "" || len(child.Classification.Undefined) != 0 {
 		t.Fatalf("model inherited: %+v %v", child, err)
+	}
+}
+
+// The quality preset is an authoring aid. It creates an ordinary requirement
+// and classification, not the template, selects quality-specific advice.
+func TestQualityPresetCreatesAnOrdinaryRequirement(t *testing.T) {
+	dir, err := filepath.EvalSymlinks(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if output, err := exec.Command("git", "-C", dir, "init", "-q").CombinedOutput(); err != nil {
+		t.Fatalf("initialize repository: %v: %s", err, output)
+	}
+	path, err := InitWithPreset(dir, "bounded", "quality")
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !Layout.Match(path) || !strings.Contains(string(data), "type: requirement") || !strings.Contains(string(data), "## Criterion") {
+		t.Fatalf("quality preset: %s\n%s", path, data)
+	}
+	if _, err := InitWithPreset(dir, "other", "performance"); err == nil {
+		t.Fatal("accepted an unknown preset")
+	}
+	draft := "---\ntype: requirement\n---\n# Draft\n"
+	classified := strings.Replace(draft, "type: requirement", "type: requirement\nquality_attributes: [reliability]", 1)
+	messages := func(source string) string {
+		spec, err := Parse([]byte(source))
+		if err != nil {
+			t.Fatal(err)
+		}
+		text := ""
+		for _, d := range Check(spec) {
+			text += d.Rule + ": " + d.Message + "\n"
+		}
+		return text
+	}
+	if general, quality := messages(draft), messages(classified); !strings.Contains(general, "required result, rule, property, or restriction") || !strings.Contains(quality, "assessable quality obligation") || !strings.Contains(quality, "requirement.statement") {
+		t.Fatalf("advice wording should follow classification:\n%s\n%s", general, quality)
 	}
 }

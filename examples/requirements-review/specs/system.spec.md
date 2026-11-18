@@ -179,7 +179,7 @@ A deleted document kept inside its recovery window.
 
 An external backup copy. This deliberate alias collision needs review.
 
-## Explanatory notes
+## Notes
 
 A recovery window limits restoration from retained state; it does not describe external backup guarantees.
 

@@ -1,5 +1,5 @@
 ---
-type: quality
+type: requirement
 id: inspection-preserves-source
 quality_attributes:
   - source-preservation
@@ -26,7 +26,7 @@ Apply the preservation rule in [Statement](#statement) to the files covered by
 [Applies to](#applies-to). Filesystem access-time changes are not changes to source
 contents or paths.
 
-## Measurement plan
+## Verification plan
 
 Snapshot the relative paths and byte contents of project files and any system
 context outside the selected subtree. Capture command output separately from

@@ -40,7 +40,7 @@ func TestLayeredTraceability(t *testing.T) {
 	}
 	clause := elementKind(t, s, "ObligationClause")
 	uc := elementKind(t, s, "UseCase")
-	req := elementKind(t, s, "GeneralRequirement")
+	req := elementKind(t, s, "Requirement")
 	use := elementKind(t, s, "ConceptUse")
 	if clause["authored_id"] != "restore-content" || clause["owner"] != uc["id"] {
 		t.Fatal(clause)
@@ -49,7 +49,7 @@ func TestLayeredTraceability(t *testing.T) {
 		r      Record
 		field  string
 		target Record
-	}{{req, "refines", clause}, {uc, "involves", use}, {clause, "derived_from", elementKind(t, s, "BusinessRule")}, {req, "relies_on", elementKind(t, s, "Assumption")}, {elementKind(t, s, "Job"), "supports", elementKind(t, s, "SystemGoal")}} {
+	}{{req, "refines", clause}, {uc, "involves", use}, {clause, "derived_from", elementKind(t, s, "BusinessRule")}, {req, "relies_on", elementKind(t, s, "Assumption")}, {elementKind(t, s, "Job"), "supports", elementKind(t, s, "Goal")}} {
 		if !slices.Equal(Strings(tc.r[tc.field]), []string{String(tc.target, "id")}) {
 			t.Fatalf("%s: %v", tc.field, tc.r)
 		}
@@ -65,19 +65,19 @@ func TestLayeredTraceability(t *testing.T) {
 	}
 	kinds := map[string]bool{}
 	for _, a := range s.Assertions {
-		kinds[String(a, "kind")] = true
+		kinds[String(a, "projection_path")] = true
 	}
-	for _, kind := range []string{"Supports", "DerivedFrom", "Refines", "ReliesOn", "Involves", "HasObligation", "AppliesTo"} {
+	for _, kind := range []string{"TraceableElement.supports", "TraceableElement.derived_from", "Obligation.refines", "TraceableElement.relies_on", "UseCase.involves", "ObligationContainer.obligations", "Obligation.applies_to"} {
 		if !kinds[kind] {
 			t.Fatal("missing projection", kind)
 		}
 	}
 	conformancePayloads(t, s)
 	forged := cloneSnapshot(t, s)
-	elementKind(t, forged, "GeneralRequirement")["refines"] = []string{String(elementKind(t, forged, "BusinessRule"), "id")}
+	elementKind(t, forged, "Requirement")["refines"] = []string{String(elementKind(t, forged, "BusinessRule"), "id")}
 	requireFinding(t, forged, "concept.projection")
 	borrowed := cloneSnapshot(t, s)
-	br := elementKind(t, borrowed, "GeneralRequirement")
+	br := elementKind(t, borrowed, "Requirement")
 	br["refines_references"] = br["relies_on_references"]
 	requireFinding(t, borrowed, "relationship.provenance")
 }
@@ -130,12 +130,12 @@ func TestRefinementCycleRetainsSourceWithoutCyclicClaim(t *testing.T) {
 			}
 		}
 		for _, a := range r.Snapshot.Assertions {
-			if String(a, "kind") == "Refines" {
+			if String(a, "projection_path") == "Obligation.refines" {
 				t.Fatal("cyclic assertion exported")
 			}
 		}
 		forged := cloneSnapshot(t, r.Snapshot)
-		req := elementKind(t, forged, "GeneralRequirement")
+		req := elementKind(t, forged, "Requirement")
 		req["refines"] = []string{String(req, "id")}
 		requireFinding(t, forged, "relationship.cycle")
 		conformancePayloads(t, r.Snapshot)
@@ -149,7 +149,7 @@ func TestTraceCitationsAndDrafts(t *testing.T) {
 	if r.ExitCode != 0 {
 		t.Fatal(r.Snapshot.Diagnostics)
 	}
-	if len(Strings(elementKind(t, r.Snapshot, "GeneralRequirement")["refines"])) != 0 {
+	if len(Strings(elementKind(t, r.Snapshot, "Requirement")["refines"])) != 0 {
 		t.Fatal("citation inferred refinement")
 	}
 	codes := map[string]bool{}
@@ -227,7 +227,7 @@ Compare the item identity before deletion and after restoration.
 	if r.ExitCode != 0 {
 		t.Fatal(r.Snapshot.Diagnostics)
 	}
-	if len(Strings(elementKind(t, r.Snapshot, "GeneralRequirement")["refines"])) != 2 {
+	if len(Strings(elementKind(t, r.Snapshot, "Requirement")["refines"])) != 2 {
 		t.Fatal("multiple refinement parents lost")
 	}
 	clause := designRecord(t, r.Snapshot, "ObligationClause", "Preserve identity")

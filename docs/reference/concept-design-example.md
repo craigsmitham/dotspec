@@ -4,7 +4,7 @@ Specification project: **concept-design**. Project membership does not imply a S
 
 Generated from authored specifications. Regenerate this view instead of editing it.
 
-Model `0.17.0-draft`; mapping `dotspec-markdown/13`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
+Model `0.18.0-draft`; mapping `dotspec-markdown/14`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.
 
 ## Concepts
 

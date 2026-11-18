@@ -47,13 +47,13 @@ includes errcheck, govet, ineffassign, staticcheck, and unused.
   reports and the source inventory. Both operations share discovery, context, and
   reference resolution. It owns report accounting and context deduplication, without importing
   the concrete specification types. Checks do not print or exit.
-- `internal/qualitymodel`, `internal/businessrule`, `internal/system`, `internal/job`, `internal/usecase`, `internal/concept`,
-  `internal/quality` and `internal/requirement` own type-specific parsing and validation,
+- `internal/qualitymodel`, `internal/businessrule`, `internal/system`, `internal/job`, `internal/usecase`, `internal/concept`
+  and `internal/requirement` own type-specific parsing and validation,
   metadata schemas, layouts, templates, and repository operations. Their `CheckType`
   functions supply inspection behavior; the CLI registers the supported types.
   Parsing functions accept bytes without I/O.
-- `internal/obligation` shares general and quality requirement content parsing
-  and quality-attribute classification.
+- `internal/obligation` is the authoring model for the obligation a requirement
+  states: content parsing, quality-attribute classification and measurement-basis guidance.
 - `internal/specfile` owns common frontmatter, Goldmark outlines, source locations,
   document-local identifiers, reference extraction, and shared filesystem/discovery
   behavior. All specification types use the same Markdown extraction path.
@@ -74,8 +74,8 @@ unknown prose and distinguish draft omissions from structural errors.
 
 ### Adding a specification type
 
-Define a `specfile.Layout` in the owning type package with its kind, collection,
-and either a singleton filename or a slug suffix. Use that layout for discovery,
+Define a `specfile.Layout` in the owning type package with its specification type
+(the `Kind` field), collection, and either a singleton filename or a slug suffix. Use that layout for discovery,
 placement validation, creation, and direct lookup so those operations agree.
 Keep slug rules and filename diagnostics in the type package.
 
@@ -88,7 +88,7 @@ before validating local references. Preserve authored Markdown and source locati
 Expose a `CheckType` integration supplying the layout, slug validation, and an
 inspector that reads the file and returns writing advice only after structural
 validation succeeds. Attach a context provider only when the type needs other
-sources. Jobs, use cases, concepts, general requirements, and quality requirements share
+sources. Business rules, jobs, use cases, concepts, and requirements share
 `system.CheckContext`; other types need not
 depend on system specifications. Providers report attempted source paths even
 when reads fail, and the checker distinguishes structural findings from incomplete
@@ -96,7 +96,7 @@ scans. Sharing a provider instance resolves it once per owning directory. Its op
 `Inspect` function contributes findings from context files. A type can supply
 `References` to expose validated identities and authored links, and
 `InspectContext` to check relationships against those resolved sources after
-context validation succeeds; general and quality requirements use this for attribute labels.
+context validation succeeds; requirements use this for attribute labels.
 
 The checker follows one reference edge from selected specs and their system
 context. Pass the supported target types to `check.Focused` so target parsers
@@ -107,8 +107,8 @@ Register the type in the CLI's project check and pass the same integration to an
 focused check command. Preserve the existing command and report contracts.
 `internal/check/testdata/quality` is a minimal integration fixture demonstrating
 another type with its own metadata and no dependency on existing domain packages;
-its deliberately different metadata is test-only. The supported quality
-format belongs to `internal/quality`.
+its deliberately different metadata is test-only. It is not a supported
+specification type.
 
 ## CLI changes and generated artifacts
 
@@ -130,7 +130,7 @@ dotspec or a consequence of using a particular test framework.
   is explicitly stated. New cases belong here only when reviewers intend to
   preserve their behavior across changes in implementation.
 - `internal/cli/quality_contracts_test.go` verifies the quality obligations
-  stated in the linked Markdown quality specs. Those prose criteria retain
+  stated in the requirement specifications that link to it. Those prose criteria retain
   authority; a test passing is evidence for its exercised cases.
 - Other Go tests and the integration harness remain development artifacts by
   default. They can test private structure, parser mechanics, and regressions
@@ -147,7 +147,7 @@ behavior; resolve disagreements explicitly rather than treating a green run as
 precedence.
 
 The [CLI Interaction concept](internal/integration/specs/concepts/cli-interaction.concept.spec.md)
-links to the acceptance scripts. Quality specs explain their verification links.
+links to the acceptance scripts. Quality requirements explain their verification links.
 Use ordinary file links from the relevant specs, with prose stating the role.
 An entire directory link does not provide file coverage.
 

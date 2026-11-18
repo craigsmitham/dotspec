@@ -76,12 +76,12 @@ func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		section("Type parameters", r, r["type_parameters_content"])
 		section("Introduced types", r, r["introduced_types_content"])
 		section("State", r, Object(r["abstract_state"])["content"])
-		section("Actions", r, Object(r["actions"])["content"])
-		if r["effects_table"] != nil {
-			section("Effects table", r, Object(r["effects_table"])["content"])
+		section("Actions", r, r["actions_content"])
+		if r["effects_table_content"] != nil {
+			section("Effects table", r, r["effects_table_content"])
 			out.WriteString("Blank effects cells are unspecified, not unchanged. This authored matrix is not a proof of completeness.\n\n")
 		}
-		section("Explanatory notes", r, r["explanatory_notes"])
+		section("Notes", r, r["notes"])
 		section("Implementation suggestions (nonbinding)", r, r["implementation_suggestions"])
 		section("Illustrative examples", r, r["illustrative_examples"])
 	}

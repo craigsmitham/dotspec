@@ -911,7 +911,7 @@ func SourceID(locator string) string {
 // SourceRecord retains acquired bytes, without assuming a Markdown media type.
 func SourceRecord(locator string, data []byte) Record {
 	sum := sha256.Sum256(data)
-	payload := Record{"storage": "inline_base64", "bytes_base64": base64.StdEncoding.EncodeToString(data), "sha256": fmt.Sprintf("%x", sum), "byte_length": len(data)}
+	payload := Record{"bytes_base64": base64.StdEncoding.EncodeToString(data), "sha256": fmt.Sprintf("%x", sum), "byte_length": len(data)}
 	if utf8.Valid(data) {
 		payload["text_encoding"] = "UTF-8"
 	}

@@ -23,7 +23,7 @@ is outside the boundary.
 The narrative maps to `boundary_description`. The field retains its source reference
 in `subject_system_references`; a resolved System populates `subject_system`. A plain link
 elsewhere in the narrative is only a citation. The boundary may differ from the
-use case's directory-derived `system_context`.
+use case's `specification_system`.
 
 ## State which user progress a use case supports
 
@@ -36,14 +36,15 @@ Use a Supports section to declare a support relationship:
 [Send a link step](../jobs/share-information.job.spec.md#send-a-link).
 ```
 
-Every link in this section declares a target: a SystemGoal, Job, JobStep or DesiredOutcome. A file
-link identifies the job; a fragment identifies the explicitly mapped step or
-outcome. The section is preserved as `supports_content`, its occurrences as
-`supports_references`, and resolved targets as `supports`.
+Every link in this section declares a target: a Goal, Job, JobStep, DesiredOutcome
+or higher-level UseCase. A file link identifies the job or use case; a fragment
+identifies the explicitly mapped goal, step or outcome. The section is preserved
+as `supports_content`, its occurrences as `supports_references`, and resolved
+targets as `supports`.
 
 This is an authored design claim, not proof that the use case achieves the job's
-outcomes. Put research citations and loosely related jobs in Related jobs instead.
-Cross-system support relationships are permitted.
+outcomes. Put research citations and loosely related jobs in Related
+specifications instead. Cross-system support relationships are permitted.
 
 ## Identify the subjects of a requirement or business rule
 
@@ -61,15 +62,15 @@ The recipient must have consented to delivery.
 Applies when the address is sent to a recipient outside the organization.
 ```
 
-Both general and quality requirements, and business rules, use this form. Targets
+Requirements, obligation clauses and business rules use this form. Targets
 may identify any acquired domain record, including a system, concept use, use case
 or explicitly named step. Cross-system applicability is permitted.
 
 The complete section remains `applicability: Applicability`. Source occurrences and
 resolved domain targets are retained on the obligation or business-rule record as
-`applies_to_references` and `applies_to`. A Subject or
-Subjects subsection remains contextual; its links do not silently become Targets.
-Conditions, exclusions, workloads and populations remain authored explanations.
+`applies_to_references` and `applies_to`. Only the Targets field declares targets;
+links elsewhere in the section do not silently become Targets. Conditions,
+Workload, Population and Exclusions subsections remain authored explanations.
 A target link does not establish enforcement, satisfaction or compliance.
 
 ## Keep ownership and composition distinct
@@ -79,10 +80,11 @@ a concept, or a named use to a system declaration. It is checked against the
 containing record's member list and source document. It does not describe runtime
 object lifetime or business ownership.
 
-`system_context` associates a non-system specification with the enclosing system
-found through directory discovery. `specification_system` selects the effective
-association, explicitly or by directory default. Systems retain directory context
-in `enclosing_system`. Standalone QualityModels have neither association. These
+`specification_system` associates a non-system specification with a system: the
+one selected by a Specification system section, or by default the nearest enclosing
+system found through directory discovery. `specification_system_origin` records
+which, as `explicit` or `directory`. Systems retain directory context in
+`enclosing_system`. Standalone QualityModels have neither association. These
 relationships supply no inherited requirements or use-case boundary.
 
 For explicit concept inclusion, type bindings, dependencies and coordination, use
@@ -104,16 +106,17 @@ use is unknown, dependent scope checks are deferred. Unknown is not incompatible
 The snapshot retains the authored references and diagnostics in either case.
 
 Consumers should read the typed fields as authoritative. The optional `assertions`
-collection provides derived views such as HasSubjectSystem, Supports and AppliesTo.
-Every assertion has both endpoints, source-backed inputs, and a `projection_path`
-identifying its canonical field. That path also distinguishes concept parameters
-from introduced types when both project as HasConceptType. Assertions are a partial
-view of the full graph; their absence does not remove a typed relationship.
+collection provides derived views of those fields. Every assertion has both
+endpoints, source-backed inputs, and a `projection_path` naming its canonical
+field, such as `UseCase.subject_system`, `TraceableElement.supports` or
+`Obligation.applies_to`. That path also distinguishes roles, such as
+`Concept.type_parameters` from `Concept.introduced_types`. Assertions are a view
+of the typed graph; their absence does not remove a typed relationship.
 
 ## Trace motivation, derivation and assumptions
 
 Use these headings on a specification or on a named traceable element such as a
-system goal, job step, outcome, concept use, concept action or synchronization:
+goal, job step, outcome, concept use, concept action or synchronization:
 
 ```markdown
 ## Supports
@@ -131,7 +134,7 @@ retention interval.
 ```
 
 Use the appropriate deeper heading level inside a named element. Supports accepts
-SystemGoal, Job, JobStep and DesiredOutcome targets. These are
+Goal, Job, JobStep, DesiredOutcome and UseCase targets. These are
 intended contributions, not achieved outcomes.
 
 Derived from accepts an acquired domain record or a source fragment, including an
@@ -149,8 +152,8 @@ Empty sections are valid drafts. No links are inferred from prose.
 
 ## Identify an obligation without creating another document
 
-Use an Obligations section within a System, Component, Interface, BusinessRule, Job, JobStep, UseCase, Concept,
-ConceptUse, ConceptAction, Synchronization or standalone Requirement when a rule needs its own identity:
+Use an Obligations section within a System, Component, Interface, UseCase, Concept,
+ConceptAction, ConceptUse or Synchronization when a rule needs its own identity:
 
 ```markdown
 ## Obligations
@@ -176,24 +179,29 @@ authorized member requests restoration within the recovery window.
 Compare content and metadata before deletion and after restoration.
 ```
 
-The introductory prose becomes the clause's statement. Applies to, Rationale and
-Verification plan use the same forms as standalone requirements. Optional Criterion
-and Measurement plan sections provide assessment details. The optional comma-separated
-Quality attributes field classifies the clause against its declaring system; it uses
-the same IDs as standalone `quality_attributes` metadata. Relationship
+The introductory prose becomes the clause's statement. Applies to, Rationale,
+Criterion and Verification plan use the same forms as in a requirement
+specification. The optional comma-separated Quality attributes field classifies
+the clause against its declaring system; it uses the same IDs as a requirement's
+`quality_attributes` metadata. Relationship
 headings can appear beneath the clause. An optional ID must be nonempty and unique
 among declared IDs in the document; otherwise link to the generated heading anchor.
 IDs and anchors work in same-file and cross-file links. Generated reader links use
 Markdown heading anchors so they also work in ordinary Markdown viewers.
 
 This creates an owned `ObligationClause`, not a new file. Do not copy the statement
-into a standalone requirement just to link it. If a narrative already owns the
+into a requirement specification just to link it. If a narrative already owns the
 obligation, refer to that clause from scenarios or other views. The declaration
 does not itself record acceptance; retain the consuming project's authority policy.
 
+A requirement specification states one obligation and cannot contain an Obligations
+section. Jobs, job steps, business rules, features, capabilities and quality models
+do not contain clauses either; model export reports `obligation.container` for an
+Obligations section in any of them.
+
 ## Refine an obligation
 
-Use Refines on a standalone requirement, business rule or obligation clause:
+Use Refines on a requirement, obligation clause or business rule:
 
 ```markdown
 ## Refines
@@ -204,8 +212,9 @@ This requirement identifies the metadata fields while preserving the parent's
 recovery window and authorization condition.
 ```
 
-Targets must be Requirement, BusinessRule or ObligationClause records. Multiple
-parents are permitted. Explain the added precision in the section or Rationale.
+A requirement or clause can refine Requirement, BusinessRule or ObligationClause
+records. A business rule refines only other business rules. Multiple parents are
+permitted. Explain the added precision in the section or Rationale.
 Refinement preserves the parent commitment; it is not supersession, duplication
 or proof that the statements are consistent. The tool checks endpoint kinds and
 cycles, not logical implication from prose. A cyclic edge is withheld from the
@@ -249,8 +258,9 @@ why these distinctions matter.
 
 Use a System for the whole being specified, a Component for a named structural
 part, and a Feature for a recognizable grouping of specified product behavior. These are
-partial specification subjects, not an inventory of runtime architecture. Start
-with named entries in `system.spec.md`; no new file family is required.
+partial specification subjects, not an inventory of runtime architecture. Components
+and features are named elements declared in `system.spec.md`; they are not
+specification types and need no files of their own.
 
 ```markdown
 ---
@@ -333,7 +343,7 @@ to authoritative native artifacts, not separately modeled architecture definitio
 
 ### Select a specification system
 
-In a business rule, job, use case, concept, or either requirement form:
+In a business rule, job, use case, concept or requirement:
 
 ```markdown
 ## Specification system
@@ -356,8 +366,9 @@ dotspec model overview --path . --relative-to docs/reference > docs/reference/sy
 ```
 
 The [generated example](reference/system-overview-example.md) shows explicit part
-relationships, feature groups, directly applicable obligations, verification and
-measurement guidance, concept uses, descriptions and native references. Feature
+relationships, feature groups, directly applicable obligations, whether
+verification guidance and a criterion are recorded, concept uses, descriptions
+and native references. Feature
 involvement is derived only from direct applicability on grouped obligations;
 transitive membership or component parentage does not invent additional links.
 The overview distinguishes declaration location, selected system and directory
@@ -383,6 +394,6 @@ relationships with user jobs and desired outcomes.
 
 Use Interacts with on Systems or Components for explicit boundary partners, separate
 from Part of. Use an Illustrates bullet inside a scenario step to identify its
-underlying obligation or concept action. See [Review requirements](review-requirements.md)
+underlying obligation, business rule or concept action. See [Review requirements](review-requirements.md)
 for these forms, exclusions, required/provided interfaces, assumption validation,
 question resolution metadata and the generated review and PEGS perspectives.

@@ -6,11 +6,13 @@ together. Start with purpose and a characteristic story; add structure where it
 helps people make a design decision. The [format reference](../README.md#concept-spec-format)
 defines the basic file contract.
 
-ConceptUse and Synchronization are specifications in the same abstract hierarchy
-as Concept, even though they are authored inline in a System document. They can
-carry shared Notes, Evidence, Related specifications and Validation plan sections,
-and optional introductory `**ID:**` values. This classification does not imply a
-separate file or an execution guarantee. See [specification kinds](specification-model.md#specification-kinds-and-document-placement).
+A Concept is a specification with its own document. ConceptUse and Synchronization
+are elements declared inside a System specification, not specifications. They are
+traceable, addressable through heading anchors and optional introductory `**ID:**`
+values, and can carry Notes, Open questions, Validation plan and trace sections.
+Evidence, Authority and Related specifications sections belong to specifications;
+under a declared element they are retained as unmodelled extension sections. See
+[specification types and declared elements](specification-model.md#specification-types-and-declared-elements).
 
 ## Find a purposeful boundary
 
@@ -186,7 +188,7 @@ ordering or conjunction semantics: state those requirements in the rule.
 
 Explain consequential ordering, atomicity, failures, retries and timing. The
 original atomic synchronization model and the newer event-based model make different
-promises. Dotspec can document either; omitting Semantics chooses neither.
+promises. dotspec can document either; omitting Semantics chooses neither.
 A heading without Use or Action fields remains supporting content, not a fabricated
 invocation. The complete [expiring-links example](../examples/concept-design/specs/system.spec.md)
 includes repeated uses, bindings and coordination with explicit delivery limits.

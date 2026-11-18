@@ -28,7 +28,7 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		seen[id] = true
 		r := v.d.index[id]
-		if String(r, "kind") == "SystemGoal" {
+		if String(r, "kind") == "Goal" {
 			reached[id] = true
 		}
 		for _, field := range []string{"supports", "derived_from", "refines"} {
@@ -43,7 +43,7 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 	}
 	for _, r := range v.records {
-		if String(r, "kind") == "SystemGoal" {
+		if String(r, "kind") == "Goal" {
 			status := "No contribution path recorded from specified behavior; review required."
 			if reached[String(r, "id")] {
 				status = "Contribution path recorded; sufficiency requires review."
@@ -73,15 +73,10 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	for _, r := range v.records {
 		if designKind(String(r, "kind"), "Obligation") {
 			fmt.Fprintf(&v.out, "### %s\n\n", v.link(r))
-			present := false
-			for _, f := range []string{"verification_plan", "measurement_plan"} {
-				if v.body(r, reviewLabel(f), Object(r[f])["content"]) {
-					present = true
-				}
-			}
+			present := v.body(r, reviewLabel("verification_plan"), Object(r["verification_plan"])["content"])
 			v.body(r, "Criterion", Object(r["criterion"])["content"])
 			if !present {
-				v.out.WriteString("No system verification or measurement guidance recorded; review required.\n\n")
+				v.out.WriteString("No verification plan recorded; review required.\n\n")
 			} else {
 				v.out.WriteString("Assessment guidance recorded; its adequacy and any verification result are not evaluated.\n\n")
 			}
@@ -95,7 +90,7 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	v.glossary()
 	v.out.WriteString("## Explanations and suggestions\n\nThese roles distinguish explanation, nonbinding implementation advice and examples from specified obligations. They do not record stakeholder endorsement.\n\n")
 	for _, r := range v.records {
-		for _, f := range []string{"explanatory_notes", "implementation_suggestions", "illustrative_examples"} {
+		for _, f := range []string{"notes", "implementation_suggestions", "illustrative_examples"} {
 			if strings.TrimSpace(v.d.text(r[f])) != "" {
 				fmt.Fprintf(&v.out, "### %s — %s\n\n", v.link(r), reviewLabel(f))
 				v.body(r, "", r[f])
@@ -133,7 +128,7 @@ func PEGSMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	v.assumptions()
 	v.out.WriteString("## Goals\n\n")
 	for _, r := range v.records {
-		if !designKind(String(r, "kind"), "SystemGoal or Job or JobStep or DesiredOutcome") {
+		if !designKind(String(r, "kind"), "Goal or Job or JobStep or DesiredOutcome") {
 			continue
 		}
 		fmt.Fprintf(&v.out, "### %s: %s\n\n", String(r, "kind"), v.link(r))
@@ -262,11 +257,12 @@ func (v *reviewView) boundaries() {
 	v.out.WriteString("## Environment and boundaries\n\nOperating conditions and constraints describe what the solution must accommodate. Assumptions are assessed separately for evidence and justified reliance. Explicit exclusions delimit scope. External partners are separate from structural parents.\n\n")
 	for _, r := range v.records {
 		kind := String(r, "kind")
-		if !designKind(kind, "System or Component or Constraint or BusinessRule") {
+		if !designKind(kind, "System or Component or BusinessRule") {
 			continue
 		}
 		fmt.Fprintf(&v.out, "### %s: %s\n\n", kind, v.link(r))
-		v.body(r, "Environment", Object(r["environment"])["content"])
+		v.body(r, "Environment", r["environment"])
+		v.body(r, "Constraints", r["constraints"])
 		for _, f := range []string{"statement", "out_of_scope", "basis", "applicability"} {
 			value := r[f]
 			if kind == "BusinessRule" && f == "applicability" {
@@ -279,14 +275,13 @@ func (v *reviewView) boundaries() {
 			fmt.Fprintf(&v.out, "Interacts with: %s.\n\n", v.links(ids))
 		}
 		for _, field := range []string{"required_interfaces", "provided_interfaces"} {
-			collection := Object(r[field])
-			if collection == nil {
+			if r[field+"_content"] == nil {
 				continue
 			}
-			v.body(r, reviewLabel(field), collection["content"])
-			items := Strings(collection["interfaces"])
+			v.body(r, reviewLabel(field), r[field+"_content"])
+			items := Strings(r[field])
 			if len(items) == 0 {
-				v.out.WriteString("Review required: no named interface specifications recorded.\n\n")
+				v.out.WriteString("Review required: no named interfaces recorded.\n\n")
 			}
 			for _, id := range items {
 				item := v.d.index[id]
@@ -374,7 +369,7 @@ func (v *reviewView) questions() {
 	v.out.WriteString("## Open questions\n\nConsolidated authored questions. External tracking references own resolution workflow. Omitted specification fields are not automatically questions; missing metadata below is advisory.\n\n")
 	count := 0
 	for _, r := range v.records {
-		for _, q := range reviewObjects(Object(r["open_questions"])["questions"]) {
+		for _, q := range reviewObjects(r["open_questions"]) {
 			count++
 			fmt.Fprintf(&v.out, "### Question %d — %s\n\n", count, v.link(r))
 			v.body(r, "Question", q["question"])

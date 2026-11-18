@@ -21,18 +21,18 @@ A contributor beginning a behavioral account.
 
 User task (sea).
 
-## Success criterion
+## Success guarantees
 
 The contributor receives the path to a newly created draft of the selected kind.
 
-## Minimum guarantees
+## Minimal guarantees
 
 An existing target is preserved according to the
 [reject-existing-target requirement](../requirements/reject-existing-target.requirement.spec.md).
 
 ## Main success scenario
 
-1. The contributor selects a project directory, specification kind, and local name.
+1. The contributor selects a project directory, specification type, and local name.
 2. Dotspec creates the draft and reports its path.
 3. The contributor opens the document and replaces prompts with known behavior.
 

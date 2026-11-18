@@ -43,15 +43,15 @@ inside a Git repository.
 Contributors need actionable findings. Reviewers need an honest account of what
 was inspected. Both need their authored sources preserved.
 
-## Minimum guarantees
+## Minimal guarantees
 
 Inspection leaves authored sources unchanged, as defined by the
-[source preservation requirement](../quality/inspection-preserves-source.quality.spec.md).
+[source preservation requirement](../requirements/inspection-preserves-source.requirement.spec.md).
 The [check report contract](../../README.md#check-specifications) requires the
 report to distinguish incomplete scans from completed ones, even when inspection
 cannot finish.
 
-## Success criterion
+## Success guarantees
 
 The contributor receives a complete report identifying the inspected scope,
 structural errors, advisory findings, and any additional context. The
@@ -105,7 +105,7 @@ Representative. The narrative explains the interaction; the
 [check report contract](../../README.md#check-specifications) governs error
 handling and reporting behavior.
 
-## Related jobs
+## Supports
 
 This use case contributes to
 [Evaluate the requirements](../jobs/develop-requirements.job.spec.md#evaluate-the-requirements)
@@ -114,7 +114,7 @@ in the Develop Requirements job, including its conflict-detection outcome
 Structural findings can inform that evaluation; human review still determines
 whether the requirements accurately represent stakeholder needs.
 
-## Related concepts
+## Related specifications
 
 [Specification Inspection](../concepts/specification-inspection.concept.spec.md)
 describes the report and inspection behavior used in this interaction.

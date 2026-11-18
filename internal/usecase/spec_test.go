@@ -35,7 +35,7 @@ The contributor requests a check.
 ## Preconditions
 The selected project directory exists and is readable.
 
-## Success criterion
+## Success guarantees
 The contributor receives a complete report for the selected scope.
 
 ## Main success scenario
@@ -53,7 +53,7 @@ This nested heading describes an extension; it is not the main preconditions.
 ## Sequence
 Representative. The [reporting contract](../../README.md#check-specifications) defines required behavior.
 
-## Related jobs
+## Supports
 [Evaluate requirements](../jobs/develop-requirements.job.spec.md#evaluate-requirements).
 
 ## Notes
@@ -73,19 +73,19 @@ func TestParsePreservesUseCaseAndDistinctFields(t *testing.T) {
 		t.Fatalf("identity or association: %+v", got)
 	}
 	want := map[string]string{
-		"goal":              "Identify structural problems before committing a change.",
-		"system boundary":   "The dotspec CLI.",
-		"primary actor":     "A contributor preparing a change.",
-		"goal level":        "User task (sea level).",
-		"trigger":           "The contributor requests a check.",
-		"preconditions":     "The selected project directory exists and is readable.",
-		"success criterion": "The contributor receives a complete report for the selected scope.",
+		"goal":               "Identify structural problems before committing a change.",
+		"system boundary":    "The dotspec CLI.",
+		"primary actor":      "A contributor preparing a change.",
+		"goal level":         "User task (sea level).",
+		"trigger":            "The contributor requests a check.",
+		"preconditions":      "The selected project directory exists and is readable.",
+		"success guarantees": "The contributor receives a complete report for the selected scope.",
 	}
-	actual := map[string]string{"goal": got.Goal, "system boundary": got.BoundaryDescription, "primary actor": got.PrimaryActor, "goal level": got.GoalLevel, "trigger": got.Trigger, "preconditions": got.Preconditions, "success criterion": got.SuccessCriterion}
+	actual := map[string]string{"goal": got.Goal, "system boundary": got.BoundaryDescription, "primary actor": got.PrimaryActor, "goal level": got.GoalLevel, "trigger": got.Trigger, "preconditions": got.Preconditions, "success guarantees": got.SuccessGuarantees}
 	if !reflect.DeepEqual(actual, want) {
 		t.Fatalf("fields: %v; want %v", actual, want)
 	}
-	if !strings.HasPrefix(got.MainSuccessScenario, "1. The contributor") || !strings.Contains(got.Extensions, "### Preconditions") || !strings.Contains(got.RelatedJobs, "#evaluate-requirements") {
+	if !strings.HasPrefix(got.MainSuccessScenario, "1. The contributor") || !strings.Contains(got.Extensions, "### Preconditions") || !strings.Contains(got.Supports, "#evaluate-requirements") {
 		t.Fatalf("lost scenario, extension, or job link: %+v", got)
 	}
 	if len(Check(got)) != 0 {
@@ -155,7 +155,7 @@ func TestStructureAndSourceLocations(t *testing.T) {
 }
 
 func TestEveryConventionalSectionRejectsDuplicates(t *testing.T) {
-	for _, name := range []string{"Goal", "System boundary", "Primary actor", "Goal level", "Trigger", "Preconditions", "Success criterion", "Main success scenario", "Extensions", "Sequence", "Related jobs", "Supporting actors", "Stakeholder interests", "Minimum guarantees"} {
+	for _, name := range []string{"Goal", "System boundary", "Primary actor", "Goal level", "Trigger", "Preconditions", "Success guarantees", "Main success scenario", "Extensions", "Sequence", "Supports", "Supporting actors", "Stakeholder interests", "Minimal guarantees"} {
 		_, err := Parse([]byte(draft + "## " + name + "\n\n## " + name + "\n"))
 		var d *diagnostic.Diagnostic
 		if !errors.As(err, &d) || d.Rule != "structure.duplicate-section" {
@@ -210,13 +210,13 @@ func TestProgressiveExtensionsAndGuarantees(t *testing.T) {
 		t.Fatal("missing extension advice after a scenario")
 	}
 	source += "### Alternative service\nCondition: preferred service unavailable. Handling unresolved.\n" +
-		"## Minimum guarantees\nNo unconfirmed promise.\n## Supporting actors\nExternal provider.\n## Stakeholder interests\nOperator: accurate commitments.\n" +
+		"## Minimal guarantees\nNo unconfirmed promise.\n## Supporting actors\nExternal provider.\n## Stakeholder interests\nOperator: accurate commitments.\n" +
 		"## Evidence\n[Branch](#alternative-service)\n"
 	spec, err = Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if spec.MinimumGuarantees != "No unconfirmed promise." || spec.SupportingActors != "External provider." || spec.StakeholderInterests != "Operator: accurate commitments." {
+	if spec.MinimalGuarantees != "No unconfirmed promise." || spec.SupportingActors != "External provider." || spec.StakeholderInterests != "Operator: accurate commitments." {
 		t.Fatalf("lost context: %+v", spec)
 	}
 	for _, d := range Check(spec) {

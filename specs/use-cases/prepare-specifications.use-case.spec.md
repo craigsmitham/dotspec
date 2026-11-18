@@ -22,7 +22,7 @@ A contributor proposing a product change.
 
 Summary (kite).
 
-## Success criterion
+## Success guarantees
 
 The contributor has assembled the proposed behavioral account, related sources,
 and known unresolved questions for review. Preparation does not establish approval.

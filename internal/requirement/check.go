@@ -11,11 +11,16 @@ import (
 // the adequacy of its behavior, or whether its purpose has been achieved.
 func Check(spec *Requirement) []diagnostic.Diagnostic {
 	var suggestions []diagnostic.Diagnostic
+	// Quality-specific wording follows the classification, not a separate type.
+	statement, rationale := "State one required result, rule, property, or restriction.", "Explain why this obligation is needed and reference its source or governing goal."
+	if len(spec.QualityAttributes) > 0 {
+		statement, rationale = "State one coherent, assessable quality obligation.", "Explain why this quality matters and any relevant tradeoffs."
+	}
 	for _, field := range []struct{ rule, name, value, message string }{
 		{"requirement.applies-to", "Applies to", spec.Applicability, "Identify the subject and applicable conditions, workload, or population."},
-		{"requirement.statement", "Statement", spec.Statement, "State one required result, rule, property, or restriction."},
-		{"requirement.verification", "Verification plan", spec.VerificationPlan + spec.MeasurementPlan, "Record assessment guidance for checking a realization against the obligation; a plan is not a verification result."},
-		{"requirement.rationale", "Rationale", spec.Rationale, "Explain why this obligation is needed and reference its source or governing goal."},
+		{"requirement.statement", "Statement", spec.Statement, statement},
+		{"requirement.verification", "Verification plan", spec.VerificationPlan, "Record assessment guidance for checking a realization against the obligation; a plan is not a verification result."},
+		{"requirement.rationale", "Rationale", spec.Rationale, rationale},
 	} {
 		if strings.TrimSpace(field.value) != "" {
 			continue
@@ -28,12 +33,8 @@ func Check(spec *Requirement) []diagnostic.Diagnostic {
 		suggestions = append(suggestions, diagnostic.Advice(field.rule, field.message, location))
 	}
 	if missing := spec.MeasurementGuidance.Missing(); len(missing) > 0 {
-		section := "Measurement plan"
-		if strings.TrimSpace(spec.MeasurementPlan) == "" {
-			section = "Criterion"
-		}
-		location := spec.SectionLocations[section]
-		location.Path, location.Element = spec.Path, section
+		location := spec.SectionLocations["Criterion"]
+		location.Path, location.Element = spec.Path, "Criterion"
 		suggestions = append(suggestions, diagnostic.Advice("requirement.measurement-basis", obligation.MeasurementMessage(missing), location))
 	}
 	return suggestions

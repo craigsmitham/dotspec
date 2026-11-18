@@ -4,7 +4,7 @@ Specification project: **requirements-review**. Project membership does not impl
 
 Generated from acquired specifications. Findings below are advisory review prompts, not completeness, acceptance or implementation claims. Missing links mean **no relationship recorded in this scope**. Drafts may conform to the authoring format while requirements verification and validation remain unfinished.
 
-Model `0.17.0-draft`; mapping `dotspec-markdown/13`.
+Model `0.18.0-draft`; mapping `dotspec-markdown/14`.
 
 ## Needs and intent
 
@@ -184,15 +184,11 @@ Representative accidental-deletion situations and the stated recovery-window bou
 
 Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.
 
-### QualityRequirement: [Timely recovery feedback](<../../examples/requirements-review/specs/quality/recovery-feedback.quality.spec.md#timely-recovery-feedback>)
+### Requirement: [Timely recovery feedback](<../../examples/requirements-review/specs/requirements/recovery-feedback.requirement.spec.md#timely-recovery-feedback>)
 
 No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
 
-### QualityRequirement: [Unassisted recovery](<../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#unassisted-recovery>)
-
-No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
-
-### GeneralRequirement: [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
+### Requirement: [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
 
 **Validation plan**
 
@@ -223,6 +219,10 @@ Representative accidental-deletion situations and the stated recovery-window bou
 #### Evidence to retain
 
 Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.
+
+### Requirement: [Unassisted recovery](<../../examples/requirements-review/specs/requirements/unassisted-recovery.requirement.spec.md#unassisted-recovery>)
+
+No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
 
 ### System: [Document workspace](<../../examples/requirements-review/specs/system.spec.md#document-workspace>)
 
@@ -314,23 +314,29 @@ No validation plan recorded. Review whether an explicit plan would help assess n
 
 These plans assess realizations against obligations. Requirements verification instead assesses the quality of the requirement statements and set. A plan is distinct from an observation, an evidence-based assessment, and an acceptance decision.
 
-### [Timely recovery feedback](<../../examples/requirements-review/specs/quality/recovery-feedback.quality.spec.md#timely-recovery-feedback>)
+### [Timely recovery feedback](<../../examples/requirements-review/specs/requirements/recovery-feedback.requirement.spec.md#timely-recovery-feedback>)
 
-**Measurement plan**
+**Verification plan**
 
-#### Procedure
+#### Method
 
-Measure elapsed time from submitting a recovery request to visible feedback.
+Measure the elapsed time for representative recovery requests.
 
-#### Sampling
+**Criterion**
 
-Collect observations for representative recovery requests.
+#### Measure
+
+Elapsed time from submitting a recovery request to visible feedback.
 
 Assessment guidance recorded; its adequacy and any verification result are not evaluated.
 
-Review required: A measure or measurement plan is recorded, but no separately identified criterion, conditions or applicability is recorded for the obligation. Define or reference the required comparison under Criterion and its operating context under Applies to or Criterion. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result.
+Review required: A measure is recorded, but no separately identified target, conditions or applicability is recorded for the obligation. Define or reference the required bound under Criterion and its operating context under Applies to. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result.
 
-### [Unassisted recovery](<../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#unassisted-recovery>)
+### [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
+
+No verification plan recorded; review required.
+
+### [Unassisted recovery](<../../examples/requirements-review/specs/requirements/unassisted-recovery.requirement.spec.md#unassisted-recovery>)
 
 **Verification plan**
 
@@ -340,7 +346,7 @@ The candidate recovery workflow, with implementation revision recorded before th
 
 #### Basis
 
-[Statement](../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#statement), [Criterion](../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#criterion), and [Applies to](../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#applies-to).
+[Statement](../../examples/requirements-review/specs/requirements/unassisted-recovery.requirement.spec.md#statement), [Criterion](../../examples/requirements-review/specs/requirements/unassisted-recovery.requirement.spec.md#criterion), and [Applies to](../../examples/requirements-review/specs/requirements/unassisted-recovery.requirement.spec.md#applies-to).
 
 #### Participants
 
@@ -358,14 +364,14 @@ success for every user or environment.
 
 #### Success criteria
 
-Compare the observed proportion with the required bound in [Criterion](../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#criterion).
+Compare the observed proportion with the required bound in [Criterion](../../examples/requirements-review/specs/requirements/unassisted-recovery.requirement.spec.md#criterion).
 Retain the comparison and its limitations for the assessment decision.
 
 #### Conditions
 
 Use a working network and supported browsers, with normal in-product help enabled.
 Give each member a recognizable document to delete before the recovery task.
-Explain how the seeded task represents the context in [Applies to](../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#applies-to)
+Explain how the seeded task represents the context in [Applies to](../../examples/requirements-review/specs/requirements/unassisted-recovery.requirement.spec.md#applies-to)
 and record deviations without silently changing the requirement's scope.
 
 #### Evidence to retain
@@ -383,19 +389,11 @@ document and opens the recovered contents without external assistance. Count one
 attempt per member; an abandoned attempt or facilitator intervention is a failure.
 Divide successful attempts by all eligible attempts, including failures.
 
-#### Comparison
-
-At least.
-
 #### Target
 
-90%.
+At least 90%.
 
 Assessment guidance recorded; its adequacy and any verification result are not evaluated.
-
-### [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
-
-No system verification or measurement guidance recorded; review required.
 
 ### [Preserve request identity](<../../examples/requirements-review/specs/system.spec.md#preserve-request-identity>)
 
@@ -477,7 +475,7 @@ These roles distinguish explanation, nonbinding implementation advice and exampl
 
 An index could accelerate expiration queries without changing the specified effects.
 
-### [Document workspace](<../../examples/requirements-review/specs/system.spec.md#document-workspace>) — Explanatory notes
+### [Document workspace](<../../examples/requirements-review/specs/system.spec.md#document-workspace>) — Notes
 
 A recovery window limits restoration from retained state; it does not describe external backup guarantees.
 
@@ -489,12 +487,16 @@ A background worker could expire retained copies. This suggestion does not presc
 
 A member restores a document one day after deletion and resumes editing.
 
+### [Restoration requests](<../../examples/requirements-review/specs/system.spec.md#restoration-requests>) — Notes
+
+The interaction contract covers retries; the native protocol remains to be selected.
+
 ## Automated inspection findings
 
 - **advice** `relationship.motivation`: No explicit motivation or derivation is recorded for this obligation; review its justification.
-- **advice** `relationship.measurement_basis`: A measure or measurement plan is recorded, but no separately identified criterion, conditions or applicability is recorded for the obligation. Define or reference the required comparison under Criterion and its operating context under Applies to or Criterion. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result.
-- **advice** `relationship.verification_plan`: No system verification or measurement plan is recorded for this obligation; review how a realization will be checked.
+- **advice** `relationship.measurement_basis`: A measure is recorded, but no separately identified target, conditions or applicability is recorded for the obligation. Define or reference the required bound under Criterion and its operating context under Applies to. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result.
+- **advice** `relationship.verification_plan`: No verification plan is recorded for this obligation; review how a realization will be checked.
 - **advice** `relationship.motivation`: No explicit motivation or derivation is recorded for this obligation; review its justification.
-- **advice** `quality.applies-to`: Identify the subject and applicable conditions, workload, or population.
-- **advice** `quality.measurement-basis`: A measure or measurement plan is recorded, but no separately identified criterion, conditions or applicability is recorded for the obligation. Define or reference the required comparison under Criterion and its operating context under Applies to or Criterion. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result.
+- **advice** `requirement.applies-to`: Identify the subject and applicable conditions, workload, or population.
+- **advice** `requirement.measurement-basis`: A measure is recorded, but no separately identified target, conditions or applicability is recorded for the obligation. Define or reference the required bound under Criterion and its operating context under Applies to. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result.
 - **advice** `requirement.verification`: Record assessment guidance for checking a realization against the obligation; a plan is not a verification result.

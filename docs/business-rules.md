@@ -74,29 +74,39 @@ retain their source content. Unknown sections survive as explicit extensions.
 
 ## Refer to a rule from software specifications
 
-Use a `Business rules` section in a use case, requirement, or another spec:
+Cite a rule under `Related specifications` in a use case, requirement, or another spec:
 
 ```markdown
-## Business rules
+## Related specifications
 
 [Manager approval](../business-rules/purchase-approval.business-rule.spec.md#purchase-approval)
 governs this interaction. The linked requirement describes automated enforcement.
 ```
 
 The model preserves the explanation and reference occurrences in
-`business_rules: ContextualReferences`. Resolving a citation identifies its
+`related_specifications: ContextualReferences`. Resolving a citation identifies its
 target; it does not create a typed enforcement or compliance assertion.
-Stronger relationships require a separately defined authoring convention.
+
+Use a typed relationship when the connection itself matters. `Derived from` on
+another element names the rule as its basis. `Refines` on a requirement or
+obligation clause adds precision to the rule. The `**Targets:**` field in the
+rule's own `Applies to` section identifies what the rule governs, and an
+`Illustrates:` bullet under a scenario step names a rule that the step illustrates.
+See [Declare relationships](develop-relationships.md). None of these establishes
+enforcement or compliance.
 
 ## Model representation
 
 `BusinessRule` is a `Specification` in the core `business-requirements`
 subset. Statement, applicability, rationale, authority, and exceptions have
 named source-backed model fields. The rule's constraint is independent of any
-software requirement that implements it.
+software requirement that implements it. A rule's own `Refines` section targets
+only other business rules, and a rule does not contain obligation clauses: state
+software enforcement in a requirement or in a clause of the specification that
+describes the behavior.
 
 The [core domain reference](reference/model/core.md) shows its place among the
-specification kinds. The [complete reference](reference/model/index.md#businessrule)
+specification types. The [complete reference](reference/model/index.md#businessrule)
 and [mapping profile](../model/markdown-mapping.md#business-rule) define its model
 shape and mapping. Use [model export and validation](specification-model.md) to
 inspect source retention, references, and coverage.

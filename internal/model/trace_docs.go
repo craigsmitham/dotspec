@@ -209,7 +209,7 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		count++
 		guidanceParts := []string{}
-		for _, field := range []string{"verification_plan", "measurement_plan"} {
+		for _, field := range []string{"verification_plan"} {
 			if strings.TrimSpace(d.text(Object(r[field])["content"])) != "" {
 				guidanceParts = append(guidanceParts, strings.ReplaceAll(field, "_", " "))
 			}

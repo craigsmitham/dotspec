@@ -9,16 +9,23 @@ subsets:
 - software-requirements
 - specification-traceability
 types:
-  Specification:
+  DomainElement:
+  - name
+  - authored_id
   - notes
+  - open_questions
+  Specification:
+  - slug
+  - preamble
   - evidence
+  - authority_and_evidence
   - related_specifications
   TraceableElement:
   - supports
   - derived_from
   - relies_on
   - validation_plan
-  SystemGoal:
+  Goal:
   - statement
   - supports
   Assumption:
@@ -26,21 +33,23 @@ types:
   - basis
   - applicability
   - validation_plan
-  Constraint:
-  - statement
   ObligationClause:
+  - owner
   - statement
   - quality_attributes
   - refines
   - applies_to
   - verification_plan
   - criterion
-  - measurement_plan
   System:
   - purpose
   - scope
   - goals
+  - environment
+  - stakeholders
+  - assumptions
   - constraints
+  - glossary
   - concept_uses
   - synchronizations
   - quality_attributes
@@ -98,11 +107,13 @@ types:
   - subject_system
   - supports
   - primary_actor
+  - goal_level
   - preconditions
-  - minimum_guarantees
+  - minimal_guarantees
+  - success_guarantees
   - main_success_scenario
   - extensions
-  - business_rules
+  - sequence
   Scenario:
   - content
   - steps
@@ -113,7 +124,6 @@ types:
   UseCaseExtension:
   - content
   - condition
-  - location
   - handling
   - steps
   - branches
@@ -175,6 +185,7 @@ types:
   - effects
   - rejections
   Requirement:
+  - statement
   - refines
   - derived_from
   - supports
@@ -183,17 +194,8 @@ types:
   - applies_to
   - rationale
   - quality_attributes
-  - business_rules
-  GeneralRequirement:
-  - statement
-  - verification_plan
   - criterion
-  - measurement_plan
-  QualityRequirement:
-  - statement
   - verification_plan
-  - criterion
-  - measurement_plan
   QualityModel:
   - description
   - edition
@@ -229,7 +231,16 @@ types:
   - refines
   - verification_plan
   - criterion
-  - measurement_plan
+  Applicability:
+  - content
+  - conditions
+  - workload
+  - population
+  - exclusions
+  ObligationCriterion:
+  - content
+  - measure
+  - target
   Component:
   - purpose
   - responsibilities
@@ -261,9 +272,6 @@ types:
   - importance
   - evidence_needed
   - tracking_reference
-  InterfaceCollection:
-  - content
-  - interfaces
   Interface:
   - owner
   - obligations
@@ -272,9 +280,6 @@ types:
   - description
   - contracts
   - counterpart
-  EffectsTable:
-  - content
-  - rows
   EffectsRow:
   - cells
   AssessmentPlan:
@@ -293,38 +298,53 @@ types:
   - expected_result
   - evidence_to_retain
 diagrams:
-- title: Specification kinds
+- title: Specification types
   direction: TB
   show_cardinality: false
-  description: Specification is a cohesive definition independent of document placement. Eight document families
-    supply roots; Component, Feature, Capability, ConceptUse, Synchronization and Interface are named inline
-    specifications. Subsets classify concerns separately from this hierarchy.
+  description: A Specification is the root record of one authored specification document. The seven specification
+    types correspond one-to-one with these concrete classes. Subsets classify concerns separately from this
+    hierarchy.
   nodes:
   - Specification
   - SystemContextSpecification
   - System
-  - Feature
-  - Component
-  - Capability
-  - ConceptUse
-  - Synchronization
-  - Interface
   - QualityModel
   - BusinessRule
   - Job
   - UseCase
   - Concept
   - Requirement
-  - GeneralRequirement
-  - QualityRequirement
   paths: []
   inheritance: true
+- title: Elements declared in a system specification
+  description: Components, features, capabilities, concept uses, synchronizations and interfaces are named elements
+    declared inside a System specification, not specifications themselves. Each has one declaring owner; declaration
+    does not establish structural parentage.
+  nodes:
+  - System
+  - Component
+  - Feature
+  - Capability
+  - ConceptUse
+  - Synchronization
+  - Interface
+  paths:
+  - System.components
+  - System.features
+  - System.capabilities
+  - System.concept_uses
+  - System.synchronizations
+  - System.required_interfaces
+  - System.provided_interfaces
+  - Component.required_interfaces
+  - Component.provided_interfaces
+  inheritance: false
 - title: Specification system association
   direction: TB
   show_cardinality: false
-  description: Document families derived from SystemContextSpecification select a specification system explicitly
-    or use the nearest directory system by default. Inline specifications have declaring owners instead.
-    Neither association establishes structural parentage. Quality models stand independently.
+  description: Specification types derived from SystemContextSpecification select a specification system explicitly
+    or use the nearest directory system by default. Elements declared inside a specification have declaring
+    owners instead. Neither association establishes structural parentage. Quality models stand independently.
   nodes:
   - System
   - BusinessRule
@@ -341,17 +361,17 @@ diagrams:
   inheritance: false
 - title: Boundary interfaces
   description: Required and provided are relative to the declaring System or Component. Each Interface is an
-    addressable specification with one declaration membership. Requirements can apply to it and it may own
+    addressable element with one declaration membership. Requirements can apply to it and it may own
     obligation clauses. Native contract references do not establish implementation or compatibility.
   nodes:
   - System
   - Component
   - Interface
   paths:
-  - System.required_interfaces.interfaces
-  - System.provided_interfaces.interfaces
-  - Component.required_interfaces.interfaces
-  - Component.provided_interfaces.interfaces
+  - System.required_interfaces
+  - System.provided_interfaces
+  - Component.required_interfaces
+  - Component.provided_interfaces
   inheritance: false
 - title: System structure and feature grouping
   description: Declaration membership identifies where records are authored. Explicit part_of identifies structural
@@ -380,18 +400,16 @@ diagrams:
   - Component.interacts_with
   inheritance: false
 - title: Shared obligation capabilities
-  description: Both standalone requirement forms and embedded clauses share statement, classification, applicability
-    and assessment plans through Obligation. ObligationContainer separately grants clause ownership to System,
-    Component, Interface, BusinessRule, Job, JobStep, UseCase, Concept, ConceptUse, ConceptAction, Synchronization and
-    Requirement. Goals, assumptions and desired outcomes retain traceability without containing clauses. Triangle
-    arrows include explicitly mixed-in capabilities.
+  description: A Requirement specification and an embedded clause share statement, classification, applicability,
+    criterion and verification plan through Obligation. ObligationContainer separately grants clause ownership
+    to System, Component, Interface, UseCase, Concept, ConceptUse, ConceptAction and Synchronization. A Requirement
+    states one obligation and contains no clauses. Business rules, jobs, goals, assumptions and desired outcomes
+    retain traceability without containing clauses. Triangle arrows include explicitly mixed-in capabilities.
   direction: TB
   nodes:
   - Obligation
   - ObligationContainer
   - Requirement
-  - GeneralRequirement
-  - QualityRequirement
   - ObligationClause
   paths:
   - ObligationContainer.obligations
@@ -405,10 +423,10 @@ diagrams:
   - DesiredOutcome
   - ProgressCase
   paths:
-  - Job.steps.steps
-  - Job.outcomes.outcomes
-  - Job.progress_cases.cases
-  - JobStep.outcomes.outcomes
+  - Job.steps
+  - Job.outcomes
+  - Job.progress_cases
+  - JobStep.outcomes
   inheritance: false
 - title: Outcome applicability
   description: An outcome can explicitly apply to several jobs or steps independently of its single declaration
@@ -423,7 +441,7 @@ diagrams:
 - title: Software behavior
   description: Use cases describe interactions and alternatives; concepts describe purposeful state and actions.
     These are complementary views, with no mandatory authoring or execution order. Steps may explicitly illustrate
-    obligations or actions; this does not prove completeness.
+    obligations, business rules or actions; this does not prove completeness.
   nodes:
   - UseCase
   - Scenario
@@ -432,13 +450,14 @@ diagrams:
   - Concept
   - ConceptAction
   - Obligation
+  - BusinessRule
   paths:
   - UseCase.main_success_scenario
-  - UseCase.extensions.branches
+  - UseCase.extensions
   - Scenario.steps
   - UseCaseExtension.steps
   - UseCaseExtension.branches
-  - Concept.actions.actions
+  - Concept.actions
   - ScenarioStep.illustrates
   inheritance: false
 - title: Quality classification
@@ -506,7 +525,7 @@ diagrams:
   - Requirement
   - BusinessRule
   - DomainElement
-  - SystemGoal
+  - Goal
   paths:
   - UseCase.subject_system
   - UseCase.supports
@@ -520,10 +539,11 @@ diagrams:
     condition validity. These links do not impose authoring order or prove satisfaction.
   nodes:
   - TraceableElement
-  - SystemGoal
+  - Goal
   - Job
   - JobStep
   - DesiredOutcome
+  - UseCase
   - DomainElement
   - SourceFragment
   - Assumption
@@ -533,10 +553,11 @@ diagrams:
   - TraceableElement.relies_on
   inheritance: false
 - title: Obligations and complementary behavioral views
-  description: Requirement is the standalone obligation document family, not every normative expression. Explicit
-    clauses identify obligations within existing specifications without duplicating them. Refinement preserves
-    a parent commitment and must be acyclic; multiple parents are permitted. Use cases involve named concept
-    uses many-to-many; neither view is the mandatory parent of the other.
+  description: Requirement is the specification type that gives one obligation its own document, not every normative
+    expression. Explicit clauses identify obligations within other specifications without duplicating them.
+    Refinement preserves a parent commitment and must be acyclic; multiple parents are permitted. A business
+    rule refines only another business rule. Use cases involve named concept uses many-to-many; neither view
+    is the mandatory parent of the other.
   nodes:
   - TraceableElement
   - ObligationClause
@@ -580,10 +601,11 @@ diagrams:
   - Capability
   - System
   - Component
-  - SystemGoal
+  - Goal
   - Job
   - JobStep
   - DesiredOutcome
+  - UseCase
   paths:
   - Capability.supports
   - Capability.depends_on

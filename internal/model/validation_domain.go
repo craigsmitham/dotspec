@@ -32,10 +32,10 @@ func (v *graphValidator) checkDomain() {
 		r, path := located.value, located.path
 		kind := String(r, "kind")
 		if kind == "System" || kind == "Component" {
-			required := Strings(Object(r["required_interfaces"])["interfaces"])
-			for _, id := range Strings(Object(r["provided_interfaces"])["interfaces"]) {
+			required := Strings(r["required_interfaces"])
+			for _, id := range Strings(r["provided_interfaces"]) {
 				if slices.Contains(required, id) {
-					v.add("interface.direction", path+"/provided_interfaces/interfaces", "an interface declaration must have one direction relative to its owner")
+					v.add("interface.direction", path+"/provided_interfaces", "an interface declaration must have one direction relative to its owner")
 				}
 			}
 		}
@@ -287,12 +287,12 @@ func (v *graphValidator) checkAssertions() {
 		if !v.isA(kind, "Assertion") {
 			continue
 		}
-		key := kind + "\x00" + String(r, "projection_path") + "\x00" + String(r, "subject") + "\x00" + String(r, "object")
+		key := String(r, "projection_path") + "\x00" + String(r, "subject") + "\x00" + String(r, "object")
 		if seen[key] {
 			v.add("assertion.duplicate", path, "a materialized semantic relation is repeated")
 		}
 		seen[key] = true
-		if String(r, "origin") == "derived" && (String(r, "mapping_rule") == "" || len(Strings(r["inputs"])) == 0) {
+		if String(r, "mapping_rule") == "" || len(Strings(r["inputs"])) == 0 {
 			v.add("assertion.derivation", path, "derived assertions require a mapping rule and input records")
 		}
 		provenance := len(Strings(r["source_nodes"])) > 0 || len(records(r["source_spans"])) > 0
@@ -304,20 +304,11 @@ func (v *graphValidator) checkAssertions() {
 		if !provenance {
 			v.add("assertion.provenance", path, "assertion must retain source provenance directly or through input records")
 		}
-		expression := v.catalog.Classes[kind].Annotations["projection_of"]
-		if expression == "" {
-			continue
-		}
-		if String(r, "origin") != "derived" {
-			v.add("assertion.origin", path+"/origin", "Relationship views must be derived from their canonical fields.")
-		}
+		// The projection path names one canonical field; the field decides the claim.
+		projection := String(r, "projection_path")
+		class, field, found := strings.Cut(projection, ".")
 		subject := v.records[String(r, "subject")].value
-		agrees := false
-		for _, projection := range modelPaths(expression) {
-			if String(r, "projection_path") == projection[0]+"."+projection[1] && v.isA(String(subject, "kind"), projection[0]) && slices.Contains(valuesAt(subject, projection[1]), String(r, "object")) {
-				agrees = true
-			}
-		}
+		agrees := found && slices.Contains(v.catalog.Projections, projection) && v.isA(String(subject, "kind"), class) && slices.Contains(valuesAt(subject, field), String(r, "object"))
 		if !agrees {
 			v.add("assertion.projection", path, "materialized relation disagrees with its canonical typed membership or reference field")
 		}

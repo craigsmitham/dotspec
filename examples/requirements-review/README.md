@@ -14,7 +14,7 @@ They record no completed observations, assessments or acceptance. The feedback q
 requirement deliberately supplies measurement-only guidance without a defined criterion
 or operating context, demonstrating advisory measurement-basis findings.
 
-The [unassisted recovery requirement](specs/quality/unassisted-recovery.quality.spec.md)
+The [unassisted recovery requirement](specs/requirements/unassisted-recovery.requirement.spec.md)
 provides a contrasting example: explicit users, task, assistance and environment;
 one operationally defined measure and required bound; and a verification plan that
 references the criterion. Study values and targets are illustrative. Sampling

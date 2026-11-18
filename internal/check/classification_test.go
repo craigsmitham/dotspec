@@ -8,27 +8,27 @@ import (
 	"testing"
 
 	"github.com/craigsmitham/dotspec/internal/check"
-	"github.com/craigsmitham/dotspec/internal/quality"
+	"github.com/craigsmitham/dotspec/internal/requirement"
 )
 
-func TestQualityContextAndAdvice(t *testing.T) {
+func TestClassificationContextAndAdvice(t *testing.T) {
 	dir := t.TempDir()
 	git(t, dir, "init", "-q")
 	child := filepath.Join(dir, "component")
 	modelPath := filepath.Join(dir, "specs/system.spec.md")
 	model := validSystem + "\n## Quality attributes\n### Known\n**ID:** known\n"
 	write(t, modelPath, model)
-	source := strings.Replace(quality.Template, "type: quality", "type: quality\nquality_attributes: [known, unknown]", 1)
-	path := quality.Layout.Path(child, "work")
+	source := strings.Replace(requirement.QualityTemplate, "type: requirement", "type: requirement\nquality_attributes: [known, unknown]", 1)
+	path := requirement.Layout.Path(child, "work")
 	write(t, path, source)
-	focused := check.Focused(child, "work", quality.CheckType())
+	focused := check.Focused(child, "work", requirement.CheckType())
 	project := checkProject(child)
 	if !reflect.DeepEqual(focused.Diagnostics, project.Diagnostics) || focused.ExitCode() != 0 || focused.Summary.Advice != 2 || focused.Summary.ContextFilesChecked != 1 {
 		t.Fatalf("context advice differs: %+v %+v", focused, project)
 	}
 	// A system discovered directly and also used by two requirement owners
 	// contributes its missing-definition advice only once.
-	write(t, quality.Layout.Path(dir, "root"), source)
+	write(t, requirement.Layout.Path(dir, "root"), source)
 	project = checkProject(dir)
 	if project.Summary.Advice != 3 || project.Summary.ContextFilesChecked != 0 {
 		t.Fatalf("duplicate model advice: %+v", project)
@@ -40,41 +40,41 @@ func TestQualityContextAndAdvice(t *testing.T) {
 	}
 	// Failure to locate a valid context does not fabricate undefined labels.
 	write(t, modelPath, "broken")
-	focused = check.Focused(child, "work", quality.CheckType())
+	focused = check.Focused(child, "work", requirement.CheckType())
 	if !focused.Complete || focused.ExitCode() != 1 || focused.Summary.Errors != 1 || focused.Summary.Advice != 0 {
 		t.Fatalf("broken context: %+v", focused)
 	}
 	if err := os.Remove(modelPath); err != nil {
 		t.Fatal(err)
 	}
-	focused = check.Focused(child, "work", quality.CheckType())
+	focused = check.Focused(child, "work", requirement.CheckType())
 	if focused.ExitCode() != 0 || focused.Summary.Advice != 0 || focused.Summary.ContextFilesChecked != 0 {
 		t.Fatalf("absent model: %+v", focused)
 	}
-	missing := check.Focused(child, "missing", quality.CheckType())
+	missing := check.Focused(child, "missing", requirement.CheckType())
 	if missing.Complete || missing.ExitCode() != 2 || missing.Summary.FilesChecked != 1 {
 		t.Fatalf("missing input: %+v", missing)
 	}
 }
 
-func TestQualityDiscoveryAndSourceLocations(t *testing.T) {
+func TestClassifiedRequirementDiscoveryAndSourceLocations(t *testing.T) {
 	dir := t.TempDir()
 	git(t, dir, "init", "-q")
-	path := quality.Layout.Path(dir, "tracked")
-	write(t, path, quality.Template)
-	git(t, dir, "add", "specs/quality/tracked.quality.spec.md")
-	write(t, filepath.Join(dir, ".gitignore"), "tracked.quality.spec.md\nignored/\nsystem.spec.md\n")
-	write(t, filepath.Join(dir, "ignored/broken.quality.spec.md"), "ignored")
+	path := requirement.Layout.Path(dir, "tracked")
+	write(t, path, requirement.QualityTemplate)
+	git(t, dir, "add", "specs/requirements/tracked.requirement.spec.md")
+	write(t, filepath.Join(dir, ".gitignore"), "tracked.requirement.spec.md\nignored/\nsystem.spec.md\n")
+	write(t, filepath.Join(dir, "ignored/broken.requirement.spec.md"), "ignored")
 	write(t, filepath.Join(dir, "specs/system.spec.md"), validSystem+"\n## Quality attributes\n")
 	r := checkProject(dir)
 	if r.ExitCode() != 0 || r.Summary.FilesChecked != 1 || r.Summary.ContextFilesChecked != 1 {
 		t.Fatalf("discovery or ignored context: %+v", r)
 	}
-	write(t, path, "---\ntype: quality\nquality_attributes:\n  - known\n  - missing\n---\n# Draft\n")
+	write(t, path, "---\ntype: requirement\nquality_attributes:\n  - known\n  - missing\n---\n# Draft\n")
 	r = checkProject(dir)
 	var lines []int
 	for _, d := range r.Diagnostics {
-		if d.Rule == "quality.undefined-attribute" {
+		if d.Rule == "requirement.undefined-attribute" {
 			lines = append(lines, d.Location.Line)
 		}
 	}

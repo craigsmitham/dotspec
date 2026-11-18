@@ -15,7 +15,6 @@ import (
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
-	"github.com/craigsmitham/dotspec/internal/quality"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
@@ -23,7 +22,7 @@ import (
 )
 
 func conformanceTypes() []check.Type {
-	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType(), quality.CheckType()}
+	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
 }
 
 func conformanceExport(t *testing.T, path string) ExportResult {
@@ -158,7 +157,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 				return err
 			}
 			parsed := ParseContent(absolute, data)
-			class := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[String(parsed.Document, "declared_type")]
+			class := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement", "quality": "Requirement"}[String(parsed.Document, "declared_type")]
 			if class == "" {
 				t.Errorf("%s: unknown specimen family", path)
 			}
@@ -250,14 +249,14 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system\n---\n# Root\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n\n### Broad\n\n**ID:** broad\n\nA concern.\n\n### Narrow\n\n**ID:** narrow\n**Sub-attribute of:** broad\n\nA narrower concern.\n")
-	conformanceWrite(t, root, "specs/quality/resolved.quality.spec.md", "---\ntype: quality\nid: reused\nquality_attributes: [narrow]\n---\n# Resolved\n")
+	conformanceWrite(t, root, "specs/requirements/resolved.requirement.spec.md", "---\ntype: requirement\nid: reused\nquality_attributes: [narrow]\n---\n# Resolved\n")
 	conformanceWrite(t, root, "specs/requirements/undefined.requirement.spec.md", "---\ntype: requirement\nid: reused\nquality_attributes: [unknown]\n---\n# Undefined\n")
 	conformanceWrite(t, root, "sub/specs/system.spec.md", "---\ntype: system\n---\n# Subsystem\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
-	conformanceWrite(t, root, "sub/specs/quality/unbound.quality.spec.md", "---\ntype: quality\nid: reused\nquality_attributes: [narrow]\n---\n# Unbound\n")
+	conformanceWrite(t, root, "sub/specs/requirements/unbound.requirement.spec.md", "---\ntype: requirement\nid: reused\nquality_attributes: [narrow]\n---\n# Unbound\n")
 	conformanceWrite(t, root, "empty/specs/system.spec.md", "---\ntype: system\n---\n# Empty attributes\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n")
-	conformanceWrite(t, root, "empty/specs/quality/undefined-empty.quality.spec.md", "---\ntype: quality\nquality_attributes: [narrow]\n---\n# Undefined in empty attributes\n")
+	conformanceWrite(t, root, "empty/specs/requirements/undefined-empty.requirement.spec.md", "---\ntype: requirement\nquality_attributes: [narrow]\n---\n# Undefined in empty attributes\n")
 	conformanceWrite(t, root, "sibling/specs/system.spec.md", "---\ntype: system\n---\n# Sibling\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n### Local narrow\n**ID:** narrow\nA different concern in this system.\n")
-	conformanceWrite(t, root, "sibling/specs/quality/local.quality.spec.md", "---\ntype: quality\nquality_attributes: [narrow]\n---\n# Local classification\n")
+	conformanceWrite(t, root, "sibling/specs/requirements/local.requirement.spec.md", "---\ntype: requirement\nquality_attributes: [narrow]\n---\n# Local classification\n")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
 		t.Errorf("advice-only fixtures exit %d", result.ExitCode)
@@ -274,7 +273,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 		owner := index[String(label, "owner")]
 		if String(resolution, "status") == "resolved" {
 			target := index[String(resolution, "target")]
-			if String(target, "owner") != String(label, "governing_system") || String(target, "owner") != String(owner, "system_context") {
+			if String(target, "owner") != String(label, "governing_system") || String(target, "owner") != String(owner, "specification_system") {
 				t.Fatalf("classification escaped its declaring system: %+v", label)
 			}
 		}
@@ -492,14 +491,12 @@ type: use-case
 ##### Flow caveat
 1. This explanatory item is not a flow step.
 `)
-	conformanceWrite(t, root, "specs/quality/measure.quality.spec.md", `---
-type: quality
+	conformanceWrite(t, root, "specs/requirements/measure.requirement.spec.md", `---
+type: requirement
 ---
 # Measure
 ## Criterion
 A qualitative criterion.
-## Measurement plan
-Measure the criterion.
 ### Custom protocol
 Unmapped protocol detail.
 `)
@@ -518,7 +515,7 @@ Unmapped protocol detail.
 		case "ExtensionSection":
 			extensions[strings.TrimSpace(conformanceRichText(s, element["heading"]))] = String(index[String(element, "owner")], "kind")
 		case "Job":
-			decisions := records(Object(element["open_questions"])["questions"])
+			decisions := records(element["open_questions"])
 			if len(decisions) != 1 || !strings.Contains(conformanceRichText(s, decisions[0]["question"]), "Which option?") || !strings.Contains(conformanceRichText(s, decisions[0]["evidence_needed"]), "Collect evidence") {
 				t.Errorf("direct decision/evidence misbound: %#v", element["open_questions"])
 			}
@@ -527,11 +524,11 @@ Unmapped protocol detail.
 				t.Error("empty stage confused with absent/authored value")
 			}
 		case "ProgressCase":
-			text := conformanceRichText(s, Object(element["timeline"])["content"])
+			text := conformanceRichText(s, element["timeline"])
 			if !strings.Contains(text, "First timeline") || !strings.Contains(text, "Second timeline") {
 				t.Errorf("repeated timeline overwritten: %q", text)
 			}
-			if len(records(Object(element["forces"])["items"])) != 2 {
+			if len(records(element["forces"])) != 2 {
 				t.Error("repeated force collection overwritten")
 			}
 		case "Concept":
@@ -581,7 +578,7 @@ Unmapped protocol detail.
 			}
 		}
 	}
-	for heading, owner := range map[string]string{"#### Surprises": "JobStep", "#### Custom case detail": "ProgressCase", "#### Implementation details": "ConceptAction", "##### Flow caveat": "UseCaseExtension", "### Supporting notes": "Job", "### Custom protocol": "QualityRequirement", "##### Decision caveat": "QualityAttribute"} {
+	for heading, owner := range map[string]string{"#### Surprises": "JobStep", "#### Custom case detail": "ProgressCase", "#### Implementation details": "ConceptAction", "##### Flow caveat": "UseCaseExtension", "### Supporting notes": "Job", "### Custom protocol": "Requirement", "##### Decision caveat": "QualityAttribute"} {
 		if extensions[heading] != owner {
 			t.Errorf("unknown section %q owner=%q want %q; extensions=%v", heading, extensions[heading], owner, extensions)
 		}
@@ -639,7 +636,7 @@ Ask the contributor to return later.
 	conformancePayloads(t, s)
 	index := conformanceIndex(s)
 	labels := map[string]Record{}
-	var useCase, service, notes Record
+	var useCase, service Record
 	counts := map[string]int{}
 	for _, e := range s.Elements {
 		kind := String(e, "kind")
@@ -656,7 +653,7 @@ Ask the contributor to return later.
 			if strings.Contains(conformanceRichText(s, e["name"]), "Service unavailable") {
 				service = e
 			}
-			for _, removed := range []string{"at_step", "response", "flow", "continuation", "handling_state", "governing_references"} {
+			for _, removed := range []string{"at_step", "location", "response", "flow", "continuation", "handling_state", "governing_references"} {
 				if e[removed] != nil {
 					t.Errorf("obsolete extension field %s", removed)
 				}
@@ -667,19 +664,15 @@ Ask the contributor to return later.
 					t.Errorf("obsolete step field %s", removed)
 				}
 			}
-		case "ExtensionSection":
-			if strings.Contains(conformanceRichText(s, e["heading"]), "Notes") {
-				notes = e
-			}
 		}
 	}
-	if counts["UseCaseExtension"] != 7 || counts["ScenarioStep"] != 5 || counts["ExtensionSection"] != 1 {
+	if counts["UseCaseExtension"] != 7 || counts["ScenarioStep"] != 5 || counts["ExtensionSection"] != 0 {
 		t.Fatalf("unexpected decomposition: %v", counts)
 	}
-	if service == nil || notes == nil || String(notes, "owner") != String(service, "id") {
-		t.Fatal("Notes should belong to its enclosing branch as an extension section")
+	if service == nil || !strings.Contains(conformanceRichText(s, service["notes"]), "not an alternative path") {
+		t.Fatal("Notes should be retained as its enclosing branch's notes, not as another branch")
 	}
-	rootBranches := Strings(Object(useCase["extensions"])["branches"])
+	rootBranches := Strings(useCase["extensions"])
 	if len(rootBranches) != 3 || rootBranches[0] != String(labels["1a"], "id") || rootBranches[1] != String(labels["*a"], "id") || rootBranches[2] != String(service, "id") {
 		t.Fatalf("branch source order lost: %v", rootBranches)
 	}
@@ -692,7 +685,7 @@ Ask the contributor to return later.
 			t.Errorf("branch %s handling step label lost: %v", label, steps)
 		}
 	}
-	if labels["*a"]["handling"] != nil || labels["*a"]["condition"] != nil || labels["*a"]["location"] != nil {
+	if labels["*a"]["handling"] != nil || labels["*a"]["condition"] != nil {
 		t.Error("condition-only prose acquired inferred semantic fields")
 	}
 	if len(Strings(service["branches"])) != 2 || len(Strings(service["steps"])) != 3 {
@@ -707,8 +700,8 @@ Ask the contributor to return later.
 		}
 		previous = position
 	}
-	if !strings.Contains(conformanceRichText(s, service["location"]), "At any time.") {
-		t.Error("free-prose location lost")
+	if !strings.Contains(conformanceRichText(s, service["content"]), "At any time.") {
+		t.Error("where the condition arises must stay in the branch narrative")
 	}
 	if len(Strings(service["references"])) != 1 {
 		t.Error("ordinary inline reference missing")

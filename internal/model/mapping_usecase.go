@@ -8,7 +8,7 @@ import (
 )
 
 func (m *domainMapper) useCase(r Record, s *Section) bool {
-	fields := map[string]string{"Goal": "goal", "Trigger": "trigger", "Success criterion": "success_criterion"}
+	fields := map[string]string{"Goal": "goal", "Trigger": "trigger", "Supporting actors": "supporting_actors", "Stakeholder interests": "stakeholder_interests", "Sequence": "sequence"}
 	if field, ok := fields[s.Title]; ok {
 		m.section(r, field, s)
 		return true
@@ -21,54 +21,23 @@ func (m *domainMapper) useCase(r Record, s *Section) bool {
 		r["primary_actor"] = m.actor(s.Content)
 		m.sectionBindings(r, "primary_actor.content", s)
 	case "Goal level":
-		v := Record{"content": m.doc.Rich(s.Content)}
+		m.section(r, "goal_level_content", s)
 		text := strings.ToLower(strings.TrimSpace(m.contentText(s.Content)))
 		text = strings.TrimSuffix(text, ".")
 		switch text {
 		case "summary", "kite", "summary (kite)":
-			v["level"] = "summary"
+			r["goal_level"] = "summary"
 		case "user task", "user-task", "sea", "sea level", "user task (sea level)":
-			v["level"] = "user_task"
+			r["goal_level"] = "user_task"
 		case "subfunction", "fish", "subfunction (fish)":
-			v["level"] = "subfunction"
+			r["goal_level"] = "subfunction"
 		}
-		r["goal_level"] = v
-		m.sectionBindings(r, "goal_level.content", s)
 	case "Preconditions":
-		r["preconditions"] = m.conditions(s)
-		m.sectionBindings(r, "preconditions.content", s)
-	case "Minimum guarantees":
-		r["minimum_guarantees"] = m.conditions(s)
-		m.sectionBindings(r, "minimum_guarantees.content", s)
-	case "Supporting actors":
-		actors := []Record{}
-		for _, id := range m.listItems(s.Intro, false) {
-			actors = append(actors, m.actor([]string{id}))
-		}
-		for _, sub := range s.Children {
-			v := m.actor(sub.Content)
-			v["role_name"] = m.doc.Rich([]string{sub.HeadingID})
-			for _, detail := range sub.Children {
-				if detail.Title == "Services" {
-					m.setRich(v, "services", detail.Content)
-				} else {
-					m.extension(r, detail)
-				}
-			}
-			actors = append(actors, v)
-		}
-		r["supporting_actors"] = Record{"content": m.doc.Rich(s.Content), "actors": actors}
-		m.sectionBindings(r, "supporting_actors.content", s)
-	case "Stakeholder interests":
-		items := []Record{}
-		for _, id := range m.listItems(s.Intro, false) {
-			items = append(items, Record{"content": m.doc.Rich([]string{id}), "interest": m.doc.Rich([]string{id})})
-		}
-		for _, sub := range s.Children {
-			items = append(items, Record{"content": m.doc.Rich(append([]string{sub.HeadingID}, sub.Content...)), "stakeholder": m.actor([]string{sub.HeadingID}), "interest": m.doc.Rich(sub.Content)})
-		}
-		r["stakeholder_interests"] = Record{"content": m.doc.Rich(s.Content), "interests": items}
-		m.sectionBindings(r, "stakeholder_interests.content", s)
+		m.conditionField(r, "preconditions", s)
+	case "Minimal guarantees":
+		m.conditionField(r, "minimal_guarantees", s)
+	case "Success guarantees":
+		m.conditionField(r, "success_guarantees", s)
 	case "Main success scenario":
 		x := m.named("Scenario", r, s)
 		m.section(x, "content", s)
@@ -79,30 +48,12 @@ func (m *domainMapper) useCase(r Record, s *Section) bool {
 		r["main_success_scenario"] = String(x, "id")
 		m.bind(r, "main_success_scenario", []string{s.HeadingID}, "structured_item", "main-scenario")
 	case "Extensions":
-		v := m.collection(r, "extensions", "branches", s)
-		v["branches"] = append(Strings(v["branches"]), m.listBranches(r, s.Intro)...)
+		m.declared(r, "extensions", s)
+		r["extensions"] = append(Strings(r["extensions"]), m.listBranches(r, s.Intro)...)
 		for _, sub := range s.Children {
 			x := m.branch(r, sub)
-			appendID(v, "branches", String(x, "id"))
+			appendID(r, "extensions", String(x, "id"))
 		}
-	case "Sequence":
-		v := Record{"content": m.doc.Rich(s.Content)}
-		mode := strings.ToLower(m.fieldText(s, "Mode"))
-		if mode == "representative" || mode == "required" || mode == "partially_constrained" {
-			v["mode"] = mode
-		}
-		items := []Record{}
-		for _, id := range m.listItems(s.Intro, false) {
-			items = append(items, Record{"statement": m.doc.Rich([]string{id}), "governing_references": m.references([]string{id})})
-		}
-		if len(items) > 0 {
-			v["constraints"] = items
-		}
-		r["sequence"] = v
-		m.sectionBindings(r, "sequence.content", s)
-	case "Related jobs":
-		r["related_jobs"] = m.context(s.Content)
-		m.sectionBindings(r, "related_jobs.content", s)
 	default:
 		return false
 	}
@@ -113,7 +64,7 @@ func (m *domainMapper) actor(nodes []string) Record {
 	return Record{"content": m.doc.Rich(nodes), "references": m.references(nodes)}
 }
 
-func (m *domainMapper) conditions(s *Section) Record {
+func (m *domainMapper) conditions(s *Section) []Record {
 	items := []Record{}
 	for _, id := range m.listItems(s.Intro, false) {
 		items = append(items, Record{"statement": m.doc.Rich([]string{id}), "references": m.references([]string{id})})
@@ -121,20 +72,16 @@ func (m *domainMapper) conditions(s *Section) Record {
 	for _, child := range s.Children {
 		items = append(items, Record{"statement": m.doc.Rich(append([]string{child.HeadingID}, child.Content...)), "references": m.references(child.Content)})
 	}
-	return Record{"content": m.doc.Rich(s.Content), "conditions": items}
+	return items
 }
 
+// conditionField retains the complete section and its explicitly separated
+// conditions as sibling fields; a repeated section extends both.
 func (m *domainMapper) conditionField(owner Record, field string, s *Section) {
-	v := m.conditions(s)
-	if previous := Object(owner[field]); previous != nil {
-		nodes := append(append([]string{}, Strings(Object(previous["content"])["content_nodes"])...), s.Content...)
-		v["content"] = m.doc.Rich(nodes)
-		old, _ := previous["conditions"].([]Record)
-		items, _ := v["conditions"].([]Record)
-		v["conditions"] = append(old, items...)
-	}
-	owner[field] = v
-	m.sectionBindings(owner, field+".content", s)
+	previous, _ := owner[field].([]Record)
+	owner[field] = append(append([]Record{}, previous...), m.conditions(s)...)
+	m.setRich(owner, field+"_content", s.Content)
+	m.sectionBindings(owner, field+"_content", s)
 }
 
 func (m *domainMapper) contentText(nodes []string) string {
@@ -211,7 +158,7 @@ func (m *domainMapper) branch(owner Record, s *Section) Record {
 	x["references"] = m.references(s.Content)
 	x["steps"] = m.scenarioSteps(x, s.Intro)
 	x["branches"] = m.listBranches(x, s.Intro)
-	for _, pair := range [][2]string{{"Condition", "condition"}, {"Location", "location"}, {"At step", "location"}, {"Point of occurrence", "location"}, {"Handling", "handling"}, {"Response", "handling"}, {"Continuation", "handling"}} {
+	for _, pair := range [][2]string{{"Condition", "condition"}, {"Handling", "handling"}, {"Response", "handling"}, {"Continuation", "handling"}} {
 		if nodes := m.fieldNodes(s, pair[0]); nodes != nil {
 			m.setRich(x, pair[1], nodes)
 			m.bind(x, pair[1], nodes, "named_field", "extension-field/"+pair[0])
@@ -219,7 +166,7 @@ func (m *domainMapper) branch(owner Record, s *Section) Record {
 		}
 	}
 	for _, sub := range s.Children {
-		field := map[string]string{"Condition": "condition", "Location": "location", "At step": "location", "Point of occurrence": "location", "Handling": "handling", "Response": "handling", "Flow": "handling", "Continuation": "handling", "Unresolved handling": "handling"}[sub.Title]
+		field := map[string]string{"Condition": "condition", "Handling": "handling", "Response": "handling", "Flow": "handling", "Continuation": "handling", "Unresolved handling": "handling"}[sub.Title]
 		if field != "" {
 			m.section(x, field, sub)
 			if field == "handling" {
@@ -239,7 +186,7 @@ func (m *domainMapper) branch(owner Record, s *Section) Record {
 	}
 	// Explicit fields may be authored in any order. Preserve source order when
 	// several old Response/Flow/Continuation fields contribute to one narrative.
-	for _, field := range []string{"condition", "location", "handling"} {
+	for _, field := range []string{"condition", "handling"} {
 		if value := Object(x[field]); value != nil {
 			nodes := Strings(value["content_nodes"])
 			sort.SliceStable(nodes, func(i, j int) bool {

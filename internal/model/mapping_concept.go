@@ -27,8 +27,7 @@ func (m *domainMapper) concept(r Record, s *Section) bool {
 			}
 			if sub.Title == "Invariants" {
 				old, _ := v["invariants"].([]Record)
-				next, _ := Object(m.conditions(sub))["conditions"].([]Record)
-				v["invariants"] = append(append([]Record{}, old...), next...)
+				v["invariants"] = append(append([]Record{}, old...), m.conditions(sub)...)
 				continue
 			}
 			x := Record{"name": m.doc.Rich([]string{sub.HeadingID}), "description": m.doc.Rich(sub.Content)}
@@ -48,7 +47,7 @@ func (m *domainMapper) concept(r Record, s *Section) bool {
 			v["elements"] = elements
 		}
 	case "Actions":
-		v := m.collection(r, "actions", "actions", s)
+		m.declared(r, "actions", s)
 		for _, sub := range s.Children {
 			x := m.named("ConceptAction", r, sub)
 			m.section(x, "description", sub)
@@ -76,7 +75,7 @@ func (m *domainMapper) concept(r Record, s *Section) bool {
 				}
 			}
 			m.openQuestions(x, sub.Children)
-			appendID(v, "actions", String(x, "id"))
+			appendID(r, "actions", String(x, "id"))
 		}
 	default:
 		return false
@@ -90,22 +89,14 @@ func (m *domainMapper) requirement(r Record, s *Section) bool {
 		m.section(r, "rationale", s)
 	case "Applies to":
 		m.designField(r, "applies_to", s, "Targets")
-		m.wrapper(r, "applicability", s, map[string]string{"Conditions": "conditions", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"}, "Subject", "Subjects")
-		for _, sub := range s.Children {
-			if sub.Title == "Subjects" || sub.Title == "Subject" {
-				m.contextField(Object(r["applicability"]), "subjects", sub.Content)
-				m.sectionBindings(r, "applicability.subjects.content", sub)
-			}
-		}
+		m.wrapper(r, "applicability", s, map[string]string{"Conditions": "conditions", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"})
 	case "Statement":
 		m.section(r, "statement", s)
 	case "Verification plan", "Validation plan":
 		return m.assessmentSection(r, s)
 	case "Criterion":
-		m.wrapper(r, "criterion", s, map[string]string{"Measure": "measure", "Comparison": "comparison", "Target": "target", "Units": "units", "Aggregation": "aggregation", "Window": "window", "Observation window": "window", "Conditions": "conditions", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"}, "Open question", "Open questions")
+		m.wrapper(r, "criterion", s, map[string]string{"Measure": "measure", "Target": "target"}, "Open question", "Open questions")
 		m.openQuestions(r, s.Children)
-	case "Measurement plan":
-		m.wrapper(r, "measurement_plan", s, map[string]string{"Success criteria": "success_criteria", "Sampling": "sampling", "Conditions": "conditions", "Procedure": "procedure", "Evidence to retain": "evidence_to_retain", "Evidence retention": "evidence_to_retain", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"})
 	default:
 		return false
 	}

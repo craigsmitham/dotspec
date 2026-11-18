@@ -12,7 +12,6 @@ import (
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
-	"github.com/craigsmitham/dotspec/internal/quality"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
@@ -20,7 +19,7 @@ import (
 )
 
 func exportTypes() []check.Type {
-	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType(), quality.CheckType()}
+	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
 }
 
 func TestExportEmptyScope(t *testing.T) {
@@ -126,9 +125,9 @@ func TestExportReferencedClassificationDoesNotSkipNearerBoundary(t *testing.T) {
 		t.Fatalf("git init: %v %s", err, output)
 	}
 	files := map[string]string{
-		"specs/system.spec.md":                              "---\ntype: system\n---\n# Root\n## Purpose\nRead.\n## Scope\nLocal.\n## Quality attributes\n### Useful\n**ID:** useful\nA concern.\n",
-		"consumer/specs/concepts/entry.concept.spec.md":     "---\ntype: concept\n---\n# Entry\n## Purpose\nRead.\n## State\n[Target](../../../middle/child/specs/quality/target.quality.spec.md)\n## Actions\nRead.\n## Operational principles\nRead a target.\n",
-		"middle/child/specs/quality/target.quality.spec.md": "---\ntype: quality\nquality_attributes: [useful]\n---\n# Target\n## Criterion\nA criterion.\n",
+		"specs/system.spec.md":                                       "---\ntype: system\n---\n# Root\n## Purpose\nRead.\n## Scope\nLocal.\n## Quality attributes\n### Useful\n**ID:** useful\nA concern.\n",
+		"consumer/specs/concepts/entry.concept.spec.md":              "---\ntype: concept\n---\n# Entry\n## Purpose\nRead.\n## State\n[Target](../../../middle/child/specs/requirements/target.requirement.spec.md)\n## Actions\nRead.\n## Operational principles\nRead a target.\n",
+		"middle/child/specs/requirements/target.requirement.spec.md": "---\ntype: requirement\nquality_attributes: [useful]\n---\n# Target\n## Criterion\nA criterion.\n",
 	}
 	for path, data := range files {
 		full := filepath.Join(dir, path)

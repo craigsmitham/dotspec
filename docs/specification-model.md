@@ -1,6 +1,6 @@
 # Specification model
 
-Dotspec exports the specification layer as a source-backed JSON snapshot. Use it
+dotspec exports the specification layer as a source-backed JSON snapshot. Use it
 when another tool needs the complete documents and their domain structure,
 including content that the type-specific `show` commands expose only as prose.
 The snapshot describes what dotspec read and how it interpreted that material.
@@ -13,59 +13,78 @@ The canonical [LinkML model](../model/metamodel.yaml) defines the records and th
 relationships. The [generated reference](reference/model/index.md) describes
 every field. The [relationship reference](reference/model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.17.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/13`.
+`model_version` is `0.18.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/14`.
 
 The [verification and validation vocabulary](verification-and-validation.md)
 distinguishes requirements quality, requirements fitness, system conformance and
 system fitness. Shared AssessmentPlan/AssessmentCase values keep those plan roles
 separate through their owning fields and explicit subject and basis.
 
-## Specification kinds and document placement
+## Specification types and declared elements
 
-`Specification` is the abstract base for a cohesive definition of a subject,
-behavior, obligation or classification scheme. It includes System, Feature,
-Component, Capability, Job, UseCase, Concept, ConceptUse, Synchronization,
-Interface, BusinessRule, Requirement and QualityModel. GeneralRequirement and
-QualityRequirement specialize Requirement.
+A specification is one authored `*.spec.md` document. Its root record is a
+`Specification`: a cohesive definition of a subject, behavior, obligation or
+classification scheme. There are seven specification types, and each corresponds
+to exactly one concrete `Specification` class:
+
+| Specification type | Class |
+| --- | --- |
+| `system` | System |
+| `job` | Job |
+| `quality-model` | QualityModel |
+| `business-rule` | BusinessRule |
+| `use-case` | UseCase |
+| `concept` | Concept |
+| `requirement` | Requirement |
+
+The `SpecificationType` enumeration lists these values, and a snapshot's
+`scope.selected_spec_types` records the types selected for an inspection. A
+quality requirement is a Requirement classified by `quality_attributes`, not
+another type. A record's `kind` names its class.
 
 A System record describes the system within the specification; it is not a
 running system or deployment inventory. The same distinction applies to a
 Component, Feature or Interface record. We do not require a second
 “SystemSpecification” record to repeat that definition.
 
-Specification kind, concern subset, and document placement are independent:
+Component, Feature, Capability, ConceptUse, Synchronization and Interface are
+named elements declared inside a System specification. An Interface is declared
+under a System or Component's Required interfaces or Provided interfaces section.
+These elements are not specifications:
 
-- The existing eight document families provide document roots.
-- Component, Feature, Capability, ConceptUse and Synchronization are named inline
-  specifications in a System document. Interface is declared under a System or
-  Component's Required interfaces or Provided interfaces section.
-- All inherit common notes, evidence, contextual references and validation
-  planning, alongside traceability. Heading anchors and optional introductory
-  `**ID:**` fields make inline specifications addressable without separate files.
-- Business/user/software subsets describe concerns. Core/supporting/generic
-  classifies those subsets; neither classification follows from inheritance.
+- Each is traceable and has one declaring owner. Heading anchors and optional
+  introductory `**ID:**` fields make it addressable without a separate file.
+- Each can carry Notes, Open questions, a Validation plan and trace sections such
+  as Supports, Derived from and Relies on.
+- Evidence, Authority and Related specifications belong to specifications only.
+  Such a section under a declared element is retained as an unmodelled extension
+  section.
+
+Specification type and concern subset are independent. Business/user/software
+subsets describe concerns. Core/supporting/generic classifies those subsets;
+neither classification follows from inheritance.
 
 Goals, assumptions, quality attributes, scenario steps and action parameters
-remain constituent domain elements. Plans, evidence and open questions support
-specification work without becoming specification kinds themselves. An unknown
+are likewise constituent domain elements. Plans, evidence and open questions
+support specification work without becoming specifications themselves. An unknown
 section remains preserved as extension content.
 
-An Interface specifies a boundary interaction. Its declaration has one owner and
+An Interface describes a boundary interaction. Its declaration has one owner and
 one direction relative to that owner; requirements can apply to it, features can
 group it, and it can own obligation clauses. References to counterpart interfaces
 or native contracts do not assert compatibility or implementation. Separate
 required and provided declarations may cite the same native contract without
-claiming they are the same specification. See [boundary authoring](review-requirements.md#delimit-the-boundary-and-its-interfaces)
-and the [generated kind hierarchy](reference/model/core.md#specification-kinds).
+claiming they are the same interface. See [boundary authoring](review-requirements.md#delimit-the-boundary-and-its-interfaces)
+and the [generated type hierarchy](reference/model/core.md#specification-types).
 
 ## Specification projects and workspace exports
 
-A registered specification project bounds discovery and implicit System context;
-it is tooling metadata, not a Specification subclass. `scope.project` identifies
-the selected project and acquired sources record their registered project. The
-workspace manifest is retained as source context. Explicit cross-project links
-remain context acquisition rather than recursive discovery.
+A registered specification project bounds discovery and the directory-default
+System association; it is tooling metadata, not a Specification subclass.
+`scope.project` identifies the selected project and acquired sources record their
+registered project. The workspace manifest is retained as source context. Explicit
+cross-project links remain context acquisition rather than recursive discovery.
 
 `model export --all` returns a workspace envelope containing separate snapshots.
 `model validate` accepts this envelope as well as a single snapshot;
@@ -113,19 +132,21 @@ before a snapshot exists.
 
 Business, user and software subsets describe concerns, not development stages or
 normative authority. Core/supporting/generic describes the role of model subsets.
-Artifact kinds and relationship categories remain separate axes. A software
+Record kinds and relationship categories remain separate axes. A software
 obligation can derive directly from a business rule; no intermediate record is
 required to complete a hierarchy. See [Requirements layers](requirements-layers.md).
 
 `TraceableElement` supplies `supports`, `derived_from` and `relies_on`.
 The separate `ObligationContainer` capability declares owned `ObligationClause`
-records. Goals, assumptions and desired outcomes are traceable but cannot contain
-clauses. `Obligation` supplies a common statement, quality classification,
-applicability, refinement and assessment plans to standalone requirements and clauses. `Requirement` means the standalone obligation
-family. A clause can identify an obligation in a use case, concept, action or
-other explicitly supported container without copying its statement into another document.
-Both clauses and standalone requirements can refine other obligations. Business
-rules can also refine obligations. Refinement is acyclic, may have multiple
+records. Jobs, job steps, business rules, goals, assumptions and desired outcomes
+are traceable but cannot contain clauses. `Obligation` supplies a common statement,
+quality classification, applicability, criterion, refinement and assessment plans
+to requirements and clauses. `Requirement` is the specification type that gives
+one obligation its own document; it contains no clauses. A clause can identify an
+obligation in a use case, concept, action or other explicitly supported container
+without copying its statement into another document. Both clauses and requirements
+can refine other obligations and business rules. A business rule refines only
+other business rules. Refinement is acyclic, may have multiple
 parents, and declares precision preserving the parent commitment; dotspec does
 not prove that preservation from prose.
 
@@ -183,7 +204,7 @@ Synchronization semantics must be authored. Jackson's
 uses atomic coordination; Meng and Jackson's
 [WYSIWID paper, sections 3–5](https://arxiv.org/html/2508.14511v2)
 introduces event-based rules without a required transaction across the chain.
-Dotspec records either design and claims neither is implemented. Similarly,
+dotspec records either design and claims neither is implemented. Similarly,
 [application dependencies](https://essenceofsoftware.com/tutorials/concept-basics/dependency/)
 express design rationale rather than intrinsic calls, and can be mutual.
 
@@ -202,7 +223,7 @@ The [authoring guide](develop-concepts.md) explains how to develop these descrip
 
 The core use-case structure is a goal and context, a main success scenario, and
 extensions. An extension retains its full narrative, with optional `condition`,
-`location`, `handling`, handling `steps`, and nested `branches`. A step is a label
+`handling`, handling `steps`, and nested `branches`. A step is a label
 and narrative. Shared source bindings, identity and ordinary references provide
 traceability without prescribing a separate writing form.
 
@@ -212,13 +233,14 @@ for the next decision. A handling narrative can say what happens, where the
 interaction resumes, how it concludes, or what remains unresolved. Separate
 response, continuation and handling-status fields add distinctions the author
 need not maintain. Step actor/action/result fields similarly overstructure prose.
-No direct step target is inferred from a branch label; location can be a range,
-a phrase such as “at any time,” or an explicit label.
+No direct step target is inferred from a branch label. Where a condition arises
+stays in the label or narrative: a range, a phrase such as “at any time,” or an
+explicit label.
 
 Nested alternatives remain useful because handling can itself fail. Export
-recognizes explicit nested labels or an Extensions grouping while keeping a Notes
-heading as explanatory content. The source tree preserves all prose, including
-casual narratives that are not decomposed. See the
+recognizes explicit nested labels or an Extensions grouping, while a Notes
+heading under a branch supplies that branch's `notes`. The source tree preserves
+all prose, including casual narratives that are not decomposed. See the
 [authoring guide](develop-use-cases.md#sketch-the-interaction-then-investigate-alternatives)
 for examples and the [mapping profile](../model/markdown-mapping.md#use-case) for
 precise recognition rules.
@@ -265,21 +287,21 @@ flowchart LR
     E --> A[Derived relationship assertions]
 ```
 
-A use case's `minimum_guarantees`, a concept's `operational_principles`, and a
+A use case's `minimal_guarantees_content`, a concept's `operational_principles`, and a
 requirement's `rationale` are named domain values even when each remains a
 paragraph. `RichContent` points to ordered content nodes instead of maintaining
 an independent editable copy of that prose. Explicit structures also receive
 records: job-step headings identify `JobStep` records, ordered scenario items
 identify `ScenarioStep` records, and named concept actions identify
-`ConceptAction` records. An `OpenQuestionCollection` retains a decision section's
-full narrative and its explicit question/evidence entries; an omitted field does
-not automatically become an open decision.
+`ConceptAction` records. `open_questions_content` retains a decision section's
+full narrative and `open_questions` its explicit question/evidence entries; an
+omitted field does not automatically become an open decision.
 
-For example, a quality requirement's Measurement section may contain a
-procedure, exclusions, evidence instructions and links. Its complete content
-belongs to `MeasurementPlan.content`; recognized explicit subsections also
-populate the corresponding fields. An exporter cannot discard those instructions
-because they do not fit a measure-and-threshold pair.
+For example, a requirement's Verification plan may contain a measurement
+procedure, sampling, evidence instructions and links. Its complete content
+belongs to `verification_plan.content`; recognized explicit subsections also
+populate the corresponding `AssessmentPlan` fields. An exporter cannot discard
+those instructions because they do not fit a method-and-criteria pair.
 
 ### Exact source and content structure
 
@@ -335,14 +357,21 @@ to be read. Links in those targets do not recursively expand the scan. Their
 occurrences remain represented, with resolution limited to already available
 context or explicitly marked as not attempted.
 
-Directory-derived `system_context` does not set a use case's system boundary. It is available on non-system specifications through SystemContextSpecification. Systems use `enclosing_system` for directory context and explicit `part_of` for structural parentage; standalone QualityModels have neither field. An enclosing
+A specification of any type other than System and QualityModel records its
+associated system in `specification_system`: the system selected by a
+Specification system section when one is authored, otherwise the nearest
+enclosing system found by directory discovery. `specification_system_origin`
+records which: `explicit` or `directory`. An invalid explicit selection never
+falls back. The association does not set a use case's system boundary, which is
+`subject_system`. Systems use `enclosing_system` for directory context and
+explicit `part_of` for structural parentage; standalone QualityModels have no
+system association. An enclosing
 system does not silently supply inherited requirements, assumptions or quality
 attributes through another system. Each `QualityAttribute` belongs directly to
 its declaring `System` or standalone `QualityModel`. Model definitions can be
-copied into systems as independent declarations with ordinary source links. The effective `specification_system` is an explicit link when supplied, otherwise
-the directory default. `specification_system_origin` records this provenance.
-Invalid explicit links never fall back. Quality classification follows this
-selection, independently of applicability. Classification labels retain their authored occurrences
+copied into systems as independent declarations with ordinary source links.
+Quality classification follows the specification system, independently of
+applicability. Classification labels retain their authored occurrences
 and the selected system as label `governing_system`; resolved targets populate the corresponding typed fields.
 Sub-attribute references stay within their declaring owner. Reusable-model
 grouping labels use `governing_quality_model`; obligation labels use `governing_system`.
@@ -351,12 +380,16 @@ The system's
 `quality_attributes` preserves the ordered attribute references. An absent
 section and an explicitly empty section remain distinct.
 
-Typed relationship fields are authoritative. Assertions are optional derived views
-with required endpoints and provenance. Each assertion records its canonical
-`projection_path`, preserving roles such as type parameters versus introduced types.
-The exporter derives these views from model annotations; the assertions collection
-is not a complete replacement for the typed graph. Reverse navigation is derived,
-except stored owner backlinks which are checked against canonical memberships.
+Typed relationship fields are authoritative. An `Assertion` is an optional derived
+view of one canonical field, with required endpoints and provenance. Its
+`projection_path`, such as `TraceableElement.supports`, `System.goals` or
+`Obligation.refines`, names that field and preserves roles such as type parameters
+versus introduced types. Its `mapping_rule` is `dotspec-markdown/14/projection/<path>`.
+The catalog lists the projectable paths in `projections`: every declaration
+membership and every semantic-association or structural-context field. The
+assertions collection is not a replacement for the typed graph. Reverse navigation
+is derived, except stored owner backlinks which are checked against canonical
+memberships.
 
 Explicit boundary, support and applicability syntax produces `UseCase.subject_system`,
 `UseCase.supports`, and requirement/business-rule `applies_to`.
@@ -365,19 +398,26 @@ See [Declare relationships](develop-relationships.md) for the authoring forms.
 Relationship categories describe containment, structural context, semantic
 association, contextual citation and derived projections. Source provenance and
 document representation supply the infrastructure categories. They do not change
-core/supporting/generic subset classifications. Each record-reference slot declares
-its scope, basis, ordering, inverse and cycle policy in the canonical schema.
+core/supporting/generic subset classifications. In the canonical schema, each
+record-reference field states its `relationship_category` and only what differs
+from that category. The `RelationshipCategory` enumeration supplies the default
+scope, cycle policy and basis; an unstated inverse is none, an unstated label is
+the field name, and ordering follows the field's shape. The generated catalog and
+relationship reference show the completed contract.
 Generation rejects incomplete metadata and assertions with optional endpoints.
 Specialized scope predicates are enforced by the graph resolver; unknown scope
 produces advice rather than an incompatibility error.
 
-Section collections retain full narrative alongside any distinguished members.
-Embedded wrappers require their content directly. Sibling declaration/content
-fields declare reciprocal `paired_with` annotations and are validated generically.
+A section with distinguished members maps to sibling fields: `X_content` retains
+the full narrative and `X` lists the members, as in `Job.steps_content` and
+`Job.steps` or `System.goals_content` and `System.goals`. The pair declares
+reciprocal `paired_with` annotations and is validated generically. Embedded values
+such as evidence, abstract state, contextual references, applicability, criterion
+and assessment plans require their content directly.
 Optional decomposition fields use `requires_content` for one-way prerequisites,
 allowing prose sections without inventing parameter or action records.
 Presence is distinct from cardinality: a present empty declaration is valid, and a
-required list need not contain a member unless its minimum cardinality says so. A Related jobs link, verification citation or authority paragraph
+required list need not contain a member unless its minimum cardinality says so. A Related specifications link, verification citation or authority paragraph
 remains authored context; the link alone does not prove support, satisfaction,
 authority or execution evidence.
 
@@ -399,7 +439,7 @@ This choice supports the starter models with one relationship:
   both placements without duplicating its identity.
 - [Q42](https://quality.arc42.org/articles/arc42-quality-model) uses overlapping
   dimension tags instead of a fixed tree. For example, resilience belongs under
-  reliable and secure. Dotspec represents those tags with the same grouping
+  reliable and secure. dotspec represents those tags with the same grouping
   relation; this does not reinterpret them as exclusive decomposition.
 
 **Decision rationale:** restricting each attribute to one parent would lose
@@ -414,7 +454,7 @@ References must be distinct, resolve within the same declaring owner, and form
 no cycles. Direct sub-attributes are derived by reversing the references;
 ancestors are derived by traversal. Neither is a second authored source of truth.
 The exporter preserves each authored label and its resolution separately and
-projects `SubattributeOf` assertions from the resolved references.
+projects `QualityAttribute.subattribute_of` assertions from the resolved references.
 
 Grouping supports discovery and classification. It does **not** imply inherited
 requirements, thresholds, satisfaction, equivalence, or exclusive membership.
@@ -452,10 +492,8 @@ typed reference ranges, ownership, cycles, source payloads and spans, syntax
 order, bindings, resolutions and assertion consistency. A well-formed snapshot
 can correctly describe a malformed source or incomplete scan. Passing snapshot
 validation therefore makes no claim about source acceptance, stakeholder
-adequacy or requirement satisfaction. The schema also permits externally stored
-payloads with immutable locators and digests; offline validation checks their
-structure, not whether the external bytes are retrievable. The exporter writes
-inline payloads.
+adequacy or requirement satisfaction. A source payload always carries its bytes
+inline as `bytes_base64`.
 
 ## Model maintenance and evidence
 

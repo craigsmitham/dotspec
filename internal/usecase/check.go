@@ -15,12 +15,12 @@ func Check(spec *UseCase) []diagnostic.Diagnostic {
 		{"use-case.system-boundary", "System boundary", spec.BoundaryDescription, "Name the system whose behavior this use case describes; file ownership does not define this boundary."},
 		{"use-case.primary-actor", "Primary actor", spec.PrimaryActor, "Identify the role pursuing the goal."},
 		{"use-case.goal-level", "Goal level", spec.GoalLevel, "Identify the goal level, such as summary, user task, or subfunction."},
-		{"use-case.success-criterion", "Success criterion", spec.SuccessCriterion, "State or link to the observable condition that completes the actor's goal."},
+		{"use-case.success-guarantees", "Success guarantees", spec.SuccessGuarantees, "State or link to what holds when the actor's goal is achieved."},
 		{"use-case.main-success-scenario", "Main success scenario", spec.MainSuccessScenario, "Describe or reference the actor-system interaction that reaches the goal."},
 		{"use-case.extensions", "Extensions", spec.Extensions, "Consider alternative success paths and failure conditions. List conditions first; handling may remain explicitly unresolved."},
 		{"use-case.sequence", "Sequence", spec.Sequence, "State whether scenario order is representative or required, and link to the governing rule for required order."},
 	} {
-		needsScenario := field.name == "Sequence" || field.name == "Extensions" || field.name == "Success criterion"
+		needsScenario := field.name == "Sequence" || field.name == "Extensions" || field.name == "Success guarantees"
 		if strings.TrimSpace(field.value) != "" || (needsScenario && strings.TrimSpace(spec.MainSuccessScenario) == "") {
 			continue
 		}

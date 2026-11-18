@@ -28,7 +28,7 @@ arguments, standard streams, and exit statuses.
 ## Assumptions
 
 The execution conditions required for repeatability comparisons are defined in
-[Repeated inspections](quality/repeatable-inspection.quality.spec.md#applies-to).
+[Repeated inspections](requirements/repeatable-inspection.requirement.spec.md#applies-to).
 
 ## Constraints
 

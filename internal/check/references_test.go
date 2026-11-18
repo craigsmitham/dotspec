@@ -10,13 +10,12 @@ import (
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
-	"github.com/craigsmitham/dotspec/internal/quality"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
 )
 
 func referenceCheck(dir string) check.Report {
-	return check.Focused(dir, "rule", requirement.CheckType(), system.CheckType(), concept.CheckType(), job.CheckType(), quality.CheckType())
+	return check.Focused(dir, "rule", requirement.CheckType(), system.CheckType(), concept.CheckType(), job.CheckType())
 }
 
 func TestCrossFileReferencesAndContext(t *testing.T) {

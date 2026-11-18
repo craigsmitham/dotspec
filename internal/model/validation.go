@@ -48,6 +48,8 @@ type classDefinition struct {
 
 type modelCatalog struct {
 	Classes map[string]classDefinition `json:"classes"`
+	// Projections lists the canonical Class.field paths an Assertion may project.
+	Projections []string `json:"projections"`
 }
 
 type modelRuntime struct {

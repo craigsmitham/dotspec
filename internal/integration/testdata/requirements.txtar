@@ -1,4 +1,4 @@
-# General requirements and quality share an inventory and attribute model.
+# Requirements share one inventory; quality attributes classify them.
 mkdir project
 cd project
 exec git init -q
@@ -8,15 +8,14 @@ status 0 dotspec requirement init work --json
 stdout '"path":'
 ! stderr .
 status 0 dotspec requirement show work --json
-stdout '"type": "requirement"'
+! stdout '"type":'
 stdout '"statement":'
 cp ../system.md specs/system.spec.md
 cp ../rule.md specs/requirements/work.requirement.spec.md
-mkdir specs/quality
-cp ../quality.md specs/quality/work.quality.spec.md
+cp ../repeatable.md specs/requirements/repeatable.requirement.spec.md
 status 0 dotspec requirement list --attribute reliability --json
-stdout '"type": "requirement"'
-stdout '"type": "quality"'
+stdout '"name": "Preserve source"'
+stdout '"name": "Repeatable inspection"'
 stdout '"attribute": "reliability"'
 status 0 dotspec system show --json
 stdout '"goals": "Inspect drafts before review."'
@@ -28,7 +27,7 @@ stdout '"context_files_checked": 2'
 stdout '"errors": 0'
 ! stderr .
 cmp specs/requirements/work.requirement.spec.md ../rule.md
-cmp specs/quality/work.quality.spec.md ../quality.md
+cmp specs/requirements/repeatable.requirement.spec.md ../repeatable.md
 status 2 dotspec requirement init work
 ! stdout .
 stderr 'refusing to overwrite'
@@ -110,11 +109,11 @@ Preserve authored work.
 ## Verification plan
 Compare before and after bytes.
 ## Related specifications
-[Quality](../quality/work.quality.spec.md#statement)
+[Repeatable inspection](repeatable.requirement.spec.md#statement)
 [Term](../system.spec.md#scan)
--- quality.md --
+-- repeatable.md --
 ---
-type: quality
+type: requirement
 quality_attributes: [preservation]
 ---
 # Repeatable inspection
@@ -122,7 +121,7 @@ quality_attributes: [preservation]
 Unchanged sources and environment.
 ## Statement
 Repeated inspections yield equivalent findings.
-## Measurement plan
+## Verification plan
 Repeat the same inspection and compare results.
 ## Rationale
 Support meaningful comparisons.
@@ -147,4 +146,4 @@ Another obligation.
 type: requirement
 ---
 # Bad link
-[Missing](../quality/work.quality.spec.md#missing)
+[Missing](repeatable.requirement.spec.md#missing)

@@ -1,6 +1,6 @@
 # Requirements layers and relationships
 
-Dotspec represents requirements as a layered traceability graph. This explanation
+dotspec represents requirements as a layered traceability graph. This explanation
 is for authors and model maintainers deciding where an element belongs and what
 its relationships mean. The [canonical model](../model/metamodel.yaml) defines the
 types; [Declare relationships](develop-relationships.md) gives the Markdown forms.
@@ -11,8 +11,8 @@ types; [Declare relationships](develop-relationships.md) gives the Markdown form
 | --- | --- | --- |
 | Concern subset | Whose concerns and which level of abstraction the model serves | business-requirements, user-requirements, software-requirements |
 | Subset classification | The subset's role in dotspec's domain | core, supporting, generic |
-| Artifact kind | What a record represents | SystemGoal, BusinessRule, Job, UseCase, Concept, Requirement |
-| Relationship | Why or how two particular elements are connected | supports, derived_from, refines, relies_on, applicability, involves |
+| Record kind | What a record represents | Goal, BusinessRule, Job, UseCase, Concept, Requirement, ObligationClause |
+| Relationship | Why or how two particular elements are connected | supports, derived_from, refines, relies_on, applies_to, involves |
 
 Subset membership may overlap. It does not make every member an obligation,
 assign priority, determine acceptance, or impose a creation order. A reusable
@@ -52,11 +52,12 @@ term in a glossary also need not become a concept with actions and state.
 
 ## Distinguish an obligation from its document
 
-`Requirement` is the abstract family of standalone GeneralRequirement and
-QualityRequirement specifications. It is not the superclass of every normative
-expression. Accepted use-case prose or concept contracts can also express
-obligations. Acceptance comes from the consuming project's authority policy;
-neither a type tag nor a generated projection establishes it.
+`Requirement` is the specification type that gives one obligation its own
+document. It is not the superclass of every normative expression: `Obligation`
+is the shared definition of an obligation, which ISO/IEC/IEEE 29148 calls a
+requirement, wherever it is written. Accepted use-case prose or concept contracts
+can also express obligations. Acceptance comes from the consuming project's
+authority policy; neither a type tag nor a generated projection establishes it.
 
 Use an optional `ObligationClause` when a particular rule within an existing
 specification needs its own reference, refinement, applicability or verification
@@ -69,16 +70,21 @@ assumed to enumerate all required behavior.
 
 | Relationship | Meaning | Does not establish |
 | --- | --- | --- |
-| supports | Intended contribution to a goal, job, step or outcome | Achievement or stakeholder validation |
+| supports | Intended contribution to a goal, job, step, outcome or higher-level use case | Achievement or stakeholder validation |
 | derived_from | Source or rationale for the element | Logical entailment or refinement |
-| refines | More precise obligation preserving a parent commitment | Replacement, supersession or a proof of consistency |
+| refines | More precise obligation or business rule preserving a parent commitment | Replacement, supersession or a proof of consistency |
 | relies_on | Validity conditioned on a named assumption | That the assumption is true |
-| applicability | Subject governed by an obligation or business rule | Implementation satisfaction |
+| applies_to | Subject governed by an obligation or business rule | Implementation satisfaction |
 | involves | Named concept uses participating in a use case | Calls, service boundaries or required execution order |
 
-Refinement may have several parents and must be acyclic. Children may collectively
-cover a broader commitment; the presence of one refining child does not establish
-that coverage. Alternative designs require an explicit decision, not a claim
+An obligation or business rule declares `applies_to` with the Targets field of its
+Applies to section. The narrative operating context in that section is its
+`applicability`, which creates no relationship.
+
+Refinement may have several parents and must be acyclic. An obligation can refine
+a requirement, an obligation clause or a business rule; a business rule refines
+only other business rules. Children may collectively cover a broader commitment;
+the presence of one refining child does not establish that coverage. Alternative designs require an explicit decision, not a claim
 that every alternative is simultaneously required. Support and application
 relationships may cycle; the entire graph is not a DAG.
 
@@ -132,16 +138,18 @@ This is dotspec's synthesis, not a schema prescribed by any one source.
 
 ## Common obligation capabilities
 
-Standalone general requirements, quality requirements and embedded clauses share
-`Obligation`: statement, quality attributes, applicability, rationale, refinement,
-verification plan and optional criterion and measurement plan. Their authoring
-location does not limit their quality classification or assessment detail.
+Requirement specifications and embedded clauses share `Obligation`: statement,
+quality attributes, applicability, rationale, refinement, verification plan and
+optional criterion. Their authoring location does not limit their quality
+classification or assessment detail. A quality requirement is a requirement
+classified by a quality attribute, not a separate type.
 
-Clause containment is an explicit `ObligationContainer` capability on System, Component, Interface,
-BusinessRule, Job, JobStep, UseCase, Concept, ConceptUse, ConceptAction,
-Synchronization and Requirement. Goals, assumptions and desired outcomes can
-participate in traceability without containing clauses. This keeps motivation,
-declaration ownership and normative content distinct.
+Clause containment is an explicit `ObligationContainer` capability on System,
+Component, Interface, UseCase, Concept, ConceptAction, ConceptUse and
+Synchronization. A Requirement states one obligation and contains no clauses.
+Jobs, job steps, business rules, features, capabilities, goals, assumptions and
+desired outcomes can participate in traceability without containing clauses. This
+keeps motivation, declaration ownership and normative content distinct.
 
 ## Verification and validation across layers
 

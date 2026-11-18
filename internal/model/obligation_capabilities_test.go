@@ -8,14 +8,8 @@ import (
 func TestObligationFormsShareAssessmentAndClassification(t *testing.T) {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system\n---\n# Service\n\n## Purpose\n\nServe requests.\n\n## Scope\n\nThis service.\n\n## Quality attributes\n\n### Speed\n\n**ID:** speed\n\nResponse speed.\n")
-	body := "## Statement\n\nRespond within one second.\n\n## Applies to\n\n**Targets:** [Service](../system.spec.md)\n\n## Criterion\n\n### Target\n\n1 second.\n\n## Verification plan\n\n### Method\n\nCheck the response.\n\n## Measurement plan\n\n### Sampling\n\nEvery request.\n"
-	for _, kind := range []string{"requirement", "quality"} {
-		collection := "requirements"
-		if kind == "quality" {
-			collection = "quality"
-		}
-		conformanceWrite(t, root, "specs/"+collection+"/speed."+kind+".spec.md", "---\ntype: "+kind+"\nquality_attributes: [speed]\n---\n# Speed\n\n"+body)
-	}
+	body := "## Statement\n\nRespond within one second.\n\n## Applies to\n\n**Targets:** [Service](../system.spec.md)\n\n## Criterion\n\n### Target\n\n1 second.\n\n## Verification plan\n\n### Method\n\nCheck the response to every request.\n"
+	conformanceWrite(t, root, "specs/requirements/speed.requirement.spec.md", "---\ntype: requirement\nquality_attributes: [speed]\n---\n# Speed\n\n"+body)
 	clause := "---\ntype: use-case\n---\n# Respond\n\n## Obligations\n\n### Response time\n\n**Quality attributes:** speed\n\nRespond within one second.\n\n" + strings.ReplaceAll(strings.TrimPrefix(body, "## Statement\n\nRespond within one second.\n\n"), "##", "####")
 	conformanceWrite(t, root, "specs/use-cases/respond.use-case.spec.md", clause)
 	result := conformanceExport(t, root)
@@ -23,9 +17,9 @@ func TestObligationFormsShareAssessmentAndClassification(t *testing.T) {
 		t.Fatalf("%v", result.Snapshot.Diagnostics)
 	}
 	s := result.Snapshot
-	for _, kind := range []string{"GeneralRequirement", "QualityRequirement", "ObligationClause"} {
+	for _, kind := range []string{"Requirement", "ObligationClause"} {
 		r := elementKind(t, s, kind)
-		for _, field := range []string{"statement", "applicability", "criterion", "verification_plan", "measurement_plan"} {
+		for _, field := range []string{"statement", "applicability", "criterion", "verification_plan"} {
 			if r[field] == nil {
 				t.Fatalf("%s lacks %s", kind, field)
 			}

@@ -1,5 +1,5 @@
 ---
-type: quality
+type: requirement
 id: unassisted-recovery
 ---
 # Unassisted recovery
@@ -38,13 +38,9 @@ document and opens the recovered contents without external assistance. Count one
 attempt per member; an abandoned attempt or facilitator intervention is a failure.
 Divide successful attempts by all eligible attempts, including failures.
 
-### Comparison
-
-At least.
-
 ### Target
 
-90%.
+At least 90%.
 
 ## Supports
 

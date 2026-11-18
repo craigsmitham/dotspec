@@ -1,4 +1,4 @@
-// Package requirement reads and discovers general obligations.
+// Package requirement reads and discovers requirement specifications.
 package requirement
 
 import (
@@ -42,12 +42,61 @@ Explain why this obligation is needed and reference its source or governing goal
 Describe how to check a system or process realization against the statement and any criterion. Identify the method, assessment conditions, and evidence to retain; explain how the conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.
 `
 
+// QualityTemplate is the quality preset. It prompts for an explicit criterion;
+// the result is an ordinary requirement, classified by its quality attributes.
+const QualityTemplate = `---
+type: requirement
+---
+
+# New quality requirement
+
+## Applies to
+
+Identify the subject and operating conditions, workload, population, and exclusions.
+For outcomes of use, identify the users, their task, available assistance, and environment; link relevant actors, jobs, or use cases.
+
+## Statement
+
+State one coherent quality obligation. What observable result would violate it?
+
+## Criterion
+
+Define or reference what counts as satisfaction. For a measured property, state the measure (including units, aggregation, and observation window as needed) and the required bound. Keep each required bound in one place; reference it if already stated above or in an authoritative source.
+If a bound is unknown, record an open question and the evidence needed to choose it. Qualitative criteria are valid; keep preferred targets distinct from required bounds.
+
+## Rationale
+
+Explain why this quality matters and any relevant tradeoffs.
+
+## Verification plan
+
+Describe how to obtain and compare evidence against the statement and criterion. Identify the realization, method (including measurement procedure and sampling where needed), assessment conditions, and evidence to retain. Explain how assessment conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.
+`
+
+// Presets guide authoring; they do not create another specification type.
+func ValidatePreset(preset string) error {
+	switch preset {
+	case "general", "quality":
+		return nil
+	}
+	return fmt.Errorf("unknown requirement preset %q: choose general or quality", preset)
+}
+
+func TemplateFor(preset string) (string, error) {
+	if err := ValidatePreset(preset); err != nil {
+		return "", err
+	}
+	if preset == "quality" {
+		return QualityTemplate, nil
+	}
+	return Template, nil
+}
+
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 
 // Requirement keeps obligations as authored Markdown. Classification resolves
 // against the associated system without establishing applicability or satisfaction.
 type Requirement struct {
-	Type string `json:"type"`
 	*obligation.Content
 }
 
@@ -83,11 +132,11 @@ func Read(path string) (*Requirement, error) {
 	return spec, nil
 }
 
-// Parse interprets the general requirement form without filesystem access.
+// Parse interprets the requirement form without filesystem access.
 func Parse(data []byte) (*Requirement, error) {
 	content, err := obligation.Parse(data, Layout.Kind)
 	if err != nil {
 		return nil, err
 	}
-	return &Requirement{Content: content, Type: Layout.Kind}, nil
+	return &Requirement{Content: content}, nil
 }

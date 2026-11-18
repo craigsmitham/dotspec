@@ -8,7 +8,9 @@ import (
 	"testing"
 )
 
-func TestInlineSpecificationCommonContent(t *testing.T) {
+// Elements declared by name inside a system specification are addressable and
+// traceable, but only an authored document is a specification.
+func TestDeclaredElementsAreNotSpecifications(t *testing.T) {
 	for _, tc := range []struct{ kind, section string }{
 		{"Component", "Components"}, {"Feature", "Features"}, {"Capability", "Capabilities"},
 		{"ConceptUse", "Concept uses"}, {"Synchronization", "Synchronizations"}, {"Interface", "Required interfaces"},
@@ -69,17 +71,22 @@ Review with the intended users.
 			s := result.Snapshot
 			conformancePayloads(t, s)
 			r := designRecord(t, s, tc.kind, "Named definition")
-			if !designKind(tc.kind, "Specification") || r["authored_id"] != "named-definition" || r["extension_sections"] != nil {
-				t.Fatal("inline definition not recognized as a specification", r)
+			if designKind(tc.kind, "Specification") || !designKind(tc.kind, "TraceableElement") || r["authored_id"] != "named-definition" {
+				t.Fatal("declared element must be traceable and addressable without being a specification", r)
 			}
-			for _, field := range []string{"preamble", "notes", "evidence", "related_specifications", "validation_plan"} {
+			for _, field := range []string{"notes", "validation_plan"} {
 				if r[field] == nil {
-					t.Fatal("missing common specification content", field)
+					t.Fatal("missing element content", field)
 				}
 			}
-			evidence := designRecord(t, s, "EvidenceStatement", "Observation")
-			if evidence["owner"] != r["id"] {
-				t.Fatal("evidence ownership lost", evidence)
+			for _, field := range []string{"preamble", "evidence", "related_specifications", "slug"} {
+				if r[field] != nil {
+					t.Fatal("document-level content mapped onto a declared element", field)
+				}
+			}
+			// Sections that belong to specifications stay with the element as retained, unmodelled content.
+			if len(Strings(r["extension_sections"])) != 2 {
+				t.Fatal("Evidence and Related specifications should be retained as the element's extension sections", r["extension_sections"])
 			}
 		})
 	}
@@ -117,14 +124,14 @@ func TestInterfaceSpecificationRelationships(t *testing.T) {
 	if ids := Strings(clause["applies_to"]); len(ids) != 1 || ids[0] != provided["id"] {
 		t.Fatal("interface ID did not resolve as a subject", clause)
 	}
-	req := designRecord(t, s, "GeneralRequirement", "Preserve document metadata on restoration")
+	req := designRecord(t, s, "Requirement", "Preserve document metadata on restoration")
 	if ids := Strings(req["applies_to"]); len(ids) != 3 || ids[2] != provided["id"] {
 		t.Fatal("cross-file interface reference did not resolve", req)
 	}
-	for kind, object := range map[string]Record{"RequiredInterface": required, "ProvidedInterface": provided} {
+	for kind, object := range map[string]Record{"System.required_interfaces": required, "System.provided_interfaces": provided} {
 		count := 0
 		for _, a := range s.Assertions {
-			if String(a, "kind") == kind && a["subject"] == sys["id"] && a["object"] == object["id"] {
+			if String(a, "projection_path") == kind && a["subject"] == sys["id"] && a["object"] == object["id"] {
 				count++
 			}
 		}
@@ -138,7 +145,7 @@ func TestInterfaceSpecificationRelationships(t *testing.T) {
 	}
 	forged := cloneSnapshot(t, s)
 	fSys := designRecord(t, forged, "System", "Document workspace")
-	Object(fSys["provided_interfaces"])["interfaces"] = append(Strings(Object(fSys["provided_interfaces"])["interfaces"]), String(required, "id"))
+	fSys["provided_interfaces"] = append(Strings(fSys["provided_interfaces"]), String(required, "id"))
 	requireFinding(t, forged, "interface.direction")
 	forged = cloneSnapshot(t, s)
 	designRecord(t, forged, "Interface", "Restoration requests")["owner"] = required["id"]

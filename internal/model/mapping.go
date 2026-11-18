@@ -12,7 +12,6 @@ import (
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/job"
-	"github.com/craigsmitham/dotspec/internal/quality"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
@@ -83,12 +82,6 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		if err == nil {
 			authoredID, labels = v.ID, v.QualityAttributes
 		}
-	case "quality":
-		var v *quality.Requirement
-		v, err = quality.Parse(doc.Data)
-		if err == nil {
-			authoredID, labels = v.ID, v.QualityAttributes
-		}
 	default:
 		err = fmt.Errorf("no domain mapping for specification type %q", kind)
 	}
@@ -96,7 +89,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.parseFailure(err)
 		return m.result
 	}
-	class := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "concept": "Concept", "use-case": "UseCase", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[kind]
+	class := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "concept": "Concept", "use-case": "UseCase", "requirement": "Requirement"}[kind]
 	r := m.record(class, "")
 	m.result.RootID = String(r, "id")
 	if authoredID != "" {
@@ -115,7 +108,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.bind(r, "preamble", doc.Preamble, "named_field", "preamble")
 	}
 	m.metadata(r)
-	if kind == "quality" || kind == "requirement" {
+	if kind == "requirement" {
 		m.classification(r, labels)
 	}
 	for _, section := range doc.Sections {
@@ -140,7 +133,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 			mapped = m.concept(r, section)
 		case "use-case":
 			mapped = m.useCase(r, section)
-		case "requirement", "quality":
+		case "requirement":
 			mapped = m.requirement(r, section)
 		}
 		if !mapped {
@@ -211,6 +204,18 @@ func (m *domainMapper) sectionBindings(owner Record, field string, s *Section) {
 	m.bind(owner, field, []string{s.HeadingID}, "structural_wrapper", "section-heading/"+s.Title)
 }
 
+// declared starts or extends a section whose narrative and explicitly authored
+// members are sibling fields: field_content and field.
+func (m *domainMapper) declared(owner Record, field string, s *Section) {
+	m.setRich(owner, field+"_content", s.Content)
+	m.sectionBindings(owner, field+"_content", s)
+	if owner[field] == nil {
+		owner[field] = []string{}
+	}
+}
+
+// collection serves the few embedded values that keep further named fields
+// beside their narrative and members, such as an evidence section.
 func (m *domainMapper) collection(owner Record, field, items string, s *Section) Record {
 	v := Object(owner[field])
 	if v == nil {
@@ -226,11 +231,7 @@ func (m *domainMapper) named(kind string, owner Record, s *Section) Record {
 	r := m.record(kind, String(owner, "id"))
 	r["name"] = m.doc.Rich([]string{s.HeadingID})
 	m.bind(r, "name", []string{s.HeadingID}, "record_identity", "item-heading")
-	if designKind(kind, "Specification") {
-		if len(s.Intro) > 0 {
-			m.setRich(r, "preamble", s.Intro)
-			m.bind(r, "preamble", s.Intro, "named_field", "preamble")
-		}
+	if declaredWithID[kind] {
 		if id := m.fieldText(s, "ID"); id != "" {
 			r["authored_id"] = id
 			m.bind(r, "authored_id", m.fieldNodes(s, "ID"), "record_identity", "specification-id")
@@ -239,6 +240,9 @@ func (m *domainMapper) named(kind string, owner Record, s *Section) Record {
 	}
 	return r
 }
+
+// Elements declared by name inside a specification may carry an explicit ID.
+var declaredWithID = map[string]bool{"Component": true, "Feature": true, "Capability": true, "ConceptUse": true, "Synchronization": true, "Interface": true}
 
 func appendID(r Record, field, id string) { r[field] = append(Strings(r[field]), id) }
 
@@ -306,6 +310,11 @@ func (m *domainMapper) extension(owner Record, s *Section) Record {
 	if m.traceSection(owner, s) || m.explanatory(owner, s) || m.boundarySection(owner, s) || m.assessmentSection(owner, s) {
 		return nil
 	}
+	// Any domain element can carry explicitly headed open questions.
+	if kind := String(owner, "kind"); openQuestionHeading(s.Title) && kind != "Document" && kind != "ExtensionSection" {
+		m.openQuestions(owner, []*Section{s})
+		return nil
+	}
 	r := m.record("ExtensionSection", String(owner, "id"))
 	r["heading"] = m.doc.Rich([]string{s.HeadingID})
 	r["content"] = m.doc.Rich(s.Content)
@@ -362,22 +371,11 @@ func (m *domainMapper) common(r Record, s *Section) bool {
 			return false
 		}
 		m.structureReference(r, "specification_system", s)
-	case "Business rules":
-		m.contextField(r, "business_rules", s.Content)
-		m.sectionBindings(r, "business_rules.content", s)
 	case "Related specifications":
 		m.contextField(r, "related_specifications", s.Content)
 		m.sectionBindings(r, "related_specifications.content", s)
-	case "Related use cases":
-		m.contextField(r, "related_use_cases", s.Content)
-		m.sectionBindings(r, "related_use_cases.content", s)
-	case "Related concepts":
-		m.contextField(r, "related_concepts", s.Content)
-		m.sectionBindings(r, "related_concepts.content", s)
 	case "Authority", "Authority and evidence":
 		m.section(r, "authority_and_evidence", s)
-	case "Notes":
-		m.section(r, "notes", s)
 	case "Evidence":
 		m.evidence(r, "evidence", s)
 	case "Open question", "Open questions":

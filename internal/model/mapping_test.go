@@ -76,7 +76,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 			if len(m.Diagnostics) > 0 || m.RootID == "" {
 				t.Errorf("%s: root=%q diagnostics=%#v", path, m.RootID, m.Diagnostics)
 			}
-			expectedClass := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "GeneralRequirement", "quality": "QualityRequirement"}[kind]
+			expectedClass := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement"}[kind]
 			rootMatches := false
 			for _, element := range m.Elements {
 				if String(element, "id") == m.RootID && String(element, "kind") == expectedClass {
@@ -126,7 +126,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 		}
 	}
 	total := 0
-	for _, kind := range []string{"system", "job", "use-case", "concept", "requirement", "quality", "business-rule", "quality-model"} {
+	for _, kind := range []string{"system", "job", "use-case", "concept", "requirement", "business-rule", "quality-model"} {
 		if counts[kind] == 0 {
 			t.Errorf("%s family absent from inventory", kind)
 		}
@@ -207,11 +207,11 @@ Unvalidated hypothesis.
 	if len(cases) != 1 {
 		t.Fatal("progress case missing")
 	}
-	forces := Object(cases[0]["forces"])["items"].([]Record)
+	forces := cases[0]["forces"].([]Record)
 	if len(forces) != 4 || String(forces[0], "kind") != "push" {
 		t.Errorf("forces: %#v", forces)
 	}
-	if Object(Object(cases[0]["timeline"])["content"])["presence"] != "authored" {
+	if Object(cases[0]["timeline"])["presence"] != "authored" {
 		t.Error("unknown timeline was erased")
 	}
 	for _, x := range recordsOf(m, "DesiredOutcome") {
@@ -264,7 +264,7 @@ Works consistently.
 
 Problems can be explained.
 `)
-	if len(recordsOf(m, "SystemGoal")) != 2 || len(recordsOf(m, "GlossaryTerm")) != 1 {
+	if len(recordsOf(m, "Goal")) != 2 || len(recordsOf(m, "GlossaryTerm")) != 1 {
 		t.Error("named system items missing")
 	}
 	if len(Strings(r["quality_attributes"])) != 3 || len(recordsOf(m, "QualityAttribute")) != 3 {
@@ -352,7 +352,7 @@ An additional explicitly headed branch.
 
 **Mode:** representative
 
-## Related use cases
+## Related specifications
 
 See [another case](another.use-case.spec.md).
 `)
@@ -369,11 +369,11 @@ See [another case](another.use-case.spec.md).
 	if branches[0]["handling_state"] != nil {
 		t.Error("inferred handling status from prose")
 	}
-	if Object(r["sequence"])["mode"] != "representative" {
-		t.Error("explicit sequence mode absent")
+	if Object(r["sequence"])["presence"] != "authored" {
+		t.Error("sequence statement absent")
 	}
-	if r["related_use_cases"] == nil {
-		t.Error("related use cases were treated as an extension")
+	if r["related_specifications"] == nil {
+		t.Error("related specifications were treated as an extension")
 	}
 }
 
@@ -413,7 +413,7 @@ Unknown task is rejected.
 	if actions[0]["caller_assumptions"] == nil || actions[0]["guards"] == nil {
 		t.Error("assumptions and guards not represented separately")
 	}
-	_, _, r := mapped(t, "quality", `## Applies to
+	_, _, r := mapped(t, "requirement", `## Applies to
 
 The selected source files.
 
@@ -425,23 +425,19 @@ Concurrent edits.
 
 Files remain unchanged.
 
-## Measurement plan
+## Verification plan
 
 Compare snapshots.
 
-### Procedure
+### Method
 
 Read before and after inspection.
 
 ### Evidence to retain
 
 Retain changed paths.
-
-### Exclusions
-
-Access times do not count.
 `)
-	if Object(r["applicability"])["exclusions"] == nil || Object(r["measurement_plan"])["evidence_to_retain"] == nil {
+	if Object(r["applicability"])["exclusions"] == nil || Object(r["verification_plan"])["evidence_to_retain"] == nil {
 		t.Error("plan subfields missing")
 	}
 	if Object(r["criterion"])["target"] != nil {
@@ -477,9 +473,9 @@ func TestMappingPresentEmptyUnknownAndInvalid(t *testing.T) {
 }
 
 func TestMappingMetadataLabelsHaveSourceOccurrences(t *testing.T) {
-	data := []byte("---\ntype: quality\nid: sample\nquality_attributes: [usability, reliability]\n---\n# Sample\n")
-	d := ParseContent("sample.quality.spec.md", data)
-	m := MapDomain(d, "quality")
+	data := []byte("---\ntype: requirement\nid: sample\nquality_attributes: [usability, reliability]\n---\n# Sample\n")
+	d := ParseContent("sample.requirement.spec.md", data)
+	m := MapDomain(d, "requirement")
 	if len(m.Labels) != 2 {
 		t.Fatalf("classification labels missing: %#v", m.Labels)
 	}

@@ -28,7 +28,7 @@ The workspace owns retention and restoration; external backups are outside this 
    - **Illustrates:** [Restore retained content](#restore-content), [Restore](../concepts/trash.concept.spec.md#restore).
 3. The member resumes work.
 
-## Success criterion
+## Success guarantees
 
 The member can resume work on the restored document.
 

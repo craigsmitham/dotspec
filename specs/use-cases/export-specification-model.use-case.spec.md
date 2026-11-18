@@ -45,14 +45,14 @@ need explicit domain roles, provenance, and visible unresolved or uninterpreted
 content. Integrators need a checkable representation and an honest account of
 which scope was inspected.
 
-## Minimum guarantees
+## Minimal guarantees
 
 Export preserves acquired bytes, source content, and authored files according to
 the [model source-fidelity requirement](../requirements/model-source-fidelity.requirement.spec.md).
 Failed reads and incomplete operations remain visible. References remain authored
 occurrences unless resolution or an explicit mapping establishes more.
 
-## Success criterion
+## Success guarantees
 
 The contributor receives a complete snapshot for the selected scope, with exact
 acquired source payloads, ordered document content, named domain mappings,
@@ -125,7 +125,7 @@ Representative. The source-fidelity requirement and model contract govern
 preservation, traversal, status and validation behavior. Numbered scenario order
 does not impose an additional authoring workflow.
 
-## Related concepts
+## Related specifications
 
 [Specification Inspection](../concepts/specification-inspection.concept.spec.md)
 provides the existing inspection context. The source, document-content and domain

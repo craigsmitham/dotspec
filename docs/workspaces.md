@@ -48,7 +48,7 @@ dotspec model validate workspace.json
 dotspec model schema --workspace > workspace.schema.json
 ```
 
-Dotspec finds the nearest ancestor `dotspec.yaml`, stopping at the Git/worktree
+dotspec finds the nearest ancestor `dotspec.yaml`, stopping at the Git/worktree
 boundary (or filesystem root outside Git). With no explicit selector, the
 containing project is selected; running from one of its subdirectories still
 selects that project root. Use `--path` to narrow the scan. On its own, `--path` is

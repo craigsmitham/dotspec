@@ -4,7 +4,7 @@ Specification project: **requirements-review**. Project membership does not impl
 
 Generated PEGS reading perspective. This view complements business, user and software requirements subsets; it does not replace them or impose a dependency order. It covers only acquired specifications. Referenced project plans and native contracts remain authoritative.
 
-Model `0.17.0-draft`; mapping `dotspec-markdown/13`.
+Model `0.18.0-draft`; mapping `dotspec-markdown/14`.
 
 ## Project
 
@@ -154,13 +154,13 @@ Supports: [Reduce lost work](<../../examples/requirements-review/specs/system.sp
 
 - Minimize the time required to resume work after recovering an accidentally deleted document.
 
-### SystemGoal: [Reduce lost work](<../../examples/requirements-review/specs/system.spec.md#reduce-lost-work>)
+### Goal: [Reduce lost work](<../../examples/requirements-review/specs/system.spec.md#reduce-lost-work>)
 
 **Statement**
 
 Reduce the amount of valuable work lost through accidental deletion.
 
-### SystemGoal: [Reduce retention cost](<../../examples/requirements-review/specs/system.spec.md#reduce-retention-cost>)
+### Goal: [Reduce retention cost](<../../examples/requirements-review/specs/system.spec.md#reduce-retention-cost>)
 
 **Statement**
 
@@ -186,30 +186,30 @@ The clock service boundary; consumers remain separate systems.
 
 Make deletion reversible until a retained item expires.
 
-### QualityRequirement: [Timely recovery feedback](<../../examples/requirements-review/specs/quality/recovery-feedback.quality.spec.md#timely-recovery-feedback>)
+### Requirement: [Timely recovery feedback](<../../examples/requirements-review/specs/requirements/recovery-feedback.requirement.spec.md#timely-recovery-feedback>)
 
 **Statement**
 
 The workspace must provide recovery feedback promptly enough for members to continue their task.
 
-### QualityRequirement: [Unassisted recovery](<../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#unassisted-recovery>)
-
-**Statement**
-
-Members in the stated context must be able to recover the intended document
-without external assistance at the success rate defined in [Criterion](../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#criterion).
-
-Supports: [Recover lost work](<../../examples/requirements-review/specs/jobs/recover.job.spec.md#recover-lost-work>).
-
-Applies to: [Restore a document](<../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md#restore-a-document>).
-
-### GeneralRequirement: [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
+### Requirement: [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
 
 **Statement**
 
 For the restoration required by Restore retained content, the restored metadata must preserve the original title, author identity, creation time and workspace identity.
 
 Applies to: [Restore a document](<../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md#restore-a-document>), [DocumentTrash](<../../examples/requirements-review/specs/system.spec.md#documenttrash>).
+
+### Requirement: [Unassisted recovery](<../../examples/requirements-review/specs/requirements/unassisted-recovery.requirement.spec.md#unassisted-recovery>)
+
+**Statement**
+
+Members in the stated context must be able to recover the intended document
+without external assistance at the success rate defined in [Criterion](../../examples/requirements-review/specs/requirements/unassisted-recovery.requirement.spec.md#criterion).
+
+Supports: [Recover lost work](<../../examples/requirements-review/specs/jobs/recover.job.spec.md#recover-lost-work>).
+
+Applies to: [Restore a document](<../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md#restore-a-document>).
 
 ### System: [Document workspace](<../../examples/requirements-review/specs/system.spec.md#document-workspace>)
 
@@ -222,14 +222,6 @@ Help teams preserve and recover valuable work.
 Document deletion and restoration within a workspace.
 
 Interacts with: [Platform clock](<../../examples/requirements-review/clock/specs/system.spec.md#platform-clock>).
-
-### ObligationClause: [Preserve request identity](<../../examples/requirements-review/specs/system.spec.md#preserve-request-identity>)
-
-**Statement**
-
-A retried restoration request must retain its original request identifier.
-
-Applies to: [Restoration requests](<../../examples/requirements-review/specs/system.spec.md#restoration-requests>).
 
 ### ConceptUse: [DocumentTrash](<../../examples/requirements-review/specs/system.spec.md#documenttrash>)
 
@@ -260,6 +252,14 @@ Read UTC time for retention comparisons.
 **ID:** restoration-requests
 
 Accept restoration requests from authorized clients. The native contract remains to be selected.
+
+### ObligationClause: [Preserve request identity](<../../examples/requirements-review/specs/system.spec.md#preserve-request-identity>)
+
+**Statement**
+
+A retried restoration request must retain its original request identifier.
+
+Applies to: [Restoration requests](<../../examples/requirements-review/specs/system.spec.md#restoration-requests>).
 
 ### UseCase: [Restore a document](<../../examples/requirements-review/specs/use-cases/restore.use-case.spec.md#restore-a-document>)
 
@@ -321,15 +321,11 @@ Representative accidental-deletion situations and the stated recovery-window bou
 
 Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.
 
-### QualityRequirement: [Timely recovery feedback](<../../examples/requirements-review/specs/quality/recovery-feedback.quality.spec.md#timely-recovery-feedback>)
+### Requirement: [Timely recovery feedback](<../../examples/requirements-review/specs/requirements/recovery-feedback.requirement.spec.md#timely-recovery-feedback>)
 
 No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
 
-### QualityRequirement: [Unassisted recovery](<../../examples/requirements-review/specs/quality/unassisted-recovery.quality.spec.md#unassisted-recovery>)
-
-No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
-
-### GeneralRequirement: [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
+### Requirement: [Preserve document metadata on restoration](<../../examples/requirements-review/specs/requirements/restoration.requirement.spec.md#preserve-document-metadata-on-restoration>)
 
 **Validation plan**
 
@@ -360,6 +356,10 @@ Representative accidental-deletion situations and the stated recovery-window bou
 #### Evidence to retain
 
 Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.
+
+### Requirement: [Unassisted recovery](<../../examples/requirements-review/specs/requirements/unassisted-recovery.requirement.spec.md#unassisted-recovery>)
+
+No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.
 
 ### System: [Document workspace](<../../examples/requirements-review/specs/system.spec.md#document-workspace>)
 

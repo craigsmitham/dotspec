@@ -10,7 +10,7 @@ func (m *domainMapper) job(r Record, s *Section) bool {
 	}
 	switch s.Title {
 	case "Steps":
-		v := m.collection(r, "steps", "steps", s)
+		m.declared(r, "steps", s)
 		for _, child := range s.Children {
 			x := m.named("JobStep", r, child)
 			description := m.withoutFields(child, child.Intro, "ID", "Stage")
@@ -32,12 +32,12 @@ func (m *domainMapper) job(r Record, s *Section) bool {
 					m.extension(x, sub)
 				}
 			}
-			appendID(v, "steps", String(x, "id"))
+			appendID(r, "steps", String(x, "id"))
 		}
 	case "Outcomes":
 		m.outcomes(r, s)
 	case "Progress cases":
-		v := m.collection(r, "progress_cases", "cases", s)
+		m.declared(r, "progress_cases", s)
 		for _, child := range s.Children {
 			x := m.named("ProgressCase", r, child)
 			x["description"] = m.doc.Rich(child.Intro)
@@ -54,14 +54,14 @@ func (m *domainMapper) job(r Record, s *Section) bool {
 				case "Forces":
 					m.forces(x, sub)
 				case "Timeline":
-					m.timeline(x, sub)
+					m.section(x, "timeline", sub)
 				case "Evidence":
 					m.evidence(x, "evidence", sub)
 				default:
 					m.extension(x, sub)
 				}
 			}
-			appendID(v, "cases", String(x, "id"))
+			appendID(r, "progress_cases", String(x, "id"))
 		}
 	default:
 		return false
@@ -70,7 +70,7 @@ func (m *domainMapper) job(r Record, s *Section) bool {
 }
 
 func (m *domainMapper) outcomes(owner Record, s *Section) {
-	v := m.collection(owner, "outcomes", "outcomes", s)
+	m.declared(owner, "outcomes", s)
 	for _, item := range m.listItems(s.Intro, false) {
 		x := m.record("DesiredOutcome", String(owner, "id"))
 		x["statement"] = m.doc.Rich([]string{item})
@@ -84,7 +84,7 @@ func (m *domainMapper) outcomes(owner Record, s *Section) {
 			x["supporting_content"] = m.doc.Rich(children[1:])
 			m.bind(x, "supporting_content", children[1:], "named_field", "outcome-supporting-content")
 		}
-		appendID(v, "outcomes", String(x, "id"))
+		appendID(owner, "outcomes", String(x, "id"))
 	}
 	for _, sub := range s.Children {
 		if m.fieldText(sub, "ID") == "" {
@@ -110,7 +110,7 @@ func (m *domainMapper) outcomes(owner Record, s *Section) {
 				m.extension(x, detail)
 			}
 		}
-		appendID(v, "outcomes", String(x, "id"))
+		appendID(owner, "outcomes", String(x, "id"))
 	}
 }
 
@@ -136,42 +136,10 @@ func (m *domainMapper) forces(owner Record, s *Section) {
 		}
 		items = append(items, item)
 	}
-	v := Object(owner["forces"])
-	if v == nil {
-		v = Record{}
-	}
-	previous, _ := v["items"].([]Record)
-	v["items"] = append(append([]Record{}, previous...), items...)
-	m.setRich(v, "content", s.Content)
-	owner["forces"] = v
-	m.sectionBindings(owner, "forces.content", s)
-}
-
-func (m *domainMapper) timeline(owner Record, s *Section) {
-	events := []Record{}
-	for _, id := range m.listItems(s.Intro, false) {
-		events = append(events, Record{"description": m.doc.Rich([]string{id})})
-	}
-	for _, child := range s.Children {
-		v := Record{"label": m.doc.Rich([]string{child.HeadingID}), "description": m.doc.Rich(child.Content)}
-		for _, sub := range child.Children {
-			if sub.Title == "Time" || sub.Title == "Date" {
-				m.setRich(v, "time", sub.Content)
-			} else {
-				m.extension(owner, sub)
-			}
-		}
-		events = append(events, v)
-	}
-	v := Object(owner["timeline"])
-	if v == nil {
-		v = Record{}
-	}
-	previous, _ := v["events"].([]Record)
-	v["events"] = append(append([]Record{}, previous...), events...)
-	m.setRich(v, "content", s.Content)
-	owner["timeline"] = v
-	m.sectionBindings(owner, "timeline.content", s)
+	previous, _ := owner["forces"].([]Record)
+	owner["forces"] = append(append([]Record{}, previous...), items...)
+	m.setRich(owner, "forces_content", s.Content)
+	m.sectionBindings(owner, "forces_content", s)
 }
 
 func (m *domainMapper) evidence(owner Record, field string, s *Section) {

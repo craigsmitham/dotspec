@@ -10,14 +10,13 @@ import (
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
-	"github.com/craigsmitham/dotspec/internal/quality"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
 )
 
 func sourceReport(dir string) check.SourceReport {
-	return check.Sources(dir, system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), quality.CheckType(), requirement.CheckType())
+	return check.Sources(dir, system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType())
 }
 
 func sourceMap(r check.SourceReport) map[string]check.SourceFile {
@@ -45,7 +44,6 @@ func TestSourcesCollectLinksFromEveryTypeWithoutInterpretingNativeFiles(t *testi
 		job.Layout.Path(dir, "work"):         job.Template,
 		usecase.Layout.Path(dir, "work"):     usecase.Template,
 		concept.Layout.Path(dir, "work"):     concept.Template,
-		quality.Layout.Path(dir, "work"):     quality.Template,
 		requirement.Layout.Path(dir, "work"): requirement.Template,
 	}
 	for path, content := range specs {
@@ -61,11 +59,11 @@ func TestSourcesCollectLinksFromEveryTypeWithoutInterpretingNativeFiles(t *testi
 	specs[path] += "[Another reference](../../contract.tla)\n[Guide](../../Guide%20to%20tests.md#guide)\n[Directory](../../)\n[Remote](https://example.invalid/file)\n`[Code](absent.txt)`\n![Image](absent.png)\n"
 	write(t, path, specs[path])
 	r := sourceReport(dir)
-	if r.ExitCode() != 0 || len(r.Files) != 8 || !r.Complete {
+	if r.ExitCode() != 0 || len(r.Files) != 7 || !r.Complete {
 		t.Fatalf("sources: %+v", r)
 	}
 	files := sourceMap(r)
-	if len(files[native].ReferencedBy) != 7 || len(files[guide].ReferencedBy) != 1 {
+	if len(files[native].ReferencedBy) != 6 || len(files[guide].ReferencedBy) != 1 {
 		t.Fatalf("lost incoming references: %+v", files)
 	}
 	for _, location := range files[native].ReferencedBy {

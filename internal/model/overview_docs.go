@@ -96,10 +96,10 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			fmt.Fprintf(&out, "| %s | %s | %s |\n", link(String(r, "id")), link(String(r, "part_of")), declared)
 		}
 	}
-	out.WriteString("\n## Interfaces\n\nRequired and provided are relative to the declaring subject. Each entry is an addressable specification; native contract references do not prove implementation or compatibility.\n\n| Subject | Direction | Interface |\n| --- | --- | --- |\n")
+	out.WriteString("\n## Interfaces\n\nRequired and provided are relative to the declaring subject. Each entry is an addressable element; native contract references do not prove implementation or compatibility.\n\n| Subject | Direction | Interface |\n| --- | --- | --- |\n")
 	for _, r := range elements {
 		for _, field := range []string{"required_interfaces", "provided_interfaces"} {
-			for _, id := range Strings(Object(r[field])["interfaces"]) {
+			for _, id := range Strings(r[field]) {
 				fmt.Fprintf(&out, "| %s | %s | %s |\n", link(String(r, "id")), strings.TrimSuffix(field, "_interfaces"), link(id))
 			}
 		}
@@ -123,7 +123,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		fmt.Fprintf(&out, "| %s | %s | %s | %s |\n", link(String(r, "id")), link(String(r, "owner")), links(Strings(r["groups"])), links(components))
 	}
-	out.WriteString("\n## Applicable obligations\n\nOnly explicit applicability to acquired systems and components is listed. Declaration inside a component does not implicitly supply an applicability target. Plans describe intended system verification; their presence does not prove satisfaction.\n\n| Obligation | Subjects | Verification guidance | Measurement guidance |\n| --- | --- | --- | --- |\n")
+	out.WriteString("\n## Applicable obligations\n\nOnly explicit applicability to acquired systems and components is listed. Declaration inside a component does not implicitly supply an applicability target. Plans describe intended system verification; their presence does not prove satisfaction.\n\n| Obligation | Subjects | Verification plan | Criterion |\n| --- | --- | --- | --- |\n")
 	guidance := func(r Record, field string) string {
 		if strings.TrimSpace(d.text(Object(r[field])["content"])) != "" {
 			return "Recorded in source"
@@ -141,20 +141,20 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			}
 		}
 		if len(subjects) > 0 {
-			fmt.Fprintf(&out, "| %s | %s | %s | %s |\n", link(String(r, "id")), links(subjects), guidance(r, "verification_plan"), guidance(r, "measurement_plan"))
+			fmt.Fprintf(&out, "| %s | %s | %s | %s |\n", link(String(r, "id")), links(subjects), guidance(r, "verification_plan"), guidance(r, "criterion"))
 		}
 	}
-	out.WriteString("\n## Specification association and discovery context\n\nAn explicit specification system overrides the directory default. These associations do not establish structural parentage.\n\n| Specification | Selected system | Selection origin | Directory context |\n| --- | --- | --- | --- |\n")
+	out.WriteString("\n## Specification association and discovery context\n\nAn explicit specification system overrides the directory default. These associations do not establish structural parentage.\n\n| Specification | System | Origin |\n| --- | --- | --- |\n")
 	for _, r := range elements {
 		if designKind(String(r, "kind"), "SystemContextSpecification") {
 			origin := String(r, "specification_system_origin")
 			if origin == "" {
 				origin = "None"
 			}
-			fmt.Fprintf(&out, "| %s | %s | %s | %s |\n", link(String(r, "id")), link(String(r, "specification_system")), origin, link(String(r, "system_context")))
+			fmt.Fprintf(&out, "| %s | %s | %s |\n", link(String(r, "id")), link(String(r, "specification_system")), origin)
 		}
 		if String(r, "kind") == "System" && String(r, "enclosing_system") != "" {
-			fmt.Fprintf(&out, "| %s | — | Directory discovery only | %s |\n", link(String(r, "id")), link(String(r, "enclosing_system")))
+			fmt.Fprintf(&out, "| %s | %s | enclosing system by directory discovery |\n", link(String(r, "id")), link(String(r, "enclosing_system")))
 		}
 	}
 	out.WriteString("\n## Concept uses\n\n| System | Named use | Concept definition |\n| --- | --- | --- |\n")
@@ -181,9 +181,9 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 				definitions = append(definitions, d.text(Record{"content_nodes": []string{String(n, "id")}}))
 			}
 		}
-		for _, field := range []string{"description", "purpose", "scope", "responsibilities", "boundary_description", "contracts", "counterpart", "architecture", "implementation", "part_of_content", "groups_content", "statement", "verification_plan", "validation_plan", "measurement_plan", "criterion"} {
+		for _, field := range []string{"description", "purpose", "scope", "responsibilities", "boundary_description", "contracts", "counterpart", "architecture", "implementation", "part_of_content", "groups_content", "statement", "verification_plan", "validation_plan", "criterion"} {
 			value := r[field]
-			if field == "counterpart" || field == "contracts" || field == "architecture" || field == "implementation" || field == "validation_plan" || field == "verification_plan" || field == "measurement_plan" || field == "criterion" {
+			if field == "counterpart" || field == "contracts" || field == "architecture" || field == "implementation" || field == "validation_plan" || field == "verification_plan" || field == "criterion" {
 				value = Object(value)["content"]
 			}
 			text := d.text(value)

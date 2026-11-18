@@ -30,13 +30,19 @@ func (m *domainMapper) traceSection(r Record, s *Section) bool {
 	if m.traceMapped[key] {
 		return true
 	}
-	m.traceMapped[key] = true
 	if s.Title == "Obligations" {
 		if _, ok := cls.Slots["obligations"]; !ok {
+			// Report once and leave the section unmapped, so its content is
+			// retained as an extension section instead of being left unbound.
+			if m.traceMapped[key+"/rejected"] {
+				return false
+			}
+			m.traceMapped[key+"/rejected"] = true
 			m.result.Diagnostics = append(m.result.Diagnostics, Record{"id": m.id("diagnostic"), "kind": "Diagnostic", "code": "obligation.container", "severity": "error", "message": "This kind of element does not declare obligation clauses; link an obligation using traceability instead.", "source": r["source_document"], "record": r["id"], "phase": "parse"})
 			return false
 		}
 	}
+	m.traceMapped[key] = true
 	if field != "" {
 		m.section(r, field+"_content", s)
 		r[field+"_references"] = append(append([]string{}, Strings(r[field+"_references"])...), m.references(s.Content)...)
@@ -73,7 +79,7 @@ func (m *domainMapper) traceSection(r Record, s *Section) bool {
 			if m.traceSection(x, sub) {
 				continue
 			}
-			if sub.Title == "Verification plan" || sub.Title == "Measurement plan" || sub.Title == "Criterion" || sub.Title == "Applies to" || sub.Title == "Rationale" {
+			if sub.Title == "Verification plan" || sub.Title == "Criterion" || sub.Title == "Applies to" || sub.Title == "Rationale" {
 				m.requirement(x, sub)
 			} else {
 				m.extension(x, sub)
@@ -170,8 +176,8 @@ func (d *designResolver) traceReview() {
 		if missing := d.measurementGuidance(r).Missing(); len(missing) > 0 {
 			d.issue(r, "measurement_basis", "advice", obligation.MeasurementMessage(missing))
 		}
-		if strings.TrimSpace(d.text(Object(r["verification_plan"])["content"])+d.text(Object(r["measurement_plan"])["content"])) == "" {
-			d.issue(r, "verification_plan", "advice", "No system verification or measurement plan is recorded for this obligation; review how a realization will be checked.")
+		if strings.TrimSpace(d.text(Object(r["verification_plan"])["content"])) == "" {
+			d.issue(r, "verification_plan", "advice", "No verification plan is recorded for this obligation; review how a realization will be checked.")
 		}
 	}
 }
@@ -188,9 +194,6 @@ func obligationSystem(r Record, index map[string]Record) string {
 			return String(r, "specification_system")
 		}
 		if id := String(r, "specification_system"); id != "" {
-			return id
-		}
-		if id := String(r, "system_context"); id != "" {
 			return id
 		}
 		r = index[String(r, "owner")]

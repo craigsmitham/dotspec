@@ -1,52 +1,58 @@
-# System attribute declarations resolve classifications without changing authored labels.
+# System attribute declarations classify requirements without changing authored labels.
+# The quality preset is an authoring template; it creates an ordinary requirement.
 mkdir project
 cd project
 exec git init -q
-status 0 dotspec quality init work --json
+status 0 dotspec requirement init work --preset quality --json
 stdout '"schema_version": 1'
 ! stderr .
-status 0 dotspec quality show work --json
+grep 'type: requirement' specs/requirements/work.requirement.spec.md
+grep '## Criterion' specs/requirements/work.requirement.spec.md
+status 0 dotspec requirement show work --json
 stdout '"quality_attributes": \[\]'
 stdout '"system": null'
 cp ../model.md specs/system.spec.md
-cp ../requirement.md specs/quality/work.quality.spec.md
+cp ../requirement.md specs/requirements/work.requirement.spec.md
 status 0 dotspec system show --json
 stdout '"quality_attributes": \['
 stdout '"quality_attributes_content":'
 ! stdout '"quality_model":'
 stdout '"subattribute_of":'
-status 0 dotspec quality list --attribute usability --json
+status 0 dotspec requirement list --attribute usability --json
 stdout '"name": "Accessible diagnostics"'
 stdout '"attribute": "usability"'
-status 0 dotspec quality show work
+status 0 dotspec requirement show work
 stdout 'Quality attributes: diagnostics, accessibility'
 stdout 'Ancestor quality attributes: usability'
-status 0 dotspec quality check work --json
+status 0 dotspec requirement check work --json
 stdout '"context_files_checked": 1'
 stdout '"advice": 1'
-stdout 'quality.measurement-basis'
-stdout 'no separately identified criterion'
+stdout 'requirement.measurement-basis'
+stdout 'no separately identified target'
 ! stderr .
 status 0 dotspec check --json
 stdout '"files_checked": 2'
 stdout '"context_files_checked": 0'
-cmp specs/quality/work.quality.spec.md ../requirement.md
+cmp specs/requirements/work.requirement.spec.md ../requirement.md
 cmp specs/system.spec.md ../model.md
-status 2 dotspec quality init work
+status 2 dotspec requirement init work --preset quality
 stderr 'refusing to overwrite'
 ! stdout .
+status 2 dotspec requirement init other --preset performance
+stderr 'unknown requirement preset'
+! exists specs/requirements/other.requirement.spec.md
 
 # Unknown labels are advice; invalid attribute declarations is a structural error.
-cp ../unknown.md specs/quality/unknown.quality.spec.md
-status 0 dotspec quality check unknown --json
-stdout 'quality.undefined-attribute'
+cp ../unknown.md specs/requirements/unknown.requirement.spec.md
+status 0 dotspec requirement check unknown --json
+stdout 'requirement.undefined-attribute'
 ! stderr .
 cp ../cycle.md specs/system.spec.md
-status 1 dotspec quality check work --json
+status 1 dotspec requirement check work --json
 stdout 'quality.cycle'
 ! stdout 'undefined-attribute'
 ! stderr .
-status 2 dotspec quality check missing --json
+status 2 dotspec requirement check missing --json
 stdout '"complete": false'
 ! stderr .
 -- model.md --
@@ -72,7 +78,7 @@ Understandable findings.
 Accessible output.
 -- requirement.md --
 ---
-type: quality
+type: requirement
 quality_attributes: [diagnostics, accessibility]
 ---
 # Accessible diagnostics
@@ -80,13 +86,16 @@ quality_attributes: [diagnostics, accessibility]
 Human-readable check reports.
 ## Statement
 Every diagnostic identifies its severity in text.
-## Measurement plan
+## Criterion
+### Measure
+Share of rendered diagnostics whose severity appears as text.
+## Verification plan
 Capture output for every severity.
 ## Rationale
 Contributors can distinguish severities without color.
 -- unknown.md --
 ---
-type: quality
+type: requirement
 quality_attributes: [unknown]
 ---
 # Unknown classification

@@ -24,19 +24,20 @@ class CatalogTests(unittest.TestCase):
         return self.catalog["classes"][class_name]["slots"][slot_name]
 
     def test_inherited_and_narrowed_reference_ranges(self):
-        # Abstract Requirement must accept either concrete requirement subtype.
-        subject = self.slot("QualityClassification", "subject")
-        self.assertEqual(subject["reference_ranges"], ["Obligation"])
+        # One concrete Requirement; a mixed-in capability narrows a reference range.
+        self.assertFalse(self.catalog["classes"]["Requirement"]["abstract"])
+        self.assertIn("Obligation", self.catalog["classes"]["Requirement"]["ancestors"])
+        self.assertNotIn("ObligationContainer", self.catalog["classes"]["Requirement"]["ancestors"])
+        self.assertEqual(self.slot("LabelOccurrence", "owner")["reference_ranges"], ["Obligation", "QualityAttribute"])
+        subject = self.slot("Assertion", "subject")
+        self.assertEqual(subject["reference_ranges"], ["DomainElement"])
         self.assertTrue(subject["required"])
-        self.assertIn("Requirement", self.catalog["classes"]["QualityRequirement"]["ancestors"])
-        self.assertIn("Requirement", self.catalog["classes"]["GeneralRequirement"]["ancestors"])
         # A union must not silently reopen the broad DomainElement parent range.
         owner = self.slot("ScenarioStep", "owner")
         self.assertEqual(owner["range"], "DomainElement")
         self.assertEqual(owner["reference_ranges"], ["Scenario", "UseCaseExtension"])
         self.assertNotIn("DomainElement", owner["reference_ranges"])
         self.assertEqual(self.slot("QualityAttribute", "owner")["reference_ranges"], ["System", "QualityModel"])
-        self.assertEqual(self.slot("DeclaresQualityAttribute", "subject")["reference_ranges"], ["System", "QualityModel"])
         self.assertEqual(self.slot("LabelOccurrence", "governing_quality_model")["reference_ranges"], ["QualityModel"])
 
     def test_embedded_values_and_ordered_references_stay_distinct(self):
@@ -54,7 +55,7 @@ class CatalogTests(unittest.TestCase):
 
     def test_annotations_rules_and_discriminators_remain_available(self):
         classes = self.catalog["classes"]
-        self.assertEqual(classes["HasJobStep"]["annotations"]["projection_of"], "Job.steps.steps")
+        self.assertEqual(classes["Job"]["annotations"]["owned_memberships"], "Job.steps or Job.outcomes or Job.progress_cases")
         self.assertEqual(self.slot("UseCase", "kind")["equals_string"], "UseCase")
         self.assertTrue(self.slot("QualityAttribute", "authored_id")["required"])
         self.assertFalse(self.slot("Job", "authored_id")["required"])
@@ -64,17 +65,47 @@ class CatalogTests(unittest.TestCase):
 
     def test_stale_canonical_membership_paths_cannot_generate(self):
         catalog = copy.deepcopy(self.catalog)
-        catalog["classes"]["Job"]["annotations"]["owned_memberships"] = "Job.steps.missing"
-        with self.assertRaisesRegex(ValueError, "absent field JobMap.missing"):
+        catalog["classes"]["Job"]["annotations"]["owned_memberships"] = "Job.missing"
+        with self.assertRaisesRegex(ValueError, "absent field Job.missing"):
             generate.validate_annotations(catalog)
         catalog = copy.deepcopy(self.catalog)
-        catalog["classes"]["ActionCollection"]["slots"]["actions"]["annotations"]["relationship_category"] = "semantic-association"
+        catalog["classes"]["Concept"]["slots"]["actions"]["annotations"]["relationship_category"] = "semantic-association"
         with self.assertRaisesRegex(ValueError, "membership must declare containment"):
             generate.validate_annotations(catalog)
-        catalog = copy.deepcopy(self.catalog)
-        catalog["classes"]["HasJobStep"]["annotations"]["projection_of"] = "Concept.actions.actions"
-        with self.assertRaisesRegex(ValueError, "projection violates declared assertion endpoints"):
-            generate.validate_annotations(catalog)
+
+    def test_relationship_defaults_complete_the_catalog(self):
+        raw = yaml.safe_load(generate.MODEL.read_bytes())
+        # The source states only the category for an ordinary citation field.
+        source = raw["classes"]["ContextualReferences"]["attributes"]["references"]["annotations"]
+        self.assertEqual(source, {"relationship_category": "contextual-citation"})
+        completed = self.slot("ContextualReferences", "references")["annotations"]
+        defaults = self.catalog["relationship_categories"]["contextual-citation"]["defaults"]
+        for key, value in defaults.items():
+            self.assertEqual(completed[key], value)
+        self.assertEqual(completed["relationship_inverse"], "none")
+        self.assertEqual(completed["relationship_label"], "references")
+        self.assertEqual(completed["relationship_ordering"], "authored presentation order; no execution order implied")
+        self.assertEqual(self.slot("UseCase", "subject_system")["annotations"]["relationship_ordering"], "single target")
+        self.assertEqual(self.slot("QualityAttribute", "subattribute_of")["annotations"]["relationship_ordering"], "unordered")
+        # A stated value wins over the category default.
+        self.assertEqual(self.slot("Obligation", "refines")["annotations"]["relationship_cycles"], "forbidden")
+        self.assertEqual(self.slot("Goal", "owner")["annotations"]["relationship_inverse"], "System.goals")
+        broken = copy.deepcopy(raw)
+        del broken["enums"]["RelationshipCategory"]
+        with self.assertRaisesRegex(ValueError, "RelationshipCategory"):
+            generate.relationship_categories(broken)
+
+    def test_projection_paths_are_derived_from_relationship_fields(self):
+        projections = self.catalog["projections"]
+        self.assertEqual(projections, sorted(set(projections)))
+        for path in ("TraceableElement.supports", "Obligation.refines", "BusinessRule.refines", "System.goals",
+                     "Job.steps", "ObligationContainer.obligations", "Specification.evidence.statements",
+                     "System.enclosing_system", "SystemContextSpecification.specification_system"):
+            self.assertIn(path, projections)
+        # Owner backlinks, citations and provenance are not separate relationship claims.
+        for path in ("Goal.owner", "TraceableElement.supports_references", "DomainElement.source_document"):
+            self.assertNotIn(path, projections)
+        self.assertEqual([n for n, c in self.catalog["classes"].items() if "Assertion" in c["ancestors"]], ["Assertion"])
 
     def test_every_induced_slot_is_present(self):
         view = SchemaView(str(generate.MODEL))
@@ -90,14 +121,17 @@ class CatalogTests(unittest.TestCase):
         self.assertIn('ConceptUse.definition', reference)
         self.assertIn('ContextualReferences.references', reference)
         self.assertIn('projection_path', reference)
-        self.assertNotIn('system_context', self.catalog['classes']['System']['slots'])
-        self.assertNotIn('system_context', self.catalog['classes']['QualityModel']['slots'])
+        for name in ('System', 'QualityModel', 'UseCase', 'Requirement'):
+            self.assertNotIn('system_context', self.catalog['classes'][name]['slots'])
+        self.assertIn('TraceableElement.supports', reference)
         for mutate, message in [
-            (lambda c: c['classes']['UsesConcept']['slots']['subject'].update(required=False), 'endpoints must be required'),
+            (lambda c: c['classes']['Assertion']['slots']['subject'].update(required=False), 'must be required'),
+            (lambda c: c['classes']['Assertion'].update(abstract=True), 'one concrete assertion class'),
+            (lambda c: c['classes'].update(Supports=copy.deepcopy(c['classes']['Assertion'])), 'one concrete assertion class'),
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].pop('relationship_scope'), 'missing relationship metadata'),
             (lambda c: c['classes']['ConceptUse']['slots']['bindings']['annotations'].update(paired_with='missing'), 'reciprocal peer'),
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].update(relationship_cycles='guess'), 'cycle policy'),
-            (lambda c: c['classes']['Supports']['annotations'].pop('projection_of'), 'canonical projection fields'),
+            (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].update(relationship_category='guess'), 'invalid relationship category'),
             (lambda c: c['classes']['UseCase']['slots']['involves']['annotations'].update(trace_targets='Concept'), 'canonical endpoint ranges'),
             (lambda c: c['classes']['Requirement']['slots']['refines']['annotations'].pop('trace_heading'), 'paired and unique'),
             (lambda c: c['classes']['UseCase']['slots']['supports']['annotations'].update(trace_heading='Involves'), 'paired and unique'),
@@ -178,7 +212,7 @@ class ModelViewTests(unittest.TestCase):
             (lambda v: v['subsets'].append('document-content'), 'is not core'),
             (lambda v: v['types'].update(Missing=[]), 'unknown class'),
             (lambda v: v['types']['Job'].append('missing'), 'absent field'),
-            (lambda v: v['diagrams'][0]['paths'].append('UseCase.related_jobs'), 'all declared class targets'),
+            (lambda v: v['diagrams'][0]['paths'].append('UseCase.involves'), 'all declared class targets'),
             (lambda v: v['diagrams'][0].update(edges=[['Job', 'UseCase']]), 'diagram must declare'),
         ]:
             v = copy.deepcopy(self.view)
@@ -196,7 +230,8 @@ class ModelViewTests(unittest.TestCase):
         output = core_markdown(c, v).decode()
         self.assertIn('BusinessRule --> "0..1" Concept : specification system', output)
         self.assertNotIn('BusinessRule --> "0..1" System : specification system', output)
-        self.assertIn('Requirement <|-- QualityRequirement', output)
+        self.assertIn('SystemContextSpecification <|-- Requirement', output)
+        self.assertNotIn('Specification <|-- Component', output)
         self.assertNotIn('enforces -->', output)
 
 if __name__ == "__main__":

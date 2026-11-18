@@ -132,9 +132,9 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 				definitions = append(definitions, d.text(Record{"content_nodes": []string{String(n, "id")}}))
 			}
 		}
-		for _, field := range []string{"statement", "description", "purpose", "performer", "situation", "motivation", "intended_progress", "current_approach", "desired_progress", "circumstances", "struggling_moment", "participants", "alternatives_considered", "tradeoffs_and_selection_criteria", "enablers", "supporting_content", "supports_content", "applies_to_content", "depends_on_content", "provided_by_content", "forces", "timeline", "evidence"} {
+		for _, field := range []string{"statement", "description", "purpose", "performer", "situation", "motivation", "intended_progress", "current_approach", "desired_progress", "circumstances", "struggling_moment", "participants", "alternatives_considered", "tradeoffs_and_selection_criteria", "enablers", "supporting_content", "supports_content", "applies_to_content", "depends_on_content", "provided_by_content", "forces_content", "timeline", "evidence"} {
 			value := r[field]
-			if field == "forces" || field == "timeline" || field == "evidence" {
+			if field == "evidence" {
 				value = Object(value)["content"]
 			}
 			text := strings.TrimSpace(d.text(value))

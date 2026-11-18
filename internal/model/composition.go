@@ -156,7 +156,7 @@ func (d *designResolver) run() {
 			d.resolve(r, "groups", "Requirement or ObligationClause or UseCase or Concept or ConceptUse or Synchronization or Interface", true, nil)
 		case "UseCase":
 			d.resolve(r, "subject_system", "System", false, nil)
-		case "GeneralRequirement", "QualityRequirement", "BusinessRule", "ObligationClause":
+		case "Requirement", "BusinessRule", "ObligationClause":
 			d.resolve(r, "applies_to", "DomainElement", true, nil)
 		case "ConceptUse":
 			d.resolve(r, "dependencies", "ConceptUse", true, func(t Record) bool { return d.sameSystem(r, t) })

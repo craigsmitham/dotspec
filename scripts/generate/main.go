@@ -19,7 +19,6 @@ import (
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/model"
-	"github.com/craigsmitham/dotspec/internal/quality"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
@@ -58,7 +57,7 @@ func run(check bool) error {
 		{"examples/starter/specs/use-cases/check-specifications.use-case.spec.md", usecase.Template},
 		{"examples/starter/specs/use-cases/review-change.use-case.spec.md", usecase.ExpandedTemplate},
 		{"examples/starter/specs/concepts/job-map.concept.spec.md", concept.Template},
-		{"examples/starter/specs/quality/diagnostic-severity.quality.spec.md", quality.Template},
+		{"examples/starter/specs/requirements/diagnostic-severity.requirement.spec.md", requirement.QualityTemplate},
 		{"examples/starter/specs/requirements/reject-existing-target.requirement.spec.md", requirement.Template},
 		{"docs/examples.md", gallery},
 	}
@@ -88,7 +87,7 @@ func run(check bool) error {
 		return err
 	}
 	files = append(files, struct{ path, content string }{"docs/reference/concept-design-example.md", design})
-	traceResult, err := model.Export(filepath.Join(root, "examples/requirements-traceability"), system.CheckType(), concept.CheckType(), job.CheckType(), usecase.CheckType(), businessrule.CheckType(), requirement.CheckType(), quality.CheckType())
+	traceResult, err := model.Export(filepath.Join(root, "examples/requirements-traceability"), system.CheckType(), concept.CheckType(), job.CheckType(), usecase.CheckType(), businessrule.CheckType(), requirement.CheckType())
 	if err != nil {
 		return err
 	}
@@ -107,7 +106,7 @@ func run(check bool) error {
 		return err
 	}
 	files = append(files, struct{ path, content string }{"docs/reference/requirements-traceability-example.md", trace})
-	overviewResult, err := model.Export(filepath.Join(root, "examples/system-structure"), system.CheckType(), concept.CheckType(), job.CheckType(), usecase.CheckType(), businessrule.CheckType(), requirement.CheckType(), quality.CheckType())
+	overviewResult, err := model.Export(filepath.Join(root, "examples/system-structure"), system.CheckType(), concept.CheckType(), job.CheckType(), usecase.CheckType(), businessrule.CheckType(), requirement.CheckType())
 	if err != nil {
 		return err
 	}
@@ -153,7 +152,7 @@ func run(check bool) error {
 	}
 	files = append(files, struct{ path, content string }{"docs/reference/needs-map-example.md", needs})
 
-	reviewResult, err := model.Export(filepath.Join(root, "examples/requirements-review"), system.CheckType(), concept.CheckType(), job.CheckType(), usecase.CheckType(), businessrule.CheckType(), requirement.CheckType(), quality.CheckType())
+	reviewResult, err := model.Export(filepath.Join(root, "examples/requirements-review"), system.CheckType(), concept.CheckType(), job.CheckType(), usecase.CheckType(), businessrule.CheckType(), requirement.CheckType())
 	if err != nil {
 		return err
 	}
@@ -272,9 +271,9 @@ func outputGallery() (result string, err error) {
 		{"concept", "init", "job-map"},
 		{"concept", "show", "job-map", "--json"},
 		{"concept", "check", "job-map", "--json"},
-		{"quality", "init", "diagnostic-severity"},
-		{"quality", "show", "diagnostic-severity", "--json"},
-		{"quality", "check", "diagnostic-severity", "--json"},
+		{"requirement", "init", "diagnostic-severity", "--preset", "quality"},
+		{"requirement", "show", "diagnostic-severity", "--json"},
+		{"requirement", "check", "diagnostic-severity", "--json"},
 		{"requirement", "init", "reject-existing-target"},
 		{"requirement", "show", "reject-existing-target", "--json"},
 		{"requirement", "list", "--json"},

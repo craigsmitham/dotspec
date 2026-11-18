@@ -1,12 +1,15 @@
 # Markdown mapping profile
 
-`dotspec-markdown/13` maps specification Markdown to the
+`dotspec-markdown/14` maps specification Markdown to the
 [canonical model](metamodel.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/specification-model.md).
 
-The profile covers all eight specification families: quality model, business rule, system, job, use case,
-concept, general requirement and quality requirement. Existing type parsers
+The profile covers all seven specification types: system, job, quality model,
+business rule, use case, concept and requirement. A specification is one authored
+`*.spec.md` document, and its root record is the one concrete class of its type:
+`System`, `Job`, `QualityModel`, `BusinessRule`, `UseCase`, `Concept` or
+`Requirement`. Existing type parsers
 remain authoritative for authoring structure and validity. The exporter retains
 source and syntax before invoking those parsers. Rejection produces diagnostics
 and failed domain decomposition without manufacturing a valid domain object.
@@ -51,22 +54,30 @@ narrative point to source nodes, without rewritten copies of the prose.
 
 ## Shared specification content
 
-These roles apply to each specification family where authored.
+These roles apply where authored. Some are recognized only on a specification,
+the root record of a document. The others are recognized beneath the heading of
+any element that has the field, including elements declared inside a
+specification.
 
-| Section | Domain field or structure |
-| --- | --- |
-| Business rules | `business_rules: ContextualReferences`; a citation does not assert enforcement or compliance |
-| Related specifications | `related_specifications: ContextualReferences` |
-| Related use cases | `related_use_cases: ContextualReferences` |
-| Related concepts | `related_concepts: ContextualReferences` |
-| Authority; Authority and evidence | `authority_and_evidence: RichContent` |
-| Notes | `notes: RichContent` |
-| Validation plan (TraceableElement) | `validation_plan: AssessmentPlan`; explicit subject and basis distinguish requirements/system validation and assumption assessment |
-| Explanatory notes | `explanatory_notes: RichContent`, including on named domain records |
-| Implementation suggestions; Implementation hints | `implementation_suggestions: RichContent`; nonbinding advice, not endorsement |
-| Illustrative examples | `illustrative_examples: RichContent`, distinct from general obligations |
-| Evidence | `EvidenceCollection` with full content, direct list-item statements and named `EvidenceStatement` records |
-| Open question; Open questions | `OpenQuestionCollection.content` and ordered `questions` values; each question is distinct from its Evidence needed subsection |
+| Section | Recognized on | Domain field or structure |
+| --- | --- | --- |
+| Related specifications | Specification | `related_specifications: ContextualReferences`; a citation does not assert support, refinement, enforcement or compliance |
+| Authority; Authority and evidence | Specification | `authority_and_evidence: RichContent` |
+| Evidence | Specification; progress case | `evidence: EvidenceCollection` with full content, direct list-item statements and named `EvidenceStatement` records |
+| Notes | Any element | `notes: RichContent` |
+| Implementation suggestions; Implementation hints | Any element | `implementation_suggestions: RichContent`; nonbinding advice, not endorsement |
+| Illustrative examples | Any element | `illustrative_examples: RichContent`, distinct from general obligations |
+| Validation plan | Any TraceableElement | `validation_plan: AssessmentPlan`; explicit subject and basis distinguish requirements/system validation and assumption assessment |
+| Supports; Derived from; Relies on | Any TraceableElement | Trace sections; see [Layered traceability and obligation clauses](#layered-traceability-and-obligation-clauses) |
+| Open question; Open questions | Specification; any named element whose subsections are mapped, such as a declared component, job step, obligation clause, concept action, quality attribute or named assumption (a goal's or glossary term's subsections stay in its statement or definition); an obligation's Criterion | `open_questions_content` and ordered `open_questions` values on that record (the obligation, for a Criterion); each question is distinct from its Evidence needed subsection |
+
+A specification's root record also carries its `preamble` and, for every type
+except system, the `slug` taken from its file name. Related specifications is
+the single contextual-reference section: cite a business rule, job, use case or
+concept there, or use Derived from for a typed basis link. Beneath a Component,
+Feature, Capability, ConceptUse, Synchronization or Interface, which are
+elements and not specifications, Related specifications, Authority and Evidence
+headings are retained as extension sections.
 
 Contextual references retain full explanatory prose, reference occurrences and
 explicit list-item descriptions. They do not create support, authority,
@@ -75,7 +86,8 @@ Research basis and Limitations subsections. Named evidence statements recognize
 Type, Research status and Limitations. An authored hypothesis remains a claim;
 the mapper does not assign confidence or prove it.
 
-An open-question section retains its complete narrative in the collection. A
+An open-question section retains its complete narrative in
+`open_questions_content`. A
 singular heading maps its introductory question and explicit detail subsections
 into one question. Raised by, Raised on, Resolve by, Importance and Evidence needed
 map to corresponding rich-content fields; Tracking reference maps to
@@ -95,16 +107,19 @@ requirement-level field.
 | Section | Domain field |
 | --- | --- |
 | Statement | `statement: RichContent` |
-| Applies to | `applicability: Applicability`, including the same explicit dimensions as requirements |
+| Applies to | `applicability: Applicability`, including the same explicit dimensions and `**Targets:**` field as requirements |
 | Rationale | `rationale: RichContent` |
 | Authority; Authority and evidence | Shared `authority_and_evidence: RichContent` |
 | Exceptions | `exceptions: RichContent`, retaining qualifications and references |
+| Refines | `refines_content`, `refines_references`; resolved `refines` targets business rules only |
 | Related specifications | Shared contextual-reference content |
 
 Absent and empty exceptions remain distinct. Unknown sections remain visible
-extensions. The existing generic Constraint record remains available for
-constraint narrative in system documents; identifying a BusinessRule is an
-explicit authoring decision.
+extensions. A requirement relates to a rule through Derived from, through
+Refines on the requirement, or through a citation under Related specifications.
+A business rule does not contain obligation clauses. Constraints in a system
+specification remain narrative; identifying a BusinessRule is an explicit
+authoring decision.
 
 ## Quality model
 
@@ -122,8 +137,8 @@ implicit enclosing-system association.
 
 A parent label on a model definition resolves inside that model and records
 `governing_quality_model`. Obligation classification continues to resolve only
-against a system's declarations. Both owner types project
-`DeclaresQualityAttribute` assertions. Copy provenance uses ordinary source links;
+against a system's declarations. Assertions project both memberships, as
+`QualityModel.quality_attributes` and `System.quality_attributes`. Copy provenance uses ordinary source links;
 no synchronization, equivalence, or satisfaction relationship is inferred.
 
 ## System
@@ -134,8 +149,8 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | Purpose; Scope | `purpose`; `scope` |
 | System or Component: Out of scope | `out_of_scope: RichContent` |
 | System or Component: Interacts with | Authored content and reference occurrences; resolved `interacts_with` System/Component targets, independent of `part_of` |
-| System or Component: Required interfaces; Provided interfaces | `RequiredInterfaceCollection` / `ProvidedInterfaceCollection` values with full content and ordered references to owned `Interface` specifications |
-| Named interface | Heading `name`, complete `content`, introductory `description` and `preamble`, declaring System/Component `owner`, optional introductory `**ID:**`; Contracts and Counterpart subsections are contextual references; shared specification sections and Obligations are supported |
+| System or Component: Required interfaces; Provided interfaces | `required_interfaces_content` or `provided_interfaces_content` with the full section, plus ordered `required_interfaces` or `provided_interfaces` membership of owned `Interface` elements |
+| Named interface | Heading `name`, complete `content`, introductory `description`, declaring System/Component `owner`, optional introductory `**ID:**`; Contracts and Counterpart subsections are contextual references; Notes, Open questions, Validation plan, trace sections and Obligations are supported |
 | Project context | `project_context: ContextualReferences`; authoritative project artifacts remain external |
 | Part of | `part_of_content`, explicit `part_of_references`, resolved scalar System `part_of`; no inferred parent |
 | Components; Features; Capabilities | Paired section content and ordered declaration membership in `components`, `features` or `capabilities` |
@@ -148,12 +163,11 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | Feature: Groups | Narrative and explicit references; resolved non-owning `groups` membership in requirements, clauses, use cases, concepts, concept uses, synchronizations or interfaces |
 | Capability: Supports; Depends on; Provided by | Explicit semantic associations to user needs/goals, Capability dependencies, and System/Component providers; declaration does not imply provision |
 | Capability: Enablers | `enablers` narrative, including human/procedural providers and external references |
-| Environment | `EnvironmentDescription.content` |
-| Goals | `GoalCollection.content`; direct list items and named subsections become `SystemGoal` records |
-| Assumptions | `AssumptionCollection.content`; direct list items and named subsections become `Assumption` records |
+| Environment; Stakeholders; Constraints | Narrative `environment`, `stakeholders` and `constraints`; list items and subordinate headings remain part of the narrative |
+| Goals | `goals_content`; direct list items and named subsections become `Goal` records in `goals` |
+| Assumptions | `assumptions_content`; direct list items and named subsections become `Assumption` records in `assumptions` |
 | Assumption: Basis; Applicability; Validation plan | `basis`, prose `applicability`, and `validation_plan: AssessmentPlan`; statement contains the named assumption introduction only |
-| Constraints | `ConstraintCollection.content`; direct list items and named subsections become `Constraint` records |
-| Glossary | `Glossary.content`; named subsections become `GlossaryTerm` records with full definitions |
+| Glossary | `glossary_content`; named subsections become `GlossaryTerm` records in `glossary` with full definitions |
 | Term: Alternative names; Aliases | List-item values, or the unsegmented subsection, populate `alternative_names` |
 | Term: Related terms | `related_terms: ContextualReferences` |
 | Quality attributes | `System.quality_attributes_content` preserves the section; `System.quality_attributes` lists its attributes in authored order |
@@ -168,7 +182,12 @@ quality-attribute or glossary definition remain part of that narrative unless a
 specific rule above assigns a more precise role. Unrecognized headings inside
 structured detail fields, such as a glossary alias list, receive extension
 records. An absent section leaves both system fields absent. An explicitly empty section retains empty content and an empty attribute list. Directory-derived enclosing system documents
-and specification ownership are associations; they introduce no inheritance.
+and a specification's `specification_system` are associations; they introduce no inheritance.
+
+Components, features, capabilities, concept uses, synchronizations and interfaces
+are elements declared inside the system specification, not specifications. There
+is no constraint record: an individually addressable constraint is a requirement
+or a business rule.
 
 ## Job
 
@@ -177,49 +196,46 @@ and specification ownership are associations; they introduce no inheritance.
 | Job | `statement` |
 | Performer; Situation; Motivation | `performer`; `situation`; `motivation` |
 | Intended progress | `intended_progress`; the old singular Desired outcome heading is extension content |
-| Steps | `JobMap.content`; named subsections become ordered `JobStep` records |
+| Steps | `steps_content`; named subsections become ordered `JobStep` records in `steps` |
 | Step `**ID:**`; `**Stage:**` | Optional `authored_id`; source-backed `stage` |
 | Step introduction | `description`, excluding its explicit ID and Stage metadata lines |
-| Outcomes under the job or a step | `OutcomeCollection` and direct list-item `DesiredOutcome` records with that actual owner |
+| Outcomes under the job or a step | `outcomes_content` and direct list-item `DesiredOutcome` records in `outcomes`, with that actual owner |
 | DesiredOutcome `**identifier:**` prefix | Optional outcome `authored_id`; complete item remains available as its statement |
 | Named outcome with introductory `**ID:**` | `name` from its heading, `authored_id`, and full `statement` from introductory prose excluding ID; headings without IDs remain extensions |
 | Named outcome: Applies to | `applies_to_content`, authored reference occurrences, and resolved Job/JobStep `applies_to` targets, independently of declaration owner |
 | Named outcome: Supporting content | `supporting_content` |
 | Nested outcome support content | `supporting_content` on the outcome |
-| Progress cases | `ProgressCaseCollection.content`; named subsections become `ProgressCase` records |
+| Progress cases | `progress_cases_content`; named subsections become `ProgressCase` records in `progress_cases` |
 | Case: Circumstances; Struggling moment; Participants | `circumstances`; `struggling_moment`; `participants` |
 | Case: Alternatives considered; Trade-offs and selection criteria | `alternatives_considered`; `tradeoffs_and_selection_criteria` |
 | Case: Current approach; Desired progress | `current_approach`; `desired_progress` |
-| Case: Forces | `ForceCollection` with full narrative and explicit list-item or headed force values |
-| Case: Timeline | `Timeline.content`; direct list items or named events supply `TimelineEvent` values |
-| Event: Time; Date | Authored `time` content, without inferred dates |
+| Case: Forces | `forces_content` with the full narrative; explicit list-item or headed `Force` values in `forces` |
+| Case: Timeline | Narrative `timeline`; list items and subordinate headings remain part of it, without inferred dates |
 | Case: Evidence | The shared evidence structure |
 
 A force receives `kind` only from an explicit push, pull, anxiety or habit label.
 Other force descriptions retain their content without a fabricated category.
 Stage labels remain open. An explicit empty Stage field remains distinguishable
-from an omitted Stage field. Unknown detail headings under a step, progress case
-or timeline event become extension sections on the nearest addressable owner.
+from an omitted Stage field. Unknown detail headings under a step or progress
+case become extension sections on the nearest addressable owner.
 A timeline saying “to be established” remains authored content. Overall outcomes belong to the job and are not copied into every step.
+Jobs and job steps do not contain obligation clauses.
 
 ## Use case
 
 | Section or item | Mapping |
 | --- | --- |
-| Goal; System boundary; Trigger; Success criterion | `goal`; `boundary_description`; `trigger`; `success_criterion` |
-| Primary actor | `ActorMention` with full content and reference occurrences |
-| Goal level | `GoalLevel.content`; recognized explicit wording may also populate canonical `level` |
-| Preconditions; Minimum guarantees | `ConditionCollection` with full content and explicitly separated list items or headed conditions |
-| Supporting actors | `ActorCollection` with full content and list-item or named actor mentions; named Services subsections populate `services` |
-| Stakeholder interests | Full collection content and explicit list-item or named stakeholder-interest entries |
-| Step: nested `Illustrates:` bullet | `illustrates_content`, source occurrences, resolved `illustrates` Obligation/ConceptAction targets; ordinary step links remain citations |
+| Goal; System boundary; Trigger | `goal`; `boundary_description`; `trigger` |
+| Primary actor | `primary_actor: ActorMention` with full content and reference occurrences |
+| Goal level | `goal_level_content`; recognized explicit wording also populates canonical `goal_level` |
+| Preconditions; Minimal guarantees; Success guarantees | `preconditions_content`, `minimal_guarantees_content` or `success_guarantees_content` with the full section; list items or headed conditions become `Condition` values in `preconditions`, `minimal_guarantees` or `success_guarantees` |
+| Supporting actors; Stakeholder interests; Sequence | Narrative `supporting_actors`, `stakeholder_interests` and `sequence` |
+| Step: nested `Illustrates:` bullet | `illustrates_content`, `illustrates_references`; resolved `illustrates` Obligation, BusinessRule or ConceptAction targets; ordinary step links remain citations |
 | Main success scenario | `Scenario` with full narrative; direct ordered-list items become `ScenarioStep` records |
 | Step `**Actor:**`, `**Action:**`, `**Response:**`, `**Outcome:**` | Preserved in step `content`, without separate semantic fields |
-| Extensions | Full `ExtensionCollection.content` and named or explicitly labelled branch records |
-| Sequence | `SequenceStatement.content`; explicit Mode and list-item constraints as described below |
-| Related jobs | `related_jobs: ContextualReferences` |
+| Extensions | `extensions_content` with the full section; named or explicitly labelled branch records in `extensions` |
 | System boundary: explicit `**Subject system:**` link | `subject_system_references`; resolved `subject_system: System` |
-| Supports | `supports_content`, `supports_references`; resolved `supports` (SystemGoal, Job, JobStep or DesiredOutcome) |
+| Supports | `supports_content`, `supports_references`; resolved `supports` (Goal, Job, JobStep, DesiredOutcome or UseCase) |
 
 Scenario steps retain their authored numbers or labels, narrative, ordinary
 references and source order. Ordered-list items and explicitly labelled handling
@@ -227,10 +243,10 @@ steps such as `2a1` or `.1` become `ScenarioStep` records. A paragraph-only scen
 remains valid without invented steps. Actor, action and result wording remains
 in the narrative, including explicitly labelled fields from older documents.
 
-Each extension retains its full `content` and ordinary `references`. Optional
-Condition and Location subsections or introductory fields populate `condition`
-and `location`. At step and Point of occurrence are aliases for Location. Location
-wording remains authored content; “during steps 2–3” does not resolve a step target.
+Each extension retains its full `content` and ordinary `references`. An optional
+Condition subsection or introductory field populates `condition`. Where the
+condition arises stays in the branch label or narrative; “during steps 2–3” does
+not resolve a step target.
 
 Handling subsections or `**Handling:**` fields supply `handling` narrative.
 Response and Continuation fields or subsections, and Flow subsections, also
@@ -243,19 +259,18 @@ no Governing references subsection is required.
 
 Direct headings in the use case's Extensions section distinguish branches.
 Inside a branch, a nested branch must have an explicit label (for example,
-`1a2a` or `.1a`) or appear under an Extensions subsection. Other detail headings,
-such as Notes, become `ExtensionSection` records. Explicitly branch-labelled list
+`1a2a` or `.1a`) or appear under an Extensions subsection. A Notes subsection is
+the branch's `notes`; other detail headings become `ExtensionSection` records. Explicitly branch-labelled list
 items also create branches, including nested items under a handling step. Labels
 include `2a`, `*a`, `1a2a` and `.1a`; `authored_label` preserves the label while
 Markdown containment establishes ownership. Labels do not determine control-flow
 edges, durable identity or return targets. Sibling branches retain source order.
 
-A Sequence section's `**Mode:**` field recognizes `representative`, `required`
-and `partially_constrained`. Direct list items can carry explicit sequence
-statements and their references. Ordinary narrative remains complete content
-without silently deriving ordering edges. Canonical goal levels recognize
+A Sequence section states, as narrative, which ordering is representative or
+required. Scenario step order alone creates no constraint, and no ordering edges
+are derived. Canonical goal levels recognize
 the following wording after trimming whitespace, lowercasing and removing a
-final period; other wording remains in the source-backed value.
+final period; other wording remains in `goal_level_content` only.
 
 | Canonical goal level | Recognized wording |
 | --- | --- |
@@ -268,22 +283,22 @@ final period; other wording remains in the source-backed value.
 | Section or item | Mapping |
 | --- | --- |
 | Purpose | `purpose` |
-| State | `StateDescription.content`; direct list items and named state components retain descriptions |
-| Type parameters; Introduced types | Full section content and named `ConceptType` records in `type_parameters` or `introduced_types` |
+| State | `abstract_state: StateDescription` with full `content`; direct list items and named state components retain descriptions |
+| Type parameters; Introduced types | `type_parameters_content` or `introduced_types_content` with the full section; named `ConceptType` records in `type_parameters` or `introduced_types` |
 | State: Initial state | `abstract_state.initial_state` narrative |
 | State: Invariants | Explicit condition values in `invariants` |
 | State component: Value; Values; Type | `value_description` |
 | State component: Derivation | `derivation` narrative; no computed value is inferred |
-| Effects table | `EffectsTable.content` plus ordered rows and rich-content cells from the first table; first row is the header, first column identifies operations; blank cells remain unspecified |
-| Actions | `ActionCollection.content`; named subsections become `ConceptAction` records |
+| Effects table | `effects_table_content` with the full section; `effects_table` holds the ordered rows and rich-content cells of the first table; first row is the header, first column identifies operations; blank cells remain unspecified |
+| Actions | `actions_content`; named subsections become `ConceptAction` records in `actions` |
 | Action: Inputs; Outputs; Initiation; Effects; Rejections; Rejection behavior | Corresponding action fields; both rejection headings map to `rejections` |
-| Action: Caller assumptions; Assumptions | `caller_assumptions: ConditionCollection` |
-| Action: Guards | `guards: ConditionCollection` |
+| Action: Caller assumptions; Assumptions | `caller_assumptions_content` with the full section; list items or headed conditions become `Condition` values in `caller_assumptions` |
+| Action: Guards | `guards_content` with the full section; `Condition` values in `guards` |
 | Action: Open question/question sections | Explicit `OpenQuestion` values |
 | Operational principles | `operational_principles`; named subsections may distinguish individual stories |
 | Named Inputs/Outputs subsections | `ActionParameter` records in `input_parameters`/`output_parameters`, preserving full content |
 
-An unsegmented Actions paragraph remains complete named actions content. Abstract
+An unsegmented Actions paragraph remains complete `actions_content`. Abstract
 state is a domain description, without an inferred database schema. Caller
 assumptions and enforced guards have separate fields.
 
@@ -330,21 +345,26 @@ Dependencies may cycle. Neither bindings nor incidental links infer dependency
 edges. No argument-expression checking, execution, timing, atomicity or behavior
 is inferred. The [authoring guide](../docs/develop-concepts.md) supplies examples.
 
-## General and quality requirements
+## Requirement
+
+A `requirement` specification maps to `Requirement` and states one obligation. A
+quality requirement is a requirement classified by `quality_attributes`, not
+another type. A requirement does not contain an Obligations section. Obligation
+clauses declared inside another specification share these fields; see
+[Layered traceability and obligation clauses](#layered-traceability-and-obligation-clauses).
 
 | Section or metadata | Mapping |
 | --- | --- |
-| Applies to | `Applicability.content` |
+| Applies to | `applicability: Applicability` with full `content` |
 | Applies to: Conditions; Workload; Population; Exclusions | Corresponding applicability fields |
-| Applies to: Subject; Subjects | `subjects: ContextualReferences` |
-| Applies to: explicit `**Targets:**` links | Root `applies_to_references`; resolved `applies_to: DomainElement` (also on BusinessRule) |
+| Applies to: explicit `**Targets:**` links | `applies_to_references`; resolved `applies_to: DomainElement` (also on BusinessRule) |
 | Rationale | `rationale` |
-| Frontmatter `quality_attributes` | Every authored classification label occurrence; resolved quality attribute targets populate `quality_attributes` |
+| Frontmatter `quality_attributes` | `quality_attribute_labels` retains every authored classification label occurrence; resolved quality attribute targets populate `quality_attributes` |
 | Statement | `statement` |
 | Verification plan | `verification_plan: AssessmentPlan` for planned realization conformance |
 | Validation plan | `validation_plan: AssessmentPlan` for needs/intent assessment; also recognized on other traceable records |
-| Criterion (optional explicit satisfaction rule) | `ObligationCriterion.content` and recognized explicit criterion fields |
-| Measurement plan | `MeasurementPlan.content` and recognized explicit measurement fields |
+| Criterion (optional explicit satisfaction rule) | `criterion: ObligationCriterion` with full `content` |
+| Criterion: Measure; Target | `measure`; `target` |
 
 Verification plan and Validation plan share `AssessmentPlan`. They recognize Subject,
 Basis (`ContextualReferences`), Participants, Method or Procedure, Success criteria,
@@ -356,41 +376,42 @@ assessment. Assumptions distinguish empirical support from justified reliance.
 Neither field records an execution, verdict or acceptance. Repeated supplementary
 plan content and cases append in authored order. Named Cases subsections supply
 `AssessmentCase` values; each can contain Conditions, Procedure, Expected
-result and Evidence to retain.
+result and Evidence to retain. Measurement procedure and sampling belong under
+the Verification plan's Method.
 
-Criterion recognizes Measure, Comparison, Target, Units, Aggregation,
-Window or Observation window, Conditions, Workload, Population and Exclusions.
+Criterion recognizes Measure and Target. The measure carries units, aggregation
+and observation window as needed; the target carries the comparison and bound,
+as in “At least 90%”. Operating context belongs to Applies to, not Criterion.
 Explicit open-question headings remain distinguishable from an omitted target.
 Qualitative criteria remain valid; classification labels cannot supply missing
 thresholds. Define each required bound once in Statement or Criterion, or reference
 its authoritative source. Criterion may reference Statement instead of restating
 it. Target is a required bound or acceptable range, not an aspirational preference.
-Keep preferred targets explicitly nonbinding in Rationale or Explanatory notes.
+Keep preferred targets explicitly nonbinding in Rationale or Notes.
 
-Measurement plan recognizes Success criteria, Sampling, Conditions, Procedure, Evidence to retain or
-Evidence retention, Workload, Population and Exclusions. Full measurement
-narrative remains available alongside those components, including procedural
-qualifications, examples and evidence instructions.
-
-Applicability and criterion conditions describe required operating context.
+Applicability describes required operating context.
 For outcomes of use, record users, tasks, assistance and environment in Applies to;
-existing subject references, population and conditions preserve this context without
-a new context-of-use type. Plan conditions describe the assessment setup and its
+population and conditions preserve this context without
+a separate context-of-use type. Plan conditions describe the assessment setup and its
 relationship to that context. Plan Success criteria explain how observations are
 interpreted against the obligation; reference its required bounds rather than
 introducing competing thresholds. The mapper preserves authored content even when
 it does not follow this guidance; it does not relocate or infer requirements.
 
-Measurement-basis advice considers an explicit Measure or Measurement plan even
-when Verification plan is present. Missing separately recorded obligation criteria,
-comparison rules or operating context remain advisory; prose may already supply
+Measurement-basis advice considers an explicit Measure even
+when Verification plan is present. A Measure without a separately identified
+target, or without conditions or applicability, produces advice; prose may already supply
 them. Plan Success criteria and Conditions do not substitute for obligation
 criteria and applicability. See [Develop requirements](../docs/develop-requirements.md).
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/13`, an owner and field path, source
-occurrence and role. Named-field, record-identity and structured-item bindings
+Bindings record a rule under `dotspec-markdown/14`, an owner and field path, source
+occurrence and role. A field path is relative to its owner and uses canonical
+field names. A section's narrative binds to `<field>_content`, or to
+`<field>.content` on an embedded value such as `criterion.content`. Items of an
+embedded list are indexed from zero, as in `open_questions.0.question` or
+`effects_table.1.cells.2`. Named-field, record-identity and structured-item bindings
 account for interpreted domain content. Metadata bindings account for frontmatter.
 Structural-wrapper bindings cover headings and syntax support; a document-root
 wrapper does not claim that its substantive descendants were mapped.
@@ -409,9 +430,9 @@ mapping, authoring validity, reference resolution, scan completion and snapshot
 conformance each retain their own evidence and status.
 
 The implementation is in the [mapping source](../internal/model/mapping.go)
-and the family-specific `mapping_*.go` files beside it. The
+and the type-specific `mapping_*.go` files beside it. The
 [mapping tests](../internal/model/mapping_test.go) exercise every checked-in
-specification family and explicit structures; the
+specification type and explicit structures; the
 [export conformance tests](../internal/model/export_conformance_test.go) check
 whole-snapshot behavior. Model projections are regenerated and checked as
 specified in the [model README](README.md#regeneration).
@@ -425,18 +446,32 @@ parameter, type, use and action fields likewise retain all authored occurrences,
 including malformed multiple references; an invalid draft must remain representable.
 Only successfully resolved, compatible relationships populate semantic targets.
 Unknown declaring scope defers dependent resolution rather than inventing a scope
-error. Requirements, business rules, jobs, use cases and concepts may have a
-`system_context` derived from directory discovery. An explicit Specification system
-section overrides that default through `specification_system`; its origin is
-`explicit` or `directory`. Systems use `enclosing_system` for discovery context
+error. Requirements, business rules, jobs, use cases and concepts record their
+system in `specification_system`. An explicit Specification system section selects it;
+otherwise the nearest enclosing system found by directory discovery supplies it.
+`specification_system_origin` records which: `explicit` or `directory`. Systems use `enclosing_system` for discovery context
 and explicit `part_of` for structural parentage; QualityModels are standalone.
 
-Typed fields are canonical. Assertions are optional derived views with a required
-`projection_path`, subject and object. HasSubjectSystem, Supports and AppliesTo now
-project the explicit fields above; AppliesTo supports both requirements and business
-rules. Membership projections retain their originating role, including the two
-HasConceptType paths. Section collection wrappers retain required content; sibling
+Typed fields are canonical. An `Assertion` is an optional derived view of one
+canonical field, with a required `projection_path`, subject and object. There is
+one concrete assertion class. `projection_path` names the projected field, such
+as `UseCase.subject_system`, `TraceableElement.supports`, `Obligation.applies_to`
+or `BusinessRule.applies_to`, and `mapping_rule` is
+`dotspec-markdown/14/projection/<path>`. The path also carries a membership's
+role, as with `Concept.type_parameters` and `Concept.introduced_types`. The
+generated catalog lists the projectable paths in `projections`: every
+declaration membership and every semantic-association or structural-context
+field. Embedded values such as evidence, applicability and assessment plans
+retain required content; sibling
 declaration/content pairs use reciprocal `paired_with` schema annotations.
+
+In the canonical model a relationship field states its `relationship_category`
+and only what differs from that category. The `RelationshipCategory` enumeration
+supplies the default scope, cycle policy and basis. An unstated inverse is none,
+an unstated label is the field name, and ordering follows the field shape. The
+generated catalog and
+[relationship reference](../docs/reference/model/relationships.md) show the
+completed contract.
 
 Optional input/output parameter and synchronization action collections require the
 corresponding complete Inputs/Outputs/When/Then content through `requires_content`.
@@ -446,16 +481,19 @@ and applicability occurrences likewise require their narrative sections.
 ## Layered traceability and obligation clauses
 
 `TraceableElement` supplies explicit Supports, Derived from and Relies on sections.
-It is the base of Specification and of named SystemGoal, Assumption,
-Constraint, JobStep, DesiredOutcome, ConceptAction and ObligationClause records.
-Specification includes document roots and inline Component, Feature, Capability,
-ConceptUse, Synchronization and Interface definitions. Common Notes, Evidence,
-Authority, Related specifications/concepts/use cases, Business rules and Validation
-plan sections work at the appropriate level beneath each inline definition.
+It is the base of Specification and of named Goal, Assumption,
+JobStep, DesiredOutcome, ConceptAction and ObligationClause records. It is also
+the base of the Component, Feature, Capability, ConceptUse, Synchronization and
+Interface elements declared inside a System specification; an Interface can also
+be declared inside a Component. These declared elements are not specifications.
+Notes, Open questions, Validation plan and trace sections work beneath each of
+them; Evidence, Authority and Related specifications headings there are retained
+as extension sections.
 Heading anchors and optional introductory IDs identify these records. Interface
 ownership is exactly one required or provided declaration under one System or
-Component; RequiredInterface and ProvidedInterface assertions project those
-memberships. Native Contracts and Counterpart citations do not establish typed
+Component; assertions project those memberships through the
+`required_interfaces` and `provided_interfaces` paths of the declaring class.
+Native Contracts and Counterpart citations do not establish typed
 implementation or compatibility edges. The exact heading annotations `trace_heading` and
 `trace_targets` in the canonical schema drive mapping and endpoint resolution.
 The mapper also recognizes these sections directly beneath named nested records.
@@ -463,11 +501,16 @@ It never interprets arbitrary prose or ordinary citations as semantic links.
 
 Each trace section maps to `<field>_content: RichContent` plus ordered
 `<field>_references`. Resolved targets populate the multivalued canonical field.
-Supports targets SystemGoal/Job/JobStep/DesiredOutcome; Derived from targets DomainElement
+Supports targets Goal/Job/JobStep/DesiredOutcome/UseCase; Derived from targets DomainElement
 or SourceFragment; Relies on targets Assumption. UseCase Involves targets ConceptUse.
-Requirement, BusinessRule and ObligationClause Refines targets Requirement,
-BusinessRule or ObligationClause. Every section link is a declared target; rationale
+Requirement and ObligationClause Refines targets Requirement,
+BusinessRule or ObligationClause; BusinessRule Refines targets BusinessRule only.
+Every section link is a declared target; rationale
 prose remains in that section, and contextual citations belong elsewhere.
+
+A ScenarioStep is a plain element, not a TraceableElement, and has no trace
+sections. Its only typed link is the nested `Illustrates:` bullet, which targets
+Obligation, BusinessRule or ConceptAction records.
 
 A file reference promotes to a specification's root domain record. A fragment
 promotes to its named domain record where one exists; Derived from alone also
@@ -478,22 +521,30 @@ edge from the resolved graph; references and source content remain intact. Other
 semantic relationships may cycle. Offline validation replays these projections.
 
 An Obligations section on an ObligationContainer maps to `obligations_content` and
-ordered owned `ObligationClause` records, one per immediate child heading. The
+ordered owned `ObligationClause` records, one per immediate child heading.
+System, Component, Interface, UseCase, Concept, ConceptAction, ConceptUse and
+Synchronization are obligation containers. Job, JobStep, BusinessRule,
+Requirement, Feature, Capability and QualityModel are not: an Obligations
+section there produces an `obligation.container` error, declares no clauses, and is
+retained as an extension section. The
 clause's introductory content, excluding optional **ID:** and **Quality attributes:** fields, is its
 `statement`; its heading is its `name`. IDs follow the common identifier grammar
 and document-wide uniqueness rule. Same-file and cross-file reference checks
 recognize them. Named clauses can contain trace sections, Rationale, Applies to
-(with the same explicit Targets field as Requirement), and structured Verification plan, Criterion and Measurement plan.
+(with the same explicit Targets field as Requirement), and structured Verification plan and Criterion.
 Quality attributes is a comma-separated list of system-declared IDs and resolves
-through the clause’s declaring owner, using the same rules as standalone classification.
+through the clause’s declaring owner, using the same rules as requirement classification.
 Unknown sections remain ExtensionSection records. No obligation is inferred from
 a scenario step, state invariant, sentence, or evidence link.
 
-Typed fields remain authoritative. Supports, DerivedFrom, Refines, ReliesOn,
-Involves and HasObligation assertions are optional projections, and AppliesTo also
-supports clauses. Required `projection_path` identifies the source field. There
+Typed fields remain authoritative. Assertions projecting
+`TraceableElement.supports`, `TraceableElement.derived_from`,
+`TraceableElement.relies_on`, `Obligation.refines`, `BusinessRule.refines`,
+`UseCase.involves`, `ScenarioStep.illustrates` and
+`ObligationContainer.obligations` are optional views, and `Obligation.applies_to`
+covers clauses as well as requirements. Required `projection_path` identifies the source field. There
 are no stored semantic inverse fields. Missing explicit motivation and verification
-guidance on standalone requirements and clauses produce advisory findings, not
+guidance on requirements and clauses produce advisory findings, not
 shape failures or claims of missing required behavior.
 
 `model trace` reads the same snapshot to render motivation, participation,
@@ -504,13 +555,15 @@ in the generated core model reference.
 
 ## Explicit specification-system selection
 
-On SystemContextSpecification document kinds, a `Specification system` H2 maps to
+On every specification type except system and quality model
+(`SystemContextSpecification`), a `Specification system` H2 maps to
 `specification_system_content` and `specification_system_references`. Exactly one
 Markdown link must identify a repository-local System, using its file, title
 heading or authored ID. Images and footnotes remain content references, not
 selection links. Empty, ambiguous or invalid selections remain explicit and never
 fall back. Resolved selections populate scalar `specification_system`; when the
-section is absent, an acquired directory `system_context` supplies that value.
+section is absent, the nearest enclosing system acquired by directory discovery
+supplies that value.
 `specification_system_origin` is `explicit` when a selection was authored, otherwise
 `directory` when a default was acquired, otherwise absent.
 

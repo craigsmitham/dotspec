@@ -32,8 +32,11 @@ type snapshotBuilder struct {
 	follow      map[string]bool
 	contextPath map[string]string
 	contextOK   map[string]bool
-	readFailed  bool
-	sequence    int
+	// directorySystem records, by root element, the nearest enclosing system
+	// found by directory discovery. It supplies the default association only.
+	directorySystem map[string]string
+	readFailed      bool
+	sequence        int
 }
 
 // Export observes the same selected specifications, enclosing systems and
@@ -59,7 +62,7 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 		kinds = append(kinds, kind.Layout.Kind)
 	}
 	scope := Record{
-		"roots": []string{filepath.ToSlash(dir)}, "selected_spec_kinds": kinds,
+		"roots": []string{filepath.ToSlash(dir)}, "selected_spec_types": kinds,
 		"discovery_complete": discoverErr == nil && repoErr == nil,
 		"reads_complete":     true, "inspection_complete": report.Complete,
 		"discovery_policy":    Record{"mode": report.Scope.Discovery, "rule": "dotspec-discovery/1", "follow_symlinks": false, "include_nested_repositories": false},
@@ -69,6 +72,7 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 		snapshot: NewSnapshot(scope), types: types, byPath: map[string]*ParsedDocument{},
 		sources: map[string]Record{}, elements: map[string]Record{}, rootByPath: map[string]string{},
 		primary: map[string]bool{}, follow: map[string]bool{}, contextPath: map[string]string{}, contextOK: map[string]bool{},
+		directorySystem: map[string]string{},
 	}
 	for _, path := range paths {
 		path = cleanPath(path)
@@ -256,7 +260,7 @@ func (b *snapshotBuilder) associateSystems() {
 			continue
 		}
 		if context := b.elements[b.rootByPath[b.contextPath[path]]]; String(context, "kind") == "System" && String(root, "kind") != "System" && String(root, "kind") != "QualityModel" {
-			root["system_context"] = context["id"]
+			b.directorySystem[String(root, "id")] = String(context, "id")
 		}
 		if String(root, "kind") != "System" {
 			continue

@@ -233,7 +233,7 @@ func (b *snapshotBuilder) resolveLabels() {
 				b.contextPath[path] = candidate
 				b.contextOK[path] = b.rootByPath[candidate] != ""
 				if sys := b.elements[b.rootByPath[candidate]]; String(sys, "kind") == "System" {
-					b.elements[b.rootByPath[path]]["system_context"] = sys["id"]
+					b.directorySystem[b.rootByPath[path]] = String(sys, "id")
 				}
 				break
 			}
@@ -309,30 +309,19 @@ func (b *snapshotBuilder) materializeAssertions() {
 	if runtime.err != nil {
 		return // CLI validation reports unavailable schema/catalog as operational failure.
 	}
-	for _, kind := range sortedKeys(runtime.catalog.Classes) {
-		definition := runtime.catalog.Classes[kind]
-		projection := definition.Annotations["projection_of"]
-		if projection == "" {
+	// Each assertion is a mechanical view of one canonical relationship field.
+	for _, projection := range runtime.catalog.Projections {
+		parent, path, found := strings.Cut(projection, ".")
+		if !found {
 			continue
 		}
-		for _, expression := range strings.Split(projection, " or ") {
-			parent, path, found := strings.Cut(strings.TrimSpace(expression), ".")
-			if !found {
+		for _, subject := range b.snapshot.Elements {
+			if !designKind(String(subject, "kind"), parent) {
 				continue
 			}
-			for _, subject := range b.snapshot.Elements {
-				concrete := runtime.catalog.Classes[String(subject, "kind")]
-				matches := false
-				for _, ancestor := range concrete.Ancestors {
-					matches = matches || ancestor == parent
-				}
-				if !matches {
-					continue
-				}
-				for _, object := range valuesAt(subject, path) {
-					assertion := Record{"id": b.next("assertion"), "kind": kind, "projection_path": expression, "subject": subject["id"], "object": object, "origin": "derived", "mapping_rule": MappingProfile + "/projection/" + kind, "inputs": []string{String(subject, "id"), object}}
-					b.snapshot.Assertions = append(b.snapshot.Assertions, assertion)
-				}
+			for _, object := range valuesAt(subject, path) {
+				assertion := Record{"id": b.next("assertion"), "kind": "Assertion", "projection_path": projection, "subject": subject["id"], "object": object, "mapping_rule": MappingProfile + "/projection/" + projection, "inputs": []string{String(subject, "id"), object}}
+				b.snapshot.Assertions = append(b.snapshot.Assertions, assertion)
 			}
 		}
 	}

@@ -95,13 +95,13 @@ Name external collaborators and the services or notifications exchanged with the
 
 Identify interests that affect the promised behavior, including those of nonparticipants.
 
-## Minimum guarantees
+## Minimal guarantees
 
 State or link to what remains protected even when the actor's goal is not achieved.
 
-## Success criterion
+## Success guarantees
 
-State or link to the observable condition that completes the actor's goal.
+State or link to what holds when the actor's goal is achieved.
 
 ## Main success scenario
 
@@ -120,9 +120,9 @@ Use descriptive subheadings when other sources need to link to a branch.
 
 State whether the scenario's order is representative or required; link to the governing rule for required order.
 
-## Related jobs
+## Supports
 
-Link to the jobs, steps, or desired outcomes this use case supports.
+Link to the jobs, steps, desired outcomes, or higher-level use cases this use case supports.
 `
 
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
@@ -142,14 +142,13 @@ type UseCase struct {
 	GoalLevel            string                         `json:"goal_level"`
 	Trigger              string                         `json:"trigger"`
 	Preconditions        string                         `json:"preconditions"`
-	SuccessCriterion     string                         `json:"success_criterion"`
+	SuccessGuarantees    string                         `json:"success_guarantees"`
 	MainSuccessScenario  string                         `json:"main_success_scenario"`
 	Extensions           string                         `json:"extensions"`
 	Sequence             string                         `json:"sequence"`
 	SupportingActors     string                         `json:"supporting_actors"`
 	StakeholderInterests string                         `json:"stakeholder_interests"`
-	MinimumGuarantees    string                         `json:"minimum_guarantees"`
-	RelatedJobs          string                         `json:"related_jobs"`
+	MinimalGuarantees    string                         `json:"minimal_guarantees"`
 	Supports             string                         `json:"supports,omitempty"`
 	Markdown             string                         `json:"markdown"`
 	Path                 string                         `json:"path"`
@@ -211,9 +210,9 @@ func Parse(data []byte) (*UseCase, error) {
 		"Primary actor": &spec.PrimaryActor, "Goal level": &spec.GoalLevel,
 		"Trigger": &spec.Trigger, "Preconditions": &spec.Preconditions,
 		"Supporting actors": &spec.SupportingActors, "Stakeholder interests": &spec.StakeholderInterests,
-		"Minimum guarantees": &spec.MinimumGuarantees,
-		"Success criterion":  &spec.SuccessCriterion, "Main success scenario": &spec.MainSuccessScenario,
-		"Extensions": &spec.Extensions, "Sequence": &spec.Sequence, "Related jobs": &spec.RelatedJobs, "Supports": &spec.Supports,
+		"Minimal guarantees": &spec.MinimalGuarantees,
+		"Success guarantees": &spec.SuccessGuarantees, "Main success scenario": &spec.MainSuccessScenario,
+		"Extensions": &spec.Extensions, "Sequence": &spec.Sequence, "Supports": &spec.Supports,
 	}
 	for _, section := range doc.Sections {
 		target, known := fields[section.Title]

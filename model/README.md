@@ -1,7 +1,7 @@
 # Specification model
 
 [metamodel.yaml](metamodel.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.17.0-draft`; the JSON
+specification snapshots. The model version is `0.18.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/specification-model.md)
@@ -12,8 +12,8 @@ Generated projections are committed with the model:
 
 - [schema.json](generated/schema.json) validates local JSON shape and concrete
   subtype fields.
-- [catalog.json](generated/catalog.json) supplies inherited class/slot definitions
-  and typed reference ranges to the runtime graph checker.
+- [catalog.json](generated/catalog.json) supplies inherited class/slot definitions,
+  typed reference ranges and assertion projection paths to the runtime graph checker.
 - [Relationship reference](../docs/reference/model/relationships.md) inventories typed edges, scope, provenance, inverse navigation and cycle rules.
 - [Core domain reference](../docs/reference/model/core.md) provides selected domain types and generated Mermaid diagrams.
 - [Specification model reference](../docs/reference/model/index.md) provides a
@@ -57,7 +57,8 @@ generation and runtime validation do not require it.
 
 `catalog_version: 1` identifies the catalog representation. The catalog records
 the canonical schema ID, model and representation versions, source digest,
-annotations, classes and enumerations. Class entries include every induced slot,
+annotations, subsets, relationship categories, classes, enumerations and
+assertion projection paths. Class entries include every induced slot,
 so inherited constraints and subtype narrowing are available without a second
 hand-maintained endpoint table.
 
@@ -66,9 +67,8 @@ For each class:
 - `ancestors` includes the class itself, base classes and mixed-in capabilities.
 - `mixins` records explicitly declared reusable capabilities; `is_a` records the
   primary superclass.
-- `abstract`, `description` and `annotations` retain model declarations. Typed
-  assertion classes use the `projection_of` annotation where a relation is a
-  materialized view of canonical fields. `owned_memberships` identifies canonical
+- `abstract`, `description` and `annotations` retain model declarations.
+  `owned_memberships` identifies canonical
   membership paths whose members must name the containing record as their owner.
 - `rules` retains inherited conditional rules. A rule's presence does not mean
   every generator enforces it; the model explicitly records projection limits.
@@ -83,6 +83,22 @@ For each slot:
 - `required`, `multivalued`, `inlined`, `inlined_as_list`, `ordered` and
   `identifier` describe the field shape. Applicable fixed values, enumerations,
   patterns and cardinality/value bounds are retained too.
+- `annotations` on a relationship field hold the completed relationship
+  contract. In the model a field states its `relationship_category` and only
+  what differs from it. The generator fills scope, cycle policy and basis from
+  the category, and defaults an unstated inverse to `none`, an unstated label
+  to the field name and unstated ordering from the field shape. It rejects a
+  record-reference field whose completed contract is still incomplete.
+
+`relationship_categories` records each value of the `RelationshipCategory`
+enumeration with its title, description and default scope, cycle policy and
+basis.
+
+`projections` lists the canonical `Class.field` paths an `Assertion` may
+project: every declaration membership named by `owned_memberships`, and every
+semantic-association or structural-context field declared on a record class.
+The exporter materializes assertions from this list. Validation rejects an
+assertion whose `projection_path` is not listed or disagrees with that field.
 
 JSON Schema cannot establish cross-record identity, endpoint existence,
 provenance, source fidelity or coverage honesty. The canonical model identifies
@@ -102,14 +118,14 @@ Every class declares explicit `in_subset` membership. Membership can overlap:
 System and shared domain values participate in more than one requirements
 perspective. Membership does not change inheritance, move a definition between
 files, or require a classification field in authored specifications. Embedded
-values and collection wrappers belong with the domain concepts they serve.
+values belong with the domain concepts they serve.
 The complete reference lists all memberships by classification and subset.
 
 [core-domain.yaml](views/core-domain.yaml) controls the
 [core domain reference](../docs/reference/model/core.md): selected subsets,
 types, fields, diagram nodes, and canonical field paths. It defines presentation,
 not relationship semantics. The generator resolves paths through embedded
-collection wrappers and derives endpoints and inheritance from the model.
+values and derives endpoints and inheritance from the model.
 Diagrams distinguish declaration containment (diamond), structural context and citations (dashed), semantic associations (plain), and inheritance (triangle). Containment describes declarations, not runtime lifecycle or enforcement.
 
 `model-check` validates all declared subset references, allowed classifications,
@@ -269,7 +285,7 @@ and the [generated overview](../docs/reference/system-overview-example.md).
 
 ## Jobs, user needs and capabilities
 
-Version `0.15.0-draft` and mapping `dotspec-markdown/13` add:
+Version `0.11.0-draft` and mapping `dotspec-markdown/10` add:
 
 - Shared `DesiredOutcome.applies_to` relationships to jobs and steps, independent
   of the single declaring owner. Named outcomes have short heading labels,
@@ -300,7 +316,7 @@ Interface is a specification with an identity, declaring System or Component,
 traceability, shared content and optional obligation clauses. Required/provided
 collections retain narrative and reference Interface records; graph projections
 retain direction. Native contracts and counterpart references remain contextual.
-The existing eight file families remain unchanged. See [the authoring model](../docs/specification-model.md#specification-kinds-and-document-placement).
+The existing eight file families remain unchanged. See [the authoring model](../docs/specification-model.md#specification-types-and-declared-elements).
 
 ## Workspace acquisition boundaries
 
@@ -357,3 +373,134 @@ The remaining changes tighten the schema to what the exporter already produced:
   Dependencies section.
 - Record identity, the kind discriminator, authored IDs and assertion endpoints are
   declared on their classes instead of as schema-wide slots.
+
+## Specification types and flattened sections
+
+`0.18.0-draft` / `dotspec-markdown/14` gives each specification type one concrete
+class and removes wrapper objects, per-relation assertion classes and slots that
+carried no information. Headings, field paths and exported JSON change.
+
+Specification types:
+
+- A specification is one authored `*.spec.md` document, and its root record is a
+  `Specification`. The seven types are `system`, `job`, `quality-model`,
+  `business-rule`, `use-case`, `concept` and `requirement`, each with one
+  concrete class. `SpecificationType` replaces `SpecificationKind`, and
+  `ScanScope.selected_spec_types` replaces `selected_spec_kinds`. "Kind" now means
+  only a record's class, through the `kind` discriminator.
+- Component, Feature, Capability, ConceptUse, Synchronization and Interface are
+  elements declared inside a System specification (an Interface also inside a
+  Component), no longer specifications. They stay traceable and addressable and
+  keep Notes, Open questions, Validation plan and trace sections. Evidence,
+  Authority and Related specifications sections beneath them are extension
+  sections.
+- The `quality` type, `*.quality.spec.md` files, the `specs/quality/` folder and
+  the `dotspec quality` command are removed. One concrete `Requirement` replaces
+  `GeneralRequirement` and `QualityRequirement`; a quality requirement is a
+  requirement classified by `quality_attributes`.
+  `dotspec requirement init <slug> --preset quality` creates a requirement from
+  a template that prompts for a Criterion; `general` is the default preset.
+  `requirement show` and `requirement list` JSON has no `type` field. Advice
+  wording follows classification, and rule IDs are `requirement.*`.
+- `Obligation` remains the shared definition of an obligation, `Requirement` is
+  the specification type that gives one obligation its own document, and
+  `ObligationClause` is an obligation declared inside another specification.
+  Obligations sections are allowed in System, Component, Interface, UseCase,
+  Concept, ConceptAction, ConceptUse and Synchronization. Job, JobStep,
+  BusinessRule and Requirement are no longer obligation containers; export
+  reports `obligation.container` for an Obligations section outside a container.
+
+Requirements and obligations:
+
+- Measurement plan and `MeasurementPlan` are removed. Measurement procedure and
+  sampling belong under the Verification plan's Method.
+- `ObligationCriterion` keeps `content`, `measure` and `target`, and Criterion
+  recognizes only Measure and Target subsections. The measure carries units,
+  aggregation and observation window; the target carries the comparison and
+  bound. Comparison, Units, Aggregation, Window, Conditions, Workload,
+  Population and Exclusions are removed from Criterion; operating context
+  belongs to Applies to.
+- `Applicability` keeps `content`, `conditions`, `workload`, `population` and
+  `exclusions`. The Subject and Subjects subsections and `subjects` are removed;
+  the explicit `**Targets:**` field still resolves `applies_to`.
+- Measurement-basis advice reports a recorded measure that has no separately
+  identified target, conditions or applicability.
+
+Use cases:
+
+- `Minimal guarantees` replaces Minimum guarantees and `Success guarantees`
+  replaces Success criterion. Both map to condition lists:
+  `minimal_guarantees_content` with `minimal_guarantees`, and
+  `success_guarantees_content` with `success_guarantees`.
+- Supporting actors, Stakeholder interests and Sequence are narrative fields.
+  The `**Mode:**` field, sequence constraints and `SequenceStatement` are removed.
+- `Related jobs` is removed; use Supports, which now also targets a UseCase.
+- A scenario step's `Illustrates:` bullet can also target business rules.
+  `ScenarioStep` is no longer a TraceableElement.
+- Extensions lose `location` and the Location, At step and Point of occurrence
+  headings. A Notes subsection under a branch is that branch's `notes`.
+- `goal_level_content` holds the authored text and `goal_level` the canonical
+  value.
+
+Systems, jobs and business rules:
+
+- `Goal` replaces `SystemGoal`. Environment, Constraints and the new
+  Stakeholders section are narrative. `Constraint` records are removed: an
+  individually addressable constraint is a Requirement or a BusinessRule.
+- A progress case's Timeline is narrative, and its Forces are a list with an
+  optional kind.
+- BusinessRule `refines` targets business rules only. A requirement relates to a
+  rule through Derived from, Refines or a citation under Related specifications.
+
+Shared content:
+
+- `notes` on any element replaces `explanatory_notes` and the specification-only
+  `notes`. The `Explanatory notes` heading is not recognized.
+- `Related specifications` is the single contextual-reference section, on
+  specifications only, alongside Authority, Evidence, preamble and slug.
+  `Related concepts`, `Related use cases` and `Business rules` are removed.
+- Every section with items maps to sibling fields `X_content` and `X`. Wrapper
+  objects are removed for goals, assumptions, glossary, steps, outcomes,
+  progress cases, forces, preconditions, guarantees, extensions, actions, caller
+  assumptions, guards, required and provided interfaces, open questions and
+  effects-table rows. They now match the existing pairs for obligations, quality
+  attributes, components, features, capabilities, concept uses,
+  synchronizations, type parameters, introduced types and bindings. Paths
+  shorten accordingly, as in `Job.steps`, `System.goals`, `UseCase.extensions`
+  and `Concept.actions`. Evidence, abstract state, contextual references,
+  applicability, criterion and assessment plans remain embedded values.
+
+System association:
+
+- `system_context` is removed. `specification_system` holds the association for
+  every specification type except system and quality model, and
+  `specification_system_origin` is `explicit` or `directory`. An invalid explicit
+  selection never falls back. `System.enclosing_system`, `System.part_of` and a
+  use case's `subject_system` are unchanged.
+
+Assertions and relationship metadata:
+
+- One concrete `Assertion` class replaces the per-relation assertion classes.
+  `projection_path` names the canonical field it projects, `origin` is removed,
+  and `mapping_rule` is `dotspec-markdown/14/projection/<path>`. The catalog
+  lists projectable paths in `projections`, replacing the `projection_of` class
+  annotation.
+- A relationship field states its `relationship_category` and only what differs.
+  The `RelationshipCategory` enumeration supplies default scope, cycle policy
+  and basis; the generator completes inverse, label and ordering. The catalog
+  and relationship reference show the completed contract.
+
+Removed slots and classes: `SourceRevision` and `SourceDocument.revision`;
+`ScanScope.included_patterns` and `excluded_patterns`; `SourcePayload.storage`
+and `immutable_locator`, so a payload always carries `bytes_base64`;
+`ContentBinding.occurrence_index`; `EnvironmentDescription`,
+`SequenceConstraint`, `Timeline`, `TimelineEvent`, `Constraint`,
+`ActorCollection`, `StakeholderInterest` and `StakeholderInterestCollection`;
+`ActorMention.role_name` and `services`.
+
+An explicitly headed Open questions section is recognized on any element whose
+subsections are mapped. An Obligations section outside an obligation container
+is reported and retained as an extension section.
+
+There are no compatibility aliases. Saved snapshots are not silently migrated;
+re-export source specifications with the current CLI.

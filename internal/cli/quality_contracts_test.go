@@ -47,24 +47,24 @@ func TestInspectionQualityContracts(t *testing.T) {
 		{"valid", []string{"check"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
 		{"advice", []string{"check"}, func(t *testing.T) {
 			prepareExample(t, "read")
-			writeFixture(t, "specs/quality/draft.quality.spec.md", "---\ntype: quality\n---\n# Draft\n")
+			writeFixture(t, "specs/requirements/draft.requirement.spec.md", "---\ntype: requirement\n---\n# Draft\n")
 		}, 0},
 		{"malformed", []string{"check"}, func(t *testing.T) {
 			prepareExample(t, "read")
-			writeFixture(t, "specs/quality/broken.quality.spec.md", "broken")
+			writeFixture(t, "specs/requirements/broken.requirement.spec.md", "broken")
 		}, 1},
 		{"shared context outside subtree", []string{"check", "--path", "internal"}, func(t *testing.T) {
 			prepareExample(t, "read")
-			writeFixture(t, "internal/specs/quality/a.quality.spec.md", "---\ntype: quality\n---\n# Draft A\n")
-			writeFixture(t, "internal/specs/quality/b.quality.spec.md", "---\ntype: quality\n---\n# Draft B\n")
+			writeFixture(t, "internal/specs/requirements/a.requirement.spec.md", "---\ntype: requirement\n---\n# Draft A\n")
+			writeFixture(t, "internal/specs/requirements/b.requirement.spec.md", "---\ntype: requirement\n---\n# Draft B\n")
 		}, 0},
 		{"focused job", []string{"job", "check", "develop-requirements"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
 		{"focused use case", []string{"use-case", "check", "check-specifications"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
 		{"focused concept", []string{"concept", "check", "job-map"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
 		{"focused general requirement", []string{"requirement", "check", "reject-existing-target"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
-		{"focused quality requirement", []string{"quality", "check", "diagnostic-severity"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
-		{"missing input", []string{"quality", "check", "missing"}, func(t *testing.T) { prepareExample(t, "read") }, 2},
-		{"unavailable context", []string{"quality", "check", "diagnostic-severity"}, func(t *testing.T) {
+		{"focused quality requirement", []string{"requirement", "check", "diagnostic-severity"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
+		{"missing input", []string{"requirement", "check", "missing"}, func(t *testing.T) { prepareExample(t, "read") }, 2},
+		{"unavailable context", []string{"requirement", "check", "diagnostic-severity"}, func(t *testing.T) {
 			prepareExample(t, "read")
 			if err := os.Remove("specs/system.spec.md"); err != nil {
 				t.Fatal(err)
@@ -103,8 +103,8 @@ func TestInspectionQualityContracts(t *testing.T) {
 // Textual severity must survive changes in styling and redirection settings.
 func TestDiagnosticSeverityQualityContract(t *testing.T) {
 	prepareExample(t, "read")
-	writeFixture(t, "specs/quality/draft.quality.spec.md", "---\ntype: quality\n---\n# Draft\n")
-	writeFixture(t, "specs/quality/broken.quality.spec.md", "broken")
+	writeFixture(t, "specs/requirements/draft.requirement.spec.md", "---\ntype: requirement\n---\n# Draft\n")
+	writeFixture(t, "specs/requirements/broken.requirement.spec.md", "broken")
 	for _, env := range []struct{ term, color, noColor string }{{"dumb", "", "1"}, {"xterm-256color", "1", ""}} {
 		t.Setenv("TERM", env.term)
 		t.Setenv("CLICOLOR_FORCE", env.color)
@@ -113,7 +113,7 @@ func TestDiagnosticSeverityQualityContract(t *testing.T) {
 		if code != 1 || errOut != "" {
 			t.Fatalf("check: %d %s %s", code, out, errOut)
 		}
-		for _, label := range []string{"error [metadata.frontmatter]", "advice [quality.statement]"} {
+		for _, label := range []string{"error [metadata.frontmatter]", "advice [requirement.statement]"} {
 			if !strings.Contains(out, label) {
 				t.Fatalf("missing %q in %s", label, out)
 			}

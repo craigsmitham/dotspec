@@ -22,22 +22,23 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 	case "Scope":
 		m.section(r, "scope", s)
 	case "Environment":
-		r["environment"] = Record{"content": m.doc.Rich(s.Content)}
-		m.sectionBindings(r, "environment.content", s)
-	case "Goals", "Assumptions", "Constraints":
-		field, kind := "goals", "SystemGoal"
+		m.section(r, "environment", s)
+	case "Stakeholders":
+		m.section(r, "stakeholders", s)
+	case "Constraints":
+		// Constraints stay narrative; an addressable constraint is a requirement or business rule.
+		m.section(r, "constraints", s)
+	case "Goals", "Assumptions":
+		field, kind := "goals", "Goal"
 		if s.Title == "Assumptions" {
 			field, kind = "assumptions", "Assumption"
 		}
-		if s.Title == "Constraints" {
-			field, kind = "constraints", "Constraint"
-		}
-		v := m.collection(r, field, "items", s)
+		m.declared(r, field, s)
 		for _, item := range m.listItems(s.Intro, false) {
 			x := m.record(kind, String(r, "id"))
 			x["statement"] = m.doc.Rich([]string{item})
 			m.bind(x, "statement", []string{item}, "structured_item", "system-list-item")
-			appendID(v, "items", String(x, "id"))
+			appendID(r, field, String(x, "id"))
 		}
 		for _, child := range s.Children {
 			x := m.named(kind, r, child)
@@ -48,10 +49,10 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 			} else {
 				m.section(x, "statement", child)
 			}
-			appendID(v, "items", String(x, "id"))
+			appendID(r, field, String(x, "id"))
 		}
 	case "Glossary":
-		v := m.collection(r, "glossary", "terms", s)
+		m.declared(r, "glossary", s)
 		for _, child := range s.Children {
 			x := m.named("GlossaryTerm", r, child)
 			m.section(x, "definition", child)
@@ -83,7 +84,7 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 					m.sectionBindings(x, "related_terms.content", sub)
 				}
 			}
-			appendID(v, "terms", String(x, "id"))
+			appendID(r, "glossary", String(x, "id"))
 		}
 	case "Quality attributes":
 		m.section(r, "quality_attributes_content", s)
@@ -122,20 +123,19 @@ func (m *domainMapper) openQuestions(owner Record, sections []*Section) {
 		if !openQuestionHeading(s.Title) {
 			continue
 		}
-		collection := Object(owner["open_questions"])
-		if collection == nil {
-			collection = Record{"questions": []Record{}}
-			owner["open_questions"] = collection
+		m.setRich(owner, "open_questions_content", s.Content)
+		m.sectionBindings(owner, "open_questions_content", s)
+		values, _ := owner["open_questions"].([]Record)
+		if values == nil {
+			values = []Record{}
+			owner["open_questions"] = values
 		}
-		m.setRich(collection, "content", s.Content)
-		m.sectionBindings(owner, "open_questions.content", s)
-		values, _ := collection["questions"].([]Record)
 		add := func(question []string, item *Section) {
 			v := Record{"question": m.doc.Rich(question)}
 			index := len(values)
 			values = append(values, v)
-			collection["questions"] = values
-			path := fmt.Sprintf("open_questions.questions.%d", index)
+			owner["open_questions"] = values
+			path := fmt.Sprintf("open_questions.%d", index)
 			m.bind(owner, path+".question", question, "named_field", "open-question-question")
 			if item == nil {
 				return

@@ -141,9 +141,9 @@ def core_markdown(catalog: dict[str, Any], view: dict[str, Any]) -> bytes:
               '## Relationships', '', 'See the [relationship reference](relationships.md) for the complete edge contracts.', '',
               'Arrows use schema-owned relationship labels; reference tables retain exact canonical field paths. Diamond arrows represent declaration containment, dashed arrows structural context and citations, and plain arrows semantic associations or provenance; '
               'triangle arrows represent declared inheritance. Multiple edges with the same path show alternative target types; cardinality applies to the slot as a whole. '
-              'Collection wrappers are omitted from diagrams; exact paths remain in the reference tables. '
-              '`system_context` is a directory-derived association, not a use-case boundary or inherited requirement. '
-              'Contextual links to business rules, jobs, and concepts do not assert enforcement, fulfillment, or compliance.', '']
+              'Embedded values are omitted from diagrams; exact paths remain in the reference tables. '
+              '`specification_system` is a grouping association, not a use-case boundary or inherited requirement. '
+              'Contextual links to related specifications do not assert enforcement, fulfillment, or compliance.', '']
     for diagram in view['diagrams']:
         lines += [f'### {diagram["title"]}', '', text(diagram['description']), '', '```mermaid', 'classDiagram', f'    direction {diagram.get("direction", "LR")}']
         for node in diagram['nodes']:

@@ -27,7 +27,7 @@ status 0 dotspec sources --json
 stdout 'approval.business-rule.spec.md'
 status 0 dotspec model export
 stdout '"kind": "BusinessRule"'
-stdout '"business_rules":'
+stdout '"related_specifications":'
 stdout '"status": "resolved"'
 ! stdout '"kind": "EnforcesRule"'
 cp stdout snapshot.json
@@ -74,7 +74,7 @@ type: use-case
 # Submit a purchase
 ## Goal
 Submit a purchase for approval.
-## Business rules
+## Related specifications
 [Manager approval](../business-rules/approval.business-rule.spec.md#approval) governs purchases.
 The citation records context; it does not establish software compliance.
 -- draft.md --

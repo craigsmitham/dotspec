@@ -130,7 +130,7 @@ Check all supported specifications in a project subtree
 dotspec check [flags]
 ```
 
-Check quality-model, business-rule, system, job, use-case, concept, requirement, and quality specifications using the same discovery rules as list. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.
+Check quality-model, business-rule, system, job, use-case, concept, and requirement specifications using the same discovery rules as list. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
@@ -752,104 +752,6 @@ Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid 
 | `--help, -h` | `false` | help for validate |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 
-## dotspec quality
-
-Specify assessable quality obligations and their attributes
-
-```sh
-dotspec quality [flags]
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for quality |
-
-## dotspec quality check
-
-Check quality specifications and attribute references
-
-```sh
-dotspec quality check <slug> [flags]
-```
-
-Check quality specifications and attribute references.
-
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
-
-```sh
-dotspec quality check diagnostic-severity --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for check |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
-
-## dotspec quality init
-
-Create a quality specification without overwriting an existing file
-
-```sh
-dotspec quality init <slug> [flags]
-```
-
-```sh
-dotspec quality init diagnostic-severity --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for init |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
-
-## dotspec quality list
-
-Discover quality requirements, grouped by associated system
-
-```sh
-dotspec quality list [flags]
-```
-
-```sh
-dotspec quality list --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all registered workspace projects separately |
-| `--attribute` | `` | Include requirements with this attribute or a sub-attribute in their system's model |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for list |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
-
-## dotspec quality show
-
-Show authored Markdown and the associated system
-
-```sh
-dotspec quality show <slug> [flags]
-```
-
-```sh
-dotspec quality show diagnostic-severity --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for show |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
-
 ## dotspec quality-model
 
 Define reusable quality attributes and copy them into systems
@@ -1029,11 +931,12 @@ dotspec requirement init reject-existing-target --path .
 | `--help, -h` | `false` | help for init |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
+| `--preset` | `general` | Authoring template: general, or quality to prompt for an explicit criterion |
 | `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
 ## dotspec requirement list
 
-Discover general and quality requirements, grouped by associated system
+Discover requirements, grouped by associated system
 
 ```sh
 dotspec requirement list [flags]

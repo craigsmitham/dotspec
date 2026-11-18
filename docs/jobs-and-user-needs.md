@@ -7,7 +7,7 @@ formal types and relationships.
 
 ## Choose a useful perspective
 
-Dotspec supports several JTBD approaches through one model. It does not assume
+dotspec supports several JTBD approaches through one model. It does not assume
 that their theories or uses of the word “outcome” are identical.
 
 | Perspective | Focus | Authoring support |
@@ -30,7 +30,7 @@ examines struggling moments, choices, forces and trade-offs.
 [Kalbach](https://experiencinginformation.com/2020/10/23/drills-and-milkshakes-say-yes-to-the-mess/)
 connects aspirations, functional jobs and steps in a practical synthesis.
 [Klement](https://medium.com/the-job-to-be-done/know-the-two-very-different-interpretations-of-jobs-to-be-done-5a18b748bd89)
-argues for distinguishing the underlying theories more sharply. Dotspec preserves
+argues for distinguishing the underlying theories more sharply. dotspec preserves
 the authored distinctions without declaring that debate settled.
 [Intercom's job stories](https://www.intercom.com/blog/accidentally-invented-job-stories)
 provide a concise presentation using fields already present on Job.
@@ -48,7 +48,9 @@ provide a concise presentation using fields already present on Job.
 “Minimize time before discovering a disruption” is a candidate ODI criterion.
 “Submit a notification within 30 seconds of receiving the event” is a software
 commitment. Satisfying that commitment does not prove that either user outcome
-has been achieved.
+has been achieved. Jobs and job steps do not contain obligation clauses; state the
+commitment in a requirement, or in a clause of a use case or concept, and relate it
+with Supports.
 
 Keep importance, satisfaction and opportunity scores in dated research with a
 defined population, method and source. Do not store them as enduring properties
@@ -87,7 +89,7 @@ Under `## Progress cases`, each H3 names a case. Optional H4 sections include:
 - `Current approach` and `Desired progress`: the present situation and sought change.
 - `Alternatives considered`: include continuing the current approach or doing nothing where relevant.
 - `Trade-offs and selection criteria`: what matters in choosing or rejecting an approach.
-- `Forces`: explicitly labeled Push, Pull, Anxiety and Habit descriptions.
+- `Forces`: a list of forces; a Push, Pull, Anxiety or Habit label records the kind.
 - `Timeline`: the decision/change narrative, distinct from a functional job map.
 - `Evidence`: source statements, `Research basis`, and `Limitations`.
 
@@ -99,7 +101,7 @@ Keep emotional and social motivations visible without forcing metric wording.
 
 Richard Allen's [User Needs Mapping](https://leanpub.com/userneedsmapping) connects
 user needs to enabling capabilities and their dependencies, then considers
-technical systems and organizational design. Dotspec adopts the needs and
+technical systems and organizational design. dotspec adopts the needs and
 capability relationships while leaving team design and Wardley evolution in
 external artifacts. The distinction is informed by *User Needs Mapping*,
 printed pp. 39–49; the mapping below is a dotspec design choice.
@@ -115,7 +117,7 @@ Each H3 capability can have an `**ID:**`, `Purpose`, `Supports`, `Depends on`,
 `Provided by`, and `Enablers` sections. Its declaring system is its documentation
 home; declaration does not make that system a provider.
 
-- `supports` links to goals, jobs, steps or outcomes; it expresses intended contribution.
+- `supports` links to goals, jobs, steps, outcomes or use cases; it expresses intended contribution.
 - `depends_on` links to other capabilities; dependencies can be many-to-many and cyclic.
 - `provided_by` links to explicitly identified systems or components; it is optional and non-exhaustive.
 - `enablers` describes human, procedural or other enabling context and external references.

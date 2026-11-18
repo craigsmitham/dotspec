@@ -30,7 +30,7 @@ func TestStructureAndFeatureMembership(t *testing.T) {
 	if String(store, "authored_id") != "store" || reservations["owner"] != store["id"] || reservations["part_of"] != inventory["id"] {
 		t.Fatal(store, reservations)
 	}
-	req := designRecord(t, s, "GeneralRequirement", "Reserve purchased stock")
+	req := designRecord(t, s, "Requirement", "Reserve purchased stock")
 	if targets := Strings(req["applies_to"]); len(targets) != 1 || targets[0] != reservations["id"] {
 		t.Fatal(req)
 	}
@@ -86,7 +86,7 @@ func TestStructuralErrorsPreserveSourceWithoutInventingParents(t *testing.T) {
 	}
 }
 
-func TestInlineSpecificationsMapCommonContent(t *testing.T) {
+func TestDeclaredElementsKeepNotesAndRetainOtherSections(t *testing.T) {
 	root := structureFixture(t)
 	traceEdit(t, root, "specs/system.spec.md", "### Inventory", "#### Notes\n\nA component note.\n\n#### Evidence\n\nEvidence to review.\n\n#### Related specifications\n\n[Reservation](concepts/reservation.concept.spec.md)\n\n### Inventory")
 	result := conformanceExport(t, root)
@@ -94,8 +94,8 @@ func TestInlineSpecificationsMapCommonContent(t *testing.T) {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	checkout := designRecord(t, result.Snapshot, "Component", "Checkout")
-	if checkout["extension_sections"] != nil || checkout["notes"] == nil || checkout["evidence"] == nil || checkout["related_specifications"] == nil {
-		t.Fatal("common specification detail not mapped", checkout)
+	if checkout["notes"] == nil || checkout["evidence"] != nil || checkout["related_specifications"] != nil || len(Strings(checkout["extension_sections"])) != 2 {
+		t.Fatal("a declared element keeps its notes; specification-level sections are retained as extension content", checkout)
 	}
 	conformancePayloads(t, result.Snapshot)
 }
