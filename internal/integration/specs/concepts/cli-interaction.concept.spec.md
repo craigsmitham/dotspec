@@ -18,7 +18,7 @@ individual concept and requirement specifications define their effects on files.
 The invocation concept does not own those operations' domain behavior.
 
 The [command reference](../../../../docs/cli.md) describes the available inputs.
-The [output contract](../../../../README.md#output-and-automation) defines process
+The [output contract](../../../../docs/reference/inspection.md#output-and-automation) defines process
 outputs, formats and exit statuses.
 
 ## Actions
@@ -54,6 +54,7 @@ restating those rules here. A passing example does not settle untested cases.
 - [Create and inspect specifications](../../testdata/workflow.txtar)
 - [Repository discovery](../../testdata/discovery.txtar)
 - [Diagnostics and exit statuses](../../testdata/diagnostics.txtar)
+- [Discover authoring guidance in an installed CLI](../../testdata/guide.txtar)
 - [Help and redirected output](../../testdata/help.txtar)
 - [Use-case commands](../../testdata/use-cases.txtar)
 - [Concept commands](../../testdata/concepts.txtar)

@@ -1,0 +1,174 @@
+[
+  {
+    "topic": "handbook",
+    "page": "docs/handbook/README.md",
+    "description": "Choose what to write using the document recovery example."
+  },
+  {
+    "topic": "business-rule",
+    "page": "docs/business-rules.md",
+    "description": "State business constraints and link their enforcement.",
+    "rules": [
+      "business-rule.statement",
+      "business-rule.applies-to",
+      "business-rule.authority",
+      "business-rule.rationale"
+    ]
+  },
+  {
+    "topic": "concept",
+    "page": "docs/develop-concepts.md",
+    "description": "Explain purposeful behavior through state and actions.",
+    "rules": [
+      "concept.actions",
+      "concept.operational-principle",
+      "concept.purpose",
+      "concept.state"
+    ]
+  },
+  {
+    "topic": "conventions",
+    "page": "docs/handbook/project-conventions.md",
+    "description": "Identify a project’s local specification authorities."
+  },
+  {
+    "topic": "job",
+    "page": "docs/jobs-and-user-needs.md",
+    "description": "Distinguish jobs, steps, outcomes and commitments.",
+    "rules": [
+      "job.boundary",
+      "job.map",
+      "job.outcome-empty",
+      "job.outcome-measure",
+      "job.performer",
+      "job.progress-case",
+      "job.progress-context",
+      "job.statement",
+      "job.story-context"
+    ]
+  },
+  {
+    "topic": "system",
+    "page": "docs/reference/system.md",
+    "description": "Describe a system, its boundary, goals and quality attributes."
+  },
+  {
+    "topic": "use-case",
+    "page": "docs/develop-use-cases.md",
+    "description": "Describe actor goals, boundaries and alternative paths.",
+    "rules": [
+      "use-case.goal",
+      "use-case.goal-level",
+      "use-case.primary-actor",
+      "use-case.system-boundary",
+      "use-case.main-success-scenario",
+      "use-case.sequence",
+      "use-case.success-guarantees",
+      "use-case.extensions"
+    ]
+  },
+  {
+    "topic": "requirement",
+    "page": "docs/develop-requirements.md",
+    "description": "Author assessable obligations and satisfaction criteria.",
+    "rules": [
+      "requirement.applies-to",
+      "requirement.statement",
+      "requirement.rationale"
+    ]
+  },
+  {
+    "topic": "obligation",
+    "page": "docs/requirements-layers.md#distinguish-an-obligation-from-its-document",
+    "description": "Locate the authoritative expression of an obligation."
+  },
+  {
+    "topic": "quality-model",
+    "page": "docs/quality-models.md",
+    "description": "Select quality attributes and apply them to a system.",
+    "rules": [
+      "quality-model.attributes",
+      "quality-model.description",
+      "quality.cycle",
+      "quality.definition",
+      "quality.legacy-hierarchy",
+      "quality.subattribute",
+      "requirement.undefined-attribute"
+    ]
+  },
+  {
+    "topic": "quality",
+    "page": "docs/develop-requirements.md#define-or-reference-the-criterion-once",
+    "description": "Define a criterion and distinguish a measure from its required bound.",
+    "rules": [
+      "requirement.measurement-basis",
+      "relationship.measurement_basis"
+    ]
+  },
+  {
+    "topic": "relationships",
+    "page": "docs/develop-relationships.md",
+    "description": "Connect specifications through explicit relationships.",
+    "rules": [
+      "relationship.specification_system"
+    ]
+  },
+  {
+    "topic": "verification",
+    "page": "docs/verification-and-validation.md",
+    "description": "Distinguish assessment purposes, plans and evidence.",
+    "rules": [
+      "requirement.verification"
+    ]
+  },
+  {
+    "topic": "review",
+    "page": "docs/review-requirements.md",
+    "description": "Review a requirement set and surface unresolved decisions."
+  },
+  {
+    "topic": "inspection",
+    "page": "docs/reference/inspection.md",
+    "description": "Interpret check results, source discovery and references.",
+    "rules": [
+      "reference.boundary",
+      "reference.invalid",
+      "reference.unresolved",
+      "scan.context",
+      "scan.discovery",
+      "scan.read",
+      "scan.reference",
+      "scan.scope"
+    ]
+  },
+  {
+    "topic": "layout",
+    "page": "docs/reference/layout.md",
+    "description": "Find the expected location of each specification.",
+    "rules": [
+      "layout.business-rule-name",
+      "layout.concept-name",
+      "layout.directory",
+      "layout.job-name",
+      "layout.quality-model-name",
+      "layout.requirement-name",
+      "layout.system-location",
+      "layout.use-case-name"
+    ]
+  },
+  {
+    "topic": "maintaining",
+    "page": "docs/handbook/maintaining.md",
+    "description": "Audit domain choices, their sources and the effects of a change."
+  },
+  {
+    "topic": "core-domain",
+    "page": "docs/reference/model/core.md",
+    "description": "Inspect the core domain types, relationships and diagrams."
+  },
+  {
+    "topic": "mapping",
+    "page": "model/markdown-mapping.md",
+    "description": "Look up how authored Markdown maps to model elements."
+  }
+]

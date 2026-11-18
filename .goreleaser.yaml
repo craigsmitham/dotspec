@@ -1,5 +1,8 @@
 version: 2
 project_name: dotspec
+before:
+  hooks:
+    - python3 scripts/package-knowledge/package.py --version {{ .Version }} --output .release/dotspec-knowledge.zip
 builds:
   - id: dotspec
     main: .
@@ -22,10 +25,26 @@ archives:
         formats: [zip]
     files:
       - README.md
-      - docs/cli.md
+      - CONTRIBUTING.md
+      - docs/*.md
+      - docs/**/*.md
+      - docs/handbook/topics.json
+      - examples/**/*.md
+      - examples/**/*.yaml
+      - specs/*.md
+      - specs/**/*.md
+      - model/README.md
+      - model/markdown-mapping.md
+      - model/metamodel.yaml
+      - model/views/*.yaml
+      - go.mod
 checksum:
+  extra_files:
+    - glob: .release/dotspec-knowledge.zip
   name_template: checksums.txt
 release:
+  extra_files:
+    - glob: .release/dotspec-knowledge.zip
   github:
     owner: craigsmitham
     name: dotspec

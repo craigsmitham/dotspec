@@ -1,0 +1,60 @@
+# Discover the handbook in a consumer directory, with no source checkout.
+exec dotspec --help
+stdout 'guide +Read the offline authoring handbook'
+exec dotspec guide
+stdout 'Where should a promise live'
+stdout 'dotspec guide examples/requirements-review/specs/jobs/recover.job.spec.md'
+exec dotspec guide job
+stdout 'progress'
+exec dotspec guide use-case
+stdout 'Start with actors and goals'
+exec dotspec guide obligation
+stdout 'ObligationClause'
+exec dotspec guide examples/requirements-review/specs/use-cases/restore.use-case.spec.md
+stdout 'Restore retained content'
+exec dotspec guide examples/requirements-review/specs/requirements/restoration.requirement.spec.md
+stdout '## Refines'
+exec dotspec guide conventions
+stdout 'AGENTS.md'
+
+# A real check leads to a focused explanation, then to the authored example.
+exec dotspec requirement init feedback
+stdout 'dotspec guide requirement'
+exec dotspec requirement init --help
+stdout 'dotspec guide requirement'
+cp draft specs/requirements/feedback.requirement.spec.md
+exec dotspec requirement check feedback --json
+stdout '"rule": "requirement.measurement-basis"'
+! stdout 'Authoring guide'
+exec dotspec requirement check feedback
+stdout 'Guide: dotspec guide requirement.measurement-basis'
+exec dotspec guide requirement.measurement-basis
+stdout '## Define or reference the criterion once'
+stdout 'An unresolved bound belongs in Open questions'
+! stdout '## Describe context of use explicitly'
+stdout 'dotspec guide examples/requirements-review/specs/requirements/recovery-feedback.requirement.spec.md'
+exec dotspec guide examples/requirements-review/specs/requirements/recovery-feedback.requirement.spec.md
+stdout 'leaves the required bound and operating conditions to be established'
+! stdout 'Read linked pages'
+exec dotspec guide examples
+stdout 'examples/requirements-review/specs/requirements/restoration.requirement.spec.md'
+status 2 dotspec guide requirement.misspelled
+stderr 'unknown guide topic'
+status 2 dotspec guide ../draft
+status 2 dotspec guide docs/../draft
+
+-- draft --
+---
+type: requirement
+---
+# Timely feedback
+
+## Statement
+
+Members receive feedback promptly.
+
+## Criterion
+
+### Measure
+
+Elapsed time to visible feedback.

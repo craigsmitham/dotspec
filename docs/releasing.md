@@ -1,8 +1,9 @@
 # Releasing dotspec
 
 The release configuration builds standalone Go executables for Linux, macOS, and
-Windows on amd64 and arm64 with CGO disabled. Each archive includes the CLI reference
-and README. GoReleaser generates `checksums.txt` and stamps the version and commit
+Windows on amd64 and arm64 with CGO disabled. The binary embeds the handbook and examples. Each platform archive also
+includes the Markdown guides for browsing. Releases attach a separate optional
+`dotspec-knowledge.zip` for AXM users. GoReleaser generates `checksums.txt` and stamps the version and commit
 reported by `dotspec --version`.
 
 Before preparing a release:

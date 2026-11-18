@@ -30,5 +30,5 @@ errors in different supported specification types and positions in scan order.
 
 [Specification Inspection](../concepts/specification-inspection.concept.spec.md)
 provides the conceptual context. The
-[report contract](../../README.md#check-specifications) describes report fields
+[report contract](../../docs/reference/inspection.md#check-specifications) describes report fields
 and handling within an individual malformed file.

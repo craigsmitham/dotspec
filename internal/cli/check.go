@@ -9,6 +9,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/craigsmitham/dotspec/internal/guide"
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/requirement"
@@ -66,6 +67,9 @@ func writeCheckReport(out io.Writer, report check.Report, format string) error {
 			fmt.Fprintf(&text, " %s", d.Location.Element)
 		}
 		fmt.Fprintf(&text, "\n%s\n", indent(d.Message))
+		if guide.HasRule(d.Rule) {
+			fmt.Fprintf(&text, "  Guide: dotspec guide %s\n", d.Rule)
+		}
 		for _, related := range d.Related {
 			fmt.Fprintf(&text, "  Related: %s", diagnosticPath(related))
 			if related.Element != "" {

@@ -52,7 +52,7 @@ Representative. Discovery order is not a required order of authoring or review.
 
 ## Authority and evidence
 
-The [source-discovery reference](../../README.md#references) describes link behavior.
+The [source-discovery reference](../../docs/reference/inspection.md#references) describes link behavior.
 The [source-discovery executable examples](../../internal/integration/testdata/sources.txtar)
 define required outcomes for their illustrated cases. Discovery does not establish
 which statements are accepted obligations or whether tests cover them.

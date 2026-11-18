@@ -1,0 +1,13 @@
+{
+  "$schema": "https://axm.sh/schemas/knowledge.schema.json",
+  "owner": "@craigsmitham",
+  "name": "dotspec",
+  "version": "0.1.0",
+  "type": "knowledge",
+  "format": {
+    "name": "okf",
+    "version": "0.2"
+  },
+  "bundleRoot": "src",
+  "description": "Author and review dotspec specifications using the handbook, domain guidance and worked examples."
+}

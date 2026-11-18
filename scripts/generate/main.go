@@ -210,7 +210,7 @@ func writeCommand(out *strings.Builder, cmd *cobra.Command) {
 	cmd.InitDefaultHelpFlag()
 	fmt.Fprintf(out, "## %s\n\n%s\n\n```sh\n%s\n```\n", cmd.CommandPath(), cmd.Short, cmd.UseLine())
 	if cmd.Long != "" {
-		fmt.Fprintf(out, "\n%s\n", cmd.Long)
+		fmt.Fprintf(out, "\n%s\n", strings.TrimPrefix(cmd.Long, cmd.Short+"\n\n"))
 	}
 	if cmd.Example != "" {
 		fmt.Fprintf(out, "\n```sh\n%s\n```\n", cmd.Example)

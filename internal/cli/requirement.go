@@ -103,7 +103,7 @@ func runRequirement(command, path, slug, format, preset string, out io.Writer) e
 		if format == "json" {
 			return writeJSON(out, createdResult{1, target})
 		}
-		_, err = fmt.Fprintf(out, "Created %s\nDescribe the scope, statement, any criterion, rationale, and verification as they become known.\n", displayPath(target))
+		_, err = fmt.Fprintf(out, "Created %s\nDescribe the scope, statement, any criterion, rationale, and verification as they become known.\nAuthoring guide: dotspec guide requirement\n", displayPath(target))
 		return err
 	}
 	if command == "check" {

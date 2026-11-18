@@ -45,5 +45,5 @@ automation.
 ## Related specifications
 
 [Specification Inspection](../concepts/specification-inspection.concept.spec.md)
-describes inspection. The [check report contract](../../README.md#check-specifications)
+describes inspection. The [check report contract](../../docs/reference/inspection.md#check-specifications)
 defines report fields and their ordering rules.

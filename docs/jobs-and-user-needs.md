@@ -1,7 +1,7 @@
 # Jobs and user needs
 
 Use this guide when documenting user progress, success criteria, or the abilities
-needed to support them. The [job format](../README.md#job-spec-format) defines the
+needed to support them. The [job format](reference/job.md#job-spec-format) defines the
 Markdown syntax; the [core model reference](reference/model/core.md) defines the
 formal types and relationships.
 

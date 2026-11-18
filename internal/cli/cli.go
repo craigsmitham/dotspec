@@ -160,12 +160,25 @@ func buildVersion() string {
 func NewRoot() *cobra.Command {
 	root := &cobra.Command{Use: "dotspec", Short: "Manage software requirements alongside your code",
 		Long:    "Manage human-readable software requirements in *.spec.md files.\n\n" + exitPolicy,
-		Example: "dotspec system init\ndotspec job init develop-requirements\ndotspec check",
+		Example: "dotspec guide\ndotspec system init\ndotspec job init develop-requirements\ndotspec check",
 		Version: buildVersion(), SilenceUsage: true, SilenceErrors: true,
 		Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error { return cmd.Help() },
 	}
 	root.SetVersionTemplate("dotspec {{.Version}}\n")
-	root.AddCommand(newQualityModelCommand(), newBusinessRuleCommand(), newSystemCommand(), newJobCommand(), newUseCaseCommand(), newConceptCommand(), newRequirementCommand(), newCheckCommand(), newSourcesCommand(), newModelCommand(), newManCommand(), newCompletionCommand())
+	root.AddCommand(newGuideCommand(), newCheckCommand(), newSourcesCommand(), newModelCommand(), newManCommand(), newCompletionCommand())
+	for _, parent := range []*cobra.Command{newQualityModelCommand(), newBusinessRuleCommand(), newSystemCommand(), newJobCommand(), newUseCaseCommand(), newConceptCommand(), newRequirementCommand()} {
+		root.AddCommand(parent)
+		for _, cmd := range append(parent.Commands(), parent) {
+			if cmd != parent && cmd.Name() != "init" && cmd.Name() != "check" {
+				continue
+			}
+			description := cmd.Long
+			if description == "" {
+				description = cmd.Short
+			}
+			cmd.Long = description + "\n\nAuthoring guide: dotspec guide " + parent.Name()
+		}
+	}
 	root.InitDefaultHelpFlag()
 	root.InitDefaultVersionFlag()
 	root.InitDefaultHelpCmd()

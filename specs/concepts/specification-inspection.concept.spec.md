@@ -19,7 +19,7 @@ writing advice and locate the relevant source where possible.
 
 This is the state of one run. A later run produces a new report from its inputs;
 there is no stored finding lifecycle or acknowledgement state. The
-[check report contract](../../README.md#check-specifications) defines report
+[check report contract](../../docs/reference/inspection.md#check-specifications) defines report
 fields, diagnostic identifiers, and exit statuses.
 
 Quality obligations are defined by

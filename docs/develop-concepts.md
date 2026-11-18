@@ -3,7 +3,7 @@
 Use this guide when you need to explain a coherent piece of product behavior,
 reuse that behavior in another setting, or describe how independent concepts work
 together. Start with purpose and a characteristic story; add structure where it
-helps people make a design decision. The [format reference](../README.md#concept-spec-format)
+helps people make a design decision. The [format reference](reference/concept.md#concept-spec-format)
 defines the basic file contract.
 
 A Concept is a specification with its own document. ConceptUse and Synchronization

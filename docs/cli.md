@@ -15,6 +15,7 @@ Manage human-readable software requirements in *.spec.md files.
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
 ```sh
+dotspec guide
 dotspec system init
 dotspec job init develop-requirements
 dotspec check
@@ -33,6 +34,8 @@ Describe business constraints independently of their enforcement
 dotspec business-rule [flags]
 ```
 
+Authoring guide: dotspec guide business-rule
+
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--help, -h` | `false` | help for business-rule |
@@ -48,6 +51,8 @@ dotspec business-rule check <slug> [flags]
 Check structure and suggest missing business-rule content.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+Authoring guide: dotspec guide business-rule
 
 ```sh
 dotspec business-rule check purchase-approval --path .
@@ -68,6 +73,8 @@ Create a business-rule specification without overwriting an existing file
 ```sh
 dotspec business-rule init <slug> [flags]
 ```
+
+Authoring guide: dotspec guide business-rule
 
 ```sh
 dotspec business-rule init purchase-approval --path .
@@ -238,6 +245,8 @@ Describe purposeful product behavior through state and actions
 dotspec concept [flags]
 ```
 
+Authoring guide: dotspec guide concept
+
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--help, -h` | `false` | help for concept |
@@ -253,6 +262,8 @@ dotspec concept check <slug> [flags]
 Check structure and suggest missing concept content.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+Authoring guide: dotspec guide concept
 
 ```sh
 dotspec concept check job-map --path .
@@ -273,6 +284,8 @@ Create a concept specification without overwriting an existing file
 ```sh
 dotspec concept init <slug> [flags]
 ```
+
+Authoring guide: dotspec guide concept
 
 ```sh
 dotspec concept init job-map --path .
@@ -327,6 +340,27 @@ dotspec concept show job-map --path .
 | `--path` | `.` | project directory to inspect or initialize |
 | `--project` | `` | select a project registered in dotspec.yaml; --path is relative to its root |
 
+## dotspec guide
+
+Read the offline authoring handbook and worked examples
+
+```sh
+dotspec guide [TOPIC|RULE|PATH] [flags]
+```
+
+Open guidance from this version of dotspec. With no argument, list topics and help choose an authoring form. Use examples to browse worked specifications or a diagnostic's suggested rule ID to read its guidance.
+
+```sh
+dotspec guide
+dotspec guide obligation
+dotspec guide requirement.measurement-basis
+dotspec guide examples
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for guide |
+
 ## dotspec help
 
 Help about any command
@@ -350,6 +384,8 @@ Define and discover jobs to be done (JTBDs)
 dotspec job [flags]
 ```
 
+Authoring guide: dotspec guide job
+
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--help, -h` | `false` | help for job |
@@ -365,6 +401,8 @@ dotspec job check <slug> [flags]
 Check structure and suggest writing improvements.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+Authoring guide: dotspec guide job
 
 ```sh
 dotspec job check develop-requirements --path .
@@ -386,6 +424,8 @@ Create a job specification without overwriting an existing file
 ```sh
 dotspec job init <slug> [flags]
 ```
+
+Authoring guide: dotspec guide job
 
 ```sh
 dotspec job init develop-requirements --path .
@@ -760,6 +800,8 @@ Define reusable quality attributes and copy them into systems
 dotspec quality-model [flags]
 ```
 
+Authoring guide: dotspec guide quality-model
+
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--help, -h` | `false` | help for quality-model |
@@ -803,6 +845,8 @@ Check quality-model structure and suggest missing content.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
+Authoring guide: dotspec guide quality-model
+
 ```sh
 dotspec quality-model check furps --path .
 ```
@@ -822,6 +866,8 @@ Create an editable project quality model
 ```sh
 dotspec quality-model init <slug> [flags]
 ```
+
+Authoring guide: dotspec guide quality-model
 
 ```sh
 dotspec quality-model init organization-quality --path .
@@ -885,6 +931,8 @@ Specify required results, rules, properties, and restrictions
 dotspec requirement [flags]
 ```
 
+Authoring guide: dotspec guide requirement
+
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--help, -h` | `false` | help for requirement |
@@ -900,6 +948,8 @@ dotspec requirement check <slug> [flags]
 Check requirement specifications and attribute references.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+Authoring guide: dotspec guide requirement
 
 ```sh
 dotspec requirement check reject-existing-target --path .
@@ -920,6 +970,8 @@ Create a requirement specification without overwriting an existing file
 ```sh
 dotspec requirement init <slug> [flags]
 ```
+
+Authoring guide: dotspec guide requirement
 
 ```sh
 dotspec requirement init reject-existing-target --path .
@@ -1010,6 +1062,8 @@ Describe systems and discover their directory context
 dotspec system [flags]
 ```
 
+Authoring guide: dotspec guide system
+
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--help, -h` | `false` | help for system |
@@ -1021,6 +1075,8 @@ Create specs/system.spec.md without overwriting an existing file
 ```sh
 dotspec system init [flags]
 ```
+
+Authoring guide: dotspec guide system
 
 ```sh
 dotspec system init --path .
@@ -1083,6 +1139,8 @@ Describe actor goals and interactions with a system
 dotspec use-case [flags]
 ```
 
+Authoring guide: dotspec guide use-case
+
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--help, -h` | `false` | help for use-case |
@@ -1098,6 +1156,8 @@ dotspec use-case check <slug> [flags]
 Check structure and suggest missing use-case content.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+Authoring guide: dotspec guide use-case
 
 ```sh
 dotspec use-case check check-specifications --path .
@@ -1118,6 +1178,8 @@ Create a use-case specification without overwriting an existing file
 ```sh
 dotspec use-case init <slug> [flags]
 ```
+
+Authoring guide: dotspec guide use-case
 
 ```sh
 dotspec use-case init check-specifications --path .

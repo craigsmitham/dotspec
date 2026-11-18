@@ -83,6 +83,8 @@ subsections. Record preferred targets in Rationale or Notes and label them
 nonbinding. An unresolved bound belongs in Open questions with the evidence needed
 to choose it; a draft can remain useful without pretending to be complete.
 
+See the [unfinished recovery feedback requirement](../examples/requirements-review/specs/requirements/recovery-feedback.requirement.spec.md) for a draft that records a measure while the target and operating conditions are open.
+
 ## Describe context of use explicitly
 
 Product quality concerns the product's properties. Quality in use concerns the

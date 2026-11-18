@@ -20,7 +20,7 @@ of terminal styling.
 ## Criterion
 
 Use the text-label rule in [Statement](#statement), with supported severity values
-defined by the [check report contract](../../README.md#check-specifications).
+defined by the [check report contract](../../docs/reference/inspection.md#check-specifications).
 
 ## Verification plan
 
@@ -42,5 +42,5 @@ specific need; it does not establish overall accessibility.
 
 [Specification Inspection](../concepts/specification-inspection.concept.spec.md)
 describes the report and inspection behavior. The
-[check report contract](../../README.md#check-specifications) defines the
+[check report contract](../../docs/reference/inspection.md#check-specifications) defines the
 supported severity values and report structure.

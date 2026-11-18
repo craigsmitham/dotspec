@@ -1,5 +1,9 @@
 # Contributing
 
+When changing a domain concept, an authoring convention, or a quality check,
+start with [Maintaining the handbook](docs/handbook/maintaining.md). It points
+to the owning text, the sources behind each choice, and examples for review.
+
 Install [mise](https://mise.jdx.dev), then run these commands from the repository root:
 
 ```sh

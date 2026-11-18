@@ -11,6 +11,7 @@ dotspec system init
 ````text
 Created specs/system.spec.md
 Edit the system name, Purpose, and Scope.
+Authoring guide: dotspec guide system
 ````
 
 ## job init develop-requirements
@@ -22,6 +23,7 @@ dotspec job init develop-requirements
 ````text
 Created specs/jobs/develop-requirements.job.spec.md
 Edit the job statement and performer; add context, steps, and outcomes as they become known.
+Authoring guide: dotspec guide job
 ````
 
 ## system show
@@ -156,6 +158,7 @@ dotspec use-case init check-specifications
 ````text
 Created specs/use-cases/check-specifications.use-case.spec.md
 Edit the actor goal and system boundary; add success criteria, scenarios, and extensions as they become known.
+Authoring guide: dotspec guide use-case
 ````
 
 ## use-case show check-specifications --json
@@ -210,6 +213,7 @@ dotspec use-case init review-change --template expanded
 ````text
 Created specs/use-cases/review-change.use-case.spec.md
 Edit the actor goal and system boundary; add success criteria, scenarios, and extensions as they become known.
+Authoring guide: dotspec guide use-case
 ````
 
 ## use-case list --overview
@@ -299,6 +303,7 @@ dotspec concept init job-map
 ````text
 Created specs/concepts/job-map.concept.spec.md
 Describe the purpose, state, actions, and operational principle as they become known.
+Authoring guide: dotspec guide concept
 ````
 
 ## concept show job-map --json
@@ -375,6 +380,7 @@ dotspec requirement init diagnostic-severity --preset quality
 ````text
 Created specs/requirements/diagnostic-severity.requirement.spec.md
 Describe the scope, statement, any criterion, rationale, and verification as they become known.
+Authoring guide: dotspec guide requirement
 ````
 
 ## requirement show diagnostic-severity --json
@@ -460,6 +466,7 @@ dotspec requirement init reject-existing-target
 ````text
 Created specs/requirements/reject-existing-target.requirement.spec.md
 Describe the scope, statement, any criterion, rationale, and verification as they become known.
+Authoring guide: dotspec guide requirement
 ````
 
 ## requirement show reject-existing-target --json

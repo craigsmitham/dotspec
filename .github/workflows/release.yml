@@ -12,6 +12,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: jdx/mise-action@v4
+      - run: mise run model-setup
       - run: mise run check
       - run: goreleaser release --clean
         env:

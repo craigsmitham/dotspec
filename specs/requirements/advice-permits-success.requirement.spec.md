@@ -30,4 +30,4 @@ Exercise project-wide checks and focused checks for each applicable type.
 
 [Specification Inspection](../concepts/specification-inspection.concept.spec.md)
 provides the conceptual context. The
-[report contract](../../README.md#check-specifications) defines other exit statuses.
+[report contract](../../docs/reference/inspection.md#check-specifications) defines other exit statuses.

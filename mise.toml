@@ -66,7 +66,7 @@ run = "go run ./scripts/check-spec-sources"
 
 [tasks.check]
 description = "Run the same complete gate locally and in CI"
-depends = ["fmt-check", "tidy-check", "lint", "test", "generated-check", "model-check", "model-test", "spec-check", "spec-sources-check", "release-check"]
+depends = ["fmt-check", "tidy-check", "lint", "test", "generated-check", "model-check", "model-test", "knowledge-test", "spec-check", "spec-sources-check", "release-check"]
 
 [tasks.fuzz]
 description = "Exercise all Markdown parsers with bounded fuzzing"
@@ -79,3 +79,11 @@ run = "goreleaser check"
 [tasks.snapshot]
 description = "Build all release archives and checksums without publishing"
 run = "goreleaser release --snapshot --clean"
+
+[tasks.knowledge-bundle]
+description = "Package the authored guides and recovery examples for optional AXM installation"
+run = "python scripts/package-knowledge/package.py"
+
+[tasks.knowledge-test]
+description = "Check the portable handbook package against its authored sources"
+run = "python -B -m unittest discover -s scripts/package-knowledge"

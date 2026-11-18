@@ -37,6 +37,7 @@ status 2 dotspec unknown
 -- created.txt --
 Created specs/system.spec.md
 Edit the system name, Purpose, and Scope.
+Authoring guide: dotspec guide system
 -- map.txt --
 flowchart TD
   job["New job"]

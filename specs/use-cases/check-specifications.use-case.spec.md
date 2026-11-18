@@ -47,7 +47,7 @@ was inspected. Both need their authored sources preserved.
 
 Inspection leaves authored sources unchanged, as defined by the
 [source preservation requirement](../requirements/inspection-preserves-source.requirement.spec.md).
-The [check report contract](../../README.md#check-specifications) requires the
+The [check report contract](../../docs/reference/inspection.md#check-specifications) requires the
 report to distinguish incomplete scans from completed ones, even when inspection
 cannot finish.
 
@@ -58,7 +58,7 @@ structural errors, advisory findings, and any additional context. The
 report distinguishes a completed scan from an operational failure. A report
 with structural errors still completes this information-gathering goal.
 
-The [check report contract](../../README.md#check-specifications) defines the
+The [check report contract](../../docs/reference/inspection.md#check-specifications) defines the
 report fields and exit statuses. A successful check does not establish that
 requirements are complete, validated, or satisfied.
 
@@ -102,7 +102,7 @@ governs exit status. This also completes the information-gathering goal.
 ## Sequence
 
 Representative. The narrative explains the interaction; the
-[check report contract](../../README.md#check-specifications) governs error
+[check report contract](../../docs/reference/inspection.md#check-specifications) governs error
 handling and reporting behavior.
 
 ## Supports

@@ -3,7 +3,7 @@
 Use this guide when you need to agree on what an actor can accomplish with a
 system, investigate alternatives, or retain behavior across delivery increments.
 Start with a readable sketch and expand the portions needed for the next decision.
-The [format reference](../README.md#use-case-spec-format) defines the supported
+The [format reference](reference/use-case.md#use-case-spec-format) defines the supported
 sections and checks; this guide explains how to use them.
 
 ## Start with actors and goals

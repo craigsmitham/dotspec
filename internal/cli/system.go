@@ -61,7 +61,7 @@ func runSystem(command, path, format string, out io.Writer) error {
 		if format == "json" {
 			return writeJSON(out, createdResult{1, target})
 		}
-		_, err = fmt.Fprintf(out, "Created %s\nEdit the system name, Purpose, and Scope.\n", displayPath(target))
+		_, err = fmt.Fprintf(out, "Created %s\nEdit the system name, Purpose, and Scope.\nAuthoring guide: dotspec guide system\n", displayPath(target))
 		return err
 	case "show":
 		spec, parent, err := system.Show(path)
