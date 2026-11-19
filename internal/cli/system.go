@@ -26,13 +26,13 @@ type createdResult struct {
 func newSystemCommand() *cobra.Command {
 	root := group("system", "Describe systems and discover their directory context")
 	for _, action := range []struct{ name, short string }{
-		{"init", "Create specs/system.spec.md without overwriting an existing file"},
+		{"init", "Create a named system specification"},
 		{"show", "Describe the nearest system and its enclosing system document"},
 		{"list", "Display systems in the selected subtree"},
 	} {
 		cmd := &cobra.Command{Use: action.name, Short: action.short, Args: cobra.NoArgs,
 			Example: "dotspec system " + action.name + " --path .",
-			RunE: func(cmd *cobra.Command, _ []string) error {
+			RunE: func(cmd *cobra.Command, args []string) error {
 				path, err := projectPath(cmd)
 				if err != nil {
 					return err
@@ -41,8 +41,12 @@ func newSystemCommand() *cobra.Command {
 				if err != nil {
 					return err
 				}
-				return runSystem(cmd.Name(), path, format, cmd.OutOrStdout())
+				return runSystem(cmd.Name(), path, format, cmd.OutOrStdout(), args...)
 			},
+		}
+		if action.name == "init" {
+			cmd.Use = "init [name]"
+			cmd.Args = cobra.MaximumNArgs(1)
 		}
 		addPath(cmd)
 		addOutput(cmd, false)
@@ -51,17 +55,21 @@ func newSystemCommand() *cobra.Command {
 	return root
 }
 
-func runSystem(command, path, format string, out io.Writer) error {
+func runSystem(command, path, format string, out io.Writer, args ...string) error {
 	switch command {
 	case "init":
-		target, err := system.Init(path)
+		name := "New system"
+		if len(args) > 0 {
+			name = args[0]
+		}
+		target, err := system.InitNamed(path, name)
 		if err != nil {
 			return err
 		}
 		if format == "json" {
 			return writeJSON(out, createdResult{1, target})
 		}
-		_, err = fmt.Fprintf(out, "Created %s\nEdit the system name, Purpose, and Scope.\nAuthoring guide: dotspec guide system\n", displayPath(target))
+		_, err = fmt.Fprintf(out, "Created %s\nEdit Description, Purpose, and Scope. Keep the filename in sync if you rename the system.\nAuthoring guide: dotspec guide system\n", displayPath(target))
 		return err
 	case "show":
 		spec, parent, err := system.Show(path)
@@ -85,8 +93,12 @@ func runSystem(command, path, format string, out io.Writer) error {
 		if spec.QualityAttributesContent != nil {
 			modelText += "\n\nQuality attributes\n" + indent(*spec.QualityAttributesContent)
 		}
-		_, err = fmt.Fprintf(out, "%s\n\nPurpose\n%s\n\nScope\n%s%s\n\nEnclosing system document: %s\nSource: %s\n",
-			result.System.Name, indent(result.System.Purpose), indent(result.System.Scope), modelText, parentText, displayPath(result.System.Path))
+		description := ""
+		if spec.Description != "" {
+			description = "\n\nDescription\n" + indent(spec.Description)
+		}
+		_, err = fmt.Fprintf(out, "%s%s\n\nPurpose\n%s\n\nScope\n%s%s\n\nEnclosing system document: %s\nSource: %s\n",
+			result.System.Name, description, indent(result.System.Purpose), indent(result.System.Scope), modelText, parentText, displayPath(result.System.Path))
 		return err
 	case "list":
 		nodes, err := system.List(path)
@@ -111,4 +123,36 @@ func runSystem(command, path, format string, out io.Writer) error {
 		return err
 	}
 	return fmt.Errorf("unknown system command %q", command)
+}
+
+func newComponentCommand() *cobra.Command {
+	root := group("component", "Describe a component in its own specification")
+	var parent string
+	cmd := &cobra.Command{Use: "init <name>", Short: "Create a named component specification", Args: cobra.ExactArgs(1),
+		Example: "dotspec component init Intake --path internal --part-of specs/new-system.system.spec.md",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			path, err := projectPath(cmd)
+			if err != nil {
+				return err
+			}
+			format, err := outputFormat(cmd)
+			if err != nil {
+				return err
+			}
+			target, err := system.InitComponent(path, args[0], parent)
+			if err != nil {
+				return err
+			}
+			if format == "json" {
+				return writeJSON(cmd.OutOrStdout(), createdResult{1, target})
+			}
+			_, err = fmt.Fprintf(cmd.OutOrStdout(), "Created %s\n", displayPath(target))
+			return err
+		}}
+	cmd.Flags().StringVar(&parent, "part-of", "", "Parent system or component source file, relative to the working directory")
+	_ = cmd.MarkFlagRequired("part-of")
+	addPath(cmd)
+	addOutput(cmd, false)
+	root.AddCommand(cmd)
+	return root
 }

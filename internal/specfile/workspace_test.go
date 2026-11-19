@@ -20,7 +20,7 @@ func workspaceFixture(t *testing.T) string {
 			t.Fatal(err)
 		}
 	}
-	for _, path := range []string{"specs/system.spec.md", "apps/demo/specs/system.spec.md", "apps/other/specs/system.spec.md"} {
+	for _, path := range []string{"specs/new-system.system.spec.md", "apps/demo/specs/new-system.system.spec.md", "apps/other/specs/new-system.system.spec.md"} {
 		if err := os.WriteFile(filepath.Join(root, path), []byte("example"), 0600); err != nil {
 			t.Fatal(err)
 		}
@@ -41,8 +41,8 @@ func TestWorkspacePartitionsDiscovery(t *testing.T) {
 				}
 			}
 			for _, dir := range []string{".", "apps/demo", "apps/other"} {
-				paths, err := Discover(filepath.Join(root, dir), func(name string) bool { return name == "system.spec.md" })
-				want := []string{filepath.Join(root, dir, "specs/system.spec.md")}
+				paths, err := Discover(filepath.Join(root, dir), func(name string) bool { return name == "new-system.system.spec.md" })
+				want := []string{filepath.Join(root, dir, "specs/new-system.system.spec.md")}
 				if err != nil || !reflect.DeepEqual(paths, want) {
 					t.Fatal(paths, want, err)
 				}
@@ -74,8 +74,8 @@ func TestProjectManifestValidation(t *testing.T) {
 			if _, err := FindWorkspace(root); err == nil {
 				t.Fatal("invalid manifest accepted")
 			}
-			paths, err := Discover(root, func(name string) bool { return name == "system.spec.md" })
-			if err != nil || !reflect.DeepEqual(paths, []string{filepath.Join(root, "specs/system.spec.md")}) {
+			paths, err := Discover(root, func(name string) bool { return name == "new-system.system.spec.md" })
+			if err != nil || !reflect.DeepEqual(paths, []string{filepath.Join(root, "specs/new-system.system.spec.md")}) {
 				t.Fatal(paths, err)
 			}
 		})

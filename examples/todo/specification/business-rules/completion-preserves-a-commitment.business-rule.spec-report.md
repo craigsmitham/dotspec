@@ -5,7 +5,7 @@ documents: "../../specs/business-rules/completion.business-rule.spec.md#completi
 ---
 # Completion preserves a commitment
 
-[Personal task list](<../system.spec-report.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Statement
 
@@ -13,7 +13,7 @@ A finished commitment stays on the person's list until they explicitly delete it
 
 ## Applies to
 
-**Targets:** [Personal task list](<../system.spec-report.md>).
+**Targets:** [Personal task list](<../personal-task-list.system.spec-report.md>).
 
 ## Authority
 

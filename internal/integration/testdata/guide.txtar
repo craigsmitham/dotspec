@@ -13,7 +13,7 @@ stdout 'examples  Browse the files bundled'
 status 2 dotspec guide --list quality
 exec dotspec guide examples/todo/SPEC.md
 stdout 'Read the system specification'
-exec dotspec guide examples/todo/specification/system.spec-report.md
+exec dotspec guide examples/todo/specification/personal-task-list.system.spec-report.md
 stdout 'Personal task list'
 stdout '## Requirements'
 exec dotspec guide job

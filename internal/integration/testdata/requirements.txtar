@@ -10,7 +10,7 @@ stdout '"path":'
 status 0 dotspec requirement show work --json
 ! stdout '"type":'
 stdout '"statement":'
-cp ../system.md specs/system.spec.md
+cp ../system.md specs/new-system.system.spec.md
 cp ../rule.md specs/requirements/work.requirement.spec.md
 cp ../repeatable.md specs/requirements/repeatable.requirement.spec.md
 status 0 dotspec requirement list --attribute reliability --json
@@ -69,7 +69,7 @@ stdout '"complete": true'
 ---
 type: system-spec
 ---
-# Inspector
+# New system
 ## Purpose
 Help reviewers.
 ## Scope
@@ -110,7 +110,7 @@ Preserve authored work.
 Compare before and after bytes.
 ## Related specifications
 [Repeatable inspection](repeatable.requirement.spec.md#statement)
-[Term](../system.spec.md#scan)
+[Term](../new-system.system.spec.md#scan)
 -- repeatable.md --
 ---
 type: requirement-spec

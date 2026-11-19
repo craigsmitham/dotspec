@@ -5,7 +5,7 @@ documents: "../../specs/concepts/checklist.concept.spec.md#checklist"
 ---
 # Checklist
 
-[Personal task list](<../system.spec-report.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Purpose
 

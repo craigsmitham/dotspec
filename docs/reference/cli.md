@@ -237,6 +237,43 @@ dotspec completion zsh
 | `--help, -h` | `false` | help for zsh |
 | `--no-descriptions` | `false` | omit completion descriptions |
 
+## dotspec component
+
+Describe a component in its own specification
+
+```sh
+dotspec component [flags]
+```
+
+Authoring guide: dotspec guide component
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for component |
+
+## dotspec component init
+
+Create a named component specification
+
+```sh
+dotspec component init <name> [flags]
+```
+
+Authoring guide: dotspec guide component
+
+```sh
+dotspec component init Intake --path internal --part-of specs/new-system.system.spec.md
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for init |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--part-of` | `` | Parent system or component source file, relative to the working directory |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+
 ## dotspec concept
 
 Describe purposeful product behavior through state and actions
@@ -821,7 +858,7 @@ Copy attributes from a bundled starter or local quality model. The default model
 Local declarations remain independent of their source model.
 
 ```sh
-dotspec quality-model apply --system specs/system.spec.md --dry-run
+dotspec quality-model apply --system specs/new-system.system.spec.md --dry-run
 ```
 
 | Flag | Default | Description |
@@ -833,7 +870,7 @@ dotspec quality-model apply --system specs/system.spec.md --dry-run
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
 | `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-| `--system` | `` | Target system.spec.md path, relative to --path |
+| `--system` | `` | Target example.system.spec.md path, relative to --path |
 
 ## dotspec quality-model check
 
@@ -1104,10 +1141,10 @@ Authoring guide: dotspec guide system
 
 ## dotspec system init
 
-Create specs/system.spec.md without overwriting an existing file
+Create a named system specification
 
 ```sh
-dotspec system init [flags]
+dotspec system init [name] [flags]
 ```
 
 Authoring guide: dotspec guide system

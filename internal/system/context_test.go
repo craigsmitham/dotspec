@@ -17,8 +17,8 @@ func TestOptionalSystemContext(t *testing.T) {
 	if s.Goals != "Improve reviews." || s.Environment == "" || s.Assumptions == "" || s.Constraints == "" || !strings.Contains(s.Glossary, "### Complete scan") || !s.References.Anchors["complete-scan"] {
 		t.Fatalf("context: %+v", s)
 	}
-	for _, name := range []string{"Goals", "Environment", "Assumptions", "Constraints", "Glossary"} {
-		for _, bad := range []string{source + "\n## " + name + "\n", strings.Replace(Template, "## Purpose", "### "+name+"\n\n## Purpose", 1)} {
+	for _, name := range []string{"Description", "Goals", "Environment", "Assumptions", "Constraints", "Glossary"} {
+		for _, bad := range []string{source + "\n## " + name + "\n", strings.Replace(Template, "# New system", "# New system\n\n### "+name, 1)} {
 			_, err := Parse([]byte(bad))
 			var d *diagnostic.Diagnostic
 			if !errors.As(err, &d) || !strings.HasPrefix(d.Rule, "structure.") {

@@ -4,7 +4,7 @@ Generated from [the canonical model](../../../model/metamodel.yaml) and [the vie
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.20.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.21.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
@@ -25,7 +25,7 @@ Arrows use schema-owned relationship labels; reference tables retain exact canon
 
 ### Specification types
 
-A Specification is the root record of one authored specification document. The seven specification types correspond one-to-one with these concrete classes. Subsets classify concerns separately from this hierarchy.
+A Specification is the root record of one authored specification document. The eight specification types correspond one-to-one with these concrete classes. Subsets classify concerns separately from this hierarchy.
 
 ```mermaid
 classDiagram
@@ -35,6 +35,7 @@ classDiagram
     class SystemContextSpecification
     <<abstract>> SystemContextSpecification
     class System
+    class Component
     class QualityModel
     class BusinessRule
     class Job
@@ -43,6 +44,7 @@ classDiagram
     class Requirement
     Specification <|-- SystemContextSpecification
     Specification <|-- System
+    SystemContextSpecification <|-- Component
     Specification <|-- QualityModel
     SystemContextSpecification <|-- BusinessRule
     SystemContextSpecification <|-- Job
@@ -51,9 +53,9 @@ classDiagram
     SystemContextSpecification <|-- Requirement
 ```
 
-### Elements declared in a system specification
+### Elements declared in system and component specifications
 
-Components, features, capabilities, concept uses, synchronizations and interfaces are named elements declared inside a System specification, not specifications themselves. Each has one declaring owner; declaration does not establish structural parentage.
+Components link to their structural parents. Systems and components can each declare features, capabilities, concept uses, synchronizations, and interfaces.
 
 ```mermaid
 classDiagram
@@ -65,11 +67,16 @@ classDiagram
     class ConceptUse
     class Synchronization
     class Interface
-    System *-- "0..*" Component : declares components
+    Component --> "0..1" System : part of
+    Component --> "0..1" Component : part of
     System *-- "0..*" Feature : declares features
     System *-- "0..*" Capability : declares capabilities
     System *-- "0..*" ConceptUse : concept uses
     System *-- "0..*" Synchronization : synchronizations
+    Component *-- "0..*" Feature : declares features
+    Component *-- "0..*" Capability : declares capabilities
+    Component *-- "0..*" ConceptUse : concept uses
+    Component *-- "0..*" Synchronization : synchronizations
     System *-- "0..*" Interface : requires interface
     System *-- "0..*" Interface : provides interface
     Component *-- "0..*" Interface : requires interface
@@ -78,12 +85,13 @@ classDiagram
 
 ### Specification system association
 
-Specification types derived from SystemContextSpecification select a specification system explicitly or use the nearest directory system by default. Elements declared inside a specification have declaring owners instead. Neither association establishes structural parentage. Quality models stand independently.
+A local specification records its owning component and effective system. Component parent links identify the default system. Quality models are project-wide.
 
 ```mermaid
 classDiagram
     direction TB
     class System
+    class Component
     class BusinessRule
     class Job
     class UseCase
@@ -93,6 +101,7 @@ classDiagram
     Job --> System : specification system
     UseCase --> System : specification system
     Concept --> System : specification system
+    Requirement ..> Component : specification component
     Requirement --> System : specification system
 ```
 
@@ -539,7 +548,6 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 | `synchronizations` | [Synchronization](index.md#synchronization) | optional; ordered list |  |
 | `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; ordered list | Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. Must be present together with quality_attributes_content. |
 | `part_of` | [System](index.md#system) | optional | Optional explicit parent System. Directory context does not supply this relationship. |
-| `components` | [Component](index.md#component) | optional; ordered list | Named component declarations in authored order; membership does not establish structural parentage. |
 | `features` | [Feature](index.md#feature) | optional; ordered list | Named feature declarations in authored order; each feature belongs to this System. |
 | `capabilities` | [Capability](index.md#capability) | optional; ordered list | Capability declarations; the declaring System is a documentation home, not an inferred provider. |
 | `out_of_scope` | [RichContent](index.md#richcontent) | optional | Explicit boundary exclusions; absence is not a statement of scope. |
@@ -713,7 +721,7 @@ Subsets: `software-requirements`. [ConceptType](index.md#concepttype) contains t
 
 ### ConceptUse
 
-An explicitly named design-time inclusion of a concept in a system, declared in the system's specification. Multiple uses of one definition remain distinct; directory association creates no use.
+An explicitly named design-time inclusion of a concept in a system or component specification. Multiple uses of one definition remain distinct; directory association creates no use.
 
 Subsets: `software-requirements`. [ConceptUse](index.md#conceptuse) contains the complete definition.
 
@@ -739,7 +747,7 @@ Subsets: `software-requirements`. [TypeBinding](index.md#typebinding) contains t
 
 ### Synchronization
 
-A composition rule declared in a system's specification. Narrative and action references describe coordination; no atomicity, execution or completeness is inferred.
+A composition rule declared in a system or component specification. Narrative and action references describe coordination; no atomicity, execution or completeness is inferred.
 
 Subsets: `software-requirements`. [Synchronization](index.md#synchronization) contains the complete definition.
 
@@ -970,7 +978,7 @@ Subsets: `software-requirements`. [Component](index.md#component) contains the c
 | `purpose` | [RichContent](index.md#richcontent) | optional | Benefit or reason for this component to exist. |
 | `responsibilities` | [RichContent](index.md#richcontent) | optional | Authored responsibilities identifying what this component is expected to do. |
 | `boundary_description` | [RichContent](index.md#richcontent) | optional | What the component includes, excludes and delegates; normative commitments remain obligations. |
-| `part_of` | [System](index.md#system) or [Component](index.md#component) | optional | Optional single structural parent System or Component, independent of declaration ownership. Must be acyclic. |
+| `part_of` | [System](index.md#system) or [Component](index.md#component) | optional | System or Component identified by the required Part of link, when resolved. The parent chain must be acyclic. |
 | `contracts` | [ContextualReferences](index.md#contextualreferences) | optional | Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred. |
 | `architecture` | [ContextualReferences](index.md#contextualreferences) | optional | Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred. |
 | `implementation` | [ContextualReferences](index.md#contextualreferences) | optional | Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred. |
@@ -989,7 +997,7 @@ Subsets: `software-requirements`. [Feature](index.md#feature) contains the compl
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `purpose` | [RichContent](index.md#richcontent) | optional | Stakeholder benefit expressed by this feature. |
-| `owner` | [System](index.md#system) | required |  |
+| `owner` | [System](index.md#system) or [Component](index.md#component) | required |  |
 | `groups` | [Requirement](index.md#requirement) or [ObligationClause](index.md#obligationclause) or [UseCase](index.md#usecase) or [Concept](index.md#concept) or [ConceptUse](index.md#conceptuse) or [Synchronization](index.md#synchronization) or [Interface](index.md#interface) | optional; list | Non-owning specification membership; the same record may participate in several features. |
 
 ### Capability

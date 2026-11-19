@@ -50,7 +50,7 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 	if code != 1 || json.Unmarshal([]byte(out), &workspace) != nil || len(workspace.Projects) != 2 || workspace.Projects[0].ExitCode != 1 || workspace.Projects[1].ExitCode != 0 || errOut != "" {
 		t.Fatal(code, out, errOut)
 	}
-	writeFixture(t, filepath.Join(demo, "specs/system.spec.md"), "broken\n")
+	writeFixture(t, filepath.Join(demo, "specs/demo.system.spec.md"), "broken\n")
 	report := readReport(1, "blocked-by-source", "check", "--project", "demo")
 	for _, finding := range report.Diagnostics {
 		if strings.HasPrefix(finding.Rule, "spec.generated") {
@@ -64,7 +64,7 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 func TestGeneratedSpecificationMultipleRoots(t *testing.T) {
 	root := projectFixture(t)
 	writeFixture(t, filepath.Join(root, "dotspec.yaml"), "name: tool\ngenerated_spec: true\n")
-	writeFixture(t, filepath.Join(root, "other/specs/system.spec.md"), "---\ntype: system-spec\n---\n# Other\n\n## Purpose\nOther work.\n\n## Scope\nOther only.\n")
+	writeFixture(t, filepath.Join(root, "other/specs/other.system.spec.md"), "---\ntype: system-spec\n---\n# Other\n\n## Purpose\nOther work.\n\n## Scope\nOther only.\n")
 	code, out, errOut := invoke("check")
 	if code != 1 || errOut != "" || !strings.Contains(out, "root") {
 		t.Fatalf("expected ambiguous root finding: %d %s %s", code, out, errOut)
@@ -75,11 +75,12 @@ func TestGeneratedSpecScopedSystemsAndComponents(t *testing.T) {
 	root := projectFixture(t)
 	writeFixture(t, filepath.Join(root, "dotspec.yaml"), "name: tool\ngenerated_spec: true\n")
 	writeFixture(t, filepath.Join(root, "README.md"), "# Tool\n\n[Read the spec](SPEC.md).\n")
-	writeFixture(t, filepath.Join(root, "specs/system.spec.md"), "---\ntype: system-spec\n---\n# Tool\n\n## Purpose\nProcess work.\n\n## Scope\nQueued work.\n\n## Notes\n[Introduction](../README.md).\n")
-	writeFixture(t, filepath.Join(root, "worker/specs/system.spec.md"), "---\ntype: system-spec\n---\n# Worker\n\n## Purpose\nClaim jobs.\n\n## Scope\nExecutors.\n\n## Part of\n[Tool](../../specs/system.spec.md).\n")
+	writeFixture(t, filepath.Join(root, "specs/tool.system.spec.md"), "---\ntype: system-spec\n---\n# Tool\n\n## Purpose\nProcess work.\n\n## Scope\nQueued work.\n\n## Notes\n[Introduction](../README.md).\n")
+	writeFixture(t, filepath.Join(root, "worker/specs/worker.system.spec.md"), "---\ntype: system-spec\n---\n# Worker\n\n## Description\nA **local** job executor.\n\n## Purpose\nClaim jobs.\n\n## Scope\nExecutors.\n\n## Part of\n[Tool](../../specs/tool.system.spec.md).\n")
 	const grandchild = "worker/queues/specs"
-	writeFixture(t, filepath.Join(root, grandchild, "system.spec.md"), `---
+	writeFixture(t, filepath.Join(root, grandchild, "queue.system.spec.md"), `---
 type: system-spec
+id: queue-boundary
 ---
 # Queue
 
@@ -90,31 +91,7 @@ Retain queued work.
 Persistence.
 
 ## Part of
-[Worker](../../specs/system.spec.md).
-
-## Components
-
-### Intake
-
-#### Part of
-[Queue](#queue).
-
-#### Required interfaces
-
-##### Storage
-
-Read persisted jobs.
-
-#### Provided interfaces
-
-##### Submission
-
-Accept jobs.
-
-### Journal
-
-#### Part of
-[Intake](#intake).
+[Worker](../../specs/worker.system.spec.md).
 
 ## Quality attributes
 
@@ -130,6 +107,37 @@ Maintenance windows are excluded.
 - Which outages count?
 - How is uptime measured?
 `)
+	writeFixture(t, filepath.Join(root, "worker/queues/components/intake/specs/intake.component.spec.md"), `---
+type: component-spec
+id: incoming-jobs
+---
+
+# Intake
+
+## Part of
+[Queue](../../../specs/queue.system.spec.md#queue).
+
+## Required interfaces
+
+### Storage
+
+Read persisted jobs.
+
+## Provided interfaces
+
+### Submission
+
+Accept jobs.
+`)
+	writeFixture(t, filepath.Join(root, "worker/queues/components/journal/specs/journal.component.spec.md"), `---
+type: component-spec
+---
+
+# Journal
+
+## Part of
+[Intake](../../intake/specs/intake.component.spec.md).
+`)
 	writeFixture(t, filepath.Join(root, grandchild, "requirements/retain.requirement.spec.md"), `---
 type: requirement-spec
 quality_attributes: [availability]
@@ -140,10 +148,10 @@ quality_attributes: [availability]
 Each submitted job must remain in the queue until accepted.
 
 ## Applies to
-**Targets:** [Intake](../system.spec.md#intake) and [Journal](../system.spec.md#journal).
+**Targets:** [Intake](../../components/intake/specs/intake.component.spec.md) and [Journal](../../components/journal/specs/journal.component.spec.md).
 
 ## Other applications
-The [Demo system](../../../../apps/demo/specs/system.spec.md) supplies examples.
+The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies examples.
 `)
 	if code, out, errOut := invoke("spec", "build"); code != 0 {
 		t.Fatal(code, out, errOut)
@@ -164,18 +172,18 @@ The [Demo system](../../../../apps/demo/specs/system.spec.md) supplies examples.
 			}
 		}
 	}
-	reader("SPEC.md", "[Read the system specification](<specification/system.spec-report.md>)")
-	reader("specification/system.spec-report.md", "## Child systems\n\n- [Worker](<systems/worker/system.spec-report.md>)")
-	reader("specification/systems/worker/system.spec-report.md", "[Tool](<../../system.spec-report.md>)", "## Child systems\n\n- [Queue](<systems/queue/system.spec-report.md>)")
-	reader(section+"system.spec-report.md", "[Worker](<../../system.spec-report.md>) · [Requirements](<#requirements>)", "## Components\n\n- [Intake](<components/intake.component.spec-report.md>)", "## Requirements\n\n- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>)")
-	reader(section+"system.spec-report.md", "[Availability](<quality-attributes.spec-report.md#availability>) | Accept work while either A &#124; B is available. |")
+	reader("SPEC.md", "[Read the system specification](<specification/tool.system.spec-report.md>)")
+	reader("specification/tool.system.spec-report.md", "## Child systems\n\n- [Worker](<systems/worker/worker.system.spec-report.md>) — A local job executor.")
+	reader("specification/systems/worker/worker.system.spec-report.md", "[Tool](<../../tool.system.spec-report.md>)", "## Child systems\n\n- [Queue](<systems/queue/queue.system.spec-report.md>)\n")
+	reader(section+"queue.system.spec-report.md", "[Worker](<../../worker.system.spec-report.md>) · [Requirements](<#requirements>)", "## Components\n\n- [Intake](<components/intake/intake.component.spec-report.md>)", "## Requirements\n\n- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>) — Each submitted job must remain in the queue until accepted.")
+	reader(section+"queue.system.spec-report.md", "[Availability](<quality-attributes.spec-report.md#availability>) | Accept work while either A &#124; B is available. |")
 	reader(section+"quality-attributes.spec-report.md", "## Availability", "### Limit", "Maintenance windows are excluded.", "[Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>)")
 	reader("specification/requirements-review.report.md",
 		"[Which outages count?](<systems/worker/systems/queue/quality-attributes.spec-report.md#open-questions>)",
 		"[How is uptime measured?](<systems/worker/systems/queue/quality-attributes.spec-report.md#open-questions>)")
-	reader(section+"components/journal.component.spec-report.md", "intake.component.spec-report.md", "## Applicable requirements\n\n- [Retain jobs](<../requirements/retain-jobs.requirement.spec-report.md>)")
-	reader(section+"components/intake.component.spec-report.md", "## Required interfaces\n\n- [Storage](<../interfaces/storage.interface.spec-report.md>)", "## Provided interfaces\n\n- [Submission](<../interfaces/submission.interface.spec-report.md>)", "## Components\n\n- [Journal](<journal.component.spec-report.md>)", "## Applicable requirements\n\n- [Retain jobs](<../requirements/retain-jobs.requirement.spec-report.md>)")
-	reader(section+"requirements/retain-jobs.requirement.spec-report.md", "../components/intake.component.spec-report.md", "../components/journal.component.spec-report.md", "apps/demo/specs/system.spec.md", "../quality-attributes.spec-report.md#availability")
+	reader(section+"components/intake/components/journal/journal.component.spec-report.md", "../../intake.component.spec-report.md", "## Applicable requirements\n\n- [Retain jobs](<../../../../requirements/retain-jobs.requirement.spec-report.md>)")
+	reader(section+"components/intake/intake.component.spec-report.md", "## Required interfaces\n\n- [Storage](<interfaces/storage.interface.spec-report.md>)", "## Provided interfaces\n\n- [Submission](<interfaces/submission.interface.spec-report.md>)", "## Components\n\n- [Journal](<components/journal/journal.component.spec-report.md>)", "## Applicable requirements\n\n- [Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)")
+	reader(section+"requirements/retain-jobs.requirement.spec-report.md", "../components/intake/intake.component.spec-report.md", "../components/intake/components/journal/journal.component.spec-report.md", "apps/demo/specs/demo.system.spec.md", "../quality-attributes.spec-report.md#availability")
 	if _, err := os.Stat(filepath.Join(root, "apps/demo/SPEC.md")); !os.IsNotExist(err) {
 		t.Fatalf("referenced project must not acquire generated files: %v", err)
 	}
@@ -201,13 +209,13 @@ Keep notes.
 ### Audience
 Individual authors.
 `
-	writeFixture(t, "specs/system.spec.md", opening)
+	writeFixture(t, "specs/notes.system.spec.md", opening)
 	build := func() string {
 		t.Helper()
 		if code, out, errOut := invoke("spec", "build"); code != 0 {
 			t.Fatal(code, out, errOut)
 		}
-		data, err := os.ReadFile("specification/system.spec-report.md")
+		data, err := os.ReadFile("specification/notes.system.spec-report.md")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -237,7 +245,7 @@ An example:
 **Sub-attribute of:** example-parent
 ~~~
 `
-	writeFixture(t, "specs/system.spec.md", strings.ReplaceAll(opening+attributes, "\n", "\r\n"))
+	writeFixture(t, "specs/notes.system.spec.md", strings.ReplaceAll(opening+attributes, "\n", "\r\n"))
 	for name, labels := range map[string]string{"Save": "[durability, reliability]", "Restore": "[durability]"} {
 		writeFixture(t, filepath.Join("specs/requirements", strings.ToLower(name)+".requirement.spec.md"),
 			"---\ntype: requirement-spec\nquality_attributes: "+labels+"\n---\n# "+name+"\n\n## Statement\nKeep the note.\n")
@@ -278,5 +286,51 @@ func TestGeneratedSpecificationMissingSystem(t *testing.T) {
 	code, out, errOut := invoke("check")
 	if code != 1 || errOut != "" || !strings.Contains(out, "root") {
 		t.Fatalf("expected missing root finding: %d %s %s", code, out, errOut)
+	}
+}
+
+func TestNamedSubjectFilesAgreeWithTheirHeadings(t *testing.T) {
+	for _, tc := range []struct{ kind, name, slug, dir string }{
+		{"system", "Dispatch & Routing", "dispatch-routing", "external"},
+		{"component", "HTTP Task Service", "http-task-service", "adapter"},
+	} {
+		t.Run(tc.kind, func(t *testing.T) {
+			root := projectFixture(t)
+			if err := os.Mkdir(filepath.Join(root, tc.dir), 0755); err != nil {
+				t.Fatal(err)
+			}
+			args := []string{tc.kind, "init", tc.name, "--path", tc.dir}
+			if tc.kind == "component" {
+				args = append(args, "--part-of", "specs/tool.system.spec.md")
+			}
+			if code, _, msg := invoke(args...); code != 0 {
+				t.Fatal(msg)
+			}
+			suffix := tc.kind + ".spec.md"
+			expected := tc.slug + "." + suffix
+			path := filepath.Join(root, tc.dir, "specs", expected)
+			data, err := os.ReadFile(path)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !strings.Contains(string(data), "# "+tc.name+"\n") {
+				t.Fatal(string(data))
+			}
+			if code, out, msg := invoke("check", "--path", tc.dir); code != 0 {
+				t.Fatal(out, msg)
+			}
+			for _, bad := range []string{suffix, "different." + suffix} {
+				renamed := filepath.Join(filepath.Dir(path), bad)
+				if err := os.Rename(path, renamed); err != nil {
+					t.Fatal(err)
+				}
+				if code, out, msg := invoke("check", "--path", tc.dir); code != 1 || !strings.Contains(out+msg, expected) {
+					t.Fatalf("expected diagnostic naming %s, got %d %s %s", expected, code, out, msg)
+				}
+				if err := os.Rename(renamed, path); err != nil {
+					t.Fatal(err)
+				}
+			}
+		})
 	}
 }

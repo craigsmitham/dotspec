@@ -5,7 +5,7 @@ documents: "../../specs/use-cases/check-specifications.use-case.spec.md#check-sp
 ---
 # Check specifications before committing
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Goal
 

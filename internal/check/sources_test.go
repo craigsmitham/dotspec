@@ -40,11 +40,11 @@ func TestSourcesCollectLinksFromEveryTypeWithoutInterpretingNativeFiles(t *testi
 	write(t, filepath.Join(dir, "unlisted.txt"), "Must stay outside the inventory.\n")
 	write(t, filepath.Join(dir, ".gitignore"), "contract.tla\nGuide to tests.md\n")
 	specs := map[string]string{
-		system.Layout.Path(dir, ""):          system.Template,
-		job.Layout.Path(dir, "work"):         job.Template,
-		usecase.Layout.Path(dir, "work"):     usecase.Template,
-		concept.Layout.Path(dir, "work"):     concept.Template,
-		requirement.Layout.Path(dir, "work"): requirement.Template,
+		system.Layout.Path(dir, "new-system"): system.Template,
+		job.Layout.Path(dir, "work"):          job.Template,
+		usecase.Layout.Path(dir, "work"):      usecase.Template,
+		concept.Layout.Path(dir, "work"):      concept.Template,
+		requirement.Layout.Path(dir, "work"):  requirement.Template,
 	}
 	for path, content := range specs {
 		rel, err := filepath.Rel(filepath.Dir(path), native)
@@ -99,7 +99,7 @@ func TestSourcesIncludeAncestorContextAndKeepBoundaryFailuresVisible(t *testing.
 	}
 	git(t, dir, "init", "-q")
 	child := filepath.Join(dir, "module")
-	write(t, system.Layout.Path(dir, ""), system.Template+"\n[Contract](../contract.txt)\n")
+	write(t, system.Layout.Path(dir, "new-system"), system.Template+"\n[Contract](../contract.txt)\n")
 	write(t, filepath.Join(dir, "contract.txt"), "A native source.\n")
 	path := concept.Layout.Path(child, "work")
 	write(t, path, concept.Template)
@@ -136,7 +136,7 @@ func TestSourcesEmptyInvalidAndIncomplete(t *testing.T) {
 		t.Fatalf("invalid source: %+v", r)
 	}
 	write(t, path, requirement.Template)
-	if err := os.Mkdir(system.Layout.Path(dir, ""), 0755); err != nil {
+	if err := os.Mkdir(system.Layout.Path(dir, "new-system"), 0755); err != nil {
 		t.Fatal(err)
 	}
 	if r := sourceReport(dir); r.ExitCode() != 2 || r.Complete || len(r.Files) != 1 {

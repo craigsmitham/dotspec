@@ -48,8 +48,8 @@ func Run(source *qualitymodel.QualityModel, target string, selected []string, dr
 	if err := system.Layout.ValidateLocal(owner); err != nil {
 		return result, err
 	}
-	if filepath.Base(target) != system.Filename {
-		return result, fmt.Errorf("target must be a %s file", system.Filename)
+	if !system.Layout.Match(target) {
+		return result, fmt.Errorf("target must be a named %s file", system.Suffix)
 	}
 	original, err := os.ReadFile(target)
 	if err != nil {
@@ -57,6 +57,9 @@ func Run(source *qualitymodel.QualityModel, target string, selected []string, dr
 	}
 	current, err := system.Parse(original)
 	if err != nil {
+		return result, err
+	}
+	if err := system.Layout.CheckName(target, current.Name); err != nil {
 		return result, err
 	}
 	chosen, err := selection(source, selected)

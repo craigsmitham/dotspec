@@ -16,7 +16,7 @@ func TestAssociatedSystemHonorsReferenceBoundaries(t *testing.T) {
 	writeFile(t, filepath.Join(root, "nested", ".git", "marker"), "")
 	writeSpec(t, filepath.Join(root, "nested"), "Nested")
 	outside := writeSpec(t, t.TempDir(), "Outside")
-	link := filepath.Join(root, "linked", "specs", Filename)
+	link := filepath.Join(root, "linked", "specs", "linked.system.spec.md")
 	if err := os.MkdirAll(filepath.Dir(link), 0755); err != nil {
 		t.Fatal(err)
 	}
@@ -32,14 +32,14 @@ func TestAssociatedSystemHonorsReferenceBoundaries(t *testing.T) {
 		destination string
 		valid       bool
 	}{
-		{"../../selected/specs/system.spec.md", true},
-		{"../../selected/specs/system.spec.md#selected", true},
-		{"../../selected/specs/system.spec.md#purpose", false},
-		{"../../selected/specs/system.spec.md?alternate=true", false},
-		{"../../nested/specs/system.spec.md", false},
-		{"../../linked/specs/system.spec.md", false},
+		{"../../selected/specs/selected.system.spec.md", true},
+		{"../../selected/specs/selected.system.spec.md#selected", true},
+		{"../../selected/specs/selected.system.spec.md#purpose", false},
+		{"../../selected/specs/selected.system.spec.md?alternate=true", false},
+		{"../../nested/specs/nested.system.spec.md", false},
+		{"../../linked/specs/linked.system.spec.md", false},
 		{filepath.ToSlash(outsideRel), false},
-		{"https://example.test/system.spec.md", false},
+		{"https://example.test/new-system.system.spec.md", false},
 	} {
 		t.Run(tc.destination, func(t *testing.T) {
 			writeFile(t, source, fmt.Sprintf("---\ntype: requirement-spec\n---\n# Selection\n## Specification system\n[Selected](%s)\n", tc.destination))
@@ -52,7 +52,7 @@ func TestAssociatedSystemHonorsReferenceBoundaries(t *testing.T) {
 			}
 		})
 	}
-	writeFile(t, source, "---\ntype: requirement-spec\n---\n# Selection\n## Specification system\n[Selected][system?]\n\n[system?]: ../../selected/specs/system.spec.md\n")
+	writeFile(t, source, "---\ntype: requirement-spec\n---\n# Selection\n## Specification system\n[Selected][system?]\n\n[system?]: ../../selected/specs/selected.system.spec.md\n")
 	got, err := Associated(root, source)
 	if err != nil || got.Name != "Selected" {
 		t.Fatal(got, err)

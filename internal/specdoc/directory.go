@@ -34,28 +34,15 @@ func (d *directory) contains(target string) bool {
 }
 
 func (p *planner) placeDirectoryEntry(s *subject) {
-	owner := s.system
+	owner := s.parent
 	label := sentenceCase(strings.ReplaceAll(families[s.kind()], "-", " "))
 	switch s.kind() {
 	case "System":
 		label = "Child systems"
-	case "Component":
-		if parent := p.pages[attr(s.r, "part_of")]; parent != nil {
-			owner = parent
-		}
 	case "Interface":
-		if declared := p.pages[attr(s.r, "owner")]; declared != nil {
-			owner = declared
-		}
 		label = "Provided interfaces"
 		if slices.Contains(model.Strings(owner.r["required_interfaces"]), id(s.r)) {
 			label = "Required interfaces"
-		}
-	default:
-		// Some declarations (including concept uses and synchronizations) can
-		// belong to a component rather than directly to its system.
-		if declaring := p.pages[attr(s.r, "owner")]; declaring != nil && declaring.kind() == "Component" {
-			owner = declaring
 		}
 	}
 	owner.addMember(label, entry{s.name.title, s.file, s})
@@ -68,7 +55,7 @@ func (d *directory) render(w *writer) {
 	w.out.WriteByte('\n')
 	for _, e := range d.entries {
 		line := "- " + w.link(e.title, e.target)
-		if len(d.entries) > 1 && e.subject != nil {
+		if e.subject != nil {
 			if summary := subjectPreview(e.subject); summary != "" {
 				line += " — " + inlineText(summary)
 			}

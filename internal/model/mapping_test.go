@@ -58,7 +58,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 	}
 	schemas := map[string]*jsonschema.Schema{}
 	counts := map[string]int{}
-	for _, root := range []string{"../../specs", "../../examples/todo/specs", "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
+	for _, root := range []string{"../../specs", "../../examples/todo", "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
 		err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
 			if err != nil {
 				return err
@@ -76,7 +76,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 			if len(m.Diagnostics) > 0 || m.RootID == "" {
 				t.Errorf("%s: root=%q diagnostics=%#v", path, m.RootID, m.Diagnostics)
 			}
-			expectedClass := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement"}[kind]
+			expectedClass := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "component": "Component", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement"}[kind]
 			rootMatches := false
 			for _, element := range m.Elements {
 				if String(element, "id") == m.RootID && String(element, "kind") == expectedClass {
@@ -126,7 +126,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 		}
 	}
 	total := 0
-	for _, kind := range []string{"system", "job", "use-case", "concept", "requirement", "business-rule", "quality-model"} {
+	for _, kind := range []string{"system", "component", "job", "use-case", "concept", "requirement", "business-rule", "quality-model"} {
 		if counts[kind] == 0 {
 			t.Errorf("%s family absent from inventory", kind)
 		}

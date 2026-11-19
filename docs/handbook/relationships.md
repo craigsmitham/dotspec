@@ -14,7 +14,7 @@ boundary has a system specification, identify it with an explicit Subject system
 ```markdown
 ## System boundary
 
-**Subject system:** [Delivery service](../system.spec.md)
+**Subject system:** [Delivery service](../delivery-service.system.spec.md)
 
 The actor submits an address through this service; the recipient's mail client
 is outside the boundary.
@@ -121,7 +121,7 @@ goal, job step, outcome, concept use, concept action or synchronization:
 ```markdown
 ## Supports
 
-[Reduce lost work](../system.spec.md#reduce-lost-work).
+[Reduce lost work](../document-workspace.system.spec.md#reduce-lost-work).
 
 ## Derived from
 
@@ -130,7 +130,7 @@ retention interval.
 
 ## Relies on
 
-[Trusted time](../system.spec.md#trusted-time).
+[Trusted time](../document-workspace.system.spec.md#trusted-time).
 ```
 
 Use the appropriate deeper heading level inside a named element. Supports accepts
@@ -172,7 +172,7 @@ authorized member requests restoration within the recovery window.
 
 #### Applies to
 
-**Targets:** [DocumentTrash](../system.spec.md#documenttrash)
+**Targets:** [DocumentTrash](../document-workspace.system.spec.md#documenttrash)
 
 #### Verification plan
 
@@ -227,7 +227,7 @@ In a use case, name the particular uses participating in the actor-goal interact
 ```markdown
 ## Involves
 
-[DocumentTrash](../system.spec.md#documenttrash).
+[DocumentTrash](../document-workspace.system.spec.md#documenttrash).
 ```
 
 Each target must be a ConceptUse. Linking a reusable Concept definition is
@@ -259,49 +259,30 @@ for the meaning of those relationships.
 
 Use a System for the whole being specified, a Component for a named structural
 part, and a Feature for a recognizable grouping of specified product behavior. These are
-partial specification subjects, not an inventory of runtime architecture. Components
-and features are named elements declared in `system.spec.md`; they are not
-specification types and need no files of their own.
+partial specification subjects. Declare each system and component in its own named
+source. For example, `components/checkout/specs/checkout.component.spec.md`
+can identify the system that contains it:
 
 ```markdown
 ---
-type: system-spec
-id: online-store
+type: component-spec
+id: checkout
 ---
-# Online Store
+# Checkout
 
-## Purpose
-Let customers buy products.
+## Part of
+[Online Store](../../../specs/online-store.system.spec.md)
 
-## Scope
-Order submission and stock reservation.
-
-## Components
-
-### Checkout
-**ID:** checkout
-
-#### Purpose
-Accept customer orders.
-
-#### Part of
-[Online Store](#online-store)
-
-#### Responsibilities
+## Responsibilities
 Calculate totals and coordinate submission.
 
-#### Boundary
-Owns order submission; Inventory owns stock availability.
+## Boundary
+Checkout owns order submission. Inventory owns stock availability.
+```
 
-#### Contracts
-[Submission contract](../contracts/orders.md)
+In the system source, group behavior with a feature:
 
-#### Architecture
-[Coordination decision](../decisions/order-coordination.md)
-
-#### Implementation
-[Checkout source](../src/checkout/)
-
+```markdown
 ## Features
 
 ### Place an order
@@ -314,16 +295,14 @@ Let a customer buy available products.
 - [Reserve stock](requirements/reserve-stock.requirement.spec.md)
 ```
 
-`Part of` takes one link to a System or Component for component entries. A System's
-own `## Part of` takes one System link. Omit it while parentage is undecided; no
-parent is inferred from the declaring document or its directory. Structural cycles
-and multiple parent links are errors. Components are declared as sibling entries;
-express nesting through links, not deeper heading levels.
+Each component declares one parent system or component. A nested component links
+to its immediate parent. Subsystems use a single system link in their own
+`Part of` section. The root system omits that section.
 
 `Groups` can reference requirements, obligation clauses, use cases, concepts,
 named concept uses, synchronizations and interfaces. Several features can group the same
 record. Membership leaves that record's declaration ownership unchanged. Each
-feature belongs to the System declaring it. There is no separate feature/component
+feature belongs to the system or component declaring it. There is no separate feature/component
 implementation edge to maintain.
 
 In a requirement or embedded obligation, explicitly target a component:
@@ -331,10 +310,10 @@ In a requirement or embedded obligation, explicitly target a component:
 ```markdown
 ## Applies to
 
-**Targets:** [Checkout](../system.spec.md#checkout)
+**Targets:** [Checkout](../../components/checkout/specs/checkout.component.spec.md)
 ```
 
-Components can also contain an `#### Obligations` section with named clauses,
+Components can also contain a `## Obligations` section with named clauses,
 using the existing obligation authoring conventions at the corresponding heading
 levels. Declaration alone does not supply an applicability target. Purpose,
 Responsibilities and Boundary explain a component; put normative commitments in
@@ -349,7 +328,7 @@ In a business rule, job, use case, concept or requirement:
 ```markdown
 ## Specification system
 
-[Online Store](../../store/specs/system.spec.md#online-store)
+[Online Store](../../store/specs/online-store.system.spec.md#online-store)
 ```
 
 Use one repository-local link identifying a system document, its title heading,
@@ -369,7 +348,7 @@ dotspec model overview
 The command reports explicit part relationships, feature groups, directly
 applicable obligations, verification and criterion coverage, concept uses,
 descriptions and native references. To read the same subjects in context, open
-the [To-do system specification](../../examples/todo/specification/system.spec-report.md) and follow the
+the [To-do system specification](../../examples/todo/specification/personal-task-list.system.spec-report.md) and follow the
 feature, component or interface that interests you.
 
 The command derives feature involvement from the direct applicability targets

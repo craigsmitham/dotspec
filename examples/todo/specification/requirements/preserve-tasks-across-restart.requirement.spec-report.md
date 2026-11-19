@@ -5,7 +5,7 @@ documents: "../../specs/requirements/restart.requirement.spec.md#preserve-tasks-
 ---
 # Preserve tasks across restart
 
-[Personal task list](<../system.spec-report.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Statement
 
@@ -45,7 +45,7 @@ stops the process, starts a new process on the same file and compares both views
 
 ## Relies on
 
-[Same local storage](<../system.spec-report.md#same-local-storage>).
+[Same local storage](<../personal-task-list.system.spec-report.md#same-local-storage>).
 
 ## Supports
 

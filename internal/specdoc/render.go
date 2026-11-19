@@ -18,10 +18,7 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
-const (
-	systemReportName = "system.spec-report.md"
-	reviewPath       = "specification/requirements-review.report.md"
-)
+const reviewPath = "specification/requirements-review.report.md"
 
 type writer struct {
 	page                *Page
@@ -103,17 +100,24 @@ func (p *planner) renderSubject(s *subject) {
 	w := p.newPage(s.file, subjectDocument(s.file, s.source, s.name), s.name.title)
 	w.titleMarkdown = p.headingMarkdown(w, s, s.name)
 	headings := readingOrder(s)
+	var opening []string
 	if s.kind() == "System" {
-		// Keep the opening sections with all their descendants, even when
-		// Scope is the last authored section on the page.
+		opening = []string{"Description", "Purpose", "Scope"}
+	} else if hasDescriptionSection(s.kind()) && s.section("Description") != nil {
+		opening = []string{"Description"}
+	}
+	if len(opening) > 0 {
+		// Keep each opening section and its descendants ahead of navigation.
 		end := slices.IndexFunc(headings, func(h *heading) bool {
-			return h.level == s.name.level+1 && h.title != "Purpose" && h.title != "Scope"
+			return h.level == s.name.level+1 && !slices.Contains(opening, h.title)
 		})
 		if end < 0 {
 			end = len(headings)
 		}
 		p.renderHeadings(w, s, headings[:end])
 		headings = headings[end:]
+	}
+	if s.kind() == "System" {
 		var nav []string
 		if s != p.governing {
 			nav = append(nav, w.link(s.system.name.title, s.system.file))
@@ -125,7 +129,11 @@ func (p *planner) renderSubject(s *subject) {
 		w.text("---")
 		w.text(strings.Join(nav, " · "))
 	} else {
-		w.text(w.link(s.system.name.title, s.system.file))
+		parent := s.parent
+		if parent == nil {
+			parent = s.system
+		}
+		w.text(w.link(parent.name.title, parent.file))
 	}
 	p.renderHeadings(w, s, headings)
 	for _, label := range slices.Sorted(maps.Keys(s.directories)) {
@@ -211,7 +219,11 @@ func readingOrder(s *subject) []*heading {
 	case "UseCase":
 		first = []string{"Goal", "Primary actor", "Trigger", "Preconditions", "Main success scenario", "Extensions", "Success guarantees", "Minimal guarantees"}
 	case "System":
-		first = []string{"Purpose", "Scope", "Features"}
+		first = []string{"Description", "Purpose", "Scope", "Features"}
+	default:
+		if hasDescriptionSection(s.kind()) {
+			first = []string{"Description"}
+		}
 	}
 	priority := func(group []*heading) int {
 		if group[0] == s.name {

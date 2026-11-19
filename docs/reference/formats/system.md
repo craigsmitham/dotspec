@@ -3,7 +3,7 @@
 ## System commands
 
 ```sh
-dotspec system init                     # Create specs/system.spec.md here
+dotspec system init "Spec parser"       # Create specs/spec-parser.system.spec.md
 dotspec system show                     # Describe the nearest enclosing system
 dotspec system list                     # Discover systems in this subtree
 dotspec system show --path internal/cli
@@ -17,12 +17,12 @@ Every system command accepts `--path DIR`, defaulting to the current project dir
 The project directory must already exist. Use `dotspec system <command> --help`
 for usage.
 
-- `init` creates `specs/system.spec.md` with editable placeholders for the name,
-  purpose, and scope. The
+- `init` creates `specs/<name>.system.spec.md` using the supplied display name and editable
+  sections for description, purpose, and scope. With no argument it uses “New system”. The
   [existing-target requirement](../../../specs/requirements/reject-existing-target.requirement.spec.md)
   governs initialization at an existing path.
-- `show` reads the selected project directory's `specs/system.spec.md`, or the
-  nearest ancestor's if there is no local spec. It displays the name, purpose, scope, nearest parent
+- `show` reads the selected project directory's `specs/<name>.system.spec.md`, or the
+  nearest ancestor's if there is no local spec. It displays the name, optional description, purpose, scope, nearest parent
   system, and source path. Ancestor lookup stops at the Git repository root
   (including a worktree root), or the filesystem root outside Git.
 - `list` displays a tree of systems within the selected directory and its
@@ -48,7 +48,7 @@ read the systems associated with their specifications.
 
 ## System spec format
 
-Each project directory can contain one system spec at `specs/system.spec.md`:
+Each project directory can contain one system spec at `specs/<name>.system.spec.md`:
 
 ```markdown
 ---
@@ -56,6 +56,10 @@ type: system-spec
 ---
 
 # Spec parser
+
+## Description
+
+A Markdown reader that extracts structured requirements from specification files.
 
 ## Purpose
 
@@ -75,29 +79,69 @@ headings. The optional `Quality attributes` section is also displayed by
 and interpreted as described below. Other sections remain authored Markdown.
 There is no requirement inheritance behavior.
 
-Directory discovery supplies context, not structural parentage:
+Use an optional `## Description` to introduce the system in one short paragraph.
+Write it so that someone seeing only the name and description can tell what the
+system is. Use `Purpose` for the reason it exists and `Scope` for its boundaries.
 
-```text
-specs/system.spec.md                  # enclosing system document
-internal/parser/specs/system.spec.md  # nested document; no part_of inferred
+### Match the filename to the heading
+
+Use the visible H1 as the subject name. Lowercase its letters, keep letters and
+digits, and replace each run of spaces or punctuation between them with one
+hyphen. For example, `# Spec parser` requires `spec-parser.system.spec.md` and
+`type: system-spec`. An optional frontmatter `id` supplies a stable link anchor.
+The directory can keep its codebase name. When a subject is renamed, update its
+heading, filename and incoming links together. `dotspec check` reports the
+expected filename when the two names disagree.
+
+## Component spec format
+
+Give each component its own code directory with a `specs/` folder. Put one
+named declaration directly under that folder. A component uses the same filename
+rule as a system, with the suffix `.component.spec.md`. For example,
+`components/task-service/specs/task-service.component.spec.md` contains:
+
+```markdown
+---
+type: component-spec
+---
+
+# Task service
+
+## Description
+
+Records task changes and acknowledges each committed update.
+
+## Part of
+
+[Personal task list](../../../specs/personal-task-list.system.spec.md)
 ```
 
-Declare `## Part of` with one system link to identify a subsystem. Add named
-`Components` and `Features` entries to a system document when requirements need
-more precise subjects or capability groupings. Components can identify one system
-or component parent; features group requirements and behavioral specifications
-without owning them. No requirement inheritance or implementation allocation is
-inferred.
+From the To-do project root, the equivalent initializer for an empty component
+directory is:
 
-Specifications other than systems and quality models can select a system with
-`## Specification system` and one Markdown link. Without that section, the nearest directory system remains the
-default. An invalid explicit selection never falls back. Moving a file can change
-its directory context and may require updating relative links. Structural parentage
-and explicit system selection follow authored links, never directory nesting. Quality classification uses the selected system, independently
-of `Applies to` targets.
+```sh
+dotspec component init "Task service" --path components/task-service \
+  --part-of specs/personal-task-list.system.spec.md
+```
+
+A component requires one `Part of` link to a system or another component in
+the project. A subsystem links to its parent system with the same heading.
+The parent report lists its children from those links.
+
+Use the same collections under either subject's `specs/` directory.
+For example, Task service owns
+`specs/requirements/acknowledge-after-commit.requirement.spec.md` under its
+component directory. The nearest subject supplies the local owner. Following a
+component's parent links identifies the default system for quality classification.
+A requirement can explicitly select a different specification system and can
+name any applicable targets in `Applies to`.
+
+For a feature, capability, or concept use, put `Description` one heading level
+below its declaration. The report opens with the description and reuses the
+first paragraph in its parent's directory.
 
 See [structure and feature authoring](../../handbook/relationships.md#describe-systems-components-and-features)
-and the [To-do system overview](../../../examples/todo/specification/system.spec-report.md).
+and the [To-do system overview](../../../examples/todo/specification/personal-task-list.system.spec-report.md).
 Use `dotspec spec build` in an [opted-in project](../generated-specification.md)
 to generate its overview and supporting pages. To inspect system structure and
 applicable obligations as a standalone Markdown report, run `dotspec model overview`.
@@ -166,7 +210,7 @@ quality models or FURPS. dotspec includes three reusable starters and can copy
 selected definitions into a system. See [Populate system quality attributes](../../handbook/quality-models.md)
 for browsing, previewing, and authoring models. Copied declarations remain local;
 model updates do not synchronize them.
-The repository's [system spec](../../../specs/system.spec.md#quality-attributes) provides
+The repository's [system spec](../../../specs/dotspec.system.spec.md#quality-attributes) provides
 a local example, including concerns that do not yet have requirements.
 
 ## System context

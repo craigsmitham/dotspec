@@ -1,11 +1,15 @@
 ---
 generated_by: dotspec
 type: concept-use-spec-report
-documents: "../../specs/system.spec.md#my-checklist"
+documents: "../../specs/personal-task-list.system.spec.md#my-checklist"
 ---
 # My checklist
 
-[Personal task list](<../system.spec-report.md>)
+## Description
+
+The checklist used to track one person’s open and completed tasks.
+
+[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Definition
 
@@ -21,4 +25,4 @@ documents: "../../specs/system.spec.md#my-checklist"
 
 **Used in** · [Return to my list](<../use-cases/return-to-my-list.use-case.spec-report.md>)
 
-[Edit source](<../../specs/system.spec.md#my-checklist>)
+[Edit source](<../../specs/personal-task-list.system.spec.md#my-checklist>)

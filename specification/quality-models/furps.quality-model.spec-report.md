@@ -5,11 +5,11 @@ documents: "../../internal/qualitymodel/specs/quality-models/furps.quality-model
 ---
 # FURPS starter
 
-[dotspec](<../system.spec-report.md>)
-
 ## Description
 
 A dotspec starter covering the five FURPS categories and all 32 subcategory placements (31 distinct subcategories) listed in the cited Rational Unified Process guidance. This is a documented RUP variant, not a claim that FURPS has one universal fixed taxonomy. Explanations are original authoring prompts. Functionality can classify general requirements as well as quality requirements; these categories do not impose targets. The separate FURPS+ constraint categories are outside this starter. Accuracy appears under two categories in the source and is represented once, organized under both reliability and performance.
+
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Edition
 

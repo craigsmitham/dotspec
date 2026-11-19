@@ -3,14 +3,14 @@ generated_by: dotspec
 ---
 # Quality attributes
 
-[dotspec](<system.spec-report.md>)
+[dotspec](<dotspec.system.spec-report.md>)
 
 These are dotspec's declared quality attributes. The definitions identify concerns;
 individual quality requirements establish the obligations.
 
 ## Usability
 
-<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/system.spec.md#usability"} -->
+<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/dotspec.system.spec.md#usability"} -->
 
 **ID:** usability
 
@@ -20,7 +20,7 @@ How effectively contributors can author, inspect, and maintain specifications.
 
 ## Diagnosability
 
-<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/system.spec.md#diagnosability"} -->
+<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/dotspec.system.spec.md#diagnosability"} -->
 
 **ID:** diagnosability\
 **Sub-attribute of:** usability
@@ -35,7 +35,7 @@ problems.
 
 ## Accessibility
 
-<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/system.spec.md#accessibility"} -->
+<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/dotspec.system.spec.md#accessibility"} -->
 
 **ID:** accessibility\
 **Sub-attribute of:** usability
@@ -47,7 +47,7 @@ can use dotspec.
 
 ## Reliability
 
-<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/system.spec.md#reliability"} -->
+<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/dotspec.system.spec.md#reliability"} -->
 
 **ID:** reliability
 
@@ -56,7 +56,7 @@ conditions.
 
 ## Repeatability
 
-<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/system.spec.md#repeatability"} -->
+<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/dotspec.system.spec.md#repeatability"} -->
 
 **ID:** repeatability\
 **Sub-attribute of:** reliability
@@ -71,7 +71,7 @@ reports.
 
 ## Source preservation
 
-<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/system.spec.md#source-preservation"} -->
+<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/dotspec.system.spec.md#source-preservation"} -->
 
 **ID:** source-preservation\
 **Sub-attribute of:** reliability
@@ -86,7 +86,7 @@ Whether inspection preserves the source material it examines.
 
 ## Performance
 
-<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/system.spec.md#performance"} -->
+<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/dotspec.system.spec.md#performance"} -->
 
 **ID:** performance
 
@@ -95,7 +95,7 @@ workloads.
 
 ## Responsiveness
 
-<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/system.spec.md#responsiveness"} -->
+<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../specs/dotspec.system.spec.md#responsiveness"} -->
 
 **ID:** responsiveness\
 **Sub-attribute of:** performance
@@ -105,4 +105,4 @@ The elapsed time before an operation delivers its result.
 No responsiveness target has been adopted. Selecting one requires representative
 workloads, defined measurement conditions, and baseline measurements.
 
-[Edit source](<../specs/system.spec.md#quality-attributes>)
+[Edit source](<../specs/dotspec.system.spec.md#quality-attributes>)

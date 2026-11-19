@@ -16,7 +16,7 @@ Deleted entries must stay absent.
 
 ## Relies on
 
-[Same local storage](../system.spec.md#same-local-storage).
+[Same local storage](../personal-task-list.system.spec.md#same-local-storage).
 
 ## Supports
 

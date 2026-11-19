@@ -10,12 +10,12 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
-	"unicode"
 
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 
 	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
 // Plan binds source-backed expectations to their project-relative generated paths.
@@ -54,6 +54,7 @@ type subject struct {
 	source      *sourceFile
 	name        *heading
 	system      *subject
+	parent      *subject
 	directories map[string]*directory
 	attributes  *subject // the system's generated quality-attributes section
 	file, dir   string
@@ -214,36 +215,34 @@ func (p *planner) read() error {
 }
 
 func (s *subject) slug() string {
+	if s.kind() == "System" || s.kind() == "Component" {
+		return strings.TrimSuffix(path.Base(s.source.path), "."+kindName(s.kind())+".spec.md")
+	}
 	name := attr(s.r, "authored_id")
 	if name == "" {
 		name = s.name.title
 	}
-	var b strings.Builder
-	dash := false
-	for _, r := range strings.ToLower(name) {
-		if unicode.IsLetter(r) || unicode.IsNumber(r) {
-			if dash && b.Len() > 0 {
-				b.WriteByte('-')
-			}
-			b.WriteRune(r)
-			dash = false
-		} else {
-			dash = true
-		}
+	if slug := specfile.NameSlug(name); slug != "" {
+		return slug
 	}
-	if b.Len() == 0 {
-		return "section"
-	}
-	return b.String()
+	return "section"
 }
 func (s *subject) kind() string {
 	return attr(s.r, "kind")
 }
+
+// A system or component owns a directory. Its overview mirrors its source filename,
+// including when a sibling with the same name needs a distinct directory.
+func (s *subject) placeOverview(dir string) {
+	s.dir = dir
+	s.file = path.Join(dir, strings.TrimSuffix(path.Base(s.source.path), ".md")+"-report.md")
+}
+
 func (s *subject) collectionDir() string {
 	if s.kind() == "System" {
-		return path.Join(s.system.dir, "systems")
+		return path.Join(s.parent.dir, "systems")
 	}
-	return path.Join(s.system.dir, families[s.kind()])
+	return path.Join(s.parent.dir, families[s.kind()])
 }
 
 func (p *planner) place() error {
@@ -261,13 +260,32 @@ func (p *planner) place() error {
 		case "QualityModel":
 			continue // project-wide reference definition
 		}
+		switch s.kind() {
+		case "Component":
+			s.parent = p.pages[attr(s.r, "part_of")]
+		case "System":
+			s.parent = p.pages[parent]
+		default:
+			s.parent = p.pages[attr(s.r, "specification_component")]
+		}
+		if s.parent == nil {
+			s.parent = p.pages[attr(s.r, "owner")]
+		}
 		if parent == "" {
 			parent = attr(s.r, "owner")
 		}
 		for parent != "" && attr(p.elements[parent], "kind") != "System" {
-			parent = attr(p.elements[parent], "owner")
+			element := p.elements[parent]
+			if attr(element, "kind") == "Component" {
+				parent = attr(element, "specification_system")
+			} else {
+				parent = attr(element, "owner")
+			}
 		}
 		s.system = p.pages[parent]
+		if s.parent == nil {
+			s.parent = s.system
+		}
 		if s.system == nil {
 			return fmt.Errorf("%s: cannot place %s in a selected system", s.source.path, s.name.title)
 		}
@@ -275,16 +293,16 @@ func (p *planner) place() error {
 	if len(roots) != 1 {
 		return fmt.Errorf("generated specification requires one root system; found %d (%s)", len(roots), strings.Join(roots, ", "))
 	}
-	p.governing.dir = "specification"
-	p.governing.file = path.Join(p.governing.dir, systemReportName)
+	p.governing.placeOverview("specification")
 	for _, s := range p.subjects {
 		if s.kind() == "QualityModel" {
 			s.system = p.governing
+			s.parent = p.governing
 		}
 	}
 	// Disambiguate siblings by stable project-relative source and authored heading.
 	names := map[string]int{}
-	key := func(s *subject) string { return id(s.system.r) + "/" + families[s.kind()] + "/" + s.slug() }
+	key := func(s *subject) string { return id(s.parent.r) + "/" + families[s.kind()] + "/" + s.slug() }
 	for _, s := range p.subjects {
 		if s != p.governing {
 			names[key(s)]++
@@ -300,7 +318,7 @@ func (p *planner) place() error {
 			return fmt.Errorf("cycle in system parentage at %s", s.source.path)
 		}
 		active[s] = true
-		if err := assign(s.system); err != nil {
+		if err := assign(s.parent); err != nil {
 			return err
 		}
 		slug := s.slug()
@@ -309,9 +327,8 @@ func (p *planner) place() error {
 			slug += fmt.Sprintf("-%x", sum[:5])
 		}
 		base := path.Join(s.collectionDir(), slug)
-		if s.kind() == "System" {
-			s.dir = base
-			s.file = path.Join(s.dir, systemReportName)
+		if s.kind() == "System" || s.kind() == "Component" {
+			s.placeOverview(base)
 		} else {
 			s.file = base + "." + kindName(s.kind()) + ".spec-report.md"
 		}
@@ -403,7 +420,10 @@ func (p *planner) indexTargets() {
 			page := p.ownerPage(r)
 			if page != nil {
 				sys := page.system
-				if page.kind() == "System" {
+				if page.parent != nil && page.parent.kind() == "Component" {
+					sys = page.parent
+				}
+				if page.kind() == "System" || page.kind() == "Component" {
 					sys = page
 				}
 				n := p.nodes[nameNode(r)]
@@ -419,7 +439,11 @@ func (p *planner) indexTargets() {
 			component := p.pages[target]
 			dest := p.targets[id(r)]
 			if component != nil && component.kind() == "Component" && dest != "" {
-				component.addMember("Applicable requirements", entry{attr(p.nodes[nameNode(r)], "decoded_text"), dest, p.pages[id(r)]})
+				preview := p.pages[id(r)]
+				if component.directories["Requirements"].contains(dest) {
+					preview = nil // The local Requirements entry already carries the statement.
+				}
+				component.addMember("Applicable requirements", entry{attr(p.nodes[nameNode(r)], "decoded_text"), dest, preview})
 			}
 		}
 	}

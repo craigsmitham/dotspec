@@ -5,7 +5,7 @@ documents: "../../specs/jobs/develop-requirements.job.spec.md#develop-requiremen
 ---
 # Develop Requirements
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Job
 

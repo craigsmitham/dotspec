@@ -14,17 +14,6 @@ type Node struct {
 	Children []*Node `json:"children"`
 }
 
-func Init(path string) (string, error) {
-	dir, err := specfile.Scope(path)
-	if err != nil {
-		return "", err
-	}
-	if err := Layout.ValidateLocal(dir); err != nil {
-		return "", err
-	}
-	return Layout.Create(dir, "", Template)
-}
-
 // Enclosing returns the nearest system, or nil when none exists. Malformed
 // enclosing specs remain errors. Lookup stops at the repository boundary.
 func Enclosing(path string) (*System, error) {
@@ -64,13 +53,20 @@ func enclosing(path string, limit int) ([]*System, error) {
 		if err := Layout.ValidateLocal(current); err != nil {
 			return nil, err
 		}
-		candidate, err := Read(Layout.Path(current, ""))
-		if err == nil {
+		file, err := Layout.LocalSubject(current)
+		if err != nil {
+			return nil, err
+		}
+		var candidate *System
+		if file != "" {
+			candidate, err = Read(file)
+		}
+		if candidate != nil {
 			specs = append(specs, candidate)
 			if len(specs) == limit {
 				return specs, nil
 			}
-		} else if !errors.Is(err, fs.ErrNotExist) {
+		} else if err != nil && !errors.Is(err, fs.ErrNotExist) {
 			return nil, err
 		}
 		if current == root || filepath.Dir(current) == current {

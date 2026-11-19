@@ -54,7 +54,6 @@ types:
   - synchronizations
   - quality_attributes
   - part_of
-  - components
   - features
   - capabilities
   - out_of_scope
@@ -301,13 +300,14 @@ diagrams:
 - title: Specification types
   direction: TB
   show_cardinality: false
-  description: A Specification is the root record of one authored specification document. The seven specification
+  description: A Specification is the root record of one authored specification document. The eight specification
     types correspond one-to-one with these concrete classes. Subsets classify concerns separately from this
     hierarchy.
   nodes:
   - Specification
   - SystemContextSpecification
   - System
+  - Component
   - QualityModel
   - BusinessRule
   - Job
@@ -316,10 +316,8 @@ diagrams:
   - Requirement
   paths: []
   inheritance: true
-- title: Elements declared in a system specification
-  description: Components, features, capabilities, concept uses, synchronizations and interfaces are named elements
-    declared inside a System specification, not specifications themselves. Each has one declaring owner; declaration
-    does not establish structural parentage.
+- title: Elements declared in system and component specifications
+  description: Components link to their structural parents. Systems and components can each declare features, capabilities, concept uses, synchronizations, and interfaces.
   nodes:
   - System
   - Component
@@ -329,11 +327,15 @@ diagrams:
   - Synchronization
   - Interface
   paths:
-  - System.components
+  - Component.part_of
   - System.features
   - System.capabilities
   - System.concept_uses
   - System.synchronizations
+  - Component.features
+  - Component.capabilities
+  - Component.concept_uses
+  - Component.synchronizations
   - System.required_interfaces
   - System.provided_interfaces
   - Component.required_interfaces
@@ -342,11 +344,10 @@ diagrams:
 - title: Specification system association
   direction: TB
   show_cardinality: false
-  description: Specification types derived from SystemContextSpecification select a specification system explicitly
-    or use the nearest directory system by default. Elements declared inside a specification have declaring
-    owners instead. Neither association establishes structural parentage. Quality models stand independently.
+  description: A local specification records its owning component and effective system. Component parent links identify the default system. Quality models are project-wide.
   nodes:
   - System
+  - Component
   - BusinessRule
   - Job
   - UseCase
@@ -357,6 +358,7 @@ diagrams:
   - Job.specification_system
   - UseCase.specification_system
   - Concept.specification_system
+  - Requirement.specification_component
   - Requirement.specification_system
   inheritance: false
 - title: Boundary interfaces

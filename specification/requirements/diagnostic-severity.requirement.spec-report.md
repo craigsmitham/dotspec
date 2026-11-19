@@ -5,7 +5,7 @@ documents: "../../specs/requirements/diagnostic-severity.requirement.spec.md#dia
 ---
 # Diagnostic severity is available without styling
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 

@@ -5,11 +5,11 @@ documents: "../../specs/quality-models/personal-data.quality-model.spec.md#perso
 ---
 # Personal data quality
 
-[Personal task list](<../system.spec-report.md>)
-
 ## Description
 
 Select concerns for tools in which a person keeps work between sessions.
+
+[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Quality attributes
 

@@ -29,6 +29,10 @@ func SpecificationSystem(data []byte) (Reference, bool, error) {
 }
 
 func (o *Outline) SpecificationSystem() (Reference, bool, error) {
+	return o.SingleSubjectLink("Specification system", "relationship.specification_system")
+}
+
+func (o *Outline) SingleSubjectLink(title, rule string) (Reference, bool, error) {
 	var location diagnostic.Location
 	var links []Reference
 	found, active := false, false
@@ -37,12 +41,12 @@ func (o *Outline) SpecificationSystem() (Reference, bool, error) {
 			if h.Level <= 2 {
 				active = false
 			}
-			if h.Level == 2 && strings.TrimSpace(inlineText(h, o.Source)) == "Specification system" {
+			if h.Level == 2 && strings.TrimSpace(inlineText(h, o.Source)) == title {
 				if found {
-					return Reference{}, true, diagnostic.Error("structure.duplicate-section", "Duplicate Specification system section.", o.Location(h.Pos(), "Specification system"), location)
+					return Reference{}, true, diagnostic.Error("structure.duplicate-section", "Duplicate "+title+" section.", o.Location(h.Pos(), title), location)
 				}
 				found, active = true, true
-				location = o.Location(h.Pos(), "Specification system")
+				location = o.Location(h.Pos(), title)
 			}
 		}
 		if !active {
@@ -50,7 +54,7 @@ func (o *Outline) SpecificationSystem() (Reference, bool, error) {
 		}
 		_ = ast.Walk(n, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
 			if link, ok := node.(*ast.Link); entering && ok {
-				links = append(links, Reference{string(link.Destination), o.Location(link.Pos(), "Specification system")})
+				links = append(links, Reference{string(link.Destination), o.Location(link.Pos(), title)})
 			}
 			return ast.WalkContinue, nil
 		})
@@ -59,7 +63,7 @@ func (o *Outline) SpecificationSystem() (Reference, bool, error) {
 		return Reference{}, false, nil
 	}
 	if len(links) != 1 {
-		return Reference{}, true, diagnostic.Error("relationship.specification_system", "Specification system must contain exactly one Markdown link to a system.", location)
+		return Reference{}, true, diagnostic.Error(rule, title+" must contain exactly one Markdown link to the subject.", location)
 	}
 	return links[0], true, nil
 }

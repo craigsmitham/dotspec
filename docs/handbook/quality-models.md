@@ -49,8 +49,8 @@ it does not automatically add quality attributes.
 
 ```sh
 dotspec system init
-dotspec quality-model apply --system specs/system.spec.md --dry-run
-dotspec quality-model apply --system specs/system.spec.md
+dotspec quality-model apply --system specs/personal-task-list.system.spec.md --dry-run
+dotspec quality-model apply --system specs/personal-task-list.system.spec.md
 ```
 
 Omitting the model selects `iso-25010-2023`. Omitting `--attributes` selects all
@@ -60,7 +60,7 @@ writes those same bytes, provided the inputs have not changed.
 To choose another model and only some attributes:
 
 ```sh
-dotspec quality-model apply furps --system specs/system.spec.md \
+dotspec quality-model apply furps --system specs/personal-task-list.system.spec.md \
   --attributes reliability,performance --dry-run
 ```
 

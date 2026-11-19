@@ -27,6 +27,12 @@ func prepareExample(t *testing.T, command string) {
 	if err := os.Mkdir("internal", 0o755); err != nil {
 		t.Fatal(err)
 	}
+	if command == "dotspec component init" {
+		if _, err := system.Init("."); err != nil {
+			t.Fatal(err)
+		}
+		return
+	}
 	if command == "dotspec" || strings.HasSuffix(command, " init") {
 		return
 	}
@@ -132,7 +138,7 @@ func TestOutputFailuresAcrossCommands(t *testing.T) {
 	prepareExample(t, "output")
 	for _, args := range [][]string{
 		{"--help"}, {"--version"}, {"completion", "bash"}, {"man"}, {"sources"}, {"sources", "--json"},
-		{"quality-model", "show", "furps"}, {"quality-model", "list", "--json"}, {"quality-model", "check", "furps", "--json"}, {"quality-model", "apply", "--system", "specs/system.spec.md", "--dry-run"},
+		{"quality-model", "show", "furps"}, {"quality-model", "list", "--json"}, {"quality-model", "check", "furps", "--json"}, {"quality-model", "apply", "--system", "specs/new-system.system.spec.md", "--dry-run"},
 		{"system", "show"}, {"system", "list", "--json"}, {"job", "show", "develop-requirements"},
 		{"job", "check", "develop-requirements", "--json"},
 		{"use-case", "show", "check-specifications"}, {"use-case", "list", "--json"}, {"use-case", "list", "--overview"},

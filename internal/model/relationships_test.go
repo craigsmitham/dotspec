@@ -11,8 +11,8 @@ import (
 func relationshipFixture(t *testing.T) string {
 	t.Helper()
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system-spec\n---\n# Authoring context\n## Purpose\nProvide context.\n## Scope\nThis repository.\n")
-	conformanceWrite(t, root, "external/specs/system.spec.md", "---\ntype: system-spec\n---\n# Delivery system\n## Purpose\nDeliver links.\n## Scope\nExternal delivery.\n")
+	conformanceWrite(t, root, "specs/authoring-context.system.spec.md", "---\ntype: system-spec\n---\n# Authoring context\n## Purpose\nProvide context.\n## Scope\nThis repository.\n")
+	conformanceWrite(t, root, "external/specs/delivery-system.system.spec.md", "---\ntype: system-spec\n---\n# Delivery system\n## Purpose\nDeliver links.\n## Scope\nExternal delivery.\n")
 	conformanceWrite(t, root, "specs/jobs/share.job.spec.md", "---\ntype: job-spec\n---\n# Share information\n## Job\nWhen collaborating, I want to share information so others can act.\n## Steps\n### Send a link\nSend the address to a recipient.\n## Outcomes\n- Minimize time to share a usable address.\n")
 	conformanceWrite(t, root, "specs/use-cases/share.use-case.spec.md", `---
 type: use-case-spec
@@ -21,7 +21,7 @@ type: use-case-spec
 ## Goal
 Deliver an address to the recipient.
 ## System boundary
-**Subject system:** [Delivery](../../external/specs/system.spec.md)
+**Subject system:** [Delivery](../../external/specs/delivery-system.system.spec.md)
 
 The actor submits the address through the delivery service.
 ## Supports
@@ -54,7 +54,7 @@ The service must confirm delivery.
 ## Applies to
 **Targets:** [Sharing](../use-cases/share.use-case.spec.md)
 ### Subjects
-[Delivery context](../../external/specs/system.spec.md) is contextual background.
+[Delivery context](../../external/specs/delivery-system.system.spec.md) is contextual background.
 `)
 	return root
 }
@@ -119,7 +119,7 @@ func TestContextualLinksDoNotAssertSemanticRelations(t *testing.T) {
 
 func TestUnknownConceptScopeDefersDependentRelationships(t *testing.T) {
 	root := compositionFixture(t)
-	p := filepath.Join(root, "specs/system.spec.md")
+	p := filepath.Join(root, "specs/expiring-links.system.spec.md")
 	data, err := os.ReadFile(p)
 	if err != nil {
 		t.Fatal(err)

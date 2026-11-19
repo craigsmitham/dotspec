@@ -15,7 +15,7 @@ import (
 func target(t *testing.T, raw string) string {
 	t.Helper()
 	dir := t.TempDir()
-	path := filepath.Join(dir, "specs", "system.spec.md")
+	path := filepath.Join(dir, "specs", "system.system.spec.md")
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 		t.Fatal(err)
 	}
@@ -139,7 +139,7 @@ func TestFailureLeavesOriginal(t *testing.T) {
 		}
 	}
 	path := target(t, plain)
-	link := filepath.Join(t.TempDir(), "system.spec.md")
+	link := filepath.Join(t.TempDir(), "target.system.spec.md")
 	if err := os.Symlink(path, link); err == nil {
 		if _, err := Run(m, link, nil, false); err == nil {
 			t.Fatal("symlink target accepted")

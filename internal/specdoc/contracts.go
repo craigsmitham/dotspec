@@ -80,7 +80,11 @@ func addSourceContracts(p *planner) error {
 			}
 		}
 		if s != p.governing {
-			requireRoute(page, relative(s.file, s.system.file), s.system.name.title)
+			parent := s.parent
+			if parent == nil {
+				parent = s.system
+			}
+			requireRoute(page, relative(s.file, parent.file), parent.name.title)
 		}
 	}
 	// Read typed relation facts independently of the renderer's choice to

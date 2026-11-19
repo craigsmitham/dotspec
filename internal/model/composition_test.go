@@ -113,7 +113,7 @@ func TestConceptCompositionExport(t *testing.T) {
 }
 func TestCompositionAuthoringErrorsRemainFaithful(t *testing.T) {
 	cases := []struct{ name, old, replacement, code string }{
-		{"wrong definition kind", "[Shorthand](concepts/shorthand.concept.spec.md).", "[System](system.spec.md).", "concept.definition"},
+		{"wrong definition kind", "[Shorthand](concepts/shorthand.concept.spec.md).", "[System](expiring-links.system.spec.md).", "concept.definition"},
 		{"action from another definition", "[Register](concepts/shorthand.concept.spec.md#register)", "[Allocate](concepts/expiry.concept.spec.md#allocate)", "concept.action"},
 		{"type from wrong use", "**Supplying concept use:** [PublicLinks](#publiclinks)", "**Supplying concept use:** [PublicExpiry](#publicexpiry)", "concept.bound_type"},
 		{"duplicate parameter binding", "### PublicExpiry", "##### Duplicate target binding\n\n**Parameter:** [Target](concepts/shorthand.concept.spec.md#target)\n**Primitive:** URL\n\n### PublicExpiry", "concept.parameter"},
@@ -122,7 +122,7 @@ func TestCompositionAuthoringErrorsRemainFaithful(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			root := compositionFixture(t)
-			path := filepath.Join(root, "specs/system.spec.md")
+			path := filepath.Join(root, "specs/expiring-links.system.spec.md")
 			data, err := os.ReadFile(path)
 			if err != nil {
 				t.Fatal(err)
@@ -151,7 +151,7 @@ func TestCompositionAuthoringErrorsRemainFaithful(t *testing.T) {
 func TestCompositionCyclesAndPartialDeclarations(t *testing.T) {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/concepts/simple.concept.spec.md", "---\ntype: concept-spec\n---\n# Simple\n## Purpose\nServe a purpose.\n## Actions\n### Run\nPerform behavior.\n")
-	conformanceWrite(t, root, "specs/system.spec.md", `---
+	conformanceWrite(t, root, "specs/example.system.spec.md", `---
 type: system-spec
 ---
 # Example
@@ -239,7 +239,7 @@ func TestDesignMarkdownRebasesReferencesWithoutRewritingCode(t *testing.T) {
 func TestCompositionRejectsForeignSystemUsesAndLocalNameCollisions(t *testing.T) {
 	t.Run("foreign system use", func(t *testing.T) {
 		root := compositionFixture(t)
-		conformanceWrite(t, root, "other/specs/system.spec.md", `---
+		conformanceWrite(t, root, "other/specs/other.system.spec.md", `---
 type: system-spec
 ---
 # Other
@@ -252,7 +252,7 @@ S.
 #### Definition
 [Shorthand](../../specs/concepts/shorthand.concept.spec.md)
 #### Dependencies
-[PublicLinks](../../specs/system.spec.md#publiclinks)
+[PublicLinks](../../specs/expiring-links.system.spec.md#publiclinks)
 `)
 		result := conformanceExport(t, root)
 		if result.ExitCode != 1 {

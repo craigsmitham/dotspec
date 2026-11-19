@@ -2290,6 +2290,30 @@
           ],
           "required": false
         },
+        "specification_component": {
+          "annotations": {
+            "relationship_basis": "Directory-derived association under the recorded discovery policy.",
+            "relationship_category": "structural-context",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "none",
+            "relationship_label": "specification component",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
+          },
+          "any_of": [],
+          "description": "Local component that owns this specification by directory scope.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Component",
+          "reference_ranges": [
+            "Component"
+          ],
+          "required": false
+        },
         "specification_system": {
           "annotations": {
             "relationship_basis": "Explicit Specification system reference when present; otherwise the nearest enclosing system found by directory discovery.",
@@ -2820,6 +2844,22 @@
           ],
           "required": false
         },
+        "description": {
+          "annotations": {},
+          "any_of": [],
+          "description": "The ability this system or organization provides.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "enablers": {
           "annotations": {},
           "any_of": [],
@@ -2995,12 +3035,15 @@
             "relationship_basis": "Checked inverse of canonical declaration membership.",
             "relationship_category": "declaration-containment",
             "relationship_cycles": "forbidden",
-            "relationship_inverse": "System.capabilities",
+            "relationship_inverse": "System.capabilities or Component.capabilities",
             "relationship_label": "declared by",
             "relationship_ordering": "single target",
-            "relationship_scope": "Exactly one declaring System in the same source document."
+            "relationship_scope": "Exactly one declaring System or Component in the same source document."
           },
-          "any_of": [],
+          "any_of": [
+            "System",
+            "Component"
+          ],
           "description": "",
           "identifier": false,
           "inline_ranges": [],
@@ -3008,9 +3051,10 @@
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "System",
+          "range": "DomainElement",
           "reference_ranges": [
-            "System"
+            "System",
+            "Component"
           ],
           "required": true
         },
@@ -3380,15 +3424,17 @@
       "ancestors": [
         "Component",
         "ObligationContainer",
+        "SystemContextSpecification",
+        "Specification",
         "TraceableElement",
         "DomainElement",
         "Record"
       ],
       "annotations": {
-        "owned_memberships": "Component.required_interfaces or Component.provided_interfaces"
+        "owned_memberships": "Component.concept_uses or Component.synchronizations or Component.features or Component.capabilities or Component.required_interfaces or Component.provided_interfaces"
       },
       "description": "A named part of a system with a described responsibility and boundary. Neither its declaration nor code location establishes structural parentage.",
-      "is_a": "TraceableElement",
+      "is_a": "SystemContextSpecification",
       "mixins": [
         "ObligationContainer"
       ],
@@ -3424,6 +3470,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "authority_and_evidence": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "boundary_description": {
           "annotations": {},
           "any_of": [],
@@ -3440,8 +3502,35 @@
           "reference_ranges": [],
           "required": false
         },
-        "content": {
-          "annotations": {},
+        "capabilities": {
+          "annotations": {
+            "paired_with": "capabilities_content",
+            "relationship_basis": "Explicit named declarations.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Capability.owner",
+            "relationship_label": "declares capabilities",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring Component in the same source document."
+          },
+          "any_of": [],
+          "description": "Capability declarations; the declaring Component is a documentation home, not an inferred provider.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Capability",
+          "reference_ranges": [
+            "Capability"
+          ],
+          "required": false
+        },
+        "capabilities_content": {
+          "annotations": {
+            "paired_with": "capabilities"
+          },
           "any_of": [],
           "description": "",
           "identifier": false,
@@ -3454,7 +3543,50 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
-          "required": true
+          "required": false
+        },
+        "concept_uses": {
+          "annotations": {
+            "paired_with": "concept_uses_content",
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "ConceptUse.owner",
+            "relationship_label": "concept uses",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "ConceptUse",
+          "reference_ranges": [
+            "ConceptUse"
+          ],
+          "required": false
+        },
+        "concept_uses_content": {
+          "annotations": {
+            "paired_with": "concept_uses"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
         },
         "contracts": {
           "annotations": {},
@@ -3565,6 +3697,38 @@
           ],
           "required": false
         },
+        "description": {
+          "annotations": {},
+          "any_of": [],
+          "description": "The role this component plays in its system.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "evidence": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "EvidenceCollection"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "EvidenceCollection",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -3587,6 +3751,49 @@
           "reference_ranges": [
             "ExtensionSection"
           ],
+          "required": false
+        },
+        "features": {
+          "annotations": {
+            "paired_with": "features_content",
+            "relationship_basis": "Explicit named declarations.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Feature.owner",
+            "relationship_label": "declares features",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring Component in the same source document."
+          },
+          "any_of": [],
+          "description": "Named feature declarations in authored order; each feature belongs to this Component.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Feature",
+          "reference_ranges": [
+            "Feature"
+          ],
+          "required": false
+        },
+        "features_content": {
+          "annotations": {
+            "paired_with": "features"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
           "required": false
         },
         "id": {
@@ -3866,30 +4073,6 @@
           "reference_ranges": [],
           "required": false
         },
-        "owner": {
-          "annotations": {
-            "relationship_basis": "Checked inverse of canonical declaration membership.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "System.components",
-            "relationship_label": "declared by",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Exactly one declaring System in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "System",
-          "reference_ranges": [
-            "System"
-          ],
-          "required": true
-        },
         "part_of": {
           "annotations": {
             "relationship_basis": "Projection of explicit authored reference occurrences.",
@@ -3898,7 +4081,7 @@
             "relationship_inverse": "none",
             "relationship_label": "part of",
             "relationship_ordering": "single target",
-            "relationship_scope": "Explicit structural parent, independent of the System that declares this record.",
+            "relationship_scope": "Explicit parent in the same project, identified by the component source.",
             "relationship_source": "part_of_content",
             "requires_content": "part_of_content"
           },
@@ -3906,7 +4089,7 @@
             "System",
             "Component"
           ],
-          "description": "Optional single structural parent System or Component, independent of declaration ownership. Must be acyclic.",
+          "description": "System or Component identified by the required Part of link, when resolved. The parent chain must be acyclic.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -3959,6 +4142,22 @@
           "reference_ranges": [
             "SourceReference"
           ],
+          "required": false
+        },
+        "preamble": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored content between the title and the first named section.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
           "required": false
         },
         "provided_interfaces": {
@@ -4017,6 +4216,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "related_specifications": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Contextual citations of related specifications of any type, with their explanation; no implicit support, refinement, enforcement or compliance relation.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
         },
@@ -4147,6 +4362,20 @@
           "reference_ranges": [],
           "required": false
         },
+        "slug": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Path-derived current slug where applicable.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
         "source_document": {
           "annotations": {
             "relationship_basis": "Recorded source or inspection evidence.",
@@ -4192,6 +4421,114 @@
           "range": "SourceFragment",
           "reference_ranges": [
             "SourceFragment"
+          ],
+          "required": false
+        },
+        "specification_component": {
+          "annotations": {
+            "relationship_basis": "Directory-derived association under the recorded discovery policy.",
+            "relationship_category": "structural-context",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "none",
+            "relationship_label": "specification component",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
+          },
+          "any_of": [],
+          "description": "Local component that owns this specification by directory scope.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Component",
+          "reference_ranges": [
+            "Component"
+          ],
+          "required": false
+        },
+        "specification_system": {
+          "annotations": {
+            "relationship_basis": "Explicit Specification system reference when present; otherwise the nearest enclosing system found by directory discovery.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Explicit selection, or nearest enclosing system when no selection was authored.",
+            "relationship_source": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "System association for inventory grouping and quality classification. An explicit selection takes precedence over the directory default; an invalid selection never falls back.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": false
+        },
+        "specification_system_content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_origin": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Records whether the association was explicitly selected or supplied by directory discovery.",
+          "enum_values": [
+            "explicit",
+            "directory"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SystemAssociationOrigin",
+          "reference_ranges": [],
+          "required": false
+        },
+        "specification_system_references": {
+          "annotations": {
+            "relationship_basis": "Explicit source syntax. Only separately declared semantic fields establish domain associations.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "specification system references",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Authored occurrences in the containing domain record source; targets may remain unresolved.",
+            "requires_content": "specification_system_content"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
           ],
           "required": false
         },
@@ -4271,6 +4608,49 @@
           "reference_ranges": [
             "SourceReference"
           ],
+          "required": false
+        },
+        "synchronizations": {
+          "annotations": {
+            "paired_with": "synchronizations_content",
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Synchronization.owner",
+            "relationship_label": "synchronizations",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Synchronization",
+          "reference_ranges": [
+            "Synchronization"
+          ],
+          "required": false
+        },
+        "synchronizations_content": {
+          "annotations": {
+            "paired_with": "synchronizations"
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
           "required": false
         },
         "validation_plan": {
@@ -5037,6 +5417,30 @@
           "range": "SourceFragment",
           "reference_ranges": [
             "SourceFragment"
+          ],
+          "required": false
+        },
+        "specification_component": {
+          "annotations": {
+            "relationship_basis": "Directory-derived association under the recorded discovery policy.",
+            "relationship_category": "structural-context",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "none",
+            "relationship_label": "specification component",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
+          },
+          "any_of": [],
+          "description": "Local component that owns this specification by directory scope.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Component",
+          "reference_ranges": [
+            "Component"
           ],
           "required": false
         },
@@ -6524,7 +6928,7 @@
       "annotations": {
         "owned_memberships": "ConceptUse.bindings"
       },
-      "description": "An explicitly named design-time inclusion of a concept in a system, declared in the system's specification. Multiple uses of one definition remain distinct; directory association creates no use.",
+      "description": "An explicitly named design-time inclusion of a concept in a system or component specification. Multiple uses of one definition remain distinct; directory association creates no use.",
       "is_a": "TraceableElement",
       "mixins": [
         "ObligationContainer"
@@ -6828,6 +7232,22 @@
           ],
           "required": false
         },
+        "description": {
+          "annotations": {},
+          "any_of": [],
+          "description": "The role of this particular concept use in its declaring context.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -7030,12 +7450,15 @@
             "relationship_basis": "Checked inverse of canonical membership fields.",
             "relationship_category": "declaration-containment",
             "relationship_cycles": "forbidden",
-            "relationship_inverse": "System.concept_uses",
+            "relationship_inverse": "System.concept_uses or Component.concept_uses",
             "relationship_label": "owner",
             "relationship_ordering": "single target",
             "relationship_scope": "Exactly one declaring owner in the same source document."
           },
-          "any_of": [],
+          "any_of": [
+            "System",
+            "Component"
+          ],
           "description": "",
           "identifier": false,
           "inline_ranges": [],
@@ -7043,9 +7466,10 @@
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "System",
+          "range": "DomainElement",
           "reference_ranges": [
-            "System"
+            "System",
+            "Component"
           ],
           "required": true
         },
@@ -11180,6 +11604,22 @@
           ],
           "required": false
         },
+        "description": {
+          "annotations": {},
+          "any_of": [],
+          "description": "The behavior available through this feature.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "extension_sections": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -11420,12 +11860,15 @@
             "relationship_basis": "Checked inverse of canonical declaration membership.",
             "relationship_category": "declaration-containment",
             "relationship_cycles": "forbidden",
-            "relationship_inverse": "System.features",
+            "relationship_inverse": "System.features or Component.features",
             "relationship_label": "declared by",
             "relationship_ordering": "single target",
-            "relationship_scope": "Exactly one declaring System in the same source document."
+            "relationship_scope": "Exactly one declaring System or Component in the same source document."
           },
-          "any_of": [],
+          "any_of": [
+            "System",
+            "Component"
+          ],
           "description": "",
           "identifier": false,
           "inline_ranges": [],
@@ -11433,9 +11876,10 @@
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "System",
+          "range": "DomainElement",
           "reference_ranges": [
-            "System"
+            "System",
+            "Component"
           ],
           "required": true
         },
@@ -14108,6 +14552,30 @@
           "range": "SourceFragment",
           "reference_ranges": [
             "SourceFragment"
+          ],
+          "required": false
+        },
+        "specification_component": {
+          "annotations": {
+            "relationship_basis": "Directory-derived association under the recorded discovery policy.",
+            "relationship_category": "structural-context",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "none",
+            "relationship_label": "specification component",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
+          },
+          "any_of": [],
+          "description": "Local component that owns this specification by directory scope.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Component",
+          "reference_ranges": [
+            "Component"
           ],
           "required": false
         },
@@ -20148,6 +20616,30 @@
           ],
           "required": false
         },
+        "specification_component": {
+          "annotations": {
+            "relationship_basis": "Directory-derived association under the recorded discovery policy.",
+            "relationship_category": "structural-context",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "none",
+            "relationship_label": "specification component",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
+          },
+          "any_of": [],
+          "description": "Local component that owns this specification by directory scope.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Component",
+          "reference_ranges": [
+            "Component"
+          ],
+          "required": false
+        },
         "specification_system": {
           "annotations": {
             "relationship_basis": "Explicit Specification system reference when present; otherwise the nearest enclosing system found by directory discovery.",
@@ -20913,6 +21405,7 @@
           "any_of": [],
           "description": "Specification types selected for this inspection.",
           "enum_values": [
+            "component-spec",
             "system-spec",
             "job-spec",
             "quality-model-spec",
@@ -21913,7 +22406,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.20.0-draft",
+          "equals_string": "0.21.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -23696,7 +24189,7 @@
       "annotations": {
         "owned_memberships": "Synchronization.when_actions or Synchronization.then_actions"
       },
-      "description": "A composition rule declared in a system's specification. Narrative and action references describe coordination; no atomicity, execution or completeness is inferred.",
+      "description": "A composition rule declared in a system or component specification. Narrative and action references describe coordination; no atomicity, execution or completeness is inferred.",
       "is_a": "TraceableElement",
       "mixins": [
         "ObligationContainer"
@@ -24028,12 +24521,15 @@
             "relationship_basis": "Checked inverse of canonical membership fields.",
             "relationship_category": "declaration-containment",
             "relationship_cycles": "forbidden",
-            "relationship_inverse": "System.synchronizations",
+            "relationship_inverse": "System.synchronizations or Component.synchronizations",
             "relationship_label": "owner",
             "relationship_ordering": "single target",
             "relationship_scope": "Exactly one declaring owner in the same source document."
           },
-          "any_of": [],
+          "any_of": [
+            "System",
+            "Component"
+          ],
           "description": "",
           "identifier": false,
           "inline_ranges": [],
@@ -24041,9 +24537,10 @@
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "System",
+          "range": "DomainElement",
           "reference_ranges": [
-            "System"
+            "System",
+            "Component"
           ],
           "required": true
         },
@@ -24991,7 +25488,7 @@
         "Record"
       ],
       "annotations": {
-        "owned_memberships": "System.goals or System.assumptions or System.glossary or System.quality_attributes or System.concept_uses or System.synchronizations or System.components or System.features or System.capabilities or System.required_interfaces or System.provided_interfaces"
+        "owned_memberships": "System.goals or System.assumptions or System.glossary or System.quality_attributes or System.concept_uses or System.synchronizations or System.features or System.capabilities or System.required_interfaces or System.provided_interfaces"
       },
       "description": "The system described by a system document; subordinate systems retain their own boundaries and quality attributes.",
       "is_a": "Specification",
@@ -25101,49 +25598,6 @@
         "capabilities_content": {
           "annotations": {
             "paired_with": "capabilities"
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "components": {
-          "annotations": {
-            "paired_with": "components_content",
-            "relationship_basis": "Explicit named declarations.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "Component.owner",
-            "relationship_label": "declares components",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring System in the same source document."
-          },
-          "any_of": [],
-          "description": "Named component declarations in authored order; membership does not establish structural parentage.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "Component",
-          "reference_ranges": [
-            "Component"
-          ],
-          "required": false
-        },
-        "components_content": {
-          "annotations": {
-            "paired_with": "components"
           },
           "any_of": [],
           "description": "",
@@ -25309,6 +25763,22 @@
           "reference_ranges": [
             "SourceReference"
           ],
+          "required": false
+        },
+        "description": {
+          "annotations": {},
+          "any_of": [],
+          "description": "What this system is.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
           "required": false
         },
         "enclosing_system": {
@@ -26812,6 +27282,30 @@
           "range": "SourceFragment",
           "reference_ranges": [
             "SourceFragment"
+          ],
+          "required": false
+        },
+        "specification_component": {
+          "annotations": {
+            "relationship_basis": "Directory-derived association under the recorded discovery policy.",
+            "relationship_category": "structural-context",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "none",
+            "relationship_label": "specification component",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
+          },
+          "any_of": [],
+          "description": "Local component that owns this specification by directory scope.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Component",
+          "reference_ranges": [
+            "Component"
           ],
           "required": false
         },
@@ -28951,6 +29445,30 @@
           ],
           "required": false
         },
+        "specification_component": {
+          "annotations": {
+            "relationship_basis": "Directory-derived association under the recorded discovery policy.",
+            "relationship_category": "structural-context",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "none",
+            "relationship_label": "specification component",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Nearest inspected enclosing system according to directory discovery; no semantic inheritance."
+          },
+          "any_of": [],
+          "description": "Local component that owns this specification by directory scope.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Component",
+          "reference_ranges": [
+            "Component"
+          ],
+          "required": false
+        },
         "specification_system": {
           "annotations": {
             "relationship_basis": "Explicit Specification system reference when present; otherwise the nearest enclosing system found by directory discovery.",
@@ -29962,6 +30480,7 @@
       "info"
     ],
     "SpecificationType": [
+      "component-spec",
       "system-spec",
       "job-spec",
       "quality-model-spec",
@@ -29975,17 +30494,21 @@
       "directory"
     ]
   },
-  "model_version": "0.20.0-draft",
+  "model_version": "0.21.0-draft",
   "projections": [
     "ActionParameter.type",
     "BusinessRule.applies_to",
     "BusinessRule.refines",
     "Capability.depends_on",
     "Capability.provided_by",
+    "Component.capabilities",
+    "Component.concept_uses",
+    "Component.features",
     "Component.interacts_with",
     "Component.part_of",
     "Component.provided_interfaces",
     "Component.required_interfaces",
+    "Component.synchronizations",
     "Concept.actions",
     "Concept.introduced_types",
     "Concept.type_parameters",
@@ -30018,7 +30541,6 @@
     "SynchronizationAction.concept_use",
     "System.assumptions",
     "System.capabilities",
-    "System.components",
     "System.concept_uses",
     "System.enclosing_system",
     "System.features",
@@ -30030,6 +30552,7 @@
     "System.quality_attributes",
     "System.required_interfaces",
     "System.synchronizations",
+    "SystemContextSpecification.specification_component",
     "SystemContextSpecification.specification_system",
     "TraceableElement.derived_from",
     "TraceableElement.relies_on",
@@ -30111,7 +30634,7 @@
   },
   "representation_version": "0.1.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "9d1b42fc1c7ebb352ced463a758b135392007e9d00febe0e50095226f44e3db9",
+  "source_sha256": "cc879d8bf2a59e6c1138e1c91ec62a3fc6091d393e915c78fa61d38a71cbc6f2",
   "subsets": {
     "business-requirements": {
       "classification": "core",

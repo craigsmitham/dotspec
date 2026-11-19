@@ -20,7 +20,7 @@ func TestJobWorkflow(t *testing.T) {
 		}
 	}
 	code, out, errOut := invoke("job", "show", "develop-requirements")
-	for _, want := range []string{"New job", "Situation", "Motivation", "Intended progress", "System: New system (specs/system.spec.md)", "Source: specs/jobs/develop-requirements.job.spec.md"} {
+	for _, want := range []string{"New job", "Situation", "Motivation", "Intended progress", "System: New system (specs/new-system.system.spec.md)", "Source: specs/jobs/develop-requirements.job.spec.md"} {
 		if code != 0 || errOut != "" || !strings.Contains(out, want) {
 			t.Fatalf("show missing %q: %d %q %q", want, code, out, errOut)
 		}
@@ -29,7 +29,7 @@ func TestJobWorkflow(t *testing.T) {
 		t.Fatalf("new template uses the legacy heading: %s", out)
 	}
 	code, out, errOut = invoke("job", "list")
-	want := "Jobs\n\nSystem: New system (specs/system.spec.md)\n  New job  (specs/jobs/develop-requirements.job.spec.md)\n  New job  (specs/jobs/manage-requirements.job.spec.md)\n"
+	want := "Jobs\n\nSystem: New system (specs/new-system.system.spec.md)\n  New job  (specs/jobs/develop-requirements.job.spec.md)\n  New job  (specs/jobs/manage-requirements.job.spec.md)\n"
 	if code != 0 || out != want || errOut != "" {
 		t.Fatalf("list: %d %q %q", code, out, errOut)
 	}

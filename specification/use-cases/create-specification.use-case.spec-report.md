@@ -5,7 +5,7 @@ documents: "../../specs/use-cases/create-specification.use-case.spec.md#create-a
 ---
 # Create a specification draft
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Goal
 

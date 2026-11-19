@@ -10,9 +10,9 @@ import (
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
-const Filename = "system.spec.md"
+const Suffix = ".system.spec.md"
 
-var Layout = specfile.Layout{Kind: "system", Filename: Filename}
+var Layout = specfile.Layout{Kind: "system", Suffix: Suffix, NamedSubject: true}
 
 type metadata struct {
 	specfile.Metadata `yaml:",inline"`
@@ -25,6 +25,10 @@ type: system-spec
 
 # New system
 
+## Description
+
+Describe what this system is in one short paragraph.
+
 ## Purpose
 
 Describe why this system exists and whom it serves.
@@ -35,6 +39,7 @@ Describe the system's boundary and what it includes.
 `
 
 type System struct {
+	Description              string                      `json:"description,omitempty"`
 	ValidationPlan           string                      `json:"validation_plan,omitempty"`
 	OutOfScope               string                      `json:"out_of_scope,omitempty"`
 	InteractsWith            string                      `json:"interacts_with,omitempty"`
@@ -64,10 +69,14 @@ type System struct {
 }
 
 func Read(path string) (*System, error) {
-	if filepath.Base(path) != Filename {
-		return nil, diagnostic.Error("layout.system-location", fmt.Sprintf("expected a %s filename", Filename), diagnostic.Location{Path: path})
+	if !Layout.Match(filepath.Base(path)) {
+		return nil, diagnostic.Error("layout.system-location", fmt.Sprintf("expected a <name>%s filename", Suffix), diagnostic.Location{Path: path})
 	}
-	if _, err := Layout.Owner(path); err != nil {
+	owner, err := Layout.Owner(path)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := localSubject(owner); err != nil {
 		return nil, err
 	}
 	data, err := os.ReadFile(path)
@@ -77,6 +86,9 @@ func Read(path string) (*System, error) {
 	spec, err := Parse(data)
 	if err != nil {
 		return nil, diagnostic.WithPath(err, path)
+	}
+	if err := Layout.CheckName(path, spec.Name); err != nil {
+		return nil, err
 	}
 	spec.Path = path
 	for i := range spec.QualityAttributes {
@@ -92,7 +104,7 @@ func Parse(data []byte) (*System, error) {
 		return nil, err
 	}
 	spec := &System{Name: doc.Name, ID: meta.ID}
-	fields := map[string]*string{"Validation plan": &spec.ValidationPlan, "Out of scope": &spec.OutOfScope, "Interacts with": &spec.InteractsWith, "Required interfaces": &spec.RequiredInterfaces, "Provided interfaces": &spec.ProvidedInterfaces, "Project context": &spec.ProjectContext, "Capabilities": &spec.Capabilities, "Components": &spec.Components, "Features": &spec.Features, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Stakeholders": &spec.Stakeholders, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
+	fields := map[string]*string{"Description": &spec.Description, "Validation plan": &spec.ValidationPlan, "Out of scope": &spec.OutOfScope, "Interacts with": &spec.InteractsWith, "Required interfaces": &spec.RequiredInterfaces, "Provided interfaces": &spec.ProvidedInterfaces, "Project context": &spec.ProjectContext, "Capabilities": &spec.Capabilities, "Components": &spec.Components, "Features": &spec.Features, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Stakeholders": &spec.Stakeholders, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
 	locations := make(map[string]diagnostic.Location)
 	var ids specfile.Identifiers
 	if err := ids.Register(meta.ID, "system", specfile.MetadataLocation(data, "id")); err != nil {
@@ -105,6 +117,9 @@ func Parse(data []byte) (*System, error) {
 		return nil, err
 	}
 	for _, section := range doc.Sections {
+		if section.Title == "Components" && len(section.Children) > 0 {
+			return nil, diagnostic.Error("structure.component-source", "declare each component in its own <name>.component.spec.md file", doc.Location(section.Start, section.Title))
+		}
 		if section.Level != 2 {
 			if _, known := fields[section.Title]; known || section.Title == "Quality attributes" {
 				return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), doc.Location(section.Start, section.Title))

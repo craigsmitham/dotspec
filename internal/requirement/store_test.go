@@ -26,7 +26,7 @@ func TestInventoryClassifiesAgainstLocalModel(t *testing.T) {
 	if output, err := exec.Command("git", "-C", dir, "init", "-q").CombinedOutput(); err != nil {
 		t.Fatalf("initialize repository: %v: %s", err, output)
 	}
-	put(t, filepath.Join(dir, "specs/system.spec.md"), `---
+	put(t, filepath.Join(dir, "specs/system.system.spec.md"), `---
 type: system-spec
 ---
 # System
@@ -69,7 +69,7 @@ Unchanged sources.
 		t.Fatalf("show: %+v %v", r, err)
 	}
 	put(t, Layout.Path(filepath.Join(dir, "child"), "work"), example)
-	put(t, filepath.Join(dir, "child/specs/system.spec.md"), "---\ntype: system-spec\n---\n# Child\n## Purpose\nWork.\n## Scope\nChild.\n")
+	put(t, filepath.Join(dir, "child/specs/child.system.spec.md"), "---\ntype: system-spec\n---\n# Child\n## Purpose\nWork.\n## Scope\nChild.\n")
 	child, err := Show(filepath.Join(dir, "child"), "work")
 	if err != nil || child.Classification.SystemPath != "" || len(child.Classification.Undefined) != 0 {
 		t.Fatalf("model inherited: %+v %v", child, err)

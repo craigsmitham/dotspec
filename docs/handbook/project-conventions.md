@@ -10,7 +10,7 @@ For example, a contributor working on the To-do app could use this entry in its 
 ```markdown
 ## Specifications
 
-Start at [the task list boundary](specs/system.spec.md). The
+Start at [the task list boundary](specs/personal-task-list.system.spec.md). The
 [completion policy](specs/business-rules/completion.business-rule.spec.md) explains
 why finished entries stay available. The [return scenario](specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available)
 owns the promise. The [restart requirement](specs/requirements/restart.requirement.spec.md)

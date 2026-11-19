@@ -9,8 +9,8 @@ dotspec system init
 ```
 
 ````text
-Created specs/system.spec.md
-Edit the system name, Purpose, and Scope.
+Created specs/new-system.system.spec.md
+Edit Description, Purpose, and Scope. Keep the filename in sync if you rename the system.
 Authoring guide: dotspec guide system
 ````
 
@@ -35,6 +35,9 @@ dotspec system show
 ````text
 New system
 
+Description
+  Describe what this system is in one short paragraph.
+
 Purpose
   Describe why this system exists and whom it serves.
 
@@ -42,7 +45,7 @@ Scope
   Describe the system's boundary and what it includes.
 
 Enclosing system document: None
-Source: specs/system.spec.md
+Source: specs/new-system.system.spec.md
 ````
 
 ## job show develop-requirements
@@ -75,7 +78,7 @@ Describe why someone wants to act in this situation.
 Describe the progress or result they want to achieve.
 Use an optional Outcomes section for individual success criteria.
 
-System: New system (specs/system.spec.md)
+System: New system (specs/new-system.system.spec.md)
 Source: specs/jobs/develop-requirements.job.spec.md
 ````
 
@@ -136,7 +139,7 @@ dotspec job check develop-requirements --json
   },
   "complete": true,
   "context_files": [
-    "$PROJECT/specs/system.spec.md"
+    "$PROJECT/specs/new-system.system.spec.md"
   ],
   "summary": {
     "files_discovered": 1,
@@ -189,10 +192,11 @@ dotspec use-case show check-specifications --json
     "markdown": "# New use case\n\n## Goal\n\nName what the primary actor wants to accomplish, using an active verb phrase.\n\n## System boundary\n\nName the system whose external behavior this use case describes.\n\n## Primary actor\n\nIdentify the role pursuing the goal.\n\n## Goal level\n\nIdentify the level: summary (kite), user task (sea), or subfunction (fish).\n\n## Main success scenario\n\nDescribe the typical successful interaction in a short paragraph or a few steps.\nKeep internal implementation and interface details in their own sources.\n\n## Extensions\n\nList alternative success paths and failure conditions before resolving their handling.\nMark unknown responses as unresolved; expand the branches needed for the next decision.",
     "path": "$PROJECT/specs/use-cases/check-specifications.use-case.spec.md",
     "system": {
+      "description": "Describe what this system is in one short paragraph.",
       "name": "New system",
       "purpose": "Describe why this system exists and whom it serves.",
       "scope": "Describe the system's boundary and what it includes.",
-      "path": "$PROJECT/specs/system.spec.md",
+      "path": "$PROJECT/specs/new-system.system.spec.md",
       "quality_attributes": null
     },
     "location": {
@@ -225,7 +229,7 @@ dotspec use-case list --overview
 ````text
 Use cases
 
-System: New system (specs/system.spec.md)
+System: New system (specs/new-system.system.spec.md)
 
   New use case (specs/use-cases/check-specifications.use-case.spec.md)
     Actor: Identify the role pursuing the goal.
@@ -258,7 +262,7 @@ dotspec use-case check check-specifications --json
   },
   "complete": true,
   "context_files": [
-    "$PROJECT/specs/system.spec.md"
+    "$PROJECT/specs/new-system.system.spec.md"
   ],
   "summary": {
     "files_discovered": 1,
@@ -325,10 +329,11 @@ dotspec concept show job-map --json
     "markdown": "# New concept\n\n## Purpose\n\nDescribe the benefit this concept provides and why it exists.\n\n## State\n\nDescribe the abstract information needed to explain the behavior, independently of its storage representation.\n\n## Actions\n\nDescribe or reference the available actions, their inputs and outputs, conditions, and effects.\nDistinguish caller assumptions from enforced guards, and state rejection behavior where it matters.\nUse subheadings for individual actions when useful.\n\n## Operational principles\n\nTell a characteristic story showing how the actions and state fulfill the purpose.\nUse multiple stories when needed to explain the essential behavior.\nThe story explains the design; it does not establish exhaustive behavior or verification.",
     "path": "$PROJECT/specs/concepts/job-map.concept.spec.md",
     "system": {
+      "description": "Describe what this system is in one short paragraph.",
       "name": "New system",
       "purpose": "Describe why this system exists and whom it serves.",
       "scope": "Describe the system's boundary and what it includes.",
-      "path": "$PROJECT/specs/system.spec.md",
+      "path": "$PROJECT/specs/new-system.system.spec.md",
       "quality_attributes": null
     },
     "location": {
@@ -358,7 +363,7 @@ dotspec concept check job-map --json
   },
   "complete": true,
   "context_files": [
-    "$PROJECT/specs/system.spec.md"
+    "$PROJECT/specs/new-system.system.spec.md"
   ],
   "summary": {
     "files_discovered": 1,
@@ -410,10 +415,11 @@ dotspec requirement show diagnostic-severity --json
     "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and operating conditions, workload, population, and exclusions.\nFor outcomes of use, identify the users, their task, available assistance, and environment; link relevant actors, jobs, or use cases.\n\n## Statement\n\nState one coherent quality obligation. What observable result would violate it?\n\n## Criterion\n\nDefine or reference what counts as satisfaction. For a measured property, state the measure (including units, aggregation, and observation window as needed) and the required bound. Keep each required bound in one place; reference it if already stated above or in an authoritative source.\nIf a bound is unknown, record an open question and the evidence needed to choose it. Qualitative criteria are valid; keep preferred targets distinct from required bounds.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.\n\n## Verification plan\n\nDescribe how to obtain and compare evidence against the statement and criterion. Identify the realization, method (including measurement procedure and sampling where needed), assessment conditions, and evidence to retain. Explain how assessment conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
     "path": "$PROJECT/specs/requirements/diagnostic-severity.requirement.spec.md",
     "system": {
+      "description": "Describe what this system is in one short paragraph.",
       "name": "New system",
       "purpose": "Describe why this system exists and whom it serves.",
       "scope": "Describe the system's boundary and what it includes.",
-      "path": "$PROJECT/specs/system.spec.md",
+      "path": "$PROJECT/specs/new-system.system.spec.md",
       "quality_attributes": null
     },
     "location": {
@@ -444,7 +450,7 @@ dotspec requirement check diagnostic-severity --json
   },
   "complete": true,
   "context_files": [
-    "$PROJECT/specs/system.spec.md"
+    "$PROJECT/specs/new-system.system.spec.md"
   ],
   "summary": {
     "files_discovered": 1,
@@ -495,10 +501,11 @@ dotspec requirement show reject-existing-target --json
     "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and operating conditions, including any exclusions. Distinguish assumptions from conditions the system must accommodate. For outcomes of use, identify the users, task, and environment.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\nWhat observable result would violate this obligation? Add a Criterion section if an explicit assessment rule helps, defining or referencing each required bound once.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification plan\n\nDescribe how to check a system or process realization against the statement and any criterion. Identify the method, assessment conditions, and evidence to retain; explain how the conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
     "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
     "system": {
+      "description": "Describe what this system is in one short paragraph.",
       "name": "New system",
       "purpose": "Describe why this system exists and whom it serves.",
       "scope": "Describe the system's boundary and what it includes.",
-      "path": "$PROJECT/specs/system.spec.md",
+      "path": "$PROJECT/specs/new-system.system.spec.md",
       "quality_attributes": null
     },
     "location": {
@@ -523,10 +530,11 @@ dotspec requirement list --json
   "groups": [
     {
       "system": {
+        "description": "Describe what this system is in one short paragraph.",
         "name": "New system",
         "purpose": "Describe why this system exists and whom it serves.",
         "scope": "Describe the system's boundary and what it includes.",
-        "path": "$PROJECT/specs/system.spec.md",
+        "path": "$PROJECT/specs/new-system.system.spec.md",
         "quality_attributes": null
       },
       "requirements": [
@@ -548,10 +556,11 @@ dotspec requirement list --json
           "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and operating conditions, workload, population, and exclusions.\nFor outcomes of use, identify the users, their task, available assistance, and environment; link relevant actors, jobs, or use cases.\n\n## Statement\n\nState one coherent quality obligation. What observable result would violate it?\n\n## Criterion\n\nDefine or reference what counts as satisfaction. For a measured property, state the measure (including units, aggregation, and observation window as needed) and the required bound. Keep each required bound in one place; reference it if already stated above or in an authoritative source.\nIf a bound is unknown, record an open question and the evidence needed to choose it. Qualitative criteria are valid; keep preferred targets distinct from required bounds.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.\n\n## Verification plan\n\nDescribe how to obtain and compare evidence against the statement and criterion. Identify the realization, method (including measurement procedure and sampling where needed), assessment conditions, and evidence to retain. Explain how assessment conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
           "path": "$PROJECT/specs/requirements/diagnostic-severity.requirement.spec.md",
           "system": {
+            "description": "Describe what this system is in one short paragraph.",
             "name": "New system",
             "purpose": "Describe why this system exists and whom it serves.",
             "scope": "Describe the system's boundary and what it includes.",
-            "path": "$PROJECT/specs/system.spec.md",
+            "path": "$PROJECT/specs/new-system.system.spec.md",
             "quality_attributes": null
           },
           "location": {
@@ -578,10 +587,11 @@ dotspec requirement list --json
           "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and operating conditions, including any exclusions. Distinguish assumptions from conditions the system must accommodate. For outcomes of use, identify the users, task, and environment.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\nWhat observable result would violate this obligation? Add a Criterion section if an explicit assessment rule helps, defining or referencing each required bound once.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification plan\n\nDescribe how to check a system or process realization against the statement and any criterion. Identify the method, assessment conditions, and evidence to retain; explain how the conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
           "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
           "system": {
+            "description": "Describe what this system is in one short paragraph.",
             "name": "New system",
             "purpose": "Describe why this system exists and whom it serves.",
             "scope": "Describe the system's boundary and what it includes.",
-            "path": "$PROJECT/specs/system.spec.md",
+            "path": "$PROJECT/specs/new-system.system.spec.md",
             "quality_attributes": null
           },
           "location": {
@@ -615,7 +625,7 @@ dotspec requirement check reject-existing-target --json
   },
   "complete": true,
   "context_files": [
-    "$PROJECT/specs/system.spec.md"
+    "$PROJECT/specs/new-system.system.spec.md"
   ],
   "summary": {
     "files_discovered": 1,
@@ -643,6 +653,7 @@ dotspec sources --json
       "quality-model",
       "business-rule",
       "system",
+      "component",
       "job",
       "use-case",
       "concept",
@@ -661,15 +672,15 @@ dotspec sources --json
       "referenced_by": []
     },
     {
+      "path": "$PROJECT/specs/new-system.system.spec.md",
+      "referenced_by": []
+    },
+    {
       "path": "$PROJECT/specs/requirements/diagnostic-severity.requirement.spec.md",
       "referenced_by": []
     },
     {
       "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
-      "referenced_by": []
-    },
-    {
-      "path": "$PROJECT/specs/system.spec.md",
       "referenced_by": []
     },
     {

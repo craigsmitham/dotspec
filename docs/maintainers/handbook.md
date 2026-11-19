@@ -8,7 +8,7 @@ is the shared entry point for authors, agents and maintainers.
 
 | Principle | Question to ask in review |
 | --- | --- |
-| Optimize for human readability. | Can the author state the idea in ordinary prose? If a new field is proposed, which authoring or inspection task requires the structure? [Human-readable specifications](../../specs/system.spec.md#human-readable-specifications) |
+| Optimize for human readability. | Can the author state the idea in ordinary prose? If a new field is proposed, which authoring or inspection task requires the structure? [Human-readable specifications](../../specs/dotspec.system.spec.md#human-readable-specifications) |
 | Keep each obligation with its authoritative source. | If a test, contract or use-case clause already owns the promise, can another document cite it? Who decides which source carries authority here? [Obligations and documents](../handbook/requirements-layers.md#distinguish-an-obligation-from-its-document) |
 | Let authors develop precision as decisions are made. | Can someone record a useful sketch, a consequential exception or an unresolved threshold, then improve it when they have evidence? [Use-case authoring](../handbook/use-cases.md#sketch-the-interaction-then-investigate-alternatives) |
 | Say exactly what an inspection establishes. | Could someone read a passing check or a resolved link as proof of stakeholder agreement or satisfaction? Identify the observation that would support the stronger claim. [Assessment purposes](../handbook/verification-and-validation.md#dotspec-commands-and-model-roles) |

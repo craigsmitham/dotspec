@@ -21,7 +21,7 @@ func writeFile(t *testing.T, path, contents string) {
 
 func writeSpec(t *testing.T, dir, name string) string {
 	t.Helper()
-	path := filepath.Join(dir, "specs", Filename)
+	path := Layout.Path(dir, strings.ToLower(name))
 	writeFile(t, path, strings.Replace(validSpec, "# Parser", "# "+name, 1))
 	return path
 }
@@ -120,10 +120,10 @@ func TestShowHonorsRepositoryAndWorktreeBoundaries(t *testing.T) {
 
 func TestShowReportsMalformedAncestor(t *testing.T) {
 	dir := t.TempDir()
-	writeFile(t, filepath.Join(dir, "specs", Filename), "not a spec")
+	writeFile(t, filepath.Join(dir, "specs", "sample.system.spec.md"), "not a spec")
 	child := filepath.Join(dir, "child")
 	writeSpec(t, child, "Child")
-	if _, _, err := Show(child); err == nil || !strings.Contains(err.Error(), Filename) {
+	if _, _, err := Show(child); err == nil || !strings.Contains(err.Error(), "sample.system.spec.md") {
 		t.Fatalf("expected source-specific parent error, got %v", err)
 	}
 }
@@ -172,19 +172,19 @@ func TestListGitIgnoresAndSymlinks(t *testing.T) {
 	writeSpec(t, filepath.Join(dir, "tracked"), "Tracked")
 	writeSpec(t, filepath.Join(dir, "deleted"), "Deleted")
 	git(t, dir, "add", ".")
-	if err := os.Remove(filepath.Join(dir, "deleted", "specs", Filename)); err != nil {
+	if err := os.Remove(filepath.Join(dir, "deleted", "specs", "deleted.system.spec.md")); err != nil {
 		t.Fatal(err)
 	}
 	writeFile(t, filepath.Join(dir, ".gitignore"), "ignored/\ntracked/\nchoices/*\n!choices/keep/\n")
-	writeFile(t, filepath.Join(dir, "ignored", "specs", Filename), "malformed but ignored")
+	writeFile(t, filepath.Join(dir, "ignored", "specs", "sample.system.spec.md"), "malformed but ignored")
 	writeSpec(t, filepath.Join(dir, "choices", "keep"), "Kept")
-	writeFile(t, filepath.Join(dir, "choices", "omit", "specs", Filename), "ignored")
+	writeFile(t, filepath.Join(dir, "choices", "omit", "specs", "sample.system.spec.md"), "ignored")
 	writeFile(t, filepath.Join(dir, "nested", ".gitignore"), "hidden/\n")
-	writeFile(t, filepath.Join(dir, "nested", "hidden", "specs", Filename), "ignored")
+	writeFile(t, filepath.Join(dir, "nested", "hidden", "specs", "sample.system.spec.md"), "ignored")
 	writeSpec(t, filepath.Join(dir, "nested", "visible"), "Visible")
 	writeFile(t, filepath.Join(dir, ".git", "info", "exclude"), "excluded/\n")
-	writeFile(t, filepath.Join(dir, "excluded", "specs", Filename), "ignored")
-	writeFile(t, filepath.Join(dir, ".git", "metadata", "specs", Filename), "not a spec")
+	writeFile(t, filepath.Join(dir, "excluded", "specs", "sample.system.spec.md"), "ignored")
+	writeFile(t, filepath.Join(dir, ".git", "metadata", "specs", "sample.system.spec.md"), "not a spec")
 	outside := t.TempDir()
 	writeSpec(t, outside, "Outside")
 	if err := os.Symlink(outside, filepath.Join(dir, "linked-directory")); err != nil {
@@ -194,7 +194,7 @@ func TestListGitIgnoresAndSymlinks(t *testing.T) {
 	if err := os.MkdirAll(filepath.Join(linkedFile, "specs"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.Symlink(filepath.Join(outside, "specs", Filename), filepath.Join(linkedFile, "specs", Filename)); err != nil {
+	if err := os.Symlink(filepath.Join(outside, "specs", "outside.system.spec.md"), filepath.Join(linkedFile, "specs", "sample.system.spec.md")); err != nil {
 		t.Fatal(err)
 	}
 	// A tracked directory replaced with a symlink must not expose outside files.
@@ -241,9 +241,9 @@ func TestListEmptyAndMalformed(t *testing.T) {
 	if err != nil || len(nodes) != 0 {
 		t.Fatalf("empty list: %v, %v", nodes, err)
 	}
-	path := filepath.Join(dir, "child", "specs", Filename)
+	path := filepath.Join(dir, "child", "specs", "sample.system.spec.md")
 	writeFile(t, path, "bad spec")
-	if _, err := List(dir); err == nil || !strings.Contains(err.Error(), Filename) {
+	if _, err := List(dir); err == nil || !strings.Contains(err.Error(), "sample.system.spec.md") {
 		t.Fatalf("expected source-specific parse error, got %v", err)
 	}
 }

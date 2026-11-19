@@ -31,7 +31,7 @@ func writeUseCase(t *testing.T, dir, slug string) string {
 
 func writeSystem(t *testing.T, dir, name string) {
 	t.Helper()
-	write(t, filepath.Join(dir, "specs/system.spec.md"), "---\ntype: system-spec\n---\n# "+name+"\n## Purpose\nHelp people.\n## Scope\nThe project.\n")
+	write(t, filepath.Join(dir, "specs/"+strings.ToLower(strings.ReplaceAll(name, " ", "-"))+".system.spec.md"), "---\ntype: system-spec\n---\n# "+name+"\n## Purpose\nHelp people.\n## Scope\nThe project.\n")
 }
 
 func git(t *testing.T, dir string, args ...string) {
@@ -123,7 +123,7 @@ func TestGroupingAndAncestorContext(t *testing.T) {
 	if err != nil || len(groups) != 1 || len(groups[0].UseCases) != 1 || groups[0].System.Name != "Same name" {
 		t.Fatalf("subtree context: %+v, %v", groups, err)
 	}
-	write(t, filepath.Join(dir, "a/specs/system.spec.md"), "broken")
+	write(t, filepath.Join(dir, "a/specs/new-system.system.spec.md"), "broken")
 	if _, err := List(deep); err == nil {
 		t.Fatal("malformed enclosing system was ignored")
 	}

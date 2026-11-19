@@ -1,14 +1,14 @@
 # Markdown mapping profile
 
-`dotspec-markdown/14` maps specification Markdown to the
+`dotspec-markdown/15` maps specification Markdown to the
 [canonical model](metamodel.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/reference/specification-model.md).
 
-The profile covers all seven specification types: system, job, quality model,
+The profile covers eight specification types: system, component, job, quality model,
 business rule, use case, concept and requirement. A specification is one authored
 `*.spec.md` document, and its root record is the one concrete class of its type:
-`System`, `Job`, `QualityModel`, `BusinessRule`, `UseCase`, `Concept` or
+`System`, `Component`, `Job`, `QualityModel`, `BusinessRule`, `UseCase`, `Concept` or
 `Requirement`. Existing type parsers
 remain authoritative for authoring structure and validity. The exporter retains
 source and syntax before invoking those parsers. Rejection produces diagnostics
@@ -146,6 +146,7 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | Section or item | Mapping |
 | --- | --- |
 | Frontmatter `id` | Optional System `authored_id`, document-local anchor |
+| System, Component, Feature, Capability, or ConceptUse: direct Description section | Optional `description: RichContent` on the declaring subject, with bindings to the authored heading and content. |
 | Purpose; Scope | `purpose`; `scope` |
 | System or Component: Out of scope | `out_of_scope: RichContent` |
 | System or Component: Interacts with | Authored content and reference occurrences; resolved `interacts_with` System/Component targets, independent of `part_of` |
@@ -153,8 +154,8 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | Named interface | Heading `name`, complete `content`, introductory `description`, declaring System/Component `owner`, optional introductory `**ID:**`; Contracts and Counterpart subsections are contextual references; Notes, Open questions, Validation plan, trace sections and Obligations are supported |
 | Project context | `project_context: ContextualReferences`; authoritative project artifacts remain external |
 | Part of | `part_of_content`, explicit `part_of_references`, resolved scalar System `part_of`; no inferred parent |
-| Components; Features; Capabilities | Paired section content and ordered declaration membership in `components`, `features` or `capabilities` |
-| Named Component/Feature/Capability | `name`, complete `content`, declaring System `owner`, optional introductory `**ID:**` |
+| Features; Capabilities | Paired section content and ordered declaration membership in `features` or `capabilities` on a system or component |
+| Named Feature/Capability | `name`, complete `content`, declaring System `owner`, optional introductory `**ID:**` |
 | Component/Feature/Capability: Purpose | `purpose` |
 | Component: Responsibilities; Boundary | `responsibilities`; `boundary_description` |
 | Component: Part of | Narrative and explicit references; resolved scalar System or Component `part_of` |
@@ -184,8 +185,7 @@ structured detail fields, such as a glossary alias list, receive extension
 records. An absent section leaves both system fields absent. An explicitly empty section retains empty content and an empty attribute list. Directory-derived enclosing system documents
 and a specification's `specification_system` are associations; they introduce no inheritance.
 
-Components, features, capabilities, concept uses, synchronizations and interfaces
-are elements declared inside the system specification, not specifications. There
+A component is the root of a named `component-spec` document. Its required `Part of` link supplies its structural parent. Local specifications record their component in `specification_component`. Systems and components can declare features, capabilities, concept uses, synchronizations and interfaces. There
 is no constraint record: an individually addressable constraint is a requirement
 or a business rule.
 
@@ -406,7 +406,7 @@ criteria and applicability. See [Develop requirements](../docs/handbook/requirem
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/14`, an owner and field path, source
+Bindings record a rule under `dotspec-markdown/15`, an owner and field path, source
 occurrence and role. A field path is relative to its owner and uses canonical
 field names. A section's narrative binds to `<field>_content`, or to
 `<field>.content` on an embedded value such as `criterion.content`. Items of an
@@ -457,7 +457,7 @@ canonical field, with a required `projection_path`, subject and object. There is
 one concrete assertion class. `projection_path` names the projected field, such
 as `UseCase.subject_system`, `TraceableElement.supports`, `Obligation.applies_to`
 or `BusinessRule.applies_to`, and `mapping_rule` is
-`dotspec-markdown/14/projection/<path>`. The path also carries a membership's
+`dotspec-markdown/15/projection/<path>`. The path also carries a membership's
 role, as with `Concept.type_parameters` and `Concept.introduced_types`. The
 generated catalog lists the projectable paths in `projections`: every
 declaration membership and every semantic-association or structural-context

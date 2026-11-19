@@ -14,9 +14,9 @@ func TestMisplacedSpecsFailLocalCommands(t *testing.T) {
 		commands                       [][]string
 	}{
 		{"adjacent business rule", "business-rule", "work.business-rule.spec.md", "specs/business-rules/work.business-rule.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"adjacent system", "system", "system.spec.md", "specs/system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
-		{"system collection", "system", "specs/systems/system.spec.md", "specs/system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
-		{"nested system", "system", "specs/child/specs/system.spec.md", "specs/system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
+		{"adjacent system", "system", "new-system.system.spec.md", "specs/new-system.system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
+		{"system collection", "system", "specs/systems/new-system.system.spec.md", "specs/new-system.system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
+		{"nested system", "system", "specs/child/specs/new-system.system.spec.md", "specs/new-system.system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
 		{"adjacent use case", "use-case", "work.use-case.spec.md", "specs/use-cases/work.use-case.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"adjacent requirement", "requirement", "work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
 		{"nested requirement", "requirement", "specs/requirements/group/work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
@@ -72,7 +72,7 @@ func TestDiscoveryRejectsLegacyFilesAlongsideCanonicalSpecs(t *testing.T) {
 					}
 				}
 				args := []string{kind, "init"}
-				filename := "system.spec.md"
+				filename := "new-system.system.spec.md"
 				if kind == "job" {
 					args = append(args, "work")
 					filename = "work.job.spec.md"
@@ -141,7 +141,7 @@ func TestMisplacedAssociatedSystemDoesNotFallBackToAncestor(t *testing.T) {
 		t.Fatal(errOut)
 	}
 	child := filepath.Join(dir, "child")
-	writeFixture(t, filepath.Join(child, "system.spec.md"), "legacy child system")
+	writeFixture(t, filepath.Join(child, "new-system.system.spec.md"), "legacy child system")
 	if code, _, errOut := invoke("job", "init", "work", "--path", child); code != 0 {
 		t.Fatal(errOut)
 	}

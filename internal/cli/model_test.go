@@ -17,7 +17,7 @@ func TestModelExportValidationAndSourcePreservation(t *testing.T) {
 	t.Chdir(t.TempDir())
 	system := "---\ntype: system-spec\n---\n# System\n## Purpose\nRead specs.\n## Scope\nA CLI.\n"
 	useCase := "\xef\xbb\xbf---\r\ntype: use-case-spec\r\nid: check\r\n---\r\n# Check a specification\r\n\r\n## Goal\r\nRead [missing material](../../missing.md).  \r\n\r\n## Main success scenario\r\n1. Ask for a report.\r\n2. Receive findings.\r\n\r\n## Extensions\r\n### Invalid source\r\nHandling unresolved.\r\n\r\n<!-- retain this comment -->\r\n"
-	writeFixture(t, "specs/system.spec.md", system)
+	writeFixture(t, "specs/system.system.spec.md", system)
 	writeFixture(t, "specs/use-cases/check.use-case.spec.md", useCase)
 	code, output, errOut := invoke("model", "export")
 	if code != 1 || errOut != "" {
@@ -30,7 +30,7 @@ func TestModelExportValidationAndSourcePreservation(t *testing.T) {
 	if len(snapshot.Elements) < 5 || snapshot.ModelVersion != model.ModelVersion {
 		t.Fatalf("missing typed domain records: %d", len(snapshot.Elements))
 	}
-	for path, expected := range map[string]string{"specs/system.spec.md": system, "specs/use-cases/check.use-case.spec.md": useCase} {
+	for path, expected := range map[string]string{"specs/system.system.spec.md": system, "specs/use-cases/check.use-case.spec.md": useCase} {
 		actual, err := os.ReadFile(path)
 		if err != nil || string(actual) != expected {
 			t.Fatalf("source modified: %s: %v", path, err)
@@ -108,7 +108,7 @@ func TestConceptDesignCommands(t *testing.T) {
 	if code != 0 || errOut != "" || !strings.Contains(output, `"concept_uses":`) || !strings.Contains(output, `"synchronizations":`) {
 		t.Fatalf("system composition omitted: %d %s %s", code, output, errOut)
 	}
-	path := filepath.Join(root, "specs/system.spec.md")
+	path := filepath.Join(root, "specs/expiring-links.system.spec.md")
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
@@ -150,7 +150,7 @@ func TestRequirementsTraceCommand(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	data = []byte(strings.Replace(string(data), "[Trusted time](../system.spec.md#trusted-time)", "[Goal](../system.spec.md#reduce-lost-work)", 1))
+	data = []byte(strings.Replace(string(data), "[Trusted time](../document-workspace.system.spec.md#trusted-time)", "[Goal](../document-workspace.system.spec.md#reduce-lost-work)", 1))
 	if err = os.WriteFile(path, data, 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -164,7 +164,7 @@ func TestSystemOverviewCommand(t *testing.T) {
 	root := testproject.Open(t, "system-structure")
 	t.Chdir(root)
 	code, output, errOut := invoke("model", "overview", "--relative-to", "docs")
-	if code != 0 || errOut != "" || !strings.Contains(output, "# System specification overview") || !strings.Contains(output, "../specs/system.spec.md#checkout") || !strings.Contains(output, "## Features") {
+	if code != 0 || errOut != "" || !strings.Contains(output, "# System specification overview") || !strings.Contains(output, "../components/checkout/specs/checkout.component.spec.md") || !strings.Contains(output, "## Features") {
 		t.Fatalf("overview: %d %s %s", code, output, errOut)
 	}
 	var stderr bytes.Buffer
@@ -178,7 +178,7 @@ func TestModelReviewAndPEGSCommandsKeepAdvisoryDraftsValid(t *testing.T) {
 	t.Chdir(root)
 	for _, tc := range []struct{ command, want string }{{"review", "No verification plan recorded"}, {"pegs", "## Project"}} {
 		code, output, errOut := invoke("model", tc.command, "--relative-to", "docs")
-		if code != 0 || errOut != "" || !strings.Contains(output, tc.want) || !strings.Contains(output, "../specs/system.spec.md") {
+		if code != 0 || errOut != "" || !strings.Contains(output, tc.want) || !strings.Contains(output, "../specs/document-workspace.system.spec.md") {
 			t.Fatalf("%s: %d %s %s", tc.command, code, errOut, output)
 		}
 	}

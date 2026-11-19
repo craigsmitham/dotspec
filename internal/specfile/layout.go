@@ -17,10 +17,11 @@ const Folder = "specs"
 // files. The owning type supplies its kind; layout never infers domain identity
 // from a directory name. Slug validation remains the type's responsibility.
 type Layout struct {
-	Kind       string
-	Collection string
-	Filename   string
-	Suffix     string
+	NamedSubject bool
+	Kind         string
+	Collection   string
+	Filename     string
+	Suffix       string
 }
 
 func (l Layout) Match(name string) bool {
@@ -28,7 +29,7 @@ func (l Layout) Match(name string) bool {
 	if l.Filename != "" {
 		return name == l.Filename
 	}
-	return strings.HasSuffix(name, l.Suffix)
+	return strings.HasSuffix(name, l.Suffix) || (l.NamedSubject && name == strings.TrimPrefix(l.Suffix, "."))
 }
 
 func (l Layout) filename(slug string) string {

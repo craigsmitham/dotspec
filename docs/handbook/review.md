@@ -208,7 +208,7 @@ Restoring documents from external backups after their retained copies expire.
 
 ## Interacts with
 
-[Platform clock](../clock/specs/system.spec.md).
+[Platform clock](../clock/specs/platform-clock.system.spec.md).
 
 ## Required interfaces
 
@@ -220,7 +220,7 @@ Read UTC time for retention comparisons.
 
 #### Counterpart
 
-[Platform clock](../clock/specs/system.spec.md).
+[Platform clock](../clock/specs/platform-clock.system.spec.md).
 
 #### Contracts
 
@@ -248,7 +248,7 @@ An interface may contain an Obligations section. Requirements can target it usin
 `**Targets:** [Time readings](#time-readings)` under Applies to, and features may
 include it under Groups. Counterpart links are contextual; they do not establish
 implementation or compatibility between declarations. Two declarations can cite
-the same native contract without sharing identity. The [task list interface](../../examples/todo/specs/system.spec.md#task-list-forms) links to its HTML form contract.
+the same native contract without sharing identity. The [task list interface](../../examples/todo/specs/personal-task-list.system.spec.md#task-list-forms) links to its HTML form contract.
 
 Keep wire formats, protocol definitions and detailed architecture in their native
 artifacts. The review flags interfaces without contract references, but a link

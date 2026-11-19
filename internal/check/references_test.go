@@ -30,7 +30,7 @@ func TestCrossFileReferencesAndContext(t *testing.T) {
 [Heading](../concepts/inspection.concept.spec.md#actions)
 [ID](../concepts/inspection.concept.spec.md#stable-inspection)
 [Job step](../jobs/work.job.spec.md#prepare)
-[Attribute](../system.spec.md#reliability)
+[Attribute](../product.system.spec.md#reliability)
 [Native Markdown](../../Guide%20to%20rules.md#example-rule)
 [Native contract](../../schema.json#/properties/name)
 [External](https://example.invalid/missing#unknown)
@@ -43,7 +43,7 @@ func TestCrossFileReferencesAndContext(t *testing.T) {
 	write(t, path, source)
 	write(t, concept.Layout.Path(dir, "inspection"), strings.Replace(concept.Template, "type: concept-spec", "type: concept-spec\nid: stable-inspection", 1)+"\n[Not recursively checked](missing.md)\n")
 	write(t, job.Layout.Path(dir, "work"), "---\ntype: job-spec\n---\n# Work\n## Steps\n### Prepare\n**ID:** prepare\n")
-	write(t, system.Layout.Path(dir, ""), validSystem+"\n## Quality attributes\n### Reliability\n**ID:** reliability\nConsistent operation.\n")
+	write(t, system.Layout.Path(dir, "product"), validSystem+"\n## Quality attributes\n### Reliability\n**ID:** reliability\nConsistent operation.\n")
 	write(t, filepath.Join(dir, "Guide to rules.md"), "---\nlayout: article\n---\n## Example rule\nA rule.\n[Not followed](missing.md)\n")
 	write(t, filepath.Join(dir, "schema.json"), "{}")
 	if err := os.Mkdir(filepath.Join(dir, "docs"), 0755); err != nil {
@@ -140,13 +140,13 @@ func TestReferenceBoundaries(t *testing.T) {
 func TestRequirementsShareSystemAttributeContext(t *testing.T) {
 	dir := t.TempDir()
 	git(t, dir, "init", "-q")
-	write(t, system.Layout.Path(dir, ""), validSystem+"\n## Quality attributes\n")
+	write(t, system.Layout.Path(dir, "product"), validSystem+"\n## Quality attributes\n")
 	write(t, requirement.Layout.Path(dir, "rule"), strings.Replace(requirement.Template, "type: requirement-spec", "type: requirement-spec\nquality_attributes: [missing]", 1))
 	r := referenceCheck(dir)
 	if r.ExitCode() != 0 || r.Summary.Advice != 1 || r.Diagnostics[0].Rule != "requirement.undefined-attribute" || r.Diagnostics[0].Location.Line != 3 {
 		t.Fatalf("attribute advice: %+v", r)
 	}
-	write(t, system.Layout.Path(dir, ""), "broken")
+	write(t, system.Layout.Path(dir, "product"), "broken")
 	r = referenceCheck(dir)
 	if r.Summary.Errors != 1 || r.Summary.Advice != 0 {
 		t.Fatalf("invalid context cascaded: %+v", r)
@@ -157,7 +157,7 @@ func TestReferencesDoNotRepeatFailedContextReads(t *testing.T) {
 	dir := t.TempDir()
 	git(t, dir, "init", "-q")
 	write(t, requirement.Layout.Path(dir, "rule"), requirement.Template)
-	if err := os.Mkdir(system.Layout.Path(dir, ""), 0755); err != nil {
+	if err := os.Mkdir(system.Layout.Path(dir, "product"), 0755); err != nil {
 		t.Fatal(err)
 	}
 	r := referenceCheck(dir)

@@ -77,7 +77,7 @@ func FuzzParse(f *testing.F) {
 }
 
 func TestSystemAndDeclarationIdentities(t *testing.T) {
-	source := strings.Replace(validSpec, "type: system-spec", "type: system-spec\nid: parser", 1) + "\n## Components\n### Scanner\n**ID:** scanner\n#### Part of\n[Parser](#parser)\n## Features\n### Scan files\n**ID:** scan-files\n#### Notes\n[Scanner heading](#scanner)\n"
+	source := strings.Replace(validSpec, "type: system-spec", "type: system-spec\nid: parser", 1) + "\n## Capabilities\n### Scanner\n**ID:** scanner\n#### Part of\n[Parser](#parser)\n## Features\n### Scan files\n**ID:** scan-files\n#### Notes\n[Scanner heading](#scanner)\n"
 	spec, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)

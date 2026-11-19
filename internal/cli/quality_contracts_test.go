@@ -66,10 +66,10 @@ func TestInspectionQualityContracts(t *testing.T) {
 		{"missing input", []string{"requirement", "check", "missing"}, func(t *testing.T) { prepareExample(t, "read") }, 2},
 		{"unavailable context", []string{"requirement", "check", "diagnostic-severity"}, func(t *testing.T) {
 			prepareExample(t, "read")
-			if err := os.Remove("specs/system.spec.md"); err != nil {
+			if err := os.Remove("specs/new-system.system.spec.md"); err != nil {
 				t.Fatal(err)
 			}
-			if err := os.Mkdir("specs/system.spec.md", 0o755); err != nil {
+			if err := os.Mkdir("specs/new-system.system.spec.md", 0o755); err != nil {
 				t.Fatal(err)
 			}
 		}, 2},

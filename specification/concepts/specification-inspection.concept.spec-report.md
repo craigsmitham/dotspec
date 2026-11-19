@@ -5,7 +5,7 @@ documents: "../../specs/concepts/specification-inspection.concept.spec.md#specif
 ---
 # Specification Inspection
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Purpose
 

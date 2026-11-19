@@ -8,7 +8,7 @@ subsystems or new scopes.
 
 ```text
 specs/
-  system.spec.md
+  dotspec.system.spec.md
   jobs/
     develop-requirements.job.spec.md
     manage-requirements.job.spec.md
@@ -28,14 +28,14 @@ internal/
   parser/
     parser.go
     specs/
-      system.spec.md
+      spec-parser.component.spec.md
       jobs/
         interpret-specification.job.spec.md
 ```
 
 The layout is required:
 
-- The system spec is `specs/system.spec.md`, with one system per project directory.
+- A directory can describe one system or component. Its declaration lives at `specs/<name>.system.spec.md` or `specs/<name>.component.spec.md`. Derive `<name>` from the document heading using the [subject naming rule](formats/system.md#match-the-filename-to-the-heading). Both subjects can own the collections below.
 - Jobs are `specs/jobs/<slug>.job.spec.md`, directly inside the plural `jobs/` folder.
 - Use cases are `specs/use-cases/<slug>.use-case.spec.md`, directly inside the
   plural `use-cases/` folder.
@@ -59,7 +59,7 @@ a project scope is an error. A nested `specs/` tree inside another `specs/` tree
 is not a separate scope.
 
 Adjacent spec files and singular collection folders are not supported. Move an
-existing `system.spec.md` to `specs/system.spec.md`, and move each adjacent
+existing `<name>.system.spec.md` to `specs/<name>.system.spec.md`, and move each adjacent
 `<slug>.job.spec.md` to `specs/jobs/<slug>.job.spec.md`. Discovery rejects misplaced
 files of the requested type with an expected-location diagnostic. Local lookup
 and initialization also reject misplaced specs of that type directly in the

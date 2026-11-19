@@ -5,7 +5,7 @@ documents: "../../specs/use-cases/resume-list.use-case.spec.md#return-to-my-list
 ---
 # Return to my list
 
-[Personal task list](<../system.spec-report.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Goal
 
@@ -59,7 +59,7 @@ User task.
 
 ## System boundary
 
-**Subject system:** [Personal task list](<../system.spec-report.md>).
+**Subject system:** [Personal task list](<../personal-task-list.system.spec-report.md>).
 
 ## Supports
 

@@ -4,7 +4,7 @@ type: requirements-review-report
 ---
 # Requirements review
 
-[dotspec](<system.spec-report.md>)
+[dotspec](<dotspec.system.spec-report.md>)
 
 ## Open questions
 

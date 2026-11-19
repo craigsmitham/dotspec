@@ -39,37 +39,37 @@ func TestOverviewIsPortableAndSeparatesRelationships(t *testing.T) {
 		t.Fatal("feature became a structural part")
 	}
 	root := structureFixture(t)
-	traceEdit(t, root, "specs/system.spec.md", "[Inventory](#inventory)", "[Missing](missing.md)")
+	traceEdit(t, root, "components/reservations/specs/reservations.component.spec.md", "[Inventory](../../inventory/specs/inventory.component.spec.md)", "[Missing](missing.md)")
 	result := conformanceExport(t, root)
 	text, err := OverviewMarkdown(result.Snapshot, root)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(text, "Unresolved or undeclared") || !strings.Contains(text, "[Missing](specs/missing.md)") || !strings.Contains(text, "Inspection findings") {
+	if !strings.Contains(text, "Unresolved or undeclared") || !strings.Contains(text, "[Missing](components/reservations/specs/missing.md)") || !strings.Contains(text, "Inspection findings") {
 		t.Fatal("unresolved authored relationship disappeared", text)
 	}
 }
 
 func TestComponentClausesAndCrossDocumentStructure(t *testing.T) {
 	root := structureFixture(t)
-	traceEdit(t, root, "specs/system.spec.md", "### Inventory", `#### Obligations
+	traceEdit(t, root, "components/checkout/specs/checkout.component.spec.md", "## Implementation", `## Obligations
 
-##### Idempotent submission
+### Idempotent submission
 
 **ID:** idempotent-submission
 
 A repeated submission must not duplicate the order.
 
-###### Applies to
+#### Applies to
 
 **Targets:** [Checkout](#checkout)
 
-###### Verification plan
+#### Verification plan
 
 Repeat a submission and count orders.
 
-### Inventory`)
-	conformanceWrite(t, root, "worker/specs/system.spec.md", `---
+## Implementation`)
+	conformanceWrite(t, root, "worker/specs/worker.system.spec.md", `---
 type: system-spec
 id: worker
 ---
@@ -79,12 +79,15 @@ Do background work.
 ## Scope
 Fulfilment work.
 ## Part of
-[Store](../../specs/system.spec.md#store)
-## Components
-### Worker queue
-**ID:** worker-queue
-#### Part of
-[Checkout](../../specs/system.spec.md#checkout)
+[Store](../../specs/online-store.system.spec.md#store)
+`)
+	conformanceWrite(t, root, "worker/queue/specs/worker-queue.component.spec.md", `---
+type: component-spec
+id: worker-queue
+---
+# Worker queue
+## Part of
+[Checkout](../../../components/checkout/specs/checkout.component.spec.md)
 `)
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
@@ -99,7 +102,7 @@ Fulfilment work.
 	worker := designRecord(t, s, "System", "Worker")
 	store := designRecord(t, s, "System", "Online Store")
 	queue := designRecord(t, s, "Component", "Worker queue")
-	if worker["part_of"] != store["id"] || queue["part_of"] != checkout["id"] || queue["owner"] != worker["id"] {
+	if worker["part_of"] != store["id"] || queue["part_of"] != checkout["id"] || queue["specification_system"] != store["id"] {
 		t.Fatal(worker, queue)
 	}
 	// A parent component is allowed to be declared in another system document.

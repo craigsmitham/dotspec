@@ -22,7 +22,7 @@ func inspectAttributes(path string, sources []string) ([]diagnostic.Diagnostic, 
 	if len(sources) == 0 {
 		return nil, nil
 	}
-	sys, err := system.Read(sources[0])
+	sys, err := system.Read(sources[len(sources)-1])
 	if err != nil {
 		return nil, err
 	}

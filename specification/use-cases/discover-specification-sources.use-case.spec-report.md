@@ -5,7 +5,7 @@ documents: "../../specs/use-cases/discover-specification-sources.use-case.spec.m
 ---
 # Discover specification sources
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Goal
 
@@ -66,7 +66,7 @@ The [source-discovery executable examples](<../../internal/integration/testdata/
 define required outcomes for their illustrated cases. Contributors use the
 inventory to assemble the material for review and decide whether it adequately
 specifies the system. The
-[source authority principle](<../system.spec-report.md#source-authority>) explains how
+[source authority principle](<../dotspec.system.spec-report.md#source-authority>) explains how
 projects assign roles to those sources.
 
 [Edit source](<../../specs/use-cases/discover-specification-sources.use-case.spec.md#discover-specification-sources>)

@@ -22,7 +22,7 @@ import (
 )
 
 func conformanceTypes() []check.Type {
-	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
+	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
 }
 
 func conformanceExport(t *testing.T, path string) ExportResult {
@@ -253,14 +253,14 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 
 func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system-spec\n---\n# Root\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n\n### Broad\n\n**ID:** broad\n\nA concern.\n\n### Narrow\n\n**ID:** narrow\n**Sub-attribute of:** broad\n\nA narrower concern.\n")
+	conformanceWrite(t, root, "specs/root.system.spec.md", "---\ntype: system-spec\n---\n# Root\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n\n### Broad\n\n**ID:** broad\n\nA concern.\n\n### Narrow\n\n**ID:** narrow\n**Sub-attribute of:** broad\n\nA narrower concern.\n")
 	conformanceWrite(t, root, "specs/requirements/resolved.requirement.spec.md", "---\ntype: requirement-spec\nid: reused\nquality_attributes: [narrow]\n---\n# Resolved\n")
 	conformanceWrite(t, root, "specs/requirements/undefined.requirement.spec.md", "---\ntype: requirement-spec\nid: reused\nquality_attributes: [unknown]\n---\n# Undefined\n")
-	conformanceWrite(t, root, "sub/specs/system.spec.md", "---\ntype: system-spec\n---\n# Subsystem\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
+	conformanceWrite(t, root, "sub/specs/subsystem.system.spec.md", "---\ntype: system-spec\n---\n# Subsystem\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
 	conformanceWrite(t, root, "sub/specs/requirements/unbound.requirement.spec.md", "---\ntype: requirement-spec\nid: reused\nquality_attributes: [narrow]\n---\n# Unbound\n")
-	conformanceWrite(t, root, "empty/specs/system.spec.md", "---\ntype: system-spec\n---\n# Empty attributes\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n")
+	conformanceWrite(t, root, "empty/specs/empty-attributes.system.spec.md", "---\ntype: system-spec\n---\n# Empty attributes\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n")
 	conformanceWrite(t, root, "empty/specs/requirements/undefined-empty.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [narrow]\n---\n# Undefined in empty attributes\n")
-	conformanceWrite(t, root, "sibling/specs/system.spec.md", "---\ntype: system-spec\n---\n# Sibling\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n### Local narrow\n**ID:** narrow\nA different concern in this system.\n")
+	conformanceWrite(t, root, "sibling/specs/sibling.system.spec.md", "---\ntype: system-spec\n---\n# Sibling\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n### Local narrow\n**ID:** narrow\nA different concern in this system.\n")
 	conformanceWrite(t, root, "sibling/specs/requirements/local.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [narrow]\n---\n# Local classification\n")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
@@ -362,7 +362,7 @@ func TestExportConformanceInvalidAndNativeSources(t *testing.T) {
 
 func TestExportConformanceDeterminismAndContext(t *testing.T) {
 	root := t.TempDir()
-	context := conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system-spec\n---\n# Context\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
+	context := conformanceWrite(t, root, "specs/context.system.spec.md", "---\ntype: system-spec\n---\n# Context\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
 	conformanceWrite(t, root, "module/specs/use-cases/example.use-case.spec.md", "---\ntype: use-case-spec\n---\n# Example\n\n## Main success scenario\n\n1. **Actor:** Contributor\n   **Action:** Inspect\n   **Response:** Report\n   **DesiredOutcome:** Informed\n\n## Extensions\n\n### Failure\n\n**Condition:** Unreadable source\n**At step:** 1\n**Response:** Report a failure\n**Continuation:** End\n")
 	selected := filepath.Join(root, "module")
 	first := conformanceExport(t, selected)
@@ -410,7 +410,7 @@ func conformanceRichText(snapshot *Snapshot, value any) string {
 
 func TestExportConformanceAdversarialDomainCompletion(t *testing.T) {
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/system.spec.md", `---
+	conformanceWrite(t, root, "specs/system.system.spec.md", `---
 type: system-spec
 ---
 # System

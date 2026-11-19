@@ -5,7 +5,7 @@ documents: "../../specs/jobs/resume.job.spec.md#resume-interrupted-work"
 ---
 # Resume interrupted work
 
-[Personal task list](<../system.spec-report.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Job
 
@@ -17,7 +17,7 @@ A person managing their own errands or work.
 
 ## Supports
 
-[Resume unfinished work](<../system.spec-report.md#resume-unfinished-work>).
+[Resume unfinished work](<../personal-task-list.system.spec-report.md#resume-unfinished-work>).
 
 ## Steps
 

@@ -5,7 +5,7 @@ documents: "../../specs/requirements/repeatable-inspection.requirement.spec.md#r
 ---
 # Repeated inspections produce equivalent reports
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 

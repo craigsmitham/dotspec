@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"github.com/craigsmitham/dotspec/internal/system"
 	"io/fs"
 	"net/url"
 	"path/filepath"
@@ -228,7 +229,11 @@ func (b *snapshotBuilder) resolveLabels() {
 		}
 		repo, _ := specfile.RepositoryRoot(owner)
 		for current := owner; ; current = filepath.Dir(current) {
-			candidate := cleanPath(filepath.Join(current, "specs", "system.spec.md"))
+			file, err := system.Layout.LocalSubject(current)
+			if err != nil {
+				break
+			}
+			candidate := cleanPath(file)
 			if source := b.sources[candidate]; source != nil {
 				b.contextPath[path] = candidate
 				b.contextOK[path] = b.rootByPath[candidate] != ""
@@ -238,7 +243,7 @@ func (b *snapshotBuilder) resolveLabels() {
 				break
 			}
 			// An unacquired nearer system leaves the label uninspected, not unbound.
-			if _, _, err := check.ReferenceTarget(filepath.FromSlash(candidate), repo); !errors.Is(err, fs.ErrNotExist) {
+			if file != "" {
 				break
 			}
 			if current == repo || filepath.Dir(current) == current {

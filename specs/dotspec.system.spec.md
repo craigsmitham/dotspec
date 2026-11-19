@@ -4,6 +4,10 @@ type: system-spec
 
 # dotspec
 
+## Description
+
+A requirements authoring framework and command-line toolkit for Markdown specifications stored alongside source code.
+
 ## Purpose
 
 Help teams develop and maintain software product requirements alongside the

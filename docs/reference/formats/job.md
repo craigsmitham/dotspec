@@ -62,7 +62,7 @@ or file extensions. Different directories can reuse a slug. Changing a job's
 name does not change its file slug.
 
 Each job belongs to the project directory containing its `specs/` tree. It is
-associated with that directory's `specs/system.spec.md`, or the nearest ancestor
+associated with that directory's `specs/<name>.system.spec.md`, or the nearest ancestor
 project directory's system, even if that system is outside the subtree selected for
 `job list`. Lookup stops at the Git repository or worktree root, or the filesystem
 root outside Git. A job without an enclosing system is valid and displays

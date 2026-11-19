@@ -27,20 +27,29 @@ Commit the authored changes, `SPEC.md` and the generated Markdown in `specificat
 | Destination | Contents |
 | --- | --- |
 | `SPEC.md` | System name and a single link to its full report |
-| `specification/system.spec-report.md` | Root system overview and links into its specification |
+| `specification/<name>.system.spec-report.md` | Root system overview and links into its specification |
 | `specification/quality-attributes.spec-report.md` | The system's declared quality attributes, with their full definitions, hierarchy, qualifications, and links to classified requirements |
-| `specification/system.spec-report.md#requirements` | Requirements and embedded obligations in this system, each linked to its canonical page or passage |
-| `specification/systems/<child>/system.spec-report.md` | Child system overview with its own local directories |
+| `specification/<name>.system.spec-report.md#requirements` | Requirements and embedded obligations in this system, each linked to its canonical page or passage |
+| `specification/systems/<child>/<child>.system.spec-report.md` | Child system overview with its own local directories |
 | `specification/requirements-review.report.md` | Review items with links to passages for follow-up |
 
-Every system directory contains a `system.spec-report.md`. In a collection, the
-report filename includes the subject slug and kind, for example
-`components/task-service.component.spec-report.md`. Use the canonical report
-path for bookmarks and links to headings.
+System and component overviews keep the source basename and change `.spec.md`
+to `.spec-report.md`. For example, the Task service report lives at
+`components/task-service/task-service.component.spec-report.md`. Its directory also
+holds its local requirements, interfaces, and child components. The optional source
+`id` provides an anchor. The subject name determines the overview filename.
 
-In a system overview, select an attribute in the name-and-description table to read its full entry. A child system with declared attributes has its own detail page beside its `system.spec-report.md`. On a requirement page, read the statement, applicability, criterion, and verification plan together. Links beside the requirement lead back to the precise attribute or use-case passage.
+In a system overview, select an attribute in the name-and-description table to read its full entry. A child system with declared attributes has its own detail page beside its system overview. On a requirement page, read the statement, applicability, criterion, and verification plan together. Links beside the requirement lead back to the precise attribute or use-case passage.
 
-For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with the goal of its grouped use case. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
+For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with its authored description of the behavior it offers. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
+
+A system, component, feature, capability, or concept use can supply a short
+Description. Its report opens with that section, and its directory entry reuses
+the visible text of the first paragraph. An entry with no description shows
+the subject name alone. Interfaces use their introductory description and quality
+models use their Description section. For requirements and business rules, a
+short Statement introduces the promise or rule. Use cases use their Goal and
+jobs use their Job statement.
 
 Each system lists its immediate child systems and the specifications in its scope.
 Each component lists its structural children, declared interfaces, and requirements
@@ -48,12 +57,11 @@ that explicitly apply to it. A promise applicable to two components appears in
 both directories and leads to the same page or heading.
 
 Authored Markdown uses `<subject>-spec`. The corresponding generated Markdown
-uses `<subject>-spec-report`. For example, `system.spec.md` declares
-`type: system-spec`, and its generated `system.spec-report.md` declares `type: system-spec-report`.
+uses `<subject>-spec-report`. For example, `<name>.system.spec.md` declares
+`type: system-spec`, and its generated `<name>.system.spec-report.md` declares `type: system-spec-report`.
 
 The report’s `documents` value is a relative URI to its subject’s authored
-heading. A component declared inside the system spec gets a
-`component-spec-report` pointing to that heading. For a report rendered as a
+heading. A `component-spec-report` points to the H1 in the component’s own source. For a report rendered as a
 section, the same two fields appear in a `dotspec-doc` HTML comment beneath its
 heading. A shared quality-attributes file holds one `quality-attribute-spec-report`
 per entry. The file’s `generated_by: dotspec` marker identifies generator

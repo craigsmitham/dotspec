@@ -5,7 +5,7 @@ documents: "../../specs/requirements/reject-existing-target.requirement.spec.md#
 ---
 # Reject initialization at an existing target
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 

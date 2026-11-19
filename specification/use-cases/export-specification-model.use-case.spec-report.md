@@ -5,7 +5,7 @@ documents: "../../specs/use-cases/export-specification-model.use-case.spec.md#ex
 ---
 # Export a specification model for review or integration
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Goal
 

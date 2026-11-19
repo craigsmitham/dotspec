@@ -13,8 +13,8 @@ The canonical [LinkML model](../../model/metamodel.yaml) defines the records and
 relationships. The [generated reference](model/index.md) describes
 every field. The [relationship reference](model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.20.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/14`.
+`model_version` is `0.21.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/15`.
 
 The [verification and validation vocabulary](../handbook/verification-and-validation.md)
 distinguishes requirements quality, requirements fitness, system conformance and
@@ -24,12 +24,13 @@ separate through their owning fields and explicit subject and basis.
 ## Specification types and declared elements
 
 Each authored `*.spec.md` document has one root `Specification` record defining
-a subject, behavior, obligation or classification scheme. There are seven authored
+a subject, behavior, obligation or classification scheme. There are eight authored
 specification types, each corresponding to one concrete `Specification` class.
 
 | Specification type | Class |
 | --- | --- |
 | `system-spec` | System |
+| `component-spec` | Component |
 | `job-spec` | Job |
 | `quality-model-spec` | QualityModel |
 | `business-rule-spec` | BusinessRule |
@@ -53,8 +54,7 @@ running system or deployment inventory. The same distinction applies to a
 Component, Feature or Interface record. We do not require a second
 “SystemSpecification” record to repeat that definition.
 
-Component, Feature, Capability, ConceptUse, Synchronization and Interface are
-named elements declared inside a System specification. An Interface is declared
+A Component specification identifies one structural parent through `part_of`. Locally owned specifications identify their Component through `specification_component`. Feature, Capability, ConceptUse, Synchronization and Interface are named elements declared inside a System or Component specification. An Interface is declared
 under a System or Component's Required interfaces or Provided interfaces section.
 These elements are not specifications:
 
@@ -391,7 +391,7 @@ Typed relationship fields are authoritative. An `Assertion` is an optional deriv
 view of one canonical field, with required endpoints and provenance. Its
 `projection_path`, such as `TraceableElement.supports`, `System.goals` or
 `Obligation.refines`, names that field and preserves roles such as type parameters
-versus introduced types. Its `mapping_rule` is `dotspec-markdown/14/projection/<path>`.
+versus introduced types. Its `mapping_rule` is `dotspec-markdown/15/projection/<path>`.
 The catalog lists the projectable paths in `projections`: every declaration
 membership and every semantic-association or structural-context field. The
 assertions collection is not a replacement for the typed graph. Reverse navigation

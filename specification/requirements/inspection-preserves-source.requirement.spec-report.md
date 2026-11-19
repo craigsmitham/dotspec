@@ -5,7 +5,7 @@ documents: "../../specs/requirements/inspection-preserves-source.requirement.spe
 ---
 # Inspection preserves source material
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 

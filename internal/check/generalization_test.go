@@ -41,7 +41,7 @@ func TestIndependentTypeIntegration(t *testing.T) {
 		t.Fatal("creation overwrote an existing requirement")
 	}
 	// An unrelated malformed system must not become implicit context.
-	write(t, filepath.Join(dir, "specs/system.spec.md"), "broken")
+	write(t, filepath.Join(dir, "specs/product.system.spec.md"), "broken")
 	write(t, filepath.Join(dir, "specs/jobs/unrelated.job.spec.md"), "broken")
 	kind := quality.CheckType()
 	project, focused := check.Project(dir, kind), check.Focused(dir, "response-time", kind)
@@ -58,7 +58,7 @@ func TestIndependentTypeIntegration(t *testing.T) {
 		t.Fatalf("authored document changed: %q (%v)", data, err)
 	}
 	// Adding a fourth type requires only composition, not another engine branch.
-	write(t, filepath.Join(dir, "specs/system.spec.md"), validSystem)
+	write(t, filepath.Join(dir, "specs/product.system.spec.md"), validSystem)
 	write(t, filepath.Join(dir, "specs/jobs/unrelated.job.spec.md"), validJob)
 	write(t, filepath.Join(dir, "specs/use-cases/work.use-case.spec.md"), usecase.Template)
 	report := check.Project(dir, system.CheckType(), job.CheckType(), usecase.CheckType(), kind)

@@ -19,7 +19,7 @@ import (
 )
 
 func exportTypes() []check.Type {
-	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
+	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
 }
 
 func TestExportEmptyScope(t *testing.T) {
@@ -89,7 +89,7 @@ func TestExportDoesNotSkipInaccessibleParentSystem(t *testing.T) {
 		t.Fatalf("git init: %v %s", err, output)
 	}
 	body := []byte("---\ntype: system-spec\n---\n# System\n## Purpose\nRead.\n## Scope\nLocal.\n")
-	for _, path := range []string{"specs/system.spec.md", "middle/child/specs/system.spec.md"} {
+	for _, path := range []string{"specs/system.system.spec.md", "middle/child/specs/system.system.spec.md"} {
 		full := filepath.Join(dir, path)
 		if err := os.MkdirAll(filepath.Dir(full), 0o755); err != nil {
 			t.Fatal(err)
@@ -101,7 +101,7 @@ func TestExportDoesNotSkipInaccessibleParentSystem(t *testing.T) {
 	if err := os.MkdirAll(filepath.Join(dir, "middle/specs"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.Symlink(filepath.Join(dir, "specs/system.spec.md"), filepath.Join(dir, "middle/specs/system.spec.md")); err != nil {
+	if err := os.Symlink(filepath.Join(dir, "specs/system.system.spec.md"), filepath.Join(dir, "middle/specs/system.system.spec.md")); err != nil {
 		t.Skipf("symlinks unavailable: %v", err)
 	}
 	result, err := Export(dir, exportTypes()...)
@@ -125,7 +125,7 @@ func TestExportReferencedClassificationDoesNotSkipNearerBoundary(t *testing.T) {
 		t.Fatalf("git init: %v %s", err, output)
 	}
 	files := map[string]string{
-		"specs/system.spec.md":                                       "---\ntype: system-spec\n---\n# Root\n## Purpose\nRead.\n## Scope\nLocal.\n## Quality attributes\n### Useful\n**ID:** useful\nA concern.\n",
+		"specs/root.system.spec.md":                                  "---\ntype: system-spec\n---\n# Root\n## Purpose\nRead.\n## Scope\nLocal.\n## Quality attributes\n### Useful\n**ID:** useful\nA concern.\n",
 		"consumer/specs/concepts/entry.concept.spec.md":              "---\ntype: concept-spec\n---\n# Entry\n## Purpose\nRead.\n## State\n[Target](../../../middle/child/specs/requirements/target.requirement.spec.md)\n## Actions\nRead.\n## Operational principles\nRead a target.\n",
 		"middle/child/specs/requirements/target.requirement.spec.md": "---\ntype: requirement-spec\nquality_attributes: [useful]\n---\n# Target\n## Criterion\nA criterion.\n",
 	}
@@ -141,7 +141,7 @@ func TestExportReferencedClassificationDoesNotSkipNearerBoundary(t *testing.T) {
 	if err := os.MkdirAll(filepath.Join(dir, "middle/specs"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.Symlink(filepath.Join(dir, "specs/system.spec.md"), filepath.Join(dir, "middle/specs/system.spec.md")); err != nil {
+	if err := os.Symlink(filepath.Join(dir, "specs/root.system.spec.md"), filepath.Join(dir, "middle/specs/root.system.spec.md")); err != nil {
 		t.Skipf("symlinks unavailable: %v", err)
 	}
 	result, err := Export(filepath.Join(dir, "consumer"), exportTypes()...)

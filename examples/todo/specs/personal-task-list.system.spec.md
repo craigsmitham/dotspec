@@ -3,6 +3,10 @@ type: system-spec
 ---
 # Personal task list
 
+## Description
+
+A single-user task list that stores open and completed tasks on one computer.
+
 ## Purpose
 
 Help a person pick up unfinished work after an interruption.
@@ -35,29 +39,25 @@ The person returns to the same writable database file.
 
 The person who keeps the list also decides which entries can be discarded.
 
-## Components
+## Capabilities
 
-### Task service
+### Local task storage
 
-#### Part of
+#### Description
 
-[Personal task list](#personal-task-list).
+Retains accepted task changes between sessions on the same computer.
 
-#### Responsibilities
+#### Provided by
 
-Accept browser changes and commit them to the local database before confirming them.
-
-#### Contracts
-
-- The browser uses the [HTML forms](../app/list.html) to submit changes.
-
-#### Implementation
-
-The [Go server](../app/main.go) owns form handling and storage.
+[Task service](../components/task-service/specs/task-service.component.spec.md).
 
 ## Features
 
 ### Pick up where I left off
+
+#### Description
+
+Reopens the task list with each task in its last saved state.
 
 #### Groups
 
@@ -72,6 +72,10 @@ The [walkthrough](../README.md) identifies the setup, checks and validation exer
 ## Concept uses
 
 ### My checklist
+
+#### Description
+
+The checklist used to track one person’s open and completed tasks.
 
 #### Definition
 

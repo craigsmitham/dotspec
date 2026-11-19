@@ -16,6 +16,7 @@ Run `dotspec guide TOPIC` to open the page or section below. Use `dotspec guide 
 | Topic | Use it to | Source |
 | --- | --- | --- |
 | `business-rule` | State business constraints and link their enforcement. | [`docs/handbook/business-rules.md`](handbook/business-rules.md) |
+| `component` | Name a component, declare its parent and organize its local specifications. | [`docs/reference/formats/system.md#component-spec-format`](reference/formats/system.md#component-spec-format) |
 | `concept` | Explain purposeful behavior through state and actions. | [`docs/handbook/concepts.md`](handbook/concepts.md) |
 | `conventions` | Identify a project’s local specification authorities. | [`docs/handbook/project-conventions.md`](handbook/project-conventions.md) |
 | `core-domain` | Inspect the core domain types, relationships and diagrams. | [`docs/reference/model/core.md`](reference/model/core.md) |

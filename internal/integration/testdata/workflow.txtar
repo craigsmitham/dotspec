@@ -5,7 +5,7 @@ exec git init -q
 exec dotspec system init
 cmp stdout ../created.txt
 ! stderr .
-cp ../system.spec.md specs/system.spec.md
+cp ../new-system.system.spec.md specs/new-system.system.spec.md
 exec dotspec check
 stdout 'Checked 1 of 1 discovered specifications'
 stdout 'Errors: 0'
@@ -40,10 +40,10 @@ status 2 dotspec job show ../escape
 status 2 dotspec unknown
 ! stdout .
 -- created.txt --
-Created specs/system.spec.md
-Edit the system name, Purpose, and Scope.
+Created specs/new-system.system.spec.md
+Edit Description, Purpose, and Scope. Keep the filename in sync if you rename the system.
 Authoring guide: dotspec guide system
--- system.spec.md --
+-- new-system.system.spec.md --
 ---
 type: system-spec
 ---

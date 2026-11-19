@@ -13,7 +13,7 @@ A person managing their own errands or work.
 
 ## Supports
 
-[Resume unfinished work](../system.spec.md#resume-unfinished-work).
+[Resume unfinished work](../personal-task-list.system.spec.md#resume-unfinished-work).
 
 ## Steps
 

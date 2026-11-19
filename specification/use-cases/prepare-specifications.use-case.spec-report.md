@@ -5,7 +5,7 @@ documents: "../../specs/use-cases/prepare-specifications.use-case.spec.md#prepar
 ---
 # Prepare specifications for review
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Goal
 

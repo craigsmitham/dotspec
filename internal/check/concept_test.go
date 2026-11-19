@@ -13,7 +13,7 @@ func TestConceptProjectAndFocusedReports(t *testing.T) {
 	dir := t.TempDir()
 	git(t, dir, "init", "-q")
 	child := filepath.Join(dir, "component")
-	write(t, filepath.Join(dir, "specs/system.spec.md"), validSystem)
+	write(t, filepath.Join(dir, "specs/product.system.spec.md"), validSystem)
 	write(t, filepath.Join(child, "specs/concepts/work.concept.spec.md"), "---\ntype: concept-spec\n---\n# Work\n## Purpose\nInspect findings.\n")
 	focused, project := checkConcept(child, "work"), checkProject(child)
 	if !reflect.DeepEqual(focused.Diagnostics, project.Diagnostics) || !reflect.DeepEqual(focused.ContextFiles, project.ContextFiles) {
@@ -27,13 +27,13 @@ func TestConceptProjectAndFocusedReports(t *testing.T) {
 	}
 	// A job and concept sharing an ancestor report that context only once.
 	write(t, filepath.Join(child, "specs/jobs/work.job.spec.md"), validJob)
-	write(t, filepath.Join(dir, "specs/system.spec.md"), "broken shared context")
+	write(t, filepath.Join(dir, "specs/product.system.spec.md"), "broken shared context")
 	project = checkProject(child)
 	if project.ExitCode() != 1 || !project.Complete || project.Summary.Errors != 1 || project.Summary.FilesChecked != 2 || project.Summary.ContextFilesChecked != 1 {
 		t.Fatalf("shared malformed context: %+v", project)
 	}
 	// The focused check does not inspect malformed sibling specifications.
-	write(t, filepath.Join(dir, "specs/system.spec.md"), validSystem)
+	write(t, filepath.Join(dir, "specs/product.system.spec.md"), validSystem)
 	write(t, filepath.Join(child, "specs/concepts/broken.concept.spec.md"), "broken sibling")
 	if focused := checkConcept(child, "work"); focused.ExitCode() != 0 || focused.Summary.FilesChecked != 1 {
 		t.Fatalf("focused check scanned a sibling: %+v", focused)
@@ -75,9 +75,9 @@ func TestConceptCheckVisibilityAndIgnoredContext(t *testing.T) {
 	git(t, dir, "init", "-q")
 	write(t, filepath.Join(dir, "specs/concepts/tracked.concept.spec.md"), concept.Template)
 	git(t, dir, "add", "specs/concepts/tracked.concept.spec.md")
-	write(t, filepath.Join(dir, ".gitignore"), "tracked.concept.spec.md\nignored/\nsystem.spec.md\n")
+	write(t, filepath.Join(dir, ".gitignore"), "tracked.concept.spec.md\nignored/\n*.system.spec.md\n")
 	write(t, filepath.Join(dir, "ignored/bad.concept.spec.md"), "ignored")
-	write(t, filepath.Join(dir, "specs/system.spec.md"), validSystem)
+	write(t, filepath.Join(dir, "specs/product.system.spec.md"), validSystem)
 	r := checkProject(dir)
 	if r.ExitCode() != 0 || r.Scope.Discovery != "git" || r.Summary.FilesChecked != 1 || r.Summary.ContextFilesChecked != 1 {
 		t.Fatalf("tracked file or ignored ancestor context lost: %+v", r)

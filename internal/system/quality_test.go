@@ -137,7 +137,7 @@ func TestQualityMetadataOnlyComesFromIntroParagraphs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	blank.Path = "specs/system.spec.md"
+	blank.Path = "specs/parser.system.spec.md"
 	advice := Check(blank)
 	if len(advice) != 1 || advice[0].Rule != "quality.definition" || advice[0].Location.Path != blank.Path {
 		t.Fatalf("definition advice: %+v", advice)

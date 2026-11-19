@@ -83,7 +83,8 @@ def check_project(cli, project, tmp):
     snapshot = tmp / "snapshot.json"
     snapshot.write_text(cli("model export", "--path", project), encoding="utf-8")
     assert json.loads(cli("model validate", snapshot, "--json"))["valid"]
-    elements = json.loads(snapshot.read_bytes())["elements"]
+    model = json.loads(snapshot.read_bytes())
+    elements = model["elements"]
 
     def one(kind, **fields):
         value, = [e for e in elements if e["kind"] == kind and
@@ -98,6 +99,13 @@ def check_project(cli, project, tmp):
     assert one("BusinessRule", slug="completion")["id"] in clause["derived_from"]
     assert job["id"] in use["supports"]
     assert one("DesiredOutcome", owner=job["id"], authored_id="less-reconstruction")["id"] in requirement["supports"]
+    for kind in ("System", "Component", "Feature", "Capability", "ConceptUse"):
+        subject = one(kind)
+        description = subject["description"]
+        assert description["presence"] == "authored" and description["content_nodes"], kind
+        bound = {b["content_node"] for b in model["content_bindings"]
+                 if b["owner"] == subject["id"] and b["field_path"] == "description"}
+        assert set(description["content_nodes"]) <= bound, kind
     system = one("System")
     assert system["id"] == use["subject_system"]
     assert one("QualityAttribute", owner=system["id"], authored_id="durability")["id"] in requirement["quality_attributes"]
@@ -133,16 +141,31 @@ def spec_journey(cli, tmp):
     shutil.rmtree(project / "specification")
     cli("spec build", cwd=project)
     root = follow(entry, "Read the system specification")
-    assert root == project / "specification/system.spec-report.md"
+    assert root == project / "specification/personal-task-list.system.spec-report.md"
     assert len(markdown_links(entry)) == 1
     assert sorted(project.rglob("SPEC.md")) == [entry]
     assert all(target != entry for page in (project / "specification").rglob("*.md")
                for _, target, _, _ in markdown_links(page))
     feature = follow(root, "Pick up where I left off")
     promise = follow(feature, "Preserve tasks across restart")
-    interaction = follow(feature, "Return to my list")
-    goal = interaction.read_text(encoding="utf-8").split("## Goal\n", 1)[1].split("\n## ", 1)[0].strip()
-    assert goal in feature.read_text(encoding="utf-8").split("## Groups", 1)[0]
+    source = (project / "specs/personal-task-list.system.spec.md").read_text(encoding="utf-8")
+    overview = root.read_text(encoding="utf-8")
+    for name in ("Personal task list", "Pick up where I left off", "Task service",
+                 "Local task storage", "My checklist"):
+        declaration = (project / "components/task-service/specs/task-service.component.spec.md").read_text(encoding="utf-8") if name == "Task service" else source
+        subject = re.search(r"^#+ " + re.escape(name) + r"\n\n#+ Description\n\n([^\n]+)", declaration, re.M)
+        description = subject[1]
+        page = root if name == "Personal task list" else follow(root, name)
+        text = page.read_text(encoding="utf-8")
+        assert text.split("---\n", 2)[2].startswith(f"# {name}\n\n## Description\n\n{description}")
+        assert text.count(description) == overview.count(description) == 1
+    component = follow(root, "Task service")
+    assert component == project / "specification/components/task-service/task-service.component.spec-report.md"
+    acknowledgement = follow(component, "Acknowledge after commit")
+    assert acknowledgement.parent == component.parent / "requirements"
+    statement = acknowledgement.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
+    assert component.read_text(encoding="utf-8").count(statement) == 1
+    assert "## Goal" in follow(feature, "Return to my list").read_text(encoding="utf-8")
     qualities = follow(root, "Durability")
     assert follow(promise, "Durability") == qualities
     for page in (root, promise):
@@ -173,7 +196,7 @@ def spec_journey(cli, tmp):
         body = page.read_text(encoding="utf-8")
         if rule == "spec.document-type":
             if page == qualities:
-                changed = body.replace('system.spec.md#durability"', 'system.spec.md#personal-task-list"')
+                changed = body.replace('personal-task-list.system.spec.md#durability"', 'personal-task-list.system.spec.md#personal-task-list"')
             else:
                 changed = body.replace("type: requirement-spec-report", "type: feature-spec-report")
         elif rule == "spec.membership":
@@ -216,7 +239,7 @@ def inspect(cli):
     assert "s1 --> s2" in cli("job map", "resume", "--format", "mermaid", "--path", TODO)
     assert "Snapshot" in json.loads(cli("model schema"))["$defs"]
     assert "To-do" in cli("guide")
-    assert "examples/todo/specs/system.spec.md" in cli("guide", "examples")
+    assert "examples/todo/specs/personal-task-list.system.spec.md" in cli("guide", "examples")
     catalog = json.loads((ROOT / "docs/handbook/topics.json").read_bytes())
     coverage = (TODO / "COVERAGE.md").read_text(encoding="utf-8")
     exercises = coverage.split("## Handbook and authoring exercises", 1)[1].split("## Field inventory", 1)[0]
@@ -233,6 +256,9 @@ def author(cli, tmp):
     draft = project / "draft"
     draft.mkdir()
     cli("system init", "--path", draft, cwd=project)
+    component = draft / "intake"
+    component.mkdir()
+    cli("component init", "Intake", "--path", component, "--part-of", draft / "specs/new-system.system.spec.md", cwd=project)
     for kind in TYPES.keys() - {"system"}:
         cli(kind + " init", "sample", "--path", draft, cwd=project)
         assert list((draft / "specs").rglob(f"sample.{kind}.spec.md"))
@@ -245,7 +271,7 @@ def author(cli, tmp):
     assert "## Stakeholder interests" in cli("use-case show", "long-form", "--path", draft, cwd=project)
     cli("requirement init", "quality", "--preset", "quality", "--path", draft, cwd=project)
     assert "## Criterion" in cli("requirement show", "quality", "--path", draft, cwd=project)
-    target = draft / "specs/system.spec.md"
+    target = draft / "specs/new-system.system.spec.md"
     args = ("personal-data", "--system", target, "--attributes", "durability")
     before = target.read_bytes()
     preview = cli("quality-model apply", *args, "--dry-run", cwd=project)
@@ -321,7 +347,7 @@ def main():
                    for e in map(json.loads, events.splitlines())), "help.txtar did not run"
         tooling = {"man", "completion bash", "completion zsh", "completion fish", "completion powershell"}
         public = cli.public_commands()
-        groups = set(TYPES) | {"spec", "model", "job outcome", "job step", "completion"}
+        groups = set(TYPES) | {"component","spec", "model", "job outcome", "job step", "completion"}
         for group in groups | {""}:
             assert "Available Commands:" in cli("help", *group.split())
         missing = public - cli.exercised - groups - tooling - {""}

@@ -5,7 +5,7 @@ documents: "../../internal/integration/specs/concepts/cli-interaction.concept.sp
 ---
 # Command Invocation
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Purpose
 

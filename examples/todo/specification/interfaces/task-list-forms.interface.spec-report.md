@@ -1,11 +1,11 @@
 ---
 generated_by: dotspec
 type: interface-spec-report
-documents: "../../specs/system.spec.md#task-list-forms"
+documents: "../../specs/personal-task-list.system.spec.md#task-list-forms"
 ---
 # Task list forms
 
-[Personal task list](<../system.spec-report.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 The browser presents open and completed tasks and accepts changes through HTML forms.
 
@@ -13,4 +13,4 @@ The browser presents open and completed tasks and accepts changes through HTML f
 
 [Form template](<../../app/list.html>) supplies the actions and fields.
 
-[Edit source](<../../specs/system.spec.md#task-list-forms>)
+[Edit source](<../../specs/personal-task-list.system.spec.md#task-list-forms>)

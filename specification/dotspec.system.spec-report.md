@@ -1,9 +1,13 @@
 ---
 generated_by: dotspec
 type: system-spec-report
-documents: "../specs/system.spec.md#dotspec"
+documents: "../specs/dotspec.system.spec.md#dotspec"
 ---
 # dotspec
+
+## Description
+
+A requirements authoring framework and command-line toolkit for Markdown specifications stored alongside source code.
 
 ## Purpose
 
@@ -71,20 +75,20 @@ explains how this repository assigns those roles to its tests.
 
 ### Complete scan
 
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../specs/system.spec.md#complete-scan"} -->
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../specs/dotspec.system.spec.md#complete-scan"} -->
 
 An inspection that finished its selected scope and required context without an
 operational failure. A complete scan can contain structural error findings.
 
 ### Structural error
 
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../specs/system.spec.md#structural-error"} -->
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../specs/dotspec.system.spec.md#structural-error"} -->
 
 A finding that a specification violates a supported structural rule.
 
 ### Writing advice
 
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../specs/system.spec.md#writing-advice"} -->
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../specs/dotspec.system.spec.md#writing-advice"} -->
 
 A suggestion about specification content. Its exit-status consequences are
 specified by [Advice permits success](<requirements/advice-permits-success.requirement.spec-report.md>).
@@ -118,21 +122,21 @@ individual quality requirements establish the obligations.
 
 ## Quality models
 
-- [FURPS starter](<quality-models/furps.quality-model.spec-report.md>)
-- [ISO/IEC 25010:2023 starter](<quality-models/iso-25010-2023.quality-model.spec-report.md>)
-- [Q42 starter](<quality-models/q42.quality-model.spec-report.md>)
+- [FURPS starter](<quality-models/furps.quality-model.spec-report.md>) — A dotspec starter covering the five FURPS categories and all 32 subcategory placements (31 distinct subcategories) listed in the cited Rational Unified Process guidance. This is a documented RUP variant, not a claim that FURPS has one universal fixed taxonomy. Explanations are original authoring prompts. Functionality can classify general requirements as well as quality requirements; these categories do not impose targets. The separate FURPS+ constraint categories are outside this starter. Accuracy appears under two categories in the source and is represented once, organized under both reliability and performance.
+- [ISO/IEC 25010:2023 starter](<quality-models/iso-25010-2023.quality-model.spec-report.md>) — A dotspec starter for reviewing the nine product-quality characteristics and all 40 sub-characteristics in ISO/IEC 25010:2023. These short explanations are original authoring prompts, not standard definitions or a conformance checklist. Consult the standard for authoritative definitions and guidance.
+- [Q42 starter](<quality-models/q42.quality-model.spec-report.md>) — A dotspec starter with all nine Q42 dimensions and 191 distinct qualities from the pinned upstream revision. Dimension tags are represented as Sub-attribute of groupings, preserving all overlaps without implying exclusive decomposition, inherited obligations, or equivalent meanings. The 37 alias records are retained as alternative-name prose on their canonical qualities, not duplicate attributes. Names and groupings are adapted from arc42 Q42; explanatory questions are original dotspec authoring prompts. Upstream definitions, requirements, approaches, and standards are available through the source links.
 
 ## Requirements
 
-- [Advice permits a successful check](<requirements/advice-permits-success.requirement.spec-report.md>) — Project-wide and focused specification checks that complete without structural errors or operational failures.
-- [Continue checking after a structural error](<requirements/continue-after-invalid-spec.requirement.spec-report.md>) — Project-wide specification checks.
-- [Diagnostic severity is available without styling](<requirements/diagnostic-severity.requirement.spec-report.md>) — Human-readable reports from project-wide and focused specification checks.
-- [Inspection preserves source material](<requirements/inspection-preserves-source.requirement.spec-report.md>)
+- [Advice permits a successful check](<requirements/advice-permits-success.requirement.spec-report.md>) — When a completed check reports only advisory findings, dotspec must return exit status zero.
+- [Continue checking after a structural error](<requirements/continue-after-invalid-spec.requirement.spec-report.md>) — When a discovered specification contains a structural error, dotspec must continue inspecting the remaining discovered specifications.
+- [Diagnostic severity is available without styling](<requirements/diagnostic-severity.requirement.spec-report.md>) — Every diagnostic must identify its severity using a text label independently of terminal styling.
+- [Inspection preserves source material](<requirements/inspection-preserves-source.requirement.spec-report.md>) — Inspection must leave source-file contents and paths unchanged, without creating, deleting, or renaming source files.
 - [Isolate specification projects in a workspace](<requirements/isolate-specification-projects-in-a-workspace.requirement.spec-report.md>)
 - [Preserve source and represented content in model exports](<requirements/model-source-fidelity.requirement.spec-report.md>)
-- [Read and verify the generated requirements specification](<requirements/read-and-verify-the-generated-requirements-specification.requirement.spec-report.md>) — Whole-project builds and checks for projects that enable generated specifications.
-- [Reject initialization at an existing target](<requirements/reject-existing-target.requirement.spec-report.md>) — Initialization commands for all supported specification types.
-- [Repeated inspections produce equivalent reports](<requirements/repeatable-inspection.requirement.spec-report.md>)
+- [Read and verify the generated requirements specification](<requirements/read-and-verify-the-generated-requirements-specification.requirement.spec-report.md>)
+- [Reject initialization at an existing target](<requirements/reject-existing-target.requirement.spec-report.md>) — When the target path already exists, initialization must terminate with an unsuccessful exit status.
+- [Repeated inspections produce equivalent reports](<requirements/repeatable-inspection.requirement.spec-report.md>) — Repeated inspections must produce equivalent structured reports, including the ordering of array elements.
 
 ## Use cases
 
@@ -142,4 +146,4 @@ individual quality requirements establish the obligations.
 - [Export a specification model for review or integration](<use-cases/export-specification-model.use-case.spec-report.md>) — Obtain a faithful, structured snapshot of a project's specification content for review or consumption by another tool.
 - [Prepare specifications for review](<use-cases/prepare-specifications.use-case.spec-report.md>) — Give reviewers a readable account of proposed behavior and its related sources.
 
-[Edit source](<../specs/system.spec.md#dotspec>)
+[Edit source](<../specs/dotspec.system.spec.md#dotspec>)

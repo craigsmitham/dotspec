@@ -34,7 +34,7 @@ func TestProjectContinuesAcrossMalformedFiles(t *testing.T) {
 	dir := t.TempDir()
 	sources := map[string]string{
 		"adjacent.job.spec.md":                 validJob,
-		"specs/system.spec.md":                 "---\ntype: [\n---\n# Broken\n",
+		"specs/product.system.spec.md":         "---\ntype: [\n---\n# Broken\n",
 		"specs/jobs/duplicate.job.spec.md":     "---\ntype: job-spec\nid: shared\n---\n# Duplicate\n\n## Steps\n\n### Gather\n**ID:** shared\n",
 		"specs/jobs/advice.job.spec.md":        "---\ntype: job-spec\n---\n# Draft\n",
 		"specs/jobs/valid.job.spec.md":         validJob,
@@ -81,7 +81,7 @@ func TestSubtreeReportsAncestorContext(t *testing.T) {
 	child := filepath.Join(dir, "component")
 	write(t, filepath.Join(child, "specs/jobs/one.job.spec.md"), validJob)
 	write(t, filepath.Join(child, "specs/jobs/two.job.spec.md"), validJob)
-	ancestor := filepath.Join(dir, "specs/system.spec.md")
+	ancestor := filepath.Join(dir, "specs/product.system.spec.md")
 	write(t, ancestor, validSystem)
 	for _, broken := range []bool{false, true} {
 		if broken {

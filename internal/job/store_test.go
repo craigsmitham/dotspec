@@ -1,6 +1,7 @@
 package job
 
 import (
+	"github.com/craigsmitham/dotspec/internal/specfile"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -28,7 +29,7 @@ func writeJob(t *testing.T, dir, slug, name string) string {
 
 func writeSystem(t *testing.T, dir, name string) {
 	t.Helper()
-	writeFile(t, filepath.Join(dir, "specs", "system.spec.md"), "---\ntype: system-spec\n---\n# "+name+"\n## Purpose\nHelp teams.\n## Scope\nRequirements.\n")
+	writeFile(t, filepath.Join(dir, "specs", specfile.NameSlug(name)+".system.spec.md"), "---\ntype: system-spec\n---\n# "+name+"\n## Purpose\nHelp teams.\n## Scope\nRequirements.\n")
 }
 
 func boundLookup(t *testing.T, dir string) {
@@ -238,11 +239,11 @@ func TestMalformedJobsAndAssociatedSystems(t *testing.T) {
 		t.Fatalf("malformed list: %v", err)
 	}
 	writeJob(t, dir, "work", "Work")
-	writeFile(t, filepath.Join(dir, "specs", "system.spec.md"), "malformed")
-	if _, err := Show(dir, "work"); err == nil || !strings.Contains(err.Error(), "system.spec.md") {
+	writeFile(t, filepath.Join(dir, "specs", "new-system.system.spec.md"), "malformed")
+	if _, err := Show(dir, "work"); err == nil || !strings.Contains(err.Error(), "new-system.system.spec.md") {
 		t.Fatalf("malformed association: %v", err)
 	}
-	if _, err := List(dir); err == nil || !strings.Contains(err.Error(), "system.spec.md") {
+	if _, err := List(dir); err == nil || !strings.Contains(err.Error(), "new-system.system.spec.md") {
 		t.Fatalf("malformed group: %v", err)
 	}
 	writeSystem(t, dir, "Valid")

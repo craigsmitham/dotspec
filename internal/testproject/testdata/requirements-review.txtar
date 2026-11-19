@@ -1,4 +1,4 @@
--- clock/specs/system.spec.md --
+-- clock/specs/platform-clock.system.spec.md --
 ---
 type: system-spec
 ---
@@ -54,7 +54,7 @@ Workspace members may recover accidentally deleted documents during the 30 days 
 
 ## Supports
 
-[Reduce lost work](../system.spec.md#reduce-lost-work).
+[Reduce lost work](../document-workspace.system.spec.md#reduce-lost-work).
 
 ## Rationale
 
@@ -62,7 +62,7 @@ The organization commits to a bounded recovery period. This business rule does n
 
 ## Applies to
 
-**Targets:** [Document workspace](../system.spec.md)
+**Targets:** [Document workspace](../document-workspace.system.spec.md)
 
 Applies to workspace members and documents deleted within that workspace.
 
@@ -156,7 +156,7 @@ When valuable work is accidentally removed, I want to recover it so I can contin
 
 ## Supports
 
-[Reduce lost work](../system.spec.md#reduce-lost-work).
+[Reduce lost work](../document-workspace.system.spec.md#reduce-lost-work).
 
 ## Outcomes
 
@@ -208,11 +208,11 @@ The refinement makes the required metadata explicit without weakening the parent
 
 ## Relies on
 
-[Trusted time](../system.spec.md#trusted-time).
+[Trusted time](../document-workspace.system.spec.md#trusted-time).
 
 ## Applies to
 
-**Targets:** [Restore a document](../use-cases/restore.use-case.spec.md), [DocumentTrash](../system.spec.md#documenttrash)
+**Targets:** [Restore a document](../use-cases/restore.use-case.spec.md), [DocumentTrash](../document-workspace.system.spec.md#documenttrash)
 
 ## Rationale
 
@@ -344,7 +344,7 @@ and record deviations without silently changing the requirement's scope.
 Retain the implementation revision, recruitment criteria, browser and task setup,
 attempt outcomes, interventions, calculation and assessment limitations. Record
 the assessment conclusion separately from this plan.
--- specs/system.spec.md --
+-- specs/document-workspace.system.spec.md --
 ---
 type: system-spec
 ---
@@ -382,7 +382,7 @@ Recovering documents after their retained copies expire. External backup restora
 
 ## Interacts with
 
-[Platform clock](../clock/specs/system.spec.md) supplies time readings across the workspace boundary.
+[Platform clock](../clock/specs/platform-clock.system.spec.md) supplies time readings across the workspace boundary.
 
 ## Required interfaces
 
@@ -394,7 +394,7 @@ Read UTC time for retention comparisons.
 
 #### Counterpart
 
-[Platform clock](../clock/specs/system.spec.md).
+[Platform clock](../clock/specs/platform-clock.system.spec.md).
 
 #### Contracts
 
@@ -609,7 +609,7 @@ Recover an accidentally deleted document and resume work.
 
 ## System boundary
 
-**Subject system:** [Document workspace](../system.spec.md)
+**Subject system:** [Document workspace](../document-workspace.system.spec.md)
 
 The workspace owns retention and restoration; external backups are outside this boundary.
 
@@ -619,7 +619,7 @@ The workspace owns retention and restoration; external backups are outside this 
 
 ## Involves
 
-[DocumentTrash](../system.spec.md#documenttrash).
+[DocumentTrash](../document-workspace.system.spec.md#documenttrash).
 
 ## Main success scenario
 
@@ -650,7 +650,7 @@ When an authorized workspace member requests restoration before the 30-day recov
 
 #### Applies to
 
-**Targets:** [DocumentTrash](../system.spec.md#documenttrash)
+**Targets:** [DocumentTrash](../document-workspace.system.spec.md#documenttrash)
 
 #### Verification plan
 

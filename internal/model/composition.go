@@ -133,11 +133,8 @@ func (d *designResolver) resolve(r Record, field, kind string, many bool, accept
 	d.projections = append(d.projections, designProjection{r, field, values, many})
 }
 func (d *designResolver) sameSystem(r Record, candidate Record) bool {
-	owner := d.index[String(r, "owner")]
-	if String(owner, "kind") == "System" {
-		return String(candidate, "owner") == String(owner, "id")
-	}
-	return String(candidate, "owner") == String(owner, "owner")
+	system := obligationSystem(r, d.index)
+	return system != "" && system == obligationSystem(candidate, d.index)
 }
 func (d *designResolver) run() {
 	d.resolveSpecificationSystems()

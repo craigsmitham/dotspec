@@ -5,7 +5,7 @@ documents: "../../specs/requirements/model-source-fidelity.requirement.spec.md#p
 ---
 # Preserve source and represented content in model exports
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 

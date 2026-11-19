@@ -84,10 +84,10 @@ func TestTraceTargetErrorsAndDeferredReferences(t *testing.T) {
 		name, path, old, replacement, field string
 		code                                int
 	}{
-		{"definition is not use", "specs/use-cases/restore.use-case.spec.md", "[DocumentTrash](../system.spec.md#documenttrash)", "[Trash](../concepts/trash.concept.spec.md)", "involves", 1},
-		{"goal is not obligation", "specs/requirements/restoration.requirement.spec.md", "[Restore retained content](../use-cases/restore.use-case.spec.md#restore-content)", "[Goal](../system.spec.md#reduce-lost-work)", "refines", 1},
-		{"goal is not assumption", "specs/requirements/restoration.requirement.spec.md", "[Trusted time](../system.spec.md#trusted-time)", "[Goal](../system.spec.md#reduce-lost-work)", "relies_on", 1},
-		{"concept is not motivation", "specs/jobs/recover.job.spec.md", "[Reduce lost work](../system.spec.md#reduce-lost-work)", "[Trash](../concepts/trash.concept.spec.md)", "supports", 1},
+		{"definition is not use", "specs/use-cases/restore.use-case.spec.md", "[DocumentTrash](../document-workspace.system.spec.md#documenttrash)", "[Trash](../concepts/trash.concept.spec.md)", "involves", 1},
+		{"goal is not obligation", "specs/requirements/restoration.requirement.spec.md", "[Restore retained content](../use-cases/restore.use-case.spec.md#restore-content)", "[Goal](../document-workspace.system.spec.md#reduce-lost-work)", "refines", 1},
+		{"goal is not assumption", "specs/requirements/restoration.requirement.spec.md", "[Trusted time](../document-workspace.system.spec.md#trusted-time)", "[Goal](../document-workspace.system.spec.md#reduce-lost-work)", "relies_on", 1},
+		{"concept is not motivation", "specs/jobs/recover.job.spec.md", "[Reduce lost work](../document-workspace.system.spec.md#reduce-lost-work)", "[Trash](../concepts/trash.concept.spec.md)", "supports", 1},
 		{"external basis deferred", "specs/use-cases/restore.use-case.spec.md", "[Recovery window](../business-rules/retention.business-rule.spec.md)", "[Policy](https://example.com/policy)", "derived_from", 0},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -165,7 +165,7 @@ func TestTraceCitationsAndDrafts(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	selected := strings.NewReplacer("../use-cases/", "../../../specs/use-cases/", "../system.spec.md", "../../../specs/system.spec.md").Replace(string(data))
+	selected := strings.NewReplacer("../use-cases/", "../../../specs/use-cases/", "../document-workspace.system.spec.md", "../../../specs/document-workspace.system.spec.md").Replace(string(data))
 	conformanceWrite(t, root, "selected/specs/requirements/restoration.requirement.spec.md", selected)
 	bounded := conformanceExport(t, filepath.Join(root, "selected"))
 	found := false

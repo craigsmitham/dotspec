@@ -68,18 +68,38 @@ func (s *subject) section(title string) *heading {
 	return nil
 }
 
+func hasDescriptionSection(kind string) bool {
+	switch kind {
+	case "System", "Component", "Feature", "Capability", "ConceptUse", "QualityModel":
+		return true
+	}
+	return false
+}
+
 func subjectPreview(s *subject) string {
+	if hasDescriptionSection(s.kind()) {
+		if h := s.section("Description"); h != nil {
+			return paragraphPreview(sourceProse(s.source, h))
+		}
+		return ""
+	}
 	title := map[string]string{
-		"System": "Purpose", "Concept": "Purpose", "UseCase": "Goal", "Job": "Job",
-		"Component": "Responsibilities", "Feature": "Purpose", "QualityModel": "Description", "Requirement": "Applies to",
+		"Concept": "Purpose", "UseCase": "Goal", "Job": "Job",
+		"Requirement": "Statement", "BusinessRule": "Statement",
 	}[s.kind()]
-	h := s.section(title)
-	if h == nil {
-		h = s.name
+	h := s.name
+	if title != "" {
+		h = s.section(title)
+		if h == nil {
+			return ""
+		}
+	}
+	if s.kind() == "Interface" {
+		return paragraphPreview(sourceProse(s.source, h))
 	}
 	// A bare metadata field or cross-reference gives little context in a list.
 	raw := sourceProse(s.source, h)
-	if strings.HasPrefix(raw, "**") && strings.Contains(strings.SplitN(raw, "\n", 2)[0], ":**") {
+	if title == "" && strings.HasPrefix(raw, "**") && strings.Contains(strings.SplitN(raw, "\n", 2)[0], ":**") {
 		return ""
 	}
 	summary := paragraphPreview(raw)

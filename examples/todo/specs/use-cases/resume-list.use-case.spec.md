@@ -17,7 +17,7 @@ User task.
 
 ## System boundary
 
-**Subject system:** [Personal task list](../system.spec.md).
+**Subject system:** [Personal task list](../personal-task-list.system.spec.md).
 
 ## Supports
 
@@ -25,7 +25,7 @@ User task.
 
 ## Involves
 
-[My checklist](../system.spec.md#my-checklist).
+[My checklist](../personal-task-list.system.spec.md#my-checklist).
 
 ## Preconditions
 
@@ -79,7 +79,7 @@ The list must make previously recorded entries available when the person returns
 
 #### Applies to
 
-**Targets:** [My checklist](../system.spec.md#my-checklist).
+**Targets:** [My checklist](../personal-task-list.system.spec.md#my-checklist).
 
 #### Verification plan
 

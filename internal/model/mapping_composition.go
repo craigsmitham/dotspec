@@ -12,6 +12,8 @@ func (m *domainMapper) composition(r Record, s *Section) bool {
 			m.section(x, "content", child)
 			for _, sub := range child.Children {
 				switch sub.Title {
+				case "Description":
+					m.section(x, "description", sub)
 				case "Definition":
 					x["definition_references"] = m.references(sub.Content)
 					m.bindDesignReferences(x, "definition_references")

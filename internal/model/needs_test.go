@@ -68,12 +68,12 @@ func TestNeedsReferencesRejectWrongKindsAndPreserveUnresolvedNarrative(t *testin
 		invalid                bool
 	}{
 		{"wrong capability", "[Service-change detection](#change-detection)", "[Feature](#disruption-alerts)", true},
-		{"wrong provider", "[Notification service](#notification-service)", "[Feature](#disruption-alerts)", true},
-		{"provider prose", "[Notification service](#notification-service)", "Provider not yet selected.", false},
+		{"wrong provider", "[Notification service](../components/notification-service/specs/notification-service.component.spec.md)", "[Feature](#disruption-alerts)", true},
+		{"provider prose", "[Notification service](../components/notification-service/specs/notification-service.component.spec.md)", "Provider not yet selected.", false},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			root := needsFixture(t)
-			traceEdit(t, root, "specs/system.spec.md", tc.old, tc.replacement)
+			traceEdit(t, root, "specs/journey-service.system.spec.md", tc.old, tc.replacement)
 			result := conformanceExport(t, root)
 			if (result.ExitCode != 0) != tc.invalid {
 				t.Fatal(result.Snapshot.Diagnostics)
@@ -85,7 +85,7 @@ func TestNeedsReferencesRejectWrongKindsAndPreserveUnresolvedNarrative(t *testin
 
 func TestNeedsDiagramLabelsExplicitCaseApplicability(t *testing.T) {
 	root := needsFixture(t)
-	traceEdit(t, root, "specs/requirements/notify-commuters.requirement.spec.md", "**Targets:** [Notification service](../system.spec.md#notification-service)", "**Targets:** [Case](../jobs/reach-work.job.spec.md#repeated-late-arrivals)")
+	traceEdit(t, root, "specs/requirements/notify-commuters.requirement.spec.md", "**Targets:** [Notification service](../../components/notification-service/specs/notification-service.component.spec.md)", "**Targets:** [Case](../jobs/reach-work.job.spec.md#repeated-late-arrivals)")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
 		t.Fatal(result.Snapshot.Diagnostics)

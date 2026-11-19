@@ -144,6 +144,6 @@ links, a plan, a passing test or a merge.
 
 See [Review requirements](review.md) for authoring plans and reading advisory
 findings. Compare the [restart verification plan](../../examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md#verification-plan)
-with the [system validation exercise](../../examples/todo/specification/system.spec-report.md#validation-plan).
+with the [system validation exercise](../../examples/todo/specification/personal-task-list.system.spec-report.md#validation-plan).
 One tests preservation of acknowledged tasks, and the other asks a participant
 to resume interrupted work.

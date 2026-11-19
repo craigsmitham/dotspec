@@ -238,7 +238,7 @@ class ModelViewTests(unittest.TestCase):
         self.assertIn('BusinessRule --> "0..1" Concept : specification system', output)
         self.assertNotIn('BusinessRule --> "0..1" System : specification system', output)
         self.assertIn('SystemContextSpecification <|-- Requirement', output)
-        self.assertNotIn('Specification <|-- Component', output)
+        self.assertIn('SystemContextSpecification <|-- Component', output)
         self.assertNotIn('enforces -->', output)
 
 if __name__ == "__main__":

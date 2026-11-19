@@ -21,20 +21,22 @@ The default file is `todo.sqlite` in the app's working directory. Use `-db PATH`
 
 Start with the [job of resuming interrupted work](specs/jobs/resume.job.spec.md). The [business rule](specs/business-rules/completion.business-rule.spec.md) explains why finishing an errand keeps it available. The [return scenario](specs/use-cases/resume-list.use-case.spec.md) connects that policy to the [checklist actions](specs/concepts/checklist.concept.spec.md).
 
+The [Task service specification](components/task-service/specs/task-service.component.spec.md) links back to the system and owns the [acknowledgement requirement](components/task-service/specs/requirements/acknowledge-after-commit.requirement.spec.md). Its [component report](specification/components/task-service/task-service.component.spec-report.md) brings those sources together.
+
 The [restart requirement](specs/requirements/restart.requirement.spec.md) refines the scenario's promise and classifies it against the system's [durability concern](specs/quality-models/personal-data.quality-model.spec.md#durability). Follow its verification link to the [acceptance test](tests/acceptance.py). Compare the fields it reads through the [forms](app/list.html) with the updates the [server](app/main.go) commits before redirecting.
 
 ## Read the requirements specification
 
-Start with the [system overview](specification/system.spec-report.md) or its [Requirements section](specification/system.spec-report.md#requirements). The pages are generated from the [To-do specifications](specs). Edit the specifications and run `mise run generate` from the repository root to refresh the spec. Run `dotspec check --project todo` to check its content, links and freshness.
+Start with the [system overview](specification/personal-task-list.system.spec-report.md) or its [Requirements section](specification/personal-task-list.system.spec-report.md#requirements). The pages are generated from the [To-do specifications](specs). Edit the specifications and run `mise run generate` from the repository root to refresh the spec. Run `dotspec check --project todo` to check its content, links and freshness.
 
 | Question | Start here |
 | --- | --- |
-| Which features, interfaces and behaviors does the system expose? | [System overview](specification/system.spec-report.md) |
+| Which features, interfaces and behaviors does the system expose? | [System overview](specification/personal-task-list.system.spec-report.md) |
 | How do the user's goals connect to the specifications? | [User job](specification/jobs/resume-interrupted-work.job.spec-report.md) |
 | What changes when someone reopens a task? | [Checklist](specification/concepts/checklist.concept.spec-report.md) |
 | Which promise does the restart requirement refine? | [Restart requirement](specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md) |
 | Which scenarios and decisions need review? | [Requirements review](specification/requirements-review.report.md) |
-| How do project, environment, goals and system fit together? | [Purpose, environment and scope](specification/system.spec-report.md) |
+| How do project, environment, goals and system fit together? | [Purpose, environment and scope](specification/personal-task-list.system.spec-report.md) |
 
 ## Verify the example
 
@@ -46,4 +48,4 @@ mise exec -- go run . model trace --path examples/todo
 mise run example-check
 ```
 
-The acceptance test builds the app in a temporary directory, submits the rendered forms and restarts the server on a temporary database. For a session with a participant, use the [validation exercise](specs/system.spec.md#validation-plan). The [coverage inventory](COVERAGE.md) identifies what the gate exercises and which fields still need a worked example.
+The acceptance test builds the app in a temporary directory, submits the rendered forms and restarts the server on a temporary database. For a session with a participant, use the [validation exercise](specs/personal-task-list.system.spec.md#validation-plan). The [coverage inventory](COVERAGE.md) identifies what the gate exercises and which fields still need a worked example.

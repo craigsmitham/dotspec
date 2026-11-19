@@ -52,11 +52,19 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		if err == nil {
 			authoredID = v.ID
 		}
+	case "component":
+		var v *system.Component
+		v, err = system.ParseComponent(doc.Data)
+		if err == nil {
+			authoredID = v.ID
+			err = system.ComponentLayout.CheckName(String(doc.Source, "locator"), v.Name)
+		}
 	case "system":
 		var v *system.System
 		v, err = system.Parse(doc.Data)
 		if err == nil {
 			authoredID = v.ID
+			err = system.Layout.CheckName(String(doc.Source, "locator"), v.Name)
 		}
 	case "job":
 		var v *job.Job
@@ -89,7 +97,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.parseFailure(err)
 		return m.result
 	}
-	class := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "concept": "Concept", "use-case": "UseCase", "requirement": "Requirement"}[kind]
+	class := map[string]string{"component": "Component", "quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "concept": "Concept", "use-case": "UseCase", "requirement": "Requirement"}[kind]
 	r := m.record(class, "")
 	m.result.RootID = String(r, "id")
 	if authoredID != "" {
@@ -125,6 +133,8 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 			mapped = m.qualityModel(r, section)
 		case "business-rule":
 			mapped = m.businessRule(r, section)
+		case "component":
+			mapped = m.componentSection(r, section)
 		case "system":
 			mapped = m.system(r, section)
 		case "job":

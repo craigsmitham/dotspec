@@ -2,9 +2,7 @@ package model
 
 import (
 	"crypto/sha256"
-	"errors"
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"sort"
@@ -93,15 +91,29 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 		if ownerErr != nil {
 			continue
 		}
-		// An explicit selection makes an unacquired directory default irrelevant.
-		// Already acquired directory context is attached later without extra reads.
-		if _, explicit := b.elements[b.rootByPath[path]]["specification_system_content"]; explicit {
-			continue
+		_, explicit := b.elements[b.rootByPath[path]]["specification_system_content"]
+		var contexts []string
+		var contextErr error
+		if explicit {
+			contexts, contextErr = kind.Context.ResolveSource(owner, filepath.FromSlash(path))
+		} else {
+			contexts, contextErr = kind.Context.Resolve(owner)
 		}
-		contexts, contextErr := kind.Context.Resolve(owner)
 		b.contextOK[path] = contextErr == nil
 		for _, context := range contexts {
 			context = cleanPath(context)
+			if system.ComponentLayout.Match(context) {
+				b.load(context)
+				subject := b.elements[b.rootByPath[path]]
+				if subject != nil && b.rootByPath[context] != "" && subject["specification_component"] == nil && String(subject, "kind") != "Component" {
+					subject["specification_component"] = b.rootByPath[context]
+				}
+				b.follow[context] = true
+				continue
+			}
+			if explicit {
+				continue
+			}
 			b.contextPath[path], b.follow[context] = context, true
 			b.load(context)
 			b.context(context, "system_context", path, "")
@@ -277,14 +289,16 @@ func (b *snapshotBuilder) associateSystems() {
 			continue
 		}
 		for current := filepath.Dir(owner); current != owner; current = filepath.Dir(current) {
-			candidate := cleanPath(system.Layout.Path(current, ""))
-			if info, _, statErr := check.ReferenceTarget(filepath.FromSlash(candidate), repository); statErr == nil {
-				if parent := b.elements[b.rootByPath[candidate]]; info.Mode().IsRegular() && String(parent, "kind") == "System" {
+			file, err := system.Layout.LocalSubject(current)
+			if err != nil {
+				break
+			}
+			candidate := cleanPath(file)
+			if file != "" {
+				if parent := b.elements[b.rootByPath[candidate]]; String(parent, "kind") == "System" {
 					root["enclosing_system"] = parent["id"]
 				}
 				break // An uninspected nearer system must not be skipped.
-			} else if statErr != nil && !errors.Is(statErr, fs.ErrNotExist) {
-				break
 			}
 			if current == repository || filepath.Dir(current) == current {
 				break

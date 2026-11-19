@@ -23,7 +23,11 @@ func Associated(owner, source string) (*System, error) {
 		return nil, diagnostic.WithPath(err, source)
 	}
 	if !explicit {
-		return Enclosing(owner)
+		paths, err := SubjectChain(owner)
+		if err != nil || len(paths) == 0 {
+			return nil, err
+		}
+		return Read(paths[len(paths)-1])
 	}
 	ref.Location.Path = source
 	invalid := func(message string) (*System, error) {
@@ -34,8 +38,8 @@ func Associated(owner, source string) (*System, error) {
 		return invalid("Specification system must link to a repository-local system document.")
 	}
 	target := filepath.Clean(filepath.Join(filepath.Dir(source), filepath.FromSlash(u.Path)))
-	if filepath.Base(target) != Filename {
-		return invalid("Specification system must identify a system.spec.md document.")
+	if !Layout.Match(target) {
+		return invalid("Specification system must identify a named .system.spec.md document.")
 	}
 	root, err := specfile.RepositoryRoot(owner)
 	if err != nil {

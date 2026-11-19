@@ -5,7 +5,7 @@ documents: "../../specs/requirements/generated-specification.requirement.spec.md
 ---
 # Read and verify the generated requirements specification
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 
@@ -17,7 +17,7 @@ Whole-project builds and checks for projects that enable generated specification
 
 ## Criterion
 
-The project's `SPEC.md` gives the system name and one link to `specification/system.spec-report.md`. From that report, reach the same promise through its feature and through the system’s Requirements section. Both routes explain why the promise is listed and lead to its canonical page or passage. The statement, conditions and criterion agree with the authored text. Editing a condition only in the generated spec or removing the feature link produces a check finding. A second build over identical inputs produces identical files.
+The project's `SPEC.md` gives the system name and one link to `specification/<name>.system.spec-report.md`. Each system and component overview uses the basename of its named source with `.spec.md` changed to `.spec-report.md`. From that report, reach the same promise through its feature and through the system’s Requirements section. Both routes explain why the promise is listed and lead to its canonical page or passage. The statement, conditions and criterion agree with the authored text. Editing a condition only in the generated spec or removing the feature link produces a check finding. A second build over identical inputs produces identical files.
 
 ## Verification plan
 

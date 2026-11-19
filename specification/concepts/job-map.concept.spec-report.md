@@ -5,7 +5,7 @@ documents: "../../specs/concepts/job-map.concept.spec.md#job-map"
 ---
 # Job Map
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Purpose
 

@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	systemPath = "specification/system.spec-report.md"
+	systemPath = "specification/task-list.system.spec-report.md"
 	detailLink = "requirements/restart.requirement.spec-report.md"
 	detailPath = "specification/" + detailLink
 )
@@ -25,9 +25,9 @@ func testPlan() *Plan {
 		Markdown: "---\ngenerated_by: dotspec\n---\n# Task list\n\n[Read the system specification](" + systemPath + ")\n",
 	}
 	root := &Page{
-		Document: Document{Type: "system-spec-report", Documents: "../specs/system.spec.md#task-list"}, Title: "Task list",
+		Document: Document{Type: "system-spec-report", Documents: "../specs/task-list.system.spec.md#task-list"}, Title: "Task list",
 		RequiredLinks: []string{detailLink},
-		Markdown:      "---\ntype: system-spec-report\ndocuments: ../specs/system.spec.md#task-list\ngenerated_by: dotspec\n---\n# Task list\n\n[Resume tasks](" + detailLink + ")\n",
+		Markdown:      "---\ntype: system-spec-report\ndocuments: ../specs/task-list.system.spec.md#task-list\ngenerated_by: dotspec\n---\n# Task list\n\n[Resume tasks](" + detailLink + ")\n",
 	}
 	detail := &Page{
 		Document: Document{Type: "requirement-spec-report", Documents: "../../specs/restart.spec.md#restart"}, Title: "Restart",

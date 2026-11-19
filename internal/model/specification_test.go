@@ -12,7 +12,7 @@ import (
 // traceable, but only an authored document is a specification.
 func TestDeclaredElementsAreNotSpecifications(t *testing.T) {
 	for _, tc := range []struct{ kind, section string }{
-		{"Component", "Components"}, {"Feature", "Features"}, {"Capability", "Capabilities"},
+		{"Feature", "Features"}, {"Capability", "Capabilities"},
 		{"ConceptUse", "Concept uses"}, {"Synchronization", "Synchronizations"}, {"Interface", "Required interfaces"},
 	} {
 		t.Run(tc.kind, func(t *testing.T) {
@@ -61,7 +61,7 @@ Review with the intended users.
 			if err := os.MkdirAll(filepath.Join(root, "specs"), 0700); err != nil {
 				t.Fatal(err)
 			}
-			if err := os.WriteFile(filepath.Join(root, "specs", "system.spec.md"), []byte(source), 0600); err != nil {
+			if err := os.WriteFile(filepath.Join(root, "specs", "example.system.spec.md"), []byte(source), 0600); err != nil {
 				t.Fatal(err)
 			}
 			result := conformanceExport(t, root)
@@ -94,7 +94,7 @@ Review with the intended users.
 
 func TestInterfaceSpecificationRelationships(t *testing.T) {
 	root := reviewFixture(t)
-	traceEdit(t, root, "specs/system.spec.md", "## Assumptions", `## Features
+	traceEdit(t, root, "specs/document-workspace.system.spec.md", "## Assumptions", `## Features
 
 ### Reliable recovery
 
@@ -103,7 +103,7 @@ func TestInterfaceSpecificationRelationships(t *testing.T) {
 [Restoration requests](#restoration-requests).
 
 ## Assumptions`)
-	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "[DocumentTrash](../system.spec.md#documenttrash)", "[DocumentTrash](../system.spec.md#documenttrash), [Restoration requests](../system.spec.md#restoration-requests)")
+	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "[DocumentTrash](../document-workspace.system.spec.md#documenttrash)", "[DocumentTrash](../document-workspace.system.spec.md#documenttrash), [Restoration requests](../document-workspace.system.spec.md#restoration-requests)")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
 		t.Fatal(result.Snapshot.Diagnostics)
@@ -155,7 +155,7 @@ func TestInterfaceSpecificationRelationships(t *testing.T) {
 func TestInterfaceDeclarationIDsAreChecked(t *testing.T) {
 	for _, duplicate := range []string{"**ID:** time-readings", "**ID:** restoration-requests\n\n**ID:** another-id"} {
 		root := reviewFixture(t)
-		traceEdit(t, root, "specs/system.spec.md", "**ID:** restoration-requests", duplicate)
+		traceEdit(t, root, "specs/document-workspace.system.spec.md", "**ID:** restoration-requests", duplicate)
 		result := conformanceExport(t, root)
 		if result.ExitCode == 0 {
 			t.Fatal("duplicate declaration identity accepted")

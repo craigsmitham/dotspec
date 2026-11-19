@@ -99,7 +99,7 @@ under Applies to. Use existing actor, job and use-case references where helpful;
 the current model does not require a new context-of-use object or perspective
 field. Population and Conditions subsections can make the context easier to find.
 
-The [To-do validation exercise](../../examples/todo/specs/system.spec.md#validation-plan)
+The [To-do validation exercise](../../examples/todo/specs/personal-task-list.system.spec.md#validation-plan)
 gives the participant real errands to resume. Ask what they recognize after
 returning to the app and record where they need help.
 

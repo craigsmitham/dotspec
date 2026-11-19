@@ -1,5 +1,7 @@
 package model
 
+import "strings"
+
 // Structural links and feature membership are explicit source projections.
 // Declaration containment does not supply a missing structural parent.
 func (m *domainMapper) structureReference(r Record, field string, s *Section) {
@@ -17,10 +19,7 @@ func (m *domainMapper) structureReference(r Record, field string, s *Section) {
 }
 
 func (m *domainMapper) systemDeclarations(system Record, s *Section) {
-	kind, field := "Component", "components"
-	if s.Title == "Features" {
-		kind, field = "Feature", "features"
-	}
+	kind, field := "Feature", "features"
 	if s.Title == "Capabilities" {
 		kind, field = "Capability", "capabilities"
 	}
@@ -36,26 +35,41 @@ func (m *domainMapper) systemDeclarations(system Record, s *Section) {
 			switch {
 			case openQuestionHeading(sub.Title):
 				m.openQuestions(r, []*Section{sub})
+			case sub.Title == "Description":
+				m.section(r, "description", sub)
 			case sub.Title == "Purpose":
 				m.section(r, "purpose", sub)
 			case kind == "Capability" && sub.Title == "Enablers":
 				m.section(r, "enablers", sub)
 			case kind == "Feature" && sub.Title == "Groups":
 				m.structureReference(r, "groups", sub)
-			case kind == "Component" && sub.Title == "Part of":
-				m.structureReference(r, "part_of", sub)
-			case kind == "Component" && sub.Title == "Responsibilities":
-				m.section(r, "responsibilities", sub)
-			case kind == "Component" && sub.Title == "Boundary":
-				m.section(r, "boundary_description", sub)
-			case kind == "Component" && (sub.Title == "Contracts" || sub.Title == "Architecture" || sub.Title == "Implementation"):
-				field := map[string]string{"Contracts": "contracts", "Architecture": "architecture", "Implementation": "implementation"}[sub.Title]
-				m.contextField(r, field, sub.Content)
-				m.sectionBindings(r, field+".content", sub)
 			default:
 				m.extension(r, sub)
 			}
 		}
 		appendID(system, field, String(r, "id"))
 	}
+}
+
+func (m *domainMapper) componentSection(r Record, s *Section) bool {
+	if m.composition(r, s) {
+		return true
+	}
+	switch s.Title {
+	case "Features", "Capabilities":
+		m.systemDeclarations(r, s)
+	case "Purpose", "Description", "Responsibilities":
+		m.section(r, strings.ToLower(s.Title), s)
+	case "Part of":
+		m.structureReference(r, "part_of", s)
+	case "Boundary":
+		m.section(r, "boundary_description", s)
+	case "Contracts", "Architecture", "Implementation":
+		field := strings.ToLower(s.Title)
+		m.contextField(r, field, s.Content)
+		m.sectionBindings(r, field+".content", s)
+	default:
+		return false
+	}
+	return true
 }

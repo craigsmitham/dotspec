@@ -23,9 +23,42 @@ func inspect(path string) ([]diagnostic.Diagnostic, error) {
 
 // CheckContext preserves the same explicit selection or directory default as
 // Show and List, including ignored systems outside the selected subtree.
-var CheckContext = &check.ContextProvider{Inspect: inspect,
-	Resolve:       func(owner string) ([]string, error) { return contextPaths(Enclosing(owner)) },
-	ResolveSource: func(owner, source string) ([]string, error) { return contextPaths(Associated(owner, source)) },
+var CheckContext = &check.ContextProvider{Inspect: func(path string) ([]diagnostic.Diagnostic, error) {
+	if ComponentLayout.Match(path) {
+		_, err := ReadComponent(path)
+		return nil, err
+	}
+	return inspect(path)
+},
+	Resolve: SubjectChain,
+	ResolveSource: func(owner, source string) ([]string, error) {
+		data, err := os.ReadFile(source)
+		if err != nil {
+			return nil, err
+		}
+		_, explicit, err := specfile.SpecificationSystem(data)
+		if err != nil {
+			return nil, diagnostic.WithPath(err, source)
+		}
+		if explicit {
+			paths, err := contextPaths(Associated(owner, source))
+			if err != nil {
+				return paths, err
+			}
+			// An explicit selection can override an invalid directory system. Only a local
+			// component contributes additional ownership context.
+			boundary, err := specfile.ContextRoot(owner)
+			if err != nil {
+				return nil, err
+			}
+			local, lookupErr := nearestSubject(owner, boundary)
+			if lookupErr == nil && local != "" && ComponentLayout.Match(local) {
+				paths = append([]string{local}, paths...)
+			}
+			return paths, nil
+		}
+		return SubjectChain(owner)
+	},
 }
 
 func contextPaths(spec *System, err error) ([]string, error) {

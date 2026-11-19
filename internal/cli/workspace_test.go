@@ -22,8 +22,8 @@ func projectFixture(t *testing.T) string {
 	files := map[string]string{
 		"dotspec.yaml":                          "name: tool\n",
 		"apps/demo/dotspec.yaml":                "name: demo\n",
-		"specs/system.spec.md":                  "---\ntype: system-spec\n---\n# Tool\n\n## Purpose\nTool work.\n\n## Scope\nTool only.\n",
-		"apps/demo/specs/system.spec.md":        "---\ntype: system-spec\n---\n# Demo\n\n## Purpose\nDemo work.\n\n## Scope\nDemo only.\n",
+		"specs/tool.system.spec.md":             "---\ntype: system-spec\n---\n# Tool\n\n## Purpose\nTool work.\n\n## Scope\nTool only.\n",
+		"apps/demo/specs/demo.system.spec.md":   "---\ntype: system-spec\n---\n# Demo\n\n## Purpose\nDemo work.\n\n## Scope\nDemo only.\n",
 		"apps/demo/specs/jobs/work.job.spec.md": "---\ntype: job-spec\n---\n# Work\n\n## Statement\nWhen I need help, I want to work, so I make progress.\n",
 	}
 	for path, body := range files {
@@ -66,7 +66,7 @@ func TestProjectSelectorsAndSeparateWorkspaceResults(t *testing.T) {
 		t.Fatal(code, errOut, out)
 	}
 	// A missing System never falls through to the tool's System.
-	if err := os.Remove(filepath.Join(root, "apps/demo/specs/system.spec.md")); err != nil {
+	if err := os.Remove(filepath.Join(root, "apps/demo/specs/demo.system.spec.md")); err != nil {
 		t.Fatal(err)
 	}
 	code, out, errOut = invoke("job", "show", "work", "--project", "demo", "--json")
@@ -87,7 +87,7 @@ func TestExplicitCrossProjectContextAndAllFailures(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	data = append(data, []byte("\n## Specification system\n\n[Tool](../../../../specs/system.spec.md).\n")...)
+	data = append(data, []byte("\n## Specification system\n\n[Tool](../../../../specs/tool.system.spec.md).\n")...)
 	if err := os.WriteFile(path, data, 0600); err != nil {
 		t.Fatal(err)
 	}
@@ -95,7 +95,7 @@ func TestExplicitCrossProjectContextAndAllFailures(t *testing.T) {
 	if code != 0 || !strings.Contains(out, `"specification_system_origin": "explicit"`) || !strings.Contains(out, `"name": "tool"`) {
 		t.Fatal(code, errOut, out)
 	}
-	if err := os.WriteFile(filepath.Join(root, "specs/system.spec.md"), []byte("not a system"), 0600); err != nil {
+	if err := os.WriteFile(filepath.Join(root, "specs/tool.system.spec.md"), []byte("not a system"), 0600); err != nil {
 		t.Fatal(err)
 	}
 	code, out, errOut = invoke("check", "--all", "--json")
@@ -210,12 +210,12 @@ func TestWorkspaceRootWithoutProjectAndPathNarrowing(t *testing.T) {
 
 func TestWorkspaceMutationCannotTargetAnotherProject(t *testing.T) {
 	root := projectFixture(t)
-	target := filepath.Join(root, "apps/demo/specs/system.spec.md")
+	target := filepath.Join(root, "apps/demo/specs/demo.system.spec.md")
 	before, err := os.ReadFile(target)
 	if err != nil {
 		t.Fatal(err)
 	}
-	code, _, _ := invoke("quality-model", "apply", "--project", "tool", "--system", "apps/demo/specs/system.spec.md")
+	code, _, _ := invoke("quality-model", "apply", "--project", "tool", "--system", "apps/demo/specs/demo.system.spec.md")
 	if code != 2 {
 		t.Fatal(code)
 	}

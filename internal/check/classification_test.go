@@ -15,7 +15,7 @@ func TestClassificationContextAndAdvice(t *testing.T) {
 	dir := t.TempDir()
 	git(t, dir, "init", "-q")
 	child := filepath.Join(dir, "component")
-	modelPath := filepath.Join(dir, "specs/system.spec.md")
+	modelPath := filepath.Join(dir, "specs/product.system.spec.md")
 	model := validSystem + "\n## Quality attributes\n### Known\n**ID:** known\n"
 	write(t, modelPath, model)
 	source := strings.Replace(requirement.QualityTemplate, "type: requirement-spec", "type: requirement-spec\nquality_attributes: [known, unknown]", 1)
@@ -63,9 +63,9 @@ func TestClassifiedRequirementDiscoveryAndSourceLocations(t *testing.T) {
 	path := requirement.Layout.Path(dir, "tracked")
 	write(t, path, requirement.QualityTemplate)
 	git(t, dir, "add", "specs/requirements/tracked.requirement.spec.md")
-	write(t, filepath.Join(dir, ".gitignore"), "tracked.requirement.spec.md\nignored/\nsystem.spec.md\n")
+	write(t, filepath.Join(dir, ".gitignore"), "tracked.requirement.spec.md\nignored/\n*.system.spec.md\n")
 	write(t, filepath.Join(dir, "ignored/broken.requirement.spec.md"), "ignored")
-	write(t, filepath.Join(dir, "specs/system.spec.md"), validSystem+"\n## Quality attributes\n")
+	write(t, filepath.Join(dir, "specs/product.system.spec.md"), validSystem+"\n## Quality attributes\n")
 	r := checkProject(dir)
 	if r.ExitCode() != 0 || r.Summary.FilesChecked != 1 || r.Summary.ContextFilesChecked != 1 {
 		t.Fatalf("discovery or ignored context: %+v", r)

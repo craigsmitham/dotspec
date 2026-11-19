@@ -11,7 +11,7 @@ grep '## Criterion' specs/requirements/work.requirement.spec.md
 status 0 dotspec requirement show work --json
 stdout '"quality_attributes": \[\]'
 stdout '"system": null'
-cp ../model.md specs/system.spec.md
+cp ../model.md specs/new-system.system.spec.md
 cp ../requirement.md specs/requirements/work.requirement.spec.md
 status 0 dotspec system show --json
 stdout '"quality_attributes": \['
@@ -34,7 +34,7 @@ status 0 dotspec check --json
 stdout '"files_checked": 2'
 stdout '"context_files_checked": 0'
 cmp specs/requirements/work.requirement.spec.md ../requirement.md
-cmp specs/system.spec.md ../model.md
+cmp specs/new-system.system.spec.md ../model.md
 status 2 dotspec requirement init work --preset quality
 stderr 'refusing to overwrite'
 ! stdout .
@@ -47,7 +47,7 @@ cp ../unknown.md specs/requirements/unknown.requirement.spec.md
 status 0 dotspec requirement check unknown --json
 stdout 'requirement.undefined-attribute'
 ! stderr .
-cp ../cycle.md specs/system.spec.md
+cp ../cycle.md specs/new-system.system.spec.md
 status 1 dotspec requirement check work --json
 stdout 'quality.cycle'
 ! stdout 'undefined-attribute'
@@ -59,7 +59,7 @@ stdout '"complete": false'
 ---
 type: system-spec
 ---
-# Project
+# New system
 ## Purpose
 Help contributors.
 ## Scope
@@ -103,7 +103,7 @@ quality_attributes: [unknown]
 ---
 type: system-spec
 ---
-# Project
+# New system
 ## Purpose
 Help contributors.
 ## Scope

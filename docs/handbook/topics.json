@@ -16,6 +16,11 @@
     ]
   },
   {
+    "topic": "component",
+    "page": "docs/reference/formats/system.md#component-spec-format",
+    "description": "Name a component, declare its parent and organize its local specifications."
+  },
+  {
     "topic": "concept",
     "page": "docs/handbook/concepts.md",
     "description": "Explain purposeful behavior through state and actions.",

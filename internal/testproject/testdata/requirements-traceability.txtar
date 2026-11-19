@@ -12,7 +12,7 @@ Workspace members may recover accidentally deleted documents during the 30 days 
 
 ## Supports
 
-[Reduce lost work](../system.spec.md#reduce-lost-work).
+[Reduce lost work](../document-workspace.system.spec.md#reduce-lost-work).
 
 ## Rationale
 
@@ -20,7 +20,7 @@ The organization commits to a bounded recovery period. This business rule does n
 
 ## Applies to
 
-**Targets:** [Document workspace](../system.spec.md)
+**Targets:** [Document workspace](../document-workspace.system.spec.md)
 
 Applies to workspace members and documents deleted within that workspace.
 
@@ -70,7 +70,7 @@ When valuable work is accidentally removed, I want to recover it so I can contin
 
 ## Supports
 
-[Reduce lost work](../system.spec.md#reduce-lost-work).
+[Reduce lost work](../document-workspace.system.spec.md#reduce-lost-work).
 
 ## Outcomes
 
@@ -97,11 +97,11 @@ The refinement makes the required metadata explicit without weakening the parent
 
 ## Relies on
 
-[Trusted time](../system.spec.md#trusted-time).
+[Trusted time](../document-workspace.system.spec.md#trusted-time).
 
 ## Applies to
 
-**Targets:** [Restore a document](../use-cases/restore.use-case.spec.md), [DocumentTrash](../system.spec.md#documenttrash)
+**Targets:** [Restore a document](../use-cases/restore.use-case.spec.md), [DocumentTrash](../document-workspace.system.spec.md#documenttrash)
 
 ## Verification plan
 
@@ -110,7 +110,7 @@ Compare all four metadata fields before deletion and after restoration for each 
 ## Rationale
 
 Preserving these metadata fields lets members resume work with the same document identity and attribution. The Refines section identifies the governing obligation.
--- specs/system.spec.md --
+-- specs/document-workspace.system.spec.md --
 ---
 type: system-spec
 ---
@@ -163,7 +163,7 @@ Recover an accidentally deleted document and resume work.
 
 ## System boundary
 
-**Subject system:** [Document workspace](../system.spec.md)
+**Subject system:** [Document workspace](../document-workspace.system.spec.md)
 
 The workspace owns retention and restoration; external backups are outside this boundary.
 
@@ -173,7 +173,7 @@ The workspace owns retention and restoration; external backups are outside this 
 
 ## Involves
 
-[DocumentTrash](../system.spec.md#documenttrash).
+[DocumentTrash](../document-workspace.system.spec.md#documenttrash).
 
 ## Main success scenario
 
@@ -203,7 +203,7 @@ When an authorized workspace member requests restoration before the 30-day recov
 
 #### Applies to
 
-**Targets:** [DocumentTrash](../system.spec.md#documenttrash)
+**Targets:** [DocumentTrash](../document-workspace.system.spec.md#documenttrash)
 
 #### Verification plan
 

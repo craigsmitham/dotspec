@@ -5,7 +5,7 @@ documents: "../../specs/requirements/specification-project-isolation.requirement
 ---
 # Isolate specification projects in a workspace
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 

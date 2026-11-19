@@ -5,7 +5,7 @@ documents: "../../specs/requirements/advice-permits-success.requirement.spec.md#
 ---
 # Advice permits a successful check
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 

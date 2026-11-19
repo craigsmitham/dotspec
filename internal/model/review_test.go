@@ -113,7 +113,7 @@ func TestReviewViewsAreAdvisoryAndRebaseSources(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"No contribution path recorded", "Contribution path recorded", "ScenarioStep 2", "no rule or action relationship recorded", "no native contract reference recorded", "No verification plan recorded", "Before acceptance", "no Raised by, Raised on, Resolve by, Importance, Evidence needed recorded", "Review required for **recovery copy**", "../specs/system.spec.md#reduce-retention-cost", "../project-plan.md#retention-boundary-decision", "nonbinding"} {
+	for _, want := range []string{"No contribution path recorded", "Contribution path recorded", "ScenarioStep 2", "no rule or action relationship recorded", "no native contract reference recorded", "No verification plan recorded", "Before acceptance", "no Raised by, Raised on, Resolve by, Importance, Evidence needed recorded", "Review required for **recovery copy**", "../specs/document-workspace.system.spec.md#reduce-retention-cost", "../project-plan.md#retention-boundary-decision", "nonbinding"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("review missing %q", want)
 		}
@@ -156,7 +156,7 @@ func TestIllustrationIsExplicitAndRejectsWrongEndpoint(t *testing.T) {
 		invalid           bool
 	}{
 		{"citation", "Related: [Restore retained content](#restore-content).", false},
-		{"wrong endpoint", "**Illustrates:** [Workspace](../system.spec.md).", true},
+		{"wrong endpoint", "**Illustrates:** [Workspace](../document-workspace.system.spec.md).", true},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			root := reviewFixture(t)
@@ -177,37 +177,39 @@ func TestIllustrationIsExplicitAndRejectsWrongEndpoint(t *testing.T) {
 
 func TestRepeatedComponentInterfaceSectionsRetainAllEntries(t *testing.T) {
 	root := reviewFixture(t)
-	traceEdit(t, root, "specs/system.spec.md", "## Concept uses", `## Components
+	conformanceWrite(t, root, "worker/specs/retention-worker.component.spec.md", `---
+type: component-spec
+---
+# Retention worker
+## Part of
+[Workspace](../../specs/document-workspace.system.spec.md)
 
-### Retention worker
+## Required interfaces
 
-#### Required interfaces
-
-##### Time readings
+### Time readings
 
 **ID:** component-time
 
 Read the current time.
 
-###### Contracts
+#### Contracts
 
-[Clock contract](../contracts/time.openapi.yaml).
+[Clock contract](../../contracts/time.openapi.yaml).
 
-###### Contracts
+#### Contracts
 
-[Project context](../project-plan.md).
+[Project context](../../project-plan.md).
 
-#### Required interfaces
+## Required interfaces
 
-##### Storage reads
+### Storage reads
 
 Read retained items.
 
-#### Implementation hints
+## Implementation hints
 
 A batch worker can use [Time readings](#component-time).
-
-## Concept uses`)
+`)
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
 		t.Fatal(result.Snapshot.Diagnostics)

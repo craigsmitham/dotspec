@@ -5,7 +5,7 @@ documents: "../../specs/requirements/continue-after-invalid-spec.requirement.spe
 ---
 # Continue checking after a structural error
 
-[dotspec](<../system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 

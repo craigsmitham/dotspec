@@ -138,12 +138,12 @@ The notification service must submit a disruption notification for each affected
 
 ## Applies to
 
-**Targets:** [Notification service](../system.spec.md#notification-service)
+**Targets:** [Notification service](../../components/notification-service/specs/notification-service.component.spec.md)
 
 ## Verification plan
 
 In a controlled test, record event receipt and notification submission timestamps for each affected subscription. Check that each elapsed duration is at most 30 seconds. This tests submission, not delivery, reading, or improved user confidence.
--- specs/system.spec.md --
+-- specs/journey-service.system.spec.md --
 ---
 type: system-spec
 id: journey-service
@@ -157,20 +157,6 @@ Help commuters respond to changing travel conditions.
 ## Scope
 
 Journey information and disruption notifications. Transport operations remain external.
-
-## Components
-
-### Notification service
-
-**ID:** notification-service
-
-#### Part of
-
-[Journey service](#journey-service)
-
-#### Responsibilities
-
-Deliver relevant disruption information to affected commuters.
 
 ## Features
 
@@ -211,7 +197,7 @@ Make relevant changes understandable and available to affected travelers.
 
 #### Provided by
 
-[Notification service](#notification-service)
+[Notification service](../components/notification-service/specs/notification-service.component.spec.md)
 
 #### Enablers
 
@@ -228,3 +214,18 @@ Recognize changes that could affect a planned journey.
 #### Enablers
 
 Transport operations staff and external information feeds. No software provider is specified here.
+-- components/notification-service/specs/notification-service.component.spec.md --
+---
+type: component-spec
+id: notification-service
+---
+
+# Notification service
+
+## Part of
+
+[Journey service](../../../specs/journey-service.system.spec.md#journey-service)
+
+## Responsibilities
+
+Deliver relevant disruption information to affected commuters.

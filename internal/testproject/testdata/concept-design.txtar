@@ -203,7 +203,7 @@ same target while the registration remains active.
 ### End access
 
 Unregister the code. Subsequent lookups report that it is unknown.
--- specs/system.spec.md --
+-- specs/expiring-links.system.spec.md --
 ---
 type: system-spec
 ---

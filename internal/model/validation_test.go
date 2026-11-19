@@ -22,7 +22,7 @@ func validationSnapshot(t *testing.T) *Snapshot {
 	t.Helper()
 	dir := t.TempDir()
 	files := map[string]string{
-		"specs/system.spec.md": `---
+		"specs/example.system.spec.md": `---
 type: system-spec
 ---
 # Example
@@ -65,7 +65,7 @@ An input is invalid.
 #### Handling
 Unresolved
 ## Related specifications
-[The system](../system.spec.md) and [requirements](../requirements/).
+[The system](../example.system.spec.md) and [requirements](../requirements/).
 `,
 		"specs/jobs/inspect.job.spec.md": `---
 type: job-spec

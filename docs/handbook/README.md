@@ -18,7 +18,7 @@ takes that question from user intent to a real process restart.
 | Question | Follow it in the app | Authoring guide |
 | --- | --- | --- |
 | What progress does someone seek? | The [job](../../examples/todo/specs/jobs/resume.job.spec.md) describes the effort of reconstructing unfinished work. | [Jobs and user needs](jobs.md) |
-| What is in scope? | The [system](../../examples/todo/specs/system.spec.md) serves one person returning to the same computer. | [Boundaries and interfaces](review.md#delimit-the-boundary-and-its-interfaces) |
+| What is in scope? | The [system](../../examples/todo/specs/personal-task-list.system.spec.md) serves one person returning to the same computer. | [Boundaries and interfaces](review.md#delimit-the-boundary-and-its-interfaces) |
 | Which policy governs completion? | The [business rule](../../examples/todo/specs/business-rules/completion.business-rule.spec.md) explains why a completed errand is still available for follow-up. | [Business rules](business-rules.md) |
 | How does a person act on that policy? | The [use case](../../examples/todo/specs/use-cases/resume-list.use-case.spec.md) follows a person revisiting a finished errand. The [checklist concept](../../examples/todo/specs/concepts/checklist.concept.spec.md) defines how reopening changes its state. | [Use cases](use-cases.md) · [Concepts](concepts.md) |
 | Where should a promise live? | The use case owns [Keep recorded work available](../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available). The [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md) refines what must survive and links to its executable verification. | [Choose an authoring form](requirements.md#choose-an-authoring-form) · [Declare relationships](relationships.md) |
@@ -32,7 +32,7 @@ matter. Run the walkthrough to see how the acceptance test compares what the
 person recorded with what the new process serves. [Review requirements](review.md).
 
 To assess whether the workflow helps a person resume work, try the exercise in
-the [system validation plan](../../examples/todo/specs/system.spec.md#validation-plan).
+the [system validation plan](../../examples/todo/specs/personal-task-list.system.spec.md#validation-plan).
 Record what the participant tried and where they needed help.
 [Verification and validation](verification-and-validation.md).
 
