@@ -55,7 +55,7 @@ status 2 dotspec sources --json --format text
 ! stdout .
 -- concept.md --
 ---
-type: concept
+type: concept-spec
 ---
 # Native example
 ## Purpose
@@ -70,7 +70,7 @@ Follow the link for required behavior.
 [Directory](../../more-tests/)
 -- quality.md --
 ---
-type: requirement
+type: requirement-spec
 ---
 # Preserve source
 ## Applies to

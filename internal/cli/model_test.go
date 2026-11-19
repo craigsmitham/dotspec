@@ -15,8 +15,8 @@ import (
 
 func TestModelExportValidationAndSourcePreservation(t *testing.T) {
 	t.Chdir(t.TempDir())
-	system := "---\ntype: system\n---\n# System\n## Purpose\nRead specs.\n## Scope\nA CLI.\n"
-	useCase := "\xef\xbb\xbf---\r\ntype: use-case\r\nid: check\r\n---\r\n# Check a specification\r\n\r\n## Goal\r\nRead [missing material](../../missing.md).  \r\n\r\n## Main success scenario\r\n1. Ask for a report.\r\n2. Receive findings.\r\n\r\n## Extensions\r\n### Invalid source\r\nHandling unresolved.\r\n\r\n<!-- retain this comment -->\r\n"
+	system := "---\ntype: system-spec\n---\n# System\n## Purpose\nRead specs.\n## Scope\nA CLI.\n"
+	useCase := "\xef\xbb\xbf---\r\ntype: use-case-spec\r\nid: check\r\n---\r\n# Check a specification\r\n\r\n## Goal\r\nRead [missing material](../../missing.md).  \r\n\r\n## Main success scenario\r\n1. Ask for a report.\r\n2. Receive findings.\r\n\r\n## Extensions\r\n### Invalid source\r\nHandling unresolved.\r\n\r\n<!-- retain this comment -->\r\n"
 	writeFixture(t, "specs/system.spec.md", system)
 	writeFixture(t, "specs/use-cases/check.use-case.spec.md", useCase)
 	code, output, errOut := invoke("model", "export")

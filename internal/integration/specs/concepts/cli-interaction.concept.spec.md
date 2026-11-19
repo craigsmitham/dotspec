@@ -1,5 +1,5 @@
 ---
-type: concept
+type: concept-spec
 id: cli-interaction
 ---
 

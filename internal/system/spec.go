@@ -20,7 +20,7 @@ type metadata struct {
 }
 
 const Template = `---
-type: system
+type: system-spec
 ---
 
 # New system

@@ -17,7 +17,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/usecase"
 )
 
-const qualitySource = "---\ntype: quality\nid: QR-1\nunit: milliseconds\n---\n# Response time\n\n## Criterion\n95% of requests finish in 200 milliseconds. See [requirement](#QR-1).\n\n## Evidence\nRetain this **authored prose** and [criterion](#criterion).\n"
+const qualitySource = "---\ntype: quality-spec\nid: QR-1\nunit: milliseconds\n---\n# Response time\n\n## Criterion\n95% of requests finish in 200 milliseconds. See [requirement](#QR-1).\n\n## Evidence\nRetain this **authored prose** and [criterion](#criterion).\n"
 
 func testScope(t *testing.T) string {
 	t.Helper()

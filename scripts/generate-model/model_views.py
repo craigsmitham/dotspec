@@ -23,7 +23,20 @@ def validate_groups(catalog: dict[str, Any]) -> None:
             if subset not in subsets:
                 raise ValueError(f'{name}: unknown subset {subset}')
 
-    document_types = set(catalog['enums']['SpecificationDocumentType'])
+    document_types = set()
+    for name, cls in catalog['classes'].items():
+        if cls['abstract'] or 'GeneratedDocument' not in cls['ancestors']:
+            continue
+        tag = cls['slots']['type']['equals_string']
+        if tag in document_types:
+            raise ValueError(f'{name}: duplicate document type {tag}')
+        document_types.add(tag)
+        if 'SubjectSpecReport' in cls['ancestors']:
+            subject = name.removesuffix('SpecReport')
+            if (not name.endswith('SpecReport') or
+                    cls['slots']['documents']['reference_ranges'] != [subject] or
+                    tag != re.sub(r'(?<!^)(?=[A-Z])', '-', name).lower()):
+                raise ValueError(f'{name}: document type must mirror its subject')
     domain_names = set(catalog['enums']['SpecificationType'])
     for name, cls in catalog['classes'].items():
         if any(subsets[s]['classification'] == 'core' for s in cls['subsets']):

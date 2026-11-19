@@ -72,7 +72,7 @@ not mean that the software performs every step of the customer's job.
 ## Job spec format
 
 Jobs use one Markdown convention with no profiles or method selection. Only
-`type: job` frontmatter and one nonempty document-level H1 are required. An
+`type: job-spec` frontmatter and one nonempty document-level H1 are required. An
 optional `id` in frontmatter supplies an explicit job identity; the file slug
 remains the CLI selector. Other frontmatter keys are currently rejected.
 
@@ -80,7 +80,7 @@ For example, a draft with a partial map:
 
 ```markdown
 ---
-type: job
+type: job-spec
 id: develop-requirements
 ---
 
@@ -187,7 +187,7 @@ A job can have overall outcomes without any steps or IDs, for example:
 
 ```markdown
 ---
-type: job
+type: job-spec
 ---
 
 # Assess a proposed change

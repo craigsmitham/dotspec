@@ -1,5 +1,5 @@
 ---
-type: requirement
+type: requirement-spec
 quality_attributes: [usability, repeatability]
 ---
 # Read and verify the generated requirements specification
@@ -14,7 +14,7 @@ For an opted-in project with one root system, contributors must be able to gener
 
 ## Criterion
 
-Starting from the project's `SPEC.md`, follow the product's feature and the collection indexes to the same requirement. The statement, conditions and criterion agree with the authored text. Editing a condition only in the generated spec or removing the feature link produces a check finding. A second build over identical inputs produces identical files.
+Starting from the project's `SPEC.md`, reach the same promise through its feature and through the system’s Requirements section. Both routes explain why the promise is listed and lead to its canonical page or passage. The statement, conditions and criterion agree with the authored text. Editing a condition only in the generated spec or removing the feature link produces a check finding. A second build over identical inputs produces identical files.
 
 ## Verification plan
 

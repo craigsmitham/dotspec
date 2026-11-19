@@ -2,6 +2,7 @@ package specdoc
 
 import (
 	"cmp"
+	"encoding/json"
 	"fmt"
 	"html"
 	"maps"
@@ -9,6 +10,7 @@ import (
 	"path"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/model"
@@ -16,7 +18,6 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
-const contentsPath = "specification/index.md"
 const reviewPath = "specification/review.md"
 
 type writer struct {
@@ -25,16 +26,19 @@ type writer struct {
 	out                 strings.Builder
 }
 
-func (p *planner) newPage(file, typ, subjectKind, title string) *writer {
-	page := &Page{Type: typ, SubjectKind: subjectKind, Title: title}
+func (p *planner) newPage(file string, document Document, title string) *writer {
+	page := &Page{Document: document, Title: title}
 	p.plan.Pages[file] = page
 	return &writer{page: page, file: file, titleMarkdown: title}
 }
 func (w *writer) finish() {
 	var header strings.Builder
-	fmt.Fprintf(&header, "---\ntype: %s\ngenerated_by: dotspec\n", w.page.Type)
-	if w.page.SubjectKind != "" {
-		fmt.Fprintf(&header, "subject_kind: %s\n", w.page.SubjectKind)
+	header.WriteString("---\ngenerated_by: dotspec\n")
+	if w.page.Type != "" {
+		fmt.Fprintf(&header, "type: %s\n", w.page.Type)
+	}
+	if w.page.Documents != "" {
+		fmt.Fprintf(&header, "documents: %s\n", strconv.Quote(w.page.Documents))
 	}
 	fmt.Fprintf(&header, "---\n# %s\n", w.titleMarkdown)
 	w.page.Markdown = strings.TrimSpace(header.String()+w.out.String()) + "\n"
@@ -84,20 +88,12 @@ func (p *planner) render() *Plan {
 	for _, s := range p.subjects {
 		p.renderSubject(s)
 	}
-	for _, file := range slices.Sorted(maps.Keys(p.collections)) {
-		p.renderIndex(p.collections[file])
-	}
-	p.renderContents()
 	p.renderReview()
 	return p.plan
 }
 
 func (p *planner) renderSubject(s *subject) {
-	typ := SpecificationSection
-	if s.kind() == "System" {
-		typ = RequirementsSpecification
-	}
-	w := p.newPage(s.file, typ, kindName(s.kind()), s.name.title)
+	w := p.newPage(s.file, subjectDocument(s.file, s.source, s.name), s.name.title)
 	w.titleMarkdown = p.headingMarkdown(w, s, s.name)
 	headings := readingOrder(s)
 	if s.kind() == "System" {
@@ -115,29 +111,25 @@ func (p *planner) renderSubject(s *subject) {
 		if s != p.governing {
 			nav = append(nav, w.link(s.system.name.title, s.system.file))
 		}
-		if c := p.collections[path.Join(s.dir, "requirements", "index.md")]; c != nil {
-			nav = append(nav, w.link("Requirements", c.file))
+		if d := s.directories["Requirements"]; d != nil {
+			nav = append(nav, w.link("Requirements", s.file+"#"+d.anchor))
 		}
-		nav = append(nav, w.link("Full contents", contentsPath), w.link("Requirements review", reviewPath))
+		nav = append(nav, w.link("Requirements review", reviewPath))
 		w.text("---")
 		w.text(strings.Join(nav, " · "))
 	} else {
-		w.text(w.link(s.system.name.title, s.system.file) + " · " + w.link("Contents", contentsPath))
+		w.text(w.link(s.system.name.title, s.system.file))
 	}
 	p.renderHeadings(w, s, headings)
-	if s.kind() == "System" {
-		w.heading("Explore this system")
-		w.out.WriteByte('\n')
-		for _, file := range slices.Sorted(maps.Keys(p.collections)) {
-			c := p.collections[file]
-			if c.system == s {
-				fmt.Fprintln(&w.out, "- "+w.link(sentenceCase(c.label), c.file))
-			}
+	for _, label := range slices.Sorted(maps.Keys(s.directories)) {
+		if d := s.directories[label]; d.section == nil {
+			w.heading(label)
+			d.render(w)
 		}
-		fmt.Fprintln(&w.out, "- "+w.link("Full specification contents", contentsPath))
-		fmt.Fprintln(&w.out, "- "+w.link("Requirements review", reviewPath))
 	}
-	p.relationships(w, s)
+	if s.section("Related specifications") == nil {
+		p.relationships(w, s.name, true)
+	}
 	p.appendFootnotes(w, s)
 	w.text(w.sourceLink("Edit source", s.source.path, s.name.anchor))
 	w.finish()
@@ -146,8 +138,10 @@ func (p *planner) renderSubject(s *subject) {
 func (p *planner) renderHeadings(w *writer, s *subject, headings []*heading) {
 	for _, h := range headings {
 		if h.owner != s {
-			if h.owner != nil && h.owner.name == h && p.ownerPage(p.elements[attr(h.owner.r, "owner")]) == s {
-				w.text("- " + w.link(h.title, h.owner.file))
+			if s.attributes != nil && h == s.attributes.name {
+				w.heading(h.title)
+				p.body(w, s.source, h)
+				p.attributeTable(w, s)
 			}
 			continue
 		}
@@ -157,10 +151,27 @@ func (p *planner) renderHeadings(w *writer, s *subject, headings []*heading) {
 				w.text(`<a id="` + html.EscapeString(h.explicitAnchor) + `"></a>`)
 			}
 			w.text(strings.Repeat("#", max(2, h.level-s.name.level+1)) + " " + p.headingMarkdown(w, s, h))
+			if h.subjectKind != "" {
+				meta, _ := json.Marshal(subjectDocument(w.file, s.source, h))
+				w.text("<!-- dotspec-doc " + string(meta) + " -->")
+			}
+			if d := s.directories[h.title]; d != nil && d.section == h {
+				d.render(w)
+				if strings.TrimSpace(s.source.data[h.end:h.bodyEnd]) != "" {
+					// A following authored Markdown list must remain a separate list.
+					w.text("<!-- end directory -->")
+				}
+			}
+		}
+		if h == s.name && s.kind() == "Feature" {
+			p.featureGoals(w, s)
 		}
 		p.body(w, s.source, h)
+		if h.level == s.name.level+1 && h.title == "Related specifications" {
+			p.relationships(w, s.name, false)
+		}
 		if h != s.name {
-			p.embeddedRelationships(w, h)
+			p.relationships(w, h, false)
 			if h.obligation {
 				w.text(w.sourceLink("Edit obligation", s.source.path, h.anchor))
 			}
@@ -186,24 +197,26 @@ func readingOrder(s *subject) []*heading {
 			groups[i] = append(groups[i], h)
 		}
 	}
+	var first []string
+	switch s.kind() {
+	case "Requirement":
+		first = []string{"Statement", "Applies to", "Conditions", "Criterion", "Verification plan"}
+	case "UseCase":
+		first = []string{"Goal", "Primary actor", "Trigger", "Preconditions", "Main success scenario", "Extensions", "Success guarantees", "Minimal guarantees"}
+	case "System":
+		first = []string{"Purpose", "Scope", "Features"}
+	}
 	priority := func(group []*heading) int {
 		if group[0] == s.name {
 			return 0
 		}
-		if s.kind() == "Requirement" && group[0].title == "Statement" {
-			return 1
+		if group[0].title == "Related specifications" {
+			return len(first) + 2 // Keep cross-references after the subject's own details.
 		}
-		if s.kind() == "System" {
-			switch group[0].title {
-			case "Purpose":
-				return 1
-			case "Scope":
-				return 2
-			case "Features":
-				return 3
-			}
+		if i := slices.Index(first, group[0].title); i >= 0 {
+			return i + 1
 		}
-		return 4
+		return len(first) + 1
 	}
 	slices.SortStableFunc(groups, func(a, b []*heading) int { return cmp.Compare(priority(a), priority(b)) })
 	var headings []*heading
@@ -218,13 +231,13 @@ func readingOrder(s *subject) []*heading {
 func (p *planner) appendFootnotes(w *writer, s *subject) {
 	definitions := map[string]model.Record{}
 	needed := map[string]bool{}
-	owner := func(pos int) *subject {
+	onPage := func(pos int) bool {
 		for _, h := range s.source.headings {
 			if h.start <= pos && pos < h.bodyEnd {
-				return h.owner
+				return h.owner == s || (s.attributes != nil && h == s.attributes.name)
 			}
 		}
-		return nil
+		return false
 	}
 	for _, n := range s.source.footnotes {
 		key := strings.ToLower(attr(n, "label"))
@@ -232,12 +245,12 @@ func (p *planner) appendFootnotes(w *writer, s *subject) {
 			definitions[key] = n
 			continue
 		}
-		if owner(position(n, "start")) == s {
+		if onPage(position(n, "start")) {
 			needed[key] = true
 		}
 	}
 	for _, key := range slices.Sorted(maps.Keys(needed)) {
-		if n := definitions[key]; n != nil && owner(position(n, "start")) != s {
+		if n := definitions[key]; n != nil && !onPage(position(n, "start")) {
 			w.text(p.rebasedText(w, s.source, position(n, "start"), position(n, "end")))
 		}
 	}
@@ -299,7 +312,7 @@ func attributeFieldBreaks(source string, start, end int) []replacement {
 			segment := block.Lines().At(i)
 			line := strings.TrimRight(source[start+segment.Start:start+segment.Stop], "\r\n")
 			trimmed := strings.TrimSpace(line)
-			if !strings.HasPrefix(trimmed, "**ID:**") && !strings.HasPrefix(trimmed, "**Sub-attribute of:**") {
+			if !attributeField(trimmed) {
 				previousFieldEnd = -1
 				continue
 			}
@@ -443,40 +456,58 @@ func (p *planner) indexRelationships() {
 	}
 }
 
-// Place inverse links beside an embedded obligation or outcome. An authored
-// forward link anywhere within that heading's child sections already serves
-// the reader, so materialize only additional routes.
-func (p *planner) embeddedRelationships(w *writer, h *heading) {
+// Only a link in the corresponding authored relationship section fills that
+// role. Navigation and links to the same passage for other reasons can coexist.
+func (p *planner) relationships(w *writer, h *heading, showHeading bool) {
 	if len(p.routes[h.node]) == 0 {
 		return
 	}
 	sf := h.owner.source
-	limit := len(sf.data)
-	for _, next := range sf.headings {
-		if next.start > h.start && next.level <= h.level {
-			limit = next.start
+	type labeledLink struct{ label, dest string }
+	authored := map[labeledLink]bool{}
+	field := ""
+	for _, section := range sf.headings {
+		if section.start <= h.start {
+			continue
+		}
+		if section.level <= h.level {
 			break
+		}
+		if section.level == h.level+1 {
+			field = section.title
+			if field == "Quality attributes" {
+				field = "Quality attribute"
+			}
+		}
+		if field == "" || section.owner != h.owner {
+			continue
+		}
+		for _, n := range sf.links {
+			pos := position(n, "start")
+			if pos >= section.end && pos < section.bodyEnd && attr(n, "node_kind") == "link" {
+				dest := p.documentLink(w.file, sf.path, attr(n, "destination"))
+				authored[labeledLink{field, dest}] = true
+			}
 		}
 	}
 	byLabel := map[string][]string{}
 	for _, r := range p.routes[h.node] {
-		if r.target == w.file {
+		if r.target == w.file || (r.forward && authored[labeledLink{r.label, relative(w.file, r.target)}]) {
 			continue
 		}
-		found := false
-		if r.forward {
-			dest := relative(w.file, r.target)
-			for _, n := range sf.links {
-				pos := position(n, "start")
-				if pos >= h.start && pos < limit && attr(n, "node_kind") == "link" && p.documentLink(w.file, sf.path, attr(n, "destination")) == dest {
-					found = true
-					break
-				}
+		if h == h.owner.name {
+			dirs := h.owner.directories
+			if r.label == "Parts" && (dirs["Child systems"].contains(r.target) || dirs["Components"].contains(r.target)) {
+				continue
+			}
+			if r.label == "Applies here" && dirs["Applicable requirements"].contains(r.target) {
+				continue
 			}
 		}
-		if !found {
-			byLabel[r.label] = append(byLabel[r.label], w.link(r.title, r.target))
-		}
+		byLabel[r.label] = append(byLabel[r.label], w.link(r.title, r.target))
+	}
+	if showHeading && len(byLabel) != 0 {
+		w.heading("Related specifications")
 	}
 	for _, label := range slices.Sorted(maps.Keys(byLabel)) {
 		links := byLabel[label]
@@ -490,70 +521,9 @@ func (p *planner) embeddedRelationships(w *writer, h *heading) {
 		}
 	}
 }
-func (p *planner) relationships(w *writer, s *subject) {
-	var lines []string
-	for _, r := range p.routes[s.name.node] {
-		if r.target == w.file || slices.Contains(w.page.RequiredLinks, relative(w.file, r.target)) {
-			continue
-		}
-		lines = append(lines, r.label+" — "+w.link(r.title, r.target))
-	}
-	if len(lines) > 0 {
-		w.heading("Related specifications")
-		w.out.WriteByte('\n')
-		slices.Sort(lines)
-		for _, line := range slices.Compact(lines) {
-			fmt.Fprintln(&w.out, "- "+line)
-		}
-	}
-}
-func (p *planner) renderIndex(c *collection) {
-	title := sentenceCase(c.label) + " for " + c.system.name.title
-	w := p.newPage(c.file, CollectionIndex, "", title)
-	w.text(w.link(c.system.name.title, c.system.file) + " · " + w.link("Contents", contentsPath))
-	slices.SortFunc(c.entries, func(a, b entry) int {
-		return cmp.Or(strings.Compare(a.title, b.title), strings.Compare(a.target, b.target))
-	})
-	w.out.WriteByte('\n')
-	for _, e := range c.entries {
-		fmt.Fprintln(&w.out, "- "+w.link(e.title, e.target))
-	}
-	w.finish()
-}
-func (p *planner) renderContents() {
-	w := p.newPage(contentsPath, TableOfContents, "", "Specification contents")
-	systems := []*subject{p.governing}
-	for _, s := range p.subjects {
-		if s != p.governing && s.kind() == "System" {
-			systems = append(systems, s)
-		}
-	}
-	slices.SortFunc(systems[1:], func(a, b *subject) int { return strings.Compare(a.file, b.file) })
-	w.heading("By system")
-	w.out.WriteByte('\n')
-	for _, s := range systems {
-		fmt.Fprintln(&w.out, strings.Repeat("  ", strings.Count(s.file, "/systems/"))+"- "+w.link(s.name.title, s.file))
-	}
-	byKind := map[string][]*collection{}
-	for _, file := range slices.Sorted(maps.Keys(p.collections)) {
-		c := p.collections[file]
-		byKind[c.label] = append(byKind[c.label], c)
-	}
-	w.heading("By kind")
-	w.out.WriteByte('\n')
-	for _, label := range slices.Sorted(maps.Keys(byKind)) {
-		var links []string
-		for _, c := range byKind[label] {
-			links = append(links, w.link(sentenceCase(label)+" for "+c.system.name.title, c.file))
-		}
-		fmt.Fprintln(&w.out, "- "+strings.Join(links, " · "))
-	}
-	w.text(w.link("Requirements review", reviewPath))
-	w.finish()
-}
 func (p *planner) renderReview() {
-	w := p.newPage(reviewPath, RequirementsReviewReport, "", "Requirements review")
-	w.text(w.link(p.governing.name.title, p.governing.file) + " · " + w.link("Contents", contentsPath))
+	w := p.newPage(reviewPath, Document{Type: RequirementsReviewReport}, "Requirements review")
+	w.text(w.link(p.governing.name.title, p.governing.file))
 	var questions, findings, verification, validation []string
 	for _, s := range p.subjects {
 		var ancestors []*heading
@@ -570,12 +540,11 @@ func (p *planner) renderReview() {
 			}
 			switch h.title {
 			case "Open questions", "Open question":
-				// Lists and prose remain legible at the review destination;
-				// nested question headings also receive an individual route.
-				label := contentText(sourceProse(s.source, h))
-				if label != "" {
-					questions = append(questions, w.link(label, p.targets[h.node])+" · "+s.name.title)
-				} else if h.title == "Open question" {
+				labels := questionPassages(sourceProse(s.source, h))
+				for _, label := range labels {
+					questions = append(questions, w.link(inlineText(label), p.targets[h.node])+" · "+inlineText(subject))
+				}
+				if len(labels) == 0 && h.title == "Open question" {
 					questions = append(questions, w.link(subject+" — "+h.title, p.targets[h.node]))
 				}
 			case "Verification plan":
@@ -584,17 +553,25 @@ func (p *planner) renderReview() {
 				validation = append(validation, w.link(subject, p.targets[h.node]))
 			default:
 				if len(ancestors) > 0 && ancestors[len(ancestors)-1].title == "Open questions" {
-					questions = append(questions, w.link(h.title, p.targets[h.node]))
+					labels := questionPassages(sourceProse(s.source, h))
+					if len(labels) == 0 {
+						labels = []string{h.title}
+					}
+					for _, label := range labels {
+						questions = append(questions, w.link(inlineText(label), p.targets[h.node])+" · "+inlineText(s.name.title))
+					}
 				}
 			}
 			ancestors = append(ancestors, h)
 		}
 	}
+	byFinding := map[string][]string{}
 	for _, d := range p.snapshot.Diagnostics {
 		msg := strings.ReplaceAll(attr(d, "message"), filepath.ToSlash(p.root)+"/", "")
 		dest := p.targets[attr(d, "source")]
 		if dest != "" {
 			src := p.sources[attr(d, "source")]
+			label := p.plan.Pages[dest].Title
 			start := 0
 			for line := 1; line < model.Number(d["line"]); line++ {
 				next := strings.IndexByte(src.data[start:], '\n')
@@ -606,12 +583,25 @@ func (p *planner) renderReview() {
 			for _, h := range src.headings {
 				if h.start <= start && start < h.bodyEnd && p.targets[h.node] != "" {
 					dest = p.targets[h.node]
+					label = h.owner.name.title
+					if h != h.owner.name {
+						label += " · " + h.title
+					}
 					break
 				}
 			}
-			msg += " · " + w.link(src.path, dest)
+			byFinding[msg] = append(byFinding[msg], w.link(label, dest))
+		} else {
+			findings = append(findings, inlineText(msg))
 		}
-		findings = append(findings, msg)
+	}
+	for msg, passages := range byFinding {
+		slices.Sort(passages)
+		if len(passages) == 1 {
+			findings = append(findings, inlineText(msg)+" · "+passages[0])
+		} else {
+			findings = append(findings, inlineText(msg)+"\n  - "+strings.Join(passages, "\n  - "))
+		}
 	}
 	for _, section := range []struct {
 		name, empty string
@@ -634,4 +624,25 @@ func (p *planner) renderReview() {
 		}
 	}
 	w.finish()
+}
+
+func questionPassages(md string) []string {
+	source := []byte(md)
+	doc := markdownParser.Parse(text.NewReader(source))
+	var passages []string
+	add := func(n ast.Node) {
+		if label := visibleText(n, source); label != "" {
+			passages = append(passages, label)
+		}
+	}
+	for n := doc.FirstChild(); n != nil; n = n.NextSibling() {
+		if n.Kind() == ast.KindList {
+			for item := n.FirstChild(); item != nil; item = item.NextSibling() {
+				add(item)
+			}
+		} else {
+			add(n)
+		}
+	}
+	return passages
 }

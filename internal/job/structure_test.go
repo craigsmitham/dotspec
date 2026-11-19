@@ -6,7 +6,7 @@ import (
 )
 
 const structuredJob = `---
-type: job
+type: job-spec
 id: prepare-change
 ---
 
@@ -97,10 +97,10 @@ func TestStructuredJob(t *testing.T) {
 
 func TestDraftsAndLegacyStoriesRemainValid(t *testing.T) {
 	for _, source := range []string{
-		"---\ntype: job\n---\n# A job\n",
+		"---\ntype: job-spec\n---\n# A job\n",
 		validJob,
-		"---\ntype: job\n---\n# A job\n## Steps\n### An incomplete step\n",
-		"---\ntype: job\n---\n# A job\n## Job\n\n## Outcomes\n- A preliminary success criterion.\n",
+		"---\ntype: job-spec\n---\n# A job\n## Steps\n### An incomplete step\n",
+		"---\ntype: job-spec\n---\n# A job\n## Job\n\n## Outcomes\n- A preliminary success criterion.\n",
 	} {
 		got, err := Parse([]byte(source))
 		if err != nil {
@@ -157,7 +157,7 @@ func TestStructuralErrors(t *testing.T) {
 		{strings.Replace(structuredJob, "#### Outcomes", "##### Outcomes", 1), "#### Outcomes"},
 		{strings.Replace(structuredJob, "### Agree on the baseline", "#### Outcomes\n\n### Agree on the baseline", 1), "duplicate Outcomes"},
 		{strings.Replace(structuredJob, "(#OUT-002)", "(#missing-outcome)", 1), "unresolved local reference"},
-		{strings.Replace(structuredJob, "type: job", "type: job\nprofiles: [odi]", 1), "invalid YAML"},
+		{strings.Replace(structuredJob, "type: job-spec", "type: job-spec\nprofiles: [odi]", 1), "invalid YAML"},
 	}
 	for _, tt := range tests {
 		_, err := Parse([]byte(tt.source))
@@ -179,7 +179,7 @@ func TestReferencesAndUnknownSections(t *testing.T) {
 }
 
 func TestCheckExplainsHeuristics(t *testing.T) {
-	source := "---\ntype: job\n---\n# Maintain requirements\n## Job\nManage requirements.\n## Outcomes\n- **O1:** Make things better.\n## Steps\n### Review them\n"
+	source := "---\ntype: job-spec\n---\n# Maintain requirements\n## Job\nManage requirements.\n## Outcomes\n- **O1:** Make things better.\n## Steps\n### Review them\n"
 	got, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)
@@ -191,7 +191,7 @@ func TestCheckExplainsHeuristics(t *testing.T) {
 }
 
 func TestCheckAllowsOptionalStructure(t *testing.T) {
-	base := "---\ntype: job\n---\n# Prepare a change\n\n## Job\n\nPrepare a product change from proposal to review.\n\n## Performer\n\nA product engineer.\n"
+	base := "---\ntype: job-spec\n---\n# Prepare a change\n\n## Job\n\nPrepare a product change from proposal to review.\n\n## Performer\n\nA product engineer.\n"
 	for _, optional := range []string{
 		"",
 		"\n## Outcomes\n\n## Steps\n",
@@ -210,7 +210,7 @@ func TestCheckAllowsOptionalStructure(t *testing.T) {
 }
 
 func FuzzStructuredJob(f *testing.F) {
-	for _, source := range []string{structuredJob, validJob, Template, "---\ntype: job\n---\n# Draft\n"} {
+	for _, source := range []string{structuredJob, validJob, Template, "---\ntype: job-spec\n---\n# Draft\n"} {
 		f.Add([]byte(source))
 	}
 	f.Fuzz(func(t *testing.T, data []byte) {

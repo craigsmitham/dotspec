@@ -162,7 +162,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 				return err
 			}
 			parsed := ParseContent(absolute, data)
-			class := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement", "quality": "Requirement"}[String(parsed.Document, "declared_type")]
+			class := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement", "quality": "Requirement"}[strings.TrimSuffix(String(parsed.Document, "declared_type"), "-spec")]
 			if class == "" {
 				t.Errorf("%s: unknown specimen family", path)
 			}
@@ -253,15 +253,15 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 
 func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system\n---\n# Root\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n\n### Broad\n\n**ID:** broad\n\nA concern.\n\n### Narrow\n\n**ID:** narrow\n**Sub-attribute of:** broad\n\nA narrower concern.\n")
-	conformanceWrite(t, root, "specs/requirements/resolved.requirement.spec.md", "---\ntype: requirement\nid: reused\nquality_attributes: [narrow]\n---\n# Resolved\n")
-	conformanceWrite(t, root, "specs/requirements/undefined.requirement.spec.md", "---\ntype: requirement\nid: reused\nquality_attributes: [unknown]\n---\n# Undefined\n")
-	conformanceWrite(t, root, "sub/specs/system.spec.md", "---\ntype: system\n---\n# Subsystem\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
-	conformanceWrite(t, root, "sub/specs/requirements/unbound.requirement.spec.md", "---\ntype: requirement\nid: reused\nquality_attributes: [narrow]\n---\n# Unbound\n")
-	conformanceWrite(t, root, "empty/specs/system.spec.md", "---\ntype: system\n---\n# Empty attributes\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n")
-	conformanceWrite(t, root, "empty/specs/requirements/undefined-empty.requirement.spec.md", "---\ntype: requirement\nquality_attributes: [narrow]\n---\n# Undefined in empty attributes\n")
-	conformanceWrite(t, root, "sibling/specs/system.spec.md", "---\ntype: system\n---\n# Sibling\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n### Local narrow\n**ID:** narrow\nA different concern in this system.\n")
-	conformanceWrite(t, root, "sibling/specs/requirements/local.requirement.spec.md", "---\ntype: requirement\nquality_attributes: [narrow]\n---\n# Local classification\n")
+	conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system-spec\n---\n# Root\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n\n### Broad\n\n**ID:** broad\n\nA concern.\n\n### Narrow\n\n**ID:** narrow\n**Sub-attribute of:** broad\n\nA narrower concern.\n")
+	conformanceWrite(t, root, "specs/requirements/resolved.requirement.spec.md", "---\ntype: requirement-spec\nid: reused\nquality_attributes: [narrow]\n---\n# Resolved\n")
+	conformanceWrite(t, root, "specs/requirements/undefined.requirement.spec.md", "---\ntype: requirement-spec\nid: reused\nquality_attributes: [unknown]\n---\n# Undefined\n")
+	conformanceWrite(t, root, "sub/specs/system.spec.md", "---\ntype: system-spec\n---\n# Subsystem\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
+	conformanceWrite(t, root, "sub/specs/requirements/unbound.requirement.spec.md", "---\ntype: requirement-spec\nid: reused\nquality_attributes: [narrow]\n---\n# Unbound\n")
+	conformanceWrite(t, root, "empty/specs/system.spec.md", "---\ntype: system-spec\n---\n# Empty attributes\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n")
+	conformanceWrite(t, root, "empty/specs/requirements/undefined-empty.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [narrow]\n---\n# Undefined in empty attributes\n")
+	conformanceWrite(t, root, "sibling/specs/system.spec.md", "---\ntype: system-spec\n---\n# Sibling\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n### Local narrow\n**ID:** narrow\nA different concern in this system.\n")
+	conformanceWrite(t, root, "sibling/specs/requirements/local.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [narrow]\n---\n# Local classification\n")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
 		t.Errorf("advice-only fixtures exit %d", result.ExitCode)
@@ -311,8 +311,8 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 
 func TestExportConformanceInvalidAndNativeSources(t *testing.T) {
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/jobs/valid.job.spec.md", "---\ntype: job\n---\n# Valid\n\n## Job\n\nInspect from request to report.\n\n## Performer\n\nContributor.\n\n## Related specifications\n\n[Native](../../reference.md#native) and [Broken](../../missing.md).\n")
-	badPath := conformanceWrite(t, root, "specs/jobs/bad.job.spec.md", "---\ntype: job\n---\n# Bad\n\n## Intended progress\n\nFirst.\n\n## Intended progress\n\nDuplicate.\n")
+	conformanceWrite(t, root, "specs/jobs/valid.job.spec.md", "---\ntype: job-spec\n---\n# Valid\n\n## Job\n\nInspect from request to report.\n\n## Performer\n\nContributor.\n\n## Related specifications\n\n[Native](../../reference.md#native) and [Broken](../../missing.md).\n")
+	badPath := conformanceWrite(t, root, "specs/jobs/bad.job.spec.md", "---\ntype: job-spec\n---\n# Bad\n\n## Intended progress\n\nFirst.\n\n## Intended progress\n\nDuplicate.\n")
 	conformanceWrite(t, root, "reference.md", "\xef\xbb\xbf# Native\r\n\r\n<!-- retain comment -->\r\n\r\n## Custom material\r\n\r\nA [second hop](second.md) must remain uninspected.  \r\n")
 	second := conformanceWrite(t, root, "second.md", "# Second hop\n")
 	result := conformanceExport(t, root)
@@ -362,8 +362,8 @@ func TestExportConformanceInvalidAndNativeSources(t *testing.T) {
 
 func TestExportConformanceDeterminismAndContext(t *testing.T) {
 	root := t.TempDir()
-	context := conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system\n---\n# Context\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
-	conformanceWrite(t, root, "module/specs/use-cases/example.use-case.spec.md", "---\ntype: use-case\n---\n# Example\n\n## Main success scenario\n\n1. **Actor:** Contributor\n   **Action:** Inspect\n   **Response:** Report\n   **DesiredOutcome:** Informed\n\n## Extensions\n\n### Failure\n\n**Condition:** Unreadable source\n**At step:** 1\n**Response:** Report a failure\n**Continuation:** End\n")
+	context := conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system-spec\n---\n# Context\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
+	conformanceWrite(t, root, "module/specs/use-cases/example.use-case.spec.md", "---\ntype: use-case-spec\n---\n# Example\n\n## Main success scenario\n\n1. **Actor:** Contributor\n   **Action:** Inspect\n   **Response:** Report\n   **DesiredOutcome:** Informed\n\n## Extensions\n\n### Failure\n\n**Condition:** Unreadable source\n**At step:** 1\n**Response:** Report a failure\n**Continuation:** End\n")
 	selected := filepath.Join(root, "module")
 	first := conformanceExport(t, selected)
 	encoded, err := json.Marshal(first.Snapshot)
@@ -411,7 +411,7 @@ func conformanceRichText(snapshot *Snapshot, value any) string {
 func TestExportConformanceAdversarialDomainCompletion(t *testing.T) {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/system.spec.md", `---
-type: system
+type: system-spec
 ---
 # System
 ## Purpose
@@ -439,7 +439,7 @@ Measure the baseline.
 An unmapped structured decision detail.
 `)
 	conformanceWrite(t, root, "specs/jobs/inspect.job.spec.md", `---
-type: job
+type: job-spec
 ---
 # Inspect
 ## Outcomes
@@ -469,7 +469,7 @@ Which option?
 Collect evidence.
 `)
 	conformanceWrite(t, root, "specs/concepts/action.concept.spec.md", `---
-type: &family concept
+type: &family concept-spec
 id: *family
 ---
 # Action
@@ -480,7 +480,7 @@ id: *family
 Unmapped action detail.
 `)
 	conformanceWrite(t, root, "specs/use-cases/inspect.use-case.spec.md", `---
-type: use-case
+type: use-case-spec
 ---
 # Inspect
 ## Main success scenario
@@ -497,7 +497,7 @@ type: use-case
 1. This explanatory item is not a flow step.
 `)
 	conformanceWrite(t, root, "specs/requirements/measure.requirement.spec.md", `---
-type: requirement
+type: requirement-spec
 ---
 # Measure
 ## Criterion
@@ -537,7 +537,7 @@ Unmapped protocol detail.
 				t.Error("repeated force collection overwritten")
 			}
 		case "Concept":
-			if String(element, "authored_id") != "concept" || String(element, "source_fragment") == "" {
+			if String(element, "authored_id") != "concept-spec" || String(element, "source_fragment") == "" {
 				t.Error("YAML alias identity lacks its authored fragment")
 			}
 			bound := false
@@ -599,7 +599,7 @@ Unmapped protocol detail.
 func TestExportUseCaseNarrativesAndExplicitNesting(t *testing.T) {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/use-cases/reserve.use-case.spec.md", `---
-type: use-case
+type: use-case-spec
 ---
 # Reserve equipment
 ## Main success scenario

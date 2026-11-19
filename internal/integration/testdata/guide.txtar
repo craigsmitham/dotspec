@@ -54,7 +54,7 @@ status 2 dotspec guide docs/../draft
 
 -- draft --
 ---
-type: requirement
+type: requirement-spec
 ---
 # Timely feedback
 

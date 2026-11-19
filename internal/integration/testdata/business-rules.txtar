@@ -51,7 +51,7 @@ status 2 dotspec business-rule init ../escape
 status 2 dotspec business-rule show approval --path specs
 -- approval.md --
 ---
-type: business-rule
+type: business-rule-spec
 id: approval
 ---
 # Manager approval
@@ -69,7 +69,7 @@ Emergency purchases follow a separately approved exception rule.
 [Submit a purchase](../use-cases/purchase.use-case.spec.md) describes a software interaction.
 -- purchase.md --
 ---
-type: use-case
+type: use-case-spec
 ---
 # Submit a purchase
 ## Goal
@@ -79,12 +79,12 @@ Submit a purchase for approval.
 The citation records context; it does not establish software compliance.
 -- draft.md --
 ---
-type: business-rule
+type: business-rule-spec
 ---
 # Draft
 -- invalid.md --
 ---
-type: business-rule
+type: business-rule-spec
 ---
 # Ambiguous rule
 ## Statement

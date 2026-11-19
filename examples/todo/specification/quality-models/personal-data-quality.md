@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: quality-model
+type: quality-model-spec-report
+documents: "../../specs/quality-models/personal-data.quality-model.spec.md#personal-data-quality"
 ---
 # Personal data quality
 
-[Personal task list](<../../SPEC.md>) · [Contents](<../index.md>)
+[Personal task list](<../../SPEC.md>)
 
 ## Description
 
@@ -14,6 +14,8 @@ Select concerns for tools in which a person keeps work between sessions.
 ## Quality attributes
 
 ### Durability
+
+<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../specs/quality-models/personal-data.quality-model.spec.md#durability"} -->
 
 **ID:** durability
 

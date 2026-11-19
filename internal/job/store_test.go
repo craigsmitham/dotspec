@@ -28,7 +28,7 @@ func writeJob(t *testing.T, dir, slug, name string) string {
 
 func writeSystem(t *testing.T, dir, name string) {
 	t.Helper()
-	writeFile(t, filepath.Join(dir, "specs", "system.spec.md"), "---\ntype: system\n---\n# "+name+"\n## Purpose\nHelp teams.\n## Scope\nRequirements.\n")
+	writeFile(t, filepath.Join(dir, "specs", "system.spec.md"), "---\ntype: system-spec\n---\n# "+name+"\n## Purpose\nHelp teams.\n## Scope\nRequirements.\n")
 }
 
 func boundLookup(t *testing.T, dir string) {

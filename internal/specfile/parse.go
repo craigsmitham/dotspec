@@ -26,6 +26,9 @@ type Metadata struct {
 	Type string `yaml:"type"`
 }
 
+// AuthoredType returns the Markdown frontmatter type for a subject kind.
+func AuthoredType(kind string) string { return kind + "-spec" }
+
 func (m Metadata) SpecType() string { return m.Type }
 
 // TypedMetadata must be a pointer to the type's metadata destination.
@@ -166,8 +169,8 @@ func frontmatter(data []byte, kind string, metadata TypedMetadata) ([]byte, erro
 		}
 		return nil, diagnostic.Error("metadata.invalid", fmt.Sprintf("invalid YAML frontmatter: %v", err), location)
 	}
-	if metadata.SpecType() != kind {
-		return nil, diagnostic.Error("metadata.type", fmt.Sprintf("frontmatter must declare type: %s", kind), MetadataLocation(data, "type"))
+	if expected := AuthoredType(kind); metadata.SpecType() != expected {
+		return nil, diagnostic.Error("metadata.type", fmt.Sprintf("frontmatter must declare type: %s", expected), MetadataLocation(data, "type"))
 	}
 	var extra any
 	if err := decoder.Decode(&extra); err != io.EOF {

@@ -1,15 +1,18 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: feature
+type: feature-spec-report
+documents: "../../specs/system.spec.md#pick-up-where-i-left-off"
 ---
 # Pick up where I left off
 
-[Personal task list](<../../SPEC.md>) · [Contents](<../index.md>)
+[Personal task list](<../../SPEC.md>)
+
+Pick up an outstanding task and bring a finished one back for follow-up.
 
 ## Groups
 
-[Return to my list](<../use-cases/return-to-my-list.md>) and
+Follow the interaction in [Return to my list](<../use-cases/return-to-my-list.md>).
+For the storage guarantee and its acceptance test, see
 [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.md>).
 
 [Edit source](<../../specs/system.spec.md#pick-up-where-i-left-off>)

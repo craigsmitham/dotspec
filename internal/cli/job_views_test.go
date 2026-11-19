@@ -11,7 +11,7 @@ import (
 )
 
 const viewFixture = `---
-type: job
+type: job-spec
 ---
 # Prepare a change
 ## Outcomes
@@ -91,7 +91,7 @@ func TestEmptyMapsAndNewCommandHelp(t *testing.T) {
 	if err := os.MkdirAll(filepath.Join(dir, "specs", "jobs"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, "specs", "jobs", "draft.job.spec.md"), []byte("---\ntype: job\n---\n# Draft\n"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "specs", "jobs", "draft.job.spec.md"), []byte("---\ntype: job-spec\n---\n# Draft\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	for _, args := range [][]string{{"job", "map"}, {"job", "step", "list"}, {"job", "outcome", "list"}} {
@@ -155,7 +155,7 @@ func TestJobMapWithoutSteps(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, outcome := range []string{"", "\n## Outcomes\n\n- **O1:** Minimize the likelihood of missed needs.\n"} {
-		if err := os.WriteFile(filepath.Join(dir, "specs", "jobs", "draft.job.spec.md"), []byte("---\ntype: job\n---\n# Draft\n"+outcome), 0o644); err != nil {
+		if err := os.WriteFile(filepath.Join(dir, "specs", "jobs", "draft.job.spec.md"), []byte("---\ntype: job-spec\n---\n# Draft\n"+outcome), 0o644); err != nil {
 			t.Fatal(err)
 		}
 		for _, format := range []string{"text", "mermaid"} {

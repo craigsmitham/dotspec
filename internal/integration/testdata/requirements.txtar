@@ -67,7 +67,7 @@ stdout '"complete": true'
 ! stderr .
 -- system.md --
 ---
-type: system
+type: system-spec
 ---
 # Inspector
 ## Purpose
@@ -95,7 +95,7 @@ Consistent operation.
 Unchanged source content.
 -- rule.md --
 ---
-type: requirement
+type: requirement-spec
 id: preserve
 quality_attributes: [preservation]
 ---
@@ -113,7 +113,7 @@ Compare before and after bytes.
 [Term](../system.spec.md#scan)
 -- repeatable.md --
 ---
-type: requirement
+type: requirement-spec
 quality_attributes: [preservation]
 ---
 # Repeatable inspection
@@ -127,14 +127,14 @@ Repeat the same inspection and compare results.
 Support meaningful comparisons.
 -- draft.md --
 ---
-type: requirement
+type: requirement-spec
 ---
 # Draft
 -- broken.md --
 Broken document.
 -- duplicate.md --
 ---
-type: requirement
+type: requirement-spec
 ---
 # Duplicate
 ## Statement
@@ -143,7 +143,7 @@ First obligation.
 Another obligation.
 -- bad-link.md --
 ---
-type: requirement
+type: requirement-spec
 ---
 # Bad link
 [Missing](repeatable.requirement.spec.md#missing)

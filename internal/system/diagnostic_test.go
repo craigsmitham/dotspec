@@ -13,10 +13,10 @@ func TestSystemDiagnosticLocations(t *testing.T) {
 		source, rule string
 		line         int
 	}{
-		{"---\ntype: job\n---\n# Example\n", "metadata.type", 2},
-		{"---\ntype: system\nunknown: field\n---\n# Example\n", "metadata.invalid", 3},
-		{"---\ntype: system\n---\n# Example\n## Scope\nThe product.\n", "structure.required-section", 4},
-		{"---\ntype: system\n---\n# Example\n## Purpose\nHelp.\n## Scope\n[Missing](#absent)\n", "reference.unresolved", 8},
+		{"---\ntype: job-spec\n---\n# Example\n", "metadata.type", 2},
+		{"---\ntype: system-spec\nunknown: field\n---\n# Example\n", "metadata.invalid", 3},
+		{"---\ntype: system-spec\n---\n# Example\n## Scope\nThe product.\n", "structure.required-section", 4},
+		{"---\ntype: system-spec\n---\n# Example\n## Purpose\nHelp.\n## Scope\n[Missing](#absent)\n", "reference.unresolved", 8},
 	} {
 		for _, source := range []string{tt.source, "\ufeff" + strings.ReplaceAll(tt.source, "\n", "\r\n")} {
 			_, err := Parse([]byte(source))
@@ -29,7 +29,7 @@ func TestSystemDiagnosticLocations(t *testing.T) {
 }
 
 func TestSystemHeadingReferences(t *testing.T) {
-	source := "---\ntype: system\n---\n# Example\n## Purpose\nSee [scope](#scope) and [details](#details).\n## Scope\nThe product.\n### Details\n[External](https://example.com) and [file](other.md#other) stay unchecked.\n```markdown\n[Example](#not-an-actual-link)\n```\n"
+	source := "---\ntype: system-spec\n---\n# Example\n## Purpose\nSee [scope](#scope) and [details](#details).\n## Scope\nThe product.\n### Details\n[External](https://example.com) and [file](other.md#other) stay unchecked.\n```markdown\n[Example](#not-an-actual-link)\n```\n"
 	if _, err := Parse([]byte(source)); err != nil {
 		t.Fatal(err)
 	}

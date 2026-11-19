@@ -31,7 +31,7 @@ func writeUseCase(t *testing.T, dir, slug string) string {
 
 func writeSystem(t *testing.T, dir, name string) {
 	t.Helper()
-	write(t, filepath.Join(dir, "specs/system.spec.md"), "---\ntype: system\n---\n# "+name+"\n## Purpose\nHelp people.\n## Scope\nThe project.\n")
+	write(t, filepath.Join(dir, "specs/system.spec.md"), "---\ntype: system-spec\n---\n# "+name+"\n## Purpose\nHelp people.\n## Scope\nThe project.\n")
 }
 
 func git(t *testing.T, dir string, args ...string) {

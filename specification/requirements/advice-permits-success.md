@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: requirement
+type: requirement-spec-report
+documents: "../../specs/requirements/advice-permits-success.requirement.spec.md#advice-permits-a-successful-check"
 ---
 # Advice permits a successful check
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Statement
 
@@ -17,16 +17,16 @@ exit status zero.
 Project-wide and focused specification checks that complete without structural
 errors or operational failures.
 
-## Rationale
-
-Unfinished specifications remain useful working material. Suggestions should
-not prevent contributors from checking a draft.
-
 ## Verification plan
 
 Check structurally valid drafts that produce advisory findings. Verify exit
 status zero and the presence of the advice in both text and JSON reports.
 Exercise project-wide checks and focused checks for each applicable type.
+
+## Rationale
+
+Unfinished specifications remain useful working material. Suggestions should
+not prevent contributors from checking a draft.
 
 ## Related specifications
 

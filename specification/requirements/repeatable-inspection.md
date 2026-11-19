@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: requirement
+type: requirement-spec-report
+documents: "../../specs/requirements/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports"
 ---
 # Repeated inspections produce equivalent reports
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Statement
 
@@ -48,8 +48,6 @@ automation.
 describes inspection. The [check report contract](<../../docs/reference/inspection.md#check-specifications>)
 defines report fields and their ordering rules.
 
-## Related specifications
-
-- Quality attribute — [Repeatability](<../../SPEC.md#repeatability>)
+**Quality attribute** · [Repeatability](<../quality-attributes.md#repeatability>)
 
 [Edit source](<../../specs/requirements/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports>)

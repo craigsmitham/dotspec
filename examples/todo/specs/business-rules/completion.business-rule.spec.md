@@ -1,5 +1,5 @@
 ---
-type: business-rule
+type: business-rule-spec
 ---
 # Completion preserves a commitment
 

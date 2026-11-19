@@ -24,7 +24,7 @@ type metadata struct {
 }
 
 const Template = `---
-type: quality-model
+type: quality-model-spec
 ---
 
 # New quality model

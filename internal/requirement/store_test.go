@@ -27,7 +27,7 @@ func TestInventoryClassifiesAgainstLocalModel(t *testing.T) {
 		t.Fatalf("initialize repository: %v: %s", err, output)
 	}
 	put(t, filepath.Join(dir, "specs/system.spec.md"), `---
-type: system
+type: system-spec
 ---
 # System
 ## Purpose
@@ -51,7 +51,7 @@ Unchanged sources.
 		t.Fatal("overwrote target")
 	}
 	put(t, path, example)
-	put(t, Layout.Path(dir, "preservation"), "---\ntype: requirement\nquality_attributes: [source-preservation]\n---\n# Preservation\n## Statement\nUnchanged sources.\n## Verification plan\nCompare snapshots.\n")
+	put(t, Layout.Path(dir, "preservation"), "---\ntype: requirement-spec\nquality_attributes: [source-preservation]\n---\n# Preservation\n## Statement\nUnchanged sources.\n## Verification plan\nCompare snapshots.\n")
 	groups, err := List(dir)
 	if err != nil {
 		t.Fatal(err)
@@ -69,7 +69,7 @@ Unchanged sources.
 		t.Fatalf("show: %+v %v", r, err)
 	}
 	put(t, Layout.Path(filepath.Join(dir, "child"), "work"), example)
-	put(t, filepath.Join(dir, "child/specs/system.spec.md"), "---\ntype: system\n---\n# Child\n## Purpose\nWork.\n## Scope\nChild.\n")
+	put(t, filepath.Join(dir, "child/specs/system.spec.md"), "---\ntype: system-spec\n---\n# Child\n## Purpose\nWork.\n## Scope\nChild.\n")
 	child, err := Show(filepath.Join(dir, "child"), "work")
 	if err != nil || child.Classification.SystemPath != "" || len(child.Classification.Undefined) != 0 {
 		t.Fatalf("model inherited: %+v %v", child, err)
@@ -94,14 +94,14 @@ func TestQualityPresetCreatesAnOrdinaryRequirement(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !Layout.Match(path) || !strings.Contains(string(data), "type: requirement") || !strings.Contains(string(data), "## Criterion") {
+	if !Layout.Match(path) || !strings.Contains(string(data), "type: requirement-spec") || !strings.Contains(string(data), "## Criterion") {
 		t.Fatalf("quality preset: %s\n%s", path, data)
 	}
 	if _, err := InitWithPreset(dir, "other", "performance"); err == nil {
 		t.Fatal("accepted an unknown preset")
 	}
-	draft := "---\ntype: requirement\n---\n# Draft\n"
-	classified := strings.Replace(draft, "type: requirement", "type: requirement\nquality_attributes: [reliability]", 1)
+	draft := "---\ntype: requirement-spec\n---\n# Draft\n"
+	classified := strings.Replace(draft, "type: requirement-spec", "type: requirement-spec\nquality_attributes: [reliability]", 1)
 	messages := func(source string) string {
 		spec, err := Parse([]byte(source))
 		if err != nil {

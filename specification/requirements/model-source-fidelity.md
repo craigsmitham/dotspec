@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: requirement
+type: requirement-spec-report
+documents: "../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-model-exports"
 ---
 # Preserve source and represented content in model exports
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Statement
 
@@ -40,14 +40,6 @@ Specification-model exports and validation of their saved snapshots, including
 all eight supported specification families, malformed specifications, directly
 consulted Markdown, and other acquired reference targets.
 
-## Rationale
-
-Consumers need both faithful source material and explicit domain meaning to
-review, navigate and transform a specification safely. Lossy exports hide
-qualifications and unresolved decisions. Combining source acquisition, mapping
-coverage and semantic adequacy into one success flag overstates what inspection
-established.
-
 ## Verification plan
 
 Export fixtures from every supported specification family and validate the
@@ -70,6 +62,14 @@ The [content tests](<../../internal/model/content_test.go>),
 for the cases they exercise. The statements above define the obligation; a test
 passing does not establish semantic adequacy of arbitrary specifications.
 
+## Rationale
+
+Consumers need both faithful source material and explicit domain meaning to
+review, navigate and transform a specification safely. Lossy exports hide
+qualifications and unresolved decisions. Combining source acquisition, mapping
+coverage and semantic adequacy into one success flag overstates what inspection
+established.
+
 ## Related specifications
 
 [Inspection preserves source material](<inspection-preserves-source.md>)
@@ -83,8 +83,6 @@ The [specification model documentation](<../../docs/reference/specification-mode
 [Markdown mapping profile](<../../model/markdown-mapping.md>) describe the
 representation and named mappings.
 
-## Related specifications
-
-- Quality attribute — [Source preservation](<../../SPEC.md#source-preservation>)
+**Quality attribute** · [Source preservation](<../quality-attributes.md#source-preservation>)
 
 [Edit source](<../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-model-exports>)

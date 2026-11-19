@@ -1,27 +1,43 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: use-case
+type: use-case-spec-report
+documents: "../../specs/use-cases/create-specification.use-case.spec.md#create-a-specification-draft"
 ---
 # Create a specification draft
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Goal
 
 Obtain an editable starting document for a selected kind of specification.
 
-## System boundary
-
-The dotspec CLI and its creation of a specification file in the selected project.
-
 ## Primary actor
 
 A contributor beginning a behavioral account.
 
-## Goal level
+## Main success scenario
 
-User task (sea).
+<!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/create-specification.use-case.spec.md#main-success-scenario"} -->
+
+1. The contributor selects a project directory, specification type, and local name.
+2. Dotspec creates the draft and reports its path.
+3. The contributor opens the document and replaces prompts with known behavior.
+
+## Extensions
+
+### More detailed use-case prompts
+
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/create-specification.use-case.spec.md#more-detailed-use-case-prompts"} -->
+
+At step 1, the contributor selects the expanded use-case template. Dotspec creates
+additional context prompts in the same document format, then continues at step 3.
+
+### Target already exists
+
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/create-specification.use-case.spec.md#target-already-exists"} -->
+
+At step 2, the target exists. Dotspec refuses to overwrite it. This creation attempt
+ends without a new draft; the contributor can edit the existing source instead.
 
 ## Success guarantees
 
@@ -32,23 +48,13 @@ The contributor receives the path to a newly created draft of the selected kind.
 An existing target is preserved according to the
 [reject-existing-target requirement](<../requirements/reject-existing-target.md>).
 
-## Main success scenario
+## System boundary
 
-1. The contributor selects a project directory, specification type, and local name.
-2. Dotspec creates the draft and reports its path.
-3. The contributor opens the document and replaces prompts with known behavior.
+The dotspec CLI and its creation of a specification file in the selected project.
 
-## Extensions
+## Goal level
 
-### More detailed use-case prompts
-
-At step 1, the contributor selects the expanded use-case template. Dotspec creates
-additional context prompts in the same document format, then continues at step 3.
-
-### Target already exists
-
-At step 2, the target exists. Dotspec refuses to overwrite it. This creation attempt
-ends without a new draft; the contributor can edit the existing source instead.
+User task (sea).
 
 ## Sequence
 

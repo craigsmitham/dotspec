@@ -1,5 +1,5 @@
 ---
-type: requirement
+type: requirement-spec
 id: reject-existing-target
 quality_attributes:
   - source-preservation

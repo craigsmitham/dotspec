@@ -94,6 +94,27 @@
             "title": "ActionParameter",
             "type": "object"
         },
+        "ActionParameterSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "action-parameter-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "ActionParameterSpecReport",
+            "type": "object"
+        },
         "ActorMention": {
             "additionalProperties": false,
             "description": "The primary actor's role as authored in this use case; no global actor identity or fabricated role extraction.",
@@ -423,6 +444,27 @@
             "title": "Assumption",
             "type": "object"
         },
+        "AssumptionSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "assumption-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "AssumptionSpecReport",
+            "type": "object"
+        },
         "BindingRole": {
             "description": "How a syntax node contributes to an identified domain field or retained fallback.",
             "enum": [
@@ -661,6 +703,27 @@
             "title": "BusinessRule",
             "type": "object"
         },
+        "BusinessRuleSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "business-rule-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "BusinessRuleSpecReport",
+            "type": "object"
+        },
         "ByteSpan": {
             "additionalProperties": false,
             "description": "Half-open [start,end) offsets into ORIGINAL bytes of one SourceDocument. Graph checks enforce bounds and start <= end.",
@@ -874,6 +937,27 @@
                 "kind"
             ],
             "title": "Capability",
+            "type": "object"
+        },
+        "CapabilitySpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "capability-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "CapabilitySpecReport",
             "type": "object"
         },
         "Component": {
@@ -1117,6 +1201,27 @@
                 "kind"
             ],
             "title": "Component",
+            "type": "object"
+        },
+        "ComponentSpecReport": {
+            "additionalProperties": false,
+            "description": "Explains the component\u2019s responsibilities and links to its structural children, declared interfaces, and explicitly applicable requirements.",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "component-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "ComponentSpecReport",
             "type": "object"
         },
         "Concept": {
@@ -1551,6 +1656,48 @@
             "title": "ConceptAction",
             "type": "object"
         },
+        "ConceptActionSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "concept-action-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "ConceptActionSpecReport",
+            "type": "object"
+        },
+        "ConceptSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "concept-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "ConceptSpecReport",
+            "type": "object"
+        },
         "ConceptType": {
             "additionalProperties": false,
             "description": "A type parameter or introduced identity type, scoped to one concept definition. Membership distinguishes its role.",
@@ -1628,6 +1775,27 @@
                 "kind"
             ],
             "title": "ConceptType",
+            "type": "object"
+        },
+        "ConceptTypeSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "concept-type-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "ConceptTypeSpecReport",
             "type": "object"
         },
         "ConceptUse": {
@@ -1818,6 +1986,27 @@
                 "kind"
             ],
             "title": "ConceptUse",
+            "type": "object"
+        },
+        "ConceptUseSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "concept-use-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "ConceptUseSpecReport",
             "type": "object"
         },
         "Condition": {
@@ -2389,6 +2578,27 @@
             "title": "DesiredOutcome",
             "type": "object"
         },
+        "DesiredOutcomeSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "desired-outcome-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "DesiredOutcomeSpecReport",
+            "type": "object"
+        },
         "Diagnostic": {
             "additionalProperties": false,
             "description": "A parser, mapper, resolver, coverage or graph-check finding. It may identify a source without any line, element or parsed document.",
@@ -2792,6 +3002,27 @@
             "title": "EvidenceStatement",
             "type": "object"
         },
+        "EvidenceStatementSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "evidence-statement-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "EvidenceStatementSpecReport",
+            "type": "object"
+        },
         "ExtensionSection": {
             "additionalProperties": false,
             "description": "An unknown domain section retained with its original heading and body. This is explicit representation, not a claim that its domain semantics have been modeled.",
@@ -3089,6 +3320,27 @@
             "title": "Feature",
             "type": "object"
         },
+        "FeatureSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "feature-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "FeatureSpecReport",
+            "type": "object"
+        },
         "Force": {
             "additionalProperties": false,
             "description": "An explicitly described progress force; a kind is assigned only when authored or deterministically marked.",
@@ -3113,6 +3365,21 @@
             ],
             "title": "ForceKind",
             "type": "string"
+        },
+        "GeneratedDocument": {
+            "additionalProperties": false,
+            "description": "A reader-facing document rendered as a Markdown page or an addressable section.",
+            "properties": {
+                "type": {
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "title": "GeneratedDocument",
+            "type": "object"
         },
         "GlossaryTerm": {
             "additionalProperties": false,
@@ -3205,6 +3472,27 @@
                 "kind"
             ],
             "title": "GlossaryTerm",
+            "type": "object"
+        },
+        "GlossaryTermSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "glossary-term-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "GlossaryTermSpecReport",
             "type": "object"
         },
         "Goal": {
@@ -3359,6 +3647,27 @@
             ],
             "title": "GoalLevelValue",
             "type": "string"
+        },
+        "GoalSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "goal-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "GoalSpecReport",
+            "type": "object"
         },
         "Interface": {
             "additionalProperties": false,
@@ -3528,6 +3837,27 @@
                 "kind"
             ],
             "title": "Interface",
+            "type": "object"
+        },
+        "InterfaceSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "interface-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "InterfaceSpecReport",
             "type": "object"
         },
         "Job": {
@@ -3751,6 +4081,27 @@
             "title": "Job",
             "type": "object"
         },
+        "JobSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "job-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "JobSpecReport",
+            "type": "object"
+        },
         "JobStep": {
             "additionalProperties": false,
             "description": "A meaningful accomplishment within a functional job map; not a prescribed software interaction or execution sequence.",
@@ -3907,6 +4258,27 @@
                 "kind"
             ],
             "title": "JobStep",
+            "type": "object"
+        },
+        "JobStepSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "job-step-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "JobStepSpecReport",
             "type": "object"
         },
         "LabelOccurrence": {
@@ -4424,6 +4796,27 @@
             "title": "ObligationClause",
             "type": "object"
         },
+        "ObligationClauseSpecReport": {
+            "additionalProperties": false,
+            "description": "Preserves an addressable promise within the interaction or other subject that declares it.",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "obligation-clause-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "ObligationClauseSpecReport",
+            "type": "object"
+        },
         "ObligationContainer": {
             "additionalProperties": false,
             "description": "Explicit declaration container for embedded obligation clauses. Traceability alone does not confer containment.",
@@ -4797,6 +5190,27 @@
             "title": "ProgressCase",
             "type": "object"
         },
+        "ProgressCaseSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "progress-case-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "ProgressCaseSpecReport",
+            "type": "object"
+        },
         "QualityAttribute": {
             "additionalProperties": false,
             "description": "A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit obligations, thresholds, or satisfaction.",
@@ -4893,6 +5307,27 @@
                 "kind"
             ],
             "title": "QualityAttribute",
+            "type": "object"
+        },
+        "QualityAttributeSpecReport": {
+            "additionalProperties": false,
+            "description": "Defines one quality attribute and links to the requirements classified by it.",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "quality-attribute-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "QualityAttributeSpecReport",
             "type": "object"
         },
         "QualityModel": {
@@ -5068,6 +5503,27 @@
                 "kind"
             ],
             "title": "QualityModel",
+            "type": "object"
+        },
+        "QualityModelSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "quality-model-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "QualityModelSpecReport",
             "type": "object"
         },
         "ReadStatus": {
@@ -5411,6 +5867,43 @@
             "title": "Requirement",
             "type": "object"
         },
+        "RequirementSpecReport": {
+            "additionalProperties": false,
+            "description": "Brings the requirement statement, applicability, criterion, and verification plan together at one address.",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "requirement-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "RequirementSpecReport",
+            "type": "object"
+        },
+        "RequirementsReviewReport": {
+            "additionalProperties": false,
+            "description": "Project-wide open questions, verification and validation plans, and inspection findings with routes to their subjects.",
+            "properties": {
+                "type": {
+                    "const": "requirements-review-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "title": "RequirementsReviewReport",
+            "type": "object"
+        },
         "Resolution": {
             "additionalProperties": false,
             "description": "The recorded outcome of resolving one authored reference or label; targets need not be domain entities.",
@@ -5728,6 +6221,27 @@
                 "kind"
             ],
             "title": "Scenario",
+            "type": "object"
+        },
+        "ScenarioSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "scenario-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "ScenarioSpecReport",
             "type": "object"
         },
         "ScenarioStep": {
@@ -6492,43 +7006,6 @@
             "title": "Specification",
             "type": "object"
         },
-        "SpecificationDocument": {
-            "additionalProperties": false,
-            "description": "A reader-facing document derived from a specification snapshot. The document role describes the required contents and navigation. Generated pages live outside the source snapshot.",
-            "properties": {
-                "generated_by": {
-                    "const": "dotspec",
-                    "description": "Ownership marker used when refreshing or removing generated pages.",
-                    "type": "string"
-                },
-                "subject_kind": {
-                    "description": "Domain kind of the subject presented on a detail page.",
-                    "type": "string"
-                },
-                "type": {
-                    "$ref": "#/$defs/SpecificationDocumentType",
-                    "description": "Reader purpose and presentation contract of the generated Markdown file."
-                }
-            },
-            "required": [
-                "type",
-                "generated_by"
-            ],
-            "title": "SpecificationDocument",
-            "type": "object"
-        },
-        "SpecificationDocumentType": {
-            "description": "Roles of generated requirements documents. These names are disjoint from authored specification types and core domain kinds.",
-            "enum": [
-                "requirements-specification",
-                "table-of-contents",
-                "index",
-                "specification-section",
-                "requirements-review-report"
-            ],
-            "title": "SpecificationDocumentType",
-            "type": "string"
-        },
         "SpecificationProject": {
             "additionalProperties": false,
             "description": "A tooling partition rooted at the directory containing its dotspec.yaml.",
@@ -6548,15 +7025,15 @@
             "type": "object"
         },
         "SpecificationType": {
-            "description": "Types of authored specification document, as declared in frontmatter and file names. Each type has exactly one concrete Specification class.",
+            "description": "Markdown frontmatter types for authored specifications. Each type has exactly one concrete Specification class.",
             "enum": [
-                "system",
-                "job",
-                "quality-model",
-                "business-rule",
-                "use-case",
-                "concept",
-                "requirement"
+                "system-spec",
+                "job-spec",
+                "quality-model-spec",
+                "business-rule-spec",
+                "use-case-spec",
+                "concept-spec",
+                "requirement-spec"
             ],
             "title": "SpecificationType",
             "type": "string"
@@ -6608,6 +7085,26 @@
                 }
             },
             "title": "StateElement",
+            "type": "object"
+        },
+        "SubjectSpecReport": {
+            "additionalProperties": false,
+            "description": "The canonical generated account of one addressable subject in the selected snapshot.",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "SubjectSpecReport",
             "type": "object"
         },
         "Synchronization": {
@@ -6888,6 +7385,48 @@
                 "kind"
             ],
             "title": "SynchronizationAction",
+            "type": "object"
+        },
+        "SynchronizationActionSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "synchronization-action-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "SynchronizationActionSpecReport",
+            "type": "object"
+        },
+        "SynchronizationSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "synchronization-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "SynchronizationSpecReport",
             "type": "object"
         },
         "SyntaxProperty": {
@@ -7434,6 +7973,27 @@
             "title": "SystemContextSpecification",
             "type": "object"
         },
+        "SystemSpecReport": {
+            "additionalProperties": false,
+            "description": "Explains the system\u2019s purpose and scope and links to its immediate child systems, local subjects, and obligations.",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "system-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "SystemSpecReport",
+            "type": "object"
+        },
         "TraceableElement": {
             "additionalProperties": false,
             "description": "An element with explicit motivation, derivation and assumptions. Concern subset, artifact kind and core/supporting/generic classification are independent; neither traceability nor document location confers normative authority.",
@@ -7676,6 +8236,27 @@
                 "kind"
             ],
             "title": "TypeBinding",
+            "type": "object"
+        },
+        "TypeBindingSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "type-binding-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "TypeBindingSpecReport",
             "type": "object"
         },
         "UnmappedRole": {
@@ -8103,6 +8684,48 @@
                 "kind"
             ],
             "title": "UseCaseExtension",
+            "type": "object"
+        },
+        "UseCaseExtensionSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "use-case-extension-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "UseCaseExtensionSpecReport",
+            "type": "object"
+        },
+        "UseCaseSpecReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "use-case-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "UseCaseSpecReport",
             "type": "object"
         }
     },

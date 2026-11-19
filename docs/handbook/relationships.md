@@ -265,7 +265,7 @@ specification types and need no files of their own.
 
 ```markdown
 ---
-type: system
+type: system-spec
 id: online-store
 ---
 # Online Store

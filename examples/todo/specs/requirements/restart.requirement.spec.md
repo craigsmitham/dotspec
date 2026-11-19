@@ -1,5 +1,5 @@
 ---
-type: requirement
+type: requirement-spec
 quality_attributes: [durability]
 ---
 # Preserve tasks across restart

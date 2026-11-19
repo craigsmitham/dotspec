@@ -46,6 +46,31 @@ def record_witnesses(snapshot, classes, expected, evidence, project, label):
     visit(snapshot, "Snapshot", f"model export: {label}")
 
 
+def document_witnesses(project, classes, evidence):
+    names = {cls["slots"]["type"]["equals_string"]: name for name, cls in classes.items()
+             if not cls["abstract"] and "SubjectSpecReport" in cls["ancestors"]}
+
+    def witness(kind, path):
+        for ancestor in classes[names[kind]]["ancestors"]:
+            if "documents" in classes[ancestor]["slots"]:
+                evidence.setdefault(f"{ancestor}.documents", path.relative_to(Path.cwd()).as_posix())
+
+    for path in [project / "SPEC.md", *sorted((project / "specification").rglob("*.md"))]:
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        header = re.match(r"^---\n(.*?)\n---\n", text, re.S)
+        if not header or "generated_by: dotspec" not in header[1].splitlines():
+            continue
+        kind = re.search(r"^type: ([\w-]+)$", header[1], re.M)
+        if kind and kind[1] in names and re.search(r'^documents: ".+#.+"$', header[1], re.M):
+            witness(kind[1], path)
+        for raw in re.findall(r"^<!-- dotspec-doc (.+) -->$", text, re.M):
+            doc = json.loads(raw)
+            if doc.get("documents"):
+                witness(doc["type"], path)
+
+
 def main(binary, scratch, detailed):
     root = Path.cwd()
     classes = json.loads((root / "model/generated/catalog.json").read_bytes())["classes"]
@@ -67,6 +92,7 @@ def main(binary, scratch, detailed):
     todo = examples / "todo"
     projects = [todo, *sorted(p.parent for p in examples.glob("*/dotspec.yaml") if p.parent != todo)]
     for project in projects:
+        document_witnesses(project, classes, evidence)
         raw = subprocess.check_output([binary, "model", "export", "--path", project])
         snapshot = json.loads(raw)
         record_witnesses(snapshot, classes, relationships | forms, evidence, project,
@@ -80,7 +106,7 @@ def main(binary, scratch, detailed):
     assert not allowed - missing, f"retire obsolete field gap assignments: {sorted(allowed - missing)}"
     for title, keys in [("Relationship fields", relationships), ("Structured content fields", forms)]:
         gaps = sorted(keys - evidence.keys())
-        print(f"{title}: {len(keys) - len(gaps)}/{len(keys)} populated in example exports.")
+        print(f"{title}: {len(keys) - len(gaps)}/{len(keys)} populated in example artifacts.")
         if detailed:
             for key in sorted(keys):
                 print(f"  {key:<50} {evidence.get(key, 'GAP: no populated example')}")

@@ -1,5 +1,5 @@
 ---
-type: use-case
+type: use-case-spec
 ---
 # Return to my list
 

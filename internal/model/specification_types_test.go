@@ -7,7 +7,7 @@ import (
 )
 
 const typedSystem = `---
-type: system
+type: system-spec
 ---
 # Lending desk
 
@@ -56,15 +56,15 @@ func TestSpecificationTypesCorrespondToDocumentRoots(t *testing.T) {
 	}
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/system.spec.md", typedSystem+"\n## Quality attributes\n\n### Speed\n\n**ID:** speed\n\nResponse speed.\n")
-	conformanceWrite(t, root, "specs/requirements/fast.requirement.spec.md", "---\ntype: requirement\nquality_attributes: [speed]\n---\n# Fast\n\n## Statement\n\nRespond promptly.\n")
-	conformanceWrite(t, root, "specs/requirements/plain.requirement.spec.md", "---\ntype: requirement\n---\n# Plain\n\n## Statement\n\nRecord each loan.\n")
+	conformanceWrite(t, root, "specs/requirements/fast.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [speed]\n---\n# Fast\n\n## Statement\n\nRespond promptly.\n")
+	conformanceWrite(t, root, "specs/requirements/plain.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Plain\n\n## Statement\n\nRecord each loan.\n")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	s := result.Snapshot
 	conformancePayloads(t, s)
-	if types := Strings(s.Scope["selected_spec_types"]); slices.Contains(types, "quality") || !slices.Contains(types, "requirement") {
+	if types := Strings(s.Scope["selected_spec_types"]); slices.Contains(types, "quality") || !slices.Contains(types, "requirement-spec") {
 		t.Fatalf("selected specification types: %v", types)
 	}
 	fast, plain := designRecord(t, s, "Requirement", "Fast"), designRecord(t, s, "Requirement", "Plain")
@@ -118,10 +118,10 @@ func TestSystemNarrativeSectionsAndGoals(t *testing.T) {
 func TestUseCaseGuaranteesSupportAndIllustration(t *testing.T) {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/system.spec.md", typedSystem)
-	conformanceWrite(t, root, "specs/business-rules/limit.business-rule.spec.md", "---\ntype: business-rule\nid: limit\n---\n# Loan limit\n\n## Statement\n\nA member holds at most three items.\n")
-	conformanceWrite(t, root, "specs/use-cases/manage.use-case.spec.md", "---\ntype: use-case\n---\n# Manage loans\n\n## Goal\n\nKeep loans in order.\n\n## Goal level\n\nSummary.\n")
+	conformanceWrite(t, root, "specs/business-rules/limit.business-rule.spec.md", "---\ntype: business-rule-spec\nid: limit\n---\n# Loan limit\n\n## Statement\n\nA member holds at most three items.\n")
+	conformanceWrite(t, root, "specs/use-cases/manage.use-case.spec.md", "---\ntype: use-case-spec\n---\n# Manage loans\n\n## Goal\n\nKeep loans in order.\n\n## Goal level\n\nSummary.\n")
 	conformanceWrite(t, root, "specs/use-cases/borrow.use-case.spec.md", `---
-type: use-case
+type: use-case-spec
 ---
 # Borrow an item
 
@@ -202,9 +202,9 @@ An obsolete heading is retained, not interpreted.
 func TestObligationClausesBelongOnlyToTheirContainers(t *testing.T) {
 	clause := "\n## Obligations\n\n### Extra\n\nAn embedded obligation.\n"
 	for _, tc := range []struct{ path, source string }{
-		{"specs/jobs/borrow.job.spec.md", "---\ntype: job\n---\n# Borrow\n\n## Job\n\nBorrow equipment.\n" + clause},
-		{"specs/business-rules/limit.business-rule.spec.md", "---\ntype: business-rule\n---\n# Limit\n\n## Statement\n\nAt most three items.\n" + clause},
-		{"specs/requirements/record.requirement.spec.md", "---\ntype: requirement\n---\n# Record\n\n## Statement\n\nRecord each loan.\n" + clause},
+		{"specs/jobs/borrow.job.spec.md", "---\ntype: job-spec\n---\n# Borrow\n\n## Job\n\nBorrow equipment.\n" + clause},
+		{"specs/business-rules/limit.business-rule.spec.md", "---\ntype: business-rule-spec\n---\n# Limit\n\n## Statement\n\nAt most three items.\n" + clause},
+		{"specs/requirements/record.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Record\n\n## Statement\n\nRecord each loan.\n" + clause},
 	} {
 		t.Run(tc.path, func(t *testing.T) {
 			root := t.TempDir()
@@ -233,7 +233,7 @@ func TestObligationClausesBelongOnlyToTheirContainers(t *testing.T) {
 	t.Run("use cases still contain clauses", func(t *testing.T) {
 		root := t.TempDir()
 		conformanceWrite(t, root, "specs/system.spec.md", typedSystem)
-		conformanceWrite(t, root, "specs/use-cases/borrow.use-case.spec.md", "---\ntype: use-case\n---\n# Borrow\n\n## Goal\n\nBorrow.\n"+clause)
+		conformanceWrite(t, root, "specs/use-cases/borrow.use-case.spec.md", "---\ntype: use-case-spec\n---\n# Borrow\n\n## Goal\n\nBorrow.\n"+clause)
 		result := conformanceExport(t, root)
 		if result.ExitCode != 0 || len(Strings(designRecord(t, result.Snapshot, "UseCase", "Borrow")["obligations"])) != 1 {
 			t.Fatal(result.Snapshot.Diagnostics)
@@ -244,9 +244,9 @@ func TestObligationClausesBelongOnlyToTheirContainers(t *testing.T) {
 func TestBusinessRuleRefinesOnlyBusinessRules(t *testing.T) {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/system.spec.md", typedSystem)
-	conformanceWrite(t, root, "specs/requirements/record.requirement.spec.md", "---\ntype: requirement\n---\n# Record\n\n## Statement\n\nRecord each loan.\n")
-	conformanceWrite(t, root, "specs/business-rules/limit.business-rule.spec.md", "---\ntype: business-rule\n---\n# Limit\n\n## Statement\n\nAt most three items.\n")
-	conformanceWrite(t, root, "specs/business-rules/student-limit.business-rule.spec.md", "---\ntype: business-rule\n---\n# Student limit\n\n## Statement\n\nStudents hold at most two items.\n\n## Refines\n\n[Limit](limit.business-rule.spec.md).\n")
+	conformanceWrite(t, root, "specs/requirements/record.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Record\n\n## Statement\n\nRecord each loan.\n")
+	conformanceWrite(t, root, "specs/business-rules/limit.business-rule.spec.md", "---\ntype: business-rule-spec\n---\n# Limit\n\n## Statement\n\nAt most three items.\n")
+	conformanceWrite(t, root, "specs/business-rules/student-limit.business-rule.spec.md", "---\ntype: business-rule-spec\n---\n# Student limit\n\n## Statement\n\nStudents hold at most two items.\n\n## Refines\n\n[Limit](limit.business-rule.spec.md).\n")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
 		t.Fatal(result.Snapshot.Diagnostics)
@@ -268,7 +268,7 @@ func TestBusinessRuleRefinesOnlyBusinessRules(t *testing.T) {
 func TestOpenQuestionsBelongToAnyElement(t *testing.T) {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/system.spec.md", typedSystem)
-	conformanceWrite(t, root, "specs/jobs/borrow.job.spec.md", "---\ntype: job\n---\n# Borrow\n\n## Job\n\nBorrow equipment.\n\n## Steps\n\n### Reserve\n\nChoose an item.\n\n#### Open questions\n\n- How far ahead can members reserve?\n")
+	conformanceWrite(t, root, "specs/jobs/borrow.job.spec.md", "---\ntype: job-spec\n---\n# Borrow\n\n## Job\n\nBorrow equipment.\n\n## Steps\n\n### Reserve\n\nChoose an item.\n\n#### Open questions\n\n- How far ahead can members reserve?\n")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
 		t.Fatal(result.Snapshot.Diagnostics)

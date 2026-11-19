@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: requirement
+type: requirement-spec-report
+documents: "../../specs/requirements/reject-existing-target.requirement.spec.md#reject-initialization-at-an-existing-target"
 ---
 # Reject initialization at an existing target
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Statement
 
@@ -16,11 +16,6 @@ unsuccessful exit status.
 
 Initialization commands for all supported specification types.
 
-## Rationale
-
-Contributors must not mistake an existing specification for a newly created one.
-An existing target requires an explicit editing decision.
-
 ## Verification plan
 
 For each supported specification type, invoke initialization with an existing
@@ -28,8 +23,13 @@ target. Verify the unsuccessful exit status. Cover a regular file, directory,
 and symbolic link where the platform supports it. Preserve the target fixture
 and capture output to diagnose failures.
 
+## Rationale
+
+Contributors must not mistake an existing specification for a newly created one.
+An existing target requires an explicit editing decision.
+
 ## Related specifications
 
-- Quality attribute — [Source preservation](<../../SPEC.md#source-preservation>)
+**Quality attribute** · [Source preservation](<../quality-attributes.md#source-preservation>)
 
 [Edit source](<../../specs/requirements/reject-existing-target.requirement.spec.md#reject-initialization-at-an-existing-target>)

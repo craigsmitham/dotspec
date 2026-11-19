@@ -14,7 +14,7 @@ import (
 
 func mapped(t *testing.T, kind, body string) (*ParsedDocument, Mapping, Record) {
 	t.Helper()
-	d := ParseContent("specs/example."+kind+".spec.md", []byte("---\ntype: "+kind+"\n---\n\n# Example\n\n"+body))
+	d := ParseContent("specs/example."+kind+".spec.md", []byte("---\ntype: "+kind+"-spec\n---\n\n# Example\n\n"+body))
 	m := MapDomain(d, kind)
 	if len(m.Diagnostics) > 0 {
 		t.Fatalf("unexpected mapping diagnostics: %#v", m.Diagnostics)
@@ -71,7 +71,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 				return err
 			}
 			d := ParseContent(path, data)
-			kind := String(d.Document, "declared_type")
+			kind := strings.TrimSuffix(String(d.Document, "declared_type"), "-spec")
 			m := MapDomain(d, kind)
 			if len(m.Diagnostics) > 0 || m.RootID == "" {
 				t.Errorf("%s: root=%q diagnostics=%#v", path, m.RootID, m.Diagnostics)
@@ -456,7 +456,7 @@ func TestMappingPresentEmptyUnknownAndInvalid(t *testing.T) {
 	if len(recordsOf(m, "ExtensionSection")) != 1 {
 		t.Error("unknown domain gap not explicit")
 	}
-	bad := ParseContent("bad.job.spec.md", []byte("---\ntype: job\n---\n# Bad\n\n## Intended progress\n\nA.\n\n## Intended progress\n\nB.\n"))
+	bad := ParseContent("bad.job.spec.md", []byte("---\ntype: job-spec\n---\n# Bad\n\n## Intended progress\n\nA.\n\n## Intended progress\n\nB.\n"))
 	invalid := MapDomain(bad, "job")
 	if invalid.RootID != "" || len(invalid.Elements) != 0 || len(invalid.Diagnostics) != 1 {
 		t.Fatalf("invalid source fabricated a domain object: %#v", invalid)
@@ -473,7 +473,7 @@ func TestMappingPresentEmptyUnknownAndInvalid(t *testing.T) {
 }
 
 func TestMappingMetadataLabelsHaveSourceOccurrences(t *testing.T) {
-	data := []byte("---\ntype: requirement\nid: sample\nquality_attributes: [usability, reliability]\n---\n# Sample\n")
+	data := []byte("---\ntype: requirement-spec\nid: sample\nquality_attributes: [usability, reliability]\n---\n# Sample\n")
 	d := ParseContent("sample.requirement.spec.md", data)
 	m := MapDomain(d, "requirement")
 	if len(m.Labels) != 2 {

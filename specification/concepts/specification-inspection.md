@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: concept
+type: concept-spec-report
+documents: "../../specs/concepts/specification-inspection.concept.spec.md#specification-inspection"
 ---
 # Specification Inspection
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Purpose
 
@@ -33,12 +33,16 @@ and [source preservation](<../requirements/inspection-preserves-source.md>).
 
 ### Inspect a project
 
+<!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/specification-inspection.concept.spec.md#inspect-a-project"} -->
+
 Select an existing project directory and inspect supported specifications in its
 subtree, consulting enclosing system specifications and direct reference targets
 when needed. Report findings and scan completion. An empty completed scan explicitly reports that no
 supported specifications were found.
 
 ### Inspect one specification
+
+<!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/specification-inspection.concept.spec.md#inspect-one-specification"} -->
 
 Select a supported specification by type, local slug, and project directory.
 Inspect it and its required system and reference context using the same

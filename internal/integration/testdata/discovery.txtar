@@ -22,7 +22,7 @@ ignored/
 untracked/
 -- specs/system.spec.md --
 ---
-type: system
+type: system-spec
 ---
 # Root
 ## Purpose
@@ -31,7 +31,7 @@ Support the root project.
 The root scope.
 -- ignored/specs/system.spec.md --
 ---
-type: system
+type: system-spec
 ---
 # Tracked
 ## Purpose
@@ -40,7 +40,7 @@ Remain visible when tracked.
 An ignored directory.
 -- untracked/specs/system.spec.md --
 ---
-type: system
+type: system-spec
 ---
 # Untracked
 ## Purpose
@@ -49,7 +49,7 @@ Remain invisible when ignored.
 An untracked directory.
 -- nested/specs/system.spec.md --
 ---
-type: system
+type: system-spec
 ---
 # Nested
 ## Purpose

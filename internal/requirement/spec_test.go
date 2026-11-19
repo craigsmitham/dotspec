@@ -9,7 +9,7 @@ import (
 )
 
 const example = `---
-type: requirement
+type: requirement-spec
 id: preserve
 quality_attributes: [reliability, source-preservation]
 ---
@@ -46,7 +46,7 @@ func TestGeneralRequirement(t *testing.T) {
 }
 
 func TestDraftAndStructure(t *testing.T) {
-	draft := "---\ntype: requirement\n---\n# Draft\n"
+	draft := "---\ntype: requirement-spec\n---\n# Draft\n"
 	r, err := Parse([]byte(draft + "## Verification plan\n"))
 	if err != nil {
 		t.Fatal(err)
@@ -61,7 +61,7 @@ func TestDraftAndStructure(t *testing.T) {
 		}
 	}
 	for _, tt := range []struct{ text, rule string }{
-		{strings.Replace(example, "type: requirement", "type: quality", 1), "metadata.type"},
+		{strings.Replace(example, "type: requirement-spec", "type: quality", 1), "metadata.type"},
 		{strings.Replace(example, "id: preserve", "kind: functional", 1), "metadata.invalid"},
 		{draft + "### Statement\n", "structure.section-level"},
 		{draft + "## Statement\nOne.\n## Statement\nTwo.\n", "structure.duplicate-section"},
@@ -78,7 +78,7 @@ func TestDraftAndStructure(t *testing.T) {
 }
 
 func FuzzParse(f *testing.F) {
-	for _, seed := range []string{example, Template, QualityTemplate, "---\ntype: requirement\nquality_attributes: [null]\n---\n# Draft\n"} {
+	for _, seed := range []string{example, Template, QualityTemplate, "---\ntype: requirement-spec\nquality_attributes: [null]\n---\n# Draft\n"} {
 		f.Add([]byte(seed))
 	}
 	f.Fuzz(func(t *testing.T, data []byte) {

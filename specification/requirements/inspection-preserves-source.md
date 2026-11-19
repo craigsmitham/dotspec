@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: requirement
+type: requirement-spec-report
+documents: "../../specs/requirements/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material"
 ---
 # Inspection preserves source material
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Statement
 
@@ -49,8 +49,6 @@ changing the material they are reviewing.
 describes the read-and-report operation. File creation belongs to the separate
 `init` commands.
 
-## Related specifications
-
-- Quality attribute — [Source preservation](<../../SPEC.md#source-preservation>)
+**Quality attribute** · [Source preservation](<../quality-attributes.md#source-preservation>)
 
 [Edit source](<../../specs/requirements/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material>)

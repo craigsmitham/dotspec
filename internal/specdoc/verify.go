@@ -3,6 +3,7 @@ package specdoc
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/fs"
@@ -28,8 +29,7 @@ import (
 )
 
 type pageHeader struct {
-	Type        string `yaml:"type"`
-	SubjectKind string `yaml:"subject_kind"`
+	Document    `yaml:",inline"`
 	GeneratedBy string `yaml:"generated_by"`
 }
 
@@ -50,6 +50,8 @@ var anchorAttribute = regexp.MustCompile(`(?i)^<a\s+(?:[^>]*?\s)?(?:id|name)=["'
 var markdownParser = goldmark.New(goldmark.WithExtensions(extension.GFM), goldmark.WithParserOptions(parser.WithAutoHeadingID())).Parser()
 
 type parsedPage struct {
+	sectionDocs    map[string][]Document
+	firstList      map[string][]string
 	header         pageHeader
 	titles         []string
 	visible        string
@@ -64,7 +66,7 @@ type parsedPage struct {
 func parseGenerated(data []byte) parsedPage {
 	header, body := splitHeader(data)
 	doc := markdownParser.Parse(text.NewReader(body))
-	p := parsedPage{sectionContent: map[string][]string{}, sectionLinks: map[string]map[string]bool{}, header: header, links: make(map[string]int), labels: make(map[string][]string), resources: make(map[string]bool), anchors: make(map[string]bool), visible: visibleText(doc, body)}
+	p := parsedPage{sectionDocs: map[string][]Document{}, firstList: map[string][]string{}, sectionContent: map[string][]string{}, sectionLinks: map[string]map[string]bool{}, header: header, links: make(map[string]int), labels: make(map[string][]string), resources: make(map[string]bool), anchors: make(map[string]bool), visible: visibleText(doc, body)}
 	type section struct {
 		level int
 		ids   []string
@@ -80,6 +82,23 @@ func parseGenerated(data []byte) parsedPage {
 			bodyText := visibleText(n, body)
 			for _, id := range ancestors[len(ancestors)-1].ids {
 				p.sectionContent[id] = append(p.sectionContent[id], bodyText)
+			}
+		}
+		// The directory is the first direct list in its section. Later authored
+		// prose and links can refer to other subjects for different reasons.
+		if n.Kind() == ast.KindList && n.Parent() == doc && len(ancestors) > 0 {
+			ids := ancestors[len(ancestors)-1].ids
+			if _, seen := p.firstList[ids[0]]; !seen {
+				var members []string
+				_ = ast.Walk(n, func(child ast.Node, entering bool) (ast.WalkStatus, error) {
+					if link, ok := child.(*ast.Link); ok && entering {
+						members = append(members, string(util.URLEscape(link.Destination, true)))
+					}
+					return ast.WalkContinue, nil
+				})
+				for _, id := range ids {
+					p.firstList[id] = members
+				}
 			}
 		}
 		switch n := n.(type) {
@@ -119,6 +138,16 @@ func parseGenerated(data []byte) parsedPage {
 				addAnchor(string(m[1]))
 			}
 		case *ast.HTMLBlock:
+			raw := strings.TrimSpace(string(n.Lines().Value(body)))
+			if data, ok := strings.CutPrefix(raw, "<!-- dotspec-doc "); ok && n.Parent() == doc {
+				anchor := ""
+				if len(ancestors) > 0 {
+					anchor = ancestors[len(ancestors)-1].ids[0]
+				}
+				var document Document
+				_ = json.Unmarshal([]byte(strings.TrimSuffix(data, " -->")), &document)
+				p.sectionDocs[anchor] = append(p.sectionDocs[anchor], document)
+			}
 			if m := anchorAttribute.FindSubmatch(bytes.TrimSpace(n.Lines().Value(body))); m != nil {
 				addAnchor(string(m[1]))
 			}
@@ -168,7 +197,7 @@ func contentText(md string) string {
 
 // Check the rendered document against the plan's source-derived contract.
 func checkPage(expected *Page, p parsedPage, report func(string, string)) {
-	if p.header.GeneratedBy != "dotspec" || p.header.Type != expected.Type || p.header.SubjectKind != expected.SubjectKind {
+	if p.header.GeneratedBy != "dotspec" || p.header.Document != expected.Document {
 		report("spec.document-type", fmt.Sprintf("expected a generated %s document for %q", expected.Type, expected.Title))
 	}
 	if len(p.titles) != 1 || p.titles[0] != contentText(expected.Title) {
@@ -190,11 +219,18 @@ func checkPage(expected *Page, p parsedPage, report func(string, string)) {
 		}
 		report("spec.content", fmt.Sprintf("missing, altered, or out-of-order authored content: %q", string(excerpt)))
 	}
-	allowed := map[string]bool{}
+	for _, anchor := range slices.Sorted(maps.Keys(expected.SectionDocs)) {
+		if !slices.Equal(p.sectionDocs[anchor], []Document{expected.SectionDocs[anchor]}) {
+			report("spec.document-type", "expected one typed document for the authored subject at #"+anchor)
+		}
+	}
+	for _, anchor := range slices.Sorted(maps.Keys(p.sectionDocs)) {
+		if _, ok := expected.SectionDocs[anchor]; !ok {
+			report("spec.document-type", "unexpected subject document at #"+anchor)
+		}
+	}
 	for _, link := range expected.RequiredLinks {
-		dest := string(util.URLEscape([]byte(link), true))
-		allowed[dest] = true
-		if p.links[dest] == 0 {
+		if p.links[string(util.URLEscape([]byte(link), true))] == 0 {
 			report("spec.navigation", fmt.Sprintf("missing visible link to %q", link))
 		}
 	}
@@ -229,18 +265,16 @@ func checkPage(expected *Page, p parsedPage, report func(string, string)) {
 			report("spec.structure", fmt.Sprintf("missing addressable section %q", anchor))
 		}
 	}
-	for _, member := range expected.Members {
-		dest := string(util.URLEscape([]byte(member), true))
-		allowed[dest] = true
-		if p.links[dest] != 1 {
-			report("spec.membership", fmt.Sprintf("expected exactly one entry for %q, found %d", member, p.links[dest]))
+	for _, anchor := range slices.Sorted(maps.Keys(expected.DirectoryMembers)) {
+		var members []string
+		for _, dest := range expected.DirectoryMembers[anchor] {
+			members = append(members, string(util.URLEscape([]byte(dest), true)))
 		}
-	}
-	if expected.Type == CollectionIndex {
-		for _, dest := range slices.Sorted(maps.Keys(p.links)) {
-			if !allowed[dest] {
-				report("spec.membership", fmt.Sprintf("unexpected index entry %q", dest))
-			}
+		found := slices.Clone(p.firstList[anchor])
+		slices.Sort(members)
+		slices.Sort(found)
+		if !slices.Equal(members, found) {
+			report("spec.membership", "directory at #"+anchor+" must list each scoped member exactly once")
 		}
 	}
 }

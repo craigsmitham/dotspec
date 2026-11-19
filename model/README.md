@@ -383,8 +383,8 @@ carried no information. Headings, field paths and exported JSON change.
 Specification types:
 
 - A specification is one authored `*.spec.md` document, and its root record is a
-  `Specification`. The seven types are `system`, `job`, `quality-model`,
-  `business-rule`, `use-case`, `concept` and `requirement`, each with one
+  `Specification`. The seven Markdown types are `system-spec`, `job-spec`, `quality-model-spec`,
+  `business-rule-spec`, `use-case-spec`, `concept-spec` and `requirement-spec`, each with one
   concrete class. `SpecificationType` replaces `SpecificationKind`, and
   `ScanScope.selected_spec_types` replaces `selected_spec_kinds`. "Kind" now means
   only a record's class, through the `kind` discriminator.
@@ -505,9 +505,10 @@ is reported and retained as an extension section.
 There are no compatibility aliases. Saved snapshots are not silently migrated;
 re-export source specifications with the current CLI.
 
-The supporting **Specification documentation** subset defines `SpecificationDocument`
-and its `SpecificationDocumentType` enumeration. These describe the generated
-Markdown pages readers navigate. Snapshot `Document` records describe acquired
-source syntax. `SourceDocument.selected` identifies primary discovery inputs so
-referenced context can be cited outside the generated system tree. See the
+The supporting **Specification documentation** subset defines `GeneratedDocument`,
+`SubjectSpecReport`, and a concrete `<SubjectType>SpecReport` for each documented kind. Each
+subject document references exactly one domain subject. The Markdown serialization
+uses a relative source URI for this reference. Pages and addressable sections can
+both represent subject documents. `RequirementsReviewReport` covers the project.
+Snapshot `Document` records describe acquired source syntax. See the
 [generated specification guide](../docs/reference/generated-specification.md).

@@ -1,5 +1,5 @@
 ---
-type: job
+type: job-spec
 ---
 # Resume interrupted work
 

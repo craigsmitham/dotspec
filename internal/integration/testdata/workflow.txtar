@@ -45,7 +45,7 @@ Edit the system name, Purpose, and Scope.
 Authoring guide: dotspec guide system
 -- system.spec.md --
 ---
-type: system
+type: system-spec
 ---
 
 # New system

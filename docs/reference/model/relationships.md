@@ -62,6 +62,18 @@ Explicit source syntax. Only separately declared semantic fields establish domai
 - Ordering: authored presentation order; no execution order implied. Cycles: not-applicable.
 - Stored inverse: `none`; other reverse navigation is derived.
 
+### ActionParameterSpecReport.documents
+
+[ActionParameterSpecReport](index.md#actionparameterspecreport) → [ActionParameter](index.md#actionparameter).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### ActorMention.references
 
 [ActorMention](index.md#actormention) → [SourceReference](index.md#sourcereference).
@@ -134,6 +146,18 @@ Checked inverse of canonical membership fields.
 - Ordering: single target. Cycles: forbidden.
 - Stored inverse: `System.assumptions`; other reverse navigation is derived.
 
+### AssumptionSpecReport.documents
+
+[AssumptionSpecReport](index.md#assumptionspecreport) → [Assumption](index.md#assumption).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### BusinessRule.applies_to
 
 [BusinessRule](index.md#businessrule) → [DomainElement](index.md#domainelement).
@@ -184,6 +208,18 @@ Explicit source syntax. Only separately declared semantic fields establish domai
 - Ordering: authored presentation order; no execution order implied. Cycles: not-applicable.
 - Stored inverse: `none`; other reverse navigation is derived.
 - Complete section content required when this field is present: `BusinessRule.refines_content`.
+
+### BusinessRuleSpecReport.documents
+
+[BusinessRuleSpecReport](index.md#businessrulespecreport) → [BusinessRule](index.md#businessrule).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
 
 ### ByteSpan.source
 
@@ -260,6 +296,18 @@ Explicit source syntax. Only separately declared semantic fields establish domai
 - Ordering: authored presentation order; no execution order implied. Cycles: not-applicable.
 - Stored inverse: `none`; other reverse navigation is derived.
 - Complete section content required when this field is present: `Capability.provided_by_content`.
+
+### CapabilitySpecReport.documents
+
+[CapabilitySpecReport](index.md#capabilityspecreport) → [Capability](index.md#capability).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
 
 ### Component.interacts_with
 
@@ -364,6 +412,18 @@ Services this subject expects from its environment.
 - Stored inverse: `Interface.owner`; other reverse navigation is derived.
 - Declaration/content pair: `Component.required_interfaces_content`; both fields are present or both absent.
 
+### ComponentSpecReport.documents
+
+[ComponentSpecReport](index.md#componentspecreport) → [Component](index.md#component).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### Concept.actions
 
 [Concept](index.md#concept) → [ConceptAction](index.md#conceptaction).
@@ -467,6 +527,30 @@ Checked inverse of canonical membership fields.
 - Ordering: single target. Cycles: forbidden.
 - Stored inverse: `Concept.actions`; other reverse navigation is derived.
 
+### ConceptActionSpecReport.documents
+
+[ConceptActionSpecReport](index.md#conceptactionspecreport) → [ConceptAction](index.md#conceptaction).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
+### ConceptSpecReport.documents
+
+[ConceptSpecReport](index.md#conceptspecreport) → [Concept](index.md#concept).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### ConceptType.owner
 
 [ConceptType](index.md#concepttype) → [Concept](index.md#concept).
@@ -478,6 +562,18 @@ Checked inverse of canonical membership fields.
 - Basis: Checked inverse of canonical membership fields.
 - Ordering: single target. Cycles: forbidden.
 - Stored inverse: `Concept.type_parameters or Concept.introduced_types`; other reverse navigation is derived.
+
+### ConceptTypeSpecReport.documents
+
+[ConceptTypeSpecReport](index.md#concepttypespecreport) → [ConceptType](index.md#concepttype).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
 
 ### ConceptUse.bindings
 
@@ -566,6 +662,18 @@ Checked inverse of canonical membership fields.
 - Basis: Checked inverse of canonical membership fields.
 - Ordering: single target. Cycles: forbidden.
 - Stored inverse: `System.concept_uses`; other reverse navigation is derived.
+
+### ConceptUseSpecReport.documents
+
+[ConceptUseSpecReport](index.md#conceptusespecreport) → [ConceptUse](index.md#conceptuse).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
 
 ### Condition.references
 
@@ -761,6 +869,18 @@ Checked inverse of canonical membership fields.
 - Ordering: single target. Cycles: forbidden.
 - Stored inverse: `Job.outcomes or JobStep.outcomes`; other reverse navigation is derived.
 
+### DesiredOutcomeSpecReport.documents
+
+[DesiredOutcomeSpecReport](index.md#desiredoutcomespecreport) → [DesiredOutcome](index.md#desiredoutcome).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### Diagnostic.record
 
 [Diagnostic](index.md#diagnostic) → [Record](index.md#record).
@@ -929,6 +1049,18 @@ Explicit source syntax. Only separately declared semantic fields establish domai
 - Ordering: unordered. Cycles: not-applicable.
 - Stored inverse: `none`; other reverse navigation is derived.
 
+### EvidenceStatementSpecReport.documents
+
+[EvidenceStatementSpecReport](index.md#evidencestatementspecreport) → [EvidenceStatement](index.md#evidencestatement).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### ExtensionSection.children
 
 [ExtensionSection](index.md#extensionsection) → [ExtensionSection](index.md#extensionsection).
@@ -1003,6 +1135,18 @@ Checked inverse of canonical declaration membership.
 - Ordering: single target. Cycles: forbidden.
 - Stored inverse: `System.features`; other reverse navigation is derived.
 
+### FeatureSpecReport.documents
+
+[FeatureSpecReport](index.md#featurespecreport) → [Feature](index.md#feature).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### GlossaryTerm.owner
 
 [GlossaryTerm](index.md#glossaryterm) → [System](index.md#system).
@@ -1027,6 +1171,18 @@ Explicit source syntax. Only separately declared semantic fields establish domai
 - Ordering: unordered. Cycles: not-applicable.
 - Stored inverse: `none`; other reverse navigation is derived.
 
+### GlossaryTermSpecReport.documents
+
+[GlossaryTermSpecReport](index.md#glossarytermspecreport) → [GlossaryTerm](index.md#glossaryterm).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### Goal.owner
 
 [Goal](index.md#goal) → [System](index.md#system).
@@ -1038,6 +1194,18 @@ Checked inverse of canonical membership fields.
 - Basis: Checked inverse of canonical membership fields.
 - Ordering: single target. Cycles: forbidden.
 - Stored inverse: `System.goals`; other reverse navigation is derived.
+
+### GoalSpecReport.documents
+
+[GoalSpecReport](index.md#goalspecreport) → [Goal](index.md#goal).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
 
 ### Interface.obligations
 
@@ -1063,6 +1231,18 @@ Checked inverse of canonical declaration membership.
 - Basis: Checked inverse of canonical declaration membership.
 - Ordering: single target. Cycles: forbidden.
 - Stored inverse: `System.required_interfaces or System.provided_interfaces or Component.required_interfaces or Component.provided_interfaces`; other reverse navigation is derived.
+
+### InterfaceSpecReport.documents
+
+[InterfaceSpecReport](index.md#interfacespecreport) → [Interface](index.md#interface).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
 
 ### Job.outcomes
 
@@ -1103,6 +1283,18 @@ Document order, not a universal lifecycle or required process sequence.
 - Stored inverse: `JobStep.owner`; other reverse navigation is derived.
 - Declaration/content pair: `Job.steps_content`; both fields are present or both absent.
 
+### JobSpecReport.documents
+
+[JobSpecReport](index.md#jobspecreport) → [Job](index.md#job).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### JobStep.outcomes
 
 [JobStep](index.md#jobstep) → [DesiredOutcome](index.md#desiredoutcome).
@@ -1127,6 +1319,18 @@ Checked inverse of canonical membership fields.
 - Basis: Checked inverse of canonical membership fields.
 - Ordering: single target. Cycles: forbidden.
 - Stored inverse: `Job.steps`; other reverse navigation is derived.
+
+### JobStepSpecReport.documents
+
+[JobStepSpecReport](index.md#jobstepspecreport) → [JobStep](index.md#jobstep).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
 
 ### LabelOccurrence.content_node
 
@@ -1350,6 +1554,18 @@ Explicit source syntax. Only separately declared semantic fields establish domai
 - Stored inverse: `none`; other reverse navigation is derived.
 - Complete section content required when this field is present: `ObligationClause.refines_content`.
 
+### ObligationClauseSpecReport.documents
+
+[ObligationClauseSpecReport](index.md#obligationclausespecreport) → [ObligationClause](index.md#obligationclause).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### ObligationContainer.obligations
 
 [ObligationContainer](index.md#obligationcontainer) → [ObligationClause](index.md#obligationclause).
@@ -1374,6 +1590,18 @@ Checked inverse of canonical membership fields.
 - Basis: Checked inverse of canonical membership fields.
 - Ordering: single target. Cycles: forbidden.
 - Stored inverse: `Job.progress_cases`; other reverse navigation is derived.
+
+### ProgressCaseSpecReport.documents
+
+[ProgressCaseSpecReport](index.md#progresscasespecreport) → [ProgressCase](index.md#progresscase).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
 
 ### QualityAttribute.owner
 
@@ -1411,6 +1639,18 @@ All authored Sub-attribute of labels, including unresolved references.
 - Ordering: authored presentation order; no execution order implied. Cycles: not-applicable.
 - Stored inverse: `LabelOccurrence.owner`; other reverse navigation is derived.
 
+### QualityAttributeSpecReport.documents
+
+[QualityAttributeSpecReport](index.md#qualityattributespecreport) → [QualityAttribute](index.md#qualityattribute).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### QualityModel.quality_attributes
 
 [QualityModel](index.md#qualitymodel) → [QualityAttribute](index.md#qualityattribute).
@@ -1423,6 +1663,18 @@ Ordered model definitions; must be present together with quality_attributes_cont
 - Ordering: authored presentation order; no execution order implied. Cycles: forbidden.
 - Stored inverse: `QualityAttribute.owner`; other reverse navigation is derived.
 - Declaration/content pair: `QualityModel.quality_attributes_content`; both fields are present or both absent.
+
+### QualityModelSpecReport.documents
+
+[QualityModelSpecReport](index.md#qualitymodelspecreport) → [QualityModel](index.md#qualitymodel).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
 
 ### Requirement.applies_to
 
@@ -1498,6 +1750,18 @@ Explicit source syntax. Only separately declared semantic fields establish domai
 - Ordering: authored presentation order; no execution order implied. Cycles: not-applicable.
 - Stored inverse: `none`; other reverse navigation is derived.
 - Complete section content required when this field is present: `Requirement.refines_content`.
+
+### RequirementSpecReport.documents
+
+[RequirementSpecReport](index.md#requirementspecreport) → [Requirement](index.md#requirement).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
 
 ### Resolution.candidates
 
@@ -1582,6 +1846,18 @@ Source order only. Required sequencing belongs in the Sequence section.
 - Basis: Explicit Markdown decomposition under the declared mapping profile.
 - Ordering: authored presentation order; no execution order implied. Cycles: forbidden.
 - Stored inverse: `ScenarioStep.owner`; other reverse navigation is derived.
+
+### ScenarioSpecReport.documents
+
+[ScenarioSpecReport](index.md#scenariospecreport) → [Scenario](index.md#scenario).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
 
 ### ScenarioStep.illustrates
 
@@ -1741,6 +2017,18 @@ Recorded source or inspection evidence.
 - Ordering: single target. Cycles: not-applicable.
 - Stored inverse: `none`; other reverse navigation is derived.
 
+### SubjectSpecReport.documents
+
+[SubjectSpecReport](index.md#subjectspecreport) → [DomainElement](index.md#domainelement).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### Synchronization.obligations
 
 [Synchronization](index.md#synchronization) → [ObligationClause](index.md#obligationclause).
@@ -1851,6 +2139,30 @@ Checked inverse of canonical membership fields.
 - Basis: Checked inverse of canonical membership fields.
 - Ordering: single target. Cycles: forbidden.
 - Stored inverse: `Synchronization.when_actions or Synchronization.then_actions`; other reverse navigation is derived.
+
+### SynchronizationActionSpecReport.documents
+
+[SynchronizationActionSpecReport](index.md#synchronizationactionspecreport) → [SynchronizationAction](index.md#synchronizationaction).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
+### SynchronizationSpecReport.documents
+
+[SynchronizationSpecReport](index.md#synchronizationspecreport) → [Synchronization](index.md#synchronization).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
 
 ### System.assumptions
 
@@ -2097,6 +2409,18 @@ Explicit source syntax. Only separately declared semantic fields establish domai
 - Stored inverse: `none`; other reverse navigation is derived.
 - Complete section content required when this field is present: `SystemContextSpecification.specification_system_content`.
 
+### SystemSpecReport.documents
+
+[SystemSpecReport](index.md#systemspecreport) → [System](index.md#system).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### TraceableElement.derived_from
 
 [TraceableElement](index.md#traceableelement) → [DomainElement](index.md#domainelement) or [SourceFragment](index.md#sourcefragment).
@@ -2259,6 +2583,18 @@ Explicit source syntax. Only separately declared semantic fields establish domai
 - Ordering: authored presentation order; no execution order implied. Cycles: not-applicable.
 - Stored inverse: `none`; other reverse navigation is derived.
 
+### TypeBindingSpecReport.documents
+
+[TypeBindingSpecReport](index.md#typebindingspecreport) → [TypeBinding](index.md#typebinding).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
 ### UnmappedRole.content_nodes
 
 [UnmappedRole](index.md#unmappedrole) → [ContentNode](index.md#contentnode).
@@ -2407,6 +2743,30 @@ Explicit handling steps in source order; no execution semantics are inferred.
 - Basis: Explicit Markdown decomposition under the declared mapping profile.
 - Ordering: authored presentation order; no execution order implied. Cycles: forbidden.
 - Stored inverse: `ScenarioStep.owner`; other reverse navigation is derived.
+
+### UseCaseExtensionSpecReport.documents
+
+[UseCaseExtensionSpecReport](index.md#usecaseextensionspecreport) → [UseCaseExtension](index.md#usecaseextension).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
+
+### UseCaseSpecReport.documents
+
+[UseCaseSpecReport](index.md#usecasespecreport) → [UseCase](index.md#usecase).
+
+The documented subject, serialized as a relative URI to its authored heading.
+
+- Category: Semantic association. Cardinality: `1`.
+- Scope: One selected subject of the concrete document's corresponding domain class.
+- Basis: Identity of the domain record mapped from the referenced heading.
+- Ordering: single target. Cycles: permitted.
+- Stored inverse: `none`; other reverse navigation is derived.
 
 ## Assertion projections
 

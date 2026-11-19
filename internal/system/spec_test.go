@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-const validSpec = "---\ntype: system\n---\n\n# Parser\n\n## Purpose\n\nRead specs.\n\n## Scope\n\nMarkdown files.\n"
+const validSpec = "---\ntype: system-spec\n---\n\n# Parser\n\n## Purpose\n\nRead specs.\n\n## Scope\n\nMarkdown files.\n"
 
 func TestParse(t *testing.T) {
 	tests := []struct {
@@ -13,11 +13,11 @@ func TestParse(t *testing.T) {
 	}{
 		{"minimal", validSpec, "Parser", "Read specs.", "Markdown files."},
 		{"CRLF and BOM", "\xef\xbb\xbf" + strings.ReplaceAll(validSpec, "\n", "\r\n"), "Parser", "Read specs.", "Markdown files."},
-		{"quoted YAML", strings.Replace(validSpec, "type: system", "type: 'system' # comment", 1), "Parser", "Read specs.", "Markdown files."},
+		{"quoted YAML", strings.Replace(validSpec, "type: system-spec", "type: 'system-spec' # comment", 1), "Parser", "Read specs.", "Markdown files."},
 		{"formatted title", strings.Replace(validSpec, "# Parser", "# **Spec** `parser`", 1), "Spec parser", "Read specs.", "Markdown files."},
-		{"setext headings", "---\ntype: system\n---\nParser\n======\n\nPurpose\n-------\nRead specs.\n\nScope\n-----\nMarkdown files.", "Parser", "Read specs.", "Markdown files."},
+		{"setext headings", "---\ntype: system-spec\n---\nParser\n======\n\nPurpose\n-------\nRead specs.\n\nScope\n-----\nMarkdown files.", "Parser", "Read specs.", "Markdown files."},
 		{"closing heading markers", strings.ReplaceAll(strings.ReplaceAll(validSpec, "## Purpose", "## Purpose ##"), "## Scope", "## Scope ##"), "Parser", "Read specs.", "Markdown files."},
-		{"scope first", "---\ntype: system\n---\n# Parser\n## Scope\nMarkdown files.\n## Purpose\nRead specs.", "Parser", "Read specs.", "Markdown files."},
+		{"scope first", "---\ntype: system-spec\n---\n# Parser\n## Scope\nMarkdown files.\n## Purpose\nRead specs.", "Parser", "Read specs.", "Markdown files."},
 		{"extra section", validSpec + "\n## Notes\nNot part of scope.\n", "Parser", "Read specs.", "Markdown files."},
 		{"Markdown body", strings.Replace(validSpec, "Read specs.", "- Read specs.\n\n### Detail\n\nPreserve structure.\n\n```markdown\n# Fake title\n## Scope\n```\n\n> ## Scope\n> Quoted heading.", 1), "Parser", "- Read specs.\n\n### Detail\n\nPreserve structure.\n\n```markdown\n# Fake title\n## Scope\n```\n\n> ## Scope\n> Quoted heading.", "Markdown files."},
 	}
@@ -38,12 +38,14 @@ func TestParseRejectsMalformedSpecs(t *testing.T) {
 	tests := []struct{ name, source, want string }{
 		{"empty", "", "frontmatter"},
 		{"no frontmatter", "# Parser", "frontmatter"},
-		{"unclosed frontmatter", "---\ntype: system", "must end"},
-		{"invalid YAML", strings.Replace(validSpec, "type: system", "type: [", 1), "invalid YAML"},
-		{"duplicate YAML key", strings.Replace(validSpec, "type: system", "type: system\ntype: system", 1), "invalid YAML"},
-		{"unknown metadata", strings.Replace(validSpec, "type: system", "type: system\nparent: root", 1), "invalid YAML"},
-		{"wrong type", strings.Replace(validSpec, "type: system", "type: job", 1), "type: system"},
-		{"missing type", strings.Replace(validSpec, "type: system", "{}", 1), "type: system"},
+		{"unclosed frontmatter", "---\ntype: system-spec", "must end"},
+		{"invalid YAML", strings.Replace(validSpec, "type: system-spec", "type: [", 1), "invalid YAML"},
+		{"duplicate YAML key", strings.Replace(validSpec, "type: system-spec", "type: system-spec\ntype: system-spec", 1), "invalid YAML"},
+		{"unknown metadata", strings.Replace(validSpec, "type: system-spec", "type: system-spec\nparent: root", 1), "invalid YAML"},
+		{"wrong type", strings.Replace(validSpec, "type: system-spec", "type: job-spec", 1), "type: system-spec"},
+		{"bare subject kind", strings.Replace(validSpec, "type: system-spec", "type: system", 1), "type: system-spec"},
+		{"generated report type", strings.Replace(validSpec, "type: system-spec", "type: system-spec-report", 1), "type: system-spec"},
+		{"missing type", strings.Replace(validSpec, "type: system-spec", "{}", 1), "type: system-spec"},
 		{"no title", strings.Replace(validSpec, "# Parser", "Parser", 1), "name heading"},
 		{"empty title", strings.Replace(validSpec, "# Parser", "#", 1), "nonempty top-level"},
 		{"two titles", validSpec + "\n# Another\n", "exactly one"},
@@ -66,7 +68,7 @@ func TestParseRejectsMalformedSpecs(t *testing.T) {
 }
 
 func FuzzParse(f *testing.F) {
-	for _, seed := range []string{validSpec, validSpec + qualityExample, validSpec + "\n## Quality attributes\n### Cycle\n**ID:** cycle\n**Sub-attribute of:** cycle", Template, "", "---\ntype: system\n---\n#\n## Purpose\n## Scope"} {
+	for _, seed := range []string{validSpec, validSpec + qualityExample, validSpec + "\n## Quality attributes\n### Cycle\n**ID:** cycle\n**Sub-attribute of:** cycle", Template, "", "---\ntype: system-spec\n---\n#\n## Purpose\n## Scope"} {
 		f.Add([]byte(seed))
 	}
 	f.Fuzz(func(t *testing.T, data []byte) {
@@ -75,7 +77,7 @@ func FuzzParse(f *testing.F) {
 }
 
 func TestSystemAndDeclarationIdentities(t *testing.T) {
-	source := strings.Replace(validSpec, "type: system", "type: system\nid: parser", 1) + "\n## Components\n### Scanner\n**ID:** scanner\n#### Part of\n[Parser](#parser)\n## Features\n### Scan files\n**ID:** scan-files\n#### Notes\n[Scanner heading](#scanner)\n"
+	source := strings.Replace(validSpec, "type: system-spec", "type: system-spec\nid: parser", 1) + "\n## Components\n### Scanner\n**ID:** scanner\n#### Part of\n[Parser](#parser)\n## Features\n### Scan files\n**ID:** scan-files\n#### Notes\n[Scanner heading](#scanner)\n"
 	spec, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)

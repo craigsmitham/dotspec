@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: use-case
+type: use-case-spec-report
+documents: "../../specs/use-cases/resume-list.use-case.spec.md#return-to-my-list"
 ---
 # Return to my list
 
-[Personal task list](<../../SPEC.md>) · [Contents](<../index.md>)
+[Personal task list](<../../SPEC.md>)
 
 ## Goal
 
@@ -14,6 +14,44 @@ Pick up an outstanding task and bring a finished one back for follow-up.
 ## Primary actor
 
 The person who keeps the list.
+
+## Preconditions
+
+- The person has access to their local database.
+
+## Main success scenario
+
+<!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/resume-list.use-case.spec.md#main-success-scenario"} -->
+
+1. The person records an errand and later marks it complete.
+   - **Illustrates:** [Complete](<../concepts/checklist.md#complete>).
+2. On returning, the person finds the errand among the completed tasks.
+   - **Illustrates:** [Keep recorded work available](<#keep-recorded-work-available>).
+3. The person discovers a follow-up and reopens the errand.
+   - **Illustrates:** [Reopen](<../concepts/checklist.md#reopen>).
+
+## Extensions
+
+### The person intentionally deleted the errand
+
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/resume-list.use-case.spec.md#the-person-intentionally-deleted-the-errand"} -->
+
+#### Condition
+
+The person previously used [Delete](<../concepts/checklist.md#delete>).
+
+#### Handling
+
+1. The person looks through the two views. Neither contains the deleted entry.
+2. If the commitment still matters, the person records a new entry.
+
+## Success guarantees
+
+- The person can continue with the original entry.
+
+## Minimal guarantees
+
+- A rejected rename preserves the existing title.
 
 ## Goal level
 
@@ -31,47 +69,15 @@ User task.
 
 [My checklist](<../concept-uses/my-checklist.md>).
 
-## Preconditions
-
-- The person has access to their local database.
-
-## Minimal guarantees
-
-- A rejected rename preserves the existing title.
-
-## Main success scenario
-
-1. The person records an errand and later marks it complete.
-   - **Illustrates:** [Complete](<../concepts/checklist.md#complete>).
-2. On returning, the person finds the errand among the completed tasks.
-   - **Illustrates:** [Keep recorded work available](<#keep-recorded-work-available>).
-3. The person discovers a follow-up and reopens the errand.
-   - **Illustrates:** [Reopen](<../concepts/checklist.md#reopen>).
-
-## Success guarantees
-
-- The person can continue with the original entry.
-
 ## Sequence
 
 The example follows one errand across two work sessions.
 
-## Extensions
-
-### The person intentionally deleted the errand
-
-#### Condition
-
-The person previously used [Delete](<../concepts/checklist.md#delete>).
-
-#### Handling
-
-1. The person looks through the two views. Neither contains the deleted entry.
-2. If the commitment still matters, the person records a new entry.
-
 ## Obligations
 
 ### Keep recorded work available
+
+<!-- dotspec-doc {"type":"obligation-clause-spec-report","documents":"../../specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available"} -->
 
 **ID:** keep-recorded-work-available
 
@@ -97,6 +103,8 @@ identity with the original. For an interruption between sessions, follow the
 
 ## Related specifications
 
-- Feature — [Pick up where I left off](<../features/pick-up-where-i-left-off.md>)
+**Applies here** · [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.md>)
+
+**Feature** · [Pick up where I left off](<../features/pick-up-where-i-left-off.md>)
 
 [Edit source](<../../specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>)

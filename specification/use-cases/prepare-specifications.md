@@ -1,35 +1,23 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: use-case
+type: use-case-spec-report
+documents: "../../specs/use-cases/prepare-specifications.use-case.spec.md#prepare-specifications-for-review"
 ---
 # Prepare specifications for review
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Goal
 
 Give reviewers a readable account of proposed behavior and its related sources.
 
-## System boundary
-
-The contributor's specification preparation process, including editing tools and
-the dotspec CLI. Code review and acceptance decisions follow this process.
-
 ## Primary actor
 
 A contributor proposing a product change.
 
-## Goal level
-
-Summary (kite).
-
-## Success guarantees
-
-The contributor has assembled the proposed behavioral account, related sources,
-and known unresolved questions for review. Preparation does not establish approval.
-
 ## Main success scenario
+
+<!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/prepare-specifications.use-case.spec.md#main-success-scenario"} -->
 
 1. The contributor [creates a specification draft](<create-specification.md>)
    or edits an existing source to describe the proposed behavior.
@@ -43,16 +31,34 @@ and known unresolved questions for review. Preparation does not establish approv
 
 ### Behavior remains undecided
 
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/prepare-specifications.use-case.spec.md#behavior-remains-undecided"} -->
+
 During steps 1–3, the team lacks an agreed response to an identified condition.
 Record the condition and explicitly unresolved handling. Continue preparation for
 review; the review must resolve it before a delivery relies on that promise.
 
 ### Inspection cannot finish
 
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/prepare-specifications.use-case.spec.md#inspection-cannot-finish"} -->
+
 At step 3, the check follows its
 [operational-failure branch](<check-specifications.md#unreadable-input-or-failed-discovery>).
 Repair the inspection scope or access and repeat step 3. If this cannot be done,
 end with the gap visible rather than claiming completed inspection.
+
+## Success guarantees
+
+The contributor has assembled the proposed behavioral account, related sources,
+and known unresolved questions for review. Preparation does not establish approval.
+
+## System boundary
+
+The contributor's specification preparation process, including editing tools and
+the dotspec CLI. Code review and acceptance decisions follow this process.
+
+## Goal level
+
+Summary (kite).
 
 ## Sequence
 

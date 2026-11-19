@@ -1,5 +1,5 @@
 ---
-type: requirement
+type: requirement-spec
 id: model-source-fidelity
 quality_attributes:
   - source-preservation

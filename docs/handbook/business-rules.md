@@ -30,7 +30,7 @@ It does not limit the business scope of the rule.
 
 ```markdown
 ---
-type: business-rule
+type: business-rule-spec
 id: purchase-approval
 ---
 

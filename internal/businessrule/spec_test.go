@@ -9,7 +9,7 @@ import (
 )
 
 func TestBusinessRulePreservesBusinessMeaningAndLocations(t *testing.T) {
-	source := "---\nid: approval\ntype: business-rule\n---\n# Purchase approval\n## Statement\nPurchases above $10,000 require manager approval.\n## Applies to\nAll departments.\n## Rationale\nControl expenditure.\n## Authority\nBoard policy.\n## Exceptions\nEmergency purchases follow [emergency policy](emergency.business-rule.spec.md).\n## Related specifications\n[Submit a purchase](../use-cases/submit.use-case.spec.md).\n"
+	source := "---\nid: approval\ntype: business-rule-spec\n---\n# Purchase approval\n## Statement\nPurchases above $10,000 require manager approval.\n## Applies to\nAll departments.\n## Rationale\nControl expenditure.\n## Authority\nBoard policy.\n## Exceptions\nEmergency purchases follow [emergency policy](emergency.business-rule.spec.md).\n## Related specifications\n[Submit a purchase](../use-cases/submit.use-case.spec.md).\n"
 	rule, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)
@@ -26,7 +26,7 @@ func TestBusinessRulePreservesBusinessMeaningAndLocations(t *testing.T) {
 }
 
 func TestBusinessRuleDraftAndStructuralErrors(t *testing.T) {
-	prefix := "---\ntype: business-rule\n---\n# Rule\n"
+	prefix := "---\ntype: business-rule-spec\n---\n# Rule\n"
 	draft, err := Parse([]byte(prefix))
 	if err != nil || len(Check(draft)) != 4 {
 		t.Fatalf("draft: %+v %v", draft, err)
@@ -46,7 +46,7 @@ func TestBusinessRuleDraftAndStructuralErrors(t *testing.T) {
 			t.Fatalf("error: %v", err)
 		}
 	}
-	for _, source := range []string{strings.Replace(prefix, "type: business-rule", "type: business-rule\nunknown: value", 1), strings.Replace(prefix, "type: business-rule", "type: job", 1), prefix + "[broken](#absent)\n"} {
+	for _, source := range []string{strings.Replace(prefix, "type: business-rule-spec", "type: business-rule-spec\nunknown: value", 1), strings.Replace(prefix, "type: business-rule-spec", "type: job-spec", 1), prefix + "[broken](#absent)\n"} {
 		if _, err := Parse([]byte(source)); err == nil {
 			t.Fatalf("accepted invalid source %s", source)
 		}
@@ -59,6 +59,6 @@ func TestBusinessRuleDraftAndStructuralErrors(t *testing.T) {
 
 func FuzzParse(f *testing.F) {
 	f.Add([]byte(Template))
-	f.Add([]byte("---\ntype: business-rule\n---\n# Draft\n"))
+	f.Add([]byte("---\ntype: business-rule-spec\n---\n# Draft\n"))
 	f.Fuzz(func(t *testing.T, data []byte) { _, _ = Parse(data) })
 }

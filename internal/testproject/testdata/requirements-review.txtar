@@ -1,6 +1,6 @@
 -- clock/specs/system.spec.md --
 ---
-type: system
+type: system-spec
 ---
 # Platform clock
 
@@ -44,7 +44,7 @@ The team maintains dates, responsibilities and acceptance records here or in its
 Resolve acceptable clock offset before retention-boundary test acceptance.
 -- specs/business-rules/retention.business-rule.spec.md --
 ---
-type: business-rule
+type: business-rule-spec
 ---
 # Recovery window
 
@@ -71,7 +71,7 @@ Applies to workspace members and documents deleted within that workspace.
 The workspace team's recovery policy establishes this example rule.
 -- specs/concepts/trash.concept.spec.md --
 ---
-type: concept
+type: concept-spec
 ---
 # Trash
 
@@ -146,7 +146,7 @@ Representative accidental-deletion situations and the stated recovery-window bou
 Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.
 -- specs/jobs/recover.job.spec.md --
 ---
-type: job
+type: job-spec
 ---
 # Recover lost work
 
@@ -167,7 +167,7 @@ When valuable work is accidentally removed, I want to recover it so I can contin
 A workspace member who has accidentally deleted valuable work.
 -- specs/requirements/recovery-feedback.requirement.spec.md --
 ---
-type: requirement
+type: requirement-spec
 ---
 # Timely recovery feedback
 
@@ -192,7 +192,7 @@ Measure the elapsed time for representative recovery requests.
 This deliberately incomplete draft names a measure but leaves the required bound and operating conditions to be established. Measurements alone will not establish conformance or intended-use fitness.
 -- specs/requirements/restoration.requirement.spec.md --
 ---
-type: requirement
+type: requirement-spec
 ---
 # Preserve document metadata on restoration
 
@@ -249,7 +249,7 @@ Representative accidental-deletion situations and the stated recovery-window bou
 Keep example responses and observations, the reviewed revision, the assessment rationale and any disagreements. Record acceptance separately.
 -- specs/requirements/unassisted-recovery.requirement.spec.md --
 ---
-type: requirement
+type: requirement-spec
 id: unassisted-recovery
 ---
 # Unassisted recovery
@@ -346,7 +346,7 @@ attempt outcomes, interventions, calculation and assessment limitations. Record
 the assessment conclusion separately from this plan.
 -- specs/system.spec.md --
 ---
-type: system
+type: system-spec
 ---
 # Document workspace
 
@@ -599,7 +599,7 @@ Consented observation notes, task outcome, revision, conditions and observed obs
 Retain the protocol and observations separately from the assessment of intended-use fitness and any stakeholder acceptance decision. This example records a plan only.
 -- specs/use-cases/restore.use-case.spec.md --
 ---
-type: use-case
+type: use-case-spec
 ---
 # Restore a document
 

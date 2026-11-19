@@ -2,7 +2,7 @@
 name: concept-design
 -- specs/concepts/expiry.concept.spec.md --
 ---
-type: concept
+type: concept-spec
 ---
 # Expiry
 
@@ -91,7 +91,7 @@ Allocate a resource with a lifetime. Once that time has passed, expiration repor
 the resource identity so the surrounding application can react.
 -- specs/concepts/shorthand.concept.spec.md --
 ---
-type: concept
+type: concept-spec
 ---
 # Shorthand
 
@@ -205,7 +205,7 @@ same target while the registration remains active.
 Unregister the code. Subsequent lookups report that it is unknown.
 -- specs/system.spec.md --
 ---
-type: system
+type: system-spec
 ---
 # Expiring links
 

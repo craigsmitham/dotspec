@@ -25,7 +25,7 @@ type metadata struct {
 }
 
 const Template = `---
-type: job
+type: job-spec
 ---
 
 # New job

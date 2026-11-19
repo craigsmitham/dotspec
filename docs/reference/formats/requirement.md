@@ -45,7 +45,7 @@ A requirement spec states one obligation.
 
 ```markdown
 ---
-type: requirement
+type: requirement-spec
 id: continue-after-invalid-spec
 quality_attributes: [diagnosability]
 ---
@@ -71,7 +71,7 @@ Check two files with distinct structural errors and verify that both appear
 in the report.
 ```
 
-Only `type: requirement` and one nonempty document H1 are required.
+Only `type: requirement-spec` and one nonempty document H1 are required.
 `id` is optional and follows the document-local ID rules. `quality_attributes` is an
 optional list of unique, nonempty string IDs; an empty list is allowed. A scalar,
 null, non-string element, invalid ID, or duplicate label is a structural error.

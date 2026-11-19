@@ -18,7 +18,7 @@ func TestDeclaredElementsAreNotSpecifications(t *testing.T) {
 		t.Run(tc.kind, func(t *testing.T) {
 			root := t.TempDir()
 			source := fmt.Sprintf(`---
-type: system
+type: system-spec
 ---
 # Example
 

@@ -1,5 +1,5 @@
 ---
-type: requirement
+type: requirement-spec
 id: inspection-preserves-source
 quality_attributes:
   - source-preservation

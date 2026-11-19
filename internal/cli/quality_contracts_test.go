@@ -47,7 +47,7 @@ func TestInspectionQualityContracts(t *testing.T) {
 		{"valid", []string{"check"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
 		{"advice", []string{"check"}, func(t *testing.T) {
 			prepareExample(t, "read")
-			writeFixture(t, "specs/requirements/draft.requirement.spec.md", "---\ntype: requirement\n---\n# Draft\n")
+			writeFixture(t, "specs/requirements/draft.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Draft\n")
 		}, 0},
 		{"malformed", []string{"check"}, func(t *testing.T) {
 			prepareExample(t, "read")
@@ -55,8 +55,8 @@ func TestInspectionQualityContracts(t *testing.T) {
 		}, 1},
 		{"shared context outside subtree", []string{"check", "--path", "internal"}, func(t *testing.T) {
 			prepareExample(t, "read")
-			writeFixture(t, "internal/specs/requirements/a.requirement.spec.md", "---\ntype: requirement\n---\n# Draft A\n")
-			writeFixture(t, "internal/specs/requirements/b.requirement.spec.md", "---\ntype: requirement\n---\n# Draft B\n")
+			writeFixture(t, "internal/specs/requirements/a.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Draft A\n")
+			writeFixture(t, "internal/specs/requirements/b.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Draft B\n")
 		}, 0},
 		{"focused job", []string{"job", "check", "develop-requirements"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
 		{"focused use case", []string{"use-case", "check", "check-specifications"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
@@ -103,7 +103,7 @@ func TestInspectionQualityContracts(t *testing.T) {
 // Textual severity must survive changes in styling and redirection settings.
 func TestDiagnosticSeverityQualityContract(t *testing.T) {
 	prepareExample(t, "read")
-	writeFixture(t, "specs/requirements/draft.requirement.spec.md", "---\ntype: requirement\n---\n# Draft\n")
+	writeFixture(t, "specs/requirements/draft.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Draft\n")
 	writeFixture(t, "specs/requirements/broken.requirement.spec.md", "broken")
 	for _, env := range []struct{ term, color, noColor string }{{"dumb", "", "1"}, {"xterm-256color", "1", ""}} {
 		t.Setenv("TERM", env.term)

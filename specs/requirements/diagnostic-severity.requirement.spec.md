@@ -1,5 +1,5 @@
 ---
-type: requirement
+type: requirement-spec
 id: diagnostic-severity
 quality_attributes:
   - diagnosability

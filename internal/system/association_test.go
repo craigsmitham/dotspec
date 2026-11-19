@@ -42,7 +42,7 @@ func TestAssociatedSystemHonorsReferenceBoundaries(t *testing.T) {
 		{"https://example.test/system.spec.md", false},
 	} {
 		t.Run(tc.destination, func(t *testing.T) {
-			writeFile(t, source, fmt.Sprintf("---\ntype: requirement\n---\n# Selection\n## Specification system\n[Selected](%s)\n", tc.destination))
+			writeFile(t, source, fmt.Sprintf("---\ntype: requirement-spec\n---\n# Selection\n## Specification system\n[Selected](%s)\n", tc.destination))
 			got, err := Associated(root, source)
 			if (err == nil) != tc.valid {
 				t.Fatal(got, err)
@@ -52,12 +52,12 @@ func TestAssociatedSystemHonorsReferenceBoundaries(t *testing.T) {
 			}
 		})
 	}
-	writeFile(t, source, "---\ntype: requirement\n---\n# Selection\n## Specification system\n[Selected][system?]\n\n[system?]: ../../selected/specs/system.spec.md\n")
+	writeFile(t, source, "---\ntype: requirement-spec\n---\n# Selection\n## Specification system\n[Selected][system?]\n\n[system?]: ../../selected/specs/system.spec.md\n")
 	got, err := Associated(root, source)
 	if err != nil || got.Name != "Selected" {
 		t.Fatal(got, err)
 	}
-	writeFile(t, source, strings.Replace(validSpec, "type: system", "type: requirement", 1))
+	writeFile(t, source, strings.Replace(validSpec, "type: system-spec", "type: requirement-spec", 1))
 	got, err = Associated(root, source)
 	if err != nil || got.Name != "Default" {
 		t.Fatal(got, err)

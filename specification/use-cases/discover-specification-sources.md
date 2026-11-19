@@ -1,35 +1,23 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: use-case
+type: use-case-spec-report
+documents: "../../specs/use-cases/discover-specification-sources.use-case.spec.md#discover-specification-sources"
 ---
 # Discover specification sources
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Goal
 
 Find specification files and their directly linked context for review.
 
-## System boundary
-
-The dotspec CLI reading the selected project scope and direct reference targets.
-
 ## Primary actor
 
 A contributor assembling material for review.
 
-## Goal level
-
-User task (sea).
-
-## Success guarantees
-
-The contributor receives a complete source inventory for the selected scope,
-including findings about unresolved references. They can follow the reported
-paths to consult the original files in their native form.
-
 ## Main success scenario
+
+<!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/discover-specification-sources.use-case.spec.md#main-success-scenario"} -->
 
 1. The contributor selects a project subtree and requests its source inventory.
 2. Dotspec discovers specifications, their enclosing context, and direct references.
@@ -39,15 +27,33 @@ paths to consult the original files in their native form.
 
 ### Unresolved reference
 
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/discover-specification-sources.use-case.spec.md#unresolved-reference"} -->
+
 At step 2, a reference target cannot be resolved. Report the finding with the
 inventory according to the source-discovery contract. The contributor can repair
 the link and request another inventory.
 
 ### Operational failure
 
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/discover-specification-sources.use-case.spec.md#operational-failure"} -->
+
 During discovery or reading, an operational failure prevents completing the
 inventory. Report the incomplete operation. End without achieving the goal;
 the contributor can repair access and retry.
+
+## Success guarantees
+
+The contributor receives a complete source inventory for the selected scope,
+including findings about unresolved references. They can follow the reported
+paths to consult the original files in their native form.
+
+## System boundary
+
+The dotspec CLI reading the selected project scope and direct reference targets.
+
+## Goal level
+
+User task (sea).
 
 ## Sequence
 

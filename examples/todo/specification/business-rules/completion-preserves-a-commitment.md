@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: business-rule
+type: business-rule-spec-report
+documents: "../../specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment"
 ---
 # Completion preserves a commitment
 
-[Personal task list](<../../SPEC.md>) · [Contents](<../index.md>)
+[Personal task list](<../../SPEC.md>)
 
 ## Statement
 
@@ -25,6 +25,6 @@ A person can discover that a finished errand needs a follow-up.
 
 ## Related specifications
 
-- Basis for — [Keep recorded work available](<../use-cases/return-to-my-list.md#keep-recorded-work-available>)
+**Basis for** · [Keep recorded work available](<../use-cases/return-to-my-list.md#keep-recorded-work-available>)
 
 [Edit source](<../../specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment>)

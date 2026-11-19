@@ -46,7 +46,7 @@ See the [core domain reference](core.md) for focused summaries and diagrams.
 
 **Specification documentation** (`specification-documentation`). Roles, reader-facing content, and navigation of generated requirements documents.
 
-[SpecificationDocument](#specificationdocument).
+[ActionParameterSpecReport](#actionparameterspecreport), [AssumptionSpecReport](#assumptionspecreport), [BusinessRuleSpecReport](#businessrulespecreport), [CapabilitySpecReport](#capabilityspecreport), [ComponentSpecReport](#componentspecreport), [ConceptActionSpecReport](#conceptactionspecreport), [ConceptSpecReport](#conceptspecreport), [ConceptTypeSpecReport](#concepttypespecreport), [ConceptUseSpecReport](#conceptusespecreport), [DesiredOutcomeSpecReport](#desiredoutcomespecreport), [EvidenceStatementSpecReport](#evidencestatementspecreport), [FeatureSpecReport](#featurespecreport), [GeneratedDocument](#generateddocument), [GlossaryTermSpecReport](#glossarytermspecreport), [GoalSpecReport](#goalspecreport), [InterfaceSpecReport](#interfacespecreport), [JobSpecReport](#jobspecreport), [JobStepSpecReport](#jobstepspecreport), [ObligationClauseSpecReport](#obligationclausespecreport), [ProgressCaseSpecReport](#progresscasespecreport), [QualityAttributeSpecReport](#qualityattributespecreport), [QualityModelSpecReport](#qualitymodelspecreport), [RequirementSpecReport](#requirementspecreport), [RequirementsReviewReport](#requirementsreviewreport), [ScenarioSpecReport](#scenariospecreport), [SubjectSpecReport](#subjectspecreport), [SynchronizationActionSpecReport](#synchronizationactionspecreport), [SynchronizationSpecReport](#synchronizationspecreport), [SystemSpecReport](#systemspecreport), [TypeBindingSpecReport](#typebindingspecreport), [UseCaseExtensionSpecReport](#usecaseextensionspecreport), [UseCaseSpecReport](#usecasespecreport).
 
 ### Generic
 
@@ -89,6 +89,19 @@ Concrete; inherits [DomainElement](#domainelement).
 | `type` | [ConceptType](#concepttype) | optional, record ID |  |
 | `type_description` | [RichContent](#richcontent) | optional, embedded |  |
 | `type_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
+
+### ActionParameterSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [ActionParameter](#actionparameter) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `action-parameter-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### ActorMention
 
@@ -213,6 +226,19 @@ Concrete; inherits [TraceableElement](#traceableelement).
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess empirical support for the premise in its stated conditions and whether reliance on it is justified for intended use; not a guarantee that it holds. |
 
+### AssumptionSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [Assumption](#assumption) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `assumption-spec-report` | Serialized document type fixed by the concrete class. |
+
 ### BusinessRule
 
 A declarative business constraint independent of the software or process that enforces it.
@@ -264,6 +290,19 @@ Concrete; inherits [SystemContextSpecification](#systemcontextspecification).
 | `supports_content` | [RichContent](#richcontent) | optional, embedded | Complete authored relationship section, including rationale and unresolved references. |
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
+
+### BusinessRuleSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [BusinessRule](#businessrule) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `business-rule-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### ByteSpan
 
@@ -323,6 +362,19 @@ Concrete; inherits [TraceableElement](#traceableelement).
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
 
+### CapabilitySpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [Capability](#capability) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `capability-spec-report` | Serialized document type fixed by the concrete class. |
+
 ### Component
 
 A named part of a system with a described responsibility and boundary. Neither its declaration nor code location establishes structural parentage.
@@ -379,6 +431,19 @@ Concrete; capabilities [ObligationContainer](#obligationcontainer); inherits [Tr
 | `supports_content` | [RichContent](#richcontent) | optional, embedded | Complete authored relationship section, including rationale and unresolved references. |
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
+
+### ComponentSpecReport
+
+Explains the component’s responsibilities and links to its structural children, declared interfaces, and explicitly applicable requirements.
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [Component](#component) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `component-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### Concept
 
@@ -489,6 +554,32 @@ Concrete; capabilities [ObligationContainer](#obligationcontainer); inherits [Tr
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
 
+### ConceptActionSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [ConceptAction](#conceptaction) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `concept-action-spec-report` | Serialized document type fixed by the concrete class. |
+
+### ConceptSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [Concept](#concept) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `concept-spec-report` | Serialized document type fixed by the concrete class. |
+
 ### ConceptType
 
 A type parameter or introduced identity type, scoped to one concept definition. Membership distinguishes its role.
@@ -514,6 +605,19 @@ Concrete; inherits [DomainElement](#domainelement).
 | `owner` | [Concept](#concept) | required, record ID |  |
 | `source_document` | [SourceDocument](#sourcedocument) | required, record ID |  |
 | `source_fragment` | [SourceFragment](#sourcefragment) | optional, record ID |  |
+
+### ConceptTypeSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [ConceptType](#concepttype) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `concept-type-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### ConceptUse
 
@@ -562,6 +666,19 @@ Concrete; capabilities [ObligationContainer](#obligationcontainer); inherits [Tr
 | `supports_content` | [RichContent](#richcontent) | optional, embedded | Complete authored relationship section, including rationale and unresolved references. |
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
+
+### ConceptUseSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [ConceptUse](#conceptuse) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `concept-use-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### Condition
 
@@ -742,6 +859,19 @@ Concrete; inherits [TraceableElement](#traceableelement).
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
 
+### DesiredOutcomeSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [DesiredOutcome](#desiredoutcome) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `desired-outcome-spec-report` | Serialized document type fixed by the concrete class. |
+
 ### Diagnostic
 
 A parser, mapper, resolver, coverage or graph-check finding. It may identify a source without any line, element or parsed document.
@@ -891,6 +1021,19 @@ Concrete; inherits [DomainElement](#domainelement).
 | `source_fragment` | [SourceFragment](#sourcefragment) | optional, record ID |  |
 | `statement` | [RichContent](#richcontent) | optional, embedded |  |
 
+### EvidenceStatementSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [EvidenceStatement](#evidencestatement) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `evidence-statement-spec-report` | Serialized document type fixed by the concrete class. |
+
 ### ExtensionSection
 
 An unknown domain section retained with its original heading and body. This is explicit representation, not a claim that its domain semantics have been modeled.
@@ -977,6 +1120,19 @@ Concrete; inherits [TraceableElement](#traceableelement).
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
 
+### FeatureSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [Feature](#feature) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `feature-spec-report` | Serialized document type fixed by the concrete class. |
+
 ### Force
 
 An explicitly described progress force; a kind is assigned only when authored or deterministically marked.
@@ -989,6 +1145,18 @@ Concrete.
 | --- | --- | --- | --- |
 | `description` | [RichContent](#richcontent) | optional, embedded |  |
 | `kind` | `ForceKind` | optional |  |
+
+### GeneratedDocument
+
+A reader-facing document rendered as a Markdown page or an addressable section.
+
+Subsets: `specification-documentation`.
+
+Abstract.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `type` | `string` | required | Serialized document type fixed by the concrete class. |
 
 ### GlossaryTerm
 
@@ -1018,6 +1186,19 @@ Concrete; inherits [DomainElement](#domainelement).
 | `related_terms` | [ContextualReferences](#contextualreferences) | optional, embedded |  |
 | `source_document` | [SourceDocument](#sourcedocument) | required, record ID |  |
 | `source_fragment` | [SourceFragment](#sourcefragment) | optional, record ID |  |
+
+### GlossaryTermSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [GlossaryTerm](#glossaryterm) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `glossary-term-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### Goal
 
@@ -1054,6 +1235,19 @@ Concrete; inherits [TraceableElement](#traceableelement).
 | `supports_content` | [RichContent](#richcontent) | optional, embedded | Complete authored relationship section, including rationale and unresolved references. |
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
+
+### GoalSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [Goal](#goal) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `goal-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### Interface
 
@@ -1095,6 +1289,19 @@ Concrete; capabilities [ObligationContainer](#obligationcontainer); inherits [Tr
 | `supports_content` | [RichContent](#richcontent) | optional, embedded | Complete authored relationship section, including rationale and unresolved references. |
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
+
+### InterfaceSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [Interface](#interface) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `interface-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### Job
 
@@ -1152,6 +1359,19 @@ Concrete; inherits [SystemContextSpecification](#systemcontextspecification).
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
 
+### JobSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [Job](#job) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `job-spec-report` | Serialized document type fixed by the concrete class. |
+
 ### JobStep
 
 A meaningful accomplishment within a functional job map; not a prescribed software interaction or execution sequence.
@@ -1192,6 +1412,19 @@ Concrete; inherits [TraceableElement](#traceableelement).
 | `supports_content` | [RichContent](#richcontent) | optional, embedded | Complete authored relationship section, including rationale and unresolved references. |
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
+
+### JobStepSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [JobStep](#jobstep) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `job-step-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### LabelOccurrence
 
@@ -1305,6 +1538,19 @@ Concrete; capabilities [Obligation](#obligation); inherits [TraceableElement](#t
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
 | `verification_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
+
+### ObligationClauseSpecReport
+
+Preserves an addressable promise within the interaction or other subject that declares it.
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [ObligationClause](#obligationclause) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `obligation-clause-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### ObligationContainer
 
@@ -1431,6 +1677,19 @@ Concrete; inherits [DomainElement](#domainelement).
 | `timeline` | [RichContent](#richcontent) | optional, embedded | Authored timeline of progress or switching decisions, distinct from a functional job map; unknown dates and research-pending narratives are allowed. |
 | `tradeoffs_and_selection_criteria` | [RichContent](#richcontent) | optional, embedded | Trade-offs and criteria for choosing, hiring or rejecting an approach. |
 
+### ProgressCaseSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [ProgressCase](#progresscase) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `progress-case-spec-report` | Serialized document type fixed by the concrete class. |
+
 ### QualityAttribute
 
 A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit obligations, thresholds, or satisfaction.
@@ -1458,6 +1717,19 @@ Concrete; inherits [DomainElement](#domainelement).
 | `source_fragment` | [SourceFragment](#sourcefragment) | optional, record ID |  |
 | `subattribute_of` | [QualityAttribute](#qualityattribute) | optional, list, record ID | Resolved attributes under which this attribute is directly organized, within the same declaring owner. Derive subattributes by reversing this relation; preserve authored labels and provenance. |
 | `subattribute_of_labels` | [LabelOccurrence](#labeloccurrence) | optional, ordered list, record ID | All authored Sub-attribute of labels, including unresolved references. |
+
+### QualityAttributeSpecReport
+
+Defines one quality attribute and links to the requirements classified by it.
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [QualityAttribute](#qualityattribute) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `quality-attribute-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### QualityModel
 
@@ -1504,6 +1776,19 @@ Concrete; inherits [Specification](#specification).
 | `supports_content` | [RichContent](#richcontent) | optional, embedded | Complete authored relationship section, including rationale and unresolved references. |
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
+
+### QualityModelSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [QualityModel](#qualitymodel) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `quality-model-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### Record
 
@@ -1589,6 +1874,31 @@ Concrete; capabilities [Obligation](#obligation); inherits [SystemContextSpecifi
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
 | `verification_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence. |
+
+### RequirementSpecReport
+
+Brings the requirement statement, applicability, criterion, and verification plan together at one address.
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [Requirement](#requirement) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `requirement-spec-report` | Serialized document type fixed by the concrete class. |
+
+### RequirementsReviewReport
+
+Project-wide open questions, verification and validation plans, and inspection findings with routes to their subjects.
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [GeneratedDocument](#generateddocument).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `type` | `string` | required, fixed `requirements-review-report` | Serialized document type fixed by the concrete class. |
 
 ### Resolution
 
@@ -1682,6 +1992,19 @@ Concrete; inherits [DomainElement](#domainelement).
 | `source_document` | [SourceDocument](#sourcedocument) | required, record ID |  |
 | `source_fragment` | [SourceFragment](#sourcefragment) | optional, record ID |  |
 | `steps` | [ScenarioStep](#scenariostep) | optional, ordered list, record ID | Source order only. Required sequencing belongs in the Sequence section. |
+
+### ScenarioSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [Scenario](#scenario) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `scenario-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### ScenarioStep
 
@@ -1906,20 +2229,6 @@ Abstract; inherits [TraceableElement](#traceableelement).
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
 
-### SpecificationDocument
-
-A reader-facing document derived from a specification snapshot. The document role describes the required contents and navigation. Generated pages live outside the source snapshot.
-
-Subsets: `specification-documentation`.
-
-Concrete.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `generated_by` | `string` | required, fixed `dotspec` | Ownership marker used when refreshing or removing generated pages. |
-| `subject_kind` | `string` | optional | Domain kind of the subject presented on a detail page. |
-| `type` | `SpecificationDocumentType` | required | Reader purpose and presentation contract of the generated Markdown file. |
-
 ### SpecificationProject
 
 A tooling partition rooted at the directory containing its dotspec.yaml.
@@ -1962,6 +2271,19 @@ Concrete.
 | `description` | [RichContent](#richcontent) | optional, embedded |  |
 | `name` | [RichContent](#richcontent) | optional, embedded |  |
 | `value_description` | [RichContent](#richcontent) | optional, embedded |  |
+
+### SubjectSpecReport
+
+The canonical generated account of one addressable subject in the selected snapshot.
+
+Subsets: `specification-documentation`.
+
+Abstract; inherits [GeneratedDocument](#generateddocument).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [DomainElement](#domainelement) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required | Serialized document type fixed by the concrete class. |
 
 ### Synchronization
 
@@ -2040,6 +2362,32 @@ Concrete; inherits [DomainElement](#domainelement).
 | `result` | [RichContent](#richcontent) | optional, embedded |  |
 | `source_document` | [SourceDocument](#sourcedocument) | required, record ID |  |
 | `source_fragment` | [SourceFragment](#sourcefragment) | optional, record ID |  |
+
+### SynchronizationActionSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [SynchronizationAction](#synchronizationaction) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `synchronization-action-spec-report` | Serialized document type fixed by the concrete class. |
+
+### SynchronizationSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [Synchronization](#synchronization) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `synchronization-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### SyntaxProperty
 
@@ -2177,6 +2525,19 @@ Abstract; inherits [Specification](#specification).
 | `supports_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
 | `validation_plan` | [AssessmentPlan](#assessmentplan) | optional, embedded | Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred. |
 
+### SystemSpecReport
+
+Explains the system’s purpose and scope and links to its immediate child systems, local subjects, and obligations.
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [System](#system) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `system-spec-report` | Serialized document type fixed by the concrete class. |
+
 ### TraceableElement
 
 An element with explicit motivation, derivation and assumptions. Concern subset, artifact kind and core/supporting/generic classification are independent; neither traceability nor document location confers normative authority.
@@ -2243,6 +2604,19 @@ Concrete; inherits [DomainElement](#domainelement).
 | `source_fragment` | [SourceFragment](#sourcefragment) | optional, record ID |  |
 | `supplying_concept_use` | [ConceptUse](#conceptuse) | optional, record ID |  |
 | `supplying_concept_use_references` | [SourceReference](#sourcereference) | optional, ordered list, record ID |  |
+
+### TypeBindingSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [TypeBinding](#typebinding) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `type-binding-spec-report` | Serialized document type fixed by the concrete class. |
 
 ### UnmappedRole
 
@@ -2361,6 +2735,32 @@ Concrete; inherits [DomainElement](#domainelement).
 | `source_document` | [SourceDocument](#sourcedocument) | required, record ID |  |
 | `source_fragment` | [SourceFragment](#sourcefragment) | optional, record ID |  |
 | `steps` | [ScenarioStep](#scenariostep) | optional, ordered list, record ID | Explicit handling steps in source order; no execution semantics are inferred. |
+
+### UseCaseExtensionSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [UseCaseExtension](#usecaseextension) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `use-case-extension-spec-report` | Serialized document type fixed by the concrete class. |
+
+### UseCaseSpecReport
+
+
+
+Subsets: `specification-documentation`.
+
+Concrete; inherits [SubjectSpecReport](#subjectspecreport).
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `documents` | [UseCase](#usecase) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
+| `type` | `string` | required, fixed `use-case-spec-report` | Serialized document type fixed by the concrete class. |
 
 ## Enumerations
 
@@ -2618,31 +3018,19 @@ Diagnostic severity.
 | `advice` | Non-failing advice. |
 | `info` | Informational result. |
 
-### SpecificationDocumentType
-
-Roles of generated requirements documents. These names are disjoint from authored specification types and core domain kinds.
-
-| Value | Meaning |
-| --- | --- |
-| `requirements-specification` | Orient readers to one system through its purpose, boundaries, authored capabilities, immediate children, and scoped collections. |
-| `table-of-contents` | Navigate the complete system hierarchy and reach every populated local collection by kind. |
-| `index` | Enumerate exactly the canonical destinations in a collection for a system and kind. |
-| `specification-section` | Present one domain subject, its authored content and qualifications, the relationships readers can follow, and the passage where it can be edited. |
-| `requirements-review-report` | Locate authored open questions and inspection findings at their source passages within the reviewed scope. |
-
 ### SpecificationType
 
-Types of authored specification document, as declared in frontmatter and file names. Each type has exactly one concrete Specification class.
+Markdown frontmatter types for authored specifications. Each type has exactly one concrete Specification class.
 
 | Value | Meaning |
 | --- | --- |
-| `system` | System. |
-| `job` | Job. |
-| `quality-model` | Quality model. |
-| `business-rule` | Business rule. |
-| `use-case` | Use case. |
-| `concept` | Concept. |
-| `requirement` | Requirement. |
+| `system-spec` | System. |
+| `job-spec` | Job. |
+| `quality-model-spec` | Quality model. |
+| `business-rule-spec` | Business rule. |
+| `use-case-spec` | Use case. |
+| `concept-spec` | Concept. |
+| `requirement-spec` | Requirement. |
 
 ### SystemAssociationOrigin
 

@@ -25,7 +25,7 @@ status 2 dotspec check --format unknown
 stderr 'unknown output format'
 -- specs/jobs/invalid.job.spec.md --
 ---
-type: job
+type: job-spec
 id: repeated
 ---
 # Invalid
@@ -34,6 +34,6 @@ id: repeated
 **ID:** repeated
 -- specs/jobs/draft.job.spec.md --
 ---
-type: job
+type: job-spec
 ---
 # Draft

@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: job
+type: job-spec-report
+documents: "../../specs/jobs/manage-requirements.job.spec.md#manage-requirements"
 ---
 # Manage Requirements
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Job
 
@@ -42,6 +42,8 @@ to trust the requirements.
 
 ### Determine the change to assess
 
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/manage-requirements.job.spec.md#determine-the-change-to-assess"} -->
+
 **ID:** determine-change
 **Stage:** define
 
@@ -54,6 +56,8 @@ Establish what is changing and the decisions needed about existing requirements.
 
 ### Locate affected requirements
 
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/manage-requirements.job.spec.md#locate-affected-requirements"} -->
+
 **ID:** locate-requirements
 **Stage:** locate
 
@@ -65,6 +69,8 @@ Identify relevant requirements, commitments, rationale, and supporting evidence.
 
 ### Assemble the change context
 
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/manage-requirements.job.spec.md#assemble-the-change-context"} -->
+
 **ID:** assemble-context
 **Stage:** prepare
 
@@ -75,6 +81,8 @@ Bring together the current baseline, proposed change, dependencies, and open que
 - **OUT-005:** Minimize the likelihood of assessing impact using an outdated baseline.
 
 ### Confirm applicable commitments
+
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/manage-requirements.job.spec.md#confirm-applicable-commitments"} -->
 
 **ID:** confirm-commitments
 **Stage:** confirm
@@ -88,6 +96,8 @@ Establish which commitments remain applicable and who must participate in decisi
 
 ### Assess impact and update requirements
 
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/manage-requirements.job.spec.md#assess-impact-and-update-requirements"} -->
+
 **ID:** update-requirements
 **Stage:** execute
 
@@ -99,6 +109,8 @@ Determine how the change affects the requirements and propose the necessary revi
   a requirements revision.
 
 ### Check alignment
+
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/manage-requirements.job.spec.md#check-alignment"} -->
 
 **ID:** check-alignment
 **Stage:** monitor
@@ -113,6 +125,8 @@ agreed product change.
 
 ### Resolve discrepancies
 
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/manage-requirements.job.spec.md#resolve-discrepancies"} -->
+
 **ID:** resolve-discrepancies
 **Stage:** modify
 
@@ -125,6 +139,8 @@ revisiting the impact assessment when needed.
   agreed change and the revised requirements.
 
 ### Communicate the updated baseline
+
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/manage-requirements.job.spec.md#communicate-the-updated-baseline"} -->
 
 **ID:** communicate-baseline
 **Stage:** conclude
@@ -140,6 +156,8 @@ to the affected people.
 ## Progress cases
 
 ### Adopting requirements alongside code
+
+<!-- dotspec-doc {"type":"progress-case-spec-report","documents":"../../specs/jobs/manage-requirements.job.spec.md#adopting-requirements-alongside-code"} -->
 
 This case is a hypothesis to investigate with teams considering dotspec.
 

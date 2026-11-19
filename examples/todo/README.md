@@ -25,7 +25,7 @@ The [restart requirement](specs/requirements/restart.requirement.spec.md) refine
 
 ## Read the requirements specification
 
-Start with the [system overview](SPEC.md) or [table of contents](specification/index.md). The pages are generated from the [To-do specifications](specs). Edit the specifications and run `mise run generate` from the repository root to refresh the spec. Run `dotspec check --project todo` to check its content, links and freshness.
+Start with the [system overview](SPEC.md) or its [Requirements section](SPEC.md#requirements). The pages are generated from the [To-do specifications](specs). Edit the specifications and run `mise run generate` from the repository root to refresh the spec. Run `dotspec check --project todo` to check its content, links and freshness.
 
 | Question | Start here |
 | --- | --- |

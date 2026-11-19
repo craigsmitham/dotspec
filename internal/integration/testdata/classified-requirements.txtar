@@ -6,7 +6,7 @@ exec git init -q
 status 0 dotspec requirement init work --preset quality --json
 stdout '"schema_version": 1'
 ! stderr .
-grep 'type: requirement' specs/requirements/work.requirement.spec.md
+grep 'type: requirement-spec' specs/requirements/work.requirement.spec.md
 grep '## Criterion' specs/requirements/work.requirement.spec.md
 status 0 dotspec requirement show work --json
 stdout '"quality_attributes": \[\]'
@@ -57,7 +57,7 @@ stdout '"complete": false'
 ! stderr .
 -- model.md --
 ---
-type: system
+type: system-spec
 ---
 # Project
 ## Purpose
@@ -78,7 +78,7 @@ Understandable findings.
 Accessible output.
 -- requirement.md --
 ---
-type: requirement
+type: requirement-spec
 quality_attributes: [diagnostics, accessibility]
 ---
 # Accessible diagnostics
@@ -95,13 +95,13 @@ Capture output for every severity.
 Contributors can distinguish severities without color.
 -- unknown.md --
 ---
-type: requirement
+type: requirement-spec
 quality_attributes: [unknown]
 ---
 # Unknown classification
 -- cycle.md --
 ---
-type: system
+type: system-spec
 ---
 # Project
 ## Purpose

@@ -15,7 +15,7 @@ func TestObligationIdentityDeclarations(t *testing.T) {
 		{"fenced sample", "## Obligations\n### First\n```markdown\n**ID:** fake\n```\n", ""},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			doc, err := ParseOutline([]byte("---\ntype: system\n---\n# System\n"+tc.body), "system", &Metadata{})
+			doc, err := ParseOutline([]byte("---\ntype: system-spec\n---\n# System\n"+tc.body), "system", &Metadata{})
 			if err != nil {
 				t.Fatal(err)
 			}

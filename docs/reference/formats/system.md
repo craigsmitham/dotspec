@@ -52,7 +52,7 @@ Each project directory can contain one system spec at `specs/system.spec.md`:
 
 ```markdown
 ---
-type: system
+type: system-spec
 ---
 
 # Spec parser
@@ -66,7 +66,7 @@ Make specifications available to dotspec commands as structured information.
 Reading and interpreting specification files.
 ```
 
-The frontmatter accepts `type: system` and an optional `id` for a stable authored identity. The Markdown body must
+The frontmatter accepts `type: system-spec` and an optional `id` for a stable authored identity. The Markdown body must
 contain exactly one nonempty document-level H1 naming the system, followed by
 nonempty `Purpose` and `Scope` H2 sections. Section names are case-sensitive.
 Section bodies can contain Markdown, including lists, code blocks, and deeper

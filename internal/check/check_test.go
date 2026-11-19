@@ -9,8 +9,8 @@ import (
 	"testing"
 )
 
-const validJob = "---\ntype: job\n---\n# Prepare a change\n\n## Job\nPrepare a change for review.\n\n## Performer\nA reviewer.\n"
-const validSystem = "---\ntype: system\n---\n# Product\n\n## Purpose\nHelp people.\n\n## Scope\nThe product.\n"
+const validJob = "---\ntype: job-spec\n---\n# Prepare a change\n\n## Job\nPrepare a change for review.\n\n## Performer\nA reviewer.\n"
+const validSystem = "---\ntype: system-spec\n---\n# Product\n\n## Purpose\nHelp people.\n\n## Scope\nThe product.\n"
 
 func write(t *testing.T, path, source string) {
 	t.Helper()
@@ -35,8 +35,8 @@ func TestProjectContinuesAcrossMalformedFiles(t *testing.T) {
 	sources := map[string]string{
 		"adjacent.job.spec.md":                 validJob,
 		"specs/system.spec.md":                 "---\ntype: [\n---\n# Broken\n",
-		"specs/jobs/duplicate.job.spec.md":     "---\ntype: job\nid: shared\n---\n# Duplicate\n\n## Steps\n\n### Gather\n**ID:** shared\n",
-		"specs/jobs/advice.job.spec.md":        "---\ntype: job\n---\n# Draft\n",
+		"specs/jobs/duplicate.job.spec.md":     "---\ntype: job-spec\nid: shared\n---\n# Duplicate\n\n## Steps\n\n### Gather\n**ID:** shared\n",
+		"specs/jobs/advice.job.spec.md":        "---\ntype: job-spec\n---\n# Draft\n",
 		"specs/jobs/valid.job.spec.md":         validJob,
 		"specs/terms/unsupported.term.spec.md": "ignored unsupported type",
 	}
@@ -134,7 +134,7 @@ func TestEmptyAndAdvisoryOnlyProjectsSucceed(t *testing.T) {
 	if !r.Complete || r.ExitCode() != 0 || r.Summary.FilesChecked != 0 || r.Diagnostics == nil {
 		t.Fatalf("empty project: %+v", r)
 	}
-	write(t, filepath.Join(dir, "specs/jobs/draft.job.spec.md"), "---\ntype: job\n---\n# Draft\n")
+	write(t, filepath.Join(dir, "specs/jobs/draft.job.spec.md"), "---\ntype: job-spec\n---\n# Draft\n")
 	r = checkProject(dir)
 	if !r.Complete || r.ExitCode() != 0 || r.Summary.Errors != 0 || r.Summary.Advice != 2 {
 		t.Fatalf("advisory-only project: %+v", r)
@@ -166,7 +166,7 @@ func TestUnreadableSpecDoesNotPreventOtherChecks(t *testing.T) {
 	dir := t.TempDir()
 	unreadable := filepath.Join(dir, "specs/jobs/a-private.job.spec.md")
 	write(t, unreadable, validJob)
-	write(t, filepath.Join(dir, "specs/jobs/z-draft.job.spec.md"), "---\ntype: job\n---\n# Draft\n")
+	write(t, filepath.Join(dir, "specs/jobs/z-draft.job.spec.md"), "---\ntype: job-spec\n---\n# Draft\n")
 	if err := os.Chmod(unreadable, 0); err != nil {
 		t.Fatal(err)
 	}

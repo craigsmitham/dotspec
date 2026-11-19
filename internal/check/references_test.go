@@ -41,8 +41,8 @@ func TestCrossFileReferencesAndContext(t *testing.T) {
 [Directory](../../docs/)
 `
 	write(t, path, source)
-	write(t, concept.Layout.Path(dir, "inspection"), strings.Replace(concept.Template, "type: concept", "type: concept\nid: stable-inspection", 1)+"\n[Not recursively checked](missing.md)\n")
-	write(t, job.Layout.Path(dir, "work"), "---\ntype: job\n---\n# Work\n## Steps\n### Prepare\n**ID:** prepare\n")
+	write(t, concept.Layout.Path(dir, "inspection"), strings.Replace(concept.Template, "type: concept-spec", "type: concept-spec\nid: stable-inspection", 1)+"\n[Not recursively checked](missing.md)\n")
+	write(t, job.Layout.Path(dir, "work"), "---\ntype: job-spec\n---\n# Work\n## Steps\n### Prepare\n**ID:** prepare\n")
 	write(t, system.Layout.Path(dir, ""), validSystem+"\n## Quality attributes\n### Reliability\n**ID:** reliability\nConsistent operation.\n")
 	write(t, filepath.Join(dir, "Guide to rules.md"), "---\nlayout: article\n---\n## Example rule\nA rule.\n[Not followed](missing.md)\n")
 	write(t, filepath.Join(dir, "schema.json"), "{}")
@@ -141,7 +141,7 @@ func TestRequirementsShareSystemAttributeContext(t *testing.T) {
 	dir := t.TempDir()
 	git(t, dir, "init", "-q")
 	write(t, system.Layout.Path(dir, ""), validSystem+"\n## Quality attributes\n")
-	write(t, requirement.Layout.Path(dir, "rule"), strings.Replace(requirement.Template, "type: requirement", "type: requirement\nquality_attributes: [missing]", 1))
+	write(t, requirement.Layout.Path(dir, "rule"), strings.Replace(requirement.Template, "type: requirement-spec", "type: requirement-spec\nquality_attributes: [missing]", 1))
 	r := referenceCheck(dir)
 	if r.ExitCode() != 0 || r.Summary.Advice != 1 || r.Diagnostics[0].Rule != "requirement.undefined-attribute" || r.Diagnostics[0].Location.Line != 3 {
 		t.Fatalf("attribute advice: %+v", r)

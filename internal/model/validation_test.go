@@ -23,7 +23,7 @@ func validationSnapshot(t *testing.T) *Snapshot {
 	dir := t.TempDir()
 	files := map[string]string{
 		"specs/system.spec.md": `---
-type: system
+type: system-spec
 ---
 # Example
 ## Purpose
@@ -45,7 +45,7 @@ Works as specified.
 Produces the same result from the same source.
 `,
 		"specs/use-cases/check.use-case.spec.md": `---
-type: use-case
+type: use-case-spec
 id: check
 ---
 # Check specifications
@@ -68,7 +68,7 @@ Unresolved
 [The system](../system.spec.md) and [requirements](../requirements/).
 `,
 		"specs/jobs/inspect.job.spec.md": `---
-type: job
+type: job-spec
 id: inspect
 ---
 # Inspect intent
@@ -91,7 +91,7 @@ Read the specifications.
 - **clear:** Minimize overlooked constraints.
 `,
 		"specs/concepts/inspection.concept.spec.md": `---
-type: concept
+type: concept-spec
 ---
 # Inspection
 ## Purpose
@@ -107,7 +107,7 @@ Inspection preserves original sources.
 Keep this authored content even though its domain role is unknown.
 `,
 		"specs/requirements/preserve.requirement.spec.md": `---
-type: requirement
+type: requirement-spec
 quality_attributes:
 - reliable
 ---

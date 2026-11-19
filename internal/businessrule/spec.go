@@ -24,7 +24,7 @@ type metadata struct {
 }
 
 const Template = `---
-type: business-rule
+type: business-rule-spec
 ---
 
 # New business rule

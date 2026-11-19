@@ -1,5 +1,5 @@
 ---
-type: requirement
+type: requirement-spec
 ---
 # Isolate specification projects in a workspace
 

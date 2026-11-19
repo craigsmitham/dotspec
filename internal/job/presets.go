@@ -110,7 +110,7 @@ Describe what remains unknown and which population or circumstances the evidence
 `, nil
 	case "job-story":
 		return `---
-type: job
+type: job-spec
 ---
 
 # New job

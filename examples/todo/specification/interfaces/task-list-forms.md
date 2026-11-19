@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: interface
+type: interface-spec-report
+documents: "../../specs/system.spec.md#task-list-forms"
 ---
 # Task list forms
 
-[Personal task list](<../../SPEC.md>) · [Contents](<../index.md>)
+[Personal task list](<../../SPEC.md>)
 
 The browser presents open and completed tasks and accepts changes through HTML forms.
 

@@ -2,7 +2,7 @@
 name: requirements-traceability
 -- specs/business-rules/retention.business-rule.spec.md --
 ---
-type: business-rule
+type: business-rule-spec
 ---
 # Recovery window
 
@@ -29,7 +29,7 @@ Applies to workspace members and documents deleted within that workspace.
 The workspace team's recovery policy establishes this example rule.
 -- specs/concepts/trash.concept.spec.md --
 ---
-type: concept
+type: concept-spec
 ---
 # Trash
 
@@ -60,7 +60,7 @@ Move a retained, unexpired item into available state.
 Remove an expired item from retained state.
 -- specs/jobs/recover.job.spec.md --
 ---
-type: job
+type: job-spec
 ---
 # Recover lost work
 
@@ -81,7 +81,7 @@ When valuable work is accidentally removed, I want to recover it so I can contin
 A workspace member who has accidentally deleted valuable work.
 -- specs/requirements/restoration.requirement.spec.md --
 ---
-type: requirement
+type: requirement-spec
 ---
 # Preserve document metadata on restoration
 
@@ -112,7 +112,7 @@ Compare all four metadata fields before deletion and after restoration for each 
 Preserving these metadata fields lets members resume work with the same document identity and attribution. The Refines section identifies the governing obligation.
 -- specs/system.spec.md --
 ---
-type: system
+type: system-spec
 ---
 # Document workspace
 
@@ -153,7 +153,7 @@ The platform supplies a trustworthy UTC clock for retention calculations.
 [Trusted time](#trusted-time) bounds retention intervals.
 -- specs/use-cases/restore.use-case.spec.md --
 ---
-type: use-case
+type: use-case-spec
 ---
 # Restore a document
 

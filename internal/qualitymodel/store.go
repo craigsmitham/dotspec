@@ -74,7 +74,7 @@ func Init(path, slug, from string) (string, error) {
 		if m == nil {
 			return "", fmt.Errorf("--from must name a bundled starter: %q", from)
 		}
-		content = "---\ntype: quality-model\nid: " + slug + "\n---\n\n" + m.Markdown + "\n"
+		content = "---\ntype: quality-model-spec\nid: " + slug + "\n---\n\n" + m.Markdown + "\n"
 	}
 	return Layout.Create(dir, slug, content)
 }

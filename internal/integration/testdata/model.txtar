@@ -51,7 +51,7 @@ stdout '"Snapshot"'
 ! stderr .
 -- invalid.md --
 ---
-type: requirement
+type: requirement-spec
 unsupported_metadata: retained
 ---
 # Invalid authored metadata

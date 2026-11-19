@@ -17,6 +17,8 @@ Breaking changes are acceptable. Do not introduce backward compatbility mechanis
 # Design principles
 
 * Optimize *.spec.md files for human readability
+* **Write each generated page for the reader’s task.** Give an overview enough substance to explain the system, an index enough context to choose a destination, and a subject page enough detail to understand its subject. Keep each requirement’s statement, conditions, and criteria together.
+* **Give each detail a clear home and link to it in context.** Use a short, source-faithful description when introducing a related subject. Repeat a link wherever the relationship helps the reader, and point it directly to the section that carries the full detail.
 
 <!-- axm:knowledge -->
 ## Knowledge Bundles

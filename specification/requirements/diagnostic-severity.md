@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: requirement
+type: requirement-spec-report
+documents: "../../specs/requirements/diagnostic-severity.requirement.spec.md#diagnostic-severity-is-available-without-styling"
 ---
 # Diagnostic severity is available without styling
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Statement
 
@@ -44,9 +44,9 @@ describes the report and inspection behavior. The
 [check report contract](<../../docs/reference/inspection.md#check-specifications>) defines the
 supported severity values and report structure.
 
-## Related specifications
+**Quality attribute**
 
-- Quality attribute — [Accessibility](<../../SPEC.md#accessibility>)
-- Quality attribute — [Diagnosability](<../../SPEC.md#diagnosability>)
+- [Accessibility](<../quality-attributes.md#accessibility>)
+- [Diagnosability](<../quality-attributes.md#diagnosability>)
 
 [Edit source](<../../specs/requirements/diagnostic-severity.requirement.spec.md#diagnostic-severity-is-available-without-styling>)

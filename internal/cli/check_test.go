@@ -13,8 +13,8 @@ import (
 
 func TestProjectCheckTextAndJSON(t *testing.T) {
 	dir := t.TempDir()
-	writeFixture(t, filepath.Join(dir, "specs/jobs/duplicate.job.spec.md"), "---\ntype: job\nid: repeated\n---\n# Example\n## Steps\n### Gather\n**ID:** repeated\n")
-	writeFixture(t, filepath.Join(dir, "specs/jobs/draft.job.spec.md"), "---\ntype: job\n---\n# Draft\n")
+	writeFixture(t, filepath.Join(dir, "specs/jobs/duplicate.job.spec.md"), "---\ntype: job-spec\nid: repeated\n---\n# Example\n## Steps\n### Gather\n**ID:** repeated\n")
+	writeFixture(t, filepath.Join(dir, "specs/jobs/draft.job.spec.md"), "---\ntype: job-spec\n---\n# Draft\n")
 	code, out, errOut := invoke("check", "--path", dir, "--format", "json")
 	if code != 1 || errOut != "" {
 		t.Fatalf("JSON check: %d %q %q", code, out, errOut)
@@ -53,7 +53,7 @@ func TestProjectCheckEmptyAdvisoryAndIncomplete(t *testing.T) {
 	if code != 0 || errOut != "" || !strings.Contains(out, "No supported specifications found.") {
 		t.Fatalf("empty: %d %q %q", code, out, errOut)
 	}
-	writeFixture(t, filepath.Join(dir, "specs/jobs/draft.job.spec.md"), "---\ntype: job\n---\n# Draft\n")
+	writeFixture(t, filepath.Join(dir, "specs/jobs/draft.job.spec.md"), "---\ntype: job-spec\n---\n# Draft\n")
 	code, out, errOut = invoke("check", "--format=json", "--path="+dir)
 	if code != 0 || errOut != "" || !strings.Contains(out, `"severity": "advice"`) {
 		t.Fatalf("advice should not fail: %d %q %q", code, out, errOut)

@@ -1,30 +1,20 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: use-case
+type: use-case-spec-report
+documents: "../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-model-for-review-or-integration"
 ---
 # Export a specification model for review or integration
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Goal
 
 Obtain a faithful, structured snapshot of a project's specification content for
 review or consumption by another tool.
 
-## System boundary
-
-The dotspec CLI reading the selected project subtree, enclosing system context
-and direct reference targets, then writing the snapshot and validating saved
-snapshots against the embedded model contract.
-
 ## Primary actor
 
 A contributor preparing specification material for review or tool integration.
-
-## Goal level
-
-User task (sea level).
 
 ## Trigger
 
@@ -35,39 +25,9 @@ The contributor requests a specification-model export.
 The contributor has selected an existing project directory. Reading files and
 repository discovery may still fail; those outcomes are handled below.
 
-## Supporting actors
-
-Git supplies repository discovery information when the directory belongs to a
-Git repository. A downstream tool may consume the JSON snapshot and its schema.
-
-## Stakeholder interests
-
-Contributors need their authored sources and qualifications preserved. Reviewers
-need explicit domain roles, provenance, and visible unresolved or uninterpreted
-content. Integrators need a checkable representation and an honest account of
-which scope was inspected.
-
-## Minimal guarantees
-
-Export preserves acquired bytes, source content, and authored files according to
-the [model source-fidelity requirement](<../requirements/model-source-fidelity.md>).
-Failed reads and incomplete operations remain visible. References remain authored
-occurrences unless resolution or an explicit mapping establishes more.
-
-## Success guarantees
-
-The contributor receives a complete snapshot for the selected scope, with exact
-acquired source payloads, ordered document content, named domain mappings,
-reference resolutions, diagnostics and coverage results. Structural findings
-about authored specifications can be part of this successful information-gathering
-outcome. The contributor can validate the saved representation without rereading
-its original source paths.
-
-The [model contract](<../../docs/reference/specification-model.md>) defines command output,
-validation and completion distinctions. A conforming snapshot does not establish
-that its specifications are accepted, adequate or satisfied.
-
 ## Main success scenario
+
+<!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#main-success-scenario"} -->
 
 1. The contributor selects a project subtree and requests a model export.
 2. Dotspec discovers specifications and their required enclosing context and
@@ -83,12 +43,16 @@ that its specifications are accepted, adequate or satisfied.
 
 ### Malformed specification
 
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#malformed-specification"} -->
+
 During steps 2–3, a specification fails syntax or authoring validation. Retain the
 available bytes and content, report the failure, omit an invalid domain object,
 and continue with other files. Resume step 4 with the retained findings. A
 complete snapshot containing authoring errors still achieves the review goal.
 
 ### Unknown section or unfinished content
+
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#unknown-section-or-unfinished-content"} -->
 
 During step 3, a section has no named domain mapping, or the author leaves content
 empty or handling explicitly unresolved. Preserve its content and appropriate
@@ -97,12 +61,16 @@ step 4. Do not invent missing behavior or claim stakeholder adequacy.
 
 ### Unresolved or uninspected reference
 
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#unresolved-or-uninspected-reference"} -->
+
 During step 3, a target cannot be resolved or lies outside the traversal boundary.
 Retain the occurrence and its resolution state. External resources are not
 fetched, and links within direct targets do not trigger a recursive scan.
 Continue to step 4 so the contributor can inspect the result.
 
 ### Unreadable input or failed discovery
+
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#unreadable-input-or-failed-discovery"} -->
 
 During steps 2–3, an operational failure prevents completion. Retain acquired
 material, identify the failed source or operation, and report an incomplete
@@ -111,27 +79,67 @@ goal; the contributor can repair access and retry.
 
 ### Empty scope
 
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#empty-scope"} -->
+
 At step 2, the selected scope contains no supported specifications. Report a
 completed empty snapshot at step 4. This is an alternative successful outcome.
 
 ### Invalid saved snapshot
+
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#invalid-saved-snapshot"} -->
 
 At step 5, validation finds a malformed representation, inconsistent payload,
 invalid reference or dishonest coverage claim. Report the contract findings
 without changing the snapshot or its source files. The contributor repairs or
 regenerates the representation before relying on it.
 
+## Success guarantees
+
+The contributor receives a complete snapshot for the selected scope, with exact
+acquired source payloads, ordered document content, named domain mappings,
+reference resolutions, diagnostics and coverage results. Structural findings
+about authored specifications can be part of this successful information-gathering
+outcome. The contributor can validate the saved representation without rereading
+its original source paths.
+
+The [model contract](<../../docs/reference/specification-model.md>) defines command output,
+validation and completion distinctions. A conforming snapshot does not establish
+that its specifications are accepted, adequate or satisfied.
+
+## Minimal guarantees
+
+Export preserves acquired bytes, source content, and authored files according to
+the [model source-fidelity requirement](<../requirements/model-source-fidelity.md>).
+Failed reads and incomplete operations remain visible. References remain authored
+occurrences unless resolution or an explicit mapping establishes more.
+
+## System boundary
+
+The dotspec CLI reading the selected project subtree, enclosing system context
+and direct reference targets, then writing the snapshot and validating saved
+snapshots against the embedded model contract.
+
+## Goal level
+
+User task (sea level).
+
+## Supporting actors
+
+Git supplies repository discovery information when the directory belongs to a
+Git repository. A downstream tool may consume the JSON snapshot and its schema.
+
+## Stakeholder interests
+
+Contributors need their authored sources and qualifications preserved. Reviewers
+need explicit domain roles, provenance, and visible unresolved or uninterpreted
+content. Integrators need a checkable representation and an honest account of
+which scope was inspected.
+
 ## Sequence
 
 Representative. The source-fidelity requirement and model contract govern
 preservation, traversal, status and validation behavior. Numbered scenario order
 does not impose an additional authoring workflow.
-
-## Related specifications
-
-[Specification Inspection](<../concepts/specification-inspection.md>)
-provides the existing inspection context. The source, document-content and domain
-layers are explained in [Specification model](<../../docs/reference/specification-model.md>).
 
 ## Authority and evidence
 
@@ -144,5 +152,11 @@ the required CLI outcomes for their illustrated cases. The
 [CLI model tests](<../../internal/cli/model_test.go>) provide evidence for exercised
 export and validation cases; the references do not assert complete behavioral
 coverage or successful execution of every branch.
+
+## Related specifications
+
+[Specification Inspection](<../concepts/specification-inspection.md>)
+provides the existing inspection context. The source, document-content and domain
+layers are explained in [Specification model](<../../docs/reference/specification-model.md>).
 
 [Edit source](<../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-model-for-review-or-integration>)

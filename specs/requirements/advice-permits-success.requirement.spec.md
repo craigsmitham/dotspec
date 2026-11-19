@@ -1,5 +1,5 @@
 ---
-type: requirement
+type: requirement-spec
 id: advice-permits-success
 ---
 

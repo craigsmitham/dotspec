@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"maps"
 	"path"
 	"path/filepath"
 	"slices"
@@ -21,11 +22,14 @@ import (
 type Plan struct{ Pages map[string]*Page }
 
 type Page struct {
-	Type, SubjectKind, Title, Markdown                       string
-	RequiredLinks, RequiredContent, Members, RequiredAnchors []string
-	RequiredLabels, RequiredSectionLinks                     map[string][]string
-	RequiredSectionContent                                   map[string]string
-	RequiredResources                                        []string
+	Document
+	Title, Markdown                                 string
+	SectionDocs                                     map[string]Document
+	DirectoryMembers                                map[string][]string
+	RequiredLinks, RequiredContent, RequiredAnchors []string
+	RequiredLabels, RequiredSectionLinks            map[string][]string
+	RequiredSectionContent                          map[string]string
+	RequiredResources                               []string
 }
 
 type sourceFile struct {
@@ -42,14 +46,17 @@ type heading struct {
 	owner                               *subject
 	obligation                          bool
 	qualityAttribute                    bool
+	subjectKind                         string
 }
 
 type subject struct {
-	r         model.Record
-	source    *sourceFile
-	name      *heading
-	system    *subject
-	file, dir string
+	r           model.Record
+	source      *sourceFile
+	name        *heading
+	system      *subject
+	directories map[string]*directory
+	attributes  *subject // the system's generated quality-attributes section
+	file, dir   string
 }
 
 type planner struct {
@@ -62,16 +69,14 @@ type planner struct {
 	subjects        []*subject
 	targets         map[string]string // snapshot record, source, or fragment to canonical project-relative URL
 	governing       *subject
-	collections     map[string]*collection
-	routes          map[string][]route
+
+	routes map[string][]route
 }
 
-type collection struct {
-	file, label string
-	system      *subject
-	entries     []entry
+type entry struct {
+	title, target string
+	subject       *subject
 }
-type entry struct{ title, target string }
 
 var families = map[string]string{
 	"System": "systems", "Component": "components", "Feature": "features", "Capability": "capabilities",
@@ -86,7 +91,7 @@ func Generate(root string, snapshot *model.Snapshot) (*Plan, error) {
 	if roots := model.Strings(snapshot.Scope["roots"]); len(roots) == 1 {
 		root = filepath.FromSlash(roots[0])
 	}
-	p := &planner{root: root, snapshot: snapshot, plan: &Plan{Pages: map[string]*Page{}}, sources: map[string]*sourceFile{}, nodes: map[string]model.Record{}, elements: map[string]model.Record{}, pages: map[string]*subject{}, targets: map[string]string{}, collections: map[string]*collection{}}
+	p := &planner{root: root, snapshot: snapshot, plan: &Plan{Pages: map[string]*Page{}}, sources: map[string]*sourceFile{}, nodes: map[string]model.Record{}, elements: map[string]model.Record{}, pages: map[string]*subject{}, targets: map[string]string{}}
 	if err := p.read(); err != nil {
 		return nil, err
 	}
@@ -183,6 +188,7 @@ func (p *planner) read() error {
 		sf := p.sources[attr(r, "source_document")]
 		h := headingByNode[nameNode(r)]
 		if h != nil {
+			h.subjectKind = attr(r, "kind")
 			switch attr(r, "kind") {
 			case "ObligationClause":
 				h.obligation = true
@@ -230,7 +236,9 @@ func (s *subject) slug() string {
 	}
 	return b.String()
 }
-func (s *subject) kind() string { return attr(s.r, "kind") }
+func (s *subject) kind() string {
+	return attr(s.r, "kind")
+}
 func (s *subject) collectionDir() string {
 	if s.kind() == "System" {
 		return path.Join(s.system.dir, "systems")
@@ -296,7 +304,7 @@ func (p *planner) place() error {
 			return err
 		}
 		slug := s.slug()
-		if slug == "index" || names[key(s)] > 1 {
+		if names[key(s)] > 1 {
 			sum := sha256.Sum256([]byte(s.source.path + "#" + s.name.anchor))
 			slug += fmt.Sprintf("-%x", sum[:5])
 		}
@@ -329,7 +337,21 @@ func (p *planner) indexTargets() {
 			p.targets[attr(s.r, "source_document")] = s.file
 		}
 		if s != p.governing {
-			p.addMember(s.system, families[s.kind()], entry{s.name.title, s.file})
+			p.placeDirectoryEntry(s)
+		}
+		if s.kind() == "System" && len(model.Strings(s.r["quality_attributes"])) > 0 {
+			for _, h := range s.source.headings {
+				if h.level == s.name.level+1 && h.title == "Quality attributes" {
+					detail := &subject{source: s.source, name: h, system: s, file: path.Join(s.dir, "quality-attributes.md")}
+					s.attributes = detail
+					h.owner = detail
+					p.subjects = append(p.subjects, detail)
+					for _, attribute := range model.Strings(s.r["quality_attributes"]) {
+						p.pages[attribute] = detail
+					}
+					break
+				}
+			}
 		}
 	}
 	// A source heading belongs to the nearest lifted declaration. Preserve the
@@ -350,10 +372,15 @@ func (p *planner) indexTargets() {
 			h.owner = stack[len(stack)-1]
 		}
 	}
+	headingIDs := map[*subject]parser.IDs{}
 	for _, s := range p.subjects {
 		ids := parser.NewContext().IDs()
+		headingIDs[s] = ids
 		for _, h := range readingOrder(s) {
 			if h.owner != s {
+				if s.attributes != nil && h == s.attributes.name {
+					ids.Generate([]byte(h.title), ast.KindHeading) // overview table heading
+				}
 				continue
 			}
 			p.targets[h.node] = s.file
@@ -380,7 +407,30 @@ func (p *planner) indexTargets() {
 					sys = page
 				}
 				n := p.nodes[nameNode(r)]
-				p.addMember(sys, "requirements", entry{attr(n, "decoded_text"), dest})
+				sys.addMember("Requirements", entry{title: attr(n, "decoded_text"), target: dest})
+			}
+		}
+	}
+	for _, r := range p.snapshot.Elements {
+		if attr(r, "kind") != "Requirement" && attr(r, "kind") != "ObligationClause" {
+			continue
+		}
+		for _, target := range model.Strings(r["applies_to"]) {
+			component := p.pages[target]
+			dest := p.targets[id(r)]
+			if component != nil && component.kind() == "Component" && dest != "" {
+				component.addMember("Applicable requirements", entry{attr(p.nodes[nameNode(r)], "decoded_text"), dest, p.pages[id(r)]})
+			}
+		}
+	}
+	for _, s := range p.subjects {
+		for _, label := range slices.Sorted(maps.Keys(s.directories)) {
+			d := s.directories[label]
+			d.section = s.section(label)
+			if d.section != nil {
+				_, d.anchor, _ = strings.Cut(p.targets[d.section.node], "#")
+			} else {
+				d.anchor = string(headingIDs[s].Generate([]byte(label), ast.KindHeading))
 			}
 		}
 	}
@@ -425,13 +475,4 @@ func (p *planner) ownerPage(r model.Record) *subject {
 		r = p.elements[attr(r, "owner")]
 	}
 	return nil
-}
-func (p *planner) addMember(sys *subject, folder string, e entry) {
-	file := path.Join(sys.dir, folder, "index.md")
-	c := p.collections[file]
-	if c == nil {
-		c = &collection{file: file, label: strings.ReplaceAll(folder, "-", " "), system: sys}
-		p.collections[file] = c
-	}
-	c.entries = append(c.entries, e)
 }

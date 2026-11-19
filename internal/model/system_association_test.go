@@ -17,11 +17,11 @@ func associationFixture(t *testing.T) string {
 		{"specs/system.spec.md", "Directory default", "local"},
 		{"remote/specs/system.spec.md", "Explicit selection", "selected"},
 	} {
-		conformanceWrite(t, root, entry.path, "---\ntype: system\nid: "+entry.attribute+"-system\n---\n# "+entry.name+"\n## Purpose\nServe users.\n## Scope\nThis service.\n## Quality attributes\n### Concern\n**ID:** "+entry.attribute+"\nA quality concern.\n")
+		conformanceWrite(t, root, entry.path, "---\ntype: system-spec\nid: "+entry.attribute+"-system\n---\n# "+entry.name+"\n## Purpose\nServe users.\n## Scope\nThis service.\n## Quality attributes\n### Concern\n**ID:** "+entry.attribute+"\nA quality concern.\n")
 	}
 	body := "## Statement\nRespond promptly.\n\n## Applies to\n**Targets:** [Directory default](../system.spec.md)\n\n## Rationale\nKeep users informed.\n\n## Verification plan\nMeasure responses.\n"
-	conformanceWrite(t, root, "specs/requirements/explicit.requirement.spec.md", "---\ntype: requirement\nquality_attributes: [selected]\n---\n# Explicit\n\n## Specification system\n[Selected](../../remote/specs/system.spec.md#selected-system)\n\n"+body)
-	conformanceWrite(t, root, "specs/requirements/default.requirement.spec.md", "---\ntype: requirement\nquality_attributes: [local]\n---\n# Default\n\n"+body)
+	conformanceWrite(t, root, "specs/requirements/explicit.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [selected]\n---\n# Explicit\n\n## Specification system\n[Selected](../../remote/specs/system.spec.md#selected-system)\n\n"+body)
+	conformanceWrite(t, root, "specs/requirements/default.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [local]\n---\n# Default\n\n"+body)
 	return root
 }
 
@@ -97,7 +97,7 @@ func TestExplicitSelectionDoesNotRequireUnselectedDirectoryDefault(t *testing.T)
 	// Select only this subtree. The malformed ancestor default is irrelevant to
 	// the explicit association and must not be read solely for quality context.
 	conformanceWrite(t, root, "specs/system.spec.md", "not a valid system")
-	conformanceWrite(t, root, "client/specs/requirements/selected.requirement.spec.md", "---\ntype: requirement\nquality_attributes: [selected]\n---\n# Selected client\n\n## Specification system\n[System](../../../remote/specs/system.spec.md)\n\n## Statement\nRespond promptly.\n")
+	conformanceWrite(t, root, "client/specs/requirements/selected.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [selected]\n---\n# Selected client\n\n## Specification system\n[System](../../../remote/specs/system.spec.md)\n\n## Statement\nRespond promptly.\n")
 	scope := filepath.Join(root, "client")
 	got, err := requirement.Show(scope, "selected")
 	if err != nil || got.System == nil || got.System.ID != "selected-system" {

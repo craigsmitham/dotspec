@@ -41,7 +41,7 @@ associated system is valid.
 
 ## Concept spec format
 
-Only `type: concept` frontmatter and one nonempty document-level H1 are required.
+Only `type: concept-spec` frontmatter and one nonempty document-level H1 are required.
 An optional `id` follows the same document-local identifier rules as jobs and use
 cases: begin with an ASCII letter or digit, followed by letters, digits, hyphens,
 or underscores. Dots are not allowed. IDs are not resolved across files, and
@@ -49,7 +49,7 @@ repository-wide uniqueness is not checked. Unknown frontmatter fields are errors
 
 ```markdown
 ---
-type: concept
+type: concept-spec
 id: task
 ---
 

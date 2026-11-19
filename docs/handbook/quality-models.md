@@ -106,7 +106,7 @@ an existing file. Edit the name, description, edition, sources, and attributes.
 
 ```markdown
 ---
-type: quality-model
+type: quality-model-spec
 id: organization-quality
 ---
 
@@ -140,7 +140,7 @@ Consistent operation under the conditions our developers encounter.
 The same inputs and environment produce the same observable results.
 ```
 
-Only `type: quality-model` and one nonempty H1 are required. An authored `id` is
+Only `type: quality-model-spec` and one nonempty H1 are required. An authored `id` is
 optional. Conventional sections are optional, but cannot be repeated or placed
 at the wrong heading level. Unknown sections and deeper definition content are
 preserved. Each attribute needs a document-unique ID. Sub-attribute references stay

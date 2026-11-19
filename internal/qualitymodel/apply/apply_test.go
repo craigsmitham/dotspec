@@ -25,7 +25,7 @@ func target(t *testing.T, raw string) string {
 	return path
 }
 
-const plain = "---\ntype: system\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n"
+const plain = "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n"
 
 func TestDefaultPreviewApplyAndConflict(t *testing.T) {
 	raw := "\ufeff" + strings.ReplaceAll(plain+"## Quality attributes\nLocal narrative.\n### Existing\n**ID:** existing\nKeep this definition.\n## Tail\n<!-- untouched -->\n", "\n", "\r\n")
@@ -102,7 +102,7 @@ func TestDefaultWholeModelAndAppend(t *testing.T) {
 func TestLocalAncestorClosureAndLinkRelocation(t *testing.T) {
 	path := target(t, plain)
 	source := filepath.Join(filepath.Dir(path), "quality-models", "local.quality-model.spec.md")
-	data := []byte("---\ntype: quality-model\n---\n# Local\n## Sources\n[doc]: ../../guide.md#topic \"Guide\"\n## Quality attributes\n### Narrow\n**ID:** narrow\n**Sub-attribute of:** broad\nSee [details][doc] and [broad](#broad).\n\n`[code](relative.md)`\n\n![image](../../image.png)\n### Broad\n**ID:** broad\nThe parent concern.\n### Other\n**ID:** other\nUnselected.\n")
+	data := []byte("---\ntype: quality-model-spec\n---\n# Local\n## Sources\n[doc]: ../../guide.md#topic \"Guide\"\n## Quality attributes\n### Narrow\n**ID:** narrow\n**Sub-attribute of:** broad\nSee [details][doc] and [broad](#broad).\n\n`[code](relative.md)`\n\n![image](../../image.png)\n### Broad\n**ID:** broad\nThe parent concern.\n### Other\n**ID:** other\nUnselected.\n")
 	m, err := qualitymodel.Parse(data)
 	if err != nil {
 		t.Fatal(err)

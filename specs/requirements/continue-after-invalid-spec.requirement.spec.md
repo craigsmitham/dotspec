@@ -1,5 +1,5 @@
 ---
-type: requirement
+type: requirement-spec
 id: continue-after-invalid-spec
 quality_attributes:
   - diagnosability

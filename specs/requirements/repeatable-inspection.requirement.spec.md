@@ -1,5 +1,5 @@
 ---
-type: requirement
+type: requirement-spec
 id: repeatable-inspection
 quality_attributes:
   - repeatability

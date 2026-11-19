@@ -8,18 +8,30 @@ import (
 	schema "github.com/craigsmitham/dotspec/model"
 )
 
-func TestDocumentRolesMatchSupportingModel(t *testing.T) {
+func TestSubjectDocumentsMirrorTheModel(t *testing.T) {
+	type slot struct {
+		Fixed  string   `json:"equals_string"`
+		Ranges []string `json:"reference_ranges"`
+	}
 	var catalog struct {
-		Enums map[string][]string
+		Classes map[string]struct{ Slots map[string]slot }
 	}
 	if err := json.Unmarshal(schema.CatalogJSON, &catalog); err != nil {
 		t.Fatal(err)
 	}
-	modelRoles := catalog.Enums["SpecificationDocumentType"]
-	pageRoles := []string{RequirementsSpecification, TableOfContents, CollectionIndex, SpecificationSection, RequirementsReviewReport}
-	slices.Sort(modelRoles)
-	slices.Sort(pageRoles)
-	if !slices.Equal(pageRoles, modelRoles) {
-		t.Fatalf("document roles %v differ from model %v", pageRoles, modelRoles)
+	check := func(kind string) {
+		t.Helper()
+		fields := catalog.Classes[kind+"SpecReport"].Slots
+		if fields["type"].Fixed != kindName(kind)+"-spec-report" || !slices.Equal(fields["documents"].Ranges, []string{kind}) {
+			t.Errorf("%sSpecReport must document one %s", kind, kind)
+		}
+	}
+	for kind := range families {
+		check(kind)
+	}
+	check("QualityAttribute")
+	check("ObligationClause")
+	if catalog.Classes["RequirementsReviewReport"].Slots["type"].Fixed != RequirementsReviewReport {
+		t.Error("review report type differs from the model")
 	}
 }

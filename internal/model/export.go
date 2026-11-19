@@ -58,7 +58,7 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 	repo := inspection.Repository
 	kinds := make([]string, 0, len(types))
 	for _, kind := range types {
-		kinds = append(kinds, kind.Layout.Kind)
+		kinds = append(kinds, specfile.AuthoredType(kind.Layout.Kind))
 	}
 	scope := Record{
 		"roots": []string{filepath.ToSlash(dir)}, "selected_spec_types": kinds,

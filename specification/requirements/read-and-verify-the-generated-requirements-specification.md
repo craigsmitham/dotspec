@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: requirement
+type: requirement-spec-report
+documents: "../../specs/requirements/generated-specification.requirement.spec.md#read-and-verify-the-generated-requirements-specification"
 ---
 # Read and verify the generated requirements specification
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Statement
 
@@ -17,7 +17,7 @@ Whole-project builds and checks for projects that enable generated specification
 
 ## Criterion
 
-Starting from the project's `SPEC.md`, follow the product's feature and the collection indexes to the same requirement. The statement, conditions and criterion agree with the authored text. Editing a condition only in the generated spec or removing the feature link produces a check finding. A second build over identical inputs produces identical files.
+Starting from the project's `SPEC.md`, reach the same promise through its feature and through the system’s Requirements section. Both routes explain why the promise is listed and lead to its canonical page or passage. The statement, conditions and criterion agree with the authored text. Editing a condition only in the generated spec or removing the feature link produces a check finding. A second build over identical inputs produces identical files.
 
 ## Verification plan
 
@@ -29,7 +29,9 @@ Reviewers can inspect product intent in Git and follow a promise to its context 
 
 ## Related specifications
 
-- Quality attribute — [Repeatability](<../../SPEC.md#repeatability>)
-- Quality attribute — [Usability](<../../SPEC.md#usability>)
+**Quality attribute**
+
+- [Repeatability](<../quality-attributes.md#repeatability>)
+- [Usability](<../quality-attributes.md#usability>)
 
 [Edit source](<../../specs/requirements/generated-specification.requirement.spec.md#read-and-verify-the-generated-requirements-specification>)

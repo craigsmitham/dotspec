@@ -14,7 +14,7 @@ func TestConceptProjectAndFocusedReports(t *testing.T) {
 	git(t, dir, "init", "-q")
 	child := filepath.Join(dir, "component")
 	write(t, filepath.Join(dir, "specs/system.spec.md"), validSystem)
-	write(t, filepath.Join(child, "specs/concepts/work.concept.spec.md"), "---\ntype: concept\n---\n# Work\n## Purpose\nInspect findings.\n")
+	write(t, filepath.Join(child, "specs/concepts/work.concept.spec.md"), "---\ntype: concept-spec\n---\n# Work\n## Purpose\nInspect findings.\n")
 	focused, project := checkConcept(child, "work"), checkProject(child)
 	if !reflect.DeepEqual(focused.Diagnostics, project.Diagnostics) || !reflect.DeepEqual(focused.ContextFiles, project.ContextFiles) {
 		t.Fatalf("focused and project differ:\n%+v\n%+v", focused, project)

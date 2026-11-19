@@ -1,5 +1,5 @@
 ---
-type: system
+type: system-spec
 ---
 # Personal task list
 
@@ -61,7 +61,8 @@ The [Go server](../app/main.go) owns form handling and storage.
 
 #### Groups
 
-[Return to my list](use-cases/resume-list.use-case.spec.md) and
+Follow the interaction in [Return to my list](use-cases/resume-list.use-case.spec.md).
+For the storage guarantee and its acceptance test, see
 [Preserve tasks across restart](requirements/restart.requirement.spec.md).
 
 ## Project context
@@ -97,6 +98,7 @@ The browser presents open and completed tasks and accepts changes through HTML f
 **ID:** durability
 
 Preservation of acknowledged work between local sessions.
+
 [Source definition](quality-models/personal-data.quality-model.spec.md#durability).
 
 ## Validation plan

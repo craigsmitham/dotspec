@@ -6,6 +6,8 @@ import (
 	"path"
 	"slices"
 	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/model"
 )
 
 // addSourceContracts runs against the complete subject, heading, and collection
@@ -17,11 +19,9 @@ func addSourceContracts(p *planner) error {
 		if page == nil {
 			return fmt.Errorf("%s: no generated destination for %s", s.source.path, s.name.title)
 		}
-		page.Type = SpecificationSection
-		if s.kind() == "System" {
-			page.Type = RequirementsSpecification
-		}
-		page.SubjectKind = kindName(s.kind())
+		page.Document = subjectDocument(s.file, s.source, s.name)
+		page.SectionDocs = map[string]Document{}
+		page.DirectoryMembers = map[string][]string{}
 		page.Title = s.name.title
 		page.RequiredContent = nil
 		page.RequiredSectionContent = map[string]string{}
@@ -32,6 +32,9 @@ func addSourceContracts(p *planner) error {
 			dest, _ := url.Parse(p.targets[h.node])
 			if dest != nil && dest.Fragment != "" {
 				page.RequiredAnchors = append(page.RequiredAnchors, dest.Fragment)
+				if h.subjectKind != "" {
+					page.SectionDocs[dest.Fragment] = subjectDocument(s.file, s.source, h)
+				}
 				if h.obligation {
 					source := relativeURL(s.file, s.source.path, h.anchor)
 					requireRoute(page, source, "Edit obligation")
@@ -63,34 +66,22 @@ func addSourceContracts(p *planner) error {
 			}
 		}
 		requireRoute(page, relativeURL(s.file, s.source.path, s.name.anchor), "Edit source")
+		if s.attributes != nil {
+			for _, id := range model.Strings(s.r["quality_attributes"]) {
+				h := p.nodes[nameNode(p.elements[id])]
+				requireRoute(page, relative(s.file, p.targets[id]), attr(h, "decoded_text"))
+			}
+		}
+		for _, d := range s.directories {
+			for _, e := range d.entries {
+				dest := relative(s.file, e.target)
+				page.DirectoryMembers[d.anchor] = append(page.DirectoryMembers[d.anchor], dest)
+				requireRoute(page, dest, e.title)
+			}
+		}
 		if s != p.governing {
 			requireRoute(page, relative(s.file, s.system.file), s.system.name.title)
 		}
-	}
-	for _, coll := range p.collections {
-		index := p.plan.Pages[coll.file]
-		if index == nil {
-			return fmt.Errorf("%s: collection index is missing", coll.file)
-		}
-		index.Type = CollectionIndex
-		index.SubjectKind = ""
-		index.Members = nil
-		// Only system and contents links are navigation. Any other visible
-		// destination must correspond to an expected collection member.
-		index.RequiredLinks = nil
-		requireRoute(index, relative(coll.file, coll.system.file), coll.system.name.title)
-		requireRoute(index, relative(coll.file, contentsPath), "Contents")
-		for _, e := range coll.entries {
-			dest := relative(coll.file, e.target)
-			index.Members = append(index.Members, dest)
-			requireRoute(index, dest, e.title)
-		}
-		requireRoute(p.plan.Pages[coll.system.file], relative(coll.system.file, coll.file), "")
-		contents := p.plan.Pages[contentsPath]
-		if contents == nil {
-			return fmt.Errorf("%s: specification contents is missing", contentsPath)
-		}
-		requireRoute(contents, relative(contentsPath, coll.file), "")
 	}
 	// Read typed relation facts independently of the renderer's choice to
 	// present a relation inline, beside a section or in a related-items list.
@@ -115,18 +106,11 @@ func addSourceContracts(p *planner) error {
 			}
 		}
 	}
-	for required, role := range map[string]string{"SPEC.md": RequirementsSpecification, contentsPath: TableOfContents, reviewPath: RequirementsReviewReport} {
-		page := p.plan.Pages[required]
-		if page == nil {
-			return fmt.Errorf("%s: required document is missing", required)
-		}
-		page.Type = role
-		if required != "SPEC.md" {
-			page.SubjectKind = ""
-		}
+	if p.plan.Pages[reviewPath] == nil {
+		return fmt.Errorf("%s: review report is missing", reviewPath)
 	}
+	p.plan.Pages[reviewPath].Document = Document{Type: RequirementsReviewReport}
 	root := p.plan.Pages["SPEC.md"]
-	requireRoute(root, relative("SPEC.md", contentsPath), "")
 	requireRoute(root, relative("SPEC.md", reviewPath), "")
 	return nil
 }

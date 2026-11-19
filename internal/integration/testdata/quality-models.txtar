@@ -106,7 +106,7 @@ status 0 dotspec model validate snapshot.json --json
 stdout '"valid": true'
 -- local.md --
 ---
-type: quality-model
+type: quality-model-spec
 id: organization-quality
 ---
 # Organization quality
@@ -129,12 +129,12 @@ Our specific concern.
 A concern to consider later.
 -- draft.md --
 ---
-type: quality-model
+type: quality-model-spec
 ---
 # Draft model
 -- invalid.md --
 ---
-type: quality-model
+type: quality-model-spec
 ---
 # Invalid
 ## Quality attributes
@@ -142,7 +142,7 @@ type: quality-model
 
 -- resilient-service.md --
 ---
-type: requirement
+type: requirement-spec
 quality_attributes: [resilience]
 ---
 # Resilient service

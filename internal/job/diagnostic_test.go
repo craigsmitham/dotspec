@@ -9,7 +9,7 @@ import (
 )
 
 func TestDiagnosticLocationsSurviveLineEndings(t *testing.T) {
-	source := "---\ntype: job\nid: shared\n---\n# Example\n\n## Steps\n\n### Gather\n**ID:** shared\n"
+	source := "---\ntype: job-spec\nid: shared\n---\n# Example\n\n## Steps\n\n### Gather\n**ID:** shared\n"
 	for _, data := range []string{source, "\ufeff" + strings.ReplaceAll(source, "\n", "\r\n")} {
 		_, err := Parse([]byte(data))
 		var d *diagnostic.Diagnostic
@@ -30,7 +30,7 @@ func TestStructuralDiagnosticsHaveSourceLocations(t *testing.T) {
 		{"## Steps\n### Gather\n**Stage:** locate\n**Stage:** execute\n", "structure.duplicate-field", 8, 7},
 		{"## Notes\n[Missing](#unknown)\n", "reference.unresolved", 6, 0},
 	} {
-		_, err := Parse([]byte("---\ntype: job\n---\n# Example\n" + tt.body))
+		_, err := Parse([]byte("---\ntype: job-spec\n---\n# Example\n" + tt.body))
 		var d *diagnostic.Diagnostic
 		if !errors.As(err, &d) || d.Rule != tt.rule || d.Location.Line != tt.line || d.Location.Column < 1 {
 			t.Fatalf("%s: %#v, %v", tt.rule, d, err)
@@ -42,7 +42,7 @@ func TestStructuralDiagnosticsHaveSourceLocations(t *testing.T) {
 }
 
 func TestAdviceRetainsOutcomeScopeAndLocation(t *testing.T) {
-	source := "---\ntype: job\n---\n# Example\n## Job\nPrepare a change for review.\n## Performer\nA reviewer.\n## Outcomes\n- **O1:** Better results.\n## Steps\n### Gather\n#### Outcomes\n- **O2:** Better results.\n"
+	source := "---\ntype: job-spec\n---\n# Example\n## Job\nPrepare a change for review.\n## Performer\nA reviewer.\n## Outcomes\n- **O1:** Better results.\n## Steps\n### Gather\n#### Outcomes\n- **O2:** Better results.\n"
 	spec, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)

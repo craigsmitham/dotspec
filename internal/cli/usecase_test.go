@@ -92,7 +92,7 @@ func TestUseCaseUsageAndFailureChannels(t *testing.T) {
 			t.Fatalf("structural error %v: %d %q %q", args, code, out, errOut)
 		}
 	}
-	writeFixture(t, "specs/use-cases/draft.use-case.spec.md", "---\ntype: use-case\n---\n# Draft\n")
+	writeFixture(t, "specs/use-cases/draft.use-case.spec.md", "---\ntype: use-case-spec\n---\n# Draft\n")
 	if code, out, errOut := invoke("use-case", "check", "draft"); code != 0 || errOut != "" || !strings.Contains(out, "advice [use-case.goal]") {
 		t.Fatalf("draft should succeed with advice: %d %q %q", code, out, errOut)
 	}
@@ -107,7 +107,7 @@ func TestUseCaseBriefAndOverview(t *testing.T) {
 	if err != nil || strings.Contains(string(data), "## Preconditions") || !strings.Contains(string(data), "## System boundary") {
 		t.Fatalf("brief: %s %v", data, err)
 	}
-	writeFixture(t, "specs/use-cases/sketch.use-case.spec.md", "---\ntype: use-case\n---\n# Reserve equipment\n## Primary actor\nCustomer\n## Goal level\nUser task\n## System boundary\nRental business\nincluding depot handover.\n")
+	writeFixture(t, "specs/use-cases/sketch.use-case.spec.md", "---\ntype: use-case-spec\n---\n# Reserve equipment\n## Primary actor\nCustomer\n## Goal level\nUser task\n## System boundary\nRental business\nincluding depot handover.\n")
 	code, out, errOut := invoke("use-case", "list", "--overview")
 	for _, want := range []string{"System: New system", "Customer", "Reserve equipment", "User task", "Rental business including depot handover.", "sketch.use-case.spec.md"} {
 		if code != 0 || errOut != "" || !strings.Contains(out, want) {
@@ -119,7 +119,7 @@ func TestUseCaseBriefAndOverview(t *testing.T) {
 	if code != 0 || overviewCode != 0 || errOut != "" || overviewErr != "" || ordinary != overview {
 		t.Fatal("overview changed JSON records")
 	}
-	writeFixture(t, "specs/use-cases/sketch.use-case.spec.md", "---\ntype: use-case\n---\n# Reserve equipment\n")
+	writeFixture(t, "specs/use-cases/sketch.use-case.spec.md", "---\ntype: use-case-spec\n---\n# Reserve equipment\n")
 	_, out, _ = invoke("use-case", "list", "--overview")
 	if strings.Count(out, "(unspecified)") != 3 {
 		t.Fatalf("missing fields were inferred: %s", out)

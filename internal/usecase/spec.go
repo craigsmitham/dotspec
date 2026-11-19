@@ -25,7 +25,7 @@ type metadata struct {
 
 // Template starts a readable sketch; expanded prompts are optional elaboration.
 const Template = `---
-type: use-case
+type: use-case-spec
 ---
 
 # New use case
@@ -58,7 +58,7 @@ Mark unknown responses as unresolved; expand the branches needed for the next de
 `
 
 const ExpandedTemplate = `---
-type: use-case
+type: use-case-spec
 ---
 
 # New use case

@@ -29,13 +29,13 @@ specification types, each corresponding to one concrete `Specification` class.
 
 | Specification type | Class |
 | --- | --- |
-| `system` | System |
-| `job` | Job |
-| `quality-model` | QualityModel |
-| `business-rule` | BusinessRule |
-| `use-case` | UseCase |
-| `concept` | Concept |
-| `requirement` | Requirement |
+| `system-spec` | System |
+| `job-spec` | Job |
+| `quality-model-spec` | QualityModel |
+| `business-rule-spec` | BusinessRule |
+| `use-case-spec` | UseCase |
+| `concept-spec` | Concept |
+| `requirement-spec` | Requirement |
 
 The `SpecificationType` enumeration lists these values, and a snapshot's
 `scope.selected_spec_types` records the types selected for an inspection. A
@@ -43,10 +43,10 @@ quality requirement is a Requirement classified by `quality_attributes`, not
 another type. A record's `kind` names its class.
 
 The [generated requirements specification](generated-specification.md) draws on
-the snapshot. Its Markdown files carry a separate document `type` from the
-[`SpecificationDocumentType` vocabulary](model/index.md#specificationdocumenttype).
-For example, the generated restart page has document type `specification-section`
-and subject kind `requirement`.
+the snapshot. A [SubjectSpecReport](model/index.md#subjectspecreport) documents one subject.
+For example, `RequirementSpecReport` has type `requirement-spec-report` and a `documents`
+reference to the authored requirement. An embedded obligation has its own
+`ObligationClauseSpecReport` at the corresponding heading in the use-case page.
 
 A System record describes the system within the specification; it is not a
 running system or deployment inventory. The same distinction applies to a

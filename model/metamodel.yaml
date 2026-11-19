@@ -69,24 +69,273 @@ subsets:
     annotations:
       classification: generic
 classes:
-  SpecificationDocument:
-    in_subset:
-    - specification-documentation
-    description: A reader-facing document derived from a specification snapshot. The document role describes
-      the required contents and navigation. Generated pages live outside the source snapshot.
+  GeneratedDocument:
+    abstract: true
+    in_subset: [specification-documentation]
+    description: A reader-facing document rendered as a Markdown page or an addressable section.
     attributes:
       type:
         required: true
-        range: SpecificationDocumentType
-        description: Reader purpose and presentation contract of the generated Markdown file.
-      generated_by:
         range: string
+        description: Serialized document type fixed by the concrete class.
+  SubjectSpecReport:
+    abstract: true
+    is_a: GeneratedDocument
+    in_subset: [specification-documentation]
+    description: The canonical generated account of one addressable subject in the selected snapshot.
+    attributes:
+      documents:
         required: true
-        equals_string: dotspec
-        description: Ownership marker used when refreshing or removing generated pages.
-      subject_kind:
-        range: string
-        description: Domain kind of the subject presented on a detail page.
+        range: DomainElement
+        description: The documented subject, serialized as a relative URI to its authored heading.
+        annotations:
+          relationship_category: semantic-association
+          relationship_scope: One selected subject of the concrete document's corresponding domain class.
+          relationship_basis: Identity of the domain record mapped from the referenced heading.
+  SystemSpecReport:
+    is_a: SubjectSpecReport
+    description: Explains the system’s purpose and scope and links to its immediate child systems, local subjects, and obligations.
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: system-spec-report
+      documents:
+        range: System
+  RequirementSpecReport:
+    is_a: SubjectSpecReport
+    description: Brings the requirement statement, applicability, criterion, and verification plan together at one address.
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: requirement-spec-report
+      documents:
+        range: Requirement
+  ComponentSpecReport:
+    is_a: SubjectSpecReport
+    description: Explains the component’s responsibilities and links to its structural children, declared interfaces, and explicitly applicable requirements.
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: component-spec-report
+      documents:
+        range: Component
+  FeatureSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: feature-spec-report
+      documents:
+        range: Feature
+  CapabilitySpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: capability-spec-report
+      documents:
+        range: Capability
+  ConceptUseSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: concept-use-spec-report
+      documents:
+        range: ConceptUse
+  InterfaceSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: interface-spec-report
+      documents:
+        range: Interface
+  SynchronizationSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: synchronization-spec-report
+      documents:
+        range: Synchronization
+  QualityModelSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: quality-model-spec-report
+      documents:
+        range: QualityModel
+  BusinessRuleSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: business-rule-spec-report
+      documents:
+        range: BusinessRule
+  JobSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: job-spec-report
+      documents:
+        range: Job
+  UseCaseSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: use-case-spec-report
+      documents:
+        range: UseCase
+  ConceptSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: concept-spec-report
+      documents:
+        range: Concept
+  QualityAttributeSpecReport:
+    is_a: SubjectSpecReport
+    description: Defines one quality attribute and links to the requirements classified by it.
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: quality-attribute-spec-report
+      documents:
+        range: QualityAttribute
+  ObligationClauseSpecReport:
+    is_a: SubjectSpecReport
+    description: Preserves an addressable promise within the interaction or other subject that declares it.
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: obligation-clause-spec-report
+      documents:
+        range: ObligationClause
+  GoalSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: goal-spec-report
+      documents:
+        range: Goal
+  AssumptionSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: assumption-spec-report
+      documents:
+        range: Assumption
+  GlossaryTermSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: glossary-term-spec-report
+      documents:
+        range: GlossaryTerm
+  ScenarioSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: scenario-spec-report
+      documents:
+        range: Scenario
+  UseCaseExtensionSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: use-case-extension-spec-report
+      documents:
+        range: UseCaseExtension
+  JobStepSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: job-step-spec-report
+      documents:
+        range: JobStep
+  ProgressCaseSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: progress-case-spec-report
+      documents:
+        range: ProgressCase
+  DesiredOutcomeSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: desired-outcome-spec-report
+      documents:
+        range: DesiredOutcome
+  EvidenceStatementSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: evidence-statement-spec-report
+      documents:
+        range: EvidenceStatement
+  ConceptActionSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: concept-action-spec-report
+      documents:
+        range: ConceptAction
+  TypeBindingSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: type-binding-spec-report
+      documents:
+        range: TypeBinding
+  SynchronizationActionSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: synchronization-action-spec-report
+      documents:
+        range: SynchronizationAction
+  ConceptTypeSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: concept-type-spec-report
+      documents:
+        range: ConceptType
+  ActionParameterSpecReport:
+    is_a: SubjectSpecReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: action-parameter-spec-report
+      documents:
+        range: ActionParameter
+  RequirementsReviewReport:
+    is_a: GeneratedDocument
+    in_subset: [specification-documentation]
+    description: Project-wide open questions, verification and validation plans, and inspection findings with routes to their subjects.
+    slot_usage:
+      type:
+        equals_string: requirements-review-report
   Record:
     in_subset:
     - source-artifacts
@@ -3981,40 +4230,23 @@ enums:
         description: Selected by an authored Specification system reference.
       directory:
         description: Defaulted to the nearest enclosing system found by directory discovery.
-  SpecificationDocumentType:
-    description: Roles of generated requirements documents. These names are disjoint from authored specification
-      types and core domain kinds.
-    permissible_values:
-      requirements-specification:
-        description: Orient readers to one system through its purpose, boundaries, authored capabilities,
-          immediate children, and scoped collections.
-      table-of-contents:
-        description: Navigate the complete system hierarchy and reach every populated local collection by kind.
-      index:
-        description: Enumerate exactly the canonical destinations in a collection for a system and kind.
-      specification-section:
-        description: Present one domain subject, its authored content and qualifications, the relationships
-          readers can follow, and the passage where it can be edited.
-      requirements-review-report:
-        description: Locate authored open questions and inspection findings at their source passages within
-          the reviewed scope.
   SpecificationType:
-    description: Types of authored specification document, as declared in frontmatter and file names. Each
+    description: Markdown frontmatter types for authored specifications. Each
       type has exactly one concrete Specification class.
     permissible_values:
-      system:
+      system-spec:
         description: System.
-      job:
+      job-spec:
         description: Job.
-      quality-model:
+      quality-model-spec:
         description: Quality model.
-      business-rule:
+      business-rule-spec:
         description: Business rule.
-      use-case:
+      use-case-spec:
         description: Use case.
-      concept:
+      concept-spec:
         description: Concept.
-      requirement:
+      requirement-spec:
         description: Requirement.
   RelationshipCategory:
     description: Vocabulary of the relationship_category annotation on record-reference fields. Each category

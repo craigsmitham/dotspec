@@ -20,7 +20,7 @@ and failed domain decomposition without manufacturing a valid domain object.
 | --- | --- |
 | Original file | `SourceDocument` with original bytes, digest and byte count; all spans address those bytes. |
 | YAML frontmatter | Ordered YAML nodes with parsed scalar values, tags, aliases, anchors, comments and original spelling. Invalid YAML remains opaque content with a diagnostic. |
-| `type` and `id` | Interpreted document metadata; an accepted specification's explicit ID also maps to its root domain record. System IDs are optional and document-local. |
+| `type` and `id` | The authored type is `<subject>-spec` in kebab case (for example, `use-case-spec`). The exporter preserves it as `declared_type`; an accepted specification's explicit ID also maps to its root domain record. System IDs are optional and document-local. |
 | First level-one title | Root domain `name`, backed by its heading node. |
 | Content before the first body section | Root `preamble`. |
 | Recognized level-two section | Named field described below, with its whole content and a binding for its heading. |

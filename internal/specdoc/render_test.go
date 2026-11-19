@@ -17,10 +17,10 @@ func TestLiftedSectionPreservesAuthoredMarkdown(t *testing.T) {
 	root := t.TempDir()
 	files := map[string]string{
 		"dotspec.yaml":                                         "name: reader\ngenerated_spec: true\n",
-		"module#1/specs/system.spec.md":                        "---\ntype: system\n---\n# Sample system\n\n## Scope\n\nLocal.\n\n## Purpose\n\nKeep notes.\n\n## Features\n\n### Display a note\n\nSee [![diagram](icon.svg)](guide%23a.md?mode=reader#setup) and [details][guide].[^note]\n\n## Source notes\n\n[guide]: guide%23a.md#setup\n\n[^note]: See [setup][guide].\n",
+		"module#1/specs/system.spec.md":                        "---\ntype: system-spec\n---\n# Sample system\n\n## Scope\n\nLocal.\n\n## Purpose\n\nKeep notes.\n\n## Features\n\n### Display a note\n\nSee [![diagram](icon.svg)](guide%23a.md?mode=reader#setup) and [details][guide].[^note]\n\n## Source notes\n\n[guide]: guide%23a.md#setup\n\n[^note]: See [setup][guide].\n",
 		"module#1/specs/guide#a.md":                            "# Setup\n",
 		"module#1/specs/icon.svg":                              "<svg/>",
-		"module#1/specs/requirements/save.requirement.spec.md": "---\ntype: requirement\n---\n# Save a note\n\n## Rationale\n\nThe reader needs the note.\n\n## Statement\n\nPreserve the note.\n",
+		"module#1/specs/requirements/save.requirement.spec.md": "---\ntype: requirement-spec\n---\n# Save a note\n\n## Rationale\n\nThe reader needs the note.\n\n## Statement\n\nPreserve the note.\n",
 	}
 	for file, body := range files {
 		loc := filepath.Join(root, filepath.FromSlash(file))

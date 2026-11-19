@@ -1,10 +1,10 @@
 ---
-type: requirements-review-report
 generated_by: dotspec
+type: requirements-review-report
 ---
 # Requirements review
 
-[Personal task list](<../SPEC.md>) · [Contents](<index.md>)
+[Personal task list](<../SPEC.md>)
 
 ## Open questions
 

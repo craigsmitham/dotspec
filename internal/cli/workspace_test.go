@@ -22,9 +22,9 @@ func projectFixture(t *testing.T) string {
 	files := map[string]string{
 		"dotspec.yaml":                          "name: tool\n",
 		"apps/demo/dotspec.yaml":                "name: demo\n",
-		"specs/system.spec.md":                  "---\ntype: system\n---\n# Tool\n\n## Purpose\nTool work.\n\n## Scope\nTool only.\n",
-		"apps/demo/specs/system.spec.md":        "---\ntype: system\n---\n# Demo\n\n## Purpose\nDemo work.\n\n## Scope\nDemo only.\n",
-		"apps/demo/specs/jobs/work.job.spec.md": "---\ntype: job\n---\n# Work\n\n## Statement\nWhen I need help, I want to work, so I make progress.\n",
+		"specs/system.spec.md":                  "---\ntype: system-spec\n---\n# Tool\n\n## Purpose\nTool work.\n\n## Scope\nTool only.\n",
+		"apps/demo/specs/system.spec.md":        "---\ntype: system-spec\n---\n# Demo\n\n## Purpose\nDemo work.\n\n## Scope\nDemo only.\n",
+		"apps/demo/specs/jobs/work.job.spec.md": "---\ntype: job-spec\n---\n# Work\n\n## Statement\nWhen I need help, I want to work, so I make progress.\n",
 	}
 	for path, body := range files {
 		if err := os.WriteFile(filepath.Join(root, path), []byte(body), 0600); err != nil {

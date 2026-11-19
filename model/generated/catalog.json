@@ -380,6 +380,63 @@
         "software-requirements"
       ]
     },
+    "ActionParameterSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "ActionParameterSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ActionParameter",
+          "reference_ranges": [
+            "ActionParameter"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "action-parameter-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "ActorMention": {
       "abstract": false,
       "ancestors": [
@@ -1540,6 +1597,63 @@
         "software-requirements"
       ]
     },
+    "AssumptionSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "AssumptionSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Assumption",
+          "reference_ranges": [
+            "Assumption"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "assumption-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "BusinessRule": {
       "abstract": false,
       "ancestors": [
@@ -2375,6 +2489,63 @@
         "business-requirements"
       ]
     },
+    "BusinessRuleSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "BusinessRuleSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "BusinessRule",
+          "reference_ranges": [
+            "BusinessRule"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "business-rule-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "ByteSpan": {
       "abstract": false,
       "ancestors": [
@@ -3145,6 +3316,63 @@
       "subsets": [
         "business-requirements",
         "software-requirements"
+      ]
+    },
+    "CapabilitySpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "CapabilitySpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Capability",
+          "reference_ranges": [
+            "Capability"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "capability-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "Component": {
@@ -4064,6 +4292,63 @@
       },
       "subsets": [
         "software-requirements"
+      ]
+    },
+    "ComponentSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "ComponentSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "Explains the component\u2019s responsibilities and links to its structural children, declared interfaces, and explicitly applicable requirements.",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Component",
+          "reference_ranges": [
+            "Component"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "component-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "Concept": {
@@ -5761,6 +6046,120 @@
         "software-requirements"
       ]
     },
+    "ConceptActionSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "ConceptActionSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ConceptAction",
+          "reference_ranges": [
+            "ConceptAction"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "concept-action-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
+    "ConceptSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "ConceptSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Concept",
+          "reference_ranges": [
+            "Concept"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "concept-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "ConceptType": {
       "abstract": false,
       "ancestors": [
@@ -6054,6 +6453,63 @@
       },
       "subsets": [
         "software-requirements"
+      ]
+    },
+    "ConceptTypeSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "ConceptTypeSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ConceptType",
+          "reference_ranges": [
+            "ConceptType"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "concept-type-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "ConceptUse": {
@@ -6806,6 +7262,63 @@
       },
       "subsets": [
         "software-requirements"
+      ]
+    },
+    "ConceptUseSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "ConceptUseSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ConceptUse",
+          "reference_ranges": [
+            "ConceptUse"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "concept-use-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "Condition": {
@@ -8598,6 +9111,63 @@
         "user-requirements"
       ]
     },
+    "DesiredOutcomeSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "DesiredOutcomeSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "DesiredOutcome",
+          "reference_ranges": [
+            "DesiredOutcome"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "desired-outcome-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "Diagnostic": {
       "abstract": false,
       "ancestors": [
@@ -9984,6 +10554,63 @@
         "software-requirements"
       ]
     },
+    "EvidenceStatementSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "EvidenceStatementSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "EvidenceStatement",
+          "reference_ranges": [
+            "EvidenceStatement"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "evidence-statement-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "ExtensionSection": {
       "abstract": false,
       "ancestors": [
@@ -11043,6 +11670,63 @@
         "software-requirements"
       ]
     },
+    "FeatureSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "FeatureSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Feature",
+          "reference_ranges": [
+            "Feature"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "feature-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "Force": {
       "abstract": false,
       "ancestors": [
@@ -11092,6 +11776,35 @@
       },
       "subsets": [
         "user-requirements"
+      ]
+    },
+    "GeneratedDocument": {
+      "abstract": true,
+      "ancestors": [
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "A reader-facing document rendered as a Markdown page or an addressable section.",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "GlossaryTerm": {
@@ -11444,6 +12157,63 @@
       "subsets": [
         "business-requirements",
         "software-requirements"
+      ]
+    },
+    "GlossaryTermSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "GlossaryTermSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "GlossaryTerm",
+          "reference_ranges": [
+            "GlossaryTerm"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "glossary-term-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "Goal": {
@@ -11974,6 +12744,63 @@
       },
       "subsets": [
         "business-requirements"
+      ]
+    },
+    "GoalSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "GoalSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Goal",
+          "reference_ranges": [
+            "Goal"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "goal-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "Interface": {
@@ -12602,6 +13429,63 @@
       },
       "subsets": [
         "software-requirements"
+      ]
+    },
+    "InterfaceSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "InterfaceSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Interface",
+          "reference_ranges": [
+            "Interface"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "interface-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "Job": {
@@ -13469,6 +14353,63 @@
         "user-requirements"
       ]
     },
+    "JobSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "JobSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Job",
+          "reference_ranges": [
+            "Job"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "job-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "JobStep": {
       "abstract": false,
       "ancestors": [
@@ -14058,6 +14999,63 @@
       },
       "subsets": [
         "user-requirements"
+      ]
+    },
+    "JobStepSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "JobStepSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "JobStep",
+          "reference_ranges": [
+            "JobStep"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "job-step-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "LabelOccurrence": {
@@ -15775,6 +16773,63 @@
         "software-requirements"
       ]
     },
+    "ObligationClauseSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "ObligationClauseSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "Preserves an addressable promise within the interaction or other subject that declares it.",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ObligationClause",
+          "reference_ranges": [
+            "ObligationClause"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "obligation-clause-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "ObligationContainer": {
       "abstract": true,
       "ancestors": [
@@ -17071,6 +18126,63 @@
         "user-requirements"
       ]
     },
+    "ProgressCaseSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "ProgressCaseSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ProgressCase",
+          "reference_ranges": [
+            "ProgressCase"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "progress-case-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "QualityAttribute": {
       "abstract": false,
       "ancestors": [
@@ -17416,6 +18528,63 @@
       },
       "subsets": [
         "software-requirements"
+      ]
+    },
+    "QualityAttributeSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "QualityAttributeSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "Defines one quality attribute and links to the requirements classified by it.",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "QualityAttribute",
+          "reference_ranges": [
+            "QualityAttribute"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "quality-attribute-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "QualityModel": {
@@ -18078,6 +19247,63 @@
       },
       "subsets": [
         "software-requirements"
+      ]
+    },
+    "QualityModelSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "QualityModelSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "QualityModel",
+          "reference_ranges": [
+            "QualityModel"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "quality-model-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "Record": {
@@ -19137,6 +20363,95 @@
         "software-requirements"
       ]
     },
+    "RequirementSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "RequirementSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "Brings the requirement statement, applicability, criterion, and verification plan together at one address.",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Requirement",
+          "reference_ranges": [
+            "Requirement"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "requirement-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
+    "RequirementsReviewReport": {
+      "abstract": false,
+      "ancestors": [
+        "RequirementsReviewReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "Project-wide open questions, verification and validation plans, and inspection findings with routes to their subjects.",
+      "is_a": "GeneratedDocument",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "requirements-review-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "Resolution": {
       "abstract": false,
       "ancestors": [
@@ -19598,13 +20913,13 @@
           "any_of": [],
           "description": "Specification types selected for this inspection.",
           "enum_values": [
-            "system",
-            "job",
-            "quality-model",
-            "business-rule",
-            "use-case",
-            "concept",
-            "requirement"
+            "system-spec",
+            "job-spec",
+            "quality-model-spec",
+            "business-rule-spec",
+            "use-case-spec",
+            "concept-spec",
+            "requirement-spec"
           ],
           "identifier": false,
           "inline_ranges": [],
@@ -19940,6 +21255,63 @@
       },
       "subsets": [
         "software-requirements"
+      ]
+    },
+    "ScenarioSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "ScenarioSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Scenario",
+          "reference_ranges": [
+            "Scenario"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "scenario-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "ScenarioStep": {
@@ -22056,71 +23428,6 @@
         "software-requirements"
       ]
     },
-    "SpecificationDocument": {
-      "abstract": false,
-      "ancestors": [
-        "SpecificationDocument"
-      ],
-      "annotations": {},
-      "description": "A reader-facing document derived from a specification snapshot. The document role describes the required contents and navigation. Generated pages live outside the source snapshot.",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "generated_by": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Ownership marker used when refreshing or removing generated pages.",
-          "equals_string": "dotspec",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "subject_kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Domain kind of the subject presented on a detail page.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "type": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Reader purpose and presentation contract of the generated Markdown file.",
-          "enum_values": [
-            "requirements-specification",
-            "table-of-contents",
-            "index",
-            "specification-section",
-            "requirements-review-report"
-          ],
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SpecificationDocumentType",
-          "reference_ranges": [],
-          "required": true
-        }
-      },
-      "subsets": [
-        "specification-documentation"
-      ]
-    },
     "SpecificationProject": {
       "abstract": false,
       "ancestors": [
@@ -22320,6 +23627,61 @@
       },
       "subsets": [
         "software-requirements"
+      ]
+    },
+    "SubjectSpecReport": {
+      "abstract": true,
+      "ancestors": [
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "The canonical generated account of one addressable subject in the selected snapshot.",
+      "is_a": "GeneratedDocument",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "DomainElement",
+          "reference_ranges": [
+            "DomainElement"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "Synchronization": {
@@ -23435,6 +24797,120 @@
       },
       "subsets": [
         "software-requirements"
+      ]
+    },
+    "SynchronizationActionSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "SynchronizationActionSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SynchronizationAction",
+          "reference_ranges": [
+            "SynchronizationAction"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "synchronization-action-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
+    "SynchronizationSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "SynchronizationSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Synchronization",
+          "reference_ranges": [
+            "Synchronization"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "synchronization-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "SyntaxProperty": {
@@ -25524,6 +27000,63 @@
         "software-requirements"
       ]
     },
+    "SystemSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "SystemSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "Explains the system\u2019s purpose and scope and links to its immediate child systems, local subjects, and obligations.",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "system-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "TraceableElement": {
       "abstract": true,
       "ancestors": [
@@ -26465,6 +27998,63 @@
       },
       "subsets": [
         "software-requirements"
+      ]
+    },
+    "TypeBindingSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "TypeBindingSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "TypeBinding",
+          "reference_ranges": [
+            "TypeBinding"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "type-binding-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "UnmappedRole": {
@@ -28095,6 +29685,120 @@
       "subsets": [
         "software-requirements"
       ]
+    },
+    "UseCaseExtensionSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "UseCaseExtensionSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "UseCaseExtension",
+          "reference_ranges": [
+            "UseCaseExtension"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "use-case-extension-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
+    "UseCaseSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "UseCaseSpecReport",
+        "SubjectSpecReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectSpecReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "UseCase",
+          "reference_ranges": [
+            "UseCase"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "use-case-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
     }
   },
   "enums": {
@@ -28257,21 +29961,14 @@
       "advice",
       "info"
     ],
-    "SpecificationDocumentType": [
-      "requirements-specification",
-      "table-of-contents",
-      "index",
-      "specification-section",
-      "requirements-review-report"
-    ],
     "SpecificationType": [
-      "system",
-      "job",
-      "quality-model",
-      "business-rule",
-      "use-case",
-      "concept",
-      "requirement"
+      "system-spec",
+      "job-spec",
+      "quality-model-spec",
+      "business-rule-spec",
+      "use-case-spec",
+      "concept-spec",
+      "requirement-spec"
     ],
     "SystemAssociationOrigin": [
       "explicit",
@@ -28414,7 +30111,7 @@
   },
   "representation_version": "0.1.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "ebf07882b5c75758b04d6df1aec38f7bff4d4606a5cc224ce2388b71279dd1ba",
+  "source_sha256": "9d1b42fc1c7ebb352ced463a758b135392007e9d00febe0e50095226f44e3db9",
   "subsets": {
     "business-requirements": {
       "classification": "core",

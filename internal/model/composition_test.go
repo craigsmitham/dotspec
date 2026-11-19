@@ -150,9 +150,9 @@ func TestCompositionAuthoringErrorsRemainFaithful(t *testing.T) {
 }
 func TestCompositionCyclesAndPartialDeclarations(t *testing.T) {
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/concepts/simple.concept.spec.md", "---\ntype: concept\n---\n# Simple\n## Purpose\nServe a purpose.\n## Actions\n### Run\nPerform behavior.\n")
+	conformanceWrite(t, root, "specs/concepts/simple.concept.spec.md", "---\ntype: concept-spec\n---\n# Simple\n## Purpose\nServe a purpose.\n## Actions\n### Run\nPerform behavior.\n")
 	conformanceWrite(t, root, "specs/system.spec.md", `---
-type: system
+type: system-spec
 ---
 # Example
 ## Purpose
@@ -240,7 +240,7 @@ func TestCompositionRejectsForeignSystemUsesAndLocalNameCollisions(t *testing.T)
 	t.Run("foreign system use", func(t *testing.T) {
 		root := compositionFixture(t)
 		conformanceWrite(t, root, "other/specs/system.spec.md", `---
-type: system
+type: system-spec
 ---
 # Other
 ## Purpose
@@ -273,7 +273,7 @@ S.
 	t.Run("duplicate names", func(t *testing.T) {
 		root := t.TempDir()
 		conformanceWrite(t, root, "specs/concepts/duplicate.concept.spec.md", `---
-type: concept
+type: concept-spec
 ---
 # Duplicate
 ## Type parameters

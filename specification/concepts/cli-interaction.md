@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: concept
+type: concept-spec-report
+documents: "../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#command-invocation"
 ---
 # Command Invocation
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Purpose
 
@@ -27,10 +27,14 @@ outputs, formats and exit statuses.
 
 ### Invoke
 
+<!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#invoke"} -->
+
 Submit a supported operation and its arguments. Invalid invocation syntax produces
 an error result rather than performing the requested operation.
 
 ### Observe the result
+
+<!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#observe-the-result"} -->
 
 Read the output and error streams and the exit status when the process completes.
 A successful invocation reports exit status 0; specification findings and invocation

@@ -24,7 +24,7 @@ type metadata struct {
 }
 
 const Template = `---
-type: concept
+type: concept-spec
 ---
 
 # New concept

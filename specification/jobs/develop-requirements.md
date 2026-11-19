@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: job
+type: job-spec-report
+documents: "../../specs/jobs/develop-requirements.job.spec.md#develop-requirements"
 ---
 # Develop Requirements
 
-[dotspec](<../../SPEC.md>) · [Contents](<../index.md>)
+[dotspec](<../../SPEC.md>)
 
 ## Job
 
@@ -40,6 +40,8 @@ those needs.
 
 ### Determine the scope
 
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#determine-the-scope"} -->
+
 **ID:** determine-scope
 **Stage:** define
 
@@ -51,6 +53,8 @@ Establish the change's boundaries and the decisions the requirements must suppor
   of the proposed change differently.
 
 ### Identify stakeholders and sources
+
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#identify-stakeholders-and-sources"} -->
 
 **ID:** identify-stakeholders
 **Stage:** locate
@@ -65,6 +69,8 @@ Identify affected people and sources of relevant needs, constraints, and evidenc
 
 ### Organize the available information
 
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#organize-the-available-information"} -->
+
 **ID:** organize-information
 **Stage:** prepare
 
@@ -75,6 +81,8 @@ Organize needs, evidence, constraints, and assumptions so they can be considered
 - **OUT-006:** Minimize the time needed to find evidence supporting a stated need.
 
 ### Establish readiness to specify
+
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#establish-readiness-to-specify"} -->
 
 **ID:** establish-readiness
 **Stage:** confirm
@@ -89,6 +97,8 @@ and identify any assumptions that must remain explicit.
 
 ### Formulate the requirements
 
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#formulate-the-requirements"} -->
+
 **ID:** formulate-requirements
 **Stage:** execute
 
@@ -101,6 +111,8 @@ and assess.
   interpretations of the intended behavior.
 
 ### Evaluate the requirements
+
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#evaluate-the-requirements"} -->
 
 **ID:** evaluate-requirements
 **Stage:** monitor
@@ -116,6 +128,8 @@ complete enough for the change, and possible to verify.
 
 ### Resolve gaps and disagreements
 
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#resolve-gaps-and-disagreements"} -->
+
 **ID:** resolve-gaps
 **Stage:** modify
 
@@ -127,6 +141,8 @@ Revisit earlier steps as needed.
 - **OUT-010:** Minimize the time needed to resolve a disagreement about intended behavior.
 
 ### Establish the agreed baseline
+
+<!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#establish-the-agreed-baseline"} -->
 
 **ID:** establish-baseline
 **Stage:** conclude

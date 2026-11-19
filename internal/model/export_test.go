@@ -44,7 +44,7 @@ func TestExportDirectoryImageAndNativeFragments(t *testing.T) {
 		}
 	}
 	files := map[string][]byte{
-		"specs/concepts/media.concept.spec.md": []byte("---\ntype: concept\n---\n# Media\n## Purpose\nInspect sources.\n## State\n![Image](../../assets/pixel.bin)\n[Directory](../../assets/)\n[Native selector](../../contract.txt#rule)\n## Actions\nRead.\n## Operational principles\nFollow links.\n"),
+		"specs/concepts/media.concept.spec.md": []byte("---\ntype: concept-spec\n---\n# Media\n## Purpose\nInspect sources.\n## State\n![Image](../../assets/pixel.bin)\n[Directory](../../assets/)\n[Native selector](../../contract.txt#rule)\n## Actions\nRead.\n## Operational principles\nFollow links.\n"),
 		"assets/pixel.bin":                     {0, 1, 0xff, 0x0d, 0x0a},
 		"contract.txt":                         []byte("native selector semantics\n"),
 	}
@@ -88,7 +88,7 @@ func TestExportDoesNotSkipInaccessibleParentSystem(t *testing.T) {
 	if output, err := exec.Command("git", "-C", dir, "init", "-q").CombinedOutput(); err != nil {
 		t.Fatalf("git init: %v %s", err, output)
 	}
-	body := []byte("---\ntype: system\n---\n# System\n## Purpose\nRead.\n## Scope\nLocal.\n")
+	body := []byte("---\ntype: system-spec\n---\n# System\n## Purpose\nRead.\n## Scope\nLocal.\n")
 	for _, path := range []string{"specs/system.spec.md", "middle/child/specs/system.spec.md"} {
 		full := filepath.Join(dir, path)
 		if err := os.MkdirAll(filepath.Dir(full), 0o755); err != nil {
@@ -125,9 +125,9 @@ func TestExportReferencedClassificationDoesNotSkipNearerBoundary(t *testing.T) {
 		t.Fatalf("git init: %v %s", err, output)
 	}
 	files := map[string]string{
-		"specs/system.spec.md":                                       "---\ntype: system\n---\n# Root\n## Purpose\nRead.\n## Scope\nLocal.\n## Quality attributes\n### Useful\n**ID:** useful\nA concern.\n",
-		"consumer/specs/concepts/entry.concept.spec.md":              "---\ntype: concept\n---\n# Entry\n## Purpose\nRead.\n## State\n[Target](../../../middle/child/specs/requirements/target.requirement.spec.md)\n## Actions\nRead.\n## Operational principles\nRead a target.\n",
-		"middle/child/specs/requirements/target.requirement.spec.md": "---\ntype: requirement\nquality_attributes: [useful]\n---\n# Target\n## Criterion\nA criterion.\n",
+		"specs/system.spec.md":                                       "---\ntype: system-spec\n---\n# Root\n## Purpose\nRead.\n## Scope\nLocal.\n## Quality attributes\n### Useful\n**ID:** useful\nA concern.\n",
+		"consumer/specs/concepts/entry.concept.spec.md":              "---\ntype: concept-spec\n---\n# Entry\n## Purpose\nRead.\n## State\n[Target](../../../middle/child/specs/requirements/target.requirement.spec.md)\n## Actions\nRead.\n## Operational principles\nRead a target.\n",
+		"middle/child/specs/requirements/target.requirement.spec.md": "---\ntype: requirement-spec\nquality_attributes: [useful]\n---\n# Target\n## Criterion\nA criterion.\n",
 	}
 	for path, data := range files {
 		full := filepath.Join(dir, path)

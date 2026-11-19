@@ -1,5 +1,5 @@
 ---
-type: system
+type: system-spec
 ---
 
 # dotspec

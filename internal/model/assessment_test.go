@@ -136,11 +136,11 @@ func TestMeasurementReviewAgreesAcrossCommandsAndModel(t *testing.T) {
 			if err := os.MkdirAll(dir, 0755); err != nil {
 				t.Fatal(err)
 			}
-			source := "---\ntype: requirement\n---\n# Latency\n## Statement\nThe service must respond within the agreed bound.\n" + tc.body
+			source := "---\ntype: requirement-spec\n---\n# Latency\n## Statement\nThe service must respond within the agreed bound.\n" + tc.body
 			if err := os.WriteFile(filepath.Join(dir, "latency.requirement.spec.md"), []byte(source), 0644); err != nil {
 				t.Fatal(err)
 			}
-			if err := os.WriteFile(filepath.Join(root, "specs", "system.spec.md"), []byte("---\ntype: system\n---\n# Service\n## Purpose\nServe requests.\n## Scope\nRequest handling.\n"), 0644); err != nil {
+			if err := os.WriteFile(filepath.Join(root, "specs", "system.spec.md"), []byte("---\ntype: system-spec\n---\n# Service\n## Purpose\nServe requests.\n## Scope\nRequest handling.\n"), 0644); err != nil {
 				t.Fatal(err)
 			}
 			native, err := obligation.Parse([]byte(source), "requirement")

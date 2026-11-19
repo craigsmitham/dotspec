@@ -10,7 +10,7 @@ An accepted order identifies the quantities reserved for its customer.
 Keep reservation outcomes explicit so retries can distinguish existing reservations from new requests.
 -- specs/concepts/reservation.concept.spec.md --
 ---
-type: concept
+type: concept-spec
 id: reservation
 ---
 
@@ -44,7 +44,7 @@ Finalize an existing hold for its claimant.
 Remove an existing hold and restore its quantity to availability.
 -- specs/requirements/reserve-stock.requirement.spec.md --
 ---
-type: requirement
+type: requirement-spec
 id: reserve-stock
 ---
 
@@ -75,7 +75,7 @@ Prevent confirmation of orders that cannot be fulfilled from available stock.
 Submit concurrent orders against limited stock and verify that accepted quantities never exceed stock.
 -- specs/system.spec.md --
 ---
-type: system
+type: system-spec
 id: store
 ---
 

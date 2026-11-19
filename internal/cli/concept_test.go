@@ -109,7 +109,7 @@ func TestConceptUsageAndFailureChannels(t *testing.T) {
 			t.Fatalf("structural error %v: %d %q %q", args, code, out, errOut)
 		}
 	}
-	writeFixture(t, "specs/concepts/draft.concept.spec.md", "---\ntype: concept\n---\n# Draft\n")
+	writeFixture(t, "specs/concepts/draft.concept.spec.md", "---\ntype: concept-spec\n---\n# Draft\n")
 	if code, out, errOut := invoke("concept", "check", "draft"); code != 0 || errOut != "" || !strings.Contains(out, "advice [concept.purpose]") {
 		t.Fatalf("draft should succeed with advice: %d %q %q", code, out, errOut)
 	}

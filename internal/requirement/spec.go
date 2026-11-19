@@ -19,7 +19,7 @@ const Collection = "requirements"
 var Layout = specfile.Layout{Kind: "requirement", Collection: Collection, Suffix: Suffix}
 
 const Template = `---
-type: requirement
+type: requirement-spec
 ---
 
 # New requirement
@@ -45,7 +45,7 @@ Describe how to check a system or process realization against the statement and 
 // QualityTemplate is the quality preset. It prompts for an explicit criterion;
 // the result is an ordinary requirement, classified by its quality attributes.
 const QualityTemplate = `---
-type: requirement
+type: requirement-spec
 ---
 
 # New quality requirement

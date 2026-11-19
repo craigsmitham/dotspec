@@ -38,14 +38,14 @@ system is an error.
 
 ## Use-case spec format
 
-Only `type: use-case` frontmatter and one nonempty document-level H1 are required.
+Only `type: use-case-spec` frontmatter and one nonempty document-level H1 are required.
 An optional frontmatter `id` uses the same syntax as job IDs; other frontmatter
 keys are rejected. The file slug remains the CLI selector. IDs are local to the
 document and are not checked for uniqueness across files.
 
 ```markdown
 ---
-type: use-case
+type: use-case-spec
 id: check-specifications
 ---
 

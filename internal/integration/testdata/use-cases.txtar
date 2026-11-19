@@ -91,7 +91,7 @@ stdout '"rule": "reference.unresolved"'
 ! stderr .
 -- branch.md --
 ---
-type: use-case
+type: use-case-spec
 ---
 # Reserve equipment
 ## Primary actor
@@ -107,21 +107,21 @@ Customer requests equipment; the business confirms a reservation.
 Handling unresolved: investigate whether to offer a substitute.
 -- branch-link.md --
 ---
-type: use-case
+type: use-case-spec
 ---
 # Arrange equipment for a job
 ## Related behavior
 [Substitution question](reserve.use-case.spec.md#preferred-equipment-unavailable).
 -- broken-branch-link.md --
 ---
-type: use-case
+type: use-case-spec
 ---
 # Arrange equipment for a job
 ## Related behavior
 [Substitution question](reserve.use-case.spec.md#missing-branch).
 -- draft.md --
 ---
-type: use-case
+type: use-case-spec
 ---
 # An unfinished interaction
 -- broken.md --

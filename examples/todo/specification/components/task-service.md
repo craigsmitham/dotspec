@@ -1,11 +1,11 @@
 ---
-type: specification-section
 generated_by: dotspec
-subject_kind: component
+type: component-spec-report
+documents: "../../specs/system.spec.md#task-service"
 ---
 # Task service
 
-[Personal task list](<../../SPEC.md>) · [Contents](<../index.md>)
+[Personal task list](<../../SPEC.md>)
 
 ## Part of
 

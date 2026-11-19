@@ -1,7 +1,7 @@
 ---
-type: requirements-specification
 generated_by: dotspec
-subject_kind: system
+type: system-spec-report
+documents: "specs/system.spec.md#personal-task-list"
 ---
 # Personal task list
 
@@ -15,7 +15,7 @@ One person's list on one computer. The browser submits forms to a local service.
 
 ---
 
-[Requirements](<specification/requirements/index.md>) · [Full contents](<specification/index.md>) · [Requirements review](<specification/review.md>)
+[Requirements](<#requirements>) · [Requirements review](<specification/review.md>)
 
 ## Features
 
@@ -24,6 +24,8 @@ One person's list on one computer. The browser submits forms to a local service.
 ## Goals
 
 ### Resume unfinished work
+
+<!-- dotspec-doc {"type":"goal-spec-report","documents":"specs/system.spec.md#resume-unfinished-work"} -->
 
 Reduce the effort of working out what still needs attention.
 
@@ -40,6 +42,8 @@ Sharing lists, synchronizing devices and recovering from loss of the database fi
 ## Assumptions
 
 ### Same local storage
+
+<!-- dotspec-doc {"type":"assumption-spec-report","documents":"specs/system.spec.md#same-local-storage"} -->
 
 The person returns to the same writable database file.
 
@@ -67,14 +71,9 @@ The [walkthrough](<README.md>) identifies the setup, checks and validation exerc
 
 ## Quality attributes
 
-### Durability
-
-**ID:** durability
-
-Preservation of acknowledged work between local sessions.
-[Source definition](<specification/quality-models/personal-data-quality.md#durability>).
-
-**Classifies** · [Preserve tasks across restart](<specification/requirements/preserve-tasks-across-restart.md>)
+| Quality attribute | Description |
+| --- | --- |
+| [Durability](<specification/quality-attributes.md#durability>) | Preservation of acknowledged work between local sessions. |
 
 ## Validation plan
 
@@ -99,23 +98,33 @@ entering it again. Ask what they expected to find on returning.
 With consent, record the build, task outcome, any help given and the participant's
 explanation. Review mismatches before deciding whether the workflow meets the need.
 
-## Explore this system
+## Business rules
 
-- [Business rules](<specification/business-rules/index.md>)
-- [Components](<specification/components/index.md>)
-- [Concept uses](<specification/concept-uses/index.md>)
-- [Concepts](<specification/concepts/index.md>)
-- [Features](<specification/features/index.md>)
-- [Interfaces](<specification/interfaces/index.md>)
-- [Jobs](<specification/jobs/index.md>)
-- [Quality models](<specification/quality-models/index.md>)
-- [Requirements](<specification/requirements/index.md>)
-- [Use cases](<specification/use-cases/index.md>)
-- [Full specification contents](<specification/index.md>)
-- [Requirements review](<specification/review.md>)
+- [Completion preserves a commitment](<specification/business-rules/completion-preserves-a-commitment.md>)
+
+## Concepts
+
+- [Checklist](<specification/concepts/checklist.md>)
+
+## Jobs
+
+- [Resume interrupted work](<specification/jobs/resume-interrupted-work.md>)
+
+## Quality models
+
+- [Personal data quality](<specification/quality-models/personal-data-quality.md>)
+
+## Requirements
+
+- [Keep recorded work available](<specification/use-cases/return-to-my-list.md#keep-recorded-work-available>)
+- [Preserve tasks across restart](<specification/requirements/preserve-tasks-across-restart.md>)
+
+## Use cases
+
+- [Return to my list](<specification/use-cases/return-to-my-list.md>)
 
 ## Related specifications
 
-- Applies here — [Completion preserves a commitment](<specification/business-rules/completion-preserves-a-commitment.md>)
+**Applies here** · [Completion preserves a commitment](<specification/business-rules/completion-preserves-a-commitment.md>)
 
 [Edit source](<specs/system.spec.md#personal-task-list>)

@@ -11,11 +11,11 @@ import (
 func relationshipFixture(t *testing.T) string {
 	t.Helper()
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system\n---\n# Authoring context\n## Purpose\nProvide context.\n## Scope\nThis repository.\n")
-	conformanceWrite(t, root, "external/specs/system.spec.md", "---\ntype: system\n---\n# Delivery system\n## Purpose\nDeliver links.\n## Scope\nExternal delivery.\n")
-	conformanceWrite(t, root, "specs/jobs/share.job.spec.md", "---\ntype: job\n---\n# Share information\n## Job\nWhen collaborating, I want to share information so others can act.\n## Steps\n### Send a link\nSend the address to a recipient.\n## Outcomes\n- Minimize time to share a usable address.\n")
+	conformanceWrite(t, root, "specs/system.spec.md", "---\ntype: system-spec\n---\n# Authoring context\n## Purpose\nProvide context.\n## Scope\nThis repository.\n")
+	conformanceWrite(t, root, "external/specs/system.spec.md", "---\ntype: system-spec\n---\n# Delivery system\n## Purpose\nDeliver links.\n## Scope\nExternal delivery.\n")
+	conformanceWrite(t, root, "specs/jobs/share.job.spec.md", "---\ntype: job-spec\n---\n# Share information\n## Job\nWhen collaborating, I want to share information so others can act.\n## Steps\n### Send a link\nSend the address to a recipient.\n## Outcomes\n- Minimize time to share a usable address.\n")
 	conformanceWrite(t, root, "specs/use-cases/share.use-case.spec.md", `---
-type: use-case
+type: use-case-spec
 ---
 # Share a link
 ## Goal
@@ -35,7 +35,7 @@ The actor submits the address through the delivery service.
 The recipient can read the address.
 `)
 	conformanceWrite(t, root, "specs/business-rules/consent.business-rule.spec.md", `---
-type: business-rule
+type: business-rule-spec
 ---
 # Recipient consent
 ## Statement
@@ -46,7 +46,7 @@ The recipient must have consented to delivery.
 This rule applies to sharing links.
 `)
 	conformanceWrite(t, root, "specs/requirements/delivery.requirement.spec.md", `---
-type: requirement
+type: requirement-spec
 ---
 # Confirm delivery
 ## Statement

@@ -27,12 +27,32 @@ Commit the authored changes, `SPEC.md` and the generated Markdown in `specificat
 | Destination | Contents |
 | --- | --- |
 | `SPEC.md` | Root system overview and links into its specification |
-| `specification/index.md` | Contents across the selected project by system and kind |
-| `specification/<kind>/index.md` | Members of one collection in the root system |
-| `specification/systems/<child>/SPEC.md` | Overview of a declared child system with collections in its directory |
+| `specification/quality-attributes.md` | The system's declared quality attributes, with their full definitions, hierarchy, qualifications, and links to classified requirements |
+| `SPEC.md#requirements` | Requirements and embedded obligations in this system, each linked to its canonical page or passage |
+| `specification/systems/<child>/SPEC.md` | Child system overview with its own local directories |
 | `specification/review.md` | Review items with links to passages for follow-up |
 
-Generated Markdown frontmatter identifies a document role. A page about a requirement uses `type: specification-section` and `subject_kind: requirement`. The authoritative authored requirement retains `type: requirement`. See the [documentation model](model/index.md#specificationdocumenttype).
+In a system overview, select an attribute in the name-and-description table to read its full entry. A child system with declared attributes has its own detail page beside its `SPEC.md`. On a requirement page, read the statement, applicability, criterion, and verification plan together. Links beside the requirement lead back to the precise attribute or use-case passage.
+
+For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.md) opens with the goal of its grouped use case. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
+
+Each system lists its immediate child systems and the specifications in its scope.
+Each component lists its structural children, declared interfaces, and requirements
+that explicitly apply to it. A promise applicable to two components appears in
+both directories and leads to the same page or heading.
+
+Authored Markdown uses `<subject>-spec`. The corresponding generated Markdown
+uses `<subject>-spec-report`. For example, `system.spec.md` declares
+`type: system-spec`, and its generated `SPEC.md` declares `type: system-spec-report`.
+
+The report’s `documents` value is a relative URI to its subject’s authored
+heading. A component declared inside the system spec gets a
+`component-spec-report` pointing to that heading. For a report rendered as a
+section, the same two fields appear in a `dotspec-doc` HTML comment beneath its
+heading. A shared quality-attributes file holds one `quality-attribute-spec-report`
+per entry. The file’s `generated_by: dotspec` marker identifies generator
+ownership. The project-wide `requirements-review-report` links to the passages
+that need review. See the [document model](model/index.md#generateddocument).
 
 ## Check a workspace
 

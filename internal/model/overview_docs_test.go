@@ -70,7 +70,7 @@ Repeat a submission and count orders.
 
 ### Inventory`)
 	conformanceWrite(t, root, "worker/specs/system.spec.md", `---
-type: system
+type: system-spec
 id: worker
 ---
 # Worker

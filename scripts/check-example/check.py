@@ -134,6 +134,18 @@ def spec_journey(cli, tmp):
     cli("spec build", cwd=project)
     feature = follow(root, "Pick up where I left off")
     promise = follow(feature, "Preserve tasks across restart")
+    interaction = follow(feature, "Return to my list")
+    goal = interaction.read_text(encoding="utf-8").split("## Goal\n", 1)[1].split("\n## ", 1)[0].strip()
+    assert goal in feature.read_text(encoding="utf-8").split("## Groups", 1)[0]
+    qualities = follow(root, "Durability")
+    assert follow(promise, "Durability") == qualities
+    for page in (root, promise):
+        assert any(target == qualities and fragment == "durability"
+                   for _, target, fragment, _ in markdown_links(page))
+    assert follow(qualities, "Preserve tasks across restart") == promise
+    assert follow(qualities, "Source definition") == project / "specification/quality-models/personal-data-quality.md"
+    headings = re.findall(r"^## (.+)$", promise.read_text(encoding="utf-8"), re.M)
+    assert headings[:4] == ["Statement", "Applies to", "Criterion", "Verification plan"]
     text = " ".join(promise.read_text(encoding="utf-8").split())
     for phrase in ("acknowledges a change", "same database", "identity, title and completion state",
                    "Deleted entries must stay absent", "Zero discrepancies across the two views"):
@@ -143,21 +155,33 @@ def spec_journey(cli, tmp):
     assert any(target == project / REQUIREMENT for _, target, _, _ in targets)
     assert any("return-to-my-list" in target.name and fragment.endswith("keep-recorded-work-available")
                for _, target, fragment, _ in targets), "missing refinement of the scenario clause"
-    contents = project / "specification/index.md"
-    index = project / "specification/requirements/index.md"
-    assert any(target == contents for _, target, _, _ in markdown_links(root))
-    assert any(target == index for _, target, _, _ in markdown_links(contents))
-    assert follow(index, "Preserve tasks across restart") == promise
+    directory = root.read_text(encoding="utf-8").split("## Requirements\n", 1)[1].split("\n## ", 1)[0]
+    assert "[Preserve tasks across restart](<specification/requirements/preserve-tasks-across-restart.md>)" in directory
+    assert follow(root, "Preserve tasks across restart") == promise
+    assert not list((project / "specification").rglob("index.md"))
     cli("check", cwd=project)
-    for page, rule in [(promise, "spec.content"), (feature, "spec.navigation")]:
+    for page, rule in [(promise, "spec.content"), (feature, "spec.navigation"),
+                       (qualities, "spec.content"), (root, "spec.navigation"),
+                       (root, "spec.membership"), (qualities, "spec.document-type"),
+                       (promise, "spec.document-type")]:
         body = page.read_text(encoding="utf-8")
-        if page == promise:
+        if rule == "spec.document-type":
+            if page == qualities:
+                changed = body.replace('system.spec.md#durability"', 'system.spec.md#personal-task-list"')
+            else:
+                changed = body.replace("type: requirement-spec-report", "type: feature-spec-report")
+        elif rule == "spec.membership":
+            changed = body.replace("\n- [Preserve tasks across restart]", "\n\nSee [Preserve tasks across restart]")
+        elif page == promise:
             changed, count = re.subn(r"same\s+database", "different database", body)
             assert count >= 1
+        elif page == qualities:
+            changed = body.replace("acknowledged work", "submitted work")
         else:
             changed = body
-            for label, target, _, link in markdown_links(feature):
-                if target == promise:
+            destination = qualities if page == root else promise
+            for label, target, _, link in markdown_links(page):
+                if target == destination:
                     changed = changed.replace(link, label)
         assert changed != body
         page.write_text(changed, encoding="utf-8")

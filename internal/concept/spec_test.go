@@ -9,10 +9,10 @@ import (
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 )
 
-const draft = "---\ntype: concept\n---\n# Job Map\n"
+const draft = "---\ntype: concept-spec\n---\n# Job Map\n"
 
 const example = `---
-type: concept
+type: concept-spec
 id: job-map
 ---
 # Job Map
@@ -95,15 +95,15 @@ func TestStructureAndSourceLocations(t *testing.T) {
 		line, column, related int
 	}{
 		{"frontmatter", "# Draft", "metadata.frontmatter", 1, 1, 0},
-		{"type", strings.Replace(draft, "type: concept", "type: job", 1), "metadata.type", 2, 7, 0},
-		{"unknown field", strings.Replace(draft, "type: concept", "type: concept\ndefined_by: other", 1), "metadata.invalid", 3, 1, 0},
-		{"invalid ID", strings.Replace(draft, "type: concept", "type: concept\nid: concept.task", 1), "identity.invalid", 3, 5, 0},
-		{"wrong ID type", strings.Replace(draft, "type: concept", "type: concept\nid: [task]", 1), "metadata.invalid", 3, 1, 0},
+		{"type", strings.Replace(draft, "type: concept-spec", "type: job-spec", 1), "metadata.type", 2, 7, 0},
+		{"unknown field", strings.Replace(draft, "type: concept-spec", "type: concept-spec\ndefined_by: other", 1), "metadata.invalid", 3, 1, 0},
+		{"invalid ID", strings.Replace(draft, "type: concept-spec", "type: concept-spec\nid: concept.task", 1), "identity.invalid", 3, 5, 0},
+		{"wrong ID type", strings.Replace(draft, "type: concept-spec", "type: concept-spec\nid: [task]", 1), "metadata.invalid", 3, 1, 0},
 		{"duplicate section", draft + "## Purpose\n\n## Purpose\n", "structure.duplicate-section", 7, 1, 5},
 		{"wrong level", draft + "### Purpose\n", "structure.section-level", 5, 1, 0},
 		{"second title", draft + "# Another\n", "structure.title", 5, 1, 4},
 		{"empty title", strings.Replace(draft, "# Job Map", "#", 1), "structure.title", 4, 1, 0},
-		{"before title", "---\ntype: concept\n---\n## Purpose\n# Title\n", "structure.section-order", 4, 1, 0},
+		{"before title", "---\ntype: concept-spec\n---\n## Purpose\n# Title\n", "structure.section-order", 4, 1, 0},
 		{"unresolved reference", draft + "## Notes\n[Unknown](#missing)\n", "reference.unresolved", 6, 1, 0},
 		{"unicode reference", draft + "## Notes\né [Unknown](#missing)\n", "reference.unresolved", 6, 3, 0},
 		{"malformed fragment", draft + "## Notes\n[Unknown](#bad%XX)\n", "reference.invalid", 6, 1, 0},
@@ -160,7 +160,7 @@ func FuzzParse(f *testing.F) {
 }
 
 func TestOperationalPrinciplesAliasAndDuplicate(t *testing.T) {
-	source := "---\ntype: concept\n---\n# Example\n## Type parameters\n### Item\nAn identity.\n## Introduced types\n### Token\nA token.\n## Operational principles\n### First story\nOne.\n### Second story\nTwo.\n"
+	source := "---\ntype: concept-spec\n---\n# Example\n## Type parameters\n### Item\nAn identity.\n## Introduced types\n### Token\nA token.\n## Operational principles\n### First story\nOne.\n### Second story\nTwo.\n"
 	spec, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)

@@ -9,10 +9,10 @@ import (
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 )
 
-const draft = "---\ntype: use-case\n---\n# Check specifications\n"
+const draft = "---\ntype: use-case-spec\n---\n# Check specifications\n"
 
 const example = `---
-type: use-case
+type: use-case-spec
 id: check-specifications
 ---
 # Check specifications
@@ -128,13 +128,13 @@ func TestStructureAndSourceLocations(t *testing.T) {
 		line, column, related int
 	}{
 		{"frontmatter", "# Draft", "metadata.frontmatter", 1, 1, 0},
-		{"type", strings.Replace(draft, "type: use-case", "type: job", 1), "metadata.type", 2, 7, 0},
-		{"unknown field", strings.Replace(draft, "type: use-case", "type: use-case\nextra: true", 1), "metadata.invalid", 3, 1, 0},
-		{"invalid ID", strings.Replace(draft, "type: use-case", "type: use-case\nid: bad/id", 1), "identity.invalid", 3, 5, 0},
+		{"type", strings.Replace(draft, "type: use-case-spec", "type: job-spec", 1), "metadata.type", 2, 7, 0},
+		{"unknown field", strings.Replace(draft, "type: use-case-spec", "type: use-case-spec\nextra: true", 1), "metadata.invalid", 3, 1, 0},
+		{"invalid ID", strings.Replace(draft, "type: use-case-spec", "type: use-case-spec\nid: bad/id", 1), "identity.invalid", 3, 5, 0},
 		{"duplicate section", draft + "## Goal\n\n## Goal\n", "structure.duplicate-section", 7, 1, 5},
 		{"wrong level", draft + "### Goal\n", "structure.section-level", 5, 1, 0},
 		{"second title", draft + "# Another\n", "structure.title", 5, 1, 4},
-		{"before title", "---\ntype: use-case\n---\n## Goal\n# Title\n", "structure.section-order", 4, 1, 0},
+		{"before title", "---\ntype: use-case-spec\n---\n## Goal\n# Title\n", "structure.section-order", 4, 1, 0},
 		{"unresolved reference", draft + "## Notes\n[Unknown](#missing)\n", "reference.unresolved", 6, 1, 0},
 		{"unicode reference", draft + "## Notes\né [Unknown](#missing)\n", "reference.unresolved", 6, 3, 0},
 		{"malformed fragment", draft + "## Notes\n[Unknown](#bad%XX)\n", "reference.invalid", 6, 1, 0},

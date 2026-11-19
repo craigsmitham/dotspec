@@ -64,7 +64,7 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 func TestGeneratedSpecificationMultipleRoots(t *testing.T) {
 	root := projectFixture(t)
 	writeFixture(t, filepath.Join(root, "dotspec.yaml"), "name: tool\ngenerated_spec: true\n")
-	writeFixture(t, filepath.Join(root, "other/specs/system.spec.md"), "---\ntype: system\n---\n# Other\n\n## Purpose\nOther work.\n\n## Scope\nOther only.\n")
+	writeFixture(t, filepath.Join(root, "other/specs/system.spec.md"), "---\ntype: system-spec\n---\n# Other\n\n## Purpose\nOther work.\n\n## Scope\nOther only.\n")
 	code, out, errOut := invoke("check")
 	if code != 1 || errOut != "" || !strings.Contains(out, "root") {
 		t.Fatalf("expected ambiguous root finding: %d %s %s", code, out, errOut)
@@ -75,11 +75,11 @@ func TestGeneratedSpecScopedSystemsAndComponents(t *testing.T) {
 	root := projectFixture(t)
 	writeFixture(t, filepath.Join(root, "dotspec.yaml"), "name: tool\ngenerated_spec: true\n")
 	writeFixture(t, filepath.Join(root, "README.md"), "# Tool\n\n[Read the spec](SPEC.md).\n")
-	writeFixture(t, filepath.Join(root, "specs/system.spec.md"), "---\ntype: system\n---\n# Tool\n\n## Purpose\nProcess work.\n\n## Scope\nQueued work.\n\n## Notes\n[Introduction](../README.md).\n")
-	writeFixture(t, filepath.Join(root, "worker/specs/system.spec.md"), "---\ntype: system\n---\n# Worker\n\n## Purpose\nClaim jobs.\n\n## Scope\nExecutors.\n\n## Part of\n[Tool](../../specs/system.spec.md).\n")
+	writeFixture(t, filepath.Join(root, "specs/system.spec.md"), "---\ntype: system-spec\n---\n# Tool\n\n## Purpose\nProcess work.\n\n## Scope\nQueued work.\n\n## Notes\n[Introduction](../README.md).\n")
+	writeFixture(t, filepath.Join(root, "worker/specs/system.spec.md"), "---\ntype: system-spec\n---\n# Worker\n\n## Purpose\nClaim jobs.\n\n## Scope\nExecutors.\n\n## Part of\n[Tool](../../specs/system.spec.md).\n")
 	const grandchild = "worker/queues/specs"
 	writeFixture(t, filepath.Join(root, grandchild, "system.spec.md"), `---
-type: system
+type: system-spec
 ---
 # Queue
 
@@ -99,13 +99,40 @@ Persistence.
 #### Part of
 [Queue](#queue).
 
+#### Required interfaces
+
+##### Storage
+
+Read persisted jobs.
+
+#### Provided interfaces
+
+##### Submission
+
+Accept jobs.
+
 ### Journal
 
 #### Part of
 [Intake](#intake).
+
+## Quality attributes
+
+### Availability
+**ID:** availability
+
+Accept work while either A | B is available.
+
+#### Limit
+Maintenance windows are excluded.
+
+#### Open questions
+- Which outages count?
+- How is uptime measured?
 `)
 	writeFixture(t, filepath.Join(root, grandchild, "requirements/retain.requirement.spec.md"), `---
-type: requirement
+type: requirement-spec
+quality_attributes: [availability]
 ---
 # Retain jobs
 
@@ -137,14 +164,17 @@ The [Demo system](../../../../apps/demo/specs/system.spec.md) supplies examples.
 			}
 		}
 	}
-	reader("specification/systems/index.md", "worker/SPEC.md")
-	reader("specification/systems/worker/systems/index.md", "queue/SPEC.md")
-	reader("specification/systems/worker/SPEC.md", "[Tool](<../../../SPEC.md>) · [Full contents]")
-	reader(section+"SPEC.md", "[Worker](<../../SPEC.md>) · [Requirements](<requirements/index.md>) · [Full contents]")
-	reader(section+"components/journal.md", "intake.md", "../requirements/retain-jobs.md")
-	reader(section+"components/intake.md", "journal.md", "../requirements/retain-jobs.md")
-	reader(section+"requirements/retain-jobs.md", "../components/intake.md", "../components/journal.md", "apps/demo/specs/system.spec.md")
-	reader("specification/index.md", "systems/worker/systems/queue/requirements/index.md")
+	reader("SPEC.md", "## Child systems\n\n- [Worker](<specification/systems/worker/SPEC.md>)")
+	reader("specification/systems/worker/SPEC.md", "[Tool](<../../../SPEC.md>)", "## Child systems\n\n- [Queue](<systems/queue/SPEC.md>)")
+	reader(section+"SPEC.md", "[Worker](<../../SPEC.md>) · [Requirements](<#requirements>)", "## Components\n\n- [Intake](<components/intake.md>)", "## Requirements\n\n- [Retain jobs](<requirements/retain-jobs.md>)")
+	reader(section+"SPEC.md", "[Availability](<quality-attributes.md#availability>) | Accept work while either A &#124; B is available. |")
+	reader(section+"quality-attributes.md", "## Availability", "### Limit", "Maintenance windows are excluded.", "[Retain jobs](<requirements/retain-jobs.md>)")
+	reader("specification/review.md",
+		"[Which outages count?](<systems/worker/systems/queue/quality-attributes.md#open-questions>)",
+		"[How is uptime measured?](<systems/worker/systems/queue/quality-attributes.md#open-questions>)")
+	reader(section+"components/journal.md", "intake.md", "## Applicable requirements\n\n- [Retain jobs](<../requirements/retain-jobs.md>)")
+	reader(section+"components/intake.md", "## Required interfaces\n\n- [Storage](<../interfaces/storage.md>)", "## Provided interfaces\n\n- [Submission](<../interfaces/submission.md>)", "## Components\n\n- [Journal](<journal.md>)", "## Applicable requirements\n\n- [Retain jobs](<../requirements/retain-jobs.md>)")
+	reader(section+"requirements/retain-jobs.md", "../components/intake.md", "../components/journal.md", "apps/demo/specs/system.spec.md", "../quality-attributes.md#availability")
 	if _, err := os.Stat(filepath.Join(root, "apps/demo/SPEC.md")); !os.IsNotExist(err) {
 		t.Fatalf("referenced project must not acquire generated files: %v", err)
 	}
@@ -154,7 +184,7 @@ func TestGeneratedSystemReadingLayout(t *testing.T) {
 	t.Chdir(t.TempDir())
 	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
 	opening := `---
-type: system
+type: system-spec
 ---
 # Notes
 
@@ -183,8 +213,8 @@ Individual authors.
 		return string(data)
 	}
 	page := build()
-	nav := "[Full contents](<specification/index.md>) · [Requirements review](<specification/review.md>)"
-	if !strings.Contains(page, "Local files.\n\n---\n\n"+nav+"\n\n## Explore this system") || strings.Count(page, nav) != 1 {
+	nav := "[Requirements review](<specification/review.md>)"
+	if !strings.Contains(page, "Local files.\n\n---\n\n"+nav+"\n\n[Edit source]") || strings.Count(page, nav) != 1 {
 		t.Fatal(page)
 	}
 
@@ -209,18 +239,33 @@ An example:
 	writeFixture(t, "specs/system.spec.md", strings.ReplaceAll(opening+attributes, "\n", "\r\n"))
 	for name, labels := range map[string]string{"Save": "[durability, reliability]", "Restore": "[durability]"} {
 		writeFixture(t, filepath.Join("specs/requirements", strings.ToLower(name)+".requirement.spec.md"),
-			"---\ntype: requirement\nquality_attributes: "+labels+"\n---\n# "+name+"\n\n## Statement\nKeep the note.\n")
+			"---\ntype: requirement-spec\nquality_attributes: "+labels+"\n---\n# "+name+"\n\n## Statement\nKeep the note.\n")
 	}
 	page = build()
 	for _, want := range []string{
-		"Local files.\n\n---\n\n[Requirements](<specification/requirements/index.md>) · " + nav + "\n\n## Quality attributes",
-		"**Sub-attribute of:** reliability\\\n**ID:** durability",
-		"~~~md\n**ID:** example\n**Sub-attribute of:** example-parent\n~~~",
-		"**Classifies** · [Save](<specification/requirements/save.md>)",
-		"**Classifies**\n\n- [Restore](<specification/requirements/restore.md>)\n- [Save](<specification/requirements/save.md>)",
+		"Local files.\n\n---\n\n[Requirements](<#requirements>) · " + nav + "\n\n## Quality attributes",
+		"| Quality attribute | Description |",
+		"| [Durability](<specification/quality-attributes.md#durability>) | The ID: below is permanent. |",
 	} {
 		if !strings.Contains(page, want) {
-			t.Errorf("missing %q in:\n%s", want, page)
+			t.Errorf("overview missing %q:\n%s", want, page)
+		}
+	}
+	if strings.Contains(page, "**Classifies**") || strings.Contains(page, "**ID:**") {
+		t.Fatalf("overview repeated attribute detail:\n%s", page)
+	}
+	attributesPage, err := os.ReadFile("specification/quality-attributes.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{
+		"**Sub-attribute of:** reliability\\\n**ID:** durability",
+		"~~~md\n**ID:** example\n**Sub-attribute of:** example-parent\n~~~",
+		"**Classifies** · [Save](<requirements/save.md>)",
+		"**Classifies**\n\n- [Restore](<requirements/restore.md>)\n- [Save](<requirements/save.md>)",
+	} {
+		if !strings.Contains(string(attributesPage), want) {
+			t.Errorf("detail missing %q:\n%s", want, attributesPage)
 		}
 	}
 }

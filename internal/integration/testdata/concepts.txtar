@@ -55,7 +55,7 @@ stderr 'metadata.frontmatter'
 ! stdout .
 -- draft.md --
 ---
-type: concept
+type: concept-spec
 ---
 # An unfinished concept
 -- broken.md --
