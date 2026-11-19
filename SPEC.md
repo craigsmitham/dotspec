@@ -23,7 +23,9 @@ The system includes the authoring framework, the `dotspec` CLI, and the
 [structural checks](<specification/use-cases/check-specifications.md>), and a
 [generated requirements specification](<specification/requirements/read-and-verify-the-generated-requirements-specification.md>).
 
-[Contents](<specification/index.md>) · [Review](<specification/review.md>)
+---
+
+[Requirements](<specification/requirements/index.md>) · [Full contents](<specification/index.md>) · [Requirements review](<specification/review.md>)
 
 ## Goals
 
@@ -96,19 +98,20 @@ How effectively contributors can author, inspect, and maintain specifications.
 
 ### Diagnosability
 
-**ID:** diagnosability
+**ID:** diagnosability\
 **Sub-attribute of:** usability
 
 How effectively findings help contributors understand and locate specification
 problems.
 
-**Classifies** · [Continue checking after a structural error](<specification/requirements/continue-after-invalid-spec.md>)
+**Classifies**
 
-**Classifies** · [Diagnostic severity is available without styling](<specification/requirements/diagnostic-severity.md>)
+- [Continue checking after a structural error](<specification/requirements/continue-after-invalid-spec.md>)
+- [Diagnostic severity is available without styling](<specification/requirements/diagnostic-severity.md>)
 
 ### Accessibility
 
-**ID:** accessibility
+**ID:** accessibility\
 **Sub-attribute of:** usability
 
 How effectively people with differing abilities and ways of accessing output
@@ -125,28 +128,29 @@ conditions.
 
 ### Repeatability
 
-**ID:** repeatability
+**ID:** repeatability\
 **Sub-attribute of:** reliability
 
 Whether equivalent inspections under unchanged conditions produce equivalent
 reports.
 
-**Classifies** · [Read and verify the generated requirements specification](<specification/requirements/read-and-verify-the-generated-requirements-specification.md>)
+**Classifies**
 
-**Classifies** · [Repeated inspections produce equivalent reports](<specification/requirements/repeatable-inspection.md>)
+- [Read and verify the generated requirements specification](<specification/requirements/read-and-verify-the-generated-requirements-specification.md>)
+- [Repeated inspections produce equivalent reports](<specification/requirements/repeatable-inspection.md>)
 
 ### Source preservation
 
-**ID:** source-preservation
+**ID:** source-preservation\
 **Sub-attribute of:** reliability
 
 Whether inspection preserves the source material it examines.
 
-**Classifies** · [Inspection preserves source material](<specification/requirements/inspection-preserves-source.md>)
+**Classifies**
 
-**Classifies** · [Preserve source and represented content in model exports](<specification/requirements/model-source-fidelity.md>)
-
-**Classifies** · [Reject initialization at an existing target](<specification/requirements/reject-existing-target.md>)
+- [Inspection preserves source material](<specification/requirements/inspection-preserves-source.md>)
+- [Preserve source and represented content in model exports](<specification/requirements/model-source-fidelity.md>)
+- [Reject initialization at an existing target](<specification/requirements/reject-existing-target.md>)
 
 ### Performance
 
@@ -157,7 +161,7 @@ workloads.
 
 ### Responsiveness
 
-**ID:** responsiveness
+**ID:** responsiveness\
 **Sub-attribute of:** performance
 
 The elapsed time before an operation delivers its result.

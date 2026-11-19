@@ -41,6 +41,7 @@ type heading struct {
 	start, end, bodyEnd, level          int
 	owner                               *subject
 	obligation                          bool
+	qualityAttribute                    bool
 }
 
 type subject struct {
@@ -181,8 +182,13 @@ func (p *planner) read() error {
 		p.elements[id(r)] = r
 		sf := p.sources[attr(r, "source_document")]
 		h := headingByNode[nameNode(r)]
-		if h != nil && attr(r, "kind") == "ObligationClause" {
-			h.obligation = true
+		if h != nil {
+			switch attr(r, "kind") {
+			case "ObligationClause":
+				h.obligation = true
+			case "QualityAttribute":
+				h.qualityAttribute = true
+			}
 		}
 		if sf == nil || families[attr(r, "kind")] == "" || h == nil {
 			continue

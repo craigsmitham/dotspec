@@ -12,6 +12,8 @@ import (
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/yuin/goldmark/ast"
+	"github.com/yuin/goldmark/text"
 )
 
 const contentsPath = "specification/index.md"
@@ -97,20 +99,52 @@ func (p *planner) renderSubject(s *subject) {
 	}
 	w := p.newPage(s.file, typ, kindName(s.kind()), s.name.title)
 	w.titleMarkdown = p.headingMarkdown(w, s, s.name)
-	if s.kind() != "System" {
+	headings := readingOrder(s)
+	if s.kind() == "System" {
+		// Keep the opening sections with all their descendants, even when
+		// Scope is the last authored section on the page.
+		end := slices.IndexFunc(headings, func(h *heading) bool {
+			return h.level == s.name.level+1 && h.title != "Purpose" && h.title != "Scope"
+		})
+		if end < 0 {
+			end = len(headings)
+		}
+		p.renderHeadings(w, s, headings[:end])
+		headings = headings[end:]
+		var nav []string
+		if s != p.governing {
+			nav = append(nav, w.link(s.system.name.title, s.system.file))
+		}
+		if c := p.collections[path.Join(s.dir, "requirements", "index.md")]; c != nil {
+			nav = append(nav, w.link("Requirements", c.file))
+		}
+		nav = append(nav, w.link("Full contents", contentsPath), w.link("Requirements review", reviewPath))
+		w.text("---")
+		w.text(strings.Join(nav, " · "))
+	} else {
 		w.text(w.link(s.system.name.title, s.system.file) + " · " + w.link("Contents", contentsPath))
 	}
-	navigationShown := false
-	for _, h := range readingOrder(s) {
-		if s.kind() == "System" && !navigationShown && h != s.name && h.title != "Purpose" && h.title != "Scope" {
-			var nav []string
-			if s != p.governing {
-				nav = append(nav, w.link(s.system.name.title, s.system.file))
+	p.renderHeadings(w, s, headings)
+	if s.kind() == "System" {
+		w.heading("Explore this system")
+		w.out.WriteByte('\n')
+		for _, file := range slices.Sorted(maps.Keys(p.collections)) {
+			c := p.collections[file]
+			if c.system == s {
+				fmt.Fprintln(&w.out, "- "+w.link(sentenceCase(c.label), c.file))
 			}
-			nav = append(nav, w.link("Contents", contentsPath), w.link("Review", reviewPath))
-			w.text(strings.Join(nav, " · "))
-			navigationShown = true
 		}
+		fmt.Fprintln(&w.out, "- "+w.link("Full specification contents", contentsPath))
+		fmt.Fprintln(&w.out, "- "+w.link("Requirements review", reviewPath))
+	}
+	p.relationships(w, s)
+	p.appendFootnotes(w, s)
+	w.text(w.sourceLink("Edit source", s.source.path, s.name.anchor))
+	w.finish()
+}
+
+func (p *planner) renderHeadings(w *writer, s *subject, headings []*heading) {
+	for _, h := range headings {
 		if h.owner != s {
 			if h.owner != nil && h.owner.name == h && p.ownerPage(p.elements[attr(h.owner.r, "owner")]) == s {
 				w.text("- " + w.link(h.title, h.owner.file))
@@ -132,22 +166,6 @@ func (p *planner) renderSubject(s *subject) {
 			}
 		}
 	}
-	if s.kind() == "System" {
-		w.heading("Explore this system")
-		w.out.WriteByte('\n')
-		for _, file := range slices.Sorted(maps.Keys(p.collections)) {
-			c := p.collections[file]
-			if c.system == s {
-				fmt.Fprintln(&w.out, "- "+w.link(sentenceCase(c.label), c.file))
-			}
-		}
-		fmt.Fprintln(&w.out, "- "+w.link("Full specification contents", contentsPath))
-		fmt.Fprintln(&w.out, "- "+w.link("Requirements review", reviewPath))
-	}
-	p.relationships(w, s)
-	p.appendFootnotes(w, s)
-	w.text(w.sourceLink("Edit source", s.source.path, s.name.anchor))
-	w.finish()
 }
 
 // readingOrder promotes a few entire authored sections for the document's
@@ -259,7 +277,42 @@ func sentenceCase(s string) string {
 }
 
 func (p *planner) body(w *writer, sf *sourceFile, h *heading) {
-	w.text(p.rebasedText(w, sf, h.end, h.bodyEnd))
+	var breaks []replacement
+	if h.qualityAttribute {
+		breaks = attributeFieldBreaks(sf.data, h.end, h.bodyEnd)
+	}
+	w.text(p.rebasedText(w, sf, h.end, h.bodyEnd, breaks...))
+}
+
+// The authoring syntax recognizes fields only on lines of direct paragraphs.
+// Leave matching text in examples, block quotes and nested lists untouched.
+func attributeFieldBreaks(source string, start, end int) []replacement {
+	body := []byte(source[start:end])
+	doc := markdownParser.Parse(text.NewReader(body))
+	var breaks []replacement
+	for block := doc.FirstChild(); block != nil; block = block.NextSibling() {
+		if block.Kind() != ast.KindParagraph {
+			continue
+		}
+		previousFieldEnd := -1
+		for i := 0; i < block.Lines().Len(); i++ {
+			segment := block.Lines().At(i)
+			line := strings.TrimRight(source[start+segment.Start:start+segment.Stop], "\r\n")
+			trimmed := strings.TrimSpace(line)
+			if !strings.HasPrefix(trimmed, "**ID:**") && !strings.HasPrefix(trimmed, "**Sub-attribute of:**") {
+				previousFieldEnd = -1
+				continue
+			}
+			if previousFieldEnd >= 0 {
+				breaks = append(breaks, replacement{previousFieldEnd, previousFieldEnd, "\\"})
+			}
+			previousFieldEnd = start + segment.Start + len(line)
+			if strings.HasSuffix(line, "  ") || strings.HasSuffix(line, "\\") {
+				previousFieldEnd = -1 // already a Markdown hard break
+			}
+		}
+	}
+	return breaks
 }
 
 type replacement struct {
@@ -267,10 +320,9 @@ type replacement struct {
 	text       string
 }
 
-// Change only link destinations. Their intervals are disjoint even when an
-// image is the label of a link. All surrounding source Markdown stays intact.
-func (p *planner) rebasedText(w *writer, sf *sourceFile, start, end int) string {
-	var edits []replacement
+// Rebase link destinations alongside any requested field breaks. Link edits
+// are disjoint even when an image is the label of a link.
+func (p *planner) rebasedText(w *writer, sf *sourceFile, start, end int, edits ...replacement) string {
 	for _, n := range sf.links {
 		a, b := position(n, "start"), position(n, "end")
 		raw := attr(n, "destination")
@@ -406,7 +458,7 @@ func (p *planner) embeddedRelationships(w *writer, h *heading) {
 			break
 		}
 	}
-	var links []string
+	byLabel := map[string][]string{}
 	for _, r := range p.routes[h.node] {
 		if r.target == w.file {
 			continue
@@ -423,12 +475,19 @@ func (p *planner) embeddedRelationships(w *writer, h *heading) {
 			}
 		}
 		if !found {
-			links = append(links, "**"+r.label+"** · "+w.link(r.title, r.target))
+			byLabel[r.label] = append(byLabel[r.label], w.link(r.title, r.target))
 		}
 	}
-	slices.Sort(links)
-	for _, line := range slices.Compact(links) {
-		w.text(line)
+	for _, label := range slices.Sorted(maps.Keys(byLabel)) {
+		links := byLabel[label]
+		slices.Sort(links)
+		links = slices.Compact(links)
+		if len(links) == 1 {
+			w.text("**" + label + "** · " + links[0])
+		} else {
+			w.text("**" + label + "**")
+			w.text("- " + strings.Join(links, "\n- "))
+		}
 	}
 }
 func (p *planner) relationships(w *writer, s *subject) {

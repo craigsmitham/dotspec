@@ -31,21 +31,21 @@ Consider the capabilities and results people need from the system.
 
 ### Feature sets
 
-**ID:** feature-sets
+**ID:** feature-sets\
 **Sub-attribute of:** functionality
 
 Which groups of functions are needed to support the intended work?
 
 ### Capabilities
 
-**ID:** capabilities
+**ID:** capabilities\
 **Sub-attribute of:** functionality
 
 What actions and results must the system make possible?
 
 ### Security
 
-**ID:** security
+**ID:** security\
 **Sub-attribute of:** functionality
 
 What protection and access controls must the system provide?
@@ -58,49 +58,49 @@ Consider how people discover, learn, and use the system, including its documenta
 
 ### Human factors
 
-**ID:** human-factors
+**ID:** human-factors\
 **Sub-attribute of:** usability
 
 How should the interaction accommodate the people and work environments involved?
 
 ### Aesthetics
 
-**ID:** aesthetics
+**ID:** aesthetics\
 **Sub-attribute of:** usability
 
 What expectations apply to the visual and sensory presentation?
 
 ### User-interface consistency
 
-**ID:** user-interface-consistency
+**ID:** user-interface-consistency\
 **Sub-attribute of:** usability
 
 Which interaction conventions should behave consistently across the product?
 
 ### Online and context-sensitive help
 
-**ID:** online-and-context-sensitive-help
+**ID:** online-and-context-sensitive-help\
 **Sub-attribute of:** usability
 
 What help must be available during a task and tailored to the current situation?
 
 ### Wizards and agents
 
-**ID:** wizards-and-agents
+**ID:** wizards-and-agents\
 **Sub-attribute of:** usability
 
 Which tasks need guided steps or delegated assistance?
 
 ### User documentation
 
-**ID:** user-documentation
+**ID:** user-documentation\
 **Sub-attribute of:** usability
 
 What instructions and reference information do users need?
 
 ### Training materials
 
-**ID:** training-materials
+**ID:** training-materials\
 **Sub-attribute of:** usability
 
 What learning resources are needed for users to become effective?
@@ -113,35 +113,35 @@ Consider consistent behavior, availability, and recovery when things go wrong.
 
 ### Frequency and severity of failure
 
-**ID:** failure-frequency-and-severity
+**ID:** failure-frequency-and-severity\
 **Sub-attribute of:** reliability
 
 How often may failures occur, and which consequences distinguish their severity?
 
 ### Recoverability
 
-**ID:** recoverability
+**ID:** recoverability\
 **Sub-attribute of:** reliability
 
 What must be restored after failure, and how will successful recovery be demonstrated?
 
 ### Accuracy
 
-**ID:** accuracy
+**ID:** accuracy\
 **Sub-attribute of:** reliability, performance
 
 What accuracy must results retain during continued operation and under the specified workload?
 
 ### Predictability
 
-**ID:** predictability
+**ID:** predictability\
 **Sub-attribute of:** reliability
 
 Which behaviors must remain consistent across repeated operations and changing conditions?
 
 ### Mean time between failures
 
-**ID:** mean-time-between-failures
+**ID:** mean-time-between-failures\
 **Sub-attribute of:** reliability
 
 What observation period and failure definition will be used to assess intervals between failures?
@@ -154,49 +154,49 @@ Consider response times, throughput, and resource use for realistic workloads.
 
 ### Speed
 
-**ID:** speed
+**ID:** speed\
 **Sub-attribute of:** performance
 
 How quickly must the system complete its work under the expected load?
 
 ### Efficiency
 
-**ID:** efficiency
+**ID:** efficiency\
 **Sub-attribute of:** performance
 
 What useful output is expected for the resources consumed?
 
 ### Availability
 
-**ID:** availability
+**ID:** availability\
 **Sub-attribute of:** performance
 
 What readiness for use must be maintained under the specified workload?
 
 ### Throughput
 
-**ID:** throughput
+**ID:** throughput\
 **Sub-attribute of:** performance
 
 How much work must the system complete per unit of time?
 
 ### Response time
 
-**ID:** response-time
+**ID:** response-time\
 **Sub-attribute of:** performance
 
 How long may a caller wait for a response?
 
 ### Recovery time
 
-**ID:** recovery-time
+**ID:** recovery-time\
 **Sub-attribute of:** performance
 
 How quickly must useful operation resume following a disruption?
 
 ### Resource usage
 
-**ID:** resource-usage
+**ID:** resource-usage\
 **Sub-attribute of:** performance
 
 What resource budgets apply while the system is operating?
@@ -209,63 +209,63 @@ Consider how the system will be tested, configured, maintained, and supported th
 
 ### Testability
 
-**ID:** testability
+**ID:** testability\
 **Sub-attribute of:** supportability
 
 What controls and observations are needed to test the system?
 
 ### Extensibility
 
-**ID:** extensibility
+**ID:** extensibility\
 **Sub-attribute of:** supportability
 
 What additions should be possible without extensive rework?
 
 ### Adaptability
 
-**ID:** adaptability
+**ID:** adaptability\
 **Sub-attribute of:** supportability
 
 Which changes in environment or use should the system accommodate?
 
 ### Maintainability
 
-**ID:** maintainability
+**ID:** maintainability\
 **Sub-attribute of:** supportability
 
 What effort and confidence are expected when diagnosing and changing the system?
 
 ### Compatibility
 
-**ID:** compatibility
+**ID:** compatibility\
 **Sub-attribute of:** supportability
 
 Which existing products and versions must continue to work with the system?
 
 ### Configurability
 
-**ID:** configurability
+**ID:** configurability\
 **Sub-attribute of:** supportability
 
 What behavior must operators or users be able to configure?
 
 ### Serviceability
 
-**ID:** serviceability
+**ID:** serviceability\
 **Sub-attribute of:** supportability
 
 What support and repair tasks must be practical during the product life?
 
 ### Installability
 
-**ID:** installability
+**ID:** installability\
 **Sub-attribute of:** supportability
 
 What is required to install, update, and remove the system successfully?
 
 ### Localizability
 
-**ID:** localizability
+**ID:** localizability\
 **Sub-attribute of:** supportability
 
 Which languages and regional conventions must be supported without redesign?

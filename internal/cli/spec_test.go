@@ -139,12 +139,89 @@ The [Demo system](../../../../apps/demo/specs/system.spec.md) supplies examples.
 	}
 	reader("specification/systems/index.md", "worker/SPEC.md")
 	reader("specification/systems/worker/systems/index.md", "queue/SPEC.md")
+	reader("specification/systems/worker/SPEC.md", "[Tool](<../../../SPEC.md>) · [Full contents]")
+	reader(section+"SPEC.md", "[Worker](<../../SPEC.md>) · [Requirements](<requirements/index.md>) · [Full contents]")
 	reader(section+"components/journal.md", "intake.md", "../requirements/retain-jobs.md")
 	reader(section+"components/intake.md", "journal.md", "../requirements/retain-jobs.md")
 	reader(section+"requirements/retain-jobs.md", "../components/intake.md", "../components/journal.md", "apps/demo/specs/system.spec.md")
 	reader("specification/index.md", "systems/worker/systems/queue/requirements/index.md")
 	if _, err := os.Stat(filepath.Join(root, "apps/demo/SPEC.md")); !os.IsNotExist(err) {
 		t.Fatalf("referenced project must not acquire generated files: %v", err)
+	}
+}
+
+func TestGeneratedSystemReadingLayout(t *testing.T) {
+	t.Chdir(t.TempDir())
+	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
+	opening := `---
+type: system
+---
+# Notes
+
+## Scope
+One notebook.
+
+### Storage
+Local files.
+
+## Purpose
+Keep notes.
+
+### Audience
+Individual authors.
+`
+	writeFixture(t, "specs/system.spec.md", opening)
+	build := func() string {
+		t.Helper()
+		if code, out, errOut := invoke("spec", "build"); code != 0 {
+			t.Fatal(code, out, errOut)
+		}
+		data, err := os.ReadFile("SPEC.md")
+		if err != nil {
+			t.Fatal(err)
+		}
+		return string(data)
+	}
+	page := build()
+	nav := "[Full contents](<specification/index.md>) · [Requirements review](<specification/review.md>)"
+	if !strings.Contains(page, "Local files.\n\n---\n\n"+nav+"\n\n## Explore this system") || strings.Count(page, nav) != 1 {
+		t.Fatal(page)
+	}
+
+	attributes := `
+## Quality attributes
+### Reliability
+**ID:** reliability
+
+### Durability
+The **ID:** below is permanent.
+
+**Sub-attribute of:** reliability
+**ID:** durability
+
+An example:
+
+~~~md
+**ID:** example
+**Sub-attribute of:** example-parent
+~~~
+`
+	writeFixture(t, "specs/system.spec.md", strings.ReplaceAll(opening+attributes, "\n", "\r\n"))
+	for name, labels := range map[string]string{"Save": "[durability, reliability]", "Restore": "[durability]"} {
+		writeFixture(t, filepath.Join("specs/requirements", strings.ToLower(name)+".requirement.spec.md"),
+			"---\ntype: requirement\nquality_attributes: "+labels+"\n---\n# "+name+"\n\n## Statement\nKeep the note.\n")
+	}
+	page = build()
+	for _, want := range []string{
+		"Local files.\n\n---\n\n[Requirements](<specification/requirements/index.md>) · " + nav + "\n\n## Quality attributes",
+		"**Sub-attribute of:** reliability\\\n**ID:** durability",
+		"~~~md\n**ID:** example\n**Sub-attribute of:** example-parent\n~~~",
+		"**Classifies** · [Save](<specification/requirements/save.md>)",
+		"**Classifies**\n\n- [Restore](<specification/requirements/restore.md>)\n- [Save](<specification/requirements/save.md>)",
+	} {
+		if !strings.Contains(page, want) {
+			t.Errorf("missing %q in:\n%s", want, page)
+		}
 	}
 }
 

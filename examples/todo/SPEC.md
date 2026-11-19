@@ -13,7 +13,9 @@ Help a person pick up unfinished work after an interruption.
 
 One person's list on one computer. The browser submits forms to a local service.
 
-[Contents](<specification/index.md>) · [Review](<specification/review.md>)
+---
+
+[Requirements](<specification/requirements/index.md>) · [Full contents](<specification/index.md>) · [Requirements review](<specification/review.md>)
 
 ## Features
 
