@@ -1,7 +1,7 @@
 # Specification model
 
 [metamodel.yaml](metamodel.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.19.0-draft`; the JSON
+specification snapshots. The model version is `0.20.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/reference/specification-model.md)
@@ -109,7 +109,7 @@ array bounds.
 
 ## Subsets, classifications, and documentation views
 
-The canonical model declares seven named subsets through LinkML `subsets`.
+The canonical model declares eight named subsets through LinkML `subsets`.
 Each subset has a description and one `classification` annotation: `core`,
 `supporting`, or `generic`. Classification describes the subset's role in
 **dotspec**, not the strategic importance of an individual authored requirement.
@@ -183,8 +183,7 @@ content field; they cannot both appear in one document. Existing prose remains
 valid and no synchronization semantics are inferred.
 
 `dotspec model docs` generates concept references, system compositions and dependency
-diagrams. `mise run generate` maintains the complete example at
-[Concept design example](../examples/todo/views/concept-design.md). Re-export
+diagrams. Readers can also inspect the [generated Checklist section](../examples/todo/specification/concepts/checklist.md). Re-export
 older snapshots with the new CLI; saved JSON is not silently migrated. See
 [concept authoring](../docs/handbook/concepts.md) and the
 [concept design rationale](../docs/reference/specification-model.md#concept-definitions-and-composition).
@@ -234,7 +233,7 @@ The `0.8.0-draft` model and `dotspec-markdown/7` add layered traceability:
 Re-export source with this version; saved snapshots are not silently migrated.
 See [Requirements layers](../docs/handbook/requirements-layers.md),
 [authoring relationships](../docs/handbook/relationships.md), and the
-[generated traceability example](../examples/todo/views/requirements-traceability.md).
+[source-linked restart requirement](../examples/todo/specification/requirements/preserve-tasks-across-restart.md).
 
 
 The `0.9.0-draft` model and `dotspec-markdown/8` unify obligation capabilities:
@@ -280,7 +279,7 @@ The `0.10.0-draft` model and `dotspec-markdown/9` introduced explicit specificat
   inherited requirements or satisfaction.
 
 See [authoring relationships](../docs/handbook/relationships.md#describe-systems-components-and-features)
-and the [generated overview](../examples/todo/views/system-overview.md).
+and the [generated overview](../examples/todo/SPEC.md).
 
 
 ## Jobs, user needs and capabilities
@@ -505,3 +504,10 @@ is reported and retained as an extension section.
 
 There are no compatibility aliases. Saved snapshots are not silently migrated;
 re-export source specifications with the current CLI.
+
+The supporting **Specification documentation** subset defines `SpecificationDocument`
+and its `SpecificationDocumentType` enumeration. These describe the generated
+Markdown pages readers navigate. Snapshot `Document` records describe acquired
+source syntax. `SourceDocument.selected` identifies primary discovery inputs so
+referenced context can be cited outside the generated system tree. See the
+[generated specification guide](../docs/reference/generated-specification.md).

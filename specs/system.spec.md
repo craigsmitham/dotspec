@@ -18,8 +18,9 @@ work dotspec supports.
 
 The system includes the authoring framework, the `dotspec` CLI, and the
 `*.spec.md` files it manages. The CLI supports
-[source discovery](use-cases/discover-specification-sources.use-case.spec.md)
-and [structural checks](use-cases/check-specifications.use-case.spec.md).
+[source discovery](use-cases/discover-specification-sources.use-case.spec.md),
+[structural checks](use-cases/check-specifications.use-case.spec.md), and a
+[generated requirements specification](requirements/generated-specification.requirement.spec.md).
 
 ## Goals
 

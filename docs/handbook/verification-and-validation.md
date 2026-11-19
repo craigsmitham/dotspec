@@ -142,6 +142,8 @@ A future evidence model must preserve their subject, basis, revision, context,
 method, result and limits. No `verified` or `validated` boolean is inferred from
 links, a plan, a passing test or a merge.
 
-See [Review requirements](review.md) for authoring plans and reading
-advisory findings, and the [generated review example](../../examples/todo/views/requirements-review.md)
-for the distinctions in use.
+See [Review requirements](review.md) for authoring plans and reading advisory
+findings. Compare the [restart verification plan](../../examples/todo/specification/requirements/preserve-tasks-across-restart.md#verification-plan)
+with the [system validation exercise](../../examples/todo/SPEC.md#validation-plan).
+One tests preservation of acknowledged tasks, and the other asks a participant
+to resume interrupted work.

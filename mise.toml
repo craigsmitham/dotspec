@@ -33,8 +33,8 @@ description = "Run unit and process-level CLI tests"
 run = "go test ./..."
 
 [tasks.generate]
-description = "Regenerate the guide map, CLI reference, command gallery, and To-do model views"
-run = "go run ./scripts/generate"
+description = "Regenerate the guide map, CLI reference, command gallery, and both project specifications"
+run = ["go run ./scripts/generate", "go run . spec build --project dotspec", "go run . spec build --project todo"]
 
 [tasks.generated-check]
 description = "Verify generated docs and examples without writing"

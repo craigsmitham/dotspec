@@ -238,7 +238,7 @@ order. Applicability, application dependencies and participation are separate cl
 ## Generate traceability views
 
 ```sh
-dotspec model trace --path . --relative-to views > views/traceability.md
+dotspec model trace
 ```
 
 The result includes a layered Mermaid diagram, motivation links, behavioral
@@ -249,9 +249,10 @@ output is redirected. A nonzero authoring exit still produces the review documen
 
 Missing motivation or verification guidance is advisory. A verification plan is
 not an execution result, and a path through the graph does not prove satisfaction.
-The [generated To-do example](../../examples/todo/views/requirements-traceability.md)
-shows the complete flow; [Requirements layers](requirements-layers.md) explains
-why these distinctions matter.
+The [To-do restart requirement](../../examples/todo/specification/requirements/preserve-tasks-across-restart.md)
+links to the scenario obligation it refines, the storage assumption it relies on
+and the desired outcome it supports. See [Requirements layers](requirements-layers.md)
+for the meaning of those relationships.
 
 
 ## Describe systems, components and features
@@ -362,15 +363,17 @@ and quality classification in show, list, check and model export. It does not se
 ### Review the overview
 
 ```sh
-dotspec model overview --path . --relative-to views > views/system-overview.md
+dotspec model overview
 ```
 
-The [generated example](../../examples/todo/views/system-overview.md) shows explicit part
-relationships, feature groups, directly applicable obligations, whether
-verification guidance and a criterion are recorded, concept uses, descriptions
-and native references. Feature
-involvement is derived only from direct applicability on grouped obligations;
-transitive membership or component parentage does not invent additional links.
+The command reports explicit part relationships, feature groups, directly
+applicable obligations, verification and criterion coverage, concept uses,
+descriptions and native references. To read the same subjects in context, open
+the [To-do system specification](../../examples/todo/SPEC.md) and follow the
+feature, component or interface that interests you.
+
+The command derives feature involvement from the direct applicability targets
+of grouped obligations.
 The overview distinguishes declaration location, selected system and directory
 context, and retains unresolved authored references in the descriptions and
 inspection findings. It makes no completeness, allocation or satisfaction claim.
@@ -387,7 +390,7 @@ boundary intent while allowing implementation structure to change:
 For enabling abilities that may combine people, procedures and technology, use
 the optional [Capability model](jobs.md#connect-needs-to-capabilities-and-specifications).
 Its dependencies and providers are distinct from feature membership and structural
-parentage. The [To-do needs map](../../examples/todo/views/needs-map.md) shows the job,
+parentage. The [To-do job section](../../examples/todo/specification/jobs/resume-interrupted-work.md) shows the job,
 its steps and the outcome supported by the restart requirement.
 
 ## Review boundaries and scenario grounding

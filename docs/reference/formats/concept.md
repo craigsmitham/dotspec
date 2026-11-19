@@ -118,11 +118,13 @@ Model export resolves these declarations within the acquired reference scope and
 reports mistyped or incorrectly scoped references. Unresolved drafts retain their
 source. No field or link implies atomicity, execution, full type-expression checking,
 or verified behavior. See [Develop concepts](../../handbook/concepts.md) for the
-complete Markdown conventions and [the generated example](../../../examples/todo/views/concept-design.md)
-for the checklist definition, effects table and its use in the task list.
+complete Markdown conventions. The [Checklist section](../../../examples/todo/specification/concepts/checklist.md)
+includes the effects table and a link to the concept's named use. To inspect
+all concept definitions and their composition together, run the following from the
+repository root.
 
 ```sh
-dotspec model docs --path examples/todo --relative-to examples/todo/views
+dotspec model docs --project todo
 ```
 
 See [Job Map](../../../specs/concepts/job-map.concept.spec.md) and

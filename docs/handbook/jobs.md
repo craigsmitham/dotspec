@@ -133,7 +133,7 @@ organize model definitions, not the strategic importance of each capability.
 ## Generate a needs-to-specification view
 
 ```sh
-dotspec model needs --path . --relative-to views > views/needs.md
+dotspec model needs
 ```
 
 The generated Markdown includes a Mermaid diagram, linked relationship table,
@@ -141,7 +141,7 @@ full statements and evidence. Short labels keep the graph readable; the
 statements retain their meaning. Unresolved references remain in the authored
 narrative and inspection findings rather than becoming invented edges.
 
-Inspect the [generated example](../../examples/todo/views/needs-map.md) and its
-[source system](../../examples/todo/specs/system.spec.md). Follow the restart
-requirement to the desired outcome and the step where it applies. It covers only acquired records within
-normal model-export discovery and direct-reference bounds.
+In the [To-do job](../../examples/todo/specification/jobs/resume-interrupted-work.md#less-reconstruction),
+Less reconstruction links to the restart requirement that supports it and the job
+step where it applies. To inspect contributions together in the diagram and table,
+run `dotspec model needs --project todo` from the dotspec repository.

@@ -23,6 +23,15 @@ def validate_groups(catalog: dict[str, Any]) -> None:
             if subset not in subsets:
                 raise ValueError(f'{name}: unknown subset {subset}')
 
+    document_types = set(catalog['enums']['SpecificationDocumentType'])
+    domain_names = set(catalog['enums']['SpecificationType'])
+    for name, cls in catalog['classes'].items():
+        if any(subsets[s]['classification'] == 'core' for s in cls['subsets']):
+            domain_names.add(re.sub(r'(?<!^)(?=[A-Z])', '-', name).lower())
+    overlaps = sorted(document_types & domain_names)
+    if overlaps:
+        raise ValueError(f'generated document types overlap core kinds: {overlaps}')
+
 
 def validate_declared_memberships(raw_model: dict[str, Any]) -> None:
     subsets = raw_model.get('subsets', {})

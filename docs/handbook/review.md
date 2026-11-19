@@ -8,20 +8,21 @@ produces advisory prompts; it does not make a draft that conforms to the authori
 ## Generate the review
 
 ```sh
-dotspec model review --path . --relative-to views > views/requirements-review.md
-dotspec model pegs --path . --relative-to views > views/pegs.md
+dotspec model review
+dotspec model pegs
 ```
 
-Create the output directory first if necessary. `--relative-to` identifies where
-the generated Markdown will be read, so source and contract links work there.
-Regenerate these files after changing specifications; edit their source documents.
+Both commands write the selected perspective to standard output. If you save one
+to a file, pass its containing directory with `--relative-to` so readers can
+follow source and contract links.
 
-The [To-do review](../../examples/todo/views/requirements-review.md) connects the goal
-of resuming unfinished work with the return scenario and its obligations. Follow
-the recorded relationships, then compare the restart verification plan with the
-participant exercise. [Verification and validation](verification-and-validation.md).
+For a project with a generated spec, `dotspec spec build` writes the review index
+with the other pages. The [To-do review index](../../examples/todo/specification/review.md)
+links to the restart verification plan and the participant validation exercise.
+Read the methods in context and compare what each can demonstrate.
+[Verification and validation](verification-and-validation.md).
 
-The [PEGS example](../../examples/todo/views/pegs.md) arranges the same model into Project,
+`dotspec model pegs --project todo` arranges the example into Project,
 Environment, Goals and System reading perspectives. Business, user and software
 requirements remain the model's concern subsets. PEGS neither replaces those
 subsets nor introduces a required authoring order.
@@ -294,8 +295,9 @@ add one authored matrix under Effects table in a concept:
 The first row names columns and the first column names operations. Cells preserve
 full authored content, including formulas or links. **A blank cell is unspecified;
 it never means unchanged.** Say `unchanged` explicitly where preservation is
-intended. `dotspec model docs` renders the matrix, as in the
-[effects-table example](../../examples/todo/views/concept-design.md#effects-table).
+intended. The [Checklist effects table](../../examples/todo/specification/concepts/checklist.md#effects-table)
+shows what reopening an entry preserves. `dotspec model docs` also includes the matrix
+in its concept reference.
 
 This is an optional review aid. dotspec does not infer operations, query
 classifications, formal expressions or matrix entries from prose. The current

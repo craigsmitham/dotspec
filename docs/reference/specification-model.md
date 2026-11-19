@@ -13,7 +13,7 @@ The canonical [LinkML model](../../model/metamodel.yaml) defines the records and
 relationships. The [generated reference](model/index.md) describes
 every field. The [relationship reference](model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.19.0-draft`, `representation_version` is `0.1.0`, and
+`model_version` is `0.20.0-draft`, `representation_version` is `0.1.0`, and
 `mapping_profile` is `dotspec-markdown/14`.
 
 The [verification and validation vocabulary](../handbook/verification-and-validation.md)
@@ -23,10 +23,9 @@ separate through their owning fields and explicit subject and basis.
 
 ## Specification types and declared elements
 
-A specification is one authored `*.spec.md` document. Its root record is a
-`Specification`: a cohesive definition of a subject, behavior, obligation or
-classification scheme. There are seven specification types, and each corresponds
-to exactly one concrete `Specification` class:
+Each authored `*.spec.md` document has one root `Specification` record defining
+a subject, behavior, obligation or classification scheme. There are seven authored
+specification types, each corresponding to one concrete `Specification` class.
 
 | Specification type | Class |
 | --- | --- |
@@ -42,6 +41,12 @@ The `SpecificationType` enumeration lists these values, and a snapshot's
 `scope.selected_spec_types` records the types selected for an inspection. A
 quality requirement is a Requirement classified by `quality_attributes`, not
 another type. A record's `kind` names its class.
+
+The [generated requirements specification](generated-specification.md) draws on
+the snapshot. Its Markdown files carry a separate document `type` from the
+[`SpecificationDocumentType` vocabulary](model/index.md#specificationdocumenttype).
+For example, the generated restart page has document type `specification-section`
+and subject kind `requirement`.
 
 A System record describes the system within the specification; it is not a
 running system or deployment inventory. The same distinction applies to a
@@ -158,7 +163,7 @@ not a satisfying implementation. [Declare relationships](../handbook/relationshi
 provides the authoring forms and endpoint rules.
 
 ```sh
-dotspec model trace --path . --relative-to views > views/traceability.md
+dotspec model trace
 ```
 
 This command generates a Mermaid instance diagram and motivation, behavior,
@@ -168,8 +173,7 @@ of linked material. It preserves unresolved-reference and draft-review findings;
 missing motivation or check guidance is advisory. Checks, execution evidence,
 implementation satisfaction and achieved outcomes are distinct future relations,
 not conclusions inferred from reachability or existing Evidence prose.
-The [generated example](../../examples/todo/views/requirements-traceability.md) demonstrates
-these views from [authored specifications](../../examples/todo/README.md).
+The [restart requirement](../../examples/todo/specification/requirements/preserve-tasks-across-restart.md) lets readers follow individual relationships from [authored specifications](../../examples/todo/README.md).
 
 ## Concept definitions and composition
 
@@ -215,8 +219,11 @@ All these domain types belong to core `software-requirements`. The reuse sense o
 principles first, then state and actions, followed by system composition and
 application dependency diagrams. Use `--relative-to DIR` for the directory that will
 contain the Markdown; relative source links are rebased there. No files are written
-unless the caller redirects output. The [generated example](../../examples/todo/views/concept-design.md)
-comes from [authored example specifications](../../examples/todo/specs/system.spec.md).
+unless the caller redirects output.
+
+In the generated [Checklist section](../../examples/todo/specification/concepts/checklist.md),
+follow My checklist to its system-specific use. Run `dotspec model docs --project todo`
+to inspect the example's concept reference and composition together.
 The [authoring guide](../handbook/concepts.md) explains how to develop these descriptions.
 
 ## Use-case narratives
@@ -263,10 +270,11 @@ are advisory and do not invalidate drafts. `dotspec model pegs` assembles a
 Project, Environment, Goals, System reading perspective without replacing concern
 subsets or creating a project-management subsystem.
 
-Use the [review authoring guide](../handbook/review.md) for syntax and limitations,
-the [review example](../../examples/todo/views/requirements-review.md) to inspect the task list’s verification and validation plans, and the [PEGS example](../../examples/todo/views/pegs.md) to see the reading view.
+Use the [review authoring guide](../handbook/review.md) for syntax and limitations.
+The [To-do review index](../../examples/todo/specification/review.md) links to
+verification plans on obligations and the validation plan on the system overview.
 Optional concept effects matrices are included in `model docs`;
-the [checklist effects table](../../examples/todo/views/concept-design.md#effects-table) records which properties reopening preserves.
+the [checklist effects table](../../examples/todo/specification/concepts/checklist.md#effects-table) records which properties reopening preserves.
 
 ## Three connected representations
 
@@ -519,7 +527,7 @@ Generate a source-linked view of jobs, shared outcomes, progress cases, features
 requirements and optional capabilities:
 
 ```sh
-dotspec model needs --path . --relative-to views > views/needs.md
+dotspec model needs
 ```
 
 The diagram separates declaration from applicability, contribution from
@@ -528,4 +536,5 @@ statements and evidence accompany concise labels. Provider links describe only
 explicitly identified systems and components and are non-exhaustive.
 
 See [Jobs and user needs](../handbook/jobs.md) for authoring and method
-boundaries, and the [generated example](../../examples/todo/views/needs-map.md).
+boundaries. In the [To-do job section](../../examples/todo/specification/jobs/resume-interrupted-work.md#less-reconstruction),
+the outcome links to its supporting requirement and applicable job step.

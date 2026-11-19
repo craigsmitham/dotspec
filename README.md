@@ -18,5 +18,6 @@ Run `dotspec guide` to read the built-in handbook offline.
 ## Documentation
 
 - [Authoring handbook](docs/handbook/README.md) and [runnable To-do example](examples/todo/README.md)
+- [Generate a requirements specification](docs/reference/generated-specification.md) and [browse the To-do spec](examples/todo/SPEC.md)
 - [CLI reference](docs/reference/cli.md) and [documentation index](docs/README.md)
-- [dotspec's own specification](specs/system.spec.md) and [contributing guide](CONTRIBUTING.md)
+- [dotspec's requirements specification](SPEC.md) and [contributing guide](CONTRIBUTING.md)

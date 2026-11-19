@@ -11,8 +11,8 @@ stdout 'Define a criterion and distinguish a measure'
 stdout 'docs/handbook/requirements.md#define-or-reference-the-criterion-once'
 stdout 'examples  Browse the files bundled'
 status 2 dotspec guide --list quality
-exec dotspec guide examples/todo/views/requirements-traceability.md
-stdout 'Requirements traceability'
+exec dotspec guide examples/todo/SPEC.md
+stdout 'Personal task list'
 exec dotspec guide job
 stdout 'progress'
 exec dotspec guide use-case

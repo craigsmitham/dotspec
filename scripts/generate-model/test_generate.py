@@ -179,7 +179,7 @@ class ModelViewTests(unittest.TestCase):
     def test_groups_cover_every_class_and_keep_use_cases_in_software(self):
         from model_views import validate_groups
         validate_groups(self.catalog)
-        self.assertEqual(len(self.catalog['subsets']), 7)
+        self.assertEqual(len(self.catalog['subsets']), 8)
         self.assertEqual(self.catalog['classes']['UseCase']['subsets'], ['software-requirements'])
         self.assertEqual(self.catalog['classes']['BusinessRule']['subsets'], ['business-requirements'])
         self.assertEqual(self.catalog['classes']['Job']['subsets'], ['user-requirements'])
@@ -197,6 +197,13 @@ class ModelViewTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, message):
                 validate_groups(c)
 
+    def test_generated_document_kind_cannot_shadow_domain_kind(self):
+        from model_views import validate_groups
+        for kind in ('use-case', 'component', 'concept-action'):
+            c = copy.deepcopy(self.catalog)
+            c['enums']['SpecificationDocumentType'].append(kind)
+            with self.assertRaisesRegex(ValueError, 'overlap'):
+                validate_groups(c)
 
     def test_unknown_slot_subset_is_rejected(self):
         from model_views import validate_declared_memberships

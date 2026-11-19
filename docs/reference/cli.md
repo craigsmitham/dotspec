@@ -137,7 +137,7 @@ Check all supported specifications in a project subtree
 dotspec check [flags]
 ```
 
-Check quality-model, business-rule, system, job, use-case, concept, and requirement specifications using the same discovery rules as list. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.
+Check authored specifications using the same discovery rules as list. A whole-project check also inspects generated Markdown when dotspec.yaml enables generated_spec. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
@@ -1053,6 +1053,38 @@ dotspec sources --path internal --json
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for sources |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+
+## dotspec spec
+
+Generate the project's readable requirements specification
+
+```sh
+dotspec spec [flags]
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for spec |
+
+## dotspec spec build
+
+Build SPEC.md and the supporting Markdown tree
+
+```sh
+dotspec spec build [flags]
+```
+
+Build the requirements specification for one whole project with generated_spec enabled in dotspec.yaml. Validate the candidate before replacing generator-owned output. Run dotspec check to verify the resulting documents.
+
+```sh
+dotspec spec build
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for build |
 | `--path` | `.` | project directory to inspect or initialize |
 | `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
 

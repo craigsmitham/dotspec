@@ -165,7 +165,7 @@ func NewRoot() *cobra.Command {
 		Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error { return cmd.Help() },
 	}
 	root.SetVersionTemplate("dotspec {{.Version}}\n")
-	root.AddCommand(newGuideCommand(), newCheckCommand(), newSourcesCommand(), newModelCommand(), newManCommand(), newCompletionCommand())
+	root.AddCommand(newGuideCommand(), newCheckCommand(), newSpecCommand(), newSourcesCommand(), newModelCommand(), newManCommand(), newCompletionCommand())
 	for _, parent := range []*cobra.Command{newQualityModelCommand(), newBusinessRuleCommand(), newSystemCommand(), newJobCommand(), newUseCaseCommand(), newConceptCommand(), newRequirementCommand()} {
 		root.AddCommand(parent)
 		for _, cmd := range append(parent.Commands(), parent) {

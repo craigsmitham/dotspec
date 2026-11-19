@@ -27,6 +27,7 @@ type Summary struct {
 
 type Report struct {
 	files         map[string]*SourceFile
+	GeneratedSpec string                  `json:"generated_spec,omitempty"`
 	SchemaVersion int                     `json:"schema_version"`
 	Scope         Scope                   `json:"scope"`
 	Complete      bool                    `json:"complete"`
@@ -53,9 +54,11 @@ func Project(path string, types ...Type) Report {
 }
 
 // The optional inventory collects files during the same scan used by check.
-func project(path string, files map[string]*SourceFile, types ...Type) Report {
+func project(path string, inventory *Inventory, types ...Type) Report {
 	r := newReport(path, "unavailable", types)
-	r.files = files
+	if inventory != nil {
+		r.files = make(map[string]*SourceFile)
+	}
 	match := func(name string) bool { return findType(name, types) != nil }
 	dir, err := specfile.Scope(path)
 	if err != nil {
@@ -75,6 +78,11 @@ func project(path string, files map[string]*SourceFile, types ...Type) Report {
 		r.Scope.Discovery = "git"
 	}
 	paths, err := specfile.Discover(dir, match)
+	if inventory != nil {
+		inventory.Selected = paths
+		inventory.Repository = root
+		inventory.DiscoveryComplete = err == nil
+	}
 	if err != nil {
 		r.record(err, "scan.discovery", dir)
 	}
@@ -141,6 +149,12 @@ func (r *Report) record(err error, rule, path string) {
 	r.Diagnostics = append(r.Diagnostics, *finding)
 }
 
+// WithFindings incorporates another inspection phase into the same sorted report.
+func (r Report) WithFindings(ds ...diagnostic.Diagnostic) Report {
+	r.Diagnostics = append(r.Diagnostics, ds...)
+	return r.finish()
+}
+
 func (r Report) finish() Report {
 	sort.Strings(r.ContextFiles)
 	sort.SliceStable(r.Diagnostics, func(i, j int) bool {
@@ -188,6 +202,9 @@ func (r *Report) collectManifest() {
 		return
 	}
 	r.Scope.Project = p
+	if p != nil && p.GeneratedSpec && (r.Scope.Path != p.Root || r.Scope.Discovery == "direct") {
+		r.GeneratedSpec = "out-of-scope"
+	}
 	if p != nil {
 		manifest := p.Manifest()
 		r.ContextFiles = append(r.ContextFiles, manifest)

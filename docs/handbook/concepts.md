@@ -199,10 +199,10 @@ dotspec concept check shorthand
 dotspec check
 dotspec model export --path . > snapshot.json
 dotspec model validate snapshot.json
-dotspec model docs --path . --relative-to views > views/concept-design.md
+dotspec model docs
 ```
 
-Create the destination directory before redirecting output. Authoring checks handle
+Authoring checks handle
 structure and ordinary links. Model export additionally diagnoses composition
 names, reference kinds, declaration scope and bindings. It returns status 1 for
 composition errors while retaining the snapshot. External or unacquired targets
@@ -213,9 +213,13 @@ A saved snapshot can be validated without reading the working tree.
 The generated reference presents purpose and operational principles before state
 and actions, then system composition, binding tables and dependency diagrams. Only
 resolved action references produce coordination edges; unresolved declarations and
-findings remain visible in the narrative. `--relative-to` controls source links,
-not which files are inspected. [The generated example](../../examples/todo/views/concept-design.md)
-is maintained by `mise run generate`.
+findings remain visible in the narrative. When saving the output to a file,
+use `--relative-to DIR` to resolve links from its destination directory.
+
+In the [To-do spec](../../examples/todo/specification/concepts/checklist.md), the
+Checklist section keeps the state, actions and effects table together and links to
+the system's named use, My checklist. Generate that reading path for an opted-in
+project with `dotspec spec build`.
 
 Review purpose, independence, adequate state, end-to-end behavior and composition
 promises with people who understand the intended use. Structural validation cannot

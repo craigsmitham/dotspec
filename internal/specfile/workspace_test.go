@@ -63,7 +63,7 @@ func writeManifest(t *testing.T, dir, body string) {
 }
 
 func TestProjectManifestValidation(t *testing.T) {
-	for _, body := range []string{"", "{}", "name: ''", "name: invalid/name", "projects: {tool: .}", "name: demo\nunknown: true", "name: demo\nname: other", "name: demo\n---\nname: other"} {
+	for _, body := range []string{"", "{}", "name: ''", "name: invalid/name", "projects: {tool: .}", "name: demo\nunknown: true", "name: demo\ngenerated_spec: perhaps", "name: demo\nname: other", "name: demo\n---\nname: other"} {
 		t.Run(body, func(t *testing.T) {
 			root := workspaceFixture(t)
 			child := filepath.Join(root, "apps/demo")
@@ -110,7 +110,7 @@ func TestWorkspaceDiscoveryBoundaries(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			want := []Project{{"demo", filepath.Join(root, "apps/demo")}, {"tool", root}}
+			want := []Project{{Name: "demo", Root: filepath.Join(root, "apps/demo")}, {Name: "tool", Root: root}}
 			if w.Root != root || !reflect.DeepEqual(w.Projects, want) {
 				t.Fatal(w)
 			}

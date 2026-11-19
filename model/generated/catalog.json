@@ -20541,7 +20541,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.19.0-draft",
+          "equals_string": "0.20.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -20861,6 +20861,20 @@
           "range": "ReadStatus",
           "reference_ranges": [],
           "required": true
+        },
+        "selected": {
+          "annotations": {},
+          "any_of": [],
+          "description": "True for specification files selected by discovery in the scan scope. Context acquired through references or enclosing system lookup is excluded from the selected set.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "boolean",
+          "reference_ranges": [],
+          "required": false
         }
       },
       "subsets": [
@@ -22040,6 +22054,71 @@
         "business-requirements",
         "user-requirements",
         "software-requirements"
+      ]
+    },
+    "SpecificationDocument": {
+      "abstract": false,
+      "ancestors": [
+        "SpecificationDocument"
+      ],
+      "annotations": {},
+      "description": "A reader-facing document derived from a specification snapshot. The document role describes the required contents and navigation. Generated pages live outside the source snapshot.",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "generated_by": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Ownership marker used when refreshing or removing generated pages.",
+          "equals_string": "dotspec",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "subject_kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Domain kind of the subject presented on a detail page.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Reader purpose and presentation contract of the generated Markdown file.",
+          "enum_values": [
+            "requirements-specification",
+            "table-of-contents",
+            "index",
+            "specification-section",
+            "requirements-review-report"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SpecificationDocumentType",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
       ]
     },
     "SpecificationProject": {
@@ -28178,6 +28257,13 @@
       "advice",
       "info"
     ],
+    "SpecificationDocumentType": [
+      "requirements-specification",
+      "table-of-contents",
+      "index",
+      "specification-section",
+      "requirements-review-report"
+    ],
     "SpecificationType": [
       "system",
       "job",
@@ -28192,7 +28278,7 @@
       "directory"
     ]
   },
-  "model_version": "0.19.0-draft",
+  "model_version": "0.20.0-draft",
   "projections": [
     "ActionParameter.type",
     "BusinessRule.applies_to",
@@ -28328,7 +28414,7 @@
   },
   "representation_version": "0.1.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "4d4426417d242592ce225a07fd4249faac93be65b3615afb1e0c379780bf7765",
+  "source_sha256": "ebf07882b5c75758b04d6df1aec38f7bff4d4606a5cc224ce2388b71279dd1ba",
   "subsets": {
     "business-requirements": {
       "classification": "core",
@@ -28354,6 +28440,11 @@
       "classification": "generic",
       "description": "Source identities, exact payloads, fragments, and locations.",
       "title": "Source artifacts"
+    },
+    "specification-documentation": {
+      "classification": "supporting",
+      "description": "Roles, reader-facing content, and navigation of generated requirements documents.",
+      "title": "Specification documentation"
     },
     "specification-traceability": {
       "classification": "core",

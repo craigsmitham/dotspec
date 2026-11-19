@@ -41,10 +41,25 @@ func (r SourceReport) ExitCode() int {
 // Sources inventories discovered specs, consulted context, and direct file
 // references. Validation, boundaries, and diagnostics are identical to Project.
 func Sources(path string, types ...Type) SourceReport {
-	files := make(map[string]*SourceFile)
-	r := project(path, files, types...)
-	result := SourceReport{SchemaVersion: r.SchemaVersion, Scope: r.Scope, Complete: r.Complete, Files: []SourceFile{}, Diagnostics: r.Diagnostics}
-	for _, file := range files {
+	inspection := InspectSources(path, types...)
+	r := inspection.Report
+	return SourceReport{SchemaVersion: r.SchemaVersion, Scope: r.Scope, Complete: r.Complete, Files: inspection.Files, Diagnostics: r.Diagnostics}
+}
+
+// Inventory retains the observed project boundary, selected specs and source report
+// for subsequent model mapping without a second discovery or source check.
+type Inventory struct {
+	Report            Report
+	Files             []SourceFile
+	Selected          []string
+	Repository        string
+	DiscoveryComplete bool
+}
+
+func InspectSources(path string, types ...Type) Inventory {
+	result := Inventory{Files: []SourceFile{}}
+	result.Report = project(path, &result, types...)
+	for _, file := range result.Report.files {
 		sort.Slice(file.ReferencedBy, func(i, j int) bool {
 			a, b := file.ReferencedBy[i], file.ReferencedBy[j]
 			if a.Path != b.Path {
@@ -62,6 +77,7 @@ func Sources(path string, types ...Type) SourceReport {
 		result.Files = append(result.Files, *file)
 	}
 	sort.Slice(result.Files, func(i, j int) bool { return result.Files[i].Path < result.Files[j].Path })
+	result.Report.files = nil
 	return result
 }
 

@@ -1,0 +1,63 @@
+---
+type: specification-section
+generated_by: dotspec
+subject_kind: requirement
+---
+# Preserve tasks across restart
+
+[Personal task list](<../../SPEC.md>) · [Contents](<../index.md>)
+
+## Statement
+
+After the service acknowledges a change, stopping and restarting it on the same
+database must preserve each surviving entry's identity, title and completion state.
+Deleted entries must stay absent.
+
+## Refines
+
+[Keep recorded work available](<../use-cases/return-to-my-list.md#keep-recorded-work-available>).
+
+## Relies on
+
+[Same local storage](<../../SPEC.md#same-local-storage>).
+
+## Supports
+
+[Less reconstruction](<../jobs/resume-interrupted-work.md#less-reconstruction>).
+
+## Applies to
+
+**Targets:** [Return to my list](<../use-cases/return-to-my-list.md>).
+
+### Conditions
+
+A local file on functioning storage, with each form submission acknowledged
+before the process stops.
+
+## Criterion
+
+### Measure
+
+Count missing, unexpected or changed entries compared with the last acknowledged list.
+
+### Target
+
+Zero discrepancies across the two views.
+
+## Verification plan
+
+### Method
+
+The [restart acceptance test](<../../tests/acceptance.py>) submits the public forms,
+stops the process, starts a new process on the same file and compares both views.
+
+## Rationale
+
+A list that loses track of earlier decisions forces the person to reconstruct them.
+
+## Related specifications
+
+- Feature — [Pick up where I left off](<../features/pick-up-where-i-left-off.md>)
+- Quality attribute — [Durability](<../../SPEC.md#durability>)
+
+[Edit source](<../../specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>)

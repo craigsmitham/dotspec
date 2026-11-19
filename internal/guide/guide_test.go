@@ -26,7 +26,7 @@ func TestPublishedRoutes(t *testing.T) {
 func TestDocumentationLinks(t *testing.T) {
 	anchors := map[string]map[string]bool{}
 	sources := []string{"../../README.md", "../../CONTRIBUTING.md", "../../examples/todo/README.md"}
-	for _, root := range []string{"../../docs", "../../examples/todo/views"} {
+	for _, root := range []string{"../../docs", "../../examples/todo/specification"} {
 		err := filepath.WalkDir(root, func(path string, entry fs.DirEntry, err error) error {
 			if err == nil && !entry.IsDir() && filepath.Ext(path) == ".md" {
 				sources = append(sources, path)

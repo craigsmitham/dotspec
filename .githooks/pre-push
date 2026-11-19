@@ -1,2 +1,4 @@
 #!/bin/sh
+set -e
+mise run spec-check
 exec mise run example-check

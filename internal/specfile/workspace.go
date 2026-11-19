@@ -24,8 +24,9 @@ type Workspace struct {
 }
 
 type Project struct {
-	Name string `json:"name" yaml:"name"`
-	Root string `json:"root" yaml:"-"`
+	Name          string `json:"name" yaml:"name"`
+	GeneratedSpec bool   `json:"-" yaml:"generated_spec,omitempty"`
+	Root          string `json:"root" yaml:"-"`
 }
 
 func (p Project) Manifest() string {

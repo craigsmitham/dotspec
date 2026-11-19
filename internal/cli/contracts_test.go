@@ -33,6 +33,10 @@ func prepareExample(t *testing.T, command string) {
 	if _, err := system.Init("."); err != nil {
 		t.Fatal(err)
 	}
+	if command == "dotspec spec build" {
+		writeFixture(t, "dotspec.yaml", "name: demo\ngenerated_spec: true\n")
+		return
+	}
 	writeFixture(t, "specs/jobs/develop-requirements.job.spec.md", viewFixture)
 	writeFixture(t, "specs/use-cases/check-specifications.use-case.spec.md", usecase.Template)
 	writeFixture(t, "specs/concepts/job-map.concept.spec.md", concept.Template)

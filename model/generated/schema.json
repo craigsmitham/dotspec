@@ -6018,7 +6018,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.19.0-draft",
+                    "const": "0.20.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -6145,6 +6145,10 @@
                 },
                 "read_status": {
                     "$ref": "#/$defs/ReadStatus"
+                },
+                "selected": {
+                    "description": "True for specification files selected by discovery in the scan scope. Context acquired through references or enclosing system lookup is excluded from the selected set.",
+                    "type": "boolean"
                 }
             },
             "required": [
@@ -6487,6 +6491,43 @@
             ],
             "title": "Specification",
             "type": "object"
+        },
+        "SpecificationDocument": {
+            "additionalProperties": false,
+            "description": "A reader-facing document derived from a specification snapshot. The document role describes the required contents and navigation. Generated pages live outside the source snapshot.",
+            "properties": {
+                "generated_by": {
+                    "const": "dotspec",
+                    "description": "Ownership marker used when refreshing or removing generated pages.",
+                    "type": "string"
+                },
+                "subject_kind": {
+                    "description": "Domain kind of the subject presented on a detail page.",
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/$defs/SpecificationDocumentType",
+                    "description": "Reader purpose and presentation contract of the generated Markdown file."
+                }
+            },
+            "required": [
+                "type",
+                "generated_by"
+            ],
+            "title": "SpecificationDocument",
+            "type": "object"
+        },
+        "SpecificationDocumentType": {
+            "description": "Roles of generated requirements documents. These names are disjoint from authored specification types and core domain kinds.",
+            "enum": [
+                "requirements-specification",
+                "table-of-contents",
+                "index",
+                "specification-section",
+                "requirements-review-report"
+            ],
+            "title": "SpecificationDocumentType",
+            "type": "string"
         },
         "SpecificationProject": {
             "additionalProperties": false,
@@ -8228,7 +8269,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.19.0-draft",
+            "const": "0.20.0-draft",
             "type": "string"
         },
         "references": {
@@ -8282,5 +8323,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.19.0-draft"
+    "version": "0.20.0-draft"
 }

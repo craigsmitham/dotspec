@@ -20,7 +20,7 @@ import (
 
 func newCheckCommand() *cobra.Command {
 	cmd := &cobra.Command{Use: "check", Short: "Check all supported specifications in a project subtree",
-		Long:    "Check quality-model, business-rule, system, job, use-case, concept, and requirement specifications using the same discovery rules as list. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.\n\n" + exitPolicy,
+		Long:    "Check authored specifications using the same discovery rules as list. A whole-project check also inspects generated Markdown when dotspec.yaml enables generated_spec. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.\n\n" + exitPolicy,
 		Example: "dotspec check\ndotspec check --path internal --json", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
@@ -31,7 +31,7 @@ func newCheckCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return emitCheckReport(cmd.OutOrStdout(), check.Project(path, supportedTypes()...), format)
+			return emitCheckReport(cmd.OutOrStdout(), inspectProject(path), format)
 		},
 	}
 	addPath(cmd)
@@ -58,6 +58,9 @@ func writeCheckReport(out io.Writer, report check.Report, format string) error {
 		fmt.Fprintf(&text, "Project: %s\n", report.Scope.Project.Name)
 	}
 	fmt.Fprintf(&text, "Checking %s (%s; %s discovery)\n", displayPath(report.Scope.Path), strings.Join(report.Scope.Types, ", "), report.Scope.Discovery)
+	if report.GeneratedSpec != "" {
+		fmt.Fprintf(&text, "Generated specification: %s\n", report.GeneratedSpec)
+	}
 	for _, path := range report.ContextFiles {
 		fmt.Fprintf(&text, "Context: %s\n", displayPath(path))
 	}

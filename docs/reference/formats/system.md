@@ -97,12 +97,10 @@ and explicit system selection follow authored links, never directory nesting. Qu
 of `Applies to` targets.
 
 See [structure and feature authoring](../../handbook/relationships.md#describe-systems-components-and-features)
-and the [generated system overview](../../../examples/todo/views/system-overview.md).
-Generate your own with:
-
-```sh
-dotspec model overview --path . --relative-to views > views/system-overview.md
-```
+and the [To-do system overview](../../../examples/todo/SPEC.md).
+Use `dotspec spec build` in an [opted-in project](../generated-specification.md)
+to generate its overview and supporting pages. To inspect system structure and
+applicable obligations as a standalone Markdown report, run `dotspec model overview`.
 
 Source paths in command output are relative to the current directory.
 

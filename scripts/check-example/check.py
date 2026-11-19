@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[2]
 TODO = ROOT / "examples/todo"
@@ -106,6 +107,67 @@ def check_project(cli, project, tmp):
         assert marker in cli("model " + view, "--path", project), f"missing {marker} in {view}"
 
 
+def markdown_links(page):
+    body = page.read_text(encoding="utf-8")
+    links = []
+    for match in re.finditer(r"\[([^]\n]+)\]\((<[^>\n]+>|[^\s)]+)\)", body):
+        url = urlsplit(match[2].strip("<>"))
+        if not url.scheme and not url.netloc:
+            target = (page.parent / unquote(url.path)).resolve() if url.path else page
+            links.append((match[1], target, unquote(url.fragment), match[0]))
+    return links
+
+
+def follow(page, name):
+    matches = {link[1] for link in markdown_links(page) if link[0].casefold() == name.casefold()}
+    assert len(matches) == 1, f"{page}: expected one destination for {name!r}, got {matches}"
+    target, = matches
+    assert target.is_file(), target
+    return target
+
+
+def spec_journey(cli, tmp):
+    project = project_copy(tmp, "reader")
+    root = project / "SPEC.md"
+    root.unlink()
+    shutil.rmtree(project / "specification")
+    cli("spec build", cwd=project)
+    feature = follow(root, "Pick up where I left off")
+    promise = follow(feature, "Preserve tasks across restart")
+    text = " ".join(promise.read_text(encoding="utf-8").split())
+    for phrase in ("acknowledges a change", "same database", "identity, title and completion state",
+                   "Deleted entries must stay absent", "Zero discrepancies across the two views"):
+        assert phrase in text, phrase
+    assert follow(promise, "restart acceptance test") == project / ACCEPTANCE
+    targets = markdown_links(promise)
+    assert any(target == project / REQUIREMENT for _, target, _, _ in targets)
+    assert any("return-to-my-list" in target.name and fragment.endswith("keep-recorded-work-available")
+               for _, target, fragment, _ in targets), "missing refinement of the scenario clause"
+    contents = project / "specification/index.md"
+    index = project / "specification/requirements/index.md"
+    assert any(target == contents for _, target, _, _ in markdown_links(root))
+    assert any(target == index for _, target, _, _ in markdown_links(contents))
+    assert follow(index, "Preserve tasks across restart") == promise
+    cli("check", cwd=project)
+    for page, rule in [(promise, "spec.content"), (feature, "spec.navigation")]:
+        body = page.read_text(encoding="utf-8")
+        if page == promise:
+            changed, count = re.subn(r"same\s+database", "different database", body)
+            assert count >= 1
+        else:
+            changed = body
+            for label, target, _, link in markdown_links(feature):
+                if target == promise:
+                    changed = changed.replace(link, label)
+        assert changed != body
+        page.write_text(changed, encoding="utf-8")
+        report = json.loads(cli("check", "--json", cwd=project, status=1))
+        assert rule in {item["rule"] for item in report["diagnostics"]}, report
+        cli("spec build", cwd=project)
+        assert page.read_text(encoding="utf-8") == body
+    cli("check", cwd=project)
+
+
 def inspect(cli):
     for kind, (slug, title) in TYPES.items():
         args = [slug] if slug else []
@@ -196,6 +258,7 @@ def regressions(cli, tmp):
             if name == "persistence":
                 acceptance(copy)
             else:
+                cli("spec build", cwd=copy)
                 check_project(cli, copy, tmp)
         except (AssertionError, RuntimeError) as error:
             if reason not in str(error):
@@ -216,6 +279,7 @@ def main():
         cli = CLI(binary)
         check_project(cli, TODO, tmp)
         inspect(cli)
+        spec_journey(cli, tmp)
         author(cli, tmp)
         run(["go", "vet", "./..."], cwd=TODO / "app")
         run(["go", "mod", "tidy", "-diff"], cwd=TODO / "app")
@@ -227,7 +291,7 @@ def main():
                    for e in map(json.loads, events.splitlines())), "help.txtar did not run"
         tooling = {"man", "completion bash", "completion zsh", "completion fish", "completion powershell"}
         public = cli.public_commands()
-        groups = set(TYPES) | {"model", "job outcome", "job step", "completion"}
+        groups = set(TYPES) | {"spec", "model", "job outcome", "job step", "completion"}
         for group in groups | {""}:
             assert "Available Commands:" in cli("help", *group.split())
         missing = public - cli.exercised - groups - tooling - {""}

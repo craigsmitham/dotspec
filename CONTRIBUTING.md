@@ -30,7 +30,7 @@ and generated-file checks compare the same bytes.
 | `mise run test` | Run unit tests and process-level testscript scenarios |
 | `mise run check` | Check formatting, module tidiness, lint, tests, generated artifacts, specs, specification-source coverage, and release configuration |
 | `mise run spec-sources-check` | Check that designated specification-test files appear in the public source inventory |
-| `mise run generate` | Regenerate the guide map, command reference, output gallery, and To-do model views |
+| `mise run generate` | Regenerate the guide map, command reference, output gallery, and the dotspec and To-do requirements specifications |
 | `mise run model-setup` | Provision the isolated model toolchain from its dependency lock |
 | `mise run model-generate` | Regenerate JSON Schema, reference catalog, and model documentation |
 | `mise run model-check` | Verify generated model projections without writing |
@@ -199,12 +199,12 @@ original prompts rather than importing third-party quotations from upstream page
 
 Run `mise run example-check` from the repository root. The same read-only task
 runs in CI through `mise run check`. It builds the CLI, checks the public
-capability inventory, tests the app across restart and rejects three deliberately
+capability inventory, tests the app across restart and rejects deliberately
 broken temporary copies. See the [To-do walkthrough](examples/todo/README.md).
 
 To enable the tracked pre-push hook in this clone, run
 `git config --local core.hooksPath .githooks`. This selects the repository's
 hook directory for the clone. If you already use another hooks directory, add
-`mise run example-check` to its pre-push hook instead. Git must be able to find
+`mise run spec-check` and `mise run example-check` to its pre-push hook. Git must be able to find
 mise on PATH. To undo the local setting, restore its previous value or run
 `git config --local --unset core.hooksPath` if it was previously unset.

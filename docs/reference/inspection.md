@@ -293,3 +293,18 @@ For explicit boundary, job-support and applicability links, see
 [Declare relationships between specifications](../handbook/relationships.md).
 The generated [relationship reference](model/relationships.md)
 documents the metamodel's edge categories, cardinalities, scope and projections.
+
+## Check the generated requirements specification
+
+A whole-project check includes the generated Markdown when the project manifest
+enables `generated_spec`. Commit the output of `dotspec spec build` with its
+sources. Check all configured projects in CI with `dotspec check --all`.
+See [Generate a requirements specification](generated-specification.md) for
+document types, workspace boundaries, reader navigation and recovery from drift.
+
+When the generated spec participates, the JSON check report includes
+`generated_spec`. Its value is `checked` after the files were inspected,
+`blocked-by-source` when source findings prevent constructing the expected
+spec, `out-of-scope` for a narrower selection, or `incomplete` when an
+operational error interrupted document inspection. Read the findings and
+exit status to determine whether a checked spec passed.

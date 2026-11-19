@@ -267,12 +267,12 @@ is authoring guidance rather than a classification stored on the job:
 ```sh
 dotspec job init reach-work --preset progress
 dotspec job check reach-work --preset odi
-dotspec model needs --path . --relative-to views > views/needs.md
+dotspec model needs
 ```
 
 See [Jobs and user needs](../../handbook/jobs.md) for the method distinctions,
 progress-case fields, optional capabilities, and research evidence boundaries.
-The [generated needs map](../../../examples/todo/views/needs-map.md) shows how the restart requirement supports the
+The [generated job section](../../../examples/todo/specification/jobs/resume-interrupted-work.md) shows how the restart requirement supports the
 outcome of spending less time reconstructing outstanding work.
 
 The repository's [Develop Requirements](../../../specs/jobs/develop-requirements.job.spec.md) and

@@ -47,23 +47,22 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 	if err != nil {
 		return ExportResult{}, err
 	}
-	report := check.Sources(dir, types...)
-	paths, discoverErr := specfile.Discover(dir, func(name string) bool {
-		for _, kind := range types {
-			if kind.Layout.Match(name) {
-				return true
-			}
-		}
-		return false
-	})
-	repo, repoErr := specfile.RepositoryRoot(dir)
+	inspection := check.InspectSources(dir, types...)
+	return ExportInspection(inspection, types...), nil
+}
+
+// ExportInspection maps a previously inspected project's precise discovery result.
+func ExportInspection(inspection check.Inventory, types ...check.Type) ExportResult {
+	report := inspection.Report
+	dir := report.Scope.Path
+	repo := inspection.Repository
 	kinds := make([]string, 0, len(types))
 	for _, kind := range types {
 		kinds = append(kinds, kind.Layout.Kind)
 	}
 	scope := Record{
 		"roots": []string{filepath.ToSlash(dir)}, "selected_spec_types": kinds,
-		"discovery_complete": discoverErr == nil && repoErr == nil,
+		"discovery_complete": inspection.DiscoveryComplete,
 		"reads_complete":     true, "inspection_complete": report.Complete,
 		"discovery_policy":    Record{"mode": report.Scope.Discovery, "rule": "dotspec-discovery/1", "follow_symlinks": false, "include_nested_repositories": false},
 		"reference_traversal": Record{"mode": "direct", "include_system_context": true, "follow_external_resources": false, "repository_bounded": repo != "", "maximum_depth": 1, "rule": "dotspec-direct-references/1"},
@@ -74,12 +73,12 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 		primary: map[string]bool{}, follow: map[string]bool{}, contextPath: map[string]string{}, contextOK: map[string]bool{},
 		directorySystem: map[string]string{},
 	}
-	for _, path := range paths {
+	for _, path := range inspection.Selected {
 		path = cleanPath(path)
 		b.primary[path], b.follow[path] = true, true
-		b.load(path)
+		b.load(path)["selected"] = true
 	}
-	for _, source := range report.Files {
+	for _, source := range inspection.Files {
 		b.load(cleanPath(source.Path))
 	}
 	// Resolve context once for each selected specification owner. Referenced
@@ -115,12 +114,6 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 	for _, finding := range report.Diagnostics {
 		b.addFinding(finding)
 	}
-	if discoverErr != nil {
-		b.addError("scan.discovery", discoverErr, dir)
-	}
-	if repoErr != nil {
-		b.addError("scan.repository", repoErr, dir)
-	}
 	if p := report.Scope.Project; p != nil {
 		b.snapshot.Scope["project"] = Record{"name": p.Name, "root": cleanPath(p.Root)}
 		b.context(cleanPath(p.Manifest()), "project_configuration", "", "")
@@ -141,7 +134,7 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 	b.materializeAssertions()
 	b.finishCoverage()
 	b.snapshot.Scope["reads_complete"] = !b.readFailed
-	if b.readFailed || discoverErr != nil || repoErr != nil {
+	if b.readFailed || !inspection.DiscoveryComplete {
 		b.snapshot.Scope["inspection_complete"] = false
 	}
 	b.sort()
@@ -154,10 +147,10 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 			code = 1
 		}
 	}
-	if b.readFailed || discoverErr != nil || repoErr != nil {
+	if b.readFailed || !inspection.DiscoveryComplete {
 		code = 2
 	}
-	return ExportResult{b.snapshot, code}, nil
+	return ExportResult{b.snapshot, code}
 }
 
 func cleanPath(path string) string {
