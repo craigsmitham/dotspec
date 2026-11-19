@@ -5,6 +5,11 @@ exec git init -q
 exec dotspec system init
 cmp stdout ../created.txt
 ! stderr .
+cp ../system.spec.md specs/system.spec.md
+exec dotspec check
+stdout 'Checked 1 of 1 discovered specifications'
+stdout 'Errors: 0'
+! stderr .
 exec dotspec job init plan-work
 ! stderr .
 exec dotspec job show --path . -- plan-work
@@ -38,6 +43,20 @@ status 2 dotspec unknown
 Created specs/system.spec.md
 Edit the system name, Purpose, and Scope.
 Authoring guide: dotspec guide system
+-- system.spec.md --
+---
+type: system
+---
+
+# New system
+
+## Purpose
+
+Help a team plan its work.
+
+## Scope
+
+Work planning for a single team.
 -- map.txt --
 flowchart TD
   job["New job"]

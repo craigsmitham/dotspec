@@ -127,7 +127,7 @@ come from the type packages. Edit those sources, then run `mise run generate`.
 
 ## Specification tests and implementation tests
 
-This repository adopts the [design principle](README.md#design-principle-keep-meaning-in-the-source-keep-connections-simple)
+This repository applies dotspec's [source authority principle](specs/system.spec.md#source-authority)
 by linking to native sources and enforcing file coverage with a small consumer
 script. Test roles are an authoring decision, not a classification inferred by
 dotspec or a consequence of using a particular test framework.

@@ -65,35 +65,6 @@ func TestDeclaredCommandExamples(t *testing.T) {
 	visit(NewRoot())
 }
 
-func TestReadmeQuickStart(t *testing.T) {
-	data, err := os.ReadFile("../../README.md")
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, run, found := strings.Cut(string(data), "## Run\n")
-	if !found {
-		t.Fatal("missing Run section")
-	}
-	_, run, found = strings.Cut(run, "```sh\n")
-	if !found {
-		t.Fatal("missing quick start")
-	}
-	commands, _, found := strings.Cut(run, "```")
-	if !found {
-		t.Fatal("unclosed quick start")
-	}
-	prepareExample(t, "readme")
-	for _, line := range strings.Split(strings.TrimSpace(commands), "\n") {
-		args := strings.Fields(line)
-		if len(args) < 4 || strings.Join(args[:3], " ") != "go run ." {
-			t.Fatalf("unexpected quick start: %s", line)
-		}
-		if code, out, errOut := invoke(args[3:]...); code != 0 || errOut != "" {
-			t.Fatalf("%s: %d %s %s", line, code, out, errOut)
-		}
-	}
-}
-
 func TestStructuredReadContracts(t *testing.T) {
 	prepareExample(t, "read")
 	for _, args := range [][]string{

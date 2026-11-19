@@ -156,8 +156,8 @@ quality requirements where they can state obligations more clearly.
 Tests may define accepted examples or verify an existing rule. State which role
 they play. Link resolution establishes that a target exists; it does not establish
 execution, branch coverage, completeness, stakeholder agreement, or customer value.
-The project's [source-authority principle](../../README.md#design-principle-keep-meaning-in-the-source-keep-connections-simple)
-governs these choices.
+See [Obligations and documents](requirements-layers.md#distinguish-an-obligation-from-its-document)
+for choosing where an obligation belongs.
 
 ## Plan growth without weakening promises
 

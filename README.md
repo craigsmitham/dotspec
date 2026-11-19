@@ -1,56 +1,22 @@
 # dotspec
 
-dotspec is a framework and CLI for developing software product requirements in
-human-readable Markdown alongside the code. Describe what people need, the
-behavior a system promises, and how to assess it. Link to policies, contracts
-and tests in their native form.
+dotspec is a framework and command-line tool for writing and checking software
+requirements in human-readable Markdown alongside your code.
 
-## Install
+## Quick start
 
-Download the binary for your platform from the [releases](https://github.com/craigsmitham/dotspec/releases)
-and optionally the AXM Knowledge bundle. You can also build from this checkout with `go build -o dotspec .`. Run `dotspec guide` for
-the handbook included with your version. It works offline in any directory.
+Download and extract the archive for your platform from
+[GitHub Releases](https://github.com/craigsmitham/dotspec/releases), then put the
+binary on your PATH. From your project directory:
 
-## Run
+1. Run `dotspec system init` to create `specs/system.spec.md`.
+2. Edit the system name, Purpose, and Scope.
+3. Run `dotspec check` to check structure and local references.
 
-From this checkout with the Go version in [go.mod](go.mod), explore the
-framework and check the specifications that describe dotspec itself:
+Run `dotspec guide` to read the built-in handbook offline.
 
-```sh
-go run . guide
-go run . guide obligation
-go run . use-case show check-specifications
-go run . check
-```
+## Documentation
 
-In a project of your own, run `dotspec system init`, edit the generated Purpose
-and Scope, then run `dotspec check`. Each starter points to its authoring guide.
-
-## Find guidance
-
-The [documentation map](docs/README.md) connects each CLI guide topic to its source page or section.
-
-- Choose what to write and follow a user need through the runnable To-do app and its restart test. [Handbook](docs/handbook/README.md)
-- Record where your team keeps specifications and who owns a promise. [Project conventions](docs/handbook/project-conventions.md)
-- Look up file placement, Markdown formats, command options and check reports. [Layout and formats](docs/reference/layout.md) · [CLI](docs/reference/cli.md) · [Inspection](docs/reference/inspection.md)
-- Inspect the types, relationships and mapping into an exported snapshot. [Core domain](docs/reference/model/core.md) · [Specification model](docs/reference/specification-model.md)
-- Audit a domain decision or change the toolkit. [Maintainer's guide](docs/maintainers/handbook.md) · [Contributing](CONTRIBUTING.md)
-
-## Design principle: keep meaning in the source; keep connections simple
-
-Connect specification sources through ordinary file references, preserving their
-native form. dotspec provides discovery and reference checking. Consuming projects
-determine which sources carry specification weight and ensure those sources are
-discoverable; readers and agents interpret their meaning.
-
-This principle guides dotspec's design to reduce duplicate maintenance and keep
-sources useful to people and tools. Prefer ordinary files, Markdown links, and
-explanatory prose. Add machine-readable structure only when a demonstrated
-operation cannot reasonably work without it.
-
-An executable specification can own its required examples: link to it rather
-than copying assertions into Markdown. When a test checks a requirement already
-stated in prose, retain that definition and explain the test's verification role.
-A passing implementation test does not acquire authority merely by being linked.
-File discovery makes sources available together; deciding whether they adequately
-specify a system remains an authoring and review task.
+- [Authoring handbook](docs/handbook/README.md) and [runnable To-do example](examples/todo/README.md)
+- [CLI reference](docs/reference/cli.md) and [documentation index](docs/README.md)
+- [dotspec's own specification](specs/system.spec.md) and [contributing guide](CONTRIBUTING.md)
