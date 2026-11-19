@@ -141,7 +141,7 @@ full statements and evidence. Short labels keep the graph readable; the
 statements retain their meaning. Unresolved references remain in the authored
 narrative and inspection findings rather than becoming invented edges.
 
-In the [To-do job](../../examples/todo/specification/jobs/resume-interrupted-work.md#less-reconstruction),
+In the [To-do job](../../examples/todo/specification/jobs/resume-interrupted-work.job.spec-report.md#less-reconstruction),
 Less reconstruction links to the restart requirement that supports it and the job
 step where it applies. To inspect contributions together in the diagram and table,
 run `dotspec model needs --project todo` from the dotspec repository.

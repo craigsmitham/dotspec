@@ -14,7 +14,7 @@ For an opted-in project with one root system, contributors must be able to gener
 
 ## Criterion
 
-Starting from the project's `SPEC.md`, reach the same promise through its feature and through the system’s Requirements section. Both routes explain why the promise is listed and lead to its canonical page or passage. The statement, conditions and criterion agree with the authored text. Editing a condition only in the generated spec or removing the feature link produces a check finding. A second build over identical inputs produces identical files.
+The project's `SPEC.md` gives the system name and one link to `specification/system.spec-report.md`. From that report, reach the same promise through its feature and through the system’s Requirements section. Both routes explain why the promise is listed and lead to its canonical page or passage. The statement, conditions and criterion agree with the authored text. Editing a condition only in the generated spec or removing the feature link produces a check finding. A second build over identical inputs produces identical files.
 
 ## Verification plan
 

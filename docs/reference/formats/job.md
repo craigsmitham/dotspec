@@ -272,7 +272,7 @@ dotspec model needs
 
 See [Jobs and user needs](../../handbook/jobs.md) for the method distinctions,
 progress-case fields, optional capabilities, and research evidence boundaries.
-The [generated job section](../../../examples/todo/specification/jobs/resume-interrupted-work.md) shows how the restart requirement supports the
+The [generated job section](../../../examples/todo/specification/jobs/resume-interrupted-work.job.spec-report.md) shows how the restart requirement supports the
 outcome of spending less time reconstructing outstanding work.
 
 The repository's [Develop Requirements](../../../specs/jobs/develop-requirements.job.spec.md) and

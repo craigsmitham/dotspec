@@ -216,7 +216,7 @@ resolved action references produce coordination edges; unresolved declarations a
 findings remain visible in the narrative. When saving the output to a file,
 use `--relative-to DIR` to resolve links from its destination directory.
 
-In the [To-do spec](../../examples/todo/specification/concepts/checklist.md), the
+In the [To-do spec](../../examples/todo/specification/concepts/checklist.concept.spec-report.md), the
 Checklist section keeps the state, actions and effects table together and links to
 the system's named use, My checklist. Generate that reading path for an opted-in
 project with `dotspec spec build`.

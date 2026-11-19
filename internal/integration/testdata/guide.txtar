@@ -12,7 +12,10 @@ stdout 'docs/handbook/requirements.md#define-or-reference-the-criterion-once'
 stdout 'examples  Browse the files bundled'
 status 2 dotspec guide --list quality
 exec dotspec guide examples/todo/SPEC.md
+stdout 'Read the system specification'
+exec dotspec guide examples/todo/specification/system.spec-report.md
 stdout 'Personal task list'
+stdout '## Requirements'
 exec dotspec guide job
 stdout 'progress'
 exec dotspec guide use-case

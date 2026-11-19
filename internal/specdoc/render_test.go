@@ -42,7 +42,7 @@ func TestLiftedSectionPreservesAuthoredMarkdown(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	file := "specification/features/display-a-note.md"
+	file := "specification/features/display-a-note.feature.spec-report.md"
 	out := plan.Pages[file].Markdown
 	for _, want := range []string{
 		"[![diagram](<../../module%231/specs/icon.svg>)](<../../module%231/specs/guide%23a.md?mode=reader#setup>)",
@@ -54,7 +54,7 @@ func TestLiftedSectionPreservesAuthoredMarkdown(t *testing.T) {
 			t.Fatalf("%s missing %q\n%s", file, want, out)
 		}
 	}
-	detail := plan.Pages["specification/requirements/save-a-note.md"].Markdown
+	detail := plan.Pages["specification/requirements/save-a-note.requirement.spec-report.md"].Markdown
 	if strings.Index(detail, "## Rationale") < strings.Index(detail, "## Statement") {
 		t.Fatal(detail)
 	}

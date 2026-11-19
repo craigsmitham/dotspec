@@ -249,7 +249,7 @@ output is redirected. A nonzero authoring exit still produces the review documen
 
 Missing motivation or verification guidance is advisory. A verification plan is
 not an execution result, and a path through the graph does not prove satisfaction.
-The [To-do restart requirement](../../examples/todo/specification/requirements/preserve-tasks-across-restart.md)
+The [To-do restart requirement](../../examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md)
 links to the scenario obligation it refines, the storage assumption it relies on
 and the desired outcome it supports. See [Requirements layers](requirements-layers.md)
 for the meaning of those relationships.
@@ -369,7 +369,7 @@ dotspec model overview
 The command reports explicit part relationships, feature groups, directly
 applicable obligations, verification and criterion coverage, concept uses,
 descriptions and native references. To read the same subjects in context, open
-the [To-do system specification](../../examples/todo/SPEC.md) and follow the
+the [To-do system specification](../../examples/todo/specification/system.spec-report.md) and follow the
 feature, component or interface that interests you.
 
 The command derives feature involvement from the direct applicability targets
@@ -390,7 +390,7 @@ boundary intent while allowing implementation structure to change:
 For enabling abilities that may combine people, procedures and technology, use
 the optional [Capability model](jobs.md#connect-needs-to-capabilities-and-specifications).
 Its dependencies and providers are distinct from feature membership and structural
-parentage. The [To-do job section](../../examples/todo/specification/jobs/resume-interrupted-work.md) shows the job,
+parentage. The [To-do job section](../../examples/todo/specification/jobs/resume-interrupted-work.job.spec-report.md) shows the job,
 its steps and the outcome supported by the restart requirement.
 
 ## Review boundaries and scenario grounding

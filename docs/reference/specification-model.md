@@ -173,7 +173,7 @@ of linked material. It preserves unresolved-reference and draft-review findings;
 missing motivation or check guidance is advisory. Checks, execution evidence,
 implementation satisfaction and achieved outcomes are distinct future relations,
 not conclusions inferred from reachability or existing Evidence prose.
-The [restart requirement](../../examples/todo/specification/requirements/preserve-tasks-across-restart.md) lets readers follow individual relationships from [authored specifications](../../examples/todo/README.md).
+The [restart requirement](../../examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md) lets readers follow individual relationships from [authored specifications](../../examples/todo/README.md).
 
 ## Concept definitions and composition
 
@@ -221,7 +221,7 @@ application dependency diagrams. Use `--relative-to DIR` for the directory that 
 contain the Markdown; relative source links are rebased there. No files are written
 unless the caller redirects output.
 
-In the generated [Checklist section](../../examples/todo/specification/concepts/checklist.md),
+In the generated [Checklist section](../../examples/todo/specification/concepts/checklist.concept.spec-report.md),
 follow My checklist to its system-specific use. Run `dotspec model docs --project todo`
 to inspect the example's concept reference and composition together.
 The [authoring guide](../handbook/concepts.md) explains how to develop these descriptions.
@@ -271,10 +271,10 @@ Project, Environment, Goals, System reading perspective without replacing concer
 subsets or creating a project-management subsystem.
 
 Use the [review authoring guide](../handbook/review.md) for syntax and limitations.
-The [To-do review index](../../examples/todo/specification/review.md) links to
+The [To-do review index](../../examples/todo/specification/requirements-review.report.md) links to
 verification plans on obligations and the validation plan on the system overview.
 Optional concept effects matrices are included in `model docs`;
-the [checklist effects table](../../examples/todo/specification/concepts/checklist.md#effects-table) records which properties reopening preserves.
+the [checklist effects table](../../examples/todo/specification/concepts/checklist.concept.spec-report.md#effects-table) records which properties reopening preserves.
 
 ## Three connected representations
 
@@ -536,5 +536,5 @@ statements and evidence accompany concise labels. Provider links describe only
 explicitly identified systems and components and are non-exhaustive.
 
 See [Jobs and user needs](../handbook/jobs.md) for authoring and method
-boundaries. In the [To-do job section](../../examples/todo/specification/jobs/resume-interrupted-work.md#less-reconstruction),
+boundaries. In the [To-do job section](../../examples/todo/specification/jobs/resume-interrupted-work.job.spec-report.md#less-reconstruction),
 the outcome links to its supporting requirement and applicable job step.

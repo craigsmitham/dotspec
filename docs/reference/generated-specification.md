@@ -1,6 +1,6 @@
 # Generate a requirements specification
 
-Use a generated spec when readers need one entry point for requirements authored across a project. Start at the project's `SPEC.md` to read its purpose and scope, choose a feature, and follow its promises to the source and planned verification. The To-do example includes a [complete generated spec](../../examples/todo/SPEC.md).
+Use a generated spec when readers need one entry point for requirements authored across a project. Open the project’s `SPEC.md` and follow its link to read the system’s purpose and scope, choose a feature, and follow its promises to the source and planned verification. The To-do example includes a [complete generated spec](../../examples/todo/SPEC.md).
 
 ## Set up a project
 
@@ -26,15 +26,21 @@ Commit the authored changes, `SPEC.md` and the generated Markdown in `specificat
 
 | Destination | Contents |
 | --- | --- |
-| `SPEC.md` | Root system overview and links into its specification |
-| `specification/quality-attributes.md` | The system's declared quality attributes, with their full definitions, hierarchy, qualifications, and links to classified requirements |
-| `SPEC.md#requirements` | Requirements and embedded obligations in this system, each linked to its canonical page or passage |
-| `specification/systems/<child>/SPEC.md` | Child system overview with its own local directories |
-| `specification/review.md` | Review items with links to passages for follow-up |
+| `SPEC.md` | System name and a single link to its full report |
+| `specification/system.spec-report.md` | Root system overview and links into its specification |
+| `specification/quality-attributes.spec-report.md` | The system's declared quality attributes, with their full definitions, hierarchy, qualifications, and links to classified requirements |
+| `specification/system.spec-report.md#requirements` | Requirements and embedded obligations in this system, each linked to its canonical page or passage |
+| `specification/systems/<child>/system.spec-report.md` | Child system overview with its own local directories |
+| `specification/requirements-review.report.md` | Review items with links to passages for follow-up |
 
-In a system overview, select an attribute in the name-and-description table to read its full entry. A child system with declared attributes has its own detail page beside its `SPEC.md`. On a requirement page, read the statement, applicability, criterion, and verification plan together. Links beside the requirement lead back to the precise attribute or use-case passage.
+Every system directory contains a `system.spec-report.md`. In a collection, the
+report filename includes the subject slug and kind, for example
+`components/task-service.component.spec-report.md`. Use the canonical report
+path for bookmarks and links to headings.
 
-For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.md) opens with the goal of its grouped use case. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
+In a system overview, select an attribute in the name-and-description table to read its full entry. A child system with declared attributes has its own detail page beside its `system.spec-report.md`. On a requirement page, read the statement, applicability, criterion, and verification plan together. Links beside the requirement lead back to the precise attribute or use-case passage.
+
+For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with the goal of its grouped use case. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
 
 Each system lists its immediate child systems and the specifications in its scope.
 Each component lists its structural children, declared interfaces, and requirements
@@ -43,7 +49,7 @@ both directories and leads to the same page or heading.
 
 Authored Markdown uses `<subject>-spec`. The corresponding generated Markdown
 uses `<subject>-spec-report`. For example, `system.spec.md` declares
-`type: system-spec`, and its generated `SPEC.md` declares `type: system-spec-report`.
+`type: system-spec`, and its generated `system.spec-report.md` declares `type: system-spec-report`.
 
 The report’s `documents` value is a relative URI to its subject’s authored
 heading. A component declared inside the system spec gets a

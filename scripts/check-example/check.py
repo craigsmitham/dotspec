@@ -128,10 +128,16 @@ def follow(page, name):
 
 def spec_journey(cli, tmp):
     project = project_copy(tmp, "reader")
-    root = project / "SPEC.md"
-    root.unlink()
+    entry = project / "SPEC.md"
+    entry.unlink()
     shutil.rmtree(project / "specification")
     cli("spec build", cwd=project)
+    root = follow(entry, "Read the system specification")
+    assert root == project / "specification/system.spec-report.md"
+    assert len(markdown_links(entry)) == 1
+    assert sorted(project.rglob("SPEC.md")) == [entry]
+    assert all(target != entry for page in (project / "specification").rglob("*.md")
+               for _, target, _, _ in markdown_links(page))
     feature = follow(root, "Pick up where I left off")
     promise = follow(feature, "Preserve tasks across restart")
     interaction = follow(feature, "Return to my list")
@@ -143,7 +149,7 @@ def spec_journey(cli, tmp):
         assert any(target == qualities and fragment == "durability"
                    for _, target, fragment, _ in markdown_links(page))
     assert follow(qualities, "Preserve tasks across restart") == promise
-    assert follow(qualities, "Source definition") == project / "specification/quality-models/personal-data-quality.md"
+    assert follow(qualities, "Source definition") == project / "specification/quality-models/personal-data-quality.quality-model.spec-report.md"
     headings = re.findall(r"^## (.+)$", promise.read_text(encoding="utf-8"), re.M)
     assert headings[:4] == ["Statement", "Applies to", "Criterion", "Verification plan"]
     text = " ".join(promise.read_text(encoding="utf-8").split())
@@ -156,7 +162,7 @@ def spec_journey(cli, tmp):
     assert any("return-to-my-list" in target.name and fragment.endswith("keep-recorded-work-available")
                for _, target, fragment, _ in targets), "missing refinement of the scenario clause"
     directory = root.read_text(encoding="utf-8").split("## Requirements\n", 1)[1].split("\n## ", 1)[0]
-    assert "[Preserve tasks across restart](<specification/requirements/preserve-tasks-across-restart.md>)" in directory
+    assert "[Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>)" in directory
     assert follow(root, "Preserve tasks across restart") == promise
     assert not list((project / "specification").rglob("index.md"))
     cli("check", cwd=project)

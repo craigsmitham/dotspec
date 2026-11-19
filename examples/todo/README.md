@@ -25,16 +25,16 @@ The [restart requirement](specs/requirements/restart.requirement.spec.md) refine
 
 ## Read the requirements specification
 
-Start with the [system overview](SPEC.md) or its [Requirements section](SPEC.md#requirements). The pages are generated from the [To-do specifications](specs). Edit the specifications and run `mise run generate` from the repository root to refresh the spec. Run `dotspec check --project todo` to check its content, links and freshness.
+Start with the [system overview](specification/system.spec-report.md) or its [Requirements section](specification/system.spec-report.md#requirements). The pages are generated from the [To-do specifications](specs). Edit the specifications and run `mise run generate` from the repository root to refresh the spec. Run `dotspec check --project todo` to check its content, links and freshness.
 
 | Question | Start here |
 | --- | --- |
-| Which features, interfaces and behaviors does the system expose? | [System overview](SPEC.md) |
-| How do the user's goals connect to the specifications? | [User job](specification/jobs/resume-interrupted-work.md) |
-| What changes when someone reopens a task? | [Checklist](specification/concepts/checklist.md) |
-| Which promise does the restart requirement refine? | [Restart requirement](specification/requirements/preserve-tasks-across-restart.md) |
-| Which scenarios and decisions need review? | [Requirements review](specification/review.md) |
-| How do project, environment, goals and system fit together? | [Purpose, environment and scope](SPEC.md) |
+| Which features, interfaces and behaviors does the system expose? | [System overview](specification/system.spec-report.md) |
+| How do the user's goals connect to the specifications? | [User job](specification/jobs/resume-interrupted-work.job.spec-report.md) |
+| What changes when someone reopens a task? | [Checklist](specification/concepts/checklist.concept.spec-report.md) |
+| Which promise does the restart requirement refine? | [Restart requirement](specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md) |
+| Which scenarios and decisions need review? | [Requirements review](specification/requirements-review.report.md) |
+| How do project, environment, goals and system fit together? | [Purpose, environment and scope](specification/system.spec-report.md) |
 
 ## Verify the example
 

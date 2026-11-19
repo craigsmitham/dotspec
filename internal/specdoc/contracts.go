@@ -110,8 +110,8 @@ func addSourceContracts(p *planner) error {
 		return fmt.Errorf("%s: review report is missing", reviewPath)
 	}
 	p.plan.Pages[reviewPath].Document = Document{Type: RequirementsReviewReport}
-	root := p.plan.Pages["SPEC.md"]
-	requireRoute(root, relative("SPEC.md", reviewPath), "")
+	requireRoute(p.plan.Pages[p.governing.file], relative(p.governing.file, reviewPath), "")
+	requireRoute(p.plan.Pages["SPEC.md"], relative("SPEC.md", p.governing.file), "Read the system specification")
 	return nil
 }
 

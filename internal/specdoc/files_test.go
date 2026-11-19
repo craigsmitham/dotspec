@@ -13,20 +13,28 @@ import (
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 )
 
-const detailPath = "specification/requirements/restart.md"
+const (
+	systemPath = "specification/system.spec-report.md"
+	detailLink = "requirements/restart.requirement.spec-report.md"
+	detailPath = "specification/" + detailLink
+)
 
 func testPlan() *Plan {
+	entry := &Page{
+		Title: "Task list", RequiredLinks: []string{systemPath},
+		Markdown: "---\ngenerated_by: dotspec\n---\n# Task list\n\n[Read the system specification](" + systemPath + ")\n",
+	}
 	root := &Page{
-		Document: Document{Type: "system-spec-report", Documents: "specs/system.spec.md#task-list"}, Title: "Task list",
-		RequiredLinks: []string{detailPath},
-		Markdown:      "---\ntype: system-spec-report\ndocuments: specs/system.spec.md#task-list\ngenerated_by: dotspec\n---\n# Task list\n\n[Resume tasks](" + detailPath + ")\n",
+		Document: Document{Type: "system-spec-report", Documents: "../specs/system.spec.md#task-list"}, Title: "Task list",
+		RequiredLinks: []string{detailLink},
+		Markdown:      "---\ntype: system-spec-report\ndocuments: ../specs/system.spec.md#task-list\ngenerated_by: dotspec\n---\n# Task list\n\n[Resume tasks](" + detailLink + ")\n",
 	}
 	detail := &Page{
 		Document: Document{Type: "requirement-spec-report", Documents: "../../specs/restart.spec.md#restart"}, Title: "Restart",
 		RequiredContent: []string{"**Preserve tasks** on the same database."},
 		Markdown:        "---\ntype: requirement-spec-report\ndocuments: ../../specs/restart.spec.md#restart\ngenerated_by: dotspec\n---\n# Restart\n\n**Preserve tasks** on the same database.\n",
 	}
-	return &Plan{Pages: map[string]*Page{"SPEC.md": root, detailPath: detail}}
+	return &Plan{Pages: map[string]*Page{"SPEC.md": entry, systemPath: root, detailPath: detail}}
 }
 
 func TestCheckRenderedSourceAndRoutes(t *testing.T) {
@@ -44,7 +52,7 @@ func TestCheckRenderedSourceAndRoutes(t *testing.T) {
 	}
 	// Simulate a buggy renderer. Both broken files exactly match its generated
 	// bytes; explicit content and navigation rules still detect both losses.
-	p.Pages["SPEC.md"].Markdown = strings.ReplaceAll(p.Pages["SPEC.md"].Markdown, "[Resume tasks]("+detailPath+")", "Resume tasks")
+	p.Pages[systemPath].Markdown = strings.ReplaceAll(p.Pages[systemPath].Markdown, "[Resume tasks]("+detailLink+")", "Resume tasks")
 	p.Pages[detailPath].Markdown = strings.ReplaceAll(p.Pages[detailPath].Markdown, " on the same database", "")
 	for rel, pg := range p.Pages {
 		if err := os.WriteFile(filepath.Join(dir, rel), []byte(pg.Markdown), 0644); err != nil {
@@ -94,8 +102,8 @@ func TestWritePreservesAuthoredFiles(t *testing.T) {
 		t.Fatal(err)
 	}
 	delete(p.Pages, detailPath)
-	p.Pages["SPEC.md"].RequiredLinks = nil
-	p.Pages["SPEC.md"].Markdown = strings.Split(p.Pages["SPEC.md"].Markdown, "[")[0]
+	p.Pages[systemPath].RequiredLinks = nil
+	p.Pages[systemPath].Markdown = strings.Split(p.Pages[systemPath].Markdown, "[")[0]
 	changes, err := Write(dir, p)
 	if err != nil || len(changes.Removed) != 1 || changes.Removed[0] != detailPath {
 		t.Fatal(changes, err)
@@ -113,7 +121,7 @@ func TestWriteRejectsSymlinkedDestination(t *testing.T) {
 	if _, err := Write(dir, testPlan()); err == nil {
 		t.Fatal("wrote through a linked directory")
 	}
-	for _, name := range []string{filepath.Join(dir, "SPEC.md"), filepath.Join(other, "requirements", "restart.md")} {
+	for _, name := range []string{filepath.Join(dir, "SPEC.md"), filepath.Join(other, filepath.Base(systemPath))} {
 		if _, err := os.Stat(name); !errors.Is(err, fs.ErrNotExist) {
 			t.Fatal(name, err)
 		}

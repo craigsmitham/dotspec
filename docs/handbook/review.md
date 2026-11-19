@@ -17,7 +17,7 @@ to a file, pass its containing directory with `--relative-to` so readers can
 follow source and contract links.
 
 For a project with a generated spec, `dotspec spec build` writes the review index
-with the other pages. The [To-do review index](../../examples/todo/specification/review.md)
+with the other pages. The [To-do review index](../../examples/todo/specification/requirements-review.report.md)
 links to the restart verification plan and the participant validation exercise.
 Read the methods in context and compare what each can demonstrate.
 [Verification and validation](verification-and-validation.md).
@@ -295,7 +295,7 @@ add one authored matrix under Effects table in a concept:
 The first row names columns and the first column names operations. Cells preserve
 full authored content, including formulas or links. **A blank cell is unspecified;
 it never means unchanged.** Say `unchanged` explicitly where preservation is
-intended. The [Checklist effects table](../../examples/todo/specification/concepts/checklist.md#effects-table)
+intended. The [Checklist effects table](../../examples/todo/specification/concepts/checklist.concept.spec-report.md#effects-table)
 shows what reopening an entry preserves. `dotspec model docs` also includes the matrix
 in its concept reference.
 

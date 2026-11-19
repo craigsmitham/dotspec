@@ -164,17 +164,18 @@ The [Demo system](../../../../apps/demo/specs/system.spec.md) supplies examples.
 			}
 		}
 	}
-	reader("SPEC.md", "## Child systems\n\n- [Worker](<specification/systems/worker/SPEC.md>)")
-	reader("specification/systems/worker/SPEC.md", "[Tool](<../../../SPEC.md>)", "## Child systems\n\n- [Queue](<systems/queue/SPEC.md>)")
-	reader(section+"SPEC.md", "[Worker](<../../SPEC.md>) · [Requirements](<#requirements>)", "## Components\n\n- [Intake](<components/intake.md>)", "## Requirements\n\n- [Retain jobs](<requirements/retain-jobs.md>)")
-	reader(section+"SPEC.md", "[Availability](<quality-attributes.md#availability>) | Accept work while either A &#124; B is available. |")
-	reader(section+"quality-attributes.md", "## Availability", "### Limit", "Maintenance windows are excluded.", "[Retain jobs](<requirements/retain-jobs.md>)")
-	reader("specification/review.md",
-		"[Which outages count?](<systems/worker/systems/queue/quality-attributes.md#open-questions>)",
-		"[How is uptime measured?](<systems/worker/systems/queue/quality-attributes.md#open-questions>)")
-	reader(section+"components/journal.md", "intake.md", "## Applicable requirements\n\n- [Retain jobs](<../requirements/retain-jobs.md>)")
-	reader(section+"components/intake.md", "## Required interfaces\n\n- [Storage](<../interfaces/storage.md>)", "## Provided interfaces\n\n- [Submission](<../interfaces/submission.md>)", "## Components\n\n- [Journal](<journal.md>)", "## Applicable requirements\n\n- [Retain jobs](<../requirements/retain-jobs.md>)")
-	reader(section+"requirements/retain-jobs.md", "../components/intake.md", "../components/journal.md", "apps/demo/specs/system.spec.md", "../quality-attributes.md#availability")
+	reader("SPEC.md", "[Read the system specification](<specification/system.spec-report.md>)")
+	reader("specification/system.spec-report.md", "## Child systems\n\n- [Worker](<systems/worker/system.spec-report.md>)")
+	reader("specification/systems/worker/system.spec-report.md", "[Tool](<../../system.spec-report.md>)", "## Child systems\n\n- [Queue](<systems/queue/system.spec-report.md>)")
+	reader(section+"system.spec-report.md", "[Worker](<../../system.spec-report.md>) · [Requirements](<#requirements>)", "## Components\n\n- [Intake](<components/intake.component.spec-report.md>)", "## Requirements\n\n- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>)")
+	reader(section+"system.spec-report.md", "[Availability](<quality-attributes.spec-report.md#availability>) | Accept work while either A &#124; B is available. |")
+	reader(section+"quality-attributes.spec-report.md", "## Availability", "### Limit", "Maintenance windows are excluded.", "[Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>)")
+	reader("specification/requirements-review.report.md",
+		"[Which outages count?](<systems/worker/systems/queue/quality-attributes.spec-report.md#open-questions>)",
+		"[How is uptime measured?](<systems/worker/systems/queue/quality-attributes.spec-report.md#open-questions>)")
+	reader(section+"components/journal.component.spec-report.md", "intake.component.spec-report.md", "## Applicable requirements\n\n- [Retain jobs](<../requirements/retain-jobs.requirement.spec-report.md>)")
+	reader(section+"components/intake.component.spec-report.md", "## Required interfaces\n\n- [Storage](<../interfaces/storage.interface.spec-report.md>)", "## Provided interfaces\n\n- [Submission](<../interfaces/submission.interface.spec-report.md>)", "## Components\n\n- [Journal](<journal.component.spec-report.md>)", "## Applicable requirements\n\n- [Retain jobs](<../requirements/retain-jobs.requirement.spec-report.md>)")
+	reader(section+"requirements/retain-jobs.requirement.spec-report.md", "../components/intake.component.spec-report.md", "../components/journal.component.spec-report.md", "apps/demo/specs/system.spec.md", "../quality-attributes.spec-report.md#availability")
 	if _, err := os.Stat(filepath.Join(root, "apps/demo/SPEC.md")); !os.IsNotExist(err) {
 		t.Fatalf("referenced project must not acquire generated files: %v", err)
 	}
@@ -206,14 +207,14 @@ Individual authors.
 		if code, out, errOut := invoke("spec", "build"); code != 0 {
 			t.Fatal(code, out, errOut)
 		}
-		data, err := os.ReadFile("SPEC.md")
+		data, err := os.ReadFile("specification/system.spec-report.md")
 		if err != nil {
 			t.Fatal(err)
 		}
 		return string(data)
 	}
 	page := build()
-	nav := "[Requirements review](<specification/review.md>)"
+	nav := "[Requirements review](<requirements-review.report.md>)"
 	if !strings.Contains(page, "Local files.\n\n---\n\n"+nav+"\n\n[Edit source]") || strings.Count(page, nav) != 1 {
 		t.Fatal(page)
 	}
@@ -245,7 +246,7 @@ An example:
 	for _, want := range []string{
 		"Local files.\n\n---\n\n[Requirements](<#requirements>) · " + nav + "\n\n## Quality attributes",
 		"| Quality attribute | Description |",
-		"| [Durability](<specification/quality-attributes.md#durability>) | The ID: below is permanent. |",
+		"| [Durability](<quality-attributes.spec-report.md#durability>) | The ID: below is permanent. |",
 	} {
 		if !strings.Contains(page, want) {
 			t.Errorf("overview missing %q:\n%s", want, page)
@@ -254,15 +255,15 @@ An example:
 	if strings.Contains(page, "**Classifies**") || strings.Contains(page, "**ID:**") {
 		t.Fatalf("overview repeated attribute detail:\n%s", page)
 	}
-	attributesPage, err := os.ReadFile("specification/quality-attributes.md")
+	attributesPage, err := os.ReadFile("specification/quality-attributes.spec-report.md")
 	if err != nil {
 		t.Fatal(err)
 	}
 	for _, want := range []string{
 		"**Sub-attribute of:** reliability\\\n**ID:** durability",
 		"~~~md\n**ID:** example\n**Sub-attribute of:** example-parent\n~~~",
-		"**Classifies** · [Save](<requirements/save.md>)",
-		"**Classifies**\n\n- [Restore](<requirements/restore.md>)\n- [Save](<requirements/save.md>)",
+		"**Classifies** · [Save](<requirements/save.requirement.spec-report.md>)",
+		"**Classifies**\n\n- [Restore](<requirements/restore.requirement.spec-report.md>)\n- [Save](<requirements/save.requirement.spec-report.md>)",
 	} {
 		if !strings.Contains(string(attributesPage), want) {
 			t.Errorf("detail missing %q:\n%s", want, attributesPage)

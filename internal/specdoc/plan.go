@@ -275,8 +275,8 @@ func (p *planner) place() error {
 	if len(roots) != 1 {
 		return fmt.Errorf("generated specification requires one root system; found %d (%s)", len(roots), strings.Join(roots, ", "))
 	}
-	p.governing.file = "SPEC.md"
 	p.governing.dir = "specification"
+	p.governing.file = path.Join(p.governing.dir, systemReportName)
 	for _, s := range p.subjects {
 		if s.kind() == "QualityModel" {
 			s.system = p.governing
@@ -311,9 +311,9 @@ func (p *planner) place() error {
 		base := path.Join(s.collectionDir(), slug)
 		if s.kind() == "System" {
 			s.dir = base
-			s.file = base + "/SPEC.md"
+			s.file = path.Join(s.dir, systemReportName)
 		} else {
-			s.file = base + ".md"
+			s.file = base + "." + kindName(s.kind()) + ".spec-report.md"
 		}
 		return nil
 	}
@@ -342,7 +342,7 @@ func (p *planner) indexTargets() {
 		if s.kind() == "System" && len(model.Strings(s.r["quality_attributes"])) > 0 {
 			for _, h := range s.source.headings {
 				if h.level == s.name.level+1 && h.title == "Quality attributes" {
-					detail := &subject{source: s.source, name: h, system: s, file: path.Join(s.dir, "quality-attributes.md")}
+					detail := &subject{source: s.source, name: h, system: s, file: path.Join(s.dir, "quality-attributes.spec-report.md")}
 					s.attributes = detail
 					h.owner = detail
 					p.subjects = append(p.subjects, detail)

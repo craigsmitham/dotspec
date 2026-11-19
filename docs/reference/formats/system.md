@@ -97,7 +97,7 @@ and explicit system selection follow authored links, never directory nesting. Qu
 of `Applies to` targets.
 
 See [structure and feature authoring](../../handbook/relationships.md#describe-systems-components-and-features)
-and the [To-do system overview](../../../examples/todo/SPEC.md).
+and the [To-do system overview](../../../examples/todo/specification/system.spec-report.md).
 Use `dotspec spec build` in an [opted-in project](../generated-specification.md)
 to generate its overview and supporting pages. To inspect system structure and
 applicable obligations as a standalone Markdown report, run `dotspec model overview`.

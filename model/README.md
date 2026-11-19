@@ -183,7 +183,7 @@ content field; they cannot both appear in one document. Existing prose remains
 valid and no synchronization semantics are inferred.
 
 `dotspec model docs` generates concept references, system compositions and dependency
-diagrams. Readers can also inspect the [generated Checklist section](../examples/todo/specification/concepts/checklist.md). Re-export
+diagrams. Readers can also inspect the [generated Checklist section](../examples/todo/specification/concepts/checklist.concept.spec-report.md). Re-export
 older snapshots with the new CLI; saved JSON is not silently migrated. See
 [concept authoring](../docs/handbook/concepts.md) and the
 [concept design rationale](../docs/reference/specification-model.md#concept-definitions-and-composition).
@@ -233,7 +233,7 @@ The `0.8.0-draft` model and `dotspec-markdown/7` add layered traceability:
 Re-export source with this version; saved snapshots are not silently migrated.
 See [Requirements layers](../docs/handbook/requirements-layers.md),
 [authoring relationships](../docs/handbook/relationships.md), and the
-[source-linked restart requirement](../examples/todo/specification/requirements/preserve-tasks-across-restart.md).
+[source-linked restart requirement](../examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md).
 
 
 The `0.9.0-draft` model and `dotspec-markdown/8` unify obligation capabilities:
@@ -279,7 +279,7 @@ The `0.10.0-draft` model and `dotspec-markdown/9` introduced explicit specificat
   inherited requirements or satisfaction.
 
 See [authoring relationships](../docs/handbook/relationships.md#describe-systems-components-and-features)
-and the [generated overview](../examples/todo/SPEC.md).
+and the [generated overview](../examples/todo/specification/system.spec-report.md).
 
 
 ## Jobs, user needs and capabilities

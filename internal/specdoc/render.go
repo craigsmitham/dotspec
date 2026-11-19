@@ -18,7 +18,10 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
-const reviewPath = "specification/review.md"
+const (
+	systemReportName = "system.spec-report.md"
+	reviewPath       = "specification/requirements-review.report.md"
+)
 
 type writer struct {
 	page                *Page
@@ -85,6 +88,10 @@ func relativeURL(from, file, frag string) string {
 }
 func (p *planner) render() *Plan {
 	p.indexRelationships()
+	entry := p.newPage("SPEC.md", Document{}, p.governing.name.title)
+	entry.titleMarkdown = inlineText(p.governing.name.title)
+	entry.text(entry.link("Read the system specification", p.governing.file))
+	entry.finish()
 	for _, s := range p.subjects {
 		p.renderSubject(s)
 	}
