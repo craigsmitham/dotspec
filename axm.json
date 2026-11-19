@@ -6,6 +6,10 @@
   "instructionFiles": {
     "fileName": "AGENTS.md"
   },
+  "minimumReleaseAgeExclude": [
+    "@agentxm/*",
+    "@craigsmitham/*"
+  ],
   "skills": {
     "axm": {
       "source": "workspace",
