@@ -17,6 +17,7 @@
     }
   },
   "packs": {
-    "codebase-renewal": "agentxm:@craigsmitham/packs/codebase-renewal"
+    "codebase-renewal": "agentxm:@craigsmitham/packs/codebase-renewal",
+    "docs": "agentxm:@craigsmitham/packs/docs"
   }
 }

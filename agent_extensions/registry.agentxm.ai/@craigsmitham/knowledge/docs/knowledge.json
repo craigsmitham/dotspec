@@ -1,0 +1,57 @@
+{
+  "$schema": "https://axm.sh/schemas/knowledge.schema.json",
+  "owner": "@craigsmitham",
+  "name": "docs",
+  "version": "0.15.1",
+  "type": "knowledge",
+  "format": {
+    "name": "okf",
+    "version": "0.2"
+  },
+  "bundleRoot": "src",
+  "description": "Documentation craft and patterns for authoring, reviewing, organizing, and maintaining documents, reusable checklists, and pattern collections across domains",
+  "keywords": [
+    "docs",
+    "documentation",
+    "diataxis",
+    "tutorial",
+    "how-to",
+    "reference",
+    "explanation",
+    "authoring",
+    "workflow",
+    "quality",
+    "audit",
+    "organization",
+    "naming",
+    "information-architecture",
+    "discovery",
+    "remediation",
+    "principle",
+    "normative",
+    "judgment",
+    "playbook",
+    "runbook",
+    "documentation-patterns",
+    "pattern-collection",
+    "pattern-description",
+    "pattern-mining",
+    "pattern-review",
+    "pattern-language",
+    "checklist",
+    "checklist-design",
+    "readiness",
+    "learning-scaffold"
+  ],
+  "license": "CC-BY-SA-4.0",
+  "homepage": "https://github.com/craigsmitham/agent-extensions",
+  "recommendedPacks": [
+    "@craigsmitham/packs/docs"
+  ],
+  "standalone": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/craigsmitham/agent-extensions",
+    "directory": "knowledge/docs"
+  }
+}

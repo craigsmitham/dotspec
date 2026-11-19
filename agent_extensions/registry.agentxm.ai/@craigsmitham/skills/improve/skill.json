@@ -3,7 +3,7 @@
   "owner": "@craigsmitham",
   "type": "skill",
   "name": "improve",
-  "version": "0.0.2",
+  "version": "0.2.0",
   "description": "Improve a codebase or a specified part with evidence-backed gains in fitness for its intended purpose.",
   "keywords": [
     "improvement",
@@ -21,6 +21,6 @@
   "license": "MIT",
   "standalone": true,
   "recommendedPacks": [
-    "@craigsmitham/packs/codebase-renewal"
+    "@craigsmitham/packs/software-maintenance"
   ]
 }

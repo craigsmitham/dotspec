@@ -1,9 +1,9 @@
 # Codebase renewal
 
-Five standalone skills for codebase renewal: align with guidance, prune unnecessary elements, improve quality, generalize capabilities, and experiment to reduce uncertainty.
+Six standalone skills for codebase renewal: align with guidance, reconcile duplication and drift, prune unnecessary elements, improve quality, generalize capabilities, and experiment to reduce uncertainty.
 
 Codebase renewal keeps software useful as requirements, knowledge, and
-circumstances change. This pack brings together five concise, outcome-focused
+circumstances change. This pack brings together six concise, outcome-focused
 skills. Each defines the desired result while leaving methods to the caller
 and model. Use them independently or combine them as the work requires; the
 pack prescribes no execution order.
@@ -25,11 +25,12 @@ automatic execution, or requirement for one skill to invoke another.
 
 ## Choose a skill
 
-All five skills are published under `@craigsmitham/skills/`.
+All six skills are published under `@craigsmitham/skills/`.
 
 | Skill | Choose it when… | Desired outcome |
 | --- | --- | --- |
 | `align` | Requirements or guidance have changed, or implementation has drifted. | The codebase satisfies applicable requirements and reflects relevant guidance. |
+| `reconcile` | Related content repeats the same knowledge or has drifted apart. | Related representations agree on shared meaning, with less unnecessary duplication. |
 | `prune` | Elements no longer justify their continued presence. | A smaller, coherent system with less maintenance burden. |
 | `improve` | Existing software could better serve its intended purpose. | Worthwhile, evidence-backed gains in relevant qualities. |
 | `generalize` | Related cases should benefit from an existing capability. | Broader applicability through coherent commonality and appropriate variation. |
@@ -41,6 +42,7 @@ Name the relevant scope and the outcome or constraints that matter. For example:
 
 ```text
 $align src/api/ with the updated error-handling requirements
+$reconcile setup instructions across README.md, docs/, and example projects
 $prune obsolete build configuration while retaining supported release targets
 $improve the importer's memory use without sacrificing required throughput
 $generalize the exporter to support the additional formats in the specification
@@ -51,14 +53,15 @@ Work can begin with whichever outcome is needed. An uncertain design decision
 may call for an experiment before an improvement. Changed requirements may
 call for alignment, with removal of superseded machinery where obligations
 permit. A well-scoped task may need only one skill. These are examples of
-composition, not a required sequence or an instruction to invoke all five.
+composition, not a required sequence or an instruction to invoke all six.
 
 ## Philosophy
 
 Renewal is purposeful change in relation to what software is for and what it
 must continue to support. A useful result can involve removing something,
-improving a quality, extending applicability, satisfying changed guidance, or
-learning that a proposed change is not worthwhile.
+improving a quality, extending applicability, satisfying changed guidance,
+learning that a proposed change is not worthwhile, or reconciling content that
+duplicates or contradicts shared knowledge.
 
 The skills share a concern for context, live obligations, and claims supported
 by appropriate evidence. They have distinct outcomes, even when their
@@ -77,8 +80,9 @@ systematic innovation. The software mapping is this pack's synthesis:
 - Experimenting supplies learning that can support systematic innovation;
   innovation also requires creating and realizing value.
 - Aligning adds conformance as requirements and guidance change.
+- Reconciling adds coherence among related representations of shared knowledge.
 
-This is not a claim that Drucker proposed five software practices or a fixed
+This is not a claim that Drucker proposed six software practices or a fixed
 renewal cycle. The pack supplies a vocabulary of useful outcomes and convenient
 installation. The caller and model retain judgment about methods, priorities,
 sequence, and the extent of change.
@@ -90,13 +94,17 @@ sequence, and the extent of change.
   This Drucker Institute reading adapts “Management's New Paradigms” and
   *Innovation and Entrepreneurship*, presenting four ongoing entrepreneurial
   activities. It supplies the organizational inspiration described above.
-- **Engineering foundations:** each member's package README credits the
-  sources behind its own definition and explains the limits of that synthesis:
+- **Engineering foundations:** the five original members' package READMEs
+  credit the sources behind their definitions and explain the limits of each
+  synthesis:
   [align](https://agentxm.ai/@craigsmitham/skills/align),
   [prune](https://agentxm.ai/@craigsmitham/skills/prune),
   [improve](https://agentxm.ai/@craigsmitham/skills/improve),
   [generalize](https://agentxm.ai/@craigsmitham/skills/generalize), and
   [experiment](https://agentxm.ai/@craigsmitham/skills/experiment).
+  The [reconcile](https://agentxm.ai/@craigsmitham/skills/reconcile) README
+  explains its original synthesis of duplication, divergence, and appropriate
+  independence.
 
 The pack's explanatory prose is original. Linked sources retain their respective
 rights; no source text or code is vendored here.

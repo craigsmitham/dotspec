@@ -17,3 +17,15 @@ Breaking changes are acceptable. Do not introduce backward compatbility mechanis
 # Design principles
 
 * Optimize *.spec.md files for human readability
+
+<!-- axm:knowledge -->
+## Knowledge Bundles
+
+Use `axm knowledge concepts --help` to search, read, and explore these bundles.
+
+### @craigsmitham
+
+| Bundle | Description |
+| --- | --- |
+| [docs](agent_extensions/registry.agentxm.ai/@craigsmitham/knowledge/docs/src/index.md) | Documentation craft and patterns for authoring, reviewing, organizing, and maintaining documents, reusable checklists, and pattern collections across domains |
+<!-- /axm:knowledge -->

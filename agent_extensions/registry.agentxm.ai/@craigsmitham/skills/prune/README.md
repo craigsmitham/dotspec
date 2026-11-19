@@ -8,7 +8,18 @@ and the integrity of what remains, leaving the method to the caller and model.
 
 ## Usage
 
+Invoke this skill directly during maintenance. Automatic model invocation is
+disabled through the supported native settings.
+
 Name the scope and any relevant limits on what must remain supported. For example:
+
+An opportunity question requests findings and recommendations without edits:
+
+```text
+What could we safely $prune from the legacy import area of our app?
+```
+
+A direct change request asks for implementation and verification:
 
 ```text
 $prune this codebase while preserving all supported capabilities
@@ -44,6 +55,19 @@ The skill favors deletion and the simplification it enables. It specifies the
 desired outcome without prescribing discovery tools, removal sequences,
 verification methods, or a reporting template. A scope with nothing expendable
 does not require a change merely to produce a smaller diff or codebase.
+
+## Completion evidence
+
+The skill makes consumer migration and associated cleanup explicit. Verify
+retained obligations using evidence proportionate to removal risk. Remove
+exclusive supporting machinery, update affected instructions, and distinguish
+completed retirement from a transition that still has consumers. Report those
+consumers and an exit condition when compatibility support must remain.
+
+For recurring accumulation, a proportionate ownership change or removal of its
+cause may preserve the benefit. Such prevention must justify its own upkeep.
+Pruning removes expendable elements; simplifying retained capabilities and
+improving independent change are related outcomes with different success criteria.
 
 ## Sources and inspiration
 

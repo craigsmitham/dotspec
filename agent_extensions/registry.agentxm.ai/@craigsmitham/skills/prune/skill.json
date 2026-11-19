@@ -3,7 +3,7 @@
   "owner": "@craigsmitham",
   "type": "skill",
   "name": "prune",
-  "version": "0.0.2",
+  "version": "0.2.0",
   "description": "Prune a codebase or a specified part by removing unnecessary elements and their associated maintenance burden.",
   "keywords": [
     "pruning",
@@ -22,6 +22,6 @@
   "license": "MIT",
   "standalone": true,
   "recommendedPacks": [
-    "@craigsmitham/packs/codebase-renewal"
+    "@craigsmitham/packs/software-maintenance"
   ]
 }

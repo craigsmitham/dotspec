@@ -3,7 +3,7 @@
   "owner": "@craigsmitham",
   "type": "skill",
   "name": "generalize",
-  "version": "0.0.3",
+  "version": "0.1.1",
   "description": "Generalize a codebase or a specified part to support a broader, coherent family of cases.",
   "keywords": [
     "generalization",
@@ -18,8 +18,5 @@
   },
   "homepage": "https://github.com/craigsmitham/agent-extensions",
   "license": "MIT",
-  "standalone": true,
-  "recommendedPacks": [
-    "@craigsmitham/packs/codebase-renewal"
-  ]
+  "standalone": true
 }

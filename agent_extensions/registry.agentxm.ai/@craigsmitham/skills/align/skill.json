@@ -3,7 +3,7 @@
   "owner": "@craigsmitham",
   "type": "skill",
   "name": "align",
-  "version": "0.0.2",
+  "version": "0.1.1",
   "description": "Align a codebase or a specified part with supplied or identified requirements and guidance.",
   "keywords": [
     "alignment",
@@ -20,8 +20,5 @@
   },
   "homepage": "https://github.com/craigsmitham/agent-extensions",
   "license": "MIT",
-  "standalone": true,
-  "recommendedPacks": [
-    "@craigsmitham/packs/codebase-renewal"
-  ]
+  "standalone": true
 }

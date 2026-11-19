@@ -1,0 +1,44 @@
+{
+  "$schema": "https://axm.sh/schemas/skill.schema.json",
+  "owner": "@craigsmitham",
+  "type": "skill",
+  "name": "docs",
+  "version": "0.6.1",
+  "description": "Author, review, adapt, organize, audit, and maintain documentation, reusable checklists, pattern descriptions, and pattern collections",
+  "keywords": [
+    "docs",
+    "documentation",
+    "authoring",
+    "review",
+    "audit",
+    "quality",
+    "coverage",
+    "organization",
+    "naming",
+    "information-architecture",
+    "remediation",
+    "diataxis",
+    "principles",
+    "documentation-patterns",
+    "pattern-collection",
+    "pattern-description",
+    "pattern-mining",
+    "pattern-review",
+    "pattern-language",
+    "checklist",
+    "checklist-design",
+    "readiness",
+    "learning-scaffold"
+  ],
+  "recommendedPacks": [
+    "@craigsmitham/packs/docs"
+  ],
+  "standalone": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/craigsmitham/agent-extensions",
+    "directory": "skills/docs"
+  },
+  "homepage": "https://github.com/craigsmitham/agent-extensions",
+  "license": "CC-BY-SA-4.0"
+}

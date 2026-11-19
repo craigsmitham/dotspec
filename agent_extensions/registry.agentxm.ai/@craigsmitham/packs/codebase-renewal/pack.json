@@ -1,8 +1,8 @@
 {
   "$schema": "https://axm.sh/schemas/pack.schema.json",
   "owner": "@craigsmitham",
-  "version": "0.0.1",
-  "description": "Five standalone skills for codebase renewal: align with guidance, prune unnecessary elements, improve quality, generalize capabilities, and experiment to reduce uncertainty.",
+  "version": "0.1.0",
+  "description": "Six standalone skills for codebase renewal: align with guidance, reconcile duplication and drift, prune unnecessary elements, improve quality, generalize capabilities, and experiment to reduce uncertainty.",
   "keywords": [
     "codebase renewal",
     "software maintenance",
@@ -10,7 +10,8 @@
     "pruning",
     "improvement",
     "generalization",
-    "experimentation"
+    "experimentation",
+    "reconciliation"
   ],
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "@craigsmitham/skills/prune": ">=0.0.2",
     "@craigsmitham/skills/improve": ">=0.0.2",
     "@craigsmitham/skills/generalize": ">=0.0.2",
-    "@craigsmitham/skills/experiment": ">=0.0.2"
+    "@craigsmitham/skills/experiment": ">=0.0.2",
+    "@craigsmitham/skills/reconcile": ">=0.0.1"
   }
 }

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://axm.sh/schemas/skill.schema.json",
+  "owner": "@craigsmitham",
+  "type": "skill",
+  "name": "reconcile",
+  "version": "0.1.1",
+  "description": "Reconcile a repository or a specified part by resolving unnecessary duplication and unintended divergence in its content.",
+  "keywords": [
+    "reconciliation",
+    "deduplication",
+    "drift",
+    "consistency",
+    "repository maintenance"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/craigsmitham/agent-extensions",
+    "directory": "skills/reconcile"
+  },
+  "homepage": "https://github.com/craigsmitham/agent-extensions",
+  "license": "MIT",
+  "standalone": true
+}

@@ -8,7 +8,18 @@ and the evidence supporting it, leaving the method to the caller and model.
 
 ## Usage
 
+Invoke this skill directly during maintenance. Automatic model invocation is
+disabled through the supported native settings.
+
 Name the scope, priorities, and any relevant constraints. For example:
+
+An opportunity question requests findings and recommendations without edits:
+
+```text
+How could we $improve the importer's memory use?
+```
+
+A direct change request asks for implementation and verification:
 
 ```text
 $improve this codebase's maintainability while preserving supported behavior
@@ -46,6 +57,20 @@ Worthwhile progress is a sufficient outcome. The skill does not demand
 perfection, prescribe a quality score, or require changes when no justified
 improvement is available. It leaves discovery, prioritization, implementation,
 verification methods, and presentation to the caller and model.
+
+## Completion evidence
+
+Select a quality and a relevant baseline before claiming a gain. Compare the
+result under conditions that bear on the intended benefit, and distinguish
+demonstrated improvement from an expectation that still needs evidence.
+Complete affected configuration, tests, and guidance; superseded machinery
+should disappear when its obligations end. Any unfinished transition needs
+remaining work and exit conditions.
+
+Stabilization restores dependable behavior or feedback; improvement advances a
+selected quality. The techniques can overlap. The request determines the
+outcome, and a bounded improvement does not require running other skills or
+achieving whole-repository perfection.
 
 ## Sources and inspiration
 
