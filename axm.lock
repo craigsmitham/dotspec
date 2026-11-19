@@ -83,6 +83,14 @@ publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
 tree = "sha256-tree-v2:83dfc623b0448bd0bef1627ba855cfd8719d8854f0ff34b10ec93f430b30228c"
 
 [[package]]
+id = "registry.agentxm.ai/@craigsmitham/skills/improve-whatever"
+source = { registry = "https://registry.agentxm.ai" }
+version = "1.0.4"
+archive = "sha512-+/4ErMOblqv+EDaNiqa+bBJqFqgGLdiXINjdHozlCSMA+ONBCVENYrXxxALcWZpWCTav0XHbhQgXwMLU+wkt5A=="
+publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
+tree = "sha256-tree-v2:ac3884a893ef8b5a33e947c46398dfd2d594ce9badc8fb7a6e3b65b6f4a81803"
+
+[[package]]
 id = "registry.agentxm.ai/@craigsmitham/skills/prune"
 source = { registry = "https://registry.agentxm.ai" }
 version = "0.2.0"
@@ -104,6 +112,7 @@ docs = { package = "registry.agentxm.ai/@craigsmitham/skills/docs", name = "@cra
 experiment = { package = "registry.agentxm.ai/@craigsmitham/skills/experiment", name = "@craigsmitham/skills/experiment" }
 generalize = { package = "registry.agentxm.ai/@craigsmitham/skills/generalize", name = "@craigsmitham/skills/generalize" }
 improve = { package = "registry.agentxm.ai/@craigsmitham/skills/improve", name = "@craigsmitham/skills/improve" }
+improve-whatever = { package = "registry.agentxm.ai/@craigsmitham/skills/improve-whatever", name = "@craigsmitham/skills/improve-whatever" }
 prune = { package = "registry.agentxm.ai/@craigsmitham/skills/prune", name = "@craigsmitham/skills/prune" }
 reconcile = { package = "registry.agentxm.ai/@craigsmitham/skills/reconcile", name = "@craigsmitham/skills/reconcile" }
 

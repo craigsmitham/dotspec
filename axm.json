@@ -14,7 +14,8 @@
     "axm": {
       "source": "workspace",
       "origin": "bundled"
-    }
+    },
+    "improve-whatever": "agentxm:@craigsmitham/skills/improve-whatever"
   },
   "packs": {
     "codebase-renewal": "agentxm:@craigsmitham/packs/codebase-renewal",
