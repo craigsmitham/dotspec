@@ -83,6 +83,40 @@ func (s *subject) sectionIndex(title string) string {
 	return idx.file
 }
 
+// Each mapped question supplies its wording and owning subject. Multiple list
+// items can share the same section link and must remain separate entries.
+func (p *planner) indexOpenQuestions() {
+	for _, r := range p.snapshot.Elements {
+		src := p.sources[attr(r, "source_document")]
+		if src == nil {
+			continue
+		}
+		for _, q := range model.OpenQuestions(r) {
+			nodes := model.Strings(model.Object(q["question"])["content_nodes"])
+			if len(nodes) == 0 {
+				continue
+			}
+			start := position(p.nodes[nodes[0]], "start")
+			i, exact := slices.BinarySearchFunc(src.headings, start, func(h *heading, pos int) int {
+				return cmp.Compare(h.start, pos)
+			})
+			if !exact {
+				i--
+			}
+			if i < 0 || src.headings[i].owner == nil {
+				continue
+			}
+			end := position(p.nodes[nodes[len(nodes)-1]], "end")
+			question := contentText(src.passageMarkdown(start, end))
+			if question != "" {
+				idx := p.governing.index("Open questions")
+				owner := attr(p.nodes[nameNode(r)], "decoded_text")
+				idx.groups[""] = append(idx.groups[""], entry{question, src.headings[i].node, owner})
+			}
+		}
+	}
+}
+
 func (p *planner) requirementPreview(r model.Record) string {
 	if s := p.pages[id(r)]; s != nil {
 		return subjectPreview(s)

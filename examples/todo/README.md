@@ -35,7 +35,7 @@ Start with the [system overview](specification/personal-task-list.system.spec-re
 | How do the user's goals connect to the specifications? | [User job](specification/jobs/resume-interrupted-work.job.spec-report.md) |
 | What changes when someone reopens a task? | [Checklist](specification/concepts/checklist.concept.spec-report.md) |
 | Which promise does the restart requirement refine? | [Restart requirement](specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md) |
-| Which scenarios and decisions need review? | [Requirements review](specification/requirements-review.report.md) |
+| Which scenarios and decisions need review? | Run `dotspec model review --project todo` |
 | How do project, environment, goals and system fit together? | [Purpose, environment and scope](specification/personal-task-list.system.spec-report.md) |
 
 ## Verify the example

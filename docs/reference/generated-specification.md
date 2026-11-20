@@ -33,7 +33,7 @@ Commit the authored changes, `SPEC.md` and the generated Markdown in `specificat
 | `specification/quality/<attribute>/<attribute>.quality-attribute.spec-report.md` | One system attribute, its definition, parent and child attributes, and classified obligations |
 | `specification/requirements.md` | Requirements and embedded obligations in this system, each linked to its canonical page or passage |
 | `specification/systems/<child>/<child>.system.spec-report.md` | Child system overview with its own local directories |
-| `specification/requirements-review.report.md` | Review items with links to passages for follow-up |
+| `specification/open-questions.md` | Questions recorded across the project, each with its subject and a link to the passage. The index appears when at least one authored question exists. |
 
 ### Navigate a system report
 
@@ -53,8 +53,7 @@ Choose a section to read in order or open a collection index directly.
 | Open questions | Decisions that remain open in the system specification |
 
 The map includes populated sections. Additional authored sections remain
-available under **Reference**. **Requirements review** opens the project-wide
-assessment and findings report. A topology edge represents a declared relationship.
+available under **Reference**. When the project has authored questions, **All open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings. A topology edge represents a declared relationship.
 A child system has its own overview showing the next level of detail.
 
 ### Browse subject reports
@@ -94,14 +93,12 @@ Authored Markdown uses `<subject>-spec`. The corresponding generated Markdown
 uses `<subject>-spec-report`. For example, `<name>.system.spec.md` declares
 `type: system-spec`, and its generated `<name>.system.spec-report.md` declares `type: system-spec-report`.
 
-Every report includes a YAML `source` field. A subject report records a URI
+Each subject report records its source in a YAML `source` field using a URI
 relative to the report, including the fragment for the exact authored heading.
 For example, the todo system report declares
 `source: "../specs/personal-task-list.system.spec.md#personal-task-list"`.
 This identifies the source for the whole report. For a subject defined inside
-another spec, the fragment identifies its nested heading. The project-wide
-requirements review declares `source: null` because its findings draw on
-multiple specifications.
+another spec, the fragment identifies its nested heading.
 
 A subject rendered as a section carries its type and exact authored heading in a
 `dotspec-doc` comment. Links to supporting specifications and external evidence
@@ -109,8 +106,7 @@ stay beside the passages that use them. On the glossary index, **View term sourc
 opens the defining passage for each term.
 
 Each system quality attribute has a `quality-attribute-spec-report` file. Reusable quality model entries remain sections of the model’s report. The file’s `generated_by: dotspec` marker identifies generator
-ownership. The project-wide `requirements-review-report` links to the passages
-that need review. See the [document model](model/index.md#generateddocument).
+ownership. See the [document model](model/index.md#generateddocument).
 
 ## Check a workspace
 

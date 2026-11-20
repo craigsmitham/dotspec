@@ -7,8 +7,6 @@ source: "../specs/personal-task-list.system.spec.md#personal-task-list"
 
 A single-user task list that stores open and completed tasks on one computer.
 
-[Requirements review](<requirements-review.report.md>)
-
 | Section | Explore |
 | --- | --- |
 | [Purpose](<#purpose>) | Help a person pick up unfinished work after an interruption. |

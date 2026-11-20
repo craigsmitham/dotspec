@@ -257,7 +257,7 @@ Project, Environment, Goals, System reading perspective without replacing concer
 subsets or creating a project-management subsystem.
 
 Use the [review authoring guide](../handbook/review.md) for syntax and limitations.
-The [To-do review index](../../examples/todo/specification/requirements-review.report.md) links to recorded questions and findings.
+Run `dotspec model review --project todo` to see which authored behavior contributes to the goal of resuming unfinished work.
 Optional concept effects matrices are included in `model docs`;
 the [checklist effects table](../../examples/todo/specification/concepts/checklist.concept.spec-report.md#effects-table) records which properties reopening preserves.
 

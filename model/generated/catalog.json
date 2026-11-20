@@ -18310,38 +18310,6 @@
         "specification-documentation"
       ]
     },
-    "RequirementsReviewReport": {
-      "abstract": false,
-      "ancestors": [
-        "RequirementsReviewReport",
-        "GeneratedDocument"
-      ],
-      "annotations": {},
-      "description": "Project-wide open questions and inspection findings with routes to their subjects.",
-      "is_a": "GeneratedDocument",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "type": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Serialized document type fixed by the concrete class.",
-          "equals_string": "requirements-review-report",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        }
-      },
-      "subsets": [
-        "specification-documentation"
-      ]
-    },
     "Resolution": {
       "abstract": false,
       "ancestors": [
@@ -27386,7 +27354,7 @@
   },
   "representation_version": "0.2.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "f379eee1b8a6a98c81be591f292177abd0889a320a0c0e393b8fd1cbdee8cd61",
+  "source_sha256": "fd26cc4f277cad33af4d2f767b02596ba501ab4e735cb17dddcf347843344066",
   "subsets": {
     "business-requirements": {
       "classification": "core",

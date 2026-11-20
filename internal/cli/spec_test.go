@@ -172,7 +172,7 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 		}
 	}
 	reader("SPEC.md", "[Read the system specification](<specification/tool.system.spec-report.md>)")
-	reader("specification/tool.system.spec-report.md", "[Systems](<systems.md>)")
+	reader("specification/tool.system.spec-report.md", "[All open questions](<open-questions.md>)", "[Systems](<systems.md>)")
 	reader("specification/systems.md", "- [Worker](<systems/worker/worker.system.spec-report.md>) — A local job executor.")
 	reader("specification/systems/worker/worker.system.spec-report.md", "[Tool](<../../tool.system.spec-report.md>)", "[Systems](<systems.md>)")
 	reader("specification/systems/worker/systems.md", "- [Queue](<systems/queue/queue.system.spec-report.md>)")
@@ -181,9 +181,9 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 	reader(section+"requirements.md", "- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>) — Each submitted job must remain in the queue until accepted.", "[Intake](<components/intake/requirements.md>)")
 	reader(section+"quality-attributes.md", "**[Availability](<quality/availability/availability.quality-attribute.spec-report.md>)** — Accept work while either A &#124; B is available.")
 	reader(section+"quality/availability/availability.quality-attribute.spec-report.md", "# Availability", "## Limit", "Maintenance windows are excluded.", "[Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)")
-	reader("specification/requirements-review.report.md",
-		"[Which outages count?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>)",
-		"[How is uptime measured?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>)")
+	reader("specification/open-questions.md",
+		"[Which outages count?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>) — Availability",
+		"[How is uptime measured?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>) — Availability")
 	intake := section + "components/intake/"
 	reader(intake+"components/journal/journal.component.spec-report.md", "../../intake.component.spec-report.md", "[Requirements](<requirements.md>)")
 	reader(intake+"components/journal/requirements.md", "## Applicable requirements\n\n- [Retain jobs](<../../../../requirements/retain-jobs.requirement.spec-report.md>)")
@@ -194,6 +194,49 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 	reader(section+"requirements/retain-jobs.requirement.spec-report.md", "../components/intake/intake.component.spec-report.md", "../components/intake/components/journal/journal.component.spec-report.md", "apps/demo/specs/demo.system.spec.md", "../quality/availability/availability.quality-attribute.spec-report.md")
 	if _, err := os.Stat(filepath.Join(root, "apps/demo/SPEC.md")); !os.IsNotExist(err) {
 		t.Fatalf("referenced project must not acquire generated files: %v", err)
+	}
+}
+
+func TestGeneratedOpenQuestionsLifecycle(t *testing.T) {
+	t.Chdir(t.TempDir())
+	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
+	const system = "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nKeep notes.\n\n## Scope\nOne notebook.\n"
+	const source = "specs/notes.system.spec.md"
+	const index = "specification/open-questions.md"
+	const overview = "specification/notes.system.spec-report.md"
+	const retired = "specification/requirements-review.report.md"
+	writeFixture(t, retired, "---\ngenerated_by: dotspec\ntype: requirements-review-report\nsource: null\n---\n# Requirements review\n")
+	build := func() {
+		t.Helper()
+		for _, args := range [][]string{{"spec", "build"}, {"check"}} {
+			if code, out, errOut := invoke(args...); code != 0 {
+				t.Fatal(code, out, errOut)
+			}
+		}
+	}
+	read := func(file string) string {
+		t.Helper()
+		data, err := os.ReadFile(file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return string(data)
+	}
+
+	writeFixture(t, source, system+"\n## Open questions\n\n### Who can recover a note?\nShould `_owner_` be required for [recovery][policy]?\n\n[policy]: #scope\n")
+	build()
+	if page := read(index); !strings.Contains(page, "[Who can recover a note? Should &#95;owner&#95; be required for recovery?](<notes.system.spec-report.md#who-can-recover-a-note>) — Notes") ||
+		strings.Contains(page, "Inspection findings") || !strings.Contains(read(overview), "[All open questions](<open-questions.md>)") {
+		t.Fatal(page)
+	}
+	if _, err := os.Stat(retired); !os.IsNotExist(err) {
+		t.Fatalf("obsolete review report after build: %v", err)
+	}
+
+	writeFixture(t, source, system+"\n## Open question\n")
+	build()
+	if _, err := os.Stat(index); !os.IsNotExist(err) || strings.Contains(read(overview), "open-questions.md") {
+		t.Fatalf("question index or link remains after resolving the last question: %v", err)
 	}
 }
 
@@ -230,12 +273,11 @@ Individual authors.
 		return string(data)
 	}
 	page := build()
-	nav := "[Requirements review](<requirements-review.report.md>)"
-	if !strings.Contains(page, nav+"\n\n| Section | Explore |") ||
+	if !strings.Contains(page, "| Section | Explore |") ||
 		!strings.Contains(page, "## Purpose\n\nKeep notes.") || strings.Contains(page, "## Goals\n") ||
 		!strings.Contains(page, "## Scope\n\nOne notebook.") ||
 		strings.Index(page, "## Scope") < strings.Index(page, "Individual authors.") ||
-		strings.Count(page, nav) != 1 || strings.Contains(page, "## System topology") {
+		strings.Contains(page, "open-questions.md") || strings.Contains(page, "## System topology") {
 		t.Fatal(page)
 	}
 

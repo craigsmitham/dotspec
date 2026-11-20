@@ -280,13 +280,6 @@ classes:
         equals_string: concept-action-spec-report
       documents:
         range: ConceptAction
-  RequirementsReviewReport:
-    is_a: GeneratedDocument
-    in_subset: [specification-documentation]
-    description: Project-wide open questions and inspection findings with routes to their subjects.
-    slot_usage:
-      type:
-        equals_string: requirements-review-report
   Record:
     in_subset:
     - source-artifacts

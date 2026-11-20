@@ -172,6 +172,8 @@ var collectionDescriptions = map[string]string{
 
 func overviewIndexLabel(title string) string {
 	switch title {
+	case "Open questions":
+		return "All open questions"
 	case "Quality attributes":
 		return "Attribute index"
 	case "Requirements":
@@ -202,12 +204,9 @@ func (p *planner) renderSystem(w *writer, s *subject) {
 			p.renderPassage(w, s, group, offset, merged)
 		}
 		if i == 0 {
-			var nav []string
 			if s.parent != nil {
-				nav = append(nav, w.link(s.parent.name.title, s.parent.file))
+				w.text(w.link(s.parent.name.title, s.parent.file))
 			}
-			nav = append(nav, w.link("Requirements review", reviewPath))
-			w.text(strings.Join(nav, " · "))
 			p.overviewNavigation(w, s)
 			continue
 		}
@@ -218,8 +217,6 @@ func (p *planner) renderSystem(w *writer, s *subject) {
 			p.renderTopology(w, s)
 		case "Obligations":
 			p.overviewRefinement(w, s)
-		case "Open questions":
-			w.text(w.link("Requirements review", reviewPath))
 		}
 		for _, title := range section.collections {
 			idx := s.indexes[title]
@@ -252,7 +249,8 @@ func entryLine(w *writer, e entry) string {
 }
 
 func (p *planner) overviewNavigation(w *writer, s *subject) {
-	if len(s.overview) <= 1 {
+	questions := s.indexes["Open questions"]
+	if len(s.overview) <= 1 && questions == nil {
 		return
 	}
 	w.text("| Section | Explore |\n| --- | --- |")
@@ -269,6 +267,10 @@ func (p *planner) overviewNavigation(w *writer, s *subject) {
 				links = append(links, w.link(overviewIndexLabel(title), s.indexes[title].file))
 			}
 		}
+		if section.title == "Open questions" && questions != nil {
+			links = append(links, w.link(overviewIndexLabel(section.title), questions.file))
+			questions = nil
+		}
 		if len(links) == 0 {
 			for _, group := range section.passages {
 				h := group[0]
@@ -283,6 +285,9 @@ func (p *planner) overviewNavigation(w *writer, s *subject) {
 			links = append(links, inlineText(paragraphPreview(sourceProse(s.source, h))))
 		}
 		fmt.Fprintf(&w.out, "| %s | %s |\n", w.link(section.title, s.file+"#"+section.anchor), strings.Join(links, " · "))
+	}
+	if questions != nil {
+		fmt.Fprintf(&w.out, "| %s | |\n", w.link(overviewIndexLabel("Open questions"), questions.file))
 	}
 }
 

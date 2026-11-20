@@ -46,7 +46,7 @@ See the [core domain reference](core.md) for focused summaries and diagrams.
 
 **Specification documentation** (`specification-documentation`). Roles, reader-facing content, and navigation of generated requirements documents.
 
-[AssumptionSpecReport](#assumptionspecreport), [BusinessRuleSpecReport](#businessrulespecreport), [CapabilitySpecReport](#capabilityspecreport), [ComponentSpecReport](#componentspecreport), [ConceptActionSpecReport](#conceptactionspecreport), [ConceptSpecReport](#conceptspecreport), [ConceptUseSpecReport](#conceptusespecreport), [DesiredOutcomeSpecReport](#desiredoutcomespecreport), [FeatureSpecReport](#featurespecreport), [GeneratedDocument](#generateddocument), [GlossaryTermSpecReport](#glossarytermspecreport), [GoalSpecReport](#goalspecreport), [InterfaceSpecReport](#interfacespecreport), [JobSpecReport](#jobspecreport), [JobStepSpecReport](#jobstepspecreport), [ObligationClauseSpecReport](#obligationclausespecreport), [QualityAttributeSpecReport](#qualityattributespecreport), [QualityModelSpecReport](#qualitymodelspecreport), [RequirementSpecReport](#requirementspecreport), [RequirementsReviewReport](#requirementsreviewreport), [ScenarioSpecReport](#scenariospecreport), [SubjectSpecReport](#subjectspecreport), [SynchronizationSpecReport](#synchronizationspecreport), [SystemSpecReport](#systemspecreport), [UseCaseExtensionSpecReport](#usecaseextensionspecreport), [UseCaseSpecReport](#usecasespecreport).
+[AssumptionSpecReport](#assumptionspecreport), [BusinessRuleSpecReport](#businessrulespecreport), [CapabilitySpecReport](#capabilityspecreport), [ComponentSpecReport](#componentspecreport), [ConceptActionSpecReport](#conceptactionspecreport), [ConceptSpecReport](#conceptspecreport), [ConceptUseSpecReport](#conceptusespecreport), [DesiredOutcomeSpecReport](#desiredoutcomespecreport), [FeatureSpecReport](#featurespecreport), [GeneratedDocument](#generateddocument), [GlossaryTermSpecReport](#glossarytermspecreport), [GoalSpecReport](#goalspecreport), [InterfaceSpecReport](#interfacespecreport), [JobSpecReport](#jobspecreport), [JobStepSpecReport](#jobstepspecreport), [ObligationClauseSpecReport](#obligationclausespecreport), [QualityAttributeSpecReport](#qualityattributespecreport), [QualityModelSpecReport](#qualitymodelspecreport), [RequirementSpecReport](#requirementspecreport), [ScenarioSpecReport](#scenariospecreport), [SubjectSpecReport](#subjectspecreport), [SynchronizationSpecReport](#synchronizationspecreport), [SystemSpecReport](#systemspecreport), [UseCaseExtensionSpecReport](#usecaseextensionspecreport), [UseCaseSpecReport](#usecasespecreport).
 
 ### Generic
 
@@ -1630,18 +1630,6 @@ Concrete; inherits [SubjectSpecReport](#subjectspecreport).
 | --- | --- | --- | --- |
 | `documents` | [Requirement](#requirement) | required, record ID | The documented subject, serialized as a relative URI to its authored heading. |
 | `type` | `string` | required, fixed `requirement-spec-report` | Serialized document type fixed by the concrete class. |
-
-### RequirementsReviewReport
-
-Project-wide open questions and inspection findings with routes to their subjects.
-
-Subsets: `specification-documentation`.
-
-Concrete; inherits [GeneratedDocument](#generateddocument).
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `type` | `string` | required, fixed `requirements-review-report` | Serialized document type fixed by the concrete class. |
 
 ### Resolution
 

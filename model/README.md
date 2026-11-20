@@ -535,6 +535,6 @@ The supporting **Specification documentation** subset defines `GeneratedDocument
 `SubjectSpecReport`, and a concrete `<SubjectType>SpecReport` for each documented kind. Each
 subject document references exactly one domain subject. The Markdown serialization
 uses a relative source URI for this reference. Pages and addressable sections can
-both represent subject documents. `RequirementsReviewReport` covers the project.
+both represent subject documents.
 Snapshot `Document` records describe acquired source syntax. See the
 [generated specification guide](../docs/reference/generated-specification.md).

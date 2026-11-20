@@ -7,8 +7,6 @@ source: "../specs/dotspec.system.spec.md#dotspec"
 
 A requirements authoring framework and command-line toolkit for Markdown specifications stored alongside source code.
 
-[Requirements review](<requirements-review.report.md>)
-
 | Section | Explore |
 | --- | --- |
 | [Purpose](<#purpose>) | Help teams develop and maintain software product requirements alongside the code they describe. Teams can describe what people need, what the system promises, and how to assess those promises. |

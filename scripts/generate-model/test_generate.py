@@ -214,7 +214,10 @@ class ModelViewTests(unittest.TestCase):
         from model_views import validate_groups
         for kind in ('use-case', 'component', 'concept-action'):
             c = copy.deepcopy(self.catalog)
-            c['classes']['RequirementsReviewReport']['slots']['type']['equals_string'] = kind
+            c['classes']['ExampleDocument'] = {
+                'subsets': ['specification-documentation'], 'abstract': False,
+                'ancestors': ['GeneratedDocument'], 'slots': {'type': {'equals_string': kind}},
+            }
             with self.assertRaisesRegex(ValueError, 'overlap'):
                 validate_groups(c)
 

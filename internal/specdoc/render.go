@@ -17,8 +17,6 @@ import (
 	"github.com/yuin/goldmark/text"
 )
 
-const reviewPath = "specification/requirements-review.report.md"
-
 type writer struct {
 	page                             *Page
 	file, titleMarkdown, titleAnchor string
@@ -39,8 +37,6 @@ func (w *writer) finish() {
 	}
 	if source := w.page.Documents; source != "" {
 		fmt.Fprintf(&header, "source: %q\n", source)
-	} else if w.page.Type == RequirementsReviewReport {
-		header.WriteString("source: null\n")
 	}
 	header.WriteString("---\n")
 	if w.titleAnchor != "" {
@@ -93,7 +89,6 @@ func (p *planner) render() *Plan {
 	for _, s := range p.subjects {
 		p.renderSubject(s)
 	}
-	p.renderReview()
 	return p.plan
 }
 
@@ -402,14 +397,18 @@ func (sf *sourceFile) editedText(start, end int, edits []replacement) string {
 	return strings.TrimSpace(strings.ReplaceAll(out.String(), "\r\n", "\n"))
 }
 func sourceProse(sf *sourceFile, h *heading, edits ...replacement) string {
+	return sf.passageMarkdown(h.end, h.bodyEnd, edits...)
+}
+
+func (sf *sourceFile) passageMarkdown(from, to int, edits ...replacement) string {
 	for _, n := range sf.links {
 		start, end := position(n, "start"), position(n, "end")
-		if start < h.end || end > h.bodyEnd || attr(n, "label") == "" || attr(n, "node_kind") == "link_definition" {
+		if start < from || end > to || attr(n, "label") == "" || attr(n, "node_kind") == "link_definition" {
 			continue
 		}
 		edits = append(edits, replacement{start, end, rewriteDestination(sf.data[start:end], n, attr(n, "destination"))})
 	}
-	return sf.editedText(h.end, h.bodyEnd, edits)
+	return sf.editedText(from, to, edits)
 }
 
 func rewriteDestination(raw string, n model.Record, target string) string {
@@ -541,123 +540,4 @@ func (p *planner) relationships(w *writer, h *heading, showHeading bool) {
 			w.text("- " + strings.Join(links, "\n- "))
 		}
 	}
-}
-func (p *planner) renderReview() {
-	w := p.newPage(reviewPath, Document{Type: RequirementsReviewReport}, "Requirements review")
-	w.text(w.link(p.governing.name.title, p.governing.file))
-	var questions, findings []string
-	for _, s := range p.subjects {
-		var ancestors []*heading
-		for _, h := range s.source.headings {
-			if h.owner != s {
-				continue
-			}
-			for len(ancestors) > 0 && ancestors[len(ancestors)-1].level >= h.level {
-				ancestors = ancestors[:len(ancestors)-1]
-			}
-			subject := s.name.title
-			if len(ancestors) > 1 {
-				subject = ancestors[len(ancestors)-1].title + " · " + subject
-			}
-			switch h.title {
-			case "Open questions", "Open question":
-				labels := questionPassages(sourceProse(s.source, h))
-				for _, label := range labels {
-					questions = append(questions, w.link(inlineText(label), p.targets[h.node])+" · "+inlineText(subject))
-				}
-				if len(labels) == 0 && h.title == "Open question" {
-					questions = append(questions, w.link(subject+" — "+h.title, p.targets[h.node]))
-				}
-			default:
-				if len(ancestors) > 0 && ancestors[len(ancestors)-1].title == "Open questions" {
-					labels := questionPassages(sourceProse(s.source, h))
-					if len(labels) == 0 {
-						labels = []string{h.title}
-					}
-					for _, label := range labels {
-						questions = append(questions, w.link(inlineText(label), p.targets[h.node])+" · "+inlineText(s.name.title))
-					}
-				}
-			}
-			ancestors = append(ancestors, h)
-		}
-	}
-	byFinding := map[string][]string{}
-	for _, d := range p.snapshot.Diagnostics {
-		msg := strings.ReplaceAll(attr(d, "message"), filepath.ToSlash(p.root)+"/", "")
-		dest := p.targets[attr(d, "source")]
-		if dest != "" {
-			src := p.sources[attr(d, "source")]
-			label := p.plan.Pages[dest].Title
-			start := 0
-			for line := 1; line < model.Number(d["line"]); line++ {
-				next := strings.IndexByte(src.data[start:], '\n')
-				if next < 0 {
-					break
-				}
-				start += next + 1
-			}
-			for _, h := range src.headings {
-				if h.start <= start && start < h.bodyEnd && p.targets[h.node] != "" {
-					dest = p.targets[h.node]
-					label = h.owner.name.title
-					if h != h.owner.name {
-						label += " · " + h.title
-					}
-					break
-				}
-			}
-			byFinding[msg] = append(byFinding[msg], w.link(label, dest))
-		} else {
-			findings = append(findings, inlineText(msg))
-		}
-	}
-	for msg, passages := range byFinding {
-		slices.Sort(passages)
-		if len(passages) == 1 {
-			findings = append(findings, inlineText(msg)+" · "+passages[0])
-		} else {
-			findings = append(findings, inlineText(msg)+"\n  - "+strings.Join(passages, "\n  - "))
-		}
-	}
-	type reviewSection struct {
-		name, empty string
-		items       []string
-	}
-	sections := []reviewSection{{"Open questions", "No open questions recorded.", questions}}
-	sections = append(sections, reviewSection{"Inspection findings", "No inspection findings.", findings})
-	for _, section := range sections {
-		w.heading(section.name)
-		if len(section.items) == 0 {
-			w.text(section.empty)
-			continue
-		}
-		slices.Sort(section.items)
-		w.out.WriteByte('\n')
-		for _, item := range section.items {
-			fmt.Fprintln(&w.out, "- "+item)
-		}
-	}
-	w.finish()
-}
-
-func questionPassages(md string) []string {
-	source := []byte(md)
-	doc := markdownParser.Parse(text.NewReader(source))
-	var passages []string
-	add := func(n ast.Node) {
-		if label := visibleText(n, source); label != "" {
-			passages = append(passages, label)
-		}
-	}
-	for n := doc.FirstChild(); n != nil; n = n.NextSibling() {
-		if n.Kind() == ast.KindList {
-			for item := n.FirstChild(); item != nil; item = item.NextSibling() {
-				add(item)
-			}
-		} else {
-			add(n)
-		}
-	}
-	return passages
 }

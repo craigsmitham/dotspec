@@ -34,10 +34,14 @@ contexts define the same word, each entry names its context. A relationship
 between terms links in both reading directions, with the original statement
 and examples available in the declaring entry.
 
+When any subject in the project records an open question, the root system’s
+section map links to `specification/open-questions.md`. Each entry shows the
+authored question, names its subject and links to the passage where it appears.
+Resolving the last question removes the index and its navigation link on rebuild.
+
 Each subject report identifies its authored file and heading once in the YAML
 `source` field using a URI relative to the report. This field supplies the
-source attribution for the page and its passages. The project-wide requirements
-review declares `source: null` because it covers multiple specifications.
+source attribution for the page and its passages.
 Readers can follow supporting references beside the content they supply.
 The project check identifies duplicate page claims and missing or misdirected
 source metadata.

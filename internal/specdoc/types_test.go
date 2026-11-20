@@ -33,7 +33,4 @@ func TestSubjectDocumentsMirrorTheModel(t *testing.T) {
 	}
 	check("QualityAttribute")
 	check("ObligationClause")
-	if catalog.Classes["RequirementsReviewReport"].Slots["type"].Fixed != RequirementsReviewReport {
-		t.Error("review report type differs from the model")
-	}
 }

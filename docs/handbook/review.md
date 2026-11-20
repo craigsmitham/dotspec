@@ -16,9 +16,7 @@ Both commands write the selected perspective to standard output. If you save one
 to a file, pass its containing directory with `--relative-to` so readers can
 follow source and contract links.
 
-For a project with a generated spec, `dotspec spec build` writes the review index
-with the other pages. The [To-do review index](../../examples/todo/specification/requirements-review.report.md)
-links to unresolved questions and inspection findings.
+When a project records an open question, `dotspec spec build` includes **All open questions** in the root system’s section map. Follow a question to read it in context. To prepare a broader review, run `dotspec model review` for goal contributions, scenario steps, obligation criteria, and inspection findings.
 
 `dotspec model pegs --project todo` arranges the example into Project,
 Environment, Goals and System reading perspectives. Business, user and software

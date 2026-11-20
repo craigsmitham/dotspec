@@ -4,13 +4,11 @@ package specdoc
 import "github.com/craigsmitham/dotspec/internal/specfile"
 
 // Document identifies a logical page or passage. Documents is a portable URI
-// to the exact authored subject. The report has project scope and no subject.
+// to the exact authored subject.
 type Document struct {
 	Type      string `json:"type"`
 	Documents string `json:"documents,omitempty"`
 }
-
-const RequirementsReviewReport = "requirements-review-report"
 
 func subjectDocument(file string, sf *sourceFile, h *heading) Document {
 	if h.subjectKind == "" {

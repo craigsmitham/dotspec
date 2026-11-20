@@ -201,15 +201,8 @@ func checkPage(expected *Page, p parsedPage, report func(string, string)) {
 	if p.header.GeneratedBy != "dotspec" || p.header.Type != expected.Type {
 		report("spec.document-type", fmt.Sprintf("expected a generated %s document for %q", expected.Type, expected.Title))
 	}
-	switch {
-	case expected.Documents != "":
-		if p.header.Source.ShortTag() != "!!str" || p.header.Source.Value != expected.Documents {
-			report("spec.document-type", fmt.Sprintf("expected authored subject %q for %q", expected.Documents, expected.Title))
-		}
-	case expected.Type == RequirementsReviewReport:
-		if p.header.Source.Kind != yaml.ScalarNode || p.header.Source.ShortTag() != "!!null" {
-			report("spec.document-type", "expected source: null for the project-wide requirements review")
-		}
+	if expected.Documents != "" && (p.header.Source.ShortTag() != "!!str" || p.header.Source.Value != expected.Documents) {
+		report("spec.document-type", fmt.Sprintf("expected authored subject %q for %q", expected.Documents, expected.Title))
 	}
 	if len(p.titles) != 1 || p.titles[0] != contentText(expected.Title) {
 		report("spec.title", "expected one title naming "+expected.Title)

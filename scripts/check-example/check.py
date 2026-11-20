@@ -189,8 +189,6 @@ def spec_journey(cli, tmp):
         assert text.count(description) == directory.read_text(encoding="utf-8").count(description) == 1
     # Every source in this fixture gets one report documenting its H1. Pages
     # for inline subjects document a deeper heading in that same source.
-    review = follow(root, "Requirements review")
-    assert "source: null" in review.read_text(encoding="utf-8").split("---\n", 2)[1].splitlines()
     claims = {}
     for page in (project / "specification").rglob("*.spec-report.md"):
         header = page.read_text(encoding="utf-8").split("---\n", 2)[1]
@@ -255,12 +253,10 @@ def spec_journey(cli, tmp):
     for page, rule in [(promise, "spec.content"), (feature, "spec.navigation"),
                        (qualities, "spec.content"), (root, "spec.navigation"),
                        (requirements, "spec.membership"), (qualities, "spec.document-type"),
-                       (promise, "spec.document-type"), (definitions, "spec.document-type"), (review, "spec.document-type")]:
+                       (promise, "spec.document-type"), (definitions, "spec.document-type")]:
         body = page.read_text(encoding="utf-8")
         if rule == "spec.document-type":
-            if page == review:
-                changed = body.replace("source: null\n", "")
-            elif page == definitions:
+            if page == definitions:
                 changed = re.sub(r"^source: .+$", 'source: "wrong.spec.md"', body, flags=re.M)
             elif page == qualities:
                 changed = body.replace('durability.quality-attribute.spec.md#durability"', 'personal-task-list.system.spec.md#personal-task-list"')

@@ -435,6 +435,7 @@ func (p *planner) indexTargets() {
 			idx.add(applicableRules, entry{rule.name.title, rule.file, subjectPreview(rule)})
 		}
 	}
+	p.indexOpenQuestions()
 	// Embedded obligations get their final fragments after the overview headings are planned.
 	clauses := map[string]bool{}
 	for _, r := range p.snapshot.Elements {
@@ -525,6 +526,13 @@ func (p *planner) indexTargets() {
 					}
 				}
 			}
+		}
+	}
+	// Question entries initially point at source headings. Their final fragments
+	// are known once every subject and overview has been laid out.
+	if idx := p.governing.indexes["Open questions"]; idx != nil {
+		for i, e := range idx.groups[""] {
+			idx.groups[""][i].target = p.targets[e.target]
 		}
 	}
 	// Map source paths and their authored or generated fragments as link targets.

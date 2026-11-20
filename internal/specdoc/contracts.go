@@ -94,7 +94,7 @@ func addSourceContracts(p *planner) error {
 				for _, e := range members {
 					dest := relative(idx.file, e.target)
 					indexPage.DirectoryMembers[anchor] = append(indexPage.DirectoryMembers[anchor], dest)
-					requireRoute(indexPage, dest, e.title)
+					requireRoute(indexPage, dest, inlineText(e.title))
 				}
 			}
 			if title == "Glossary" {
@@ -159,11 +159,6 @@ func addSourceContracts(p *planner) error {
 			}
 		}
 	}
-	if p.plan.Pages[reviewPath] == nil {
-		return fmt.Errorf("%s: review report is missing", reviewPath)
-	}
-	p.plan.Pages[reviewPath].Document = Document{Type: RequirementsReviewReport}
-	requireRoute(p.plan.Pages[p.governing.file], relative(p.governing.file, reviewPath), "")
 	requireRoute(p.plan.Pages["SPEC.md"], relative("SPEC.md", p.governing.file), "Read the system specification")
 	return nil
 }

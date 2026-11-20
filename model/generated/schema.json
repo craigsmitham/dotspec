@@ -5309,22 +5309,6 @@
             "title": "RequirementSpecReport",
             "type": "object"
         },
-        "RequirementsReviewReport": {
-            "additionalProperties": false,
-            "description": "Project-wide open questions and inspection findings with routes to their subjects.",
-            "properties": {
-                "type": {
-                    "const": "requirements-review-report",
-                    "description": "Serialized document type fixed by the concrete class.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "type"
-            ],
-            "title": "RequirementsReviewReport",
-            "type": "object"
-        },
         "Resolution": {
             "additionalProperties": false,
             "description": "The recorded outcome of resolving one authored reference or label; targets need not be domain entities.",
