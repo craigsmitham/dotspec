@@ -24,7 +24,7 @@ types:
   - supports
   - derived_from
   - relies_on
-  - validation_plan
+  - assessment_plans
   Goal:
   - statement
   - supports
@@ -32,14 +32,14 @@ types:
   - statement
   - basis
   - applicability
-  - validation_plan
+  - assessment_plans
   ObligationClause:
   - owner
   - statement
   - quality_attributes
   - refines
   - applies_to
-  - verification_plan
+  - assessment_plans
   - criterion
   System:
   - purpose
@@ -192,7 +192,7 @@ types:
   - rationale
   - quality_attributes
   - criterion
-  - verification_plan
+  - assessment_plans
   QualityModel:
   - description
   - edition
@@ -226,7 +226,7 @@ types:
   - applicability
   - rationale
   - refines
-  - verification_plan
+  - assessment_plans
   - criterion
   Applicability:
   - content
@@ -272,7 +272,7 @@ types:
   Interface:
   - owner
   - obligations
-  - validation_plan
+  - assessment_plans
   - name
   - description
   - contracts
@@ -280,6 +280,7 @@ types:
   EffectsRow:
   - cells
   AssessmentPlan:
+  - purpose
   - subject
   - basis
   - participants
@@ -609,16 +610,18 @@ diagrams:
   inheritance: false
 
 - title: Assessment planning
-  description: Verification and validation retain distinct field roles while sharing plan structure. The authored
-    subject and basis identify what is assessed and against what. Neither plan nor case is an observation,
-    assessment conclusion or acceptance decision.
+  description: Each plan records an [assessment purpose](index.md#assessmentpurpose) selected by its heading. Subject and basis can cite what is being assessed
+    and what it is judged against independently of where the plan is recorded.
   nodes:
   - TraceableElement
-  - Obligation
   - AssessmentPlan
   - AssessmentCase
+  - ContextualReferences
+  - SourceReference
   paths:
-  - TraceableElement.validation_plan
-  - Obligation.verification_plan
+  - TraceableElement.assessment_plans
+  - AssessmentPlan.subject
+  - AssessmentPlan.basis
+  - ContextualReferences.references
   - AssessmentPlan.cases
   inheritance: false

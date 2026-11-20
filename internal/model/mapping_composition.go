@@ -139,10 +139,14 @@ func (m *domainMapper) actionParameters(r Record, s *Section, field string) {
 }
 
 func (m *domainMapper) bindDesignReferences(r Record, field string) {
-	for _, id := range Strings(r[field]) {
+	m.bindReferenceOccurrences(r, field, Strings(r[field]))
+}
+
+func (m *domainMapper) bindReferenceOccurrences(owner Record, field string, ids []string) {
+	for _, id := range ids {
 		for _, ref := range m.doc.References {
 			if String(ref, "id") == id {
-				m.bind(r, field, []string{String(ref, "content_node")}, "named_field", "design-reference")
+				m.bind(owner, field, []string{String(ref, "content_node")}, "named_field", "reference-occurrence")
 			}
 		}
 	}

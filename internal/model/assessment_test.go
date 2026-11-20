@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/craigsmitham/dotspec/internal/assessment"
 	"github.com/craigsmitham/dotspec/internal/obligation"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 )
@@ -20,14 +21,18 @@ func TestAssessmentPlansPreservePurposeSubjectBasisAndCases(t *testing.T) {
 	s := result.Snapshot
 	conformancePayloads(t, s)
 	d := newDesignResolver(s)
-	for _, tc := range []struct{ kind, name string }{
-		{"System", "Document workspace"}, {"Concept", "Trash"}, {"UseCase", "Restore a document"},
-		{"Requirement", "Preserve document metadata on restoration"}, {"Assumption", "Trusted time"},
+	for _, tc := range []struct{ kind, name, purpose string }{
+		{"System", "Document workspace", "system_validation"}, {"Concept", "Trash", "system_validation"}, {"UseCase", "Restore a document", "system_validation"},
+		{"Requirement", "Preserve document metadata on restoration", "requirements_validation"}, {"Assumption", "Trusted time", "assumption_validation"},
 	} {
 		r := designRecord(t, s, tc.kind, tc.name)
-		plan := Object(r["validation_plan"])
+		plan := plansFor(r, assessment.Purpose(tc.purpose))[0]
 		for _, f := range []string{"subject", "participants", "method", "success_criteria", "conditions"} {
-			if strings.TrimSpace(d.text(plan[f])) == "" {
+			value := plan[f]
+			if f == "subject" {
+				value = Object(value)["content"]
+			}
+			if strings.TrimSpace(d.text(value)) == "" {
 				t.Errorf("%s missing %s", tc.kind, f)
 			}
 		}
@@ -36,7 +41,7 @@ func TestAssessmentPlansPreservePurposeSubjectBasisAndCases(t *testing.T) {
 		}
 	}
 	sys := designRecord(t, s, "System", "Document workspace")
-	cases := reviewObjects(Object(sys["validation_plan"])["cases"])
+	cases := reviewObjects(plansFor(sys, assessment.SystemValidation)[0]["cases"])
 	if len(cases) != 1 || !strings.Contains(d.text(cases[0]["expected_result"]), "resumes the task") || d.text(cases[0]["evidence_to_retain"]) == "" {
 		t.Fatal("lost assessment case", cases)
 	}
@@ -47,22 +52,22 @@ func TestAssessmentPlansPreservePurposeSubjectBasisAndCases(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"## Requirements quality", "## Needs and intent", "## Assumptions: evidence and justified reliance", "## Validation planning", "## System verification planning", "No verification plan recorded", "no separately identified target, conditions or applicability", "../specs/jobs/recover.job.spec.md", "not a guarantee"} {
+	for _, want := range []string{"## Requirements quality", "## Needs and intent", "## Assumptions: evidence and justified reliance", "## System validation plans", "## System verification plans", "No system verification guidance recorded here", "no separately identified target, conditions or applicability", "../specs/jobs/recover.job.spec.md", "not a guarantee"} {
 		if !strings.Contains(review, want) {
 			t.Errorf("missing review distinction %q", want)
 		}
 	}
 	forged := cloneSnapshot(t, s)
-	plan := Object(designRecord(t, forged, "System", "Document workspace")["validation_plan"])
+	plan := plansFor(designRecord(t, forged, "System", "Document workspace"), assessment.SystemValidation)[0]
 	Object(plan["basis"])["references"] = []string{String(sys, "id")}
 	requireFinding(t, forged, "reference.kind")
 }
 
 func TestNestedAndEmptyValidationPlansAreExplicitAndIdempotent(t *testing.T) {
 	root := traceFixture(t)
-	// Named actions inherit the same plan role. Repeated supplementary sections
-	// preserve content and append cases without duplicating the nested mapping pass.
-	traceEdit(t, root, "specs/concepts/trash.concept.spec.md", "### Restore", `#### Validation plan
+	// Named actions inherit the same plan role. Repeated headings
+	// preserve distinct plans and their cases without duplicating the nested mapping pass.
+	traceEdit(t, root, "specs/concepts/trash.concept.spec.md", "### Restore", `#### System validation plan
 
 ##### Subject
 
@@ -74,7 +79,7 @@ The proposed Delete action.
 
 Discuss whether recovery remains possible.
 
-#### Validation plan
+#### System validation plan
 
 ##### Basis
 
@@ -87,28 +92,29 @@ The operational principle of reversible deletion.
 Discuss whether the recovery policy is appropriate.
 
 ### Restore`)
-	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "## Rationale", "## Validation plan\n\n## Rationale")
+	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "## Rationale", "## System validation plan\n\n## Rationale")
 	result := conformanceExport(t, root)
 	conformancePayloads(t, result.Snapshot)
 	if result.ExitCode != 0 {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	action := designRecord(t, result.Snapshot, "ConceptAction", "Delete")
-	plan := Object(action["validation_plan"])
+	plan := plansFor(action, assessment.SystemValidation)[0]
 	cases := reviewObjects(plan["cases"])
-	if len(cases) != 2 {
+	other := plansFor(action, assessment.SystemValidation)
+	if len(other) != 2 || len(cases) != 1 || len(reviewObjects(other[1]["cases"])) != 1 {
 		t.Fatal("cases overwritten or duplicated", cases)
 	}
 	d := newDesignResolver(result.Snapshot)
-	if strings.Count(d.text(plan["subject"]), "proposed Delete action") != 1 {
+	if strings.Count(d.text(Object(plan["subject"])["content"]), "proposed Delete action") != 1 {
 		t.Fatal("subject duplicated")
 	}
 	req := designRecord(t, result.Snapshot, "Requirement", "Preserve document metadata on restoration")
-	if String(Object(Object(req["validation_plan"])["content"]), "presence") != "empty" {
+	if String(Object(plansFor(req, assessment.SystemValidation)[0]["content"]), "presence") != "empty" {
 		t.Fatal("empty plan fabricated", req)
 	}
 	uc := designRecord(t, result.Snapshot, "UseCase", "Restore a document")
-	if uc["validation_plan"] != nil {
+	if uc["assessment_plans"] != nil {
 		t.Fatal("validation inferred from supports or narrative")
 	}
 }
@@ -122,12 +128,12 @@ func TestMeasurementReviewAgreesAcrossCommandsAndModel(t *testing.T) {
 		{"measure without target", "## Applies to\nManaged production requests.\n## Criterion\n### Measure\nElapsed time.\n", []string{"target"}},
 		{"complete narrative criterion", "## Applies to\nManaged production requests.\n## Criterion\nThe 95th percentile is at most 100 ms.\n", nil},
 		{"structured criterion", "## Applies to\n### Conditions\nProduction requests.\n## Criterion\n### Measure\nElapsed time.\n### Target\nAt most 100 ms at the 95th percentile.\n", nil},
-		{"plan success criteria are assessment guidance", "## Criterion\n### Measure\nElapsed time.\n## Verification plan\n### Method\nCollect timings.\n### Conditions\nProduction requests.\n### Success criteria\nThe 95th percentile is at most 100 ms.\n", []string{"target", "conditions or applicability"}},
-		{"empty verification plan", "## Criterion\n### Measure\nElapsed time.\n## Verification plan\n", []string{"target", "conditions or applicability"}},
-		{"assessment conditions do not define applicability", "## Criterion\n### Measure\nElapsed time.\n### Target\nAt most 100 ms at the 95th percentile.\n## Verification plan\n### Conditions\nTest with ten synthetic requests.\n", []string{"conditions or applicability"}},
-		{"criterion references authoritative statement", "## Applies to\nManaged production requests.\n## Criterion\nUse the bound defined in [Statement](#statement).\n## Verification plan\nCollect timings and compare them to [Criterion](#criterion).\n", nil},
-		{"no explicitly recorded measure", "## Applies to\nManaged production requests.\n## Verification plan\nInspect compliance with the specified response behavior.\n", nil},
-		{"validation is distinct", "## Validation plan\nObserve whether the proposed latency serves user needs.\n## Criterion\n### Measure\nElapsed time.\n", []string{"target", "conditions or applicability"}},
+		{"plan success criteria are assessment guidance", "## Criterion\n### Measure\nElapsed time.\n## System verification plan\n### Method\nCollect timings.\n### Conditions\nProduction requests.\n### Success criteria\nThe 95th percentile is at most 100 ms.\n", []string{"target", "conditions or applicability"}},
+		{"empty verification plan", "## Criterion\n### Measure\nElapsed time.\n## System verification plan\n", []string{"target", "conditions or applicability"}},
+		{"assessment conditions do not define applicability", "## Criterion\n### Measure\nElapsed time.\n### Target\nAt most 100 ms at the 95th percentile.\n## System verification plan\n### Conditions\nTest with ten synthetic requests.\n", []string{"conditions or applicability"}},
+		{"criterion references authoritative statement", "## Applies to\nManaged production requests.\n## Criterion\nUse the bound defined in [Statement](#statement).\n## System verification plan\nCollect timings and compare them to [Criterion](#criterion).\n", nil},
+		{"no explicitly recorded measure", "## Applies to\nManaged production requests.\n## System verification plan\nInspect compliance with the specified response behavior.\n", nil},
+		{"validation is distinct", "## System validation plan\nObserve whether the proposed latency serves user needs.\n## Criterion\n### Measure\nElapsed time.\n", []string{"target", "conditions or applicability"}},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -176,4 +182,53 @@ func TestMeasurementReviewAgreesAcrossCommandsAndModel(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestRestartPlansKeepPurposeAndReferencesAfterReload(t *testing.T) {
+	result := conformanceExport(t, "../../examples/todo")
+	if result.ExitCode != 0 {
+		t.Fatal(result.Snapshot.Diagnostics)
+	}
+	reloaded := cloneSnapshot(t, result.Snapshot)
+	r := designRecord(t, reloaded, "Requirement", "Preserve tasks across restart")
+	plans := records(r["assessment_plans"])
+	if len(plans) != 2 || String(plans[0], "purpose") != string(assessment.RequirementsVerification) || String(plans[1], "purpose") != string(assessment.SystemVerification) {
+		t.Fatal("expected distinct wording and realization checks in source order", plans)
+	}
+	index := conformanceIndex(reloaded)
+	targets := func(plan Record, role string) []string {
+		var targets []string
+		for _, id := range Strings(Object(plan[role])["references"]) {
+			ref := index[id]
+			if String(ref, "kind") != "SourceReference" || String(ref, "resolution") == "" || !strings.HasSuffix(String(ref, "context_field"), "."+role+".references") {
+				t.Fatalf("missing reference occurrence or resolution for %s: %v", role, ref)
+			}
+			targets = append(targets, String(ref, "authored_target"))
+		}
+		return targets
+	}
+	if !slices.Equal(targets(plans[0], "subject"), []string{"#statement"}) ||
+		!slices.Equal(targets(plans[1], "subject"), []string{"../../app/main.go"}) ||
+		!slices.Equal(targets(plans[1], "basis"), []string{"#statement", "#criterion"}) {
+		t.Fatal("lost the distinct roles of the statement and service")
+	}
+	review, err := ReviewMarkdown(reloaded, t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		purpose            assessment.Purpose
+		contains, excludes string
+	}{
+		{assessment.RequirementsVerification, "Ask a reviewer", "restart acceptance test"},
+		{assessment.SystemVerification, "restart acceptance test", "Ask a reviewer"},
+	} {
+		_, rest, ok := strings.Cut(review, "## "+tc.purpose.Definition().Label+" plans\n")
+		group, _, _ := strings.Cut(rest, "\n## ")
+		if !ok || !strings.Contains(group, tc.contains) || strings.Contains(group, tc.excludes) {
+			t.Errorf("wrong content in %s group", tc.purpose)
+		}
+	}
+	plans[0]["purpose"] = string(assessment.SystemVerification)
+	requireFinding(t, reloaded, "assessment.purpose")
 }

@@ -14,9 +14,30 @@ For an opted-in project with one root system, contributors must be able to gener
 
 ## Criterion
 
-The project's `SPEC.md` gives the system name and one link to `specification/<name>.system.spec-report.md`. Each system and component overview uses the basename of its named source with `.spec.md` changed to `.spec-report.md`. From that report, reach the same promise through its feature and through the system’s Requirements section. Both routes explain why the promise is listed and lead to its canonical page or passage. The statement, conditions and criterion agree with the authored text. Editing a condition only in the generated spec or removing the feature link produces a check finding. A second build over identical inputs produces identical files.
+The project's `SPEC.md` gives the system name and one link to `specification/<name>.system.spec-report.md`. Each system and component overview uses the basename of its named source with `.spec.md` changed to `.spec-report.md`. Each overview links to a plural-named index beside it for each populated collection, such as `use-cases.md` or `requirements.md`. An index entry links to the subject and includes its authored goal, statement, or description when available. Empty collections produce no index. From the overview, reach the same promise through its feature and through the system’s requirements index. Both routes explain why the promise is listed and lead to its canonical page or passage. The statement, conditions and criterion agree with the authored text. Editing a condition only in the generated spec or removing the feature link produces a check finding. A second build over identical inputs produces identical files.
 
-## Verification plan
+The system overview opens with the system name and authored description. Its
+section map links directly to populated indexes. Readers can follow goals,
+user needs, scope, system topology, requirements, quality attributes, and
+validation in that order when present. The topology shows declared immediate
+parts and boundary relationships in a Mermaid diagram and in linked text.
+The overview displays the full declared quality hierarchy with definition
+previews. A shared attribute appears under each declared parent, with its
+descendants expanded once. Business rule listings belong in the rules index.
+
+A reader can look up a term from an inline or imported glossary and follow it
+to its defining heading. Declared topics link to that same definition. When two
+contexts define the same word, each entry names its context. A relationship
+between terms links in both reading directions, with the original statement
+and examples available in the declaring entry.
+
+From a subject page’s navigation, one link opens the authored heading. The
+reference definition carries the page’s source URI once. From an embedded
+obligation or an authored passage reached by a report link, one link at the end
+of the passage opens its own source heading. The project check identifies
+duplicate page claims and missing or misdirected source links.
+
+## System verification plan
 
 Run the [To-do reader journey and regression probes](../../scripts/check-example/check.py). Inspect the artifact and diagnostics using the [generated specification guide](../../docs/reference/generated-specification.md).
 

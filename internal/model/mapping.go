@@ -14,6 +14,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/requirement"
+	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
 	"go.yaml.in/yaml/v3"
@@ -24,6 +25,24 @@ import (
 // headings, lists and labelled fields; it never infers assertions from prose.
 func MapDomain(doc *ParsedDocument, kind string) Mapping {
 	m := &domainMapper{doc: doc, result: Mapping{Elements: []Record{}, Bindings: []Record{}, Labels: []Record{}, Diagnostics: []Record{}}}
+	if kind == "glossary" {
+		context, err := system.ParseGlossary(doc.Data)
+		if err != nil {
+			m.parseFailure(err)
+			return m.result
+		}
+		if context != "" {
+			doc.Document["glossary_context"] = strings.TrimSpace(context)
+			m.bind(doc.Document, "glossary_context", []string{m.metadataNode("context", context)}, "metadata", "glossary-context")
+		}
+		doc.Document["glossary_terms"] = []string{}
+		m.glossaryTerms(doc.Document, "glossary_terms", doc.Sections)
+		doc.Document["domain_decomposition"] = "complete"
+		m.bind(doc.Document, "root", []string{String(doc.Document, "root")}, "structural_wrapper", "document-root")
+		m.bind(doc.Document, "glossary_terms", append([]string{doc.TitleNode}, doc.Preamble...), "structural_wrapper", "glossary-introduction")
+		m.metadata(doc.Document)
+		return m.result
+	}
 	if kind == "" {
 		// Ordinary referenced Markdown has a content model, not a fabricated
 		// specification type. Unknown sections remain visible domain gaps.
@@ -38,6 +57,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 	}
 	var err error
 	var authoredID string
+	var glossarySources []string
 	var labels []string
 	switch kind {
 	case "feature", "capability":
@@ -77,6 +97,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		v, err = system.Parse(doc.Data)
 		if err == nil {
 			authoredID = v.ID
+			glossarySources = v.GlossarySources
 			err = system.Layout.CheckName(String(doc.Source, "locator"), v.Name)
 		}
 	case "job":
@@ -129,6 +150,12 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.bind(r, "preamble", doc.Preamble, "named_field", "preamble")
 	}
 	m.metadata(r)
+	if glossarySources != nil {
+		r["glossary_source_paths"] = glossarySources
+	}
+	for _, name := range glossarySources {
+		m.bind(r, "glossary_source_paths", []string{m.metadataNode(specfile.GlossarySourcesField, name)}, "metadata", "glossary-source")
+	}
 	if kind == "quality-attribute" {
 		for _, parent := range labels {
 			node := m.metadataNode("subattribute_of", parent)

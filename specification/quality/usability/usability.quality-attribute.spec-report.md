@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: quality-attribute-spec-report
-documents: "../../../specs/quality/usability/usability.quality-attribute.spec.md#usability"
 ---
 # Usability
 
-[dotspec](<../../dotspec.system.spec-report.md>)
+[dotspec](<../../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Definition
 
@@ -20,4 +19,4 @@ How effectively contributors can author, inspect, and maintain specifications.
 - [Accessibility](<accessibility/accessibility.quality-attribute.spec-report.md>)
 - [Diagnosability](<diagnosability/diagnosability.quality-attribute.spec-report.md>)
 
-[Edit source](<../../../specs/quality/usability/usability.quality-attribute.spec.md#usability>)
+[subject-source]: <../../../specs/quality/usability/usability.quality-attribute.spec.md#usability>

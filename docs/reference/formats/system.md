@@ -82,6 +82,77 @@ Use an optional `## Description` to introduce the system in one short paragraph.
 Write it so that someone seeing only the name and description can tell what the
 system is. Use `Purpose` for the reason it exists and `Scope` for its boundaries.
 
+### Include a glossary
+
+Use `## Glossary` with a level-three heading for each term defined in the system
+spec. To include terms from another Markdown file, declare its path relative to
+the system spec in frontmatter. For example, dotspec uses this declaration.
+
+```yaml
+---
+type: system-spec
+glossary_sources:
+  - ../docs/reference/model/glossary.md
+---
+```
+
+A term needs only a heading and a definition. In an imported vocabulary, use
+one H1 for the vocabulary title and one H2 per term. Several systems can
+include the same file. A generator can produce it from a model, a catalog, or
+another authoritative source.
+
+Use a **topic** when readers need a way to find related entries. A term can
+appear under several topics and still have one definition. Use a **context**
+when a word has a different meaning for a different group. For example, Billing
+can define *Account* as a ledger and Identity can define *Account* as a login.
+Set the context once in each vocabulary’s optional frontmatter.
+
+```markdown
+---
+context: Billing
+---
+# Billing vocabulary
+
+## Account
+
+A ledger of charges and payments for a customer.
+
+### Topics
+
+- Customers
+- Payments
+
+### Relationships
+
+- Receives charges from an [Invoice](#invoice).
+
+### Example
+
+One customer can pay two invoices from the same account.
+
+## Invoice
+
+A request for payment for goods or services.
+```
+
+| Optional term subsection | Use |
+| --- | --- |
+| Aliases or Alternative names | List other names for the same meaning. |
+| Topics | List one plain-text topic name per Markdown list item. |
+| Example or Examples | Show how the term is used. Link to a scenario or requirement when it supplies the example. |
+| Relationships | Write a sentence explaining how this term relates to another. Link the other term by its source heading, including the file path for a different vocabulary. Its entry links back to this passage when both terms appear in the system glossary. |
+| Related terms | Point readers to neighboring terms or explain how two contexts use a word. |
+
+Inline terms use the same subsections one heading level deeper. They share
+the system’s default context with imported vocabularies that omit `context`.
+`dotspec model review` flags preferred names and aliases shared by different
+terms within the same system and context. Topic membership has no effect on review.
+
+Dotspec’s `mise run model-generate` takes definitions from class descriptions,
+topics from metamodel subsets, and the Feature relationships from its allowed
+group members. Run `dotspec spec build` to combine that vocabulary with inline
+terms. [Generated vocabulary](../model/glossary.md) · [System glossary](../../../specification/glossary.md)
+
 ### Match the filename to the heading
 
 Use the visible H1 as the subject name. Lowercase its letters, keep letters and
@@ -124,7 +195,7 @@ dotspec component init "Task service" --path app \
 
 A component requires one `Part of` link to a system or another component in
 the project. A subsystem links to its parent system with the same heading.
-The parent report lists its children from those links.
+The parent’s `components.md` and `systems.md` indexes list its children from those links.
 
 Use the same collections under either subject's `specs/` directory.
 For example, Task service owns
@@ -137,7 +208,7 @@ name any applicable targets in `Applies to`.
 Write each feature and capability in its own typed file with an H1 and a
 level-two `Description`. For an inline concept use, put `Description` one level
 below its declaration. The report opens with the description and reuses the
-first paragraph in its parent's directory.
+first paragraph in the parent’s collection index.
 
 See [structure and feature authoring](../../handbook/relationships.md#describe-systems-components-and-features)
 and the [To-do system overview](../../../examples/todo/specification/personal-task-list.system.spec-report.md).
@@ -190,7 +261,7 @@ specs/
     personal-data.quality-model.spec.md
 ```
 
-The system overview links each attribute’s name and short definition to its
+The system’s [quality attributes index](../../../examples/todo/specification/quality-attributes.md) links each attribute’s name and short definition to its
 individual report. Readers can follow parent and child links or browse all
 obligations classified by that attribute. For a complete example, read the
 [Durability source](../../../examples/todo/specs/quality/durability/durability.quality-attribute.spec.md)

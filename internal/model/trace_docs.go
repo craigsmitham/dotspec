@@ -7,6 +7,8 @@ import (
 	"slices"
 	"sort"
 	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/assessment"
 )
 
 type traceEdge struct{ source, field, target string }
@@ -208,15 +210,9 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			continue
 		}
 		count++
-		guidanceParts := []string{}
-		for _, field := range []string{"verification_plan"} {
-			if strings.TrimSpace(d.text(Object(r[field])["content"])) != "" {
-				guidanceParts = append(guidanceParts, strings.ReplaceAll(field, "_", " "))
-			}
-		}
-		guidance := "Not recorded"
-		if len(guidanceParts) > 0 {
-			guidance = "Recorded in source (" + strings.Join(guidanceParts, ", ") + ")"
+		guidance := "Not recorded here"
+		if d.hasPlanGuidance(r, assessment.SystemVerification) {
+			guidance = "Recorded in source (system verification plan)"
 		}
 
 		fmt.Fprintf(&out, "| %s | %s | Not evaluated |\n", link(String(r, "id")), guidance)

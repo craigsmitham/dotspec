@@ -120,8 +120,12 @@ def check_project(cli, project, tmp):
 def markdown_links(page):
     body = page.read_text(encoding="utf-8")
     links = []
-    for match in re.finditer(r"\[([^]\n]+)\]\((<[^>\n]+>|[^\s)]+)\)", body):
-        url = urlsplit(match[2].strip("<>"))
+    definitions = dict(re.findall(r"^\[([^]\n]+)\]: <([^>\n]+)>$", body, re.M))
+    for match in re.finditer(r"\[([^]\n]+)\](?:\((<[^>\n]+>|[^\s)]+)\)|\[([^]\n]+)\])", body):
+        dest = match[2] or definitions.get(match[3])
+        if dest is None:
+            continue
+        url = urlsplit(dest.strip("<>"))
         if not url.scheme and not url.netloc:
             target = (page.parent / unquote(url.path)).resolve() if url.path else page
             links.append((match[1], target, unquote(url.fragment), match[0]))
@@ -148,33 +152,47 @@ def spec_journey(cli, tmp):
     assert sorted(project.rglob("SPEC.md")) == [entry]
     assert all(target != entry for page in (project / "specification").rglob("*.md")
                for _, target, _, _ in markdown_links(page))
-    feature = follow(root, "Pick up where I left off")
-    promise = follow(feature, "Preserve tasks across restart")
     overview = root.read_text(encoding="utf-8")
-    for name, source in {
-        "Personal task list": "specs/personal-task-list.system.spec.md",
-        "Pick up where I left off": "specs/features/pick-up-where-i-left-off.feature.spec.md",
-        "Task service": "app/specs/task-service.component.spec.md",
-        "Local task storage": "specs/capabilities/local-task-storage.capability.spec.md",
-        "My checklist": "specs/personal-task-list.system.spec.md",
+    sections = ["Goals", "User needs", "Scope", "System topology", "Requirements",
+                "Quality attributes", "Validation"]
+    assert re.findall(r"^## (.+)$", overview, re.M) == sections
+    navigation = overview.split("\n## Goals\n", 1)[0]
+    for section in sections:
+        assert f"[{section}](<#{section.lower().replace(' ', '-')}>)" in navigation
+    assert all(f"[{name}]" in navigation for name in (
+        "Jobs", "Business rules", "Components", "Interfaces", "Features", "Capabilities",
+        "Concept definitions", "Concept uses", "Use cases", "All requirements", "Attribute index", "Quality models"))
+    topology = overview.split("## System topology\n", 1)[1].split("\n## ", 1)[0]
+    assert "```mermaid" in topology and "contains" in topology and "provides interface" in topology
+    assert "Task service" in topology and "Task list forms" in topology
+    for name in ("Components", "Interfaces"):
+        assert follow(root, name).name == name.lower() + ".md"
+    feature = follow(follow(root, "Features"), "Pick up where I left off")
+    promise = follow(feature, "Preserve tasks across restart")
+    for name, (collection, source) in {
+        "Personal task list": (None, "specs/personal-task-list.system.spec.md"),
+        "Pick up where I left off": ("Features", "specs/features/pick-up-where-i-left-off.feature.spec.md"),
+        "Task service": ("Components", "app/specs/task-service.component.spec.md"),
+        "Local task storage": ("Capabilities", "specs/capabilities/local-task-storage.capability.spec.md"),
+        "My checklist": ("Concept uses", "specs/personal-task-list.system.spec.md"),
     }.items():
         declaration = (project / source).read_text(encoding="utf-8")
         subject = re.search(r"^#+ " + re.escape(name) + r"\n\n#+ Description\n\n([^\n]+)", declaration, re.M)
         description = subject[1]
-        page = root if name == "Personal task list" else follow(root, name)
+        directory = follow(root, collection) if collection else root
+        page = follow(directory, name) if collection else root
         text = page.read_text(encoding="utf-8")
-        assert text.split("---\n", 2)[2].startswith(f"# {name}\n\n## Description\n\n{description}")
-        assert text.count(description) == overview.count(description) == 1
+        lead = description if page == root else f"## Description\n\n{description}"
+        assert text.split("---\n", 2)[2].startswith(f"# {name}\n\n{lead}")
+        assert text.count(description) == directory.read_text(encoding="utf-8").count(description) == 1
     # Every source in this fixture gets one report documenting its H1. Pages
     # for inline subjects document a deeper heading in that same source.
     claims = {}
     for page in (project / "specification").rglob("*.spec-report.md"):
-        edits = [(target, fragment) for label, target, fragment, _ in markdown_links(page)
-                 if label == "Edit source"]
-        (target, fragment), = edits
-        header = re.search(r'^documents: "([^"]+)"$', page.read_text(encoding="utf-8"), re.M)
-        url = urlsplit(header[1])
-        assert (page.parent / unquote(url.path)).resolve() == target and unquote(url.fragment) == fragment
+        (target, fragment), = [(target, fragment) for label, target, fragment, _ in markdown_links(page)
+                               if label == "View source"]
+        header = page.read_text(encoding="utf-8").split("---\n", 2)[1]
+        assert "documents:" not in header
         key = (target, fragment)
         assert key not in claims, (page, claims.get(key))
         claims[key] = page
@@ -182,17 +200,19 @@ def spec_journey(cli, tmp):
         title = re.search(r"^# (.+)$", source.read_text(encoding="utf-8"), re.M)[1]
         anchor = re.sub(r"[^a-z0-9 -]", "", title.lower()).replace(" ", "-")
         assert (source.resolve(), anchor) in claims, source
-    component = follow(root, "Task service")
-    assert follow(follow(root, "Local task storage"), "Task service") == component
+    component = follow(follow(root, "Components"), "Task service")
+    assert follow(follow(follow(root, "Capabilities"), "Local task storage"), "Task service") == component
     assert component == project / "specification/components/task-service/task-service.component.spec-report.md"
-    acknowledgement = follow(component, "Acknowledge after commit")
+    component_requirements = follow(component, "Requirements")
+    acknowledgement = follow(component_requirements, "Acknowledge after commit")
     assert acknowledgement.parent == component.parent / "requirements"
     statement = acknowledgement.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
-    assert component.read_text(encoding="utf-8").count(statement) == 1
+    assert component_requirements.read_text(encoding="utf-8").count(statement) == 1
     assert "## Goal" in follow(feature, "Return to my list").read_text(encoding="utf-8")
-    qualities = follow(root, "Durability")
+    qualities_index = follow(root, "Attribute index")
+    qualities = follow(qualities_index, "Durability")
     assert follow(promise, "Durability") == qualities
-    for page in (root, promise):
+    for page in (qualities_index, promise):
         assert any(target == qualities and not fragment
                    for _, target, fragment, _ in markdown_links(page))
     assert qualities == project / "specification/quality/durability/durability.quality-attribute.spec-report.md"
@@ -200,9 +220,23 @@ def spec_journey(cli, tmp):
     assert not (qualities.parent / "restart.requirement.spec-report.md").exists()
     assert follow(qualities, "Acknowledge after commit") == acknowledgement
     assert follow(qualities, "Preserve tasks across restart") == promise
-    assert follow(qualities, "Source definition") == project / "specification/quality-models/personal-data-quality.quality-model.spec-report.md"
+    definitions = follow(qualities, "Source definition")
+    assert definitions == project / "specification/quality-models/personal-data-quality.quality-model.spec-report.md"
+    assert [(target, anchor) for label, target, anchor, _ in markdown_links(definitions)
+            if label == "View definition source"] == [(project / "specs/quality-models/personal-data.quality-model.spec.md", "durability")]
+    use_case = follow(feature, "Return to my list")
+    passage = use_case.read_text(encoding="utf-8").split("### Keep recorded work available\n", 1)[1]
+    assert passage.index("#### System verification plan") < passage.index("[View obligation source]") < passage.index("## Related specifications")
+    assert [(target, anchor) for label, target, anchor, _ in markdown_links(use_case)
+            if label == "View obligation source"] == [(project / "specs/use-cases/resume-list.use-case.spec.md", "keep-recorded-work-available")]
+    checklist = follow(use_case, "Complete")
+    action_sources = {(target, anchor) for label, target, anchor, _ in markdown_links(checklist)
+                      if label == "View action source"}
+    concept_source = project / "specs/concepts/checklist.concept.spec.md"
+    assert (concept_source, "complete") in action_sources
+    assert (concept_source, "add") not in action_sources
     headings = re.findall(r"^## (.+)$", promise.read_text(encoding="utf-8"), re.M)
-    assert headings[:4] == ["Statement", "Applies to", "Criterion", "Verification plan"]
+    assert headings[:4] == ["Statement", "Applies to", "Criterion", "System verification plan"]
     text = " ".join(promise.read_text(encoding="utf-8").split())
     for phrase in ("acknowledges a change", "same database", "identity, title and completion state",
                    "Deleted entries must stay absent", "Zero discrepancies across the two views"):
@@ -212,21 +246,28 @@ def spec_journey(cli, tmp):
     assert any(target == project / REQUIREMENT for _, target, _, _ in targets)
     assert any("return-to-my-list" in target.name and fragment.endswith("keep-recorded-work-available")
                for _, target, fragment, _ in targets), "missing refinement of the scenario clause"
-    directory = root.read_text(encoding="utf-8").split("## Requirements\n", 1)[1].split("\n## ", 1)[0]
-    assert "[Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>)" in directory
-    assert follow(root, "Preserve tasks across restart") == promise
+    requirements = follow(root, "All requirements")
+    assert requirements == root.parent / "requirements.md"
+    assert follow(requirements, "Preserve tasks across restart") == promise
+    assert follow(requirements, "Task service") == component_requirements
+    use_cases = follow(root, "Use cases")
+    assert use_cases == root.parent / "use-cases.md"
+    assert follow(use_cases, "Return to my list") == use_case
+    assert not (component.parent / "use-cases.md").exists()
     assert not list((project / "specification").rglob("index.md"))
     cli("check", cwd=project)
     for page, rule in [(promise, "spec.content"), (feature, "spec.navigation"),
                        (qualities, "spec.content"), (root, "spec.navigation"),
-                       (root, "spec.membership"), (qualities, "spec.document-type"),
+                       (requirements, "spec.membership"), (definitions, "spec.navigation"), (qualities, "spec.document-type"),
                        (promise, "spec.document-type")]:
         body = page.read_text(encoding="utf-8")
         if rule == "spec.document-type":
             if page == qualities:
-                changed = body.replace('durability.quality-attribute.spec.md#durability"', 'personal-task-list.system.spec.md#personal-task-list"')
+                changed = body.replace('durability.quality-attribute.spec.md#durability>', 'personal-task-list.system.spec.md#personal-task-list>')
             else:
                 changed = body.replace("type: requirement-spec-report", "type: feature-spec-report")
+        elif page == definitions:
+            changed = re.sub(r"^\[View definition source\].+$", "", body, flags=re.M)
         elif rule == "spec.membership":
             changed = body.replace("\n- [Preserve tasks across restart]", "\n\nSee [Preserve tasks across restart]")
         elif page == promise:
@@ -236,7 +277,7 @@ def spec_journey(cli, tmp):
             changed = body.replace("acknowledged work", "submitted work")
         else:
             changed = body
-            destination = qualities if page == root else promise
+            destination = qualities_index if page == root else promise
             for label, target, _, link in markdown_links(page):
                 if target == destination:
                     changed = changed.replace(link, label)

@@ -38,7 +38,7 @@ func TestInventoryClassifiesAgainstLocalModel(t *testing.T) {
 		t.Fatal("overwrote target")
 	}
 	put(t, path, example)
-	put(t, Layout.Path(dir, "preservation"), "---\ntype: requirement-spec\nquality_attributes: [source-preservation]\n---\n# Preservation\n## Statement\nUnchanged sources.\n## Verification plan\nCompare snapshots.\n")
+	put(t, Layout.Path(dir, "preservation"), "---\ntype: requirement-spec\nquality_attributes: [source-preservation]\n---\n# Preservation\n## Statement\nUnchanged sources.\n## System verification plan\nCompare snapshots.\n")
 	groups, err := List(dir)
 	if err != nil {
 		t.Fatal(err)
@@ -48,7 +48,7 @@ func TestInventoryClassifiesAgainstLocalModel(t *testing.T) {
 		t.Fatalf("inventory: %+v", filtered)
 	}
 	q := filtered[0].Requirements[0]
-	if q.Statement != "Unchanged sources." || q.VerificationPlan != "Compare snapshots." {
+	if q.Statement != "Unchanged sources." || len(q.AssessmentPlans) != 1 || q.AssessmentPlans[0].Content != "Compare snapshots." {
 		t.Fatalf("classified requirement: %+v", q)
 	}
 	r, err := Show(dir, "work")

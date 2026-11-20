@@ -24,14 +24,47 @@ type Reference struct {
 
 func (o *Outline) References() *ReferenceDocument {
 	refs := &ReferenceDocument{Anchors: o.Anchors, Links: []Reference{}}
-	// The callback never stops or returns an error.
-	_ = ast.Walk(o.AST, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+	outlineLinks(o, o.AST, refs)
+	return refs
+}
+
+func outlineLinks(o *Outline, root ast.Node, refs *ReferenceDocument) {
+	_ = ast.Walk(root, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if link, ok := n.(*ast.Link); entering && ok {
 			refs.Links = append(refs.Links, Reference{string(link.Destination), o.Location(link.Pos(), string(link.Destination))})
 		}
 		return ast.WalkContinue, nil
 	})
-	return refs
+}
+
+// GlossarySourcesField identifies a system's explicitly included vocabulary files.
+const GlossarySourcesField = "glossary_sources"
+
+// GlossaryDetailReferences retains outgoing links in explicitly modeled passages.
+// Ordinary citations in the rest of an imported document keep the normal one-hop scope.
+func GlossaryDetailReferences(data []byte) (*ReferenceDocument, error) {
+	outline, err := MarkdownOutline(data, "glossary")
+	if err != nil {
+		return nil, err
+	}
+	refs := &ReferenceDocument{Anchors: outline.Anchors}
+	// Walk blocks in document order alongside the ordered detail sections.
+	block := outline.AST.FirstChild()
+	for _, term := range outline.Sections {
+		for _, sub := range term.Children {
+			switch sub.Title {
+			case "Relationships", "Related terms", "Example", "Examples", "Illustrative examples":
+				for block != nil && block.Pos() < sub.ContentStart {
+					block = block.NextSibling()
+				}
+				for block != nil && block.Pos() < sub.End {
+					outlineLinks(outline, block, refs)
+					block = block.NextSibling()
+				}
+			}
+		}
+	}
+	return refs, nil
 }
 
 // MarkdownReferences reads heading targets in native Markdown documents without

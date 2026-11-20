@@ -75,7 +75,8 @@ type Step struct {
 }
 
 type Job struct {
-	ValidationPlan   string                         `json:"validation_plan,omitempty"`
+	AssessmentPlans []specfile.AssessmentPlan `json:"assessment_plans,omitempty"`
+
 	References       *specfile.ReferenceDocument    `json:"-"`
 	ID               string                         `json:"id,omitempty"`
 	Slug             string                         `json:"slug"`
@@ -133,7 +134,7 @@ func Parse(data []byte) (*Job, error) {
 	if err != nil {
 		return nil, err
 	}
-	job := &Job{Steps: []Step{}, Outcomes: []DesiredOutcome{}, ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
+	job := &Job{AssessmentPlans: doc.AssessmentPlans, Steps: []Step{}, Outcomes: []DesiredOutcome{}, ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
 	var ids specfile.Identifiers
 	if err := ids.Register(job.ID, "job", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err
@@ -142,7 +143,7 @@ func Parse(data []byte) (*Job, error) {
 	for _, section := range doc.Sections {
 		name := section.Title
 		switch name {
-		case "Validation plan", "Job", "Performer", "Situation", "Motivation", "Intended progress", "Outcomes", "Steps", "Progress cases", "Evidence":
+		case "Job", "Performer", "Situation", "Motivation", "Intended progress", "Outcomes", "Steps", "Progress cases", "Evidence":
 			location := doc.Location(section.Start, name)
 			if section.Level != 2 {
 				return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), location)
@@ -155,7 +156,7 @@ func Parse(data []byte) (*Job, error) {
 		}
 	}
 	for name, target := range map[string]*string{
-		"Validation plan": &job.ValidationPlan, "Job": &job.Statement, "Performer": &job.Performer, "Situation": &job.Situation,
+		"Job": &job.Statement, "Performer": &job.Performer, "Situation": &job.Situation,
 		"Motivation": &job.Motivation, "Intended progress": &job.IntendedProgress,
 		"Progress cases": &job.ProgressCases, "Evidence": &job.Evidence,
 	} {

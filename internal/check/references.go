@@ -17,7 +17,7 @@ import (
 var referenceScheme = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9+.-]*:`)
 
 // inspectReferences follows one edge from each successfully parsed source and
-// its system context. Referenced documents supply targets, not another scan.
+// its system context, including modeled passages of explicitly included glossaries.
 func (r *Report) inspectReferences(sources []string, discovered map[string]bool, types []Type) {
 	sources = append([]string{}, sources...)
 	for _, path := range r.ContextFiles {
@@ -70,16 +70,29 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 		return result.doc, result.err
 	}
 	visited := make(map[string]bool)
-	for _, source := range sources {
+	glossaries := map[string]bool{}
+	for len(sources) > 0 {
+		source := sources[0]
+		sources = sources[1:]
 		if visited[source] || failed[source] {
 			continue
 		}
-		visited[source] = true
 		kind := findType(source, types)
-		if kind == nil || kind.References == nil {
+		if !glossaries[source] && (kind == nil || kind.References == nil) {
 			continue
 		}
-		doc, err := read(source)
+		visited[source] = true
+		var doc *specfile.ReferenceDocument
+		var err error
+		if glossaries[source] {
+			var data []byte
+			data, err = os.ReadFile(source)
+			if err == nil {
+				doc, err = specfile.GlossaryDetailReferences(data)
+			}
+		} else {
+			doc, err = read(source)
+		}
 		if err != nil {
 			r.record(err, "scan.reference", source)
 			continue
@@ -132,6 +145,10 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 			}
 			count(target)
 			r.collectFile(target, &location)
+			if location.Element == specfile.GlossarySourcesField && kind != nil && kind.Layout.Kind == "system" && !glossaries[target] {
+				glossaries[target] = true
+				sources = append(sources, target)
+			}
 			targetKind := findType(target, types)
 			markdown := strings.EqualFold(filepath.Ext(target), ".md") || strings.EqualFold(filepath.Ext(target), ".markdown")
 			// Native non-Markdown formats own their fragment semantics.

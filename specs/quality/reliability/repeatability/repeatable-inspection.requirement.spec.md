@@ -26,7 +26,7 @@ be equal, preserving array order. JSON object key order and insignificant whites
 do not affect equivalence. The comparison applies only within the operating context
 in [Applies to](#applies-to).
 
-## Verification plan
+## System verification plan
 
 Run each fixture repeatedly without changing its inputs or execution
 conditions. Compare reports using [Criterion](#criterion).

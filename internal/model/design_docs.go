@@ -8,6 +8,8 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/assessment"
 )
 
 // DesignMarkdown renders the authored concept descriptions and the explicitly
@@ -71,7 +73,9 @@ func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		concepts++
 		fmt.Fprintf(&out, "### %s\n\n[Source](%s).\n\n", d.name(r), sourceLink(r))
 		section("Purpose", r, r["purpose"])
-		section("Validation plan (needs and intended use)", r, Object(r["validation_plan"])["content"])
+		for _, plan := range reviewObjects(r["assessment_plans"]) {
+			section(assessment.Purpose(String(plan, "purpose")).Definition().Heading(), r, plan["content"])
+		}
 		section("Operational principles", r, r["operational_principles"])
 		section("Type parameters", r, r["type_parameters_content"])
 		section("Introduced types", r, r["introduced_types_content"])

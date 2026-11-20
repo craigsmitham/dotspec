@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/craigsmitham/dotspec/internal/assessment"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/obligation"
 	"github.com/craigsmitham/dotspec/internal/specfile"
@@ -18,7 +19,7 @@ const Collection = "requirements"
 
 var Layout = specfile.Layout{Kind: "requirement", Collection: Collection, Suffix: Suffix}
 
-const Template = `---
+var Template = `---
 type: requirement-spec
 ---
 
@@ -37,14 +38,14 @@ What observable result would violate this obligation? Add a Criterion section if
 
 Explain why this obligation is needed and reference its source or governing goal.
 
-## Verification plan
+## ` + assessment.SystemVerification.Definition().Heading() + `
 
 Describe how to check a system or process realization against the statement and any criterion. Identify the method, assessment conditions, and evidence to retain; explain how the conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.
 `
 
 // QualityTemplate is the quality preset. It prompts for an explicit criterion;
 // the result is an ordinary requirement, classified by its quality attributes.
-const QualityTemplate = `---
+var QualityTemplate = `---
 type: requirement-spec
 ---
 
@@ -68,7 +69,7 @@ If a bound is unknown, record an open question and the evidence needed to choose
 
 Explain why this quality matters and any relevant tradeoffs.
 
-## Verification plan
+## ` + assessment.SystemVerification.Definition().Heading() + `
 
 Describe how to obtain and compare evidence against the statement and criterion. Identify the realization, method (including measurement procedure and sampling where needed), assessment conditions, and evidence to retain. Explain how assessment conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.
 `

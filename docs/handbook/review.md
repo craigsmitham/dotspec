@@ -29,14 +29,13 @@ subsets nor introduces a required authoring order.
 
 ## Plan verification and validation explicitly
 
-Use Verification plan on an obligation to describe how a realization will be checked
-against it. Use Validation plan on a requirement, system, concept, use case or other
-traceable element to assess its stated subject against needs and intended use.
-Both fields use the neutral `AssessmentPlan` structure, with `AssessmentCase` values
-for named cases. They are plans, not observations, assessment conclusions or acceptance.
+Choose a purpose-qualified plan heading on the traceable element where readers
+will look for the plan. Each heading opens an independent plan. **Subject** identifies
+what to assess and **Basis** identifies the criteria, needs, or obligations to use.
+Both accept prose and links. See the [assessment purposes](verification-and-validation.md#assessment-purposes).
 
 ```markdown
-## Validation plan
+## System validation plan
 
 ### Subject
 
@@ -88,7 +87,7 @@ Basis, Participants, Method, Success criteria, Conditions or Evidence to retain 
 not separately identified; the narrative may already supply them. Do not create
 new obligations merely to describe assessment activities.
 
-A Verification plan's Method records how to collect observations, including any
+A System verification plan's Method records how to collect observations, including any
 measurement procedure and sampling. Define or reference the satisfaction rule
 under Criterion, using narrative or its Measure and Target subsections. Plan
 Success criteria refer to that rule rather than define competing bounds. Put
@@ -96,8 +95,8 @@ required operating context under Applies to; plan Conditions describe the
 assessment setup and how it represents that context.
 
 Checks offer advisory prompts when a Criterion records an explicit Measure without
-a separately identified target or operating context, even when Verification plan
-is present. They do not interpret arbitrary prose or certify adequacy. A Validation plan alone does
+a separately identified target or operating context, even when System verification plan
+is present. They do not interpret arbitrary prose or certify adequacy. A System validation plan alone does
 not satisfy the need for system-verification guidance. See
 [Develop requirements](requirements.md) for the authoring workflow and the
 [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md)
@@ -176,7 +175,7 @@ The platform clock stays within the agreed offset tolerance.
 
 Retention calculations in the managed production environment.
 
-#### Validation plan
+#### Assumption validation plan
 
 ##### Method
 
@@ -240,7 +239,7 @@ entries are independently addressable Interface elements, with heading
 anchors and optional introductory `**ID:**` values. Each belongs to one required
 or provided list under one System or Component. Entries carry descriptions,
 optional counterpart context and contract links, plus Notes, Open questions,
-Validation plan and trace sections. An Interface is not a specification: Evidence,
+assessment plans and trace sections. An Interface is not a specification: Evidence,
 Authority and Related specifications sections under it are retained as unmodelled
 extension sections.
 

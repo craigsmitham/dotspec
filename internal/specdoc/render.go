@@ -10,20 +10,29 @@ import (
 	"path"
 	"path/filepath"
 	"slices"
-	"strconv"
 	"strings"
 
+	"github.com/craigsmitham/dotspec/internal/assessment"
 	"github.com/craigsmitham/dotspec/internal/model"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/text"
+	"github.com/yuin/goldmark/util"
 )
 
 const reviewPath = "specification/requirements-review.report.md"
 
 type writer struct {
-	page                *Page
-	file, titleMarkdown string
-	out                 strings.Builder
+	page                             *Page
+	file, titleMarkdown, titleAnchor string
+	out                              strings.Builder
+	passageEnds                      []passageEnd
+	notePrefixes                     map[*sourceFile]string // keep footnote labels local when combining sources
+}
+
+// A passage may receive its first incoming link from a page rendered later.
+type passageEnd struct {
+	heading *heading
+	offset  int
 }
 
 func (p *planner) newPage(file string, document Document, title string) *writer {
@@ -37,10 +46,11 @@ func (w *writer) finish() {
 	if w.page.Type != "" {
 		fmt.Fprintf(&header, "type: %s\n", w.page.Type)
 	}
-	if w.page.Documents != "" {
-		fmt.Fprintf(&header, "documents: %s\n", strconv.Quote(w.page.Documents))
+	header.WriteString("---\n")
+	if w.titleAnchor != "" {
+		fmt.Fprintf(&header, "<a id=\"%s\"></a>\n\n", html.EscapeString(w.titleAnchor))
 	}
-	fmt.Fprintf(&header, "---\n# %s\n", w.titleMarkdown)
+	fmt.Fprintf(&header, "# %s\n", w.titleMarkdown)
 	w.page.Markdown = strings.TrimSpace(header.String()+w.out.String()) + "\n"
 }
 func (w *writer) text(value string) {
@@ -53,11 +63,6 @@ func (w *writer) link(title, target string) string {
 	dest := relative(w.file, target)
 	w.requireLink(dest)
 	return link(title, dest)
-}
-func (w *writer) sourceLink(label, file, fragment string) string {
-	dest := relativeURL(w.file, file, fragment)
-	w.requireLink(dest)
-	return link(label, dest)
 }
 func (w *writer) requireLink(dest string) {
 	if !slices.Contains(w.page.RequiredLinks, dest) {
@@ -89,27 +94,88 @@ func (p *planner) render() *Plan {
 	entry.titleMarkdown = inlineText(p.governing.name.title)
 	entry.text(entry.link("Read the system specification", p.governing.file))
 	entry.finish()
+	var subjects []*writer
 	for _, s := range p.subjects {
-		p.renderSubject(s)
+		subjects = append(subjects, p.renderSubject(s))
 	}
 	p.renderReview()
+	p.linkedPassages = linkedPassages(p.plan)
+	for _, w := range subjects {
+		body := w.out.String()
+		w.out.Reset()
+		start := 0
+		for _, end := range w.passageEnds {
+			h := end.heading
+			if !h.obligation && !p.linkedPassages[p.targets[h.node]] {
+				continue
+			}
+			w.out.WriteString(body[start:end.offset])
+			w.text(link(h.sourceLabel(), relativeURL(w.file, h.owner.source.path, h.anchor)))
+			start = end.offset
+		}
+		w.out.WriteString(body[start:])
+		w.finish()
+	}
 	return p.plan
 }
 
-func (p *planner) renderSubject(s *subject) {
-	w := p.newPage(s.file, subjectDocument(s.file, s.source, s.name), s.name.title)
-	w.titleMarkdown = p.headingMarkdown(w, s, s.name)
-	headings := readingOrder(s)
-	var opening []string
-	if s.kind() == "System" {
-		opening = []string{"Description", "Purpose", "Scope"}
-	} else if hasDescriptionSection(s.kind()) && s.section("Description") != nil {
-		opening = []string{"Description"}
+// Only visible routes into a generated passage make it an independent entry point.
+func linkedPassages(plan *Plan) map[string]bool {
+	linked := map[string]bool{}
+	for file, page := range plan.Pages {
+		for _, dest := range page.RequiredLinks {
+			u, err := url.Parse(dest)
+			if err != nil || u.Fragment == "" || u.IsAbs() || u.Host != "" || path.IsAbs(u.Path) {
+				continue
+			}
+			target := file
+			if u.Path != "" {
+				target = path.Join(path.Dir(file), u.Path)
+			}
+			if plan.Pages[target] != nil {
+				linked[target+"#"+u.Fragment] = true
+			}
+		}
 	}
-	if len(opening) > 0 {
-		// Keep each opening section and its descendants ahead of navigation.
+	return linked
+}
+
+func (h *heading) sourceLabel() string {
+	switch h.subjectKind {
+	case "QualityAttribute":
+		return "View definition source"
+	case "ObligationClause":
+		return "View obligation source"
+	case "ConceptAction":
+		return "View action source"
+	default:
+		return "View source for “" + inlineText(h.title) + "”"
+	}
+}
+
+func (p *planner) renderSubject(s *subject) *writer {
+	w := p.newPage(s.file, subjectDocument(s.file, s.source, s.name), s.name.title)
+	w.titleMarkdown = p.headingMarkdown(w, s.source, s.name)
+	w.titleAnchor = s.name.explicitAnchor
+	ref := sourceReference(s.source.data)
+	if s.kind() == "System" {
+		p.renderSystem(w, s, ref)
+	} else {
+		p.renderSubjectBody(w, s, ref)
+	}
+	if s.section("Related specifications") == nil {
+		p.relationships(w, s.name, true)
+	}
+	p.appendFootnotes(w, s)
+	w.text("[" + ref + "]: <" + w.page.Documents + ">")
+	return w
+}
+
+func (p *planner) renderSubjectBody(w *writer, s *subject, ref string) {
+	headings := readingOrder(s)
+	if hasDescriptionSection(s.kind()) && s.section("Description") != nil {
 		end := slices.IndexFunc(headings, func(h *heading) bool {
-			return h.level == s.name.level+1 && !slices.Contains(opening, h.title)
+			return h.level == s.name.level+1 && h.title != "Description"
 		})
 		if end < 0 {
 			end = len(headings)
@@ -117,94 +183,100 @@ func (p *planner) renderSubject(s *subject) {
 		p.renderHeadings(w, s, headings[:end])
 		headings = headings[end:]
 	}
-	if s.kind() == "System" {
-		var nav []string
-		if s != p.governing {
-			nav = append(nav, w.link(s.system.name.title, s.system.file))
-		}
-		if d := s.directories["Requirements"]; d != nil {
-			nav = append(nav, w.link("Requirements", s.file+"#"+d.anchor))
-		}
-		nav = append(nav, w.link("Requirements review", reviewPath))
-		w.text("---")
-		w.text(strings.Join(nav, " · "))
-	} else {
-		parent := s.parent
-		if parent == nil {
-			parent = s.system
-		}
-		w.text(w.link(parent.name.title, parent.file))
+	parent := s.parent
+	if parent == nil {
+		parent = s.system
 	}
-	var earlyDirectory *directory
-	if features := s.directories["Features"]; s.kind() == "System" && features != nil && features.section == nil {
-		earlyDirectory = features
-		w.heading("Features")
-		features.render(w)
+	w.text(w.link(parent.name.title, parent.file) + " · [View source][" + ref + "]")
+	var indexes []string
+	for _, title := range slices.Sorted(maps.Keys(s.indexes)) {
+		idx := s.indexes[title]
+		p.renderIndex(s, title, idx)
+		indexes = append(indexes, "- "+w.link(title, idx.file))
 	}
+	w.text(strings.Join(indexes, "\n"))
 	p.renderHeadings(w, s, headings)
-	if s.kind() == "System" && len(model.Strings(s.r["quality_attributes"])) > 0 && s.section("Quality attributes") == nil {
-		w.heading("Quality attributes")
-		p.attributeOverview(w, s)
+}
+
+// Keep authored reference definitions and literal bracketed text independent
+// of the generated link, including when a subject moves to its own report.
+func sourceReference(authored string) string {
+	authored = string(util.DoFullUnicodeCaseFolding([]byte(authored)))
+	ref := "subject-source"
+	for n := 2; strings.Contains(authored, ref); n++ {
+		ref = fmt.Sprintf("subject-source-%d", n)
 	}
-	for _, label := range slices.Sorted(maps.Keys(s.directories)) {
-		if d := s.directories[label]; d.section == nil && d != earlyDirectory {
-			w.heading(label)
-			d.render(w)
-		}
-	}
-	if s.section("Related specifications") == nil {
-		p.relationships(w, s.name, true)
-	}
-	p.appendFootnotes(w, s)
-	w.text(w.sourceLink("Edit source", s.source.path, s.name.anchor))
-	w.finish()
+	return ref
 }
 
 func (p *planner) renderHeadings(w *writer, s *subject, headings []*heading) {
+	p.renderPassage(w, s, headings, 0, false, "")
+}
+
+// A system overview can introduce an authored passage under a shared section
+// heading or at a deeper level. Its body and source links stay together.
+func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offset int, merged bool, title string) {
+	var open []*heading
+	closePassages := func(level int) {
+		for len(open) > 0 && open[len(open)-1].level >= level {
+			w.passageEnds = append(w.passageEnds, passageEnd{open[len(open)-1], w.out.Len()})
+			open = open[:len(open)-1]
+		}
+	}
 	for _, h := range headings {
 		if h.owner != s {
 			continue
 		}
+		closePassages(h.level)
 		if h != s.name {
+			open = append(open, h)
 			// Preserve addressability for duplicated headings moved onto different pages.
 			if h.explicitAnchor != "" {
 				w.text(`<a id="` + html.EscapeString(h.explicitAnchor) + `"></a>`)
 			}
-			w.text(strings.Repeat("#", max(2, h.level-s.name.level+1)) + " " + p.headingMarkdown(w, s, h))
+			if !merged || h != headings[0] {
+				caption := p.headingMarkdown(w, s.source, h)
+				if h == headings[0] && title != "" && title != h.title {
+					caption = title
+				}
+				w.text(strings.Repeat("#", min(6, max(2, h.level-s.name.level+1+offset))) + " " + caption)
+			}
 			if h.subjectKind != "" {
 				meta, _ := json.Marshal(subjectDocument(w.file, s.source, h))
 				w.text("<!-- dotspec-doc " + string(meta) + " -->")
-			}
-			if d := s.directories[h.title]; d != nil && d.section == h {
-				d.render(w)
-				if strings.TrimSpace(s.source.data[h.end:h.bodyEnd]) != "" {
-					// A following authored Markdown list must remain a separate list.
-					w.text("<!-- end directory -->")
-				}
 			}
 		}
 		if h == s.name && s.kind() == "Feature" {
 			p.featureGoals(w, s)
 		}
 		p.body(w, s.source, h)
-		if s.kind() == "System" && h.title == "Quality attributes" && h.level == 2 && len(model.Strings(s.r["quality_attributes"])) > 0 {
-			p.attributeOverview(w, s)
+		if s.kind() != "System" && h.level == s.name.level+1 {
+			if dest := s.sectionIndex(h.title); dest != "" {
+				w.text(w.link("Browse "+strings.ToLower(h.title), dest))
+			}
 		}
 		if h.level == s.name.level+1 && h.title == "Related specifications" {
 			p.relationships(w, s.name, false)
 		}
 		if h != s.name {
 			p.relationships(w, h, false)
-			if h.obligation {
-				w.text(w.sourceLink("Edit obligation", s.source.path, h.anchor))
-			}
 		}
 	}
+	closePassages(0)
 }
 
 // readingOrder promotes a few entire authored sections for the document's
 // purpose. Descendants, scenario steps and all other siblings retain order.
 func readingOrder(s *subject) []*heading {
+	if s.overview != nil {
+		var headings []*heading
+		for _, section := range s.overview {
+			for _, passage := range section.passages {
+				headings = append(headings, passage...)
+			}
+		}
+		return headings
+	}
 	var groups [][]*heading
 	for _, h := range s.source.headings {
 		if h.start < s.name.start {
@@ -223,11 +295,9 @@ func readingOrder(s *subject) []*heading {
 	var first []string
 	switch s.kind() {
 	case "Requirement":
-		first = []string{"Statement", "Applies to", "Conditions", "Criterion", "Verification plan"}
+		first = []string{"Statement", "Applies to", "Conditions", "Criterion", assessment.SystemVerification.Definition().Heading()}
 	case "UseCase":
 		first = []string{"Goal", "Primary actor", "Trigger", "Preconditions", "Main success scenario", "Extensions", "Success guarantees", "Minimal guarantees"}
-	case "System":
-		first = []string{"Description", "Purpose", "Scope", "Features"}
 	default:
 		if hasDescriptionSection(s.kind()) {
 			first = []string{"Description"}
@@ -256,17 +326,21 @@ func readingOrder(s *subject) []*heading {
 // A footnote can be defined anywhere in its authored file. Keep its
 // definition available locally on every generated page that uses it.
 func (p *planner) appendFootnotes(w *writer, s *subject) {
-	definitions := map[string]model.Record{}
-	needed := map[string]bool{}
 	onPage := func(pos int) bool {
 		for _, h := range s.source.headings {
 			if h.start <= pos && pos < h.bodyEnd {
-				return h.owner == s
+				return h.owner == s && !h.inGlossary
 			}
 		}
 		return false
 	}
-	for _, n := range s.source.footnotes {
+	p.appendSourceFootnotes(w, s.source, onPage)
+}
+
+func (p *planner) appendSourceFootnotes(w *writer, sf *sourceFile, onPage func(int) bool) {
+	definitions := map[string]model.Record{}
+	needed := map[string]bool{}
+	for _, n := range sf.footnotes {
 		key := strings.ToLower(attr(n, "label"))
 		if attr(n, "node_kind") == "footnote_definition" {
 			definitions[key] = n
@@ -278,12 +352,12 @@ func (p *planner) appendFootnotes(w *writer, s *subject) {
 	}
 	for _, key := range slices.Sorted(maps.Keys(needed)) {
 		if n := definitions[key]; n != nil && !onPage(position(n, "start")) {
-			w.text(p.rebasedText(w, s.source, position(n, "start"), position(n, "end")))
+			w.text(p.rebasedText(w, sf, position(n, "start"), position(n, "end")))
 		}
 	}
 }
-func (p *planner) headingMarkdown(w *writer, s *subject, h *heading) string {
-	raw := p.rebasedText(w, s.source, h.start, h.end)
+func (p *planner) headingMarkdown(w *writer, source *sourceFile, h *heading) string {
+	raw := p.rebasedText(w, source, h.start, h.end)
 	if strings.HasPrefix(raw, "#") {
 		// CommonMark permits a closing run of hashes preceded by whitespace.
 		raw = strings.TrimSpace(strings.TrimLeft(raw, "#"))
@@ -366,6 +440,7 @@ type replacement struct {
 // Rebase link destinations alongside any requested field breaks. Link edits
 // are disjoint even when an image is the label of a link.
 func (p *planner) rebasedText(w *writer, sf *sourceFile, start, end int, edits ...replacement) string {
+	edits = append(edits, sf.footnoteEdits(start, end, w.notePrefixes[sf])...)
 	for _, n := range sf.links {
 		a, b := position(n, "start"), position(n, "end")
 		raw := attr(n, "destination")
@@ -386,6 +461,10 @@ func (p *planner) rebasedText(w *writer, sf *sourceFile, start, end int, edits .
 			edits = append(edits, replacement{a + common, b, changed[common:]})
 		}
 	}
+	return sf.editedText(start, end, edits)
+}
+
+func (sf *sourceFile) editedText(start, end int, edits []replacement) string {
 	slices.SortFunc(edits, func(a, b replacement) int { return cmp.Compare(a.start, b.start) })
 	var out strings.Builder
 	pos := start
@@ -400,21 +479,17 @@ func (p *planner) rebasedText(w *writer, sf *sourceFile, start, end int, edits .
 	out.WriteString(sf.data[pos:end])
 	return strings.TrimSpace(strings.ReplaceAll(out.String(), "\r\n", "\n"))
 }
-func sourceProse(sf *sourceFile, h *heading) string {
-	var b strings.Builder
-	pos := h.end
+func sourceProse(sf *sourceFile, h *heading, edits ...replacement) string {
 	for _, n := range sf.links {
 		start, end := position(n, "start"), position(n, "end")
-		if start < pos || end > h.bodyEnd || attr(n, "label") == "" || attr(n, "node_kind") == "link_definition" {
+		if start < h.end || end > h.bodyEnd || attr(n, "label") == "" || attr(n, "node_kind") == "link_definition" {
 			continue
 		}
-		b.WriteString(sf.data[pos:start])
-		b.WriteString(rewriteDestination(sf.data[start:end], n, attr(n, "destination")))
-		pos = end
+		edits = append(edits, replacement{start, end, rewriteDestination(sf.data[start:end], n, attr(n, "destination"))})
 	}
-	b.WriteString(sf.data[pos:h.bodyEnd])
-	return strings.TrimSpace(b.String())
+	return sf.editedText(h.end, h.bodyEnd, edits)
 }
+
 func rewriteDestination(raw string, n model.Record, target string) string {
 	// Reference definitions may be shared between sections. Expand reference
 	// uses inline so each generated page works independently.
@@ -525,14 +600,8 @@ func (p *planner) relationships(w *writer, h *heading, showHeading bool) {
 		if r.target == w.file || (r.forward && authored[labeledLink{r.label, relative(w.file, r.target)}]) {
 			continue
 		}
-		if h == h.owner.name {
-			dirs := h.owner.directories
-			if r.label == "Parts" && (dirs["Child systems"].contains(r.target) || dirs["Components"].contains(r.target)) {
-				continue
-			}
-			if r.label == "Applies here" && dirs["Applicable requirements"].contains(r.target) {
-				continue
-			}
+		if h == h.owner.name && relationshipIndex(h.owner, r.label, r.target) != nil {
+			continue
 		}
 		byLabel[r.label] = append(byLabel[r.label], w.link(r.title, r.target))
 	}
@@ -554,7 +623,9 @@ func (p *planner) relationships(w *writer, h *heading, showHeading bool) {
 func (p *planner) renderReview() {
 	w := p.newPage(reviewPath, Document{Type: RequirementsReviewReport}, "Requirements review")
 	w.text(w.link(p.governing.name.title, p.governing.file))
-	var questions, findings, verification, validation []string
+	var questions, findings []string
+	plans := map[assessment.Purpose][]string{}
+	planHeadings := p.snapshot.AssessmentHeadings()
 	for _, s := range p.subjects {
 		var ancestors []*heading
 		for _, h := range s.source.headings {
@@ -568,6 +639,9 @@ func (p *planner) renderReview() {
 			if len(ancestors) > 1 {
 				subject = ancestors[len(ancestors)-1].title + " · " + subject
 			}
+			if purpose, ok := planHeadings[h.node]; ok {
+				plans[purpose] = append(plans[purpose], w.link(subject, p.targets[h.node]))
+			}
 			switch h.title {
 			case "Open questions", "Open question":
 				labels := questionPassages(sourceProse(s.source, h))
@@ -577,10 +651,6 @@ func (p *planner) renderReview() {
 				if len(labels) == 0 && h.title == "Open question" {
 					questions = append(questions, w.link(subject+" — "+h.title, p.targets[h.node]))
 				}
-			case "Verification plan":
-				verification = append(verification, w.link(subject, p.targets[h.node]))
-			case "Validation plan":
-				validation = append(validation, w.link(subject, p.targets[h.node]))
 			default:
 				if len(ancestors) > 0 && ancestors[len(ancestors)-1].title == "Open questions" {
 					labels := questionPassages(sourceProse(s.source, h))
@@ -633,15 +703,18 @@ func (p *planner) renderReview() {
 			findings = append(findings, inlineText(msg)+"\n  - "+strings.Join(passages, "\n  - "))
 		}
 	}
-	for _, section := range []struct {
+	type reviewSection struct {
 		name, empty string
 		items       []string
-	}{
-		{"Open questions", "No open questions recorded.", questions},
-		{"Verification plans", "No verification plans recorded.", verification},
-		{"Validation plans", "No validation plans recorded.", validation},
-		{"Inspection findings", "No inspection findings.", findings},
-	} {
+	}
+	sections := []reviewSection{{"Open questions", "No open questions recorded.", questions}}
+	for _, def := range assessment.Definitions {
+		if len(plans[def.Purpose]) > 0 {
+			sections = append(sections, reviewSection{name: def.Label + " plans", items: plans[def.Purpose]})
+		}
+	}
+	sections = append(sections, reviewSection{"Inspection findings", "No inspection findings.", findings})
+	for _, section := range sections {
 		w.heading(section.name)
 		if len(section.items) == 0 {
 			w.text(section.empty)

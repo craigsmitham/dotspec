@@ -25,7 +25,7 @@ Apply the preservation rule in [Statement](#statement) to the files covered by
 [Applies to](#applies-to). Filesystem access-time changes are not changes to source
 contents or paths.
 
-## Verification plan
+## System verification plan
 
 Snapshot the relative paths and byte contents of project files and any system
 context outside the selected subtree. Capture command output separately from

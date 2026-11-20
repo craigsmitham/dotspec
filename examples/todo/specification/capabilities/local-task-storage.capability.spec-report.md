@@ -1,7 +1,6 @@
 ---
 generated_by: dotspec
 type: capability-spec-report
-documents: "../../specs/capabilities/local-task-storage.capability.spec.md#local-task-storage"
 ---
 # Local task storage
 
@@ -9,10 +8,10 @@ documents: "../../specs/capabilities/local-task-storage.capability.spec.md#local
 
 Retains accepted task changes between sessions on the same computer.
 
-[Personal task list](<../personal-task-list.system.spec-report.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) · [View source][subject-source]
 
 ## Provided by
 
 [Task service](<../components/task-service/task-service.component.spec-report.md>).
 
-[Edit source](<../../specs/capabilities/local-task-storage.capability.spec.md#local-task-storage>)
+[subject-source]: <../../specs/capabilities/local-task-storage.capability.spec.md#local-task-storage>

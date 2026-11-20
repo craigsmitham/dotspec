@@ -292,7 +292,7 @@ func designKind(actual, expected string) bool {
 }
 func designIssueCode(field string) string {
 	switch field {
-	case "measurement_basis", "illustrates", "interacts_with", "depends_on", "provided_by", "part_of", "groups", "specification_system", "subject_system", "supports", "applies_to", "derived_from", "refines", "relies_on", "involves", "motivation", "verification_plan":
+	case "measurement_basis", "illustrates", "interacts_with", "depends_on", "provided_by", "part_of", "groups", "specification_system", "subject_system", "supports", "applies_to", "derived_from", "refines", "relies_on", "involves", "motivation", "system_verification":
 		return "relationship." + field
 	default:
 		return "concept." + field

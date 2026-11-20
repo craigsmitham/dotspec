@@ -73,7 +73,7 @@ The browser presents open and completed tasks and accepts changes through HTML f
 
 The task list is stored locally. Its quality requirements cover what survives between sessions on the same database.
 
-## Validation plan
+## System validation plan
 
 ### Subject
 

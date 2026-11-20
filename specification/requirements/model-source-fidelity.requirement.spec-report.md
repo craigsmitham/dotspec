@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
-documents: "../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-model-exports"
 ---
 # Preserve source and represented content in model exports
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Statement
 
@@ -40,7 +39,7 @@ Specification-model exports and validation of their saved snapshots, including
 all eight supported specification families, malformed specifications, directly
 consulted Markdown, and other acquired reference targets.
 
-## Verification plan
+## System verification plan
 
 Export fixtures from every supported specification family and validate the
 resulting snapshots. Decode retained payloads and compare them with the inputs,
@@ -61,6 +60,8 @@ The [content tests](<../../internal/model/content_test.go>),
 [CLI model tests](<../../internal/cli/model_test.go>) provide verification evidence
 for the cases they exercise. The statements above define the obligation; a test
 passing does not establish semantic adequacy of arbitrary specifications.
+
+[View source for “System verification plan”](<../../specs/requirements/model-source-fidelity.requirement.spec.md#system-verification-plan>)
 
 ## Rationale
 
@@ -85,4 +86,4 @@ representation and named mappings.
 
 **Quality attribute** · [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)
 
-[Edit source](<../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-model-exports>)
+[subject-source]: <../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-model-exports>

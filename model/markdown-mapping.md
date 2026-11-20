@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/17` maps specification Markdown to the
+`dotspec-markdown/20` maps specification Markdown to the
 [canonical model](metamodel.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/reference/specification-model.md).
@@ -67,7 +67,7 @@ specification.
 | Notes | Any element | `notes: RichContent` |
 | Implementation suggestions; Implementation hints | Any element | `implementation_suggestions: RichContent`; nonbinding advice, not endorsement |
 | Illustrative examples | Any element | `illustrative_examples: RichContent`, distinct from general obligations |
-| Validation plan | Any TraceableElement | `validation_plan: AssessmentPlan`; explicit subject and basis distinguish requirements/system validation and assumption assessment |
+| Purpose-qualified plan heading | Any TraceableElement | Append an `AssessmentPlan` to `assessment_plans` with the heading’s explicit purpose. |
 | Supports; Derived from; Relies on | Any TraceableElement | Trace sections; see [Layered traceability and obligation clauses](#layered-traceability-and-obligation-clauses) |
 | Open question; Open questions | Specification; any named element whose subsections are mapped, such as a declared component, job step, obligation clause, concept action, quality attribute or named assumption (a goal's or glossary term's subsections stay in its statement or definition); an obligation's Criterion | `open_questions_content` and ordered `open_questions` values on that record (the obligation, for a Criterion); each question is distinct from its Evidence needed subsection |
 
@@ -150,7 +150,7 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | System or Component: Out of scope | `out_of_scope: RichContent` |
 | System or Component: Interacts with | Authored content and reference occurrences; resolved `interacts_with` System/Component targets, independent of `part_of` |
 | System or Component: Required interfaces; Provided interfaces | `required_interfaces_content` or `provided_interfaces_content` with the full section, plus ordered `required_interfaces` or `provided_interfaces` membership of owned `Interface` elements |
-| Named interface | Heading `name`, complete `content`, introductory `description`, declaring System/Component `owner`, optional introductory `**ID:**`; Contracts and Counterpart subsections are contextual references; Notes, Open questions, Validation plan, trace sections and Obligations are supported |
+| Named interface | Heading `name`, complete `content`, introductory `description`, declaring System/Component `owner`, optional introductory `**ID:**`; Contracts and Counterpart subsections are contextual references; Notes, Open questions, assessment plans, trace sections and Obligations are supported |
 | Project context | `project_context: ContextualReferences`; authoritative project artifacts remain external |
 | Part of | `part_of_content`, explicit `part_of_references`, resolved scalar System `part_of`; no inferred parent |
 | Feature or capability source | Root Feature or Capability with a name from its H1, optional frontmatter `id` and nearest `specification_owner`. |
@@ -165,9 +165,14 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | Environment; Stakeholders; Constraints | Narrative `environment`, `stakeholders` and `constraints`; list items and subordinate headings remain part of the narrative |
 | Goals | `goals_content`; direct list items and named subsections become `Goal` records in `goals` |
 | Assumptions | `assumptions_content`; direct list items and named subsections become `Assumption` records in `assumptions` |
-| Assumption: Basis; Applicability; Validation plan | `basis`, prose `applicability`, and `validation_plan: AssessmentPlan`; statement contains the named assumption introduction only |
+| Assumption: Basis; Applicability; Assumption validation plan | `basis`, prose `applicability`, and an entry in `assessment_plans`; statement contains the named assumption introduction only |
+| System frontmatter `glossary_sources` | `glossary_source_paths` retains the paths. `glossary_sources` links to acquired Documents in that order. Their H2 declarations become document-owned `glossary_terms` using the same term mapping as inline entries. |
 | Glossary | `glossary_content`; named subsections become `GlossaryTerm` records in `glossary` with full definitions |
 | Term: Alternative names; Aliases | List-item values, or the unsegmented subsection, populate `alternative_names` |
+| Vocabulary frontmatter `context` | `Document.glossary_context` names the scope for terminology review within a consuming system. The default scope includes inline terms. |
+| Term: Topics | Ordered list-item labels in `topics` classify terms for browsing. |
+| Term: Example; Examples; Illustrative examples | `illustrative_examples` retains the full passage and its links. |
+| Term: Relationships | `relationships: ContextualReferences` preserves the authored wording and reference occurrences. A report links each referenced term back to the declaring passage. |
 | Term: Related terms | `related_terms: ContextualReferences` |
 | Quality attributes | `System.quality_attributes_content` preserves the section; `System.quality_attributes` lists the declarations in its quality tree |
 | Named attribute subsection | `QualityAttribute` with title, definition and declaring `System` owner |
@@ -366,23 +371,26 @@ clauses declared inside another specification share these fields; see
 | Rationale | `rationale` |
 | Frontmatter `quality_attributes` | `quality_attribute_labels` retains every authored classification label occurrence; resolved quality attribute targets populate `quality_attributes` |
 | Statement | `statement` |
-| Verification plan | `verification_plan: AssessmentPlan` for planned realization conformance |
-| Validation plan | `validation_plan: AssessmentPlan` for needs/intent assessment; also recognized on other traceable records |
+| Purpose-qualified plan heading | Append one plan with this purpose to `assessment_plans`, as on other traceable records. |
 | Criterion (optional explicit satisfaction rule) | `criterion: ObligationCriterion` with full `content` |
 | Criterion: Measure; Target | `measure`; `target` |
 
-Verification plan and Validation plan share `AssessmentPlan`. They recognize Subject,
-Basis (`ContextualReferences`), Participants, Method or Procedure, Success criteria,
-Conditions, and Evidence to retain or Evidence retention. Verification plan on an
-Obligation assesses a realization against the obligation. Validation plan is available
-on TraceableElement records, including requirements, systems, concepts, use cases,
-needs and assumptions; the subject and basis determine the intended-use or premise
-assessment. Assumptions distinguish empirical support from justified reliance.
-Neither field records an execution, verdict or acceptance. Repeated supplementary
-plan content and cases append in authored order. Named Cases subsections supply
-`AssessmentCase` values; each can contain Conditions, Procedure, Expected
-result and Evidence to retain. Measurement procedure and sampling belong under
-the Verification plan's Method.
+### Assessment plans
+
+On a traceable element, the heading is the label of an
+[AssessmentPurpose](../docs/reference/model/index.md#assessmentpurpose) followed by
+` plan`. Every occurrence starts a distinct plan in source order. The heading maps to
+the required `purpose`; the entire body maps to `content`, including empty drafts.
+The enclosing element records where the plan was written. Subject and Basis map
+independently to `ContextualReferences` with full prose and link occurrences.
+
+Participants, Method (or Procedure), Success criteria, Conditions, and Evidence to
+retain (or Evidence retention) supply optional detail. Named headings under Cases
+supply ordered `AssessmentCase` values with Conditions, Procedure, Expected result
+and Evidence to retain. Each case belongs to its plan. For system verification,
+record measurement procedure and sampling under Method.
+
+### Obligation criteria
 
 Criterion recognizes Measure and Target. The measure carries units, aggregation
 and observation window as needed; the target carries the comparison and bound,
@@ -404,14 +412,14 @@ introducing competing thresholds. The mapper preserves authored content even whe
 it does not follow this guidance; it does not relocate or infer requirements.
 
 Measurement-basis advice considers an explicit Measure even
-when Verification plan is present. A Measure without a separately identified
+when a System verification plan is present. A Measure without a separately identified
 target, or without conditions or applicability, produces advice; prose may already supply
 them. Plan Success criteria and Conditions do not substitute for obligation
 criteria and applicability. See [Develop requirements](../docs/handbook/requirements.md).
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/17`, an owner and field path, source
+Bindings record a rule under `dotspec-markdown/20`, an owner and field path, source
 occurrence and role. A field path is relative to its owner and uses canonical
 field names. A section's narrative binds to `<field>_content`, or to
 `<field>.content` on an embedded value such as `criterion.content`. Items of an
@@ -462,7 +470,7 @@ canonical field, with a required `projection_path`, subject and object. There is
 one concrete assertion class. `projection_path` names the projected field, such
 as `UseCase.subject_system`, `TraceableElement.supports`, `Obligation.applies_to`
 or `BusinessRule.applies_to`, and `mapping_rule` is
-`dotspec-markdown/17/projection/<path>`. The path also carries a membership's
+`dotspec-markdown/20/projection/<path>`. The path also carries a membership's
 role, as with `Concept.type_parameters` and `Concept.introduced_types`. The
 generated catalog lists the projectable paths in `projections`: every
 declaration membership and every semantic-association or structural-context
@@ -491,7 +499,7 @@ JobStep, DesiredOutcome, ConceptAction and ObligationClause records. It is also
 the base of the ConceptUse, Synchronization and
 Interface elements declared inside a System specification; an Interface can also
 be declared inside a Component. These declared elements are not specifications.
-Notes, Open questions, Validation plan and trace sections work beneath each of
+Notes, Open questions, assessment plans and trace sections work beneath each of
 them; Evidence, Authority and Related specifications headings there are retained
 as extension sections.
 Heading anchors and optional introductory IDs identify these records. Interface
@@ -536,7 +544,7 @@ clause's introductory content, excluding optional **ID:** and **Quality attribut
 `statement`; its heading is its `name`. IDs follow the common identifier grammar
 and document-wide uniqueness rule. Same-file and cross-file reference checks
 recognize them. Named clauses can contain trace sections, Rationale, Applies to
-(with the same explicit Targets field as Requirement), and structured Verification plan and Criterion.
+(with the same explicit Targets field as Requirement), and structured assessment plans and Criterion.
 Quality attributes is a comma-separated list of system-declared IDs and resolves
 through the clause’s declaring owner, using the same rules as requirement classification.
 Unknown sections remain ExtensionSection records. No obligation is inferred from

@@ -18,7 +18,7 @@ func inspect(path string) ([]diagnostic.Diagnostic, error) {
 	if err != nil {
 		return nil, err
 	}
-	return Check(spec), nil
+	return Check(spec), spec.checkGlossarySources()
 }
 
 // CheckContext preserves the same explicit selection or directory default as

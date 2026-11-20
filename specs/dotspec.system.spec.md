@@ -1,5 +1,7 @@
 ---
 type: system-spec
+glossary_sources:
+  - ../docs/reference/model/glossary.md
 ---
 
 # dotspec

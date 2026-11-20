@@ -33,7 +33,8 @@ type snapshotBuilder struct {
 	// directorySystem records, by root element, the nearest enclosing system
 	// found by directory discovery. It supplies the default association only.
 	directorySystem map[string]string
-	attributeOwners map[string]string // validated quality source path to declaring system path
+	glossaries      map[string]map[string]bool // glossary path to the system sources that declared it
+	attributeOwners map[string]string          // validated quality source path to declaring system path
 	readFailed      bool
 	sequence        int
 }
@@ -70,7 +71,18 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 		snapshot: NewSnapshot(scope), types: types, byPath: map[string]*ParsedDocument{},
 		sources: map[string]Record{}, elements: map[string]Record{}, rootByPath: map[string]string{},
 		primary: map[string]bool{}, follow: map[string]bool{}, contextPath: map[string]string{}, contextOK: map[string]bool{},
-		directorySystem: map[string]string{}, attributeOwners: map[string]string{},
+		directorySystem: map[string]string{}, attributeOwners: map[string]string{}, glossaries: map[string]map[string]bool{},
+	}
+	for _, file := range inspection.Files {
+		for _, ref := range file.ReferencedBy {
+			if ref.Element == specfile.GlossarySourcesField && system.Layout.Match(ref.Path) {
+				target := cleanPath(file.Path)
+				if b.glossaries[target] == nil {
+					b.glossaries[target] = map[string]bool{}
+				}
+				b.glossaries[target][cleanPath(ref.Path)] = true
+			}
+		}
 	}
 	for _, path := range inspection.Selected {
 		path = cleanPath(path)
@@ -145,6 +157,7 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 			}
 		}
 	}
+	b.associateGlossaries()
 	b.associateSystems()
 	b.resolveReferences()
 	b.resolveLabels()
@@ -240,6 +253,8 @@ func (b *snapshotBuilder) load(path string) Record {
 	kindName := ""
 	if kind != nil {
 		kindName = kind.Layout.Kind
+	} else if b.glossaries[path] != nil {
+		kindName = "glossary"
 	}
 	mapping := MapDomain(doc, kindName)
 	b.rootByPath[path] = mapping.RootID
@@ -289,6 +304,28 @@ func (b *snapshotBuilder) context(path, role, requester, reference string) {
 		context["reference_occurrences"] = []string{reference}
 	}
 	b.snapshot.ContextSources = append(b.snapshot.ContextSources, context)
+}
+
+func (b *snapshotBuilder) associateGlossaries() {
+	for _, file := range sortedKeys(b.rootByPath) {
+		sys := b.elements[b.rootByPath[file]]
+		if String(sys, "kind") != "System" {
+			continue
+		}
+		if sys["glossary_source_paths"] == nil {
+			continue
+		}
+		sys["glossary_sources"] = []string{}
+		for _, name := range Strings(sys["glossary_source_paths"]) {
+			target := cleanPath(filepath.Join(filepath.Dir(file), filepath.FromSlash(name)))
+			vocab := b.byPath[target]
+			if !b.glossaries[target][file] || vocab == nil || vocab.Document["glossary_terms"] == nil {
+				continue
+			}
+			appendID(sys, "glossary_sources", String(vocab.Document, "id"))
+			b.context(target, "glossary_source", file, "")
+		}
+	}
 }
 
 func (b *snapshotBuilder) associateSystems() {

@@ -17,7 +17,7 @@ func TestLiftedSectionPreservesAuthoredMarkdown(t *testing.T) {
 	root := t.TempDir()
 	files := map[string]string{
 		"dotspec.yaml": "name: reader\ngenerated_spec: true\n",
-		"module#1/specs/sample-system.system.spec.md":          "---\ntype: system-spec\n---\n# Sample system\n\n## Scope\n\nLocal.\n\n## Purpose\n\nKeep notes.\n\n## Concept uses\n\n### Display a note\n\nSee [![diagram](icon.svg)](guide%23a.md?mode=reader#setup) and [details][guide].[^note]\n\n## Source notes\n\n[guide]: guide%23a.md#setup\n\n[^note]: See [setup][guide].\n",
+		"module#1/specs/sample-system.system.spec.md":          "---\ntype: system-spec\n---\n# Sample system\n\n## Scope\n\nLocal.\n\n## Purpose\n\nKeep notes.\n\n## Concept uses\n\n### Display a note\n\nSee [![diagram](icon.svg)](guide%23a.md?mode=reader#setup) and [details][SUBJECT-SOURCE].[^note]\n\n## Source notes\n\n[SUBJECT-SOURCE]: guide%23a.md#setup\n\n[^note]: See [setup][SUBJECT-SOURCE].\n",
 		"module#1/specs/guide#a.md":                            "# Setup\n",
 		"module#1/specs/icon.svg":                              "<svg/>",
 		"module#1/specs/requirements/save.requirement.spec.md": "---\ntype: requirement-spec\n---\n# Save a note\n\n## Rationale\n\nThe reader needs the note.\n\n## Statement\n\nPreserve the note.\n",
@@ -48,7 +48,8 @@ func TestLiftedSectionPreservesAuthoredMarkdown(t *testing.T) {
 		"[![diagram](<../../module%231/specs/icon.svg>)](<../../module%231/specs/guide%23a.md?mode=reader#setup>)",
 		"[details](<../../module%231/specs/guide%23a.md#setup>)",
 		"[^note]: See [setup](<../../module%231/specs/guide%23a.md#setup>).",
-		"[Edit source](<../../module%231/specs/sample-system.system.spec.md#display-a-note>)",
+		"[View source][subject-source-2]",
+		"[subject-source-2]: <../../module%231/specs/sample-system.system.spec.md#display-a-note>",
 	} {
 		if !strings.Contains(out, want) {
 			t.Fatalf("%s missing %q\n%s", file, want, out)

@@ -3,7 +3,6 @@ package specdoc
 import (
 	"fmt"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/craigsmitham/dotspec/internal/model"
 	"github.com/yuin/goldmark/ast"
@@ -144,7 +143,7 @@ func subjectPreview(s *subject) string {
 		return ""
 	}
 	summary := paragraphPreview(raw)
-	if utf8.RuneCountInString(summary) > 200 || summary == s.name.title {
+	if summary == s.name.title {
 		return ""
 	}
 	return summary

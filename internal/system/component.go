@@ -15,10 +15,11 @@ import (
 var ComponentLayout = specfile.ComponentLayout
 
 type Component struct {
-	Name       string
-	ID         string
-	Parent     specfile.Reference
-	References *specfile.ReferenceDocument
+	AssessmentPlans []specfile.AssessmentPlan `json:"assessment_plans,omitempty"`
+	Name            string
+	ID              string
+	Parent          specfile.Reference
+	References      *specfile.ReferenceDocument
 }
 
 func ParseComponent(data []byte) (*Component, error) {
@@ -59,7 +60,7 @@ func ParseComponent(data []byte) (*Component, error) {
 	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
 		return nil, err
 	}
-	return &Component{Name: doc.Name, ID: meta.ID, Parent: parent, References: doc.References()}, nil
+	return &Component{AssessmentPlans: doc.AssessmentPlans, Name: doc.Name, ID: meta.ID, Parent: parent, References: doc.References()}, nil
 }
 
 func ReadComponent(path string) (*Component, error) {

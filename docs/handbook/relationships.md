@@ -174,13 +174,13 @@ authorized member requests restoration within the recovery window.
 
 **Targets:** [DocumentTrash](../document-workspace.system.spec.md#documenttrash)
 
-#### Verification plan
+#### System verification plan
 
 Compare content and metadata before deletion and after restoration.
 ```
 
 The introductory prose becomes the clause's statement. Applies to, Rationale,
-Criterion and Verification plan use the same forms as in a requirement
+Criterion and System verification plan use the same forms as in a requirement
 specification. The optional comma-separated Quality attributes field classifies
 the clause against its declaring system; it uses the same IDs as a requirement's
 `quality_attributes` metadata. Relationship

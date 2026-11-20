@@ -1,14 +1,19 @@
 package model
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
 
-// Assessment structure is shared; field, subject and basis retain the purpose.
+	"github.com/craigsmitham/dotspec/internal/assessment"
+)
+
+// Each authored heading starts a distinct plan in source order.
 func (m *domainMapper) assessmentSection(r Record, s *Section) bool {
-	field := map[string]string{"Verification plan": "verification_plan", "Validation plan": "validation_plan"}[s.Title]
-	if field == "" {
+	definition, known := assessment.FromHeading(s.Title)
+	if !known {
 		return false
 	}
-	if _, ok := compiledModel().catalog.Classes[String(r, "kind")].Slots[field]; !ok {
+	if _, ok := compiledModel().catalog.Classes[String(r, "kind")].Slots["assessment_plans"]; !ok {
 		return false
 	}
 	if m.traceMapped == nil {
@@ -19,14 +24,14 @@ func (m *domainMapper) assessmentSection(r Record, s *Section) bool {
 		return true
 	}
 	m.traceMapped[key] = true
-	v := Object(r[field])
-	if v == nil {
-		v = Record{}
-		r[field] = v
-	}
+	plans := records(r["assessment_plans"])
+	field := fmt.Sprintf("assessment_plans.%d", len(plans))
+	v := Record{"purpose": string(definition.Purpose)}
+	r["assessment_plans"] = append(plans, v)
 	m.setRich(v, "content", s.Content)
-	m.sectionBindings(r, field+".content", s)
-	details := map[string]string{"Subject": "subject", "Participants": "participants", "Method": "method", "Procedure": "method", "Success criteria": "success_criteria", "Conditions": "conditions", "Evidence to retain": "evidence_to_retain", "Evidence retention": "evidence_to_retain"}
+	m.bind(r, field+".content", s.Content, "named_field", "assessment-content")
+	m.bind(r, field+".purpose", []string{s.HeadingID}, "named_field", "assessment-purpose")
+	details := map[string]string{"Participants": "participants", "Method": "method", "Procedure": "method", "Success criteria": "success_criteria", "Conditions": "conditions", "Evidence to retain": "evidence_to_retain", "Evidence retention": "evidence_to_retain"}
 	for _, sub := range s.Children {
 		if f := details[sub.Title]; f != "" {
 			m.setRich(v, f, sub.Content)
@@ -34,9 +39,11 @@ func (m *domainMapper) assessmentSection(r Record, s *Section) bool {
 			continue
 		}
 		switch sub.Title {
-		case "Basis":
-			m.contextField(v, "basis", sub.Content)
-			m.sectionBindings(r, field+".basis.content", sub)
+		case "Subject", "Basis":
+			role := strings.ToLower(sub.Title)
+			m.contextField(v, role, sub.Content)
+			m.sectionBindings(r, field+"."+role+".content", sub)
+			m.bindReferenceOccurrences(r, field+"."+role+".references", m.references(sub.Content))
 		case "Cases":
 			cases := reviewObjects(v["cases"])
 			if cases == nil {
@@ -65,4 +72,43 @@ func (m *domainMapper) assessmentSection(r Record, s *Section) bool {
 		}
 	}
 	return true
+}
+
+func plansFor(r Record, purpose assessment.Purpose) []Record {
+	var result []Record
+	for _, plan := range records(r["assessment_plans"]) {
+		if String(plan, "purpose") == string(purpose) {
+			result = append(result, plan)
+		}
+	}
+	return result
+}
+
+func (d *designResolver) hasPlanGuidance(r Record, purpose assessment.Purpose) bool {
+	for _, plan := range plansFor(r, purpose) {
+		if strings.TrimSpace(d.text(plan["content"])) != "" {
+			return true
+		}
+	}
+	return false
+}
+
+// AssessmentHeadings locates authored plan headings for navigation in a snapshot.
+// Group them by the purpose recorded on the plan, including after JSON reload.
+func (s *Snapshot) AssessmentHeadings() map[string]assessment.Purpose {
+	type bindingKey struct{ owner, field string }
+	purposes := map[bindingKey]assessment.Purpose{}
+	for _, owner := range s.Elements {
+		for i, plan := range records(owner["assessment_plans"]) {
+			key := bindingKey{String(owner, "id"), fmt.Sprintf("assessment_plans.%d.purpose", i)}
+			purposes[key] = assessment.Purpose(String(plan, "purpose"))
+		}
+	}
+	headings := map[string]assessment.Purpose{}
+	for _, binding := range s.ContentBindings {
+		if purpose, ok := purposes[bindingKey{String(binding, "owner"), String(binding, "field_path")}]; ok {
+			headings[String(binding, "content_node")] = purpose
+		}
+	}
+	return headings
 }

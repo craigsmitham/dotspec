@@ -7,6 +7,8 @@ import (
 	"slices"
 	"sort"
 	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/assessment"
 )
 
 // OverviewMarkdown describes the acquired specification subjects and features.
@@ -123,9 +125,9 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		fmt.Fprintf(&out, "| %s | %s | %s | %s |\n", link(String(r, "id")), link(String(r, "specification_owner")), links(Strings(r["groups"])), links(components))
 	}
-	out.WriteString("\n## Applicable obligations\n\nOnly explicit applicability to acquired systems and components is listed. Declaration inside a component does not implicitly supply an applicability target. Plans describe intended system verification; their presence does not prove satisfaction.\n\n| Obligation | Subjects | Verification plan | Criterion |\n| --- | --- | --- | --- |\n")
-	guidance := func(r Record, field string) string {
-		if strings.TrimSpace(d.text(Object(r[field])["content"])) != "" {
+	out.WriteString("\n## Applicable obligations\n\nOnly explicit applicability to acquired systems and components is listed. Declaration inside a component does not implicitly supply an applicability target. The guidance column reports system verification plans recorded on each obligation.\n\n| Obligation | Subjects | Local system verification guidance | Criterion |\n| --- | --- | --- | --- |\n")
+	guidance := func(recorded bool) string {
+		if recorded {
 			return "Recorded in source"
 		}
 		return "Not recorded"
@@ -141,7 +143,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			}
 		}
 		if len(subjects) > 0 {
-			fmt.Fprintf(&out, "| %s | %s | %s | %s |\n", link(String(r, "id")), links(subjects), guidance(r, "verification_plan"), guidance(r, "criterion"))
+			fmt.Fprintf(&out, "| %s | %s | %s | %s |\n", link(String(r, "id")), links(subjects), guidance(d.hasPlanGuidance(r, assessment.SystemVerification)), guidance(strings.TrimSpace(d.text(Object(r["criterion"])["content"])) != ""))
 		}
 	}
 	out.WriteString("\n## Specification association and discovery context\n\nAn explicit specification system overrides the directory default. These associations do not establish structural parentage.\n\n| Specification | System | Origin |\n| --- | --- | --- |\n")
@@ -181,9 +183,9 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 				definitions = append(definitions, d.text(Record{"content_nodes": []string{String(n, "id")}}))
 			}
 		}
-		for _, field := range []string{"description", "purpose", "scope", "responsibilities", "boundary_description", "contracts", "counterpart", "architecture", "implementation", "part_of_content", "groups_content", "statement", "verification_plan", "validation_plan", "criterion"} {
+		for _, field := range []string{"description", "purpose", "scope", "responsibilities", "boundary_description", "contracts", "counterpart", "architecture", "implementation", "part_of_content", "groups_content", "statement", "criterion"} {
 			value := r[field]
-			if field == "counterpart" || field == "contracts" || field == "architecture" || field == "implementation" || field == "validation_plan" || field == "verification_plan" || field == "criterion" {
+			if field == "counterpart" || field == "contracts" || field == "architecture" || field == "implementation" || field == "criterion" {
 				value = Object(value)["content"]
 			}
 			text := d.text(value)
@@ -193,6 +195,11 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			title := strings.ReplaceAll(strings.TrimSuffix(field, "_content"), "_", " ")
 			title = strings.ToUpper(title[:1]) + title[1:]
 			fmt.Fprintf(&out, "#### %s\n\n%s\n\n", title, designHeadings(rebaseDesignMarkdown(text, sourceURL(r), strings.Join(definitions, "\n")), 5))
+		}
+		for _, plan := range reviewObjects(r["assessment_plans"]) {
+			title := assessment.Purpose(String(plan, "purpose")).Definition().Heading()
+			body := rebaseDesignMarkdown(d.text(plan["content"]), sourceURL(r), strings.Join(definitions, "\n"))
+			fmt.Fprintf(&out, "#### %s\n\n%s\n\n", title, designHeadings(body, 5))
 		}
 	}
 	if len(s.Diagnostics) > 0 {

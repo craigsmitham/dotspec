@@ -142,7 +142,7 @@ func TestRefinementCycleRetainsSourceWithoutCyclicClaim(t *testing.T) {
 func TestTraceCitationsAndDrafts(t *testing.T) {
 	root := traceFixture(t)
 	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "## Refines", "## Related specifications")
-	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "## Verification plan", "## Notes")
+	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "## System verification plan", "## Notes")
 	r := conformanceExport(t, root)
 	if r.ExitCode != 0 {
 		t.Fatal(r.Snapshot.Diagnostics)
@@ -157,7 +157,7 @@ func TestTraceCitationsAndDrafts(t *testing.T) {
 		}
 		codes[String(f, "code")] = true
 	}
-	if !codes["relationship.motivation"] || !codes["relationship.verification_plan"] {
+	if !codes["relationship.motivation"] || !codes["relationship.system_verification"] {
 		t.Fatal("missing draft advice", codes)
 	}
 	// A selected subtree does not traverse references from its direct targets.
@@ -217,7 +217,7 @@ func TestSeveralRefinementParentsAndNestedConceptObligation(t *testing.T) {
 Restoration must preserve the item identity.
 ###### Derived from
 [Recovery](../use-cases/restore.use-case.spec.md#restore-content)
-###### Verification plan
+###### System verification plan
 Compare the item identity before deletion and after restoration.
 
 ### Expire`)

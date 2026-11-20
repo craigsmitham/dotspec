@@ -41,7 +41,31 @@ Count missing, unexpected or changed entries compared with the last acknowledged
 
 Zero discrepancies across the two views.
 
-## Verification plan
+## Requirements verification plan
+
+### Subject
+
+The [restart statement](#statement).
+
+### Basis
+
+Clarity, consistency with [same local storage](../personal-task-list.system.spec.md#same-local-storage),
+and whether each promised result can be checked.
+
+### Method
+
+Ask a reviewer to identify when preservation starts, which entries must survive,
+and what would count as a discrepancy. Record any ambiguity in the wording.
+
+## System verification plan
+
+### Subject
+
+The running [task list service](../../app/main.go) before and after restart on the same database.
+
+### Basis
+
+The [restart statement](#statement) and its [criterion](#criterion).
 
 ### Method
 

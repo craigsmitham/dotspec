@@ -18,25 +18,26 @@ type metadata struct {
 }
 
 type Content struct {
-	ValidationPlan      string                         `json:"validation_plan,omitempty"`
-	MeasurementGuidance MeasurementGuidance            `json:"-"`
-	References          *specfile.ReferenceDocument    `json:"-"`
-	ID                  string                         `json:"id,omitempty"`
-	Slug                string                         `json:"slug"`
-	Name                string                         `json:"name"`
-	Applicability       string                         `json:"applicability"`
-	Statement           string                         `json:"statement"`
-	Criterion           string                         `json:"criterion,omitempty"`
-	VerificationPlan    string                         `json:"verification_plan"`
-	Rationale           string                         `json:"rationale"`
-	QualityAttributes   []string                       `json:"quality_attributes"`
-	Classification      Classification                 `json:"classification"`
-	Markdown            string                         `json:"markdown"`
-	Path                string                         `json:"path"`
-	System              *system.System                 `json:"system"`
-	Location            diagnostic.Location            `json:"location"`
-	SectionLocations    map[string]diagnostic.Location `json:"-"`
-	AttributeLocations  map[string]diagnostic.Location `json:"-"`
+	AssessmentPlans []specfile.AssessmentPlan `json:"assessment_plans,omitempty"`
+
+	MeasurementGuidance MeasurementGuidance         `json:"-"`
+	References          *specfile.ReferenceDocument `json:"-"`
+	ID                  string                      `json:"id,omitempty"`
+	Slug                string                      `json:"slug"`
+	Name                string                      `json:"name"`
+	Applicability       string                      `json:"applicability"`
+	Statement           string                      `json:"statement"`
+	Criterion           string                      `json:"criterion,omitempty"`
+
+	Rationale          string                         `json:"rationale"`
+	QualityAttributes  []string                       `json:"quality_attributes"`
+	Classification     Classification                 `json:"classification"`
+	Markdown           string                         `json:"markdown"`
+	Path               string                         `json:"path"`
+	System             *system.System                 `json:"system"`
+	Location           diagnostic.Location            `json:"location"`
+	SectionLocations   map[string]diagnostic.Location `json:"-"`
+	AttributeLocations map[string]diagnostic.Location `json:"-"`
 }
 
 // Parse accepts unfinished content, but rejects ambiguous document structure
@@ -47,7 +48,7 @@ func Parse(data []byte, kind string) (*Content, error) {
 	if err != nil {
 		return nil, err
 	}
-	spec := &Content{ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location), QualityAttributes: []string{}, AttributeLocations: make(map[string]diagnostic.Location)}
+	spec := &Content{AssessmentPlans: doc.AssessmentPlans, ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location), QualityAttributes: []string{}, AttributeLocations: make(map[string]diagnostic.Location)}
 	if err := parseAttributes(spec, &meta.QualityAttributes, kind); err != nil {
 		return nil, err
 	}
@@ -62,7 +63,7 @@ func Parse(data []byte, kind string) (*Content, error) {
 	ids.AddAnchors(doc.Anchors)
 	fields := map[string]*string{
 		"Applies to": &spec.Applicability, "Statement": &spec.Statement,
-		"Validation plan": &spec.ValidationPlan, "Verification plan": &spec.VerificationPlan,
+
 		"Criterion": &spec.Criterion, "Rationale": &spec.Rationale,
 	}
 	for _, section := range doc.Sections {

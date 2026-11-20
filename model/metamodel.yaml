@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/metamodel.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.23.0-draft
+version: 0.26.0-draft
 description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
   is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
   and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
@@ -103,7 +103,7 @@ classes:
         range: System
   RequirementSpecReport:
     is_a: SubjectSpecReport
-    description: Brings the requirement statement, applicability, criterion, and verification plan together at one address.
+    description: Brings the requirement statement, applicability, criterion, and assessment plans together at one address.
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -361,7 +361,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.23.0-draft
+        equals_string: 0.26.0-draft
       mapping_profile:
         range: string
         description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
@@ -682,8 +682,7 @@ classes:
         multivalued: true
         annotations:
           relationship_category: representation
-          relationship_scope: Mapped elements of the same source document; only document-owned unknown sections
-            point back through owner.
+          relationship_scope: Mapped elements of the same source document. Document-owned glossary terms have a separate glossary_terms membership.
           relationship_inverse: ExtensionSection.owner
       coverage:
         range: CoverageReport
@@ -694,6 +693,19 @@ classes:
         multivalued: true
         annotations:
           relationship_category: provenance
+      glossary_context:
+        range: string
+        description: Optional name of the context in which this vocabulary defines its terms.
+      glossary_terms:
+        range: GlossaryTerm
+        multivalued: true
+        list_elements_ordered: true
+        description: Terms defined by the level-two headings of a declared Markdown glossary source.
+        annotations:
+          relationship_category: declaration-containment
+          relationship_inverse: GlossaryTerm.owner
+    annotations:
+      owned_memberships: Document.glossary_terms
   ContentNode:
     in_subset:
     - document-content
@@ -1070,11 +1082,12 @@ classes:
     is_a: DomainElement
     abstract: true
     attributes:
-      validation_plan:
+      assessment_plans:
         range: AssessmentPlan
-        inlined: true
-        description: Plan to assess a proposed requirement, need, concept or solution against stakeholder needs
-          and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.
+        multivalued: true
+        inlined_as_list: true
+        list_elements_ordered: true
+        description: Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.
       supports_content:
         range: RichContent
         inlined: true
@@ -1453,6 +1466,18 @@ classes:
         inlined: true
         description: Externally imposed restrictions the system must respect, as narrative. An individually
           addressable constraint is a Requirement or BusinessRule.
+      glossary_source_paths:
+        range: string
+        multivalued: true
+        list_elements_ordered: true
+        description: Relative Markdown paths declared in glossary_sources frontmatter, including unacquired sources.
+      glossary_sources:
+        range: Document
+        multivalued: true
+        list_elements_ordered: true
+        description: Acquired Markdown glossaries explicitly included by this system, in declaration order.
+        annotations:
+          relationship_category: contextual-citation
       glossary_content:
         range: RichContent
         inlined: true
@@ -1572,9 +1597,6 @@ classes:
     slot_usage:
       kind:
         equals_string: Assumption
-      validation_plan:
-        description: Plan to assess empirical support for the premise in its stated conditions and whether
-          reliance on it is justified for intended use; not a guarantee that it holds.
     attributes:
       basis:
         range: RichContent
@@ -1605,12 +1627,15 @@ classes:
         equals_string: GlossaryTerm
     attributes:
       owner:
-        range: System
+        range: Record
+        any_of:
+        - range: System
+        - range: Document
         required: true
         annotations:
           relationship_category: declaration-containment
           relationship_basis: Checked inverse of canonical membership fields.
-          relationship_inverse: System.glossary
+          relationship_inverse: System.glossary or Document.glossary_terms
       definition:
         range: RichContent
         inlined: true
@@ -1624,6 +1649,15 @@ classes:
         multivalued: true
         annotations:
           relationship_category: contextual-citation
+      topics:
+        range: string
+        multivalued: true
+        list_elements_ordered: true
+        description: Topic labels for browsing definitions. A term may appear under several topics.
+      relationships:
+        range: ContextualReferences
+        inlined: true
+        description: Authored statements linking this term to other terms, with their original wording and references.
       related_terms:
         range: ContextualReferences
         inlined: true
@@ -2904,15 +2938,18 @@ classes:
     - business-requirements
     - user-requirements
     - software-requirements
-    description: Shared assessment structure. The owning verification_plan or validation_plan field identifies
-      the role; the authored subject and basis identify what is assessed and against what. The method alone
-      does not determine the purpose. A plan is not execution evidence or a verdict.
+    description: An authored plan for answering one assessment question. Its purpose identifies the question,
+      its subject identifies what to assess, and its basis identifies what to judge the subject against.
+      Executions, findings and acceptance decisions are recorded separately.
     attributes:
+      purpose:
+        range: AssessmentPurpose
+        required: true
+        description: Assessment question selected by the authored plan heading.
       subject:
-        range: RichContent
+        range: ContextualReferences
         inlined: true
-        description: The proposed requirement, design, prototype, implementation or environmental premise to
-          assess; identify revisions when planning execution.
+        description: What will be assessed, with optional links to requirements, designs, builds, processes or premises.
       basis:
         range: ContextualReferences
         inlined: true
@@ -2933,9 +2970,7 @@ classes:
       success_criteria:
         range: RichContent
         inlined: true
-        description: How to interpret the assessment against its basis. Verification refers to the obligation's
-          statement or criterion for required bounds rather than defining competing thresholds; validation
-          identifies the needs or intended outcomes against which the subject is assessed.
+        description: How to interpret observations against the stated basis. Reference authoritative criteria where they are defined.
       conditions:
         range: RichContent
         inlined: true
@@ -2954,7 +2989,7 @@ classes:
     - business-requirements
     - user-requirements
     - software-requirements
-    description: An explicitly distinguished assessment case; its parent plan supplies verification or validation
+    description: An explicitly distinguished assessment case; its parent plan supplies its assessment
       purpose. A case definition is not an observation or result.
     attributes:
       name:
@@ -2978,7 +3013,7 @@ classes:
     - user-requirements
     - software-requirements
     description: Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define
-      each bound once or reference its authoritative statement or source; the verification plan refers to this
+      each bound once or reference its authoritative statement or source; system verification plans cite this
       rule. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure
       or an observation, and quality classification does not supply a criterion.
     attributes:
@@ -2990,7 +3025,7 @@ classes:
         range: RichContent
         inlined: true
         description: Property observed and its operational definition or reference, including units, calculation,
-          aggregation and observation window where needed. The verification plan supplies the collection procedure.
+          aggregation and observation window where needed. A system verification plan describes the collection procedure.
       target:
         range: RichContent
         inlined: true
@@ -3497,8 +3532,8 @@ classes:
     - software-requirements
     description: An obligation, expressed in its own Requirement specification or as a clause inside another
       specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines
-      or references the satisfaction rule; the verification plan describes how to obtain and interpret evidence
-      against it. Verification plans are not execution evidence.
+      or references the satisfaction rule. A system verification plan assesses a realization against that rule.
+      A requirements verification plan assesses the quality of the obligation itself.
     is_a: TraceableElement
     abstract: true
     mixin: true
@@ -3572,16 +3607,11 @@ classes:
       statement:
         range: RichContent
         inlined: true
-      verification_plan:
-        range: AssessmentPlan
-        inlined: true
-        description: Plan for assessing a system, component or process realization against this obligation;
-          not a review of requirement wording and not completed verification evidence.
       criterion:
         range: ObligationCriterion
         inlined: true
         description: Optional explicit satisfaction rule, defining or referencing the required bounds once.
-          The verification plan refers to it.
+          System verification plans can cite this criterion as their basis.
   Component:
     in_subset:
     - software-requirements
@@ -3912,6 +3942,34 @@ classes:
         inlined_as_list: true
         list_elements_ordered: true
 enums:
+  AssessmentPurpose:
+    description: The question a plan addresses, independent of its authoring location and assessment method.
+    permissible_values:
+      requirements_verification:
+        title: Requirements verification
+        description: Do the requirement statements and set meet the applicable criteria for clarity, consistency and verifiability?
+        annotations:
+          subject: A requirement or set of requirements
+      requirements_validation:
+        title: Requirements validation
+        description: Do the proposed requirements faithfully express stakeholder needs, higher-level intent and constraints?
+        annotations:
+          subject: A proposed requirement or set of requirements
+      system_verification:
+        title: System verification
+        description: Does the realization fulfill the specified obligations under the assessed conditions?
+        annotations:
+          subject: A system, component or process realization
+      system_validation:
+        title: System validation
+        description: Can the intended users accomplish their work with the proposed or realized solution in its intended context?
+        annotations:
+          subject: A proposed or realized solution
+      assumption_validation:
+        title: Assumption validation
+        description: Does the evidence support the premise under the stated conditions, and is reliance on it justified for the intended use?
+        annotations:
+          subject: A premise on which the specification relies
   ReadStatus:
     description: Whether original source bytes were acquired.
     permissible_values:
@@ -4191,6 +4249,8 @@ enums:
     permissible_values:
       project_configuration:
         description: Local dotspec.yaml declaring the selected project.
+      glossary_source:
+        description: Markdown vocabulary explicitly included by a system.
       system_context:
         description: Enclosing-system context required for inspection.
       reference_target:

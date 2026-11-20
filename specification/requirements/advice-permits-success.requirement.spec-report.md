@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
-documents: "../../specs/requirements/advice-permits-success.requirement.spec.md#advice-permits-a-successful-check"
 ---
 # Advice permits a successful check
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Statement
 
@@ -17,11 +16,13 @@ exit status zero.
 Project-wide and focused specification checks that complete without structural
 errors or operational failures.
 
-## Verification plan
+## System verification plan
 
 Check structurally valid drafts that produce advisory findings. Verify exit
 status zero and the presence of the advice in both text and JSON reports.
 Exercise project-wide checks and focused checks for each applicable type.
+
+[View source for “System verification plan”](<../../specs/requirements/advice-permits-success.requirement.spec.md#system-verification-plan>)
 
 ## Rationale
 
@@ -34,4 +35,4 @@ not prevent contributors from checking a draft.
 provides the conceptual context. The
 [report contract](<../../docs/reference/inspection.md#check-specifications>) defines other exit statuses.
 
-[Edit source](<../../specs/requirements/advice-permits-success.requirement.spec.md#advice-permits-a-successful-check>)
+[subject-source]: <../../specs/requirements/advice-permits-success.requirement.spec.md#advice-permits-a-successful-check>

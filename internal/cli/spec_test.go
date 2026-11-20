@@ -172,16 +172,25 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 		}
 	}
 	reader("SPEC.md", "[Read the system specification](<specification/tool.system.spec-report.md>)")
-	reader("specification/tool.system.spec-report.md", "## Child systems\n\n- [Worker](<systems/worker/worker.system.spec-report.md>) — A local job executor.")
-	reader("specification/systems/worker/worker.system.spec-report.md", "[Tool](<../../tool.system.spec-report.md>)", "## Child systems\n\n- [Queue](<systems/queue/queue.system.spec-report.md>)\n")
-	reader(section+"queue.system.spec-report.md", "[Worker](<../../worker.system.spec-report.md>) · [Requirements](<#requirements>)", "## Components\n\n- [Intake](<components/intake/intake.component.spec-report.md>)", "## Requirements\n\n- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>) — Each submitted job must remain in the queue until accepted.")
-	reader(section+"queue.system.spec-report.md", "**[Availability](<quality/availability/availability.quality-attribute.spec-report.md>)** — Accept work while either A &#124; B is available.")
+	reader("specification/tool.system.spec-report.md", "[Systems](<systems.md>)")
+	reader("specification/systems.md", "- [Worker](<systems/worker/worker.system.spec-report.md>) — A local job executor.")
+	reader("specification/systems/worker/worker.system.spec-report.md", "[Tool](<../../tool.system.spec-report.md>)", "[Systems](<systems.md>)")
+	reader("specification/systems/worker/systems.md", "- [Queue](<systems/queue/queue.system.spec-report.md>)")
+	reader(section+"queue.system.spec-report.md", "[Worker](<../../worker.system.spec-report.md>)", "[All requirements](<requirements.md>)", "[Components](<components.md>)")
+	reader(section+"components.md", "- [Intake](<components/intake/intake.component.spec-report.md>)")
+	reader(section+"requirements.md", "- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>) — Each submitted job must remain in the queue until accepted.", "[Intake](<components/intake/requirements.md>)")
+	reader(section+"quality-attributes.md", "**[Availability](<quality/availability/availability.quality-attribute.spec-report.md>)** — Accept work while either A &#124; B is available.")
 	reader(section+"quality/availability/availability.quality-attribute.spec-report.md", "# Availability", "## Limit", "Maintenance windows are excluded.", "[Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)")
 	reader("specification/requirements-review.report.md",
 		"[Which outages count?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>)",
 		"[How is uptime measured?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>)")
-	reader(section+"components/intake/components/journal/journal.component.spec-report.md", "../../intake.component.spec-report.md", "## Applicable requirements\n\n- [Retain jobs](<../../../../requirements/retain-jobs.requirement.spec-report.md>)")
-	reader(section+"components/intake/intake.component.spec-report.md", "## Required interfaces\n\n- [Storage](<interfaces/storage.interface.spec-report.md>)", "## Provided interfaces\n\n- [Submission](<interfaces/submission.interface.spec-report.md>)", "## Components\n\n- [Journal](<components/journal/journal.component.spec-report.md>)", "## Applicable requirements\n\n- [Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)")
+	intake := section + "components/intake/"
+	reader(intake+"components/journal/journal.component.spec-report.md", "../../intake.component.spec-report.md", "[Requirements](<requirements.md>)")
+	reader(intake+"components/journal/requirements.md", "## Applicable requirements\n\n- [Retain jobs](<../../../../requirements/retain-jobs.requirement.spec-report.md>)")
+	reader(intake+"intake.component.spec-report.md", "[Interfaces](<interfaces.md>)", "[Browse required interfaces](<interfaces.md#required-interfaces>)", "[Components](<components.md>)")
+	reader(intake+"interfaces.md", "## Required interfaces\n\n- [Storage](<interfaces/storage.interface.spec-report.md>)", "## Provided interfaces\n\n- [Submission](<interfaces/submission.interface.spec-report.md>)")
+	reader(intake+"components.md", "- [Journal](<components/journal/journal.component.spec-report.md>)")
+	reader(intake+"requirements.md", "## Applicable requirements\n\n- [Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)", "[Journal](<components/journal/requirements.md>)")
 	reader(section+"requirements/retain-jobs.requirement.spec-report.md", "../components/intake/intake.component.spec-report.md", "../components/intake/components/journal/journal.component.spec-report.md", "apps/demo/specs/demo.system.spec.md", "../quality/availability/availability.quality-attribute.spec-report.md")
 	if _, err := os.Stat(filepath.Join(root, "apps/demo/SPEC.md")); !os.IsNotExist(err) {
 		t.Fatalf("referenced project must not acquire generated files: %v", err)
@@ -221,8 +230,12 @@ Individual authors.
 		return string(data)
 	}
 	page := build()
-	nav := "[Requirements review](<requirements-review.report.md>)"
-	if !strings.Contains(page, "Local files.\n\n---\n\n"+nav+"\n\n[Edit source]") || strings.Count(page, nav) != 1 {
+	nav := "[Requirements review](<requirements-review.report.md>) · [View source][subject-source]"
+	if !strings.Contains(page, nav+"\n\n| Section | Explore |") ||
+		!strings.Contains(page, "## Goals\n\nKeep notes.") ||
+		!strings.Contains(page, "## Scope\n\nOne notebook.") ||
+		strings.Index(page, "## Scope") < strings.Index(page, "Individual authors.") ||
+		strings.Count(page, nav) != 1 || strings.Contains(page, "## System topology") {
 		t.Fatal(page)
 	}
 
@@ -250,21 +263,23 @@ An example:
 			"---\ntype: requirement-spec\nquality_attributes: "+labels+"\n---\n# "+name+"\n\n## Statement\nKeep the note.\n")
 	}
 	page = build()
-	if !strings.Contains(page, "Local files.\n\n---\n\n[Requirements](<#requirements>) · "+nav+"\n\n## Quality attributes") {
+	if !strings.Contains(page, "| [Quality attributes](<#quality-attributes>) | [Attribute index](<quality-attributes.md>)") || !strings.Contains(page, "## Quality attributes\n\nProtect recorded work.") {
 		t.Fatalf("unexpected system reading order:\n%s", page)
 	}
 	durability := "- [Durability](<quality/reliability/durability/durability.quality-attribute.spec-report.md>) — The ID: below is permanent."
-	_, overview, _ := strings.Cut(page, "## Quality attributes\n\n")
-	overview, _, _ = strings.Cut(overview, "\n## ")
+	index, err := os.ReadFile("specification/quality-attributes.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, overview, _ := strings.Cut(string(index), "[Notes](<notes.system.spec-report.md>)")
 	wantOverview := strings.Join([]string{
-		"Protect recorded work.", "",
 		"**[Reliability](<quality/reliability/reliability.quality-attribute.spec-report.md>)**", "",
 		durability,
 		"  - [Recovery](<quality/reliability/durability/recovery/recovery.quality-attribute.spec-report.md>)", "",
 		"**[Safety](<quality/safety/safety.quality-attribute.spec-report.md>)**", "",
 		durability,
 	}, "\n")
-	if strings.TrimSpace(overview) != wantOverview {
+	if strings.TrimSpace(overview) != wantOverview || !strings.Contains(page, wantOverview) {
 		t.Fatalf("quality attributes overview:\n%s\nwant:\n%s", overview, wantOverview)
 	}
 	attributesPage, err := os.ReadFile("specification/quality/reliability/durability/durability.quality-attribute.spec-report.md")
@@ -278,6 +293,49 @@ An example:
 	} {
 		if !strings.Contains(string(attributesPage), want) {
 			t.Errorf("detail missing %q:\n%s", want, attributesPage)
+		}
+	}
+}
+
+// The lead loses its authored heading and the map introduces new headings.
+// Rebased Markdown in a title and repeated section names must keep distinct
+// destinations through both changes.
+func TestSystemOverviewRichTitleAndCollidingHeadings(t *testing.T) {
+	t.Chdir(t.TempDir())
+	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
+	writeFixture(t, "specs/guide.md", "# Guide\n")
+	writeFixture(t, "specs/scope.system.spec.md", `---
+type: system-spec
+---
+# [Scope](guide.md)
+
+## Description
+A local notebook.
+
+## Purpose
+Remember ideas.
+
+## Scope
+Read [the description](#description).
+
+### Validation
+An authored boundary detail.
+
+## System validation plan
+See [the boundary detail](#validation).
+`)
+	for _, args := range [][]string{{"spec", "build"}, {"check"}} {
+		if code, out, errOut := invoke(args...); code != 0 {
+			t.Fatal(code, out, errOut)
+		}
+	}
+	page, err := os.ReadFile("specification/scope.system.spec-report.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{"[the description](<#overview.lead>)", "[the boundary detail](<#passage.validation>)", "[Validation](<#overview.validation-1>)"} {
+		if !strings.Contains(string(page), want) {
+			t.Fatalf("missing %s in %s", want, page)
 		}
 	}
 }

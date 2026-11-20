@@ -103,7 +103,7 @@ Inspection of source files.
 Inspection must leave source bytes unchanged.
 ## Rationale
 Preserve authored work.
-## Verification plan
+## System verification plan
 Compare before and after bytes.
 ## Related specifications
 [Repeatable inspection](repeatable.requirement.spec.md#statement)
@@ -118,7 +118,7 @@ quality_attributes: [preservation]
 Unchanged sources and environment.
 ## Statement
 Repeated inspections yield equivalent findings.
-## Verification plan
+## System verification plan
 Repeat the same inspection and compare results.
 ## Rationale
 Support meaningful comparisons.

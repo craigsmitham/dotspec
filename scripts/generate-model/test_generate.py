@@ -40,6 +40,19 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(self.slot("QualityAttribute", "owner")["reference_ranges"], ["System", "QualityModel"])
         self.assertEqual(self.slot("LabelOccurrence", "governing_quality_model")["reference_ranges"], ["QualityModel"])
 
+    def test_glossary_follows_model_topics_and_group_members(self):
+        catalog = copy.deepcopy(self.catalog)
+        feature = catalog["classes"]["Feature"]
+        feature["subsets"] = ["business-requirements"]
+        feature["slots"]["groups"]["reference_ranges"] = ["Requirement"]
+        glossary = generate.glossary_markdown(catalog).decode()
+        entry = glossary.split("## Feature\n", 1)[1].split("\n## Job", 1)[0]
+        self.assertIn("### Topics\n\n- Business requirements", entry)
+        self.assertIn("[requirement](#requirement)", entry)
+        self.assertNotIn("Software requirements", entry)
+        self.assertNotIn("[use case]", entry)
+        self.assertNotIn("### Example", entry)
+
     def test_embedded_values_and_ordered_references_stay_distinct(self):
         scenario = self.slot("UseCase", "main_success_scenario")
         self.assertFalse(scenario["inlined"])

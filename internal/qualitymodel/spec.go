@@ -48,6 +48,7 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 
 // QualityModel owns reusable definitions independently of any system.
 type QualityModel struct {
+	AssessmentPlans          []specfile.AssessmentPlan      `json:"assessment_plans,omitempty"`
 	References               *specfile.ReferenceDocument    `json:"-"`
 	ID                       string                         `json:"id,omitempty"`
 	Slug                     string                         `json:"slug"`
@@ -105,7 +106,7 @@ func Parse(data []byte) (*QualityModel, error) {
 	if err != nil {
 		return nil, err
 	}
-	spec := &QualityModel{ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location), Data: append([]byte(nil), data...)}
+	spec := &QualityModel{AssessmentPlans: doc.AssessmentPlans, ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location), Data: append([]byte(nil), data...)}
 	var ids specfile.Identifiers
 	if err := ids.Register(spec.ID, "quality-model", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err

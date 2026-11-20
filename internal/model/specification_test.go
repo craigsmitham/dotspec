@@ -51,7 +51,7 @@ An observation awaiting assessment.
 
 [This definition](#named-definition).
 
-#### Validation plan
+#### System validation plan
 
 ##### Method
 
@@ -73,7 +73,7 @@ Review with the intended users.
 			if designKind(tc.kind, "Specification") || !designKind(tc.kind, "TraceableElement") || r["authored_id"] != "named-definition" {
 				t.Fatal("declared element must be traceable and addressable without being a specification", r)
 			}
-			for _, field := range []string{"notes", "validation_plan"} {
+			for _, field := range []string{"notes", "assessment_plans"} {
 				if r[field] == nil {
 					t.Fatal("missing element content", field)
 				}

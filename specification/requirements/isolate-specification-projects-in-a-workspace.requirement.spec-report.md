@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
-documents: "../../specs/requirements/specification-project-isolation.requirement.spec.md#isolate-specification-projects-in-a-workspace"
 ---
 # Isolate specification projects in a workspace
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Statement
 
@@ -25,7 +24,7 @@ Workspace-aware discovery, System context, source inventories, model exports and
 reading views, and CLI project selection. Repositories without project
 manifests retain their existing discovery behavior.
 
-## Verification plan
+## System verification plan
 
 Exercise nested roots under both Git and filesystem discovery; a workspace without
 a root project; missing local Systems; explicit cross-project references; scoped
@@ -35,10 +34,12 @@ The [discovery tests](<../../internal/specfile/workspace_test.go>) and
 [CLI scenarios](<../../internal/cli/workspace_test.go>) provide executable cases.
 Check the actual repository's isolated root export and all-project check as well.
 
+[View source for “System verification plan”](<../../specs/requirements/specification-project-isolation.requirement.spec.md#system-verification-plan>)
+
 ## Rationale
 
 A reference app or unrelated monorepo product must not become part of dotspec's own
 specification collection because of directory nesting. System relationships remain
 explicit domain assertions, independent of tooling partitions.
 
-[Edit source](<../../specs/requirements/specification-project-isolation.requirement.spec.md#isolate-specification-projects-in-a-workspace>)
+[subject-source]: <../../specs/requirements/specification-project-isolation.requirement.spec.md#isolate-specification-projects-in-a-workspace>

@@ -1,16 +1,17 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
-documents: "../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports"
 ---
 # Repeated inspections produce equivalent reports
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Statement
 
 Repeated inspections must produce equivalent structured reports, including the
 ordering of array elements.
+
+[View source for “Statement”](<../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#statement>)
 
 ## Applies to
 
@@ -20,6 +21,8 @@ state, permissions, and environment. Source files and execution conditions
 remain unchanged during and between runs. Completed scans can contain
 structural errors or writing advice.
 
+[View source for “Applies to”](<../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#applies-to>)
+
 ## Criterion
 
 For the equivalence required by [Statement](<#statement>), parsed JSON values must
@@ -27,7 +30,9 @@ be equal, preserving array order. JSON object key order and insignificant whites
 do not affect equivalence. The comparison applies only within the operating context
 in [Applies to](<#applies-to>).
 
-## Verification plan
+[View source for “Criterion”](<../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#criterion>)
+
+## System verification plan
 
 Run each fixture repeatedly without changing its inputs or execution
 conditions. Compare reports using [Criterion](<#criterion>).
@@ -36,6 +41,8 @@ errors, and shared system context. Retain differing reports on test failure.
 
 The [CLI quality-contract tests](<../../internal/cli/quality_contracts_test.go>)
 check this criterion. The obligation remains defined in this document.
+
+[View source for “System verification plan”](<../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#system-verification-plan>)
 
 ## Rationale
 
@@ -50,4 +57,4 @@ defines report fields and their ordering rules.
 
 **Quality attribute** · [Repeatability](<../quality/reliability/repeatability/repeatability.quality-attribute.spec-report.md>)
 
-[Edit source](<../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports>)
+[subject-source]: <../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports>

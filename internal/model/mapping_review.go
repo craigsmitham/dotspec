@@ -68,14 +68,12 @@ func (m *domainMapper) boundarySection(r Record, s *Section) bool {
 
 func (m *domainMapper) assumptionDetails(r Record, s *Section) {
 	for _, sub := range s.Children {
-		if m.traceSection(r, sub) || m.explanatory(r, sub) {
+		if m.traceSection(r, sub) || m.explanatory(r, sub) || m.assessmentSection(r, sub) {
 			continue
 		}
 		switch sub.Title {
 		case "Basis", "Applicability":
 			m.section(r, strings.ToLower(sub.Title), sub)
-		case "Validation plan":
-			m.assessmentSection(r, sub)
 		case "Open question", "Open questions":
 			m.openQuestions(r, []*Section{sub})
 		default:

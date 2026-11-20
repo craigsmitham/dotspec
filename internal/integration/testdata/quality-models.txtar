@@ -150,7 +150,7 @@ quality_attributes: [resilience]
 Loss of one service instance.
 ## Statement
 At least one instance remains able to serve requests.
-## Verification plan
+## System verification plan
 Stop one instance and send a request.
 ## Rationale
 Continue useful service during disruption.

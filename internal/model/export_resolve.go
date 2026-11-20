@@ -2,7 +2,6 @@ package model
 
 import (
 	"errors"
-	"github.com/craigsmitham/dotspec/internal/system"
 	"io/fs"
 	"net/url"
 	"path/filepath"
@@ -11,6 +10,7 @@ import (
 
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/craigsmitham/dotspec/internal/system"
 )
 
 func (b *snapshotBuilder) resolution(occurrence Record, status, target, rule string) Record {
@@ -82,6 +82,12 @@ func (b *snapshotBuilder) resolveReferences() {
 		}
 		source := b.sources[targetPath]
 		mayFollow := b.follow[path] && b.rootByPath[path] != ""
+		if b.glossaries[path] != nil && String(node, "node_kind") == "link" {
+			switch String(reference, "context_field") {
+			case "relationships.references", "related_terms.references", "illustrative_examples":
+				mayFollow = true
+			}
+		}
 		if source == nil && targetPath != path {
 			if !mayFollow {
 				b.resolution(reference, "not_attempted", "", "direct-reference-boundary/1")
@@ -199,6 +205,12 @@ func (b *snapshotBuilder) referenceContext(reference Record, doc *ParsedDocument
 		node := doc.NodeByID[String(binding, "content_node")]
 		if node == nil {
 			continue
+		}
+		// An explicit binding to this occurrence is more specific than a
+		// surrounding paragraph, even when the link fills the paragraph.
+		if binding["content_node"] == reference["content_node"] && String(binding, "mapping_rule") == MappingProfile+"/reference-occurrence" {
+			reference["context_owner"], reference["context_field"] = binding["owner"], binding["field_path"]
+			return
 		}
 		bound := Object(node["span"])
 		width := Number(bound["end"]) - Number(bound["start"])

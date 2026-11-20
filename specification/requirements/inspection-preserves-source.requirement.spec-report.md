@@ -1,16 +1,17 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
-documents: "../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material"
 ---
 # Inspection preserves source material
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Statement
 
 Inspection must leave source-file contents and paths unchanged, without
 creating, deleting, or renaming source files.
+
+[View source for “Statement”](<../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#statement>)
 
 ## Applies to
 
@@ -20,13 +21,17 @@ includes specifications, consulted system context, and other existing project
 files. Concurrent edits by other processes and files explicitly written by
 the caller's output redirection are outside this criterion.
 
+[View source for “Applies to”](<../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#applies-to>)
+
 ## Criterion
 
 Apply the preservation rule in [Statement](<#statement>) to the files covered by
 [Applies to](<#applies-to>). Filesystem access-time changes are not changes to source
 contents or paths.
 
-## Verification plan
+[View source for “Criterion”](<../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#criterion>)
+
+## System verification plan
 
 Snapshot the relative paths and byte contents of project files and any system
 context outside the selected subtree. Capture command output separately from
@@ -37,6 +42,8 @@ Retain the differing paths and contents on test failure.
 
 The [CLI quality-contract tests](<../../internal/cli/quality_contracts_test.go>)
 check this criterion. The obligation remains defined in this document.
+
+[View source for “System verification plan”](<../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#system-verification-plan>)
 
 ## Rationale
 
@@ -51,4 +58,4 @@ describes the read-and-report operation. File creation belongs to the separate
 
 **Quality attribute** · [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)
 
-[Edit source](<../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material>)
+[subject-source]: <../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material>

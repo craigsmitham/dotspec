@@ -47,7 +47,7 @@ qualifications and unresolved decisions. Combining source acquisition, mapping
 coverage and semantic adequacy into one success flag overstates what inspection
 established.
 
-## Verification plan
+## System verification plan
 
 Export fixtures from every supported specification family and validate the
 resulting snapshots. Decode retained payloads and compare them with the inputs,

@@ -92,8 +92,6 @@ func (m *domainMapper) requirement(r Record, s *Section) bool {
 		m.wrapper(r, "applicability", s, map[string]string{"Conditions": "conditions", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"})
 	case "Statement":
 		m.section(r, "statement", s)
-	case "Verification plan", "Validation plan":
-		return m.assessmentSection(r, s)
 	case "Criterion":
 		m.wrapper(r, "criterion", s, map[string]string{"Measure": "measure", "Target": "target"}, "Open question", "Open questions")
 		m.openQuestions(r, s.Children)

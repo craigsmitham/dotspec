@@ -1,7 +1,7 @@
 # Specification model
 
 [metamodel.yaml](metamodel.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.23.0-draft`; the JSON
+specification snapshots. The model version is `0.26.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/reference/specification-model.md)
@@ -23,6 +23,21 @@ The Go package at this path is named `schema`. It embeds `SchemaJSON` and
 `CatalogJSON` as read-only byte slices. The CLI does not invoke Python or LinkML.
 Go snapshot records retain heterogeneous subtype fields instead of relying on
 LinkML-generated Go structs.
+
+## Vocabulary contexts in 0.26.0-draft
+
+A vocabulary document can name its context. A term can declare topics, relationships and illustrative examples. The generated system glossary groups term links by topic and links a related term back to the passage that describes the relationship. [Authoring format](../docs/reference/formats/system.md#include-a-glossary)
+
+## Glossary sources in 0.25.0-draft
+
+A system can include Markdown vocabulary documents alongside its inline terms. Each imported term belongs to its defining document. The system’s glossary source references determine where the term is used. The [generated model glossary](../docs/reference/model/glossary.md) uses class descriptions from the canonical model.
+
+## Assessment purposes in 0.24.0-draft
+
+Each traceable element can record ordered assessment plans. Each plan declares one
+[assessment purpose](../docs/reference/model/index.md#assessmentpurpose). Subject and
+Basis preserve prose and contextual references. The Markdown heading supplies the
+purpose, including when the author has only sketched the plan.
 
 ## Standalone features and capabilities in 0.23.0-draft
 

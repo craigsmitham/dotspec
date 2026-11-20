@@ -2,12 +2,14 @@ package model
 
 import (
 	"fmt"
-	"github.com/craigsmitham/dotspec/internal/obligation"
 	"net/url"
 	"path/filepath"
 	"slices"
 	"sort"
 	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/assessment"
+	"github.com/craigsmitham/dotspec/internal/obligation"
 )
 
 // ReviewMarkdown assembles advisory questions from recorded content and links.
@@ -68,21 +70,19 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	}
 	v.boundaries()
 	v.assumptions()
-	v.validationPlans()
-	v.out.WriteString("## System verification planning\n\nThese plans assess realizations against obligations. Requirements verification instead assesses the quality of the requirement statements and set. A plan is distinct from an observation, an evidence-based assessment, and an acceptance decision.\n\n")
+	v.assessmentPlans()
+	v.out.WriteString("## Obligation review\n\nReview the criterion and system verification guidance recorded on each obligation.\n\n")
 	for _, r := range v.records {
-		if designKind(String(r, "kind"), "Obligation") {
-			fmt.Fprintf(&v.out, "### %s\n\n", v.link(r))
-			present := v.body(r, reviewLabel("verification_plan"), Object(r["verification_plan"])["content"])
-			v.body(r, "Criterion", Object(r["criterion"])["content"])
-			if !present {
-				v.out.WriteString("No verification plan recorded; review required.\n\n")
-			} else {
-				v.out.WriteString("Assessment guidance recorded; its adequacy and any verification result are not evaluated.\n\n")
-			}
-			if missing := v.d.measurementGuidance(r).Missing(); len(missing) > 0 {
-				fmt.Fprintf(&v.out, "Review required: %s\n\n", obligation.MeasurementMessage(missing))
-			}
+		if !designKind(String(r, "kind"), "Obligation") {
+			continue
+		}
+		fmt.Fprintf(&v.out, "### %s\n\n", v.link(r))
+		v.body(r, "Criterion", Object(r["criterion"])["content"])
+		if !v.d.hasPlanGuidance(r, assessment.SystemVerification) {
+			v.out.WriteString("No system verification guidance recorded here.\n\n")
+		}
+		if missing := v.d.measurementGuidance(r).Missing(); len(missing) > 0 {
+			fmt.Fprintf(&v.out, "Review required: %s\n\n", obligation.MeasurementMessage(missing))
 		}
 	}
 	v.questions()
@@ -160,7 +160,7 @@ func PEGSMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			}
 		}
 	}
-	v.validationPlans()
+	v.assessmentPlans()
 	v.questions()
 	return projectReading(s, strings.TrimRight(v.out.String(), "\n")+"\n"), nil
 }
@@ -302,49 +302,50 @@ func (v *reviewView) assumptions() {
 		for _, field := range []string{"statement", "basis", "applicability"} {
 			v.body(r, reviewLabel(field), r[field])
 		}
-		v.body(r, "Assumption validation plan", Object(r["validation_plan"])["content"])
 		missing := []string{}
-		for _, field := range []string{"basis", "applicability", "validation_plan"} {
+		for _, field := range []string{"basis", "applicability"} {
 			value := r[field]
-			if field == "validation_plan" {
-				value = Object(value)["content"]
-			}
 			if strings.TrimSpace(v.d.text(value)) == "" {
 				missing = append(missing, reviewLabel(field))
 			}
+		}
+		if !v.d.hasPlanGuidance(r, assessment.AssumptionValidation) {
+			missing = append(missing, assessment.AssumptionValidation.Definition().Heading())
 		}
 		if len(missing) > 0 {
 			fmt.Fprintf(&v.out, "Review required: no %s recorded.\n\n", strings.Join(missing, ", "))
 		}
 	}
 }
-func (v *reviewView) validationPlans() {
-	v.out.WriteString("## Validation planning\n\nIdentify the subject and the needs, intended use or other basis for the assessment. Requirements validation assesses proposed obligations; system validation assesses proposed or realized solutions. A method or supports link alone establishes neither purpose nor a result.\n\n")
-	for _, r := range v.records {
-		if String(r, "kind") == "Assumption" {
-			continue
-		}
-		plan := Object(r["validation_plan"])
-		if plan == nil && !designKind(String(r, "kind"), "System or Concept or UseCase or Obligation") {
-			continue
-		}
-		fmt.Fprintf(&v.out, "### %s: %s\n\n", String(r, "kind"), v.link(r))
-		if !v.body(r, "Validation plan", plan["content"]) {
-			v.out.WriteString("No validation plan recorded. Review whether an explicit plan would help assess needs or intended use; it is optional.\n\n")
-			continue
-		}
-		missing := []string{}
-		for _, field := range []string{"subject", "basis", "participants", "method", "success_criteria", "conditions", "evidence_to_retain"} {
-			value := plan[field]
-			if field == "basis" {
-				value = Object(value)["content"]
+func (v *reviewView) assessmentPlans() {
+	for _, def := range assessment.Definitions {
+		fmt.Fprintf(&v.out, "## %s plans\n\n%s\n\n", def.Label, def.Question)
+		count := 0
+		for _, owner := range v.records {
+			for _, plan := range plansFor(owner, def.Purpose) {
+				count++
+				fmt.Fprintf(&v.out, "### Recorded on %s\n\n", v.link(owner))
+				if !v.body(owner, "", plan["content"]) {
+					v.out.WriteString("Plan details pending.\n\n")
+					continue
+				}
+				var missing []string
+				for _, field := range []string{"subject", "basis", "participants", "method", "success_criteria", "conditions", "evidence_to_retain"} {
+					value := plan[field]
+					if field == "subject" || field == "basis" {
+						value = Object(value)["content"]
+					}
+					if strings.TrimSpace(v.d.text(value)) == "" {
+						missing = append(missing, reviewLabel(field))
+					}
+				}
+				if len(missing) > 0 {
+					fmt.Fprintf(&v.out, "Review separately identified plan details: %s. The narrative may already address them.\n\n", strings.Join(missing, ", "))
+				}
 			}
-			if strings.TrimSpace(v.d.text(value)) == "" {
-				missing = append(missing, reviewLabel(field))
-			}
 		}
-		if len(missing) > 0 {
-			fmt.Fprintf(&v.out, "Review separately identified plan details: %s. The narrative may already address them; no adequacy or completion is inferred.\n\n", strings.Join(missing, ", "))
+		if count == 0 {
+			v.out.WriteString("No plans recorded in this scope.\n\n")
 		}
 	}
 }
@@ -390,20 +391,26 @@ func (v *reviewView) questions() {
 	}
 }
 func (v *reviewView) glossary() {
-	v.out.WriteString("### Terminology review\n\nUse one preferred term consistently in specification prose; declared alternative names and synonym entries remain useful. Collisions below are scoped to the declaring System and require human review. This report does not scan prose for undeclared synonyms.\n\n")
+	v.out.WriteString("### Terminology review\n\nUse one preferred term consistently in specification prose; declared alternative names and synonym entries remain useful. Review preferred terms and aliases within each context of a system. Inline terms and vocabularies without a named context share the system default. This report does not scan prose for undeclared synonyms.\n\n")
 	type designation struct {
 		record Record
 		role   string
 	}
 	terms := map[string][]designation{}
-	for _, r := range v.records {
-		if String(r, "kind") == "GlossaryTerm" {
+	for _, sys := range v.records {
+		if String(sys, "kind") != "System" {
+			continue
+		}
+		for _, term := range SystemGlossary(sys, v.d.index) {
+			r := v.d.index[term]
 			names := []struct{ text, role string }{{v.d.name(r), "preferred term"}}
 			for _, alias := range reviewObjects(r["alternative_names"]) {
 				names = append(names, struct{ text, role string }{strings.TrimSpace(strings.TrimLeft(strings.TrimSpace(v.d.text(alias)), "-*+ ")), "alternative name"})
 			}
+			context := String(v.d.index[String(r, "owner")], "glossary_context")
+			scope := String(sys, "id") + "\x00" + strings.ToLower(context)
 			for _, name := range names {
-				key := String(r, "owner") + "\x00" + strings.ToLower(strings.TrimSpace(name.text))
+				key := scope + "\x00" + strings.ToLower(strings.TrimSpace(name.text))
 				terms[key] = append(terms[key], designation{r, name.role})
 			}
 		}
@@ -423,10 +430,16 @@ func (v *reviewView) glossary() {
 		for _, e := range entries {
 			labels = append(labels, v.link(e.record)+" ("+e.role+")")
 		}
-		fmt.Fprintf(&v.out, "- Review required for **%s**: %s.\n", strings.SplitN(key, "\x00", 2)[1], strings.Join(labels, ", "))
+		systemID, rest, _ := strings.Cut(key, "\x00")
+		_, name, _ := strings.Cut(rest, "\x00")
+		scope := v.d.name(v.d.index[systemID])
+		if context := String(v.d.index[String(entries[0].record, "owner")], "glossary_context"); context != "" {
+			scope = context + " (" + scope + ")"
+		}
+		fmt.Fprintf(&v.out, "- Review required for **%s** in %s: %s.\n", name, scope, strings.Join(labels, ", "))
 	}
 	if count == 0 {
-		v.out.WriteString("No collisions found among recorded preferred terms and alternative names in each System. This does not establish terminology consistency.\n")
+		v.out.WriteString("No preferred term or alias is shared by different terms within the same system and context. This does not establish terminology consistency.\n")
 	}
 	v.out.WriteString("\n")
 }

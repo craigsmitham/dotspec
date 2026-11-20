@@ -24,7 +24,7 @@ The operation must preserve the input state.
 
 ## Rationale
 Inspection must not edit the work being inspected.
-## Verification plan
+## System verification plan
 Compare snapshots of source-file bytes and paths.
 ## Assumptions
 No concurrent edits by other processes.
@@ -37,7 +37,7 @@ func TestGeneralRequirement(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if r.ID != "preserve" || len(r.QualityAttributes) != 2 || !strings.Contains(r.Statement, "state_after = state_before") || !strings.Contains(r.Markdown, "## Assumptions") || r.Rationale == "" || r.VerificationPlan == "" || len(Check(r)) != 0 {
+	if r.ID != "preserve" || len(r.QualityAttributes) != 2 || !strings.Contains(r.Statement, "state_after = state_before") || !strings.Contains(r.Markdown, "## Assumptions") || r.Rationale == "" || len(r.AssessmentPlans) != 1 || r.AssessmentPlans[0].Content == "" || len(Check(r)) != 0 {
 		t.Fatalf("lost authored content: %+v", r)
 	}
 	if !r.References.Anchors["preserve"] || !r.References.Anchors["postcondition"] {
@@ -47,7 +47,7 @@ func TestGeneralRequirement(t *testing.T) {
 
 func TestDraftAndStructure(t *testing.T) {
 	draft := "---\ntype: requirement-spec\n---\n# Draft\n"
-	r, err := Parse([]byte(draft + "## Verification plan\n"))
+	r, err := Parse([]byte(draft + "## System verification plan\n"))
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: quality-attribute-spec-report
-documents: "../../../../specs/quality/reliability/source-preservation/source-preservation.quality-attribute.spec.md#source-preservation"
 ---
 # Source preservation
 
-[dotspec](<../../../dotspec.system.spec-report.md>)
+[dotspec](<../../../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Definition
 
@@ -21,4 +20,4 @@ Whether inspection preserves the source material it examines.
 
 **Parent attribute** · [Reliability](<../reliability.quality-attribute.spec-report.md>)
 
-[Edit source](<../../../../specs/quality/reliability/source-preservation/source-preservation.quality-attribute.spec.md#source-preservation>)
+[subject-source]: <../../../../specs/quality/reliability/source-preservation/source-preservation.quality-attribute.spec.md#source-preservation>

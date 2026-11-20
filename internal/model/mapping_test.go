@@ -391,7 +391,7 @@ Concurrent edits.
 
 Files remain unchanged.
 
-## Verification plan
+## System verification plan
 
 Compare snapshots.
 
@@ -403,7 +403,7 @@ Read before and after inspection.
 
 Retain changed paths.
 `)
-	if Object(r["applicability"])["exclusions"] == nil || Object(r["verification_plan"])["evidence_to_retain"] == nil {
+	if Object(r["applicability"])["exclusions"] == nil || plansFor(r, "system_verification")[0]["evidence_to_retain"] == nil {
 		t.Error("plan subfields missing")
 	}
 	if Object(r["criterion"])["target"] != nil {

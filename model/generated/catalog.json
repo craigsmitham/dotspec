@@ -782,7 +782,7 @@
         "AssessmentCase"
       ],
       "annotations": {},
-      "description": "An explicitly distinguished assessment case; its parent plan supplies verification or validation purpose. A case definition is not an observation or result.",
+      "description": "An explicitly distinguished assessment case; its parent plan supplies its assessment purpose. A case definition is not an observation or result.",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -879,7 +879,7 @@
         "AssessmentPlan"
       ],
       "annotations": {},
-      "description": "Shared assessment structure. The owning verification_plan or validation_plan field identifies the role; the authored subject and basis identify what is assessed and against what. The method alone does not determine the purpose. A plan is not execution evidence or a verdict.",
+      "description": "An authored plan for answering one assessment question. Its purpose identifies the question, its subject identifies what to assess, and its basis identifies what to judge the subject against. Executions, findings and acceptance decisions are recorded separately.",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -995,26 +995,47 @@
           "reference_ranges": [],
           "required": false
         },
+        "purpose": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment question selected by the authored plan heading.",
+          "enum_values": [
+            "requirements_verification",
+            "requirements_validation",
+            "system_verification",
+            "system_validation",
+            "assumption_validation"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "AssessmentPurpose",
+          "reference_ranges": [],
+          "required": true
+        },
         "subject": {
           "annotations": {},
           "any_of": [],
-          "description": "The proposed requirement, design, prototype, implementation or environmental premise to assess; identify revisions when planning execution.",
+          "description": "What will be assessed, with optional links to requirements, designs, builds, processes or premises.",
           "identifier": false,
           "inline_ranges": [
-            "RichContent"
+            "ContextualReferences"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "RichContent",
+          "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
         },
         "success_criteria": {
           "annotations": {},
           "any_of": [],
-          "description": "How to interpret the assessment against its basis. Verification refers to the obligation's statement or criterion for required bounds rather than defining competing thresholds; validation identifies the needs or intended outcomes against which the subject is assessed.",
+          "description": "How to interpret observations against the stated basis. Reference authoritative criteria where they are defined.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -1061,6 +1082,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
           "reference_ranges": [],
           "required": false
         },
@@ -1574,22 +1611,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess empirical support for the premise in its stated conditions and whether reliance on it is justified for intended use; not a guarantee that it holds.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -1733,6 +1754,22 @@
           "reference_ranges": [
             "SourceReference"
           ],
+          "required": false
+        },
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
           "required": false
         },
         "authored_id": {
@@ -2495,22 +2532,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -2659,6 +2680,22 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -3491,22 +3528,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -3605,6 +3626,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
           "reference_ranges": [],
           "required": false
         },
@@ -4722,22 +4759,6 @@
           "range": "RichContent",
           "reference_ranges": [],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -4878,6 +4899,22 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
           "reference_ranges": [],
           "required": false
         },
@@ -5722,22 +5759,6 @@
           "range": "RichContent",
           "reference_ranges": [],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -5763,6 +5784,22 @@
       ],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -6502,22 +6539,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -7009,6 +7030,22 @@
       ],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -7739,22 +7776,6 @@
           "reference_ranges": [
             "SourceReference"
           ],
-          "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
           "required": false
         }
       },
@@ -8654,6 +8675,7 @@
           "description": "",
           "enum_values": [
             "project_configuration",
+            "glossary_source",
             "system_context",
             "reference_target",
             "other"
@@ -9071,6 +9093,22 @@
           "reference_ranges": [
             "SourceReference"
           ],
+          "required": false
+        },
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
           "required": false
         },
         "authored_id": {
@@ -9587,22 +9625,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -9982,7 +10004,9 @@
         "Document",
         "Record"
       ],
-      "annotations": {},
+      "annotations": {
+        "owned_memberships": "Document.glossary_terms"
+      },
       "description": "Syntax and interpretation state for an acquired document, separate from its SourceDocument read state.",
       "is_a": "Record",
       "mixins": [],
@@ -10085,7 +10109,7 @@
             "relationship_inverse": "ExtensionSection.owner",
             "relationship_label": "elements",
             "relationship_ordering": "unordered",
-            "relationship_scope": "Mapped elements of the same source document; only document-owned unknown sections point back through owner."
+            "relationship_scope": "Mapped elements of the same source document. Document-owned glossary terms have a separate glossary_terms membership."
           },
           "any_of": [],
           "description": "Index of every domain element mapped from this document. Indexing is not ownership, except that a document-owned ExtensionSection names this document as its owner and must appear here.",
@@ -10143,6 +10167,44 @@
           "ordered": false,
           "range": "ParseStatus",
           "reference_ranges": [],
+          "required": false
+        },
+        "glossary_context": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Optional name of the context in which this vocabulary defines its terms.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "glossary_terms": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "GlossaryTerm.owner",
+            "relationship_label": "glossary terms",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Terms defined by the level-two headings of a declared Markdown glossary source.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "GlossaryTerm",
+          "reference_ranges": [
+            "GlossaryTerm"
+          ],
           "required": false
         },
         "id": {
@@ -11557,6 +11619,22 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -12314,22 +12392,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -12712,12 +12774,15 @@
             "relationship_basis": "Checked inverse of canonical membership fields.",
             "relationship_category": "declaration-containment",
             "relationship_cycles": "forbidden",
-            "relationship_inverse": "System.glossary",
+            "relationship_inverse": "System.glossary or Document.glossary_terms",
             "relationship_label": "owner",
             "relationship_ordering": "single target",
             "relationship_scope": "Exactly one declaring owner in the same source document."
           },
-          "any_of": [],
+          "any_of": [
+            "System",
+            "Document"
+          ],
           "description": "",
           "identifier": false,
           "inline_ranges": [],
@@ -12725,9 +12790,10 @@
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "System",
+          "range": "Record",
           "reference_ranges": [
-            "System"
+            "System",
+            "Document"
           ],
           "required": true
         },
@@ -12759,6 +12825,22 @@
           "annotations": {},
           "any_of": [],
           "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
+        },
+        "relationships": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored statements linking this term to other terms, with their original wording and references.",
           "identifier": false,
           "inline_ranges": [
             "ContextualReferences"
@@ -12817,6 +12899,20 @@
           "reference_ranges": [
             "SourceFragment"
           ],
+          "required": false
+        },
+        "topics": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Topic labels for browsing definitions. A term may appear under several topics.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "string",
+          "reference_ranges": [],
           "required": false
         }
       },
@@ -12896,6 +12992,22 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -13390,22 +13502,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -13486,6 +13582,22 @@
       ],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -14075,22 +14187,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -14172,6 +14268,22 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -15025,22 +15137,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -15120,6 +15216,22 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -15673,22 +15785,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -15964,7 +16060,7 @@
         "Record"
       ],
       "annotations": {},
-      "description": "An obligation, expressed in its own Requirement specification or as a clause inside another specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines or references the satisfaction rule; the verification plan describes how to obtain and interpret evidence against it. Verification plans are not execution evidence.",
+      "description": "An obligation, expressed in its own Requirement specification or as a clause inside another specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines or references the satisfaction rule. A system verification plan assesses a realization against that rule. A requirements verification plan assesses the quality of the obligation itself.",
       "is_a": "TraceableElement",
       "mixins": [],
       "rules": [],
@@ -16034,6 +16130,22 @@
           ],
           "required": false
         },
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -16051,7 +16163,7 @@
         "criterion": {
           "annotations": {},
           "any_of": [],
-          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The verification plan refers to it.",
+          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis.",
           "identifier": false,
           "inline_ranges": [
             "ObligationCriterion"
@@ -16657,38 +16769,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
-        "verification_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -16779,6 +16859,22 @@
           ],
           "required": false
         },
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -16796,7 +16892,7 @@
         "criterion": {
           "annotations": {},
           "any_of": [],
-          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The verification plan refers to it.",
+          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis.",
           "identifier": false,
           "inline_ranges": [
             "ObligationCriterion"
@@ -17427,38 +17523,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
-        "verification_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -17540,6 +17604,22 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -18036,22 +18116,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -18066,7 +18130,7 @@
         "ObligationCriterion"
       ],
       "annotations": {},
-      "description": "Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define each bound once or reference its authoritative statement or source; the verification plan refers to this rule. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.",
+      "description": "Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define each bound once or reference its authoritative statement or source; system verification plans cite this rule. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -18089,7 +18153,7 @@
         "measure": {
           "annotations": {},
           "any_of": [],
-          "description": "Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed. The verification plan supplies the collection procedure.",
+          "description": "Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed. A system verification plan describes the collection procedure.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -19298,6 +19362,22 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -19921,22 +20001,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -20233,6 +20297,22 @@
           ],
           "required": false
         },
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -20266,7 +20346,7 @@
         "criterion": {
           "annotations": {},
           "any_of": [],
-          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The verification plan refers to it.",
+          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis.",
           "identifier": false,
           "inline_ranges": [
             "ObligationCriterion"
@@ -21047,38 +21127,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
-        "verification_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -21093,7 +21141,7 @@
         "GeneratedDocument"
       ],
       "annotations": {},
-      "description": "Brings the requirement statement, applicability, criterion, and verification plan together at one address.",
+      "description": "Brings the requirement statement, applicability, criterion, and assessment plans together at one address.",
       "is_a": "SubjectSpecReport",
       "mixins": [],
       "rules": [],
@@ -22639,7 +22687,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.23.0-draft",
+          "equals_string": "0.26.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -23599,6 +23647,22 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -24130,22 +24194,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -24429,6 +24477,22 @@
       ],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -25026,22 +25090,6 @@
           "reference_ranges": [
             "SynchronizationAction"
           ],
-          "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
           "required": false
         },
         "when": {
@@ -25730,6 +25778,22 @@
       ],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "assumptions": {
           "annotations": {
             "paired_with": "assumptions_content",
@@ -26092,6 +26156,44 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
+          "required": false
+        },
+        "glossary_source_paths": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Relative Markdown paths declared in glossary_sources frontmatter, including unacquired sources.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "glossary_sources": {
+          "annotations": {
+            "relationship_basis": "Explicit source syntax. Only separately declared semantic fields establish domain associations.",
+            "relationship_category": "contextual-citation",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "glossary sources",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Authored occurrences in the containing domain record source; targets may remain unresolved."
+          },
+          "any_of": [],
+          "description": "Acquired Markdown glossaries explicitly included by this system, in declaration order.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Document",
+          "reference_ranges": [
+            "Document"
+          ],
           "required": false
         },
         "goals": {
@@ -26937,22 +27039,6 @@
           "range": "RichContent",
           "reference_ranges": [],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -26975,6 +27061,22 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -27618,22 +27720,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -27660,6 +27746,22 @@
       ],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -28284,22 +28386,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -28376,6 +28462,22 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -28828,22 +28930,6 @@
           "reference_ranges": [
             "SourceReference"
           ],
-          "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
           "required": false
         }
       },
@@ -29451,6 +29537,22 @@
       ],
       "rules": [],
       "slots": {
+        "assessment_plans": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+          "identifier": false,
+          "inline_ranges": [
+            "AssessmentPlan"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AssessmentPlan",
+          "reference_ranges": [],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -30579,22 +30681,6 @@
           "range": "RichContent",
           "reference_ranges": [],
           "required": false
-        },
-        "validation_plan": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -31136,6 +31222,13 @@
     }
   },
   "enums": {
+    "AssessmentPurpose": [
+      "requirements_verification",
+      "requirements_validation",
+      "system_verification",
+      "system_validation",
+      "assumption_validation"
+    ],
     "BindingRole": [
       "named_field",
       "record_identity",
@@ -31151,6 +31244,7 @@
     ],
     "ContextSourceRole": [
       "project_configuration",
+      "glossary_source",
       "system_context",
       "reference_target",
       "other"
@@ -31313,7 +31407,7 @@
       "directory"
     ]
   },
-  "model_version": "0.23.0-draft",
+  "model_version": "0.26.0-draft",
   "projections": [
     "ActionParameter.type",
     "BusinessRule.applies_to",
@@ -31335,6 +31429,7 @@
     "ConceptUse.definition",
     "ConceptUse.dependencies",
     "DesiredOutcome.applies_to",
+    "Document.glossary_terms",
     "DomainElement.extension_sections",
     "ExtensionSection.children",
     "Feature.groups",
@@ -31449,7 +31544,7 @@
   },
   "representation_version": "0.1.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "0800cf49c9fcf70ff2b7142bf20147f3243122ad68ede4c8709f88918010bd76",
+  "source_sha256": "69f58a8337481dfe4c032f09d5903e76ef20fabec9b22b449b10a7fefbdcb78f",
   "subsets": {
     "business-requirements": {
       "classification": "core",

@@ -55,7 +55,8 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 // Concept retains section bodies as Markdown. State and actions have no imposed
 // language; system association does not imply an implementation boundary.
 type Concept struct {
-	ValidationPlan        string                         `json:"validation_plan,omitempty"`
+	AssessmentPlans []specfile.AssessmentPlan `json:"assessment_plans,omitempty"`
+
 	EffectsTable          string                         `json:"effects_table,omitempty"`
 	TypeParameters        string                         `json:"type_parameters,omitempty"`
 	IntroducedTypes       string                         `json:"introduced_types,omitempty"`
@@ -110,7 +111,7 @@ func Parse(data []byte) (*Concept, error) {
 	if err != nil {
 		return nil, err
 	}
-	spec := &Concept{ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
+	spec := &Concept{AssessmentPlans: doc.AssessmentPlans, ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
 	var ids specfile.Identifiers
 	if err := ids.Register(spec.ID, "concept", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err
@@ -119,7 +120,7 @@ func Parse(data []byte) (*Concept, error) {
 		return nil, err
 	}
 	ids.AddAnchors(doc.Anchors)
-	fields := map[string]*string{"Validation plan": &spec.ValidationPlan,
+	fields := map[string]*string{
 		"Effects table": &spec.EffectsTable,
 		"Purpose":       &spec.Purpose, "State": &spec.State,
 		"Type parameters": &spec.TypeParameters, "Introduced types": &spec.IntroducedTypes,

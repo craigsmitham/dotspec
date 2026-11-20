@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: quality-attribute-spec-report
-documents: "../../../../specs/quality/usability/accessibility/accessibility.quality-attribute.spec.md#accessibility"
 ---
 # Accessibility
 
-[dotspec](<../../../dotspec.system.spec-report.md>)
+[dotspec](<../../../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Definition
 
@@ -18,4 +17,4 @@ can use dotspec.
 
 **Parent attribute** · [Usability](<../usability.quality-attribute.spec-report.md>)
 
-[Edit source](<../../../../specs/quality/usability/accessibility/accessibility.quality-attribute.spec.md#accessibility>)
+[subject-source]: <../../../../specs/quality/usability/accessibility/accessibility.quality-attribute.spec.md#accessibility>

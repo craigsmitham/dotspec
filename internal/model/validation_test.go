@@ -98,7 +98,7 @@ quality_attributes:
 Inspection preserves the original source bytes.
 ## Applies to
 Source inspection.
-## Verification plan
+## System verification plan
 Compare the bytes before and after inspection.
 `,
 	}

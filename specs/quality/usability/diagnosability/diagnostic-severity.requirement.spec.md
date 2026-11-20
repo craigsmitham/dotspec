@@ -20,7 +20,7 @@ of terminal styling.
 Use the text-label rule in [Statement](#statement), with supported severity values
 defined by the [check report contract](../../../../docs/reference/inspection.md#check-specifications).
 
-## Verification plan
+## System verification plan
 
 Render reports containing each supported diagnostic severity. Capture output
 with terminal-style environment settings and in redirected-output conditions,

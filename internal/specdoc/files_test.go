@@ -19,7 +19,17 @@ const (
 	detailPath = "specification/" + detailLink
 )
 
-func testPlan() *Plan {
+func testPlan(t *testing.T, dir string) *Plan {
+	t.Helper()
+	specs := filepath.Join(dir, "specs")
+	if err := os.MkdirAll(specs, 0755); err != nil {
+		t.Fatal(err)
+	}
+	for file, body := range map[string]string{"task-list.system.spec.md": "# Task list\n", "restart.spec.md": "# Restart\n"} {
+		if err := os.WriteFile(filepath.Join(specs, file), []byte(body), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
 	entry := &Page{
 		Title: "Task list", RequiredLinks: []string{systemPath},
 		Markdown: "---\ngenerated_by: dotspec\n---\n# Task list\n\n[Read the system specification](" + systemPath + ")\n",
@@ -27,19 +37,19 @@ func testPlan() *Plan {
 	root := &Page{
 		Document: Document{Type: "system-spec-report", Documents: "../specs/task-list.system.spec.md#task-list"}, Title: "Task list",
 		RequiredLinks: []string{detailLink},
-		Markdown:      "---\ntype: system-spec-report\ndocuments: ../specs/task-list.system.spec.md#task-list\ngenerated_by: dotspec\n---\n# Task list\n\n[Resume tasks](" + detailLink + ")\n",
+		Markdown:      "---\ntype: system-spec-report\ngenerated_by: dotspec\n---\n# Task list\n\n[View source][subject-source]\n\n[subject-source]: <../specs/task-list.system.spec.md#task-list>\n\n[Resume tasks](" + detailLink + ")\n",
 	}
 	detail := &Page{
 		Document: Document{Type: "requirement-spec-report", Documents: "../../specs/restart.spec.md#restart"}, Title: "Restart",
 		RequiredContent: []string{"**Preserve tasks** on the same database."},
-		Markdown:        "---\ntype: requirement-spec-report\ndocuments: ../../specs/restart.spec.md#restart\ngenerated_by: dotspec\n---\n# Restart\n\n**Preserve tasks** on the same database.\n",
+		Markdown:        "---\ntype: requirement-spec-report\ngenerated_by: dotspec\n---\n# Restart\n\n[View source][subject-source]\n\n[subject-source]: <../../specs/restart.spec.md#restart>\n\n**Preserve tasks** on the same database.\n",
 	}
 	return &Plan{Pages: map[string]*Page{"SPEC.md": entry, systemPath: root, detailPath: detail}}
 }
 
 func TestCheckRenderedSourceAndRoutes(t *testing.T) {
 	dir := t.TempDir()
-	p := testPlan()
+	p := testPlan(t, dir)
 	if _, err := Write(dir, p); err != nil {
 		t.Fatal(err)
 	}
@@ -74,7 +84,7 @@ func TestCheckRenderedSourceAndRoutes(t *testing.T) {
 
 func TestWritePreservesAuthoredFiles(t *testing.T) {
 	dir := t.TempDir()
-	p := testPlan()
+	p := testPlan(t, dir)
 	root := filepath.Join(dir, "SPEC.md")
 	if err := os.WriteFile(root, []byte("# Authored\n"), 0644); err != nil {
 		t.Fatal(err)
@@ -103,7 +113,7 @@ func TestWritePreservesAuthoredFiles(t *testing.T) {
 	}
 	delete(p.Pages, detailPath)
 	p.Pages[systemPath].RequiredLinks = nil
-	p.Pages[systemPath].Markdown = strings.Split(p.Pages[systemPath].Markdown, "[")[0]
+	p.Pages[systemPath].Markdown = strings.Split(p.Pages[systemPath].Markdown, "[Resume tasks]")[0]
 	changes, err := Write(dir, p)
 	if err != nil || len(changes.Removed) != 1 || changes.Removed[0] != detailPath {
 		t.Fatal(changes, err)
@@ -118,7 +128,7 @@ func TestWriteRejectsSymlinkedDestination(t *testing.T) {
 	if err := os.Symlink(other, filepath.Join(dir, "specification")); err != nil {
 		t.Skip(err)
 	}
-	if _, err := Write(dir, testPlan()); err == nil {
+	if _, err := Write(dir, testPlan(t, dir)); err == nil {
 		t.Fatal("wrote through a linked directory")
 	}
 	for _, name := range []string{filepath.Join(dir, "SPEC.md"), filepath.Join(other, filepath.Base(systemPath))} {
@@ -130,7 +140,7 @@ func TestWriteRejectsSymlinkedDestination(t *testing.T) {
 
 func TestBuildsSerialize(t *testing.T) {
 	dir := t.TempDir()
-	p := testPlan()
+	p := testPlan(t, dir)
 	var wg sync.WaitGroup
 	for range 4 {
 		wg.Go(func() {
@@ -146,7 +156,7 @@ func TestBuildsSerialize(t *testing.T) {
 }
 
 func TestCheckScopedLinksAndIndexMembership(t *testing.T) {
-	source := []byte("---\ntype: use-case-spec-report\ndocuments: source.md#return\ngenerated_by: dotspec\n---\n# Return\n\n## First promise\n\n## Second promise\n\n[Edit source](../test.py)\n")
+	source := []byte("---\ntype: use-case-spec-report\ngenerated_by: dotspec\n---\n# Return\n\n[View source][subject-source]\n\n[subject-source]: <source.md#return>\n\n## First promise\n\n## Second promise\n\n[Test](../test.py)\n")
 	p := parseGenerated(source)
 	page := Page{Title: "Return", Document: Document{Type: "use-case-spec-report", Documents: "source.md#return"}, RequiredSectionLinks: map[string][]string{"first-promise": {"../test.py"}}}
 	var rules []string
@@ -161,7 +171,7 @@ func TestCheckScopedLinksAndIndexMembership(t *testing.T) {
 	if len(rules) != 0 {
 		t.Fatal(rules)
 	}
-	p = parseGenerated([]byte("---\ntype: system-spec-report\ndocuments: source.md#tasks\ngenerated_by: dotspec\n---\n# Tasks\n\n## Requirements\n\n- [Restart](restart.md)\n- [Unexpected](other.md)\n"))
+	p = parseGenerated([]byte("---\ntype: system-spec-report\ngenerated_by: dotspec\n---\n# Tasks\n\n[View source][subject-source]\n\n[subject-source]: <source.md#tasks>\n\n## Requirements\n\n- [Restart](restart.md)\n- [Unexpected](other.md)\n"))
 	page = Page{Document: Document{Type: "system-spec-report", Documents: "source.md#tasks"}, Title: "Tasks", DirectoryMembers: map[string][]string{"requirements": {"restart.md"}}}
 	checkPage(&page, p, report)
 	if !slices.Equal(rules, []string{"spec.membership"}) {
@@ -171,7 +181,7 @@ func TestCheckScopedLinksAndIndexMembership(t *testing.T) {
 
 func TestCheckRestoresOrderAndHandlesCheckoutLineEndings(t *testing.T) {
 	dir := t.TempDir()
-	p := testPlan()
+	p := testPlan(t, dir)
 	if _, err := Write(dir, p); err != nil {
 		t.Fatal(err)
 	}
@@ -208,7 +218,7 @@ func TestWriteRespectsNestedProjectBoundaries(t *testing.T) {
 			if err := os.WriteFile(stale, []byte("---\ngenerated_by: dotspec\n---\n# Child\n"), 0644); err != nil {
 				t.Fatal(err)
 			}
-			_, err := Write(dir, testPlan())
+			_, err := Write(dir, testPlan(t, dir))
 			var d *diagnostic.Diagnostic
 			if !errors.As(err, &d) || d.Rule != "spec.collision" {
 				t.Fatalf("nested project: %v", err)
@@ -228,7 +238,7 @@ func TestDuplicateReportClaimsIdentifyBothFiles(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	plan := testPlan()
+	plan := testPlan(t, dir)
 	if _, err := Write(dir, plan); err != nil {
 		t.Fatal(err)
 	}

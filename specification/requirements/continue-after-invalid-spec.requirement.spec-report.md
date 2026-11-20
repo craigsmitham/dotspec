@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
-documents: "../../specs/requirements/continue-after-invalid-spec.requirement.spec.md#continue-checking-after-a-structural-error"
 ---
 # Continue checking after a structural error
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Statement
 
@@ -16,11 +15,13 @@ continue inspecting the remaining discovered specifications.
 
 Project-wide specification checks.
 
-## Verification plan
+## System verification plan
 
 Check a project containing two specifications with distinct structural errors.
 Verify that the report contains a finding for each specification. Exercise
 errors in different supported specification types and positions in scan order.
+
+[View source for “System verification plan”](<../../specs/requirements/continue-after-invalid-spec.requirement.spec.md#system-verification-plan>)
 
 ## Rationale
 
@@ -35,4 +36,4 @@ and handling within an individual malformed file.
 
 **Quality attribute** · [Diagnosability](<../quality/usability/diagnosability/diagnosability.quality-attribute.spec-report.md>)
 
-[Edit source](<../../specs/requirements/continue-after-invalid-spec.requirement.spec.md#continue-checking-after-a-structural-error>)
+[subject-source]: <../../specs/requirements/continue-after-invalid-spec.requirement.spec.md#continue-checking-after-a-structural-error>

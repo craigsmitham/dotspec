@@ -13,13 +13,14 @@ The canonical [LinkML model](../../model/metamodel.yaml) defines the records and
 relationships. The [generated reference](model/index.md) describes
 every field. The [relationship reference](model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.23.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/17`.
+`model_version` is `0.26.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/20`.
 
-The [verification and validation vocabulary](../handbook/verification-and-validation.md)
-distinguishes requirements quality, requirements fitness, system conformance and
-system fitness. Shared AssessmentPlan/AssessmentCase values keep those plan roles
-separate through their owning fields and explicit subject and basis.
+Each traceable element can record `assessment_plans`. Each plan declares an
+[AssessmentPurpose](model/index.md#assessmentpurpose). The plan’s Subject and Basis
+can cite what is assessed and what it is judged against. The
+[handbook comparison](../handbook/verification-and-validation.md#assessment-purposes)
+gives the assessment questions and a worked example.
 
 ## Specification types and declared elements
 
@@ -61,7 +62,7 @@ These elements are not specifications:
 
 - Each is traceable and has one declaring owner. Heading anchors and optional
   introductory `**ID:**` fields make it addressable without a separate file.
-- Each can carry Notes, Open questions, a Validation plan and trace sections such
+- Each can carry Notes, Open questions, assessment plans and trace sections such
   as Supports, Derived from and Relies on.
 - Evidence, Authority and Related specifications belong to specifications only.
   Such a section under a declared element is retained as an unmodelled extension
@@ -273,7 +274,8 @@ subsets or creating a project-management subsystem.
 
 Use the [review authoring guide](../handbook/review.md) for syntax and limitations.
 The [To-do review index](../../examples/todo/specification/requirements-review.report.md) links to
-verification plans on obligations and the validation plan on the system overview.
+system verification plans on obligations, the wording review on the restart requirement,
+and the system validation exercise on the system overview.
 Optional concept effects matrices are included in `model docs`;
 the [checklist effects table](../../examples/todo/specification/concepts/checklist.concept.spec-report.md#effects-table) records which properties reopening preserves.
 
@@ -305,10 +307,10 @@ identify `ScenarioStep` records, and named concept actions identify
 full narrative and `open_questions` its explicit question/evidence entries; an
 omitted field does not automatically become an open decision.
 
-For example, a requirement's Verification plan may contain a measurement
+For example, a requirement's System verification plan may contain a measurement
 procedure, sampling, evidence instructions and links. Its complete content
-belongs to `verification_plan.content`; recognized explicit subsections also
-populate the corresponding `AssessmentPlan` fields. An exporter cannot discard
+belongs to the corresponding `assessment_plans` entry’s `content` field. Recognized
+subsections also populate the structured plan fields. An exporter cannot discard
 those instructions because they do not fit a method-and-criteria pair.
 
 ### Exact source and content structure
@@ -389,7 +391,7 @@ Typed relationship fields are authoritative. An `Assertion` is an optional deriv
 view of one canonical field, with required endpoints and provenance. Its
 `projection_path`, such as `TraceableElement.supports`, `System.goals` or
 `Obligation.refines`, names that field and preserves roles such as type parameters
-versus introduced types. Its `mapping_rule` is `dotspec-markdown/17/projection/<path>`.
+versus introduced types. Its `mapping_rule` is `dotspec-markdown/20/projection/<path>`.
 The catalog lists the projectable paths in `projections`: every declaration
 membership and every semantic-association or structural-context field. The
 assertions collection is not a replacement for the typed graph. Reverse navigation

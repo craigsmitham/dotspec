@@ -1,18 +1,24 @@
 # Verification and validation
 
-dotspec distinguishes assessments by **subject and basis**, not by whether the
-method is a test, interview, inspection or proof. This vocabulary applies across
+Each dotspec assessment plan names its **purpose** in its heading. Choose the
+purpose by asking what you will assess (the **subject**) and what you will judge
+it against (the **basis**). This vocabulary applies across
 business, user and software requirements and is independent of the model's
 core/supporting/generic classification.
 
-## Four assessment purposes
+## Assessment purposes
 
-| Term | Subject | Basis and question |
+<!-- assessment-purposes -->
+
+| Purpose | Subject | Assessment question |
 | --- | --- | --- |
-| Requirements verification | A requirement or requirement set | Declared requirements-quality criteria: are the statements and set well formed, clear, consistent and assessable? |
-| Requirements validation | A proposed requirement or requirement set | Relevant stakeholder needs, intended use, parent intent and constraints: are these the right requirements, faithfully expressed? |
-| System verification | A system, component, implementation or process realization | Specified obligations: does the identified realization conform under the assessed conditions? |
-| System validation | A proposed or realized solution | Stakeholder needs and intended use: does the solution support the intended work in the relevant context? |
+| Requirements verification | A requirement or set of requirements | Do the requirement statements and set meet the applicable criteria for clarity, consistency and verifiability? |
+| Requirements validation | A proposed requirement or set of requirements | Do the proposed requirements faithfully express stakeholder needs, higher-level intent and constraints? |
+| System verification | A system, component or process realization | Does the realization fulfill the specified obligations under the assessed conditions? |
+| System validation | A proposed or realized solution | Can the intended users accomplish their work with the proposed or realized solution in its intended context? |
+| Assumption validation | A premise on which the specification relies | Does the evidence support the premise under the stated conditions, and is reliance on it justified for the intended use? |
+
+<!-- /assessment-purposes -->
 
 The requirements distinction follows ISO/IEC/IEEE 24765:2017, entries 3.3452–3.3453,
 which reference requirements-engineering definitions in ISO/IEC/IEEE 29148.
@@ -82,21 +88,28 @@ uses validation for instance constraint checks.
 | --- | --- |
 | `model validate` | Snapshot conformance and integrity: schema, typed references, source fidelity and graph invariants. |
 | `check` | Automated authoring and selected requirements-quality checks that support requirements verification. Passing does not complete requirements verification or establish fitness. |
-| `model review` | Review material for requirements quality, needs and intent, assumptions, validation plans, and system verification planning. It does not execute plans. |
-| `verification_plan` on an obligation | A plan to assess a realization against that obligation, not a review of the requirement's wording. Its Method covers any measurement procedure and sampling. |
-| `validation_plan` on a traceable element | A plan to assess the stated subject against needs, intended use or, for an assumption, empirical support and justified reliance. |
+| `model review` | Groups authored plans by purpose and surfaces review prompts about requirements quality, needs, assumptions and missing guidance. |
+| `assessment_plans` on a traceable element | An ordered list of plans. Each purpose-qualified heading supplies the plan’s required `purpose`. Subject and Basis can each cite sources. |
 | `criterion` | An optional explicit satisfaction rule (`ObligationCriterion`), defining or referencing required bounds for any obligation, with an optional Measure and Target. |
 
 A well-formed snapshot can faithfully represent a malformed or incomplete source.
 A source that passes authoring checks can still express the wrong requirements.
 Use the qualified terms above instead of a blanket “specification validated.”
 
-`AssessmentPlan` and `AssessmentCase` are shared structures. The owning plan field
-retains verification or validation purpose; Subject and Basis identify what is
-being assessed and against what. Participants, Method, Conditions, Success criteria,
-Cases and Evidence to retain provide optional detail. Basis links are contextual
-citations, not additional satisfaction or validation assertions. Ordinary `supports`
-relationships remain contribution claims.
+Use the purpose label from the table followed by “plan” as the heading, such as
+**Requirements verification plan** or **System verification plan**. Each occurrence
+starts a separate plan, including a second plan with the same purpose.
+
+The [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md)
+has both. Its requirements-verification plan cites the statement as its **Subject**
+and gives criteria for reviewing the wording. Its system-verification plan names the
+service as its **Subject** and cites the same statement as its **Basis**. Where the
+plan is recorded tells readers where to find it. The purpose tells them which
+question the author intends to answer.
+
+Subject, Basis, Participants, Method, Conditions, Success criteria, Cases and
+Evidence to retain are optional. Subject and Basis preserve both prose and links.
+A case shares the purpose of its plan. `supports` records an intended contribution.
 
 Define each required bound once in the statement or criterion, or reference its
 authoritative source. Plan Success criteria explain interpretation against that
@@ -104,11 +117,6 @@ basis; they should refer to its bounds rather than redefine them. Applicability
 describes the required operating context, while plan Conditions describe the
 assessment setup and how it represents that context. See
 [Develop requirements](requirements.md) for examples.
-
-Validation plans can concern the quality of a proposed solution's fit, a requirement's
-faithfulness to needs, or a job/outcome hypothesis. The method does not assign that
-purpose automatically. Identify the subject explicitly rather than treating every
-plan on a requirement as system verification or every prototype session as validation.
 
 ## Assumptions: evidence and justified reliance
 
@@ -120,7 +128,7 @@ Assumption validation has two questions:
 Measuring clock offset supplies empirical evidence. Deciding whether that offset
 is acceptable for the recovery-window boundary assesses the justification for
 reliance. The Assumption's Basis and Applicability explain the premise; its
-Validation plan explains how to assess it. An observation supports a bounded claim,
+Assumption validation plan explains how to assess it. An observation supports a bounded claim,
 not a guarantee about every future environment. Stakeholder agreement alone does
 not establish an empirical premise.
 
@@ -143,7 +151,7 @@ method, result and limits. No `verified` or `validated` boolean is inferred from
 links, a plan, a passing test or a merge.
 
 See [Review requirements](review.md) for authoring plans and reading advisory
-findings. Compare the [restart verification plan](../../examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md#verification-plan)
-with the [system validation exercise](../../examples/todo/specification/personal-task-list.system.spec-report.md#validation-plan).
+findings. Compare the [restart verification plan](../../examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md#system-verification-plan)
+with the [system validation exercise](../../examples/todo/specification/personal-task-list.system.spec-report.md#system-validation-plan).
 One tests preservation of acknowledged tasks, and the other asks a participant
 to resume interrupted work.

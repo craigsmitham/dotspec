@@ -27,7 +27,7 @@ Workspace-aware discovery, System context, source inventories, model exports and
 reading views, and CLI project selection. Repositories without project
 manifests retain their existing discovery behavior.
 
-## Verification plan
+## System verification plan
 
 Exercise nested roots under both Git and filesystem discovery; a workspace without
 a root project; missing local Systems; explicit cross-project references; scoped

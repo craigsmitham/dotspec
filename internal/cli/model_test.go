@@ -176,7 +176,7 @@ func TestSystemOverviewCommand(t *testing.T) {
 func TestModelReviewAndPEGSCommandsKeepAdvisoryDraftsValid(t *testing.T) {
 	root := testproject.Open(t, "requirements-review")
 	t.Chdir(root)
-	for _, tc := range []struct{ command, want string }{{"review", "No verification plan recorded"}, {"pegs", "## Project"}} {
+	for _, tc := range []struct{ command, want string }{{"review", "No system verification guidance recorded here"}, {"pegs", "## Project"}} {
 		code, output, errOut := invoke("model", tc.command, "--relative-to", "docs")
 		if code != 0 || errOut != "" || !strings.Contains(output, tc.want) || !strings.Contains(output, "../specs/document-workspace.system.spec.md") {
 			t.Fatalf("%s: %d %s %s", tc.command, code, errOut, output)

@@ -1,7 +1,6 @@
 ---
 generated_by: dotspec
 type: component-spec-report
-documents: "../../../app/specs/task-service.component.spec.md#task-service"
 ---
 # Task service
 
@@ -9,7 +8,9 @@ documents: "../../../app/specs/task-service.component.spec.md#task-service"
 
 The local service that handles browser requests and saves changes to the task list.
 
-[Personal task list](<../../personal-task-list.system.spec-report.md>)
+[Personal task list](<../../personal-task-list.system.spec-report.md>) · [View source][subject-source]
+
+- [Requirements](<requirements.md>)
 
 ## Part of
 
@@ -27,12 +28,8 @@ Accept browser changes and persist them locally. See [Acknowledge after commit](
 
 The [Go server](<../../../app/main.go>) owns form handling and storage.
 
-## Applicable requirements
+## Related specifications
 
-- [Acknowledge after commit](<requirements/acknowledge-after-commit.requirement.spec-report.md>)
+**Applies here** · [Acknowledge after commit](<requirements/acknowledge-after-commit.requirement.spec-report.md>)
 
-## Requirements
-
-- [Acknowledge after commit](<requirements/acknowledge-after-commit.requirement.spec-report.md>) — The task service must commit a change to the local database before acknowledging it to the browser.
-
-[Edit source](<../../../app/specs/task-service.component.spec.md#task-service>)
+[subject-source]: <../../../app/specs/task-service.component.spec.md#task-service>

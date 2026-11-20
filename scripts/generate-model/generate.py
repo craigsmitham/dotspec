@@ -319,13 +319,78 @@ def reference_markdown(catalog: dict[str, Any], raw_model: dict[str, Any]) -> by
     lines += ["## Enumerations", ""]
     for name, values in catalog["enums"].items():
         enum = raw_model.get("enums", {}).get(name, {})
-        lines += [f"### {name}", "", escape(enum.get("description", "")), "",
-                  "| Value | Meaning |", "| --- | --- |"]
+        lines += [f"### {name}", "", escape(enum.get("description", "")), ""]
+        if name == "AssessmentPurpose":
+            lines += ["| Value | Markdown heading | Assessment question |", "| --- | --- | --- |"]
+        else:
+            lines += ["| Value | Meaning |", "| --- | --- |"]
         for value in values:
             meaning = enum.get("permissible_values", {}).get(value, {}) or {}
-            lines.append(f"| `{value}` | {escape(meaning.get('description', ''))} |")
+            heading = f" {escape(meaning['title'])} plan |" if name == "AssessmentPurpose" else ""
+            lines.append(f"| `{value}` |{heading} {escape(meaning.get('description', ''))} |")
         lines.append("")
     return ("\n".join(lines).rstrip() + "\n").encode()
+
+
+def assessment_outputs(raw_model: dict[str, Any]) -> dict[Path, bytes]:
+    values = raw_model["enums"]["AssessmentPurpose"]["permissible_values"]
+    go = ["// Code generated from model/metamodel.yaml. DO NOT EDIT.", "", "package assessment", ""]
+    definitions = []
+    labels = set()
+    table = ["| Purpose | Subject | Assessment question |", "| --- | --- | --- |"]
+    for value, entry in values.items():
+        name = "".join(part.capitalize() for part in value.split("_"))
+        label, question = entry["title"], entry["description"]
+        if label in labels or not label or not question:
+            raise ValueError(f"AssessmentPurpose.{value} needs a distinct label and a defining question")
+        labels.add(label)
+        go.extend([f"const {name} Purpose = {json.dumps(value)}", ""])
+        definitions.append(f"\t{{{name}, {json.dumps(label)}, {json.dumps(question)}}},")
+        table.append(f"| {label} | {entry['annotations']['subject']} | {question} |")
+    go.extend(["var Definitions = [...]Definition{", *definitions, "}", ""])
+    guide = ROOT / "docs/handbook/verification-and-validation.md"
+    start, end = "<!-- assessment-purposes -->", "<!-- /assessment-purposes -->"
+    before, middle = guide.read_text().split(start)
+    _, after = middle.split(end)
+    return {
+        ROOT / "internal/assessment/purposes_generated.go": "\n".join(go).encode(),
+        guide: (before + start + "\n\n" + "\n".join(table) + "\n\n" + end + after).encode(),
+    }
+
+
+def glossary_markdown(catalog: dict[str, Any]) -> bytes:
+    terms = {
+        "Business rule": "BusinessRule", "Capability": "Capability", "Component": "Component",
+        "Concept": "Concept", "Feature": "Feature", "Job": "Job", "Obligation clause": "ObligationClause",
+        "Quality attribute": "QualityAttribute", "Requirement": "Requirement", "System": "System",
+        "Use case": "UseCase",
+    }
+    lines = ["# Dotspec model glossary", "",
+             "Generated from the [metamodel](../../../model/metamodel.yaml).", ""]
+    labels = {name: term for term, name in terms.items()}
+    for term, name in sorted(terms.items()):
+        cls = catalog["classes"][name]
+        lines.extend([f"## {term}", "", cls["description"], "",
+                      f"[Model reference](index.md#{name.lower()})", ""])
+        topics = [catalog["subsets"][subset]["title"] for subset in cls["subsets"]]
+        if topics:
+            lines.extend(["### Topics", "", *(f"- {topic}" for topic in topics), ""])
+        if name == "Feature":
+            members = [labels[target] for target in cls["slots"]["groups"]["reference_ranges"]
+                       if target in labels]
+            if members:
+                lines.extend(["### Relationships", ""])
+                for member in members:
+                    anchor = member.lower().replace(" ", "-")
+                    article = "an" if member == "Obligation clause" else "a"
+                    lines.append(f"- Can group {article} [{member.lower()}](#{anchor}).")
+                lines.append("")
+            if "Use case" in members:
+                examples = "../../../examples/todo/specs"
+                lines.extend(["### Example", "",
+                              f"[Pick up where I left off]({examples}/features/pick-up-where-i-left-off.feature.spec.md) "
+                              f"groups the [Return to my list]({examples}/use-cases/resume-list.use-case.spec.md) use case.", ""])
+    return "\n".join(lines).encode()
 
 
 def generate_outputs() -> dict[Path, bytes]:
@@ -351,6 +416,8 @@ def generate_outputs() -> dict[Path, bytes]:
     view_definition = yaml.safe_load((ROOT / "model/views/core-domain.yaml").read_text())
     core_reference = core_markdown(catalog, view_definition)
     return {
+        **assessment_outputs(raw_model),
+        ROOT / "docs/reference/model/glossary.md": glossary_markdown(catalog),
         ROOT / "docs/reference/model/core.md": core_reference,
         ROOT / "docs/reference/model/relationships.md": relationships_markdown(catalog),
         ROOT / "model/generated/schema.json": schema_bytes,

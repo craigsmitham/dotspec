@@ -15,7 +15,9 @@ exec dotspec guide examples/todo/SPEC.md
 stdout 'Read the system specification'
 exec dotspec guide examples/todo/specification/personal-task-list.system.spec-report.md
 stdout 'Personal task list'
-stdout '## Requirements'
+stdout '\[All requirements\]\(<requirements\.md>\)'
+exec dotspec guide examples/todo/specification/requirements.md
+stdout 'Preserve tasks across restart'
 exec dotspec guide job
 stdout 'progress'
 exec dotspec guide use-case

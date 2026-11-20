@@ -88,7 +88,7 @@ Every diagnostic identifies its severity in text.
 ## Criterion
 ### Measure
 Share of rendered diagnostics whose severity appears as text.
-## Verification plan
+## System verification plan
 Capture output for every severity.
 ## Rationale
 Contributors can distinguish severities without color.

@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: use-case-spec-report
-documents: "../../specs/use-cases/prepare-specifications.use-case.spec.md#prepare-specifications-for-review"
 ---
 # Prepare specifications for review
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Goal
 
@@ -72,4 +71,4 @@ The [authoring guide](<../../docs/handbook/use-cases.md#plan-growth-without-weak
 explains how delivery increments can span these narratives without changing their
 behavioral authority.
 
-[Edit source](<../../specs/use-cases/prepare-specifications.use-case.spec.md#prepare-specifications-for-review>)
+[subject-source]: <../../specs/use-cases/prepare-specifications.use-case.spec.md#prepare-specifications-for-review>

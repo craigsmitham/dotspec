@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: use-case-spec-report
-documents: "../../specs/use-cases/resume-list.use-case.spec.md#return-to-my-list"
 ---
 # Return to my list
 
-[Personal task list](<../personal-task-list.system.spec-report.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) · [View source][subject-source]
 
 ## Goal
 
@@ -85,8 +84,6 @@ The list must make previously recorded entries available when the person returns
 
 **Refined by** · [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
 
-[Edit obligation](<../../specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>)
-
 #### Derived from
 
 [Completion preserves a commitment](<../business-rules/completion-preserves-a-commitment.business-rule.spec-report.md>).
@@ -95,11 +92,15 @@ The list must make previously recorded entries available when the person returns
 
 **Targets:** [My checklist](<../concept-uses/my-checklist.concept-use.spec-report.md>).
 
-#### Verification plan
+#### System verification plan
 
 Record a task, complete it and return to both views. Reopen it and compare its
 identity with the original. For an interruption between sessions, follow the
-[restart verification plan](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md#verification-plan>).
+[restart verification plan](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md#system-verification-plan>).
+
+[View source for “System verification plan”](<../../specs/use-cases/resume-list.use-case.spec.md#system-verification-plan>)
+
+[View obligation source](<../../specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>)
 
 ## Related specifications
 
@@ -107,4 +108,4 @@ identity with the original. For an interruption between sessions, follow the
 
 **Feature** · [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)
 
-[Edit source](<../../specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>)
+[subject-source]: <../../specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>

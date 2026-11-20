@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
 // addSourceContracts runs against the complete subject, heading, and collection
@@ -21,7 +22,6 @@ func addSourceContracts(p *planner) error {
 		}
 		page.Document = subjectDocument(s.file, s.source, s.name)
 		page.SectionDocs = map[string]Document{}
-		page.DirectoryMembers = map[string][]string{}
 		page.Title = s.name.title
 		page.RequiredContent = nil
 		page.RequiredSectionContent = map[string]string{}
@@ -35,9 +35,9 @@ func addSourceContracts(p *planner) error {
 				if h.subjectKind != "" {
 					page.SectionDocs[dest.Fragment] = subjectDocument(s.file, s.source, h)
 				}
-				if h.obligation {
+				if h.obligation || p.linkedPassages[p.targets[h.node]] {
 					source := relativeURL(s.file, s.source.path, h.anchor)
-					requireRoute(page, source, "Edit obligation")
+					requireRoute(page, source, h.sourceLabel())
 					requireSectionRoute(page, dest.Fragment, source)
 				}
 			}
@@ -65,18 +65,62 @@ func addSourceContracts(p *planner) error {
 				}
 			}
 		}
-		requireRoute(page, relativeURL(s.file, s.source.path, s.name.anchor), "Edit source")
-		if s.kind() == "System" {
-			for _, id := range model.Strings(s.r["quality_attributes"]) {
-				h := p.nodes[nameNode(p.elements[id])]
-				requireRoute(page, relative(s.file, p.targets[id]), attr(h, "decoded_text"))
+		requireRoute(page, relativeURL(s.file, s.source.path, s.name.anchor), "View source")
+		for title, idx := range s.indexes {
+			indexPage := p.plan.Pages[idx.file]
+			if indexPage == nil {
+				return fmt.Errorf("%s: missing collection index %s", s.source.path, idx.file)
 			}
-		}
-		for _, d := range s.directories {
-			for _, e := range d.entries {
-				dest := relative(s.file, e.target)
-				page.DirectoryMembers[d.anchor] = append(page.DirectoryMembers[d.anchor], dest)
-				requireRoute(page, dest, e.title)
+			label := title
+			if s.kind() == "System" {
+				label = overviewIndexLabel(title)
+			}
+			requireRoute(page, relative(s.file, idx.file), label)
+			requireRoute(indexPage, relative(idx.file, s.file), s.name.title)
+			indexPage.DirectoryMembers = map[string][]string{}
+			for group, headings := range idx.sources {
+				for _, h := range headings {
+					dest := relativeURL(idx.file, s.source.path, h.anchor)
+					requireRoute(indexPage, dest, h.sourceLabel())
+					if group != "" {
+						requireSectionRoute(indexPage, specfile.NameSlug(group), dest)
+					}
+				}
+			}
+			for group, members := range idx.groups {
+				anchor := specfile.NameSlug(group)
+				if group == "" {
+					anchor = specfile.NameSlug(title)
+				}
+				for _, e := range members {
+					dest := relative(idx.file, e.target)
+					indexPage.DirectoryMembers[anchor] = append(indexPage.DirectoryMembers[anchor], dest)
+					requireRoute(indexPage, dest, e.title)
+				}
+			}
+			if title == "Glossary" {
+				indexPage.SectionDocs = map[string]Document{}
+				indexPage.RequiredSectionContent = map[string]string{}
+				for _, term := range s.glossary {
+					for i, h := range term.headings {
+						anchor := term.anchors[i]
+						if h.subjectKind != "" {
+							indexPage.SectionDocs[anchor] = subjectDocument(idx.file, term.source, h)
+						}
+						edits := term.source.footnoteEdits(h.end, h.bodyEnd, term.notePrefix)
+						indexPage.RequiredSectionContent[anchor] = sourceProse(term.source, h, edits...)
+					}
+					dest := relativeURL(idx.file, term.source.path, term.headings[0].anchor)
+					requireRoute(indexPage, dest, "View term source")
+					requireSectionRoute(indexPage, term.anchors[0], dest)
+				}
+			}
+			if title == "Quality attributes" {
+				for _, id := range model.Strings(s.r["quality_attributes"]) {
+					h := p.nodes[nameNode(p.elements[id])]
+					requireRoute(indexPage, relative(idx.file, p.targets[id]), attr(h, "decoded_text"))
+					requireRoute(page, relative(s.file, p.targets[id]), attr(h, "decoded_text"))
+				}
 			}
 		}
 		if s != p.governing {
@@ -96,14 +140,20 @@ func addSourceContracts(p *planner) error {
 			continue
 		}
 		left, right := attr(a, "subject"), attr(a, "object")
-		for _, edge := range [][2]string{{left, right}, {right, left}} {
+		for i, edge := range [][2]string{{left, right}, {right, left}} {
 			from := p.ownerPage(p.elements[edge[0]])
 			source, destination := p.targets[edge[0]], p.targets[edge[1]]
 			if from == nil || source == "" || destination == "" || destination == from.file || destination == source || p.nodes[nameNode(p.elements[edge[1]])] == nil {
 				continue
 			}
-			page := p.plan.Pages[from.file]
-			dest := relative(from.file, destination)
+			file := from.file
+			if i == 1 && source == file {
+				if idx := relationshipIndex(from, relations[field].reverse, destination); idx != nil {
+					file = idx.file
+				}
+			}
+			page := p.plan.Pages[file]
+			dest := relative(file, destination)
 			requireRoute(page, dest, "")
 			if _, fragment, ok := strings.Cut(source, "#"); ok {
 				requireSectionRoute(page, fragment, dest)
@@ -155,7 +205,12 @@ func (p *planner) documentLink(pagePath, sourcePath, raw string) string {
 		target = path.Join(path.Dir(sourcePath), u.Path)
 	}
 	dest := relativeURL(pagePath, target, u.Fragment)
-	if canonical := p.targets[sourceKey(target, u.Fragment)]; canonical != "" {
+	key := sourceKey(target, u.Fragment)
+	canonical := p.glossaryTargets[pagePath][key]
+	if canonical == "" {
+		canonical = p.targets[key]
+	}
+	if canonical != "" {
 		dest = relative(pagePath, canonical)
 	}
 	if u.RawQuery != "" || u.ForceQuery {

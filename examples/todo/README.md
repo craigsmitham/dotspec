@@ -27,7 +27,7 @@ The [restart requirement](specs/requirements/restart.requirement.spec.md) refine
 
 ## Read the requirements specification
 
-Start with the [system overview](specification/personal-task-list.system.spec-report.md) or its [Requirements section](specification/personal-task-list.system.spec-report.md#requirements). The pages are generated from the [To-do specifications](specs). Edit the specifications and run `mise run generate` from the repository root to refresh the spec. Run `dotspec check --project todo` to check its content, links and freshness.
+Start with the [system overview](specification/personal-task-list.system.spec-report.md) or its [requirements index](specification/requirements.md). The pages are generated from the [To-do specifications](specs). Edit the specifications and run `mise run generate` from the repository root to refresh the spec. Run `dotspec check --project todo` to check its content, links and freshness.
 
 | Question | Start here |
 | --- | --- |
@@ -48,4 +48,4 @@ mise exec -- go run . model trace --path examples/todo
 mise run example-check
 ```
 
-The acceptance test builds the app in a temporary directory, submits the rendered forms and restarts the server on a temporary database. For a session with a participant, use the [validation exercise](specs/personal-task-list.system.spec.md#validation-plan). The [coverage inventory](COVERAGE.md) identifies what the gate exercises and which fields still need a worked example.
+The acceptance test builds the app in a temporary directory, submits the rendered forms and restarts the server on a temporary database. For a session with a participant, use the [validation exercise](specs/personal-task-list.system.spec.md#system-validation-plan). The [coverage inventory](COVERAGE.md) identifies what the gate exercises and which fields still need a worked example.

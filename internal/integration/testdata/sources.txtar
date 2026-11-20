@@ -77,7 +77,7 @@ type: requirement-spec
 Read commands.
 ## Statement
 Source files remain unchanged.
-## Verification plan
+## System verification plan
 Compare before and after bytes.
 [Supporting material](../../native.tla)
 ## Rationale

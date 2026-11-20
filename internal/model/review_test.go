@@ -41,10 +41,10 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 			t.Fatal("unmapped assumption", field)
 		}
 	}
-	if !strings.Contains(d.text(Object(assumption["validation_plan"])["method"]), "independent reference") {
+	if !strings.Contains(d.text(plansFor(assumption, "assumption_validation")[0]["method"]), "independent reference") {
 		t.Fatal("missing validation method")
 	}
-	if strings.Contains(d.text(assumption["statement"]), "Validation plan") {
+	if strings.Contains(d.text(assumption["statement"]), "Assumption validation plan") {
 		t.Fatal("assumption guidance became its premise")
 	}
 	questions := reviewObjects(sys["open_questions"])
@@ -113,7 +113,7 @@ func TestReviewViewsAreAdvisoryAndRebaseSources(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"No contribution path recorded", "Contribution path recorded", "ScenarioStep 2", "no rule or action relationship recorded", "no native contract reference recorded", "No verification plan recorded", "Before acceptance", "no Raised by, Raised on, Resolve by, Importance, Evidence needed recorded", "Review required for **recovery copy**", "../specs/document-workspace.system.spec.md#reduce-retention-cost", "../project-plan.md#retention-boundary-decision", "nonbinding"} {
+	for _, want := range []string{"No contribution path recorded", "Contribution path recorded", "ScenarioStep 2", "no rule or action relationship recorded", "no native contract reference recorded", "No system verification guidance recorded here", "Before acceptance", "no Raised by, Raised on, Resolve by, Importance, Evidence needed recorded", "Review required for **recovery copy**", "../specs/document-workspace.system.spec.md#reduce-retention-cost", "../project-plan.md#retention-boundary-decision", "nonbinding"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("review missing %q", want)
 		}

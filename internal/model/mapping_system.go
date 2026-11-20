@@ -53,39 +53,7 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 		}
 	case "Glossary":
 		m.declared(r, "glossary", s)
-		for _, child := range s.Children {
-			x := m.named("GlossaryTerm", r, child)
-			m.section(x, "definition", child)
-			if refs := m.references(child.Content); len(refs) > 0 {
-				x["references"] = refs
-			}
-			for _, sub := range child.Children {
-				switch sub.Title {
-				case "Alternative names", "Aliases":
-					names, _ := x["alternative_names"].([]Record)
-					items := m.listItems(sub.Intro, false)
-					for _, item := range items {
-						names = append(names, m.doc.Rich([]string{item}))
-						x["alternative_names"] = names
-						m.bind(x, fmt.Sprintf("alternative_names.%d", len(names)-1), []string{item}, "named_field", "glossary-alias")
-					}
-					if len(items) == 0 {
-						names = append(names, m.doc.Rich(sub.Intro))
-						x["alternative_names"] = names
-						m.bind(x, fmt.Sprintf("alternative_names.%d", len(names)-1), sub.Intro, "named_field", "glossary-alias")
-					}
-					x["alternative_names"] = names
-					m.bind(x, "alternative_names", []string{sub.HeadingID}, "structural_wrapper", "glossary-aliases-heading")
-					for _, detail := range sub.Children {
-						m.extension(x, detail)
-					}
-				case "Related terms":
-					m.contextField(x, "related_terms", sub.Content)
-					m.sectionBindings(x, "related_terms.content", sub)
-				}
-			}
-			appendID(r, "glossary", String(x, "id"))
-		}
+		m.glossaryTerms(r, "glossary", s.Children)
 	case "Quality attributes":
 		m.section(r, "quality_attributes_content", s)
 		r["quality_attributes"] = []string{}
@@ -186,4 +154,77 @@ func (m *domainMapper) openQuestions(owner Record, sections []*Section) {
 
 func openQuestionHeading(title string) bool {
 	return title == "Open question" || title == "Open questions"
+}
+
+func (m *domainMapper) glossaryTerms(r Record, field string, terms []*Section) {
+	for _, child := range terms {
+		x := m.named("GlossaryTerm", r, child)
+		m.section(x, "definition", child)
+		if refs := m.references(child.Content); len(refs) > 0 {
+			x["references"] = refs
+		}
+		for _, sub := range child.Children {
+			switch sub.Title {
+			case "Alternative names", "Aliases":
+				names, _ := x["alternative_names"].([]Record)
+				items := m.listItems(sub.Intro, false)
+				for _, item := range items {
+					names = append(names, m.doc.Rich([]string{item}))
+					x["alternative_names"] = names
+					m.bind(x, fmt.Sprintf("alternative_names.%d", len(names)-1), []string{item}, "named_field", "glossary-alias")
+				}
+				if len(items) == 0 {
+					names = append(names, m.doc.Rich(sub.Intro))
+					x["alternative_names"] = names
+					m.bind(x, fmt.Sprintf("alternative_names.%d", len(names)-1), sub.Intro, "named_field", "glossary-alias")
+				}
+				x["alternative_names"] = names
+				m.bind(x, "alternative_names", []string{sub.HeadingID}, "structural_wrapper", "glossary-aliases-heading")
+				for _, detail := range sub.Children {
+					m.extension(x, detail)
+				}
+			case "Topics":
+				m.glossaryTopics(x, sub)
+			case "Examples", "Example", "Illustrative examples":
+				m.section(x, "illustrative_examples", sub)
+				m.bindReferenceOccurrences(x, "illustrative_examples", m.references(sub.Content))
+			case "Relationships", "Related terms":
+				detail := "relationships"
+				if sub.Title == "Related terms" {
+					detail = "related_terms"
+				}
+				m.contextField(x, detail, sub.Content)
+				m.sectionBindings(x, detail+".content", sub)
+				m.bindReferenceOccurrences(x, detail+".references", m.references(sub.Content))
+			}
+		}
+		appendID(r, field, String(x, "id"))
+	}
+}
+
+func (m *domainMapper) glossaryTopics(term Record, section *Section) {
+	for _, item := range m.listItems(section.Intro, false) {
+		for _, block := range Strings(m.doc.NodeByID[item]["children"]) {
+			if String(m.doc.NodeByID[block], "node_kind") != "paragraph" {
+				continue
+			}
+			topic := strings.Join(strings.Fields(m.doc.Text(block)), " ")
+			if topic != "" {
+				index := len(Strings(term["topics"]))
+				term["topics"] = append(Strings(term["topics"]), topic)
+				m.bind(term, fmt.Sprintf("topics.%d", index), []string{block}, "named_field", "glossary-topic")
+			}
+			break
+		}
+	}
+}
+
+// SystemGlossary returns the terms in the inline glossary and each declared
+// source. A shared vocabulary retains one term identity across consuming systems.
+func SystemGlossary(system Record, index map[string]Record) []string {
+	terms := append([]string(nil), Strings(system["glossary"])...)
+	for _, doc := range Strings(system["glossary_sources"]) {
+		terms = append(terms, Strings(index[doc]["glossary_terms"])...)
+	}
+	return terms
 }

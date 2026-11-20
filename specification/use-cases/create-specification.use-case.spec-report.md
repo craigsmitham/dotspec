@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: use-case-spec-report
-documents: "../../specs/use-cases/create-specification.use-case.spec.md#create-a-specification-draft"
 ---
 # Create a specification draft
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Goal
 
@@ -67,4 +66,4 @@ The [init commands](<../../docs/reference/cli.md>) and linked requirement define
 The [use-case command examples](<../../internal/integration/testdata/use-cases.txtar>)
 define the illustrated template-selection and non-overwrite outcomes.
 
-[Edit source](<../../specs/use-cases/create-specification.use-case.spec.md#create-a-specification-draft>)
+[subject-source]: <../../specs/use-cases/create-specification.use-case.spec.md#create-a-specification-draft>

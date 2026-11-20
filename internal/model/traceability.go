@@ -1,9 +1,11 @@
 package model
 
 import (
-	"github.com/craigsmitham/dotspec/internal/obligation"
 	"slices"
 	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/assessment"
+	"github.com/craigsmitham/dotspec/internal/obligation"
 )
 
 // Traceability uses the schema's heading and endpoint contracts. Ordinary links
@@ -76,10 +78,10 @@ func (m *domainMapper) traceSection(r Record, s *Section) bool {
 		x["statement"] = m.doc.Rich(nodes)
 		m.bind(x, "statement", nodes, "named_field", "obligation-statement")
 		for _, sub := range child.Children {
-			if m.traceSection(x, sub) {
+			if m.traceSection(x, sub) || m.assessmentSection(x, sub) {
 				continue
 			}
-			if sub.Title == "Verification plan" || sub.Title == "Criterion" || sub.Title == "Applies to" || sub.Title == "Rationale" {
+			if sub.Title == "Criterion" || sub.Title == "Applies to" || sub.Title == "Rationale" {
 				m.requirement(x, sub)
 			} else {
 				m.extension(x, sub)
@@ -176,8 +178,8 @@ func (d *designResolver) traceReview() {
 		if missing := d.measurementGuidance(r).Missing(); len(missing) > 0 {
 			d.issue(r, "measurement_basis", "advice", obligation.MeasurementMessage(missing))
 		}
-		if strings.TrimSpace(d.text(Object(r["verification_plan"])["content"])) == "" {
-			d.issue(r, "verification_plan", "advice", "No verification plan is recorded for this obligation; review how a realization will be checked.")
+		if !d.hasPlanGuidance(r, assessment.SystemVerification) {
+			d.issue(r, "system_verification", "advice", "No system verification guidance recorded here. Identify how to check the realization against this obligation.")
 		}
 	}
 }

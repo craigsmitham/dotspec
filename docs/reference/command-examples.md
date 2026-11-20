@@ -398,12 +398,17 @@ dotspec requirement show diagnostic-severity --json
 {
   "schema_version": 1,
   "requirement": {
+    "assessment_plans": [
+      {
+        "purpose": "system_verification",
+        "content": "Describe how to obtain and compare evidence against the statement and criterion. Identify the realization, method (including measurement procedure and sampling where needed), assessment conditions, and evidence to retain. Explain how assessment conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result."
+      }
+    ],
     "slug": "diagnostic-severity",
     "name": "New quality requirement",
     "applicability": "Identify the subject and operating conditions, workload, population, and exclusions.\nFor outcomes of use, identify the users, their task, available assistance, and environment; link relevant actors, jobs, or use cases.",
     "statement": "State one coherent quality obligation. What observable result would violate it?",
     "criterion": "Define or reference what counts as satisfaction. For a measured property, state the measure (including units, aggregation, and observation window as needed) and the required bound. Keep each required bound in one place; reference it if already stated above or in an authoritative source.\nIf a bound is unknown, record an open question and the evidence needed to choose it. Qualitative criteria are valid; keep preferred targets distinct from required bounds.",
-    "verification_plan": "Describe how to obtain and compare evidence against the statement and criterion. Identify the realization, method (including measurement procedure and sampling where needed), assessment conditions, and evidence to retain. Explain how assessment conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
     "rationale": "Explain why this quality matters and any relevant tradeoffs.",
     "quality_attributes": [],
     "classification": {
@@ -412,7 +417,7 @@ dotspec requirement show diagnostic-severity --json
       "ancestors": [],
       "undefined": []
     },
-    "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and operating conditions, workload, population, and exclusions.\nFor outcomes of use, identify the users, their task, available assistance, and environment; link relevant actors, jobs, or use cases.\n\n## Statement\n\nState one coherent quality obligation. What observable result would violate it?\n\n## Criterion\n\nDefine or reference what counts as satisfaction. For a measured property, state the measure (including units, aggregation, and observation window as needed) and the required bound. Keep each required bound in one place; reference it if already stated above or in an authoritative source.\nIf a bound is unknown, record an open question and the evidence needed to choose it. Qualitative criteria are valid; keep preferred targets distinct from required bounds.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.\n\n## Verification plan\n\nDescribe how to obtain and compare evidence against the statement and criterion. Identify the realization, method (including measurement procedure and sampling where needed), assessment conditions, and evidence to retain. Explain how assessment conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
+    "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and operating conditions, workload, population, and exclusions.\nFor outcomes of use, identify the users, their task, available assistance, and environment; link relevant actors, jobs, or use cases.\n\n## Statement\n\nState one coherent quality obligation. What observable result would violate it?\n\n## Criterion\n\nDefine or reference what counts as satisfaction. For a measured property, state the measure (including units, aggregation, and observation window as needed) and the required bound. Keep each required bound in one place; reference it if already stated above or in an authoritative source.\nIf a bound is unknown, record an open question and the evidence needed to choose it. Qualitative criteria are valid; keep preferred targets distinct from required bounds.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.\n\n## System verification plan\n\nDescribe how to obtain and compare evidence against the statement and criterion. Identify the realization, method (including measurement procedure and sampling where needed), assessment conditions, and evidence to retain. Explain how assessment conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
     "path": "$PROJECT/specs/requirements/diagnostic-severity.requirement.spec.md",
     "system": {
       "description": "Describe what this system is in one short paragraph.",
@@ -485,11 +490,16 @@ dotspec requirement show reject-existing-target --json
 {
   "schema_version": 1,
   "requirement": {
+    "assessment_plans": [
+      {
+        "purpose": "system_verification",
+        "content": "Describe how to check a system or process realization against the statement and any criterion. Identify the method, assessment conditions, and evidence to retain; explain how the conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result."
+      }
+    ],
     "slug": "reject-existing-target",
     "name": "New requirement",
     "applicability": "Identify the subject and operating conditions, including any exclusions. Distinguish assumptions from conditions the system must accommodate. For outcomes of use, identify the users, task, and environment.",
     "statement": "State one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\nWhat observable result would violate this obligation? Add a Criterion section if an explicit assessment rule helps, defining or referencing each required bound once.",
-    "verification_plan": "Describe how to check a system or process realization against the statement and any criterion. Identify the method, assessment conditions, and evidence to retain; explain how the conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
     "rationale": "Explain why this obligation is needed and reference its source or governing goal.",
     "quality_attributes": [],
     "classification": {
@@ -498,7 +508,7 @@ dotspec requirement show reject-existing-target --json
       "ancestors": [],
       "undefined": []
     },
-    "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and operating conditions, including any exclusions. Distinguish assumptions from conditions the system must accommodate. For outcomes of use, identify the users, task, and environment.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\nWhat observable result would violate this obligation? Add a Criterion section if an explicit assessment rule helps, defining or referencing each required bound once.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification plan\n\nDescribe how to check a system or process realization against the statement and any criterion. Identify the method, assessment conditions, and evidence to retain; explain how the conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
+    "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and operating conditions, including any exclusions. Distinguish assumptions from conditions the system must accommodate. For outcomes of use, identify the users, task, and environment.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\nWhat observable result would violate this obligation? Add a Criterion section if an explicit assessment rule helps, defining or referencing each required bound once.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## System verification plan\n\nDescribe how to check a system or process realization against the statement and any criterion. Identify the method, assessment conditions, and evidence to retain; explain how the conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
     "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
     "system": {
       "description": "Describe what this system is in one short paragraph.",
@@ -539,12 +549,17 @@ dotspec requirement list --json
       },
       "requirements": [
         {
+          "assessment_plans": [
+            {
+              "purpose": "system_verification",
+              "content": "Describe how to obtain and compare evidence against the statement and criterion. Identify the realization, method (including measurement procedure and sampling where needed), assessment conditions, and evidence to retain. Explain how assessment conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result."
+            }
+          ],
           "slug": "diagnostic-severity",
           "name": "New quality requirement",
           "applicability": "Identify the subject and operating conditions, workload, population, and exclusions.\nFor outcomes of use, identify the users, their task, available assistance, and environment; link relevant actors, jobs, or use cases.",
           "statement": "State one coherent quality obligation. What observable result would violate it?",
           "criterion": "Define or reference what counts as satisfaction. For a measured property, state the measure (including units, aggregation, and observation window as needed) and the required bound. Keep each required bound in one place; reference it if already stated above or in an authoritative source.\nIf a bound is unknown, record an open question and the evidence needed to choose it. Qualitative criteria are valid; keep preferred targets distinct from required bounds.",
-          "verification_plan": "Describe how to obtain and compare evidence against the statement and criterion. Identify the realization, method (including measurement procedure and sampling where needed), assessment conditions, and evidence to retain. Explain how assessment conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
           "rationale": "Explain why this quality matters and any relevant tradeoffs.",
           "quality_attributes": [],
           "classification": {
@@ -553,7 +568,7 @@ dotspec requirement list --json
             "ancestors": [],
             "undefined": []
           },
-          "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and operating conditions, workload, population, and exclusions.\nFor outcomes of use, identify the users, their task, available assistance, and environment; link relevant actors, jobs, or use cases.\n\n## Statement\n\nState one coherent quality obligation. What observable result would violate it?\n\n## Criterion\n\nDefine or reference what counts as satisfaction. For a measured property, state the measure (including units, aggregation, and observation window as needed) and the required bound. Keep each required bound in one place; reference it if already stated above or in an authoritative source.\nIf a bound is unknown, record an open question and the evidence needed to choose it. Qualitative criteria are valid; keep preferred targets distinct from required bounds.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.\n\n## Verification plan\n\nDescribe how to obtain and compare evidence against the statement and criterion. Identify the realization, method (including measurement procedure and sampling where needed), assessment conditions, and evidence to retain. Explain how assessment conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
+          "markdown": "# New quality requirement\n\n## Applies to\n\nIdentify the subject and operating conditions, workload, population, and exclusions.\nFor outcomes of use, identify the users, their task, available assistance, and environment; link relevant actors, jobs, or use cases.\n\n## Statement\n\nState one coherent quality obligation. What observable result would violate it?\n\n## Criterion\n\nDefine or reference what counts as satisfaction. For a measured property, state the measure (including units, aggregation, and observation window as needed) and the required bound. Keep each required bound in one place; reference it if already stated above or in an authoritative source.\nIf a bound is unknown, record an open question and the evidence needed to choose it. Qualitative criteria are valid; keep preferred targets distinct from required bounds.\n\n## Rationale\n\nExplain why this quality matters and any relevant tradeoffs.\n\n## System verification plan\n\nDescribe how to obtain and compare evidence against the statement and criterion. Identify the realization, method (including measurement procedure and sampling where needed), assessment conditions, and evidence to retain. Explain how assessment conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
           "path": "$PROJECT/specs/requirements/diagnostic-severity.requirement.spec.md",
           "system": {
             "description": "Describe what this system is in one short paragraph.",
@@ -571,11 +586,16 @@ dotspec requirement list --json
           }
         },
         {
+          "assessment_plans": [
+            {
+              "purpose": "system_verification",
+              "content": "Describe how to check a system or process realization against the statement and any criterion. Identify the method, assessment conditions, and evidence to retain; explain how the conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result."
+            }
+          ],
           "slug": "reject-existing-target",
           "name": "New requirement",
           "applicability": "Identify the subject and operating conditions, including any exclusions. Distinguish assumptions from conditions the system must accommodate. For outcomes of use, identify the users, task, and environment.",
           "statement": "State one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\nWhat observable result would violate this obligation? Add a Criterion section if an explicit assessment rule helps, defining or referencing each required bound once.",
-          "verification_plan": "Describe how to check a system or process realization against the statement and any criterion. Identify the method, assessment conditions, and evidence to retain; explain how the conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
           "rationale": "Explain why this obligation is needed and reference its source or governing goal.",
           "quality_attributes": [],
           "classification": {
@@ -584,7 +604,7 @@ dotspec requirement list --json
             "ancestors": [],
             "undefined": []
           },
-          "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and operating conditions, including any exclusions. Distinguish assumptions from conditions the system must accommodate. For outcomes of use, identify the users, task, and environment.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\nWhat observable result would violate this obligation? Add a Criterion section if an explicit assessment rule helps, defining or referencing each required bound once.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## Verification plan\n\nDescribe how to check a system or process realization against the statement and any criterion. Identify the method, assessment conditions, and evidence to retain; explain how the conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
+          "markdown": "# New requirement\n\n## Applies to\n\nIdentify the subject and operating conditions, including any exclusions. Distinguish assumptions from conditions the system must accommodate. For outcomes of use, identify the users, task, and environment.\n\n## Statement\n\nState one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.\nWhat observable result would violate this obligation? Add a Criterion section if an explicit assessment rule helps, defining or referencing each required bound once.\n\n## Rationale\n\nExplain why this obligation is needed and reference its source or governing goal.\n\n## System verification plan\n\nDescribe how to check a system or process realization against the statement and any criterion. Identify the method, assessment conditions, and evidence to retain; explain how the conditions represent the operating context in Applies to. Reference required bounds rather than repeating them. This plan is not a completed verification result.",
           "path": "$PROJECT/specs/requirements/reject-existing-target.requirement.spec.md",
           "system": {
             "description": "Describe what this system is in one short paragraph.",

@@ -225,7 +225,7 @@
         },
         "AssessmentCase": {
             "additionalProperties": false,
-            "description": "An explicitly distinguished assessment case; its parent plan supplies verification or validation purpose. A case definition is not an observation or result.",
+            "description": "An explicitly distinguished assessment case; its parent plan supplies its assessment purpose. A case definition is not an observation or result.",
             "properties": {
                 "conditions": {
                     "$ref": "#/$defs/RichContent"
@@ -248,7 +248,7 @@
         },
         "AssessmentPlan": {
             "additionalProperties": false,
-            "description": "Shared assessment structure. The owning verification_plan or validation_plan field identifies the role; the authored subject and basis identify what is assessed and against what. The method alone does not determine the purpose. A plan is not execution evidence or a verdict.",
+            "description": "An authored plan for answering one assessment question. Its purpose identifies the question, its subject identifies what to assess, and its basis identifies what to judge the subject against. Executions, findings and acceptance decisions are recorded separately.",
             "properties": {
                 "basis": {
                     "$ref": "#/$defs/ContextualReferences",
@@ -278,20 +278,37 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Relevant users, stakeholders or assessors and their roles; naming them is not endorsement."
                 },
+                "purpose": {
+                    "$ref": "#/$defs/AssessmentPurpose",
+                    "description": "Assessment question selected by the authored plan heading."
+                },
                 "subject": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "The proposed requirement, design, prototype, implementation or environmental premise to assess; identify revisions when planning execution."
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "What will be assessed, with optional links to requirements, designs, builds, processes or premises."
                 },
                 "success_criteria": {
                     "$ref": "#/$defs/RichContent",
-                    "description": "How to interpret the assessment against its basis. Verification refers to the obligation's statement or criterion for required bounds rather than defining competing thresholds; validation identifies the needs or intended outcomes against which the subject is assessed."
+                    "description": "How to interpret observations against the stated basis. Reference authoritative criteria where they are defined."
                 }
             },
             "required": [
+                "purpose",
                 "content"
             ],
             "title": "AssessmentPlan",
             "type": "object"
+        },
+        "AssessmentPurpose": {
+            "description": "The question a plan addresses, independent of its authoring location and assessment method.",
+            "enum": [
+                "requirements_verification",
+                "requirements_validation",
+                "system_verification",
+                "system_validation",
+                "assumption_validation"
+            ],
+            "title": "AssessmentPurpose",
+            "type": "string"
         },
         "Assumption": {
             "additionalProperties": false,
@@ -300,6 +317,13 @@
                 "applicability": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Conditions, locations or periods in which this assumption is expected to hold."
+                },
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
                 },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -428,10 +452,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess empirical support for the premise in its stated conditions and whether reliance on it is justified for intended use; not a guarantee that it holds."
                 }
             },
             "required": [
@@ -504,6 +524,13 @@
                 "applies_to_references": {
                     "items": {
                         "type": "string"
+                    },
+                    "type": "array"
+                },
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
                     },
                     "type": "array"
                 },
@@ -697,10 +724,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -761,6 +784,13 @@
             "additionalProperties": false,
             "description": "An ability needed to deliver value, potentially combining people, procedures and technology. Distinct from a product feature or structural component; its declaration does not establish a provider.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -974,10 +1004,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -1017,6 +1043,13 @@
                 "architecture": {
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred."
+                },
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
                 },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -1297,10 +1330,6 @@
                 },
                 "synchronizations_content": {
                     "$ref": "#/$defs/RichContent"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -1350,6 +1379,13 @@
                 "actions_content": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Complete Actions section narrative; an unsegmented Actions section is valid."
+                },
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
                 },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -1557,10 +1593,6 @@
                 },
                 "type_parameters_content": {
                     "$ref": "#/$defs/RichContent"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -1576,6 +1608,13 @@
             "additionalProperties": false,
             "description": "An explicitly named concept action. Caller assumptions and enforced guards are different authored claims.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -1758,10 +1797,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -1920,6 +1955,13 @@
             "additionalProperties": false,
             "description": "An explicitly named design-time inclusion of a concept in a system or component specification. Multiple uses of one definition remain distinct; directory association creates no use.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -2098,10 +2140,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -2407,6 +2445,7 @@
             "description": "Why a source outside the selected candidates was consulted.",
             "enum": [
                 "project_configuration",
+                "glossary_source",
                 "system_context",
                 "reference_target",
                 "other"
@@ -2557,6 +2596,13 @@
                     },
                     "type": "array"
                 },
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -2689,10 +2735,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -2871,6 +2913,17 @@
                 },
                 "frontmatter_parse_status": {
                     "$ref": "#/$defs/ParseStatus"
+                },
+                "glossary_context": {
+                    "description": "Optional name of the context in which this vocabulary defines its terms.",
+                    "type": "string"
+                },
+                "glossary_terms": {
+                    "description": "Terms defined by the level-two headings of a declared Markdown glossary source.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "id": {
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
@@ -3282,6 +3335,13 @@
             "additionalProperties": false,
             "description": "A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own obligations.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -3473,10 +3533,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -3614,6 +3670,11 @@
                     "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions."
                 },
                 "owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
                     "type": "string"
                 },
                 "references": {
@@ -3625,11 +3686,22 @@
                 "related_terms": {
                     "$ref": "#/$defs/ContextualReferences"
                 },
+                "relationships": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Authored statements linking this term to other terms, with their original wording and references."
+                },
                 "source_document": {
                     "type": "string"
                 },
                 "source_fragment": {
                     "type": "string"
+                },
+                "topics": {
+                    "description": "Topic labels for browsing definitions. A term may appear under several topics.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 }
             },
             "required": [
@@ -3667,6 +3739,13 @@
             "additionalProperties": false,
             "description": "An explicitly distinguished goal: a result that an organization or stakeholder wants the system to help achieve.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -3790,10 +3869,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -3841,6 +3916,13 @@
             "additionalProperties": false,
             "description": "An independently addressable description of interaction at a System or Component boundary, declared by that System or Component. Required or provided membership states direction relative to the declaring subject. Native protocol contracts retain their authority; neither declaration nor citation proves implementation or compatibility.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -3990,10 +4072,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -4032,6 +4110,13 @@
             "additionalProperties": false,
             "description": "What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps, progress cases and job-story phrasing are optional complementary perspectives.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -4243,10 +4328,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -4283,6 +4364,13 @@
             "additionalProperties": false,
             "description": "A meaningful accomplishment within a functional job map; not a prescribed software interaction or execution sequence.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -4421,10 +4509,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -4570,7 +4654,7 @@
         },
         "Obligation": {
             "additionalProperties": false,
-            "description": "An obligation, expressed in its own Requirement specification or as a clause inside another specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines or references the satisfaction rule; the verification plan describes how to obtain and interpret evidence against it. Verification plans are not execution evidence.",
+            "description": "An obligation, expressed in its own Requirement specification or as a clause inside another specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines or references the satisfaction rule. A system verification plan assesses a realization against that rule. A requirements verification plan assesses the quality of the obligation itself.",
             "properties": {
                 "applicability": {
                     "$ref": "#/$defs/Applicability"
@@ -4587,13 +4671,20 @@
                     },
                     "type": "array"
                 },
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
                 },
                 "criterion": {
                     "$ref": "#/$defs/ObligationCriterion",
-                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The verification plan refers to it."
+                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -4749,14 +4840,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
-                },
-                "verification_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence."
                 }
             },
             "required": [
@@ -4787,13 +4870,20 @@
                     },
                     "type": "array"
                 },
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
                 },
                 "criterion": {
                     "$ref": "#/$defs/ObligationCriterion",
-                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The verification plan refers to it."
+                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -4953,14 +5043,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
-                },
-                "verification_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence."
                 }
             },
             "required": [
@@ -4998,6 +5080,13 @@
             "additionalProperties": false,
             "description": "Explicit declaration container for embedded obligation clauses. Traceability alone does not confer containment.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -5123,10 +5212,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -5140,14 +5225,14 @@
         },
         "ObligationCriterion": {
             "additionalProperties": false,
-            "description": "Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define each bound once or reference its authoritative statement or source; the verification plan refers to this rule. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.",
+            "description": "Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define each bound once or reference its authoritative statement or source; system verification plans cite this rule. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.",
             "properties": {
                 "content": {
                     "$ref": "#/$defs/RichContent"
                 },
                 "measure": {
                     "$ref": "#/$defs/RichContent",
-                    "description": "Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed. The verification plan supplies the collection procedure."
+                    "description": "Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed. A system verification plan describes the collection procedure."
                 },
                 "target": {
                     "$ref": "#/$defs/RichContent",
@@ -5511,6 +5596,13 @@
             "additionalProperties": false,
             "description": "A standalone reusable set of quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -5667,10 +5759,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -5826,6 +5914,13 @@
                     },
                     "type": "array"
                 },
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -5836,7 +5931,7 @@
                 },
                 "criterion": {
                     "$ref": "#/$defs/ObligationCriterion",
-                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The verification plan refers to it."
+                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -6034,14 +6129,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
-                },
-                "verification_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan for assessing a system, component or process realization against this obligation; not a review of requirement wording and not completed verification evidence."
                 }
             },
             "required": [
@@ -6055,7 +6142,7 @@
         },
         "RequirementSpecReport": {
             "additionalProperties": false,
-            "description": "Brings the requirement statement, applicability, criterion, and verification plan together at one address.",
+            "description": "Brings the requirement statement, applicability, criterion, and assessment plans together at one address.",
             "properties": {
                 "documents": {
                     "description": "The documented subject, serialized as a relative URI to its authored heading.",
@@ -6721,7 +6808,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.23.0-draft",
+                    "const": "0.26.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -7045,6 +7132,13 @@
             "additionalProperties": false,
             "description": "The root record of one authored specification document. Every specification has exactly one specification type, and specification types correspond one-to-one with concrete Specification classes. Elements declared inside a specification are not specifications. Narrative authority and evidence do not create executable authority assertions.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -7180,10 +7274,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -7304,6 +7394,13 @@
             "additionalProperties": false,
             "description": "A composition rule declared in a system or component specification. Narrative and action references describe coordination; no atomicity, execution or completeness is inferred.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -7453,10 +7550,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 },
                 "when": {
                     "$ref": "#/$defs/RichContent"
@@ -7652,6 +7745,13 @@
             "additionalProperties": false,
             "description": "The system described by a system document; subordinate systems retain their own boundaries and quality attributes.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "assumptions": {
                     "description": "Explicitly authored assumptions, in authored order.",
                     "items": {
@@ -7741,6 +7841,20 @@
                 "glossary_content": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Complete Glossary section, including its introduction."
+                },
+                "glossary_source_paths": {
+                    "description": "Relative Markdown paths declared in glossary_sources frontmatter, including unacquired sources.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "glossary_sources": {
+                    "description": "Acquired Markdown glossaries explicitly included by this system, in declaration order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "goals": {
                     "description": "Explicitly authored goals, in authored order.",
@@ -7950,10 +8064,6 @@
                 },
                 "synchronizations_content": {
                     "$ref": "#/$defs/RichContent"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -7978,6 +8088,13 @@
             "additionalProperties": false,
             "description": "A specification associated with a system: every specification type other than System and QualityModel. The association is selected explicitly or defaults to the nearest enclosing system found by directory discovery.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -8139,10 +8256,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -8158,6 +8271,13 @@
             "additionalProperties": false,
             "description": "A system's named quality attribute, authored in a standalone quality attribute specification.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -8319,10 +8439,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -8360,6 +8476,13 @@
             "additionalProperties": false,
             "description": "An element with explicit motivation, derivation and assumptions. Concern subset, artifact kind and core/supporting/generic classification are independent; neither traceability nor document location confers normative authority.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -8476,10 +8599,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -8650,6 +8769,13 @@
             "additionalProperties": false,
             "description": "An actor goal and its interactions at a stated system boundary, with alternative paths and protections.",
             "properties": {
+                "assessment_plans": {
+                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
+                    "items": {
+                        "$ref": "#/$defs/AssessmentPlan"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -8927,10 +9053,6 @@
                 },
                 "trigger": {
                     "$ref": "#/$defs/RichContent"
-                },
-                "validation_plan": {
-                    "$ref": "#/$defs/AssessmentPlan",
-                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
                 }
             },
             "required": [
@@ -9266,7 +9388,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.23.0-draft",
+            "const": "0.26.0-draft",
             "type": "string"
         },
         "references": {
@@ -9320,5 +9442,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.23.0-draft"
+    "version": "0.26.0-draft"
 }

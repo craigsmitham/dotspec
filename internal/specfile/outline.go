@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/craigsmitham/dotspec/internal/assessment"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
@@ -19,14 +20,21 @@ type Section struct {
 	Children                 []*Section
 }
 
+type AssessmentPlan struct {
+	Purpose  assessment.Purpose  `json:"purpose"`
+	Content  string              `json:"content"`
+	Location diagnostic.Location `json:"-"`
+}
+
 type Outline struct {
-	Name         string
-	NameLocation diagnostic.Location
-	Source       []byte
-	Original     []byte
-	AST          ast.Node
-	Sections     []*Section
-	Anchors      map[string]bool
+	AssessmentPlans []AssessmentPlan
+	Name            string
+	NameLocation    diagnostic.Location
+	Source          []byte
+	Original        []byte
+	AST             ast.Node
+	Sections        []*Section
+	Anchors         map[string]bool
 }
 
 // ParseOutline is the shared Markdown extraction path. The caller supplies a
@@ -39,12 +47,21 @@ func ParseOutline(data []byte, kind string, metadata TypedMetadata) (*Outline, e
 		return nil, err
 	}
 	md := goldmark.New(goldmark.WithParserOptions(parser.WithAutoHeadingID()))
-	doc := md.Parser().Parse(text.NewReader(body))
-	out := &Outline{Source: body, Original: data, AST: doc, Anchors: make(map[string]bool)}
+	out := &Outline{Source: body, Original: data, AST: md.Parser().Parse(text.NewReader(body)), Anchors: make(map[string]bool)}
+	return out.parseHeadings(kind)
+}
+
+// MarkdownOutline reads ordinary Markdown with optional YAML frontmatter.
+func MarkdownOutline(data []byte, kind string) (*Outline, error) {
+	return markdownOutline(data).parseHeadings(kind)
+}
+
+func (out *Outline) parseHeadings(kind string) (*Outline, error) {
+	body := out.Source
 	var stack []*Section
 	titles := 0
 	var titleLocation diagnostic.Location
-	for n := doc.FirstChild(); n != nil; n = n.NextSibling() {
+	for n := out.AST.FirstChild(); n != nil; n = n.NextSibling() {
 		h, ok := n.(*ast.Heading)
 		if !ok {
 			continue
@@ -82,6 +99,15 @@ func ParseOutline(data []byte, kind string, metadata TypedMetadata) (*Outline, e
 	}
 	if titles != 1 || out.Name == "" {
 		return nil, diagnostic.Error("structure.title", fmt.Sprintf("expected exactly one nonempty top-level heading naming the %s", kind), out.Location(0, ""))
+	}
+	for _, section := range out.Sections {
+		if def, ok := assessment.FromHeading(section.Title); ok {
+			loc := out.Location(section.Start, section.Title)
+			if section.Level != 2 {
+				return nil, diagnostic.Error("structure.section-level", section.Title+" requires a level-two heading", loc)
+			}
+			out.AssessmentPlans = append(out.AssessmentPlans, AssessmentPlan{def.Purpose, out.Body(section), loc})
+		}
 	}
 	return out, nil
 }

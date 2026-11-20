@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: use-case-spec-report
-documents: "../../specs/use-cases/check-specifications.use-case.spec.md#check-specifications-before-committing"
 ---
 # Check specifications before committing
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Goal
 
@@ -56,6 +55,8 @@ During steps 2–3, a file cannot be read or discovery fails, including a requir
 Git invocation. Report the operational failure and mark the scan incomplete.
 End without achieving the complete-report goal; the contributor can repair access
 and start another check.
+
+[View source for “Unreadable input or failed discovery”](<../../specs/use-cases/check-specifications.use-case.spec.md#unreadable-input-or-failed-discovery>)
 
 ### Empty scope
 
@@ -143,4 +144,4 @@ describes the report and inspection behavior used in this interaction.
 Its [quality obligations](<../concepts/specification-inspection.concept.spec-report.md#state>)
 cover diagnostic severity, report repeatability, and source preservation.
 
-[Edit source](<../../specs/use-cases/check-specifications.use-case.spec.md#check-specifications-before-committing>)
+[subject-source]: <../../specs/use-cases/check-specifications.use-case.spec.md#check-specifications-before-committing>

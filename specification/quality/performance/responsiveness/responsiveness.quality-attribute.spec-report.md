@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: quality-attribute-spec-report
-documents: "../../../../specs/quality/performance/responsiveness/responsiveness.quality-attribute.spec.md#responsiveness"
 ---
 # Responsiveness
 
-[dotspec](<../../../dotspec.system.spec-report.md>)
+[dotspec](<../../../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Definition
 
@@ -18,4 +17,4 @@ workloads, defined measurement conditions, and baseline measurements.
 
 **Parent attribute** · [Performance](<../performance.quality-attribute.spec-report.md>)
 
-[Edit source](<../../../../specs/quality/performance/responsiveness/responsiveness.quality-attribute.spec.md#responsiveness>)
+[subject-source]: <../../../../specs/quality/performance/responsiveness/responsiveness.quality-attribute.spec.md#responsiveness>

@@ -64,7 +64,7 @@ A repeated submission must not duplicate the order.
 
 **Targets:** [Checkout](#checkout)
 
-#### Verification plan
+#### System verification plan
 
 Repeat a submission and count orders.
 

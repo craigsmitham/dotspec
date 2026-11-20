@@ -19,7 +19,7 @@ continue inspecting the remaining discovered specifications.
 
 One malformed specification must not hide problems in other files.
 
-## Verification plan
+## System verification plan
 
 Check a project containing two specifications with distinct structural errors.
 Verify that the report contains a finding for each specification. Exercise

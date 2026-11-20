@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: concept-spec-report
-documents: "../../specs/concepts/checklist.concept.spec.md#checklist"
 ---
 # Checklist
 
-[Personal task list](<../personal-task-list.system.spec-report.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) · [View source][subject-source]
 
 ## Purpose
 
@@ -35,6 +34,8 @@ A new list has no entries.
 <!-- dotspec-doc {"type":"concept-type-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#entry"} -->
 
 The identity of one recorded commitment.
+
+[View source for “Entry”](<../../specs/concepts/checklist.concept.spec.md#entry>)
 
 ## Actions
 
@@ -78,17 +79,23 @@ A blank title leaves the entry as it was.
 
 Mark an existing entry finished.
 
+[View action source](<../../specs/concepts/checklist.concept.spec.md#complete>)
+
 ### Reopen
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#reopen"} -->
 
 Return a finished entry to the open list.
 
+[View action source](<../../specs/concepts/checklist.concept.spec.md#reopen>)
+
 ### Delete
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#delete"} -->
 
 Remove the selected entry from the list.
+
+[View action source](<../../specs/concepts/checklist.concept.spec.md#delete>)
 
 ## Effects table
 
@@ -104,4 +111,4 @@ Remove the selected entry from the list.
 
 **Used by** · [My checklist](<../concept-uses/my-checklist.concept-use.spec-report.md>)
 
-[Edit source](<../../specs/concepts/checklist.concept.spec.md#checklist>)
+[subject-source]: <../../specs/concepts/checklist.concept.spec.md#checklist>

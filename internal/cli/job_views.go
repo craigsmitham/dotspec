@@ -2,9 +2,9 @@ package cli
 
 import (
 	"fmt"
+	"github.com/craigsmitham/dotspec/internal/mermaid"
 	"io"
 	"strings"
-	"unicode"
 
 	"github.com/craigsmitham/dotspec/internal/job"
 )
@@ -117,13 +117,13 @@ func writeJobMap(spec *job.Job, options jobOptions, out io.Writer) error {
 	var output strings.Builder
 	if options.format == "mermaid" {
 		output.WriteString("flowchart TD\n")
-		fmt.Fprintf(&output, "  job[\"%s\"]\n", mermaidLabel(spec.Name))
+		fmt.Fprintf(&output, "  job[\"%s\"]\n", mermaid.Label(spec.Name))
 		if len(spec.Steps) == 0 {
 			output.WriteString("  no_steps[\"No steps defined.\"]\n  job --- no_steps\n")
 		} else {
 			output.WriteString("  subgraph steps[\"Authored step order (not a required sequence; completeness not assessed)\"]\n")
 			for i, step := range spec.Steps {
-				fmt.Fprintf(&output, "    s%d[\"%s\"]\n", i+1, mermaidLabel(stepLabel(step)))
+				fmt.Fprintf(&output, "    s%d[\"%s\"]\n", i+1, mermaid.Label(stepLabel(step)))
 				if i > 0 {
 					fmt.Fprintf(&output, "    s%d --> s%d\n", i, i+1)
 				}
@@ -133,9 +133,9 @@ func writeJobMap(spec *job.Job, options jobOptions, out io.Writer) error {
 		// Internal node names avoid interpreting author IDs as Mermaid syntax.
 		for i, step := range spec.Steps {
 			if options.outcomes && len(step.Outcomes) > 0 {
-				fmt.Fprintf(&output, "  subgraph step_outcomes_%d[\"%s\"]\n", i+1, mermaidLabel("Outcomes declared by step: "+stepLabel(step)))
+				fmt.Fprintf(&output, "  subgraph step_outcomes_%d[\"%s\"]\n", i+1, mermaid.Label("Outcomes declared by step: "+stepLabel(step)))
 				for j, outcome := range step.Outcomes {
-					fmt.Fprintf(&output, "    o%d_%d[\"%s\"]\n", i+1, j+1, mermaidLabel(outcomeMapLabel(outcome)))
+					fmt.Fprintf(&output, "    o%d_%d[\"%s\"]\n", i+1, j+1, mermaid.Label(outcomeMapLabel(outcome)))
 				}
 				output.WriteString("  end\n")
 				for j := range step.Outcomes {
@@ -146,7 +146,7 @@ func writeJobMap(spec *job.Job, options jobOptions, out io.Writer) error {
 		if options.outcomes && len(spec.Outcomes) > 0 {
 			output.WriteString("  subgraph overall_outcomes[\"Outcomes declared by job\"]\n")
 			for i, outcome := range spec.Outcomes {
-				fmt.Fprintf(&output, "    jo%d[\"%s\"]\n", i+1, mermaidLabel(outcomeMapLabel(outcome)))
+				fmt.Fprintf(&output, "    jo%d[\"%s\"]\n", i+1, mermaid.Label(outcomeMapLabel(outcome)))
 			}
 			output.WriteString("  end\n")
 			for i := range spec.Outcomes {
@@ -191,17 +191,4 @@ func outcomeMapLabel(outcome job.DesiredOutcome) string {
 		return outcome.Name
 	}
 	return outcomeLabel(outcome)
-}
-
-// Mermaid's decimal entity notation prevents labels from becoming diagram syntax.
-func mermaidLabel(label string) string {
-	var output strings.Builder
-	for _, r := range strings.Join(strings.Fields(label), " ") {
-		if unicode.IsLetter(r) || unicode.IsDigit(r) || r == ' ' || r == '-' || r == '.' || r == ',' || r == ':' {
-			output.WriteRune(r)
-		} else {
-			fmt.Fprintf(&output, "#%d;", r)
-		}
-	}
-	return output.String()
 }

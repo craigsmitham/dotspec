@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: quality-attribute-spec-report
-documents: "../../../specs/quality/performance/performance.quality-attribute.spec.md#performance"
 ---
 # Performance
 
-[dotspec](<../../dotspec.system.spec-report.md>)
+[dotspec](<../../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Definition
 
@@ -16,4 +15,4 @@ workloads.
 
 **Subattributes** · [Responsiveness](<responsiveness/responsiveness.quality-attribute.spec-report.md>)
 
-[Edit source](<../../../specs/quality/performance/performance.quality-attribute.spec.md#performance>)
+[subject-source]: <../../../specs/quality/performance/performance.quality-attribute.spec.md#performance>

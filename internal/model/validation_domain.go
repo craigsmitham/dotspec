@@ -2,8 +2,11 @@ package model
 
 import (
 	"fmt"
+	pathpkg "path"
 	"slices"
 	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/assessment"
 )
 
 // modelPaths is deliberately a small grammar shared by projection and ownership
@@ -21,6 +24,7 @@ func modelPaths(expression string) [][2]string {
 }
 
 func (v *graphValidator) checkDomain() {
+	v.checkAssessmentPurposes()
 	v.checkAuthoredIDs()
 	v.checkComposition()
 	v.checkMemberships()
@@ -31,6 +35,9 @@ func (v *graphValidator) checkDomain() {
 	for _, located := range v.sortedRecords() {
 		r, path := located.value, located.path
 		kind := String(r, "kind")
+		if kind == "System" {
+			v.checkGlossarySources(r, path)
+		}
 		if kind == "System" || kind == "Component" {
 			required := Strings(r["required_interfaces"])
 			for _, id := range Strings(r["provided_interfaces"]) {
@@ -45,6 +52,58 @@ func (v *graphValidator) checkDomain() {
 					v.add("quality.scope", path+"/subattribute_of", "parent attributes must belong to the same declaring owner")
 				}
 			}
+		}
+	}
+}
+
+// Resolved vocabulary documents must match declared paths, in declaration order.
+func (v *graphValidator) checkGlossarySources(sys Record, location string) {
+	paths := Strings(sys["glossary_source_paths"])
+	dir := pathpkg.Dir(String(v.records[v.sourceOf(sys)].value, "locator"))
+	for _, id := range Strings(sys["glossary_sources"]) {
+		doc := v.records[id].value
+		file := String(v.records[String(doc, "source")].value, "locator")
+		i := slices.IndexFunc(paths, func(name string) bool { return pathpkg.Join(dir, name) == file })
+		if i < 0 || doc["glossary_terms"] == nil {
+			v.add("glossary.source", location+"/glossary_sources", "expected a glossary document at a declared path")
+			return
+		}
+		paths = paths[i+1:]
+	}
+}
+
+// Check the discriminator against the heading that authored it, including after
+// a snapshot is loaded without access to the original working tree.
+func (v *graphValidator) checkAssessmentPurposes() {
+	type planKey struct{ owner, field string }
+	headings := map[planKey][]Record{}
+	for _, binding := range records(v.root["content_bindings"]) {
+		field := String(binding, "field_path")
+		if strings.HasPrefix(field, "assessment_plans.") && strings.HasSuffix(field, ".purpose") {
+			key := planKey{String(binding, "owner"), field}
+			node := v.records[String(binding, "content_node")].value
+			headings[key] = append(headings[key], node)
+		}
+	}
+	for _, owner := range records(v.root["elements"]) {
+		id := String(owner, "id")
+		previousStart := -1
+		for i, plan := range records(owner["assessment_plans"]) {
+			path := fmt.Sprintf("%s/assessment_plans/%d/purpose", v.records[id].path, i)
+			nodes := headings[planKey{id, fmt.Sprintf("assessment_plans.%d.purpose", i)}]
+			if len(nodes) != 1 || String(nodes[0], "node_kind") != "heading" {
+				v.add("assessment.purpose", path, "each plan purpose must be bound to one authored heading")
+				continue
+			}
+			def, ok := assessment.FromHeading(String(nodes[0], "decoded_text"))
+			if !ok || string(def.Purpose) != String(plan, "purpose") {
+				v.add("assessment.purpose", path, "plan purpose disagrees with its authored heading")
+			}
+			start := Number(Object(nodes[0]["span"])["start"])
+			if start <= previousStart {
+				v.add("assessment.order", path, "plans must follow the order of their authored headings")
+			}
+			previousStart = start
 		}
 	}
 }

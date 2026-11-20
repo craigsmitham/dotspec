@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: job-spec-report
-documents: "../../specs/jobs/manage-requirements.job.spec.md#manage-requirements"
 ---
 # Manage Requirements
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Job
 
@@ -187,4 +186,4 @@ intended purpose. No interview or outcome research has validated them yet.
 The map's completeness has not been established. It includes decisions and
 collaboration performed outside the CLI.
 
-[Edit source](<../../specs/jobs/manage-requirements.job.spec.md#manage-requirements>)
+[subject-source]: <../../specs/jobs/manage-requirements.job.spec.md#manage-requirements>

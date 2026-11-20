@@ -1,11 +1,10 @@
 ---
 generated_by: dotspec
 type: quality-attribute-spec-report
-documents: "../../../../specs/quality/usability/diagnosability/diagnosability.quality-attribute.spec.md#diagnosability"
 ---
 # Diagnosability
 
-[dotspec](<../../../dotspec.system.spec-report.md>)
+[dotspec](<../../../dotspec.system.spec-report.md>) · [View source][subject-source]
 
 ## Definition
 
@@ -21,4 +20,4 @@ problems.
 
 **Parent attribute** · [Usability](<../usability.quality-attribute.spec-report.md>)
 
-[Edit source](<../../../../specs/quality/usability/diagnosability/diagnosability.quality-attribute.spec.md#diagnosability>)
+[subject-source]: <../../../../specs/quality/usability/diagnosability/diagnosability.quality-attribute.spec.md#diagnosability>

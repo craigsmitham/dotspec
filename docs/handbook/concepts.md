@@ -9,7 +9,7 @@ defines the basic file contract.
 A Concept is a specification with its own document. ConceptUse and Synchronization
 are elements declared inside a System specification, not specifications. They are
 traceable, addressable through heading anchors and optional introductory `**ID:**`
-values, and can carry Notes, Open questions, Validation plan and trace sections.
+values, and can carry Notes, Open questions, assessment plans and trace sections.
 Evidence, Authority and Related specifications sections belong to specifications;
 under a declared element they are retained as unmodelled extension sections. See
 [specification types and declared elements](../reference/specification-model.md#specification-types-and-declared-elements).

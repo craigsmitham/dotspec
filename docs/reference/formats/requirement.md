@@ -69,7 +69,7 @@ continue inspecting the remaining discovered specifications.
 
 One malformed specification must not hide problems in other files.
 
-## Verification plan
+## System verification plan
 
 Check two files with distinct structural errors and verify that both appear
 in the report.
@@ -81,11 +81,10 @@ optional list of unique, nonempty string IDs; an empty list is allowed. A scalar
 null, non-string element, invalid ID, or duplicate label is a structural error.
 Unknown metadata fields are rejected.
 
-`Applies to`, `Statement`, `Criterion`, `Rationale`, `Verification plan`, and
-`Validation plan` are optional H2 sections. Missing statement, applicability,
-rationale, or verification plan produces advice; `Criterion` and `Validation plan`
-provide optional detail. Duplicate sections or invalid levels produce structural
-errors. Deeper headings belong to their enclosing sections. Contract notation,
+`Applies to`, `Statement`, `Criterion` and `Rationale` are optional, single H2
+sections. Use a [purpose-qualified plan heading](../../handbook/verification-and-validation.md#assessment-purposes)
+for each assessment plan. Plan headings can repeat. Missing statement, applicability,
+rationale or system verification guidance produces advice. Deeper headings belong to their enclosing sections. Contract notation,
 tables, additional sections, links, and other authored Markdown are preserved.
 No sentence pattern or particular verification technique is required. Check
 commands validate relative file links using the shared [reference rules](../inspection.md#references).
@@ -139,9 +138,9 @@ Grouping beneath an attribute does not establish that the attribute is satisfied
 The show envelope uses `requirement`; the inventory uses `groups` containing
 `requirements`, with `attribute` when one is selected. Both include
 `schema_version: 1`. Each requirement exposes its
-`statement`, `applicability`, `rationale`, `verification_plan`, `quality_attributes`,
+`statement`, `applicability`, `rationale`, `quality_attributes`,
 `classification`, `markdown`, source identity, and associated system; `criterion`
-and `validation_plan` appear when authored. Empty collections are arrays.
+and `assessment_plans` appear when authored. Each plan includes its purpose and full Markdown body.
 
 Requirement JSON lists the authored attribute IDs. The snapshot separately preserves the authored label occurrences. The separate `classification`
 object exposes `system_path` for the system supplying attribute declarations,

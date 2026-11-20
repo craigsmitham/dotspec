@@ -46,17 +46,20 @@ type heading struct {
 	owner                               *subject
 	obligation                          bool
 	qualityAttribute                    bool
+	inGlossary                          bool
 	subjectKind                         string
 }
 
 type subject struct {
-	r           model.Record
-	source      *sourceFile
-	name        *heading
-	system      *subject
-	parent      *subject
-	directories map[string]*directory
-	file, dir   string
+	r         model.Record
+	source    *sourceFile
+	name      *heading
+	system    *subject
+	parent    *subject
+	indexes   map[string]*collectionIndex
+	glossary  []glossaryPassage
+	overview  []overviewSection
+	file, dir string
 }
 
 type planner struct {
@@ -70,12 +73,13 @@ type planner struct {
 	targets         map[string]string // snapshot record, source, or fragment to canonical project-relative URL
 	governing       *subject
 
-	routes map[string][]route
+	glossaryTargets map[string]map[string]string // scoped routes for terms shared between systems
+	linkedPassages  map[string]bool
+	routes          map[string][]route
 }
 
 type entry struct {
-	title, target string
-	subject       *subject
+	title, target, preview string
 }
 
 var families = map[string]string{
@@ -91,7 +95,7 @@ func Generate(root string, snapshot *model.Snapshot) (*Plan, error) {
 	if roots := model.Strings(snapshot.Scope["roots"]); len(roots) == 1 {
 		root = filepath.FromSlash(roots[0])
 	}
-	p := &planner{root: root, snapshot: snapshot, plan: &Plan{Pages: map[string]*Page{}}, sources: map[string]*sourceFile{}, nodes: map[string]model.Record{}, elements: map[string]model.Record{}, pages: map[string]*subject{}, targets: map[string]string{}}
+	p := &planner{root: root, snapshot: snapshot, plan: &Plan{Pages: map[string]*Page{}}, sources: map[string]*sourceFile{}, nodes: map[string]model.Record{}, elements: map[string]model.Record{}, pages: map[string]*subject{}, targets: map[string]string{}, glossaryTargets: map[string]map[string]string{}}
 	if err := p.read(); err != nil {
 		return nil, err
 	}
@@ -114,8 +118,15 @@ func nameNode(r model.Record) string {
 	return nodes[0]
 }
 func (p *planner) read() error {
+	glossarySources := map[string]bool{}
+	for _, doc := range p.snapshot.Documents {
+		p.elements[id(doc)] = doc
+		if doc["glossary_terms"] != nil {
+			glossarySources[attr(doc, "source")] = true
+		}
+	}
 	for _, r := range p.snapshot.Sources {
-		if selected, _ := r["selected"].(bool); !selected {
+		if selected, _ := r["selected"].(bool); !selected && !glossarySources[id(r)] {
 			continue
 		}
 		data, err := base64.StdEncoding.DecodeString(attr(model.Object(r["payload"]), "bytes_base64"))
@@ -125,6 +136,11 @@ func (p *planner) read() error {
 		rel, err := filepath.Rel(p.root, filepath.FromSlash(attr(r, "locator")))
 		if err != nil {
 			return err
+		}
+		if glossarySources[id(r)] && (rel == "SPEC.md" || strings.HasPrefix(filepath.ToSlash(rel), "specification/")) {
+			if header, _ := splitHeader(data); header.GeneratedBy == "dotspec" {
+				return fmt.Errorf("glossary source %s is an output of this report", rel)
+			}
 		}
 		p.sources[id(r)] = &sourceFile{path: filepath.ToSlash(rel), data: string(data)}
 	}
@@ -213,6 +229,9 @@ func (p *planner) read() error {
 		}
 	}
 	for _, key := range slices.Sorted(maps.Keys(p.sources)) {
+		if glossarySources[key] {
+			continue
+		}
 		source := p.sources[key]
 		if count := rootsBySource[source]; count != 1 {
 			return fmt.Errorf("%s: expected one standalone report for the source title, found %d", source.path, count)
@@ -372,14 +391,15 @@ func (p *planner) place() error {
 	return nil
 }
 
+func needsHeadingAnchor(s *subject, h *heading) bool {
+	return strings.IndexFunc(h.title, func(r rune) bool { return r > 127 }) >= 0 || strings.ContainsAny(s.source.data[h.start:h.end], "[]*_~`<>&")
+}
+
 func (p *planner) indexTargets() {
 	for _, s := range p.subjects {
 		p.targets[id(s.r)] = s.file
 		if s.name.level == 1 {
 			p.targets[attr(s.r, "source_document")] = s.file
-		}
-		if s != p.governing && !s.name.qualityAttribute {
-			p.placeDirectoryEntry(s)
 		}
 	}
 	// A source heading belongs to the nearest lifted declaration. Preserve the
@@ -400,31 +420,36 @@ func (p *planner) indexTargets() {
 			h.owner = stack[len(stack)-1]
 		}
 	}
-	headingIDs := map[*subject]parser.IDs{}
+
 	for _, s := range p.subjects {
-		ids := parser.NewContext().IDs()
-		headingIDs[s] = ids
-		for _, h := range readingOrder(s) {
-			if h.owner != s {
-				continue
-			}
-			p.targets[h.node] = s.file
-			generated := string(ids.Generate([]byte(h.title), ast.KindHeading))
-			if h != s.name {
-				if strings.IndexFunc(h.title, func(r rune) bool { return r > 127 }) >= 0 || strings.ContainsAny(s.source.data[h.start:h.end], "[]*_~`") {
-					h.explicitAnchor = "section-" + h.anchor
-					generated = h.explicitAnchor
-				}
-				p.targets[h.node] += "#" + generated
-			}
+		if s != p.governing && !s.name.qualityAttribute {
+			p.placeDirectoryEntry(s)
+		}
+		if s.kind() == "System" && len(model.Strings(s.r["quality_attributes"])) > 0 {
+			s.index("Quality attributes")
 		}
 	}
-
-	for _, r := range p.snapshot.Elements {
-		if dest := p.targets[nameNode(r)]; dest != "" {
-			p.targets[id(r)] = dest
+	for _, rule := range p.subjects {
+		if rule.kind() != "BusinessRule" {
+			continue
 		}
-		if dest := p.targets[id(r)]; attr(r, "kind") == "ObligationClause" && dest != "" {
+		for _, target := range model.Strings(rule.r["applies_to"]) {
+			sys := p.pages[target]
+			if sys == nil || sys.kind() != "System" {
+				continue
+			}
+			idx := sys.index("Business rules")
+			idx.groups[""] = slices.DeleteFunc(idx.groups[""], func(e entry) bool { return e.target == rule.file })
+			if len(idx.groups[""]) == 0 {
+				delete(idx.groups, "")
+			}
+			idx.add(applicableRules, entry{rule.name.title, rule.file, subjectPreview(rule)})
+		}
+	}
+	// Embedded obligations get their final fragments after the overview headings are planned.
+	clauses := map[string]bool{}
+	for _, r := range p.snapshot.Elements {
+		if attr(r, "kind") == "ObligationClause" {
 			page := p.ownerPage(r)
 			if page != nil {
 				sys := page.system
@@ -435,7 +460,8 @@ func (p *planner) indexTargets() {
 					sys = page
 				}
 				n := p.nodes[nameNode(r)]
-				sys.addMember("Requirements", entry{title: attr(n, "decoded_text"), target: dest})
+				sys.index("Requirements").add("", entry{attr(n, "decoded_text"), id(r), p.requirementPreview(r)})
+				clauses[id(r)] = true
 			}
 		}
 	}
@@ -446,23 +472,69 @@ func (p *planner) indexTargets() {
 		for _, target := range model.Strings(r["applies_to"]) {
 			component := p.pages[target]
 			dest := p.targets[id(r)]
+			if clauses[id(r)] {
+				dest = id(r)
+			}
 			if component != nil && component.kind() == "Component" && dest != "" {
-				preview := p.pages[id(r)]
-				if component.directories["Requirements"].contains(dest) {
-					preview = nil // The local Requirements entry already carries the statement.
+				index := component.index("Requirements")
+				if !index.contains("", dest) {
+					index.add("Applicable requirements", entry{attr(p.nodes[nameNode(r)], "decoded_text"), dest, p.requirementPreview(r)})
 				}
-				component.addMember("Applicable requirements", entry{attr(p.nodes[nameNode(r)], "decoded_text"), dest, preview})
+			}
+		}
+	}
+	// A system index also leads to the same collection in its components.
+	// Walk to the enclosing system so nested components remain discoverable
+	// regardless of the order in which their sources were read.
+	for _, s := range p.subjects {
+		if s.kind() != "Component" {
+			continue
+		}
+		for title := range s.indexes {
+			if title == "Components" {
+				continue
+			}
+			for child := s; child.kind() == "Component"; child = child.parent {
+				child.parent.index(title).add("By component", entry{child.name.title, child.indexes[title].file, subjectPreview(child)})
 			}
 		}
 	}
 	for _, s := range p.subjects {
-		for _, label := range slices.Sorted(maps.Keys(s.directories)) {
-			d := s.directories[label]
-			d.section = s.section(label)
-			if d.section != nil {
-				_, d.anchor, _ = strings.Cut(p.targets[d.section.node], "#")
-			} else {
-				d.anchor = string(headingIDs[s].Generate([]byte(label), ast.KindHeading))
+		ids := parser.NewContext().IDs()
+		if s.kind() == "System" {
+			p.planGlossary(s)
+			s.overview = p.planOverview(s)
+			p.indexOverviewHeadings(s, ids)
+			continue
+		}
+		for _, h := range readingOrder(s) {
+			if h.owner != s {
+				continue
+			}
+			p.targets[h.node] = s.file
+			generated := string(ids.Generate([]byte(h.title), ast.KindHeading))
+			if h != s.name {
+				if needsHeadingAnchor(s, h) {
+					h.explicitAnchor = "section-" + h.anchor
+					generated = h.explicitAnchor
+				}
+				p.targets[h.node] += "#" + generated
+			}
+		}
+	}
+	for _, r := range p.snapshot.Elements {
+		if dest := p.targets[nameNode(r)]; dest != "" {
+			p.targets[id(r)] = dest
+		}
+	}
+	for _, s := range p.subjects {
+		if idx := s.indexes["Requirements"]; idx != nil {
+			for _, members := range idx.groups {
+				for i, member := range members {
+					if clauses[member.target] {
+						members[i].target = p.targets[member.target]
+					}
+				}
 			}
 		}
 	}
