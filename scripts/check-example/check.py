@@ -153,10 +153,19 @@ def spec_journey(cli, tmp):
     assert all(target != entry for page in (project / "specification").rglob("*.md")
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")
-    sections = ["Purpose", "Goals", "Business rules", "User needs", "Scope", "System topology", "Requirements",
-                "Quality attributes"]
+    sections = ["Purpose", "Goals", "Business rules", "User needs", "Scope", "System topology",
+                "Features", "Use cases", "Concepts", "Requirements", "Quality attributes"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
     navigation = overview.split("\n## Purpose\n", 1)[0]
+    rows = [line for line in navigation.splitlines() if line.startswith("| ")]
+    for title, index in (("Features", "features"), ("Capabilities", "capabilities"),
+                         ("Use cases", "use-cases"), ("Requirements", "requirements")):
+        row, = [line for line in rows if line.split(" | ")[0] in
+                (f"| [{title}](<#{index}>)", f"| {title}")]
+        assert f"[All {title.lower()}](<{index}.md>)" in row, row
+    concepts_row, = [line for line in rows if line.startswith("| [Concepts]")]
+    assert "[Concept definitions](<concepts.md>)" in concepts_row and "[Concept uses](<concept-uses.md>)" in concepts_row
+    assert "### Behavior" not in overview and "### Obligations" not in overview
     goals = overview.split("\n## Goals\n", 1)[1].split("\n## ", 1)[0]
     assert "**Supported by** · [Resume interrupted work]" in goals
     rules = overview.split("\n## Business rules\n", 1)[1].split("\n## ", 1)[0]
@@ -167,20 +176,26 @@ def spec_journey(cli, tmp):
     for section in sections:
         assert f"[{section}](<#{section.lower().replace(' ', '-')}>)" in navigation
     assert all(f"[{name}]" in navigation for name in (
-        "Jobs", "Business rules", "Components", "Interfaces", "Features", "Capabilities",
-        "Concept definitions", "Concept uses", "Use cases", "All requirements", "Attribute index", "Quality models"))
+        "Jobs", "Business rules", "Components", "Interfaces", "All features", "All capabilities",
+        "Concept definitions", "Concept uses", "All use cases", "All requirements", "Attribute index", "Quality models"))
     topology = overview.split("## System topology\n", 1)[1].split("\n## ", 1)[0]
     assert "```mermaid" in topology and "contains" in topology and "provides interface" in topology
     assert "Task service" in topology and "Task list forms" in topology
+    assert "Provides [Local task storage]" in topology and "## Capabilities" not in overview
+    concepts = overview.split("\n## Concepts\n", 1)[1].split("\n## ", 1)[0]
+    assert "[My checklist]" in concepts and "Uses [Checklist](<concepts/" in concepts
+    requirements_body = overview.split("\n## Requirements\n", 1)[1].split("\n## ", 1)[0]
+    assert "use-case.spec-report.md#keep-recorded-work-available>" in requirements_body
+    assert "Deleted entries must stay absent." in requirements_body
     for name in ("Components", "Interfaces"):
         assert follow(root, name).name == name.lower() + ".md"
-    feature = follow(follow(root, "Features"), "Pick up where I left off")
+    feature = follow(follow(root, "All features"), "Pick up where I left off")
     promise = follow(feature, "Preserve tasks across restart")
     for name, (collection, source) in {
         "Personal task list": (None, "specs/personal-task-list.system.spec.md"),
-        "Pick up where I left off": ("Features", "specs/features/pick-up-where-i-left-off.feature.spec.md"),
+        "Pick up where I left off": ("All features", "specs/features/pick-up-where-i-left-off.feature.spec.md"),
         "Task service": ("Components", "app/specs/task-service.component.spec.md"),
-        "Local task storage": ("Capabilities", "specs/capabilities/local-task-storage.capability.spec.md"),
+        "Local task storage": ("All capabilities", "specs/capabilities/local-task-storage.capability.spec.md"),
         "My checklist": ("Concept uses", "specs/personal-task-list.system.spec.md"),
     }.items():
         declaration = (project / source).read_text(encoding="utf-8")
@@ -209,7 +224,7 @@ def spec_journey(cli, tmp):
         anchor = re.sub(r"[^a-z0-9 -]", "", title.lower()).replace(" ", "-")
         assert (source.resolve(), anchor) in claims, source
     component = follow(follow(root, "Components"), "Task service")
-    assert follow(follow(follow(root, "Capabilities"), "Local task storage"), "Task service") == component
+    assert follow(follow(follow(root, "All capabilities"), "Local task storage"), "Task service") == component
     assert component == project / "specification/components/task-service/task-service.component.spec-report.md"
     component_requirements = follow(component, "Requirements")
     acknowledgement = follow(component_requirements, "Acknowledge after commit")
@@ -249,7 +264,7 @@ def spec_journey(cli, tmp):
     assert requirements == root.parent / "requirements.md"
     assert follow(requirements, "Preserve tasks across restart") == promise
     assert follow(requirements, "Task service") == component_requirements
-    use_cases = follow(root, "Use cases")
+    use_cases = follow(root, "All use cases")
     assert use_cases == root.parent / "use-cases.md"
     assert follow(use_cases, "Return to my list") == use_case
     assert not (component.parent / "use-cases.md").exists()

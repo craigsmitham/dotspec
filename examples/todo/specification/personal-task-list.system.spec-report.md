@@ -15,7 +15,11 @@ A single-user task list that stores open and completed tasks on one computer.
 | [User needs](<#user-needs>) | [Jobs](<jobs.md>) |
 | [Scope](<#scope>) | Out of scope · Environment · Assumptions · Project context |
 | [System topology](<#system-topology>) | [Components](<components.md>) · [Interfaces](<interfaces.md>) |
-| [Requirements](<#requirements>) | [Features](<features.md>) · [Capabilities](<capabilities.md>) · [Use cases](<use-cases.md>) · [Concept definitions](<concepts.md>) · [Concept uses](<concept-uses.md>) · [All requirements](<requirements.md>) |
+| [Features](<#features>) | [All features](<features.md>) |
+| Capabilities | [All capabilities](<capabilities.md>) |
+| [Use cases](<#use-cases>) | [All use cases](<use-cases.md>) |
+| [Concepts](<#concepts>) | [Concept definitions](<concepts.md>) · [Concept uses](<concept-uses.md>) |
+| [Requirements](<#requirements>) | [All requirements](<requirements.md>) |
 | [Quality attributes](<#quality-attributes>) | [Attribute index](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
 
 ## Purpose
@@ -82,26 +86,18 @@ flowchart LR
 ```
 
 - **Component** · [Task service](<components/task-service/task-service.component.spec-report.md>) — The local service that handles browser requests and saves changes to the task list.
-  - Provides [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>).
+  - Provides [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>) — Retains accepted task changes between sessions on the same computer.
 - **Provided interface** · [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — The browser presents open and completed tasks and accepts changes through HTML forms.
 
-## Requirements
-
-### Behavior
-
-**Features**
+## Features
 
 - [Pick up where I left off](<features/pick-up-where-i-left-off.feature.spec-report.md>) — Reopens the task list with each task in its last saved state.
 
-**Capabilities**
-
-- [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>) — Retains accepted task changes between sessions on the same computer.
-
-**Use cases**
+## Use cases
 
 - [Return to my list](<use-cases/return-to-my-list.use-case.spec-report.md>) — Pick up an outstanding task and bring a finished one back for follow-up.
 
-### Concepts
+## Concepts
 
 **Concept definitions**
 
@@ -110,10 +106,13 @@ flowchart LR
 **Concept uses**
 
 - [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — The checklist used to track one person’s open and completed tasks.
+  - Uses [Checklist](<concepts/checklist.concept.spec-report.md>)
 
-### Obligations
+## Requirements
 
-[Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>) refines [Keep recorded work available](<use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>).
+[Return to my list](<use-cases/return-to-my-list.use-case.spec-report.md>) includes [Keep recorded work available](<use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>). The list must make previously recorded entries available when the person returns.
+
+[Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>) refines that promise. After the service acknowledges a change, stopping and restarting it on the same database must preserve each surviving entry's identity, title and completion state. Deleted entries must stay absent.
 
 ## Quality attributes
 

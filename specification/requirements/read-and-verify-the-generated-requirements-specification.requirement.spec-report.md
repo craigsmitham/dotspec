@@ -21,8 +21,12 @@ The project's `SPEC.md` gives the system name and one link to `specification/<na
 
 The system overview opens with the system name and authored description. Its
 section map links directly to populated indexes. Readers can follow goals,
-user needs, scope, system topology, requirements, quality attributes, and
-open questions in that order when present. The topology shows declared immediate
+business rules, user needs, scope, system topology, features, capabilities,
+use cases, concepts, requirements, quality attributes, and open questions in
+that order when present. Features, capabilities, use cases, concepts, and
+requirements have separate rows. Concept definitions, named uses, and
+synchronizations share the Concepts row. The Requirements row leads to
+standalone requirements and embedded obligations. The topology shows declared immediate
 parts and boundary relationships in a Mermaid diagram and in linked text.
 The overview displays the full declared quality hierarchy with definition
 previews. A shared attribute appears under each declared parent, with its

@@ -271,15 +271,61 @@ func TestOverviewKeepsNavigationOnlyCollectionsInTheMap(t *testing.T) {
 			t.Fatal(err)
 		}
 		page := string(data)
-		for _, route := range []string{"[All business rules](<business-rules.md>)", "[Features](<features.md>)"} {
+		for _, route := range []string{"[All business rules](<business-rules.md>)", "| Features | [All features](<features.md>) |"} {
 			if strings.Count(page, route) != 1 {
 				t.Fatalf("expected one navigation route %s in %s", route, page)
 			}
 		}
-		if strings.Contains(page, "## Requirements\n") || strings.Contains(page, "### Behavior\n") ||
+		if strings.Contains(page, "## Requirements\n") || strings.Contains(page, "## Features\n") ||
 			strings.Contains(page, "## Business rules\n") != (narrative != "") || !strings.Contains(page, narrative) {
 			t.Fatal(page)
 		}
+	}
+}
+
+func TestSystemOverviewPreservesAuthoredObligationsUnderRequirements(t *testing.T) {
+	t.Chdir(t.TempDir())
+	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
+	writeFixture(t, "specs/notes.system.spec.md", `---
+type: system-spec
+---
+# Notes
+
+## Purpose
+Keep notes according to the [storage promises](#obligations).
+
+## Scope
+One local notebook.
+
+## Behavior
+An author can close and reopen a notebook.
+
+## Obligations
+
+### Retain edits
+Preserve saved edits when the notebook closes.
+`)
+	writeFixture(t, "specs/capabilities/storage.capability.spec.md", "---\ntype: capability-spec\n---\n# Notebook storage\n\n## Description\nStores notes on this device.\n")
+	if code, out, errOut := invoke("spec", "build"); code != 0 {
+		t.Fatal(code, out, errOut)
+	}
+	data, err := os.ReadFile("specification/notes.system.spec-report.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{
+		"[storage promises](<#requirements>)",
+		"## Behavior\n\nAn author can close and reopen a notebook.",
+		"## Capabilities\n\n- [Notebook storage](<capabilities/notebook-storage.capability.spec-report.md>) — Stores notes on this device.",
+		"## Requirements\n\n### Retain edits",
+	} {
+		if !strings.Contains(string(data), want) {
+			t.Errorf("missing %q in %s", want, data)
+		}
+	}
+	index, err := os.ReadFile("specification/requirements.md")
+	if err != nil || !strings.Contains(string(index), "[Retain edits](<notes.system.spec-report.md#retain-edits>)") {
+		t.Fatalf("requirements index: %s, %v", index, err)
 	}
 }
 

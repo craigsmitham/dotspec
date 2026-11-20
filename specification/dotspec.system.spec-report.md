@@ -13,7 +13,9 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 | [Goals](<#goals>) |  |
 | [User needs](<#user-needs>) | [Jobs](<jobs.md>) |
 | [Scope](<#scope>) | [Glossary](<glossary.md>) |
-| [Requirements](<#requirements>) | [Use cases](<use-cases.md>) · [Concept definitions](<concepts.md>) · [All requirements](<requirements.md>) |
+| Use cases | [All use cases](<use-cases.md>) |
+| [Concepts](<#concepts>) | [Concept definitions](<concepts.md>) |
+| Requirements | [All requirements](<requirements.md>) |
 | [Quality attributes](<#quality-attributes>) | [Attribute index](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
 
 ## Purpose
@@ -85,11 +87,7 @@ verification role beside the link. A link alone confers no authority.
 The [contributing guide](<../CONTRIBUTING.md#specification-tests-and-implementation-tests>)
 explains how this repository assigns those roles to its tests.
 
-## Requirements
-
-### Concepts
-
-**Concept definitions**
+## Concepts
 
 - [Command Invocation](<concepts/cli-interaction.concept.spec-report.md>) — Let a person or program submit an operation and determine its outcome through a consistent process interface.
 - [Job Map](<concepts/job-map.concept.spec-report.md>) — Make an accomplishment's steps and success criteria inspectable, so people can discuss what the work involves and how success is judged.

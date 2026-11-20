@@ -48,7 +48,11 @@ Choose a section to read in order or open a collection index directly.
 | User needs | Stakeholders, jobs, and desired outcomes |
 | Scope | Inclusions, exclusions, environment, assumptions, constraints, project context, and glossary |
 | System topology | Immediate parts, boundary partners, and required or provided interfaces, with a Mermaid diagram and linked descriptions |
-| Requirements | Features, capabilities, and use cases under **Behavior**. Definitions, named uses, and synchronizations under **Concepts**. **All requirements** includes embedded obligations and component routes. |
+| Features | Product features and their authored descriptions |
+| Capabilities | Capabilities the system provides. When topology identifies a provider, its entry describes the capability. |
+| Use cases | Interactions and their authored goals |
+| Concepts | Concept definitions, named uses, and synchronizations. A named use links to its definition when it resolves to a report. |
+| Requirements | Standalone requirements and named obligations within other specifications. **All requirements** opens the index, including routes by component. |
 | Quality attributes | The expanded hierarchy of declared attributes with linked definitions, the attribute index, and project quality models |
 | Open questions | Decisions that remain open in the system specification |
 
