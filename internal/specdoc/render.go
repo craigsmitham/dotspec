@@ -16,7 +16,6 @@ import (
 	"github.com/craigsmitham/dotspec/internal/model"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/text"
-	"github.com/yuin/goldmark/util"
 )
 
 const reviewPath = "specification/requirements-review.report.md"
@@ -25,14 +24,7 @@ type writer struct {
 	page                             *Page
 	file, titleMarkdown, titleAnchor string
 	out                              strings.Builder
-	passageEnds                      []passageEnd
 	notePrefixes                     map[*sourceFile]string // keep footnote labels local when combining sources
-}
-
-// A passage may receive its first incoming link from a page rendered later.
-type passageEnd struct {
-	heading *heading
-	offset  int
 }
 
 func (p *planner) newPage(file string, document Document, title string) *writer {
@@ -45,6 +37,11 @@ func (w *writer) finish() {
 	header.WriteString("---\ngenerated_by: dotspec\n")
 	if w.page.Type != "" {
 		fmt.Fprintf(&header, "type: %s\n", w.page.Type)
+	}
+	if source := w.page.Documents; source != "" {
+		fmt.Fprintf(&header, "source: %q\n", source)
+	} else if w.page.Type == RequirementsReviewReport {
+		header.WriteString("source: null\n")
 	}
 	header.WriteString("---\n")
 	if w.titleAnchor != "" {
@@ -94,84 +91,34 @@ func (p *planner) render() *Plan {
 	entry.titleMarkdown = inlineText(p.governing.name.title)
 	entry.text(entry.link("Read the system specification", p.governing.file))
 	entry.finish()
-	var subjects []*writer
 	for _, s := range p.subjects {
-		subjects = append(subjects, p.renderSubject(s))
+		p.renderSubject(s)
 	}
 	p.renderReview()
-	p.linkedPassages = linkedPassages(p.plan)
-	for _, w := range subjects {
-		body := w.out.String()
-		w.out.Reset()
-		start := 0
-		for _, end := range w.passageEnds {
-			h := end.heading
-			if !h.obligation && !p.linkedPassages[p.targets[h.node]] {
-				continue
-			}
-			w.out.WriteString(body[start:end.offset])
-			w.text(link(h.sourceLabel(), relativeURL(w.file, h.owner.source.path, h.anchor)))
-			start = end.offset
-		}
-		w.out.WriteString(body[start:])
-		w.finish()
-	}
 	return p.plan
 }
 
-// Only visible routes into a generated passage make it an independent entry point.
-func linkedPassages(plan *Plan) map[string]bool {
-	linked := map[string]bool{}
-	for file, page := range plan.Pages {
-		for _, dest := range page.RequiredLinks {
-			u, err := url.Parse(dest)
-			if err != nil || u.Fragment == "" || u.IsAbs() || u.Host != "" || path.IsAbs(u.Path) {
-				continue
-			}
-			target := file
-			if u.Path != "" {
-				target = path.Join(path.Dir(file), u.Path)
-			}
-			if plan.Pages[target] != nil {
-				linked[target+"#"+u.Fragment] = true
-			}
-		}
-	}
-	return linked
-}
-
 func (h *heading) sourceLabel() string {
-	switch h.subjectKind {
-	case "QualityAttribute":
-		return "View definition source"
-	case "ObligationClause":
-		return "View obligation source"
-	case "ConceptAction":
-		return "View action source"
-	default:
-		return "View source for “" + inlineText(h.title) + "”"
-	}
+	return "View source for “" + inlineText(h.title) + "”"
 }
 
-func (p *planner) renderSubject(s *subject) *writer {
+func (p *planner) renderSubject(s *subject) {
 	w := p.newPage(s.file, subjectDocument(s.file, s.source, s.name), s.name.title)
 	w.titleMarkdown = p.headingMarkdown(w, s.source, s.name)
 	w.titleAnchor = s.name.explicitAnchor
-	ref := sourceReference(s.source.data)
 	if s.kind() == "System" {
-		p.renderSystem(w, s, ref)
+		p.renderSystem(w, s)
 	} else {
-		p.renderSubjectBody(w, s, ref)
+		p.renderSubjectBody(w, s)
 	}
 	if s.section("Related specifications") == nil {
 		p.relationships(w, s.name, true)
 	}
 	p.appendFootnotes(w, s)
-	w.text("[" + ref + "]: <" + w.page.Documents + ">")
-	return w
+	w.finish()
 }
 
-func (p *planner) renderSubjectBody(w *writer, s *subject, ref string) {
+func (p *planner) renderSubjectBody(w *writer, s *subject) {
 	headings := readingOrder(s)
 	if hasDescriptionSection(s.kind()) && s.section("Description") != nil {
 		end := slices.IndexFunc(headings, func(h *heading) bool {
@@ -187,7 +134,7 @@ func (p *planner) renderSubjectBody(w *writer, s *subject, ref string) {
 	if parent == nil {
 		parent = s.system
 	}
-	w.text(w.link(parent.name.title, parent.file) + " · [View source][" + ref + "]")
+	w.text(w.link(parent.name.title, parent.file))
 	var indexes []string
 	for _, title := range slices.Sorted(maps.Keys(s.indexes)) {
 		idx := s.indexes[title]
@@ -198,47 +145,24 @@ func (p *planner) renderSubjectBody(w *writer, s *subject, ref string) {
 	p.renderHeadings(w, s, headings)
 }
 
-// Keep authored reference definitions and literal bracketed text independent
-// of the generated link, including when a subject moves to its own report.
-func sourceReference(authored string) string {
-	authored = string(util.DoFullUnicodeCaseFolding([]byte(authored)))
-	ref := "subject-source"
-	for n := 2; strings.Contains(authored, ref); n++ {
-		ref = fmt.Sprintf("subject-source-%d", n)
-	}
-	return ref
-}
-
 func (p *planner) renderHeadings(w *writer, s *subject, headings []*heading) {
-	p.renderPassage(w, s, headings, 0, false, "")
+	p.renderPassage(w, s, headings, 0, false)
 }
 
 // A system overview can introduce an authored passage under a shared section
-// heading or at a deeper level. Its body and source links stay together.
-func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offset int, merged bool, title string) {
-	var open []*heading
-	closePassages := func(level int) {
-		for len(open) > 0 && open[len(open)-1].level >= level {
-			w.passageEnds = append(w.passageEnds, passageEnd{open[len(open)-1], w.out.Len()})
-			open = open[:len(open)-1]
-		}
-	}
+// heading or at a deeper level. Its authored hierarchy stays together.
+func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offset int, merged bool) {
 	for _, h := range headings {
 		if h.owner != s {
 			continue
 		}
-		closePassages(h.level)
 		if h != s.name {
-			open = append(open, h)
 			// Preserve addressability for duplicated headings moved onto different pages.
 			if h.explicitAnchor != "" {
 				w.text(`<a id="` + html.EscapeString(h.explicitAnchor) + `"></a>`)
 			}
 			if !merged || h != headings[0] {
 				caption := p.headingMarkdown(w, s.source, h)
-				if h == headings[0] && title != "" && title != h.title {
-					caption = title
-				}
 				w.text(strings.Repeat("#", min(6, max(2, h.level-s.name.level+1+offset))) + " " + caption)
 			}
 			if h.subjectKind != "" {
@@ -262,7 +186,6 @@ func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offs
 			p.relationships(w, h, false)
 		}
 	}
-	closePassages(0)
 }
 
 // readingOrder promotes a few entire authored sections for the document's

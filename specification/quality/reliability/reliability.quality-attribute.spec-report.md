@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: quality-attribute-spec-report
+source: "../../../specs/quality/reliability/reliability.quality-attribute.spec.md#reliability"
 ---
 # Reliability
 
-[dotspec](<../../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../../dotspec.system.spec-report.md>)
 
 ## Definition
 
@@ -17,5 +18,3 @@ conditions.
 
 - [Repeatability](<repeatability/repeatability.quality-attribute.spec-report.md>)
 - [Source preservation](<source-preservation/source-preservation.quality-attribute.spec-report.md>)
-
-[subject-source]: <../../../specs/quality/reliability/reliability.quality-attribute.spec.md#reliability>

@@ -44,7 +44,6 @@ type heading struct {
 	node, title, anchor, explicitAnchor string
 	start, end, bodyEnd, level          int
 	owner                               *subject
-	obligation                          bool
 	qualityAttribute                    bool
 	inGlossary                          bool
 	subjectKind                         string
@@ -74,7 +73,6 @@ type planner struct {
 	governing       *subject
 
 	glossaryTargets map[string]map[string]string // scoped routes for terms shared between systems
-	linkedPassages  map[string]bool
 	routes          map[string][]route
 }
 
@@ -205,12 +203,7 @@ func (p *planner) read() error {
 		h := headingByNode[nameNode(r)]
 		if h != nil {
 			h.subjectKind = attr(r, "kind")
-			switch attr(r, "kind") {
-			case "ObligationClause":
-				h.obligation = true
-			case "QualityAttribute", "SystemQualityAttribute":
-				h.qualityAttribute = true
-			}
+			h.qualityAttribute = h.subjectKind == "QualityAttribute" || h.subjectKind == "SystemQualityAttribute"
 		}
 		if sf == nil || families[attr(r, "kind")] == "" || h == nil {
 			continue

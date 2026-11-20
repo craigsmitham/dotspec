@@ -25,6 +25,11 @@ func addSourceContracts(p *planner) error {
 		page.Title = s.name.title
 		page.RequiredContent = nil
 		page.RequiredSectionContent = map[string]string{}
+		for _, section := range s.overview {
+			if section.level == 2 {
+				requireRoute(page, relativeURL(s.file, s.file, section.anchor), section.title)
+			}
+		}
 		for _, h := range readingOrder(s) {
 			if h.owner != s {
 				continue
@@ -34,11 +39,6 @@ func addSourceContracts(p *planner) error {
 				page.RequiredAnchors = append(page.RequiredAnchors, dest.Fragment)
 				if h.subjectKind != "" {
 					page.SectionDocs[dest.Fragment] = subjectDocument(s.file, s.source, h)
-				}
-				if h.obligation || p.linkedPassages[p.targets[h.node]] {
-					source := relativeURL(s.file, s.source.path, h.anchor)
-					requireRoute(page, source, h.sourceLabel())
-					requireSectionRoute(page, dest.Fragment, source)
 				}
 			}
 			for _, n := range s.source.links {
@@ -65,7 +65,6 @@ func addSourceContracts(p *planner) error {
 				}
 			}
 		}
-		requireRoute(page, relativeURL(s.file, s.source.path, s.name.anchor), "View source")
 		for title, idx := range s.indexes {
 			indexPage := p.plan.Pages[idx.file]
 			if indexPage == nil {

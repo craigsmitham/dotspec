@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
+source: "../../specs/requirements/specification-project-isolation.requirement.spec.md#isolate-specification-projects-in-a-workspace"
 ---
 # Isolate specification projects in a workspace
 
-[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 
@@ -34,12 +35,8 @@ The [discovery tests](<../../internal/specfile/workspace_test.go>) and
 [CLI scenarios](<../../internal/cli/workspace_test.go>) provide executable cases.
 Check the actual repository's isolated root export and all-project check as well.
 
-[View source for “System verification plan”](<../../specs/requirements/specification-project-isolation.requirement.spec.md#system-verification-plan>)
-
 ## Rationale
 
 A reference app or unrelated monorepo product must not become part of dotspec's own
 specification collection because of directory nesting. System relationships remain
 explicit domain assertions, independent of tooling partitions.
-
-[subject-source]: <../../specs/requirements/specification-project-isolation.requirement.spec.md#isolate-specification-projects-in-a-workspace>

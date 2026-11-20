@@ -48,8 +48,7 @@ func TestLiftedSectionPreservesAuthoredMarkdown(t *testing.T) {
 		"[![diagram](<../../module%231/specs/icon.svg>)](<../../module%231/specs/guide%23a.md?mode=reader#setup>)",
 		"[details](<../../module%231/specs/guide%23a.md#setup>)",
 		"[^note]: See [setup](<../../module%231/specs/guide%23a.md#setup>).",
-		"[View source][subject-source-2]",
-		"[subject-source-2]: <../../module%231/specs/sample-system.system.spec.md#display-a-note>",
+		`source: "../../module%231/specs/sample-system.system.spec.md#display-a-note"`,
 	} {
 		if !strings.Contains(out, want) {
 			t.Fatalf("%s missing %q\n%s", file, want, out)

@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: use-case-spec-report
+source: "../../specs/use-cases/resume-list.use-case.spec.md#return-to-my-list"
 ---
 # Return to my list
 
-[Personal task list](<../personal-task-list.system.spec-report.md>) · [View source][subject-source]
+[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Goal
 
@@ -98,14 +99,8 @@ Record a task, complete it and return to both views. Reopen it and compare its
 identity with the original. For an interruption between sessions, follow the
 [restart verification plan](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md#system-verification-plan>).
 
-[View source for “System verification plan”](<../../specs/use-cases/resume-list.use-case.spec.md#system-verification-plan>)
-
-[View obligation source](<../../specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available>)
-
 ## Related specifications
 
 **Applies here** · [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
 
 **Feature** · [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)
-
-[subject-source]: <../../specs/use-cases/resume-list.use-case.spec.md#return-to-my-list>

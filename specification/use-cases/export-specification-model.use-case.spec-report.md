@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: use-case-spec-report
+source: "../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-model-for-review-or-integration"
 ---
 # Export a specification model for review or integration
 
-[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Goal
 
@@ -157,5 +158,3 @@ coverage or successful execution of every branch.
 [Specification Inspection](<../concepts/specification-inspection.concept.spec-report.md>)
 provides the existing inspection context. The source, document-content and domain
 layers are explained in [Specification model](<../../docs/reference/specification-model.md>).
-
-[subject-source]: <../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-model-for-review-or-integration>

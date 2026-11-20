@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: quality-attribute-spec-report
+source: "../../../../specs/quality/usability/accessibility/accessibility.quality-attribute.spec.md#accessibility"
 ---
 # Accessibility
 
-[dotspec](<../../../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../../../dotspec.system.spec-report.md>)
 
 ## Definition
 
@@ -16,5 +17,3 @@ can use dotspec.
 **Classifies** · [Diagnostic severity is available without styling](<../../../requirements/diagnostic-severity.requirement.spec-report.md>)
 
 **Parent attribute** · [Usability](<../usability.quality-attribute.spec-report.md>)
-
-[subject-source]: <../../../../specs/quality/usability/accessibility/accessibility.quality-attribute.spec.md#accessibility>

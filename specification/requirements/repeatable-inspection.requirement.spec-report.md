@@ -1,17 +1,16 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
+source: "../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports"
 ---
 # Repeated inspections produce equivalent reports
 
-[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 
 Repeated inspections must produce equivalent structured reports, including the
 ordering of array elements.
-
-[View source for “Statement”](<../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#statement>)
 
 ## Applies to
 
@@ -21,16 +20,12 @@ state, permissions, and environment. Source files and execution conditions
 remain unchanged during and between runs. Completed scans can contain
 structural errors or writing advice.
 
-[View source for “Applies to”](<../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#applies-to>)
-
 ## Criterion
 
 For the equivalence required by [Statement](<#statement>), parsed JSON values must
 be equal, preserving array order. JSON object key order and insignificant whitespace
 do not affect equivalence. The comparison applies only within the operating context
 in [Applies to](<#applies-to>).
-
-[View source for “Criterion”](<../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#criterion>)
 
 ## System verification plan
 
@@ -41,8 +36,6 @@ errors, and shared system context. Retain differing reports on test failure.
 
 The [CLI quality-contract tests](<../../internal/cli/quality_contracts_test.go>)
 check this criterion. The obligation remains defined in this document.
-
-[View source for “System verification plan”](<../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#system-verification-plan>)
 
 ## Rationale
 
@@ -56,5 +49,3 @@ describes inspection. The [check report contract](<../../docs/reference/inspecti
 defines report fields and their ordering rules.
 
 **Quality attribute** · [Repeatability](<../quality/reliability/repeatability/repeatability.quality-attribute.spec-report.md>)
-
-[subject-source]: <../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports>

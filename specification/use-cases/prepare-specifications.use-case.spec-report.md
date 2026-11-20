@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: use-case-spec-report
+source: "../../specs/use-cases/prepare-specifications.use-case.spec.md#prepare-specifications-for-review"
 ---
 # Prepare specifications for review
 
-[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Goal
 
@@ -70,5 +71,3 @@ an additional CLI contract. Linked user tasks explain existing command behavior.
 The [authoring guide](<../../docs/handbook/use-cases.md#plan-growth-without-weakening-promises>)
 explains how delivery increments can span these narratives without changing their
 behavioral authority.
-
-[subject-source]: <../../specs/use-cases/prepare-specifications.use-case.spec.md#prepare-specifications-for-review>

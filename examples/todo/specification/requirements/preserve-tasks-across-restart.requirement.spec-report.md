@@ -1,18 +1,17 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
+source: "../../specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart"
 ---
 # Preserve tasks across restart
 
-[Personal task list](<../personal-task-list.system.spec-report.md>) · [View source][subject-source]
+[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Statement
 
 After the service acknowledges a change, stopping and restarting it on the same
 database must preserve each surviving entry's identity, title and completion state.
 Deleted entries must stay absent.
-
-[View source for “Statement”](<../../specs/requirements/restart.requirement.spec.md#statement>)
 
 ## Applies to
 
@@ -33,8 +32,6 @@ Count missing, unexpected or changed entries compared with the last acknowledged
 
 Zero discrepancies across the two views.
 
-[View source for “Criterion”](<../../specs/requirements/restart.requirement.spec.md#criterion>)
-
 ## System verification plan
 
 ### Subject
@@ -49,8 +46,6 @@ The [restart statement](<#statement>) and its [criterion](<#criterion>).
 
 The [restart acceptance test](<../../tests/acceptance.py>) submits the public forms,
 stops the process, starts a new process on the same file and compares both views.
-
-[View source for “System verification plan”](<../../specs/requirements/restart.requirement.spec.md#system-verification-plan>)
 
 ## Refines
 
@@ -80,8 +75,6 @@ and whether each promised result can be checked.
 Ask a reviewer to identify when preservation starts, which entries must survive,
 and what would count as a discrepancy. Record any ambiguity in the wording.
 
-[View source for “Requirements verification plan”](<../../specs/requirements/restart.requirement.spec.md#requirements-verification-plan>)
-
 ## Rationale
 
 A list that loses track of earlier decisions forces the person to reconstruct them.
@@ -91,5 +84,3 @@ A list that loses track of earlier decisions forces the person to reconstruct th
 **Feature** · [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)
 
 **Quality attribute** · [Durability](<../quality/durability/durability.quality-attribute.spec-report.md>)
-
-[subject-source]: <../../specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>

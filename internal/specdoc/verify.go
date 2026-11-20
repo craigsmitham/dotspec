@@ -29,8 +29,9 @@ import (
 )
 
 type pageHeader struct {
-	Type        string `yaml:"type"`
-	GeneratedBy string `yaml:"generated_by"`
+	Source      yaml.Node `yaml:"source"`
+	Type        string    `yaml:"type"`
+	GeneratedBy string    `yaml:"generated_by"`
 }
 
 func splitHeader(data []byte) (pageHeader, []byte) {
@@ -47,11 +48,9 @@ func splitHeader(data []byte) (pageHeader, []byte) {
 }
 
 var anchorAttribute = regexp.MustCompile(`(?i)^<a\s+(?:[^>]*?\s)?(?:id|name)=["']([^"']+)["']`)
-var subjectSourceReference = regexp.MustCompile(`^subject-source(?:-[1-9][0-9]*)?$`)
 var markdownParser = goldmark.New(goldmark.WithExtensions(extension.GFM), goldmark.WithParserOptions(parser.WithAutoHeadingID())).Parser()
 
 type parsedPage struct {
-	subjectSources []string
 	sectionDocs    map[string][]Document
 	firstList      map[string][]string
 	header         pageHeader
@@ -122,9 +121,6 @@ func parseGenerated(data []byte) parsedPage {
 		case *ast.Link:
 			if label := visibleText(n, body); label != "" {
 				dest := string(util.URLEscape(n.Destination, true))
-				if ref := n.Reference; ref != nil && ref.Type == ast.ReferenceLinkFull && subjectSourceReference.MatchString(string(ref.Value)) {
-					p.subjectSources = append(p.subjectSources, string(n.Destination))
-				}
 				p.links[dest]++
 				p.labels[dest] = append(p.labels[dest], label)
 				for _, section := range ancestors {
@@ -205,12 +201,15 @@ func checkPage(expected *Page, p parsedPage, report func(string, string)) {
 	if p.header.GeneratedBy != "dotspec" || p.header.Type != expected.Type {
 		report("spec.document-type", fmt.Sprintf("expected a generated %s document for %q", expected.Type, expected.Title))
 	}
-	var claims []string
-	if expected.Documents != "" {
-		claims = []string{expected.Documents}
-	}
-	if !slices.Equal(p.subjectSources, claims) {
-		report("spec.document-type", fmt.Sprintf("expected subject source %q for %q", expected.Documents, expected.Title))
+	switch {
+	case expected.Documents != "":
+		if p.header.Source.ShortTag() != "!!str" || p.header.Source.Value != expected.Documents {
+			report("spec.document-type", fmt.Sprintf("expected authored subject %q for %q", expected.Documents, expected.Title))
+		}
+	case expected.Type == RequirementsReviewReport:
+		if p.header.Source.Kind != yaml.ScalarNode || p.header.Source.ShortTag() != "!!null" {
+			report("spec.document-type", "expected source: null for the project-wide requirements review")
+		}
 	}
 	if len(p.titles) != 1 || p.titles[0] != contentText(expected.Title) {
 		report("spec.title", "expected one title naming "+expected.Title)
@@ -308,8 +307,8 @@ func validateRendered(root string, plan *Plan, files map[string][]byte) ([]diagn
 	claims := map[string]string{}
 	for _, rel := range slices.Sorted(maps.Keys(pages)) {
 		p := pages[rel]
-		if p.header.GeneratedBy == "dotspec" && len(p.subjectSources) == 1 {
-			source, err := url.Parse(p.subjectSources[0])
+		if p.header.GeneratedBy == "dotspec" && p.header.Source.ShortTag() == "!!str" && p.header.Source.Value != "" {
+			source, err := url.Parse(p.header.Source.Value)
 			if err == nil && !source.IsAbs() {
 				key := (&url.URL{Path: path.Join(path.Dir(rel), source.Path), Fragment: source.Fragment}).String()
 				if previous, ok := claims[key]; ok {
@@ -329,6 +328,9 @@ func validateRendered(root string, plan *Plan, files map[string][]byte) ([]diagn
 		}
 		checkPage(expected, p, report)
 		destinations := maps.Clone(p.resources)
+		if p.header.Source.ShortTag() == "!!str" {
+			destinations[p.header.Source.Value] = true
+		}
 		for dest := range p.links {
 			destinations[dest] = true
 		}

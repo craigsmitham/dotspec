@@ -31,11 +31,13 @@ contexts define the same word, each entry names its context. A relationship
 between terms links in both reading directions, with the original statement
 and examples available in the declaring entry.
 
-From a subject page’s navigation, one link opens the authored heading. The
-reference definition carries the page’s source URI once. From an embedded
-obligation or an authored passage reached by a report link, one link at the end
-of the passage opens its own source heading. The project check identifies
-duplicate page claims and missing or misdirected source links.
+Each subject report identifies its authored file and heading once in the YAML
+`source` field using a URI relative to the report. This field supplies the
+source attribution for the page and its passages. The project-wide requirements
+review declares `source: null` because it covers multiple specifications.
+Readers can follow supporting references beside the content they supply.
+The project check identifies duplicate page claims and missing or misdirected
+source metadata.
 
 ## System verification plan
 

@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: job-spec-report
+source: "../../specs/jobs/manage-requirements.job.spec.md#manage-requirements"
 ---
 # Manage Requirements
 
-[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Job
 
@@ -185,5 +186,3 @@ The map, outcomes, and progress case are working hypotheses based on dotspec's
 intended purpose. No interview or outcome research has validated them yet.
 The map's completeness has not been established. It includes decisions and
 collaboration performed outside the CLI.
-
-[subject-source]: <../../specs/jobs/manage-requirements.job.spec.md#manage-requirements>

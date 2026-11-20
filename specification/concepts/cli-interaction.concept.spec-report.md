@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: concept-spec-report
+source: "../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#command-invocation"
 ---
 # Command Invocation
 
-[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Purpose
 
@@ -73,5 +74,3 @@ restating those rules here. A passing example does not settle untested cases.
 The Go test harness executes these scripts; it does not define additional
 product obligations. The repository's [specification-test convention](<../../CONTRIBUTING.md#specification-tests-and-implementation-tests>)
 identifies the sources that its coverage script requires.
-
-[subject-source]: <../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#command-invocation>

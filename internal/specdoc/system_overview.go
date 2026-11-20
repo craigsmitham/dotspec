@@ -29,7 +29,9 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 	validation = append(validation, "Open questions", "Evidence")
 	sections := []overviewSection{
 		{sources: []string{"Description"}},
-		{title: "Goals", level: 2, sources: []string{"Purpose", "Goals", "Business rules"}, collections: []string{"Business rules"}},
+		{title: "Purpose", level: 2, sources: []string{"Purpose"}},
+		{title: "Goals", level: 2, sources: []string{"Goals"}},
+		{title: "Business rules", level: 2, sources: []string{"Business rules"}, collections: []string{"Business rules"}},
 		{title: "User needs", level: 2, sources: []string{"User needs", "Stakeholders", "Jobs"}, collections: []string{"Jobs"}},
 		{title: "Scope", level: 2, sources: []string{"Scope", "Out of scope", "Environment", "Assumptions", "Constraints", assessment.AssumptionValidation.Definition().Heading(), "Project context", "Glossary"}, collections: []string{"Glossary"}},
 		{title: "System topology", level: 2, sources: []string{"System topology", "Part of", "Child systems", "Systems", "Components", "Interacts with", "Required interfaces", "Provided interfaces", "Interfaces"}, collections: []string{"Systems", "Components", "Interfaces"}},
@@ -107,19 +109,12 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 	return result
 }
 
-func overviewPassageTitle(section string, h *heading) string {
-	if section == "Goals" && h.title == "Goals" {
-		return "Objectives"
-	}
-	return h.title
-}
-
 func (section overviewSection) merges(i int) bool {
 	h := section.passages[i][0]
 	if section.level == 0 {
 		return h.title == "Description" && i == 1
 	}
-	return i == 0 && (h.title == section.title || section.title == "Goals" && h.title == "Purpose")
+	return i == 0 && h.title == section.title
 }
 
 func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
@@ -149,11 +144,7 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 				}
 				anchor := section.anchor
 				if k != 0 || !section.merges(j) {
-					title := h.title
-					if k == 0 {
-						title = overviewPassageTitle(section.title, h)
-					}
-					anchor = string(ids.Generate([]byte(title), ast.KindHeading))
+					anchor = string(ids.Generate([]byte(h.title), ast.KindHeading))
 					if explicit {
 						h.explicitAnchor = "passage." + h.anchor
 						anchor = h.explicitAnchor
@@ -197,7 +188,7 @@ func overviewIndexLabel(title string) string {
 	return title
 }
 
-func (p *planner) renderSystem(w *writer, s *subject, ref string) {
+func (p *planner) renderSystem(w *writer, s *subject) {
 	for _, title := range slices.Sorted(maps.Keys(s.indexes)) {
 		p.renderIndex(s, title, s.indexes[title])
 	}
@@ -214,15 +205,14 @@ func (p *planner) renderSystem(w *writer, s *subject, ref string) {
 			if merged {
 				offset--
 			}
-			p.renderPassage(w, s, group, offset, merged, overviewPassageTitle(section.title, group[0]))
-
+			p.renderPassage(w, s, group, offset, merged)
 		}
 		if i == 0 {
 			var nav []string
 			if s.parent != nil {
 				nav = append(nav, w.link(s.parent.name.title, s.parent.file))
 			}
-			nav = append(nav, w.link("Requirements review", reviewPath), "[View source]["+ref+"]")
+			nav = append(nav, w.link("Requirements review", reviewPath))
 			w.text(strings.Join(nav, " · "))
 			p.overviewNavigation(w, s)
 			continue
@@ -291,7 +281,7 @@ func (p *planner) overviewNavigation(w *writer, s *subject) {
 				if p.targets[h.node] == s.file+"#"+section.anchor && h.title == section.title {
 					continue
 				}
-				links = append(links, inlineText(overviewPassageTitle(section.title, h)))
+				links = append(links, inlineText(h.title))
 			}
 		}
 		if len(links) == 0 && len(section.passages) > 0 {

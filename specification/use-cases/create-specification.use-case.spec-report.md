@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: use-case-spec-report
+source: "../../specs/use-cases/create-specification.use-case.spec.md#create-a-specification-draft"
 ---
 # Create a specification draft
 
-[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Goal
 
@@ -65,5 +66,3 @@ be edited without invoking init.
 The [init commands](<../../docs/reference/cli.md>) and linked requirement define command behavior.
 The [use-case command examples](<../../internal/integration/testdata/use-cases.txtar>)
 define the illustrated template-selection and non-overwrite outcomes.
-
-[subject-source]: <../../specs/use-cases/create-specification.use-case.spec.md#create-a-specification-draft>

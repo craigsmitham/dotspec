@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: quality-attribute-spec-report
+source: "../../../../specs/quality/reliability/source-preservation/source-preservation.quality-attribute.spec.md#source-preservation"
 ---
 # Source preservation
 
-[dotspec](<../../../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../../../dotspec.system.spec-report.md>)
 
 ## Definition
 
@@ -19,5 +20,3 @@ Whether inspection preserves the source material it examines.
 - [Reject initialization at an existing target](<../../../requirements/reject-existing-target.requirement.spec-report.md>)
 
 **Parent attribute** · [Reliability](<../reliability.quality-attribute.spec-report.md>)
-
-[subject-source]: <../../../../specs/quality/reliability/source-preservation/source-preservation.quality-attribute.spec.md#source-preservation>

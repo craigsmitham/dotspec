@@ -153,10 +153,12 @@ def spec_journey(cli, tmp):
     assert all(target != entry for page in (project / "specification").rglob("*.md")
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")
-    sections = ["Goals", "User needs", "Scope", "System topology", "Requirements",
+    sections = ["Purpose", "Goals", "Business rules", "User needs", "Scope", "System topology", "Requirements",
                 "Quality attributes", "Validation"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
-    navigation = overview.split("\n## Goals\n", 1)[0]
+    navigation = overview.split("\n## Purpose\n", 1)[0]
+    goals = overview.split("\n## Goals\n", 1)[1].split("\n## ", 1)[0]
+    assert "**Supported by** · [Resume interrupted work]" in goals
     for section in sections:
         assert f"[{section}](<#{section.lower().replace(' ', '-')}>)" in navigation
     assert all(f"[{name}]" in navigation for name in (
@@ -187,13 +189,16 @@ def spec_journey(cli, tmp):
         assert text.count(description) == directory.read_text(encoding="utf-8").count(description) == 1
     # Every source in this fixture gets one report documenting its H1. Pages
     # for inline subjects document a deeper heading in that same source.
+    review = follow(root, "Requirements review")
+    assert "source: null" in review.read_text(encoding="utf-8").split("---\n", 2)[1].splitlines()
     claims = {}
     for page in (project / "specification").rglob("*.spec-report.md"):
-        (target, fragment), = [(target, fragment) for label, target, fragment, _ in markdown_links(page)
-                               if label == "View source"]
         header = page.read_text(encoding="utf-8").split("---\n", 2)[1]
-        assert "documents:" not in header
-        key = (target, fragment)
+        primary, = re.findall(r'^source: "([^"]+)"$', header, re.M)
+        uri = urlsplit(primary)
+        key = ((page.parent / unquote(uri.path)).resolve(), unquote(uri.fragment))
+        assert key[0].is_file() and key[1], page
+        assert all(dest != key[0] for _, dest, _, _ in markdown_links(page)), page
         assert key not in claims, (page, claims.get(key))
         claims[key] = page
     for source in project.rglob("*.spec.md"):
@@ -222,19 +227,11 @@ def spec_journey(cli, tmp):
     assert follow(qualities, "Preserve tasks across restart") == promise
     definitions = follow(qualities, "Source definition")
     assert definitions == project / "specification/quality-models/personal-data-quality.quality-model.spec-report.md"
-    assert [(target, anchor) for label, target, anchor, _ in markdown_links(definitions)
-            if label == "View definition source"] == [(project / "specs/quality-models/personal-data.quality-model.spec.md", "durability")]
+    assert claims[project / "specs/quality-models/personal-data.quality-model.spec.md", "personal-data-quality"] == definitions
     use_case = follow(feature, "Return to my list")
     passage = use_case.read_text(encoding="utf-8").split("### Keep recorded work available\n", 1)[1]
-    assert passage.index("#### System verification plan") < passage.index("[View obligation source]") < passage.index("## Related specifications")
-    assert [(target, anchor) for label, target, anchor, _ in markdown_links(use_case)
-            if label == "View obligation source"] == [(project / "specs/use-cases/resume-list.use-case.spec.md", "keep-recorded-work-available")]
-    checklist = follow(use_case, "Complete")
-    action_sources = {(target, anchor) for label, target, anchor, _ in markdown_links(checklist)
-                      if label == "View action source"}
-    concept_source = project / "specs/concepts/checklist.concept.spec.md"
-    assert (concept_source, "complete") in action_sources
-    assert (concept_source, "add") not in action_sources
+    assert passage.index("#### System verification plan") < passage.index("## Related specifications")
+    assert claims[project / "specs/concepts/checklist.concept.spec.md", "checklist"] == follow(use_case, "Complete")
     headings = re.findall(r"^## (.+)$", promise.read_text(encoding="utf-8"), re.M)
     assert headings[:4] == ["Statement", "Applies to", "Criterion", "System verification plan"]
     text = " ".join(promise.read_text(encoding="utf-8").split())
@@ -243,7 +240,6 @@ def spec_journey(cli, tmp):
         assert phrase in text, phrase
     assert follow(promise, "restart acceptance test") == project / ACCEPTANCE
     targets = markdown_links(promise)
-    assert any(target == project / REQUIREMENT for _, target, _, _ in targets)
     assert any("return-to-my-list" in target.name and fragment.endswith("keep-recorded-work-available")
                for _, target, fragment, _ in targets), "missing refinement of the scenario clause"
     requirements = follow(root, "All requirements")
@@ -258,16 +254,18 @@ def spec_journey(cli, tmp):
     cli("check", cwd=project)
     for page, rule in [(promise, "spec.content"), (feature, "spec.navigation"),
                        (qualities, "spec.content"), (root, "spec.navigation"),
-                       (requirements, "spec.membership"), (definitions, "spec.navigation"), (qualities, "spec.document-type"),
-                       (promise, "spec.document-type")]:
+                       (requirements, "spec.membership"), (qualities, "spec.document-type"),
+                       (promise, "spec.document-type"), (definitions, "spec.document-type"), (review, "spec.document-type")]:
         body = page.read_text(encoding="utf-8")
         if rule == "spec.document-type":
-            if page == qualities:
-                changed = body.replace('durability.quality-attribute.spec.md#durability>', 'personal-task-list.system.spec.md#personal-task-list>')
+            if page == review:
+                changed = body.replace("source: null\n", "")
+            elif page == definitions:
+                changed = re.sub(r"^source: .+$", 'source: "wrong.spec.md"', body, flags=re.M)
+            elif page == qualities:
+                changed = body.replace('durability.quality-attribute.spec.md#durability"', 'personal-task-list.system.spec.md#personal-task-list"')
             else:
                 changed = body.replace("type: requirement-spec-report", "type: feature-spec-report")
-        elif page == definitions:
-            changed = re.sub(r"^\[View definition source\].+$", "", body, flags=re.M)
         elif rule == "spec.membership":
             changed = body.replace("\n- [Preserve tasks across restart]", "\n\nSee [Preserve tasks across restart]")
         elif page == promise:

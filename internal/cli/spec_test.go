@@ -230,9 +230,9 @@ Individual authors.
 		return string(data)
 	}
 	page := build()
-	nav := "[Requirements review](<requirements-review.report.md>) · [View source][subject-source]"
+	nav := "[Requirements review](<requirements-review.report.md>)"
 	if !strings.Contains(page, nav+"\n\n| Section | Explore |") ||
-		!strings.Contains(page, "## Goals\n\nKeep notes.") ||
+		!strings.Contains(page, "## Purpose\n\nKeep notes.") || strings.Contains(page, "## Goals\n") ||
 		!strings.Contains(page, "## Scope\n\nOne notebook.") ||
 		strings.Index(page, "## Scope") < strings.Index(page, "Individual authors.") ||
 		strings.Count(page, nav) != 1 || strings.Contains(page, "## System topology") {

@@ -20,7 +20,7 @@ dotspec spec build
 dotspec check
 ```
 
-Commit the authored changes, `SPEC.md` and the generated Markdown in `specification/` together. Follow a subject report’s source link to edit the authored text, then rebuild. Build refreshes generator-owned files, removes obsolete generated pages, and reports a collision if an authored file occupies a planned destination.
+Commit the authored changes, `SPEC.md` and the generated Markdown in `specification/` together. To edit a subject, open the file named in the report’s `source` field, change the authored text, then rebuild. Build refreshes generator-owned files, removes obsolete generated pages, and reports a collision if an authored file occupies a planned destination.
 
 ## Read the generated files
 
@@ -42,7 +42,9 @@ Choose a section to read in order or open a collection index directly.
 
 | Section | What you can find |
 | --- | --- |
-| Goals | Purpose, objectives, supporting relationships, and the business rules index |
+| Purpose | The system’s authored purpose |
+| Goals | Authored goals and links to specifications that support them |
+| Business rules | The index of business rules for this system |
 | User needs | Stakeholders, jobs, and desired outcomes |
 | Scope | Inclusions, exclusions, environment, assumptions, constraints, project context, and glossary |
 | System topology | Immediate parts, boundary partners, and required or provided interfaces, with a Mermaid diagram and linked descriptions |
@@ -86,22 +88,27 @@ Its `requirements.md` lists local requirements and embedded obligations, plus
 requirements owned elsewhere that explicitly apply to the component. Each
 entry links to the canonical page or passage.
 
-Each standalone authored specification in the selected project has exactly one standalone report page. Select **View source** in the page navigation to open the authored heading. On a standalone specification this is the H1. The owning system or component links to indexes of its features and capabilities. Inline subjects can also have a report page for their own heading.
+Each standalone authored specification in the selected project has exactly one standalone report page. The owning system or component links to indexes of its features and capabilities. Inline subjects can also have a report page for their own heading.
 
 Authored Markdown uses `<subject>-spec`. The corresponding generated Markdown
 uses `<subject>-spec-report`. For example, `<name>.system.spec.md` declares
 `type: system-spec`, and its generated `<name>.system.spec-report.md` declares `type: system-spec-report`.
 
-On a subject page, the **View source** link carries the model’s `documents`
-relationship. Its Markdown reference definition records the relative URI once,
-for example `[subject-source]: <../../specs/personal-task-list.system.spec.md#my-checklist>`.
-The reference name gains a numeric suffix if it would collide with authored text.
-Frontmatter identifies the report type and generator.
+Every report includes a YAML `source` field. A subject report records a URI
+relative to the report, including the fragment for the exact authored heading.
+For example, the todo system report declares
+`source: "../specs/personal-task-list.system.spec.md#personal-task-list"`.
+This identifies the source for the whole report. For a subject defined inside
+another spec, the fragment identifies its nested heading. The project-wide
+requirements review declares `source: null` because its findings draw on
+multiple specifications.
 
-A subject rendered as a section carries its type and `documents` URI in a
-`dotspec-doc` comment beneath the heading. Follow the source link at the end of
-an embedded obligation or a passage linked from elsewhere in the reports to
-open that exact heading in the authored file. Each system quality attribute has a `quality-attribute-spec-report` file. Reusable quality model entries remain sections of the model’s report. The file’s `generated_by: dotspec` marker identifies generator
+A subject rendered as a section carries its type and exact authored heading in a
+`dotspec-doc` comment. Links to supporting specifications and external evidence
+stay beside the passages that use them. On the glossary index, **View term source**
+opens the defining passage for each term.
+
+Each system quality attribute has a `quality-attribute-spec-report` file. Reusable quality model entries remain sections of the model’s report. The file’s `generated_by: dotspec` marker identifies generator
 ownership. The project-wide `requirements-review-report` links to the passages
 that need review. See the [document model](model/index.md#generateddocument).
 

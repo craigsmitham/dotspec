@@ -1,6 +1,7 @@
 ---
 generated_by: dotspec
 type: concept-use-spec-report
+source: "../../specs/personal-task-list.system.spec.md#my-checklist"
 ---
 # My checklist
 
@@ -8,7 +9,7 @@ type: concept-use-spec-report
 
 The checklist used to track one person’s open and completed tasks.
 
-[Personal task list](<../personal-task-list.system.spec-report.md>) · [View source][subject-source]
+[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Definition
 
@@ -23,5 +24,3 @@ The checklist used to track one person’s open and completed tasks.
 **Applies here** · [Keep recorded work available](<../use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>)
 
 **Used in** · [Return to my list](<../use-cases/return-to-my-list.use-case.spec-report.md>)
-
-[subject-source]: <../../specs/personal-task-list.system.spec.md#my-checklist>

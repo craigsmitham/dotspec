@@ -1,6 +1,7 @@
 ---
 generated_by: dotspec
 type: component-spec-report
+source: "../../../app/specs/task-service.component.spec.md#task-service"
 ---
 # Task service
 
@@ -8,7 +9,7 @@ type: component-spec-report
 
 The local service that handles browser requests and saves changes to the task list.
 
-[Personal task list](<../../personal-task-list.system.spec-report.md>) · [View source][subject-source]
+[Personal task list](<../../personal-task-list.system.spec-report.md>)
 
 - [Requirements](<requirements.md>)
 
@@ -31,5 +32,3 @@ The [Go server](<../../../app/main.go>) owns form handling and storage.
 ## Related specifications
 
 **Applies here** · [Acknowledge after commit](<requirements/acknowledge-after-commit.requirement.spec-report.md>)
-
-[subject-source]: <../../../app/specs/task-service.component.spec.md#task-service>

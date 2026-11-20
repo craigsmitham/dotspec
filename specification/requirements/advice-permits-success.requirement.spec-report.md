@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
+source: "../../specs/requirements/advice-permits-success.requirement.spec.md#advice-permits-a-successful-check"
 ---
 # Advice permits a successful check
 
-[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 
@@ -22,8 +23,6 @@ Check structurally valid drafts that produce advisory findings. Verify exit
 status zero and the presence of the advice in both text and JSON reports.
 Exercise project-wide checks and focused checks for each applicable type.
 
-[View source for “System verification plan”](<../../specs/requirements/advice-permits-success.requirement.spec.md#system-verification-plan>)
-
 ## Rationale
 
 Unfinished specifications remain useful working material. Suggestions should
@@ -34,5 +33,3 @@ not prevent contributors from checking a draft.
 [Specification Inspection](<../concepts/specification-inspection.concept.spec-report.md>)
 provides the conceptual context. The
 [report contract](<../../docs/reference/inspection.md#check-specifications>) defines other exit statuses.
-
-[subject-source]: <../../specs/requirements/advice-permits-success.requirement.spec.md#advice-permits-a-successful-check>

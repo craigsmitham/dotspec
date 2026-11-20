@@ -37,12 +37,12 @@ func testPlan(t *testing.T, dir string) *Plan {
 	root := &Page{
 		Document: Document{Type: "system-spec-report", Documents: "../specs/task-list.system.spec.md#task-list"}, Title: "Task list",
 		RequiredLinks: []string{detailLink},
-		Markdown:      "---\ntype: system-spec-report\ngenerated_by: dotspec\n---\n# Task list\n\n[View source][subject-source]\n\n[subject-source]: <../specs/task-list.system.spec.md#task-list>\n\n[Resume tasks](" + detailLink + ")\n",
+		Markdown:      "---\ntype: system-spec-report\ngenerated_by: dotspec\nsource: ../specs/task-list.system.spec.md#task-list\n---\n# Task list\n\n[Resume tasks](" + detailLink + ")\n",
 	}
 	detail := &Page{
 		Document: Document{Type: "requirement-spec-report", Documents: "../../specs/restart.spec.md#restart"}, Title: "Restart",
 		RequiredContent: []string{"**Preserve tasks** on the same database."},
-		Markdown:        "---\ntype: requirement-spec-report\ngenerated_by: dotspec\n---\n# Restart\n\n[View source][subject-source]\n\n[subject-source]: <../../specs/restart.spec.md#restart>\n\n**Preserve tasks** on the same database.\n",
+		Markdown:        "---\ntype: requirement-spec-report\ngenerated_by: dotspec\nsource: ../../specs/restart.spec.md#restart\n---\n# Restart\n\n**Preserve tasks** on the same database.\n",
 	}
 	return &Plan{Pages: map[string]*Page{"SPEC.md": entry, systemPath: root, detailPath: detail}}
 }
@@ -156,7 +156,7 @@ func TestBuildsSerialize(t *testing.T) {
 }
 
 func TestCheckScopedLinksAndIndexMembership(t *testing.T) {
-	source := []byte("---\ntype: use-case-spec-report\ngenerated_by: dotspec\n---\n# Return\n\n[View source][subject-source]\n\n[subject-source]: <source.md#return>\n\n## First promise\n\n## Second promise\n\n[Test](../test.py)\n")
+	source := []byte("---\ntype: use-case-spec-report\ngenerated_by: dotspec\nsource: source.md#return\n---\n# Return\n\n## First promise\n\n## Second promise\n\n[Test](../test.py)\n")
 	p := parseGenerated(source)
 	page := Page{Title: "Return", Document: Document{Type: "use-case-spec-report", Documents: "source.md#return"}, RequiredSectionLinks: map[string][]string{"first-promise": {"../test.py"}}}
 	var rules []string
@@ -171,7 +171,7 @@ func TestCheckScopedLinksAndIndexMembership(t *testing.T) {
 	if len(rules) != 0 {
 		t.Fatal(rules)
 	}
-	p = parseGenerated([]byte("---\ntype: system-spec-report\ngenerated_by: dotspec\n---\n# Tasks\n\n[View source][subject-source]\n\n[subject-source]: <source.md#tasks>\n\n## Requirements\n\n- [Restart](restart.md)\n- [Unexpected](other.md)\n"))
+	p = parseGenerated([]byte("---\ntype: system-spec-report\ngenerated_by: dotspec\nsource: source.md#tasks\n---\n# Tasks\n\n## Requirements\n\n- [Restart](restart.md)\n- [Unexpected](other.md)\n"))
 	page = Page{Document: Document{Type: "system-spec-report", Documents: "source.md#tasks"}, Title: "Tasks", DirectoryMembers: map[string][]string{"requirements": {"restart.md"}}}
 	checkPage(&page, p, report)
 	if !slices.Equal(rules, []string{"spec.membership"}) {

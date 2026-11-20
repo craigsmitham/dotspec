@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
+source: "../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-model-exports"
 ---
 # Preserve source and represented content in model exports
 
-[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 
@@ -61,8 +62,6 @@ The [content tests](<../../internal/model/content_test.go>),
 for the cases they exercise. The statements above define the obligation; a test
 passing does not establish semantic adequacy of arbitrary specifications.
 
-[View source for “System verification plan”](<../../specs/requirements/model-source-fidelity.requirement.spec.md#system-verification-plan>)
-
 ## Rationale
 
 Consumers need both faithful source material and explicit domain meaning to
@@ -85,5 +84,3 @@ The [specification model documentation](<../../docs/reference/specification-mode
 representation and named mappings.
 
 **Quality attribute** · [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)
-
-[subject-source]: <../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-model-exports>

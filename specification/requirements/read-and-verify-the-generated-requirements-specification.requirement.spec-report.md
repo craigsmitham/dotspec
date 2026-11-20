@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
+source: "../../specs/requirements/generated-specification.requirement.spec.md#read-and-verify-the-generated-requirements-specification"
 ---
 # Read and verify the generated requirements specification
 
-[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 
@@ -33,17 +34,17 @@ contexts define the same word, each entry names its context. A relationship
 between terms links in both reading directions, with the original statement
 and examples available in the declaring entry.
 
-From a subject page’s navigation, one link opens the authored heading. The
-reference definition carries the page’s source URI once. From an embedded
-obligation or an authored passage reached by a report link, one link at the end
-of the passage opens its own source heading. The project check identifies
-duplicate page claims and missing or misdirected source links.
+Each subject report identifies its authored file and heading once in the YAML
+`source` field using a URI relative to the report. This field supplies the
+source attribution for the page and its passages. The project-wide requirements
+review declares `source: null` because it covers multiple specifications.
+Readers can follow supporting references beside the content they supply.
+The project check identifies duplicate page claims and missing or misdirected
+source metadata.
 
 ## System verification plan
 
 Run the [To-do reader journey and regression probes](<../../scripts/check-example/check.py>). Inspect the artifact and diagnostics using the [generated specification guide](<../../docs/reference/generated-specification.md>).
-
-[View source for “System verification plan”](<../../specs/requirements/generated-specification.requirement.spec.md#system-verification-plan>)
 
 ## Rationale
 
@@ -55,5 +56,3 @@ Reviewers can inspect product intent in Git and follow a promise to its context 
 
 - [Repeatability](<../quality/reliability/repeatability/repeatability.quality-attribute.spec-report.md>)
 - [Usability](<../quality/usability/usability.quality-attribute.spec-report.md>)
-
-[subject-source]: <../../specs/requirements/generated-specification.requirement.spec.md#read-and-verify-the-generated-requirements-specification>

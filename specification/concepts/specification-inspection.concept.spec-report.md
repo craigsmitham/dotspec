@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: concept-spec-report
+source: "../../specs/concepts/specification-inspection.concept.spec.md#specification-inspection"
 ---
 # Specification Inspection
 
-[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Purpose
 
@@ -27,8 +28,6 @@ Quality obligations are defined by
 [textual diagnostic severity](<../requirements/diagnostic-severity.requirement.spec-report.md>),
 [repeatable reports](<../requirements/repeatable-inspection.requirement.spec-report.md>),
 and [source preservation](<../requirements/inspection-preserves-source.requirement.spec-report.md>).
-
-[View source for “State”](<../../specs/concepts/specification-inspection.concept.spec.md#state>)
 
 ## Actions
 
@@ -73,5 +72,3 @@ on the next run.
 [Advice permits success](<../requirements/advice-permits-success.requirement.spec-report.md>)
 governs the effect of advisory findings on exit status. An access or discovery failure leaves the scan
 incomplete, separately from structural findings in readable files.
-
-[subject-source]: <../../specs/concepts/specification-inspection.concept.spec.md#specification-inspection>

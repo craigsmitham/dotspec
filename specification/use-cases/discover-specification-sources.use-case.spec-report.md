@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: use-case-spec-report
+source: "../../specs/use-cases/discover-specification-sources.use-case.spec.md#discover-specification-sources"
 ---
 # Discover specification sources
 
-[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Goal
 
@@ -75,5 +76,3 @@ inventory to assemble the material for review and decide whether it adequately
 specifies the system. The
 [source authority principle](<../dotspec.system.spec-report.md#source-authority>) explains how
 projects assign roles to those sources.
-
-[subject-source]: <../../specs/use-cases/discover-specification-sources.use-case.spec.md#discover-specification-sources>

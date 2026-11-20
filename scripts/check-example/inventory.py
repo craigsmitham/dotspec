@@ -63,7 +63,7 @@ def document_witnesses(project, classes, evidence):
         if not header or "generated_by: dotspec" not in header[1].splitlines():
             continue
         kind = re.search(r"^type: ([\w-]+)$", header[1], re.M)
-        if kind and kind[1] in names and re.search(r"^\[(subject-source(?:-\d+)?)\]: <[^>]+#[^>]+>$", text, re.M):
+        if kind and kind[1] in names and re.search(r'^source: "[^"]+#[^"]+"$', header[1], re.M):
             witness(kind[1], path)
         for raw in re.findall(r"^<!-- dotspec-doc (.+) -->$", text, re.M):
             doc = json.loads(raw)

@@ -1,16 +1,19 @@
 ---
 generated_by: dotspec
 type: system-spec-report
+source: "../specs/personal-task-list.system.spec.md#personal-task-list"
 ---
 # Personal task list
 
 A single-user task list that stores open and completed tasks on one computer.
 
-[Requirements review](<requirements-review.report.md>) · [View source][subject-source]
+[Requirements review](<requirements-review.report.md>)
 
 | Section | Explore |
 | --- | --- |
-| [Goals](<#goals>) | [Business rules](<business-rules.md>) |
+| [Purpose](<#purpose>) | Help a person pick up unfinished work after an interruption. |
+| [Goals](<#goals>) |  |
+| [Business rules](<#business-rules>) | [Business rules](<business-rules.md>) |
 | [User needs](<#user-needs>) | [Jobs](<jobs.md>) |
 | [Scope](<#scope>) | Out of scope · Environment · Assumptions · Project context |
 | [System topology](<#system-topology>) | [Components](<components.md>) · [Interfaces](<interfaces.md>) |
@@ -18,15 +21,13 @@ A single-user task list that stores open and completed tasks on one computer.
 | [Quality attributes](<#quality-attributes>) | [Attribute index](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
 | [Validation](<#validation>) | System validation plan |
 
-## Goals
+## Purpose
 
 Help a person pick up unfinished work after an interruption.
 
-[View source for “Purpose”](<../specs/personal-task-list.system.spec.md#purpose>)
+## Goals
 
-### Objectives
-
-#### Resume unfinished work
+### Resume unfinished work
 
 <!-- dotspec-doc {"type":"goal-spec-report","documents":"../specs/personal-task-list.system.spec.md#resume-unfinished-work"} -->
 
@@ -34,7 +35,7 @@ Reduce the effort of working out what still needs attention.
 
 **Supported by** · [Resume interrupted work](<jobs/resume-interrupted-work.job.spec-report.md>)
 
-[View source for “Resume unfinished work”](<../specs/personal-task-list.system.spec.md#resume-unfinished-work>)
+## Business rules
 
 [Business rules](<business-rules.md>) — Policies that govern the system.
 
@@ -51,8 +52,6 @@ The person who keeps the list also decides which entries can be discarded.
 ## Scope
 
 One person's list on one computer. The browser submits forms to a local service.
-
-[View source for “Scope”](<../specs/personal-task-list.system.spec.md#scope>)
 
 ### Out of scope
 
@@ -71,8 +70,6 @@ The person may close the browser or stop the service between work sessions.
 The person returns to the same writable database file.
 
 **Relied on by** · [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
-
-[View source for “Same local storage”](<../specs/personal-task-list.system.spec.md#same-local-storage>)
 
 ### Project context
 
@@ -133,8 +130,6 @@ flowchart LR
 
 The task list is stored locally. Its quality requirements cover what survives between sessions on the same database.
 
-[View source for “Quality attributes”](<../specs/personal-task-list.system.spec.md#quality-attributes>)
-
 **[Durability](<quality/durability/durability.quality-attribute.spec-report.md>)** — Preservation of acknowledged work between local sessions.
 
 [Attribute index](<quality-attributes.md>)
@@ -166,8 +161,4 @@ entering it again. Ask what they expected to find on returning.
 With consent, record the build, task outcome, any help given and the participant's
 explanation. Review mismatches before deciding whether the workflow meets the need.
 
-[View source for “System validation plan”](<../specs/personal-task-list.system.spec.md#system-validation-plan>)
-
 [Requirements review](<requirements-review.report.md>)
-
-[subject-source]: <../specs/personal-task-list.system.spec.md#personal-task-list>

@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: job-spec-report
+source: "../../specs/jobs/develop-requirements.job.spec.md#develop-requirements"
 ---
 # Develop Requirements
 
-[dotspec](<../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Job
 
@@ -125,8 +126,6 @@ complete enough for the change, and possible to verify.
 
 - **OUT-009:** Minimize the likelihood that conflicting requirements remain undetected.
 
-[View source for “Evaluate the requirements”](<../../specs/jobs/develop-requirements.job.spec.md#evaluate-the-requirements>)
-
 ### Resolve gaps and disagreements
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#resolve-gaps-and-disagreements"} -->
@@ -162,5 +161,3 @@ This job map and its outcomes are working hypotheses based on the intended
 purpose of dotspec. They have not been validated through interviews or outcome
 research, and the map's completeness has not been established. The proposed
 steps include collaboration and judgment that dotspec may only support.
-
-[subject-source]: <../../specs/jobs/develop-requirements.job.spec.md#develop-requirements>

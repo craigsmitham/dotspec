@@ -1,22 +1,24 @@
 ---
 generated_by: dotspec
 type: system-spec-report
+source: "../specs/dotspec.system.spec.md#dotspec"
 ---
 # dotspec
 
 A requirements authoring framework and command-line toolkit for Markdown specifications stored alongside source code.
 
-[Requirements review](<requirements-review.report.md>) · [View source][subject-source]
+[Requirements review](<requirements-review.report.md>)
 
 | Section | Explore |
 | --- | --- |
-| [Goals](<#goals>) | Purpose · Objectives |
+| [Purpose](<#purpose>) | Help teams develop and maintain software product requirements alongside the code they describe. Teams can describe what people need, what the system promises, and how to assess those promises. |
+| [Goals](<#goals>) |  |
 | [User needs](<#user-needs>) | [Jobs](<jobs.md>) |
 | [Scope](<#scope>) | [Glossary](<glossary.md>) |
 | [Requirements](<#requirements>) | [Use cases](<use-cases.md>) · [Concept definitions](<concepts.md>) · [All requirements](<requirements.md>) |
 | [Quality attributes](<#quality-attributes>) | [Attribute index](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
 
-## Goals
+## Purpose
 
 Help teams develop and maintain software product requirements alongside the
 code they describe. Teams can describe what people need, what the system
@@ -26,9 +28,7 @@ The [Develop Requirements](<jobs/develop-requirements.job.spec-report.md>) and
 [Manage Requirements](<jobs/manage-requirements.job.spec-report.md>) jobs describe the
 work dotspec supports.
 
-[View source for “Purpose”](<../specs/dotspec.system.spec.md#purpose>)
-
-### Objectives
+## Goals
 
 - Reduce the effort of finding structural problems and missing specification
   content during authoring and review.
@@ -49,8 +49,6 @@ The system includes the authoring framework, the `dotspec` CLI, and the
 [source discovery](<use-cases/discover-specification-sources.use-case.spec-report.md>),
 [structural checks](<use-cases/check-specifications.use-case.spec-report.md>), and a
 [generated requirements specification](<requirements/read-and-verify-the-generated-requirements-specification.requirement.spec-report.md>).
-
-[View source for “Scope”](<../specs/dotspec.system.spec.md#scope>)
 
 ### Environment
 
@@ -85,8 +83,6 @@ verification role beside the link. A link alone confers no authority.
 The [contributing guide](<../CONTRIBUTING.md#specification-tests-and-implementation-tests>)
 explains how this repository assigns those roles to its tests.
 
-[View source for “Source authority”](<../specs/dotspec.system.spec.md#source-authority>)
-
 [Glossary](<glossary.md>) — Definitions of terms used in this system.
 
 ## Requirements
@@ -112,8 +108,6 @@ explains how this repository assigns those roles to its tests.
 These are dotspec's declared quality attributes. The definitions identify concerns;
 individual quality requirements establish the obligations.
 
-[View source for “Quality attributes”](<../specs/dotspec.system.spec.md#quality-attributes>)
-
 **[Performance](<quality/performance/performance.quality-attribute.spec-report.md>)** — The time and computing resources required to perform operations under stated workloads.
 
 - [Responsiveness](<quality/performance/responsiveness/responsiveness.quality-attribute.spec-report.md>) — The elapsed time before an operation delivers its result.
@@ -131,5 +125,3 @@ individual quality requirements establish the obligations.
 [Attribute index](<quality-attributes.md>)
 
 [Quality models](<quality-models.md>) — Reference classifications and their definitions.
-
-[subject-source]: <../specs/dotspec.system.spec.md#dotspec>

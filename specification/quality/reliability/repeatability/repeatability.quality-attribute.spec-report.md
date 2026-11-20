@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: quality-attribute-spec-report
+source: "../../../../specs/quality/reliability/repeatability/repeatability.quality-attribute.spec.md#repeatability"
 ---
 # Repeatability
 
-[dotspec](<../../../dotspec.system.spec-report.md>) · [View source][subject-source]
+[dotspec](<../../../dotspec.system.spec-report.md>)
 
 ## Definition
 
@@ -19,5 +20,3 @@ reports.
 - [Repeated inspections produce equivalent reports](<../../../requirements/repeatable-inspection.requirement.spec-report.md>)
 
 **Parent attribute** · [Reliability](<../reliability.quality-attribute.spec-report.md>)
-
-[subject-source]: <../../../../specs/quality/reliability/repeatability/repeatability.quality-attribute.spec.md#repeatability>

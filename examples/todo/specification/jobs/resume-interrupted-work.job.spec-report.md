@@ -1,10 +1,11 @@
 ---
 generated_by: dotspec
 type: job-spec-report
+source: "../../specs/jobs/resume.job.spec.md#resume-interrupted-work"
 ---
 # Resume interrupted work
 
-[Personal task list](<../personal-task-list.system.spec-report.md>) · [View source][subject-source]
+[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Job
 
@@ -31,8 +32,6 @@ Identify the commitments that still need attention.
 
 **Applies here** · [Less reconstruction](<#less-reconstruction>)
 
-[View source for “Recall outstanding work”](<../../specs/jobs/resume.job.spec.md#recall-outstanding-work>)
-
 ### Reconsider finished work
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/resume.job.spec.md#reconsider-finished-work"} -->
@@ -58,13 +57,9 @@ Minimize the time spent reconstructing outstanding commitments after an interrup
 
 [Recall outstanding work](<#recall-outstanding-work>).
 
-[View source for “Less reconstruction”](<../../specs/jobs/resume.job.spec.md#less-reconstruction>)
-
 ## Related specifications
 
 **Supported by**
 
 - [My checklist](<../concept-uses/my-checklist.concept-use.spec-report.md>)
 - [Return to my list](<../use-cases/return-to-my-list.use-case.spec-report.md>)
-
-[subject-source]: <../../specs/jobs/resume.job.spec.md#resume-interrupted-work>
