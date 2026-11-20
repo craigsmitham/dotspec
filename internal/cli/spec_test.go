@@ -116,6 +116,10 @@ id: incoming-jobs
 ## Part of
 [Queue](../../../specs/queue.system.spec.md#queue).
 
+## Responsibilities
+
+Receive submissions through the [storage contracts](#required-interfaces).
+
 ## Required interfaces
 
 ### Storage
@@ -187,7 +191,14 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 	intake := section + "components/intake/"
 	reader(intake+"components/journal/journal.component.spec-report.md", "../../intake.component.spec-report.md", "[Requirements](<requirements.md>)")
 	reader(intake+"components/journal/requirements.md", "## Applicable requirements\n\n- [Retain jobs](<../../../../requirements/retain-jobs.requirement.spec-report.md>)")
-	reader(intake+"intake.component.spec-report.md", "[Interfaces](<interfaces.md>)", "[Browse required interfaces](<interfaces.md#required-interfaces>)", "[Components](<components.md>)")
+	reader(intake+"intake.component.spec-report.md", "[Interfaces](<interfaces.md>)", "[Required interfaces](<interfaces.md#required-interfaces>)", "[storage contracts](<interfaces.md#required-interfaces>)", "[Components](<components.md>)")
+	componentPage, err := os.ReadFile(filepath.Join(root, intake, "intake.component.spec-report.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(componentPage), "## Required interfaces") || strings.Contains(string(componentPage), "## Provided interfaces") {
+		t.Fatal("collection-only interface sections in component report", string(componentPage))
+	}
 	reader(intake+"interfaces.md", "## Required interfaces\n\n- [Storage](<interfaces/storage.interface.spec-report.md>)", "## Provided interfaces\n\n- [Submission](<interfaces/submission.interface.spec-report.md>)")
 	reader(intake+"components.md", "- [Journal](<components/journal/journal.component.spec-report.md>)")
 	reader(intake+"requirements.md", "## Applicable requirements\n\n- [Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)", "[Journal](<components/journal/requirements.md>)")
@@ -237,6 +248,38 @@ func TestGeneratedOpenQuestionsLifecycle(t *testing.T) {
 	build()
 	if _, err := os.Stat(index); !os.IsNotExist(err) || strings.Contains(read(overview), "open-questions.md") {
 		t.Fatalf("question index or link remains after resolving the last question: %v", err)
+	}
+}
+
+func TestOverviewKeepsNavigationOnlyCollectionsInTheMap(t *testing.T) {
+	t.Chdir(t.TempDir())
+	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
+	const system = "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nKeep notes.\n\n## Scope\nOne notebook.\n\n## Business rules\n"
+	for _, name := range []string{"Draft", "Review", "Publish", "Archive"} {
+		slug := strings.ToLower(name)
+		writeFixture(t, "specs/business-rules/"+slug+".business-rule.spec.md",
+			"---\ntype: business-rule-spec\n---\n# "+name+" rule\n\n## Statement\nKeep the "+slug+" record.\n\n## Applies to\n**Targets:** [Notes](../notes.system.spec.md).\n")
+		writeFixture(t, "specs/features/"+slug+".feature.spec.md", "---\ntype: feature-spec\n---\n# "+name+" notes\n")
+	}
+	for _, narrative := range []string{"", "The archive keeps all published notes."} {
+		writeFixture(t, "specs/notes.system.spec.md", system+narrative+"\n")
+		if code, out, errOut := invoke("spec", "build"); code != 0 {
+			t.Fatal(code, out, errOut)
+		}
+		data, err := os.ReadFile("specification/notes.system.spec-report.md")
+		if err != nil {
+			t.Fatal(err)
+		}
+		page := string(data)
+		for _, route := range []string{"[All business rules](<business-rules.md>)", "[Features](<features.md>)"} {
+			if strings.Count(page, route) != 1 {
+				t.Fatalf("expected one navigation route %s in %s", route, page)
+			}
+		}
+		if strings.Contains(page, "## Requirements\n") || strings.Contains(page, "### Behavior\n") ||
+			strings.Contains(page, "## Business rules\n") != (narrative != "") || !strings.Contains(page, narrative) {
+			t.Fatal(page)
+		}
 	}
 }
 

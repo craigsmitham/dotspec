@@ -44,7 +44,7 @@ Choose a section to read in order or open a collection index directly.
 | --- | --- |
 | Purpose | The system’s authored purpose |
 | Goals | Authored goals and links to specifications that support them |
-| Business rules | The index of business rules for this system |
+| Business rules | Applicable rules with their authored statements when the set is small. **All business rules** opens the full index. |
 | User needs | Stakeholders, jobs, and desired outcomes |
 | Scope | Inclusions, exclusions, environment, assumptions, constraints, project context, and glossary |
 | System topology | Immediate parts, boundary partners, and required or provided interfaces, with a Mermaid diagram and linked descriptions |
@@ -52,7 +52,7 @@ Choose a section to read in order or open a collection index directly.
 | Quality attributes | The expanded hierarchy of declared attributes with linked definitions, the attribute index, and project quality models |
 | Open questions | Decisions that remain open in the system specification |
 
-The map includes populated sections. Additional authored sections remain
+The map links directly to a collection when the overview has no project-specific detail to show for it. Additional authored sections remain
 available under **Reference**. When the project has authored questions, **All open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings. A topology edge represents a declared relationship.
 A child system has its own overview showing the next level of detail.
 
@@ -82,7 +82,7 @@ choose a component by its description. A system’s `systems.md` lists its immed
 child systems. When a component has entries in a collection, **By component**
 on the parent index leads to the component’s index of the same name.
 
-Within a component, `interfaces.md` groups required and provided interfaces.
+On subject reports, collections that only provide navigation appear with the page’s index links. Sections with authored descriptions keep that text in the body. Within a component, `interfaces.md` groups required and provided interfaces.
 Its `requirements.md` lists local requirements and embedded obligations, plus
 requirements owned elsewhere that explicitly apply to the component. Each
 entry links to the canonical page or passage.

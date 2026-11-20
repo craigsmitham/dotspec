@@ -18,6 +18,9 @@ type overviewSection struct {
 	level                int
 	sources, collections []string
 	passages             [][]*heading
+	detail               string
+	detailLinks          []string
+	hasBody              bool
 }
 
 func (p *planner) planOverview(s *subject) []overviewSection {
@@ -38,40 +41,18 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 		{title: "Reference", level: 2, sources: []string{"Reference", "Evidence"}},
 	}
 	groups := map[string][][]*heading{}
-	var group []*heading
-	save := func() {
-		if len(group) == 0 {
-			return
+	for _, passage := range s.passages {
+		h := passage[0]
+		if h == s.name {
+			sections[0].passages = append(sections[0].passages, passage)
+		} else {
+			groups[h.title] = append(groups[h.title], passage)
 		}
-		groups[group[0].title] = append(groups[group[0].title], group)
 	}
-	for _, h := range s.source.headings {
-		if h.owner != s || h == s.name || h.inGlossary {
-			continue
-		}
-		if h.level == s.name.level+1 || len(group) == 0 {
-			save()
-			group = nil
-		}
-		group = append(group, h)
-	}
-	save()
-	sections[0].passages = [][]*heading{{s.name}}
 	for i := range sections {
 		section := &sections[i]
 		for _, title := range section.sources {
-			for _, group := range groups[title] {
-				h := group[0]
-				// An empty heading that only declares lifted subjects belongs to
-				// their index. Preserve incoming links and its precise source route there.
-				if dest := s.sectionIndex(title); dest != "" && title != section.title && len(group) == 1 && h.subjectKind == "" && strings.TrimSpace(sourceProse(s.source, h)) == "" {
-					index, part := collectionGroup(title)
-					s.indexes[index].sources[part] = append(s.indexes[index].sources[part], h)
-					p.targets[h.node] = dest
-					continue
-				}
-				section.passages = append(section.passages, group)
-			}
+			section.passages = append(section.passages, groups[title]...)
 			delete(groups, title)
 		}
 		section.collections = slices.DeleteFunc(section.collections, func(title string) bool { return s.indexes[title] == nil })
@@ -85,22 +66,28 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 	last := &sections[len(sections)-1]
 	last.passages = append(last.passages, extra...)
 
-	var result []overviewSection
-	for i, section := range sections {
-		populated := len(section.passages) > 0 || len(section.collections) > 0
-		if section.title == "Requirements" {
+	// Decide which headings exist before allocating their Markdown fragments.
+	// Keep a collection in the map even when it supplies no body content.
+	for i := len(sections) - 1; i >= 0; i-- {
+		section := &sections[i]
+		detail := &writer{file: s.file, page: &Page{}}
+		p.overviewDetails(detail, s, *section)
+		section.detail = detail.out.String()
+		section.detailLinks = detail.page.RequiredLinks
+		section.hasBody = len(section.passages) > 0 || section.detail != ""
+		if section.level == 2 {
 			for _, sub := range sections[i+1:] {
 				if sub.level != 3 {
 					break
 				}
-				populated = populated || len(sub.passages) > 0 || len(sub.collections) > 0
+				section.hasBody = section.hasBody || sub.hasBody
+				section.collections = append(section.collections, sub.collections...)
 			}
 		}
-		if populated {
-			result = append(result, section)
-		}
 	}
-	return result
+	return slices.DeleteFunc(sections, func(section overviewSection) bool {
+		return !section.hasBody && len(section.collections) == 0
+	})
 }
 
 func (section overviewSection) merges(i int) bool {
@@ -125,7 +112,7 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 	}
 	for i := range s.overview {
 		section := &s.overview[i]
-		if section.level > 0 {
+		if section.level > 0 && section.hasBody {
 			section.anchor = string(ids.Generate([]byte(section.title), ast.KindHeading))
 			if explicit {
 				section.anchor = "overview." + section.anchor
@@ -152,28 +139,12 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 	}
 }
 
-var collectionDescriptions = map[string]string{
-	"Glossary":           "Definitions of terms used in this system.",
-	"Business rules":     "Policies that govern the system.",
-	"Jobs":               "The work people need to accomplish and the outcomes they seek.",
-	"Systems":            "Immediate child systems and their boundaries.",
-	"Components":         "Parts of this system and their responsibilities.",
-	"Interfaces":         "Required and provided interfaces and their contracts.",
-	"Features":           "Product behavior and the specifications each feature groups.",
-	"Capabilities":       "What the system can provide and who provides it.",
-	"Use cases":          "Actor goals, interactions, and outcomes.",
-	"Concepts":           "Definitions of purposeful behavior, state, and actions.",
-	"Concept uses":       "How this system uses each concept.",
-	"Synchronizations":   "How actions across concept uses are coordinated.",
-	"Requirements":       "Standalone requirements and embedded obligations, including routes by component.",
-	"Quality attributes": "Declared attributes and their definitions.",
-	"Quality models":     "Reference classifications and their definitions.",
-}
-
 func overviewIndexLabel(title string) string {
 	switch title {
 	case "Open questions":
 		return "All open questions"
+	case "Business rules":
+		return "All business rules"
 	case "Quality attributes":
 		return "Attribute index"
 	case "Requirements":
@@ -189,6 +160,9 @@ func (p *planner) renderSystem(w *writer, s *subject) {
 		p.renderIndex(s, title, s.indexes[title])
 	}
 	for i, section := range s.overview {
+		if !section.hasBody {
+			continue
+		}
 		if section.level > 0 {
 			if s.name.explicitAnchor != "" {
 				w.text(`<a id="` + section.anchor + `"></a>`)
@@ -210,32 +184,40 @@ func (p *planner) renderSystem(w *writer, s *subject) {
 			p.overviewNavigation(w, s)
 			continue
 		}
-		switch section.title {
-		case "Quality attributes":
-			p.attributeOverview(w, s)
-		case "System topology":
-			p.renderTopology(w, s)
-		case "Obligations":
-			p.overviewRefinement(w, s)
+		w.out.WriteString(section.detail)
+		for _, dest := range section.detailLinks {
+			w.requireLink(dest)
 		}
+	}
+}
+
+func (p *planner) overviewDetails(w *writer, s *subject, section overviewSection) {
+	switch section.title {
+	case "Quality attributes":
+		p.attributeOverview(w, s)
+	case "System topology":
+		p.renderTopology(w, s)
+	case "Obligations":
+		p.overviewRefinement(w, s)
+	case "Business rules", "Behavior", "Concepts", "User needs":
 		for _, title := range section.collections {
-			idx := s.indexes[title]
-			line := w.link(overviewIndexLabel(title), idx.file)
-			if title != "Quality attributes" {
-				line += " — " + collectionDescriptions[title]
+			group := ""
+			if title == "Business rules" {
+				group = applicableRules
 			}
-			w.text(line)
-			entries := idx.groups[""]
-			switch section.title {
-			case "Behavior", "Concepts", "User needs":
-				if len(entries) <= 3 {
-					var lines []string
-					for _, e := range entries {
-						lines = append(lines, entryLine(w, e))
-					}
-					w.text(strings.Join(lines, "\n"))
-				}
+			entries := s.indexes[title].groups[group]
+			if len(entries) == 0 || len(entries) > 3 {
+				continue
 			}
+			if section.title == "Behavior" || section.title == "Concepts" {
+				w.text("**" + overviewIndexLabel(title) + "**")
+			}
+			sortEntries(entries)
+			var lines []string
+			for _, e := range entries {
+				lines = append(lines, entryLine(w, e))
+			}
+			w.text(strings.Join(lines, "\n"))
 		}
 	}
 }
@@ -254,18 +236,13 @@ func (p *planner) overviewNavigation(w *writer, s *subject) {
 		return
 	}
 	w.text("| Section | Explore |\n| --- | --- |")
-	for i, section := range s.overview {
+	for _, section := range s.overview {
 		if section.level != 2 {
 			continue
 		}
 		var links []string
-		for _, sub := range s.overview[i:] {
-			if sub.anchor != section.anchor && sub.level == 2 {
-				break
-			}
-			for _, title := range sub.collections {
-				links = append(links, w.link(overviewIndexLabel(title), s.indexes[title].file))
-			}
+		for _, title := range section.collections {
+			links = append(links, w.link(overviewIndexLabel(title), s.indexes[title].file))
 		}
 		if section.title == "Open questions" && questions != nil {
 			links = append(links, w.link(overviewIndexLabel(section.title), questions.file))
@@ -284,7 +261,13 @@ func (p *planner) overviewNavigation(w *writer, s *subject) {
 			h := section.passages[0][0]
 			links = append(links, inlineText(paragraphPreview(sourceProse(s.source, h))))
 		}
-		fmt.Fprintf(&w.out, "| %s | %s |\n", w.link(section.title, s.file+"#"+section.anchor), strings.Join(links, " · "))
+		label := section.title
+		if section.hasBody {
+			label = w.link(label, s.file+"#"+section.anchor)
+		} else if len(links) == 1 {
+			label, links = links[0], nil
+		}
+		fmt.Fprintf(&w.out, "| %s | %s |\n", label, strings.Join(links, " · "))
 	}
 	if questions != nil {
 		fmt.Fprintf(&w.out, "| %s | |\n", w.link(overviewIndexLabel("Open questions"), questions.file))
@@ -303,7 +286,7 @@ func (p *planner) overviewRefinement(w *writer, s *subject) {
 		for _, target := range model.Strings(r.r["refines"]) {
 			candidate := p.elements[target]
 			owner := p.ownerPage(candidate)
-			if owner == nil || owner.kind() != "UseCase" || p.targets[target] == "" {
+			if owner == nil || owner.kind() != "UseCase" || p.targets[nameNode(candidate)] == "" {
 				continue
 			}
 			if refinement != nil {
@@ -313,6 +296,6 @@ func (p *planner) overviewRefinement(w *writer, s *subject) {
 		}
 	}
 	if refinement != nil {
-		w.text(w.link(refinement.name.title, refinement.file) + " refines " + w.link(attr(p.nodes[nameNode(parent)], "decoded_text"), p.targets[id(parent)]) + ".")
+		w.text(w.link(refinement.name.title, refinement.file) + " refines " + w.link(attr(p.nodes[nameNode(parent)], "decoded_text"), p.targets[nameNode(parent)]) + ".")
 	}
 }

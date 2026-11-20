@@ -26,7 +26,7 @@ func addSourceContracts(p *planner) error {
 		page.RequiredContent = nil
 		page.RequiredSectionContent = map[string]string{}
 		for _, section := range s.overview {
-			if section.level == 2 {
+			if section.level == 2 && section.hasBody {
 				requireRoute(page, relativeURL(s.file, s.file, section.anchor), section.title)
 			}
 		}

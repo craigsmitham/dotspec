@@ -117,6 +117,36 @@ func (p *planner) indexOpenQuestions() {
 	}
 }
 
+// A collection heading whose children all have their own reports belongs to
+// the directory. Preserve links to its authored fragment there.
+func (p *planner) planPassages(s *subject) {
+	var groups [][]*heading
+	for _, h := range s.source.headings {
+		if h.owner != s || h.inGlossary {
+			continue
+		}
+		if len(groups) == 0 || h.level <= s.name.level+1 {
+			groups = append(groups, []*heading{h})
+		} else {
+			i := len(groups) - 1
+			groups[i] = append(groups[i], h)
+		}
+	}
+	for _, group := range groups {
+		h := group[0]
+		if h != s.name && len(group) == 1 && h.subjectKind == "" && !needsHeadingAnchor(s, h) && strings.TrimSpace(sourceProse(s.source, h)) == "" {
+			if dest := s.sectionIndex(h.title); dest != "" {
+				index, part := collectionGroup(h.title)
+				idx := s.indexes[index]
+				idx.sources[part] = append(idx.sources[part], h)
+				p.targets[h.node] = dest
+				continue
+			}
+		}
+		s.passages = append(s.passages, group)
+	}
+}
+
 func (p *planner) requirementPreview(r model.Record) string {
 	if s := p.pages[id(r)]; s != nil {
 		return subjectPreview(s)
@@ -129,6 +159,12 @@ func (p *planner) requirementPreview(r model.Record) string {
 		}
 	}
 	return ""
+}
+
+func sortEntries(entries []entry) {
+	slices.SortFunc(entries, func(a, b entry) int {
+		return cmp.Or(strings.Compare(a.title, b.title), strings.Compare(a.target, b.target))
+	})
 }
 
 func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex) {
@@ -145,9 +181,7 @@ func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex
 			w.heading(group)
 		}
 		members := idx.groups[group]
-		slices.SortFunc(members, func(a, b entry) int {
-			return cmp.Or(strings.Compare(a.title, b.title), strings.Compare(a.target, b.target))
-		})
+		sortEntries(members)
 		w.out.WriteByte('\n')
 		for _, e := range members {
 			fmt.Fprintln(&w.out, entryLine(w, e))

@@ -133,7 +133,13 @@ func (p *planner) renderSubjectBody(w *writer, s *subject) {
 	for _, title := range slices.Sorted(maps.Keys(s.indexes)) {
 		idx := s.indexes[title]
 		p.renderIndex(s, title, idx)
-		indexes = append(indexes, "- "+w.link(title, idx.file))
+		line := "- " + w.link(title, idx.file)
+		for _, group := range slices.Sorted(maps.Keys(idx.sources)) {
+			if group != "" {
+				line += " · " + w.link(group, s.sectionIndex(group))
+			}
+		}
+		indexes = append(indexes, line)
 	}
 	w.text(strings.Join(indexes, "\n"))
 	p.renderHeadings(w, s, headings)
@@ -194,21 +200,7 @@ func readingOrder(s *subject) []*heading {
 		}
 		return headings
 	}
-	var groups [][]*heading
-	for _, h := range s.source.headings {
-		if h.start < s.name.start {
-			continue
-		}
-		if h != s.name && h.level <= s.name.level {
-			break
-		}
-		if h == s.name || h.level == s.name.level+1 || len(groups) == 0 {
-			groups = append(groups, []*heading{h})
-		} else {
-			i := len(groups) - 1
-			groups[i] = append(groups[i], h)
-		}
-	}
+	groups := slices.Clone(s.passages)
 	var first []string
 	switch s.kind() {
 	case "Requirement":

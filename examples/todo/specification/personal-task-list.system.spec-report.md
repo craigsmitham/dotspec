@@ -11,7 +11,7 @@ A single-user task list that stores open and completed tasks on one computer.
 | --- | --- |
 | [Purpose](<#purpose>) | Help a person pick up unfinished work after an interruption. |
 | [Goals](<#goals>) |  |
-| [Business rules](<#business-rules>) | [Business rules](<business-rules.md>) |
+| [Business rules](<#business-rules>) | [All business rules](<business-rules.md>) |
 | [User needs](<#user-needs>) | [Jobs](<jobs.md>) |
 | [Scope](<#scope>) | Out of scope · Environment · Assumptions · Project context |
 | [System topology](<#system-topology>) | [Components](<components.md>) · [Interfaces](<interfaces.md>) |
@@ -34,15 +34,13 @@ Reduce the effort of working out what still needs attention.
 
 ## Business rules
 
-[Business rules](<business-rules.md>) — Policies that govern the system.
+- [Completion preserves a commitment](<business-rules/completion-preserves-a-commitment.business-rule.spec-report.md>) — A finished commitment stays on the person's list until they explicitly delete it.
 
 ## User needs
 
 ### Stakeholders
 
 The person who keeps the list also decides which entries can be discarded.
-
-[Jobs](<jobs.md>) — The work people need to accomplish and the outcomes they seek.
 
 - [Resume interrupted work](<jobs/resume-interrupted-work.job.spec-report.md>) — When I put work down, I want to remember what remains so I can pick it up again.
 
@@ -87,33 +85,29 @@ flowchart LR
   - Provides [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>).
 - **Provided interface** · [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — The browser presents open and completed tasks and accepts changes through HTML forms.
 
-[Components](<components.md>) — Parts of this system and their responsibilities.
-
-[Interfaces](<interfaces.md>) — Required and provided interfaces and their contracts.
-
 ## Requirements
 
 ### Behavior
 
-[Features](<features.md>) — Product behavior and the specifications each feature groups.
+**Features**
 
 - [Pick up where I left off](<features/pick-up-where-i-left-off.feature.spec-report.md>) — Reopens the task list with each task in its last saved state.
 
-[Capabilities](<capabilities.md>) — What the system can provide and who provides it.
+**Capabilities**
 
 - [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>) — Retains accepted task changes between sessions on the same computer.
 
-[Use cases](<use-cases.md>) — Actor goals, interactions, and outcomes.
+**Use cases**
 
 - [Return to my list](<use-cases/return-to-my-list.use-case.spec-report.md>) — Pick up an outstanding task and bring a finished one back for follow-up.
 
 ### Concepts
 
-[Concept definitions](<concepts.md>) — Definitions of purposeful behavior, state, and actions.
+**Concept definitions**
 
 - [Checklist](<concepts/checklist.concept.spec-report.md>) — Keep track of which commitments still need attention.
 
-[Concept uses](<concept-uses.md>) — How this system uses each concept.
+**Concept uses**
 
 - [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — The checklist used to track one person’s open and completed tasks.
 
@@ -121,14 +115,8 @@ flowchart LR
 
 [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>) refines [Keep recorded work available](<use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>).
 
-[All requirements](<requirements.md>) — Standalone requirements and embedded obligations, including routes by component.
-
 ## Quality attributes
 
 The task list is stored locally. Its quality requirements cover what survives between sessions on the same database.
 
 **[Durability](<quality/durability/durability.quality-attribute.spec-report.md>)** — Preservation of acknowledged work between local sessions.
-
-[Attribute index](<quality-attributes.md>)
-
-[Quality models](<quality-models.md>) — Reference classifications and their definitions.

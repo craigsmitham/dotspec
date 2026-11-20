@@ -56,6 +56,7 @@ type subject struct {
 	parent    *subject
 	indexes   map[string]*collectionIndex
 	glossary  []glossaryPassage
+	passages  [][]*heading
 	overview  []overviewSection
 	file, dir string
 }
@@ -490,13 +491,14 @@ func (p *planner) indexTargets() {
 		}
 	}
 	for _, s := range p.subjects {
-		ids := parser.NewContext().IDs()
 		if s.kind() == "System" {
 			p.planGlossary(s)
-			s.overview = p.planOverview(s)
-			p.indexOverviewHeadings(s, ids)
+		}
+		p.planPassages(s)
+		if s.kind() == "System" {
 			continue
 		}
+		ids := parser.NewContext().IDs()
 		for _, h := range readingOrder(s) {
 			if h.owner != s {
 				continue
@@ -510,6 +512,13 @@ func (p *planner) indexTargets() {
 				}
 				p.targets[h.node] += "#" + generated
 			}
+		}
+	}
+	// Overview summaries can link directly to already-placed use-case clauses.
+	for _, s := range p.subjects {
+		if s.kind() == "System" {
+			s.overview = p.planOverview(s)
+			p.indexOverviewHeadings(s, parser.NewContext().IDs())
 		}
 	}
 	for _, r := range p.snapshot.Elements {

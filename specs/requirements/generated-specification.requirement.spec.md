@@ -23,7 +23,14 @@ open questions in that order when present. The topology shows declared immediate
 parts and boundary relationships in a Mermaid diagram and in linked text.
 The overview displays the full declared quality hierarchy with definition
 previews. A shared attribute appears under each declared parent, with its
-descendants expanded once. Business rule listings belong in the rules index.
+descendants expanded once. The business rules index lists all rules. When a small
+set explicitly applies to the system, the overview names those rules and includes
+their authored statement previews.
+
+Across subject reports, body sections describe the project using authored content,
+specific subjects, or declared relationships. Collection links that only serve
+navigation belong in the section map or page navigation. Definitions of dotspec
+categories belong in the handbook.
 
 A reader can look up a term from an inline or imported glossary and follow it
 to its defining heading. Declared topics link to that same definition. When two

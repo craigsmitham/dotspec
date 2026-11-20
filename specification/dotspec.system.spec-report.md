@@ -35,8 +35,6 @@ work dotspec supports.
 
 ## User needs
 
-[Jobs](<jobs.md>) — The work people need to accomplish and the outcomes they seek.
-
 - [Develop Requirements](<jobs/develop-requirements.job.spec-report.md>) — Define an agreed set of requirements for a proposed software change, from understanding the intended change to making an agreed baseline available.
 - [Manage Requirements](<jobs/manage-requirements.job.spec-report.md>) — Keep an agreed requirements set aligned with a proposed product change, from identifying the change's implications to communicating an updated baseline.
 
@@ -87,25 +85,15 @@ verification role beside the link. A link alone confers no authority.
 The [contributing guide](<../CONTRIBUTING.md#specification-tests-and-implementation-tests>)
 explains how this repository assigns those roles to its tests.
 
-[Glossary](<glossary.md>) — Definitions of terms used in this system.
-
 ## Requirements
-
-### Behavior
-
-[Use cases](<use-cases.md>) — Actor goals, interactions, and outcomes.
 
 ### Concepts
 
-[Concept definitions](<concepts.md>) — Definitions of purposeful behavior, state, and actions.
+**Concept definitions**
 
 - [Command Invocation](<concepts/cli-interaction.concept.spec-report.md>) — Let a person or program submit an operation and determine its outcome through a consistent process interface.
 - [Job Map](<concepts/job-map.concept.spec-report.md>) — Make an accomplishment's steps and success criteria inspectable, so people can discuss what the work involves and how success is judged.
 - [Specification Inspection](<concepts/specification-inspection.concept.spec-report.md>) — Make structural problems and missing-content advice visible within an explicit inspection scope, so contributors can decide what to revise.
-
-### Obligations
-
-[All requirements](<requirements.md>) — Standalone requirements and embedded obligations, including routes by component.
 
 ## Quality attributes
 
@@ -125,7 +113,3 @@ individual quality requirements establish the obligations.
 
 - [Accessibility](<quality/usability/accessibility/accessibility.quality-attribute.spec-report.md>) — How effectively people with differing abilities and ways of accessing output can use dotspec.
 - [Diagnosability](<quality/usability/diagnosability/diagnosability.quality-attribute.spec-report.md>) — How effectively findings help contributors understand and locate specification problems.
-
-[Attribute index](<quality-attributes.md>)
-
-[Quality models](<quality-models.md>) — Reference classifications and their definitions.

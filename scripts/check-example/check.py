@@ -159,6 +159,11 @@ def spec_journey(cli, tmp):
     navigation = overview.split("\n## Purpose\n", 1)[0]
     goals = overview.split("\n## Goals\n", 1)[1].split("\n## ", 1)[0]
     assert "**Supported by** · [Resume interrupted work]" in goals
+    rules = overview.split("\n## Business rules\n", 1)[1].split("\n## ", 1)[0]
+    rule = follow(root, "Completion preserves a commitment")
+    statement = rule.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
+    assert statement in rules and "[All business rules](<business-rules.md>)" in navigation
+    assert "[Business rules](" not in rules
     for section in sections:
         assert f"[{section}](<#{section.lower().replace(' ', '-')}>)" in navigation
     assert all(f"[{name}]" in navigation for name in (
