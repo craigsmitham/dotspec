@@ -2,18 +2,23 @@
 package apply
 
 import (
-	"bytes"
+	"crypto/sha256"
+	"errors"
 	"fmt"
+	"io/fs"
 	"net/url"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/model"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/rogpeppe/go-internal/lockedfile"
 )
 
 type Result struct {
@@ -23,12 +28,18 @@ type Result struct {
 	Added         []string `json:"added"`
 	DryRun        bool     `json:"dry_run"`
 	Content       string   `json:"content"`
+	Files         []File   `json:"files"`
 }
 
-// Run validates the complete result before replacing the file. Dry-run returns
-// the same bytes that a real run would write, including the original BOM/EOLs.
+type File struct {
+	Path    string `json:"path"`
+	Content string `json:"content"`
+}
+
+// Run stages independent attribute sources. The first declared parent supplies
+// the directory. Additional parents remain explicit in the new source.
 func Run(source *qualitymodel.QualityModel, target string, selected []string, dryRun bool) (Result, error) {
-	result := Result{SchemaVersion: 1, Source: source.Path, DryRun: dryRun, Added: []string{}}
+	result := Result{SchemaVersion: 2, Source: source.Path, DryRun: dryRun}
 	target, err := filepath.Abs(target)
 	if err != nil {
 		return result, err
@@ -39,7 +50,7 @@ func Run(source *qualitymodel.QualityModel, target string, selected []string, dr
 		return result, err
 	}
 	if !info.Mode().IsRegular() {
-		return result, fmt.Errorf("target must be a regular file: %s", target)
+		return result, fmt.Errorf("target must be a regular system file: %s", target)
 	}
 	owner, err := system.Layout.Owner(target)
 	if err != nil {
@@ -48,105 +59,157 @@ func Run(source *qualitymodel.QualityModel, target string, selected []string, dr
 	if err := system.Layout.ValidateLocal(owner); err != nil {
 		return result, err
 	}
-	if !system.Layout.Match(target) {
-		return result, fmt.Errorf("target must be a named %s file", system.Suffix)
-	}
-	original, err := os.ReadFile(target)
+	lock := lockedfile.MutexAt(filepath.Join(os.TempDir(), fmt.Sprintf("dotspec-quality-%x.lock", sha256.Sum256([]byte(target)))))
+	unlock, err := lock.Lock()
 	if err != nil {
 		return result, err
 	}
-	current, err := system.Parse(original)
+	defer unlock()
+	current, err := system.Read(target)
 	if err != nil {
-		return result, err
-	}
-	if err := system.Layout.CheckName(target, current.Name); err != nil {
 		return result, err
 	}
 	chosen, err := selection(source, selected)
 	if err != nil {
 		return result, err
 	}
+	byID := map[string]system.Attribute{}
+	for _, a := range source.QualityAttributes {
+		byID[a.ID] = a
+	}
 	for _, a := range current.QualityAttributes {
 		if chosen[a.ID] {
-			return result, fmt.Errorf("attribute ID %q already exists in %s; no changes made", a.ID, target)
+			return result, fmt.Errorf("attribute ID %q already exists in %s", a.ID, target)
 		}
 	}
-	// Relocate Markdown links before slicing sections; reference-style links become
-	// self-contained inline links so definitions elsewhere in the model aren't lost.
-	relocated, err := relocate(source, target)
-	if err != nil {
-		return result, err
-	}
-	var meta struct {
-		specfile.Metadata `yaml:",inline"`
-		ID                string `yaml:"id"`
-	}
-	doc, err := specfile.ParseOutline(relocated, "quality-model", &meta)
-	if err != nil {
-		return result, err
-	}
-	var sections []*specfile.Section
-	for _, s := range doc.Sections {
-		if s.Title == "Quality attributes" {
-			sections = s.Children
+	root := filepath.Join(filepath.Dir(target), "quality")
+	var folder func(system.Attribute) string
+	folder = func(a system.Attribute) string {
+		parent := root
+		if len(a.SubattributeOf) > 0 {
+			parent = folder(byID[a.SubattributeOf[0]])
 		}
+		return filepath.Join(parent, specfile.NameSlug(a.Name))
 	}
-	var addition strings.Builder
-	for i, a := range source.QualityAttributes {
+	used := map[string]bool{}
+	relocated := map[string][]system.Attribute{}
+	for _, a := range source.QualityAttributes {
 		if !chosen[a.ID] {
 			continue
 		}
-		if i >= len(sections) {
-			return result, fmt.Errorf("source attribute sections disagree with parsed definitions")
+		dir := folder(a)
+		file := specfile.AttributePath(dir)
+		if used[file] {
+			return result, fmt.Errorf("two attribute names produce the same destination: %s", file)
 		}
-		result.Added = append(result.Added, a.ID)
-		section := sections[i]
-		addition.WriteString(strings.TrimSpace(string(doc.Source[section.Start:section.End])))
-		sourceLink, err := origin(source, target, a.ID)
+		used[file] = true
+		cache := dir
+		if source.Builtin {
+			cache = "builtin"
+		}
+		definitions := relocated[cache]
+		if definitions == nil {
+			data, err := relocate(source, file)
+			if err != nil {
+				return result, err
+			}
+			parsed, err := qualitymodel.Parse(data)
+			if err != nil {
+				return result, err
+			}
+			definitions = parsed.QualityAttributes
+			relocated[cache] = definitions
+		}
+		i := slices.IndexFunc(definitions, func(d system.Attribute) bool { return d.ID == a.ID })
+		if i < 0 {
+			return result, fmt.Errorf("missing model attribute %s", a.ID)
+		}
+		link, err := origin(source, file, a.ID)
 		if err != nil {
 			return result, err
 		}
-		fmt.Fprintf(&addition, "\n\nSource: [quality model definition](<%s>).\n\n", sourceLink)
-	}
-	targetDoc, err := specfile.ParseOutline(original, "system", &specfile.Metadata{})
-	if err != nil {
-		return result, err
-	}
-	insert := len(original)
-	heading := "## Quality attributes\n\n"
-	for _, s := range targetDoc.Sections {
-		if s.Title == "Quality attributes" {
-			insert = rawOffset(original, len(targetDoc.Original)-len(targetDoc.Source)+s.End)
-			heading = ""
+		var body strings.Builder
+		fmt.Fprintf(&body, "---\ntype: quality-attribute-spec\nid: %s\n", strconv.Quote(a.ID))
+		if len(a.SubattributeOf) > 1 {
+			body.WriteString("subattribute_of:\n")
+			for _, id := range a.SubattributeOf[1:] {
+				fmt.Fprintf(&body, "  - %s\n", strconv.Quote(id))
+			}
 		}
-	}
-	eol := "\n"
-	if bytes.Contains(original, []byte("\r\n")) {
-		eol = "\r\n"
-	}
-	added := strings.ReplaceAll("\n\n"+heading+strings.TrimRight(addition.String(), "\n")+"\n\n", "\n", eol)
-	next := append([]byte{}, original[:insert]...)
-	next = append(next, []byte(added)...)
-	next = append(next, original[insert:]...)
-	parsed, err := system.Parse(next)
-	if err != nil {
-		return result, fmt.Errorf("copied attributes would make the system invalid: %w", err)
-	}
-	if len(parsed.QualityAttributes) != len(current.QualityAttributes)+len(result.Added) {
-		return result, fmt.Errorf("target Markdown prevents insertion of the selected attributes; no changes made")
-	}
-	for _, id := range result.Added {
-		if parsed.FindQualityAttribute(id) == nil {
-			return result, fmt.Errorf("copied attribute %s was not parsed; no changes made", id)
-		}
-	}
-	result.Content = string(next)
-	if !dryRun {
-		if err := replace(target, original, next, info.Mode()); err != nil {
+		fmt.Fprintf(&body, "---\n\n# %s\n\n## Definition\n\n%s\n\nSource: [quality model definition](<%s>).\n", a.Name, definitions[i].Definition, link)
+		if _, err := system.ParseQualityAttribute(file, []byte(body.String())); err != nil {
 			return result, err
 		}
+		result.Files = append(result.Files, File{file, body.String()})
+		result.Added = append(result.Added, a.ID)
 	}
-	return result, nil
+	var preview strings.Builder
+	for _, f := range result.Files {
+		rel, _ := filepath.Rel(owner, f.Path)
+		fmt.Fprintf(&preview, "-- %s --\n%s", filepath.ToSlash(rel), f.Content)
+	}
+	result.Content = preview.String()
+	if !dryRun {
+		err = publish(root, result.Files)
+	}
+	return result, err
+}
+
+// Publish complete top-level folders. Roll back only directories installed by
+// this operation if a later rename fails.
+func publish(root string, files []File) error {
+	stage, err := os.MkdirTemp(filepath.Dir(root), ".dotspec-quality-")
+	if err != nil {
+		return err
+	}
+	defer func() { _ = os.RemoveAll(stage) }()
+	for _, file := range files {
+		rel, err := filepath.Rel(root, file.Path)
+		if err != nil {
+			return err
+		}
+		dest := filepath.Join(stage, rel)
+		if err := os.MkdirAll(filepath.Dir(dest), 0755); err != nil {
+			return err
+		}
+		if err := os.WriteFile(dest, []byte(file.Content), 0644); err != nil {
+			return err
+		}
+	}
+	_, err = os.Lstat(root)
+	if errors.Is(err, fs.ErrNotExist) {
+		if err := os.Chmod(stage, 0755); err != nil {
+			return err
+		}
+		return os.Rename(stage, root)
+	}
+	if err != nil {
+		return err
+	}
+	entries, err := os.ReadDir(stage)
+	if err != nil {
+		return err
+	}
+	for _, e := range entries {
+		dest := filepath.Join(root, e.Name())
+		if _, err := os.Lstat(dest); err == nil {
+			return fmt.Errorf("attribute folder already exists: %s", dest)
+		} else if !errors.Is(err, fs.ErrNotExist) {
+			return err
+		}
+	}
+	var installed []string
+	for _, e := range entries {
+		from, to := filepath.Join(stage, e.Name()), filepath.Join(root, e.Name())
+		if err := os.Rename(from, to); err != nil {
+			for _, name := range installed {
+				err = errors.Join(err, os.Rename(filepath.Join(root, name), filepath.Join(stage, name)))
+			}
+			return err
+		}
+		installed = append(installed, e.Name())
+	}
+	return nil
 }
 
 func selection(source *qualitymodel.QualityModel, selected []string) (map[string]bool, error) {
@@ -189,54 +252,6 @@ func origin(source *qualitymodel.QualityModel, target, id string) (string, error
 		return "", err
 	}
 	return (&url.URL{Path: filepath.ToSlash(rel), Fragment: id}).String(), nil
-}
-
-func rawOffset(raw []byte, normalized int) int {
-	i := 0
-	if bytes.HasPrefix(raw, []byte("\xef\xbb\xbf")) {
-		i = 3
-	}
-	for n := 0; n < normalized && i < len(raw); n++ {
-		if raw[i] == '\r' && i+1 < len(raw) && raw[i+1] == '\n' {
-			i++
-		}
-		i++
-	}
-	return i
-}
-
-func replace(path string, before, after []byte, mode os.FileMode) error {
-	f, err := os.CreateTemp(filepath.Dir(path), ".dotspec-quality-*")
-	if err != nil {
-		return err
-	}
-	name := f.Name()
-	defer func() { _ = os.Remove(name) }()
-	if err = f.Chmod(mode.Perm()); err == nil {
-		_, err = f.Write(after)
-	}
-	if err == nil {
-		err = f.Sync()
-	}
-	closeErr := f.Close()
-	if err != nil {
-		return err
-	}
-	if closeErr != nil {
-		return closeErr
-	}
-	now, err := os.ReadFile(path)
-	if err != nil {
-		return err
-	}
-	info, err := os.Lstat(path)
-	if err != nil {
-		return err
-	}
-	if !info.Mode().IsRegular() || !bytes.Equal(now, before) {
-		return fmt.Errorf("target changed during population; no changes made")
-	}
-	return os.Rename(name, path)
 }
 
 // relocate rewrites only link suffix spans. Labels, formatting, code examples,

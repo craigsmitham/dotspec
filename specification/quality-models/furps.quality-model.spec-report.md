@@ -31,6 +31,12 @@ RUP category variant (1987–2001 guidance), dotspec starter 2
 
 Consider the capabilities and results people need from the system.
 
+**Subattributes**
+
+- [Capabilities](<#capabilities>)
+- [Feature sets](<#feature-sets>)
+- [Security](<#security>)
+
 ### Feature sets
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#feature-sets"} -->
@@ -39,6 +45,8 @@ Consider the capabilities and results people need from the system.
 **Sub-attribute of:** functionality
 
 Which groups of functions are needed to support the intended work?
+
+**Parent attribute** · [Functionality](<#functionality>)
 
 ### Capabilities
 
@@ -49,6 +57,8 @@ Which groups of functions are needed to support the intended work?
 
 What actions and results must the system make possible?
 
+**Parent attribute** · [Functionality](<#functionality>)
+
 ### Security
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#security"} -->
@@ -58,6 +68,8 @@ What actions and results must the system make possible?
 
 What protection and access controls must the system provide?
 
+**Parent attribute** · [Functionality](<#functionality>)
+
 ### Usability
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#usability"} -->
@@ -65,6 +77,16 @@ What protection and access controls must the system provide?
 **ID:** usability
 
 Consider how people discover, learn, and use the system, including its documentation.
+
+**Subattributes**
+
+- [Aesthetics](<#aesthetics>)
+- [Human factors](<#human-factors>)
+- [Online and context-sensitive help](<#online-and-context-sensitive-help>)
+- [Training materials](<#training-materials>)
+- [User documentation](<#user-documentation>)
+- [User-interface consistency](<#user-interface-consistency>)
+- [Wizards and agents](<#wizards-and-agents>)
 
 ### Human factors
 
@@ -75,6 +97,8 @@ Consider how people discover, learn, and use the system, including its documenta
 
 How should the interaction accommodate the people and work environments involved?
 
+**Parent attribute** · [Usability](<#usability>)
+
 ### Aesthetics
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#aesthetics"} -->
@@ -83,6 +107,8 @@ How should the interaction accommodate the people and work environments involved
 **Sub-attribute of:** usability
 
 What expectations apply to the visual and sensory presentation?
+
+**Parent attribute** · [Usability](<#usability>)
 
 ### User-interface consistency
 
@@ -93,6 +119,8 @@ What expectations apply to the visual and sensory presentation?
 
 Which interaction conventions should behave consistently across the product?
 
+**Parent attribute** · [Usability](<#usability>)
+
 ### Online and context-sensitive help
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#online-and-context-sensitive-help"} -->
@@ -101,6 +129,8 @@ Which interaction conventions should behave consistently across the product?
 **Sub-attribute of:** usability
 
 What help must be available during a task and tailored to the current situation?
+
+**Parent attribute** · [Usability](<#usability>)
 
 ### Wizards and agents
 
@@ -111,6 +141,8 @@ What help must be available during a task and tailored to the current situation?
 
 Which tasks need guided steps or delegated assistance?
 
+**Parent attribute** · [Usability](<#usability>)
+
 ### User documentation
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#user-documentation"} -->
@@ -119,6 +151,8 @@ Which tasks need guided steps or delegated assistance?
 **Sub-attribute of:** usability
 
 What instructions and reference information do users need?
+
+**Parent attribute** · [Usability](<#usability>)
 
 ### Training materials
 
@@ -129,6 +163,8 @@ What instructions and reference information do users need?
 
 What learning resources are needed for users to become effective?
 
+**Parent attribute** · [Usability](<#usability>)
+
 ### Reliability
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#reliability"} -->
@@ -136,6 +172,14 @@ What learning resources are needed for users to become effective?
 **ID:** reliability
 
 Consider consistent behavior, availability, and recovery when things go wrong.
+
+**Subattributes**
+
+- [Accuracy](<#accuracy>)
+- [Frequency and severity of failure](<#frequency-and-severity-of-failure>)
+- [Mean time between failures](<#mean-time-between-failures>)
+- [Predictability](<#predictability>)
+- [Recoverability](<#recoverability>)
 
 ### Frequency and severity of failure
 
@@ -146,6 +190,8 @@ Consider consistent behavior, availability, and recovery when things go wrong.
 
 How often may failures occur, and which consequences distinguish their severity?
 
+**Parent attribute** · [Reliability](<#reliability>)
+
 ### Recoverability
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#recoverability"} -->
@@ -154,6 +200,8 @@ How often may failures occur, and which consequences distinguish their severity?
 **Sub-attribute of:** reliability
 
 What must be restored after failure, and how will successful recovery be demonstrated?
+
+**Parent attribute** · [Reliability](<#reliability>)
 
 ### Accuracy
 
@@ -164,6 +212,11 @@ What must be restored after failure, and how will successful recovery be demonst
 
 What accuracy must results retain during continued operation and under the specified workload?
 
+**Parent attribute**
+
+- [Performance](<#performance>)
+- [Reliability](<#reliability>)
+
 ### Predictability
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#predictability"} -->
@@ -172,6 +225,8 @@ What accuracy must results retain during continued operation and under the speci
 **Sub-attribute of:** reliability
 
 Which behaviors must remain consistent across repeated operations and changing conditions?
+
+**Parent attribute** · [Reliability](<#reliability>)
 
 ### Mean time between failures
 
@@ -182,6 +237,8 @@ Which behaviors must remain consistent across repeated operations and changing c
 
 What observation period and failure definition will be used to assess intervals between failures?
 
+**Parent attribute** · [Reliability](<#reliability>)
+
 ### Performance
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#performance"} -->
@@ -189,6 +246,17 @@ What observation period and failure definition will be used to assess intervals 
 **ID:** performance
 
 Consider response times, throughput, and resource use for realistic workloads.
+
+**Subattributes**
+
+- [Accuracy](<#accuracy>)
+- [Availability](<#availability>)
+- [Efficiency](<#efficiency>)
+- [Recovery time](<#recovery-time>)
+- [Resource usage](<#resource-usage>)
+- [Response time](<#response-time>)
+- [Speed](<#speed>)
+- [Throughput](<#throughput>)
 
 ### Speed
 
@@ -199,6 +267,8 @@ Consider response times, throughput, and resource use for realistic workloads.
 
 How quickly must the system complete its work under the expected load?
 
+**Parent attribute** · [Performance](<#performance>)
+
 ### Efficiency
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#efficiency"} -->
@@ -207,6 +277,8 @@ How quickly must the system complete its work under the expected load?
 **Sub-attribute of:** performance
 
 What useful output is expected for the resources consumed?
+
+**Parent attribute** · [Performance](<#performance>)
 
 ### Availability
 
@@ -217,6 +289,8 @@ What useful output is expected for the resources consumed?
 
 What readiness for use must be maintained under the specified workload?
 
+**Parent attribute** · [Performance](<#performance>)
+
 ### Throughput
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#throughput"} -->
@@ -225,6 +299,8 @@ What readiness for use must be maintained under the specified workload?
 **Sub-attribute of:** performance
 
 How much work must the system complete per unit of time?
+
+**Parent attribute** · [Performance](<#performance>)
 
 ### Response time
 
@@ -235,6 +311,8 @@ How much work must the system complete per unit of time?
 
 How long may a caller wait for a response?
 
+**Parent attribute** · [Performance](<#performance>)
+
 ### Recovery time
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#recovery-time"} -->
@@ -243,6 +321,8 @@ How long may a caller wait for a response?
 **Sub-attribute of:** performance
 
 How quickly must useful operation resume following a disruption?
+
+**Parent attribute** · [Performance](<#performance>)
 
 ### Resource usage
 
@@ -253,6 +333,8 @@ How quickly must useful operation resume following a disruption?
 
 What resource budgets apply while the system is operating?
 
+**Parent attribute** · [Performance](<#performance>)
+
 ### Supportability
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#supportability"} -->
@@ -260,6 +342,18 @@ What resource budgets apply while the system is operating?
 **ID:** supportability
 
 Consider how the system will be tested, configured, maintained, and supported throughout its life.
+
+**Subattributes**
+
+- [Adaptability](<#adaptability>)
+- [Compatibility](<#compatibility>)
+- [Configurability](<#configurability>)
+- [Extensibility](<#extensibility>)
+- [Installability](<#installability>)
+- [Localizability](<#localizability>)
+- [Maintainability](<#maintainability>)
+- [Serviceability](<#serviceability>)
+- [Testability](<#testability>)
 
 ### Testability
 
@@ -270,6 +364,8 @@ Consider how the system will be tested, configured, maintained, and supported th
 
 What controls and observations are needed to test the system?
 
+**Parent attribute** · [Supportability](<#supportability>)
+
 ### Extensibility
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#extensibility"} -->
@@ -278,6 +374,8 @@ What controls and observations are needed to test the system?
 **Sub-attribute of:** supportability
 
 What additions should be possible without extensive rework?
+
+**Parent attribute** · [Supportability](<#supportability>)
 
 ### Adaptability
 
@@ -288,6 +386,8 @@ What additions should be possible without extensive rework?
 
 Which changes in environment or use should the system accommodate?
 
+**Parent attribute** · [Supportability](<#supportability>)
+
 ### Maintainability
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#maintainability"} -->
@@ -296,6 +396,8 @@ Which changes in environment or use should the system accommodate?
 **Sub-attribute of:** supportability
 
 What effort and confidence are expected when diagnosing and changing the system?
+
+**Parent attribute** · [Supportability](<#supportability>)
 
 ### Compatibility
 
@@ -306,6 +408,8 @@ What effort and confidence are expected when diagnosing and changing the system?
 
 Which existing products and versions must continue to work with the system?
 
+**Parent attribute** · [Supportability](<#supportability>)
+
 ### Configurability
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#configurability"} -->
@@ -314,6 +418,8 @@ Which existing products and versions must continue to work with the system?
 **Sub-attribute of:** supportability
 
 What behavior must operators or users be able to configure?
+
+**Parent attribute** · [Supportability](<#supportability>)
 
 ### Serviceability
 
@@ -324,6 +430,8 @@ What behavior must operators or users be able to configure?
 
 What support and repair tasks must be practical during the product life?
 
+**Parent attribute** · [Supportability](<#supportability>)
+
 ### Installability
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#installability"} -->
@@ -333,6 +441,8 @@ What support and repair tasks must be practical during the product life?
 
 What is required to install, update, and remove the system successfully?
 
+**Parent attribute** · [Supportability](<#supportability>)
+
 ### Localizability
 
 <!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#localizability"} -->
@@ -341,5 +451,7 @@ What is required to install, update, and remove the system successfully?
 **Sub-attribute of:** supportability
 
 Which languages and regional conventions must be supported without redesign?
+
+**Parent attribute** · [Supportability](<#supportability>)
 
 [Edit source](<../../internal/qualitymodel/specs/quality-models/furps.quality-model.spec.md#furps-starter>)

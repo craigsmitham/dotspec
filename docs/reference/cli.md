@@ -853,7 +853,7 @@ Copy selected model attributes into a system without overwriting declarations
 dotspec quality-model apply [model] [flags]
 ```
 
-Copy attributes from a bundled starter or local quality model. The default model is iso-25010-2023. With no --attributes selection, copy all attributes. Include ancestors automatically; refuse ID conflicts before writing. --dry-run prints the exact resulting document.
+Copy attributes from a bundled starter or local quality model. The default model is iso-25010-2023. With no --attributes selection, copy all attributes. Include ancestors automatically; refuse ID conflicts before writing. --dry-run lists each proposed attribute path and its complete content.
 
 Local declarations remain independent of their source model.
 
@@ -864,7 +864,7 @@ dotspec quality-model apply --system specs/new-system.system.spec.md --dry-run
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--attributes` | `[]` | Comma-separated attribute IDs to copy, including ancestors |
-| `--dry-run` | `false` | Preview the complete resulting document without writing |
+| `--dry-run` | `false` | Preview the new attribute files without writing |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for apply |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
@@ -1018,6 +1018,7 @@ dotspec requirement init reject-existing-target --path .
 
 | Flag | Default | Description |
 | --- | --- | --- |
+| `--attribute` | `` | Classify by a governing system attribute ID. At the declaring system, --preset quality places the requirement in the attribute folder. |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for init |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |

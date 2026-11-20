@@ -72,7 +72,7 @@ established.
 
 ## Related specifications
 
-[Inspection preserves source material](<inspection-preserves-source.requirement.spec-report.md>)
+[Inspection preserves source material](<../quality/reliability/source-preservation/inspection-preserves-source.requirement.spec-report.md>)
 defines the existing source-preservation quality obligation.
 [Continue checking after a structural error](<continue-after-invalid-spec.requirement.spec-report.md>)
 defines continued inspection. The
@@ -83,6 +83,6 @@ The [specification model documentation](<../../docs/reference/specification-mode
 [Markdown mapping profile](<../../model/markdown-mapping.md>) describe the
 representation and named mappings.
 
-**Quality attribute** · [Source preservation](<../quality-attributes.spec-report.md#source-preservation>)
+**Quality attribute** · [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)
 
 [Edit source](<../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-model-exports>)

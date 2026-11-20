@@ -31,7 +31,7 @@ Reviewers can inspect product intent in Git and follow a promise to its context 
 
 **Quality attribute**
 
-- [Repeatability](<../quality-attributes.spec-report.md#repeatability>)
-- [Usability](<../quality-attributes.spec-report.md#usability>)
+- [Repeatability](<../quality/reliability/repeatability/repeatability.quality-attribute.spec-report.md>)
+- [Usability](<../quality/usability/usability.quality-attribute.spec-report.md>)
 
 [Edit source](<../../specs/requirements/generated-specification.requirement.spec.md#read-and-verify-the-generated-requirements-specification>)

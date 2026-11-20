@@ -136,6 +136,10 @@ func (p *planner) renderSubject(s *subject) {
 		w.text(w.link(parent.name.title, parent.file))
 	}
 	p.renderHeadings(w, s, headings)
+	if s.kind() == "System" && len(model.Strings(s.r["quality_attributes"])) > 0 && s.section("Quality attributes") == nil {
+		w.heading("Quality attributes")
+		p.attributeTable(w, s)
+	}
 	for _, label := range slices.Sorted(maps.Keys(s.directories)) {
 		if d := s.directories[label]; d.section == nil {
 			w.heading(label)
@@ -153,11 +157,6 @@ func (p *planner) renderSubject(s *subject) {
 func (p *planner) renderHeadings(w *writer, s *subject, headings []*heading) {
 	for _, h := range headings {
 		if h.owner != s {
-			if s.attributes != nil && h == s.attributes.name {
-				w.heading(h.title)
-				p.body(w, s.source, h)
-				p.attributeTable(w, s)
-			}
 			continue
 		}
 		if h != s.name {
@@ -182,6 +181,9 @@ func (p *planner) renderHeadings(w *writer, s *subject, headings []*heading) {
 			p.featureGoals(w, s)
 		}
 		p.body(w, s.source, h)
+		if s.kind() == "System" && h.title == "Quality attributes" && h.level == 2 && len(model.Strings(s.r["quality_attributes"])) > 0 {
+			p.attributeTable(w, s)
+		}
 		if h.level == s.name.level+1 && h.title == "Related specifications" {
 			p.relationships(w, s.name, false)
 		}
@@ -253,7 +255,7 @@ func (p *planner) appendFootnotes(w *writer, s *subject) {
 	onPage := func(pos int) bool {
 		for _, h := range s.source.headings {
 			if h.start <= pos && pos < h.bodyEnd {
-				return h.owner == s || (s.attributes != nil && h == s.attributes.name)
+				return h.owner == s
 			}
 		}
 		return false
@@ -292,6 +294,9 @@ func (p *planner) headingMarkdown(w *writer, s *subject, h *heading) string {
 	return h.title
 }
 func kindName(kind string) string {
+	if kind == "SystemQualityAttribute" {
+		return "quality-attribute"
+	}
 	var b strings.Builder
 	for i, r := range kind {
 		if i > 0 && r >= 'A' && r <= 'Z' {
@@ -440,7 +445,7 @@ func linkTitle(n model.Record) string {
 type relation struct{ forward, reverse string }
 
 var relations = map[string]relation{
-	"groups": {"Groups", "Feature"}, "refines": {"Refines", "Refined by"}, "supports": {"Supports", "Supported by"},
+	"subattribute_of": {"Parent attribute", "Subattributes"}, "groups": {"Groups", "Feature"}, "refines": {"Refines", "Refined by"}, "supports": {"Supports", "Supported by"},
 	"applies_to": {"Applies to", "Applies here"}, "quality_attributes": {"Quality attribute", "Classifies"},
 	"derived_from": {"Derived from", "Basis for"}, "relies_on": {"Relies on", "Relied on by"},
 	"involves": {"Involves", "Used in"}, "illustrates": {"Illustrates", "Illustrated by"},

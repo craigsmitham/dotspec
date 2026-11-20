@@ -9,6 +9,7 @@ import (
 
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/requirement"
+	"github.com/craigsmitham/dotspec/internal/system"
 )
 
 func TestClassificationContextAndAdvice(t *testing.T) {
@@ -16,25 +17,31 @@ func TestClassificationContextAndAdvice(t *testing.T) {
 	git(t, dir, "init", "-q")
 	child := filepath.Join(dir, "component")
 	modelPath := filepath.Join(dir, "specs/product.system.spec.md")
-	model := validSystem + "\n## Quality attributes\n### Known\n**ID:** known\n"
+	attrPath := filepath.Join(dir, "specs/quality/known/known.quality-attribute.spec.md")
+	attr := "---\ntype: quality-attribute-spec\n---\n# Known\n"
+	write(t, attrPath, attr)
+	model := validSystem
 	write(t, modelPath, model)
 	source := strings.Replace(requirement.QualityTemplate, "type: requirement-spec", "type: requirement-spec\nquality_attributes: [known, unknown]", 1)
 	path := requirement.Layout.Path(child, "work")
 	write(t, path, source)
 	focused := check.Focused(child, "work", requirement.CheckType())
-	project := checkProject(child)
-	if !reflect.DeepEqual(focused.Diagnostics, project.Diagnostics) || focused.ExitCode() != 0 || focused.Summary.Advice != 2 || focused.Summary.ContextFilesChecked != 1 {
+	checkQuality := func(path string) check.Report {
+		return check.Project(path, system.CheckType(), system.AttributeCheckType(), requirement.CheckType())
+	}
+	project := checkQuality(child)
+	if !reflect.DeepEqual(focused.Diagnostics, project.Diagnostics) || focused.ExitCode() != 0 || focused.Summary.Advice != 2 || focused.Summary.ContextFilesChecked != 2 {
 		t.Fatalf("context advice differs: %+v %+v", focused, project)
 	}
 	// A system discovered directly and also used by two requirement owners
 	// contributes its missing-definition advice only once.
 	write(t, requirement.Layout.Path(dir, "root"), source)
-	project = checkProject(dir)
+	project = checkQuality(dir)
 	if project.Summary.Advice != 3 || project.Summary.ContextFilesChecked != 0 {
 		t.Fatalf("duplicate model advice: %+v", project)
 	}
-	write(t, modelPath, strings.Replace(model, "**ID:** known", "**ID:** known\n**Sub-attribute of:** missing", 1))
-	project = checkProject(dir)
+	write(t, attrPath, strings.Replace(attr, "type: quality-attribute-spec", "type: quality-attribute-spec\nsubattribute_of: [missing]", 1))
+	project = checkQuality(dir)
 	if !project.Complete || project.Summary.Errors != 1 || project.Summary.Advice != 0 || project.Diagnostics[0].Rule != "quality.subattribute" {
 		t.Fatalf("cascading model errors: %+v", project)
 	}

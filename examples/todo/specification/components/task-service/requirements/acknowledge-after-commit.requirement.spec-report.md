@@ -23,4 +23,8 @@ Use the assertions in the [restart test](<../../../../tests/acceptance.py>) to c
 
 A successful response tells the person that it is safe to close the task list.
 
+## Related specifications
+
+**Quality attribute** · [Durability](<../../../quality/durability/durability.quality-attribute.spec-report.md>)
+
 [Edit source](<../../../../components/task-service/specs/requirements/acknowledge-after-commit.requirement.spec.md#acknowledge-after-commit>)

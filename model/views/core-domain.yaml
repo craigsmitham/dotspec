@@ -300,12 +300,13 @@ diagrams:
 - title: Specification types
   direction: TB
   show_cardinality: false
-  description: A Specification is the root record of one authored specification document. The eight specification
+  description: A Specification is the root record of one authored specification document. The nine specification
     types correspond one-to-one with these concrete classes. Subsets classify concerns separately from this
     hierarchy.
   nodes:
   - Specification
   - SystemContextSpecification
+  - SystemQualityAttribute
   - System
   - Component
   - QualityModel

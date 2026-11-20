@@ -92,6 +92,9 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 		m.section(r, "quality_attributes_content", s)
 		r["quality_attributes"] = []string{}
 		m.bind(r, "quality_attributes", []string{s.HeadingID}, "structural_wrapper", "quality-attributes-heading")
+		if String(r, "kind") == "System" {
+			break
+		}
 		for _, child := range s.Children {
 			a := m.named("QualityAttribute", r, child)
 			a["authored_id"] = m.fieldText(child, "ID")

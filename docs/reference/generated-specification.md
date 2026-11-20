@@ -28,7 +28,7 @@ Commit the authored changes, `SPEC.md` and the generated Markdown in `specificat
 | --- | --- |
 | `SPEC.md` | System name and a single link to its full report |
 | `specification/<name>.system.spec-report.md` | Root system overview and links into its specification |
-| `specification/quality-attributes.spec-report.md` | The system's declared quality attributes, with their full definitions, hierarchy, qualifications, and links to classified requirements |
+| `specification/quality/<attribute>/<attribute>.quality-attribute.spec-report.md` | One system attribute, its definition, parent and child attributes, and classified obligations |
 | `specification/<name>.system.spec-report.md#requirements` | Requirements and embedded obligations in this system, each linked to its canonical page or passage |
 | `specification/systems/<child>/<child>.system.spec-report.md` | Child system overview with its own local directories |
 | `specification/requirements-review.report.md` | Review items with links to passages for follow-up |
@@ -39,7 +39,7 @@ to `.spec-report.md`. For example, the Task service report lives at
 holds its local requirements, interfaces, and child components. The optional source
 `id` provides an anchor. The subject name determines the overview filename.
 
-In a system overview, select an attribute in the name-and-description table to read its full entry. A child system with declared attributes has its own detail page beside its system overview. On a requirement page, read the statement, applicability, criterion, and verification plan together. Links beside the requirement lead back to the precise attribute or use-case passage.
+In a system overview, select an attribute in the name-and-description table to read its full entry. Nested attribute folders mirror the source beneath the system’s `quality/` directory. Functional requirement reports live under their owner’s `requirements/` folder. A quality obligation authored beside an attribute has its report beside that attribute. The attribute page links to classified requirements in both locations. On a requirement page, read the statement, applicability, criterion, and verification plan together. Links beside the requirement lead back to the precise attribute or use-case passage.
 
 For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with its authored description of the behavior it offers. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
 
@@ -63,8 +63,7 @@ uses `<subject>-spec-report`. For example, `<name>.system.spec.md` declares
 The report’s `documents` value is a relative URI to its subject’s authored
 heading. A `component-spec-report` points to the H1 in the component’s own source. For a report rendered as a
 section, the same two fields appear in a `dotspec-doc` HTML comment beneath its
-heading. A shared quality-attributes file holds one `quality-attribute-spec-report`
-per entry. The file’s `generated_by: dotspec` marker identifies generator
+heading. Each system quality attribute has a `quality-attribute-spec-report` file. Reusable quality model entries remain sections of the model’s report. The file’s `generated_by: dotspec` marker identifies generator
 ownership. The project-wide `requirements-review-report` links to the passages
 that need review. See the [document model](model/index.md#generateddocument).
 

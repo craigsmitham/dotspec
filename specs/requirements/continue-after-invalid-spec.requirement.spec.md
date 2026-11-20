@@ -1,8 +1,7 @@
 ---
 type: requirement-spec
 id: continue-after-invalid-spec
-quality_attributes:
-  - diagnosability
+quality_attributes: [diagnosability]
 ---
 
 # Continue checking after a structural error

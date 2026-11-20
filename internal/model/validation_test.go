@@ -22,28 +22,10 @@ func validationSnapshot(t *testing.T) *Snapshot {
 	t.Helper()
 	dir := t.TempDir()
 	files := map[string]string{
-		"specs/example.system.spec.md": `---
-type: system-spec
----
-# Example
-## Purpose
-Support explicit source-backed specifications.
-## Scope
-These examples.
-## Goals
-- Preserve author intent.
-## Glossary
-### Source
-The original authored bytes.
-## Quality attributes
-### Reliability
-**ID:** reliable
-Works as specified.
-### Consistency
-**ID:** consistent
-**Sub-attribute of:** reliable
-Produces the same result from the same source.
-`,
+		"specs/example.system.spec.md":                                                "---\ntype: system-spec\n---\n# Example\n## Purpose\nSupport explicit source-backed specifications.\n## Scope\nThese examples.\n## Goals\n- Preserve author intent.\n## Glossary\n### Source\nThe original authored bytes.\n## Quality attributes\n",
+		"specs/quality/reliability/reliability.quality-attribute.spec.md":             "---\ntype: quality-attribute-spec\nid: reliable\n---\n# Reliability\n\n## Definition\n\nWorks as specified.\n",
+		"specs/quality/reliability/consistency/consistency.quality-attribute.spec.md": "---\ntype: quality-attribute-spec\nid: consistent\n---\n# Consistency\n\n## Definition\n\nProduces the same result from the same source.\n",
+
 		"specs/use-cases/check.use-case.spec.md": `---
 type: use-case-spec
 id: check
@@ -133,7 +115,7 @@ Compare the bytes before and after inspection.
 			t.Fatal(err)
 		}
 	}
-	result, err := Export(dir, system.CheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType())
+	result, err := Export(dir, system.CheckType(), system.AttributeCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -250,8 +232,8 @@ func TestValidationRejectsCorruptGraph(t *testing.T) {
 		name, code string
 		mutate     func(*Snapshot)
 	}{
-		{"attribute declaration without section content", "declaration.pair", func(s *Snapshot) { delete(elementKind(t, s, "System"), "quality_attributes_content") }},
-		{"section content without attribute declaration", "declaration.pair", func(s *Snapshot) { delete(elementKind(t, s, "System"), "quality_attributes") }},
+		{"removed bound system section", "binding.field", func(s *Snapshot) { delete(elementKind(t, s, "System"), "quality_attributes_content") }},
+		{"removed attribute membership", "membership.missing", func(s *Snapshot) { delete(elementKind(t, s, "System"), "quality_attributes") }},
 		{"duplicate identity", "identity.duplicate", func(s *Snapshot) { s.Elements = append(s.Elements, s.Elements[0]) }},
 		{"missing typed reference", "reference.missing", func(s *Snapshot) { elementKind(t, s, "UseCase")["main_success_scenario"] = "missing" }},
 		{"wrong reference subtype", "reference.kind", func(s *Snapshot) {
@@ -466,7 +448,7 @@ func TestValidationRejectsDomainCyclesAndAttributeScopeEscape(t *testing.T) {
 		s := cloneSnapshot(t, original)
 		reliable, consistent := Record(nil), Record(nil)
 		for _, r := range s.Elements {
-			if String(r, "kind") == "QualityAttribute" {
+			if String(r, "kind") == "SystemQualityAttribute" {
 				if String(r, "authored_id") == "reliable" {
 					reliable = r
 				} else {

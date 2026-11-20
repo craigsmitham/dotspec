@@ -59,6 +59,6 @@ A list that loses track of earlier decisions forces the person to reconstruct th
 
 **Feature** · [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)
 
-**Quality attribute** · [Durability](<../quality-attributes.spec-report.md#durability>)
+**Quality attribute** · [Durability](<../quality/durability/durability.quality-attribute.spec-report.md>)
 
 [Edit source](<../../specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>)

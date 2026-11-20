@@ -10,8 +10,15 @@ Use `dotspec requirement init <slug>` for a required result, rule, property, or
 restriction. Add `--preset quality` when quality-focused prompts help; that
 template also prompts for a Criterion. Both presets create the same requirement
 type, with the same applicability, quality attributes, criteria, traceability,
-verification and validation plans. A quality requirement is a requirement
-classified by `quality_attributes`; it may also require behavior.
+verification and validation plans. Place a functional requirement in the owning system or component’s `specs/requirements/`.
+The To-do restart requirement belongs there because it specifies which task data must
+survive a restart. Its `quality_attributes: [durability]` entry also makes it
+discoverable from the Durability report.
+
+A requirement about how well the system performs can live beside the quality
+attribute it constrains. For example, a recovery-time limit belongs with the
+recovery attribute. At the declaring system, use `--preset quality --attribute <id>`
+to create the requirement there.
 
 An obligation can also live inside a concept or use case. Keep one authoritative
 definition and link to it from scenarios or other specifications. A separate file

@@ -253,9 +253,10 @@ func (b *snapshotBuilder) resolveLabels() {
 		}
 	}
 	b.associateSpecificationSystems()
+	b.associateQualityTree()
 	attributes := map[string]map[string][]string{}
 	for _, element := range b.snapshot.Elements {
-		if String(element, "kind") != "QualityAttribute" {
+		if !designKind(String(element, "kind"), "QualityAttribute") {
 			continue
 		}
 		owner, label := String(element, "owner"), String(element, "authored_id")

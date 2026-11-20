@@ -33,6 +33,7 @@ type snapshotBuilder struct {
 	// directorySystem records, by root element, the nearest enclosing system
 	// found by directory discovery. It supplies the default association only.
 	directorySystem map[string]string
+	attributeOwners map[string]string // validated quality source path to declaring system path
 	readFailed      bool
 	sequence        int
 }
@@ -69,7 +70,7 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 		snapshot: NewSnapshot(scope), types: types, byPath: map[string]*ParsedDocument{},
 		sources: map[string]Record{}, elements: map[string]Record{}, rootByPath: map[string]string{},
 		primary: map[string]bool{}, follow: map[string]bool{}, contextPath: map[string]string{}, contextOK: map[string]bool{},
-		directorySystem: map[string]string{},
+		directorySystem: map[string]string{}, attributeOwners: map[string]string{},
 	}
 	for _, path := range inspection.Selected {
 		path = cleanPath(path)
@@ -94,7 +95,7 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 		_, explicit := b.elements[b.rootByPath[path]]["specification_system_content"]
 		var contexts []string
 		var contextErr error
-		if explicit {
+		if explicit && kind.Context.ResolveSource != nil {
 			contexts, contextErr = kind.Context.ResolveSource(owner, filepath.FromSlash(path))
 		} else {
 			contexts, contextErr = kind.Context.Resolve(owner)
@@ -102,6 +103,10 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 		b.contextOK[path] = contextErr == nil
 		for _, context := range contexts {
 			context = cleanPath(context)
+			if system.AttributeLayout.Match(context) {
+				b.load(context)
+				continue
+			}
 			if system.ComponentLayout.Match(context) {
 				b.load(context)
 				subject := b.elements[b.rootByPath[path]]
@@ -117,6 +122,24 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 			b.contextPath[path], b.follow[context] = context, true
 			b.load(context)
 			b.context(context, "system_context", path, "")
+		}
+	}
+	// Attribute declarations are part of each acquired system's classification vocabulary.
+	for _, file := range sortedKeys(b.rootByPath) {
+		if !system.Layout.Match(file) {
+			continue
+		}
+		sys, err := system.Read(file)
+		if err != nil {
+			continue
+		}
+		for _, a := range sys.QualityAttributes {
+			if system.AttributeLayout.Match(a.Location.Path) {
+				source := cleanPath(a.Location.Path)
+				b.attributeOwners[source] = file
+				b.load(source)
+				b.follow[source] = true
+			}
 		}
 	}
 	b.associateSystems()

@@ -26,23 +26,10 @@ func TestInventoryClassifiesAgainstLocalModel(t *testing.T) {
 	if output, err := exec.Command("git", "-C", dir, "init", "-q").CombinedOutput(); err != nil {
 		t.Fatalf("initialize repository: %v: %s", err, output)
 	}
-	put(t, filepath.Join(dir, "specs/system.system.spec.md"), `---
-type: system-spec
----
-# System
-## Purpose
-Support work.
-## Scope
-This project.
-## Quality attributes
-### Reliability
-**ID:** reliability
-Consistent operation.
-### Preservation
-**ID:** source-preservation
-**Sub-attribute of:** reliability
-Unchanged sources.
-`)
+	put(t, filepath.Join(dir, "specs/system.system.spec.md"), "---\ntype: system-spec\n---\n# System\n## Purpose\nSupport work.\n## Scope\nThis project.\n## Quality attributes\n")
+	put(t, filepath.Join(dir, "specs/quality/reliability/reliability.quality-attribute.spec.md"), "---\ntype: quality-attribute-spec\nid: reliability\n---\n# Reliability\n\n## Definition\n\nConsistent operation.\n")
+	put(t, filepath.Join(dir, "specs/quality/reliability/preservation/preservation.quality-attribute.spec.md"), "---\ntype: quality-attribute-spec\nid: source-preservation\n---\n# Preservation\n\n## Definition\n\nUnchanged sources.\n")
+
 	path, err := Init(dir, "work")
 	if err != nil {
 		t.Fatal(err)
@@ -70,6 +57,7 @@ Unchanged sources.
 	}
 	put(t, Layout.Path(filepath.Join(dir, "child"), "work"), example)
 	put(t, filepath.Join(dir, "child/specs/child.system.spec.md"), "---\ntype: system-spec\n---\n# Child\n## Purpose\nWork.\n## Scope\nChild.\n")
+
 	child, err := Show(filepath.Join(dir, "child"), "work")
 	if err != nil || child.Classification.SystemPath != "" || len(child.Classification.Undefined) != 0 {
 		t.Fatalf("model inherited: %+v %v", child, err)

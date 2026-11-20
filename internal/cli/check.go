@@ -101,5 +101,5 @@ func diagnosticPath(location diagnostic.Location) string {
 }
 
 func supportedTypes() []check.Type {
-	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
+	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), system.AttributeCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
 }

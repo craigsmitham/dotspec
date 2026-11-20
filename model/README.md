@@ -1,7 +1,7 @@
 # Specification model
 
 [metamodel.yaml](metamodel.yaml) is the canonical LinkML model for experimental
-specification snapshots. The model version is `0.21.0-draft`; the JSON
+specification snapshots. The model version is `0.22.0-draft`; the JSON
 representation version is `0.1.0`. The model describes source bytes, document
 content, domain records, references, coverage and diagnostics independently of
 Markdown authoring checks. See the [consumer guide](../docs/reference/specification-model.md)
@@ -24,7 +24,7 @@ The Go package at this path is named `schema`. It embeds `SchemaJSON` and
 Go snapshot records retain heterogeneous subtype fields instead of relying on
 LinkML-generated Go structs.
 
-## Systems and components in 0.21.0-draft
+## Systems and components in 0.22.0-draft
 
 A named system or component source defines one specification. Components use a required `part_of` link to a system or another component. A local specification records its owning component in `specification_component` and the governing system in `specification_system`. Feature membership and obligation applicability are independent of both.
 

@@ -1,13 +1,19 @@
 # Requirements reference
 
+Functional requirements live in their owner’s `specs/requirements/` folder.
+Use `dotspec requirement init <slug> --attribute <id>` to record a related
+quality in frontmatter and link the requirement from the attribute report.
+For a quality obligation owned by the declaring system, use `--preset quality --attribute <id>` to create it beside the attribute definition. That folder
+supplies its primary classification. Use `quality_attributes` for additional
+IDs. Component-owned requirements stay under the component’s `requirements/`.
+
 ## Requirements
 
 Use a requirement to state an obligation without first writing a concept
 or use case. A requirement can express a response, postcondition, invariant,
 relationship, or imposed restriction. Its type does not implicitly mean
 “functional”; functional/non-functional classification is not required.
-A quality requirement is an ordinary requirement classified by quality
-attributes: there is one requirement type, command group, folder, and format.
+Functional and quality requirements share the same type, commands, and format. Both can reference quality attributes.
 
 ```sh
 dotspec requirement init reject-existing-target
@@ -26,7 +32,7 @@ conventions as other types.
   without overwriting an existing file or following symlinked metadata directories.
   `--preset quality` selects a template that also prompts for a `Criterion`;
   `general` is the default. The preset is authoring guidance: either one creates
-  an ordinary requirement, and the selection is not stored.
+  an ordinary requirement, and the selection is not stored. At the declaring system, combining `--preset quality` with `--attribute` selects the attribute folder.
 - `show <slug>` reads the requirement in that project, displays its authored
   Markdown and classifications, and reports its associated system and source.
   Slug lookup does not search ancestor projects.
@@ -120,7 +126,7 @@ satisfaction.
 
 The associated system supplies quality attributes for label resolution.
 This is independent of the subject and conditions stated in `Applies to`. If that
-system has no `Quality attributes` section, labels remain unbound without advice.
+system has neither an attribute tree nor an explicit quality overview section, labels remain unbound without advice.
 When the section is present, each undefined label produces
 `requirement.undefined-attribute` advice at its source location. An explicitly empty
 section consequently reports every used label as undefined. Statement and
@@ -139,10 +145,10 @@ The show envelope uses `requirement`; the inventory uses `groups` containing
 `classification`, `markdown`, source identity, and associated system; `criterion`
 and `validation_plan` appear when authored. Empty collections are arrays.
 
-JSON retains `quality_attributes` exactly as authored. The separate `classification`
+Requirement JSON lists the containing attribute followed by additional frontmatter IDs, once each. The snapshot separately preserves the authored label occurrences. The separate `classification`
 object exposes `system_path` for the system supplying attribute declarations,
 `resolved` attribute definitions, `ancestors` IDs in declaration order,
-and `undefined` IDs in authored order. Without a quality attributes section,
+and `undefined` IDs in authored order. Without a system quality vocabulary,
 `system_path` is empty and all three arrays are empty. Ancestor attributes are
 computed navigation, not additional authored labels or inherited requirements.
 
@@ -155,9 +161,9 @@ assumptions from conditions the system must enforce or reject.
 Examples are [existing-target rejection](../../../specs/requirements/reject-existing-target.requirement.spec.md),
 [continued inspection](../../../specs/requirements/continue-after-invalid-spec.requirement.spec.md),
 and [successful advisory checks](../../../specs/requirements/advice-permits-success.requirement.spec.md).
-[Diagnostic severity](../../../specs/requirements/diagnostic-severity.requirement.spec.md),
-[repeatable inspection](../../../specs/requirements/repeatable-inspection.requirement.spec.md),
-and [source preservation](../../../specs/requirements/inspection-preserves-source.requirement.spec.md)
+[Diagnostic severity](../../../specs/quality/usability/diagnosability/diagnostic-severity.requirement.spec.md),
+[repeatable inspection](../../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md),
+and [source preservation](../../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md)
 also state explicit criteria. They own their criteria; the report-format
 reference and inspection concept link to them. Responsiveness is a declared
 attribute with no adopted threshold. A requirement does not establish fulfillment
@@ -168,7 +174,7 @@ Additional rules for requirements and system quality attributes:
 | Rule ID | Meaning |
 | --- | --- |
 | `layout.requirement-location`, `layout.requirement-name` | Required layout and slug |
-| `structure.attribute-heading` | Quality attributes must use nonempty H3 headings |
+| `quality.attribute-source` | Give a system attribute a named source in its own quality folder |
 | `identity.required` | Attribute definition needs an explicit ID |
 | `quality.subattribute` | Sub-attribute list is empty or contains an undefined reference |
 | `quality.cycle` | Sub-attribute graph contains a cycle |

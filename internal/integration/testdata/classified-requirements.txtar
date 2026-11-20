@@ -12,6 +12,12 @@ status 0 dotspec requirement show work --json
 stdout '"quality_attributes": \[\]'
 stdout '"system": null'
 cp ../model.md specs/new-system.system.spec.md
+mkdir specs/quality/usability
+cp ../model0.md specs/quality/usability/usability.quality-attribute.spec.md
+mkdir specs/quality/usability/diagnostics
+cp ../model1.md specs/quality/usability/diagnostics/diagnostics.quality-attribute.spec.md
+mkdir specs/quality/usability/accessibility
+cp ../model2.md specs/quality/usability/accessibility/accessibility.quality-attribute.spec.md
 cp ../requirement.md specs/requirements/work.requirement.spec.md
 status 0 dotspec system show --json
 stdout '"quality_attributes": \['
@@ -25,13 +31,13 @@ status 0 dotspec requirement show work
 stdout 'Quality attributes: diagnostics, accessibility'
 stdout 'Ancestor quality attributes: usability'
 status 0 dotspec requirement check work --json
-stdout '"context_files_checked": 1'
+stdout '"context_files_checked": 4'
 stdout '"advice": 1'
 stdout 'requirement.measurement-basis'
 stdout 'no separately identified target'
 ! stderr .
 status 0 dotspec check --json
-stdout '"files_checked": 2'
+stdout '"files_checked": 5'
 stdout '"context_files_checked": 0'
 cmp specs/requirements/work.requirement.spec.md ../requirement.md
 cmp specs/new-system.system.spec.md ../model.md
@@ -48,6 +54,10 @@ status 0 dotspec requirement check unknown --json
 stdout 'requirement.undefined-attribute'
 ! stderr .
 cp ../cycle.md specs/new-system.system.spec.md
+mkdir specs/quality/a
+cp ../cycle0.md specs/quality/a/a.quality-attribute.spec.md
+mkdir specs/quality/a/b
+cp ../cycle1.md specs/quality/a/b/b.quality-attribute.spec.md
 status 1 dotspec requirement check work --json
 stdout 'quality.cycle'
 ! stdout 'undefined-attribute'
@@ -65,17 +75,6 @@ Help contributors.
 ## Scope
 CLI.
 ## Quality attributes
-### Usability
-**ID:** usability
-Effective use.
-### Diagnostics
-**ID:** diagnostics
-**Sub-attribute of:** usability
-Understandable findings.
-### Accessibility
-**ID:** accessibility
-**Sub-attribute of:** usability
-Accessible output.
 -- requirement.md --
 ---
 type: requirement-spec
@@ -109,9 +108,52 @@ Help contributors.
 ## Scope
 CLI.
 ## Quality attributes
-### A
-**ID:** a
-**Sub-attribute of:** b
-### B
-**ID:** b
-**Sub-attribute of:** a
+-- model0.md --
+---
+type: quality-attribute-spec
+id: usability
+---
+# Usability
+
+## Definition
+
+Effective use.
+-- model1.md --
+---
+type: quality-attribute-spec
+id: diagnostics
+---
+# Diagnostics
+
+## Definition
+
+Understandable findings.
+-- model2.md --
+---
+type: quality-attribute-spec
+id: accessibility
+---
+# Accessibility
+
+## Definition
+
+Accessible output.
+-- cycle0.md --
+---
+type: quality-attribute-spec
+id: a
+subattribute_of: [b]
+---
+# A
+
+## Definition
+
+
+-- cycle1.md --
+---
+type: quality-attribute-spec
+id: b
+---
+# B
+
+## Definition

@@ -24,6 +24,10 @@ func inspect(path string) ([]diagnostic.Diagnostic, error) {
 // CheckContext preserves the same explicit selection or directory default as
 // Show and List, including ignored systems outside the selected subtree.
 var CheckContext = &check.ContextProvider{Inspect: func(path string) ([]diagnostic.Diagnostic, error) {
+	if AttributeLayout.Match(path) {
+		_, err := ReadQualityAttribute(path)
+		return nil, err
+	}
 	if ComponentLayout.Match(path) {
 		_, err := ReadComponent(path)
 		return nil, err
@@ -55,9 +59,9 @@ var CheckContext = &check.ContextProvider{Inspect: func(path string) ([]diagnost
 			if lookupErr == nil && local != "" && ComponentLayout.Match(local) {
 				paths = append([]string{local}, paths...)
 			}
-			return paths, nil
+			return qualityContext(paths, nil)
 		}
-		return SubjectChain(owner)
+		return qualityContext(SubjectChain(owner))
 	},
 }
 
@@ -88,4 +92,22 @@ func readReferences(path string) (*specfile.ReferenceDocument, error) {
 		return nil, err
 	}
 	return spec.References, nil
+}
+
+func qualityContext(paths []string, err error) ([]string, error) {
+	if err != nil || len(paths) == 0 {
+		return paths, err
+	}
+	systemPath := paths[len(paths)-1]
+	sys, err := Read(systemPath)
+	if err != nil {
+		return paths, err
+	}
+	context := append([]string{}, paths[:len(paths)-1]...)
+	for _, attr := range sys.QualityAttributes {
+		if AttributeLayout.Match(attr.Location.Path) {
+			context = append(context, attr.Location.Path)
+		}
+	}
+	return append(context, systemPath), nil
 }

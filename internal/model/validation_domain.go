@@ -39,7 +39,7 @@ func (v *graphValidator) checkDomain() {
 				}
 			}
 		}
-		if kind == "QualityAttribute" {
+		if v.isA(kind, "QualityAttribute") {
 			for _, id := range valuesAt(r, "subattribute_of") {
 				if other := v.records[id].value; other != nil && String(other, "owner") != String(r, "owner") {
 					v.add("quality.scope", path+"/subattribute_of", "parent attributes must belong to the same declaring owner")
@@ -66,7 +66,7 @@ func (v *graphValidator) checkAuthoredIDs() {
 		} else {
 			docs[key] = located.path
 		}
-		if String(r, "kind") == "QualityAttribute" {
+		if v.isA(String(r, "kind"), "QualityAttribute") {
 			key = String(r, "owner") + "\x00" + authored
 			if prior, ok := attributeScopes[key]; ok {
 				v.add("quality.identity", located.path+"/authored_id", fmt.Sprintf("attribute ID %q also occurs at %s under this owner", authored, prior))
@@ -109,7 +109,8 @@ func (v *graphValidator) checkMemberships() {
 					if String(child, "owner") != String(r, "id") {
 						v.add("membership.owner", path, fmt.Sprintf("member %q does not name this record as its owner", id))
 					}
-					if v.sourceOf(child) != v.sourceOf(r) {
+					externalAttribute := member[0] == "System" && member[1] == "quality_attributes" && String(child, "kind") == "SystemQualityAttribute"
+					if !externalAttribute && v.sourceOf(child) != v.sourceOf(r) {
 						v.add("membership.source", path, "owned members must be expressed in the owner's source document")
 					}
 				}
@@ -184,6 +185,20 @@ func (v *graphValidator) checkResolutions() {
 
 func (v *graphValidator) checkLabels() {
 	actual := map[string][]string{}
+	attrs := map[string]Record{}
+	for _, item := range v.sortedRecords() {
+		r := item.value
+		if String(r, "kind") == "SystemQualityAttribute" {
+			attrs[String(v.records[String(r, "source_document")].value, "locator")] = r
+		}
+	}
+	for _, item := range v.sortedRecords() {
+		r := item.value
+		file := String(v.records[String(r, "source_document")].value, "locator")
+		if field, attr := folderClassification(r, file, attrs); attr != nil {
+			actual[String(r, "id")+"\x00"+field] = []string{String(attr, "id")}
+		}
+	}
 	for _, located := range v.sortedRecords() {
 		label, path := located.value, located.path
 		if String(label, "kind") != "LabelOccurrence" {
@@ -208,7 +223,7 @@ func (v *graphValidator) checkLabels() {
 			system = obligationSystem(owner, index)
 		case "subattribute_of":
 			field, targets = "subattribute_of_labels", "subattribute_of"
-			if String(owner, "kind") != "QualityAttribute" {
+			if !v.isA(String(owner, "kind"), "QualityAttribute") {
 				v.add("label.owner", path+"/owner", "parent labels belong to quality attributes")
 				continue
 			}
@@ -251,7 +266,7 @@ func (v *graphValidator) checkLabels() {
 		}
 		if status == "resolved" {
 			key := String(owner, "id") + "\x00" + targets
-			actual[key] = append(actual[key], String(result, "target"))
+			actual[key] = appendUnique(actual[key], String(result, "target"))
 		}
 	}
 	for _, located := range v.sortedRecords() {
@@ -259,7 +274,7 @@ func (v *graphValidator) checkLabels() {
 		field, labelField := "", ""
 		if v.isA(String(r, "kind"), "Obligation") {
 			field, labelField = "quality_attributes", "quality_attribute_labels"
-		} else if String(r, "kind") == "QualityAttribute" {
+		} else if v.isA(String(r, "kind"), "QualityAttribute") {
 			field, labelField = "subattribute_of", "subattribute_of_labels"
 		}
 		if field == "" {

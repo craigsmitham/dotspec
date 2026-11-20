@@ -48,6 +48,7 @@ func newRequirementCommand() *cobra.Command {
 			cmd.Long = action.short + ".\n\n" + exitPolicy
 		}
 		if action.name == "init" {
+			cmd.Flags().String("attribute", "", "Classify by a governing system attribute ID. At the declaring system, --preset quality places the requirement in the attribute folder.")
 			cmd.Flags().String("preset", "general", "Authoring template: general, or quality to prompt for an explicit criterion")
 		}
 		cmd.RunE = func(cmd *cobra.Command, args []string) error {
@@ -85,7 +86,14 @@ func newRequirementCommand() *cobra.Command {
 			if err := requirement.ValidateSlug(args[0]); err != nil {
 				return err
 			}
-			return runRequirement(action.name, path, args[0], format, preset, cmd.OutOrStdout())
+			attribute := ""
+			if action.name == "init" {
+				attribute, _ = cmd.Flags().GetString("attribute")
+				if cmd.Flags().Changed("attribute") && attribute == "" {
+					return fmt.Errorf("attribute selector must not be empty")
+				}
+			}
+			return runRequirement(action.name, path, args[0], format, preset, attribute, cmd.OutOrStdout())
 		}
 		addPath(cmd)
 		addOutput(cmd, false)
@@ -94,9 +102,9 @@ func newRequirementCommand() *cobra.Command {
 	return root
 }
 
-func runRequirement(command, path, slug, format, preset string, out io.Writer) error {
+func runRequirement(command, path, slug, format, preset, attribute string, out io.Writer) error {
 	if command == "init" {
-		target, err := requirement.InitWithPreset(path, slug, preset)
+		target, err := requirement.InitWithAttribute(path, slug, preset, attribute)
 		if err != nil {
 			return err
 		}

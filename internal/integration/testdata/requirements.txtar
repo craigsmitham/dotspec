@@ -11,6 +11,10 @@ status 0 dotspec requirement show work --json
 ! stdout '"type":'
 stdout '"statement":'
 cp ../system.md specs/new-system.system.spec.md
+mkdir specs/quality/reliability
+cp ../system0.md specs/quality/reliability/reliability.quality-attribute.spec.md
+mkdir specs/quality/reliability/preservation
+cp ../system1.md specs/quality/reliability/preservation/preservation.quality-attribute.spec.md
 cp ../rule.md specs/requirements/work.requirement.spec.md
 cp ../repeatable.md specs/requirements/repeatable.requirement.spec.md
 status 0 dotspec requirement list --attribute reliability --json
@@ -23,7 +27,7 @@ stdout '"glossary":'
 
 # Explicit links add bounded context. Checks do not change source files.
 status 0 dotspec requirement check work --json
-stdout '"context_files_checked": 2'
+stdout '"context_files_checked": 4'
 stdout '"errors": 0'
 ! stderr .
 cmp specs/requirements/work.requirement.spec.md ../rule.md
@@ -86,13 +90,6 @@ Ordinary files.
 ### Scan
 An inspection of selected source files.
 ## Quality attributes
-### Reliability
-**ID:** reliability
-Consistent operation.
-### Preservation
-**ID:** preservation
-**Sub-attribute of:** reliability
-Unchanged source content.
 -- rule.md --
 ---
 type: requirement-spec
@@ -147,3 +144,23 @@ type: requirement-spec
 ---
 # Bad link
 [Missing](repeatable.requirement.spec.md#missing)
+-- system0.md --
+---
+type: quality-attribute-spec
+id: reliability
+---
+# Reliability
+
+## Definition
+
+Consistent operation.
+-- system1.md --
+---
+type: quality-attribute-spec
+id: preservation
+---
+# Preservation
+
+## Definition
+
+Unchanged source content.

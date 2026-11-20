@@ -4,7 +4,7 @@ Generated from [the canonical model](../../../model/metamodel.yaml) and [the vie
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.21.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.22.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
@@ -25,7 +25,7 @@ Arrows use schema-owned relationship labels; reference tables retain exact canon
 
 ### Specification types
 
-A Specification is the root record of one authored specification document. The eight specification types correspond one-to-one with these concrete classes. Subsets classify concerns separately from this hierarchy.
+A Specification is the root record of one authored specification document. The nine specification types correspond one-to-one with these concrete classes. Subsets classify concerns separately from this hierarchy.
 
 ```mermaid
 classDiagram
@@ -34,6 +34,7 @@ classDiagram
     <<abstract>> Specification
     class SystemContextSpecification
     <<abstract>> SystemContextSpecification
+    class SystemQualityAttribute
     class System
     class Component
     class QualityModel
@@ -43,6 +44,7 @@ classDiagram
     class Concept
     class Requirement
     Specification <|-- SystemContextSpecification
+    Specification <|-- SystemQualityAttribute
     Specification <|-- System
     SystemContextSpecification <|-- Component
     Specification <|-- QualityModel
@@ -546,7 +548,7 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 | `glossary` | [GlossaryTerm](index.md#glossaryterm) | optional; ordered list | Explicitly named terms, in authored order. |
 | `concept_uses` | [ConceptUse](index.md#conceptuse) | optional; ordered list |  |
 | `synchronizations` | [Synchronization](index.md#synchronization) | optional; ordered list |  |
-| `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; ordered list | Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. Must be present together with quality_attributes_content. |
+| `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; ordered list | Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. |
 | `part_of` | [System](index.md#system) | optional | Optional explicit parent System. Directory context does not supply this relationship. |
 | `features` | [Feature](index.md#feature) | optional; ordered list | Named feature declarations in authored order; each feature belongs to this System. |
 | `capabilities` | [Capability](index.md#capability) | optional; ordered list | Capability declarations; the declaring System is a documentation home, not an inferred provider. |
@@ -832,7 +834,7 @@ Subsets: `software-requirements`. [ConceptAction](index.md#conceptaction) contai
 
 ### Requirement
 
-A specification that gives one obligation its own document. An obligation is what ISO/IEC/IEEE 29148 calls a requirement, wherever it is written; this class names the specification type, not every normative expression. A quality requirement is a requirement classified by a quality attribute, not a separate type.
+A specification that gives one obligation its own document. An obligation is what ISO/IEC/IEEE 29148 calls a requirement, wherever it is written; this class names the specification type, not every normative expression. Functional and quality requirements share this type. Either can reference a quality attribute.
 
 Subsets: `software-requirements`. [Requirement](index.md#requirement) contains the complete definition.
 

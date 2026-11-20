@@ -17,6 +17,7 @@ const Folder = "specs"
 // files. The owning type supplies its kind; layout never infers domain identity
 // from a directory name. Slug validation remains the type's responsibility.
 type Layout struct {
+	QualityTree  bool
 	NamedSubject bool
 	Kind         string
 	Collection   string
@@ -76,8 +77,21 @@ func (l Layout) Owner(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if metadata != "" && dir == filepath.Join(metadata, l.Collection) {
+	if l.QualityTree && metadata != "" {
+		folders := QualityFolders(path)
+		if len(folders) > 0 && dir == filepath.Join(metadata, "quality", filepath.Join(folders...)) {
+			return filepath.Dir(metadata), nil
+		}
+	}
+	if metadata != "" && l.Kind != "quality-attribute" && dir == filepath.Join(metadata, l.Collection) {
 		return filepath.Dir(metadata), nil
+	}
+	if l.Kind == "quality-attribute" {
+		owner := "<project-dir>"
+		if metadata != "" {
+			owner = filepath.Dir(metadata)
+		}
+		return "", l.misplaced(path, filepath.Join(owner, Folder, "quality", strings.TrimSuffix(filepath.Base(path), l.Suffix), filepath.Base(path)))
 	}
 	expected := l.path("<project-dir>", filepath.Base(path))
 	if metadata != "" {

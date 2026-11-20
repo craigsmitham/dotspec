@@ -109,10 +109,10 @@ func newQualityModelCommand() *cobra.Command {
 		addOutput(cmd, false)
 		root.AddCommand(cmd)
 	}
-	cmd := &cobra.Command{Use: "apply [model]", Short: "Copy selected model attributes into a system without overwriting declarations", Long: "Copy attributes from a bundled starter or local quality model. The default model is iso-25010-2023. With no --attributes selection, copy all attributes. Include ancestors automatically; refuse ID conflicts before writing. --dry-run prints the exact resulting document.\n\nLocal declarations remain independent of their source model.", Example: "dotspec quality-model apply --system specs/new-system.system.spec.md --dry-run", Args: cobra.MaximumNArgs(1)}
+	cmd := &cobra.Command{Use: "apply [model]", Short: "Copy selected model attributes into a system without overwriting declarations", Long: "Copy attributes from a bundled starter or local quality model. The default model is iso-25010-2023. With no --attributes selection, copy all attributes. Include ancestors automatically; refuse ID conflicts before writing. --dry-run lists each proposed attribute path and its complete content.\n\nLocal declarations remain independent of their source model.", Example: "dotspec quality-model apply --system specs/new-system.system.spec.md --dry-run", Args: cobra.MaximumNArgs(1)}
 	cmd.Flags().String("system", "", "Target example.system.spec.md path, relative to --path")
 	cmd.Flags().StringSlice("attributes", nil, "Comma-separated attribute IDs to copy, including ancestors")
-	cmd.Flags().Bool("dry-run", false, "Preview the complete resulting document without writing")
+	cmd.Flags().Bool("dry-run", false, "Preview the new attribute files without writing")
 	_ = cmd.MarkFlagRequired("system")
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		path, err := projectPath(cmd)

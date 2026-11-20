@@ -42,7 +42,7 @@ arguments, standard streams, and exit statuses.
 ## Assumptions
 
 The execution conditions required for repeatability comparisons are defined in
-[Repeated inspections](requirements/repeatable-inspection.requirement.spec.md#applies-to).
+[Repeated inspections](quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#applies-to).
 
 ## Constraints
 
@@ -86,64 +86,3 @@ specified by [Advice permits success](requirements/advice-permits-success.requir
 
 These are dotspec's declared quality attributes. The definitions identify concerns;
 individual quality requirements establish the obligations.
-
-### Usability
-
-**ID:** usability
-
-How effectively contributors can author, inspect, and maintain specifications.
-
-### Diagnosability
-
-**ID:** diagnosability
-**Sub-attribute of:** usability
-
-How effectively findings help contributors understand and locate specification
-problems.
-
-### Accessibility
-
-**ID:** accessibility
-**Sub-attribute of:** usability
-
-How effectively people with differing abilities and ways of accessing output
-can use dotspec.
-
-### Reliability
-
-**ID:** reliability
-
-How consistently dotspec performs its intended operations under stated
-conditions.
-
-### Repeatability
-
-**ID:** repeatability
-**Sub-attribute of:** reliability
-
-Whether equivalent inspections under unchanged conditions produce equivalent
-reports.
-
-### Source preservation
-
-**ID:** source-preservation
-**Sub-attribute of:** reliability
-
-Whether inspection preserves the source material it examines.
-
-### Performance
-
-**ID:** performance
-
-The time and computing resources required to perform operations under stated
-workloads.
-
-### Responsiveness
-
-**ID:** responsiveness
-**Sub-attribute of:** performance
-
-The elapsed time before an operation delivers its result.
-
-No responsiveness target has been adopted. Selecting one requires representative
-workloads, defined measurement conditions, and baseline measurements.

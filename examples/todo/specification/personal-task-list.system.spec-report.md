@@ -75,9 +75,11 @@ The [walkthrough](<../README.md>) identifies the setup, checks and validation ex
 
 ## Quality attributes
 
+The task list is stored locally. Its quality requirements cover what survives between sessions on the same database.
+
 | Quality attribute | Description |
 | --- | --- |
-| [Durability](<quality-attributes.spec-report.md#durability>) | Preservation of acknowledged work between local sessions. |
+| [Durability](<quality/durability/durability.quality-attribute.spec-report.md>) | Preservation of acknowledged work between local sessions. |
 
 ## Validation plan
 

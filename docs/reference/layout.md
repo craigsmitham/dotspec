@@ -18,12 +18,13 @@ specs/
     job-map.concept.spec.md
     specification-inspection.concept.spec.md
   requirements/
-    reject-existing-target.requirement.spec.md
-    continue-after-invalid-spec.requirement.spec.md
-    advice-permits-success.requirement.spec.md
-    diagnostic-severity.requirement.spec.md
-    repeatable-inspection.requirement.spec.md
-    inspection-preserves-source.requirement.spec.md
+    specification-project-isolation.requirement.spec.md
+  quality/
+    reliability/
+      reliability.quality-attribute.spec.md
+      repeatability/
+        repeatability.quality-attribute.spec.md
+        repeatable-inspection.requirement.spec.md
 internal/
   parser/
     parser.go
@@ -36,13 +37,13 @@ internal/
 The layout is required:
 
 - A directory can describe one system or component. Its declaration lives at `specs/<name>.system.spec.md` or `specs/<name>.component.spec.md`. Derive `<name>` from the document heading using the [subject naming rule](formats/system.md#match-the-filename-to-the-heading). Both subjects can own the collections below.
+- System quality attributes live in `specs/quality/<attribute>/<attribute>.quality-attribute.spec.md`. Every nested folder identifies a subattribute. A quality requirement that sets an expectation for that attribute can live beside its definition.
 - Jobs are `specs/jobs/<slug>.job.spec.md`, directly inside the plural `jobs/` folder.
 - Use cases are `specs/use-cases/<slug>.use-case.spec.md`, directly inside the
   plural `use-cases/` folder.
 - Concepts are `specs/concepts/<slug>.concept.spec.md`, directly inside the
   plural `concepts/` folder.
-- Requirements are `specs/requirements/<slug>.requirement.spec.md`,
-  directly inside the plural `requirements/` folder.
+- Functional requirements live in the owning system or component’s `specs/requirements/<slug>.requirement.spec.md`. Use `quality_attributes` to link relevant qualities. For example, the To-do restart requirement lives in `requirements/` and links to Durability.
 - Business rules are `specs/business-rules/<slug>.business-rule.spec.md`, and
   quality models are `specs/quality-models/<slug>.quality-model.spec.md`,
   directly inside their plural folders.

@@ -47,11 +47,11 @@ The [continued-inspection requirement](../../specs/requirements/continue-after-i
 governs progress through other discovered specifications. Repairing an error
 may reveal another on the next run. Findings are sorted
 by path, line, column, rule, and message. The
-[repeatability requirement](../../specs/requirements/repeatable-inspection.requirement.spec.md)
+[repeatability requirement](../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md)
 defines equivalence across repeated inspections.
-The [diagnostic-severity requirement](../../specs/requirements/diagnostic-severity.requirement.spec.md)
+The [diagnostic-severity requirement](../../specs/quality/usability/diagnosability/diagnostic-severity.requirement.spec.md)
 governs text presentation of severity, and the
-[source-preservation requirement](../../specs/requirements/inspection-preserves-source.requirement.spec.md)
+[source-preservation requirement](../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md)
 governs the effect of inspection on source files.
 
 Jobs, use cases, concepts, requirements, and business rules also need their enclosing
@@ -144,7 +144,7 @@ These scripts specify required outcomes for the illustrated command inputs:
 
 The [CLI Interaction concept](../../internal/integration/specs/concepts/cli-interaction.concept.spec.md)
 is a working example beside its executable acceptance scripts. The
-[source-preservation quality requirement](../../specs/requirements/inspection-preserves-source.requirement.spec.md)
+[source-preservation quality requirement](../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md)
 instead links to tests that check its prose criterion. dotspec exposes both
 links without assigning either file a semantic role.
 

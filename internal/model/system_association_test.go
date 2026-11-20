@@ -17,7 +17,8 @@ func associationFixture(t *testing.T) string {
 		{"specs/directory-default.system.spec.md", "Directory default", "local"},
 		{"remote/specs/explicit-selection.system.spec.md", "Explicit selection", "selected"},
 	} {
-		conformanceWrite(t, root, entry.path, "---\ntype: system-spec\nid: "+entry.attribute+"-system\n---\n# "+entry.name+"\n## Purpose\nServe users.\n## Scope\nThis service.\n## Quality attributes\n### Concern\n**ID:** "+entry.attribute+"\nA quality concern.\n")
+		conformanceWrite(t, root, entry.path, "---\ntype: system-spec\nid: "+entry.attribute+"-system\n---\n# "+entry.name+"\n## Purpose\nServe users.\n## Scope\nThis service.\n")
+		conformanceWrite(t, root, filepath.Join(filepath.Dir(entry.path), "quality/concern/concern.quality-attribute.spec.md"), "---\ntype: quality-attribute-spec\nid: "+entry.attribute+"\n---\n# Concern\n## Definition\nA quality concern.\n")
 	}
 	body := "## Statement\nRespond promptly.\n\n## Applies to\n**Targets:** [Directory default](../directory-default.system.spec.md)\n\n## Rationale\nKeep users informed.\n\n## Verification plan\nMeasure responses.\n"
 	conformanceWrite(t, root, "specs/requirements/explicit.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [selected]\n---\n# Explicit\n\n## Specification system\n[Selected](../../remote/specs/explicit-selection.system.spec.md#selected-system)\n\n"+body)

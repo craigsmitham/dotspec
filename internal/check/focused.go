@@ -24,7 +24,11 @@ func Focused(path, slug string, kind Type, referenceTypes ...Type) Report {
 		r.record(err, "scan.read", dir)
 		return r.finish()
 	}
-	source := kind.Layout.Path(dir, slug)
+	source, err := kind.Layout.LocalPath(dir, slug)
+	if err != nil {
+		r.record(err, "scan.scope", dir)
+		return r.finish()
+	}
 	r.Summary.FilesDiscovered = 1
 	r.Summary.FilesChecked = 1
 	findings, err := kind.Inspect(source)

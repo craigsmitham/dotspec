@@ -1,14 +1,14 @@
 # Markdown mapping profile
 
-`dotspec-markdown/15` maps specification Markdown to the
+`dotspec-markdown/16` maps specification Markdown to the
 [canonical model](metamodel.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/reference/specification-model.md).
 
-The profile covers eight specification types: system, component, job, quality model,
+The profile covers nine specification types: system, component, job, quality attribute, quality model,
 business rule, use case, concept and requirement. A specification is one authored
 `*.spec.md` document, and its root record is the one concrete class of its type:
-`System`, `Component`, `Job`, `QualityModel`, `BusinessRule`, `UseCase`, `Concept` or
+`System`, `Component`, `SystemQualityAttribute`, `Job`, `QualityModel`, `BusinessRule`, `UseCase`, `Concept` or
 `Requirement`. Existing type parsers
 remain authoritative for authoring structure and validity. The exporter retains
 source and syntax before invoking those parsers. Rejection produces diagnostics
@@ -171,7 +171,7 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | Glossary | `glossary_content`; named subsections become `GlossaryTerm` records in `glossary` with full definitions |
 | Term: Alternative names; Aliases | List-item values, or the unsegmented subsection, populate `alternative_names` |
 | Term: Related terms | `related_terms: ContextualReferences` |
-| Quality attributes | `System.quality_attributes_content` preserves the section; `System.quality_attributes` lists its attributes in authored order |
+| Quality attributes | `System.quality_attributes_content` preserves the section; `System.quality_attributes` lists the declarations in its quality tree |
 | Named attribute subsection | `QualityAttribute` with title, definition and declaring `System` owner |
 | Attribute `**ID:**` | Required system-local `authored_id` |
 | Attribute `**Sub-attribute of:**` | Ordered `subattribute_of_labels` from comma-separated IDs; resolutions supply multi-valued `subattribute_of` targets |
@@ -188,6 +188,15 @@ and a specification's `specification_system` are associations; they introduce no
 A component is the root of a named `component-spec` document. Its required `Part of` link supplies its structural parent. Local specifications record their component in `specification_component`. Systems and components can declare features, capabilities, concept uses, synchronizations and interfaces. There
 is no constraint record: an individually addressable constraint is a requirement
 or a business rule.
+
+## System quality attribute
+
+A `quality-attribute-spec` root maps to `SystemQualityAttribute`, with a
+`definition` from the Definition section. The source directory determines the
+declaring system and any immediate physical parent. A `subattribute_of` list
+adds parent labels. Requirement sources in the same directory receive a
+classification by the owning attribute. These directory-derived relationships
+can be replayed from source locators and do not create authored label occurrences.
 
 ## Job
 
@@ -347,9 +356,8 @@ is inferred. The [authoring guide](../docs/handbook/concepts.md) supplies exampl
 
 ## Requirement
 
-A `requirement` specification maps to `Requirement` and states one obligation. A
-quality requirement is a requirement classified by `quality_attributes`, not
-another type. A requirement does not contain an Obligations section. Obligation
+A `requirement` specification maps to `Requirement` and states one obligation. Functional and quality requirements share this type and can both reference
+attributes through `quality_attributes`. A requirement does not contain an Obligations section. Obligation
 clauses declared inside another specification share these fields; see
 [Layered traceability and obligation clauses](#layered-traceability-and-obligation-clauses).
 
@@ -406,7 +414,7 @@ criteria and applicability. See [Develop requirements](../docs/handbook/requirem
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/15`, an owner and field path, source
+Bindings record a rule under `dotspec-markdown/16`, an owner and field path, source
 occurrence and role. A field path is relative to its owner and uses canonical
 field names. A section's narrative binds to `<field>_content`, or to
 `<field>.content` on an embedded value such as `criterion.content`. Items of an
@@ -457,7 +465,7 @@ canonical field, with a required `projection_path`, subject and object. There is
 one concrete assertion class. `projection_path` names the projected field, such
 as `UseCase.subject_system`, `TraceableElement.supports`, `Obligation.applies_to`
 or `BusinessRule.applies_to`, and `mapping_rule` is
-`dotspec-markdown/15/projection/<path>`. The path also carries a membership's
+`dotspec-markdown/16/projection/<path>`. The path also carries a membership's
 role, as with `Concept.type_parameters` and `Concept.introduced_types`. The
 generated catalog lists the projectable paths in `projections`: every
 declaration membership and every semantic-association or structural-context

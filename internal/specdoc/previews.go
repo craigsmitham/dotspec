@@ -50,12 +50,17 @@ func inlineText(s string) string {
 
 func (p *planner) attributeTable(w *writer, system *subject) {
 	w.text("| Quality attribute | Description |\n| --- | --- |")
-	for _, h := range readingOrder(system.attributes) {
-		if h.owner != system.attributes || !h.qualityAttribute {
+	for _, id := range model.Strings(system.r["quality_attributes"]) {
+		a := p.pages[id]
+		if a == nil {
 			continue
 		}
-		preview := paragraphPreview(sourceProse(system.source, h))
-		fmt.Fprintf(&w.out, "| %s | %s |\n", w.link(inlineText(h.title), p.targets[h.node]), inlineText(preview))
+		heading := a.name
+		if definition := a.section("Definition"); definition != nil {
+			heading = definition
+		}
+		preview := paragraphPreview(sourceProse(a.source, heading))
+		fmt.Fprintf(&w.out, "| %s | %s |\n", w.link(inlineText(a.name.title), a.file), inlineText(preview))
 	}
 }
 

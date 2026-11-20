@@ -1,8 +1,7 @@
 ---
 type: requirement-spec
 id: reject-existing-target
-quality_attributes:
-  - source-preservation
+quality_attributes: [source-preservation]
 ---
 
 # Reject initialization at an existing target

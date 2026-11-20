@@ -40,6 +40,13 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 	var authoredID string
 	var labels []string
 	switch kind {
+	case "quality-attribute":
+		var a *system.AttributeDocument
+		a, err = system.ParseQualityAttribute(String(doc.Source, "locator"), doc.Data)
+		if err == nil {
+			authoredID = a.ID
+			labels = a.SubattributeOf
+		}
 	case "quality-model":
 		var v *qualitymodel.QualityModel
 		v, err = qualitymodel.Parse(doc.Data)
@@ -97,7 +104,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.parseFailure(err)
 		return m.result
 	}
-	class := map[string]string{"component": "Component", "quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "concept": "Concept", "use-case": "UseCase", "requirement": "Requirement"}[kind]
+	class := map[string]string{"quality-attribute": "SystemQualityAttribute", "component": "Component", "quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "concept": "Concept", "use-case": "UseCase", "requirement": "Requirement"}[kind]
 	r := m.record(class, "")
 	m.result.RootID = String(r, "id")
 	if authoredID != "" {
@@ -116,6 +123,14 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.bind(r, "preamble", doc.Preamble, "named_field", "preamble")
 	}
 	m.metadata(r)
+	if kind == "quality-attribute" {
+		for _, parent := range labels {
+			node := m.metadataNode("subattribute_of", parent)
+			label := m.label(r, parent, node, "subattribute_of")
+			appendID(r, "subattribute_of_labels", label)
+			m.bind(r, "subattribute_of_labels", []string{node}, "named_field", "attribute-parent")
+		}
+	}
 	if kind == "requirement" {
 		m.classification(r, labels)
 	}
@@ -129,6 +144,11 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		}
 		mapped := false
 		switch kind {
+		case "quality-attribute":
+			if section.Title == "Definition" {
+				m.section(r, "definition", section)
+				mapped = true
+			}
 		case "quality-model":
 			mapped = m.qualityModel(r, section)
 		case "business-rule":

@@ -15,7 +15,7 @@ import (
 )
 
 func referenceCheck(dir string) check.Report {
-	return check.Focused(dir, "rule", requirement.CheckType(), system.CheckType(), concept.CheckType(), job.CheckType())
+	return check.Focused(dir, "rule", requirement.CheckType(), system.AttributeCheckType(), system.CheckType(), concept.CheckType(), job.CheckType())
 }
 
 func TestCrossFileReferencesAndContext(t *testing.T) {
@@ -30,7 +30,7 @@ func TestCrossFileReferencesAndContext(t *testing.T) {
 [Heading](../concepts/inspection.concept.spec.md#actions)
 [ID](../concepts/inspection.concept.spec.md#stable-inspection)
 [Job step](../jobs/work.job.spec.md#prepare)
-[Attribute](../product.system.spec.md#reliability)
+[Attribute](../quality/reliability/reliability.quality-attribute.spec.md#reliability)
 [Native Markdown](../../Guide%20to%20rules.md#example-rule)
 [Native contract](../../schema.json#/properties/name)
 [External](https://example.invalid/missing#unknown)
@@ -43,7 +43,8 @@ func TestCrossFileReferencesAndContext(t *testing.T) {
 	write(t, path, source)
 	write(t, concept.Layout.Path(dir, "inspection"), strings.Replace(concept.Template, "type: concept-spec", "type: concept-spec\nid: stable-inspection", 1)+"\n[Not recursively checked](missing.md)\n")
 	write(t, job.Layout.Path(dir, "work"), "---\ntype: job-spec\n---\n# Work\n## Steps\n### Prepare\n**ID:** prepare\n")
-	write(t, system.Layout.Path(dir, "product"), validSystem+"\n## Quality attributes\n### Reliability\n**ID:** reliability\nConsistent operation.\n")
+	write(t, system.Layout.Path(dir, "product"), validSystem)
+	write(t, filepath.Join(dir, "specs/quality/reliability/reliability.quality-attribute.spec.md"), "---\ntype: quality-attribute-spec\n---\n# Reliability\n## Definition\nConsistent operation.\n")
 	write(t, filepath.Join(dir, "Guide to rules.md"), "---\nlayout: article\n---\n## Example rule\nA rule.\n[Not followed](missing.md)\n")
 	write(t, filepath.Join(dir, "schema.json"), "{}")
 	if err := os.Mkdir(filepath.Join(dir, "docs"), 0755); err != nil {
@@ -55,7 +56,7 @@ func TestCrossFileReferencesAndContext(t *testing.T) {
 		t.Fatal(err)
 	}
 	r := referenceCheck(dir)
-	if r.ExitCode() != 0 || r.Summary.FilesChecked != 1 || r.Summary.ContextFilesChecked != 5 {
+	if r.ExitCode() != 0 || r.Summary.FilesChecked != 1 || r.Summary.ContextFilesChecked != 6 {
 		t.Fatalf("reference context: %+v", r)
 	}
 	if after, _ := os.ReadFile(path); !reflect.DeepEqual(before, after) {
@@ -63,7 +64,7 @@ func TestCrossFileReferencesAndContext(t *testing.T) {
 	}
 	write(t, path, source+"\n[Missing](../concepts/inspection.concept.spec.md#missing)\n[Missing file](gone.md)\n[Missing file again](gone.md)\n")
 	r = referenceCheck(dir)
-	if !r.Complete || r.ExitCode() != 1 || r.Summary.Errors != 3 || r.Summary.ContextFilesChecked != 6 {
+	if !r.Complete || r.ExitCode() != 1 || r.Summary.Errors != 3 || r.Summary.ContextFilesChecked != 7 {
 		t.Fatalf("invalid links: %+v", r)
 	}
 	for _, d := range r.Diagnostics {

@@ -56,7 +56,6 @@ type subject struct {
 	system      *subject
 	parent      *subject
 	directories map[string]*directory
-	attributes  *subject // the system's generated quality-attributes section
 	file, dir   string
 }
 
@@ -80,7 +79,7 @@ type entry struct {
 }
 
 var families = map[string]string{
-	"System": "systems", "Component": "components", "Feature": "features", "Capability": "capabilities",
+	"SystemQualityAttribute": "quality", "System": "systems", "Component": "components", "Feature": "features", "Capability": "capabilities",
 	"ConceptUse": "concept-uses", "Interface": "interfaces", "Synchronization": "synchronizations",
 	"QualityModel": "quality-models", "Requirement": "requirements", "BusinessRule": "business-rules",
 	"Job": "jobs", "UseCase": "use-cases", "Concept": "concepts",
@@ -193,7 +192,7 @@ func (p *planner) read() error {
 			switch attr(r, "kind") {
 			case "ObligationClause":
 				h.obligation = true
-			case "QualityAttribute":
+			case "QualityAttribute", "SystemQualityAttribute":
 				h.qualityAttribute = true
 			}
 		}
@@ -215,7 +214,7 @@ func (p *planner) read() error {
 }
 
 func (s *subject) slug() string {
-	if s.kind() == "System" || s.kind() == "Component" {
+	if s.kind() == "System" || s.kind() == "Component" || s.kind() == "SystemQualityAttribute" {
 		return strings.TrimSuffix(path.Base(s.source.path), "."+kindName(s.kind())+".spec.md")
 	}
 	name := attr(s.r, "authored_id")
@@ -327,7 +326,11 @@ func (p *planner) place() error {
 			slug += fmt.Sprintf("-%x", sum[:5])
 		}
 		base := path.Join(s.collectionDir(), slug)
-		if s.kind() == "System" || s.kind() == "Component" {
+		folders := specfile.QualityFolders(s.source.path)
+		if len(folders) > 0 && (s.kind() == "SystemQualityAttribute" || s.kind() == "Requirement") {
+			s.dir = path.Join(s.system.dir, "quality", path.Join(folders...))
+			s.file = path.Join(s.dir, strings.TrimSuffix(path.Base(s.source.path), ".md")+"-report.md")
+		} else if s.kind() == "System" || s.kind() == "Component" {
 			s.placeOverview(base)
 		} else {
 			s.file = base + "." + kindName(s.kind()) + ".spec-report.md"
@@ -353,22 +356,8 @@ func (p *planner) indexTargets() {
 		if s.name.level == 1 {
 			p.targets[attr(s.r, "source_document")] = s.file
 		}
-		if s != p.governing {
+		if s != p.governing && !s.name.qualityAttribute {
 			p.placeDirectoryEntry(s)
-		}
-		if s.kind() == "System" && len(model.Strings(s.r["quality_attributes"])) > 0 {
-			for _, h := range s.source.headings {
-				if h.level == s.name.level+1 && h.title == "Quality attributes" {
-					detail := &subject{source: s.source, name: h, system: s, file: path.Join(s.dir, "quality-attributes.spec-report.md")}
-					s.attributes = detail
-					h.owner = detail
-					p.subjects = append(p.subjects, detail)
-					for _, attribute := range model.Strings(s.r["quality_attributes"]) {
-						p.pages[attribute] = detail
-					}
-					break
-				}
-			}
 		}
 	}
 	// A source heading belongs to the nearest lifted declaration. Preserve the
@@ -395,9 +384,6 @@ func (p *planner) indexTargets() {
 		headingIDs[s] = ids
 		for _, h := range readingOrder(s) {
 			if h.owner != s {
-				if s.attributes != nil && h == s.attributes.name {
-					ids.Generate([]byte(h.title), ast.KindHeading) // overview table heading
-				}
 				continue
 			}
 			p.targets[h.node] = s.file

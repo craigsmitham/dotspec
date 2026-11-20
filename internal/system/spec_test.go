@@ -68,7 +68,7 @@ func TestParseRejectsMalformedSpecs(t *testing.T) {
 }
 
 func FuzzParse(f *testing.F) {
-	for _, seed := range []string{validSpec, validSpec + qualityExample, validSpec + "\n## Quality attributes\n### Cycle\n**ID:** cycle\n**Sub-attribute of:** cycle", Template, "", "---\ntype: system-spec\n---\n#\n## Purpose\n## Scope"} {
+	for _, seed := range []string{validSpec, validSpec + "\n## Quality attributes\n### Cycle\n**ID:** cycle\n**Sub-attribute of:** cycle", Template, "", "---\ntype: system-spec\n---\n#\n## Purpose\n## Scope"} {
 		f.Add([]byte(seed))
 	}
 	f.Fuzz(func(t *testing.T, data []byte) {

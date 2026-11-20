@@ -51,11 +51,13 @@ func TestSpecificationTypesCorrespondToDocumentRoots(t *testing.T) {
 		}
 	}
 	slices.Sort(roots)
-	if want := []string{"BusinessRule", "Component", "Concept", "Job", "QualityModel", "Requirement", "System", "UseCase"}; !slices.Equal(roots, want) {
+	if want := []string{"BusinessRule", "Component", "Concept", "Job", "QualityModel", "Requirement", "System", "SystemQualityAttribute", "UseCase"}; !slices.Equal(roots, want) {
 		t.Fatalf("specification classes %v, want %v", roots, want)
 	}
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/lending-desk.system.spec.md", typedSystem+"\n## Quality attributes\n\n### Speed\n\n**ID:** speed\n\nResponse speed.\n")
+	conformanceWrite(t, root, "specs/lending-desk.system.spec.md", typedSystem+"\n## Quality attributes\n\n")
+	conformanceWrite(t, root, "specs/quality/speed/speed.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: speed\n---\n# Speed\n\n## Definition\n\nResponse speed.\n")
+
 	conformanceWrite(t, root, "specs/requirements/fast.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [speed]\n---\n# Fast\n\n## Statement\n\nRespond promptly.\n")
 	conformanceWrite(t, root, "specs/requirements/plain.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Plain\n\n## Statement\n\nRecord each loan.\n")
 	result := conformanceExport(t, root)

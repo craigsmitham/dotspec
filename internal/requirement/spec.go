@@ -3,9 +3,11 @@ package requirement
 
 import (
 	"fmt"
+	"github.com/craigsmitham/dotspec/internal/system"
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
@@ -16,7 +18,7 @@ import (
 const Suffix = ".requirement.spec.md"
 const Collection = "requirements"
 
-var Layout = specfile.Layout{Kind: "requirement", Collection: Collection, Suffix: Suffix}
+var Layout = specfile.Layout{Kind: "requirement", QualityTree: true, Collection: Collection, Suffix: Suffix}
 
 const Template = `---
 type: requirement-spec
@@ -129,6 +131,14 @@ func Read(path string) (*Requirement, error) {
 	}
 	spec.Slug, spec.Path = slug, path
 	spec.Location.Path = path
+	if len(specfile.QualityFolders(path)) > 0 {
+		a, err := system.ReadQualityAttribute(specfile.AttributePath(filepath.Dir(path)))
+		if err != nil {
+			return nil, err
+		}
+		additional := slices.DeleteFunc(spec.QualityAttributes, func(id string) bool { return id == a.ID })
+		spec.QualityAttributes = append([]string{a.ID}, additional...)
+	}
 	return spec, nil
 }
 

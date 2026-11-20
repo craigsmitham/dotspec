@@ -19,7 +19,7 @@ import (
 )
 
 func exportTypes() []check.Type {
-	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
+	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), system.AttributeCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
 }
 
 func TestExportEmptyScope(t *testing.T) {
@@ -125,7 +125,9 @@ func TestExportReferencedClassificationDoesNotSkipNearerBoundary(t *testing.T) {
 		t.Fatalf("git init: %v %s", err, output)
 	}
 	files := map[string]string{
-		"specs/root.system.spec.md":                                  "---\ntype: system-spec\n---\n# Root\n## Purpose\nRead.\n## Scope\nLocal.\n## Quality attributes\n### Useful\n**ID:** useful\nA concern.\n",
+		"specs/root.system.spec.md":                             "---\ntype: system-spec\n---\n# Root\n## Purpose\nRead.\n## Scope\nLocal.\n## Quality attributes\n",
+		"specs/quality/useful/useful.quality-attribute.spec.md": "---\ntype: quality-attribute-spec\nid: useful\n---\n# Useful\n\n## Definition\n\nA concern.\n",
+
 		"consumer/specs/concepts/entry.concept.spec.md":              "---\ntype: concept-spec\n---\n# Entry\n## Purpose\nRead.\n## State\n[Target](../../../middle/child/specs/requirements/target.requirement.spec.md)\n## Actions\nRead.\n## Operational principles\nRead a target.\n",
 		"middle/child/specs/requirements/target.requirement.spec.md": "---\ntype: requirement-spec\nquality_attributes: [useful]\n---\n# Target\n## Criterion\nA criterion.\n",
 	}

@@ -22,7 +22,7 @@ import (
 )
 
 func conformanceTypes() []check.Type {
-	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
+	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), system.AttributeCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
 }
 
 func conformanceExport(t *testing.T, path string) ExportResult {
@@ -162,7 +162,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 				return err
 			}
 			parsed := ParseContent(absolute, data)
-			class := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement", "quality": "Requirement"}[strings.TrimSuffix(String(parsed.Document, "declared_type"), "-spec")]
+			class := map[string]string{"quality-attribute": "SystemQualityAttribute", "quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement", "quality": "Requirement"}[strings.TrimSuffix(String(parsed.Document, "declared_type"), "-spec")]
 			if class == "" {
 				t.Errorf("%s: unknown specimen family", path)
 			}
@@ -212,7 +212,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 			t.Errorf("%s exported roots: got %d want %d inventoried sources", kind, counts[kind], want)
 		}
 	}
-	for kind, want := range map[string]int{"JobStep": 16, "DesiredOutcome": 21, "ProgressCase": 1, "ConceptAction": 6, "GlossaryTerm": 3, "QualityAttribute": 293} {
+	for kind, want := range map[string]int{"JobStep": 16, "DesiredOutcome": 21, "ProgressCase": 1, "ConceptAction": 6, "GlossaryTerm": 3, "QualityAttribute": 285, "SystemQualityAttribute": 9} {
 		if counts[kind] < want {
 			t.Errorf("%s domain records: got %d want at least baseline %d", kind, counts[kind], want)
 		}
@@ -253,14 +253,19 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 
 func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/root.system.spec.md", "---\ntype: system-spec\n---\n# Root\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n\n### Broad\n\n**ID:** broad\n\nA concern.\n\n### Narrow\n\n**ID:** narrow\n**Sub-attribute of:** broad\n\nA narrower concern.\n")
+	conformanceWrite(t, root, "specs/root.system.spec.md", "---\ntype: system-spec\n---\n# Root\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n\n")
+	conformanceWrite(t, root, "specs/quality/broad/broad.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: broad\n---\n# Broad\n\n## Definition\n\nA concern.\n")
+	conformanceWrite(t, root, "specs/quality/broad/narrow/narrow.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: narrow\n---\n# Narrow\n\n## Definition\n\nA narrower concern.\n")
+
 	conformanceWrite(t, root, "specs/requirements/resolved.requirement.spec.md", "---\ntype: requirement-spec\nid: reused\nquality_attributes: [narrow]\n---\n# Resolved\n")
 	conformanceWrite(t, root, "specs/requirements/undefined.requirement.spec.md", "---\ntype: requirement-spec\nid: reused\nquality_attributes: [unknown]\n---\n# Undefined\n")
 	conformanceWrite(t, root, "sub/specs/subsystem.system.spec.md", "---\ntype: system-spec\n---\n# Subsystem\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
 	conformanceWrite(t, root, "sub/specs/requirements/unbound.requirement.spec.md", "---\ntype: requirement-spec\nid: reused\nquality_attributes: [narrow]\n---\n# Unbound\n")
 	conformanceWrite(t, root, "empty/specs/empty-attributes.system.spec.md", "---\ntype: system-spec\n---\n# Empty attributes\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n")
 	conformanceWrite(t, root, "empty/specs/requirements/undefined-empty.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [narrow]\n---\n# Undefined in empty attributes\n")
-	conformanceWrite(t, root, "sibling/specs/sibling.system.spec.md", "---\ntype: system-spec\n---\n# Sibling\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n### Local narrow\n**ID:** narrow\nA different concern in this system.\n")
+	conformanceWrite(t, root, "sibling/specs/sibling.system.spec.md", "---\ntype: system-spec\n---\n# Sibling\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n")
+	conformanceWrite(t, root, "sibling/specs/quality/local-narrow/local-narrow.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: narrow\n---\n# Local narrow\n\n## Definition\n\nA different concern in this system.\n")
+
 	conformanceWrite(t, root, "sibling/specs/requirements/local.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [narrow]\n---\n# Local classification\n")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
@@ -410,34 +415,9 @@ func conformanceRichText(snapshot *Snapshot, value any) string {
 
 func TestExportConformanceAdversarialDomainCompletion(t *testing.T) {
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/system.system.spec.md", `---
-type: system-spec
----
-# System
-## Purpose
-P.
-## Scope
-S.
-## Glossary
-### Term
-A definition.
-#### Aliases
-- First alias
-#### Alternative names
-- Second alias
-## Quality attributes
-### Concern
-**ID:** concern
-A definition.
-#### Definition example
-Ordinary nested definition prose remains part of the definition.
-#### Open question
-Which threshold?
-##### Evidence needed
-Measure the baseline.
-##### Decision caveat
-An unmapped structured decision detail.
-`)
+	conformanceWrite(t, root, "specs/system.system.spec.md", "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n## Glossary\n### Term\nA definition.\n#### Aliases\n- First alias\n#### Alternative names\n- Second alias\n## Quality attributes\n")
+	conformanceWrite(t, root, "specs/quality/concern/concern.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: concern\n---\n# Concern\n\n## Definition\n\nA definition.\n### Definition example\nOrdinary nested definition prose remains part of the definition.\n## Open question\nWhich threshold?\n### Evidence needed\nMeasure the baseline.\n### Decision caveat\nAn unmapped structured decision detail.\n")
+
 	conformanceWrite(t, root, "specs/jobs/inspect.job.spec.md", `---
 type: job-spec
 ---
@@ -577,13 +557,13 @@ Unmapped protocol detail.
 			if len(records(element["alternative_names"])) != 2 {
 				t.Error("alias sections overwritten")
 			}
-		case "QualityAttribute":
+		case "SystemQualityAttribute":
 			if !strings.Contains(conformanceRichText(s, element["definition"]), "Ordinary nested definition prose") {
 				t.Error("nested quality definition prose lost")
 			}
 		}
 	}
-	for heading, owner := range map[string]string{"#### Surprises": "JobStep", "#### Custom case detail": "ProgressCase", "#### Implementation details": "ConceptAction", "##### Flow caveat": "UseCaseExtension", "### Supporting notes": "Job", "### Custom protocol": "Requirement", "##### Decision caveat": "QualityAttribute"} {
+	for heading, owner := range map[string]string{"#### Surprises": "JobStep", "#### Custom case detail": "ProgressCase", "#### Implementation details": "ConceptAction", "##### Flow caveat": "UseCaseExtension", "### Supporting notes": "Job", "### Custom protocol": "Requirement", "### Decision caveat": "SystemQualityAttribute"} {
 		if extensions[heading] != owner {
 			t.Errorf("unknown section %q owner=%q want %q; extensions=%v", heading, extensions[heading], owner, extensions)
 		}

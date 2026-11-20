@@ -87,7 +87,7 @@ requirements are complete, validated, or satisfied.
 ## Minimal guarantees
 
 Inspection leaves authored sources unchanged, as defined by the
-[source preservation requirement](<../requirements/inspection-preserves-source.requirement.spec-report.md>).
+[source preservation requirement](<../quality/reliability/source-preservation/inspection-preserves-source.requirement.spec-report.md>).
 The [check report contract](<../../docs/reference/inspection.md#check-specifications>) requires the
 report to distinguish incomplete scans from completed ones, even when inspection
 cannot finish.

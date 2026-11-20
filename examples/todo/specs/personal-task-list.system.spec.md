@@ -97,13 +97,7 @@ The browser presents open and completed tasks and accepts changes through HTML f
 
 ## Quality attributes
 
-### Durability
-
-**ID:** durability
-
-Preservation of acknowledged work between local sessions.
-
-[Source definition](quality-models/personal-data.quality-model.spec.md#durability).
+The task list is stored locally. Its quality requirements cover what survives between sessions on the same database.
 
 ## Validation plan
 

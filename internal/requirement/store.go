@@ -2,7 +2,9 @@ package requirement
 
 import (
 	"fmt"
+	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
@@ -17,6 +19,10 @@ func Init(path, slug string) (string, error) { return InitWithPreset(path, slug,
 
 // InitWithPreset creates a requirement from the selected authoring template.
 func InitWithPreset(path, slug, preset string) (string, error) {
+	return InitWithAttribute(path, slug, preset, "")
+}
+
+func InitWithAttribute(path, slug, preset, attribute string) (string, error) {
 	template, err := TemplateFor(preset)
 	if err != nil {
 		return "", err
@@ -31,6 +37,34 @@ func InitWithPreset(path, slug, preset string) (string, error) {
 	if err := Layout.ValidateLocal(dir); err != nil {
 		return "", err
 	}
+	if attribute == "" {
+		return Layout.Create(dir, slug, template)
+	}
+	chain, err := system.SubjectChain(dir)
+	if err != nil {
+		return "", err
+	}
+	if len(chain) == 0 {
+		return "", fmt.Errorf("no governing system for quality attribute %q in %s", attribute, dir)
+	}
+	sys, err := system.Read(chain[len(chain)-1])
+	if err != nil {
+		return "", err
+	}
+	a := sys.FindQualityAttribute(attribute)
+	if a == nil {
+		return "", fmt.Errorf("unknown quality attribute %q in %s", attribute, sys.Path)
+	}
+	// Only a quality obligation authored at the declaring system belongs in its attribute folder.
+	if preset == "quality" && filepath.Dir(filepath.Dir(sys.Path)) == dir {
+		dest := filepath.Join(filepath.Dir(a.Location.Path), slug+Suffix)
+		rel, err := filepath.Rel(dir, dest)
+		if err != nil {
+			return "", err
+		}
+		return specfile.Create(dir, rel, template)
+	}
+	template = strings.Replace(template, "type: requirement-spec\n", fmt.Sprintf("type: requirement-spec\nquality_attributes: [%q]\n", attribute), 1)
 	return Layout.Create(dir, slug, template)
 }
 
@@ -47,7 +81,11 @@ func Show(path, slug string) (*Requirement, error) {
 	if err := Layout.ValidateLocal(dir); err != nil {
 		return nil, err
 	}
-	spec, err := Read(Layout.Path(dir, slug))
+	file, err := Layout.LocalPath(dir, slug)
+	if err != nil {
+		return nil, err
+	}
+	spec, err := Read(file)
 	if err != nil {
 		return nil, err
 	}

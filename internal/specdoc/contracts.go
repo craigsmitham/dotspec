@@ -66,7 +66,7 @@ func addSourceContracts(p *planner) error {
 			}
 		}
 		requireRoute(page, relativeURL(s.file, s.source.path, s.name.anchor), "Edit source")
-		if s.attributes != nil {
+		if s.kind() == "System" {
 			for _, id := range model.Strings(s.r["quality_attributes"]) {
 				h := p.nodes[nameNode(p.elements[id])]
 				requireRoute(page, relative(s.file, p.targets[id]), attr(h, "decoded_text"))

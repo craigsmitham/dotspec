@@ -1,8 +1,7 @@
 # Populate system quality attributes from a model
 
 Use a reusable quality model when you want a starting set of concerns to tailor
-for a system. dotspec copies selected definitions into the system's existing
-`Quality attributes` section. The resulting declarations are ordinary Markdown;
+for a system. dotspec creates named attribute sources in the system’s `specs/quality/` tree. The resulting declarations are ordinary Markdown;
 editing the source model or upgrading dotspec does not change them.
 
 ## Choose a starter
@@ -48,14 +47,13 @@ Create the system first if necessary. System initialization stays minimal;
 it does not automatically add quality attributes.
 
 ```sh
-dotspec system init
+dotspec system init "Personal task list"
 dotspec quality-model apply --system specs/personal-task-list.system.spec.md --dry-run
 dotspec quality-model apply --system specs/personal-task-list.system.spec.md
 ```
 
 Omitting the model selects `iso-25010-2023`. Omitting `--attributes` selects all
-attributes. The dry run prints the complete resulting document; the real run
-writes those same bytes, provided the inputs have not changed.
+attributes. The dry run prints each proposed path and file content. Applying the model writes those files and preserves the system source.
 
 To choose another model and only some attributes:
 
@@ -70,12 +68,11 @@ automatically, including shared dimensions only once. Selecting a grouping alone
 does not select its sub-attributes; select their IDs or omit `--attributes` to copy
 the complete model. For example, selecting ISO `availability` copies `reliability`
 and `availability`; selecting Q42 `resilience` copies `reliable`, `secure`, and
-`resilience`. Definitions are appended in model declaration order, preserving
-existing system prose, attribute order, file permissions, BOM, and line endings.
+`resilience`. The first parent determines the folder. Other parents are carried across in the `subattribute_of` field.
 
 Any selected ID already present in the system causes the operation to fail
 without writing, including a second application of the same selection. Unknown
-IDs and an invalid resulting document also leave the file unchanged. dotspec
+IDs and an invalid resulting attribute also leave the file unchanged. dotspec
 never merges or replaces an existing declaration automatically.
 
 Each copied definition receives a source link. Relative Markdown links and
@@ -85,9 +82,10 @@ changes reviewable before writing.
 
 After copying, edit definitions to explain their meaning for your system. Add
 quality requirements separately when you know the actual obligations, conditions,
-and measures: a quality requirement is a requirement whose `quality_attributes`
-name these attributes, and `dotspec requirement init <slug> --preset quality`
-starts one. Copying does not create requirements, thresholds, or evidence.
+and measures. For example, `dotspec requirement init preserve-tasks --attribute durability`
+creates a functional requirement in `specs/requirements/` with a durability classification.
+For a quality obligation such as a data-loss tolerance, add `--preset quality` at
+the declaring system to create it beside the attribute.
 Use [Develop requirements](requirements.md) to turn selected concerns into
 scoped obligations with criteria and assessment guidance. Product properties and
 outcomes for users in a context of use need different evidence.

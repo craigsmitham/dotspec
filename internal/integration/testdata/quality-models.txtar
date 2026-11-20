@@ -17,19 +17,19 @@ cp specs/new-system.system.spec.md before.md
 status 0 dotspec quality-model apply --system specs/new-system.system.spec.md --dry-run
 cp stdout preview.md
 cmp specs/new-system.system.spec.md before.md
-stdout 'ID:\*\* functional-suitability'
-stdout 'ID:\*\* safety'
-stdout 'Sub-attribute of:\*\* reliability'
-stdout 'ID:\*\* safe-integration'
+stdout 'id: "functional-suitability"'
+stdout 'id: "safety"'
+stdout 'quality/reliability/availability/availability.quality-attribute.spec.md'
+stdout 'id: "safe-integration"'
 status 0 dotspec quality-model apply --system specs/new-system.system.spec.md
 stdout 'Added 49 attributes'
-cmp specs/new-system.system.spec.md preview.md
+cmp specs/new-system.system.spec.md before.md
 status 2 dotspec quality-model apply --system specs/new-system.system.spec.md
 stderr 'already exists'
-cmp specs/new-system.system.spec.md preview.md
+cmp specs/new-system.system.spec.md before.md
 status 2 dotspec quality-model apply furps --system specs/new-system.system.spec.md --attributes unknown
 stderr 'unknown attribute'
-cmp specs/new-system.system.spec.md preview.md
+cmp specs/new-system.system.spec.md before.md
 
 # Local models share parsing, checking and discovery. Selecting a leaf copies ancestors.
 status 0 dotspec quality-model init organization-quality --from furps --json
@@ -47,13 +47,13 @@ stdout '"edition": "Team edition 1"'
 status 0 dotspec quality-model list --json
 stdout '"slug": "organization-quality"'
 status 0 dotspec quality-model apply organization-quality --system specs/new-system.system.spec.md --attributes narrow --dry-run
-stdout 'ID:\*\* broad'
-stdout 'ID:\*\* narrow'
-! stdout 'ID:\*\* unselected'
+stdout 'id: "broad"'
+stdout 'id: "narrow"'
+! stdout 'id: "unselected"'
 cp stdout local-preview.md
 status 0 dotspec quality-model apply organization-quality --system specs/new-system.system.spec.md --attributes narrow --json
 stdout '"added":'
-cmp specs/new-system.system.spec.md local-preview.md
+cmp specs/new-system.system.spec.md before.md
 status 0 dotspec check --json
 stdout '"errors": 0'
 status 0 dotspec sources --json
@@ -67,7 +67,7 @@ stdout '"valid": true'
 
 # Editing the reference model does not synchronize the populated system.
 cp ../draft.md specs/quality-models/organization-quality.quality-model.spec.md
-cmp specs/new-system.system.spec.md local-preview.md
+cmp specs/new-system.system.spec.md before.md
 status 0 dotspec quality-model check organization-quality --json
 stdout 'quality-model.attributes'
 cp ../invalid.md specs/quality-models/invalid.quality-model.spec.md

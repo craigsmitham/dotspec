@@ -1,5 +1,6 @@
 ---
 type: requirement-spec
+quality_attributes: [durability]
 ---
 # Acknowledge after commit
 

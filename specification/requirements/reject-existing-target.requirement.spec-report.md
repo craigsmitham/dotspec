@@ -30,6 +30,6 @@ An existing target requires an explicit editing decision.
 
 ## Related specifications
 
-**Quality attribute** · [Source preservation](<../quality-attributes.spec-report.md#source-preservation>)
+**Quality attribute** · [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)
 
 [Edit source](<../../specs/requirements/reject-existing-target.requirement.spec.md#reject-initialization-at-an-existing-target>)

@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/metamodel.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.21.0-draft
+version: 0.22.0-draft
 description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
   is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
   and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
@@ -361,7 +361,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.21.0-draft
+        equals_string: 0.22.0-draft
       mapping_profile:
         range: string
         description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
@@ -1469,21 +1469,18 @@ classes:
       quality_attributes:
         range: QualityAttribute
         description: Attributes declared by this system, in authored order. Absent means no declaration; a
-          present empty list is distinct. Must be present together with quality_attributes_content.
+          present empty list is distinct.
         multivalued: true
         list_elements_ordered: true
         annotations:
           relationship_category: declaration-containment
           relationship_inverse: QualityAttribute.owner
-          paired_with: quality_attributes_content
           relationship_label: declares
       quality_attributes_content:
         range: RichContent
         description: Authored Quality attributes section content, including narrative and attribute subsections.
           Present even when the section is empty.
         inlined: true
-        annotations:
-          paired_with: quality_attributes
       concept_uses_content:
         range: RichContent
         inlined: true
@@ -1662,6 +1659,18 @@ classes:
       related_terms:
         range: ContextualReferences
         inlined: true
+  SystemQualityAttribute:
+    in_subset:
+    - software-requirements
+    is_a: QualityAttribute
+    mixins:
+    - Specification
+    description: A system's named quality attribute, authored in its own quality folder.
+    slot_usage:
+      kind:
+        equals_string: SystemQualityAttribute
+      owner:
+        required: false
   QualityAttribute:
     in_subset:
     - software-requirements
@@ -2889,8 +2898,7 @@ classes:
     - software-requirements
     description: A specification that gives one obligation its own document. An obligation is what ISO/IEC/IEEE
       29148 calls a requirement, wherever it is written; this class names the specification type, not every
-      normative expression. A quality requirement is a requirement classified by a quality attribute, not a
-      separate type.
+      normative expression. Functional and quality requirements share this type. Either can reference a quality attribute.
     is_a: SystemContextSpecification
     mixins:
     - Obligation
@@ -4299,6 +4307,8 @@ enums:
     description: Markdown frontmatter types for authored specifications. Each
       type has exactly one concrete Specification class.
     permissible_values:
+      quality-attribute-spec:
+        description: Named system quality attribute.
       component-spec:
         description: Named component specification.
       system-spec:

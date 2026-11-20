@@ -141,8 +141,7 @@ This is dotspec's synthesis, not a schema prescribed by any one source.
 Requirement specifications and embedded clauses share `Obligation`: statement,
 quality attributes, applicability, rationale, refinement, verification plan and
 optional criterion. Their authoring location does not limit their quality
-classification or assessment detail. A quality requirement is a requirement
-classified by a quality attribute, not a separate type.
+classification or assessment detail. Functional and quality requirements share one specification type. Either can reference a quality attribute.
 
 Clause containment is an explicit `ObligationContainer` capability on System,
 Component, Interface, UseCase, Concept, ConceptAction, ConceptUse and

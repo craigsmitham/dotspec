@@ -150,84 +150,51 @@ Source paths in command output are relative to the current directory.
 
 ## System quality attributes
 
-A system may declare its quality attributes in a `Quality attributes` H2
-section. Omit the section when attribute declarations are not needed. Its H3 headings
-introduce attributes; deeper headings belong to their definitions.
+Give each quality attribute a directory under the system’s `specs/quality/`.
+The directory and filename use the name from the H1. For example,
+`specs/quality/reliability/durability/durability.quality-attribute.spec.md` contains:
 
 ```markdown
-## Quality attributes
+---
+type: quality-attribute-spec
+id: durability
+---
 
-### Usability
+# Durability
 
-**ID:** usability
+## Definition
 
-How effectively contributors can author, inspect, and maintain specifications.
-
-### Diagnosability
-
-**ID:** diagnosability
-**Sub-attribute of:** usability
-
-How effectively findings help contributors understand and locate problems.
-
-### Accessibility
-
-**ID:** accessibility
-**Sub-attribute of:** usability
-
-How effectively people with differing abilities and ways of accessing output
-can use the CLI.
+Preservation of acknowledged work between local sessions.
 ```
 
-Each attribute needs a nonempty, document-unique `ID`. IDs begin with an ASCII
-letter or digit and otherwise contain letters, digits, hyphens, or underscores.
-They do not encode hierarchy: renaming or regrouping an attribute can preserve
-its ID. Same-document links can target these IDs as well as heading anchors.
+The ID defaults to the name slug. Supply an explicit ID to keep references stable
+when renaming the attribute. Each ID is unique within the system. Nesting the
+Durability folder under Reliability makes Reliability a parent. For additional
+parents, add a frontmatter list such as `subattribute_of: [recoverability]`. A
+flat folder can use that list for every parent. All parents belong to the same
+system, and the graph must be acyclic.
 
-`Sub-attribute of` is optional. When present it is a comma-separated list of distinct
-attribute IDs declared by this system; forward references are allowed. Several parent
-attributes are allowed. Unknown references, self-references, cycles, duplicate
-fields, and duplicate IDs are structural errors. Heading depth does not imply
-an attribute relationship. A missing definition produces nonfatal advice.
+Keep functional requirements under the owner’s `specs/requirements/`. They can name relevant attributes in `quality_attributes`. A quality obligation beside an attribute source takes its primary classification from that folder.
+Use `quality_attributes` in its frontmatter for any additional IDs. Requirements
+in a component's own `specs/requirements/` can use the same IDs through their
+governing system. Subsystems have independent vocabularies.
 
-Only `ID` and `Sub-attribute of` lines in the attribute's introductory paragraphs are
-fields. Examples in code blocks, blockquotes, lists, and deeper subsections remain
-prose. Definitions retain their Markdown, including subsections and examples.
+```text
+specs/
+  quality/
+    reliability/
+      reliability.quality-attribute.spec.md
+      durability/
+        durability.quality-attribute.spec.md
+        data-loss-tolerance.requirement.spec.md
+  requirements/
+    restart.requirement.spec.md
+  quality-models/
+    personal-data.quality-model.spec.md
+```
 
-`system show` displays the authored quality attributes section. System JSON exposes
-`quality_attributes` directly: `null` when the section is absent, an empty array
-when it declares no attributes, or an ordered array of attributes. When the section
-is present, `quality_attributes_content` preserves its Markdown, including an
-empty string for an empty section. Each attribute exposes `id`, `name`,
-`definition`, `subattribute_of`, and source `location`.
-
-The attributes belong to this system. A subsystem does not inherit or merge its
-parent's definitions. Attribute grouping imposes no obligations or thresholds.
-See the [grouping rationale](../specification-model.md#quality-attribute-grouping)
-for how this supports both trees and overlapping quality dimensions.
-The term *quality model* is reserved for named sets of attributes, such as ISO
-quality models or FURPS. dotspec includes three reusable starters and can copy
-selected definitions into a system. See [Populate system quality attributes](../../handbook/quality-models.md)
-for browsing, previewing, and authoring models. Copied declarations remain local;
-model updates do not synchronize them.
-The repository's [system spec](../../../specs/dotspec.system.spec.md#quality-attributes) provides
-a local example, including concerns that do not yet have requirements.
-
-## System context
-
-System specs may include `Goals`, `Environment`, `Stakeholders`, `Assumptions`,
-`Constraints`, and `Glossary` H2 sections. These are authored Markdown shown
-by `system show` and exposed in its JSON when nonempty. Duplicate sections are errors;
-missing or empty context sections produce no advice. `Purpose` and `Scope`
-remain required.
-
-Use goals for intended organizational or product results, environment for
-relevant surrounding conditions, stakeholders for the people and organizations
-with an interest in the system, and assumptions for conditions relied on.
-Record imposed restrictions under constraints, referencing independently
-managed obligations or existing project policies when appropriate.
-Environment, stakeholders, and constraints are narrative: state an individually
-addressable constraint as a requirement or business rule. Keep each
-definition in one place. A glossary can use H3 headings for individual meanings;
-each is a heading target, and model export records it as a glossary term. Link
-to a concept when it already defines the term.
+The system overview links each attribute’s name and short definition to its
+individual report. Readers can follow parent and child links or browse all
+obligations classified by that attribute. For a complete example, read the
+[Durability source](../../../examples/todo/specs/quality/durability/durability.quality-attribute.spec.md)
+and its [attribute report](../../../examples/todo/specification/quality/durability/durability.quality-attribute.spec-report.md).

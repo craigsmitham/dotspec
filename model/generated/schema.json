@@ -5745,7 +5745,7 @@
         },
         "Requirement": {
             "additionalProperties": false,
-            "description": "A specification that gives one obligation its own document. An obligation is what ISO/IEC/IEEE 29148 calls a requirement, wherever it is written; this class names the specification type, not every normative expression. A quality requirement is a requirement classified by a quality attribute, not a separate type.",
+            "description": "A specification that gives one obligation its own document. An obligation is what ISO/IEC/IEEE 29148 calls a requirement, wherever it is written; this class names the specification type, not every normative expression. Functional and quality requirements share this type. Either can reference a quality attribute.",
             "properties": {
                 "applicability": {
                     "$ref": "#/$defs/Applicability"
@@ -6572,6 +6572,9 @@
                                 "$ref": "#/$defs/ExtensionSection"
                             },
                             {
+                                "$ref": "#/$defs/SystemQualityAttribute"
+                            },
+                            {
                                 "$ref": "#/$defs/Goal"
                             },
                             {
@@ -6649,7 +6652,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.21.0-draft",
+                    "const": "0.22.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -7144,6 +7147,7 @@
         "SpecificationType": {
             "description": "Markdown frontmatter types for authored specifications. Each type has exactly one concrete Specification class.",
             "enum": [
+                "quality-attribute-spec",
                 "component-spec",
                 "system-spec",
                 "job-spec",
@@ -7806,7 +7810,7 @@
                     "$ref": "#/$defs/RichContent"
                 },
                 "quality_attributes": {
-                    "description": "Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. Must be present together with quality_attributes_content.",
+                    "description": "Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct.",
                     "items": {
                         "type": "string"
                     },
@@ -8092,6 +8096,187 @@
                 "kind"
             ],
             "title": "SystemContextSpecification",
+            "type": "object"
+        },
+        "SystemQualityAttribute": {
+            "additionalProperties": false,
+            "description": "A system's named quality attribute, authored in its own quality folder.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "authority_and_evidence": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
+                },
+                "decomposition": {
+                    "$ref": "#/$defs/DecompositionStatus"
+                },
+                "definition": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "derived_from": {
+                    "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "derived_from_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "derived_from_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "evidence": {
+                    "$ref": "#/$defs/EvidenceCollection"
+                },
+                "extension_sections": {
+                    "description": "Only unknown sections, not a substitute for known domain fields.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "illustrative_examples": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Illustrations, not an exhaustive behavioral specification."
+                },
+                "implementation_suggestions": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Nonbinding implementation advice, distinct from required behavior."
+                },
+                "kind": {
+                    "const": "SystemQualityAttribute",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "notes": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Explanation of the element; not a separate obligation or endorsement."
+                },
+                "open_questions": {
+                    "description": "Explicitly distinguished questions, in authored order.",
+                    "items": {
+                        "$ref": "#/$defs/OpenQuestion"
+                    },
+                    "type": "array"
+                },
+                "open_questions_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions."
+                },
+                "owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "string"
+                },
+                "preamble": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored content between the title and the first named section."
+                },
+                "related_specifications": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual citations of related specifications of any type, with their explanation; no implicit support, refinement, enforcement or compliance relation."
+                },
+                "relies_on": {
+                    "description": "Assumptions on which the validity of this element depends.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "relies_on_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "relies_on_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "slug": {
+                    "description": "Path-derived current slug where applicable.",
+                    "type": "string"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "subattribute_of": {
+                    "description": "Resolved attributes under which this attribute is directly organized, within the same declaring owner. Derive subattributes by reversing this relation; preserve authored labels and provenance.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "subattribute_of_labels": {
+                    "description": "All authored Sub-attribute of labels, including unresolved references.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports": {
+                    "description": "Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement.",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            }
+                        ],
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "supports_content": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Complete authored relationship section, including rationale and unresolved references."
+                },
+                "supports_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "validation_plan": {
+                    "$ref": "#/$defs/AssessmentPlan",
+                    "description": "Plan to assess a proposed requirement, need, concept or solution against stakeholder needs and intended use. Identify the subject and basis explicitly; no outcome or endorsement is inferred."
+                }
+            },
+            "required": [
+                "authored_id",
+                "source_document",
+                "decomposition",
+                "id",
+                "kind"
+            ],
+            "title": "SystemQualityAttribute",
             "type": "object"
         },
         "SystemSpecReport": {
@@ -8940,6 +9125,9 @@
                         "$ref": "#/$defs/ExtensionSection"
                     },
                     {
+                        "$ref": "#/$defs/SystemQualityAttribute"
+                    },
+                    {
                         "$ref": "#/$defs/Goal"
                     },
                     {
@@ -9017,7 +9205,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.21.0-draft",
+            "const": "0.22.0-draft",
             "type": "string"
         },
         "references": {
@@ -9071,5 +9259,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.21.0-draft"
+    "version": "0.22.0-draft"
 }

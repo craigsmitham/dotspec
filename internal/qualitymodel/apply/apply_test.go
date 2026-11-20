@@ -28,7 +28,7 @@ func target(t *testing.T, raw string) string {
 const plain = "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n"
 
 func TestDefaultPreviewApplyAndConflict(t *testing.T) {
-	raw := "\ufeff" + strings.ReplaceAll(plain+"## Quality attributes\nLocal narrative.\n### Existing\n**ID:** existing\nKeep this definition.\n## Tail\n<!-- untouched -->\n", "\n", "\r\n")
+	raw := "\ufeff" + strings.ReplaceAll(plain+"## Quality attributes\nLocal narrative.\n## Tail\n<!-- untouched -->\n", "\n", "\r\n")
 	path := target(t, raw)
 	m, err := qualitymodel.Show(".", qualitymodel.Default)
 	if err != nil {
@@ -47,15 +47,14 @@ func TestDefaultPreviewApplyAndConflict(t *testing.T) {
 		t.Fatal(err)
 	}
 	after, _ := os.ReadFile(path)
-	if string(after) != preview.Content || result.Content != preview.Content {
-		t.Fatal("preview differs from write")
+	if string(after) != raw || result.Content != preview.Content {
+		t.Fatal("system source changed or preview differs")
 	}
-	inserted := strings.Index(raw, "## Tail")
-	if !bytes.HasPrefix(after, []byte(raw[:inserted])) || !bytes.HasSuffix(after, []byte(raw[inserted:])) {
-		t.Fatal("existing bytes modified")
-	}
-	if bytes.Contains(bytes.ReplaceAll(after, []byte("\r\n"), nil), []byte("\n")) {
-		t.Fatal("mixed line endings introduced")
+	for _, f := range preview.Files {
+		got, err := os.ReadFile(f.Path)
+		if err != nil || string(got) != f.Content {
+			t.Fatal(f.Path, err)
+		}
 	}
 	info, _ := os.Stat(path)
 	if runtime.GOOS != "windows" && info.Mode().Perm() != 0640 {
@@ -65,10 +64,10 @@ func TestDefaultPreviewApplyAndConflict(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(parsed.QualityAttributes) != 3 || parsed.QualityAttributes[0].ID != "existing" || parsed.QualityAttributes[1].ID != "reliability" {
+	if len(parsed.QualityAttributes) != 2 || parsed.QualityAttributes[0].ID != "reliability" {
 		t.Fatalf("wrong attribute order: %+v", parsed)
 	}
-	if !strings.Contains(parsed.QualityAttributes[1].Definition, "quality model definition") {
+	if !strings.Contains(parsed.QualityAttributes[0].Definition, "quality model definition") {
 		t.Fatal("source link missing")
 	}
 	if _, err := Run(m, path, []string{"reliability", "maintainability"}, false); err == nil {
@@ -116,7 +115,7 @@ func TestLocalAncestorClosureAndLinkRelocation(t *testing.T) {
 	if strings.Join(r.Added, ",") != "narrow,broad" {
 		t.Fatalf("closure/order: %v", r.Added)
 	}
-	for _, text := range []string{"[details](<../guide.md#topic> \"Guide\")", "[broad](<quality-models/local.quality-model.spec.md#broad>)", "`[code](relative.md)`", "![image](<../image.png>)"} {
+	for _, text := range []string{"[details](<../../../../guide.md#topic> \"Guide\")", "[broad](<../../../quality-models/local.quality-model.spec.md#broad>)", "`[code](relative.md)`", "![image](<../../../../image.png>)"} {
 		if !strings.Contains(r.Content, text) {
 			t.Errorf("missing %q in %s", text, r.Content)
 		}
@@ -128,7 +127,7 @@ func TestLocalAncestorClosureAndLinkRelocation(t *testing.T) {
 
 func TestFailureLeavesOriginal(t *testing.T) {
 	m, _ := qualitymodel.Show(".", "furps")
-	for _, raw := range []string{plain + "```text\nunclosed\n", plain + "## Quality attributes\n```text\nunclosed\n"} {
+	for _, raw := range []string{"invalid specification", strings.ReplaceAll(plain, "# System", "# Wrong name")} {
 		path := target(t, raw)
 		if _, err := Run(m, path, nil, false); err == nil {
 			t.Fatal("unparseable insertion accepted")

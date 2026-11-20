@@ -1,11 +1,11 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
-documents: "../../specs/requirements/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports"
+documents: "../../../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports"
 ---
 # Repeated inspections produce equivalent reports
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[dotspec](<../../../dotspec.system.spec-report.md>)
 
 ## Statement
 
@@ -34,7 +34,7 @@ conditions. Compare reports using [Criterion](<#criterion>).
 Cover empty scans, valid specifications, writing advice, structural
 errors, and shared system context. Retain differing reports on test failure.
 
-The [CLI quality-contract tests](<../../internal/cli/quality_contracts_test.go>)
+The [CLI quality-contract tests](<../../../../internal/cli/quality_contracts_test.go>)
 check this criterion. The obligation remains defined in this document.
 
 ## Rationale
@@ -44,10 +44,10 @@ automation.
 
 ## Related specifications
 
-[Specification Inspection](<../concepts/specification-inspection.concept.spec-report.md>)
-describes inspection. The [check report contract](<../../docs/reference/inspection.md#check-specifications>)
+[Specification Inspection](<../../../concepts/specification-inspection.concept.spec-report.md>)
+describes inspection. The [check report contract](<../../../../docs/reference/inspection.md#check-specifications>)
 defines report fields and their ordering rules.
 
-**Quality attribute** · [Repeatability](<../quality-attributes.spec-report.md#repeatability>)
+**Quality attribute** · [Repeatability](<repeatability.quality-attribute.spec-report.md>)
 
-[Edit source](<../../specs/requirements/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports>)
+[Edit source](<../../../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports>)

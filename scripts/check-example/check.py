@@ -108,7 +108,7 @@ def check_project(cli, project, tmp):
         assert set(description["content_nodes"]) <= bound, kind
     system = one("System")
     assert system["id"] == use["subject_system"]
-    assert one("QualityAttribute", owner=system["id"], authored_id="durability")["id"] in requirement["quality_attributes"]
+    assert one("SystemQualityAttribute", owner=system["id"], authored_id="durability")["id"] in requirement["quality_attributes"]
     assert one("Concept", slug="checklist")["id"] == one("ConceptUse")["definition"]
     assert one("QualityModel", slug="personal-data")["quality_attributes"]
     for view, marker in VIEWS.items():
@@ -169,8 +169,12 @@ def spec_journey(cli, tmp):
     qualities = follow(root, "Durability")
     assert follow(promise, "Durability") == qualities
     for page in (root, promise):
-        assert any(target == qualities and fragment == "durability"
+        assert any(target == qualities and not fragment
                    for _, target, fragment, _ in markdown_links(page))
+    assert qualities == project / "specification/quality/durability/durability.quality-attribute.spec-report.md"
+    assert promise == project / "specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md"
+    assert not (qualities.parent / "restart.requirement.spec-report.md").exists()
+    assert follow(qualities, "Acknowledge after commit") == acknowledgement
     assert follow(qualities, "Preserve tasks across restart") == promise
     assert follow(qualities, "Source definition") == project / "specification/quality-models/personal-data-quality.quality-model.spec-report.md"
     headings = re.findall(r"^## (.+)$", promise.read_text(encoding="utf-8"), re.M)
@@ -196,7 +200,7 @@ def spec_journey(cli, tmp):
         body = page.read_text(encoding="utf-8")
         if rule == "spec.document-type":
             if page == qualities:
-                changed = body.replace('personal-task-list.system.spec.md#durability"', 'personal-task-list.system.spec.md#personal-task-list"')
+                changed = body.replace('durability.quality-attribute.spec.md#durability"', 'personal-task-list.system.spec.md#personal-task-list"')
             else:
                 changed = body.replace("type: requirement-spec-report", "type: feature-spec-report")
         elif rule == "spec.membership":
@@ -277,9 +281,19 @@ def author(cli, tmp):
     preview = cli("quality-model apply", *args, "--dry-run", cwd=project)
     assert target.read_bytes() == before
     cli("quality-model apply", *args, cwd=project)
-    assert target.read_text(encoding="utf-8") == preview and "**ID:** durability" in preview
+    copied = draft / "specs/quality/durability/durability.quality-attribute.spec.md"
+    assert copied.read_text(encoding="utf-8") in preview and target.read_bytes() == before
+    cli("requirement init", "commit-data", "--attribute", "durability", "--path", draft, cwd=project)
+    assert (draft / "specs/requirements/commit-data.requirement.spec.md").is_file()
+    cli("requirement init", "data-loss-tolerance", "--preset", "quality", "--attribute", "durability", "--path", draft, cwd=project)
+    assert copied.with_name("data-loss-tolerance.requirement.spec.md").is_file()
+    cli("requirement init", "save-draft", "--attribute", "durability", "--path", component, cwd=project)
+    assert (component / "specs/requirements/save-draft.requirement.spec.md").is_file()
+    assert "durability" in cli("requirement show", "commit-data", "--path", draft, cwd=project)
+    focused = json.loads(cli("requirement check", "commit-data", "--path", draft, "--json", cwd=project))
+    assert focused["complete"] and focused["summary"]["errors"] == 0
     cli("quality-model apply", *args, cwd=project, status=2)
-    assert target.read_text(encoding="utf-8") == preview
+    assert target.read_bytes() == before
     cli("quality-model init", "team", "--from", "furps", "--path", draft, cwd=project)
     assert "Supportability" in cli("quality-model show", "team", "--path", draft, cwd=project)
     with (project / REQUIREMENT).open("a", encoding="utf-8") as file:

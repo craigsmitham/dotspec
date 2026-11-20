@@ -35,7 +35,7 @@ func (b *snapshotBuilder) associateSpecificationSystems() {
 	// The nearest enclosing system applies only where no selection was authored;
 	// an invalid explicit selection never falls back to it.
 	for id, system := range b.directorySystem {
-		if r := b.elements[id]; r != nil {
+		if r := b.elements[id]; designKind(String(r, "kind"), "SystemContextSpecification") {
 			if _, explicit := r["specification_system_content"]; !explicit {
 				r["specification_system"] = system
 			}

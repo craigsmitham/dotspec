@@ -94,6 +94,9 @@ func Read(path string) (*System, error) {
 	for i := range spec.QualityAttributes {
 		spec.QualityAttributes[i].Location.Path = path
 	}
+	if err := spec.loadQualityTree(); err != nil {
+		return nil, err
+	}
 	return spec, nil
 }
 
@@ -141,10 +144,10 @@ func Parse(data []byte) (*System, error) {
 		}
 		content := doc.Body(section)
 		spec.QualityAttributesContent = &content
-		spec.QualityAttributes, err = ParseQualityAttributes(doc, section, &ids)
-		if err != nil {
-			return nil, err
+		if len(section.Children) > 0 {
+			return nil, diagnostic.Error("quality.attribute-source", "declare each system attribute in specs/quality/<name>/<name>.quality-attribute.spec.md", location)
 		}
+		spec.QualityAttributes = []Attribute{}
 	}
 	for _, name := range []string{"Purpose", "Scope"} {
 		if *fields[name] == "" {

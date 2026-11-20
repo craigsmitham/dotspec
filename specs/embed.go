@@ -3,5 +3,5 @@ package specs
 
 import "embed"
 
-//go:embed *.spec.md */*.spec.md
+//go:embed *.spec.md */*.spec.md quality
 var Files embed.FS

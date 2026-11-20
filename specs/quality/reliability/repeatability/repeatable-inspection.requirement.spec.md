@@ -1,8 +1,6 @@
 ---
 type: requirement-spec
 id: repeatable-inspection
-quality_attributes:
-  - repeatability
 ---
 
 # Repeated inspections produce equivalent reports
@@ -34,7 +32,7 @@ conditions. Compare reports using [Criterion](#criterion).
 Cover empty scans, valid specifications, writing advice, structural
 errors, and shared system context. Retain differing reports on test failure.
 
-The [CLI quality-contract tests](../../internal/cli/quality_contracts_test.go)
+The [CLI quality-contract tests](../../../../internal/cli/quality_contracts_test.go)
 check this criterion. The obligation remains defined in this document.
 
 ## Rationale
@@ -44,6 +42,6 @@ automation.
 
 ## Related specifications
 
-[Specification Inspection](../concepts/specification-inspection.concept.spec.md)
-describes inspection. The [check report contract](../../docs/reference/inspection.md#check-specifications)
+[Specification Inspection](../../../concepts/specification-inspection.concept.spec.md)
+describes inspection. The [check report contract](../../../../docs/reference/inspection.md#check-specifications)
 defines report fields and their ordering rules.

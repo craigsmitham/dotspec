@@ -76,7 +76,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 			if len(m.Diagnostics) > 0 || m.RootID == "" {
 				t.Errorf("%s: root=%q diagnostics=%#v", path, m.RootID, m.Diagnostics)
 			}
-			expectedClass := map[string]string{"quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "component": "Component", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement"}[kind]
+			expectedClass := map[string]string{"quality-attribute": "SystemQualityAttribute", "quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "component": "Component", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement"}[kind]
 			rootMatches := false
 			for _, element := range m.Elements {
 				if String(element, "id") == m.RootID && String(element, "kind") == expectedClass {
@@ -245,46 +245,12 @@ Unfinished material.
 
 Local quality concerns.
 
-### Usability
-
-**ID:** usability
-
-Can be used effectively.
-
-### Reliability
-
-**ID:** reliability
-
-Works consistently.
-
-### Diagnosability
-
-**ID:** diagnostic
-**Sub-attribute of:** usability
-
-Problems can be explained.
 `)
 	if len(recordsOf(m, "Goal")) != 2 || len(recordsOf(m, "GlossaryTerm")) != 1 {
 		t.Error("named system items missing")
 	}
-	if len(Strings(r["quality_attributes"])) != 3 || len(recordsOf(m, "QualityAttribute")) != 3 {
-		t.Error("quality attributes missing")
-	}
-	if len(m.Labels) != 1 {
-		t.Fatalf("parent labels: %#v", m.Labels)
-	}
-	for _, a := range recordsOf(m, "QualityAttribute") {
-		if strings.Contains(richText(d, a["definition"]), "**ID:") {
-			t.Error("attribute metadata included in definition")
-		}
-	}
-	if got := richText(d, r["quality_attributes_content"]); !strings.Contains(got, "Local quality concerns.") || !strings.Contains(got, "Problems can be explained.") {
-		t.Errorf("quality section content lost: %s", got)
-	}
-	for _, a := range recordsOf(m, "QualityAttribute") {
-		if String(a, "owner") != String(r, "id") {
-			t.Error("attribute must belong directly to the system")
-		}
+	if len(recordsOf(m, "QualityAttribute")) != 0 || !strings.Contains(richText(d, r["quality_attributes_content"]), "Local quality concerns.") {
+		t.Fatal("system overview should preserve its introduction")
 	}
 	_, _, absent := mapped(t, "system", "## Purpose\n\nP.\n\n## Scope\n\nS.\n")
 	_, _, empty := mapped(t, "system", "## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n")

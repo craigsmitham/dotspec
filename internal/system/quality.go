@@ -188,7 +188,9 @@ func Check(spec *System) []diagnostic.Diagnostic {
 	for _, a := range spec.QualityAttributes {
 		if a.Definition == "" {
 			location := a.Location
-			location.Path = spec.Path
+			if location.Path == "" {
+				location.Path = spec.Path
+			}
 			findings = append(findings, diagnostic.Advice("quality.definition", "Define what this quality attribute means for the system.", location))
 		}
 	}

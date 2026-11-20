@@ -6,7 +6,9 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 	root := t.TempDir()
 	source := "---\r\ntype: quality-model-spec\r\nid: team\r\n---\r\n# Team\r\n## Description\r\nA reusable model.\r\n## Edition\r\nOne\r\n## Sources\r\n[Original](https://example.test/model).\r\n## Quality attributes\r\nSection narrative.\r\n### Broad\r\n**ID:** broad\r\nA concern.\r\n### Narrow\r\n**ID:** narrow\r\n**Sub-attribute of:** broad, second\r\nA specific concern.\r\n### Second\r\n**ID:** second\r\nAnother grouping.\r\n## Custom\r\nRetain me.\r\n"
 	conformanceWrite(t, root, "specs/quality-models/team.quality-model.spec.md", "\ufeff"+source)
-	conformanceWrite(t, root, "specs/system.system.spec.md", "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n### Broad\n**ID:** broad\nA distinct local concern.\n")
+	conformanceWrite(t, root, "specs/system.system.spec.md", "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n")
+	conformanceWrite(t, root, "specs/quality/broad/broad.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: broad\n---\n# Broad\n\n## Definition\n\nA distinct local concern.\n")
+
 	conformanceWrite(t, root, "specs/requirements/obligation.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [broad, narrow]\n---\n# Obligation\n")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
@@ -75,4 +77,23 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 		}
 		requireFinding(t, broken, "label.context")
 	})
+}
+
+func TestQualityDirectoryCyclePreservesInvalidSources(t *testing.T) {
+	root := t.TempDir()
+	conformanceWrite(t, root, "specs/system.system.spec.md", "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n")
+	conformanceWrite(t, root, "specs/quality/reliability/reliability.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nsubattribute_of: [recovery]\n---\n# Reliability\n## Definition\nReliable service.\n")
+	conformanceWrite(t, root, "specs/quality/reliability/recovery/recovery.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\n---\n# Recovery\n## Definition\nRestoration of service.\n")
+
+	result := conformanceExport(t, root)
+	if result.ExitCode != 1 {
+		t.Fatalf("expected source error, got exit %d", result.ExitCode)
+	}
+	conformancePayloads(t, result.Snapshot)
+	for _, d := range result.Snapshot.Diagnostics {
+		if String(d, "code") == "quality.cycle" {
+			return
+		}
+	}
+	t.Fatalf("missing cycle diagnostic: %v", result.Snapshot.Diagnostics)
 }

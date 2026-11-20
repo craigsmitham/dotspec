@@ -59,6 +59,15 @@ func Associated(owner, source string) (*System, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(specfile.QualityFolders(source)) > 0 {
+		local, err := Layout.LocalSubject(owner)
+		if err != nil {
+			return nil, err
+		}
+		if local != target {
+			return invalid("a requirement in a quality folder must use its declaring system")
+		}
+	}
 	if u.Fragment != "" && u.Fragment != spec.ID {
 		targetData, err := os.ReadFile(target)
 		if err != nil {

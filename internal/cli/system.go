@@ -93,6 +93,15 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 		if spec.QualityAttributesContent != nil {
 			modelText += "\n\nQuality attributes\n" + indent(*spec.QualityAttributesContent)
 		}
+		for _, a := range spec.QualityAttributes {
+			if system.AttributeLayout.Match(a.Location.Path) {
+				if spec.QualityAttributesContent == nil && a.ID == spec.QualityAttributes[0].ID {
+					modelText += "\n\nQuality attributes"
+				}
+				modelText += "\n  " + a.Name + " (" + a.ID + ") — " + displayPath(a.Location.Path)
+			}
+		}
+
 		description := ""
 		if spec.Description != "" {
 			description = "\n\nDescription\n" + indent(spec.Description)

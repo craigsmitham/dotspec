@@ -47,7 +47,7 @@ arguments, standard streams, and exit statuses.
 ## Assumptions
 
 The execution conditions required for repeatability comparisons are defined in
-[Repeated inspections](<requirements/repeatable-inspection.requirement.spec-report.md#applies-to>).
+[Repeated inspections](<quality/reliability/repeatability/repeatable-inspection.requirement.spec-report.md#applies-to>).
 
 ## Constraints
 
@@ -100,14 +100,14 @@ individual quality requirements establish the obligations.
 
 | Quality attribute | Description |
 | --- | --- |
-| [Usability](<quality-attributes.spec-report.md#usability>) | How effectively contributors can author, inspect, and maintain specifications. |
-| [Diagnosability](<quality-attributes.spec-report.md#diagnosability>) | How effectively findings help contributors understand and locate specification problems. |
-| [Accessibility](<quality-attributes.spec-report.md#accessibility>) | How effectively people with differing abilities and ways of accessing output can use dotspec. |
-| [Reliability](<quality-attributes.spec-report.md#reliability>) | How consistently dotspec performs its intended operations under stated conditions. |
-| [Repeatability](<quality-attributes.spec-report.md#repeatability>) | Whether equivalent inspections under unchanged conditions produce equivalent reports. |
-| [Source preservation](<quality-attributes.spec-report.md#source-preservation>) | Whether inspection preserves the source material it examines. |
-| [Performance](<quality-attributes.spec-report.md#performance>) | The time and computing resources required to perform operations under stated workloads. |
-| [Responsiveness](<quality-attributes.spec-report.md#responsiveness>) | The elapsed time before an operation delivers its result. |
+| [Performance](<quality/performance/performance.quality-attribute.spec-report.md>) | The time and computing resources required to perform operations under stated workloads. |
+| [Responsiveness](<quality/performance/responsiveness/responsiveness.quality-attribute.spec-report.md>) | The elapsed time before an operation delivers its result. |
+| [Reliability](<quality/reliability/reliability.quality-attribute.spec-report.md>) | How consistently dotspec performs its intended operations under stated conditions. |
+| [Repeatability](<quality/reliability/repeatability/repeatability.quality-attribute.spec-report.md>) | Whether equivalent inspections under unchanged conditions produce equivalent reports. |
+| [Source preservation](<quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>) | Whether inspection preserves the source material it examines. |
+| [Accessibility](<quality/usability/accessibility/accessibility.quality-attribute.spec-report.md>) | How effectively people with differing abilities and ways of accessing output can use dotspec. |
+| [Diagnosability](<quality/usability/diagnosability/diagnosability.quality-attribute.spec-report.md>) | How effectively findings help contributors understand and locate specification problems. |
+| [Usability](<quality/usability/usability.quality-attribute.spec-report.md>) | How effectively contributors can author, inspect, and maintain specifications. |
 
 ## Concepts
 
@@ -130,13 +130,13 @@ individual quality requirements establish the obligations.
 
 - [Advice permits a successful check](<requirements/advice-permits-success.requirement.spec-report.md>) — When a completed check reports only advisory findings, dotspec must return exit status zero.
 - [Continue checking after a structural error](<requirements/continue-after-invalid-spec.requirement.spec-report.md>) — When a discovered specification contains a structural error, dotspec must continue inspecting the remaining discovered specifications.
-- [Diagnostic severity is available without styling](<requirements/diagnostic-severity.requirement.spec-report.md>) — Every diagnostic must identify its severity using a text label independently of terminal styling.
-- [Inspection preserves source material](<requirements/inspection-preserves-source.requirement.spec-report.md>) — Inspection must leave source-file contents and paths unchanged, without creating, deleting, or renaming source files.
+- [Diagnostic severity is available without styling](<quality/usability/diagnosability/diagnostic-severity.requirement.spec-report.md>) — Every diagnostic must identify its severity using a text label independently of terminal styling.
+- [Inspection preserves source material](<quality/reliability/source-preservation/inspection-preserves-source.requirement.spec-report.md>) — Inspection must leave source-file contents and paths unchanged, without creating, deleting, or renaming source files.
 - [Isolate specification projects in a workspace](<requirements/isolate-specification-projects-in-a-workspace.requirement.spec-report.md>)
 - [Preserve source and represented content in model exports](<requirements/model-source-fidelity.requirement.spec-report.md>)
 - [Read and verify the generated requirements specification](<requirements/read-and-verify-the-generated-requirements-specification.requirement.spec-report.md>)
 - [Reject initialization at an existing target](<requirements/reject-existing-target.requirement.spec-report.md>) — When the target path already exists, initialization must terminate with an unsuccessful exit status.
-- [Repeated inspections produce equivalent reports](<requirements/repeatable-inspection.requirement.spec-report.md>) — Repeated inspections must produce equivalent structured reports, including the ordering of array elements.
+- [Repeated inspections produce equivalent reports](<quality/reliability/repeatability/repeatable-inspection.requirement.spec-report.md>) — Repeated inspections must produce equivalent structured reports, including the ordering of array elements.
 
 ## Use cases
 
