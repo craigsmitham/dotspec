@@ -25,4 +25,6 @@ The [restart test](<../../../../tests/acceptance.py>) exercises persistence of a
 
 ## Related specifications
 
-**Quality attribute** · [Durability](<../../../quality/durability/durability.quality-attribute.spec-report.md>)
+**Quality attribute**
+
+- [Durability](<../../../quality/durability/durability.quality-attribute.spec-report.md>)

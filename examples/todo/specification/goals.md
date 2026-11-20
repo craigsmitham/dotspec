@@ -11,4 +11,6 @@ generated_by: dotspec
 
 Reduce the effort of working out what still needs attention.
 
-**Supported by** · [Resume interrupted work](<jobs/resume-interrupted-work.job.spec-report.md>)
+**Supported by**
+
+- [Resume interrupted work](<jobs/resume-interrupted-work.job.spec-report.md>)

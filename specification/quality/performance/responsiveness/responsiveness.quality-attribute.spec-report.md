@@ -16,4 +16,6 @@ workloads, defined measurement conditions, and baseline measurements.
 
 ## Related specifications
 
-**Parent attribute** · [Performance](<../performance.quality-attribute.spec-report.md>)
+**Parent attribute**
+
+- [Performance](<../performance.quality-attribute.spec-report.md>)

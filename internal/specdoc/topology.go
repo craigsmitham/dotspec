@@ -11,18 +11,18 @@ import (
 
 // Containment and boundary interactions have distinct meanings. Only explicit
 // model relationships supply edges; directory membership is navigation.
-func (p *planner) renderTopology(w *writer, system *subject, shownCapabilities map[string]bool) {
+func (p *planner) renderTopology(w *writer, owner *subject, shownCapabilities map[string]bool) {
 	type connection struct{ target, edge, role string }
 	var connections []connection
-	if system.parent != nil {
-		connections = append(connections, connection{id(system.parent.r), "part of", "Parent system"})
+	if owner.parent != nil && attr(owner.r, "part_of") == id(owner.parent.r) {
+		connections = append(connections, connection{id(owner.parent.r), "part of", "Parent " + strings.ToLower(owner.parent.kind())})
 	}
 	providers := map[string][]*subject{}
 	for _, child := range p.subjects {
-		if attr(child.r, "part_of") == id(system.r) {
+		if attr(child.r, "part_of") == id(owner.r) {
 			connections = append(connections, connection{id(child.r), "contains", child.kind()})
 		}
-		if child.kind() == "Capability" && child.system == system {
+		if child.kind() == "Capability" {
 			for _, provider := range model.Strings(child.r["provided_by"]) {
 				providers[provider] = append(providers[provider], child)
 			}
@@ -33,14 +33,14 @@ func (p *planner) renderTopology(w *writer, system *subject, shownCapabilities m
 		{"provided_interfaces", "provides interface", "Provided interface"},
 		{"interacts_with", "interacts with", "Boundary partner"},
 	} {
-		for _, target := range model.Strings(system.r[role.field]) {
+		for _, target := range model.Strings(owner.r[role.field]) {
 			connections = append(connections, connection{target, role.edge, role.label})
 		}
 	}
-	nodes := map[string]int{id(system.r): 0}
+	nodes := map[string]int{id(owner.r): 0}
 	var diagram strings.Builder
 	diagram.WriteString("```mermaid\nflowchart LR\n")
-	fmt.Fprintf(&diagram, "    n0[\"%s\"]\n", mermaid.Label(system.name.title))
+	fmt.Fprintf(&diagram, "    n0[\"%s\"]\n", mermaid.Label(owner.name.title))
 	var lines []string
 	for _, c := range connections {
 		name, detail := p.topologyDetail(w, c.target)

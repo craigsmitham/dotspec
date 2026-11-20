@@ -19,4 +19,6 @@ reports.
 - [Read and verify the generated requirements specification](<../../../requirements/read-and-verify-the-generated-requirements-specification.requirement.spec-report.md>)
 - [Repeated inspections produce equivalent reports](<../../../requirements/repeatable-inspection.requirement.spec-report.md>)
 
-**Parent attribute** · [Reliability](<../reliability.quality-attribute.spec-report.md>)
+**Parent attribute**
+
+- [Reliability](<../reliability.quality-attribute.spec-report.md>)

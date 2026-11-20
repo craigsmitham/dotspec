@@ -19,7 +19,7 @@ Whole-project builds and checks for projects that enable generated specification
 
 The project's `SPEC.md` gives the system name and one link to `specification/<name>.system.spec-report.md`. Each system and component overview uses the basename of its named source with `.spec.md` changed to `.spec-report.md`. Each overview links to a plural-named index beside it for each populated collection, such as `use-cases.md` or `requirements.md`. An index entry links to the subject and includes its authored goal, statement, or description when available. Empty collections produce no index. From the overview, reach the same promise through its feature and through the system’s requirements index. Both routes explain why the promise is listed and lead to its canonical page or passage. The statement, conditions and criterion agree with the authored text. Editing a condition only in the generated spec or removing the feature link produces a check finding. A second build over identical inputs produces identical files.
 
-The system overview opens with the system name and authored description. Its
+System and component overviews open with their subject name and authored description. Each
 section map links directly to populated indexes. Readers can follow goals,
 business rules, user needs, scope, system topology, features, capabilities,
 use cases, concepts, requirements, quality attributes, and open questions in
@@ -31,8 +31,21 @@ parts and boundary relationships in a Mermaid diagram and in linked text.
 The overview introduces the top-level quality attributes with their definition
 previews. The attribute index shows the full hierarchy. A shared attribute
 appears under each declared parent, with its descendants expanded once. The
-business rules index lists all rules. When a small set explicitly applies to the system, the overview names those rules and includes
-their authored statement previews.
+business rules index lists all rules. The overview previews explicitly applicable rules with their authored statements.
+
+Each overview section shows every substantive entry that belongs in that
+section, in index order, regardless of collection size. The topology and
+quality hierarchy retain their complete structure.
+
+Within Concepts, each group with content has a level-three heading. Concept
+definitions come first, followed by Concept uses and Synchronizations. Adding the first
+named use preserves the definitions heading and its entries. The definitions
+index is titled Concept definitions. Overviews and indexes reuse each subject’s
+linked name, authored preview, and declared relationship labels. A concept use
+identifies its definition with Uses. A requirement identifies each promise it
+refines with Refines and links to its exact page or passage. Adding a second
+refinement preserves the first relationship. The same labels identify these
+relationships on subject pages.
 
 System and component overviews introduce named goals and assumptions
 with a linked title and an authored statement preview when available. Each link

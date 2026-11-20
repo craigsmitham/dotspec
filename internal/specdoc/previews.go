@@ -140,9 +140,25 @@ func subjectPreview(s *subject) string {
 	// A bare metadata field or cross-reference gives little context in a list.
 	raw := sourceProse(s.source, h)
 	if title == "" && strings.HasPrefix(raw, "**") && strings.Contains(strings.SplitN(raw, "\n", 2)[0], ":**") {
-		return ""
+		raw = ""
 	}
 	summary := paragraphPreview(raw)
+	if s.kind() == "Synchronization" && summary == "" {
+		if h := s.section("Semantics"); h != nil {
+			summary = paragraphPreview(sourceProse(s.source, h))
+		}
+		if summary == "" {
+			var clauses []string
+			for _, field := range []string{"When", "Where", "Then"} {
+				if h := s.section(field); h != nil {
+					if preview := paragraphPreview(sourceProse(s.source, h)); preview != "" {
+						clauses = append(clauses, field+" — "+preview)
+					}
+				}
+			}
+			summary = strings.Join(clauses, " · ")
+		}
+	}
 	if summary == s.name.title {
 		return ""
 	}
@@ -153,32 +169,15 @@ func (p *planner) featureGoals(w *writer, s *subject) {
 	if paragraphPreview(sourceProse(s.source, s.name)) != "" || s.section("Purpose") != nil || s.section("Description") != nil {
 		return
 	}
-	type preview struct{ name, passage, goal string }
-	var goals []preview
+	var lines []string
 	for _, id := range model.Strings(s.r["groups"]) {
 		member := p.pages[id]
 		if member == nil || member.kind() != "UseCase" {
 			continue
 		}
-		if h := member.section("Goal"); h != nil {
-			if goal := paragraphPreview(sourceProse(member.source, h)); goal != "" {
-				goals = append(goals, preview{member.name.title, p.targets[h.node], inlineText(goal)})
-			}
+		if goal := subjectPreview(member); goal != "" {
+			lines = append(lines, entryLine(w, entry{member.name.title, p.targets[member.section("Goal").node], goal}))
 		}
 	}
-	if len(goals) == 1 {
-		goal := goals[0].goal
-		// A goal can start with literal Markdown, such as an escaped '#'
-		// or '1.'. Keep a standalone preview in a paragraph.
-		if strings.ContainsRune("#+-=0123456789", rune(goal[0])) {
-			goal = fmt.Sprintf("&#%d;%s", goal[0], goal[1:])
-		}
-		w.text(goal)
-	} else if len(goals) > 1 {
-		var lines []string
-		for _, g := range goals {
-			lines = append(lines, "- "+w.link(g.name, g.passage)+" — "+g.goal)
-		}
-		w.text(strings.Join(lines, "\n"))
-	}
+	w.text(strings.Join(lines, "\n"))
 }

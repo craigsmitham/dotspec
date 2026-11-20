@@ -84,4 +84,6 @@ Remove the selected entry from the list.
 
 ## Related specifications
 
-**Used by** · [My checklist](<../concept-uses/my-checklist.concept-use.spec-report.md>)
+**Used by**
+
+- [My checklist](<../concept-uses/my-checklist.concept-use.spec-report.md>)

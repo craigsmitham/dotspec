@@ -46,6 +46,11 @@ var collectionKinds = map[string]string{
 	"Extensions": "UseCaseExtension", "Concept uses": "ConceptUse", "Synchronizations": "Synchronization",
 }
 
+// IsCollectionHeading reports whether a source heading introduces named entries.
+func IsCollectionHeading(title string) bool {
+	return collectionKinds[title] != ""
+}
+
 var classSlots = sync.OnceValue(func() map[string]struct{ Slots map[string]json.RawMessage } {
 	var catalog struct {
 		Classes map[string]struct{ Slots map[string]json.RawMessage }

@@ -27,4 +27,6 @@ provides the conceptual context. The
 [report contract](<../../docs/reference/inspection.md#check-specifications>) describes report fields
 and handling within an individual malformed file.
 
-**Quality attribute** · [Diagnosability](<../quality/usability/diagnosability/diagnosability.quality-attribute.spec-report.md>)
+**Quality attribute**
+
+- [Diagnosability](<../quality/usability/diagnosability/diagnosability.quality-attribute.spec-report.md>)

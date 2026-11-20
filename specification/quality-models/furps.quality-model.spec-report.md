@@ -46,7 +46,9 @@ Consider the capabilities and results people need from the system.
 
 Which groups of functions are needed to support the intended work?
 
-**Parent attribute** · [Functionality](<#functionality>)
+**Parent attribute**
+
+- [Functionality](<#functionality>)
 
 ### Capabilities
 
@@ -57,7 +59,9 @@ Which groups of functions are needed to support the intended work?
 
 What actions and results must the system make possible?
 
-**Parent attribute** · [Functionality](<#functionality>)
+**Parent attribute**
+
+- [Functionality](<#functionality>)
 
 ### Security
 
@@ -68,7 +72,9 @@ What actions and results must the system make possible?
 
 What protection and access controls must the system provide?
 
-**Parent attribute** · [Functionality](<#functionality>)
+**Parent attribute**
+
+- [Functionality](<#functionality>)
 
 ### Usability
 
@@ -97,7 +103,9 @@ Consider how people discover, learn, and use the system, including its documenta
 
 How should the interaction accommodate the people and work environments involved?
 
-**Parent attribute** · [Usability](<#usability>)
+**Parent attribute**
+
+- [Usability](<#usability>)
 
 ### Aesthetics
 
@@ -108,7 +116,9 @@ How should the interaction accommodate the people and work environments involved
 
 What expectations apply to the visual and sensory presentation?
 
-**Parent attribute** · [Usability](<#usability>)
+**Parent attribute**
+
+- [Usability](<#usability>)
 
 ### User-interface consistency
 
@@ -119,7 +129,9 @@ What expectations apply to the visual and sensory presentation?
 
 Which interaction conventions should behave consistently across the product?
 
-**Parent attribute** · [Usability](<#usability>)
+**Parent attribute**
+
+- [Usability](<#usability>)
 
 ### Online and context-sensitive help
 
@@ -130,7 +142,9 @@ Which interaction conventions should behave consistently across the product?
 
 What help must be available during a task and tailored to the current situation?
 
-**Parent attribute** · [Usability](<#usability>)
+**Parent attribute**
+
+- [Usability](<#usability>)
 
 ### Wizards and agents
 
@@ -141,7 +155,9 @@ What help must be available during a task and tailored to the current situation?
 
 Which tasks need guided steps or delegated assistance?
 
-**Parent attribute** · [Usability](<#usability>)
+**Parent attribute**
+
+- [Usability](<#usability>)
 
 ### User documentation
 
@@ -152,7 +168,9 @@ Which tasks need guided steps or delegated assistance?
 
 What instructions and reference information do users need?
 
-**Parent attribute** · [Usability](<#usability>)
+**Parent attribute**
+
+- [Usability](<#usability>)
 
 ### Training materials
 
@@ -163,7 +181,9 @@ What instructions and reference information do users need?
 
 What learning resources are needed for users to become effective?
 
-**Parent attribute** · [Usability](<#usability>)
+**Parent attribute**
+
+- [Usability](<#usability>)
 
 ### Reliability
 
@@ -190,7 +210,9 @@ Consider consistent behavior, availability, and recovery when things go wrong.
 
 How often may failures occur, and which consequences distinguish their severity?
 
-**Parent attribute** · [Reliability](<#reliability>)
+**Parent attribute**
+
+- [Reliability](<#reliability>)
 
 ### Recoverability
 
@@ -201,7 +223,9 @@ How often may failures occur, and which consequences distinguish their severity?
 
 What must be restored after failure, and how will successful recovery be demonstrated?
 
-**Parent attribute** · [Reliability](<#reliability>)
+**Parent attribute**
+
+- [Reliability](<#reliability>)
 
 ### Accuracy
 
@@ -226,7 +250,9 @@ What accuracy must results retain during continued operation and under the speci
 
 Which behaviors must remain consistent across repeated operations and changing conditions?
 
-**Parent attribute** · [Reliability](<#reliability>)
+**Parent attribute**
+
+- [Reliability](<#reliability>)
 
 ### Mean time between failures
 
@@ -237,7 +263,9 @@ Which behaviors must remain consistent across repeated operations and changing c
 
 What observation period and failure definition will be used to assess intervals between failures?
 
-**Parent attribute** · [Reliability](<#reliability>)
+**Parent attribute**
+
+- [Reliability](<#reliability>)
 
 ### Performance
 
@@ -267,7 +295,9 @@ Consider response times, throughput, and resource use for realistic workloads.
 
 How quickly must the system complete its work under the expected load?
 
-**Parent attribute** · [Performance](<#performance>)
+**Parent attribute**
+
+- [Performance](<#performance>)
 
 ### Efficiency
 
@@ -278,7 +308,9 @@ How quickly must the system complete its work under the expected load?
 
 What useful output is expected for the resources consumed?
 
-**Parent attribute** · [Performance](<#performance>)
+**Parent attribute**
+
+- [Performance](<#performance>)
 
 ### Availability
 
@@ -289,7 +321,9 @@ What useful output is expected for the resources consumed?
 
 What readiness for use must be maintained under the specified workload?
 
-**Parent attribute** · [Performance](<#performance>)
+**Parent attribute**
+
+- [Performance](<#performance>)
 
 ### Throughput
 
@@ -300,7 +334,9 @@ What readiness for use must be maintained under the specified workload?
 
 How much work must the system complete per unit of time?
 
-**Parent attribute** · [Performance](<#performance>)
+**Parent attribute**
+
+- [Performance](<#performance>)
 
 ### Response time
 
@@ -311,7 +347,9 @@ How much work must the system complete per unit of time?
 
 How long may a caller wait for a response?
 
-**Parent attribute** · [Performance](<#performance>)
+**Parent attribute**
+
+- [Performance](<#performance>)
 
 ### Recovery time
 
@@ -322,7 +360,9 @@ How long may a caller wait for a response?
 
 How quickly must useful operation resume following a disruption?
 
-**Parent attribute** · [Performance](<#performance>)
+**Parent attribute**
+
+- [Performance](<#performance>)
 
 ### Resource usage
 
@@ -333,7 +373,9 @@ How quickly must useful operation resume following a disruption?
 
 What resource budgets apply while the system is operating?
 
-**Parent attribute** · [Performance](<#performance>)
+**Parent attribute**
+
+- [Performance](<#performance>)
 
 ### Supportability
 
@@ -364,7 +406,9 @@ Consider how the system will be tested, configured, maintained, and supported th
 
 What controls and observations are needed to test the system?
 
-**Parent attribute** · [Supportability](<#supportability>)
+**Parent attribute**
+
+- [Supportability](<#supportability>)
 
 ### Extensibility
 
@@ -375,7 +419,9 @@ What controls and observations are needed to test the system?
 
 What additions should be possible without extensive rework?
 
-**Parent attribute** · [Supportability](<#supportability>)
+**Parent attribute**
+
+- [Supportability](<#supportability>)
 
 ### Adaptability
 
@@ -386,7 +432,9 @@ What additions should be possible without extensive rework?
 
 Which changes in environment or use should the system accommodate?
 
-**Parent attribute** · [Supportability](<#supportability>)
+**Parent attribute**
+
+- [Supportability](<#supportability>)
 
 ### Maintainability
 
@@ -397,7 +445,9 @@ Which changes in environment or use should the system accommodate?
 
 What effort and confidence are expected when diagnosing and changing the system?
 
-**Parent attribute** · [Supportability](<#supportability>)
+**Parent attribute**
+
+- [Supportability](<#supportability>)
 
 ### Compatibility
 
@@ -408,7 +458,9 @@ What effort and confidence are expected when diagnosing and changing the system?
 
 Which existing products and versions must continue to work with the system?
 
-**Parent attribute** · [Supportability](<#supportability>)
+**Parent attribute**
+
+- [Supportability](<#supportability>)
 
 ### Configurability
 
@@ -419,7 +471,9 @@ Which existing products and versions must continue to work with the system?
 
 What behavior must operators or users be able to configure?
 
-**Parent attribute** · [Supportability](<#supportability>)
+**Parent attribute**
+
+- [Supportability](<#supportability>)
 
 ### Serviceability
 
@@ -430,7 +484,9 @@ What behavior must operators or users be able to configure?
 
 What support and repair tasks must be practical during the product life?
 
-**Parent attribute** · [Supportability](<#supportability>)
+**Parent attribute**
+
+- [Supportability](<#supportability>)
 
 ### Installability
 
@@ -441,7 +497,9 @@ What support and repair tasks must be practical during the product life?
 
 What is required to install, update, and remove the system successfully?
 
-**Parent attribute** · [Supportability](<#supportability>)
+**Parent attribute**
+
+- [Supportability](<#supportability>)
 
 ### Localizability
 
@@ -452,4 +510,6 @@ What is required to install, update, and remove the system successfully?
 
 Which languages and regional conventions must be supported without redesign?
 
-**Parent attribute** · [Supportability](<#supportability>)
+**Parent attribute**
+
+- [Supportability](<#supportability>)

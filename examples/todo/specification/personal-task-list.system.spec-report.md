@@ -14,13 +14,13 @@ A single-user task list that stores open and completed tasks on one computer.
 | [Business rules](<#business-rules>) | [All business rules](<business-rules.md>) |
 | [User needs](<#user-needs>) | [Jobs](<jobs.md>) |
 | [Scope](<#scope>) | [All assumptions](<assumptions.md>) |
-| [System topology](<#system-topology>) | [Components](<components.md>) · [Interfaces](<interfaces.md>) |
+| [System topology](<#system-topology>) | [Components](<components.md>) · [Interfaces](<interfaces.md>) · [Provided interfaces](<interfaces.md#provided-interfaces>) |
 | [Features](<#features>) | [All features](<features.md>) |
 | Capabilities | [All capabilities](<capabilities.md>) |
 | [Use cases](<#use-cases>) | [All use cases](<use-cases.md>) |
 | [Concepts](<#concepts>) | [Concept definitions](<concepts.md>) · [Concept uses](<concept-uses.md>) |
 | [Requirements](<#requirements>) | [All requirements](<requirements.md>) |
-| [Quality attributes](<#quality-attributes>) | [Attribute index](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
+| [Quality attributes](<#quality-attributes>) | [All quality attributes](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
 
 ## Purpose
 
@@ -87,20 +87,21 @@ flowchart LR
 
 ## Concepts
 
-**Concept definitions**
+### Concept definitions
 
 - [Checklist](<concepts/checklist.concept.spec-report.md>) — Keep track of which commitments still need attention.
 
-**Concept uses**
+### Concept uses
 
 - [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — The checklist used to track one person’s open and completed tasks.
   - Uses [Checklist](<concepts/checklist.concept.spec-report.md>)
 
 ## Requirements
 
-[Return to my list](<use-cases/return-to-my-list.use-case.spec-report.md>) includes [Keep recorded work available](<use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>). The list must make previously recorded entries available when the person returns.
-
-[Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>) refines that promise. After the service acknowledges a change, stopping and restarting it on the same database must preserve each surviving entry's identity, title and completion state. Deleted entries must stay absent.
+- [Keep recorded work available](<use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>) — The list must make previously recorded entries available when the person returns.
+  - In [Return to my list](<use-cases/return-to-my-list.use-case.spec-report.md>)
+- [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>) — After the service acknowledges a change, stopping and restarting it on the same database must preserve each surviving entry's identity, title and completion state. Deleted entries must stay absent.
+  - Refines [Keep recorded work available](<use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>)
 
 ## Quality attributes
 

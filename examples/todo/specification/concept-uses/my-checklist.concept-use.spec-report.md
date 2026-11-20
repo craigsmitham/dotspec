@@ -11,7 +11,7 @@ The checklist used to track one person’s open and completed tasks.
 
 [Personal task list](<../personal-task-list.system.spec-report.md>)
 
-## Definition
+## Uses
 
 [Checklist](<../concepts/checklist.concept.spec-report.md>)
 
@@ -21,6 +21,10 @@ The checklist used to track one person’s open and completed tasks.
 
 ## Related specifications
 
-**Applies here** · [Keep recorded work available](<../use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>)
+**Applies here**
 
-**Used in** · [Return to my list](<../use-cases/return-to-my-list.use-case.spec-report.md>)
+- [Keep recorded work available](<../use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>)
+
+**Used in**
+
+- [Return to my list](<../use-cases/return-to-my-list.use-case.spec-report.md>)

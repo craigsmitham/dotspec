@@ -55,6 +55,10 @@ A list that loses track of earlier decisions forces the person to reconstruct th
 
 ## Related specifications
 
-**Feature** · [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)
+**Feature**
 
-**Quality attribute** · [Durability](<../quality/durability/durability.quality-attribute.spec-report.md>)
+- [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)
+
+**Quality attribute**
+
+- [Durability](<../quality/durability/durability.quality-attribute.spec-report.md>)

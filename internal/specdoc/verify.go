@@ -92,6 +92,9 @@ func parseGenerated(data []byte) parsedPage {
 			if _, seen := p.firstList[ids[0]]; !seen {
 				var members []string
 				_ = ast.Walk(n, func(child ast.Node, entering bool) (ast.WalkStatus, error) {
+					if child != n && child.Kind() == ast.KindList {
+						return ast.WalkSkipChildren, nil // nested relationships are not directory members
+					}
 					if link, ok := child.(*ast.Link); ok && entering {
 						members = append(members, string(util.URLEscape(link.Destination, true)))
 					}

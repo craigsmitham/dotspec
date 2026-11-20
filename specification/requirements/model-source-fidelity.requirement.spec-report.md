@@ -48,4 +48,6 @@ The [specification model documentation](<../../docs/reference/specification-mode
 [Markdown mapping profile](<../../model/markdown-mapping.md>) describe the
 representation and named mappings.
 
-**Quality attribute** · [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)
+**Quality attribute**
+
+- [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)

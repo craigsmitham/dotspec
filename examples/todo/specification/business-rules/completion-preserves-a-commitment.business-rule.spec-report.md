@@ -25,4 +25,6 @@ A person can discover that a finished errand needs a follow-up.
 
 ## Related specifications
 
-**Basis for** · [Keep recorded work available](<../use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>)
+**Basis for**
+
+- [Keep recorded work available](<../use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>)

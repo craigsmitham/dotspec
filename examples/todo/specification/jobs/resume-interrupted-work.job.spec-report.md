@@ -30,7 +30,9 @@ A person managing their own errands or work.
 
 Identify the commitments that still need attention.
 
-**Applies here** · [Less reconstruction](<#less-reconstruction>)
+**Applies here**
+
+- [Less reconstruction](<#less-reconstruction>)
 
 ### Reconsider finished work
 
@@ -51,7 +53,9 @@ Recognize when a previously finished commitment needs another action.
 
 Minimize the time spent reconstructing outstanding commitments after an interruption.
 
-**Supported by** · [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
+**Supported by**
+
+- [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
 
 #### Applies to
 

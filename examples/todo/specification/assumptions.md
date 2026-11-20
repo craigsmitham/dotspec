@@ -11,4 +11,6 @@ generated_by: dotspec
 
 The person returns to the same writable database file.
 
-**Relied on by** · [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
+**Relied on by**
+
+- [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>)

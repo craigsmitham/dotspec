@@ -51,16 +51,17 @@ type heading struct {
 }
 
 type subject struct {
-	r         model.Record
-	source    *sourceFile
-	name      *heading
-	system    *subject
-	parent    *subject
-	indexes   map[string]*collectionIndex
-	glossary  []glossaryPassage
-	passages  [][]*heading
-	overview  []overviewSection
-	file, dir string
+	r                      model.Record
+	source                 *sourceFile
+	name                   *heading
+	system                 *subject
+	parent                 *subject
+	indexes                map[string]*collectionIndex
+	glossary               []glossaryPassage
+	passages               [][]*heading
+	overview               []overviewSection
+	emptyCollectionAnchors []string
+	file, dir              string
 }
 
 type planner struct {
@@ -76,6 +77,7 @@ type planner struct {
 
 	glossaryTargets map[string]map[string]string // scoped routes for terms shared between systems
 	routes          map[string][]route
+	entryRelations  map[string][]entryRelation
 }
 
 type entry struct {
@@ -239,7 +241,7 @@ func (p *planner) read() error {
 }
 
 func (s *subject) slug() string {
-	if s.kind() == "System" || s.kind() == "Component" || s.kind() == "SystemQualityAttribute" {
+	if s.isOverview() || s.kind() == "SystemQualityAttribute" {
 		return strings.TrimSuffix(path.Base(s.source.path), "."+kindName(s.kind())+".spec.md")
 	}
 	name := attr(s.r, "authored_id")
@@ -251,6 +253,10 @@ func (s *subject) slug() string {
 	}
 	return "section"
 }
+func (s *subject) isOverview() bool {
+	return s.kind() == "System" || s.kind() == "Component"
+}
+
 func (s *subject) kind() string {
 	return attr(s.r, "kind")
 }
@@ -363,7 +369,7 @@ func (p *planner) place() error {
 			}
 			s.dir = path.Join(dir, slug)
 			s.file = path.Join(s.dir, slug+".quality-attribute.spec-report.md")
-		} else if s.kind() == "System" || s.kind() == "Component" {
+		} else if s.isOverview() {
 			s.placeOverview(base)
 		} else {
 			s.file = base + "." + kindName(s.kind()) + ".spec-report.md"
@@ -418,7 +424,7 @@ func (p *planner) indexTargets() {
 		if s != p.governing && !s.name.qualityAttribute {
 			p.placeDirectoryEntry(s)
 		}
-		if s.kind() == "System" || s.kind() == "Component" {
+		if s.isOverview() {
 			p.collectOverviewDetails(s)
 		}
 		if s.kind() == "System" && len(model.Strings(s.r["quality_attributes"])) > 0 {
@@ -498,7 +504,7 @@ func (p *planner) indexTargets() {
 		}
 		p.planPassages(s)
 		p.indexDetailHeadings(s)
-		if s.kind() == "System" {
+		if s.isOverview() {
 			continue
 		}
 		ids := parser.NewContext().IDs()
@@ -507,7 +513,7 @@ func (p *planner) indexTargets() {
 				continue
 			}
 			p.targets[h.node] = s.file
-			generated := string(ids.Generate([]byte(h.title), ast.KindHeading))
+			generated := string(ids.Generate([]byte(h.reportTitle()), ast.KindHeading))
 			if h != s.name {
 				if needsHeadingAnchor(s, h) {
 					h.explicitAnchor = "section-" + h.anchor
@@ -517,9 +523,10 @@ func (p *planner) indexTargets() {
 			}
 		}
 	}
-	// Overview summaries can link directly to already-placed use-case clauses.
+	p.indexEntryRelations()
+	// Plan section visibility before resolving links to embedded obligations.
 	for _, s := range p.subjects {
-		if s.kind() == "System" {
+		if s.isOverview() {
 			s.overview = p.planOverview(s)
 			p.indexOverviewHeadings(s, parser.NewContext().IDs())
 		}
@@ -527,17 +534,6 @@ func (p *planner) indexTargets() {
 	for _, r := range p.snapshot.Elements {
 		if dest := p.targets[nameNode(r)]; dest != "" {
 			p.targets[id(r)] = dest
-		}
-	}
-	for _, s := range p.subjects {
-		if idx := s.indexes["Requirements"]; idx != nil {
-			for _, members := range idx.groups {
-				for i, member := range members {
-					if clauses[member.target] {
-						members[i].target = p.targets[member.target]
-					}
-				}
-			}
 		}
 	}
 	// Question entries initially point at source headings. Their final fragments

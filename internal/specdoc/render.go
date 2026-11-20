@@ -101,8 +101,8 @@ func (p *planner) renderSubject(s *subject) {
 	w := p.newPage(s.file, subjectDocument(s.file, s.source, s.name), s.name.title)
 	w.titleMarkdown = p.headingMarkdown(w, s.source, s.name)
 	w.titleAnchor = s.name.explicitAnchor
-	if s.kind() == "System" {
-		p.renderSystem(w, s)
+	if s.isOverview() {
+		p.renderOverview(w, s)
 	} else {
 		p.renderSubjectBody(w, s)
 	}
@@ -110,6 +110,9 @@ func (p *planner) renderSubject(s *subject) {
 		p.relationships(w, s.name, true)
 	}
 	p.appendFootnotes(w, s)
+	for _, anchor := range s.emptyCollectionAnchors {
+		w.text(`<a id="` + html.EscapeString(anchor) + `"></a>`)
+	}
 	w.finish()
 }
 
@@ -134,7 +137,7 @@ func (p *planner) renderSubjectBody(w *writer, s *subject) {
 	for _, title := range slices.Sorted(maps.Keys(s.indexes)) {
 		idx := s.indexes[title]
 		p.renderIndex(s, title, idx)
-		line := "- " + w.link(title, idx.file)
+		line := "- " + w.link(collectionTitle(title), idx.file)
 		for _, group := range slices.Sorted(maps.Keys(idx.sources)) {
 			if group != "" {
 				line += " · " + w.link(group, s.sectionIndex(group))
@@ -181,7 +184,7 @@ func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offs
 			p.featureGoals(w, s)
 		}
 		p.body(w, s.source, h)
-		if s.kind() != "System" && h.level == s.name.level+1 {
+		if !s.isOverview() && h.level == s.name.level+1 {
 			if dest := s.sectionIndex(h.title); dest != "" && !isDetailCollection(h.title) {
 				w.text(w.link("Browse "+strings.ToLower(h.title), dest))
 			}
@@ -272,7 +275,17 @@ func (p *planner) appendSourceFootnotes(w *writer, sf *sourceFile, onPage func(i
 		}
 	}
 }
+func (h *heading) reportTitle() string {
+	if h.owner != nil && h.owner.kind() == "ConceptUse" && h.level == h.owner.name.level+1 && h.title == "Definition" {
+		return relations["definition"].forward
+	}
+	return h.title
+}
+
 func (p *planner) headingMarkdown(w *writer, source *sourceFile, h *heading) string {
+	if title := h.reportTitle(); title != h.title {
+		return title
+	}
 	raw := p.rebasedText(w, source, h.start, h.end)
 	if strings.HasPrefix(raw, "#") {
 		// CommonMark permits a closing run of hashes preceded by whitespace.
@@ -451,7 +464,7 @@ var relations = map[string]relation{
 	"applies_to": {"Applies to", "Applies here"}, "quality_attributes": {"Quality attribute", "Classifies"},
 	"derived_from": {"Derived from", "Basis for"}, "relies_on": {"Relies on", "Relied on by"},
 	"involves": {"Involves", "Used in"}, "illustrates": {"Illustrates", "Illustrated by"},
-	"definition": {"Definition", "Used by"}, "part_of": {"Part of", "Parts"},
+	"definition": {"Uses", "Used by"}, "part_of": {"Part of", "Parts"},
 }
 
 type route struct {
@@ -500,7 +513,7 @@ func (p *planner) relationships(w *writer, h *heading, showHeading bool) {
 			break
 		}
 		if section.level == h.level+1 {
-			field = section.title
+			field = section.reportTitle()
 			if field == "Quality attributes" {
 				field = "Quality attribute"
 			}
@@ -521,7 +534,7 @@ func (p *planner) relationships(w *writer, h *heading, showHeading bool) {
 		if r.target == w.file || (r.forward && authored[labeledLink{r.label, relative(w.file, r.target)}]) {
 			continue
 		}
-		if h == h.owner.name && relationshipIndex(h.owner, r.label, r.target) != nil {
+		if h == h.owner.name && p.relationshipIndex(h.owner, r.label, r.target) != nil {
 			continue
 		}
 		byLabel[r.label] = append(byLabel[r.label], w.link(r.title, r.target))
@@ -533,11 +546,7 @@ func (p *planner) relationships(w *writer, h *heading, showHeading bool) {
 		links := byLabel[label]
 		slices.Sort(links)
 		links = slices.Compact(links)
-		if len(links) == 1 {
-			w.text("**" + label + "** · " + links[0])
-		} else {
-			w.text("**" + label + "**")
-			w.text("- " + strings.Join(links, "\n- "))
-		}
+		w.text("**" + label + "**")
+		w.text("- " + strings.Join(links, "\n- "))
 	}
 }

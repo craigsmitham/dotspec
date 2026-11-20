@@ -189,7 +189,7 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 		"[Which outages count?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>) — Availability",
 		"[How is uptime measured?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>) — Availability")
 	intake := section + "components/intake/"
-	reader(intake+"components/journal/journal.component.spec-report.md", "../../intake.component.spec-report.md", "[Requirements](<requirements.md>)")
+	reader(intake+"components/journal/journal.component.spec-report.md", "../../intake.component.spec-report.md", "[All requirements](<requirements.md>)")
 	reader(intake+"components/journal/requirements.md", "## Applicable requirements\n\n- [Retain jobs](<../../../../requirements/retain-jobs.requirement.spec-report.md>)")
 	reader(intake+"intake.component.spec-report.md", "[Interfaces](<interfaces.md>)", "[Required interfaces](<interfaces.md#required-interfaces>)", "[storage contracts](<interfaces.md#required-interfaces>)", "[Components](<components.md>)")
 	componentPage, err := os.ReadFile(filepath.Join(root, intake, "intake.component.spec-report.md"))
@@ -277,8 +277,13 @@ func TestOverviewKeepsNavigationOnlyCollectionsInTheMap(t *testing.T) {
 			}
 		}
 		if strings.Contains(page, "## Requirements\n") || strings.Contains(page, "## Features\n") ||
-			strings.Contains(page, "## Business rules\n") || !strings.Contains(page, narrative) {
+			!strings.Contains(page, "## Business rules\n") || !strings.Contains(page, narrative) {
 			t.Fatal(page)
+		}
+		for _, name := range []string{"draft", "review", "publish", "archive"} {
+			if !strings.Contains(page, " — Keep the "+name+" record.") {
+				t.Fatalf("missing %s rule statement in %s", name, page)
+			}
 		}
 	}
 }
@@ -394,7 +399,7 @@ An example:
 			"---\ntype: requirement-spec\nquality_attributes: "+labels+"\n---\n# "+name+"\n\n## Statement\nKeep the note.\n")
 	}
 	page = build()
-	if !strings.Contains(page, "| [Quality attributes](<#quality-attributes>) | [Attribute index](<quality-attributes.md>)") || !strings.Contains(page, "## Quality attributes") {
+	if !strings.Contains(page, "| [Quality attributes](<#quality-attributes>) | [All quality attributes](<quality-attributes.md>)") || !strings.Contains(page, "## Quality attributes") {
 		t.Fatalf("unexpected system reading order:\n%s", page)
 	}
 	durability := "- [Durability](<quality/reliability/durability/durability.quality-attribute.spec-report.md>) — The ID: below is permanent."
@@ -615,5 +620,126 @@ func TestNamedSubjectFilesAgreeWithTheirHeadings(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
+	t.Chdir(t.TempDir())
+	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
+	const systemFile = "specs/notes.system.spec.md"
+	const system = "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nRecord notes.\n\n## Scope\nLocal work.\n"
+	const goals = "\n## Goals\n\n### One\nFirst goal.\n\n### Two\nSecond goal.\n\n### Three\nThird goal.\n"
+	const fourthGoal = "\n### Four\nFourth goal.\n"
+	const uses = "\n## Concept uses\n\n### My notebook\n\n#### Description\nThe current author's notes.\n\n#### Definition\n[Notebook](concepts/notebook.concept.spec.md).\n"
+	writeFixture(t, systemFile, system+goals+"\n## Concept uses\n\n## Synchronizations\n")
+	writeFixture(t, "specs/concepts/notebook.concept.spec.md", "---\ntype: concept-spec\n---\n# Notebook\n\n## Purpose\nKeep written ideas.\n")
+	addUseCase := func(name, extra string) {
+		writeFixture(t, "specs/use-cases/"+strings.ToLower(name)+".use-case.spec.md",
+			"---\ntype: use-case-spec\n---\n# "+name+"\n\n## Goal\n"+name+" a note.\n"+extra)
+	}
+	addUseCase("Archive", "\n## Obligations\n\n### Keep notes\nSaved notes remain available.\n")
+	addUseCase("Edit", "")
+	addUseCase("Review", "")
+	addRequirement := func(name string) {
+		writeFixture(t, "specs/requirements/"+strings.ToLower(name)+".requirement.spec.md",
+			"---\ntype: requirement-spec\n---\n# "+name+"\n\n## Statement\nKeep a "+name+" copy.\n\n## Refines\n[Keep notes](../use-cases/archive.use-case.spec.md#keep-notes).\n")
+	}
+	addRequirement("Local")
+	const featureFile = "specs/features/editing.feature.spec.md"
+	const feature = "---\ntype: feature-spec\n---\n# Editing\n\n## Groups\n[Edit](../use-cases/edit.use-case.spec.md).\n"
+	writeFixture(t, featureFile, feature)
+	read := func(file string) string {
+		t.Helper()
+		b, err := os.ReadFile("specification/" + file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return string(b)
+	}
+	build := func() string {
+		t.Helper()
+		for _, args := range [][]string{{"spec", "build"}, {"check"}} {
+			if code, out, msg := invoke(args...); code != 0 {
+				t.Fatal(args, out, msg)
+			}
+		}
+		return read("notes.system.spec-report.md")
+	}
+	section := func(page, heading string) string {
+		t.Helper()
+		_, body, found := strings.Cut(page, "\n## "+heading+"\n")
+		if !found {
+			t.Fatalf("missing %s section:\n%s", heading, page)
+		}
+		body, _, _ = strings.Cut(body, "\n## ")
+		return strings.TrimSpace(body)
+	}
+	before := build()
+	const featureReport = "features/editing.feature.spec-report.md"
+	const editGoal = "- [Edit](<../use-cases/edit.use-case.spec-report.md#goal>) — Edit a note."
+	if !strings.Contains(read(featureReport), editGoal) {
+		t.Fatal(read(featureReport))
+	}
+	definition := "### Concept definitions\n\n- [Notebook](<concepts/notebook.concept.spec-report.md>) — Keep written ideas."
+	if section(before, "Concepts") != definition || !strings.Contains(read("concepts.md"), "\n# Concept definitions\n") {
+		t.Fatal(before)
+	}
+	useCases := section(before, "Use cases")
+	if strings.Count(useCases, "- [") != 3 || !strings.Contains(useCases, "Review a note.") {
+		t.Fatal(useCases)
+	}
+	refines := "\n  - Refines [Keep notes](<use-cases/archive.use-case.spec-report.md#keep-notes>)"
+	if strings.Count(section(before, "Requirements"), refines) != 1 {
+		t.Fatal(before)
+	}
+
+	addUseCase("Share", "")
+	writeFixture(t, featureFile, feature+"[Share](../use-cases/share.use-case.spec.md).\n")
+	addRequirement("Remote")
+	writeFixture(t, systemFile, system+goals+fourthGoal+uses+"\n## Synchronizations\n\n### Archive updates\n\n#### When\nThe note is saved.\n\n#### Then\nArchive the current version.\n")
+	after := build()
+	if !strings.Contains(read(featureReport), editGoal+"\n- [Share](<../use-cases/share.use-case.spec-report.md#goal>) — Share a note.") {
+		t.Fatal(read(featureReport))
+	}
+	if section(after, "Use cases") != useCases+"\n- [Share](<use-cases/share.use-case.spec-report.md>) — Share a note." || !strings.Contains(read("use-cases.md"), "Share a note.") {
+		t.Fatal(after)
+	}
+	if section(after, "Goals") != section(before, "Goals")+"\n\n- [Four](<goals.md#four>) — Fourth goal." || !strings.Contains(read("goals.md"), "Fourth goal.") {
+		t.Fatal(after)
+	}
+	use := "- [My notebook](<concept-uses/my-notebook.concept-use.spec-report.md>) — The current author's notes.\n  - Uses [Notebook](<concepts/notebook.concept.spec-report.md>)"
+	sync := "### Synchronizations\n\n- [Archive updates](<synchronizations/archive-updates.synchronization.spec-report.md>) — When — The note is saved. · Then — Archive the current version."
+	if section(after, "Concepts") != definition+"\n\n### Concept uses\n\n"+use+"\n\n"+sync || !strings.Contains(read("concept-uses.md"), use) {
+		t.Fatal(after)
+	}
+	if !strings.Contains(read("concept-uses/my-notebook.concept-use.spec-report.md"), "\n## Uses\n\n[Notebook](<../concepts/notebook.concept.spec-report.md>)") {
+		t.Fatal("concept use report lost its definition")
+	}
+	for _, page := range []string{section(after, "Requirements"), read("requirements.md")} {
+		for _, name := range []string{"Local", "Remote"} {
+			want := "- [" + name + "](<requirements/" + strings.ToLower(name) + ".requirement.spec-report.md>) — Keep a " + name + " copy." + refines
+			if !strings.Contains(page, want) {
+				t.Fatalf("missing requirement with refinement:\n%s", page)
+			}
+		}
+	}
+
+	// A second parent can live in another project, where the authored file
+	// remains the destination. Both parents belong beside the same entry.
+	const rulePath = "policy/specs/business-rules/retention.business-rule.spec.md"
+	writeFixture(t, "policy/dotspec.yaml", "name: policy\n")
+	writeFixture(t, "policy/specs/policy.system.spec.md", "---\ntype: system-spec\n---\n# Policy\n\n## Purpose\nRetain notes.\n\n## Scope\nShared policy.\n")
+	writeFixture(t, rulePath, "---\ntype: business-rule-spec\n---\n# Retention\n\n## Statement\nKeep archived notes.\n")
+	localFile := "specs/requirements/local.requirement.spec.md"
+	local, err := os.ReadFile(localFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	writeFixture(t, localFile, string(local)+"[Retention](../../"+rulePath+").\n")
+	withPolicy := build()
+	for _, page := range []string{section(withPolicy, "Requirements"), read("requirements.md")} {
+		if !strings.Contains(page, refines+"\n  - Refines [Retention](<../"+rulePath+">)") {
+			t.Fatalf("missing refinement parents:\n%s", page)
+		}
 	}
 }

@@ -13,7 +13,9 @@ How effectively contributors can author, inspect, and maintain specifications.
 
 ## Related specifications
 
-**Classifies** · [Read and verify the generated requirements specification](<../../requirements/read-and-verify-the-generated-requirements-specification.requirement.spec-report.md>)
+**Classifies**
+
+- [Read and verify the generated requirements specification](<../../requirements/read-and-verify-the-generated-requirements-specification.requirement.spec-report.md>)
 
 **Subattributes**
 

@@ -1,7 +1,7 @@
 ---
 generated_by: dotspec
 ---
-# Concepts
+# Concept definitions
 
 [Personal task list](<personal-task-list.system.spec-report.md>)
 

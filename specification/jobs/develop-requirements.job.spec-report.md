@@ -170,7 +170,9 @@ interpretations of the intended behavior.
 Assess whether the set accurately represents stakeholder needs and is consistent,
 complete enough for the change, and possible to verify.
 
-**Supported by** · [Check specifications before committing](<../use-cases/check-specifications.use-case.spec-report.md>)
+**Supported by**
+
+- [Check specifications before committing](<../use-cases/check-specifications.use-case.spec-report.md>)
 
 #### Outcomes
 

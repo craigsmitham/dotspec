@@ -23,4 +23,6 @@ An existing target requires an explicit editing decision.
 
 ## Related specifications
 
-**Quality attribute** · [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)
+**Quality attribute**
+
+- [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)

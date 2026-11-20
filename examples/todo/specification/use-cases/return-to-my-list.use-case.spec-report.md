@@ -85,7 +85,9 @@ The list must make previously recorded entries available when the person returns
 
 The [restart requirement](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>) specifies which entry data survives a service interruption.
 
-**Refined by** · [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
+**Refined by**
+
+- [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
 
 #### Derived from
 
@@ -97,6 +99,10 @@ The [restart requirement](<../requirements/preserve-tasks-across-restart.require
 
 ## Related specifications
 
-**Applies here** · [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
+**Applies here**
 
-**Feature** · [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)
+- [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
+
+**Feature**
+
+- [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)

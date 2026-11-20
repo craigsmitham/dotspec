@@ -20,27 +20,40 @@ type overviewSection struct {
 	passages             [][]*heading
 	detail               string
 	detailLinks          []string
+	attributes           []*subject
+	preview              []entry
 	hasBody              bool
 }
 
-func (p *planner) planOverview(s *subject) []overviewSection {
-	sections := []overviewSection{
+func overviewOutline() []overviewSection {
+	return []overviewSection{
 		{sources: []string{"description"}},
 		{title: "Purpose", level: 2, sources: []string{"purpose"}},
 		{title: "Goals", level: 2, sources: []string{"goals"}, collections: []string{"Goals"}},
 		{title: "Business rules", level: 2, collections: []string{"Business rules"}},
 		{title: "User needs", level: 2, sources: []string{"stakeholders"}, collections: []string{"Jobs"}},
-		{title: "Scope", level: 2, sources: []string{"scope", "out_of_scope", "environment", "assumptions", "constraints", "project_context", "glossary"}, collections: []string{"Assumptions", "Glossary"}},
+		{title: "Responsibilities", level: 2, sources: []string{"responsibilities"}},
+		{title: "Scope", level: 2, sources: []string{"scope", "boundary_description", "out_of_scope", "environment", "assumptions", "constraints", "project_context", "glossary"}, collections: []string{"Assumptions", "Glossary"}},
 		{title: "System topology", level: 2, sources: []string{"part_of", "interacts_with", "required_interfaces", "provided_interfaces"}, collections: []string{"Systems", "Components", "Interfaces"}},
 		{title: "Features", level: 2, collections: []string{"Features"}},
 		{title: "Capabilities", level: 2, collections: []string{"Capabilities"}},
 		{title: "Use cases", level: 2, collections: []string{"Use cases"}},
-		{title: "Concepts", level: 2, sources: []string{"concept_uses", "synchronizations"}, collections: []string{"Concepts", "Concept uses", "Synchronizations"}},
+		{title: "Concepts", level: 2, collections: []string{"Concepts", "Concept uses", "Synchronizations"}},
+		{title: "Concept definitions", level: 3, collections: []string{"Concepts"}},
+		{title: "Concept uses", level: 3, sources: []string{"concept_uses"}, collections: []string{"Concept uses"}},
+		{title: "Synchronizations", level: 3, sources: []string{"synchronizations"}, collections: []string{"Synchronizations"}},
 		{title: "Requirements", level: 2, sources: []string{"obligations"}, collections: []string{"Requirements"}},
 		{title: "Quality attributes", level: 2, collections: []string{"Quality attributes", "Quality models"}},
-		{title: "Open questions", level: 2, sources: []string{"open_questions"}},
-		{title: "Reference", level: 2, sources: []string{"related_specifications", "authority_and_evidence", "evidence", "supports", "derived_from", "relies_on"}},
+		{title: "Contracts", level: 2, sources: []string{"contracts"}},
+		{title: "Architecture", level: 2, sources: []string{"architecture"}},
+		{title: "Implementation", level: 2, sources: []string{"implementation"}},
+		{title: "Open questions", level: 2, sources: []string{"open_questions"}, collections: []string{"Open questions"}},
+		{title: "Reference", level: 2, sources: []string{"related_specifications", "specification_system", "authority_and_evidence", "evidence", "supports", "derived_from", "relies_on"}},
 	}
+}
+
+func (p *planner) planOverview(s *subject) []overviewSection {
+	sections := overviewOutline()
 	groups := map[string][][]*heading{}
 	for _, passage := range s.passages {
 		h := passage[0]
@@ -63,13 +76,19 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 	// Decide which headings exist before allocating their Markdown fragments.
 	// Keep a collection in the map even when it supplies no body content.
 	topologyCapabilities := map[string]bool{}
+	var parent *overviewSection
 	for i := range sections {
 		section := &sections[i]
 		detail := &writer{file: s.file, page: &Page{}}
-		p.overviewDetails(detail, s, *section, topologyCapabilities)
+		p.overviewDetails(detail, s, section, topologyCapabilities)
 		section.detail = detail.out.String()
 		section.detailLinks = detail.page.RequiredLinks
-		section.hasBody = len(section.passages) > 0 || section.detail != ""
+		section.hasBody = len(section.passages) > 0 || section.detail != "" || len(section.preview) > 0 || len(section.attributes) > 0
+		if section.level == 2 {
+			parent = section
+		} else if section.level == 3 && section.hasBody {
+			parent.hasBody = true
+		}
 	}
 	return slices.DeleteFunc(sections, func(section overviewSection) bool {
 		return !section.hasBody && len(section.collections) == 0
@@ -127,17 +146,13 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 
 func overviewIndexLabel(title string) string {
 	switch title {
-	case "Goals", "Assumptions", "Constraints", "Business rules", "Features", "Capabilities", "Use cases", "Requirements", "Open questions":
+	case "Goals", "Assumptions", "Constraints", "Business rules", "Features", "Capabilities", "Use cases", "Requirements", "Open questions", "Quality attributes":
 		return "All " + strings.ToLower(title)
-	case "Quality attributes":
-		return "Attribute index"
-	case "Concepts":
-		return "Concept definitions"
 	}
-	return title
+	return collectionTitle(title)
 }
 
-func (p *planner) renderSystem(w *writer, s *subject) {
+func (p *planner) renderOverview(w *writer, s *subject) {
 	for _, title := range slices.Sorted(maps.Keys(s.indexes)) {
 		p.renderIndex(s, title, s.indexes[title])
 	}
@@ -167,81 +182,80 @@ func (p *planner) renderSystem(w *writer, s *subject) {
 			continue
 		}
 		w.out.WriteString(section.detail)
+		for _, attribute := range section.attributes {
+			p.renderOverviewAttribute(w, attribute)
+		}
+		if len(section.preview) > 0 {
+			var lines []string
+			for _, e := range section.preview {
+				lines = append(lines, p.collectionEntryLine(w, e))
+			}
+			w.text(strings.Join(lines, "\n"))
+		}
 		for _, dest := range section.detailLinks {
 			w.requireLink(dest)
 		}
 	}
 }
 
-func (p *planner) overviewDetails(w *writer, s *subject, section overviewSection, topologyCapabilities map[string]bool) {
+func (p *planner) overviewDetails(w *writer, s *subject, section *overviewSection, topologyCapabilities map[string]bool) {
 	switch section.title {
 	case "Quality attributes":
 		for _, key := range model.Strings(s.r["quality_attributes"]) {
 			if a := p.pages[key]; a != nil && len(model.Strings(a.r["subattribute_of"])) == 0 {
-				w.text(attributeEntry(w, a, true))
-				var classified []entry
-				for _, r := range p.snapshot.Elements {
-					if !slices.Contains(model.Strings(r["quality_attributes"]), key) || (attr(r, "kind") != "Requirement" && attr(r, "kind") != "ObligationClause") {
-						continue
-					}
-					n := nameNode(r)
-					if target := p.targets[n]; target != "" {
-						classified = append(classified, entry{title: attr(p.nodes[n], "decoded_text"), target: target})
-					}
-				}
-				sortEntries(classified)
-				var links []string
-				for _, e := range classified {
-					links = append(links, w.link(inlineText(e.title), e.target))
-				}
-				if len(links) > 0 {
-					w.text("Requirements classified under " + inlineText(a.name.title) + ": " + strings.Join(links, ", ") + ".")
-				}
+				section.attributes = append(section.attributes, a)
 			}
 		}
 	case "System topology":
 		p.renderTopology(w, s, topologyCapabilities)
-	case "Requirements":
-		p.overviewRefinement(w, s)
-	case "Business rules", "Features", "Capabilities", "Use cases", "Concepts", "User needs":
-		definitions := map[string]*subject{}
-		if section.title == "Concepts" {
-			for _, useID := range model.Strings(s.r["concept_uses"]) {
-				if use := p.pages[useID]; use != nil {
-					definitions[use.file] = p.pages[attr(use.r, "definition")]
-				}
-			}
-		}
+	case "Business rules", "Features", "Capabilities", "Use cases", "Concept definitions", "Concept uses", "Synchronizations", "User needs", "Requirements":
 		for _, title := range section.collections {
-			group := ""
-			if title == "Business rules" {
-				group = applicableRules(s)
-			}
-			entries := s.indexes[title].groups[group]
-			if title == "Capabilities" {
-				entries = slices.Concat(entries, s.indexes[title].groups["Provided capabilities"])
-			}
-			if len(entries) == 0 || len(entries) > 3 {
-				continue
-			}
-			sortEntries(entries)
-			var lines []string
-			for _, e := range entries {
-				def := definitions[e.target]
-				if topologyCapabilities[e.target] || (e.preview == "" && def == nil) {
+			idx := s.indexes[title]
+			for _, group := range slices.Sorted(maps.Keys(idx.groups)) {
+				if group == "By component" {
 					continue
 				}
-				line := entryLine(w, e)
-				if def != nil {
-					line += "\n  - Uses " + w.link(inlineText(def.name.title), def.file)
+				entries := idx.groups[group]
+				sortEntries(entries)
+				if title == "Business rules" && group != applicableRules(s) {
+					continue
 				}
-				lines = append(lines, line)
+				for _, e := range entries {
+					if topologyCapabilities[e.target] || (e.preview == "" && len(p.entryRelations[e.target]) == 0) {
+						continue
+					}
+					// System obligations already have their full passage on this page.
+					if clause := p.elements[e.target]; clause != nil && p.ownerPage(clause) == s {
+						continue
+					}
+					section.preview = append(section.preview, e)
+				}
 			}
-			if len(lines) > 0 && section.title == "Concepts" && len(section.collections) > 1 {
-				w.text("**" + overviewIndexLabel(title) + "**")
-			}
-			w.text(strings.Join(lines, "\n"))
 		}
+	}
+}
+
+// System-owned clauses receive their final fragments along with the overview.
+func (p *planner) renderOverviewAttribute(w *writer, a *subject) {
+	key := id(a.r)
+	w.text(attributeEntry(w, a, true))
+	var classified []entry
+	for _, r := range p.snapshot.Elements {
+		if !slices.Contains(model.Strings(r["quality_attributes"]), key) || (attr(r, "kind") != "Requirement" && attr(r, "kind") != "ObligationClause") {
+			continue
+		}
+		n := nameNode(r)
+		if target := p.targets[n]; target != "" {
+			classified = append(classified, entry{title: attr(p.nodes[n], "decoded_text"), target: target})
+		}
+	}
+	sortEntries(classified)
+	var links []string
+	for _, e := range classified {
+		links = append(links, w.link(inlineText(e.title), e.target))
+	}
+	if len(links) > 0 {
+		w.text("Requirements classified under " + inlineText(a.name.title) + ": " + strings.Join(links, ", ") + ".")
 	}
 }
 
@@ -254,8 +268,7 @@ func entryLine(w *writer, e entry) string {
 }
 
 func (p *planner) overviewNavigation(w *writer, s *subject) {
-	questions := s.indexes["Open questions"]
-	if len(s.overview) <= 1 && questions == nil {
+	if len(s.overview) <= 1 {
 		return
 	}
 	w.text("| Section | Explore |\n| --- | --- |")
@@ -265,12 +278,15 @@ func (p *planner) overviewNavigation(w *writer, s *subject) {
 		}
 		var links []string
 		for _, title := range section.collections {
-			links = append(links, w.link(overviewIndexLabel(title), s.indexes[title].file))
+			idx := s.indexes[title]
+			links = append(links, w.link(overviewIndexLabel(title), idx.file))
+			for _, group := range slices.Sorted(maps.Keys(idx.sources)) {
+				if group != "" {
+					links = append(links, w.link(group, s.sectionIndex(group)))
+				}
+			}
 		}
-		if section.title == "Open questions" && questions != nil {
-			links = append(links, w.link(overviewIndexLabel(section.title), questions.file))
-			questions = nil
-		}
+
 		if len(links) == 0 {
 			for _, group := range section.passages {
 				h := group[0]
@@ -282,44 +298,17 @@ func (p *planner) overviewNavigation(w *writer, s *subject) {
 		}
 		if len(links) == 0 && len(section.passages) > 0 {
 			h := section.passages[0][0]
-			links = append(links, inlineText(paragraphPreview(sourceProse(s.source, h))))
+			prose := sourceProse(s.source, h)
+			preview := paragraphPreview(prose)
+			if preview == "" {
+				preview = contentText(prose)
+			}
+			links = append(links, inlineText(preview))
 		}
 		label := section.title
 		if section.hasBody {
 			label = w.link(label, s.file+"#"+section.anchor)
 		}
 		fmt.Fprintf(&w.out, "| %s | %s |\n", label, strings.Join(links, " · "))
-	}
-	if questions != nil {
-		fmt.Fprintf(&w.out, "| %s | |\n", w.link(overviewIndexLabel("Open questions"), questions.file))
-	}
-}
-
-// Show the local use-case promise and its refinement when there is one
-// unambiguous example. Larger collections have their own complete index.
-func (p *planner) overviewRefinement(w *writer, s *subject) {
-	var refinement *subject
-	var parent model.Record
-	for _, r := range p.subjects {
-		if r.parent != s || r.kind() != "Requirement" {
-			continue
-		}
-		for _, target := range model.Strings(r.r["refines"]) {
-			candidate := p.elements[target]
-			owner := p.ownerPage(candidate)
-			if owner == nil || owner.kind() != "UseCase" || p.targets[nameNode(candidate)] == "" {
-				continue
-			}
-			if refinement != nil {
-				return
-			}
-			refinement, parent = r, candidate
-		}
-	}
-	if refinement != nil {
-		useCase := p.ownerPage(parent)
-		parentLink := w.link(inlineText(attr(p.nodes[nameNode(parent)], "decoded_text")), p.targets[nameNode(parent)])
-		w.text(w.link(inlineText(useCase.name.title), useCase.file) + " includes " + parentLink + ". " + inlineText(p.requirementPreview(parent)))
-		w.text(w.link(inlineText(refinement.name.title), refinement.file) + " refines that promise. " + inlineText(subjectPreview(refinement)))
 	}
 }

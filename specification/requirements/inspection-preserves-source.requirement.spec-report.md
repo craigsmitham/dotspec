@@ -41,4 +41,6 @@ changing the material they are reviewing.
 describes the read-and-report operation. File creation belongs to the separate
 `init` commands.
 
-**Quality attribute** · [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)
+**Quality attribute**
+
+- [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)

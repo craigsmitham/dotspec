@@ -163,6 +163,13 @@ func (p *planner) planPassages(s *subject) {
 				p.targets[h.node] = dest
 				continue
 			}
+			if specfile.IsCollectionHeading(h.title) || h.title == "Open questions" {
+				// Keep authored citations to empty collections addressable.
+				anchor := "empty." + h.anchor
+				s.emptyCollectionAnchors = append(s.emptyCollectionAnchors, anchor)
+				p.targets[h.node] = s.file + "#" + anchor
+				continue
+			}
 		}
 		s.passages = append(s.passages, group)
 	}
@@ -188,8 +195,88 @@ func sortEntries(entries []entry) {
 	})
 }
 
+// Directory entries for embedded obligations retain the element ID until
+// overview planning has allocated every authored heading's final fragment.
+func (p *planner) entryDestination(key string) string {
+	if dest := p.targets[key]; dest != "" {
+		return dest
+	}
+	return key
+}
+
+func collectionTitle(title string) string {
+	if title == "Concepts" {
+		return "Concept definitions"
+	}
+	return title
+}
+
+// Each summary uses the same relationship label as the subject report.
+// References into another project keep their authored destination.
+type entryRelation struct {
+	label, title, element  string
+	source, authoredTarget string
+}
+
+func (p *planner) indexEntryRelations() {
+	p.entryRelations = map[string][]entryRelation{}
+	for _, r := range p.snapshot.Elements {
+		if attr(r, "kind") == "ObligationClause" {
+			if owner := p.ownerPage(r); owner != nil {
+				p.entryRelations[id(r)] = []entryRelation{{label: "In", title: owner.name.title, element: id(owner.r)}}
+			}
+		}
+	}
+	for _, ref := range p.snapshot.References {
+		field := attr(ref, "role")
+		if field != "definition" && field != "refines" {
+			continue
+		}
+		source := p.sources[attr(ref, "source_document")]
+		from := p.elements[attr(ref, "context_owner")]
+		to := attr(model.Object(ref["resolution"]), "target")
+		if source == nil || to == "" {
+			continue
+		}
+		// A citation supplies a summary relationship only if the domain model
+		// accepted its target for that field.
+		if attr(from, field) != to && !slices.Contains(model.Strings(from[field]), to) {
+			continue
+		}
+		key := id(from)
+		if page := p.pages[key]; page != nil {
+			key = page.file
+		}
+		title := attr(p.nodes[nameNode(p.elements[to])], "decoded_text")
+		if title != "" {
+			p.entryRelations[key] = append(p.entryRelations[key], entryRelation{
+				label: relations[field].forward, title: title, element: to,
+				source: source.path, authoredTarget: attr(ref, "authored_target"),
+			})
+		}
+	}
+}
+
+func (p *planner) collectionEntryLine(w *writer, e entry) string {
+	relations := p.entryRelations[e.target]
+	e.target = p.entryDestination(e.target)
+	var related []string
+	for _, r := range relations {
+		var dest string
+		if target := p.targets[r.element]; target != "" {
+			dest = relative(w.file, target)
+		} else {
+			dest = p.documentLink(w.file, r.source, r.authoredTarget)
+		}
+		w.requireLink(dest)
+		related = append(related, "  - "+r.label+" "+link(inlineText(r.title), dest))
+	}
+	slices.Sort(related)
+	return strings.Join(append([]string{entryLine(w, e)}, slices.Compact(related)...), "\n")
+}
+
 func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex) {
-	w := p.newPage(idx.file, Document{}, title)
+	w := p.newPage(idx.file, Document{}, collectionTitle(title))
 	w.text(w.link(owner.name.title, owner.file))
 	if title == "Glossary" {
 		p.renderGlossary(w, owner)
@@ -205,7 +292,7 @@ func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex
 		sortEntries(members)
 		w.out.WriteByte('\n')
 		for _, e := range members {
-			fmt.Fprintln(&w.out, entryLine(w, e))
+			fmt.Fprintln(&w.out, p.collectionEntryLine(w, e))
 		}
 		for _, h := range idx.sources[group] {
 			w.text(link(h.sourceLabel(), relativeURL(w.file, owner.source.path, h.anchor)))
@@ -226,7 +313,7 @@ func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex
 }
 
 // Structural and applicability relationships are presented in scoped indexes.
-func relationshipIndex(owner *subject, label, target string) *collectionIndex {
+func (p *planner) relationshipIndex(owner *subject, label, target string) *collectionIndex {
 	switch label {
 	case "Parts":
 		for _, title := range []string{"Systems", "Components"} {
@@ -242,7 +329,7 @@ func relationshipIndex(owner *subject, label, target string) *collectionIndex {
 		if idx := owner.indexes["Business rules"]; idx.contains(applicableRules(owner), target) {
 			return idx
 		}
-		if idx := owner.indexes["Requirements"]; idx.contains("Applicable requirements", target) {
+		if idx := owner.indexes["Requirements"]; idx != nil && slices.ContainsFunc(idx.groups["Applicable requirements"], func(e entry) bool { return p.entryDestination(e.target) == target }) {
 			return idx
 		}
 	}

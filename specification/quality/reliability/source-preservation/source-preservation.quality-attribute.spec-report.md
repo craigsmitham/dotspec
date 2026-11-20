@@ -19,4 +19,6 @@ Whether inspection preserves the source material it examines.
 - [Preserve source and represented content in model exports](<../../../requirements/model-source-fidelity.requirement.spec-report.md>)
 - [Reject initialization at an existing target](<../../../requirements/reject-existing-target.requirement.spec-report.md>)
 
-**Parent attribute** · [Reliability](<../reliability.quality-attribute.spec-report.md>)
+**Parent attribute**
+
+- [Reliability](<../reliability.quality-attribute.spec-report.md>)

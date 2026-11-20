@@ -14,4 +14,6 @@ workloads.
 
 ## Related specifications
 
-**Subattributes** · [Responsiveness](<responsiveness/responsiveness.quality-attribute.spec-report.md>)
+**Subattributes**
+
+- [Responsiveness](<responsiveness/responsiveness.quality-attribute.spec-report.md>)

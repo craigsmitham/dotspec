@@ -35,28 +35,38 @@ Commit the authored changes, `SPEC.md` and the generated Markdown in `specificat
 | `specification/systems/<child>/<child>.system.spec-report.md` | Child system overview with its own local directories |
 | `specification/open-questions.md` | Questions recorded across the project, each with its subject and a link to the passage. The index appears when at least one authored question exists. |
 
-### Navigate a system report
+### Navigate an overview
 
-The system name and authored description lead into a linked section map.
+System and component overviews open with the subject name, authored description, and a linked section map. Component overviews also show their responsibilities, contracts, architecture, and implementation where authored.
 Choose a section to read in order or open a collection index directly.
 
 | Section | What you can find |
 | --- | --- |
 | Purpose | The system’s authored purpose |
 | Goals | Authored goals. Select a named goal to read its full statement and see which specifications support it. |
-| Business rules | Applicable rules with their authored statements when the set is small. **All business rules** opens the full index. |
+| Business rules | Applicable rules with their authored statements. **All business rules** opens the full index. |
 | User needs | Stakeholders, jobs, and desired outcomes |
 | Scope | Inclusions, exclusions, environment, assumptions, constraints, project context, and glossary |
 | System topology | Immediate parts, boundary partners, and required or provided interfaces, with a Mermaid diagram and linked descriptions |
 | Features | Product features and their authored descriptions |
 | Capabilities | Capabilities the system provides. When topology identifies a provider, its entry describes the capability. |
 | Use cases | Interactions and their authored goals |
-| Concepts | Concept definitions, named uses, and synchronizations. A named use links to its definition when it resolves to a report. |
+| Concepts | Concept definitions, concept uses, and synchronizations, each under its own heading when there is detail to show. |
 | Requirements | Standalone requirements and named obligations within other specifications. **All requirements** opens the index, including routes by component. |
 | Quality attributes | Top-level quality attributes, their authored definition previews and the requirements classified under each |
 | Open questions | Decisions that remain open in the system specification |
 
-The map links directly to a collection when the overview has no project-specific detail to show for it. When the project has authored questions, **All open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings. A topology edge represents a declared relationship.
+Overview sections list all entries with project-specific detail in index order.
+A collection with only navigation stays in the section map. The topology
+and quality hierarchy show their declared structure in full.
+
+Across overviews and indexes, each entry uses the same linked name and authored
+preview. **Uses** beside a concept use leads to its concept definition.
+**Refines** beside a requirement leads to each promise it refines, including a
+named obligation inside another subject. Open the requirement to read its full
+statement, conditions, and criteria together.
+
+When the project has authored questions, **All open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings. A topology edge represents a declared relationship.
 A child system has its own overview showing the next level of detail.
 
 ### Browse subject reports
@@ -76,12 +86,12 @@ The system’s `quality-attributes.md` index introduces each declared attribute 
 For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with its authored description of the behavior it offers. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
 
 A system, component, feature, capability, or concept use can supply a short
-Description. The system report uses the description as its lead. Other subject reports open with the Description section. The index entry reuses
+Description. System and component overviews use the description as their lead. Other subject reports open with the Description section. The index entry reuses
 the visible text of the first paragraph. An entry with no description shows
 the subject name alone. Interfaces use their introductory description and quality
 models use their Description section. For requirements and business rules, a
 short Statement introduces the promise or rule. Use cases use their Goal and
-jobs use their Job statement.
+jobs use their Job statement. Concept definitions use their Purpose.
 
 Each overview links to the populated collections in its directory. For example,
 open `use-cases.md` to choose an interaction by its goal, or `components.md` to

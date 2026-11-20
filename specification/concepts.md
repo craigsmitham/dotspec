@@ -1,7 +1,7 @@
 ---
 generated_by: dotspec
 ---
-# Concepts
+# Concept definitions
 
 [dotspec](<dotspec.system.spec-report.md>)
 

@@ -6,7 +6,9 @@ generated_by: dotspec
 [Personal task list](<personal-task-list.system.spec-report.md>)
 
 - [Keep recorded work available](<use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>) — The list must make previously recorded entries available when the person returns.
+  - In [Return to my list](<use-cases/return-to-my-list.use-case.spec-report.md>)
 - [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>) — After the service acknowledges a change, stopping and restarting it on the same database must preserve each surviving entry's identity, title and completion state. Deleted entries must stay absent.
+  - Refines [Keep recorded work available](<use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>)
 
 ## By component
 

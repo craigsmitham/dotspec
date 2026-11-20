@@ -183,7 +183,7 @@ def spec_journey(cli, tmp):
         detail = follow(root, title)
         assert detail == root.parent / f"{collection}.md"
         assert f"## {title}\n" in detail.read_text(encoding="utf-8")
-        assert f"**{inverse}** · [{related}]" in detail.read_text(encoding="utf-8")
+        assert f"**{inverse}**\n\n- [{related}]" in detail.read_text(encoding="utf-8")
         assert "**Referenced by**" not in detail.read_text(encoding="utf-8")
         for page in (root, follow(detail, related)):
             assert any(target == detail and fragment == anchor for _, target, fragment, _ in markdown_links(page))
@@ -196,7 +196,7 @@ def spec_journey(cli, tmp):
         assert f"[{section}](<#{section.lower().replace(' ', '-')}>)" in navigation
     assert all(f"[{name}]" in navigation for name in (
         "Jobs", "Business rules", "Components", "Interfaces", "All features", "All capabilities",
-        "Concept definitions", "Concept uses", "All use cases", "All requirements", "Attribute index", "Quality models"))
+        "Concept definitions", "Concept uses", "All use cases", "All requirements", "All quality attributes", "Quality models"))
     topology = overview.split("## System topology\n", 1)[1].split("\n## ", 1)[0]
     assert "```mermaid" in topology and "contains" in topology and "provides interface" in topology
     assert "Task service" in topology and "Task list forms" in topology
@@ -223,7 +223,7 @@ def spec_journey(cli, tmp):
         directory = follow(root, collection) if collection else root
         page = follow(directory, name) if collection else root
         text = page.read_text(encoding="utf-8")
-        lead = description if page == root else f"## Description\n\n{description}"
+        lead = description if name in ("Personal task list", "Task service") else f"## Description\n\n{description}"
         assert text.split("---\n", 2)[2].startswith(f"# {name}\n\n{lead}")
         assert text.count(description) == directory.read_text(encoding="utf-8").count(description) == 1
     # Every source in this fixture gets one report documenting its H1. Pages
@@ -244,9 +244,9 @@ def spec_journey(cli, tmp):
         assert (source.resolve(), anchor) in claims, source
     component = follow(follow(root, "Components"), "Task service")
     assert follow(follow(follow(root, "All capabilities"), "Local task storage"), "Task service") == component
-    assert follow(follow(component, "Capabilities"), "Local task storage") == follow(follow(root, "All capabilities"), "Local task storage")
+    assert follow(follow(component, "All capabilities"), "Local task storage") == follow(follow(root, "All capabilities"), "Local task storage")
     assert component == project / "specification/components/task-service/task-service.component.spec-report.md"
-    component_requirements = follow(component, "Requirements")
+    component_requirements = follow(component, "All requirements")
     acknowledgement = follow(component_requirements, "Acknowledge after commit")
     assert acknowledgement.parent == component.parent / "requirements"
     assert "## Applicable requirements" in component_requirements.read_text(encoding="utf-8")
@@ -255,7 +255,7 @@ def spec_journey(cli, tmp):
     statement = acknowledgement.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
     assert component_requirements.read_text(encoding="utf-8").count(statement) == 1
     assert "## Goal" in follow(feature, "Return to my list").read_text(encoding="utf-8")
-    qualities_index = follow(root, "Attribute index")
+    qualities_index = follow(root, "All quality attributes")
     qualities = follow(qualities_index, "Durability")
     quality_section = overview.split("\n## Quality attributes\n", 1)[1].split("\n## ", 1)[0]
     attribute_source = project / "specs/quality/durability/durability.quality-attribute.spec.md"

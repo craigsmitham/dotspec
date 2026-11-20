@@ -94,8 +94,8 @@ func addSourceContracts(p *planner) error {
 			if indexPage == nil {
 				return fmt.Errorf("%s: missing collection index %s", s.source.path, idx.file)
 			}
-			label := title
-			if s.kind() == "System" {
+			label := collectionTitle(title)
+			if s.isOverview() {
 				label = overviewIndexLabel(title)
 			}
 			requireRoute(page, relative(s.file, idx.file), label)
@@ -113,10 +113,10 @@ func addSourceContracts(p *planner) error {
 			for group, members := range idx.groups {
 				anchor := specfile.NameSlug(group)
 				if group == "" {
-					anchor = specfile.NameSlug(title)
+					anchor = specfile.NameSlug(collectionTitle(title))
 				}
 				for _, e := range members {
-					dest := relative(idx.file, e.target)
+					dest := relative(idx.file, p.entryDestination(e.target))
 					indexPage.DirectoryMembers[anchor] = append(indexPage.DirectoryMembers[anchor], dest)
 					requireRoute(indexPage, dest, inlineText(e.title))
 				}
@@ -174,7 +174,7 @@ func addSourceContracts(p *planner) error {
 				continue
 			}
 			if i == 1 && source == from.file {
-				if idx := relationshipIndex(from, relations[field].reverse, destination); idx != nil {
+				if idx := p.relationshipIndex(from, relations[field].reverse, destination); idx != nil {
 					file = idx.file
 				}
 			}

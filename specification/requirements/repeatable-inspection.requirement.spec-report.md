@@ -42,4 +42,6 @@ automation.
 describes inspection. The [check report contract](<../../docs/reference/inspection.md#check-specifications>)
 defines report fields and their ordering rules.
 
-**Quality attribute** · [Repeatability](<../quality/reliability/repeatability/repeatability.quality-attribute.spec-report.md>)
+**Quality attribute**
+
+- [Repeatability](<../quality/reliability/repeatability/repeatability.quality-attribute.spec-report.md>)

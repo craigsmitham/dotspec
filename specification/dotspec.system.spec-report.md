@@ -13,10 +13,10 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 | [Goals](<#goals>) | [All goals](<goals.md>) |
 | [User needs](<#user-needs>) | [Jobs](<jobs.md>) |
 | [Scope](<#scope>) | [All assumptions](<assumptions.md>) · [Glossary](<glossary.md>) |
-| Use cases | [All use cases](<use-cases.md>) |
+| [Use cases](<#use-cases>) | [All use cases](<use-cases.md>) |
 | [Concepts](<#concepts>) | [Concept definitions](<concepts.md>) |
-| Requirements | [All requirements](<requirements.md>) |
-| [Quality attributes](<#quality-attributes>) | [Attribute index](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
+| [Requirements](<#requirements>) | [All requirements](<requirements.md>) |
+| [Quality attributes](<#quality-attributes>) | [All quality attributes](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
 
 ## Purpose
 
@@ -85,11 +85,33 @@ verification role beside the link. A link alone confers no authority.
 The [contributing guide](<../CONTRIBUTING.md#specification-tests-and-implementation-tests>)
 explains how this repository assigns those roles to its tests.
 
+## Use cases
+
+- [Check specifications before committing](<use-cases/check-specifications.use-case.spec-report.md>) — Identify structural problems and missing-content advice in the specifications affected by a proposed change before committing it.
+- [Create a specification draft](<use-cases/create-specification.use-case.spec-report.md>) — Obtain an editable starting document for a selected kind of specification.
+- [Discover specification sources](<use-cases/discover-specification-sources.use-case.spec-report.md>) — Find specification files and their directly linked context for review.
+- [Export a specification model for review or integration](<use-cases/export-specification-model.use-case.spec-report.md>) — Obtain a faithful, structured snapshot of a project's specification content for review or consumption by another tool.
+- [Prepare specifications for review](<use-cases/prepare-specifications.use-case.spec-report.md>) — Give reviewers a readable account of proposed behavior and its related sources.
+
 ## Concepts
+
+### Concept definitions
 
 - [Command Invocation](<concepts/cli-interaction.concept.spec-report.md>) — Let a person or program submit an operation and determine its outcome through a consistent process interface.
 - [Job Map](<concepts/job-map.concept.spec-report.md>) — Make an accomplishment's steps and success criteria inspectable, so people can discuss what the work involves and how success is judged.
 - [Specification Inspection](<concepts/specification-inspection.concept.spec-report.md>) — Make structural problems and missing-content advice visible within an explicit inspection scope, so contributors can decide what to revise.
+
+## Requirements
+
+- [Advice permits a successful check](<requirements/advice-permits-success.requirement.spec-report.md>) — When a completed check reports only advisory findings, dotspec must return exit status zero.
+- [Continue checking after a structural error](<requirements/continue-after-invalid-spec.requirement.spec-report.md>) — When a discovered specification contains a structural error, dotspec must continue inspecting the remaining discovered specifications.
+- [Diagnostic severity is available without styling](<requirements/diagnostic-severity.requirement.spec-report.md>) — Every diagnostic must identify its severity using a text label independently of terminal styling.
+- [Inspection preserves source material](<requirements/inspection-preserves-source.requirement.spec-report.md>) — Inspection must leave source-file contents and paths unchanged, without creating, deleting, or renaming source files.
+- [Isolate specification projects in a workspace](<requirements/isolate-specification-projects-in-a-workspace.requirement.spec-report.md>) — Each dotspec.yaml declares the name of the specification project rooted in its directory. A spec belongs to the nearest enclosing project. Discovery must exclude nested projects, and implicit System lookup must stop at the project root. Explicit references may acquire context across project boundaries.
+- [Preserve source and represented content in model exports](<requirements/model-source-fidelity.requirement.spec-report.md>) — Export must preserve the meaning and order of authored Markdown, including conditions, criteria, reference destinations, and the locations of unsupported or malformed content. Source locations refer to the normalized Markdown included in the snapshot. The original files remain authoritative for exact bytes. A native contract, executable specification, or other non-Markdown target is identified by its path and read status.
+- [Read and verify the generated requirements specification](<requirements/read-and-verify-the-generated-requirements-specification.requirement.spec-report.md>) — For an opted-in project with one root system, contributors must be able to generate a deterministic Markdown requirements specification and check its fidelity, navigation, and freshness with the project-wide check. A reader must be able to reach each authored promise in scope, read its qualifications, follow its declared relationships and supporting references, and locate the editable source.
+- [Reject initialization at an existing target](<requirements/reject-existing-target.requirement.spec-report.md>) — When the target path already exists, initialization must terminate with an unsuccessful exit status.
+- [Repeated inspections produce equivalent reports](<requirements/repeatable-inspection.requirement.spec-report.md>) — Repeated inspections must produce equivalent structured reports, including the ordering of array elements.
 
 ## Quality attributes
 
