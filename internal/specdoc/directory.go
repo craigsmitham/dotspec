@@ -12,14 +12,17 @@ import (
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
-const applicableRules = "Applies to this system"
+func applicableRules(owner *subject) string {
+	return "Applies to this " + strings.ToLower(owner.kind())
+}
 
 // An empty group is the collection's main list, directly beneath its title.
 // Named groups retain relationships such as required versus provided interfaces.
 type collectionIndex struct {
-	file    string
-	groups  map[string][]entry
-	sources map[string][]*heading
+	file     string
+	groups   map[string][]entry
+	sources  map[string][]*heading
+	passages [][]*heading
 }
 
 func (s *subject) index(title string) *collectionIndex {
@@ -54,6 +57,15 @@ func (p *planner) placeDirectoryEntry(s *subject) {
 	s.parent.index(title).add(group, entry{s.name.title, s.file, subjectPreview(s)})
 }
 
+// An explicitly related member appears once, in the group that explains why it is here.
+func (idx *collectionIndex) classify(group string, member entry) {
+	idx.groups[""] = slices.DeleteFunc(idx.groups[""], func(e entry) bool { return e.target == member.target })
+	if len(idx.groups[""]) == 0 {
+		delete(idx.groups, "")
+	}
+	idx.add(group, member)
+}
+
 // An authored overview section keeps its narrative and points to the matching list.
 func collectionGroup(title string) (string, string) {
 	group := ""
@@ -83,6 +95,20 @@ func (s *subject) sectionIndex(title string) string {
 	return idx.file
 }
 
+// headingAt returns the authored passage containing a content node.
+func (sf *sourceFile) headingAt(pos int) *heading {
+	i, exact := slices.BinarySearchFunc(sf.headings, pos, func(h *heading, pos int) int {
+		return cmp.Compare(h.start, pos)
+	})
+	if !exact {
+		i--
+	}
+	if i < 0 {
+		return nil
+	}
+	return sf.headings[i]
+}
+
 // Each mapped question supplies its wording and owning subject. Multiple list
 // items can share the same section link and must remain separate entries.
 func (p *planner) indexOpenQuestions() {
@@ -97,13 +123,8 @@ func (p *planner) indexOpenQuestions() {
 				continue
 			}
 			start := position(p.nodes[nodes[0]], "start")
-			i, exact := slices.BinarySearchFunc(src.headings, start, func(h *heading, pos int) int {
-				return cmp.Compare(h.start, pos)
-			})
-			if !exact {
-				i--
-			}
-			if i < 0 || src.headings[i].owner == nil {
+			h := src.headingAt(start)
+			if h == nil || h.owner == nil {
 				continue
 			}
 			end := position(p.nodes[nodes[len(nodes)-1]], "end")
@@ -111,7 +132,7 @@ func (p *planner) indexOpenQuestions() {
 			if question != "" {
 				idx := p.governing.index("Open questions")
 				owner := attr(p.nodes[nameNode(r)], "decoded_text")
-				idx.groups[""] = append(idx.groups[""], entry{question, src.headings[i].node, owner})
+				idx.groups[""] = append(idx.groups[""], entry{question, h.node, owner})
 			}
 		}
 	}
@@ -195,6 +216,12 @@ func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex
 			w.text(link(h.sourceLabel(), relativeURL(w.file, owner.source.path, h.anchor)))
 		}
 	}
+	for _, passage := range idx.passages {
+		p.renderPassage(w, owner, passage, 1+owner.name.level-passage[0].level, false)
+	}
+	if len(idx.passages) > 0 {
+		p.appendFootnotes(w, owner)
+	}
 	w.finish()
 }
 
@@ -207,8 +234,12 @@ func relationshipIndex(owner *subject, label, target string) *collectionIndex {
 				return idx
 			}
 		}
+	case "Provides":
+		if idx := owner.indexes["Capabilities"]; idx.contains("Provided capabilities", target) {
+			return idx
+		}
 	case "Applies here":
-		if idx := owner.indexes["Business rules"]; idx.contains(applicableRules, target) {
+		if idx := owner.indexes["Business rules"]; idx.contains(applicableRules(owner), target) {
 			return idx
 		}
 		if idx := owner.indexes["Requirements"]; idx.contains("Applicable requirements", target) {

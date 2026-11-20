@@ -12,7 +12,7 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 | [Purpose](<#purpose>) | Help teams develop and maintain software product requirements alongside the code they describe. Teams can describe what people need, what the system promises, and how to assess those promises. |
 | [Goals](<#goals>) |  |
 | [User needs](<#user-needs>) | [Jobs](<jobs.md>) |
-| [Scope](<#scope>) | [Glossary](<glossary.md>) |
+| [Scope](<#scope>) | [All constraints](<constraints.md>) · [Glossary](<glossary.md>) |
 | Use cases | [All use cases](<use-cases.md>) |
 | [Concepts](<#concepts>) | [Concept definitions](<concepts.md>) |
 | Requirements | [All requirements](<requirements.md>) |
@@ -67,25 +67,9 @@ The execution conditions required for repeatability comparisons are defined in
 
 ### Constraints
 
-#### Human-readable specifications
+- [Human-readable specifications](<constraints.md#human-readable-specifications>) — Prefer ordinary files, Markdown links, and explanatory prose. Add machine-readable structure only when a demonstrated authoring or inspection operation needs it.
 
-Prefer ordinary files, Markdown links, and explanatory prose. Add
-machine-readable structure only when a demonstrated authoring or inspection
-operation needs it.
-
-#### Source authority
-
-Projects decide which sources define their obligations. Keep policies,
-contracts, and executable specifications in their native form and make them
-discoverable through ordinary file links from the relevant specifications.
-
-An executable specification can define the required outcomes for its examples.
-Link to those examples where they apply. When a test checks an obligation
-defined elsewhere, keep the obligation at its source and explain the test's
-verification role beside the link. A link alone confers no authority.
-
-The [contributing guide](<../CONTRIBUTING.md#specification-tests-and-implementation-tests>)
-explains how this repository assigns those roles to its tests.
+- [Source authority](<constraints.md#source-authority>) — Projects decide which sources define their obligations. Keep policies, contracts, and executable specifications in their native form and make them discoverable through ordinary file links from the relevant specifications.
 
 ## Concepts
 
@@ -100,14 +84,6 @@ individual quality requirements establish the obligations.
 
 **[Performance](<quality/performance/performance.quality-attribute.spec-report.md>)** — The time and computing resources required to perform operations under stated workloads.
 
-- [Responsiveness](<quality/performance/responsiveness/responsiveness.quality-attribute.spec-report.md>) — The elapsed time before an operation delivers its result.
-
 **[Reliability](<quality/reliability/reliability.quality-attribute.spec-report.md>)** — How consistently dotspec performs its intended operations under stated conditions.
 
-- [Repeatability](<quality/reliability/repeatability/repeatability.quality-attribute.spec-report.md>) — Whether equivalent inspections under unchanged conditions produce equivalent reports.
-- [Source preservation](<quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>) — Whether inspection preserves the source material it examines.
-
 **[Usability](<quality/usability/usability.quality-attribute.spec-report.md>)** — How effectively contributors can author, inspect, and maintain specifications.
-
-- [Accessibility](<quality/usability/accessibility/accessibility.quality-attribute.spec-report.md>) — How effectively people with differing abilities and ways of accessing output can use dotspec.
-- [Diagnosability](<quality/usability/diagnosability/diagnosability.quality-attribute.spec-report.md>) — How effectively findings help contributors understand and locate specification problems.

@@ -82,6 +82,7 @@ func relativeURL(from, file, frag string) string {
 }
 func (p *planner) render() *Plan {
 	p.indexRelationships()
+	p.indexDetailReferences()
 	entry := p.newPage("SPEC.md", Document{}, p.governing.name.title)
 	entry.titleMarkdown = inlineText(p.governing.name.title)
 	entry.text(entry.link("Read the system specification", p.governing.file))
@@ -156,6 +157,12 @@ func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offs
 		if h.owner != s {
 			continue
 		}
+		if h.detailEntry != nil && w.file == s.file {
+			if h.detailEntry == h {
+				w.text(entryLine(w, entry{h.title, p.targets[h.node], paragraphPreview(sourceProse(s.source, h))}))
+			}
+			continue
+		}
 		if h != s.name {
 			// Preserve addressability for duplicated headings moved onto different pages.
 			if h.explicitAnchor != "" {
@@ -175,7 +182,7 @@ func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offs
 		}
 		p.body(w, s.source, h)
 		if s.kind() != "System" && h.level == s.name.level+1 {
-			if dest := s.sectionIndex(h.title); dest != "" {
+			if dest := s.sectionIndex(h.title); dest != "" && !isDetailCollection(h.title) {
 				w.text(w.link("Browse "+strings.ToLower(h.title), dest))
 			}
 		}
@@ -236,12 +243,12 @@ func readingOrder(s *subject) []*heading {
 // definition available locally on every generated page that uses it.
 func (p *planner) appendFootnotes(w *writer, s *subject) {
 	onPage := func(pos int) bool {
-		for _, h := range s.source.headings {
-			if h.start <= pos && pos < h.bodyEnd {
-				return h.owner == s && !h.inGlossary
-			}
+		h := s.source.headingAt(pos)
+		if h == nil || h.owner != s || h.inGlossary {
+			return false
 		}
-		return false
+		file, _, _ := strings.Cut(p.targets[h.node], "#")
+		return file == w.file
 	}
 	p.appendSourceFootnotes(w, s.source, onPage)
 }
@@ -439,6 +446,7 @@ func linkTitle(n model.Record) string {
 type relation struct{ forward, reverse string }
 
 var relations = map[string]relation{
+	"provided_by":     {"Provided by", "Provides"},
 	"subattribute_of": {"Parent attribute", "Subattributes"}, "groups": {"Groups", "Feature"}, "refines": {"Refines", "Refined by"}, "supports": {"Supports", "Supported by"},
 	"applies_to": {"Applies to", "Applies here"}, "quality_attributes": {"Quality attribute", "Classifies"},
 	"derived_from": {"Derived from", "Basis for"}, "relies_on": {"Relies on", "Relied on by"},

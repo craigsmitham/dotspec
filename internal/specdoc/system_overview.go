@@ -27,10 +27,10 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 	sections := []overviewSection{
 		{sources: []string{"Description"}},
 		{title: "Purpose", level: 2, sources: []string{"Purpose"}},
-		{title: "Goals", level: 2, sources: []string{"Goals"}},
+		{title: "Goals", level: 2, sources: []string{"Goals"}, collections: []string{"Goals"}},
 		{title: "Business rules", level: 2, sources: []string{"Business rules"}, collections: []string{"Business rules"}},
 		{title: "User needs", level: 2, sources: []string{"User needs", "Stakeholders", "Jobs"}, collections: []string{"Jobs"}},
-		{title: "Scope", level: 2, sources: []string{"Scope", "Out of scope", "Environment", "Assumptions", "Constraints", "Project context", "Glossary"}, collections: []string{"Glossary"}},
+		{title: "Scope", level: 2, sources: []string{"Scope", "Out of scope", "Environment", "Assumptions", "Constraints", "Project context", "Glossary"}, collections: []string{"Assumptions", "Constraints", "Glossary"}},
 		{title: "System topology", level: 2, sources: []string{"System topology", "Part of", "Child systems", "Systems", "Components", "Interacts with", "Required interfaces", "Provided interfaces", "Interfaces"}, collections: []string{"Systems", "Components", "Interfaces"}},
 		{title: "Behavior", level: 2, sources: []string{"Behavior"}},
 		{title: "Features", level: 2, sources: []string{"Features"}, collections: []string{"Features"}},
@@ -97,7 +97,7 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 	// rebased title link can change both its own fragment and later duplicate
 	// suffixes. Use explicit addresses on outlines containing rich headings.
 	explicit := slices.ContainsFunc(s.source.headings, func(h *heading) bool {
-		return h.owner == s && needsHeadingAnchor(s, h)
+		return h.owner == s && h.detailEntry == nil && needsHeadingAnchor(s, h)
 	})
 	titleID := string(ids.Generate([]byte(s.name.title), ast.KindHeading))
 	if explicit {
@@ -114,7 +114,7 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 		}
 		for j, group := range section.passages {
 			for k, h := range group {
-				if h == s.name {
+				if h == s.name || h.detailEntry != nil {
 					continue
 				}
 				anchor := section.anchor
@@ -135,7 +135,7 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 
 func overviewIndexLabel(title string) string {
 	switch title {
-	case "Business rules", "Features", "Capabilities", "Use cases", "Requirements", "Open questions":
+	case "Goals", "Assumptions", "Constraints", "Business rules", "Features", "Capabilities", "Use cases", "Requirements", "Open questions":
 		return "All " + strings.ToLower(title)
 	case "Quality attributes":
 		return "Attribute index"
@@ -184,7 +184,11 @@ func (p *planner) renderSystem(w *writer, s *subject) {
 func (p *planner) overviewDetails(w *writer, s *subject, section overviewSection, topologyCapabilities map[string]bool) {
 	switch section.title {
 	case "Quality attributes":
-		p.attributeOverview(w, s)
+		for _, key := range model.Strings(s.r["quality_attributes"]) {
+			if a := p.pages[key]; a != nil && len(model.Strings(a.r["subattribute_of"])) == 0 {
+				w.text(attributeEntry(w, a, true))
+			}
+		}
 	case "System topology":
 		p.renderTopology(w, s, topologyCapabilities)
 	case "Requirements":
@@ -201,9 +205,12 @@ func (p *planner) overviewDetails(w *writer, s *subject, section overviewSection
 		for _, title := range section.collections {
 			group := ""
 			if title == "Business rules" {
-				group = applicableRules
+				group = applicableRules(s)
 			}
 			entries := s.indexes[title].groups[group]
+			if title == "Capabilities" {
+				entries = slices.Concat(entries, s.indexes[title].groups["Provided capabilities"])
+			}
 			if len(entries) == 0 || len(entries) > 3 {
 				continue
 			}

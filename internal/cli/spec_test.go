@@ -410,7 +410,8 @@ An example:
 		"**[Safety](<quality/safety/safety.quality-attribute.spec-report.md>)**", "",
 		durability,
 	}, "\n")
-	if strings.TrimSpace(overview) != wantOverview || !strings.Contains(page, wantOverview) {
+	if strings.TrimSpace(overview) != wantOverview || strings.Contains(page, "[Durability]") || strings.Contains(page, "[Recovery]") ||
+		!strings.Contains(page, "**[Reliability]") || !strings.Contains(page, "**[Safety]") {
 		t.Fatalf("quality attributes overview:\n%s\nwant:\n%s", overview, wantOverview)
 	}
 	attributesPage, err := os.ReadFile("specification/quality/reliability/durability/durability.quality-attribute.spec-report.md")
@@ -424,6 +425,103 @@ An example:
 	} {
 		if !strings.Contains(string(attributesPage), want) {
 			t.Errorf("detail missing %q:\n%s", want, attributesPage)
+		}
+	}
+}
+
+func TestNamedOverviewEntriesKeepScopedDetailAndLinks(t *testing.T) {
+	t.Chdir(t.TempDir())
+	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
+	writeFixture(t, "specs/notes.system.spec.md", `---
+type: system-spec
+---
+# Notes
+
+## Purpose
+Keep drafts.
+
+## Scope
+Local edits.
+
+## Assumptions
+- The author is present.
+
+### Local storage
+A draft stays on disk.
+
+#### Basis
+The [store constraint](../store/specs/store.component.spec.md#storage) qualifies this assumption.
+`)
+	source := "store/specs/store.component.spec.md"
+	component := `---
+type: component-spec
+---
+# Store
+
+## Part of
+[Notes](../../specs/notes.system.spec.md).
+
+## Responsibilities
+Apply the [retention constraint](#storage) and its [exception](#exception).
+
+## Notes
+Storage layout.[^disk]
+
+[^disk]: A file on the author's device.
+`
+	writeFixture(t, source, component+`
+## Constraints
+Writes occur locally.
+
+### Storage
+Retain edits.
+
+#### Exception
+A reset clears the draft.[^disk] See [the basis](../../specs/notes.system.spec.md#basis).
+
+### Storage
+A separate archive retains old drafts.
+`)
+	for _, args := range [][]string{{"spec", "build"}, {"check"}} {
+		if code, out, errOut := invoke(args...); code != 0 {
+			t.Fatal(code, out, errOut)
+		}
+	}
+	read := func(file string) string {
+		t.Helper()
+		data, err := os.ReadFile("specification/" + file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return string(data)
+	}
+	overview := read("components/store/store.component.spec-report.md")
+	detail := read("components/store/constraints.md")
+	for _, want := range []string{"Writes occur locally.", "[Storage](<constraints.md#storage>) — Retain edits.", "[exception](<constraints.md#exception>)", "[Storage](<constraints.md#storage-1>)"} {
+		if !strings.Contains(overview, want) {
+			t.Fatalf("missing %q in %s", want, overview)
+		}
+	}
+	if strings.Contains(overview, "A reset clears") || strings.Contains(detail, "Writes occur locally.") ||
+		!strings.Contains(detail, "### Exception") || !strings.Contains(detail, "[^disk]: A file") ||
+		!strings.Contains(detail, "[the basis](<../../assumptions.md#basis>)") ||
+		!strings.Contains(detail, "[Store · Responsibilities](<store.component.spec-report.md#responsibilities>)") {
+		t.Fatalf("overview and detail: %s\n%s", overview, detail)
+	}
+	if !strings.Contains(read("assumptions.md"), "[store constraint](<components/store/constraints.md#storage>)") ||
+		!strings.Contains(read("constraints.md"), "[Store](<components/store/constraints.md>)") {
+		t.Fatal("missing cross-scope passage or collection link")
+	}
+
+	// A rebuild retires both the component collection and its system navigation.
+	writeFixture(t, source, component[:strings.Index(component, "## Responsibilities")])
+	writeFixture(t, "specs/notes.system.spec.md", "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nKeep drafts.\n\n## Scope\nLocal edits.\n")
+	if code, out, errOut := invoke("spec", "build"); code != 0 {
+		t.Fatal(code, out, errOut)
+	}
+	for _, file := range []string{"constraints.md", "components/store/constraints.md", "assumptions.md"} {
+		if _, err := os.Stat("specification/" + file); !os.IsNotExist(err) {
+			t.Fatalf("%s still present: %v", file, err)
 		}
 	}
 }

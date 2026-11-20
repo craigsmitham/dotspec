@@ -38,7 +38,7 @@ Zero discrepancies across the two views.
 
 ## Relies on
 
-[Same local storage](<../personal-task-list.system.spec-report.md#same-local-storage>).
+[Same local storage](<../assumptions.md#same-local-storage>).
 
 ## Supports
 

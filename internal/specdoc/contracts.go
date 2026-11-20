@@ -15,16 +15,18 @@ import (
 // inventory. A renderer that skips a body, membership list, or relationship
 // cannot make that expectation disappear by omitting its formatting step.
 func addSourceContracts(p *planner) error {
+	for _, page := range p.plan.Pages {
+		page.SectionDocs = map[string]Document{}
+		page.RequiredSectionContent = map[string]string{}
+	}
 	for _, s := range p.subjects {
 		page := p.plan.Pages[s.file]
 		if page == nil {
 			return fmt.Errorf("%s: no generated destination for %s", s.source.path, s.name.title)
 		}
 		page.Document = subjectDocument(s.file, s.source, s.name)
-		page.SectionDocs = map[string]Document{}
 		page.Title = s.name.title
 		page.RequiredContent = nil
-		page.RequiredSectionContent = map[string]string{}
 		for _, section := range s.overview {
 			if section.level == 2 && section.hasBody {
 				requireRoute(page, relativeURL(s.file, s.file, section.anchor), section.title)
@@ -34,11 +36,23 @@ func addSourceContracts(p *planner) error {
 			if h.owner != s {
 				continue
 			}
-			dest, _ := url.Parse(p.targets[h.node])
-			if dest != nil && dest.Fragment != "" {
-				page.RequiredAnchors = append(page.RequiredAnchors, dest.Fragment)
+			file, fragment, _ := strings.Cut(p.targets[h.node], "#")
+			if h == h.detailEntry {
+				requireRoute(page, relative(s.file, p.targets[h.node]), inlineText(h.title))
+			}
+			passagePage := p.plan.Pages[file]
+			if passagePage == nil {
+				return fmt.Errorf("%s: missing passage destination %s", s.source.path, file)
+			}
+			if fragment != "" {
+				passagePage.RequiredAnchors = append(passagePage.RequiredAnchors, fragment)
+				for _, r := range p.routes[h.node] {
+					if r.label == "Referenced by" {
+						requireSectionRoute(passagePage, fragment, relative(file, r.target))
+					}
+				}
 				if h.subjectKind != "" {
-					page.SectionDocs[dest.Fragment] = subjectDocument(s.file, s.source, h)
+					passagePage.SectionDocs[fragment] = subjectDocument(file, s.source, h)
 				}
 			}
 			for _, n := range s.source.links {
@@ -49,19 +63,19 @@ func addSourceContracts(p *planner) error {
 				if raw == "" {
 					continue
 				}
-				link := p.documentLink(s.file, s.source.path, raw)
+				link := p.documentLink(file, s.source.path, raw)
 				switch attr(n, "node_kind") {
 				case "link":
-					requireRoute(page, link, "")
+					requireRoute(passagePage, link, "")
 				case "image":
-					page.RequiredResources = append(page.RequiredResources, link)
+					passagePage.RequiredResources = append(passagePage.RequiredResources, link)
 				}
 			}
 			if h.end < h.bodyEnd {
 				prose := sourceProse(s.source, h)
-				page.RequiredContent = append(page.RequiredContent, prose)
-				if dest != nil && dest.Fragment != "" {
-					page.RequiredSectionContent[dest.Fragment] = prose
+				passagePage.RequiredContent = append(passagePage.RequiredContent, prose)
+				if fragment != "" {
+					passagePage.RequiredSectionContent[fragment] = prose
 				}
 			}
 		}
@@ -98,8 +112,6 @@ func addSourceContracts(p *planner) error {
 				}
 			}
 			if title == "Glossary" {
-				indexPage.SectionDocs = map[string]Document{}
-				indexPage.RequiredSectionContent = map[string]string{}
 				for _, term := range s.glossary {
 					for i, h := range term.headings {
 						anchor := term.anchors[i]
@@ -118,7 +130,9 @@ func addSourceContracts(p *planner) error {
 				for _, id := range model.Strings(s.r["quality_attributes"]) {
 					h := p.nodes[nameNode(p.elements[id])]
 					requireRoute(indexPage, relative(idx.file, p.targets[id]), attr(h, "decoded_text"))
-					requireRoute(page, relative(s.file, p.targets[id]), attr(h, "decoded_text"))
+					if len(model.Strings(p.elements[id]["subattribute_of"])) == 0 {
+						requireRoute(page, relative(s.file, p.targets[id]), attr(h, "decoded_text"))
+					}
 				}
 			}
 		}
@@ -142,11 +156,14 @@ func addSourceContracts(p *planner) error {
 		for i, edge := range [][2]string{{left, right}, {right, left}} {
 			from := p.ownerPage(p.elements[edge[0]])
 			source, destination := p.targets[edge[0]], p.targets[edge[1]]
-			if from == nil || source == "" || destination == "" || destination == from.file || destination == source || p.nodes[nameNode(p.elements[edge[1]])] == nil {
+			if from == nil || source == "" || destination == "" || destination == source || p.nodes[nameNode(p.elements[edge[1]])] == nil {
 				continue
 			}
-			file := from.file
-			if i == 1 && source == file {
+			file, fragment, _ := strings.Cut(source, "#")
+			if destination == file {
+				continue
+			}
+			if i == 1 && source == from.file {
 				if idx := relationshipIndex(from, relations[field].reverse, destination); idx != nil {
 					file = idx.file
 				}
@@ -154,7 +171,7 @@ func addSourceContracts(p *planner) error {
 			page := p.plan.Pages[file]
 			dest := relative(file, destination)
 			requireRoute(page, dest, "")
-			if _, fragment, ok := strings.Cut(source, "#"); ok {
+			if fragment != "" {
 				requireSectionRoute(page, fragment, dest)
 			}
 		}

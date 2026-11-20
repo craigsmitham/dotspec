@@ -10,10 +10,10 @@ A single-user task list that stores open and completed tasks on one computer.
 | Section | Explore |
 | --- | --- |
 | [Purpose](<#purpose>) | Help a person pick up unfinished work after an interruption. |
-| [Goals](<#goals>) |  |
+| [Goals](<#goals>) | [All goals](<goals.md>) |
 | [Business rules](<#business-rules>) | [All business rules](<business-rules.md>) |
 | [User needs](<#user-needs>) | [Jobs](<jobs.md>) |
-| [Scope](<#scope>) | Out of scope · Environment · Assumptions · Project context |
+| [Scope](<#scope>) | [All assumptions](<assumptions.md>) |
 | [System topology](<#system-topology>) | [Components](<components.md>) · [Interfaces](<interfaces.md>) |
 | [Features](<#features>) | [All features](<features.md>) |
 | Capabilities | [All capabilities](<capabilities.md>) |
@@ -28,13 +28,7 @@ Help a person pick up unfinished work after an interruption.
 
 ## Goals
 
-### Resume unfinished work
-
-<!-- dotspec-doc {"type":"goal-spec-report","documents":"../specs/personal-task-list.system.spec.md#resume-unfinished-work"} -->
-
-Reduce the effort of working out what still needs attention.
-
-**Supported by** · [Resume interrupted work](<jobs/resume-interrupted-work.job.spec-report.md>)
+- [Resume unfinished work](<goals.md#resume-unfinished-work>) — Reduce the effort of working out what still needs attention.
 
 ## Business rules
 
@@ -62,13 +56,7 @@ The person may close the browser or stop the service between work sessions.
 
 ### Assumptions
 
-#### Same local storage
-
-<!-- dotspec-doc {"type":"assumption-spec-report","documents":"../specs/personal-task-list.system.spec.md#same-local-storage"} -->
-
-The person returns to the same writable database file.
-
-**Relied on by** · [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
+- [Same local storage](<assumptions.md#same-local-storage>) — The person returns to the same writable database file.
 
 ### Project context
 

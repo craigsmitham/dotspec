@@ -28,11 +28,21 @@ requirements have separate rows. Concept definitions, named uses, and
 synchronizations share the Concepts row. The Requirements row leads to
 standalone requirements and embedded obligations. The topology shows declared immediate
 parts and boundary relationships in a Mermaid diagram and in linked text.
-The overview displays the full declared quality hierarchy with definition
-previews. A shared attribute appears under each declared parent, with its
-descendants expanded once. The business rules index lists all rules. When a small
-set explicitly applies to the system, the overview names those rules and includes
+The overview introduces the top-level quality attributes with their definition
+previews. The attribute index shows the full hierarchy. A shared attribute
+appears under each declared parent, with its descendants expanded once. The
+business rules index lists all rules. When a small set explicitly applies to the system, the overview names those rules and includes
 their authored statement previews.
+
+System and component overviews introduce named goals, assumptions, and constraints
+with a linked title and an authored statement preview when available. Each link
+opens the exact entry in the owner's collection. Readers can follow a relationship
+in either direction from the passages it connects. The detail entry keeps its
+qualifications and supporting references together. A citation in prose leads
+back to the citing passage through a “Referenced by” link. Prose and lists
+directly under the collection heading stay in the overview. The component’s
+requirements index lists each explicitly applicable requirement once. Its overview
+keeps authored citations beside the responsibilities they explain.
 
 Across subject reports, body sections describe the project using authored content,
 specific subjects, or declared relationships. Collection links that only serve

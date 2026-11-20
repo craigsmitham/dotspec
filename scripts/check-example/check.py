@@ -167,7 +167,19 @@ def spec_journey(cli, tmp):
     assert "[Concept definitions](<concepts.md>)" in concepts_row and "[Concept uses](<concept-uses.md>)" in concepts_row
     assert "### Behavior" not in overview and "### Obligations" not in overview
     goals = overview.split("\n## Goals\n", 1)[1].split("\n## ", 1)[0]
-    assert "**Supported by** · [Resume interrupted work]" in goals
+    assert "Reduce the effort of working out what still needs attention." in goals
+    assert "**Supported by**" not in goals and "**Relied on by**" not in overview
+    for title, collection, anchor, related, inverse in (
+        ("Resume unfinished work", "goals", "resume-unfinished-work", "Resume interrupted work", "Supported by"),
+        ("Same local storage", "assumptions", "same-local-storage", "Preserve tasks across restart", "Relied on by"),
+    ):
+        detail = follow(root, title)
+        assert detail == root.parent / f"{collection}.md"
+        assert f"## {title}\n" in detail.read_text(encoding="utf-8")
+        assert f"**{inverse}** · [{related}]" in detail.read_text(encoding="utf-8")
+        assert "**Referenced by**" not in detail.read_text(encoding="utf-8")
+        for page in (root, follow(detail, related)):
+            assert any(target == detail and fragment == anchor for _, target, fragment, _ in markdown_links(page))
     rules = overview.split("\n## Business rules\n", 1)[1].split("\n## ", 1)[0]
     rule = follow(root, "Completion preserves a commitment")
     statement = rule.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
@@ -225,10 +237,14 @@ def spec_journey(cli, tmp):
         assert (source.resolve(), anchor) in claims, source
     component = follow(follow(root, "Components"), "Task service")
     assert follow(follow(follow(root, "All capabilities"), "Local task storage"), "Task service") == component
+    assert follow(follow(component, "Capabilities"), "Local task storage") == follow(follow(root, "All capabilities"), "Local task storage")
     assert component == project / "specification/components/task-service/task-service.component.spec-report.md"
     component_requirements = follow(component, "Requirements")
     acknowledgement = follow(component_requirements, "Acknowledge after commit")
     assert acknowledgement.parent == component.parent / "requirements"
+    assert "## Applicable requirements" in component_requirements.read_text(encoding="utf-8")
+    assert "**Applies here**" not in component.read_text(encoding="utf-8")
+    assert follow(component, "Acknowledge after commit") == acknowledgement
     statement = acknowledgement.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
     assert component_requirements.read_text(encoding="utf-8").count(statement) == 1
     assert "## Goal" in follow(feature, "Return to my list").read_text(encoding="utf-8")

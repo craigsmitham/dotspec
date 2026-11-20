@@ -43,6 +43,7 @@ type heading struct {
 	node, title, anchor, explicitAnchor string
 	start, end, bodyEnd, level          int
 	owner                               *subject
+	detailEntry                         *heading // root of a passage collected on a detail page
 	qualityAttribute                    bool
 	inGlossary                          bool
 	subjectKind                         string
@@ -388,6 +389,7 @@ func needsHeadingAnchor(s *subject, h *heading) bool {
 func (p *planner) indexTargets() {
 	for _, s := range p.subjects {
 		p.targets[id(s.r)] = s.file
+		p.targets[s.name.node] = s.file
 		if s.name.level == 1 {
 			p.targets[attr(s.r, "source_document")] = s.file
 		}
@@ -415,25 +417,27 @@ func (p *planner) indexTargets() {
 		if s != p.governing && !s.name.qualityAttribute {
 			p.placeDirectoryEntry(s)
 		}
+		if s.kind() == "System" || s.kind() == "Component" {
+			p.collectOverviewDetails(s)
+		}
 		if s.kind() == "System" && len(model.Strings(s.r["quality_attributes"])) > 0 {
 			s.index("Quality attributes")
 		}
 	}
-	for _, rule := range p.subjects {
-		if rule.kind() != "BusinessRule" {
-			continue
-		}
-		for _, target := range model.Strings(rule.r["applies_to"]) {
-			sys := p.pages[target]
-			if sys == nil || sys.kind() != "System" {
-				continue
+	for _, s := range p.subjects {
+		switch s.kind() {
+		case "BusinessRule":
+			for _, target := range model.Strings(s.r["applies_to"]) {
+				if owner := p.pages[target]; owner != nil && (owner.kind() == "System" || owner.kind() == "Component") {
+					owner.index("Business rules").classify(applicableRules(owner), entry{s.name.title, s.file, subjectPreview(s)})
+				}
 			}
-			idx := sys.index("Business rules")
-			idx.groups[""] = slices.DeleteFunc(idx.groups[""], func(e entry) bool { return e.target == rule.file })
-			if len(idx.groups[""]) == 0 {
-				delete(idx.groups, "")
+		case "Capability":
+			for _, target := range model.Strings(s.r["provided_by"]) {
+				if provider := p.pages[target]; provider != nil {
+					provider.index("Capabilities").classify("Provided capabilities", entry{s.name.title, s.file, subjectPreview(s)})
+				}
 			}
-			idx.add(applicableRules, entry{rule.name.title, rule.file, subjectPreview(rule)})
 		}
 	}
 	p.indexOpenQuestions()
@@ -461,16 +465,13 @@ func (p *planner) indexTargets() {
 			continue
 		}
 		for _, target := range model.Strings(r["applies_to"]) {
-			component := p.pages[target]
+			owner := p.pages[target]
 			dest := p.targets[id(r)]
 			if clauses[id(r)] {
 				dest = id(r)
 			}
-			if component != nil && component.kind() == "Component" && dest != "" {
-				index := component.index("Requirements")
-				if !index.contains("", dest) {
-					index.add("Applicable requirements", entry{attr(p.nodes[nameNode(r)], "decoded_text"), dest, p.requirementPreview(r)})
-				}
+			if owner != nil && (owner.kind() == "Component" || owner.kind() == "System") && dest != "" {
+				owner.index("Requirements").classify("Applicable requirements", entry{attr(p.nodes[nameNode(r)], "decoded_text"), dest, p.requirementPreview(r)})
 			}
 		}
 	}
@@ -495,12 +496,13 @@ func (p *planner) indexTargets() {
 			p.planGlossary(s)
 		}
 		p.planPassages(s)
+		p.indexDetailHeadings(s)
 		if s.kind() == "System" {
 			continue
 		}
 		ids := parser.NewContext().IDs()
 		for _, h := range readingOrder(s) {
-			if h.owner != s {
+			if h.owner != s || h.detailEntry != nil {
 				continue
 			}
 			p.targets[h.node] = s.file

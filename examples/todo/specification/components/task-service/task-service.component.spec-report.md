@@ -11,6 +11,7 @@ The local service that handles browser requests and saves changes to the task li
 
 [Personal task list](<../../personal-task-list.system.spec-report.md>)
 
+- [Capabilities](<capabilities.md>)
 - [Requirements](<requirements.md>)
 
 ## Part of
@@ -28,7 +29,3 @@ Accept browser changes and persist them locally. See [Acknowledge after commit](
 ## Implementation
 
 The [Go server](<../../../app/main.go>) owns form handling and storage.
-
-## Related specifications
-
-**Applies here** · [Acknowledge after commit](<requirements/acknowledge-after-commit.requirement.spec-report.md>)

@@ -43,7 +43,7 @@ Choose a section to read in order or open a collection index directly.
 | Section | What you can find |
 | --- | --- |
 | Purpose | The system’s authored purpose |
-| Goals | Authored goals and links to specifications that support them |
+| Goals | Authored goals. Select a named goal to read its full statement and see which specifications support it. |
 | Business rules | Applicable rules with their authored statements when the set is small. **All business rules** opens the full index. |
 | User needs | Stakeholders, jobs, and desired outcomes |
 | Scope | Inclusions, exclusions, environment, assumptions, constraints, project context, and glossary |
@@ -53,7 +53,7 @@ Choose a section to read in order or open a collection index directly.
 | Use cases | Interactions and their authored goals |
 | Concepts | Concept definitions, named uses, and synchronizations. A named use links to its definition when it resolves to a report. |
 | Requirements | Standalone requirements and named obligations within other specifications. **All requirements** opens the index, including routes by component. |
-| Quality attributes | The expanded hierarchy of declared attributes with linked definitions, the attribute index, and project quality models |
+| Quality attributes | Top-level quality concerns and their definition previews, with links to the full attribute hierarchy and project quality models |
 | Open questions | Decisions that remain open in the system specification |
 
 The map links directly to a collection when the overview has no project-specific detail to show for it. Additional authored sections remain
@@ -67,6 +67,15 @@ to `.spec-report.md`. For example, the Task service report lives at
 `components/task-service/task-service.component.spec-report.md`. Its directory also
 holds its local requirements, interfaces, and child components. The optional source
 `id` provides an anchor. The subject name determines the overview filename.
+
+System and component overviews introduce named goals, assumptions, and constraints
+with their title and first authored paragraph. Select the title to read the
+whole passage, including any qualifications and supporting references, in
+`goals.md`, `assumptions.md`, or `constraints.md` beside its owner. Prose and
+lists directly under the collection heading stay in the overview. For example,
+follow **Same local storage** to see which requirement relies on that assumption.
+The requirement links back to the same entry. A **Referenced by** link returns
+to an authored passage that cites the entry in prose. [Task-list assumptions](../../examples/todo/specification/assumptions.md)
 
 The system’s `quality-attributes.md` index introduces each declared attribute with its definition preview. Shared attributes appear under each declared parent. Their own subattributes expand under the first parent. Select an attribute to read its full definition. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability and criterion together. Links beside the requirement lead back to the precise attribute or use-case passage.
 
@@ -87,9 +96,11 @@ child systems. When a component has entries in a collection, **By component**
 on the parent index leads to the component’s index of the same name.
 
 On subject reports, collections that only provide navigation appear with the page’s index links. Sections with authored descriptions keep that text in the body. Within a component, `interfaces.md` groups required and provided interfaces.
-Its `requirements.md` lists local requirements and embedded obligations, plus
-requirements owned elsewhere that explicitly apply to the component. Each
-entry links to the canonical page or passage.
+A provider’s `capabilities.md` groups explicitly provided capabilities, including
+those specified elsewhere. Its `requirements.md` lists local requirements and embedded obligations, plus
+requirements owned elsewhere that explicitly apply to the component. The
+**Applicable requirements** group collects explicit applicability links, including
+local requirements. Each entry links to the canonical page or passage.
 
 Each standalone authored specification in the selected project has exactly one standalone report page. The owning system or component links to indexes of its features and capabilities. Inline subjects can also have a report page for their own heading.
 
