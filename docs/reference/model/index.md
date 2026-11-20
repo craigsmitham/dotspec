@@ -1468,15 +1468,15 @@ Concrete; inherits [Specification](#specification).
 | `part_of` | [System](#system) | optional, record ID | Optional explicit parent System. Directory context does not supply this relationship. |
 | `part_of_content` | [RichContent](#richcontent) | optional, embedded | Authored Markdown qualifying the part of relationship. |
 | `preamble` | [RichContent](#richcontent) | optional, embedded | Authored content between the title and the first named section. |
-| `project_context` | [ContextualReferences](#contextualreferences) | optional, embedded | Project context and links to authoritative schedules, risks, responsibilities and workflows; not a project-management model. |
+| `project_references` | [ContextualReferences](#contextualreferences) | optional, embedded | Plans, responsibilities, risks and delivery decisions that affect this system, with prose explaining their relevance and links to the records the team maintains. |
 | `provided_interfaces` | [Interface](#interface) | optional, ordered list, record ID | Services this subject exposes to its environment. |
-| `purpose` | [RichContent](#richcontent) | optional, embedded |  |
+| `purpose` | [RichContent](#richcontent) | optional, embedded | Why the system exists, including the situation it addresses and its intended benefit. |
 | `quality_attributes` | [QualityAttribute](#qualityattribute) | optional, ordered list, record ID | Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. |
 | `related_specifications` | [ContextualReferences](#contextualreferences) | optional, embedded | Contextual citations of related specifications of any type, with their explanation; no implicit support, refinement, enforcement or compliance relation. |
 | `relies_on` | [Assumption](#assumption) | optional, list, record ID | Assumptions on which the validity of this element depends. |
 | `relies_on_content` | [RichContent](#richcontent) | optional, embedded | Authored Markdown qualifying the relies on relationship. |
 | `required_interfaces` | [Interface](#interface) | optional, ordered list, record ID | Services this subject expects from its environment. |
-| `scope` | [RichContent](#richcontent) | optional, embedded |  |
+| `scope` | [RichContent](#richcontent) | optional, embedded | The work, users and situations the system is intended to serve. |
 | `slug` | `string` | optional | Path-derived current slug where applicable. |
 | `source_document` | [SourceDocument](#sourcedocument) | required, record ID |  |
 | `source_fragment` | [SourceFragment](#sourcefragment) | optional, record ID |  |

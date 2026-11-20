@@ -11,12 +11,13 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 | --- | --- |
 | [Purpose](<#purpose>) | Help teams develop and maintain software product requirements alongside the code they describe. Teams can describe what people need, what the system promises, and how to assess those promises. |
 | [Goals](<#goals>) | [All goals](<goals.md>) |
-| User needs | [Jobs](<jobs.md>) |
-| [Scope](<#scope>) | [All assumptions](<assumptions.md>) · [Glossary](<glossary.md>) |
+| Stakeholders and user needs | [Jobs](<jobs.md>) |
+| [Scope and environment](<#scope-and-environment>) | [All assumptions](<assumptions.md>) |
 | Use cases | [All use cases](<use-cases.md>) |
 | Concepts | [Concept definitions](<concepts.md>) |
 | Requirements | [All requirements](<requirements.md>) |
 | [Quality attributes](<#quality-attributes>) | [All quality attributes](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
+| Glossary | [Glossary](<glossary.md>) |
 
 ## Purpose
 
@@ -34,7 +35,7 @@ work dotspec supports.
 
 - [Maintain requirements as the product changes](<goals.md#maintain-requirements-as-the-product-changes>) — Reduce the effort of maintaining requirements as the product changes by keeping each requirement with its authoritative source.
 
-## Scope
+## Scope and environment
 
 The system includes the authoring framework, the `dotspec` CLI, and the
 `*.spec.md` files it manages. The CLI supports
@@ -48,7 +49,7 @@ procedures, validation studies, research records, and issue tracking in their
 own tools or documents. Authors can link to them beside the requirements they
 inform or assess.
 
-### Environment
+### Operating environment
 
 Contributors edit Markdown in ordinary text editors. Git repositories provide
 version history and discovery rules. The CLI communicates through process

@@ -188,8 +188,7 @@ for recognized synonyms and interface labels. The review checks
 preferred-term and alias collisions within each declaring System. It does not
 infer bounded contexts or scan prose for undeclared synonyms.
 
-A System's Project context can link schedules, responsibilities, risks and decision
-records. Keep those artifacts authoritative outside dotspec. Stakeholder endorsement
+Use **Project references** to explain how a plan, responsibility, risk or decision affects delivery of the system. Link to the record the team maintains. See the [system authoring guide](../reference/formats/system.md#write-the-system-overview). Stakeholder endorsement
 also remains external: any future endorsement model would need the reviewed
 revision, qualified reviewers, scope, qualifications and disagreements. A generic
 `approved: true` field would lose that information.

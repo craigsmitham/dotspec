@@ -437,8 +437,8 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
-| `purpose` | [RichContent](index.md#richcontent) | optional |  |
-| `scope` | [RichContent](index.md#richcontent) | optional |  |
+| `purpose` | [RichContent](index.md#richcontent) | optional | Why the system exists, including the situation it addresses and its intended benefit. |
+| `scope` | [RichContent](index.md#richcontent) | optional | The work, users and situations the system is intended to serve. |
 | `goals` | [Goal](index.md#goal) | optional; ordered list | Explicitly authored goals, in authored order. |
 | `environment` | [RichContent](index.md#richcontent) | optional | Conditions and surroundings the system must accommodate. |
 | `stakeholders` | [RichContent](index.md#richcontent) | optional | People and organizations with an interest in the system, the interests they hold, and sources of requirements; naming them is not endorsement. |
@@ -453,7 +453,7 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 | `interacts_with` | [System](index.md#system) or [Component](index.md#component) | optional; list | Explicit interaction partners across this subject boundary; does not establish structural containment. |
 | `required_interfaces` | [Interface](index.md#interface) | optional; ordered list | Services this subject expects from its environment. |
 | `provided_interfaces` | [Interface](index.md#interface) | optional; ordered list | Services this subject exposes to its environment. |
-| `project_context` | [ContextualReferences](index.md#contextualreferences) | optional | Project context and links to authoritative schedules, risks, responsibilities and workflows; not a project-management model. |
+| `project_references` | [ContextualReferences](index.md#contextualreferences) | optional | Plans, responsibilities, risks and delivery decisions that affect this system, with prose explaining their relevance and links to the records the team maintains. |
 
 ### BusinessRule
 

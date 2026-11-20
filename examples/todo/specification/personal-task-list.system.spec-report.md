@@ -12,8 +12,8 @@ A single-user task list that stores open and completed tasks on one computer.
 | [Purpose](<#purpose>) | Help a person pick up unfinished work after an interruption. |
 | [Goals](<#goals>) | [All goals](<goals.md>) |
 | Business rules | [All business rules](<business-rules.md>) |
-| [User needs](<#user-needs>) | [Jobs](<jobs.md>) |
-| [Scope](<#scope>) | [All assumptions](<assumptions.md>) |
+| [Stakeholders and user needs](<#stakeholders-and-user-needs>) | [Jobs](<jobs.md>) |
+| [Scope and environment](<#scope-and-environment>) | [All assumptions](<assumptions.md>) |
 | [System topology](<#system-topology>) | [Components](<components.md>) · [Interfaces](<interfaces.md>) · [Provided interfaces](<interfaces.md#provided-interfaces>) |
 | [Features](<#features>) | [All features](<features.md>) |
 | Capabilities | [All capabilities](<capabilities.md>) |
@@ -30,31 +30,25 @@ Help a person pick up unfinished work after an interruption.
 
 - [Resume unfinished work](<goals.md#resume-unfinished-work>) — Reduce the effort of working out what still needs attention.
 
-## User needs
-
-### Stakeholders
+## Stakeholders and user needs
 
 The person who keeps the list also decides which entries can be discarded.
 
-## Scope
+## Scope and environment
 
-One person's list on one computer. The browser submits forms to a local service.
+The list tracks one person’s open and completed tasks on one computer.
 
 ### Out of scope
 
 Sharing lists, synchronizing devices and recovering from loss of the database file.
 
-### Environment
+### Operating environment
 
 The person may close the browser or stop the service between work sessions.
 
 ### Assumptions
 
 - [Same local storage](<assumptions.md#same-local-storage>) — The person returns to the same writable database file.
-
-### Project context
-
-The [walkthrough](<../README.md>) identifies the setup, checks and validation exercise.
 
 ## System topology
 

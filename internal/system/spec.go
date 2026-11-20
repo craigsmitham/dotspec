@@ -44,7 +44,7 @@ type System struct {
 	InteractsWith      string                      `json:"interacts_with,omitempty"`
 	RequiredInterfaces string                      `json:"required_interfaces,omitempty"`
 	ProvidedInterfaces string                      `json:"provided_interfaces,omitempty"`
-	ProjectContext     string                      `json:"project_context,omitempty"`
+	ProjectReferences  string                      `json:"project_references,omitempty"`
 	ID                 string                      `json:"id,omitempty"`
 	Components         string                      `json:"components,omitempty"`
 	PartOf             string                      `json:"part_of,omitempty"`
@@ -113,7 +113,7 @@ func ParseMarkdown(input *specfile.Markdown) (*System, error) {
 		return nil, err
 	}
 	spec := &System{Name: doc.Name, ID: meta.ID, GlossarySources: meta.GlossarySources}
-	fields := map[string]*string{"Description": &spec.Description, "Out of scope": &spec.OutOfScope, "Interacts with": &spec.InteractsWith, "Required interfaces": &spec.RequiredInterfaces, "Provided interfaces": &spec.ProvidedInterfaces, "Project context": &spec.ProjectContext, "Components": &spec.Components, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Stakeholders": &spec.Stakeholders, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
+	fields := map[string]*string{"Description": &spec.Description, "Out of scope": &spec.OutOfScope, "Interacts with": &spec.InteractsWith, "Required interfaces": &spec.RequiredInterfaces, "Provided interfaces": &spec.ProvidedInterfaces, "Project references": &spec.ProjectReferences, "Components": &spec.Components, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Stakeholders": &spec.Stakeholders, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
 	locations := make(map[string]diagnostic.Location)
 	var ids specfile.Identifiers
 	if err := ids.Register(meta.ID, "system", input.MetadataLocation("id")); err != nil {

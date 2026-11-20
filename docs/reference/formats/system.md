@@ -78,9 +78,17 @@ specification. The optional empty `Quality attributes` heading makes an empty
 collection explicit.
 There is no requirement inheritance behavior.
 
-Use an optional `## Description` to introduce the system in one short paragraph.
-Write it so that someone seeing only the name and description can tell what the
-system is. Use `Purpose` for the reason it exists and `Scope` for its boundaries.
+### Write the system overview
+
+Use this reading order for the sections that apply. Only Purpose and Scope are required.
+
+1. **Description, Purpose, Goals.** Introduce the system in a sentence. In Purpose, describe the situation that motivates it and the benefit it should provide. Include business background here when it helps explain that benefit. Give a goal its own named entry when readers need to discuss the outcome or trace what contributes to it.
+2. **Stakeholders, Scope, Out of scope.** Identify the people and organizations with an interest in the system. Describe the work, users and situations it serves, then name exclusions that clarify its boundary.
+3. **Environment, Assumptions, Constraints.** Describe the conditions the system must accommodate, the premises the specification relies on, and any externally imposed limits. For the personal task list, stopping the service between sessions is an operating condition. Returning to the same database file is an assumption behind recovering the list.
+4. **System declarations.** Describe the relevant components, interaction partners, interfaces and concept uses. Use the glossary for terms with a project-specific meaning.
+5. **Project references.** Link to a plan, responsibility, risk or decision that affects delivery of this system. Say what it affects and link to the record the team maintains. For example, “The release plan names the reviewer for the data migration.” Keep setup and walkthrough instructions in the project README.
+
+See the [personal task list system spec](../../../examples/todo/specs/personal-task-list.system.spec.md) for a worked example. This ordering adapts Meyer's distinction between goals, environment, system and project to a single reader-facing overview. [Meyer, *Handbook of Requirements and Business Analysis*, chapter 3](https://se.inf.ethz.ch/requirements/plan.pdf)
 
 ### Include a glossary
 

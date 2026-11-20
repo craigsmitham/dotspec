@@ -45,8 +45,8 @@ Choose a section to read in order or open a collection index directly.
 | Purpose | The system’s authored purpose |
 | Goals | Authored goals. Select a named goal to read its full statement and see which specifications support it. |
 | Business rules | **All business rules** opens the index of applicable and local rules. |
-| User needs | Authored stakeholder needs and a link to the jobs index |
-| Scope | Inclusions, exclusions, environment, assumptions, constraints, project context, and glossary |
+| Stakeholders and user needs | Who has an interest in the system, their authored needs and the jobs index |
+| Scope and environment | The work the system covers, explicit exclusions, operating conditions, assumptions and constraints |
 | System topology | Immediate parts, boundary partners, and required or provided interfaces, with a Mermaid diagram and linked descriptions |
 | Features | Product features and their authored descriptions |
 | Capabilities | Capabilities the system provides. When topology identifies a provider, its entry describes the capability. |
@@ -55,6 +55,8 @@ Choose a section to read in order or open a collection index directly.
 | Requirements | **All requirements** opens the index, including routes by component. |
 | Quality attributes | Top-level attributes and their definition previews. Each attribute page lists the requirements classified under it. |
 | Open questions | Decisions that remain open in the system specification |
+| Glossary | Terms defined for this system and links to their definitions |
+| Project references | Authored explanations and links to delivery plans, responsibilities, risks and decisions, when supplied |
 
 Overview sections list all entries with project-specific detail in index order.
 A collection with only navigation stays in the section map. The topology

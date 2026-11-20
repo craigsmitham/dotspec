@@ -176,7 +176,7 @@ def spec_journey(cli, tmp):
     assert all(target != entry for page in (project / "specification").rglob("*.md")
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")
-    sections = ["Purpose", "Goals", "User needs", "Scope", "System topology",
+    sections = ["Purpose", "Goals", "Stakeholders and user needs", "Scope and environment", "System topology",
                 "Features", "Concepts", "Quality attributes"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
     navigation = overview.split("\n## Purpose\n", 1)[0]
@@ -394,6 +394,10 @@ def author(cli, tmp):
     cli("requirement init", "quality", "--preset", "quality", "--path", draft, cwd=project)
     assert "## Criterion" in cli("requirement show", "quality", "--path", draft, cwd=project)
     target = draft / "specs/new-system.system.spec.md"
+    (draft / "release-plan.md").write_text(
+        "# Release plan\n\nThe release lead reviews the durability checks before rollout.\n", encoding="utf-8")
+    with target.open("a", encoding="utf-8") as file:
+        file.write("\n## Project references\n\nThe [release plan](../release-plan.md) assigns the durability review.\n")
     args = ("personal-data", "--system", target, "--attributes", "durability")
     before = target.read_bytes()
     preview = cli("quality-model apply", *args, "--dry-run", cwd=project)

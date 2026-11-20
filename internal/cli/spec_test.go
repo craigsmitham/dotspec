@@ -319,7 +319,7 @@ Individual authors.
 	page := build()
 	if !strings.Contains(page, "| Section | Explore |") ||
 		!strings.Contains(page, "## Purpose\n\nKeep notes.") || strings.Contains(page, "## Goals\n") ||
-		!strings.Contains(page, "## Scope\n\nOne notebook.") ||
+		!strings.Contains(page, "## Scope and environment\n\nOne notebook.") ||
 		strings.Index(page, "## Scope") < strings.Index(page, "Individual authors.") ||
 		strings.Contains(page, "open-questions.md") || strings.Contains(page, "## System topology") {
 		t.Fatal(page)
@@ -343,7 +343,8 @@ An example:
 `, "\n", "\r\n"))
 	writeFixture(t, "specs/quality/safety/safety.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\n---\n# Safety\n")
 	writeFixture(t, "specs/quality/reliability/durability/recovery/recovery.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nsubattribute_of: [durability]\n---\n# Recovery\n")
-	writeFixture(t, "specs/notes.system.spec.md", opening+"\n## Quality attributes\n")
+	writeFixture(t, "plan.md", "# Release plan\n")
+	writeFixture(t, "specs/notes.system.spec.md", opening+"\n## Project references\n\nThe [release plan](../plan.md) names the reviewer.\n\n## Quality attributes\n")
 	for name, labels := range map[string]string{"Save": "[durability, reliability]", "Restore": "[durability]"} {
 		writeFixture(t, filepath.Join("specs/requirements", strings.ToLower(name)+".requirement.spec.md"),
 			"---\ntype: requirement-spec\nquality_attributes: "+labels+"\n---\n# "+name+"\n\n## Statement\nKeep the note.\n")
@@ -351,6 +352,9 @@ An example:
 	page = build()
 	if !strings.Contains(page, "| [Quality attributes](<#quality-attributes>) | [All quality attributes](<quality-attributes.md>)") || !strings.Contains(page, "## Quality attributes") {
 		t.Fatalf("unexpected system reading order:\n%s", page)
+	}
+	if !strings.Contains(page, "## Project references\n\nThe [release plan](<../plan.md>) names the reviewer.") || strings.Index(page, "## Project references") < strings.Index(page, "## Quality attributes") {
+		t.Fatal(page)
 	}
 	durability := "- [Durability](<quality/reliability/durability/durability.quality-attribute.spec-report.md>) — The ID: below is permanent."
 	index, err := os.ReadFile("specification/quality-attributes.md")

@@ -378,7 +378,7 @@ Mobile clients sometimes lose connectivity. The service must accommodate retries
 
 Recovering documents after their retained copies expire. External backup restoration has a separate boundary.
 
-## Project context
+## Project references
 
 [Delivery and review plan](../project-plan.md) owns milestones and stakeholder review responsibilities.
 

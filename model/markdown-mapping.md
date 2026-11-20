@@ -10,7 +10,7 @@ Omitting a narrative field leaves it absent. An explicitly empty field has an em
 
 ## System
 
-Purpose, scope, environment, stakeholders and constraints hold authored Markdown. Goals, assumptions, interfaces, concept uses, synchronizations and inline glossary terms have named entries. Declare a system quality attribute in its own specification under the system’s quality directory. A reusable quality model declares its attributes by name under Quality attributes. Find the [system format](../docs/reference/formats/system.md).
+Purpose, scope, environment, stakeholders and constraints hold authored Markdown. The Project references section maps to `System.project_references`: its content preserves the explanation and its references identify the cited project records. Goals, assumptions, interfaces, concept uses, synchronizations and inline glossary terms have named entries. Declare a system quality attribute in its own specification under the system’s quality directory. A reusable quality model declares its attributes by name under Quality attributes. Find the [system format](../docs/reference/formats/system.md).
 
 ## Job
 

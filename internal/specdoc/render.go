@@ -276,6 +276,9 @@ func (p *planner) appendSourceFootnotes(w *writer, sf *sourceFile, onPage func(i
 	}
 }
 func (h *heading) reportTitle() string {
+	if h.field == "environment" && h.title == "Environment" {
+		return "Operating environment"
+	}
 	if h.owner != nil && h.owner.kind() == "ConceptUse" && h.level == h.owner.name.level+1 && h.title == "Definition" {
 		return relations["definition"].forward
 	}

@@ -16,9 +16,9 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 		m.section(r, "description", s)
 	case "Purpose":
 		m.section(r, "purpose", s)
-	case "Project context":
-		m.contextField(r, "project_context", s.Content)
-		m.markSection(r, "project_context.content", s)
+	case "Project references":
+		m.contextField(r, "project_references", s.Content)
+		m.markSection(r, "project_references.content", s)
 	case "Scope":
 		m.section(r, "scope", s)
 	case "Environment":

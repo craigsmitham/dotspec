@@ -3526,9 +3526,9 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored content between the title and the first named section."
                 },
-                "project_context": {
+                "project_references": {
                     "$ref": "#/$defs/ContextualReferences",
-                    "description": "Project context and links to authoritative schedules, risks, responsibilities and workflows; not a project-management model."
+                    "description": "Plans, responsibilities, risks and delivery decisions that affect this system, with prose explaining their relevance and links to the records the team maintains."
                 },
                 "provided_interfaces": {
                     "description": "Services this subject exposes to its environment.",
@@ -3538,7 +3538,8 @@
                     "type": "array"
                 },
                 "purpose": {
-                    "$ref": "#/$defs/RichContent"
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Why the system exists, including the situation it addresses and its intended benefit."
                 },
                 "quality_attributes": {
                     "description": "Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct.",
@@ -3563,7 +3564,8 @@
                     "type": "array"
                 },
                 "scope": {
-                    "$ref": "#/$defs/RichContent"
+                    "$ref": "#/$defs/RichContent",
+                    "description": "The work, users and situations the system is intended to serve."
                 },
                 "slug": {
                     "description": "Path-derived current slug where applicable.",

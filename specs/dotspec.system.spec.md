@@ -20,6 +20,18 @@ The [Develop Requirements](jobs/develop-requirements.job.spec.md) and
 [Manage Requirements](jobs/manage-requirements.job.spec.md) jobs describe the
 work dotspec supports.
 
+## Goals
+
+### Find gaps during review
+
+Reduce the effort of finding structural problems and missing specification
+content during authoring and review.
+
+### Maintain requirements as the product changes
+
+Reduce the effort of maintaining requirements as the product changes by
+keeping each requirement with its authoritative source.
+
 ## Scope
 
 The system includes the authoring framework, the `dotspec` CLI, and the
@@ -33,18 +45,6 @@ in which they apply, and the criteria for satisfaction. Teams maintain test
 procedures, validation studies, research records, and issue tracking in their
 own tools or documents. Authors can link to them beside the requirements they
 inform or assess.
-
-## Goals
-
-### Find gaps during review
-
-Reduce the effort of finding structural problems and missing specification
-content during authoring and review.
-
-### Maintain requirements as the product changes
-
-Reduce the effort of maintaining requirements as the product changes by
-keeping each requirement with its authoritative source.
 
 ## Environment
 

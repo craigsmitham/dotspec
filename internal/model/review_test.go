@@ -27,7 +27,7 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 	if ids := Strings(sys["interacts_with"]); len(ids) != 1 || ids[0] != String(partner, "id") || sys["part_of"] != nil {
 		t.Fatal("interaction confused with structure", sys)
 	}
-	if d.text(sys["out_of_scope"]) == "" || d.text(Object(sys["project_context"])["content"]) == "" {
+	if d.text(sys["out_of_scope"]) == "" || d.text(Object(sys["project_references"])["content"]) == "" {
 		t.Fatal("unmapped system context")
 	}
 	required := Strings(sys["required_interfaces"])
@@ -188,7 +188,7 @@ Read the current time.
 
 #### Contracts
 
-[Project context](../../project-plan.md).
+[Project references](../../project-plan.md).
 
 ## Required interfaces
 

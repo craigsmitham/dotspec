@@ -15,6 +15,7 @@ import (
 // rendering, source content order, fragment allocation and the navigation map.
 type overviewSection struct {
 	title, anchor        string
+	leadHeading          string
 	level                int
 	sources, collections []string
 	passages             [][]*heading
@@ -25,15 +26,19 @@ type overviewSection struct {
 	hasBody              bool
 }
 
-func overviewOutline() []overviewSection {
+func overviewOutline(kind string) []overviewSection {
+	scopeTitle := "Scope"
+	if kind == "System" {
+		scopeTitle = "Scope and environment"
+	}
 	return []overviewSection{
 		{sources: []string{"description"}},
 		{title: "Purpose", level: 2, sources: []string{"purpose"}},
 		{title: "Goals", level: 2, sources: []string{"goals"}, collections: []string{"Goals"}},
 		{title: "Business rules", level: 2, collections: []string{"Business rules"}},
-		{title: "User needs", level: 2, sources: []string{"stakeholders"}, collections: []string{"Jobs"}},
+		{title: "Stakeholders and user needs", leadHeading: "Stakeholders", level: 2, sources: []string{"stakeholders"}, collections: []string{"Jobs"}},
 		{title: "Responsibilities", level: 2, sources: []string{"responsibilities"}},
-		{title: "Scope", level: 2, sources: []string{"scope", "boundary_description", "out_of_scope", "environment", "assumptions", "constraints", "project_context", "glossary"}, collections: []string{"Assumptions", "Glossary"}},
+		{title: scopeTitle, leadHeading: "Scope", level: 2, sources: []string{"scope", "boundary_description", "out_of_scope", "environment", "assumptions", "constraints"}, collections: []string{"Assumptions"}},
 		{title: "System topology", level: 2, sources: []string{"part_of", "interacts_with", "required_interfaces", "provided_interfaces"}, collections: []string{"Systems", "Components", "Interfaces"}},
 		{title: "Features", level: 2, collections: []string{"Features"}},
 		{title: "Capabilities", level: 2, collections: []string{"Capabilities"}},
@@ -47,12 +52,14 @@ func overviewOutline() []overviewSection {
 		{title: "Architecture", level: 2, sources: []string{"architecture"}},
 		{title: "Implementation", level: 2, sources: []string{"implementation"}},
 		{title: "Open questions", level: 2, sources: []string{"open_questions"}, collections: []string{"Open questions"}},
+		{title: "Glossary", level: 2, sources: []string{"glossary"}, collections: []string{"Glossary"}},
+		{title: "Project references", level: 2, sources: []string{"project_references"}},
 		{title: "Reference", level: 2, sources: []string{"related_specifications", "specification_system", "authority_and_evidence", "evidence", "supports", "derived_from", "relies_on"}},
 	}
 }
 
 func (p *planner) planOverview(s *subject) []overviewSection {
-	sections := overviewOutline()
+	sections := overviewOutline(s.kind())
 	groups := map[string][][]*heading{}
 	for _, passage := range s.passages {
 		h := passage[0]
@@ -98,7 +105,7 @@ func (section overviewSection) merges(i int) bool {
 	if section.level == 0 {
 		return h.title == "Description" && i == 1
 	}
-	return i == 0 && h.title == section.title
+	return i == 0 && (h.title == section.title || h.title == section.leadHeading)
 }
 
 func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
@@ -128,7 +135,7 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 				}
 				anchor := section.anchor
 				if k != 0 || !section.merges(j) {
-					anchor = string(ids.Generate([]byte(h.title), ast.KindHeading))
+					anchor = string(ids.Generate([]byte(h.reportTitle()), ast.KindHeading))
 					if explicit {
 						h.explicitAnchor = "passage." + h.anchor
 						anchor = h.explicitAnchor
@@ -255,9 +262,9 @@ func (p *planner) overviewNavigation(w *writer, s *subject) {
 		}
 
 		if len(links) == 0 {
-			for _, group := range section.passages {
+			for i, group := range section.passages {
 				h := group[0]
-				if p.targets[h.node] == s.file+"#"+section.anchor && h.title == section.title {
+				if section.merges(i) {
 					continue
 				}
 				links = append(links, inlineText(h.title))

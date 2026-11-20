@@ -13532,10 +13532,10 @@
           "reference_ranges": [],
           "required": false
         },
-        "project_context": {
+        "project_references": {
           "annotations": {},
           "any_of": [],
-          "description": "Project context and links to authoritative schedules, risks, responsibilities and workflows; not a project-management model.",
+          "description": "Plans, responsibilities, risks and delivery decisions that affect this system, with prose explaining their relevance and links to the records the team maintains.",
           "identifier": false,
           "inline_ranges": [
             "ContextualReferences"
@@ -13575,7 +13575,7 @@
         "purpose": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "Why the system exists, including the situation it addresses and its intended benefit.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -13698,7 +13698,7 @@
         "scope": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "The work, users and situations the system is intended to serve.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -16411,7 +16411,7 @@
   },
   "representation_version": "0.3.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "452420812af7a648835527f66fec23a25d8e55de6b73d1ed06f00980727b7bb2",
+  "source_sha256": "707c89830617b7945fcb28562a552382c2ec22a1dcf23cace278eddae344ace5",
   "subsets": {
     "business-requirements": {
       "classification": "core",

@@ -11,37 +11,33 @@ A single-user task list that stores open and completed tasks on one computer.
 
 Help a person pick up unfinished work after an interruption.
 
-## Scope
-
-One person's list on one computer. The browser submits forms to a local service.
-
 ## Goals
 
 ### Resume unfinished work
 
 Reduce the effort of working out what still needs attention.
 
-## Environment
+## Stakeholders
 
-The person may close the browser or stop the service between work sessions.
+The person who keeps the list also decides which entries can be discarded.
+
+## Scope
+
+The list tracks one person’s open and completed tasks on one computer.
 
 ## Out of scope
 
 Sharing lists, synchronizing devices and recovering from loss of the database file.
+
+## Environment
+
+The person may close the browser or stop the service between work sessions.
 
 ## Assumptions
 
 ### Same local storage
 
 The person returns to the same writable database file.
-
-## Stakeholders
-
-The person who keeps the list also decides which entries can be discarded.
-
-## Project context
-
-The [walkthrough](../README.md) identifies the setup, checks and validation exercise.
 
 ## Concept uses
 

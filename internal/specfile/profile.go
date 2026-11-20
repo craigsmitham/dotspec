@@ -16,7 +16,7 @@ import (
 // Nested headings inside ordinary Markdown fields are local to that prose.
 var headingFields = map[string]string{
 	"Description": "description", "Part of": "part_of", "Purpose": "purpose", "Scope": "scope", "Out of scope": "out_of_scope",
-	"Project context": "project_context", "Environment": "environment", "Stakeholders": "stakeholders", "Constraints": "constraints",
+	"Project references": "project_references", "Environment": "environment", "Stakeholders": "stakeholders", "Constraints": "constraints",
 	"Responsibilities": "responsibilities", "Boundary": "boundary_description", "Contracts": "contracts", "Architecture": "architecture", "Implementation": "implementation",
 	"Interacts with": "interacts_with", "Specification system": "specification_system", "Enablers": "enablers",
 	"Groups": "groups", "Depends on": "depends_on", "Provided by": "provided_by", "Supports": "supports", "Involves": "involves",

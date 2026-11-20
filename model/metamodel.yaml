@@ -796,11 +796,11 @@ classes:
       kind:
         equals_string: System
     attributes:
-      project_context:
+      project_references:
         range: ContextualReferences
         inlined: true
-        description: Project context and links to authoritative schedules, risks, responsibilities and workflows;
-          not a project-management model.
+        description: Plans, responsibilities, risks and delivery decisions that affect this system,
+          with prose explaining their relevance and links to the records the team maintains.
       out_of_scope:
         range: RichContent
         inlined: true
@@ -851,9 +851,11 @@ classes:
       purpose:
         range: RichContent
         inlined: true
+        description: Why the system exists, including the situation it addresses and its intended benefit.
       scope:
         range: RichContent
         inlined: true
+        description: The work, users and situations the system is intended to serve.
       goals:
         range: Goal
         multivalued: true

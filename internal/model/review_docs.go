@@ -105,8 +105,8 @@ func PEGSMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	for _, r := range v.records {
 		if String(r, "kind") == "System" {
 			fmt.Fprintf(&v.out, "### %s\n\n", v.link(r))
-			if !v.body(r, "Project context", Object(r["project_context"])["content"]) {
-				v.out.WriteString("No project context recorded. Link schedules, responsibilities, risks and decisions where they are maintained.\n\n")
+			if !v.body(r, "Project references", Object(r["project_references"])["content"]) {
+				v.out.WriteString("No project references recorded. Link schedules, responsibilities, risks and decisions where they are maintained.\n\n")
 			}
 		}
 	}
