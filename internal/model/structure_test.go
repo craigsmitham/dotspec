@@ -21,7 +21,7 @@ func TestStructureAndFeatureMembership(t *testing.T) {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	s := result.Snapshot
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 	store := designRecord(t, s, "System", "Online Store")
 	inventory := designRecord(t, s, "Component", "Inventory")
 	reservations := designRecord(t, s, "Component", "Reservations")
@@ -75,7 +75,7 @@ func TestStructuralErrorsPreserveSourceWithoutInventingParents(t *testing.T) {
 			if (result.ExitCode != 0) != tc.error {
 				t.Fatal(result.ExitCode, result.Snapshot.Diagnostics)
 			}
-			conformancePayloads(t, result.Snapshot)
+			checkSourceText(t, result.Snapshot)
 		})
 	}
 }
@@ -91,5 +91,5 @@ func TestComponentMapsSpecificationSections(t *testing.T) {
 	if checkout["notes"] == nil || checkout["evidence"] == nil || checkout["related_specifications"] == nil {
 		t.Fatal("component specification sections missing", checkout)
 	}
-	conformancePayloads(t, result.Snapshot)
+	checkSourceText(t, result.Snapshot)
 }

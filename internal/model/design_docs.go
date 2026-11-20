@@ -8,8 +8,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-
-	"github.com/craigsmitham/dotspec/internal/assessment"
 )
 
 // DesignMarkdown renders the authored concept descriptions and the explicitly
@@ -73,12 +71,7 @@ func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		concepts++
 		fmt.Fprintf(&out, "### %s\n\n[Source](%s).\n\n", d.name(r), sourceLink(r))
 		section("Purpose", r, r["purpose"])
-		for _, plan := range reviewObjects(r["assessment_plans"]) {
-			section(assessment.Purpose(String(plan, "purpose")).Definition().Heading(), r, plan["content"])
-		}
 		section("Operational principles", r, r["operational_principles"])
-		section("Type parameters", r, r["type_parameters_content"])
-		section("Introduced types", r, r["introduced_types_content"])
 		section("State", r, Object(r["abstract_state"])["content"])
 		section("Actions", r, r["actions_content"])
 		if r["effects_table_content"] != nil {
@@ -107,7 +100,7 @@ func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		fmt.Fprintf(&out, "### %s\n\n[Source](%s).\n\n", d.name(sys), sourceLink(sys))
 		uses := Strings(sys["concept_uses"])
 		if len(uses) > 0 {
-			out.WriteString("| Use | Definition | Type bindings |\n| --- | --- | --- |\n")
+			out.WriteString("| Use | Definition |\n| --- | --- |\n")
 			for _, id := range uses {
 				use := d.index[id]
 				definition := d.index[String(use, "definition")]
@@ -115,62 +108,26 @@ func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
 				if definition != nil {
 					definitionText = fmt.Sprintf("[%s](%s)", designCell(d.name(definition)), sourceLink(definition))
 				}
-				var bindings []string
-				for _, bid := range Strings(use["bindings"]) {
-					b := d.index[bid]
-					parameter := d.name(d.index[String(b, "parameter")])
-					if parameter == "" {
-						parameter = "Unresolved parameter"
-					}
-					target := String(b, "primitive")
-					if target == "" {
-						target = d.name(d.index[String(b, "supplying_concept_use")]) + "." + d.name(d.index[String(b, "bound_type")])
-						if target == "." {
-							target = "Unresolved type"
-						}
-					}
-					bindings = append(bindings, designCell(parameter+" = "+target))
-				}
-				fmt.Fprintf(&out, "| %s | %s | %s |\n", designCell(d.name(use)), definitionText, strings.Join(bindings, "; "))
+				fmt.Fprintf(&out, "| %s | %s |\n", designCell(d.name(use)), definitionText)
 			}
 			out.WriteString("\n")
-		}
-		out.WriteString("#### Coordination\n\nOnly resolved action references appear as edges. A rule node does not imply a transaction.\n\n```mermaid\nflowchart LR\n")
-		ids := map[string]string{}
-		for i, id := range uses {
-			ids[id] = fmt.Sprintf("u%d", i)
-			fmt.Fprintf(&out, "    %s[\"%s\"]\n", ids[id], designDiagramLabel(d.name(d.index[id])))
-		}
-		for i, id := range Strings(sys["synchronizations"]) {
-			sync := d.index[id]
-			sid := fmt.Sprintf("s%d", i)
-			fmt.Fprintf(&out, "    %s{\"%s\"}\n", sid, designDiagramLabel(d.name(sync)))
-			for _, aid := range Strings(sync["when_actions"]) {
-				a := d.index[aid]
-				if uid := ids[String(a, "concept_use")]; uid != "" && a["action"] != nil {
-					fmt.Fprintf(&out, "    %s -->|\"%s\"| %s\n", uid, designDiagramLabel(d.name(d.index[String(a, "action")])), sid)
+			ids := map[string]string{}
+			for i, id := range uses {
+				ids[id] = fmt.Sprintf("u%d", i)
+			}
+			out.WriteString("#### Application dependencies\n\nAn arrow means the source use requires the target use for its role in this system. Cycles are permitted.\n\n```mermaid\nflowchart LR\n")
+			for _, id := range uses {
+				fmt.Fprintf(&out, "    %s[\"%s\"]\n", ids[id], designDiagramLabel(d.name(d.index[id])))
+			}
+			for _, id := range uses {
+				for _, dep := range Strings(d.index[id]["dependencies"]) {
+					if target := ids[dep]; target != "" {
+						fmt.Fprintf(&out, "    %s --> %s\n", ids[id], target)
+					}
 				}
 			}
-			for _, aid := range Strings(sync["then_actions"]) {
-				a := d.index[aid]
-				if uid := ids[String(a, "concept_use")]; uid != "" && a["action"] != nil {
-					fmt.Fprintf(&out, "    %s -->|\"%s\"| %s\n", sid, designDiagramLabel(d.name(d.index[String(a, "action")])), uid)
-				}
-			}
+			out.WriteString("```\n\n")
 		}
-		out.WriteString("```\n\n")
-		out.WriteString("#### Application dependencies\n\nAn arrow means the source use requires the target use for its role in this system. Cycles are permitted. Bindings and action calls do not imply these edges.\n\n```mermaid\nflowchart LR\n")
-		for _, id := range uses {
-			fmt.Fprintf(&out, "    %s[\"%s\"]\n", ids[id], designDiagramLabel(d.name(d.index[id])))
-		}
-		for _, id := range uses {
-			for _, dep := range Strings(d.index[id]["dependencies"]) {
-				if target := ids[dep]; target != "" {
-					fmt.Fprintf(&out, "    %s --> %s\n", ids[id], target)
-				}
-			}
-		}
-		out.WriteString("```\n\n")
 		section("Concept use declarations", sys, sys["concept_uses_content"])
 		section("Synchronization rules", sys, sys["synchronizations_content"])
 	}

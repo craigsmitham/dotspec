@@ -12,11 +12,11 @@ import (
 
 func newModelCommand() *cobra.Command {
 	cmd := &cobra.Command{Use: "model", Short: "Export and validate complete specification snapshots", Args: cobra.NoArgs,
-		Long: "Represent original source bytes, document structure, and named domain content in a versioned specification model. Coverage describes the declared mapping profile, not requirements adequacy or satisfaction.",
+		Long: "Represent Markdown text, document structure, and named domain content in a versioned specification model. Coverage describes the declared mapping profile, not requirements adequacy or satisfaction.",
 		RunE: func(cmd *cobra.Command, _ []string) error { return cmd.Help() },
 	}
 	export := &cobra.Command{Use: "export", Short: "Export a source-backed specification snapshot as JSON", Args: cobra.NoArgs,
-		Long:    "Export selected specifications, enclosing systems, and direct reference context as JSON. Preserve invalid documents and original source bytes. Filesystem discovery and authoring findings follow check; external references are not fetched.\n\n" + exitPolicy,
+		Long:    "Export selected specifications, enclosing systems, and direct reference context as JSON. Retain readable Markdown and source locations, including diagnostics for invalid documents. Filesystem discovery and authoring findings follow check; external references are not fetched.\n\n" + exitPolicy,
 		Example: "dotspec model export\ndotspec model export --path internal",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
@@ -59,7 +59,7 @@ func newModelCommand() *cobra.Command {
 		}}
 	schema.Flags().Bool("workspace", false, "print the schema for a complete model export --all envelope")
 	validate := &cobra.Command{Use: "validate SNAPSHOT", Short: "Check a snapshot's shape, references, source fidelity, and coverage", Args: cobra.ExactArgs(1),
-		Long: "Validate a snapshot file, or use - to read standard input. Snapshot validation checks representation conformance and integrity, not requirements fitness or system behavior; faithfully represented authoring errors do not make a snapshot invalid. No source paths or external targets are fetched. External payload locators can be checked structurally; their byte availability is not verified offline.\n\n" + exitPolicy,
+		Long: "Validate a snapshot file, or use - to read standard input. Snapshot validation checks representation conformance and integrity, not requirements fitness or system behavior; faithfully represented authoring errors do not make a snapshot invalid. No source paths or external targets are fetched.\n\n" + exitPolicy,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			format, err := outputFormat(cmd)
 			if err != nil {
@@ -103,7 +103,7 @@ func newModelCommand() *cobra.Command {
 		}}
 	addOutput(validate, false)
 	docs := &cobra.Command{Use: "docs", Short: "Generate concept references, system compositions, and dependency diagrams as Markdown", Args: cobra.NoArgs,
-		Long:    "Render purpose and operational principles before state and actions. Show explicit named uses, bindings, synchronization rules and application dependencies. Diagrams contain resolved relationships only; no behavior is executed or inferred.",
+		Long:    "Render purpose and operational principles before state and actions. Show explicit named uses, synchronization rules and application dependencies. Diagrams contain resolved relationships only; no behavior is executed or inferred.",
 		Example: "dotspec model docs --path . --relative-to views",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
@@ -138,7 +138,7 @@ func newModelCommand() *cobra.Command {
 			return nil
 		}}
 	trace := &cobra.Command{Use: "trace", Short: "Generate layered requirements traceability and change-review views as Markdown", Args: cobra.NoArgs,
-		Long:    "Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and verification guidance. Resolved explicit relationships only; paths do not establish satisfaction or evidence.",
+		Long:    "Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and obligation criteria. Resolved explicit relationships only; paths do not establish satisfaction or evidence.",
 		Example: "dotspec model trace --path . --relative-to views",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
@@ -173,7 +173,7 @@ func newModelCommand() *cobra.Command {
 			return nil
 		}}
 	overview := &cobra.Command{Use: "overview", Short: "Generate system structure, features, and applicable obligations as Markdown", Args: cobra.NoArgs,
-		Long:    "Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and verification guidance. Directory context remains separate; no implementation or requirement inheritance is inferred.",
+		Long:    "Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and obligation criteria. Directory context remains separate; no implementation or requirement inheritance is inferred.",
 		Example: "dotspec model overview --path . --relative-to views",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
@@ -208,7 +208,7 @@ func newModelCommand() *cobra.Command {
 			return nil
 		}}
 	needs := &cobra.Command{Use: "needs", Short: "Generate a needs-to-specification map with capability dependencies", Args: cobra.NoArgs,
-		Long:    "Show jobs, shared outcomes, progress cases, features, obligations and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.",
+		Long:    "Show jobs, shared outcomes, features, obligations and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.",
 		Example: "dotspec model needs --path . --relative-to views",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)

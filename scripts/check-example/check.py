@@ -154,7 +154,7 @@ def spec_journey(cli, tmp):
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")
     sections = ["Purpose", "Goals", "Business rules", "User needs", "Scope", "System topology", "Requirements",
-                "Quality attributes", "Validation"]
+                "Quality attributes"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
     navigation = overview.split("\n## Purpose\n", 1)[0]
     goals = overview.split("\n## Goals\n", 1)[1].split("\n## ", 1)[0]
@@ -230,10 +230,10 @@ def spec_journey(cli, tmp):
     assert claims[project / "specs/quality-models/personal-data.quality-model.spec.md", "personal-data-quality"] == definitions
     use_case = follow(feature, "Return to my list")
     passage = use_case.read_text(encoding="utf-8").split("### Keep recorded work available\n", 1)[1]
-    assert passage.index("#### System verification plan") < passage.index("## Related specifications")
+    assert passage.index("#### Notes") < passage.index("## Related specifications")
     assert claims[project / "specs/concepts/checklist.concept.spec.md", "checklist"] == follow(use_case, "Complete")
     headings = re.findall(r"^## (.+)$", promise.read_text(encoding="utf-8"), re.M)
-    assert headings[:4] == ["Statement", "Applies to", "Criterion", "System verification plan"]
+    assert headings[:3] == ["Statement", "Applies to", "Criterion"]
     text = " ".join(promise.read_text(encoding="utf-8").split())
     for phrase in ("acknowledges a change", "same database", "identity, title and completion state",
                    "Deleted entries must stay absent", "Zero discrepancies across the two views"):
@@ -329,7 +329,7 @@ def author(cli, tmp):
     for kind in TYPES.keys() - {"system"}:
         cli(kind + " init", "sample", "--path", draft, cwd=project)
         assert list((draft / "specs").rglob(f"sample.{kind}.spec.md"))
-    for preset, marker in [("odi", "## Steps"), ("progress", "## Progress cases"),
+    for preset, marker in [("odi", "## Steps"),
                            ("job-story", "When [situation]")]:
         cli("job init", preset, "--preset", preset, "--path", draft, cwd=project)
         assert marker in cli("job show", preset, "--path", draft, cwd=project)

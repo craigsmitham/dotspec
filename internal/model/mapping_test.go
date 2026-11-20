@@ -203,16 +203,8 @@ Unvalidated hypothesis.
 	if len(recordsOf(m, "DesiredOutcome")) != 1 {
 		t.Fatal("nested supporting bullets became outcomes")
 	}
-	cases := recordsOf(m, "ProgressCase")
-	if len(cases) != 1 {
-		t.Fatal("progress case missing")
-	}
-	forces := cases[0]["forces"].([]Record)
-	if len(forces) != 4 || String(forces[0], "kind") != "push" {
-		t.Errorf("forces: %#v", forces)
-	}
-	if Object(cases[0]["timeline"])["presence"] != "authored" {
-		t.Error("unknown timeline was erased")
+	if len(recordsOf(m, "ProgressCase")) != 0 || !strings.Contains(richText(d, r["evidence"]), "Unvalidated hypothesis") {
+		t.Fatal("research should remain prose")
 	}
 	for _, x := range recordsOf(m, "DesiredOutcome") {
 		if String(x, "owner") != String(steps[0], "id") {
@@ -403,7 +395,7 @@ Read before and after inspection.
 
 Retain changed paths.
 `)
-	if Object(r["applicability"])["exclusions"] == nil || plansFor(r, "system_verification")[0]["evidence_to_retain"] == nil {
+	if Object(r["applicability"])["exclusions"] == nil {
 		t.Error("plan subfields missing")
 	}
 	if Object(r["criterion"])["target"] != nil {
@@ -433,7 +425,7 @@ func TestMappingPresentEmptyUnknownAndInvalid(t *testing.T) {
 	if related, ok := invalid.Diagnostics[0]["related"].([]Record); !ok || len(related) != 1 || Number(related[0]["line"]) == 0 || String(related[0], "source") != String(bad.Source, "id") {
 		t.Errorf("lost prior definition location: %#v", invalid.Diagnostics[0])
 	}
-	if bad.Source["payload"] == nil || len(bad.Nodes) == 0 {
+	if bad.Source["markdown"] == nil || len(bad.Nodes) == 0 {
 		t.Error("invalid document lost source/content")
 	}
 }

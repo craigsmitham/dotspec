@@ -1,7 +1,5 @@
 package model
 
-import "strings"
-
 func (m *domainMapper) job(r Record, s *Section) bool {
 	fields := map[string]string{"Job": "statement", "Performer": "performer", "Situation": "situation", "Motivation": "motivation", "Intended progress": "intended_progress"}
 	if field, ok := fields[s.Title]; ok {
@@ -36,33 +34,7 @@ func (m *domainMapper) job(r Record, s *Section) bool {
 		}
 	case "Outcomes":
 		m.outcomes(r, s)
-	case "Progress cases":
-		m.declared(r, "progress_cases", s)
-		for _, child := range s.Children {
-			x := m.named("ProgressCase", r, child)
-			x["description"] = m.doc.Rich(child.Intro)
-			m.bind(x, "description", child.Intro, "named_field", "progress-case-description")
-			for _, sub := range child.Children {
-				switch sub.Title {
-				case "Circumstances", "Struggling moment", "Participants", "Alternatives considered", "Trade-offs and selection criteria":
-					field := map[string]string{"Circumstances": "circumstances", "Struggling moment": "struggling_moment", "Participants": "participants", "Alternatives considered": "alternatives_considered", "Trade-offs and selection criteria": "tradeoffs_and_selection_criteria"}[sub.Title]
-					m.section(x, field, sub)
-				case "Current approach":
-					m.section(x, "current_approach", sub)
-				case "Desired progress":
-					m.section(x, "desired_progress", sub)
-				case "Forces":
-					m.forces(x, sub)
-				case "Timeline":
-					m.section(x, "timeline", sub)
-				case "Evidence":
-					m.evidence(x, "evidence", sub)
-				default:
-					m.extension(x, sub)
-				}
-			}
-			appendID(r, "progress_cases", String(x, "id"))
-		}
+
 	default:
 		return false
 	}
@@ -111,71 +83,5 @@ func (m *domainMapper) outcomes(owner Record, s *Section) {
 			}
 		}
 		appendID(owner, "outcomes", String(x, "id"))
-	}
-}
-
-func (m *domainMapper) forces(owner Record, s *Section) {
-	items := []Record{}
-	for _, id := range m.listItems(s.Intro, false) {
-		text := strings.TrimSpace(m.doc.Text(id))
-		text = strings.TrimLeft(text, "-*+0123456789.) ")
-		text = strings.TrimPrefix(text, "**")
-		label := strings.ToLower(strings.TrimSpace(strings.SplitN(text, ":", 2)[0]))
-		item := Record{"description": m.doc.Rich([]string{id})}
-		switch label {
-		case "push", "pull", "anxiety", "habit":
-			item["kind"] = label
-		}
-		items = append(items, item)
-	}
-	for _, sub := range s.Children {
-		item := Record{"description": m.doc.Rich(sub.Content)}
-		switch strings.ToLower(sub.Title) {
-		case "push", "pull", "anxiety", "habit":
-			item["kind"] = strings.ToLower(sub.Title)
-		}
-		items = append(items, item)
-	}
-	previous, _ := owner["forces"].([]Record)
-	owner["forces"] = append(append([]Record{}, previous...), items...)
-	m.setRich(owner, "forces_content", s.Content)
-	m.sectionBindings(owner, "forces_content", s)
-}
-
-func (m *domainMapper) evidence(owner Record, field string, s *Section) {
-	v := m.collection(owner, field, "statements", s)
-	for _, id := range m.listItems(s.Intro, false) {
-		x := m.record("EvidenceStatement", String(owner, "id"))
-		x["statement"] = m.doc.Rich([]string{id})
-		x["references"] = m.references([]string{id})
-		m.bind(x, "statement", []string{id}, "structured_item", "evidence-list-item")
-		appendID(v, "statements", String(x, "id"))
-	}
-	for _, sub := range s.Children {
-		switch sub.Title {
-		case "Research basis":
-			m.setRich(v, "research_basis", sub.Content)
-			m.sectionBindings(owner, field+".research_basis", sub)
-		case "Limitations":
-			m.setRich(v, "limitations", sub.Content)
-			m.sectionBindings(owner, field+".limitations", sub)
-		default:
-			x := m.named("EvidenceStatement", owner, sub)
-			m.section(x, "statement", sub)
-			x["references"] = m.references(sub.Content)
-			for _, detail := range sub.Children {
-				switch detail.Title {
-				case "Type":
-					m.section(x, "evidence_type", detail)
-				case "Research status":
-					m.section(x, "research_status", detail)
-				case "Limitations":
-					m.section(x, "limitations", detail)
-				default:
-					m.extension(x, detail)
-				}
-			}
-			appendID(v, "statements", String(x, "id"))
-		}
 	}
 }

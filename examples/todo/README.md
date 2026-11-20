@@ -48,4 +48,12 @@ mise exec -- go run . model trace --path examples/todo
 mise run example-check
 ```
 
-The acceptance test builds the app in a temporary directory, submits the rendered forms and restarts the server on a temporary database. For a session with a participant, use the [validation exercise](specs/personal-task-list.system.spec.md#system-validation-plan). The [coverage inventory](COVERAGE.md) identifies what the gate exercises and which fields still need a worked example.
+The acceptance test builds the app in a temporary directory, submits the rendered forms and restarts the server on a temporary database. The [coverage inventory](COVERAGE.md) identifies what the gate exercises and which fields still need a worked example.
+
+## Try the workflow with a participant
+
+Invite someone to record two real errands and mark one finished. After a break,
+restart the app on the same database. Ask which errand still needs attention,
+then ask them to resume the finished errand for a follow-up. Let them choose the
+controls. With their consent, record what they recognized and where they needed
+help. Compare those observations with the [user’s job](specs/jobs/resume.job.spec.md).

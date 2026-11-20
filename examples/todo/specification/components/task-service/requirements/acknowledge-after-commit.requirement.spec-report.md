@@ -15,13 +15,13 @@ The task service must commit a change to the local database before acknowledging
 
 **Targets:** [Task service](<../task-service.component.spec-report.md>).
 
-## System verification plan
-
-Use the assertions in the [restart test](<../../../../tests/acceptance.py>) to check that an acknowledged change survives a fresh process.
-
 ## Rationale
 
 A successful response tells the person that it is safe to close the task list.
+
+## Evidence
+
+The [restart test](<../../../../tests/acceptance.py>) exercises persistence of acknowledged changes.
 
 ## Related specifications
 

@@ -65,7 +65,7 @@ func TestSpecificationTypesCorrespondToDocumentRoots(t *testing.T) {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	s := result.Snapshot
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 	if types := Strings(s.Scope["selected_spec_types"]); slices.Contains(types, "quality") || !slices.Contains(types, "requirement-spec") {
 		t.Fatalf("selected specification types: %v", types)
 	}
@@ -88,7 +88,7 @@ func TestSystemNarrativeSectionsAndGoals(t *testing.T) {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	s := result.Snapshot
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 	d := newDesignResolver(s)
 	sys := designRecord(t, s, "System", "Lending desk")
 	for field, want := range map[string]string{"stakeholders": "finance office", "environment": "intermittent connectivity", "constraints": "seven years"} {
@@ -167,7 +167,7 @@ An obsolete heading is retained, not interpreted.
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	s := result.Snapshot
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 	borrow, manage := designRecord(t, s, "UseCase", "Borrow an item"), designRecord(t, s, "UseCase", "Manage loans")
 	rule := designRecord(t, s, "BusinessRule", "Loan limit")
 	if !slices.Equal(Strings(borrow["supports"]), []string{String(manage, "id")}) {
@@ -224,7 +224,7 @@ func TestObligationClausesBelongOnlyToTheirContainers(t *testing.T) {
 			if len(Strings(result.Snapshot.Coverage["unbound_content_nodes"])) != 0 || len(Strings(result.Snapshot.Coverage["extension_sections"])) == 0 {
 				t.Fatal("rejected obligations section should be retained as an extension section", result.Snapshot.Coverage)
 			}
-			conformancePayloads(t, result.Snapshot)
+			checkSourceText(t, result.Snapshot)
 			for _, e := range result.Snapshot.Elements {
 				if String(e, "kind") == "ObligationClause" {
 					t.Fatal("clause created without a container", e)
@@ -275,7 +275,7 @@ func TestOpenQuestionsBelongToAnyElement(t *testing.T) {
 	if result.ExitCode != 0 {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
-	conformancePayloads(t, result.Snapshot)
+	checkSourceText(t, result.Snapshot)
 	step := designRecord(t, result.Snapshot, "JobStep", "Reserve")
 	if len(records(step["open_questions"])) != 1 || step["open_questions_content"] == nil || step["extension_sections"] != nil {
 		t.Fatal("open question under a job step should be its own field", step)

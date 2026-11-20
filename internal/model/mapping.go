@@ -286,19 +286,6 @@ func (m *domainMapper) declared(owner Record, field string, s *Section) {
 	}
 }
 
-// collection serves the few embedded values that keep further named fields
-// beside their narrative and members, such as an evidence section.
-func (m *domainMapper) collection(owner Record, field, items string, s *Section) Record {
-	v := Object(owner[field])
-	if v == nil {
-		v = Record{items: []string{}}
-	}
-	m.setRich(v, "content", s.Content)
-	owner[field] = v
-	m.sectionBindings(owner, field+".content", s)
-	return v
-}
-
 func (m *domainMapper) named(kind string, owner Record, s *Section) Record {
 	r := m.record(kind, String(owner, "id"))
 	r["name"] = m.doc.Rich([]string{s.HeadingID})
@@ -379,7 +366,7 @@ func (m *domainMapper) extension(owner Record, s *Section) Record {
 	if designKind(String(owner, "kind"), "Specification") && m.common(owner, s) {
 		return nil
 	}
-	if m.traceSection(owner, s) || m.explanatory(owner, s) || m.boundarySection(owner, s) || m.assessmentSection(owner, s) {
+	if m.traceSection(owner, s) || m.explanatory(owner, s) || m.boundarySection(owner, s) {
 		return nil
 	}
 	// Any domain element can carry explicitly headed open questions.
@@ -434,7 +421,7 @@ func (m *domainMapper) authoredFragments() {
 }
 
 func (m *domainMapper) common(r Record, s *Section) bool {
-	if m.traceSection(r, s) || m.explanatory(r, s) || m.boundarySection(r, s) || m.assessmentSection(r, s) {
+	if m.traceSection(r, s) || m.explanatory(r, s) || m.boundarySection(r, s) {
 		return true
 	}
 	switch s.Title {
@@ -449,7 +436,7 @@ func (m *domainMapper) common(r Record, s *Section) bool {
 	case "Authority", "Authority and evidence":
 		m.section(r, "authority_and_evidence", s)
 	case "Evidence":
-		m.evidence(r, "evidence", s)
+		m.section(r, "evidence", s)
 	case "Open question", "Open questions":
 		m.openQuestions(r, []*Section{s})
 	default:

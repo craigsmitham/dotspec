@@ -12,7 +12,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/assessment"
 	"github.com/craigsmitham/dotspec/internal/model"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/text"
@@ -218,7 +217,7 @@ func readingOrder(s *subject) []*heading {
 	var first []string
 	switch s.kind() {
 	case "Requirement":
-		first = []string{"Statement", "Applies to", "Conditions", "Criterion", assessment.SystemVerification.Definition().Heading()}
+		first = []string{"Statement", "Applies to", "Conditions", "Criterion"}
 	case "UseCase":
 		first = []string{"Goal", "Primary actor", "Trigger", "Preconditions", "Main success scenario", "Extensions", "Success guarantees", "Minimal guarantees"}
 	default:
@@ -547,8 +546,6 @@ func (p *planner) renderReview() {
 	w := p.newPage(reviewPath, Document{Type: RequirementsReviewReport}, "Requirements review")
 	w.text(w.link(p.governing.name.title, p.governing.file))
 	var questions, findings []string
-	plans := map[assessment.Purpose][]string{}
-	planHeadings := p.snapshot.AssessmentHeadings()
 	for _, s := range p.subjects {
 		var ancestors []*heading
 		for _, h := range s.source.headings {
@@ -561,9 +558,6 @@ func (p *planner) renderReview() {
 			subject := s.name.title
 			if len(ancestors) > 1 {
 				subject = ancestors[len(ancestors)-1].title + " · " + subject
-			}
-			if purpose, ok := planHeadings[h.node]; ok {
-				plans[purpose] = append(plans[purpose], w.link(subject, p.targets[h.node]))
 			}
 			switch h.title {
 			case "Open questions", "Open question":
@@ -631,11 +625,6 @@ func (p *planner) renderReview() {
 		items       []string
 	}
 	sections := []reviewSection{{"Open questions", "No open questions recorded.", questions}}
-	for _, def := range assessment.Definitions {
-		if len(plans[def.Purpose]) > 0 {
-			sections = append(sections, reviewSection{name: def.Label + " plans", items: plans[def.Purpose]})
-		}
-	}
 	sections = append(sections, reviewSection{"Inspection findings", "No inspection findings.", findings})
 	for _, section := range sections {
 		w.heading(section.name)

@@ -17,12 +17,6 @@ exit status zero.
 Project-wide and focused specification checks that complete without structural
 errors or operational failures.
 
-## System verification plan
-
-Check structurally valid drafts that produce advisory findings. Verify exit
-status zero and the presence of the advice in both text and JSON reports.
-Exercise project-wide checks and focused checks for each applicable type.
-
 ## Rationale
 
 Unfinished specifications remain useful working material. Suggestions should

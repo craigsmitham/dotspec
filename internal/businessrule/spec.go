@@ -59,8 +59,6 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 
 // BusinessRule expresses a business constraint independently of enforcement.
 type BusinessRule struct {
-	AssessmentPlans []specfile.AssessmentPlan `json:"assessment_plans,omitempty"`
-
 	References            *specfile.ReferenceDocument    `json:"-"`
 	ID                    string                         `json:"id,omitempty"`
 	Slug                  string                         `json:"slug"`
@@ -114,7 +112,7 @@ func Parse(data []byte) (*BusinessRule, error) {
 	if err != nil {
 		return nil, err
 	}
-	spec := &BusinessRule{AssessmentPlans: doc.AssessmentPlans, ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
+	spec := &BusinessRule{ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
 	var ids specfile.Identifiers
 	if err := ids.Register(spec.ID, "business-rule", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err

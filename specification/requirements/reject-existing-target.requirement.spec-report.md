@@ -16,13 +16,6 @@ unsuccessful exit status.
 
 Initialization commands for all supported specification types.
 
-## System verification plan
-
-For each supported specification type, invoke initialization with an existing
-target. Verify the unsuccessful exit status. Cover a regular file, directory,
-and symbolic link where the platform supports it. Preserve the target fixture
-and capture output to diagnose failures.
-
 ## Rationale
 
 Contributors must not mistake an existing specification for a newly created one.

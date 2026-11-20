@@ -5,10 +5,11 @@ exec git init -q
 status 0 dotspec system init
 status 0 dotspec requirement init preservation
 status 0 dotspec model export
-stdout '"model_version": "0.26.0-draft"'
+stdout '"model_version": "0.27.0-draft"'
 stdout '"kind": "Requirement"'
 stdout '"content_bindings":'
-stdout '"bytes_base64":'
+stdout '"markdown":'
+! stdout '"bytes_base64":'
 ! stderr .
 cp stdout snapshot.json
 status 0 dotspec model export

@@ -15,7 +15,7 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 		t.Fatalf("exit %d", result.ExitCode)
 	}
 	s := result.Snapshot
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 	m := elementKind(t, s, "QualityModel")
 	if m["specification_system"] != nil {
 		t.Fatal("reusable model acquired system ownership")
@@ -89,7 +89,7 @@ func TestQualityDirectoryCyclePreservesInvalidSources(t *testing.T) {
 	if result.ExitCode != 1 {
 		t.Fatalf("expected source error, got exit %d", result.ExitCode)
 	}
-	conformancePayloads(t, result.Snapshot)
+	checkSourceText(t, result.Snapshot)
 	for _, d := range result.Snapshot.Diagnostics {
 		if String(d, "code") == "quality.cycle" {
 			return

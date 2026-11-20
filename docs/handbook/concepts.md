@@ -9,7 +9,7 @@ defines the basic file contract.
 A Concept is a specification with its own document. ConceptUse and Synchronization
 are elements declared inside a System specification, not specifications. They are
 traceable, addressable through heading anchors and optional introductory `**ID:**`
-values, and can carry Notes, Open questions, assessment plans and trace sections.
+values, and can carry Notes, Open questions, and trace sections.
 Evidence, Authority and Related specifications sections belong to specifications;
 under a declared element they are retained as unmodelled extension sections. See
 [specification types and declared elements](../reference/specification-model.md#specification-types-and-declared-elements).
@@ -64,133 +64,21 @@ rejection behavior states what happens when a request cannot succeed. Initiation
 can explain system behavior such as expiration. None of these headings selects an
 execution engine or scheduler.
 
-Inputs and outputs can remain prose. When names and types need to be referenced,
-use H5 entries:
-
-```markdown
-#### Inputs
-
-##### Resource
-
-**Type:** [Resource](#resource-type)
-
-An opaque resource identity.
-
-##### Lifetime
-
-**Primitive:** Duration
-
-A positive duration.
-```
-
-The linked type must be declared by this concept, either as a parameter or an
-introduced type. Primitive names are authored labels, not a built-in type registry.
-Use a `###### Type` description for a compound type expression; dotspec retains it
-without interpreting its grammar. Results follow the same pattern under Outputs.
-Do not duplicate a signature unless the named structure is useful.
+Describe inputs and outputs in the language of the concept. For example, renaming
+a checklist entry requires its identity and new title. State what happens if the
+title is blank.
 
 ## Separate a definition from a use
 
-Declare generic identity types with `## Type parameters` and H3 headings. Declare
-identities the concept introduces with `## Introduced types` and H3 headings.
-A reusable definition should describe external identities through parameters rather
-than depend on another concept's internals.
-
-In a system specification, explicitly name each inclusion under `## Concept uses`:
-
-```markdown
-## Concept uses
-
-### PublicLinks
-
-#### Definition
-
-[Shorthand](concepts/shorthand.concept.spec.md)
-
-#### Bindings
-
-##### Targets
-
-**Parameter:** [Target](concepts/shorthand.concept.spec.md#target)
-**Primitive:** URL
-
-### PublicExpiry
-
-#### Definition
-
-[Expiry](concepts/expiry.concept.spec.md)
-
-#### Bindings
-
-##### Resources
-
-**Parameter:** [Resource](concepts/expiry.concept.spec.md#resource)
-**Bound type:** [Code](concepts/shorthand.concept.spec.md#code)
-**Supplying concept use:** [PublicLinks](#publiclinks)
-```
-
-Here PublicExpiry's resource type comes specifically from PublicLinks. An
-InternalLinks use of Shorthand would be distinct, even though both use the same
-Code definition. Bindings choose a primitive or a Type/Use pair. A parameter can
-have at most one binding per use. Missing bindings remain unfinished declarations
-and produce advice; references to an incompatible definition or scope are errors.
-
-A use may have a Configuration subsection for application-specific choices. It
-may also have Dependencies containing links to other uses in the same system and
-an explanation of why those uses are needed. Mutual dependencies are permitted.
-These declarations support application scoping and explanation; they do not claim
-that one concept calls another. Type bindings and directory placement do not
-implicitly create uses or dependencies.
+A system can declare a named use under **Concept uses**, link its **Definition**,
+and describe its **Configuration** and **Dependencies**. Two uses of the same
+definition may have different configuration and identities.
 
 ## State coordination explicitly
 
-Add `## Synchronizations` to the system specification and give each rule an H3
-heading. When, Where, Then and Semantics are H4 subsections. Start in prose.
-
-To distinguish action references, add H5 entries under When or Then with explicit
-Concept use and Action fields:
-
-```markdown
-### Start a lifetime
-
-#### When
-
-##### Registration completed
-
-**Concept use:** [PublicLinks](#publiclinks)
-**Action:** [Register](concepts/shorthand.concept.spec.md#register)
-
-###### Result
-
-Successful completion returning the newly registered code.
-
-#### Then
-
-##### Allocate lifetime
-
-**Concept use:** [PublicExpiry](#publicexpiry)
-**Action:** [Allocate](concepts/expiry.concept.spec.md#allocate)
-
-###### Arguments
-
-Use the returned code as Resource and one hour as Lifetime.
-
-#### Semantics
-
-Event-based delivery with retained completion events and retries using the same
-arguments. Allocation is idempotent. No atomic transaction spans the concepts.
-```
-
-Every action reference identifies a named use and an action offered by its
-definition. Arguments and results remain narrative; Where can describe conditions,
-queries or matching. Multiple When entries do not silently define correlation,
-ordering or conjunction semantics: state those requirements in the rule.
-
-Explain consequential ordering, atomicity, failures, retries and timing. The
-original atomic synchronization model and the newer event-based model make different
-promises. dotspec can document either; omitting Semantics chooses neither.
-A heading without Use or Action fields remains supporting content, not a fabricated
-invocation.
+Under **Synchronizations**, give each rule a name. Describe when the rule applies,
+what follows, and any timing, retry or ordering guarantees the system promises.
+Link to the relevant actions in the prose.
 
 ## Inspect and generate views
 
@@ -204,16 +92,14 @@ dotspec model docs
 
 Authoring checks handle
 structure and ordinary links. Model export additionally diagnoses composition
-names, reference kinds, declaration scope and bindings. It returns status 1 for
+names, reference kinds and declaration scope. It returns status 1 for
 composition errors while retaining the snapshot. External or unacquired targets
 remain unresolved and produce advice; export does not recursively acquire a
 concept package. Select a scope containing the definitions needed for resolution.
 A saved snapshot can be validated without reading the working tree.
 
 The generated reference presents purpose and operational principles before state
-and actions, then system composition, binding tables and dependency diagrams. Only
-resolved action references produce coordination edges; unresolved declarations and
-findings remain visible in the narrative. When saving the output to a file,
+and actions, then the system’s named uses, dependencies and coordination rules. When saving the output to a file,
 use `--relative-to DIR` to resolve links from its destination directory.
 
 In the [To-do spec](../../examples/todo/specification/concepts/checklist.concept.spec-report.md), the

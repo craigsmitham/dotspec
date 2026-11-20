@@ -9,9 +9,9 @@ import (
 	"go.yaml.in/yaml/v3"
 )
 
-const ModelVersion = "0.26.0-draft"
-const RepresentationVersion = "0.1.0"
-const MappingProfile = "dotspec-markdown/20"
+const ModelVersion = "0.27.0-draft"
+const RepresentationVersion = "0.2.0"
+const MappingProfile = "dotspec-markdown/21"
 
 // Record is a schema-validated tagged record or an embedded model value.
 // Values remain JSON-compatible and are never decoded through a base class
@@ -49,7 +49,7 @@ func NewSnapshot(scope Record) *Snapshot {
 }
 
 // ParsedDocument is the extraction work buffer, not an interchange type.
-// Its records use original-byte spans; sections expose the structure needed by
+// Its records use normalized Markdown spans; sections expose the structure needed by
 // the explicit domain mapping without reparsing narrative as natural language.
 type ParsedDocument struct {
 	Data        []byte

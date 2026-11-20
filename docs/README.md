@@ -37,4 +37,4 @@ Run `dotspec guide TOPIC` to open the page or section below. Use `dotspec guide 
 | `review` | Review a requirement set and surface unresolved decisions. | [`docs/handbook/review.md`](handbook/review.md) |
 | `system` | Describe a system, its boundary, goals and quality attributes. | [`docs/reference/formats/system.md`](reference/formats/system.md) |
 | `use-case` | Describe actor goals, boundaries and alternative paths. | [`docs/handbook/use-cases.md`](handbook/use-cases.md) |
-| `verification` | Distinguish assessment purposes, plans and evidence. | [`docs/handbook/verification-and-validation.md`](handbook/verification-and-validation.md) |
+| `verification` | Distinguish the four review questions and the evidence each needs. | [`docs/handbook/verification-and-validation.md`](handbook/verification-and-validation.md) |

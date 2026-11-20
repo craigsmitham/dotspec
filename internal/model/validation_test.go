@@ -2,7 +2,6 @@ package model
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -306,22 +305,7 @@ func TestValidationRejectsCorruptSourceAndCoverage(t *testing.T) {
 		name, code string
 		mutate     func(*Snapshot)
 	}{
-		{"source digest", "payload.digest", func(s *Snapshot) {
-			Object(snapshotRecord(t, s, usecaseSource)["payload"])["sha256"] = strings.Repeat("0", 64)
-		}},
-		{"source byte count", "payload.length", func(s *Snapshot) {
-			p := Object(snapshotRecord(t, s, usecaseSource)["payload"])
-			p["byte_length"] = Number(p["byte_length"]) + 1
-		}},
-		{"invalid base64", "payload.encoding", func(s *Snapshot) {
-			Object(snapshotRecord(t, s, usecaseSource)["payload"])["bytes_base64"] = "not base64!"
-		}},
-		{"failed read with bytes", "payload.read-state", func(s *Snapshot) { snapshotRecord(t, s, usecaseSource)["read_status"] = "failed" }},
-		{"missing offset map", "source.offset-map", func(s *Snapshot) { delete(snapshotRecord(t, s, documentID), "normalization") }},
-		{"wrong normalization transform", "source.offset-rule", func(s *Snapshot) {
-			maps := records(snapshotRecord(t, s, documentID)["normalization"])
-			maps[0]["transformation"] = "CRLF to LF"
-		}},
+		{"failed read with text", "source.markdown", func(s *Snapshot) { snapshotRecord(t, s, usecaseSource)["read_status"] = "failed" }},
 		{"root span omits bytes", "content.root-span", func(s *Snapshot) {
 			d := snapshotRecord(t, s, documentID)
 			r := snapshotRecord(t, s, String(d, "root"))
@@ -395,11 +379,10 @@ func TestValidationAllowsFaithfulFailuresAndUnboundLabels(t *testing.T) {
 		s.Scope["inspection_complete"] = false
 		requireValid(t, s)
 	})
-	t.Run("a payload carries its original bytes", func(t *testing.T) {
+	t.Run("Markdown source requires text", func(t *testing.T) {
 		s := cloneSnapshot(t, original)
-		p := Object(snapshotRecord(t, s, String(elementKind(t, s, "UseCase"), "source_document"))["payload"])
-		delete(p, "bytes_base64")
-		requireFinding(t, s, "shape.invalid")
+		delete(snapshotRecord(t, s, String(elementKind(t, s, "UseCase"), "source_document")), "markdown")
+		requireFinding(t, s, "source.markdown")
 	})
 	t.Run("unbound classification is not an invalid model", func(t *testing.T) {
 		s := cloneSnapshot(t, original)
@@ -427,19 +410,6 @@ func TestValidationClosedShapesAndMalformedJSON(t *testing.T) {
 	if findings, err := ValidateJSON([]byte(`{"model_version":`)); err != nil || len(findings) != 1 || findings[0].Code != "shape.json" {
 		t.Fatalf("invalid JSON must be a validation finding, got %v %+v", err, findings)
 	}
-}
-
-func TestValidationPayloadRetainsExactBytes(t *testing.T) {
-	snapshot := validationSnapshot(t)
-	source := snapshotRecord(t, snapshot, String(elementKind(t, snapshot, "UseCase"), "source_document"))
-	data, err := base64.StdEncoding.DecodeString(String(Object(source["payload"]), "bytes_base64"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.HasPrefix(data, []byte{0xef, 0xbb, 0xbf}) || !bytes.Contains(data, []byte("\r\n")) {
-		t.Fatal("fixture lost original BOM or CRLF")
-	}
-	requireValid(t, snapshot)
 }
 
 func TestValidationRejectsDomainCyclesAndAttributeScopeEscape(t *testing.T) {

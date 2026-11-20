@@ -49,7 +49,7 @@ stdout '"complete": false'
 cp ../draft.md specs/requirements/draft.requirement.spec.md
 status 0 dotspec requirement check draft --json
 stdout 'requirement.statement'
-stdout '"advice": 4'
+stdout '"advice": 3'
 stdout '"complete": true'
 ! stderr .
 
@@ -103,8 +103,6 @@ Inspection of source files.
 Inspection must leave source bytes unchanged.
 ## Rationale
 Preserve authored work.
-## System verification plan
-Compare before and after bytes.
 ## Related specifications
 [Repeatable inspection](repeatable.requirement.spec.md#statement)
 [Term](../new-system.system.spec.md#scan)
@@ -118,8 +116,6 @@ quality_attributes: [preservation]
 Unchanged sources and environment.
 ## Statement
 Repeated inspections yield equivalent findings.
-## System verification plan
-Repeat the same inspection and compare results.
 ## Rationale
 Support meaningful comparisons.
 -- draft.md --

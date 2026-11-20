@@ -37,7 +37,7 @@ func TestGeneralRequirement(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if r.ID != "preserve" || len(r.QualityAttributes) != 2 || !strings.Contains(r.Statement, "state_after = state_before") || !strings.Contains(r.Markdown, "## Assumptions") || r.Rationale == "" || len(r.AssessmentPlans) != 1 || r.AssessmentPlans[0].Content == "" || len(Check(r)) != 0 {
+	if r.ID != "preserve" || len(r.QualityAttributes) != 2 || !strings.Contains(r.Statement, "state_after = state_before") || !strings.Contains(r.Markdown, "## Assumptions") || r.Rationale == "" || len(Check(r)) != 0 {
 		t.Fatalf("lost authored content: %+v", r)
 	}
 	if !r.References.Anchors["preserve"] || !r.References.Anchors["postcondition"] {
@@ -52,11 +52,11 @@ func TestDraftAndStructure(t *testing.T) {
 		t.Fatal(err)
 	}
 	advice := Check(r)
-	if len(advice) != 4 {
+	if len(advice) != 3 {
 		t.Fatalf("draft advice: %+v", advice)
 	}
 	for _, d := range advice {
-		if d.Severity != "advice" || (d.Rule == "requirement.verification" && d.Location.Line != 5) {
+		if d.Severity != "advice" || d.Rule == "requirement.verification" {
 			t.Fatalf("advice location: %+v", d)
 		}
 	}

@@ -112,42 +112,18 @@ func (m *domainMapper) openQuestions(owner Record, sections []*Section) {
 				return
 			}
 			m.bind(owner, path+".question", []string{item.HeadingID}, "structural_wrapper", "open-question-heading")
-			for _, sub := range item.Children {
-				if field := questionDetails[sub.Title]; field != "" {
-					if field == "tracking_reference" {
-						m.contextField(v, field, sub.Content)
-						m.sectionBindings(owner, path+"."+field+".content", sub)
-					} else {
-						m.setRich(v, field, sub.Content)
-						m.sectionBindings(owner, path+"."+field, sub)
-					}
-				} else {
-					m.extension(owner, sub)
-				}
-			}
 		}
 		plural := s.Title == "Open questions"
-		namedChildren := []*Section{}
-		for _, child := range s.Children {
-			if questionDetails[child.Title] == "" {
-				namedChildren = append(namedChildren, child)
-			}
-		}
-		if plural && len(namedChildren) > 0 {
-			for _, child := range namedChildren {
-				add(append([]string{child.HeadingID}, child.Intro...), child)
-			}
+		if plural && len(s.Children) > 0 {
 			for _, child := range s.Children {
-				if questionDetails[child.Title] != "" {
-					m.extension(owner, child)
-				}
+				add(append([]string{child.HeadingID}, child.Content...), child)
 			}
-		} else if items := m.listItems(s.Intro, false); plural && len(items) > 0 && len(s.Children) == 0 {
+		} else if items := m.listItems(s.Intro, false); plural && len(items) > 0 {
 			for _, item := range items {
 				add([]string{item}, nil)
 			}
 		} else {
-			add(s.Intro, s)
+			add(s.Content, s)
 		}
 	}
 }

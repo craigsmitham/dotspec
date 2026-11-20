@@ -87,7 +87,7 @@ which, as `explicit` or `directory`. Systems retain directory context in
 `enclosing_system`. Standalone QualityModels have neither association. These
 relationships supply no inherited requirements or use-case boundary.
 
-For explicit concept inclusion, type bindings, dependencies and coordination, use
+For explicit concept inclusion, dependencies and coordination, use
 [Develop concepts](concepts.md). Mutual application dependencies are valid;
 containment, explicit `part_of` structure and quality sub-attribute hierarchy must be acyclic.
 
@@ -101,8 +101,7 @@ dotspec model validate snapshot.json
 
 Model export additionally checks relationship target kinds and scope. A broken or
 incompatible local reference is an authoring error; an external or unacquired
-reference remains unresolved with advice. If a concept definition or supplying
-use is unknown, dependent scope checks are deferred. Unknown is not incompatible.
+reference remains unresolved with advice.
 The snapshot retains the authored references and diagnostics in either case.
 
 Consumers should read the typed fields as authoritative. The optional `assertions`
@@ -110,7 +109,7 @@ collection provides derived views of those fields. Every assertion has both
 endpoints, source-backed inputs, and a `projection_path` naming its canonical
 field, such as `UseCase.subject_system`, `TraceableElement.supports` or
 `Obligation.applies_to`. That path also distinguishes roles, such as
-`Concept.type_parameters` from `Concept.introduced_types`. Assertions are a view
+`System.required_interfaces` from `System.provided_interfaces`. Assertions are a view
 of the typed graph; their absence does not remove a typed relationship.
 
 ## Trace motivation, derivation and assumptions
@@ -174,13 +173,10 @@ authorized member requests restoration within the recovery window.
 
 **Targets:** [DocumentTrash](../document-workspace.system.spec.md#documenttrash)
 
-#### System verification plan
-
-Compare content and metadata before deletion and after restoration.
 ```
 
-The introductory prose becomes the clause's statement. Applies to, Rationale,
-Criterion and System verification plan use the same forms as in a requirement
+The introductory prose becomes the clause's statement. Applies to, Rationale
+and Criterion use the same forms as in a requirement
 specification. The optional comma-separated Quality attributes field classifies
 the clause against its declaring system; it uses the same IDs as a requirement's
 `quality_attributes` metadata. Relationship
@@ -242,13 +238,11 @@ dotspec model trace
 ```
 
 The result includes a layered Mermaid diagram, motivation links, behavioral
-participation, direct and transitive change-review candidates, verification
-guidance, and inspection findings. It derives reverse navigation from canonical
+participation, direct and transitive change-review candidates, and inspection findings. It derives reverse navigation from canonical
 fields and emits only resolved relationships. It does not write files unless
 output is redirected. A nonzero authoring exit still produces the review document.
 
-Missing motivation or verification guidance is advisory. A verification plan is
-not an execution result, and a path through the graph does not prove satisfaction.
+Missing motivation prompts review of the obligation’s justification.
 The [To-do restart requirement](../../examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md)
 links to the scenario obligation it refines, the storage assumption it relies on
 and the desired outcome it supports. See [Requirements layers](requirements-layers.md)
@@ -322,7 +316,7 @@ Components can also contain a `## Obligations` section with named clauses,
 using the existing obligation authoring conventions at the corresponding heading
 levels. Declaration alone does not supply an applicability target. Purpose,
 Responsibilities and Boundary explain a component; put normative commitments in
-requirements or clauses so they can carry rationale and verification guidance.
+requirements or clauses so they can carry rationale and satisfaction criteria.
 Contracts, Architecture and Implementation are ordinary narrative and references
 to authoritative native artifacts, not separately modeled architecture definitions.
 
@@ -351,7 +345,7 @@ dotspec model overview
 ```
 
 The command reports explicit part relationships, feature groups, directly
-applicable obligations, verification and criterion coverage, concept uses,
+applicable obligations, criteria, concept uses,
 descriptions and native references. To read the same subjects in context, open
 the [To-do system specification](../../examples/todo/specification/personal-task-list.system.spec-report.md) and follow the
 feature, component or interface that interests you.
@@ -383,4 +377,4 @@ Use Interacts with on Systems or Components for explicit boundary partners, sepa
 from Part of. Use an Illustrates bullet inside a scenario step to identify its
 underlying obligation, business rule or concept action. See [Review requirements](review.md)
 for these forms, exclusions, required/provided interfaces, assumption validation,
-question resolution metadata and the generated review and PEGS perspectives.
+open questions and the generated review and PEGS perspectives.

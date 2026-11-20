@@ -50,6 +50,12 @@ The system includes the authoring framework, the `dotspec` CLI, and the
 [structural checks](<use-cases/check-specifications.use-case.spec-report.md>), and a
 [generated requirements specification](<requirements/read-and-verify-the-generated-requirements-specification.requirement.spec-report.md>).
 
+The specification records stakeholder needs, product obligations, the conditions
+in which they apply, and the criteria for satisfaction. Teams maintain test
+procedures, validation studies, research records, and issue tracking in their
+own tools or documents. Authors can link to them beside the requirements they
+inform or assess.
+
 ### Environment
 
 Contributors edit Markdown in ordinary text editors. Git repositories provide

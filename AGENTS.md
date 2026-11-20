@@ -18,6 +18,7 @@ Breaking changes are acceptable. Do not introduce backward compatbility mechanis
 
 * Optimize *.spec.md files for human readability
 * **Write each generated page for the reader’s task.** Give an overview enough substance to explain the system, an index enough context to choose a destination, and a subject page enough detail to understand its subject. Keep each requirement’s statement, conditions, and criteria together.
+* **Describe the system in the project’s own terms.** A report section should tell readers something specific about the system. Under *Business rules*, for example, name an applicable rule and give its authored statement. Definitions of dotspec categories belong in the handbook. When the only information a section would add is where to browse a collection, put the link in the section map.
 * **Give each detail a clear home and link to it in context.** Use a short, source-faithful description when introducing a related subject. Repeat a link wherever the relationship helps the reader, and point it directly to the section that carries the full detail.
 
 <!-- axm:knowledge -->

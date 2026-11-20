@@ -69,7 +69,7 @@ Use the [documentation map](docs/README.md) to find the source for a CLI guide t
 - `model/metamodel.yaml` owns the experimental specification metamodel. Generated
   JSON Schema and the inherited range catalog are embedded by the `model` Go
   package. [Model maintenance](model/README.md) describes the pinned toolchain.
-- `internal/model` captures original bytes and ordered document content, maps
+- `internal/model` records normalized Markdown and ordered document content, maps
   named domain fields, resolves bounded references, and validates snapshots.
   Schema-backed tagged records preserve subtype fields. The
   [Markdown mapping profile](model/markdown-mapping.md) defines deterministic

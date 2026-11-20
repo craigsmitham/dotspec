@@ -32,34 +32,14 @@ func TestConceptCompositionExport(t *testing.T) {
 	if result.ExitCode != 0 || len(s.Diagnostics) != 0 {
 		t.Fatalf("unexpected findings: %d %v", result.ExitCode, s.Diagnostics)
 	}
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 	if len(Strings(s.Coverage["extension_sections"])) != 0 || String(s.Coverage, "status") != "complete_for_profile" {
 		t.Fatal(s.Coverage)
 	}
-	index := conformanceIndex(s)
 	public := designRecord(t, s, "ConceptUse", "PublicLinks")
 	internal := designRecord(t, s, "ConceptUse", "InternalLinks")
 	if public["definition"] != internal["definition"] || public["id"] == internal["id"] {
 		t.Fatal("shared definition conflated named uses")
-	}
-	for _, label := range []string{"Public", "Internal"} {
-		expiry := designRecord(t, s, "ConceptUse", label+"Expiry")
-		binding := index[Strings(expiry["bindings"])[0]]
-		if d := index[String(binding, "supplying_concept_use")]; newDesignResolver(s).name(d) != label+"Links" {
-			t.Fatal("binding lost its specific supplying use", binding)
-		}
-		if newDesignResolver(s).name(index[String(binding, "bound_type")]) != "Code" {
-			t.Fatal("binding type unresolved", binding)
-		}
-	}
-	for _, r := range s.Elements {
-		if String(r, "kind") == "SynchronizationAction" {
-			use := index[String(r, "concept_use")]
-			action := index[String(r, "action")]
-			if use == nil || action == nil || action["owner"] != use["definition"] {
-				t.Fatal("unqualified or cross-definition action", r)
-			}
-		}
 	}
 	shorthand := designRecord(t, s, "Concept", "Shorthand")
 	state := Object(shorthand["abstract_state"])
@@ -74,7 +54,7 @@ func TestConceptCompositionExport(t *testing.T) {
 		t.Fatal("derived state lost")
 	}
 	expire := designRecord(t, s, "ConceptAction", "Expire")
-	if expire["initiation"] == nil || len(Strings(expire["output_parameters"])) != 1 {
+	if expire["initiation"] == nil || expire["outputs"] == nil {
 		t.Fatal("system initiation or action signature lost")
 	}
 	for _, r := range s.Elements {
@@ -88,36 +68,11 @@ func TestConceptCompositionExport(t *testing.T) {
 	if string(data) != string(again) {
 		t.Fatal("composition export is nondeterministic")
 	}
-	t.Run("a type has one declaration role", func(t *testing.T) {
-		forged := cloneSnapshot(t, s)
-		c := designRecord(t, forged, "Concept", "Shorthand")
-		c["introduced_types"] = append(Strings(c["introduced_types"]), Strings(c["type_parameters"])[0])
-		requireFinding(t, forged, "concept.role")
-	})
-	t.Run("offline forged use rejected", func(t *testing.T) {
-		forged := cloneSnapshot(t, s)
-		binding := designRecord(t, forged, "TypeBinding", "Public resources")
-		binding["supplying_concept_use"] = designRecord(t, forged, "ConceptUse", "InternalLinks")["id"]
-		requireFinding(t, forged, "concept.projection")
-	})
-	t.Run("offline forged action rejected", func(t *testing.T) {
-		forged := cloneSnapshot(t, s)
-		for _, r := range forged.Elements {
-			if String(r, "kind") == "SynchronizationAction" {
-				r["action"] = designRecord(t, forged, "ConceptAction", "Expire")["id"]
-				break
-			}
-		}
-		requireFinding(t, forged, "concept.projection")
-	})
+
 }
 func TestCompositionAuthoringErrorsRemainFaithful(t *testing.T) {
 	cases := []struct{ name, old, replacement, code string }{
 		{"wrong definition kind", "[Shorthand](concepts/shorthand.concept.spec.md).", "[System](expiring-links.system.spec.md).", "concept.definition"},
-		{"action from another definition", "[Register](concepts/shorthand.concept.spec.md#register)", "[Allocate](concepts/expiry.concept.spec.md#allocate)", "concept.action"},
-		{"type from wrong use", "**Supplying concept use:** [PublicLinks](#publiclinks)", "**Supplying concept use:** [PublicExpiry](#publicexpiry)", "concept.bound_type"},
-		{"duplicate parameter binding", "### PublicExpiry", "##### Duplicate target binding\n\n**Parameter:** [Target](concepts/shorthand.concept.spec.md#target)\n**Primitive:** URL\n\n### PublicExpiry", "concept.parameter"},
-		{"primitive and type", "**Bound type:** [Code](concepts/shorthand.concept.spec.md#code)", "**Primitive:** URL\n**Bound type:** [Code](concepts/shorthand.concept.spec.md#code)", "concept.bound_type"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -144,7 +99,7 @@ func TestCompositionAuthoringErrorsRemainFaithful(t *testing.T) {
 			if !found {
 				t.Fatal(result.Snapshot.Diagnostics)
 			}
-			conformancePayloads(t, result.Snapshot)
+			checkSourceText(t, result.Snapshot)
 		})
 	}
 }
@@ -210,7 +165,7 @@ func TestDesignMarkdownViews(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, part := range []string{"## Concepts", "#### Operational principles", "#### Coordination", "#### Application dependencies", "PublicLinks", "InternalLinks", "Resource = PublicLinks.Code", "Resource = InternalLinks.Code", "../specs/concepts/shorthand.concept.spec.md#target", "##### Initial state\n\nNo codes are registered and no codes have been issued.\n\n##### Issued codes", "Event-based coordination"} {
+	for _, part := range []string{"## Concepts", "#### Operational principles", "#### Application dependencies", "PublicLinks", "InternalLinks", "#### Synchronization rules", "##### Initial state\n\nNo codes are registered and no codes have been issued.\n\n##### Issued codes", "Event-based coordination"} {
 		if !strings.Contains(output, part) {
 			t.Errorf("missing %q", part)
 		}
@@ -276,12 +231,11 @@ S.
 type: concept-spec
 ---
 # Duplicate
-## Type parameters
-### Item
-Opaque identity.
-## Introduced types
-### Item
-A conflicting local identity.
+## Actions
+### Register
+Record a link.
+### Register
+Record a different link.
 `)
 		result := conformanceExport(t, root)
 		if result.ExitCode != 1 {

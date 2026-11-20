@@ -69,10 +69,6 @@ continue inspecting the remaining discovered specifications.
 
 One malformed specification must not hide problems in other files.
 
-## System verification plan
-
-Check two files with distinct structural errors and verify that both appear
-in the report.
 ```
 
 Only `type: requirement-spec` and one nonempty document H1 are required.
@@ -82,9 +78,7 @@ null, non-string element, invalid ID, or duplicate label is a structural error.
 Unknown metadata fields are rejected.
 
 `Applies to`, `Statement`, `Criterion` and `Rationale` are optional, single H2
-sections. Use a [purpose-qualified plan heading](../../handbook/verification-and-validation.md#assessment-purposes)
-for each assessment plan. Plan headings can repeat. Missing statement, applicability,
-rationale or system verification guidance produces advice. Deeper headings belong to their enclosing sections. Contract notation,
+sections. Missing statement, applicability or rationale produces advice. Deeper headings belong to their enclosing sections. Contract notation,
 tables, additional sections, links, and other authored Markdown are preserved.
 No sentence pattern or particular verification technique is required. Check
 commands validate relative file links using the shared [reference rules](../inspection.md#references).
@@ -110,8 +104,7 @@ At least 90%.
 The measure carries units, aggregation, and observation window as needed; the
 target carries the comparison and bound. Operating context belongs in
 `Applies to`, which can use `Conditions`, `Workload`, `Population`, and
-`Exclusions` subsections. Describe the measurement procedure and sampling in the
-verification plan. When a criterion records a `Measure`,
+`Exclusions` subsections. When a criterion records a `Measure`,
 `requirement.measurement-basis` advice appears if the criterion has neither
 introductory prose nor a `Target`, or if `Applies to` has neither introductory
 prose nor a `Conditions` subsection. If a target is unknown, explicitly record
@@ -139,8 +132,7 @@ The show envelope uses `requirement`; the inventory uses `groups` containing
 `requirements`, with `attribute` when one is selected. Both include
 `schema_version: 1`. Each requirement exposes its
 `statement`, `applicability`, `rationale`, `quality_attributes`,
-`classification`, `markdown`, source identity, and associated system; `criterion`
-and `assessment_plans` appear when authored. Each plan includes its purpose and full Markdown body.
+`classification`, `markdown`, source identity, and associated system. The optional `criterion` contains the authored satisfaction rule.
 
 Requirement JSON lists the authored attribute IDs. The snapshot separately preserves the authored label occurrences. The separate `classification`
 object exposes `system_path` for the system supplying attribute declarations,

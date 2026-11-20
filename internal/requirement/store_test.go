@@ -48,7 +48,7 @@ func TestInventoryClassifiesAgainstLocalModel(t *testing.T) {
 		t.Fatalf("inventory: %+v", filtered)
 	}
 	q := filtered[0].Requirements[0]
-	if q.Statement != "Unchanged sources." || len(q.AssessmentPlans) != 1 || q.AssessmentPlans[0].Content != "Compare snapshots." {
+	if q.Statement != "Unchanged sources." {
 		t.Fatalf("classified requirement: %+v", q)
 	}
 	r, err := Show(dir, "work")

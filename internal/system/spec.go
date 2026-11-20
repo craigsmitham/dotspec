@@ -39,8 +39,7 @@ Describe the system's boundary and what it includes.
 `
 
 type System struct {
-	AssessmentPlans []specfile.AssessmentPlan `json:"assessment_plans,omitempty"`
-	Description     string                    `json:"description,omitempty"`
+	Description string `json:"description,omitempty"`
 
 	OutOfScope               string                      `json:"out_of_scope,omitempty"`
 	InteractsWith            string                      `json:"interacts_with,omitempty"`
@@ -106,7 +105,7 @@ func Parse(data []byte) (*System, error) {
 	if err != nil {
 		return nil, err
 	}
-	spec := &System{AssessmentPlans: doc.AssessmentPlans, Name: doc.Name, ID: meta.ID, GlossarySources: meta.GlossarySources}
+	spec := &System{Name: doc.Name, ID: meta.ID, GlossarySources: meta.GlossarySources}
 	fields := map[string]*string{"Description": &spec.Description, "Out of scope": &spec.OutOfScope, "Interacts with": &spec.InteractsWith, "Required interfaces": &spec.RequiredInterfaces, "Provided interfaces": &spec.ProvidedInterfaces, "Project context": &spec.ProjectContext, "Components": &spec.Components, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Stakeholders": &spec.Stakeholders, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
 	locations := make(map[string]diagnostic.Location)
 	var ids specfile.Identifiers

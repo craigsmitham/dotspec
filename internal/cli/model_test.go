@@ -99,7 +99,7 @@ func TestConceptDesignCommands(t *testing.T) {
 	if code != 0 || errOut != "" {
 		t.Fatalf("docs %d: %s", code, errOut)
 	}
-	for _, part := range []string{"## Concepts", "#### Coordination", "#### Application dependencies", "Resource = PublicLinks.Code", "../specs/concepts/shorthand.concept.spec.md"} {
+	for _, part := range []string{"## Concepts", "#### Synchronization rules", "#### Application dependencies", "../specs/concepts/shorthand.concept.spec.md"} {
 		if !strings.Contains(output, part) {
 			t.Fatalf("missing %q", part)
 		}
@@ -113,12 +113,12 @@ func TestConceptDesignCommands(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	data = []byte(strings.Replace(string(data), "[Register](concepts/shorthand.concept.spec.md#register)", "[Expire](concepts/expiry.concept.spec.md#expire)", 1))
+	data = []byte(strings.Replace(string(data), "[Shorthand](concepts/shorthand.concept.spec.md).", "[System](expiring-links.system.spec.md).", 1))
 	if err = os.WriteFile(path, data, 0644); err != nil {
 		t.Fatal(err)
 	}
 	code, output, errOut = invoke("model", "docs")
-	if code != 1 || errOut != "" || !strings.Contains(output, "concept.action") || !strings.Contains(output, "#### Synchronization rules") {
+	if code != 1 || errOut != "" || !strings.Contains(output, "concept.definition") || !strings.Contains(output, "#### Synchronization rules") {
 		t.Fatalf("source findings not retained: %d %s %s", code, output, errOut)
 	}
 	code, output, errOut = invoke("model", "export")
@@ -176,7 +176,7 @@ func TestSystemOverviewCommand(t *testing.T) {
 func TestModelReviewAndPEGSCommandsKeepAdvisoryDraftsValid(t *testing.T) {
 	root := testproject.Open(t, "requirements-review")
 	t.Chdir(root)
-	for _, tc := range []struct{ command, want string }{{"review", "No system verification guidance recorded here"}, {"pegs", "## Project"}} {
+	for _, tc := range []struct{ command, want string }{{"review", "## Obligation review"}, {"pegs", "## Project"}} {
 		code, output, errOut := invoke("model", tc.command, "--relative-to", "docs")
 		if code != 0 || errOut != "" || !strings.Contains(output, tc.want) || !strings.Contains(output, "../specs/document-workspace.system.spec.md") {
 			t.Fatalf("%s: %d %s %s", tc.command, code, errOut, output)

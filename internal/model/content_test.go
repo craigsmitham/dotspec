@@ -2,8 +2,6 @@ package model
 
 import (
 	"bytes"
-	"crypto/sha256"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -13,13 +11,8 @@ import (
 func TestContentPreservesOriginalAndOrderedTree(t *testing.T) {
 	source := "\ufeff---\r\n# metadata comment\r\ntype: use-case-spec\r\nid: sample\r\nlabels: [one, two]\r\nnested:\r\n  key: \"a # quoted\" # tail\r\n  enabled: true\r\n---\r\n# A *title*\r\n\r\nPreamble.\r\n\r\n## Scenario\r\n\r\n1. [x] **ID:** first\r\n   **Stage:** explain\r\n   - nested [link](other.md#part)\r\n\r\n### Arbitrary child\r\n\r\n| Head | Other |\r\n| :--- | ---: |\r\n| ~~strike~~ | ![picture](x.png) |\r\n\r\n> ## Quoted, not a section\r\n> next\r\n\r\n```mermaid custom\r\nflowchart LR\r\nA-->B\r\n## Not a section\r\n```\r\n\r\n<!-- author comment -->\r\n\r\n[shown][r] <https://example.test> [^note]\r\n\r\n[r]: other.md \"A title\"\r\n\r\n[^note]: Footnote text.\r\n\r\n## Empty\r\n"
 	p := ParseContent("specs/a.use-case.spec.md", []byte(source))
-	payload := Object(p.Source["payload"])
-	decoded, err := base64.StdEncoding.DecodeString(String(payload, "bytes_base64"))
-	if err != nil || !bytes.Equal(decoded, []byte(source)) {
-		t.Fatalf("payload mismatch: %v", err)
-	}
-	if String(payload, "sha256") != fmt.Sprintf("%x", sha256.Sum256([]byte(source))) {
-		t.Fatal("digest mismatch")
+	if String(p.Source, "markdown") != strings.ReplaceAll(strings.TrimPrefix(source, "\ufeff"), "\r\n", "\n") {
+		t.Fatal("normalized text differs")
 	}
 	if p.Title != "A title" {
 		t.Fatalf("title %q", p.Title)
@@ -43,7 +36,7 @@ func TestContentPreservesOriginalAndOrderedTree(t *testing.T) {
 	for _, n := range p.Nodes {
 		if String(n, "node_kind") == "fenced_code" {
 			foundFence = true
-			if String(n, "code_info") != "mermaid custom" || !strings.HasSuffix(p.Raw(String(n, "id")), "```\r\n") {
+			if String(n, "code_info") != "mermaid custom" || !strings.HasSuffix(p.Raw(String(n, "id")), "```\n") {
 				t.Errorf("fence metadata/span: %#v %q", n, p.Raw(String(n, "id")))
 			}
 		}
@@ -55,18 +48,6 @@ func TestContentPreservesOriginalAndOrderedTree(t *testing.T) {
 		t.Errorf("references %d: %#v", len(p.References), p.References)
 	}
 	checkContentTree(t, p)
-	// Every normalized byte boundary maps back to exactly its original bytes;
-	// the parser offset map records the BOM and each CRLF replacement explicitly.
-	segments, ok := p.Document["normalization"].([]Record)
-	if !ok || len(segments) < 2 {
-		t.Fatal("normalization map missing")
-	}
-	for _, s := range segments {
-		a, b := Number(s["original_start"]), Number(s["original_end"])
-		if String(s, "transformation") == "CRLF to LF" && string(p.Data[a:b]) != "\r\n" {
-			t.Fatal("bad CRLF map")
-		}
-	}
 	first, _ := json.Marshal(p)
 	second, _ := json.Marshal(ParseContent("specs/a.use-case.spec.md", []byte(source)))
 	if !bytes.Equal(first, second) {
@@ -128,10 +109,6 @@ func TestContentMissingDelimiterAndInvalidUTF8(t *testing.T) {
 		p := ParseContent("bad.md", source)
 		if len(p.Diagnostics) == 0 {
 			t.Fatal("missing diagnostic")
-		}
-		payload, _ := base64.StdEncoding.DecodeString(String(Object(p.Source["payload"]), "bytes_base64"))
-		if !bytes.Equal(payload, source) {
-			t.Fatal("original bytes changed")
 		}
 		checkContentTree(t, p)
 	}
@@ -211,10 +188,7 @@ func FuzzParseContent(f *testing.F) {
 		if err != nil || len(encoded) == 0 {
 			t.Fatalf("source not JSON serializable: %v", err)
 		}
-		decoded, err := base64.StdEncoding.DecodeString(String(Object(p.Source["payload"]), "bytes_base64"))
-		if err != nil || !bytes.Equal(decoded, data) {
-			t.Fatal("byte retention failed")
-		}
+
 	})
 }
 
@@ -235,8 +209,6 @@ func TestContentYAMLScalarLexicalSpans(t *testing.T) {
 				wantRaw, wantComment := test.raw, test.comment
 				if crlf {
 					source = "\ufeff" + strings.ReplaceAll(source, "\n", "\r\n")
-					wantRaw = strings.ReplaceAll(wantRaw, "\n", "\r\n")
-					wantComment = strings.ReplaceAll(wantComment, "\n", "\r\n")
 				}
 				p := ParseContent("scalar.md", []byte(source))
 				if len(p.Diagnostics) != 0 {

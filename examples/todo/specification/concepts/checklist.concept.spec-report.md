@@ -28,14 +28,6 @@ A new list has no entries.
 
 - Every existing entry belongs to exactly one of the two views.
 
-## Introduced types
-
-### Entry
-
-<!-- dotspec-doc {"type":"concept-type-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#entry"} -->
-
-The identity of one recorded commitment.
-
 ## Actions
 
 ### Add
@@ -52,17 +44,7 @@ Change an existing entry's title.
 
 #### Inputs
 
-##### Selected entry
-
-<!-- dotspec-doc {"type":"action-parameter-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#selected-entry"} -->
-
-**Type:** [Entry](<#entry>)
-
-##### New title
-
-<!-- dotspec-doc {"type":"action-parameter-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#new-title"} -->
-
-**Primitive:** string
+The selected entry and its new title.
 
 #### Guards
 

@@ -63,17 +63,5 @@ func CheckWithPreset(job *Job, preset string) []diagnostic.Diagnostic {
 	if preset == "odi" && len(job.Steps) == 0 {
 		add("job.map", "Steps", "Consider an optional functional job map; Define, Locate, Prepare, Confirm, Execute, Monitor, Modify and Conclude are elicitation prompts, not required schema slots.", sectionLocation("Steps"))
 	}
-	if preset == "progress" {
-		if len(job.Cases) == 0 {
-			add("job.progress-case", "Progress cases", "Consider a progress case recording circumstances, a struggling moment, alternatives and trade-offs; distinguish observation from hypothesis in Evidence.", sectionLocation("Progress cases"))
-		}
-		for _, c := range job.Cases {
-			for _, field := range []struct{ name, value string }{{"Circumstances", c.Circumstances}, {"Struggling moment", c.StrugglingMoment}, {"Participants", c.Participants}, {"Alternatives considered", c.AlternativesConsidered}, {"Trade-offs and selection criteria", c.TradeoffsAndSelectionCriteria}} {
-				if strings.TrimSpace(field.value) == "" {
-					add("job.progress-context", c.Name+" / "+field.name, "Consider recording "+strings.ToLower(field.name)+" for this case.", sectionLocation("Progress cases"))
-				}
-			}
-		}
-	}
 	return suggestions
 }

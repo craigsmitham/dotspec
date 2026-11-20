@@ -18,133 +18,27 @@ follow source and contract links.
 
 For a project with a generated spec, `dotspec spec build` writes the review index
 with the other pages. The [To-do review index](../../examples/todo/specification/requirements-review.report.md)
-links to the restart verification plan and the participant validation exercise.
-Read the methods in context and compare what each can demonstrate.
-[Verification and validation](verification-and-validation.md).
+links to unresolved questions and inspection findings.
 
 `dotspec model pegs --project todo` arranges the example into Project,
 Environment, Goals and System reading perspectives. Business, user and software
 requirements remain the model's concern subsets. PEGS neither replaces those
 subsets nor introduces a required authoring order.
 
-## Plan verification and validation explicitly
-
-Choose a purpose-qualified plan heading on the traceable element where readers
-will look for the plan. Each heading opens an independent plan. **Subject** identifies
-what to assess and **Basis** identifies the criteria, needs, or obligations to use.
-Both accept prose and links. See the [assessment purposes](verification-and-validation.md#assessment-purposes).
-
-```markdown
-## System validation plan
-
-### Subject
-
-The proposed recovery workflow in the prototype, identified by revision.
-
-### Basis
-
-[Recover lost work](jobs/recover.job.spec.md).
-
-### Participants
-
-Representative workspace members and the recovery-policy stakeholder.
-
-### Method
-
-Observe participants attempting recovery, then discuss unmet needs.
-
-### Success criteria
-
-Participants recover the intended document and resume their interrupted work.
-
-### Conditions
-
-Representative mobile and desktop sessions, including reconnection.
-
-### Cases
-
-#### Resume interrupted work
-
-Ask a participant to recover a mistakenly deleted document.
-
-##### Expected result
-
-The participant identifies the intended document and resumes the interrupted task.
-
-### Evidence to retain
-
-Retain observations, revision, conditions and obstacles; record the assessment and
-stakeholder acceptance decision separately.
-```
-
-For requirements validation, identify the proposed requirement as Subject and the
-needs or parent intent as Basis. For system validation, identify the prototype or
-realization and its intended use. A method or `supports` link does not establish
-that either assessment has happened. The examples intentionally record plans only.
-
-Plan details are optional and may remain in prose. The review prompts when Subject,
-Basis, Participants, Method, Success criteria, Conditions or Evidence to retain are
-not separately identified; the narrative may already supply them. Do not create
-new obligations merely to describe assessment activities.
-
-A System verification plan's Method records how to collect observations, including any
-measurement procedure and sampling. Define or reference the satisfaction rule
-under Criterion, using narrative or its Measure and Target subsections. Plan
-Success criteria refer to that rule rather than define competing bounds. Put
-required operating context under Applies to; plan Conditions describe the
-assessment setup and how it represents that context.
-
-Checks offer advisory prompts when a Criterion records an explicit Measure without
-a separately identified target or operating context, even when System verification plan
-is present. They do not interpret arbitrary prose or certify adequacy. A System validation plan alone does
-not satisfy the need for system-verification guidance. See
-[Develop requirements](requirements.md) for the authoring workflow and the
-[restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md)
-for a bound, its operating conditions and an executable assessment.
-
 ## Make questions actionable
 
-A short `## Open questions` list remains valid. Use named questions when the
-resolution needs an owner, a deadline or evidence:
+Record the decision that remains open and the consequence for the requirement.
+A question can link to its issue, research, or decision record.
 
 ```markdown
 ## Open questions
 
-### Clock tolerance
-
-What time offset can the recovery boundary tolerate?
-
-#### Raised by
-
-Retention reviewer.
-
-#### Raised on
-
-2026-11-11.
-
-#### Resolve by
-
-Before acceptance of retention-boundary tests.
-
-#### Importance
-
-Serious: affects requests near the deadline.
-
-#### Evidence needed
-
-Offset measurements and stakeholder agreement on the boundary policy.
-
-#### Tracking reference
-
-[Boundary decision](../decisions/retention-boundary.md).
+- What time offset can the recovery boundary tolerate? The answer determines
+  which near-deadline requests qualify. See the [clock study](../decisions/clock.md).
 ```
 
-All metadata is optional. Resolve by accepts a date, milestone or condition;
-Importance preserves the author's wording, including Meyer's show-stopper,
-serious or desirable categories if useful. The review inventory identifies
-missing resolution metadata without inventing questions from every omitted field.
-Tracking reference is optional and points to the issue or decision that owns
-resolution workflow. dotspec does not copy that workflow into a question status.
+Use the [four review questions](verification-and-validation.md#assessment-purposes)
+to distinguish wording, stakeholder intent, conformance, and intended use.
 
 ## Separate premises from operating conditions
 
@@ -175,25 +69,12 @@ The platform clock stays within the agreed offset tolerance.
 
 Retention calculations in the managed production environment.
 
-#### Assumption validation plan
-
-##### Method
-
-Compare readings with an independent reference before deployment and in operation.
-
-##### Success criteria
-
-The observed offset remains within the agreed tolerance.
 ```
 
-Basis can cite existing Evidence statements or native research artifacts; use
+Basis can cite a study or link to supporting evidence. Use
 Derived from for a typed derivation and Relies on to identify consumers of the
 assumption. Applicability here is prose describing conditions, not a duplicate
-requirement `applies_to` relationship. Assumption validation plans assess both empirical support under the stated conditions
-and whether reliance is justified for intended use. Observations support bounded
-claims, not guarantees that a premise always holds. Plans describe proposed checks,
-not proof that a premise holds. The review prompts for missing basis,
-applicability and validation guidance.
+requirement `applies_to` relationship. Review the evidence for the premise and whether reliance is justified.
 
 ## Delimit the boundary and its interfaces
 
@@ -239,7 +120,7 @@ entries are independently addressable Interface elements, with heading
 anchors and optional introductory `**ID:**` values. Each belongs to one required
 or provided list under one System or Component. Entries carry descriptions,
 optional counterpart context and contract links, plus Notes, Open questions,
-assessment plans and trace sections. An Interface is not a specification: Evidence,
+and trace sections. An Interface is not a specification: Evidence,
 Authority and Related specifications sections under it are retained as unmodelled
 extension sections.
 
@@ -328,7 +209,7 @@ revision, qualified reviewers, scope, qualifications and disagreements. A generi
 These additions adapt Bertrand Meyer's
 [Handbook of Requirements and Business Analysis](https://doi.org/10.1007/978-3-031-06739-6):
 explicit exclusions (§4.9), supplementary explanation (§5.4), glossary aliases and
-preferred names (§5.7.5), TBD resolution information (§5.8), and goal, scenario and
+preferred names (§5.7.5), treatment of open questions (§5.8), and goal, scenario and
 environment completeness reviews (Chapter 11). Goal completeness concerns the
 support for known goals; it does not establish that every possible goal has been
 discovered. The operation-by-observable-property table adapts §11.6; dotspec's

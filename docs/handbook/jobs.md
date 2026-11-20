@@ -13,7 +13,6 @@ that their theories or uses of the word “outcome” are identical.
 | Perspective | Focus | Authoring support |
 | --- | --- | --- |
 | ODI | Functional accomplishment and measurable success criteria | `job init --preset odi`; optional steps and measurable outcome prompts |
-| Progress and switching | Circumstances, motivation, choices and impediments | `job init --preset progress`; progress cases, forces, timeline and evidence |
 | Job story | Concise situation, motivation and intended progress | `job init --preset job-story`; the existing Job fields |
 
 Use `--preset` with `job check` to request the same guidance. The default
@@ -40,7 +39,6 @@ provide a concise presentation using fields already present on Job.
 - **Job:** what someone seeks to accomplish or change in circumstances, independently of the chosen solution.
 - **JobStep:** a meaningful accomplishment within an optional functional map.
 - **DesiredOutcome:** a desired result or criterion by which the person judges success.
-- **ProgressCase:** an observed or hypothesized case illustrating progress, decisions and impediments.
 - **Requirement:** a commitment about the specified subject.
 - **Evidence:** authored observations, hypotheses, sources, research basis and limitations.
 
@@ -79,22 +77,12 @@ step where the person recalls outstanding work.
 shows the authored map and outcome declarations; it does not resolve shared
 applicability. Use `model needs` for the relationship view across documents.
 
-## Describe a progress case
+## Cite the basis for a need
 
-Under `## Progress cases`, each H3 names a case. Optional H4 sections include:
-
-- `Participants`: distinguish performer, buyer and decision maker when relevant.
-- `Circumstances` and `Struggling moment`: the case-specific context and trigger.
-- `Current approach` and `Desired progress`: the present situation and sought change.
-- `Alternatives considered`: include continuing the current approach or doing nothing where relevant.
-- `Trade-offs and selection criteria`: what matters in choosing or rejecting an approach.
-- `Forces`: a list of forces; a Push, Pull, Anxiety or Habit label records the kind.
-- `Timeline`: the decision/change narrative, distinct from a functional job map.
-- `Evidence`: source statements, `Research basis`, and `Limitations`.
-
-These sections are source-backed model fields, not automatically inferred facts.
-A case can be hypothetical, dates can be unknown, and fields can remain empty.
-Keep emotional and social motivations visible without forcing metric wording.
+Use Evidence to summarize the basis for a stated need and link to its source.
+Say whether it came from an observation or remains a hypothesis. Keep interview
+timelines, alternatives, switching forces, and study limitations in the research
+record, where readers can evaluate them in context.
 
 ## Connect needs to capabilities and specifications
 
@@ -128,7 +116,7 @@ A dependency is not a structural `part_of` relationship, and a provider link is
 not verified implementation. Capabilities can span systems. Human and procedural
 providers do not need to be falsely represented as software components.
 
-Job, JobStep, DesiredOutcome and ProgressCase remain in the core
+Job, JobStep and DesiredOutcome remain in the core
 `user-requirements` subset. Capability participates in the core
 `business-requirements` and `software-requirements` subsets; these memberships
 organize model definitions, not the strategic importance of each capability.

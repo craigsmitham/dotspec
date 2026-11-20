@@ -83,10 +83,8 @@ Create a task to remember work. Complete it when the work is finished.
 If more work is needed, reopen the same task and complete it again.
 ```
 
-The four basic section names are case-sensitive H2 headings. Use
-`Operational principles` once, with optional named subsections for individual stories. Optional
-`Type parameters` and `Introduced types` sections declare named types. Their order
-is flexible, and each may appear at most once. Missing or empty sections produce
+The four basic section names are case-sensitive H2 headings. Each may appear once, in any order.
+Use named subsections under `Operational principles` for individual stories. Missing or empty sections produce
 advice, so unfinished concepts remain readable. Additional sections and nested
 headings remain authored Markdown. A nested heading named `State`, for example,
 belongs to its containing section and does not replace the concept's H2 `State`.
@@ -108,15 +106,13 @@ does not designate an authoritative definition or associate a test result.
 
 Use cases can reference concept actions. Product-level coordination belongs in
 explicit `Concept uses` and `Synchronizations` sections of a system specification.
-A named use references a reusable concept definition and can bind its type
-parameters to primitives or types introduced by another named use. Synchronization
-actions identify both the use and the action. `Dependencies` on a use describe its
-application-specific role; they do not mean that concepts call one another.
+A named use links to its concept definition. List the other uses it needs under
+`Dependencies`. Describe when the uses coordinate and what happens in a named
+synchronization rule. Link to the relevant actions where that helps the reader.
 
 Model export resolves these declarations within the acquired reference scope and
 reports mistyped or incorrectly scoped references. Unresolved drafts retain their
-source. No field or link implies atomicity, execution, full type-expression checking,
-or verified behavior. See [Develop concepts](../../handbook/concepts.md) for the
+source. See [Develop concepts](../../handbook/concepts.md) for the
 complete Markdown conventions. The [Checklist section](../../../examples/todo/specification/concepts/checklist.concept.spec-report.md)
 includes the effects table and a link to the concept's named use. To inspect
 all concept definitions and their composition together, run the following from the

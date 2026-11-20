@@ -16,6 +16,6 @@ The task service must commit a change to the local database before acknowledging
 
 A successful response tells the person that it is safe to close the task list.
 
-## System verification plan
+## Evidence
 
-Use the assertions in the [restart test](../../../tests/acceptance.py) to check that an acknowledged change survives a fresh process.
+The [restart test](../../../tests/acceptance.py) exercises persistence of acknowledged changes.

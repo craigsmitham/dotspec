@@ -1,10 +1,6 @@
 package model
 
 import (
-	"bytes"
-	"crypto/sha256"
-	"encoding/base64"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -58,30 +54,17 @@ func (v *graphValidator) checkValue(object Record, class, path string) {
 		}
 	}
 	switch class {
-	case "SourcePayload":
-		data, err := base64.StdEncoding.Strict().DecodeString(String(object, "bytes_base64"))
-		if err != nil {
-			v.add("payload.encoding", path+"/bytes_base64", "payload is not valid base64")
-			return
-		}
-		digest := sha256.Sum256(data)
-		if hex.EncodeToString(digest[:]) != String(object, "sha256") {
-			v.add("payload.digest", path+"/sha256", "digest does not match the original bytes")
-		}
-		length, valid := natural(object["byte_length"])
-		if !valid || length != len(data) {
-			v.add("payload.length", path+"/byte_length", "byte count does not match the original bytes")
-		}
 	case "SourceDocument":
-		if String(object, "read_status") != "read" && object["payload"] != nil {
-			v.add("payload.read-state", path+"/payload", "a failed or unattempted read cannot claim an acquired payload")
+		_, hasText := object["markdown"]
+		if hasText != (String(object, "read_status") == "read" && String(object, "media_type") == "text/markdown") {
+			v.add("source.markdown", path+"/markdown", "a successfully read Markdown source requires its text")
 		}
 	case "ByteSpan":
 		start, validStart := natural(object["start"])
 		end, validEnd := natural(object["end"])
 		source := v.records[String(object, "source")].value
-		length, validLength := natural(Object(source["payload"])["byte_length"])
-		if !validStart || !validEnd || !validLength || start > end || end > length {
+		markdown, hasText := source["markdown"].(string)
+		if !validStart || !validEnd || !hasText || start > end || end > len(markdown) {
 			v.add("source.span", path, "span must identify an ordered interval within acquired source bytes")
 		}
 	case "RichContent":
@@ -292,7 +275,7 @@ func (v *graphValidator) checkContent() {
 			parents[id] = String(node, "id")
 			childSpan := Object(child["span"])
 			if validationNumber(childSpan["start"]) > end {
-				v.add("content.gap", location.path+"/children", "child content omits original source bytes; retain the gap as syntax, trivia or opaque content")
+				v.add("content.gap", location.path+"/children", "child content omits Markdown text; retain the gap as syntax, trivia or opaque content")
 			}
 			if String(child, "document") != String(node, "document") || validationNumber(childSpan["start"]) < end || validationNumber(childSpan["end"]) > validationNumber(span["end"]) {
 				v.add("content.order", location.path+"/children", "children must be ordered, non-overlapping and contained in their parent's document/span")
@@ -321,8 +304,8 @@ func (v *graphValidator) checkContent() {
 		sources[sourceID] = id
 		rootRecord := v.records[root].value
 		rootSpan := Object(rootRecord["span"])
-		if String(rootRecord, "node_kind") != "document" || validationNumber(rootSpan["start"]) != 0 || validationNumber(rootSpan["end"]) != validationNumber(Object(source["payload"])["byte_length"]) {
-			v.add("content.root-span", location.path+"/root", "document root must cover every original source byte")
+		if String(rootRecord, "node_kind") != "document" || validationNumber(rootSpan["start"]) != 0 || validationNumber(rootSpan["end"]) != len(String(source, "markdown")) {
+			v.add("content.root-span", location.path+"/root", "document root must cover the normalized Markdown text")
 		}
 		for _, front := range Strings(document["frontmatter"]) {
 			n := v.records[front].value
@@ -354,7 +337,6 @@ func (v *graphValidator) checkContent() {
 			}
 		}
 		v.checkDocumentCoverage(document, location.path, reachable)
-		v.checkNormalization(document, location.path, source)
 	}
 	v.checkSnapshotCoverage()
 }
@@ -496,59 +478,6 @@ func (v *graphValidator) checkSnapshotCoverage() {
 			}
 		}
 	}
-}
-
-func (v *graphValidator) checkNormalization(document Record, path string, source Record) {
-	segments := records(document["normalization"])
-	payload := Object(source["payload"])
-	data, inline := sourceBytes(source)
-	if len(segments) == 0 {
-		if inline && strings.HasPrefix(String(document, "parser"), "goldmark/") && (bytes.HasPrefix(data, []byte{0xef, 0xbb, 0xbf}) || bytes.Contains(data, []byte("\r\n"))) {
-			v.add("source.offset-map", path+"/normalization", "normalized parser input requires its original-byte offset map")
-		}
-		return
-	}
-	originalEnd, normalizedEnd := 0, 0
-	for _, segment := range segments {
-		os, oe := validationNumber(segment["original_start"]), validationNumber(segment["original_end"])
-		ns, ne := validationNumber(segment["normalized_start"]), validationNumber(segment["normalized_end"])
-		if os != originalEnd || ns != normalizedEnd || oe < os || ne < ns || oe > validationNumber(payload["byte_length"]) {
-			v.add("source.offset-map", path+"/normalization", "normalization segments must form monotone contiguous in-bounds intervals")
-		}
-		transformation := String(segment, "transformation")
-		if transformation == "" {
-			v.add("source.offset-rule", path+"/normalization", "normalization must identify its transformation")
-		}
-		if os >= 0 && oe >= os && oe <= len(data) && inline {
-			switch transformation {
-			case "identity":
-				if oe-os != ne-ns {
-					v.add("source.offset-rule", path+"/normalization", "identity mapping must preserve byte counts")
-				}
-			case "BOM removal":
-				if os != 0 || ne != ns || !bytes.Equal(data[os:oe], []byte{0xef, 0xbb, 0xbf}) {
-					v.add("source.offset-rule", path+"/normalization", "BOM removal must identify the original leading UTF-8 BOM")
-				}
-			case "CRLF to LF":
-				if ne-ns != 1 || !bytes.Equal(data[os:oe], []byte("\r\n")) {
-					v.add("source.offset-rule", path+"/normalization", "CRLF normalization must identify exactly the original CRLF bytes")
-				}
-			}
-		}
-		originalEnd, normalizedEnd = oe, ne
-	}
-	if originalEnd != validationNumber(payload["byte_length"]) {
-		v.add("source.offset-map", path+"/normalization", "normalization map must cover all original bytes")
-	}
-}
-
-func sourceBytes(source Record) ([]byte, bool) {
-	payload := Object(source["payload"])
-	if payload == nil {
-		return nil, false
-	}
-	data, err := base64.StdEncoding.Strict().DecodeString(String(payload, "bytes_base64"))
-	return data, err == nil
 }
 
 func (v *graphValidator) sortedRecords() []locatedRecord {

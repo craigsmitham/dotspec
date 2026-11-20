@@ -94,22 +94,20 @@ ordinary citations and semantic associations also retain distinct meanings.
 
 ## Generate views from the same relationships
 
-`dotspec model trace` produces an instance-level diagram and four reader views:
+`dotspec model trace` produces an instance-level diagram and three reader views:
 
 - Motivation and basis: follow explicit justification and applicability.
 - Behavior: inspect use cases, participating concept uses and related obligations.
 - Change review: inspect direct and transitive reverse links with their meanings.
-- System verification planning: find authored plans for assessing realizations against obligations.
 
 These views are bounded by acquired sources and explicit links. Transitive
 reachability identifies review candidates; it does not prove actual impact.
-Missing justification or verification guidance is advisory so unfinished drafts
+Missing justification is advisory so unfinished drafts
 remain usable. Broken or incompatible local references and refinement cycles are
 errors. Unacquired and external references retain their occurrences with advice.
 
-Implementation realization, verification definitions and revision-bound execution
-evidence need separate relationships when introduced. Current verification and
-Evidence prose must not be promoted into satisfaction claims or execution results.
+Link to tests and evidence at their source. Following a relationship identifies a
+commitment affected by a change. Assessing whether the product meets it requires evidence.
 
 The [To-do example](../../examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md) demonstrates
 the relationships without requiring a duplicate requirement for every scenario step.
@@ -139,7 +137,7 @@ This is dotspec's synthesis, not a schema prescribed by any one source.
 ## Common obligation capabilities
 
 Requirement specifications and embedded clauses share `Obligation`: statement,
-quality attributes, applicability, rationale, refinement, verification plan and
+quality attributes, applicability, rationale, refinement and
 optional criterion. Their authoring location does not limit their quality
 classification or assessment detail. Functional and quality requirements share one specification type. Either can reference a quality attribute.
 
@@ -157,5 +155,4 @@ validation reviews their faithfulness to needs and intended use. System verifica
 assesses a realization against obligations; system validation assesses its intended-use
 fitness. These distinctions apply across all concern layers, and methods can support
 more than one purpose. See [Verification and validation](verification-and-validation.md)
-for the governing vocabulary and [Review requirements](review.md) for
-plan authoring. Plan presence, observations, assessments and acceptance are distinct.
+for the governing vocabulary and [Review requirements](review.md) for review prompts.

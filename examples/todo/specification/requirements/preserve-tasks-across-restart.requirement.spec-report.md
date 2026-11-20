@@ -32,21 +32,6 @@ Count missing, unexpected or changed entries compared with the last acknowledged
 
 Zero discrepancies across the two views.
 
-## System verification plan
-
-### Subject
-
-The running [task list service](<../../app/main.go>) before and after restart on the same database.
-
-### Basis
-
-The [restart statement](<#statement>) and its [criterion](<#criterion>).
-
-### Method
-
-The [restart acceptance test](<../../tests/acceptance.py>) submits the public forms,
-stops the process, starts a new process on the same file and compares both views.
-
 ## Refines
 
 [Keep recorded work available](<../use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>).
@@ -59,21 +44,10 @@ stops the process, starts a new process on the same file and compares both views
 
 [Less reconstruction](<../jobs/resume-interrupted-work.job.spec-report.md#less-reconstruction>).
 
-## Requirements verification plan
+## Evidence
 
-### Subject
-
-The [restart statement](<#statement>).
-
-### Basis
-
-Clarity, consistency with [same local storage](<../personal-task-list.system.spec-report.md#same-local-storage>),
-and whether each promised result can be checked.
-
-### Method
-
-Ask a reviewer to identify when preservation starts, which entries must survive,
-and what would count as a discrepancy. Record any ambiguity in the wording.
+The [restart acceptance test](<../../tests/acceptance.py>) compares the acknowledged list
+with the entries served after restarting on the same database.
 
 ## Rationale
 

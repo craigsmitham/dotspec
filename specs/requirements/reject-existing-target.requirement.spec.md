@@ -19,10 +19,3 @@ unsuccessful exit status.
 
 Contributors must not mistake an existing specification for a newly created one.
 An existing target requires an explicit editing decision.
-
-## System verification plan
-
-For each supported specification type, invoke initialization with an existing
-target. Verify the unsuccessful exit status. Cover a regular file, directory,
-and symbolic link where the platform supports it. Preserve the target fixture
-and capture output to diagnose failures.

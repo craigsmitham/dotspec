@@ -8,7 +8,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/assessment"
 	"github.com/craigsmitham/dotspec/internal/obligation"
 )
 
@@ -70,17 +69,13 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	}
 	v.boundaries()
 	v.assumptions()
-	v.assessmentPlans()
-	v.out.WriteString("## Obligation review\n\nReview the criterion and system verification guidance recorded on each obligation.\n\n")
+	v.out.WriteString("## Obligation review\n\nReview the criterion recorded on each obligation.\n\n")
 	for _, r := range v.records {
 		if !designKind(String(r, "kind"), "Obligation") {
 			continue
 		}
 		fmt.Fprintf(&v.out, "### %s\n\n", v.link(r))
 		v.body(r, "Criterion", Object(r["criterion"])["content"])
-		if !v.d.hasPlanGuidance(r, assessment.SystemVerification) {
-			v.out.WriteString("No system verification guidance recorded here.\n\n")
-		}
 		if missing := v.d.measurementGuidance(r).Missing(); len(missing) > 0 {
 			fmt.Fprintf(&v.out, "Review required: %s\n\n", obligation.MeasurementMessage(missing))
 		}
@@ -160,7 +155,6 @@ func PEGSMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			}
 		}
 	}
-	v.assessmentPlans()
 	v.questions()
 	return projectReading(s, strings.TrimRight(v.out.String(), "\n")+"\n"), nil
 }
@@ -309,43 +303,8 @@ func (v *reviewView) assumptions() {
 				missing = append(missing, reviewLabel(field))
 			}
 		}
-		if !v.d.hasPlanGuidance(r, assessment.AssumptionValidation) {
-			missing = append(missing, assessment.AssumptionValidation.Definition().Heading())
-		}
 		if len(missing) > 0 {
 			fmt.Fprintf(&v.out, "Review required: no %s recorded.\n\n", strings.Join(missing, ", "))
-		}
-	}
-}
-func (v *reviewView) assessmentPlans() {
-	for _, def := range assessment.Definitions {
-		fmt.Fprintf(&v.out, "## %s plans\n\n%s\n\n", def.Label, def.Question)
-		count := 0
-		for _, owner := range v.records {
-			for _, plan := range plansFor(owner, def.Purpose) {
-				count++
-				fmt.Fprintf(&v.out, "### Recorded on %s\n\n", v.link(owner))
-				if !v.body(owner, "", plan["content"]) {
-					v.out.WriteString("Plan details pending.\n\n")
-					continue
-				}
-				var missing []string
-				for _, field := range []string{"subject", "basis", "participants", "method", "success_criteria", "conditions", "evidence_to_retain"} {
-					value := plan[field]
-					if field == "subject" || field == "basis" {
-						value = Object(value)["content"]
-					}
-					if strings.TrimSpace(v.d.text(value)) == "" {
-						missing = append(missing, reviewLabel(field))
-					}
-				}
-				if len(missing) > 0 {
-					fmt.Fprintf(&v.out, "Review separately identified plan details: %s. The narrative may already address them.\n\n", strings.Join(missing, ", "))
-				}
-			}
-		}
-		if count == 0 {
-			v.out.WriteString("No plans recorded in this scope.\n\n")
 		}
 	}
 }
@@ -367,23 +326,14 @@ func reviewObjects(value any) []Record {
 	}
 }
 func (v *reviewView) questions() {
-	v.out.WriteString("## Open questions\n\nConsolidated authored questions. External tracking references own resolution workflow. Omitted specification fields are not automatically questions; missing metadata below is advisory.\n\n")
+	v.out.WriteString("## Open questions\n\nConsolidated authored questions. External tracking references own resolution workflow. Omitted specification fields are not automatically questions.\n\n")
 	count := 0
 	for _, r := range v.records {
 		for _, q := range reviewObjects(r["open_questions"]) {
 			count++
 			fmt.Fprintf(&v.out, "### Question %d — %s\n\n", count, v.link(r))
 			v.body(r, "Question", q["question"])
-			missing := []string{}
-			for _, f := range []string{"raised_by", "raised_on", "resolve_by", "importance", "evidence_needed"} {
-				if !v.body(r, reviewLabel(f), q[f]) {
-					missing = append(missing, reviewLabel(f))
-				}
-			}
-			v.body(r, "Tracking reference", Object(q["tracking_reference"])["content"])
-			if len(missing) > 0 {
-				fmt.Fprintf(&v.out, "Review required: no %s recorded.\n\n", strings.Join(missing, ", "))
-			}
+
 		}
 	}
 	if count == 0 {

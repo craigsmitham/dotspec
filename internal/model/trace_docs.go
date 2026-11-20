@@ -7,8 +7,6 @@ import (
 	"slices"
 	"sort"
 	"strings"
-
-	"github.com/craigsmitham/dotspec/internal/assessment"
 )
 
 type traceEdge struct{ source, field, target string }
@@ -203,24 +201,7 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		fmt.Fprintf(&out, "| %s | %s | %s |\n", link(target), traceList(direct), traceList(further))
 	}
-	out.WriteString("\n## System verification planning\n\nThis inventory covers standalone requirements and explicitly distinguished obligation clauses. Other normative prose is not automatically decomposed. Guidance plans assessment of realizations against obligations; it is not an executed check or requirements-quality review. Revision-bound executions, satisfaction claims and evidence verdicts are not represented by this view.\n\n| Obligation | Authored check guidance | Execution evidence |\n| --- | --- | --- |\n")
-	count = 0
-	for _, r := range elements {
-		if !designKind(String(r, "kind"), "Requirement or ObligationClause") {
-			continue
-		}
-		count++
-		guidance := "Not recorded here"
-		if d.hasPlanGuidance(r, assessment.SystemVerification) {
-			guidance = "Recorded in source (system verification plan)"
-		}
-
-		fmt.Fprintf(&out, "| %s | %s | Not evaluated |\n", link(String(r, "id")), guidance)
-	}
-	if count == 0 {
-		out.WriteString("| — | No addressable obligations acquired | Not evaluated |\n")
-	}
-	out.WriteString("\n## Review findings\n\nUnresolved or invalid declarations remain in the source-backed snapshot, even when omitted from the resolved graph. Missing justification or check guidance is advisory.\n\n")
+	out.WriteString("\n## Review findings\n\nUnresolved or invalid declarations remain in the source-backed snapshot, even when omitted from the resolved graph. Missing justification is advisory.\n\n")
 	if len(s.Diagnostics) == 0 {
 		out.WriteString("No inspection findings in this acquired scope.\n")
 	}

@@ -27,15 +27,9 @@ be equal, preserving array order. JSON object key order and insignificant whites
 do not affect equivalence. The comparison applies only within the operating context
 in [Applies to](<#applies-to>).
 
-## System verification plan
+## Evidence
 
-Run each fixture repeatedly without changing its inputs or execution
-conditions. Compare reports using [Criterion](<#criterion>).
-Cover empty scans, valid specifications, writing advice, structural
-errors, and shared system context. Retain differing reports on test failure.
-
-The [CLI quality-contract tests](<../../internal/cli/quality_contracts_test.go>)
-check this criterion. The obligation remains defined in this document.
+Checks for this requirement include [CLI quality-contract tests](<../../internal/cli/quality_contracts_test.go>).
 
 ## Rationale
 

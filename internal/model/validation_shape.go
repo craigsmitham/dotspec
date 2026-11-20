@@ -1,7 +1,6 @@
 package model
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"slices"
@@ -225,10 +224,10 @@ func locateShapeFinding(f *Finding, root Record, index map[string]Record, record
 			f.Source = String(index[source], "locator")
 		}
 		start, ok := natural(span["start"])
-		data, available := sourceBytes(index[source])
+		data, available := index[source]["markdown"].(string)
 		if ok && available && start <= len(data) {
-			f.Line = bytes.Count(data[:start], []byte{'\n'}) + 1
-			f.Column = start - bytes.LastIndexByte(data[:start], '\n')
+			f.Line = strings.Count(data[:start], "\n") + 1
+			f.Column = start - strings.LastIndexByte(data[:start], '\n')
 		}
 	}
 }

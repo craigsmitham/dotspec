@@ -25,18 +25,12 @@ Workspace-aware discovery, System context, source inventories, model exports and
 reading views, and CLI project selection. Repositories without project
 manifests retain their existing discovery behavior.
 
-## System verification plan
-
-Exercise nested roots under both Git and filesystem discovery; a workspace without
-a root project; missing local Systems; explicit cross-project references; scoped
-and workspace-wide commands; malformed manifests; and offline export validation.
-
-The [discovery tests](<../../internal/specfile/workspace_test.go>) and
-[CLI scenarios](<../../internal/cli/workspace_test.go>) provide executable cases.
-Check the actual repository's isolated root export and all-project check as well.
-
 ## Rationale
 
 A reference app or unrelated monorepo product must not become part of dotspec's own
 specification collection because of directory nesting. System relationships remain
 explicit domain assertions, independent of tooling partitions.
+
+## Evidence
+
+Checks for this requirement include [discovery tests](<../../internal/specfile/workspace_test.go>), [CLI scenarios](<../../internal/cli/workspace_test.go>).

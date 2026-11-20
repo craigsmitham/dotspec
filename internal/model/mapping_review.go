@@ -5,11 +5,6 @@ import (
 	"strings"
 )
 
-var questionDetails = map[string]string{
-	"Raised by": "raised_by", "Raised on": "raised_on", "Resolve by": "resolve_by",
-	"Importance": "importance", "Evidence needed": "evidence_needed", "Tracking reference": "tracking_reference",
-}
-
 func (m *domainMapper) explanatory(r Record, s *Section) bool {
 	field := map[string]string{"Notes": "notes", "Implementation suggestions": "implementation_suggestions", "Implementation hints": "implementation_suggestions", "Illustrative examples": "illustrative_examples"}[s.Title]
 	if field == "" {
@@ -68,7 +63,7 @@ func (m *domainMapper) boundarySection(r Record, s *Section) bool {
 
 func (m *domainMapper) assumptionDetails(r Record, s *Section) {
 	for _, sub := range s.Children {
-		if m.traceSection(r, sub) || m.explanatory(r, sub) || m.assessmentSection(r, sub) {
+		if m.traceSection(r, sub) || m.explanatory(r, sub) {
 			continue
 		}
 		switch sub.Title {

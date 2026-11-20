@@ -70,7 +70,7 @@ func TestLayeredTraceability(t *testing.T) {
 			t.Fatal("missing projection", kind)
 		}
 	}
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 	forged := cloneSnapshot(t, s)
 	elementKind(t, forged, "Requirement")["refines"] = []string{String(elementKind(t, forged, "BusinessRule"), "id")}
 	requireFinding(t, forged, "concept.projection")
@@ -106,7 +106,7 @@ func TestTraceTargetErrorsAndDeferredReferences(t *testing.T) {
 			if !found {
 				t.Fatal("missing relationship diagnostic", r.Snapshot.Diagnostics)
 			}
-			conformancePayloads(t, r.Snapshot)
+			checkSourceText(t, r.Snapshot)
 		})
 	}
 }
@@ -136,13 +136,12 @@ func TestRefinementCycleRetainsSourceWithoutCyclicClaim(t *testing.T) {
 		req := elementKind(t, forged, "Requirement")
 		req["refines"] = []string{String(req, "id")}
 		requireFinding(t, forged, "relationship.cycle")
-		conformancePayloads(t, r.Snapshot)
+		checkSourceText(t, r.Snapshot)
 	}
 }
 func TestTraceCitationsAndDrafts(t *testing.T) {
 	root := traceFixture(t)
 	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "## Refines", "## Related specifications")
-	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "## System verification plan", "## Notes")
 	r := conformanceExport(t, root)
 	if r.ExitCode != 0 {
 		t.Fatal(r.Snapshot.Diagnostics)
@@ -157,7 +156,7 @@ func TestTraceCitationsAndDrafts(t *testing.T) {
 		}
 		codes[String(f, "code")] = true
 	}
-	if !codes["relationship.motivation"] || !codes["relationship.system_verification"] {
+	if !codes["relationship.motivation"] || codes["relationship.system_verification"] {
 		t.Fatal("missing draft advice", codes)
 	}
 	// A selected subtree does not traverse references from its direct targets.
@@ -184,7 +183,7 @@ func TestTraceViewIsPortableAndDoesNotClaimProof(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, part := range []string{"## Why:", "## Behavior:", "## Change review", "## System verification planning", "Not evaluated", "#restore-retained-content", "refines", "supports", "Further review candidates"} {
+	for _, part := range []string{"## Why:", "## Behavior:", "## Change review", "#restore-retained-content", "refines", "supports", "Further review candidates"} {
 		if !strings.Contains(view, part) {
 			t.Fatal("missing", part)
 		}

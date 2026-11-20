@@ -22,10 +22,10 @@ func TestJTBDPresetsDoNotImposeODIOnOtherJobs(t *testing.T) {
 	if !found {
 		t.Fatal("ODI guidance missing", odi)
 	}
-	if len(CheckWithPreset(j, "progress")) == 0 || len(CheckWithPreset(j, "job-story")) == 0 {
+	if len(CheckWithPreset(j, "job-story")) == 0 {
 		t.Fatal("preset guidance missing")
 	}
-	for _, preset := range []string{"general", "odi", "progress", "job-story"} {
+	for _, preset := range []string{"general", "odi", "job-story"} {
 		template, err := TemplateFor(preset)
 		if err != nil {
 			t.Fatal(err)
@@ -36,9 +36,6 @@ func TestJTBDPresetsDoNotImposeODIOnOtherJobs(t *testing.T) {
 		}
 		if parsed.Statement == "" || strings.Contains(template, "## Desired outcome\n") {
 			t.Fatal(preset, parsed)
-		}
-		if preset == "progress" && (len(parsed.Cases) != 1 || parsed.Cases[0].Participants == "") {
-			t.Fatal("case fields missing", parsed)
 		}
 		if preset == "odi" && (len(parsed.Outcomes) != 1 || parsed.Outcomes[0].AppliesTo == "") {
 			t.Fatal("outcome scope missing", parsed)

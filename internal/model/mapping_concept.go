@@ -6,10 +6,6 @@ func (m *domainMapper) concept(r Record, s *Section) bool {
 		m.effectsTable(r, s)
 	case "Purpose":
 		m.section(r, "purpose", s)
-	case "Type parameters":
-		m.conceptTypes(r, s, "type_parameters")
-	case "Introduced types":
-		m.conceptTypes(r, s, "introduced_types")
 	case "Operational principles":
 		m.section(r, "operational_principles", s)
 	case "State":
@@ -55,12 +51,6 @@ func (m *domainMapper) concept(r Record, s *Section) bool {
 				field := map[string]string{"Inputs": "inputs", "Outputs": "outputs", "Initiation": "initiation", "Effects": "effects", "Rejections": "rejections", "Rejection behavior": "rejections"}[detail.Title]
 				if field != "" {
 					m.section(x, field, detail)
-					if field == "inputs" {
-						m.actionParameters(x, detail, "input_parameters")
-					}
-					if field == "outputs" {
-						m.actionParameters(x, detail, "output_parameters")
-					}
 					continue
 				}
 				switch detail.Title {

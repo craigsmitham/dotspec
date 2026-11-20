@@ -103,10 +103,6 @@ The refinement makes the required metadata explicit without weakening the parent
 
 **Targets:** [Restore a document](../use-cases/restore.use-case.spec.md), [DocumentTrash](../document-workspace.system.spec.md#documenttrash)
 
-## System verification plan
-
-Compare all four metadata fields before deletion and after restoration for each supported document type. Record the implementation revision and test results outside this example.
-
 ## Rationale
 
 Preserving these metadata fields lets members resume work with the same document identity and attribution. The Refines section identifies the governing obligation.
@@ -204,10 +200,6 @@ When an authorized workspace member requests restoration before the 30-day recov
 #### Applies to
 
 **Targets:** [DocumentTrash](../document-workspace.system.spec.md#documenttrash)
-
-#### System verification plan
-
-Exercise restoration with retained content and metadata; compare both to their pre-deletion values. Include requests immediately before the recovery deadline.
 
 ## Authority
 

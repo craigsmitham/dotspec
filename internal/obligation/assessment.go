@@ -8,9 +8,7 @@ import (
 
 // MeasurementGuidance describes recorded sections, never their adequacy.
 // Narrative criteria may carry or reference the complete rule; structured
-// criteria identify a measure and its target separately. The verification plan
-// collects evidence against the criterion; its presence never substitutes for
-// an obligation's criterion or applicability.
+// criteria identify a measure and its target separately.
 type MeasurementGuidance struct {
 	Measurement, Criterion, Comparison, Conditions bool
 }
@@ -31,7 +29,7 @@ func (g MeasurementGuidance) Missing() []string {
 	return missing
 }
 func MeasurementMessage(missing []string) string {
-	return "A measure is recorded, but no separately identified " + strings.Join(missing, ", ") + " is recorded for the obligation. Define or reference the required bound under Criterion and its operating context under Applies to. Assessment conditions describe how evidence is collected. Prose may already supply the information; this advice does not assess adequacy or establish a verification result."
+	return "A measure is recorded, but no separately identified " + strings.Join(missing, ", ") + " is recorded for the obligation. Define or reference the required bound under Criterion and its operating context under Applies to."
 }
 func measurementGuidance(doc *specfile.Outline) MeasurementGuidance {
 	sections := map[string]*specfile.Section{}

@@ -68,7 +68,7 @@ class CatalogTests(unittest.TestCase):
 
     def test_annotations_rules_and_discriminators_remain_available(self):
         classes = self.catalog["classes"]
-        self.assertEqual(classes["Job"]["annotations"]["owned_memberships"], "Job.steps or Job.outcomes or Job.progress_cases")
+        self.assertEqual(classes["Job"]["annotations"]["owned_memberships"], "Job.steps or Job.outcomes")
         self.assertEqual(self.slot("UseCase", "kind")["equals_string"], "UseCase")
         self.assertTrue(self.slot("QualityAttribute", "authored_id")["required"])
         self.assertFalse(self.slot("Job", "authored_id")["required"])
@@ -112,7 +112,7 @@ class CatalogTests(unittest.TestCase):
         projections = self.catalog["projections"]
         self.assertEqual(projections, sorted(set(projections)))
         for path in ("TraceableElement.supports", "Obligation.refines", "BusinessRule.refines", "System.goals",
-                     "Job.steps", "ObligationContainer.obligations", "Specification.evidence.statements",
+                     "Job.steps", "ObligationContainer.obligations", "Capability.provided_by",
                      "System.enclosing_system", "SystemContextSpecification.specification_system"):
             self.assertIn(path, projections)
         # Owner backlinks, citations and provenance are not separate relationship claims.
@@ -142,7 +142,7 @@ class CatalogTests(unittest.TestCase):
             (lambda c: c['classes']['Assertion'].update(abstract=True), 'one concrete assertion class'),
             (lambda c: c['classes'].update(Supports=copy.deepcopy(c['classes']['Assertion'])), 'one concrete assertion class'),
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].pop('relationship_scope'), 'missing relationship metadata'),
-            (lambda c: c['classes']['ConceptUse']['slots']['bindings']['annotations'].update(paired_with='missing'), 'reciprocal peer'),
+            (lambda c: c['classes']['Job']['slots']['steps']['annotations'].update(paired_with='missing'), 'reciprocal peer'),
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].update(relationship_cycles='guess'), 'cycle policy'),
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].update(relationship_category='guess'), 'invalid relationship category'),
             (lambda c: c['classes']['UseCase']['slots']['involves']['annotations'].update(trace_targets='Concept'), 'canonical endpoint ranges'),

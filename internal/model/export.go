@@ -40,7 +40,7 @@ type snapshotBuilder struct {
 }
 
 // Export observes the same selected specifications, enclosing systems and
-// direct reference boundary as check. It retains source bytes before mapping,
+// direct reference boundary as check. It records source text before mapping,
 // including invalid specifications. It never rewrites an input.
 func Export(path string, types ...check.Type) (ExportResult, error) {
 	dir, err := specfile.Directory(path)
@@ -242,7 +242,7 @@ func (b *snapshotBuilder) load(path string) Record {
 	kind := b.kind(path)
 	ext := strings.ToLower(filepath.Ext(path))
 	if kind == nil && ext != ".md" && ext != ".markdown" {
-		source := SourceRecord(path, data)
+		source := sourceRecord(path)
 		source["media_type"] = "application/octet-stream"
 		b.sources[path] = source
 		b.snapshot.Sources = append(b.snapshot.Sources, source)

@@ -76,7 +76,7 @@ def main(binary, scratch, detailed):
     classes = json.loads((root / "model/generated/catalog.json").read_bytes())["classes"]
     reference = (root / "docs/reference/model/relationships.md").read_text(encoding="utf-8")
     relationships = set(re.findall(r"^### (\w+\.\w+)$", reference, re.M))
-    # Include rich-content roles and embedded assessment, action and scenario
+    # Include rich-content roles and embedded criterion, action and scenario
     # forms alongside the reference's canonical relationship contracts.
     forms = set()
     for kind, definition in classes.items():

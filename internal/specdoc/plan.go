@@ -3,7 +3,6 @@ package specdoc
 import (
 	"cmp"
 	"crypto/sha256"
-	"encoding/base64"
 	"fmt"
 	"maps"
 	"path"
@@ -127,10 +126,7 @@ func (p *planner) read() error {
 		if selected, _ := r["selected"].(bool); !selected && !glossarySources[id(r)] {
 			continue
 		}
-		data, err := base64.StdEncoding.DecodeString(attr(model.Object(r["payload"]), "bytes_base64"))
-		if err != nil {
-			return err
-		}
+		data := []byte(attr(r, "markdown"))
 		rel, err := filepath.Rel(p.root, filepath.FromSlash(attr(r, "locator")))
 		if err != nil {
 			return err

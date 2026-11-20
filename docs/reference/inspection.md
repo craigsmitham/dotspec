@@ -192,7 +192,7 @@ for this repository's policy and the CI task that enforces file coverage.
 ## Output and automation
 
 The experimental [specification model](specification-model.md) exposes
-source bytes, ordered document content, and named domain records together:
+normalized Markdown, ordered document content, and named domain records together:
 
 ```sh
 dotspec model export --path . > specification.json
@@ -235,7 +235,7 @@ above. Other results contain:
 | `use-case list` | `groups`, each with a nullable `system` and a `use_cases` array |
 | `concept show` | `concept`, including its authored Markdown, conventional section bodies, optional type declarations, and nullable `system` |
 | `concept list` | `groups`, each with a nullable `system` and a `concepts` array |
-| `requirement show` | `requirement`, including its authored Markdown, statement, criterion, verification plan, attributes, and nullable `system` |
+| `requirement show` | `requirement`, including its authored Markdown, statement, criterion, attributes, and nullable `system` |
 | `requirement list` | `groups`, each with a nullable `system` and a `requirements` array; `attribute` when `--attribute` selects one |
 | `job step list` | `name`, `path`, and `steps` in authored order |
 | `job outcome list` | `name`, `path`, `overall` outcomes, and selected `steps` with their outcomes |

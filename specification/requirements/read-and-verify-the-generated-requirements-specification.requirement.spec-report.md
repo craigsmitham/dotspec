@@ -9,7 +9,7 @@ source: "../../specs/requirements/generated-specification.requirement.spec.md#re
 
 ## Statement
 
-For an opted-in project with one root system, contributors must be able to generate a deterministic Markdown requirements specification and check its fidelity, navigation, and freshness with the project-wide check. A reader must be able to reach each authored promise in scope, read its qualifications, follow its declared relationships and verification guidance, and locate the editable source.
+For an opted-in project with one root system, contributors must be able to generate a deterministic Markdown requirements specification and check its fidelity, navigation, and freshness with the project-wide check. A reader must be able to reach each authored promise in scope, read its qualifications, follow its declared relationships and supporting references, and locate the editable source.
 
 ## Applies to
 
@@ -22,7 +22,7 @@ The project's `SPEC.md` gives the system name and one link to `specification/<na
 The system overview opens with the system name and authored description. Its
 section map links directly to populated indexes. Readers can follow goals,
 user needs, scope, system topology, requirements, quality attributes, and
-validation in that order when present. The topology shows declared immediate
+open questions in that order when present. The topology shows declared immediate
 parts and boundary relationships in a Mermaid diagram and in linked text.
 The overview displays the full declared quality hierarchy with definition
 previews. A shared attribute appears under each declared parent, with its
@@ -42,9 +42,9 @@ Readers can follow supporting references beside the content they supply.
 The project check identifies duplicate page claims and missing or misdirected
 source metadata.
 
-## System verification plan
+## Evidence
 
-Run the [To-do reader journey and regression probes](<../../scripts/check-example/check.py>). Inspect the artifact and diagnostics using the [generated specification guide](<../../docs/reference/generated-specification.md>).
+Checks for this requirement include [To-do reader journey and regression probes](<../../scripts/check-example/check.py>), [generated specification guide](<../../docs/reference/generated-specification.md>).
 
 ## Rationale
 

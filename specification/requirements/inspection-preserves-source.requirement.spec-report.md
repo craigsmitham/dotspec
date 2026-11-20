@@ -26,17 +26,9 @@ Apply the preservation rule in [Statement](<#statement>) to the files covered by
 [Applies to](<#applies-to>). Filesystem access-time changes are not changes to source
 contents or paths.
 
-## System verification plan
+## Evidence
 
-Snapshot the relative paths and byte contents of project files and any system
-context outside the selected subtree. Capture command output separately from
-that snapshot. Compare snapshots before and after each check, covering valid
-and malformed specifications, missing input, and unavailable context. Evaluate
-differences against [Criterion](<#criterion>).
-Retain the differing paths and contents on test failure.
-
-The [CLI quality-contract tests](<../../internal/cli/quality_contracts_test.go>)
-check this criterion. The obligation remains defined in this document.
+Checks for this requirement include [CLI quality-contract tests](<../../internal/cli/quality_contracts_test.go>).
 
 ## Rationale
 

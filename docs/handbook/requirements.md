@@ -9,8 +9,7 @@ scope, and add assessment detail where it resolves ambiguity.
 Use `dotspec requirement init <slug>` for a required result, rule, property, or
 restriction. Add `--preset quality` when quality-focused prompts help; that
 template also prompts for a Criterion. Both presets create the same requirement
-type, with the same applicability, quality attributes, criteria, traceability,
-verification and validation plans. The CLI creates requirements in `specs/requirements/` by default.
+type, with the same applicability, quality attributes, criteria and traceability. The CLI creates requirements in `specs/requirements/` by default.
 The To-do restart requirement belongs there because it specifies which task data must
 survive a restart. Its `quality_attributes: [durability]` entry also makes it
 discoverable from the Durability report.
@@ -50,11 +49,6 @@ An attempt to modify a closed claim must leave its recorded contents unchanged.
 
 Closure preserves the agreed claim record for later review.
 
-## System verification plan
-
-Attempt changes through each supported editing interface and compare the stored
-claim before and after each attempt. Retain the attempted changes, interface and
-implementation revision, and before-and-after records.
 ```
 
 Conditions the system must accommodate are not assumptions that excuse its
@@ -73,8 +67,6 @@ bound that already has an authoritative definition.
 | Quality attributes | Classify the concern; they do not establish thresholds. |
 | Applies to | Defines the subject and operating context covered by the obligation. |
 | Statement and optional Criterion | State the obligation and define or reference its satisfaction rule. |
-| System verification plan | Describes how to obtain and assess evidence against the obligation, including any measurement procedure and sampling. |
-| Other assessment plans | Choose the heading for the [assessment purpose](verification-and-validation.md#assessment-purposes). Each heading starts a separate plan. |
 
 For a measured property, identify the measure and the required bound. The measure
 carries its units, aggregation and observation window where needed. Define the
@@ -105,7 +97,7 @@ under Applies to. Use existing actor, job and use-case references where helpful;
 the current model does not require a new context-of-use object or perspective
 field. Population and Conditions subsections can make the context easier to find.
 
-The [To-do validation exercise](../../examples/todo/specs/personal-task-list.system.spec.md#system-validation-plan)
+The [To-do validation exercise](../../examples/todo/README.md#try-the-workflow-with-a-participant)
 gives the participant real errands to resume. Ask what they recognize after
 returning to the app and record where they need help.
 
@@ -114,37 +106,25 @@ from** for its source, and **Refines** only when it adds precision while preserv
 the referenced obligation. Meeting a latency bound alone does not refine or prove
 a user-task completion requirement. See [requirements layers](requirements-layers.md).
 
-## Plan the assessment without repeating the obligation
+## Link supporting evidence
 
-Both generated templates include **System verification plan**. Describe the realization
-and revision, method, assessment conditions and evidence to retain. Put the
-measurement procedure and sampling, where needed, under the plan's **Method**
-subsection. Compare observations with the existing statement or criterion. A
-**Success criteria** subsection may reference that rule rather than repeat its
-bounds.
-
-Keep operating context and assessment setup distinct. Applies to says when the
-obligation holds; plan Conditions explains the test or study setup and how it
-represents that context. A small test sample or an omitted failure mode must not
-silently narrow the obligation. Record limitations of the resulting evidence.
-
-Use **Requirements validation plan** to assess whether the requirement captures the right need. Use **System validation plan** to assess whether a proposed solution serves its intended use. Identify the subject and
-basis explicitly. Keep execution evidence and assessment findings in their referenced artifacts;
-see [verification and validation](verification-and-validation.md).
+Link a relevant test or study where the reader needs it. If a named benchmark,
+workload, or method determines the meaning of a required bound, include or
+reference it in the criterion. Test setup and research protocols belong with the
+test or study. See [Verification and validation](verification-and-validation.md).
 
 ## Check the draft and review the set
 
 Run `dotspec requirement check <slug>`, then `dotspec model review` for the
 acquired set. Measurement-basis advice (`requirement.measurement-basis`) applies
 when a Criterion records an explicit Measure. It prompts for a separately
-identified target and operating context even if a System verification plan exists.
+identified target and operating context.
 Introductory narrative under Criterion, including a reference, is sufficient to
 record the target. Introductory narrative or a Conditions subsection under Applies
 to is sufficient to record the operating context. Neither is interpreted or judged
 for adequacy.
 
-Plan Success criteria and assessment Conditions do not substitute for the
-obligation's criterion and operating context. Advice can be resolved by identifying
+Advice can be resolved by identifying
 or linking existing content; do not duplicate an authoritative target merely to
 satisfy a prompt. Qualitative obligations do not need invented numeric measures.
 

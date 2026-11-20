@@ -46,8 +46,6 @@
       "job.outcome-empty",
       "job.outcome-measure",
       "job.performer",
-      "job.progress-case",
-      "job.progress-context",
       "job.statement",
       "job.story-context"
     ]
@@ -121,10 +119,7 @@
   {
     "topic": "verification",
     "page": "docs/handbook/verification-and-validation.md",
-    "description": "Distinguish assessment purposes, plans and evidence.",
-    "rules": [
-      "requirement.verification"
-    ]
+    "description": "Distinguish the four review questions and the evidence each needs."
   },
   {
     "topic": "review",

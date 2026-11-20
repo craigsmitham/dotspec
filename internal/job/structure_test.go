@@ -87,7 +87,7 @@ func TestStructuredJob(t *testing.T) {
 	if got.Steps[1].Stage != "team-specific-stage" {
 		t.Fatal("custom stage lost")
 	}
-	if !strings.Contains(got.ProgressCases, "CASE-NOTE") || !strings.Contains(got.Markdown, "CASE-NOTE") {
+	if !strings.Contains(got.Markdown, "CASE-NOTE") {
 		t.Fatal("case prose lost")
 	}
 	if suggestions := CheckWithPreset(got, "odi"); len(suggestions) != 0 {

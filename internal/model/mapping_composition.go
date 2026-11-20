@@ -23,21 +23,6 @@ func (m *domainMapper) composition(r Record, s *Section) bool {
 				case "Dependencies":
 					m.section(x, "dependencies_content", sub)
 					x["dependencies_references"] = m.references(sub.Content)
-				case "Bindings":
-					m.section(x, "bindings_content", sub)
-					x["bindings"] = []string{}
-					for _, binding := range sub.Children {
-						v := m.named("TypeBinding", x, binding)
-						m.section(v, "content", binding)
-						m.designField(v, "parameter", binding, "Parameter")
-						m.designField(v, "bound_type", binding, "Bound type")
-						m.designField(v, "supplying_concept_use", binding, "Supplying concept use")
-						m.primitive(v, binding)
-						for _, detail := range binding.Children {
-							m.extension(v, detail)
-						}
-						appendID(x, "bindings", String(v, "id"))
-					}
 				default:
 					m.extension(x, sub)
 				}
@@ -57,31 +42,7 @@ func (m *domainMapper) composition(r Record, s *Section) bool {
 					continue
 				}
 				m.section(x, field, sub)
-				for _, item := range sub.Children {
-					if field != "when" && field != "then" {
-						m.extension(x, item)
-						continue
-					}
-					// Only explicit Use/Action fields distinguish an action reference.
-					// Other explanatory headings remain extension sections.
-					if m.fieldNodes(item, "Concept use") == nil && m.fieldNodes(item, "Action") == nil {
-						m.extension(x, item)
-						continue
-					}
-					v := m.named("SynchronizationAction", x, item)
-					m.section(v, "content", item)
-					m.designField(v, "concept_use", item, "Concept use")
-					m.designField(v, "action", item, "Action")
-					for _, detail := range item.Children {
-						slot := map[string]string{"Arguments": "arguments", "Result": "result"}[detail.Title]
-						if slot != "" {
-							m.section(v, slot, detail)
-						} else {
-							m.extension(v, detail)
-						}
-					}
-					appendID(x, field+"_actions", String(v, "id"))
-				}
+
 			}
 			appendID(r, "synchronizations", String(x, "id"))
 		}
@@ -96,45 +57,6 @@ func (m *domainMapper) designField(r Record, field string, s *Section, label str
 		r[field+"_references"] = m.references(nodes)
 		m.bindDesignReferences(r, field+"_references")
 		m.bind(r, field+"_references", m.fieldLabelNodes(s, label), "structural_wrapper", "design-reference-label/"+label)
-	}
-}
-
-func (m *domainMapper) primitive(r Record, s *Section) {
-	if nodes := m.fieldNodes(s, "Primitive"); nodes != nil {
-		r["primitive"] = m.fieldText(s, "Primitive")
-		m.bind(r, "primitive", nodes, "named_field", "primitive-type")
-		m.bind(r, "primitive", m.fieldLabelNodes(s, "Primitive"), "structural_wrapper", "primitive-type-label")
-	}
-}
-
-func (m *domainMapper) conceptTypes(r Record, s *Section, field string) {
-	m.section(r, field+"_content", s)
-	r[field] = []string{}
-	for _, child := range s.Children {
-		x := m.named("ConceptType", r, child)
-		m.section(x, "content", child)
-		for _, detail := range child.Children {
-			m.extension(x, detail)
-		}
-		appendID(r, field, String(x, "id"))
-	}
-}
-
-func (m *domainMapper) actionParameters(r Record, s *Section, field string) {
-	for _, child := range s.Children {
-		x := m.named("ActionParameter", r, child)
-		m.section(x, "content", child)
-		m.designField(x, "type", child, "Type")
-		m.primitive(x, child)
-		for _, detail := range child.Children {
-			if detail.Title == "Type" {
-				m.section(x, "type_description", detail)
-				// A compound type description is prose; only the explicit Type field resolves a type.
-			} else {
-				m.extension(x, detail)
-			}
-		}
-		appendID(r, field, String(x, "id"))
 	}
 }
 

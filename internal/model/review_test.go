@@ -20,7 +20,7 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	s := result.Snapshot
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 	d := newDesignResolver(s)
 	sys := designRecord(t, s, "System", "Document workspace")
 	partner := designRecord(t, s, "System", "Platform clock")
@@ -41,9 +41,6 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 			t.Fatal("unmapped assumption", field)
 		}
 	}
-	if !strings.Contains(d.text(plansFor(assumption, "assumption_validation")[0]["method"]), "independent reference") {
-		t.Fatal("missing validation method")
-	}
 	if strings.Contains(d.text(assumption["statement"]), "Assumption validation plan") {
 		t.Fatal("assumption guidance became its premise")
 	}
@@ -51,13 +48,8 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 	if len(questions) != 2 {
 		t.Fatal(questions)
 	}
-	for _, field := range []string{"raised_by", "raised_on", "resolve_by", "importance", "evidence_needed"} {
-		if d.text(questions[0][field]) == "" {
-			t.Fatal("missing question field", field)
-		}
-	}
-	if len(Strings(Object(questions[0]["tracking_reference"])["references"])) != 1 || questions[1]["resolve_by"] != nil {
-		t.Fatal("question metadata inferred or dropped")
+	if len(questions[0]) != 1 || !strings.Contains(d.text(questions[0]["question"]), "Before acceptance") {
+		t.Fatal("question prose or linked context lost")
 	}
 	count := 0
 	for _, r := range s.Elements {
@@ -113,7 +105,7 @@ func TestReviewViewsAreAdvisoryAndRebaseSources(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"No contribution path recorded", "Contribution path recorded", "ScenarioStep 2", "no rule or action relationship recorded", "no native contract reference recorded", "No system verification guidance recorded here", "Before acceptance", "no Raised by, Raised on, Resolve by, Importance, Evidence needed recorded", "Review required for **recovery copy**", "../specs/document-workspace.system.spec.md#reduce-retention-cost", "../project-plan.md#retention-boundary-decision", "nonbinding"} {
+	for _, want := range []string{"No contribution path recorded", "Contribution path recorded", "ScenarioStep 2", "no rule or action relationship recorded", "no native contract reference recorded", "Before acceptance", "Review required for **recovery copy**", "../specs/document-workspace.system.spec.md#reduce-retention-cost", "../project-plan.md#retention-boundary-decision", "nonbinding"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("review missing %q", want)
 		}
@@ -165,7 +157,7 @@ func TestIllustrationIsExplicitAndRejectsWrongEndpoint(t *testing.T) {
 			if (result.ExitCode != 0) != tc.invalid {
 				t.Fatal(result.Snapshot.Diagnostics)
 			}
-			conformancePayloads(t, result.Snapshot)
+			checkSourceText(t, result.Snapshot)
 			for _, r := range result.Snapshot.Elements {
 				if String(r, "kind") == "ScenarioStep" && len(Strings(r["illustrates"])) > 0 {
 					t.Fatal("invalid illustration projected", r)
@@ -214,7 +206,7 @@ A batch worker can use [Time readings](#component-time).
 	if result.ExitCode != 0 {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
-	conformancePayloads(t, result.Snapshot)
+	checkSourceText(t, result.Snapshot)
 	component := designRecord(t, result.Snapshot, "Component", "Retention worker")
 	d := newDesignResolver(result.Snapshot)
 	items := Strings(component["required_interfaces"])

@@ -124,7 +124,7 @@ func (e *contentExtractor) yamlNode(n *yaml.Node, base, limit int, flow bool) Re
 			v := e.yamlNode(value, base, entryLimit, flow)
 			ks, _ := e.spanBounds(k)
 			_, ve := e.spanBounds(v)
-			entry := e.node("yaml_entry", e.normalizedOffset(ks), e.normalizedOffset(ve))
+			entry := e.node("yaml_entry", ks, ve)
 			entry["children"] = e.yamlGaps(entry, []string{String(k, "id"), String(v, "id")})
 			children = append(children, String(entry, "id"))
 		}
@@ -385,8 +385,7 @@ func (e *contentExtractor) yamlGaps(parent Record, children []string) []string {
 			out = append(out, id)
 			continue
 		}
-		a, b := e.spanBounds(r)
-		start, end := e.normalizedOffset(a), e.normalizedOffset(b)
+		start, end := e.spanBounds(r)
 		at := start
 		pieces := []string{}
 		for i := start; i < end; i++ {

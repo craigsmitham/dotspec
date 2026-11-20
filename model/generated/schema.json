@@ -1,120 +1,5 @@
 {
     "$defs": {
-        "ActionParameter": {
-            "additionalProperties": false,
-            "description": "An explicitly named input or result. Type descriptions can remain prose; linked types and primitive names are optional.",
-            "properties": {
-                "authored_id": {
-                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
-                    "type": "string"
-                },
-                "content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "decomposition": {
-                    "$ref": "#/$defs/DecompositionStatus"
-                },
-                "extension_sections": {
-                    "description": "Only unknown sections, not a substitute for known domain fields.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "illustrative_examples": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Illustrations, not an exhaustive behavioral specification."
-                },
-                "implementation_suggestions": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Nonbinding implementation advice, distinct from required behavior."
-                },
-                "kind": {
-                    "const": "ActionParameter",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "name": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored title or item name, if present."
-                },
-                "notes": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Explanation of the element; not a separate obligation or endorsement."
-                },
-                "open_questions": {
-                    "description": "Explicitly distinguished questions, in authored order.",
-                    "items": {
-                        "$ref": "#/$defs/OpenQuestion"
-                    },
-                    "type": "array"
-                },
-                "open_questions_content": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions."
-                },
-                "owner": {
-                    "type": "string"
-                },
-                "primitive": {
-                    "type": "string"
-                },
-                "source_document": {
-                    "type": "string"
-                },
-                "source_fragment": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "type_description": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "type_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                }
-            },
-            "required": [
-                "owner",
-                "content",
-                "source_document",
-                "decomposition",
-                "id",
-                "kind"
-            ],
-            "title": "ActionParameter",
-            "type": "object"
-        },
-        "ActionParameterSpecReport": {
-            "additionalProperties": false,
-            "description": "",
-            "properties": {
-                "documents": {
-                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
-                    "type": "string"
-                },
-                "type": {
-                    "const": "action-parameter-spec-report",
-                    "description": "Serialized document type fixed by the concrete class.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "documents",
-                "type"
-            ],
-            "title": "ActionParameterSpecReport",
-            "type": "object"
-        },
         "ActorMention": {
             "additionalProperties": false,
             "description": "The primary actor's role as authored in this use case; no global actor identity or fabricated role extraction.",
@@ -137,7 +22,7 @@
         },
         "Applicability": {
             "additionalProperties": false,
-            "description": "Operating context covered by an obligation or business rule, with optional explicit dimensions. For outcomes of use, identify users, tasks, equipment or assistance, and environment. Assessment setup is recorded in the plan, separately from required operating context; no applicability is inferred from a link or directory.",
+            "description": "Operating context covered by an obligation or business rule, with optional explicit dimensions. For outcomes of use, identify users, tasks, equipment or assistance, and environment. Record the required operating context here.",
             "properties": {
                 "conditions": {
                     "$ref": "#/$defs/RichContent"
@@ -223,93 +108,6 @@
             "title": "Assertion",
             "type": "object"
         },
-        "AssessmentCase": {
-            "additionalProperties": false,
-            "description": "An explicitly distinguished assessment case; its parent plan supplies its assessment purpose. A case definition is not an observation or result.",
-            "properties": {
-                "conditions": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "evidence_to_retain": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "expected_result": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "name": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "procedure": {
-                    "$ref": "#/$defs/RichContent"
-                }
-            },
-            "title": "AssessmentCase",
-            "type": "object"
-        },
-        "AssessmentPlan": {
-            "additionalProperties": false,
-            "description": "An authored plan for answering one assessment question. Its purpose identifies the question, its subject identifies what to assess, and its basis identifies what to judge the subject against. Executions, findings and acceptance decisions are recorded separately.",
-            "properties": {
-                "basis": {
-                    "$ref": "#/$defs/ContextualReferences",
-                    "description": "Authored criteria, stakeholder needs, goals, obligations or evidence against which the subject is assessed. Citations do not establish satisfaction."
-                },
-                "cases": {
-                    "items": {
-                        "$ref": "#/$defs/AssessmentCase"
-                    },
-                    "type": "array"
-                },
-                "conditions": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Conditions of the assessment, including how the setup represents the obligation's operating context or the intended context of use. These do not redefine applicability."
-                },
-                "content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "evidence_to_retain": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "method": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "How the assessment is performed, including procedure, sampling and measurement where needed."
-                },
-                "participants": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Relevant users, stakeholders or assessors and their roles; naming them is not endorsement."
-                },
-                "purpose": {
-                    "$ref": "#/$defs/AssessmentPurpose",
-                    "description": "Assessment question selected by the authored plan heading."
-                },
-                "subject": {
-                    "$ref": "#/$defs/ContextualReferences",
-                    "description": "What will be assessed, with optional links to requirements, designs, builds, processes or premises."
-                },
-                "success_criteria": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "How to interpret observations against the stated basis. Reference authoritative criteria where they are defined."
-                }
-            },
-            "required": [
-                "purpose",
-                "content"
-            ],
-            "title": "AssessmentPlan",
-            "type": "object"
-        },
-        "AssessmentPurpose": {
-            "description": "The question a plan addresses, independent of its authoring location and assessment method.",
-            "enum": [
-                "requirements_verification",
-                "requirements_validation",
-                "system_verification",
-                "system_validation",
-                "assumption_validation"
-            ],
-            "title": "AssessmentPurpose",
-            "type": "string"
-        },
         "Assumption": {
             "additionalProperties": false,
             "description": "An explicitly distinguished premise about the environment on which the specification relies; no inferred truth assertion.",
@@ -317,13 +115,6 @@
                 "applicability": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Conditions, locations or periods in which this assumption is expected to hold."
-                },
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
                 },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -527,13 +318,6 @@
                     },
                     "type": "array"
                 },
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -568,7 +352,7 @@
                     "type": "array"
                 },
                 "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
+                    "$ref": "#/$defs/RichContent"
                 },
                 "exceptions": {
                     "$ref": "#/$defs/RichContent",
@@ -758,7 +542,7 @@
         },
         "ByteSpan": {
             "additionalProperties": false,
-            "description": "Half-open [start,end) offsets into ORIGINAL bytes of one SourceDocument. Graph checks enforce bounds and start <= end.",
+            "description": "Half-open [start,end) offsets into UTF-8 bytes of the normalized Markdown text. Graph checks enforce bounds and start <= end.",
             "properties": {
                 "end": {
                     "minimum": 0,
@@ -784,13 +568,6 @@
             "additionalProperties": false,
             "description": "An ability needed to deliver value, potentially combining people, procedures and technology. Distinct from a product feature or structural component; its declaration does not establish a provider.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -850,7 +627,7 @@
                     "description": "Human, procedural or other enabling context, including external references. Typed providers describe only explicitly linked systems and components."
                 },
                 "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
+                    "$ref": "#/$defs/RichContent"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -1044,13 +821,6 @@
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred."
                 },
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -1106,7 +876,7 @@
                     "description": "The role this component plays in its system."
                 },
                 "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
+                    "$ref": "#/$defs/RichContent"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -1380,13 +1150,6 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Complete Actions section narrative; an unsegmented Actions section is valid."
                 },
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -1432,7 +1195,7 @@
                     "description": "Complete authored Effects table section; no effects, unchanged values or operation classifications are inferred."
                 },
                 "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
+                    "$ref": "#/$defs/RichContent"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -1453,15 +1216,6 @@
                 "implementation_suggestions": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Nonbinding implementation advice, distinct from required behavior."
-                },
-                "introduced_types": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "introduced_types_content": {
-                    "$ref": "#/$defs/RichContent"
                 },
                 "kind": {
                     "const": "Concept",
@@ -1584,15 +1338,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "type_parameters": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "type_parameters_content": {
-                    "$ref": "#/$defs/RichContent"
                 }
             },
             "required": [
@@ -1608,13 +1353,6 @@
             "additionalProperties": false,
             "description": "An explicitly named concept action. Caller assumptions and enforced guards are different authored claims.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -1696,12 +1434,6 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored initiation conditions, including user or system actions; no scheduler or caller is inferred."
                 },
-                "input_parameters": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
                 "inputs": {
                     "$ref": "#/$defs/RichContent"
                 },
@@ -1737,12 +1469,6 @@
                 "open_questions_content": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions."
-                },
-                "output_parameters": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
                 },
                 "outputs": {
                     "$ref": "#/$defs/RichContent"
@@ -1851,129 +1577,13 @@
             "title": "ConceptSpecReport",
             "type": "object"
         },
-        "ConceptType": {
-            "additionalProperties": false,
-            "description": "A type parameter or introduced identity type, scoped to one concept definition. Membership distinguishes its role.",
-            "properties": {
-                "authored_id": {
-                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
-                    "type": "string"
-                },
-                "content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "decomposition": {
-                    "$ref": "#/$defs/DecompositionStatus"
-                },
-                "extension_sections": {
-                    "description": "Only unknown sections, not a substitute for known domain fields.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "illustrative_examples": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Illustrations, not an exhaustive behavioral specification."
-                },
-                "implementation_suggestions": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Nonbinding implementation advice, distinct from required behavior."
-                },
-                "kind": {
-                    "const": "ConceptType",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "name": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored title or item name, if present."
-                },
-                "notes": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Explanation of the element; not a separate obligation or endorsement."
-                },
-                "open_questions": {
-                    "description": "Explicitly distinguished questions, in authored order.",
-                    "items": {
-                        "$ref": "#/$defs/OpenQuestion"
-                    },
-                    "type": "array"
-                },
-                "open_questions_content": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions."
-                },
-                "owner": {
-                    "type": "string"
-                },
-                "source_document": {
-                    "type": "string"
-                },
-                "source_fragment": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "owner",
-                "content",
-                "source_document",
-                "decomposition",
-                "id",
-                "kind"
-            ],
-            "title": "ConceptType",
-            "type": "object"
-        },
-        "ConceptTypeSpecReport": {
-            "additionalProperties": false,
-            "description": "",
-            "properties": {
-                "documents": {
-                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
-                    "type": "string"
-                },
-                "type": {
-                    "const": "concept-type-spec-report",
-                    "description": "Serialized document type fixed by the concrete class.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "documents",
-                "type"
-            ],
-            "title": "ConceptTypeSpecReport",
-            "type": "object"
-        },
         "ConceptUse": {
             "additionalProperties": false,
             "description": "An explicitly named design-time inclusion of a concept in a system or component specification. Multiple uses of one definition remain distinct; directory association creates no use.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
-                },
-                "bindings": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "bindings_content": {
-                    "$ref": "#/$defs/RichContent"
                 },
                 "configuration": {
                     "$ref": "#/$defs/RichContent"
@@ -2292,7 +1902,7 @@
         },
         "ContentNode": {
             "additionalProperties": false,
-            "description": "An ordered source syntax node. Raw spans preserve exact syntax; typed properties expose parsed structure without requiring every dialect to be understood.",
+            "description": "An ordered source syntax node. Text spans preserve authored syntax; typed properties expose parsed structure without requiring every dialect to be understood.",
             "properties": {
                 "alias_name": {
                     "type": "string"
@@ -2311,7 +1921,7 @@
                     "type": "string"
                 },
                 "decoded_text": {
-                    "description": "Optional decoded textual view; never a replacement for source bytes.",
+                    "description": "Optional decoded textual view; linked to the normalized Markdown.",
                     "type": "string"
                 },
                 "destination": {
@@ -2593,13 +2203,6 @@
                 "applies_to_references": {
                     "items": {
                         "type": "string"
-                    },
-                    "type": "array"
-                },
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
                     },
                     "type": "array"
                 },
@@ -2939,13 +2542,6 @@
                     "description": "Parsed YAML root; ordered mapping entries preserve arbitrary keys, duplicate keys, lists, tags and scalar types.",
                     "type": "string"
                 },
-                "normalization": {
-                    "description": "Required when parser byte offsets differ from original bytes; no guessed offsets.",
-                    "items": {
-                        "$ref": "#/$defs/OffsetMapSegment"
-                    },
-                    "type": "array"
-                },
                 "parse_status": {
                     "$ref": "#/$defs/ParseStatus"
                 },
@@ -3056,151 +2652,6 @@
                 }
             },
             "title": "EffectsRow",
-            "type": "object"
-        },
-        "EvidenceCollection": {
-            "additionalProperties": false,
-            "description": "Evidence narrative and explicitly distinguished evidence statements, research basis and limitations.",
-            "properties": {
-                "content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "limitations": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "research_basis": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "statements": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                }
-            },
-            "required": [
-                "content"
-            ],
-            "title": "EvidenceCollection",
-            "type": "object"
-        },
-        "EvidenceStatement": {
-            "additionalProperties": false,
-            "description": "An explicitly identified source claim, hypothesis, observation or research limitation. Classification and confidence are not inferred.",
-            "properties": {
-                "authored_id": {
-                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
-                    "type": "string"
-                },
-                "decomposition": {
-                    "$ref": "#/$defs/DecompositionStatus"
-                },
-                "evidence_type": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "extension_sections": {
-                    "description": "Only unknown sections, not a substitute for known domain fields.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "illustrative_examples": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Illustrations, not an exhaustive behavioral specification."
-                },
-                "implementation_suggestions": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Nonbinding implementation advice, distinct from required behavior."
-                },
-                "kind": {
-                    "const": "EvidenceStatement",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "limitations": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "name": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored title or item name, if present."
-                },
-                "notes": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Explanation of the element; not a separate obligation or endorsement."
-                },
-                "open_questions": {
-                    "description": "Explicitly distinguished questions, in authored order.",
-                    "items": {
-                        "$ref": "#/$defs/OpenQuestion"
-                    },
-                    "type": "array"
-                },
-                "open_questions_content": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions."
-                },
-                "owner": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "type": "string"
-                },
-                "references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "research_status": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "source_document": {
-                    "type": "string"
-                },
-                "source_fragment": {
-                    "type": "string"
-                },
-                "statement": {
-                    "$ref": "#/$defs/RichContent"
-                }
-            },
-            "required": [
-                "owner",
-                "source_document",
-                "decomposition",
-                "id",
-                "kind"
-            ],
-            "title": "EvidenceStatement",
-            "type": "object"
-        },
-        "EvidenceStatementSpecReport": {
-            "additionalProperties": false,
-            "description": "",
-            "properties": {
-                "documents": {
-                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
-                    "type": "string"
-                },
-                "type": {
-                    "const": "evidence-statement-spec-report",
-                    "description": "Serialized document type fixed by the concrete class.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "documents",
-                "type"
-            ],
-            "title": "EvidenceStatementSpecReport",
             "type": "object"
         },
         "ExtensionSection": {
@@ -3335,13 +2786,6 @@
             "additionalProperties": false,
             "description": "A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own obligations.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -3380,7 +2824,7 @@
                     "description": "The behavior available through this feature."
                 },
                 "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
+                    "$ref": "#/$defs/RichContent"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -3565,31 +3009,6 @@
             "title": "FeatureSpecReport",
             "type": "object"
         },
-        "Force": {
-            "additionalProperties": false,
-            "description": "An explicitly described progress force; a kind is assigned only when authored or deterministically marked.",
-            "properties": {
-                "description": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "kind": {
-                    "$ref": "#/$defs/ForceKind"
-                }
-            },
-            "title": "Force",
-            "type": "object"
-        },
-        "ForceKind": {
-            "description": "Explicitly described forces in a job progress case.",
-            "enum": [
-                "push",
-                "pull",
-                "anxiety",
-                "habit"
-            ],
-            "title": "ForceKind",
-            "type": "string"
-        },
         "GeneratedDocument": {
             "additionalProperties": false,
             "description": "A reader-facing document rendered as a Markdown page or an addressable section.",
@@ -3739,13 +3158,6 @@
             "additionalProperties": false,
             "description": "An explicitly distinguished goal: a result that an organization or stakeholder wants the system to help achieve.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -3916,13 +3328,6 @@
             "additionalProperties": false,
             "description": "An independently addressable description of interaction at a System or Component boundary, declared by that System or Component. Required or provided membership states direction relative to the declaring subject. Native protocol contracts retain their authority; neither declaration nor citation proves implementation or compatibility.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -4108,15 +3513,8 @@
         },
         "Job": {
             "additionalProperties": false,
-            "description": "What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps, progress cases and job-story phrasing are optional complementary perspectives.",
+            "description": "What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps and job-story phrasing are optional complementary perspectives.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -4151,7 +3549,7 @@
                     "type": "array"
                 },
                 "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
+                    "$ref": "#/$defs/RichContent"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -4220,17 +3618,6 @@
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored content between the title and the first named section."
-                },
-                "progress_cases": {
-                    "description": "Explicitly named progress cases, in authored order.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "progress_cases_content": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Complete Progress cases section body."
                 },
                 "related_specifications": {
                     "$ref": "#/$defs/ContextualReferences",
@@ -4364,13 +3751,6 @@
             "additionalProperties": false,
             "description": "A meaningful accomplishment within a functional job map; not a prescribed software interaction or execution sequence.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -4654,7 +4034,7 @@
         },
         "Obligation": {
             "additionalProperties": false,
-            "description": "An obligation, expressed in its own Requirement specification or as a clause inside another specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines or references the satisfaction rule. A system verification plan assesses a realization against that rule. A requirements verification plan assesses the quality of the obligation itself.",
+            "description": "An obligation, expressed in its own Requirement specification or as a clause inside another specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines or references the satisfaction rule.",
             "properties": {
                 "applicability": {
                     "$ref": "#/$defs/Applicability"
@@ -4671,20 +4051,13 @@
                     },
                     "type": "array"
                 },
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
                 },
                 "criterion": {
                     "$ref": "#/$defs/ObligationCriterion",
-                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis."
+                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -4870,20 +4243,13 @@
                     },
                     "type": "array"
                 },
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
                 },
                 "criterion": {
                     "$ref": "#/$defs/ObligationCriterion",
-                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis."
+                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -5080,13 +4446,6 @@
             "additionalProperties": false,
             "description": "Explicit declaration container for embedded obligation clauses. Traceability alone does not confer containment.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -5225,14 +4584,14 @@
         },
         "ObligationCriterion": {
             "additionalProperties": false,
-            "description": "Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define each bound once or reference its authoritative statement or source; system verification plans cite this rule. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.",
+            "description": "Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define each bound once or reference its authoritative statement or source. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.",
             "properties": {
                 "content": {
                     "$ref": "#/$defs/RichContent"
                 },
                 "measure": {
                     "$ref": "#/$defs/RichContent",
-                    "description": "Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed. A system verification plan describes the collection procedure."
+                    "description": "Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed."
                 },
                 "target": {
                     "$ref": "#/$defs/RichContent",
@@ -5245,66 +4604,12 @@
             "title": "ObligationCriterion",
             "type": "object"
         },
-        "OffsetMapSegment": {
-            "additionalProperties": false,
-            "description": "Maps a normalized parser buffer interval to original bytes; segments must be monotone and account for removals/replacements such as BOM and CRLF.",
-            "properties": {
-                "normalized_end": {
-                    "minimum": 0,
-                    "type": "integer"
-                },
-                "normalized_start": {
-                    "minimum": 0,
-                    "type": "integer"
-                },
-                "original_end": {
-                    "minimum": 0,
-                    "type": "integer"
-                },
-                "original_start": {
-                    "minimum": 0,
-                    "type": "integer"
-                },
-                "transformation": {
-                    "description": "Identity, BOM removal, line-ending normalization, or another declared transformation.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "normalized_start",
-                "normalized_end",
-                "original_start",
-                "original_end",
-                "transformation"
-            ],
-            "title": "OffsetMapSegment",
-            "type": "object"
-        },
         "OpenQuestion": {
             "additionalProperties": false,
             "description": "An explicitly authored unresolved question; do not infer every omitted field to be an open question.",
             "properties": {
-                "evidence_needed": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "importance": {
-                    "$ref": "#/$defs/RichContent"
-                },
                 "question": {
                     "$ref": "#/$defs/RichContent"
-                },
-                "raised_by": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "raised_on": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "resolve_by": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "tracking_reference": {
-                    "$ref": "#/$defs/ContextualReferences",
-                    "description": "External issue or decision owning resolution workflow."
                 }
             },
             "title": "OpenQuestion",
@@ -5329,149 +4634,6 @@
             ],
             "title": "Presence",
             "type": "string"
-        },
-        "ProgressCase": {
-            "additionalProperties": false,
-            "description": "An explicitly authored example or hypothesis about progress; do not invent cases from unsegmented prose.",
-            "properties": {
-                "alternatives_considered": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Approaches considered, including doing nothing or continuing the current approach."
-                },
-                "authored_id": {
-                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
-                    "type": "string"
-                },
-                "circumstances": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Case-specific circumstances, distinct from the general job situation."
-                },
-                "current_approach": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "decomposition": {
-                    "$ref": "#/$defs/DecompositionStatus"
-                },
-                "description": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "desired_progress": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
-                },
-                "extension_sections": {
-                    "description": "Only unknown sections, not a substitute for known domain fields.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "forces": {
-                    "description": "Explicitly identified forces, in authored order.",
-                    "items": {
-                        "$ref": "#/$defs/Force"
-                    },
-                    "type": "array"
-                },
-                "forces_content": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Complete Forces section narrative."
-                },
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "illustrative_examples": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Illustrations, not an exhaustive behavioral specification."
-                },
-                "implementation_suggestions": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Nonbinding implementation advice, distinct from required behavior."
-                },
-                "kind": {
-                    "const": "ProgressCase",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "name": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored title or item name, if present."
-                },
-                "notes": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Explanation of the element; not a separate obligation or endorsement."
-                },
-                "open_questions": {
-                    "description": "Explicitly distinguished questions, in authored order.",
-                    "items": {
-                        "$ref": "#/$defs/OpenQuestion"
-                    },
-                    "type": "array"
-                },
-                "open_questions_content": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions."
-                },
-                "owner": {
-                    "type": "string"
-                },
-                "participants": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "People and roles in this case; distinguish performer, buyer and decision maker where relevant."
-                },
-                "source_document": {
-                    "type": "string"
-                },
-                "source_fragment": {
-                    "type": "string"
-                },
-                "struggling_moment": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "The event or difficulty that made change worth considering."
-                },
-                "timeline": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored timeline of progress or switching decisions, distinct from a functional job map; unknown dates and research-pending narratives are allowed."
-                },
-                "tradeoffs_and_selection_criteria": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Trade-offs and criteria for choosing, hiring or rejecting an approach."
-                }
-            },
-            "required": [
-                "owner",
-                "source_document",
-                "decomposition",
-                "id",
-                "kind"
-            ],
-            "title": "ProgressCase",
-            "type": "object"
-        },
-        "ProgressCaseSpecReport": {
-            "additionalProperties": false,
-            "description": "",
-            "properties": {
-                "documents": {
-                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
-                    "type": "string"
-                },
-                "type": {
-                    "const": "progress-case-spec-report",
-                    "description": "Serialized document type fixed by the concrete class.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "documents",
-                "type"
-            ],
-            "title": "ProgressCaseSpecReport",
-            "type": "object"
         },
         "QualityAttribute": {
             "additionalProperties": false,
@@ -5596,13 +4758,6 @@
             "additionalProperties": false,
             "description": "A standalone reusable set of quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -5643,7 +4798,7 @@
                     "$ref": "#/$defs/RichContent"
                 },
                 "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
+                    "$ref": "#/$defs/RichContent"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -5792,7 +4947,7 @@
             "type": "object"
         },
         "ReadStatus": {
-            "description": "Whether original source bytes were acquired.",
+            "description": "Whether the source was successfully read.",
             "enum": [
                 "read",
                 "failed",
@@ -5914,13 +5069,6 @@
                     },
                     "type": "array"
                 },
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -5931,7 +5079,7 @@
                 },
                 "criterion": {
                     "$ref": "#/$defs/ObligationCriterion",
-                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis."
+                    "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -5959,7 +5107,7 @@
                     "type": "array"
                 },
                 "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
+                    "$ref": "#/$defs/RichContent"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -6142,7 +5290,7 @@
         },
         "RequirementSpecReport": {
             "additionalProperties": false,
-            "description": "Brings the requirement statement, applicability, criterion, and assessment plans together at one address.",
+            "description": "Brings the requirement statement, applicability and criterion together at one address.",
             "properties": {
                 "documents": {
                     "description": "The documented subject, serialized as a relative URI to its authored heading.",
@@ -6163,7 +5311,7 @@
         },
         "RequirementsReviewReport": {
             "additionalProperties": false,
-            "description": "Project-wide open questions, verification and validation plans, and inspection findings with routes to their subjects.",
+            "description": "Project-wide open questions and inspection findings with routes to their subjects.",
             "properties": {
                 "type": {
                     "const": "requirements-review-report",
@@ -6698,12 +5846,6 @@
                                 "$ref": "#/$defs/QualityAttribute"
                             },
                             {
-                                "$ref": "#/$defs/ProgressCase"
-                            },
-                            {
-                                "$ref": "#/$defs/EvidenceStatement"
-                            },
-                            {
                                 "$ref": "#/$defs/Scenario"
                             },
                             {
@@ -6711,18 +5853,6 @@
                             },
                             {
                                 "$ref": "#/$defs/UseCaseExtension"
-                            },
-                            {
-                                "$ref": "#/$defs/ConceptType"
-                            },
-                            {
-                                "$ref": "#/$defs/ActionParameter"
-                            },
-                            {
-                                "$ref": "#/$defs/TypeBinding"
-                            },
-                            {
-                                "$ref": "#/$defs/SynchronizationAction"
                             },
                             {
                                 "$ref": "#/$defs/ExtensionSection"
@@ -6808,7 +5938,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.26.0-draft",
+                    "const": "0.27.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -6818,7 +5948,7 @@
                     "type": "array"
                 },
                 "representation_version": {
-                    "const": "0.1.0",
+                    "const": "0.2.0",
                     "description": "Version of this serialized snapshot contract, separate from the domain metamodel version.",
                     "type": "string"
                 },
@@ -6865,7 +5995,7 @@
         },
         "SourceDirectory": {
             "additionalProperties": false,
-            "description": "An addressable local directory referenced by Markdown. It is a resource target, not a document and has no source payload.",
+            "description": "An addressable local directory referenced by Markdown. It is a resource target, not a document and carries a directory path.",
             "properties": {
                 "id": {
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
@@ -6892,16 +6022,6 @@
         "SourceDocument": {
             "additionalProperties": false,
             "description": "A discovered Markdown or related file. A failed read retains identity, locator, status and diagnostics.",
-            "if": {
-                "properties": {
-                    "read_status": {
-                        "const": "read"
-                    }
-                },
-                "required": [
-                    "read_status"
-                ]
-            },
             "properties": {
                 "diagnostics": {
                     "items": {
@@ -6922,12 +6042,12 @@
                 "locator": {
                     "type": "string"
                 },
-                "media_type": {
+                "markdown": {
+                    "description": "Markdown text for parsed documents, normalized to UTF-8 and LF for reading and source locations.",
                     "type": "string"
                 },
-                "payload": {
-                    "$ref": "#/$defs/SourcePayload",
-                    "description": "Present only after successful read; graph rule requires it for read_status=read."
+                "media_type": {
+                    "type": "string"
                 },
                 "project": {
                     "$ref": "#/$defs/SpecificationProject",
@@ -6947,14 +6067,6 @@
                 "id",
                 "kind"
             ],
-            "then": {
-                "properties": {
-                    "payload": {}
-                },
-                "required": [
-                    "payload"
-                ]
-            },
             "title": "SourceDocument",
             "type": "object"
         },
@@ -7027,35 +6139,6 @@
             "title": "SourceLocation",
             "type": "object"
         },
-        "SourcePayload": {
-            "additionalProperties": false,
-            "description": "Exact original bytes before Goldmark/specfile normalization, including BOM, CRLF, trailing newlines and invalid encodings.",
-            "properties": {
-                "byte_length": {
-                    "minimum": 0,
-                    "type": "integer"
-                },
-                "bytes_base64": {
-                    "description": "Original bytes including BOM and line endings; decode and verify digest and byte count.",
-                    "type": "string"
-                },
-                "sha256": {
-                    "pattern": "^[a-f0-9]{64}$",
-                    "type": "string"
-                },
-                "text_encoding": {
-                    "description": "Detected or declared decoding; original bytes remain authoritative.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "sha256",
-                "byte_length",
-                "bytes_base64"
-            ],
-            "title": "SourcePayload",
-            "type": "object"
-        },
         "SourceReference": {
             "additionalProperties": false,
             "description": "An authored reference occurrence, independent of whether it resolves or carries semantic intent.",
@@ -7109,7 +6192,7 @@
         },
         "SourceResource": {
             "additionalProperties": false,
-            "description": "An addressable source; only SourceDocument implies locally acquired bytes.",
+            "description": "An addressable source; a SourceDocument records the outcome of a local read.",
             "properties": {
                 "id": {
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
@@ -7132,13 +6215,6 @@
             "additionalProperties": false,
             "description": "The root record of one authored specification document. Every specification has exactly one specification type, and specification types correspond one-to-one with concrete Specification classes. Elements declared inside a specification are not specifications. Narrative authority and evidence do not create executable authority assertions.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -7173,7 +6249,7 @@
                     "type": "array"
                 },
                 "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
+                    "$ref": "#/$defs/RichContent"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -7394,13 +6470,6 @@
             "additionalProperties": false,
             "description": "A composition rule declared in a system or component specification. Narrative and action references describe coordination; no atomicity, execution or completeness is inferred.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -7545,20 +6614,8 @@
                 "then": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "then_actions": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
                 "when": {
                     "$ref": "#/$defs/RichContent"
-                },
-                "when_actions": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
                 },
                 "where": {
                     "$ref": "#/$defs/RichContent"
@@ -7573,130 +6630,6 @@
                 "kind"
             ],
             "title": "Synchronization",
-            "type": "object"
-        },
-        "SynchronizationAction": {
-            "additionalProperties": false,
-            "description": "An authored action occurrence or invocation within a synchronization, qualified by a concept use. Conditions and arguments remain authored content.",
-            "properties": {
-                "action": {
-                    "type": "string"
-                },
-                "action_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "arguments": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "authored_id": {
-                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
-                    "type": "string"
-                },
-                "concept_use": {
-                    "type": "string"
-                },
-                "concept_use_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "decomposition": {
-                    "$ref": "#/$defs/DecompositionStatus"
-                },
-                "extension_sections": {
-                    "description": "Only unknown sections, not a substitute for known domain fields.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "illustrative_examples": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Illustrations, not an exhaustive behavioral specification."
-                },
-                "implementation_suggestions": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Nonbinding implementation advice, distinct from required behavior."
-                },
-                "kind": {
-                    "const": "SynchronizationAction",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "name": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored title or item name, if present."
-                },
-                "notes": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Explanation of the element; not a separate obligation or endorsement."
-                },
-                "open_questions": {
-                    "description": "Explicitly distinguished questions, in authored order.",
-                    "items": {
-                        "$ref": "#/$defs/OpenQuestion"
-                    },
-                    "type": "array"
-                },
-                "open_questions_content": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions."
-                },
-                "owner": {
-                    "type": "string"
-                },
-                "result": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "source_document": {
-                    "type": "string"
-                },
-                "source_fragment": {
-                    "type": "string"
-                }
-            },
-            "required": [
-                "owner",
-                "content",
-                "source_document",
-                "decomposition",
-                "id",
-                "kind"
-            ],
-            "title": "SynchronizationAction",
-            "type": "object"
-        },
-        "SynchronizationActionSpecReport": {
-            "additionalProperties": false,
-            "description": "",
-            "properties": {
-                "documents": {
-                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
-                    "type": "string"
-                },
-                "type": {
-                    "const": "synchronization-action-spec-report",
-                    "description": "Serialized document type fixed by the concrete class.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "documents",
-                "type"
-            ],
-            "title": "SynchronizationActionSpecReport",
             "type": "object"
         },
         "SynchronizationSpecReport": {
@@ -7745,13 +6678,6 @@
             "additionalProperties": false,
             "description": "The system described by a system document; subordinate systems retain their own boundaries and quality attributes.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "assumptions": {
                     "description": "Explicitly authored assumptions, in authored order.",
                     "items": {
@@ -7822,7 +6748,7 @@
                     "description": "Conditions and surroundings the system must accommodate."
                 },
                 "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
+                    "$ref": "#/$defs/RichContent"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -8088,13 +7014,6 @@
             "additionalProperties": false,
             "description": "A specification associated with a system: every specification type other than System and QualityModel. The association is selected explicitly or defaults to the nearest enclosing system found by directory discovery.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -8129,7 +7048,7 @@
                     "type": "array"
                 },
                 "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
+                    "$ref": "#/$defs/RichContent"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -8271,13 +7190,6 @@
             "additionalProperties": false,
             "description": "A system's named quality attribute, authored in a standalone quality attribute specification.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -8315,7 +7227,7 @@
                     "type": "array"
                 },
                 "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
+                    "$ref": "#/$defs/RichContent"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -8476,13 +7388,6 @@
             "additionalProperties": false,
             "description": "An element with explicit motivation, derivation and assumptions. Concern subset, artifact kind and core/supporting/generic classification are independent; neither traceability nor document location confers normative authority.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -8610,136 +7515,6 @@
             "title": "TraceableElement",
             "type": "object"
         },
-        "TypeBinding": {
-            "additionalProperties": false,
-            "description": "An explicit binding of a definition parameter to a primitive or a type introduced by a named concept use. Unresolved links remain authored references.",
-            "properties": {
-                "authored_id": {
-                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
-                    "type": "string"
-                },
-                "bound_type": {
-                    "type": "string"
-                },
-                "bound_type_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "content": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "decomposition": {
-                    "$ref": "#/$defs/DecompositionStatus"
-                },
-                "extension_sections": {
-                    "description": "Only unknown sections, not a substitute for known domain fields.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "id": {
-                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-                    "pattern": "[\\s\\S]+",
-                    "type": "string"
-                },
-                "illustrative_examples": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Illustrations, not an exhaustive behavioral specification."
-                },
-                "implementation_suggestions": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Nonbinding implementation advice, distinct from required behavior."
-                },
-                "kind": {
-                    "const": "TypeBinding",
-                    "description": "Concrete record type discriminator.",
-                    "type": "string"
-                },
-                "name": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored title or item name, if present."
-                },
-                "notes": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Explanation of the element; not a separate obligation or endorsement."
-                },
-                "open_questions": {
-                    "description": "Explicitly distinguished questions, in authored order.",
-                    "items": {
-                        "$ref": "#/$defs/OpenQuestion"
-                    },
-                    "type": "array"
-                },
-                "open_questions_content": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions."
-                },
-                "owner": {
-                    "type": "string"
-                },
-                "parameter": {
-                    "type": "string"
-                },
-                "parameter_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "primitive": {
-                    "type": "string"
-                },
-                "source_document": {
-                    "type": "string"
-                },
-                "source_fragment": {
-                    "type": "string"
-                },
-                "supplying_concept_use": {
-                    "type": "string"
-                },
-                "supplying_concept_use_references": {
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                }
-            },
-            "required": [
-                "owner",
-                "content",
-                "source_document",
-                "decomposition",
-                "id",
-                "kind"
-            ],
-            "title": "TypeBinding",
-            "type": "object"
-        },
-        "TypeBindingSpecReport": {
-            "additionalProperties": false,
-            "description": "",
-            "properties": {
-                "documents": {
-                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
-                    "type": "string"
-                },
-                "type": {
-                    "const": "type-binding-spec-report",
-                    "description": "Serialized document type fixed by the concrete class.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "documents",
-                "type"
-            ],
-            "title": "TypeBindingSpecReport",
-            "type": "object"
-        },
         "UnmappedRole": {
             "additionalProperties": false,
             "description": "A known domain field or item whose source content has not yet been mapped.",
@@ -8769,13 +7544,6 @@
             "additionalProperties": false,
             "description": "An actor goal and its interactions at a stated system boundary, with alternative paths and protections.",
             "properties": {
-                "assessment_plans": {
-                    "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-                    "items": {
-                        "$ref": "#/$defs/AssessmentPlan"
-                    },
-                    "type": "array"
-                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -8814,7 +7582,7 @@
                     "type": "array"
                 },
                 "evidence": {
-                    "$ref": "#/$defs/EvidenceCollection"
+                    "$ref": "#/$defs/RichContent"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -9278,12 +8046,6 @@
                         "$ref": "#/$defs/QualityAttribute"
                     },
                     {
-                        "$ref": "#/$defs/ProgressCase"
-                    },
-                    {
-                        "$ref": "#/$defs/EvidenceStatement"
-                    },
-                    {
                         "$ref": "#/$defs/Scenario"
                     },
                     {
@@ -9291,18 +8053,6 @@
                     },
                     {
                         "$ref": "#/$defs/UseCaseExtension"
-                    },
-                    {
-                        "$ref": "#/$defs/ConceptType"
-                    },
-                    {
-                        "$ref": "#/$defs/ActionParameter"
-                    },
-                    {
-                        "$ref": "#/$defs/TypeBinding"
-                    },
-                    {
-                        "$ref": "#/$defs/SynchronizationAction"
                     },
                     {
                         "$ref": "#/$defs/ExtensionSection"
@@ -9388,7 +8138,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.26.0-draft",
+            "const": "0.27.0-draft",
             "type": "string"
         },
         "references": {
@@ -9398,7 +8148,7 @@
             "type": "array"
         },
         "representation_version": {
-            "const": "0.1.0",
+            "const": "0.2.0",
             "description": "Version of this serialized snapshot contract, separate from the domain metamodel version.",
             "type": "string"
         },
@@ -9442,5 +8192,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.26.0-draft"
+    "version": "0.27.0-draft"
 }

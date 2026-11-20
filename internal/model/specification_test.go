@@ -68,12 +68,12 @@ Review with the intended users.
 				t.Fatal(result.Snapshot.Diagnostics)
 			}
 			s := result.Snapshot
-			conformancePayloads(t, s)
+			checkSourceText(t, s)
 			r := designRecord(t, s, tc.kind, "Named definition")
 			if designKind(tc.kind, "Specification") || !designKind(tc.kind, "TraceableElement") || r["authored_id"] != "named-definition" {
 				t.Fatal("declared element must be traceable and addressable without being a specification", r)
 			}
-			for _, field := range []string{"notes", "assessment_plans"} {
+			for _, field := range []string{"notes"} {
 				if r[field] == nil {
 					t.Fatal("missing element content", field)
 				}
@@ -84,7 +84,7 @@ Review with the intended users.
 				}
 			}
 			// Sections that belong to specifications stay with the element as retained, unmodelled content.
-			if len(Strings(r["extension_sections"])) != 2 {
+			if len(Strings(r["extension_sections"])) != 3 {
 				t.Fatal("Evidence and Related specifications should be retained as the element's extension sections", r["extension_sections"])
 			}
 		})
@@ -108,7 +108,7 @@ type: feature-spec
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	s := result.Snapshot
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 	sys := designRecord(t, s, "System", "Document workspace")
 	provided := designRecord(t, s, "Interface", "Restoration requests")
 	required := designRecord(t, s, "Interface", "Time readings")
@@ -159,6 +159,6 @@ func TestInterfaceDeclarationIDsAreChecked(t *testing.T) {
 		if result.ExitCode == 0 {
 			t.Fatal("duplicate declaration identity accepted")
 		}
-		conformancePayloads(t, result.Snapshot)
+		checkSourceText(t, result.Snapshot)
 	}
 }

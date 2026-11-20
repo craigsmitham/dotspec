@@ -1,14 +1,9 @@
 # Verification and validation
 
-Each dotspec assessment plan names its **purpose** in its heading. Choose the
-purpose by asking what you will assess (the **subject**) and what you will judge
-it against (the **basis**). This vocabulary applies across
-business, user and software requirements and is independent of the model's
-core/supporting/generic classification.
+Use these four questions when reviewing a requirement and the product it describes.
+The subject is what you examine. The basis is what you judge it against.
 
 ## Assessment purposes
-
-<!-- assessment-purposes -->
 
 | Purpose | Subject | Assessment question |
 | --- | --- | --- |
@@ -16,9 +11,6 @@ core/supporting/generic classification.
 | Requirements validation | A proposed requirement or set of requirements | Do the proposed requirements faithfully express stakeholder needs, higher-level intent and constraints? |
 | System verification | A system, component or process realization | Does the realization fulfill the specified obligations under the assessed conditions? |
 | System validation | A proposed or realized solution | Can the intended users accomplish their work with the proposed or realized solution in its intended context? |
-| Assumption validation | A premise on which the specification relies | Does the evidence support the premise under the stated conditions, and is reliance on it justified for the intended use? |
-
-<!-- /assessment-purposes -->
 
 The requirements distinction follows ISO/IEC/IEEE 24765:2017, entries 3.3452–3.3453,
 which reference requirements-engineering definitions in ISO/IEC/IEEE 29148.
@@ -82,41 +74,18 @@ validation in the intended-use sense. The
 [JSON Schema validation specification](https://json-schema.org/draft/2020-12/json-schema-validation)
 uses validation for instance constraint checks.
 
-## dotspec commands and model roles
+## Dotspec commands and model roles
 
-| Surface | Scope of the claim |
-| --- | --- |
-| `model validate` | Snapshot conformance and integrity: schema, typed references, source fidelity and graph invariants. |
-| `check` | Automated authoring and selected requirements-quality checks that support requirements verification. Passing does not complete requirements verification or establish fitness. |
-| `model review` | Groups authored plans by purpose and surfaces review prompts about requirements quality, needs, assumptions and missing guidance. |
-| `assessment_plans` on a traceable element | An ordered list of plans. Each purpose-qualified heading supplies the plan’s required `purpose`. Subject and Basis can each cite sources. |
-| `criterion` | An optional explicit satisfaction rule (`ObligationCriterion`), defining or referencing required bounds for any obligation, with an optional Measure and Target. |
+`check` inspects structure and links. `model review` brings stated criteria,
+assumptions, and open questions together for human review. `model validate`
+checks a saved snapshot against its schema and graph rules.
 
-A well-formed snapshot can faithfully represent a malformed or incomplete source.
-A source that passes authoring checks can still express the wrong requirements.
-Use the qualified terms above instead of a blanket “specification validated.”
-
-Use the purpose label from the table followed by “plan” as the heading, such as
-**Requirements verification plan** or **System verification plan**. Each occurrence
-starts a separate plan, including a second plan with the same purpose.
-
+Keep the statement, applicable conditions and satisfaction criteria together.
+Link to a test, study or assessment where it helps readers evaluate a claim.
 The [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md)
-has both. Its requirements-verification plan cites the statement as its **Subject**
-and gives criteria for reviewing the wording. Its system-verification plan names the
-service as its **Subject** and cites the same statement as its **Basis**. Where the
-plan is recorded tells readers where to find it. The purpose tells them which
-question the author intends to answer.
-
-Subject, Basis, Participants, Method, Conditions, Success criteria, Cases and
-Evidence to retain are optional. Subject and Basis preserve both prose and links.
-A case shares the purpose of its plan. `supports` records an intended contribution.
-
-Define each required bound once in the statement or criterion, or reference its
-authoritative source. Plan Success criteria explain interpretation against that
-basis; they should refer to its bounds rather than redefine them. Applicability
-describes the required operating context, while plan Conditions describe the
-assessment setup and how it represents that context. See
-[Develop requirements](requirements.md) for examples.
+defines what survives a restart. Its linked acceptance test exercises that promise.
+The [participant exercise](../../examples/todo/README.md#try-the-workflow-with-a-participant)
+asks whether someone can resume interrupted work.
 
 ## Assumptions: evidence and justified reliance
 
@@ -127,10 +96,7 @@ Assumption validation has two questions:
 
 Measuring clock offset supplies empirical evidence. Deciding whether that offset
 is acceptable for the recovery-window boundary assesses the justification for
-reliance. The Assumption's Basis and Applicability explain the premise; its
-Assumption validation plan explains how to assess it. An observation supports a bounded claim,
-not a guarantee about every future environment. Stakeholder agreement alone does
-not establish an empirical premise.
+reliance. Use the assumption’s Basis and Applicability to explain why and under which conditions it is credible.
 
 ## Plans, observations, assessments and acceptance
 
@@ -143,15 +109,5 @@ Keep these roles separate, even when one external artifact contains several:
 | Assessment | What the evidence supports about conformance, fitness or an assumption, including scope and limits. |
 | Acceptance decision | A stakeholder or governing decision informed by evidence, assessments and other considerations. |
 
-The current metamodel structures plans and preserves authored evidence; it does not
-introduce an assessment-result or approval workflow. Revision-bound observations,
-assessment rationale and acceptance records remain in referenced native artifacts.
-A future evidence model must preserve their subject, basis, revision, context,
-method, result and limits. No `verified` or `validated` boolean is inferred from
-links, a plan, a passing test or a merge.
-
-See [Review requirements](review.md) for authoring plans and reading advisory
-findings. Compare the [restart verification plan](../../examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md#system-verification-plan)
-with the [system validation exercise](../../examples/todo/specification/personal-task-list.system.spec-report.md#system-validation-plan).
-One tests preservation of acknowledged tasks, and the other asks a participant
-to resume interrupted work.
+Record observations and decisions in their native artifacts, identifying the revision
+and conditions to which they apply. Link them from the specification where useful.

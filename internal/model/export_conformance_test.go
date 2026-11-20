@@ -2,9 +2,6 @@ package model
 
 import (
 	"bytes"
-	"crypto/sha256"
-	"encoding/base64"
-	"encoding/hex"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -67,28 +64,28 @@ func conformanceIndex(snapshot *Snapshot) map[string]Record {
 	return index
 }
 
-func conformancePayloads(t *testing.T, snapshot *Snapshot) {
+func checkSourceText(t *testing.T, snapshot *Snapshot) {
 	t.Helper()
 	for _, source := range snapshot.Sources {
 		if String(source, "kind") != "SourceDocument" || String(source, "read_status") != "read" {
 			continue
 		}
-		payload := Object(source["payload"])
+		actual, present := source["markdown"].(string)
+		if String(source, "media_type") != "text/markdown" {
+			if present || source["payload"] != nil {
+				t.Errorf("native reference embedded: %s", source["locator"])
+			}
+			continue
+		}
 		original, err := os.ReadFile(filepath.FromSlash(String(source, "locator")))
 		if err != nil {
 			t.Fatal(err)
 		}
-		recovered, err := base64.StdEncoding.DecodeString(String(payload, "bytes_base64"))
-		if err != nil {
-			t.Fatal(err)
+		want := strings.ToValidUTF8(strings.ReplaceAll(strings.TrimPrefix(string(original), "\ufeff"), "\r\n", "\n"), "�")
+		if !present || actual != want {
+			t.Errorf("Markdown mismatch: %s", source["locator"])
 		}
-		if !bytes.Equal(original, recovered) {
-			t.Errorf("source bytes differ: %s", source["locator"])
-		}
-		digest := sha256.Sum256(recovered)
-		if hex.EncodeToString(digest[:]) != String(payload, "sha256") || len(recovered) != Number(payload["byte_length"]) {
-			t.Errorf("payload checksum/size mismatch: %s", source["locator"])
-		}
+
 	}
 }
 
@@ -105,7 +102,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 		if project.ExitCode != 0 {
 			t.Errorf("checked-in project %s exit %d", path, project.ExitCode)
 		}
-		conformancePayloads(t, project.Snapshot)
+		checkSourceText(t, project.Snapshot)
 		result.Snapshot.Sources = append(result.Snapshot.Sources, project.Snapshot.Sources...)
 		result.Snapshot.Documents = append(result.Snapshot.Documents, project.Snapshot.Documents...)
 		result.Snapshot.ContentNodes = append(result.Snapshot.ContentNodes, project.Snapshot.ContentNodes...)
@@ -212,7 +209,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 			t.Errorf("%s exported roots: got %d want %d inventoried sources", kind, counts[kind], want)
 		}
 	}
-	for kind, want := range map[string]int{"JobStep": 16, "DesiredOutcome": 21, "ProgressCase": 1, "ConceptAction": 6, "GlossaryTerm": 3, "QualityAttribute": 285, "SystemQualityAttribute": 9} {
+	for kind, want := range map[string]int{"JobStep": 16, "DesiredOutcome": 21, "ConceptAction": 6, "GlossaryTerm": 3, "QualityAttribute": 285, "SystemQualityAttribute": 9} {
 		if counts[kind] < want {
 			t.Errorf("%s domain records: got %d want at least baseline %d", kind, counts[kind], want)
 		}
@@ -311,7 +308,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 	if undefinedAdvice != 2 {
 		t.Errorf("undefined-label advice count %d", undefinedAdvice)
 	}
-	conformancePayloads(t, result.Snapshot)
+	checkSourceText(t, result.Snapshot)
 }
 
 func TestExportConformanceInvalidAndNativeSources(t *testing.T) {
@@ -362,7 +359,7 @@ func TestExportConformanceInvalidAndNativeSources(t *testing.T) {
 	if String(result.Snapshot.Coverage, "status") != "partial" {
 		t.Error("invalid domain extraction reported complete coverage")
 	}
-	conformancePayloads(t, result.Snapshot)
+	checkSourceText(t, result.Snapshot)
 }
 
 func TestExportConformanceDeterminismAndContext(t *testing.T) {
@@ -403,11 +400,10 @@ func conformanceRichText(snapshot *Snapshot, value any) string {
 	var out strings.Builder
 	for _, id := range Strings(Object(value)["content_nodes"]) {
 		span := Object(index[id]["span"])
-		payload := Object(index[String(span, "source")]["payload"])
-		data, _ := base64.StdEncoding.DecodeString(String(payload, "bytes_base64"))
+		data := String(index[String(span, "source")], "markdown")
 		a, b := Number(span["start"]), Number(span["end"])
 		if a >= 0 && b >= a && b <= len(data) {
-			out.Write(data[a:b])
+			out.WriteString(data[a:b])
 		}
 	}
 	return out.String()
@@ -501,20 +497,12 @@ Unmapped protocol detail.
 			extensions[strings.TrimSpace(conformanceRichText(s, element["heading"]))] = String(index[String(element, "owner")], "kind")
 		case "Job":
 			decisions := records(element["open_questions"])
-			if len(decisions) != 1 || !strings.Contains(conformanceRichText(s, decisions[0]["question"]), "Which option?") || !strings.Contains(conformanceRichText(s, decisions[0]["evidence_needed"]), "Collect evidence") {
+			if len(decisions) != 1 || !strings.Contains(conformanceRichText(s, decisions[0]["question"]), "Which option?") || !strings.Contains(conformanceRichText(s, decisions[0]["question"]), "Collect evidence") {
 				t.Errorf("direct decision/evidence misbound: %#v", element["open_questions"])
 			}
 		case "JobStep":
 			if Object(element["stage"])["presence"] != "empty" {
 				t.Error("empty stage confused with absent/authored value")
-			}
-		case "ProgressCase":
-			text := conformanceRichText(s, element["timeline"])
-			if !strings.Contains(text, "First timeline") || !strings.Contains(text, "Second timeline") {
-				t.Errorf("repeated timeline overwritten: %q", text)
-			}
-			if len(records(element["forces"])) != 2 {
-				t.Error("repeated force collection overwritten")
 			}
 		case "Concept":
 			if String(element, "authored_id") != "concept-spec" || String(element, "source_fragment") == "" {
@@ -563,7 +551,7 @@ Unmapped protocol detail.
 			}
 		}
 	}
-	for heading, owner := range map[string]string{"#### Surprises": "JobStep", "#### Custom case detail": "ProgressCase", "#### Implementation details": "ConceptAction", "##### Flow caveat": "UseCaseExtension", "### Supporting notes": "Job", "### Custom protocol": "Requirement", "### Decision caveat": "SystemQualityAttribute"} {
+	for heading, owner := range map[string]string{"#### Surprises": "JobStep", "## Progress cases": "Job", "#### Custom case detail": "ExtensionSection", "#### Implementation details": "ConceptAction", "##### Flow caveat": "UseCaseExtension", "### Supporting notes": "Job", "### Custom protocol": "Requirement"} {
 		if extensions[heading] != owner {
 			t.Errorf("unknown section %q owner=%q want %q; extensions=%v", heading, extensions[heading], owner, extensions)
 		}
@@ -571,7 +559,7 @@ Unmapped protocol detail.
 	if counts["DesiredOutcome"] != 1 || counts["ScenarioStep"] != 2 {
 		t.Errorf("supporting lists fabricated domain items: outcomes=%d steps=%d", counts["DesiredOutcome"], counts["ScenarioStep"])
 	}
-	if len(Strings(s.Coverage["extension_sections"])) != len(extensions) {
+	if len(Strings(s.Coverage["extension_sections"])) != counts["ExtensionSection"] {
 		t.Error("unknown nested sections missing from coverage inventory")
 	}
 }
@@ -618,7 +606,7 @@ Ask the contributor to return later.
 		t.Fatalf("export exit %d", result.ExitCode)
 	}
 	s := result.Snapshot
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 	index := conformanceIndex(s)
 	labels := map[string]Record{}
 	var useCase, service Record

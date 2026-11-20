@@ -13,14 +13,8 @@ The canonical [LinkML model](../../model/metamodel.yaml) defines the records and
 relationships. The [generated reference](model/index.md) describes
 every field. The [relationship reference](model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.26.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/20`.
-
-Each traceable element can record `assessment_plans`. Each plan declares an
-[AssessmentPurpose](model/index.md#assessmentpurpose). The plan’s Subject and Basis
-can cite what is assessed and what it is judged against. The
-[handbook comparison](../handbook/verification-and-validation.md#assessment-purposes)
-gives the assessment questions and a worked example.
+`model_version` is `0.27.0-draft`, `representation_version` is `0.2.0`, and
+`mapping_profile` is `dotspec-markdown/21`.
 
 ## Specification types and declared elements
 
@@ -62,7 +56,7 @@ These elements are not specifications:
 
 - Each is traceable and has one declaring owner. Heading anchors and optional
   introductory `**ID:**` fields make it addressable without a separate file.
-- Each can carry Notes, Open questions, assessment plans and trace sections such
+- Each can carry Notes, Open questions and trace sections such
   as Supports, Derived from and Relies on.
 - Evidence, Authority and Related specifications belong to specifications only.
   Such a section under a declared element is retained as an unmodelled extension
@@ -72,8 +66,8 @@ Specification type and concern subset are independent. Business/user/software
 subsets describe concerns. Core/supporting/generic classifies those subsets;
 neither classification follows from inheritance.
 
-Goals, assumptions, reusable-model attribute entries, scenario steps and action parameters
-are likewise constituent domain elements. Plans, evidence and open questions
+Goals, assumptions, reusable-model attribute entries and scenario steps
+are likewise constituent domain elements. Evidence and open questions
 support specification work without becoming specifications themselves. An unknown
 section remains preserved as extension content.
 
@@ -124,7 +118,7 @@ system context and direct reference boundary used by the existing inspection
 commands. Nested projects are excluded from the selected partition. In a Git repository, discovery follows Git ignore rules. Filesystem
 discovery is used outside Git. Symlinks and nested repositories remain outside
 the discovery boundary. Ordinary referenced Markdown receives a content model;
-other acquired files retain their bytes and media type. Directory references
+other acquired files retain their identity, read state and media type. Directory references
 identify directories without recursively scanning their contents. External
 addresses are recorded without fetching them.
 
@@ -147,7 +141,7 @@ required to complete a hierarchy. See [Requirements layers](../handbook/requirem
 The separate `ObligationContainer` capability declares owned `ObligationClause`
 records. Jobs, job steps, business rules, goals, assumptions and desired outcomes
 are traceable but cannot contain clauses. `Obligation` supplies a common statement,
-quality classification, applicability, criterion, refinement and assessment plans
+quality classification, applicability, criterion and refinement
 to requirements and clauses. `Requirement` is the specification type that gives
 one obligation its own document; it contains no clauses. A clause can identify an
 obligation in a use case, concept, action or other explicitly supported container
@@ -169,10 +163,10 @@ dotspec model trace
 ```
 
 This command generates a Mermaid instance diagram and motivation, behavior,
-reverse change-review, and verification-guidance tables. Inverses are derived
+and reverse change-review tables. Inverses are derived
 from canonical fields. Its scope is the acquired snapshot, not the entire world
 of linked material. It preserves unresolved-reference and draft-review findings;
-missing motivation or check guidance is advisory. Checks, execution evidence,
+missing motivation is advisory. Checks, execution evidence,
 implementation satisfaction and achieved outcomes are distinct future relations,
 not conclusions inferred from reachability or existing Evidence prose.
 The [restart requirement](../../examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md) lets readers follow individual relationships from [authored specifications](../../examples/todo/README.md).
@@ -181,23 +175,13 @@ The [restart requirement](../../examples/todo/specification/requirements/preserv
 
 `Concept` describes reusable, purposeful behavior. `ConceptUse` explicitly includes
 that definition under a system-local name; directory association alone creates no
-use. Two uses of one definition have distinct conceptual state. Type parameters and
-introduced identity types are `ConceptType` records owned by their definition.
-`TypeBinding` identifies the parameter and either a primitive or both an introduced
-type and the named use supplying its identities. A type definition alone cannot
-distinguish public and internal registrations of the same Shorthand concept.
-
-`Synchronization` owns coordination at the system level. Its When, Where, Then and
-Semantics narratives remain source-backed content. Explicit action entries identify
-both a `ConceptUse` and a `ConceptAction` offered by that use's definition. Ordinary
-prose remains valid without invented action records. Application dependencies are
-explicit links between uses in one system; cycles are valid. Bindings, directory
-placement and incidental links never infer dependency edges.
+use. Two uses of one definition have distinct conceptual state. A system can describe coordination in a named Synchronization. When, Where, Then
+and Semantics hold prose and ordinary links. Explicit dependency links connect
+named concept uses within the same system.
 
 This separation follows Jackson's [concept criteria](https://essenceofsoftware.com/tutorials/concept-basics/criteria/)
 and [generic state/type guidance](https://essenceofsoftware.com/tutorials/concept-basics/state/).
-The type and action references are dotspec conventions, not a general expression
-language. Initial state, derived state and system-initiated actions can be described
+Initial state, derived state and system-initiated actions can be described
 without imposing a database schema or scheduler.
 
 Operational principles remain narrative, with multiple stories when needed. They
@@ -267,15 +251,13 @@ dotspec design choices, not a claim that his method requires this metamodel.
 
 `dotspec model review` consolidates authored questions, environmental premises,
 exclusions and interfaces, then identifies missing recorded goal contributions,
-scenario grounding, verification guidance and glossary collisions. These prompts
+scenario grounding, measurement criteria and glossary collisions. These prompts
 are advisory and do not invalidate drafts. `dotspec model pegs` assembles a
 Project, Environment, Goals, System reading perspective without replacing concern
 subsets or creating a project-management subsystem.
 
 Use the [review authoring guide](../handbook/review.md) for syntax and limitations.
-The [To-do review index](../../examples/todo/specification/requirements-review.report.md) links to
-system verification plans on obligations, the wording review on the restart requirement,
-and the system validation exercise on the system overview.
+The [To-do review index](../../examples/todo/specification/requirements-review.report.md) links to recorded questions and findings.
 Optional concept effects matrices are included in `model docs`;
 the [checklist effects table](../../examples/todo/specification/concepts/checklist.concept.spec-report.md#effects-table) records which properties reopening preserves.
 
@@ -283,13 +265,13 @@ the [checklist effects table](../../examples/todo/specification/concepts/checkli
 
 | Layer | What it represents | Why it is separate |
 | --- | --- | --- |
-| Source | Locators, read state and exact acquired payloads | Formatting, comments and malformed text survive interpretation. |
-| Document content | Ordered Markdown and YAML syntax, original-byte spans, references and fragments | Consumers can examine a document's structure without accepting a domain interpretation. |
-| Domain | Business rules, systems, jobs, steps, outcomes, progress cases, use cases, scenarios, concepts, requirements, reusable quality models and quality attributes | Named fields and records make domain meaning addressable and checkable. |
+| Source | Locators, read state and normalized Markdown | Formatting, comments and malformed text survive interpretation. |
+| Document content | Ordered Markdown and YAML syntax, text spans, references and fragments | Consumers can examine a document's structure without accepting a domain interpretation. |
+| Domain | Business rules, systems, jobs, steps, outcomes, use cases, scenarios, concepts, requirements, reusable quality models and quality attributes | Named fields and records make domain meaning addressable and checkable. |
 
 ```mermaid
 flowchart LR
-    S[SourceDocument and exact payload] --> D[Document and ordered ContentNodes]
+    S[SourceDocument and Markdown text] --> D[Document and ordered ContentNodes]
     D --> B[ContentBindings]
     B --> E[Domain records and RichContent]
     D --> R[Authored reference occurrences]
@@ -304,36 +286,19 @@ an independent editable copy of that prose. Explicit structures also receive
 records: job-step headings identify `JobStep` records, ordered scenario items
 identify `ScenarioStep` records, and named concept actions identify
 `ConceptAction` records. `open_questions_content` retains a decision section's
-full narrative and `open_questions` its explicit question/evidence entries; an
+full narrative and `open_questions` its explicit questions; an
 omitted field does not automatically become an open decision.
 
-For example, a requirement's System verification plan may contain a measurement
-procedure, sampling, evidence instructions and links. Its complete content
-belongs to the corresponding `assessment_plans` entry’s `content` field. Recognized
-subsections also populate the structured plan fields. An exporter cannot discard
-those instructions because they do not fit a method-and-criteria pair.
+### Source text and locations
 
-### Exact source and content structure
+`SourceDocument.markdown` contains the text of successfully read Markdown files.
+The exporter strips a leading UTF-8 BOM, converts CRLF to LF, and replaces
+invalid UTF-8 sequences with a replacement character and a diagnostic. Content
+spans index UTF-8 bytes in that text. A saved snapshot can render a criterion
+and its qualifications or locate the heading that owns a link.
 
-Successfully read files contain an inline base64 payload, SHA-256 digest and
-byte count. Decoding that payload recovers the original bytes, including a UTF-8
-BOM, CRLF line endings, trailing spaces, YAML comments and the final newline.
-Original bytes are retained even when decoding or metadata parsing fails.
-An unreadable source has an identity, locator, failed read state and diagnostic;
-it has no invented payload.
-
-Every content span is a half-open interval `[start, end)` in the original file's
-bytes. Parsing may normalize a BOM and CRLF, but the document records the offset
-mapping and exported spans refer to the retained original. The content tree
-preserves source order and nesting. It includes paragraphs, lists, headings,
-code, GFM tables and task markers, links and images, footnotes, YAML entries,
-comments and syntax trivia. Unsupported regions use an `opaque` node with a
-reason. Code and diagrams retain their literal content; Markdown-looking text
-inside code does not become a live reference.
-
-Exact byte recovery uses the source payload. A consumer rendering domain fields
-or reconstructing Markdown from the syntax tree is producing another view and
-must not claim that the rendered text is byte-identical to the original.
+A non-Markdown target is recorded by locator, read status and media type.
+Use the repository to retrieve its contents or to inspect a file’s original bytes.
 
 ### Identity and provenance
 
@@ -390,8 +355,8 @@ The system’s `quality_attributes` lists its standalone attribute records. An o
 Typed relationship fields are authoritative. An `Assertion` is an optional derived
 view of one canonical field, with required endpoints and provenance. Its
 `projection_path`, such as `TraceableElement.supports`, `System.goals` or
-`Obligation.refines`, names that field and preserves roles such as type parameters
-versus introduced types. Its `mapping_rule` is `dotspec-markdown/20/projection/<path>`.
+`Obligation.refines`, names that field and preserves roles such as required
+and provided interfaces. Its `mapping_rule` is `dotspec-markdown/21/projection/<path>`.
 The catalog lists the projectable paths in `projections`: every declaration
 membership and every semantic-association or structural-context field. The
 assertions collection is not a replacement for the typed graph. Reverse navigation
@@ -419,8 +384,7 @@ A section with distinguished members maps to sibling fields: `X_content` retains
 the full narrative and `X` lists the members, as in `Job.steps_content` and
 `Job.steps` or `System.goals_content` and `System.goals`. The pair declares
 reciprocal `paired_with` annotations and is validated generically. Embedded values
-such as evidence, abstract state, contextual references, applicability, criterion
-and assessment plans require their content directly.
+such as abstract state, contextual references, applicability and criterion require their content directly.
 Optional decomposition fields use `requires_content` for one-way prerequisites,
 allowing prose sections without inventing parameter or action records.
 Presence is distinct from cardinality: a present empty declaration is valid, and a
@@ -473,7 +437,7 @@ ancestors once so references remain valid; it does not select every descendant.
 
 | Question | Evidence in the snapshot |
 | --- | --- |
-| Were the bytes acquired? | `SourceDocument.read_status` and `payload` |
+| Was the file read? | `SourceDocument.read_status` and the Markdown text for parsed documents |
 | Was the syntax interpreted? | Document parse states, opaque nodes and diagnostics |
 | Were supported domain roles mapped? | Document and snapshot `coverage` |
 | Was finer structure extracted? | Domain and rich-content `decomposition` |
@@ -495,12 +459,11 @@ explicitly unresolved branch. Absence, an authored empty section, an unresolved
 author decision, and an extraction failure are different states.
 
 Snapshot validation combines generated JSON Schema with Go checks for IDs,
-typed reference ranges, ownership, cycles, source payloads and spans, syntax
+typed reference ranges, ownership, cycles, source text and spans, syntax
 order, bindings, resolutions and assertion consistency. A well-formed snapshot
 can correctly describe a malformed source or incomplete scan. Passing snapshot
 validation therefore makes no claim about source acceptance, stakeholder
-adequacy or requirement satisfaction. A source payload always carries its bytes
-inline as `bytes_base64`.
+adequacy or requirement satisfaction.
 
 ## Model maintenance and evidence
 
@@ -523,7 +486,7 @@ removed, retained authoring errors, invalid JSON and I/O failures. Their success
 
 ## Needs, contributions and capabilities
 
-Generate a source-linked view of jobs, shared outcomes, progress cases, features,
+Generate a source-linked view of jobs, shared outcomes, features,
 requirements and optional capabilities:
 
 ```sh

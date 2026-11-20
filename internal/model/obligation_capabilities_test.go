@@ -21,7 +21,7 @@ func TestObligationFormsShareAssessmentAndClassification(t *testing.T) {
 	s := result.Snapshot
 	for _, kind := range []string{"Requirement", "ObligationClause"} {
 		r := elementKind(t, s, kind)
-		for _, field := range []string{"statement", "applicability", "criterion", "assessment_plans"} {
+		for _, field := range []string{"statement", "applicability", "criterion"} {
 			if r[field] == nil {
 				t.Fatalf("%s lacks %s", kind, field)
 			}
@@ -30,7 +30,7 @@ func TestObligationFormsShareAssessmentAndClassification(t *testing.T) {
 			t.Fatalf("%s lost semantic links: %v", kind, r)
 		}
 	}
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 	traceEdit(t, root, "specs/use-cases/respond.use-case.spec.md", "**Quality attributes:** speed", "**Quality attributes:** unknown")
 	result = conformanceExport(t, root)
 	found := false
@@ -40,7 +40,7 @@ func TestObligationFormsShareAssessmentAndClassification(t *testing.T) {
 	if !found {
 		t.Fatal("missing undefined clause classification advice")
 	}
-	conformancePayloads(t, result.Snapshot)
+	checkSourceText(t, result.Snapshot)
 }
 
 func TestTraceabilityDoesNotConferObligationContainment(t *testing.T) {
@@ -59,7 +59,7 @@ func TestTraceabilityDoesNotConferObligationContainment(t *testing.T) {
 			t.Fatal("goal acquired a clause", r)
 		}
 	}
-	conformancePayloads(t, result.Snapshot)
+	checkSourceText(t, result.Snapshot)
 }
 
 func TestClauseQualityLabelsRejectAmbiguousAuthoring(t *testing.T) {

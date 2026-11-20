@@ -318,11 +318,11 @@ Remember ideas.
 ## Scope
 Read [the description](#description).
 
-### Validation
+### Open questions
 An authored boundary detail.
 
-## System validation plan
-See [the boundary detail](#validation).
+## Open questions
+See [the boundary detail](#open-questions).
 `)
 	for _, args := range [][]string{{"spec", "build"}, {"check"}} {
 		if code, out, errOut := invoke(args...); code != 0 {
@@ -333,7 +333,7 @@ See [the boundary detail](#validation).
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"[the description](<#overview.lead>)", "[the boundary detail](<#passage.validation>)", "[Validation](<#overview.validation-1>)"} {
+	for _, want := range []string{"[the description](<#overview.lead>)", "[the boundary detail](<#passage.open-questions>)", "[Open questions](<#overview.open-questions-1>)"} {
 		if !strings.Contains(string(page), want) {
 			t.Fatalf("missing %s in %s", want, page)
 		}

@@ -29,7 +29,7 @@ func TestOverviewIsPortableAndSeparatesRelationships(t *testing.T) {
 	if text != render(structureFixture(t)) {
 		t.Fatal("overview depends on checkout identity")
 	}
-	for _, want := range []string{"flowchart BT", "|part of|", "Components involved (derived)", "Reserve purchased stock", "Stock holds", "Submit concurrent orders", "../order-contract.md", "explicit", "No requirements are inherited"} {
+	for _, want := range []string{"flowchart BT", "|part of|", "Components involved (derived)", "Reserve purchased stock", "Stock holds", "../order-contract.md", "explicit", "No requirements are inherited"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("missing %q", want)
 		}
@@ -106,5 +106,5 @@ id: worker-queue
 		t.Fatal(worker, queue)
 	}
 	// A parent component is allowed to be declared in another system document.
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 }

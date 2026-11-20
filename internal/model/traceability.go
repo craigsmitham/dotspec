@@ -4,7 +4,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/assessment"
 	"github.com/craigsmitham/dotspec/internal/obligation"
 )
 
@@ -78,7 +77,7 @@ func (m *domainMapper) traceSection(r Record, s *Section) bool {
 		x["statement"] = m.doc.Rich(nodes)
 		m.bind(x, "statement", nodes, "named_field", "obligation-statement")
 		for _, sub := range child.Children {
-			if m.traceSection(x, sub) || m.assessmentSection(x, sub) {
+			if m.traceSection(x, sub) {
 				continue
 			}
 			if sub.Title == "Criterion" || sub.Title == "Applies to" || sub.Title == "Rationale" {
@@ -111,7 +110,6 @@ func (m *domainMapper) nestedTraceability() {
 				for _, child := range s.Children {
 					m.traceSection(r, child)
 					m.explanatory(r, child)
-					m.assessmentSection(r, child)
 				}
 			}
 		}
@@ -177,9 +175,6 @@ func (d *designResolver) traceReview() {
 
 		if missing := d.measurementGuidance(r).Missing(); len(missing) > 0 {
 			d.issue(r, "measurement_basis", "advice", obligation.MeasurementMessage(missing))
-		}
-		if !d.hasPlanGuidance(r, assessment.SystemVerification) {
-			d.issue(r, "system_verification", "advice", "No system verification guidance recorded here. Identify how to check the realization against this obligation.")
 		}
 	}
 }

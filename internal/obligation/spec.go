@@ -18,8 +18,6 @@ type metadata struct {
 }
 
 type Content struct {
-	AssessmentPlans []specfile.AssessmentPlan `json:"assessment_plans,omitempty"`
-
 	MeasurementGuidance MeasurementGuidance         `json:"-"`
 	References          *specfile.ReferenceDocument `json:"-"`
 	ID                  string                      `json:"id,omitempty"`
@@ -48,7 +46,7 @@ func Parse(data []byte, kind string) (*Content, error) {
 	if err != nil {
 		return nil, err
 	}
-	spec := &Content{AssessmentPlans: doc.AssessmentPlans, ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location), QualityAttributes: []string{}, AttributeLocations: make(map[string]diagnostic.Location)}
+	spec := &Content{ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location), QualityAttributes: []string{}, AttributeLocations: make(map[string]diagnostic.Location)}
 	if err := parseAttributes(spec, &meta.QualityAttributes, kind); err != nil {
 		return nil, err
 	}

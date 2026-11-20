@@ -1,6 +1,6 @@
 # Generate a requirements specification
 
-Use a generated spec when readers need one entry point for requirements authored across a project. Open the project’s `SPEC.md` and follow its link to read the system’s purpose and scope, choose a feature, and follow its promises to the source and planned verification. The To-do example includes a [complete generated spec](../../examples/todo/SPEC.md).
+Use a generated spec when readers need one entry point for requirements authored across a project. Open the project’s `SPEC.md` and follow its link to read the system’s purpose and scope, choose a feature, and follow its promises to the source and supporting evidence. The To-do example includes a [complete generated spec](../../examples/todo/SPEC.md).
 
 ## Set up a project
 
@@ -50,7 +50,7 @@ Choose a section to read in order or open a collection index directly.
 | System topology | Immediate parts, boundary partners, and required or provided interfaces, with a Mermaid diagram and linked descriptions |
 | Requirements | Features, capabilities, and use cases under **Behavior**. Definitions, named uses, and synchronizations under **Concepts**. **All requirements** includes embedded obligations and component routes. |
 | Quality attributes | The expanded hierarchy of declared attributes with linked definitions, the attribute index, and project quality models |
-| Validation | Intended-use and requirements validation plans, success criteria, and open questions |
+| Open questions | Decisions that remain open in the system specification |
 
 The map includes populated sections. Additional authored sections remain
 available under **Reference**. **Requirements review** opens the project-wide
@@ -65,7 +65,7 @@ to `.spec-report.md`. For example, the Task service report lives at
 holds its local requirements, interfaces, and child components. The optional source
 `id` provides an anchor. The subject name determines the overview filename.
 
-The system’s `quality-attributes.md` index introduces each declared attribute with its definition preview. Shared attributes appear under each declared parent. Their own subattributes expand under the first parent. Select an attribute to read its full definition. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability, criterion, and verification plan together. Links beside the requirement lead back to the precise attribute or use-case passage.
+The system’s `quality-attributes.md` index introduces each declared attribute with its definition preview. Shared attributes appear under each declared parent. Their own subattributes expand under the first parent. Select an attribute to read its full definition. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability and criterion together. Links beside the requirement lead back to the precise attribute or use-case passage.
 
 For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with its authored description of the behavior it offers. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
 

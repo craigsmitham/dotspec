@@ -20,7 +20,7 @@ func TestNeedsRelationshipsAndEvidence(t *testing.T) {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	s := result.Snapshot
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 	outcome := designRecord(t, s, "DesiredOutcome", "Timely awareness")
 	j := designRecord(t, s, "Job", "Reach work predictably")
 	if outcome["owner"] != j["id"] || len(Strings(outcome["applies_to"])) != 2 {
@@ -34,21 +34,11 @@ func TestNeedsRelationshipsAndEvidence(t *testing.T) {
 	if len(Strings(providerless["provided_by"])) != 0 {
 		t.Fatal("inferred provider from declaration", providerless)
 	}
-	pc := designRecord(t, s, "ProgressCase", "Repeated late arrivals")
-	d := newDesignResolver(s)
-	for _, f := range []string{"circumstances", "struggling_moment", "participants", "alternatives_considered", "tradeoffs_and_selection_criteria"} {
-		if d.text(pc[f]) == "" {
-			t.Fatal("unmapped case field", f)
-		}
-	}
-	if !strings.Contains(d.text(Object(pc["evidence"])["research_basis"]), "Illustrative hypothesis") {
-		t.Fatal("lost evidence basis")
-	}
 	text, err := NeedsMarkdown(s, filepath.Join(root, "docs"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"DesiredOutcome: Timely awareness", "-->|applies to|", "-->|depends on|", "-->|provided by|", "Minimize the time between", "Illustrative hypothesis", "../specs/jobs/reach-work.job.spec.md#timely-awareness"} {
+	for _, want := range []string{"DesiredOutcome: Timely awareness", "-->|applies to|", "-->|depends on|", "-->|provided by|", "Minimize the time between", "../specs/jobs/reach-work.job.spec.md#timely-awareness"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("missing %q", want)
 		}
@@ -78,24 +68,7 @@ func TestNeedsReferencesRejectWrongKindsAndPreserveUnresolvedNarrative(t *testin
 			if (result.ExitCode != 0) != tc.invalid {
 				t.Fatal(result.Snapshot.Diagnostics)
 			}
-			conformancePayloads(t, result.Snapshot)
+			checkSourceText(t, result.Snapshot)
 		})
-	}
-}
-
-func TestNeedsDiagramLabelsExplicitCaseApplicability(t *testing.T) {
-	root := needsFixture(t)
-	traceEdit(t, root, "specs/requirements/notify-commuters.requirement.spec.md", "**Targets:** [Notification service](../../components/notification-service/specs/notification-service.component.spec.md)", "**Targets:** [Case](../jobs/reach-work.job.spec.md#repeated-late-arrivals)")
-	result := conformanceExport(t, root)
-	if result.ExitCode != 0 {
-		t.Fatal(result.Snapshot.Diagnostics)
-	}
-	text, err := NeedsMarkdown(result.Snapshot, root)
-	if err != nil {
-		t.Fatal(err)
-	}
-	diagram := strings.Split(strings.Split(text, "```mermaid\n")[1], "```")[0]
-	if !strings.Contains(diagram, "ProgressCase: Repeated late arrivals") || strings.Contains(diagram, "|declares|") {
-		t.Fatal(diagram)
 	}
 }

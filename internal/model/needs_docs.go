@@ -19,7 +19,7 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	d := newDesignResolver(s)
 	elements := []Record{}
 	for _, r := range s.Elements {
-		if designKind(String(r, "kind"), "Job or JobStep or DesiredOutcome or ProgressCase or Capability or Feature or System or Component or Obligation or UseCase or Concept") {
+		if designKind(String(r, "kind"), "Job or JobStep or DesiredOutcome or Capability or Feature or System or Component or Obligation or UseCase or Concept") {
 			elements = append(elements, r)
 		}
 	}
@@ -85,28 +85,19 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 				}
 			}
 		}
-		if designKind(String(r, "kind"), "JobStep or DesiredOutcome or ProgressCase or Capability or Component or Feature") {
+		if designKind(String(r, "kind"), "JobStep or DesiredOutcome or Capability or Component or Feature") {
 			if owner := String(r, "owner"); ids[owner] != "" {
 				edges = append(edges, edge{owner, String(r, "id"), "declares"})
 			}
 		}
 	}
-	connected := map[string]bool{}
-	for _, e := range edges {
-		if e.relation != "declares" {
-			connected[e.from], connected[e.to] = true, true
-		}
-	}
 	var out strings.Builder
 	out.WriteString("# Needs and specification map\n\nGenerated from authored specifications. Regenerate this view instead of editing it.\n\n")
 	fmt.Fprintf(&out, "Model `%s`; mapping `%s`. Only acquired records and explicit relationships are shown. Missing links do not establish missing needs, capabilities or implementation.\n\n", s.ModelVersion, s.MappingProfile)
-	out.WriteString("`declares` locates a record; `applies to` identifies its explicit scope. For an outcome, that scope identifies where it is a success criterion; for an obligation, where the commitment applies. `supports` records intended contribution, not achievement. Capability dependencies are distinct from structural `part of` links. Providers are optional and non-exhaustive; human and procedural enablers remain in the descriptions. Step order and switching timelines are not dependency edges. The diagram focuses on semantic relationships; declaration ownership and progress cases appear in the table and definitions below.\n\n")
+	out.WriteString("`declares` locates a record; `applies to` identifies its explicit scope. For an outcome, that scope identifies where it is a success criterion; for an obligation, where the commitment applies. `supports` records intended contribution, not achievement. Capability dependencies are distinct from structural `part of` links. Providers are optional and non-exhaustive; human and procedural enablers remain in the descriptions. Step order does not imply a dependency. The diagram focuses on semantic relationships; declaration ownership appears in the table and definitions below.\n\n")
 	if len(elements) > 0 {
 		out.WriteString("```mermaid\nflowchart LR\n")
 		for _, r := range elements {
-			if String(r, "kind") == "ProgressCase" && !connected[String(r, "id")] {
-				continue
-			}
 			fmt.Fprintf(&out, "  %s[\"%s: %s\"]\n", ids[String(r, "id")], String(r, "kind"), designDiagramLabel(label(r)))
 		}
 		for _, e := range edges {
@@ -132,11 +123,8 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 				definitions = append(definitions, d.text(Record{"content_nodes": []string{String(n, "id")}}))
 			}
 		}
-		for _, field := range []string{"statement", "description", "purpose", "performer", "situation", "motivation", "intended_progress", "current_approach", "desired_progress", "circumstances", "struggling_moment", "participants", "alternatives_considered", "tradeoffs_and_selection_criteria", "enablers", "supporting_content", "supports_content", "applies_to_content", "depends_on_content", "provided_by_content", "forces_content", "timeline", "evidence"} {
+		for _, field := range []string{"statement", "description", "purpose", "performer", "situation", "motivation", "intended_progress", "enablers", "supporting_content", "supports_content", "applies_to_content", "depends_on_content", "provided_by_content", "evidence"} {
 			value := r[field]
-			if field == "evidence" {
-				value = Object(value)["content"]
-			}
 			text := strings.TrimSpace(d.text(value))
 			if text == "" {
 				continue

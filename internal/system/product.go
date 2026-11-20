@@ -34,13 +34,12 @@ func rejectInlineSubject(doc *specfile.Outline, section *specfile.Section) error
 }
 
 type ProductSpec struct {
-	AssessmentPlans []specfile.AssessmentPlan   `json:"assessment_plans,omitempty"`
-	Name            string                      `json:"name"`
-	ID              string                      `json:"id,omitempty"`
-	Description     string                      `json:"description,omitempty"`
-	Path            string                      `json:"path"`
-	Markdown        string                      `json:"markdown"`
-	References      *specfile.ReferenceDocument `json:"-"`
+	Name        string                      `json:"name"`
+	ID          string                      `json:"id,omitempty"`
+	Description string                      `json:"description,omitempty"`
+	Path        string                      `json:"path"`
+	Markdown    string                      `json:"markdown"`
+	References  *specfile.ReferenceDocument `json:"-"`
 }
 
 func ParseProductSpec(kind string, data []byte) (*ProductSpec, error) {
@@ -57,7 +56,7 @@ func ParseProductSpec(kind string, data []byte) (*ProductSpec, error) {
 	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
 		return nil, err
 	}
-	spec := &ProductSpec{AssessmentPlans: doc.AssessmentPlans, Name: doc.Name, ID: meta.ID, Markdown: strings.TrimSpace(string(doc.Source)), References: doc.References()}
+	spec := &ProductSpec{Name: doc.Name, ID: meta.ID, Markdown: strings.TrimSpace(string(doc.Source)), References: doc.References()}
 	seen := map[string]diagnostic.Location{}
 	for _, s := range doc.Sections {
 		switch s.Title {

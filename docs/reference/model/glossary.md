@@ -66,7 +66,7 @@ A recognizable grouping of specified product behavior valued by stakeholders, in
 
 ## Job
 
-What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps, progress cases and job-story phrasing are optional complementary perspectives.
+What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps and job-story phrasing are optional complementary perspectives.
 
 [Model reference](index.md#job)
 

@@ -1,7 +1,6 @@
 package model
 
 import (
-	"encoding/base64"
 	"fmt"
 	"net/url"
 	"slices"
@@ -43,16 +42,6 @@ func (d *designResolver) issue(r Record, field, severity, message string) {
 func (d *designResolver) values(r Record, field string) []string {
 	return d.projected[String(r, "id")][field]
 }
-func (d *designResolver) target(r Record, field string) Record {
-	values := d.values(r, field)
-	if len(values) == 1 {
-		return d.index[values[0]]
-	}
-	return nil
-}
-func (d *designResolver) isMember(owner Record, field string, r Record) bool {
-	return slices.Contains(Strings(owner[field]), String(r, "id"))
-}
 
 // A heading reference resolves to its explicitly named domain record; a file
 // reference to its root concept. Ordinary reference resolution is kept intact.
@@ -77,7 +66,7 @@ func (d *designResolver) promote(target Record, kind string) []Record {
 	}
 	return matches
 }
-func (d *designResolver) resolve(r Record, field, kind string, many bool, accepts func(Record) bool, scopes ...Record) {
+func (d *designResolver) resolve(r Record, field, kind string, many bool, accepts func(Record) bool) {
 	refs := Strings(r[field+"_references"])
 	values := []string{}
 	if !many && len(refs) > 1 {
@@ -109,14 +98,6 @@ func (d *designResolver) resolve(r Record, field, kind string, many bool, accept
 			matches := d.promote(d.index[String(resolution, "target")], kind)
 			if len(matches) != 1 {
 				d.issue(r, field, "error", fmt.Sprintf("Reference must identify exactly one %s.", kind))
-				continue
-			}
-			unknownScope := false
-			for _, scope := range scopes {
-				unknownScope = unknownScope || scope == nil
-			}
-			if unknownScope {
-				d.issue(r, field, "advice", "Scope is not yet verifiable; resolve the declaring definition or use first.")
 				continue
 			}
 			if accepts != nil && !accepts(matches[0]) {
@@ -157,27 +138,7 @@ func (d *designResolver) run() {
 			d.resolve(r, "applies_to", "DomainElement", true, nil)
 		case "ConceptUse":
 			d.resolve(r, "dependencies", "ConceptUse", true, func(t Record) bool { return d.sameSystem(r, t) })
-		case "TypeBinding":
-			use := d.index[String(r, "owner")]
-			definition := d.target(use, "definition")
-			d.resolve(r, "parameter", "ConceptType", false, func(t Record) bool { return d.isMember(definition, "type_parameters", t) }, definition)
-			d.resolve(r, "supplying_concept_use", "ConceptUse", false, func(t Record) bool { return d.sameSystem(r, t) })
-			typeUse := d.target(r, "supplying_concept_use")
-			typeDefinition := d.target(typeUse, "definition")
-			d.resolve(r, "bound_type", "ConceptType", false, func(t Record) bool { return d.isMember(typeDefinition, "introduced_types", t) }, typeDefinition)
-			if String(r, "primitive") != "" && (len(Strings(r["bound_type_references"])) > 0 || len(Strings(r["supplying_concept_use_references"])) > 0) {
-				d.issue(r, "bound_type", "error", "Choose a primitive or a type from a concept use, not both.")
-			}
-		case "ActionParameter":
-			action := d.index[String(r, "owner")]
-			d.resolve(r, "type", "ConceptType", false, func(t Record) bool { return String(t, "owner") == String(action, "owner") })
-			if String(r, "primitive") != "" && len(Strings(r["type_references"])) > 0 {
-				d.issue(r, "type", "error", "Choose a primitive or a concept type, not both.")
-			}
-		case "SynchronizationAction":
-			d.resolve(r, "concept_use", "ConceptUse", false, func(t Record) bool { return d.sameSystem(r, t) })
-			definition := d.target(d.target(r, "concept_use"), "definition")
-			d.resolve(r, "action", "ConceptAction", false, func(t Record) bool { return String(t, "owner") == String(definition, "id") }, definition)
+
 		}
 	}
 	d.resolveTraceability()
@@ -192,18 +153,18 @@ func (d *designResolver) text(value any) string {
 		n := d.index[id]
 		span := Object(n["span"])
 		source := d.index[String(span, "source")]
-		data, _ := base64.StdEncoding.DecodeString(String(Object(source["payload"]), "bytes_base64"))
+		data := String(source, "markdown")
 		start, end := Number(span["start"]), Number(span["end"])
 		if start >= 0 && end >= start && end <= len(data) {
 			sourceID := String(span, "source")
 			if out.Len() > 0 {
 				if sourceID == previousSource && start >= previousEnd && strings.TrimSpace(string(data[previousEnd:start])) == "" {
-					out.Write(data[previousEnd:start])
+					out.WriteString(data[previousEnd:start])
 				} else {
 					out.WriteString("\n\n")
 				}
 			}
-			out.Write(data[start:end])
+			out.WriteString(data[start:end])
 			previousSource, previousEnd = sourceID, end
 		}
 	}
@@ -217,13 +178,9 @@ func (d *designResolver) checkDeclarations() {
 	for _, r := range d.elements {
 		kind := String(r, "kind")
 		switch kind {
-		case "Interface", "Component", "ConceptUse", "ConceptType", "ConceptAction", "ActionParameter", "Synchronization":
-			role := ""
-			if kind == "ActionParameter" && d.isMember(d.index[String(r, "owner")], "output_parameters", r) {
-				role = "output"
-			}
+		case "Interface", "Component", "ConceptUse", "ConceptAction", "Synchronization":
 			name := d.name(r)
-			key := String(r, "owner") + "/" + kind + "/" + role + "/" + name
+			key := String(r, "owner") + "/" + kind + "/" + name
 			if name != "" && names[key] {
 				d.issue(r, "name", "error", "Duplicate name within this declaration scope: "+name)
 			}
@@ -233,27 +190,7 @@ func (d *designResolver) checkDeclarations() {
 			if len(Strings(r["definition_references"])) == 0 {
 				d.issue(r, "definition", "advice", "Link the concept definition when this use is ready to resolve.")
 			}
-			seen := map[string]bool{}
-			for _, id := range Strings(r["bindings"]) {
-				binding := d.index[id]
-				parameter := d.target(binding, "parameter")
-				key := String(parameter, "id")
-				if key != "" && seen[key] {
-					d.issue(binding, "parameter", "error", "This parameter already has a binding in the same concept use.")
-				}
-				seen[key] = true
-				if parameter == nil || (String(binding, "primitive") == "" && (d.target(binding, "bound_type") == nil || d.target(binding, "supplying_concept_use") == nil)) {
-					d.issue(binding, "parameter", "advice", "Complete the parameter and its primitive or named-use type binding.")
-				}
-			}
-			for _, id := range Strings(d.target(r, "definition")["type_parameters"]) {
-				if !seen[id] {
-					d.issue(r, "bindings", "advice", "No resolved binding for parameter "+d.name(d.index[id])+".")
-				}
-			}
-		}
-		if kind == "SynchronizationAction" && (d.target(r, "concept_use") == nil || d.target(r, "action") == nil) {
-			d.issue(r, "action", "advice", "Qualify the action with its named concept use and definition's action.")
+
 		}
 	}
 }
@@ -292,7 +229,7 @@ func designKind(actual, expected string) bool {
 }
 func designIssueCode(field string) string {
 	switch field {
-	case "measurement_basis", "illustrates", "interacts_with", "depends_on", "provided_by", "part_of", "groups", "specification_system", "subject_system", "supports", "applies_to", "derived_from", "refines", "relies_on", "involves", "motivation", "system_verification":
+	case "measurement_basis", "illustrates", "interacts_with", "depends_on", "provided_by", "part_of", "groups", "specification_system", "subject_system", "supports", "applies_to", "derived_from", "refines", "relies_on", "involves", "motivation":
 		return "relationship." + field
 	default:
 		return "concept." + field

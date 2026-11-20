@@ -19,7 +19,6 @@ A single-user task list that stores open and completed tasks on one computer.
 | [System topology](<#system-topology>) | [Components](<components.md>) · [Interfaces](<interfaces.md>) |
 | [Requirements](<#requirements>) | [Features](<features.md>) · [Capabilities](<capabilities.md>) · [Use cases](<use-cases.md>) · [Concept definitions](<concepts.md>) · [Concept uses](<concept-uses.md>) · [All requirements](<requirements.md>) |
 | [Quality attributes](<#quality-attributes>) | [Attribute index](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
-| [Validation](<#validation>) | System validation plan |
 
 ## Purpose
 
@@ -135,30 +134,3 @@ The task list is stored locally. Its quality requirements cover what survives be
 [Attribute index](<quality-attributes.md>)
 
 [Quality models](<quality-models.md>) — Reference classifications and their definitions.
-
-## Validation
-
-### System validation plan
-
-#### Subject
-
-A person returning to unfinished work using this build.
-
-#### Method
-
-Invite someone to record two real errands and mark one finished. After a break,
-restart the app with the same database. Ask what still needs attention. Then tell
-them that the finished errand needs a follow-up and ask them to resume it.
-Let them choose the controls without coaching.
-
-#### Success criteria
-
-The participant identifies the outstanding errand and resumes the other without
-entering it again. Ask what they expected to find on returning.
-
-#### Evidence to retain
-
-With consent, record the build, task outcome, any help given and the participant's
-explanation. Review mismatches before deciding whether the workflow meets the need.
-
-[Requirements review](<requirements-review.report.md>)

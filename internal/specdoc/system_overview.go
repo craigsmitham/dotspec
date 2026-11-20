@@ -6,7 +6,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/assessment"
 	"github.com/craigsmitham/dotspec/internal/model"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
@@ -22,26 +21,21 @@ type overviewSection struct {
 }
 
 func (p *planner) planOverview(s *subject) []overviewSection {
-	validation := []string{"Validation"}
-	for _, purpose := range []assessment.Purpose{assessment.SystemValidation, assessment.RequirementsValidation} {
-		validation = append(validation, purpose.Definition().Heading())
-	}
-	validation = append(validation, "Open questions", "Evidence")
 	sections := []overviewSection{
 		{sources: []string{"Description"}},
 		{title: "Purpose", level: 2, sources: []string{"Purpose"}},
 		{title: "Goals", level: 2, sources: []string{"Goals"}},
 		{title: "Business rules", level: 2, sources: []string{"Business rules"}, collections: []string{"Business rules"}},
 		{title: "User needs", level: 2, sources: []string{"User needs", "Stakeholders", "Jobs"}, collections: []string{"Jobs"}},
-		{title: "Scope", level: 2, sources: []string{"Scope", "Out of scope", "Environment", "Assumptions", "Constraints", assessment.AssumptionValidation.Definition().Heading(), "Project context", "Glossary"}, collections: []string{"Glossary"}},
+		{title: "Scope", level: 2, sources: []string{"Scope", "Out of scope", "Environment", "Assumptions", "Constraints", "Project context", "Glossary"}, collections: []string{"Glossary"}},
 		{title: "System topology", level: 2, sources: []string{"System topology", "Part of", "Child systems", "Systems", "Components", "Interacts with", "Required interfaces", "Provided interfaces", "Interfaces"}, collections: []string{"Systems", "Components", "Interfaces"}},
 		{title: "Requirements", level: 2, sources: []string{"Requirements"}},
 		{title: "Behavior", level: 3, sources: []string{"Behavior", "Features", "Capabilities", "Use cases"}, collections: []string{"Features", "Capabilities", "Use cases"}},
 		{title: "Concepts", level: 3, sources: []string{"Concepts", "Concept uses", "Synchronizations"}, collections: []string{"Concepts", "Concept uses", "Synchronizations"}},
-		{title: "Obligations", level: 3, sources: []string{"Obligations", "Applicable requirements", assessment.RequirementsVerification.Definition().Heading(), assessment.SystemVerification.Definition().Heading()}, collections: []string{"Requirements"}},
+		{title: "Obligations", level: 3, sources: []string{"Obligations", "Applicable requirements"}, collections: []string{"Requirements"}},
 		{title: "Quality attributes", level: 2, sources: []string{"Quality attributes", "Quality models"}, collections: []string{"Quality attributes", "Quality models"}},
-		{title: "Validation", level: 2, sources: validation},
-		{title: "Reference", level: 2, sources: []string{"Reference"}},
+		{title: "Open questions", level: 2, sources: []string{"Open questions"}},
+		{title: "Reference", level: 2, sources: []string{"Reference", "Evidence"}},
 	}
 	groups := map[string][][]*heading{}
 	var group []*heading
@@ -224,7 +218,7 @@ func (p *planner) renderSystem(w *writer, s *subject) {
 			p.renderTopology(w, s)
 		case "Obligations":
 			p.overviewRefinement(w, s)
-		case "Validation":
+		case "Open questions":
 			w.text(w.link("Requirements review", reviewPath))
 		}
 		for _, title := range section.collections {

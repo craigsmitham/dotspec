@@ -651,7 +651,7 @@ dotspec job check develop-requirements --path .
 | `--help, -h` | `false` | help for check |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
-| `--preset` | `general` | JTBD authoring guidance: general, odi, progress, or job-story |
+| `--preset` | `general` | JTBD authoring guidance: general, odi, or job-story |
 | `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
 
 ## dotspec job init
@@ -674,7 +674,7 @@ dotspec job init develop-requirements --path .
 | `--help, -h` | `false` | help for init |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
-| `--preset` | `general` | JTBD authoring guidance: general, odi, progress, or job-story |
+| `--preset` | `general` | JTBD authoring guidance: general, odi, or job-story |
 | `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
 
 ## dotspec job list
@@ -828,7 +828,7 @@ Export and validate complete specification snapshots
 dotspec model [flags]
 ```
 
-Represent original source bytes, document structure, and named domain content in a versioned specification model. Coverage describes the declared mapping profile, not requirements adequacy or satisfaction.
+Represent Markdown text, document structure, and named domain content in a versioned specification model. Coverage describes the declared mapping profile, not requirements adequacy or satisfaction.
 
 | Flag | Default | Description |
 | --- | --- | --- |
@@ -842,7 +842,7 @@ Generate concept references, system compositions, and dependency diagrams as Mar
 dotspec model docs [flags]
 ```
 
-Render purpose and operational principles before state and actions. Show explicit named uses, bindings, synchronization rules and application dependencies. Diagrams contain resolved relationships only; no behavior is executed or inferred.
+Render purpose and operational principles before state and actions. Show explicit named uses, synchronization rules and application dependencies. Diagrams contain resolved relationships only; no behavior is executed or inferred.
 
 ```sh
 dotspec model docs --path . --relative-to views
@@ -864,7 +864,7 @@ Export a source-backed specification snapshot as JSON
 dotspec model export [flags]
 ```
 
-Export selected specifications, enclosing systems, and direct reference context as JSON. Preserve invalid documents and original source bytes. Filesystem discovery and authoring findings follow check; external references are not fetched.
+Export selected specifications, enclosing systems, and direct reference context as JSON. Retain readable Markdown and source locations, including diagnostics for invalid documents. Filesystem discovery and authoring findings follow check; external references are not fetched.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
@@ -888,7 +888,7 @@ Generate a needs-to-specification map with capability dependencies
 dotspec model needs [flags]
 ```
 
-Show jobs, shared outcomes, progress cases, features, obligations and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.
+Show jobs, shared outcomes, features, obligations and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.
 
 ```sh
 dotspec model needs --path . --relative-to views
@@ -910,7 +910,7 @@ Generate system structure, features, and applicable obligations as Markdown
 dotspec model overview [flags]
 ```
 
-Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and verification guidance. Directory context remains separate; no implementation or requirement inheritance is inferred.
+Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and obligation criteria. Directory context remains separate; no implementation or requirement inheritance is inferred.
 
 ```sh
 dotspec model overview --path . --relative-to views
@@ -997,7 +997,7 @@ Generate layered requirements traceability and change-review views as Markdown
 dotspec model trace [flags]
 ```
 
-Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and verification guidance. Resolved explicit relationships only; paths do not establish satisfaction or evidence.
+Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and obligation criteria. Resolved explicit relationships only; paths do not establish satisfaction or evidence.
 
 ```sh
 dotspec model trace --path . --relative-to views
@@ -1019,7 +1019,7 @@ Check a snapshot's shape, references, source fidelity, and coverage
 dotspec model validate SNAPSHOT [flags]
 ```
 
-Validate a snapshot file, or use - to read standard input. Snapshot validation checks representation conformance and integrity, not requirements fitness or system behavior; faithfully represented authoring errors do not make a snapshot invalid. No source paths or external targets are fetched. External payload locators can be checked structurally; their byte availability is not verified offline.
+Validate a snapshot file, or use - to read standard input. Snapshot validation checks representation conformance and integrity, not requirements fitness or system behavior; faithfully represented authoring errors do not make a snapshot invalid. No source paths or external targets are fetched.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 

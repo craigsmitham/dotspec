@@ -107,7 +107,7 @@ func newJobCommand() *cobra.Command {
 			return runJob(command, args[0], options, cmd.OutOrStdout())
 		}
 		if command == "init" || command == "check" {
-			cmd.Flags().String("preset", "general", "JTBD authoring guidance: general, odi, progress, or job-story")
+			cmd.Flags().String("preset", "general", "JTBD authoring guidance: general, odi, or job-story")
 		}
 		addPath(cmd)
 		addOutput(cmd, command == "map")

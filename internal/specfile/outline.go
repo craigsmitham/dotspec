@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/assessment"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
@@ -20,21 +19,14 @@ type Section struct {
 	Children                 []*Section
 }
 
-type AssessmentPlan struct {
-	Purpose  assessment.Purpose  `json:"purpose"`
-	Content  string              `json:"content"`
-	Location diagnostic.Location `json:"-"`
-}
-
 type Outline struct {
-	AssessmentPlans []AssessmentPlan
-	Name            string
-	NameLocation    diagnostic.Location
-	Source          []byte
-	Original        []byte
-	AST             ast.Node
-	Sections        []*Section
-	Anchors         map[string]bool
+	Name         string
+	NameLocation diagnostic.Location
+	Source       []byte
+	Original     []byte
+	AST          ast.Node
+	Sections     []*Section
+	Anchors      map[string]bool
 }
 
 // ParseOutline is the shared Markdown extraction path. The caller supplies a
@@ -99,15 +91,6 @@ func (out *Outline) parseHeadings(kind string) (*Outline, error) {
 	}
 	if titles != 1 || out.Name == "" {
 		return nil, diagnostic.Error("structure.title", fmt.Sprintf("expected exactly one nonempty top-level heading naming the %s", kind), out.Location(0, ""))
-	}
-	for _, section := range out.Sections {
-		if def, ok := assessment.FromHeading(section.Title); ok {
-			loc := out.Location(section.Start, section.Title)
-			if section.Level != 2 {
-				return nil, diagnostic.Error("structure.section-level", section.Title+" requires a level-two heading", loc)
-			}
-			out.AssessmentPlans = append(out.AssessmentPlans, AssessmentPlan{def.Purpose, out.Body(section), loc})
-		}
 	}
 	return out, nil
 }

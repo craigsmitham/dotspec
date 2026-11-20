@@ -31,8 +31,8 @@ task back or quietly giving a reopened task a different identity would each
 matter. Run the walkthrough to see how the acceptance test compares what the
 person recorded with what the new process serves. [Review requirements](review.md).
 
-To assess whether the workflow helps a person resume work, try the exercise in
-the [system validation plan](../../examples/todo/specs/personal-task-list.system.spec.md#system-validation-plan).
+To assess whether the workflow helps a person resume work, follow
+the [participant exercise](../../examples/todo/README.md#try-the-workflow-with-a-participant).
 Record what the participant tried and where they needed help.
 [Verification and validation](verification-and-validation.md).
 

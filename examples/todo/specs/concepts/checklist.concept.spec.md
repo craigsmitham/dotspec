@@ -24,12 +24,6 @@ A new list has no entries.
 
 - Every existing entry belongs to exactly one of the two views.
 
-## Introduced types
-
-### Entry
-
-The identity of one recorded commitment.
-
 ## Actions
 
 ### Add
@@ -42,13 +36,7 @@ Change an existing entry's title.
 
 #### Inputs
 
-##### Selected entry
-
-**Type:** [Entry](#entry)
-
-##### New title
-
-**Primitive:** string
+The selected entry and its new title.
 
 #### Guards
 

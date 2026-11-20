@@ -81,8 +81,6 @@ The list must make previously recorded entries available when the person returns
 
 **Targets:** [My checklist](../personal-task-list.system.spec.md#my-checklist).
 
-#### System verification plan
+#### Notes
 
-Record a task, complete it and return to both views. Reopen it and compare its
-identity with the original. For an interruption between sessions, follow the
-[restart verification plan](../requirements/restart.requirement.spec.md#system-verification-plan).
+The [restart requirement](../requirements/restart.requirement.spec.md) specifies which entry data survives a service interruption.

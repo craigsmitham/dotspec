@@ -135,34 +135,9 @@ to the affected people.
 - **OUT-010:** Minimize the likelihood that affected people continue to use
   superseded requirements after the change is agreed.
 
-## Progress cases
-
-### Adopting requirements alongside code
-
-This case is a hypothesis to investigate with teams considering dotspec.
-
-#### Current approach
-
-Requirements are distributed across issue trackers, documents, and conversations.
-
-#### Desired progress
-
-Keep requirements connected to the implementation as the product changes.
-
-#### Forces
-
-- **Push:** Requirements repeatedly become disconnected from code changes.
-- **Pull:** Relevant intent could be easier to find and review.
-- **Anxiety:** Maintaining another artifact may create additional work.
-- **Habit:** The team already knows its existing tools and conventions.
-
-#### Timeline
-
-To be established through interviews.
-
 ## Evidence
 
-The map, outcomes, and progress case are working hypotheses based on dotspec's
+The map and outcomes are working hypotheses based on dotspec's
 intended purpose. No interview or outcome research has validated them yet.
 The map's completeness has not been established. It includes decisions and
 collaboration performed outside the CLI.

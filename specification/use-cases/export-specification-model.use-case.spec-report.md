@@ -31,7 +31,7 @@ repository discovery may still fail; those outcomes are handled below.
 
 1. The contributor selects a project subtree and requests a model export.
 2. Dotspec discovers specifications and their required enclosing context and
-   retains acquired source bytes.
+   records normalized Markdown and reference identities.
 3. Dotspec represents ordered document content, maps explicit domain structures,
    and inspects direct references within the declared boundary.
 4. Dotspec writes the snapshot with provenance, diagnostics, coverage and operation
@@ -46,7 +46,7 @@ repository discovery may still fail; those outcomes are handled below.
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#malformed-specification"} -->
 
 During steps 2–3, a specification fails syntax or authoring validation. Retain the
-available bytes and content, report the failure, omit an invalid domain object,
+available text and locations, report the failure, omit an invalid domain object,
 and continue with other files. Resume step 4 with the retained findings. A
 complete snapshot containing authoring errors still achieves the review goal.
 
@@ -88,15 +88,15 @@ completed empty snapshot at step 4. This is an alternative successful outcome.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#invalid-saved-snapshot"} -->
 
-At step 5, validation finds a malformed representation, inconsistent payload,
+At step 5, validation finds a malformed representation, invalid source location,
 invalid reference or dishonest coverage claim. Report the contract findings
 without changing the snapshot or its source files. The contributor repairs or
 regenerates the representation before relying on it.
 
 ## Success guarantees
 
-The contributor receives a complete snapshot for the selected scope, with exact
-acquired source payloads, ordered document content, named domain mappings,
+The contributor receives a complete snapshot for the selected scope, with normalized
+Markdown and native reference identities, ordered document content, named domain mappings,
 reference resolutions, diagnostics and coverage results. Structural findings
 about authored specifications can be part of this successful information-gathering
 outcome. The contributor can validate the saved representation without rereading
@@ -108,7 +108,7 @@ that its specifications are accepted, adequate or satisfied.
 
 ## Minimal guarantees
 
-Export preserves acquired bytes, source content, and authored files according to
+Export preserves source identity, normalized Markdown, and content order according to
 the [model source-fidelity requirement](<../requirements/model-source-fidelity.requirement.spec-report.md>).
 Failed reads and incomplete operations remain visible. References remain authored
 occurrences unless resolution or an explicit mapping establishes more.

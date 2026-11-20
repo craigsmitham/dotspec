@@ -10,13 +10,12 @@ type: concept-spec
 
 Identify when a resource's explicitly allocated lifetime has ended.
 
-## Type parameters
+## State
 
 ### Resource
 
 An opaque resource identity; expiry does not inspect or modify the resource itself.
 
-## State
 
 ### Initial state
 
@@ -99,19 +98,17 @@ type: concept-spec
 
 Let people refer to a target with a short, memorable code.
 
-## Type parameters
+## State
 
 ### Target
 
 An opaque target identity. The concept makes no assumptions about its structure.
 
-## Introduced types
 
 ### Code
 
 An identity for a registered shorthand. Each use maintains its own codes.
 
-## State
 
 ### Initial state
 
@@ -228,13 +225,6 @@ Named shorthand registrations for public links.
 
 [Shorthand](concepts/shorthand.concept.spec.md).
 
-#### Bindings
-
-##### Public targets
-
-**Parameter:** [Target](concepts/shorthand.concept.spec.md#target)
-**Primitive:** URL
-
 ### PublicExpiry
 
 Tracks lifetimes for codes registered by PublicLinks.
@@ -242,14 +232,6 @@ Tracks lifetimes for codes registered by PublicLinks.
 #### Definition
 
 [Expiry](concepts/expiry.concept.spec.md).
-
-#### Bindings
-
-##### Public resources
-
-**Parameter:** [Resource](concepts/expiry.concept.spec.md#resource)
-**Bound type:** [Code](concepts/shorthand.concept.spec.md#code)
-**Supplying concept use:** [PublicLinks](#publiclinks)
 
 #### Dependencies
 
@@ -268,13 +250,6 @@ Named shorthand registrations for internal links.
 
 [Shorthand](concepts/shorthand.concept.spec.md).
 
-#### Bindings
-
-##### Internal targets
-
-**Parameter:** [Target](concepts/shorthand.concept.spec.md#target)
-**Primitive:** URL
-
 ### InternalExpiry
 
 Tracks lifetimes for codes registered by InternalLinks.
@@ -282,14 +257,6 @@ Tracks lifetimes for codes registered by InternalLinks.
 #### Definition
 
 [Expiry](concepts/expiry.concept.spec.md).
-
-#### Bindings
-
-##### Internal resources
-
-**Parameter:** [Resource](concepts/expiry.concept.spec.md#resource)
-**Bound type:** [Code](concepts/shorthand.concept.spec.md#code)
-**Supplying concept use:** [InternalLinks](#internallinks)
 
 #### Dependencies
 

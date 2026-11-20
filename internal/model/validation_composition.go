@@ -41,15 +41,5 @@ func (v *graphValidator) checkComposition() {
 			}
 		}
 
-		// A single declaration/occurrence has one role. Separate records can of
-		// course describe corresponding inputs/results or trigger/invoked actions.
-		rolePairs := map[string][2]string{"Concept": {"type_parameters", "introduced_types"}, "ConceptAction": {"input_parameters", "output_parameters"}, "Synchronization": {"when_actions", "then_actions"}}
-		if pair, ok := rolePairs[String(r, "kind")]; ok {
-			for _, id := range Strings(r[pair[0]]) {
-				if slices.Contains(Strings(r[pair[1]]), id) {
-					v.add("concept.role", located.path+"/"+pair[1], "A declaration or action occurrence cannot have both roles; use distinct records.")
-				}
-			}
-		}
 	}
 }

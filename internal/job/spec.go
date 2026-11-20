@@ -75,8 +75,6 @@ type Step struct {
 }
 
 type Job struct {
-	AssessmentPlans []specfile.AssessmentPlan `json:"assessment_plans,omitempty"`
-
 	References       *specfile.ReferenceDocument    `json:"-"`
 	ID               string                         `json:"id,omitempty"`
 	Slug             string                         `json:"slug"`
@@ -86,8 +84,6 @@ type Job struct {
 	Situation        string                         `json:"situation"`
 	Motivation       string                         `json:"motivation"`
 	IntendedProgress string                         `json:"intended_progress"`
-	Cases            []ProgressCase                 `json:"cases,omitempty"`
-	ProgressCases    string                         `json:"progress_cases"`
 	Evidence         string                         `json:"evidence"`
 	Steps            []Step                         `json:"steps"`
 	Outcomes         []DesiredOutcome               `json:"outcomes"`
@@ -134,7 +130,7 @@ func Parse(data []byte) (*Job, error) {
 	if err != nil {
 		return nil, err
 	}
-	job := &Job{AssessmentPlans: doc.AssessmentPlans, Steps: []Step{}, Outcomes: []DesiredOutcome{}, ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
+	job := &Job{Steps: []Step{}, Outcomes: []DesiredOutcome{}, ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
 	var ids specfile.Identifiers
 	if err := ids.Register(job.ID, "job", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err
@@ -143,7 +139,7 @@ func Parse(data []byte) (*Job, error) {
 	for _, section := range doc.Sections {
 		name := section.Title
 		switch name {
-		case "Job", "Performer", "Situation", "Motivation", "Intended progress", "Outcomes", "Steps", "Progress cases", "Evidence":
+		case "Job", "Performer", "Situation", "Motivation", "Intended progress", "Outcomes", "Steps", "Evidence":
 			location := doc.Location(section.Start, name)
 			if section.Level != 2 {
 				return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), location)
@@ -158,22 +154,10 @@ func Parse(data []byte) (*Job, error) {
 	for name, target := range map[string]*string{
 		"Job": &job.Statement, "Performer": &job.Performer, "Situation": &job.Situation,
 		"Motivation": &job.Motivation, "Intended progress": &job.IntendedProgress,
-		"Progress cases": &job.ProgressCases, "Evidence": &job.Evidence,
+		"Evidence": &job.Evidence,
 	} {
 		if s := sections[name]; s != nil {
 			*target = doc.Body(s)
-		}
-	}
-	if section := sections["Progress cases"]; section != nil {
-		for _, child := range section.Children {
-			c := ProgressCase{Name: child.Title}
-			fields := map[string]*string{"Circumstances": &c.Circumstances, "Struggling moment": &c.StrugglingMoment, "Participants": &c.Participants, "Alternatives considered": &c.AlternativesConsidered, "Trade-offs and selection criteria": &c.TradeoffsAndSelectionCriteria}
-			for _, sub := range child.Children {
-				if dest := fields[sub.Title]; dest != nil {
-					*dest = doc.Body(sub)
-				}
-			}
-			job.Cases = append(job.Cases, c)
 		}
 	}
 	if section := sections["Outcomes"]; section != nil {

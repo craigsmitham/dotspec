@@ -4,15 +4,15 @@ Generated from [the canonical model](../../../model/metamodel.yaml) and [the vie
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.26.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.27.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
 | Subset | Responsibility | Selected types |
 | --- | --- | --- |
-| Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Goal](index.md#goal), [Assumption](index.md#assumption), [ObligationClause](index.md#obligationclause), [System](index.md#system), [BusinessRule](index.md#businessrule), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Applicability](index.md#applicability), [ObligationCriterion](index.md#obligationcriterion), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [AssessmentPlan](index.md#assessmentplan), [AssessmentCase](index.md#assessmentcase) |
-| User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [ObligationClause](index.md#obligationclause), [Job](index.md#job), [JobStep](index.md#jobstep), [DesiredOutcome](index.md#desiredoutcome), [ProgressCase](index.md#progresscase), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Applicability](index.md#applicability), [ObligationCriterion](index.md#obligationcriterion), [OpenQuestion](index.md#openquestion), [AssessmentPlan](index.md#assessmentplan), [AssessmentCase](index.md#assessmentcase) |
-| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications, and verification guidance. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptType](index.md#concepttype), [ConceptUse](index.md#conceptuse), [TypeBinding](index.md#typebinding), [Synchronization](index.md#synchronization), [SynchronizationAction](index.md#synchronizationaction), [StateDescription](index.md#statedescription), [StateElement](index.md#stateelement), [ActionParameter](index.md#actionparameter), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Applicability](index.md#applicability), [ObligationCriterion](index.md#obligationcriterion), [Component](index.md#component), [Feature](index.md#feature), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [Interface](index.md#interface), [EffectsRow](index.md#effectsrow), [AssessmentPlan](index.md#assessmentplan), [AssessmentCase](index.md#assessmentcase) |
+| Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Goal](index.md#goal), [Assumption](index.md#assumption), [ObligationClause](index.md#obligationclause), [System](index.md#system), [BusinessRule](index.md#businessrule), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Applicability](index.md#applicability), [ObligationCriterion](index.md#obligationcriterion), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion) |
+| User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [ObligationClause](index.md#obligationclause), [Job](index.md#job), [JobStep](index.md#jobstep), [DesiredOutcome](index.md#desiredoutcome), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Applicability](index.md#applicability), [ObligationCriterion](index.md#obligationcriterion), [OpenQuestion](index.md#openquestion) |
+| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications and satisfaction criteria. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptUse](index.md#conceptuse), [Synchronization](index.md#synchronization), [StateDescription](index.md#statedescription), [StateElement](index.md#stateelement), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Applicability](index.md#applicability), [ObligationCriterion](index.md#obligationcriterion), [Component](index.md#component), [Feature](index.md#feature), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [Interface](index.md#interface), [EffectsRow](index.md#effectsrow) |
 | Specification traceability (`core`) | Explicit connections between specification meaning, authored occurrences, and resolved relationships. | [ContentBinding](index.md#contentbinding), [SourceReference](index.md#sourcereference), [Resolution](index.md#resolution) |
 
 Subset membership organizes model definitions; it does not infer the level or importance of an authored instance. Shared types can appear in several subsets. Supporting and generic types appear as context where a diagram needs them.
@@ -160,7 +160,7 @@ classDiagram
 
 ### Shared obligation capabilities
 
-A Requirement specification and an embedded clause share statement, classification, applicability, criterion and verification plan through Obligation. ObligationContainer separately grants clause ownership to System, Component, Interface, UseCase, Concept, ConceptUse, ConceptAction and Synchronization. A Requirement states one obligation and contains no clauses. Business rules, jobs, goals, assumptions and desired outcomes retain traceability without containing clauses. Triangle arrows include explicitly mixed-in capabilities.
+A Requirement specification and an embedded clause share statement, classification, applicability, and criterion through Obligation. ObligationContainer separately grants clause ownership to System, Component, Interface, UseCase, Concept, ConceptUse, ConceptAction and Synchronization. A Requirement states one obligation and contains no clauses. Business rules, jobs, goals, assumptions and desired outcomes retain traceability without containing clauses. Triangle arrows include explicitly mixed-in capabilities.
 
 ```mermaid
 classDiagram
@@ -178,7 +178,7 @@ classDiagram
 
 ### User progress
 
-Jobs optionally declare functional steps, outcomes and progress cases. These edges describe declaration ownership; step order is presentation order.
+Jobs optionally declare functional steps and outcomes. These edges describe declaration ownership; step order is presentation order.
 
 ```mermaid
 classDiagram
@@ -186,10 +186,8 @@ classDiagram
     class Job
     class JobStep
     class DesiredOutcome
-    class ProgressCase
     Job *-- "0..*" JobStep : steps
     Job *-- "0..*" DesiredOutcome : outcomes
-    Job *-- "0..*" ProgressCase : cases
     JobStep *-- "0..*" DesiredOutcome : outcomes
 ```
 
@@ -252,29 +250,9 @@ classDiagram
     QualityAttribute --> "0..*" QualityAttribute : sub-attribute of
 ```
 
-### Concept definitions and type bindings
-
-Explicit named uses reference reusable definitions. Bindings distinguish a type declaration from the use supplying its identities. Type parameters and introduced types share a declaration scope but play different roles.
-
-```mermaid
-classDiagram
-    direction LR
-    class ConceptUse
-    class Concept
-    class ConceptType
-    class TypeBinding
-    ConceptUse --> "0..1" Concept : definition
-    ConceptUse *-- "0..*" TypeBinding : bindings
-    Concept *-- "0..*" ConceptType : type parameters
-    Concept *-- "0..*" ConceptType : introduced types
-    TypeBinding --> "0..1" ConceptType : parameter
-    TypeBinding --> "0..1" ConceptType : binds to type
-    TypeBinding --> "0..1" ConceptUse : supplied by
-```
-
 ### System coordination
 
-Systems explicitly include named uses and own synchronization rules. Each referenced action is qualified by its use and must belong to that use's definition. Application dependencies are separately declared and may cycle. None of these relations implies execution, atomicity or behavioral completeness.
+Systems declare concept uses, dependencies, and coordination rules.
 
 ```mermaid
 classDiagram
@@ -282,15 +260,10 @@ classDiagram
     class System
     class ConceptUse
     class Synchronization
-    class SynchronizationAction
     class ConceptAction
     System *-- "0..*" ConceptUse : concept uses
     System *-- "0..*" Synchronization : synchronizations
     ConceptUse --> "0..*" ConceptUse : dependencies
-    Synchronization *-- "0..*" SynchronizationAction : when actions
-    Synchronization *-- "0..*" SynchronizationAction : then actions
-    SynchronizationAction --> "0..1" ConceptUse : concept use
-    SynchronizationAction --> "0..1" ConceptAction : action
 ```
 
 ### Explicit requirements relationships
@@ -428,26 +401,6 @@ classDiagram
     Capability --> "0..*" Component : provided by
 ```
 
-### Assessment planning
-
-Each plan records an [assessment purpose](index.md#assessmentpurpose) selected by its heading. Subject and basis can cite what is being assessed and what it is judged against independently of where the plan is recorded.
-
-```mermaid
-classDiagram
-    direction LR
-    class TraceableElement
-    <<abstract>> TraceableElement
-    class AssessmentPlan
-    class AssessmentCase
-    class ContextualReferences
-    class SourceReference
-    TraceableElement --> "0..*" AssessmentPlan : assessment plans
-    AssessmentPlan --> "0..1" ContextualReferences : subject
-    AssessmentPlan --> "0..1" ContextualReferences : basis
-    ContextualReferences ..> "0..*" SourceReference : references
-    AssessmentPlan --> "0..*" AssessmentCase : cases
-```
-
 ## Selected type reference
 
 ### DomainElement
@@ -473,7 +426,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | --- | --- | --- | --- |
 | `slug` | `string` | optional | Path-derived current slug where applicable. |
 | `preamble` | [RichContent](index.md#richcontent) | optional | Authored content between the title and the first named section. |
-| `evidence` | [EvidenceCollection](index.md#evidencecollection) | optional |  |
+| `evidence` | [RichContent](index.md#richcontent) | optional |  |
 | `authority_and_evidence` | [RichContent](index.md#richcontent) | optional | Maps both Authority and Authority and evidence headings; retain original heading nodes. |
 | `related_specifications` | [ContextualReferences](index.md#contextualreferences) | optional | Contextual citations of related specifications of any type, with their explanation; no implicit support, refinement, enforcement or compliance relation. |
 
@@ -488,7 +441,6 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `supports` | [Goal](index.md#goal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) or [UseCase](index.md#usecase) | optional; list | Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement. |
 | `derived_from` | [DomainElement](index.md#domainelement) or [SourceFragment](index.md#sourcefragment) | optional; list | Source or rationale for this element, including rules, decisions and obligations; not logical entailment. |
 | `relies_on` | [Assumption](index.md#assumption) | optional; list | Assumptions on which the validity of this element depends. |
-| `assessment_plans` | [AssessmentPlan](index.md#assessmentplan) | optional; ordered list | Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location. |
 
 ### Goal
 
@@ -512,7 +464,6 @@ Subsets: `business-requirements`, `software-requirements`. [Assumption](index.md
 | `statement` | [RichContent](index.md#richcontent) | optional |  |
 | `basis` | [RichContent](index.md#richcontent) | optional | Why reliance on this statement is justified, including cited evidence. |
 | `applicability` | [RichContent](index.md#richcontent) | optional | Conditions, locations or periods in which this assumption is expected to hold. |
-| `assessment_plans` | [AssessmentPlan](index.md#assessmentplan) | optional; ordered list | Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location. |
 
 ### ObligationClause
 
@@ -527,8 +478,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; list | Only resolved classifications; original occurrences remain separately addressable. |
 | `refines` | [Requirement](index.md#requirement) or [BusinessRule](index.md#businessrule) or [ObligationClause](index.md#obligationclause) | optional; list | Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted. |
 | `applies_to` | [DomainElement](index.md#domainelement) | optional; list |  |
-| `assessment_plans` | [AssessmentPlan](index.md#assessmentplan) | optional; ordered list | Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location. |
-| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis. |
+| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source. |
 
 ### System
 
@@ -574,7 +524,7 @@ Subsets: `business-requirements`. [BusinessRule](index.md#businessrule) contains
 
 ### Job
 
-What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps, progress cases and job-story phrasing are optional complementary perspectives.
+What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps and job-story phrasing are optional complementary perspectives.
 
 Subsets: `user-requirements`. [Job](index.md#job) contains the complete definition.
 
@@ -586,7 +536,6 @@ Subsets: `user-requirements`. [Job](index.md#job) contains the complete definiti
 | `intended_progress` | [RichContent](index.md#richcontent) | optional |  |
 | `steps` | [JobStep](index.md#jobstep) | optional; ordered list | Document order, not a universal lifecycle or required process sequence. |
 | `outcomes` | [DesiredOutcome](index.md#desiredoutcome) | optional; ordered list | Outcomes declared here, in authored order. Shared outcomes are declared once and have explicit applicability references. |
-| `progress_cases` | [ProgressCase](index.md#progresscase) | optional; ordered list | Explicitly named progress cases, in authored order. |
 
 ### JobStep
 
@@ -613,25 +562,6 @@ Subsets: `user-requirements`. [DesiredOutcome](index.md#desiredoutcome) contains
 | `name` | [RichContent](index.md#richcontent) | optional | Authored title or item name, if present. |
 | `owner` | [Job](index.md#job) or [JobStep](index.md#jobstep) | required |  |
 | `applies_to` | [Job](index.md#job) or [JobStep](index.md#jobstep) | optional; list | Jobs and steps for which this outcome is a criterion for success. Explicit, many-to-many applicability, independent of its single declaration owner; no inherited applicability or achievement is inferred. |
-
-### ProgressCase
-
-An explicitly authored example or hypothesis about progress; do not invent cases from unsegmented prose.
-
-Subsets: `user-requirements`. [ProgressCase](index.md#progresscase) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `current_approach` | [RichContent](index.md#richcontent) | optional |  |
-| `desired_progress` | [RichContent](index.md#richcontent) | optional |  |
-| `forces` | [Force](index.md#force) | optional; ordered list | Explicitly identified forces, in authored order. |
-| `timeline` | [RichContent](index.md#richcontent) | optional | Authored timeline of progress or switching decisions, distinct from a functional job map; unknown dates and research-pending narratives are allowed. |
-| `evidence` | [EvidenceCollection](index.md#evidencecollection) | optional |  |
-| `circumstances` | [RichContent](index.md#richcontent) | optional | Case-specific circumstances, distinct from the general job situation. |
-| `struggling_moment` | [RichContent](index.md#richcontent) | optional | The event or difficulty that made change worth considering. |
-| `participants` | [RichContent](index.md#richcontent) | optional | People and roles in this case; distinguish performer, buyer and decision maker where relevant. |
-| `alternatives_considered` | [RichContent](index.md#richcontent) | optional | Approaches considered, including doing nothing or continuing the current approach. |
-| `tradeoffs_and_selection_criteria` | [RichContent](index.md#richcontent) | optional | Trade-offs and criteria for choosing, hiring or rejecting an approach. |
 
 ### UseCase
 
@@ -703,21 +633,9 @@ Subsets: `software-requirements`. [Concept](index.md#concept) contains the compl
 | --- | --- | --- | --- |
 | `purpose` | [RichContent](index.md#richcontent) | optional |  |
 | `operational_principles` | [RichContent](index.md#richcontent) | optional |  |
-| `type_parameters` | [ConceptType](index.md#concepttype) | optional; ordered list |  |
-| `introduced_types` | [ConceptType](index.md#concepttype) | optional; ordered list |  |
 | `abstract_state` | [StateDescription](index.md#statedescription) | optional |  |
 | `actions` | [ConceptAction](index.md#conceptaction) | optional; ordered list | Explicitly named actions, in authored order. |
 | `effects_table` | [EffectsRow](index.md#effectsrow) | optional; ordered list | Rows of the optional authored operation-by-observable-property matrix. Empty cells mean unspecified, never unchanged. |
-
-### ConceptType
-
-A type parameter or introduced identity type, scoped to one concept definition. Membership distinguishes its role.
-
-Subsets: `software-requirements`. [ConceptType](index.md#concepttype) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `content` | [RichContent](index.md#richcontent) | required |  |
 
 ### ConceptUse
 
@@ -728,22 +646,8 @@ Subsets: `software-requirements`. [ConceptUse](index.md#conceptuse) contains the
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `definition` | [Concept](index.md#concept) | optional |  |
-| `bindings` | [TypeBinding](index.md#typebinding) | optional; ordered list |  |
 | `configuration` | [RichContent](index.md#richcontent) | optional |  |
 | `dependencies` | [ConceptUse](index.md#conceptuse) | optional; ordered list |  |
-
-### TypeBinding
-
-An explicit binding of a definition parameter to a primitive or a type introduced by a named concept use. Unresolved links remain authored references.
-
-Subsets: `software-requirements`. [TypeBinding](index.md#typebinding) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `parameter` | [ConceptType](index.md#concepttype) | optional |  |
-| `bound_type` | [ConceptType](index.md#concepttype) | optional |  |
-| `supplying_concept_use` | [ConceptUse](index.md#conceptuse) | optional |  |
-| `primitive` | `string` | optional |  |
 
 ### Synchronization
 
@@ -757,21 +661,6 @@ Subsets: `software-requirements`. [Synchronization](index.md#synchronization) co
 | `where` | [RichContent](index.md#richcontent) | optional |  |
 | `then` | [RichContent](index.md#richcontent) | optional |  |
 | `semantics` | [RichContent](index.md#richcontent) | optional |  |
-| `when_actions` | [SynchronizationAction](index.md#synchronizationaction) | optional; ordered list |  |
-| `then_actions` | [SynchronizationAction](index.md#synchronizationaction) | optional; ordered list |  |
-
-### SynchronizationAction
-
-An authored action occurrence or invocation within a synchronization, qualified by a concept use. Conditions and arguments remain authored content.
-
-Subsets: `software-requirements`. [SynchronizationAction](index.md#synchronizationaction) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `concept_use` | [ConceptUse](index.md#conceptuse) | optional |  |
-| `action` | [ConceptAction](index.md#conceptaction) | optional |  |
-| `arguments` | [RichContent](index.md#richcontent) | optional |  |
-| `result` | [RichContent](index.md#richcontent) | optional |  |
 
 ### StateDescription
 
@@ -799,19 +688,6 @@ Subsets: `software-requirements`. [StateElement](index.md#stateelement) contains
 | `value_description` | [RichContent](index.md#richcontent) | optional |  |
 | `derivation` | [RichContent](index.md#richcontent) | optional |  |
 
-### ActionParameter
-
-An explicitly named input or result. Type descriptions can remain prose; linked types and primitive names are optional.
-
-Subsets: `software-requirements`. [ActionParameter](index.md#actionparameter) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `content` | [RichContent](index.md#richcontent) | required |  |
-| `type` | [ConceptType](index.md#concepttype) | optional |  |
-| `primitive` | `string` | optional |  |
-| `type_description` | [RichContent](index.md#richcontent) | optional |  |
-
 ### ConceptAction
 
 An explicitly named concept action. Caller assumptions and enforced guards are different authored claims.
@@ -822,8 +698,6 @@ Subsets: `software-requirements`. [ConceptAction](index.md#conceptaction) contai
 | --- | --- | --- | --- |
 | `inputs` | [RichContent](index.md#richcontent) | optional |  |
 | `outputs` | [RichContent](index.md#richcontent) | optional |  |
-| `input_parameters` | [ActionParameter](index.md#actionparameter) | optional; ordered list |  |
-| `output_parameters` | [ActionParameter](index.md#actionparameter) | optional; ordered list |  |
 | `initiation` | [RichContent](index.md#richcontent) | optional | Authored initiation conditions, including user or system actions; no scheduler or caller is inferred. |
 | `caller_assumptions` | [Condition](index.md#condition) | optional; ordered list | Explicitly distinguished items; prose remains authoritative. |
 | `guards` | [Condition](index.md#condition) | optional; ordered list | Explicitly distinguished items; prose remains authoritative. |
@@ -847,8 +721,7 @@ Subsets: `software-requirements`. [Requirement](index.md#requirement) contains t
 | `applies_to` | [DomainElement](index.md#domainelement) | optional; list |  |
 | `rationale` | [RichContent](index.md#richcontent) | optional |  |
 | `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; list | Only resolved classifications; original occurrences remain separately addressable. |
-| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis. |
-| `assessment_plans` | [AssessmentPlan](index.md#assessmentplan) | optional; ordered list | Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location. |
+| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source. |
 
 ### QualityModel
 
@@ -926,7 +799,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 
 ### Obligation
 
-An obligation, expressed in its own Requirement specification or as a clause inside another specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines or references the satisfaction rule. A system verification plan assesses a realization against that rule. A requirements verification plan assesses the quality of the obligation itself.
+An obligation, expressed in its own Requirement specification or as a clause inside another specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines or references the satisfaction rule.
 
 Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [Obligation](index.md#obligation) contains the complete definition.
 
@@ -938,12 +811,11 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `applicability` | [Applicability](index.md#applicability) | optional |  |
 | `rationale` | [RichContent](index.md#richcontent) | optional |  |
 | `refines` | [Requirement](index.md#requirement) or [BusinessRule](index.md#businessrule) or [ObligationClause](index.md#obligationclause) | optional; list | Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted. |
-| `assessment_plans` | [AssessmentPlan](index.md#assessmentplan) | optional; ordered list | Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location. |
-| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis. |
+| `criterion` | [ObligationCriterion](index.md#obligationcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source. |
 
 ### Applicability
 
-Operating context covered by an obligation or business rule, with optional explicit dimensions. For outcomes of use, identify users, tasks, equipment or assistance, and environment. Assessment setup is recorded in the plan, separately from required operating context; no applicability is inferred from a link or directory.
+Operating context covered by an obligation or business rule, with optional explicit dimensions. For outcomes of use, identify users, tasks, equipment or assistance, and environment. Record the required operating context here.
 
 Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [Applicability](index.md#applicability) contains the complete definition.
 
@@ -957,14 +829,14 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 
 ### ObligationCriterion
 
-Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define each bound once or reference its authoritative statement or source; system verification plans cite this rule. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.
+Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define each bound once or reference its authoritative statement or source. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.
 
 Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [ObligationCriterion](index.md#obligationcriterion) contains the complete definition.
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `content` | [RichContent](index.md#richcontent) | required |  |
-| `measure` | [RichContent](index.md#richcontent) | optional | Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed. A system verification plan describes the collection procedure. |
+| `measure` | [RichContent](index.md#richcontent) | optional | Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed. |
 | `target` | [RichContent](index.md#richcontent) | optional | Required value, bound or acceptable range, including the comparison. Preferred targets belong in rationale or notes and must be identified as nonbinding. |
 
 ### Component
@@ -1023,12 +895,6 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `question` | [RichContent](index.md#richcontent) | optional |  |
-| `raised_by` | [RichContent](index.md#richcontent) | optional |  |
-| `raised_on` | [RichContent](index.md#richcontent) | optional |  |
-| `resolve_by` | [RichContent](index.md#richcontent) | optional |  |
-| `importance` | [RichContent](index.md#richcontent) | optional |  |
-| `evidence_needed` | [RichContent](index.md#richcontent) | optional |  |
-| `tracking_reference` | [ContextualReferences](index.md#contextualreferences) | optional | External issue or decision owning resolution workflow. |
 
 ### Interface
 
@@ -1040,7 +906,6 @@ Subsets: `software-requirements`. [Interface](index.md#interface) contains the c
 | --- | --- | --- | --- |
 | `owner` | [System](index.md#system) or [Component](index.md#component) | required |  |
 | `obligations` | [ObligationClause](index.md#obligationclause) | optional; ordered list |  |
-| `assessment_plans` | [AssessmentPlan](index.md#assessmentplan) | optional; ordered list | Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location. |
 | `name` | [RichContent](index.md#richcontent) | optional | Authored title or item name, if present. |
 | `description` | [RichContent](index.md#richcontent) | optional | Introductory description of the boundary interaction. |
 | `contracts` | [ContextualReferences](index.md#contextualreferences) | optional | References to authoritative native contracts; no conformance claim is inferred. |
@@ -1055,35 +920,3 @@ Subsets: `software-requirements`. [EffectsRow](index.md#effectsrow) contains the
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `cells` | [RichContent](index.md#richcontent) | optional; ordered list |  |
-
-### AssessmentPlan
-
-An authored plan for answering one assessment question. Its purpose identifies the question, its subject identifies what to assess, and its basis identifies what to judge the subject against. Executions, findings and acceptance decisions are recorded separately.
-
-Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [AssessmentPlan](index.md#assessmentplan) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `purpose` | `AssessmentPurpose` | required | Assessment question selected by the authored plan heading. |
-| `subject` | [ContextualReferences](index.md#contextualreferences) | optional | What will be assessed, with optional links to requirements, designs, builds, processes or premises. |
-| `basis` | [ContextualReferences](index.md#contextualreferences) | optional | Authored criteria, stakeholder needs, goals, obligations or evidence against which the subject is assessed. Citations do not establish satisfaction. |
-| `participants` | [RichContent](index.md#richcontent) | optional | Relevant users, stakeholders or assessors and their roles; naming them is not endorsement. |
-| `method` | [RichContent](index.md#richcontent) | optional | How the assessment is performed, including procedure, sampling and measurement where needed. |
-| `success_criteria` | [RichContent](index.md#richcontent) | optional | How to interpret observations against the stated basis. Reference authoritative criteria where they are defined. |
-| `conditions` | [RichContent](index.md#richcontent) | optional | Conditions of the assessment, including how the setup represents the obligation's operating context or the intended context of use. These do not redefine applicability. |
-| `cases` | [AssessmentCase](index.md#assessmentcase) | optional; ordered list |  |
-| `evidence_to_retain` | [RichContent](index.md#richcontent) | optional |  |
-
-### AssessmentCase
-
-An explicitly distinguished assessment case; its parent plan supplies its assessment purpose. A case definition is not an observation or result.
-
-Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [AssessmentCase](index.md#assessmentcase) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `name` | [RichContent](index.md#richcontent) | optional |  |
-| `conditions` | [RichContent](index.md#richcontent) | optional |  |
-| `procedure` | [RichContent](index.md#richcontent) | optional |  |
-| `expected_result` | [RichContent](index.md#richcontent) | optional |  |
-| `evidence_to_retain` | [RichContent](index.md#richcontent) | optional |  |

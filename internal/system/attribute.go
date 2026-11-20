@@ -11,7 +11,6 @@ import (
 var AttributeLayout = specfile.Layout{Kind: "quality-attribute", Suffix: specfile.AttributeSuffix, Collection: "quality"}
 
 type AttributeDocument struct {
-	AssessmentPlans []specfile.AssessmentPlan `json:"assessment_plans,omitempty"`
 	Attribute
 	References *specfile.ReferenceDocument
 }
@@ -62,7 +61,7 @@ func ParseQualityAttribute(path string, data []byte) (*AttributeDocument, error)
 	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
 		return nil, err
 	}
-	return &AttributeDocument{AssessmentPlans: doc.AssessmentPlans, Attribute: a, References: doc.References()}, nil
+	return &AttributeDocument{Attribute: a, References: doc.References()}, nil
 }
 
 func ReadQualityAttribute(path string) (*AttributeDocument, error) {

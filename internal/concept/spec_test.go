@@ -165,7 +165,7 @@ func TestOperationalPrinciplesAliasAndDuplicate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if spec.TypeParameters == "" || spec.IntroducedTypes == "" || !strings.Contains(spec.OperationalPrinciples, "Second story") {
+	if !strings.Contains(spec.OperationalPrinciples, "Second story") {
 		t.Fatal("plural stories or declarations lost")
 	}
 	if _, err = Parse([]byte(source + "\n## Operational principles\nDuplicate.\n")); err == nil {

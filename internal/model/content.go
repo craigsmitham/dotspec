@@ -3,7 +3,6 @@ package model
 import (
 	"bytes"
 	"crypto/sha256"
-	"encoding/base64"
 	"fmt"
 	"html"
 	"regexp"
@@ -11,6 +10,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/extension"
@@ -20,20 +20,23 @@ import (
 	"github.com/yuin/goldmark/util"
 )
 
-// ParseContent retains original bytes before interpreting syntax. It performs no
+// ParseContent maps Markdown to normalized UTF-8 text and source locations. It performs no
 // I/O and imposes no dotspec authoring validity requirements on Markdown or YAML.
 func ParseContent(locator string, data []byte) *ParsedDocument {
-	data = bytes.Clone(data)
+	validEncoding := utf8.Valid(data)
+	data = specfile.Normalize(data)
+	if !validEncoding {
+		data = bytes.ToValidUTF8(data, []byte("�"))
+	}
 	key := strings.TrimPrefix(SourceID(locator), "source:")
 	p := &ParsedDocument{Data: data, NodeByID: map[string]Record{}}
-	p.Source = SourceRecord(locator, data)
+	p.Source = sourceRecord(locator)
+	p.Source["markdown"] = string(data)
 	p.Source["media_type"] = "text/markdown"
 	p.Document = Record{"id": "document:" + key, "kind": "Document", "source": p.Source["id"], "parse_status": "parsed", "parser": "goldmark/1.8.7 (CommonMark, GFM, footnotes); yaml.v3/3.0.6", "domain_decomposition": "not_attempted", "coverage": Record{"status": "not_checked", "mapping_profile": MappingProfile}}
-	e := &contentExtractor{p: p, key: key, counts: map[string]int{}}
-	e.normalize()
+	e := &contentExtractor{p: p, key: key, buffer: data, counts: map[string]int{}}
 	root := e.node("document", 0, len(e.buffer))
 	p.Document["root"] = root["id"]
-	root["span"] = e.rawSpan(0, len(data))
 	body, front := e.frontmatter()
 	children := []string{}
 	if front != "" {
@@ -61,8 +64,8 @@ func ParseContent(locator string, data []byte) *ParsedDocument {
 	root["children"] = children
 	e.sections(children)
 	e.referenceDefinitions()
-	if !utf8.Valid(data) {
-		e.diagnostic("content.encoding", "Source contains invalid UTF-8; exact bytes are retained.", 0, len(e.buffer))
+	if !validEncoding {
+		e.diagnostic("content.encoding", "Source contains invalid UTF-8; unreadable sequences are represented by replacement characters.", 0, len(e.buffer))
 		p.Document["parse_status"] = "partial"
 	}
 	if len(p.Diagnostics) > 0 {
@@ -76,68 +79,30 @@ func ParseContent(locator string, data []byte) *ParsedDocument {
 }
 
 type contentExtractor struct {
-	p       *ParsedDocument
-	key     string
-	buffer  []byte
-	offsets []int
-	base    int
-	counts  map[string]int
+	p      *ParsedDocument
+	key    string
+	buffer []byte
+	base   int
+	counts map[string]int
 }
 
-func (e *contentExtractor) normalize() {
-	data := e.p.Data
-	i := 0
-	segments := []Record{}
-	if bytes.HasPrefix(data, []byte{0xef, 0xbb, 0xbf}) {
-		i = 3
-		segments = append(segments, Record{"normalized_start": 0, "normalized_end": 0, "original_start": 0, "original_end": 3, "transformation": "BOM removal"})
-	}
-	e.offsets = append(e.offsets, i)
-	identityStart, identityNorm := i, 0
-	flush := func(end int) {
-		if end > identityStart {
-			segments = append(segments, Record{"normalized_start": identityNorm, "normalized_end": len(e.buffer), "original_start": identityStart, "original_end": end, "transformation": "identity"})
-		}
-	}
-	changed := i != 0
-	for i < len(data) {
-		if data[i] == '\r' && i+1 < len(data) && data[i+1] == '\n' {
-			flush(i)
-			start := len(e.buffer)
-			e.buffer = append(e.buffer, '\n')
-			e.offsets = append(e.offsets, i+2)
-			segments = append(segments, Record{"normalized_start": start, "normalized_end": start + 1, "original_start": i, "original_end": i + 2, "transformation": "CRLF to LF"})
-			i += 2
-			identityStart, identityNorm = i, len(e.buffer)
-			changed = true
-			continue
-		}
-		e.buffer = append(e.buffer, data[i])
-		i++
-		e.offsets = append(e.offsets, i)
-	}
-	flush(i)
-	if changed {
-		e.p.Document["normalization"] = segments
-	}
-}
-func (e *contentExtractor) rawSpan(start, end int) Record {
+func (e *contentExtractor) sourceSpan(start, end int) Record {
 	return Record{"source": e.p.Source["id"], "start": start, "end": end}
 }
 func (e *contentExtractor) node(kind string, start, end int) Record {
 	start = max(0, min(start, len(e.buffer)))
 	end = max(start, min(end, len(e.buffer)))
-	key := fmt.Sprintf("%s:%d:%d", kind, e.offsets[start], e.offsets[end])
+	key := fmt.Sprintf("%s:%d:%d", kind, start, end)
 	count := e.counts[key]
 	e.counts[key]++
 	id := fmt.Sprintf("node:%s:%s:%d", e.key, key, count)
-	r := Record{"id": id, "kind": "ContentNode", "document": e.p.Document["id"], "node_kind": kind, "span": e.rawSpan(e.offsets[start], e.offsets[end])}
+	r := Record{"id": id, "kind": "ContentNode", "document": e.p.Document["id"], "node_kind": kind, "span": e.sourceSpan(start, end)}
 	e.p.Nodes = append(e.p.Nodes, r)
 	e.p.NodeByID[id] = r
 	return r
 }
 func (e *contentExtractor) diagnostic(code, message string, start, end int) {
-	r := Record{"id": fmt.Sprintf("diagnostic:%s:%d", e.key, len(e.p.Diagnostics)), "kind": "Diagnostic", "code": code, "severity": "error", "message": message, "source": e.p.Source["id"], "phase": "parse", "span": e.rawSpan(e.offsets[max(0, min(start, len(e.buffer)))], e.offsets[max(0, min(end, len(e.buffer)))])}
+	r := Record{"id": fmt.Sprintf("diagnostic:%s:%d", e.key, len(e.p.Diagnostics)), "kind": "Diagnostic", "code": code, "severity": "error", "message": message, "source": e.p.Source["id"], "phase": "parse", "span": e.sourceSpan(max(0, min(start, len(e.buffer))), max(0, min(end, len(e.buffer))))}
 	e.p.Diagnostics = append(e.p.Diagnostics, r)
 }
 func (e *contentExtractor) lineEnd(pos int) int {
@@ -158,7 +123,6 @@ func (e *contentExtractor) spanBounds(r Record) (int, int) {
 	s := Object(r["span"])
 	return Number(s["start"]), Number(s["end"])
 }
-func (e *contentExtractor) normalizedOffset(raw int) int { return sort.SearchInts(e.offsets, raw) }
 
 // fillGaps retains syntax delimiters and whitespace omitted by the parser. Child
 // nodes keep their own spans; no content node is invented from a rendered view.
@@ -175,16 +139,8 @@ func (e *contentExtractor) fillGaps(parent Record, children []string) []string {
 		if a >= b {
 			return
 		}
-		start, stop := e.normalizedOffset(a), e.normalizedOffset(b)
-		if start > len(e.buffer) {
-			start = len(e.buffer)
-		}
-		if stop > len(e.buffer) {
-			stop = len(e.buffer)
-		}
-		r := e.node("trivia", start, stop)
-		r["span"] = e.rawSpan(a, b)
-		if String(parent, "node_kind") == "document" && len(bytes.TrimSpace(bytes.TrimPrefix(e.p.Data[a:b], []byte{0xef, 0xbb, 0xbf}))) > 0 {
+		r := e.node("trivia", a, b)
+		if String(parent, "node_kind") == "document" && len(bytes.TrimSpace(e.p.Data[a:b])) > 0 {
 			r["node_kind"] = "opaque"
 			r["opaque_reason"] = "Source region not represented by the configured Markdown parser"
 		}
@@ -594,7 +550,7 @@ func (e *contentExtractor) markdown(n ast.Node) string {
 		next := c.NextSibling()
 		if current, ok := c.(*ast.Text); ok && len(children) > 0 && !current.IsRaw() {
 			_, priorEnd := e.spanBounds(e.p.NodeByID[children[len(children)-1]])
-			prior := e.normalizedOffset(priorEnd) - e.base
+			prior := priorEnd - e.base
 			if current.Segment.Start < prior {
 				width := current.Segment.Stop - current.Segment.Start
 				candidate := prior + e.base
@@ -760,7 +716,7 @@ func (p *ParsedDocument) Raw(id string) string {
 }
 
 // Text exposes decoded values where the syntax parser has supplied one, and
-// otherwise the authored syntax. It never mutates the retained payload.
+// otherwise the authored syntax. It never mutates the Markdown source.
 func (p *ParsedDocument) Text(id string) string {
 	if text, ok := p.NodeByID[id]["decoded_text"].(string); ok {
 		return text
@@ -908,14 +864,8 @@ func SourceID(locator string) string {
 	return fmt.Sprintf("source:%x", sha256.Sum256([]byte(locator)))[:27]
 }
 
-// SourceRecord retains acquired bytes, without assuming a Markdown media type.
-func SourceRecord(locator string, data []byte) Record {
-	sum := sha256.Sum256(data)
-	payload := Record{"bytes_base64": base64.StdEncoding.EncodeToString(data), "sha256": fmt.Sprintf("%x", sum), "byte_length": len(data)}
-	if utf8.Valid(data) {
-		payload["text_encoding"] = "UTF-8"
-	}
-	return Record{"id": SourceID(locator), "kind": "SourceDocument", "locator": locator, "read_status": "read", "payload": payload}
+func sourceRecord(locator string) Record {
+	return Record{"id": SourceID(locator), "kind": "SourceDocument", "locator": locator, "read_status": "read"}
 }
 
 type sourceFootnoteInline struct{ parser.InlineParser }

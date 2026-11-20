@@ -93,7 +93,7 @@ func TestExplicitSemanticRelationships(t *testing.T) {
 	forged := cloneSnapshot(t, s)
 	elementKind(t, forged, "UseCase")["subject_system"] = context["id"]
 	requireFinding(t, forged, "concept.projection")
-	conformancePayloads(t, s)
+	checkSourceText(t, s)
 }
 
 func TestContextualLinksDoNotAssertSemanticRelations(t *testing.T) {
@@ -137,7 +137,7 @@ func TestUnknownConceptScopeDefersDependentRelationships(t *testing.T) {
 		if String(d, "severity") == "error" {
 			t.Fatal(d)
 		}
-		deferred = deferred || strings.Contains(String(d, "message"), "not yet verifiable")
+		deferred = deferred || strings.Contains(String(d, "message"), "external")
 	}
 	if !deferred {
 		t.Fatal("missing deferred-scope advice")
@@ -152,19 +152,19 @@ func TestRelationshipContractsRejectCorruptSnapshots(t *testing.T) {
 		for _, a := range s.Assertions {
 			paths[String(a, "projection_path")] = true
 		}
-		if !paths["Concept.type_parameters"] || !paths["Concept.introduced_types"] {
+		if !paths["System.concept_uses"] || !paths["System.synchronizations"] {
 			t.Fatal(paths)
 		}
 		forged := cloneSnapshot(t, s)
 		for _, a := range forged.Assertions {
-			if String(a, "projection_path") == "Concept.type_parameters" {
-				a["projection_path"] = "Concept.actions"
+			if String(a, "projection_path") == "System.concept_uses" {
+				a["projection_path"] = "System.synchronizations"
 				break
 			}
 		}
 		requireFinding(t, forged, "assertion.projection")
 	})
-	for _, path := range []string{"ConceptUse.definition", "System.concept_uses", "System.synchronizations", "ConceptUse.dependencies", "Concept.type_parameters", "ConceptUse.bindings"} {
+	for _, path := range []string{"ConceptUse.definition", "System.concept_uses", "System.synchronizations", "ConceptUse.dependencies"} {
 		t.Run(path+" requires endpoints", func(t *testing.T) {
 			forged := cloneSnapshot(t, s)
 			for _, a := range forged.Assertions {
@@ -183,35 +183,11 @@ func TestRelationshipContractsRejectCorruptSnapshots(t *testing.T) {
 		sys["specification_system"] = sys["id"]
 		requireFinding(t, forged, "shape.invalid")
 	})
-	t.Run("bindings retain section content", func(t *testing.T) {
+	t.Run("concept dependencies retain section content", func(t *testing.T) {
 		forged := cloneSnapshot(t, s)
-		use := designRecord(t, forged, "ConceptUse", "PublicLinks")
-		delete(use, "bindings_content")
-		forged.ContentBindings = slices.DeleteFunc(forged.ContentBindings, func(b Record) bool { return b["owner"] == use["id"] && b["field_path"] == "bindings_content" })
-		requireFinding(t, forged, "declaration.pair")
+		use := designRecord(t, forged, "ConceptUse", "PublicExpiry")
+		delete(use, "dependencies_content")
+		forged.ContentBindings = slices.DeleteFunc(forged.ContentBindings, func(b Record) bool { return b["owner"] == use["id"] && b["field_path"] == "dependencies_content" })
+		requireFinding(t, forged, "declaration.content")
 	})
-}
-
-func TestOptionalDecompositionRetainsSectionContent(t *testing.T) {
-	s := conformanceExport(t, compositionFixture(t)).Snapshot
-	for _, tc := range []struct{ kind, field, content string }{
-		{"ConceptAction", "input_parameters", "inputs"}, {"ConceptAction", "output_parameters", "outputs"},
-		{"Synchronization", "when_actions", "when"}, {"Synchronization", "then_actions", "then"},
-	} {
-		t.Run(tc.field, func(t *testing.T) {
-			forged := cloneSnapshot(t, s)
-			found := false
-			for _, r := range forged.Elements {
-				if String(r, "kind") == tc.kind && len(Strings(r[tc.field])) > 0 {
-					delete(r, tc.content)
-					found = true
-					break
-				}
-			}
-			if !found {
-				t.Fatal("fixture missing decomposition")
-			}
-			requireFinding(t, forged, "declaration.content")
-		})
-	}
 }

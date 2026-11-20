@@ -3,7 +3,6 @@ package requirement
 import (
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/assessment"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/obligation"
 )
@@ -17,22 +16,9 @@ func Check(spec *Requirement) []diagnostic.Diagnostic {
 	if len(spec.QualityAttributes) > 0 {
 		statement, rationale = "State one coherent, assessable quality obligation.", "Explain why this quality matters and any relevant tradeoffs."
 	}
-	planHeading := assessment.SystemVerification.Definition().Heading()
-	var verification string
-	planLocation := spec.Location
-	for _, plan := range spec.AssessmentPlans {
-		if plan.Purpose == assessment.SystemVerification {
-			planLocation = plan.Location
-			verification = plan.Content
-			if strings.TrimSpace(verification) != "" {
-				break
-			}
-		}
-	}
 	for _, field := range []struct{ rule, name, value, message string }{
 		{"requirement.applies-to", "Applies to", spec.Applicability, "Identify the subject and applicable conditions, workload, or population."},
 		{"requirement.statement", "Statement", spec.Statement, statement},
-		{"requirement.verification", planHeading, verification, "Record assessment guidance for checking a realization against the obligation; a plan is not a verification result."},
 		{"requirement.rationale", "Rationale", spec.Rationale, rationale},
 	} {
 		if strings.TrimSpace(field.value) != "" {
@@ -41,9 +27,6 @@ func Check(spec *Requirement) []diagnostic.Diagnostic {
 		location, found := spec.SectionLocations[field.name]
 		if !found {
 			location = spec.Location
-		}
-		if field.name == planHeading {
-			location = planLocation
 		}
 		location.Path, location.Element = spec.Path, field.name
 		suggestions = append(suggestions, diagnostic.Advice(field.rule, field.message, location))

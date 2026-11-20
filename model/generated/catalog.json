@@ -1,442 +1,12 @@
 {
   "annotations": {
-    "graph_rules": "Identifier uniqueness; referential integrity and typed endpoints; containment ownership and cycle rules; source-byte digest, offset-map and span fidelity; ordered syntax-tree and membership consistency; complete content-binding accounting; scope and resolution consistency; owner-local attribute identity/subattribute_of cycles; paired declarations and section content; honest optional decomposition; assertion provenance and agreement with canonical fields are explicit graph checks, not implied by JSON Schema generation.",
+    "graph_rules": "Identifier uniqueness; referential integrity and typed endpoints; containment ownership and cycle rules; normalized Markdown and span bounds; ordered syntax-tree and membership consistency; complete content-binding accounting; scope and resolution consistency; owner-local attribute identity/subattribute_of cycles; paired declarations and section content; honest optional decomposition; assertion provenance and agreement with canonical fields are explicit graph checks, not implied by JSON Schema generation.",
     "relationship_defaults": "Relationship fields name a RelationshipCategory. Its scope, cycle policy and basis apply unless a field states its own. An unstated inverse is none, an unstated label is the field name, and unstated ordering follows the field shape: single target, authored presentation order for ordered lists, otherwise unordered.",
     "runtime_target": "Generated JSON Schema plus explicit graph checks; no generated-Go reliance.",
     "status": "experimental"
   },
   "catalog_version": 1,
   "classes": {
-    "ActionParameter": {
-      "abstract": false,
-      "ancestors": [
-        "ActionParameter",
-        "DomainElement",
-        "Record"
-      ],
-      "annotations": {},
-      "description": "An explicitly named input or result. Type descriptions can remain prose; linked types and primitive names are optional.",
-      "is_a": "DomainElement",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "authored_id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "An explicitly authored ID when present; no manufactured global identifier.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": true
-        },
-        "decomposition": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "enum_values": [
-            "not_attempted",
-            "unsegmented",
-            "partial",
-            "complete",
-            "failed"
-          ],
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "DecompositionStatus",
-          "reference_ranges": [],
-          "required": true
-        },
-        "extension_sections": {
-          "annotations": {
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ExtensionSection.owner",
-            "relationship_label": "extension sections",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "Only unknown sections, not a substitute for known domain fields.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ExtensionSection",
-          "reference_ranges": [
-            "ExtensionSection"
-          ],
-          "required": false
-        },
-        "id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-          "identifier": true,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "pattern": "[\\s\\S]+",
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "illustrative_examples": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Illustrations, not an exhaustive behavioral specification.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "implementation_suggestions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Nonbinding implementation advice, distinct from required behavior.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Concrete record type discriminator.",
-          "equals_string": "ActionParameter",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "name": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored title or item name, if present.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "notes": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Explanation of the element; not a separate obligation or endorsement.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions": {
-          "annotations": {
-            "paired_with": "open_questions_content"
-          },
-          "any_of": [],
-          "description": "Explicitly distinguished questions, in authored order.",
-          "identifier": false,
-          "inline_ranges": [
-            "OpenQuestion"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "OpenQuestion",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions_content": {
-          "annotations": {
-            "paired_with": "open_questions"
-          },
-          "any_of": [],
-          "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "owner": {
-          "annotations": {
-            "relationship_basis": "Checked inverse of canonical membership fields.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ConceptAction.input_parameters or ConceptAction.output_parameters",
-            "relationship_label": "owner",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ConceptAction",
-          "reference_ranges": [
-            "ConceptAction"
-          ],
-          "required": true
-        },
-        "primitive": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "source_document": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source document",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceDocument",
-          "reference_ranges": [
-            "SourceDocument"
-          ],
-          "required": true
-        },
-        "source_fragment": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source fragment",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceFragment",
-          "reference_ranges": [
-            "SourceFragment"
-          ],
-          "required": false
-        },
-        "type": {
-          "annotations": {
-            "relationship_basis": "Projection of explicit authored reference or label occurrences.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "type",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Type parameters or introduced types of the declaring Concept."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ConceptType",
-          "reference_ranges": [
-            "ConceptType"
-          ],
-          "required": false
-        },
-        "type_description": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "type_references": {
-          "annotations": {
-            "relationship_basis": "Explicit source syntax. Only separately declared semantic fields establish domain associations.",
-            "relationship_category": "contextual-citation",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "type references",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Authored occurrences in the containing domain record source; targets may remain unresolved."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "SourceReference",
-          "reference_ranges": [
-            "SourceReference"
-          ],
-          "required": false
-        }
-      },
-      "subsets": [
-        "software-requirements"
-      ]
-    },
-    "ActionParameterSpecReport": {
-      "abstract": false,
-      "ancestors": [
-        "ActionParameterSpecReport",
-        "SubjectSpecReport",
-        "GeneratedDocument"
-      ],
-      "annotations": {},
-      "description": "",
-      "is_a": "SubjectSpecReport",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "documents": {
-          "annotations": {
-            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "documents",
-            "relationship_ordering": "single target",
-            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
-          },
-          "any_of": [],
-          "description": "The documented subject, serialized as a relative URI to its authored heading.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ActionParameter",
-          "reference_ranges": [
-            "ActionParameter"
-          ],
-          "required": true
-        },
-        "type": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Serialized document type fixed by the concrete class.",
-          "equals_string": "action-parameter-spec-report",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        }
-      },
-      "subsets": [
-        "specification-documentation"
-      ]
-    },
     "ActorMention": {
       "abstract": false,
       "ancestors": [
@@ -498,7 +68,7 @@
         "Applicability"
       ],
       "annotations": {},
-      "description": "Operating context covered by an obligation or business rule, with optional explicit dimensions. For outcomes of use, identify users, tasks, equipment or assistance, and environment. Assessment setup is recorded in the plan, separately from required operating context; no applicability is inferred from a link or directory.",
+      "description": "Operating context covered by an obligation or business rule, with optional explicit dimensions. For outcomes of use, identify users, tasks, equipment or assistance, and environment. Record the required operating context here.",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -776,285 +346,6 @@
         "specification-traceability"
       ]
     },
-    "AssessmentCase": {
-      "abstract": false,
-      "ancestors": [
-        "AssessmentCase"
-      ],
-      "annotations": {},
-      "description": "An explicitly distinguished assessment case; its parent plan supplies its assessment purpose. A case definition is not an observation or result.",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "conditions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "evidence_to_retain": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "expected_result": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "name": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "procedure": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        }
-      },
-      "subsets": [
-        "business-requirements",
-        "user-requirements",
-        "software-requirements"
-      ]
-    },
-    "AssessmentPlan": {
-      "abstract": false,
-      "ancestors": [
-        "AssessmentPlan"
-      ],
-      "annotations": {},
-      "description": "An authored plan for answering one assessment question. Its purpose identifies the question, its subject identifies what to assess, and its basis identifies what to judge the subject against. Executions, findings and acceptance decisions are recorded separately.",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "basis": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored criteria, stakeholder needs, goals, obligations or evidence against which the subject is assessed. Citations do not establish satisfaction.",
-          "identifier": false,
-          "inline_ranges": [
-            "ContextualReferences"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ContextualReferences",
-          "reference_ranges": [],
-          "required": false
-        },
-        "cases": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentCase"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentCase",
-          "reference_ranges": [],
-          "required": false
-        },
-        "conditions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Conditions of the assessment, including how the setup represents the obligation's operating context or the intended context of use. These do not redefine applicability.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": true
-        },
-        "evidence_to_retain": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "method": {
-          "annotations": {},
-          "any_of": [],
-          "description": "How the assessment is performed, including procedure, sampling and measurement where needed.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "participants": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Relevant users, stakeholders or assessors and their roles; naming them is not endorsement.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "purpose": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment question selected by the authored plan heading.",
-          "enum_values": [
-            "requirements_verification",
-            "requirements_validation",
-            "system_verification",
-            "system_validation",
-            "assumption_validation"
-          ],
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "AssessmentPurpose",
-          "reference_ranges": [],
-          "required": true
-        },
-        "subject": {
-          "annotations": {},
-          "any_of": [],
-          "description": "What will be assessed, with optional links to requirements, designs, builds, processes or premises.",
-          "identifier": false,
-          "inline_ranges": [
-            "ContextualReferences"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ContextualReferences",
-          "reference_ranges": [],
-          "required": false
-        },
-        "success_criteria": {
-          "annotations": {},
-          "any_of": [],
-          "description": "How to interpret observations against the stated basis. Reference authoritative criteria where they are defined.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        }
-      },
-      "subsets": [
-        "business-requirements",
-        "user-requirements",
-        "software-requirements"
-      ]
-    },
     "Assumption": {
       "abstract": false,
       "ancestors": [
@@ -1082,22 +373,6 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
           "reference_ranges": [],
           "required": false
         },
@@ -1756,22 +1031,6 @@
           ],
           "required": false
         },
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -1901,13 +1160,13 @@
           "description": "",
           "identifier": false,
           "inline_ranges": [
-            "EvidenceCollection"
+            "RichContent"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "EvidenceCollection",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -2601,7 +1860,7 @@
         "ByteSpan"
       ],
       "annotations": {},
-      "description": "Half-open [start,end) offsets into ORIGINAL bytes of one SourceDocument. Graph checks enforce bounds and start <= end.",
+      "description": "Half-open [start,end) offsets into UTF-8 bytes of the normalized Markdown text. Graph checks enforce bounds and start <= end.",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -2680,22 +1939,6 @@
       "mixins": [],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -2925,13 +2168,13 @@
           "description": "",
           "identifier": false,
           "inline_ranges": [
-            "EvidenceCollection"
+            "RichContent"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "EvidenceCollection",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -3629,22 +2872,6 @@
           "reference_ranges": [],
           "required": false
         },
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -3865,13 +3092,13 @@
           "description": "",
           "identifier": false,
           "inline_ranges": [
-            "EvidenceCollection"
+            "RichContent"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "EvidenceCollection",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -4834,7 +4061,7 @@
         "Record"
       ],
       "annotations": {
-        "owned_memberships": "Concept.actions or Concept.type_parameters or Concept.introduced_types"
+        "owned_memberships": "Concept.actions"
       },
       "description": "A behavior-bearing concept described by purpose, abstract state, actions and an operational principle.",
       "is_a": "SystemContextSpecification",
@@ -4899,22 +4126,6 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
           "reference_ranges": [],
           "required": false
         },
@@ -5083,13 +4294,13 @@
           "description": "",
           "identifier": false,
           "inline_ranges": [
-            "EvidenceCollection"
+            "RichContent"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "EvidenceCollection",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -5152,49 +4363,6 @@
           "annotations": {},
           "any_of": [],
           "description": "Nonbinding implementation advice, distinct from required behavior.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "introduced_types": {
-          "annotations": {
-            "paired_with": "introduced_types_content",
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ConceptType.owner",
-            "relationship_label": "introduced types",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ConceptType",
-          "reference_ranges": [
-            "ConceptType"
-          ],
-          "required": false
-        },
-        "introduced_types_content": {
-          "annotations": {
-            "paired_with": "introduced_types"
-          },
-          "any_of": [],
-          "description": "",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -5716,49 +4884,6 @@
             "SourceReference"
           ],
           "required": false
-        },
-        "type_parameters": {
-          "annotations": {
-            "paired_with": "type_parameters_content",
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ConceptType.owner",
-            "relationship_label": "type parameters",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ConceptType",
-          "reference_ranges": [
-            "ConceptType"
-          ],
-          "required": false
-        },
-        "type_parameters_content": {
-          "annotations": {
-            "paired_with": "type_parameters"
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -5774,9 +4899,7 @@
         "DomainElement",
         "Record"
       ],
-      "annotations": {
-        "owned_memberships": "ConceptAction.input_parameters or ConceptAction.output_parameters"
-      },
+      "annotations": {},
       "description": "An explicitly named concept action. Caller assumptions and enforced guards are different authored claims.",
       "is_a": "TraceableElement",
       "mixins": [
@@ -5784,22 +4907,6 @@
       ],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -6098,31 +5205,6 @@
           "reference_ranges": [],
           "required": false
         },
-        "input_parameters": {
-          "annotations": {
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ActionParameter.owner",
-            "relationship_label": "input parameters",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document.",
-            "requires_content": "inputs"
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ActionParameter",
-          "reference_ranges": [
-            "ActionParameter"
-          ],
-          "required": false
-        },
         "inputs": {
           "annotations": {},
           "any_of": [],
@@ -6263,31 +5345,6 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
-          "required": false
-        },
-        "output_parameters": {
-          "annotations": {
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ActionParameter.owner",
-            "relationship_label": "output parameters",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document.",
-            "requires_content": "outputs"
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ActionParameter",
-          "reference_ranges": [
-            "ActionParameter"
-          ],
           "required": false
         },
         "outputs": {
@@ -6659,358 +5716,6 @@
         "specification-documentation"
       ]
     },
-    "ConceptType": {
-      "abstract": false,
-      "ancestors": [
-        "ConceptType",
-        "DomainElement",
-        "Record"
-      ],
-      "annotations": {},
-      "description": "A type parameter or introduced identity type, scoped to one concept definition. Membership distinguishes its role.",
-      "is_a": "DomainElement",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "authored_id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "An explicitly authored ID when present; no manufactured global identifier.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": true
-        },
-        "decomposition": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "enum_values": [
-            "not_attempted",
-            "unsegmented",
-            "partial",
-            "complete",
-            "failed"
-          ],
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "DecompositionStatus",
-          "reference_ranges": [],
-          "required": true
-        },
-        "extension_sections": {
-          "annotations": {
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ExtensionSection.owner",
-            "relationship_label": "extension sections",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "Only unknown sections, not a substitute for known domain fields.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ExtensionSection",
-          "reference_ranges": [
-            "ExtensionSection"
-          ],
-          "required": false
-        },
-        "id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-          "identifier": true,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "pattern": "[\\s\\S]+",
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "illustrative_examples": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Illustrations, not an exhaustive behavioral specification.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "implementation_suggestions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Nonbinding implementation advice, distinct from required behavior.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Concrete record type discriminator.",
-          "equals_string": "ConceptType",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "name": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored title or item name, if present.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "notes": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Explanation of the element; not a separate obligation or endorsement.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions": {
-          "annotations": {
-            "paired_with": "open_questions_content"
-          },
-          "any_of": [],
-          "description": "Explicitly distinguished questions, in authored order.",
-          "identifier": false,
-          "inline_ranges": [
-            "OpenQuestion"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "OpenQuestion",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions_content": {
-          "annotations": {
-            "paired_with": "open_questions"
-          },
-          "any_of": [],
-          "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "owner": {
-          "annotations": {
-            "relationship_basis": "Checked inverse of canonical membership fields.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "Concept.type_parameters or Concept.introduced_types",
-            "relationship_label": "owner",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "Concept",
-          "reference_ranges": [
-            "Concept"
-          ],
-          "required": true
-        },
-        "source_document": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source document",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceDocument",
-          "reference_ranges": [
-            "SourceDocument"
-          ],
-          "required": true
-        },
-        "source_fragment": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source fragment",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceFragment",
-          "reference_ranges": [
-            "SourceFragment"
-          ],
-          "required": false
-        }
-      },
-      "subsets": [
-        "software-requirements"
-      ]
-    },
-    "ConceptTypeSpecReport": {
-      "abstract": false,
-      "ancestors": [
-        "ConceptTypeSpecReport",
-        "SubjectSpecReport",
-        "GeneratedDocument"
-      ],
-      "annotations": {},
-      "description": "",
-      "is_a": "SubjectSpecReport",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "documents": {
-          "annotations": {
-            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "documents",
-            "relationship_ordering": "single target",
-            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
-          },
-          "any_of": [],
-          "description": "The documented subject, serialized as a relative URI to its authored heading.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ConceptType",
-          "reference_ranges": [
-            "ConceptType"
-          ],
-          "required": true
-        },
-        "type": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Serialized document type fixed by the concrete class.",
-          "equals_string": "concept-type-spec-report",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        }
-      },
-      "subsets": [
-        "specification-documentation"
-      ]
-    },
     "ConceptUse": {
       "abstract": false,
       "ancestors": [
@@ -7020,9 +5725,7 @@
         "DomainElement",
         "Record"
       ],
-      "annotations": {
-        "owned_memberships": "ConceptUse.bindings"
-      },
+      "annotations": {},
       "description": "An explicitly named design-time inclusion of a concept in a system or component specification. Multiple uses of one definition remain distinct; directory association creates no use.",
       "is_a": "TraceableElement",
       "mixins": [
@@ -7030,22 +5733,6 @@
       ],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -7057,49 +5744,6 @@
           "multivalued": false,
           "ordered": false,
           "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "bindings": {
-          "annotations": {
-            "paired_with": "bindings_content",
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "TypeBinding.owner",
-            "relationship_label": "bindings",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "TypeBinding",
-          "reference_ranges": [
-            "TypeBinding"
-          ],
-          "required": false
-        },
-        "bindings_content": {
-          "annotations": {
-            "paired_with": "bindings"
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -8129,7 +6773,7 @@
         "Record"
       ],
       "annotations": {},
-      "description": "An ordered source syntax node. Raw spans preserve exact syntax; typed properties expose parsed structure without requiring every dialect to be understood.",
+      "description": "An ordered source syntax node. Text spans preserve authored syntax; typed properties expose parsed structure without requiring every dialect to be understood.",
       "is_a": "Record",
       "mixins": [],
       "rules": [],
@@ -8203,7 +6847,7 @@
         "decoded_text": {
           "annotations": {},
           "any_of": [],
-          "description": "Optional decoded textual view; never a replacement for source bytes.",
+          "description": "Optional decoded textual view; linked to the normalized Markdown.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -9093,22 +7737,6 @@
           "reference_ranges": [
             "SourceReference"
           ],
-          "required": false
-        },
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
           "required": false
         },
         "authored_id": {
@@ -10261,22 +8889,6 @@
           ],
           "required": false
         },
-        "normalization": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required when parser byte offsets differ from original bytes; no guessed offsets.",
-          "identifier": false,
-          "inline_ranges": [
-            "OffsetMapSegment"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "OffsetMapSegment",
-          "reference_ranges": [],
-          "required": false
-        },
         "parse_status": {
           "annotations": {},
           "any_of": [],
@@ -10650,525 +9262,6 @@
       },
       "subsets": [
         "software-requirements"
-      ]
-    },
-    "EvidenceCollection": {
-      "abstract": false,
-      "ancestors": [
-        "EvidenceCollection"
-      ],
-      "annotations": {},
-      "description": "Evidence narrative and explicitly distinguished evidence statements, research basis and limitations.",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": true
-        },
-        "limitations": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "research_basis": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "statements": {
-          "annotations": {
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "EvidenceStatement.owner",
-            "relationship_label": "statements",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "EvidenceStatement",
-          "reference_ranges": [
-            "EvidenceStatement"
-          ],
-          "required": false
-        }
-      },
-      "subsets": [
-        "business-requirements",
-        "user-requirements",
-        "software-requirements"
-      ]
-    },
-    "EvidenceStatement": {
-      "abstract": false,
-      "ancestors": [
-        "EvidenceStatement",
-        "DomainElement",
-        "Record"
-      ],
-      "annotations": {},
-      "description": "An explicitly identified source claim, hypothesis, observation or research limitation. Classification and confidence are not inferred.",
-      "is_a": "DomainElement",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "authored_id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "An explicitly authored ID when present; no manufactured global identifier.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "decomposition": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "enum_values": [
-            "not_attempted",
-            "unsegmented",
-            "partial",
-            "complete",
-            "failed"
-          ],
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "DecompositionStatus",
-          "reference_ranges": [],
-          "required": true
-        },
-        "evidence_type": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "extension_sections": {
-          "annotations": {
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ExtensionSection.owner",
-            "relationship_label": "extension sections",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "Only unknown sections, not a substitute for known domain fields.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ExtensionSection",
-          "reference_ranges": [
-            "ExtensionSection"
-          ],
-          "required": false
-        },
-        "id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-          "identifier": true,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "pattern": "[\\s\\S]+",
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "illustrative_examples": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Illustrations, not an exhaustive behavioral specification.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "implementation_suggestions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Nonbinding implementation advice, distinct from required behavior.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Concrete record type discriminator.",
-          "equals_string": "EvidenceStatement",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "limitations": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "name": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored title or item name, if present.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "notes": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Explanation of the element; not a separate obligation or endorsement.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions": {
-          "annotations": {
-            "paired_with": "open_questions_content"
-          },
-          "any_of": [],
-          "description": "Explicitly distinguished questions, in authored order.",
-          "identifier": false,
-          "inline_ranges": [
-            "OpenQuestion"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "OpenQuestion",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions_content": {
-          "annotations": {
-            "paired_with": "open_questions"
-          },
-          "any_of": [],
-          "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "owner": {
-          "annotations": {
-            "relationship_basis": "Checked inverse of canonical membership fields.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "Specification.evidence.statements or ProgressCase.evidence.statements",
-            "relationship_label": "owner",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [
-            "Specification",
-            "ProgressCase"
-          ],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "DomainElement",
-          "reference_ranges": [
-            "Specification",
-            "ProgressCase"
-          ],
-          "required": true
-        },
-        "references": {
-          "annotations": {
-            "relationship_basis": "Explicit source syntax. Only separately declared semantic fields establish domain associations.",
-            "relationship_category": "contextual-citation",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "references",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Authored occurrences in the containing domain record source; targets may remain unresolved."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "SourceReference",
-          "reference_ranges": [
-            "SourceReference"
-          ],
-          "required": false
-        },
-        "research_status": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "source_document": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source document",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceDocument",
-          "reference_ranges": [
-            "SourceDocument"
-          ],
-          "required": true
-        },
-        "source_fragment": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source fragment",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceFragment",
-          "reference_ranges": [
-            "SourceFragment"
-          ],
-          "required": false
-        },
-        "statement": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        }
-      },
-      "subsets": [
-        "business-requirements",
-        "user-requirements",
-        "software-requirements"
-      ]
-    },
-    "EvidenceStatementSpecReport": {
-      "abstract": false,
-      "ancestors": [
-        "EvidenceStatementSpecReport",
-        "SubjectSpecReport",
-        "GeneratedDocument"
-      ],
-      "annotations": {},
-      "description": "",
-      "is_a": "SubjectSpecReport",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "documents": {
-          "annotations": {
-            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "documents",
-            "relationship_ordering": "single target",
-            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
-          },
-          "any_of": [],
-          "description": "The documented subject, serialized as a relative URI to its authored heading.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "EvidenceStatement",
-          "reference_ranges": [
-            "EvidenceStatement"
-          ],
-          "required": true
-        },
-        "type": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Serialized document type fixed by the concrete class.",
-          "equals_string": "evidence-statement-spec-report",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        }
-      },
-      "subsets": [
-        "specification-documentation"
       ]
     },
     "ExtensionSection": {
@@ -11619,22 +9712,6 @@
       "mixins": [],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -11780,13 +9857,13 @@
           "description": "",
           "identifier": false,
           "inline_ranges": [
-            "EvidenceCollection"
+            "RichContent"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "EvidenceCollection",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -12455,57 +10532,6 @@
         "specification-documentation"
       ]
     },
-    "Force": {
-      "abstract": false,
-      "ancestors": [
-        "Force"
-      ],
-      "annotations": {},
-      "description": "An explicitly described progress force; a kind is assigned only when authored or deterministically marked.",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "description": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "enum_values": [
-            "push",
-            "pull",
-            "anxiety",
-            "habit"
-          ],
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ForceKind",
-          "reference_ranges": [],
-          "required": false
-        }
-      },
-      "subsets": [
-        "user-requirements"
-      ]
-    },
     "GeneratedDocument": {
       "abstract": true,
       "ancestors": [
@@ -12992,22 +11018,6 @@
       "mixins": [],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -13582,22 +11592,6 @@
       ],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -14261,29 +12255,13 @@
         "Record"
       ],
       "annotations": {
-        "owned_memberships": "Job.steps or Job.outcomes or Job.progress_cases"
+        "owned_memberships": "Job.steps or Job.outcomes"
       },
-      "description": "What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps, progress cases and job-story phrasing are optional complementary perspectives.",
+      "description": "What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps and job-story phrasing are optional complementary perspectives.",
       "is_a": "SystemContextSpecification",
       "mixins": [],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -14413,13 +12391,13 @@
           "description": "",
           "identifier": false,
           "inline_ranges": [
-            "EvidenceCollection"
+            "RichContent"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "EvidenceCollection",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -14672,49 +12650,6 @@
           "annotations": {},
           "any_of": [],
           "description": "Authored content between the title and the first named section.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "progress_cases": {
-          "annotations": {
-            "paired_with": "progress_cases_content",
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ProgressCase.owner",
-            "relationship_label": "cases",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "Explicitly named progress cases, in authored order.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ProgressCase",
-          "reference_ranges": [
-            "ProgressCase"
-          ],
-          "required": false
-        },
-        "progress_cases_content": {
-          "annotations": {
-            "paired_with": "progress_cases"
-          },
-          "any_of": [],
-          "description": "Complete Progress cases section body.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -15216,22 +13151,6 @@
       "mixins": [],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -16060,7 +13979,7 @@
         "Record"
       ],
       "annotations": {},
-      "description": "An obligation, expressed in its own Requirement specification or as a clause inside another specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines or references the satisfaction rule. A system verification plan assesses a realization against that rule. A requirements verification plan assesses the quality of the obligation itself.",
+      "description": "An obligation, expressed in its own Requirement specification or as a clause inside another specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines or references the satisfaction rule.",
       "is_a": "TraceableElement",
       "mixins": [],
       "rules": [],
@@ -16130,22 +14049,6 @@
           ],
           "required": false
         },
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -16163,7 +14066,7 @@
         "criterion": {
           "annotations": {},
           "any_of": [],
-          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis.",
+          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source.",
           "identifier": false,
           "inline_ranges": [
             "ObligationCriterion"
@@ -16859,22 +14762,6 @@
           ],
           "required": false
         },
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -16892,7 +14779,7 @@
         "criterion": {
           "annotations": {},
           "any_of": [],
-          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis.",
+          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source.",
           "identifier": false,
           "inline_ranges": [
             "ObligationCriterion"
@@ -17604,22 +15491,6 @@
       "mixins": [],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -18130,7 +16001,7 @@
         "ObligationCriterion"
       ],
       "annotations": {},
-      "description": "Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define each bound once or reference its authoritative statement or source; system verification plans cite this rule. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.",
+      "description": "Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define each bound once or reference its authoritative statement or source. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -18153,7 +16024,7 @@
         "measure": {
           "annotations": {},
           "any_of": [],
-          "description": "Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed. A system verification plan describes the collection procedure.",
+          "description": "Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -18189,95 +16060,6 @@
         "software-requirements"
       ]
     },
-    "OffsetMapSegment": {
-      "abstract": false,
-      "ancestors": [
-        "OffsetMapSegment"
-      ],
-      "annotations": {},
-      "description": "Maps a normalized parser buffer interval to original bytes; segments must be monotone and account for removals/replacements such as BOM and CRLF.",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "normalized_end": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "minimum_value": 0,
-          "multivalued": false,
-          "ordered": false,
-          "range": "integer",
-          "reference_ranges": [],
-          "required": true
-        },
-        "normalized_start": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "minimum_value": 0,
-          "multivalued": false,
-          "ordered": false,
-          "range": "integer",
-          "reference_ranges": [],
-          "required": true
-        },
-        "original_end": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "minimum_value": 0,
-          "multivalued": false,
-          "ordered": false,
-          "range": "integer",
-          "reference_ranges": [],
-          "required": true
-        },
-        "original_start": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "minimum_value": 0,
-          "multivalued": false,
-          "ordered": false,
-          "range": "integer",
-          "reference_ranges": [],
-          "required": true
-        },
-        "transformation": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Identity, BOM removal, line-ending normalization, or another declared transformation.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        }
-      },
-      "subsets": [
-        "document-content"
-      ]
-    },
     "OpenQuestion": {
       "abstract": false,
       "ancestors": [
@@ -18288,38 +16070,6 @@
       "mixins": [],
       "rules": [],
       "slots": {
-        "evidence_needed": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "importance": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
         "question": {
           "annotations": {},
           "any_of": [],
@@ -18335,610 +16085,12 @@
           "range": "RichContent",
           "reference_ranges": [],
           "required": false
-        },
-        "raised_by": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "raised_on": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "resolve_by": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "tracking_reference": {
-          "annotations": {},
-          "any_of": [],
-          "description": "External issue or decision owning resolution workflow.",
-          "identifier": false,
-          "inline_ranges": [
-            "ContextualReferences"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ContextualReferences",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
         "business-requirements",
         "user-requirements",
         "software-requirements"
-      ]
-    },
-    "ProgressCase": {
-      "abstract": false,
-      "ancestors": [
-        "ProgressCase",
-        "DomainElement",
-        "Record"
-      ],
-      "annotations": {
-        "owned_memberships": "ProgressCase.evidence.statements"
-      },
-      "description": "An explicitly authored example or hypothesis about progress; do not invent cases from unsegmented prose.",
-      "is_a": "DomainElement",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "alternatives_considered": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Approaches considered, including doing nothing or continuing the current approach.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "authored_id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "An explicitly authored ID when present; no manufactured global identifier.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "circumstances": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Case-specific circumstances, distinct from the general job situation.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "current_approach": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "decomposition": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "enum_values": [
-            "not_attempted",
-            "unsegmented",
-            "partial",
-            "complete",
-            "failed"
-          ],
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "DecompositionStatus",
-          "reference_ranges": [],
-          "required": true
-        },
-        "description": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "desired_progress": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "evidence": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "EvidenceCollection"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "EvidenceCollection",
-          "reference_ranges": [],
-          "required": false
-        },
-        "extension_sections": {
-          "annotations": {
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ExtensionSection.owner",
-            "relationship_label": "extension sections",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "Only unknown sections, not a substitute for known domain fields.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ExtensionSection",
-          "reference_ranges": [
-            "ExtensionSection"
-          ],
-          "required": false
-        },
-        "forces": {
-          "annotations": {
-            "paired_with": "forces_content"
-          },
-          "any_of": [],
-          "description": "Explicitly identified forces, in authored order.",
-          "identifier": false,
-          "inline_ranges": [
-            "Force"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "Force",
-          "reference_ranges": [],
-          "required": false
-        },
-        "forces_content": {
-          "annotations": {
-            "paired_with": "forces"
-          },
-          "any_of": [],
-          "description": "Complete Forces section narrative.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-          "identifier": true,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "pattern": "[\\s\\S]+",
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "illustrative_examples": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Illustrations, not an exhaustive behavioral specification.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "implementation_suggestions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Nonbinding implementation advice, distinct from required behavior.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Concrete record type discriminator.",
-          "equals_string": "ProgressCase",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "name": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored title or item name, if present.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "notes": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Explanation of the element; not a separate obligation or endorsement.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions": {
-          "annotations": {
-            "paired_with": "open_questions_content"
-          },
-          "any_of": [],
-          "description": "Explicitly distinguished questions, in authored order.",
-          "identifier": false,
-          "inline_ranges": [
-            "OpenQuestion"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "OpenQuestion",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions_content": {
-          "annotations": {
-            "paired_with": "open_questions"
-          },
-          "any_of": [],
-          "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "owner": {
-          "annotations": {
-            "relationship_basis": "Checked inverse of canonical membership fields.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "Job.progress_cases",
-            "relationship_label": "owner",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "Job",
-          "reference_ranges": [
-            "Job"
-          ],
-          "required": true
-        },
-        "participants": {
-          "annotations": {},
-          "any_of": [],
-          "description": "People and roles in this case; distinguish performer, buyer and decision maker where relevant.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "source_document": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source document",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceDocument",
-          "reference_ranges": [
-            "SourceDocument"
-          ],
-          "required": true
-        },
-        "source_fragment": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source fragment",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceFragment",
-          "reference_ranges": [
-            "SourceFragment"
-          ],
-          "required": false
-        },
-        "struggling_moment": {
-          "annotations": {},
-          "any_of": [],
-          "description": "The event or difficulty that made change worth considering.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "timeline": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored timeline of progress or switching decisions, distinct from a functional job map; unknown dates and research-pending narratives are allowed.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "tradeoffs_and_selection_criteria": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Trade-offs and criteria for choosing, hiring or rejecting an approach.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        }
-      },
-      "subsets": [
-        "user-requirements"
-      ]
-    },
-    "ProgressCaseSpecReport": {
-      "abstract": false,
-      "ancestors": [
-        "ProgressCaseSpecReport",
-        "SubjectSpecReport",
-        "GeneratedDocument"
-      ],
-      "annotations": {},
-      "description": "",
-      "is_a": "SubjectSpecReport",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "documents": {
-          "annotations": {
-            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "documents",
-            "relationship_ordering": "single target",
-            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
-          },
-          "any_of": [],
-          "description": "The documented subject, serialized as a relative URI to its authored heading.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ProgressCase",
-          "reference_ranges": [
-            "ProgressCase"
-          ],
-          "required": true
-        },
-        "type": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Serialized document type fixed by the concrete class.",
-          "equals_string": "progress-case-spec-report",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        }
-      },
-      "subsets": [
-        "specification-documentation"
       ]
     },
     "QualityAttribute": {
@@ -19362,22 +16514,6 @@
       "mixins": [],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -19539,13 +16675,13 @@
           "description": "",
           "identifier": false,
           "inline_ranges": [
-            "EvidenceCollection"
+            "RichContent"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "EvidenceCollection",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -20297,22 +17433,6 @@
           ],
           "required": false
         },
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -20346,7 +17466,7 @@
         "criterion": {
           "annotations": {},
           "any_of": [],
-          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. System verification plans can cite this criterion as their basis.",
+          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source.",
           "identifier": false,
           "inline_ranges": [
             "ObligationCriterion"
@@ -20458,13 +17578,13 @@
           "description": "",
           "identifier": false,
           "inline_ranges": [
-            "EvidenceCollection"
+            "RichContent"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "EvidenceCollection",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -21141,7 +18261,7 @@
         "GeneratedDocument"
       ],
       "annotations": {},
-      "description": "Brings the requirement statement, applicability, criterion, and assessment plans together at one address.",
+      "description": "Brings the requirement statement, applicability and criterion together at one address.",
       "is_a": "SubjectSpecReport",
       "mixins": [],
       "rules": [],
@@ -21197,7 +18317,7 @@
         "GeneratedDocument"
       ],
       "annotations": {},
-      "description": "Project-wide open questions, verification and validation plans, and inspection findings with routes to their subjects.",
+      "description": "Project-wide open questions and inspection findings with routes to their subjects.",
       "is_a": "GeneratedDocument",
       "mixins": [],
       "rules": [],
@@ -22687,7 +19807,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.26.0-draft",
+          "equals_string": "0.27.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -22718,7 +19838,7 @@
           "annotations": {},
           "any_of": [],
           "description": "Version of this serialized snapshot contract, separate from the domain metamodel version.",
-          "equals_string": "0.1.0",
+          "equals_string": "0.2.0",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -22790,7 +19910,7 @@
         "Record"
       ],
       "annotations": {},
-      "description": "An addressable local directory referenced by Markdown. It is a resource target, not a document and has no source payload.",
+      "description": "An addressable local directory referenced by Markdown. It is a resource target, not a document and carries a directory path.",
       "is_a": "SourceResource",
       "mixins": [],
       "rules": [],
@@ -22855,25 +19975,7 @@
       "description": "A discovered Markdown or related file. A failed read retains identity, locator, status and diagnostics.",
       "is_a": "SourceResource",
       "mixins": [],
-      "rules": [
-        {
-          "description": "A successful read includes a source payload.",
-          "postconditions": {
-            "slot_conditions": {
-              "payload": {
-                "required": true
-              }
-            }
-          },
-          "preconditions": {
-            "slot_conditions": {
-              "read_status": {
-                "equals_string": "read"
-              }
-            }
-          }
-        }
-      ],
+      "rules": [],
       "slots": {
         "diagnostics": {
           "annotations": {
@@ -22943,6 +20045,20 @@
           "reference_ranges": [],
           "required": true
         },
+        "markdown": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Markdown text for parsed documents, normalized to UTF-8 and LF for reading and source locations.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
         "media_type": {
           "annotations": {},
           "any_of": [],
@@ -22954,22 +20070,6 @@
           "multivalued": false,
           "ordered": false,
           "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "payload": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Present only after successful read; graph rule requires it for read_status=read.",
-          "identifier": false,
-          "inline_ranges": [
-            "SourcePayload"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourcePayload",
           "reference_ranges": [],
           "required": false
         },
@@ -23293,79 +20393,6 @@
         "source-artifacts"
       ]
     },
-    "SourcePayload": {
-      "abstract": false,
-      "ancestors": [
-        "SourcePayload"
-      ],
-      "annotations": {},
-      "description": "Exact original bytes before Goldmark/specfile normalization, including BOM, CRLF, trailing newlines and invalid encodings.",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "byte_length": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "minimum_value": 0,
-          "multivalued": false,
-          "ordered": false,
-          "range": "integer",
-          "reference_ranges": [],
-          "required": true
-        },
-        "bytes_base64": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Original bytes including BOM and line endings; decode and verify digest and byte count.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "sha256": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "pattern": "^[a-f0-9]{64}$",
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "text_encoding": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Detected or declared decoding; original bytes remain authoritative.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        }
-      },
-      "subsets": [
-        "source-artifacts"
-      ]
-    },
     "SourceReference": {
       "abstract": false,
       "ancestors": [
@@ -23592,7 +20619,7 @@
         "Record"
       ],
       "annotations": {},
-      "description": "An addressable source; only SourceDocument implies locally acquired bytes.",
+      "description": "An addressable source; a SourceDocument records the outcome of a local read.",
       "is_a": "Record",
       "mixins": [],
       "rules": [],
@@ -23639,30 +20666,12 @@
         "DomainElement",
         "Record"
       ],
-      "annotations": {
-        "owned_memberships": "Specification.evidence.statements"
-      },
+      "annotations": {},
       "description": "The root record of one authored specification document. Every specification has exactly one specification type, and specification types correspond one-to-one with concrete Specification classes. Elements declared inside a specification are not specifications. Narrative authority and evidence do not create executable authority assertions.",
       "is_a": "TraceableElement",
       "mixins": [],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -23792,13 +20801,13 @@
           "description": "",
           "identifier": false,
           "inline_ranges": [
-            "EvidenceCollection"
+            "RichContent"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "EvidenceCollection",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -24467,9 +21476,7 @@
         "DomainElement",
         "Record"
       ],
-      "annotations": {
-        "owned_memberships": "Synchronization.when_actions or Synchronization.then_actions"
-      },
+      "annotations": {},
       "description": "A composition rule declared in a system or component specification. Narrative and action references describe coordination; no atomicity, execution or completeness is inferred.",
       "is_a": "TraceableElement",
       "mixins": [
@@ -24477,22 +21484,6 @@
       ],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -25067,31 +22058,6 @@
           "reference_ranges": [],
           "required": false
         },
-        "then_actions": {
-          "annotations": {
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "SynchronizationAction.owner",
-            "relationship_label": "then actions",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document.",
-            "requires_content": "then"
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "SynchronizationAction",
-          "reference_ranges": [
-            "SynchronizationAction"
-          ],
-          "required": false
-        },
         "when": {
           "annotations": {},
           "any_of": [],
@@ -25106,31 +22072,6 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
-          "required": false
-        },
-        "when_actions": {
-          "annotations": {
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "SynchronizationAction.owner",
-            "relationship_label": "when actions",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document.",
-            "requires_content": "when"
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "SynchronizationAction",
-          "reference_ranges": [
-            "SynchronizationAction"
-          ],
           "required": false
         },
         "where": {
@@ -25152,486 +22093,6 @@
       },
       "subsets": [
         "software-requirements"
-      ]
-    },
-    "SynchronizationAction": {
-      "abstract": false,
-      "ancestors": [
-        "SynchronizationAction",
-        "DomainElement",
-        "Record"
-      ],
-      "annotations": {},
-      "description": "An authored action occurrence or invocation within a synchronization, qualified by a concept use. Conditions and arguments remain authored content.",
-      "is_a": "DomainElement",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "action": {
-          "annotations": {
-            "relationship_basis": "Projection of explicit authored reference or label occurrences.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "action",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Actions declared by concept_use.definition; unknown definition defers validation."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ConceptAction",
-          "reference_ranges": [
-            "ConceptAction"
-          ],
-          "required": false
-        },
-        "action_references": {
-          "annotations": {
-            "relationship_basis": "Explicit source syntax. Only separately declared semantic fields establish domain associations.",
-            "relationship_category": "contextual-citation",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "action references",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Authored occurrences in the containing domain record source; targets may remain unresolved."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "SourceReference",
-          "reference_ranges": [
-            "SourceReference"
-          ],
-          "required": false
-        },
-        "arguments": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "authored_id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "An explicitly authored ID when present; no manufactured global identifier.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "concept_use": {
-          "annotations": {
-            "relationship_basis": "Projection of explicit authored reference or label occurrences.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "concept use",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Named uses in the owning Synchronization System."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ConceptUse",
-          "reference_ranges": [
-            "ConceptUse"
-          ],
-          "required": false
-        },
-        "concept_use_references": {
-          "annotations": {
-            "relationship_basis": "Explicit source syntax. Only separately declared semantic fields establish domain associations.",
-            "relationship_category": "contextual-citation",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "concept use references",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Authored occurrences in the containing domain record source; targets may remain unresolved."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "SourceReference",
-          "reference_ranges": [
-            "SourceReference"
-          ],
-          "required": false
-        },
-        "content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": true
-        },
-        "decomposition": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "enum_values": [
-            "not_attempted",
-            "unsegmented",
-            "partial",
-            "complete",
-            "failed"
-          ],
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "DecompositionStatus",
-          "reference_ranges": [],
-          "required": true
-        },
-        "extension_sections": {
-          "annotations": {
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ExtensionSection.owner",
-            "relationship_label": "extension sections",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "Only unknown sections, not a substitute for known domain fields.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ExtensionSection",
-          "reference_ranges": [
-            "ExtensionSection"
-          ],
-          "required": false
-        },
-        "id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-          "identifier": true,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "pattern": "[\\s\\S]+",
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "illustrative_examples": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Illustrations, not an exhaustive behavioral specification.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "implementation_suggestions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Nonbinding implementation advice, distinct from required behavior.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Concrete record type discriminator.",
-          "equals_string": "SynchronizationAction",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "name": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored title or item name, if present.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "notes": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Explanation of the element; not a separate obligation or endorsement.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions": {
-          "annotations": {
-            "paired_with": "open_questions_content"
-          },
-          "any_of": [],
-          "description": "Explicitly distinguished questions, in authored order.",
-          "identifier": false,
-          "inline_ranges": [
-            "OpenQuestion"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "OpenQuestion",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions_content": {
-          "annotations": {
-            "paired_with": "open_questions"
-          },
-          "any_of": [],
-          "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "owner": {
-          "annotations": {
-            "relationship_basis": "Checked inverse of canonical membership fields.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "Synchronization.when_actions or Synchronization.then_actions",
-            "relationship_label": "owner",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "Synchronization",
-          "reference_ranges": [
-            "Synchronization"
-          ],
-          "required": true
-        },
-        "result": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "source_document": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source document",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceDocument",
-          "reference_ranges": [
-            "SourceDocument"
-          ],
-          "required": true
-        },
-        "source_fragment": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source fragment",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceFragment",
-          "reference_ranges": [
-            "SourceFragment"
-          ],
-          "required": false
-        }
-      },
-      "subsets": [
-        "software-requirements"
-      ]
-    },
-    "SynchronizationActionSpecReport": {
-      "abstract": false,
-      "ancestors": [
-        "SynchronizationActionSpecReport",
-        "SubjectSpecReport",
-        "GeneratedDocument"
-      ],
-      "annotations": {},
-      "description": "",
-      "is_a": "SubjectSpecReport",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "documents": {
-          "annotations": {
-            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "documents",
-            "relationship_ordering": "single target",
-            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
-          },
-          "any_of": [],
-          "description": "The documented subject, serialized as a relative URI to its authored heading.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SynchronizationAction",
-          "reference_ranges": [
-            "SynchronizationAction"
-          ],
-          "required": true
-        },
-        "type": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Serialized document type fixed by the concrete class.",
-          "equals_string": "synchronization-action-spec-report",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        }
-      },
-      "subsets": [
-        "specification-documentation"
       ]
     },
     "SynchronizationSpecReport": {
@@ -25778,22 +22239,6 @@
       ],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "assumptions": {
           "annotations": {
             "paired_with": "assumptions_content",
@@ -26081,13 +22526,13 @@
           "description": "",
           "identifier": false,
           "inline_ranges": [
-            "EvidenceCollection"
+            "RichContent"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "EvidenceCollection",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -27061,22 +23506,6 @@
       "mixins": [],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -27206,13 +23635,13 @@
           "description": "",
           "identifier": false,
           "inline_ranges": [
-            "EvidenceCollection"
+            "RichContent"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "EvidenceCollection",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -27746,22 +24175,6 @@
       ],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -27907,13 +24320,13 @@
           "description": "",
           "identifier": false,
           "inline_ranges": [
-            "EvidenceCollection"
+            "RichContent"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "EvidenceCollection",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -28462,22 +24875,6 @@
       "mixins": [],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -28939,516 +25336,6 @@
         "software-requirements"
       ]
     },
-    "TypeBinding": {
-      "abstract": false,
-      "ancestors": [
-        "TypeBinding",
-        "DomainElement",
-        "Record"
-      ],
-      "annotations": {},
-      "description": "An explicit binding of a definition parameter to a primitive or a type introduced by a named concept use. Unresolved links remain authored references.",
-      "is_a": "DomainElement",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "authored_id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "An explicitly authored ID when present; no manufactured global identifier.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "bound_type": {
-          "annotations": {
-            "relationship_basis": "Projection of explicit authored reference or label occurrences.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "binds to type",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Introduced types of supplying_concept_use.definition; unknown supplying definition defers validation."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ConceptType",
-          "reference_ranges": [
-            "ConceptType"
-          ],
-          "required": false
-        },
-        "bound_type_references": {
-          "annotations": {
-            "relationship_basis": "Explicit source syntax. Only separately declared semantic fields establish domain associations.",
-            "relationship_category": "contextual-citation",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "bound type references",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Authored occurrences in the containing domain record source; targets may remain unresolved."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "SourceReference",
-          "reference_ranges": [
-            "SourceReference"
-          ],
-          "required": false
-        },
-        "content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": true
-        },
-        "decomposition": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "enum_values": [
-            "not_attempted",
-            "unsegmented",
-            "partial",
-            "complete",
-            "failed"
-          ],
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "DecompositionStatus",
-          "reference_ranges": [],
-          "required": true
-        },
-        "extension_sections": {
-          "annotations": {
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ExtensionSection.owner",
-            "relationship_label": "extension sections",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "Only unknown sections, not a substitute for known domain fields.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ExtensionSection",
-          "reference_ranges": [
-            "ExtensionSection"
-          ],
-          "required": false
-        },
-        "id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-          "identifier": true,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "pattern": "[\\s\\S]+",
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "illustrative_examples": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Illustrations, not an exhaustive behavioral specification.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "implementation_suggestions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Nonbinding implementation advice, distinct from required behavior.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Concrete record type discriminator.",
-          "equals_string": "TypeBinding",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "name": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored title or item name, if present.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "notes": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Explanation of the element; not a separate obligation or endorsement.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions": {
-          "annotations": {
-            "paired_with": "open_questions_content"
-          },
-          "any_of": [],
-          "description": "Explicitly distinguished questions, in authored order.",
-          "identifier": false,
-          "inline_ranges": [
-            "OpenQuestion"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "OpenQuestion",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions_content": {
-          "annotations": {
-            "paired_with": "open_questions"
-          },
-          "any_of": [],
-          "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "owner": {
-          "annotations": {
-            "relationship_basis": "Checked inverse of canonical membership fields.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ConceptUse.bindings",
-            "relationship_label": "owner",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ConceptUse",
-          "reference_ranges": [
-            "ConceptUse"
-          ],
-          "required": true
-        },
-        "parameter": {
-          "annotations": {
-            "relationship_basis": "Projection of explicit authored reference or label occurrences.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "parameter",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Type parameters of owner.definition; unknown definition defers scope validation."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ConceptType",
-          "reference_ranges": [
-            "ConceptType"
-          ],
-          "required": false
-        },
-        "parameter_references": {
-          "annotations": {
-            "relationship_basis": "Explicit source syntax. Only separately declared semantic fields establish domain associations.",
-            "relationship_category": "contextual-citation",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "parameter references",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Authored occurrences in the containing domain record source; targets may remain unresolved."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "SourceReference",
-          "reference_ranges": [
-            "SourceReference"
-          ],
-          "required": false
-        },
-        "primitive": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "source_document": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source document",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceDocument",
-          "reference_ranges": [
-            "SourceDocument"
-          ],
-          "required": true
-        },
-        "source_fragment": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source fragment",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceFragment",
-          "reference_ranges": [
-            "SourceFragment"
-          ],
-          "required": false
-        },
-        "supplying_concept_use": {
-          "annotations": {
-            "relationship_basis": "Projection of explicit authored reference or label occurrences.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "supplied by",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Named uses in the same System as the owning ConceptUse."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ConceptUse",
-          "reference_ranges": [
-            "ConceptUse"
-          ],
-          "required": false
-        },
-        "supplying_concept_use_references": {
-          "annotations": {
-            "relationship_basis": "Explicit source syntax. Only separately declared semantic fields establish domain associations.",
-            "relationship_category": "contextual-citation",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "supplying concept use references",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Authored occurrences in the containing domain record source; targets may remain unresolved."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "SourceReference",
-          "reference_ranges": [
-            "SourceReference"
-          ],
-          "required": false
-        }
-      },
-      "subsets": [
-        "software-requirements"
-      ]
-    },
-    "TypeBindingSpecReport": {
-      "abstract": false,
-      "ancestors": [
-        "TypeBindingSpecReport",
-        "SubjectSpecReport",
-        "GeneratedDocument"
-      ],
-      "annotations": {},
-      "description": "",
-      "is_a": "SubjectSpecReport",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "documents": {
-          "annotations": {
-            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "documents",
-            "relationship_ordering": "single target",
-            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
-          },
-          "any_of": [],
-          "description": "The documented subject, serialized as a relative URI to its authored heading.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "TypeBinding",
-          "reference_ranges": [
-            "TypeBinding"
-          ],
-          "required": true
-        },
-        "type": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Serialized document type fixed by the concrete class.",
-          "equals_string": "type-binding-spec-report",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        }
-      },
-      "subsets": [
-        "specification-documentation"
-      ]
-    },
     "UnmappedRole": {
       "abstract": false,
       "ancestors": [
@@ -29537,22 +25424,6 @@
       ],
       "rules": [],
       "slots": {
-        "assessment_plans": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Assessment plans recorded on this element in authored order. Each plan identifies its purpose independently of its location.",
-          "identifier": false,
-          "inline_ranges": [
-            "AssessmentPlan"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "AssessmentPlan",
-          "reference_ranges": [],
-          "required": false
-        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -29698,13 +25569,13 @@
           "description": "",
           "identifier": false,
           "inline_ranges": [
-            "EvidenceCollection"
+            "RichContent"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "EvidenceCollection",
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -31222,13 +27093,6 @@
     }
   },
   "enums": {
-    "AssessmentPurpose": [
-      "requirements_verification",
-      "requirements_validation",
-      "system_verification",
-      "system_validation",
-      "assumption_validation"
-    ],
     "BindingRole": [
       "named_field",
       "record_identity",
@@ -31266,12 +27130,6 @@
       "filesystem",
       "explicit",
       "unavailable"
-    ],
-    "ForceKind": [
-      "push",
-      "pull",
-      "anxiety",
-      "habit"
     ],
     "GoalLevelValue": [
       "summary",
@@ -31407,9 +27265,8 @@
       "directory"
     ]
   },
-  "model_version": "0.26.0-draft",
+  "model_version": "0.27.0-draft",
   "projections": [
-    "ActionParameter.type",
     "BusinessRule.applies_to",
     "BusinessRule.refines",
     "Capability.depends_on",
@@ -31421,11 +27278,6 @@
     "Component.required_interfaces",
     "Component.synchronizations",
     "Concept.actions",
-    "Concept.introduced_types",
-    "Concept.type_parameters",
-    "ConceptAction.input_parameters",
-    "ConceptAction.output_parameters",
-    "ConceptUse.bindings",
     "ConceptUse.definition",
     "ConceptUse.dependencies",
     "DesiredOutcome.applies_to",
@@ -31434,23 +27286,16 @@
     "ExtensionSection.children",
     "Feature.groups",
     "Job.outcomes",
-    "Job.progress_cases",
     "Job.steps",
     "JobStep.outcomes",
     "Obligation.applies_to",
     "Obligation.quality_attributes",
     "Obligation.refines",
     "ObligationContainer.obligations",
-    "ProgressCase.evidence.statements",
     "QualityAttribute.subattribute_of",
     "QualityModel.quality_attributes",
     "Scenario.steps",
     "ScenarioStep.illustrates",
-    "Specification.evidence.statements",
-    "Synchronization.then_actions",
-    "Synchronization.when_actions",
-    "SynchronizationAction.action",
-    "SynchronizationAction.concept_use",
     "System.assumptions",
     "System.concept_uses",
     "System.enclosing_system",
@@ -31467,9 +27312,6 @@
     "TraceableElement.derived_from",
     "TraceableElement.relies_on",
     "TraceableElement.supports",
-    "TypeBinding.bound_type",
-    "TypeBinding.parameter",
-    "TypeBinding.supplying_concept_use",
     "UseCase.extensions",
     "UseCase.involves",
     "UseCase.main_success_scenario",
@@ -31542,9 +27384,9 @@
       "title": "Structural context"
     }
   },
-  "representation_version": "0.1.0",
+  "representation_version": "0.2.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "69f58a8337481dfe4c032f09d5903e76ef20fabec9b22b449b10a7fefbdcb78f",
+  "source_sha256": "f379eee1b8a6a98c81be591f292177abd0889a320a0c0e393b8fd1cbdee8cd61",
   "subsets": {
     "business-requirements": {
       "classification": "core",
@@ -31563,12 +27405,12 @@
     },
     "software-requirements": {
       "classification": "core",
-      "description": "Software interactions, concept behavior, obligations, quality classifications, and verification guidance.",
+      "description": "Software interactions, concept behavior, obligations, quality classifications and satisfaction criteria.",
       "title": "Software requirements"
     },
     "source-artifacts": {
       "classification": "generic",
-      "description": "Source identities, exact payloads, fragments, and locations.",
+      "description": "Source identities, normalized Markdown, fragments, and locations.",
       "title": "Source artifacts"
     },
     "specification-documentation": {

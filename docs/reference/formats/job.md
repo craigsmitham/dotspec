@@ -132,7 +132,7 @@ This partial map and its outcomes are hypotheses awaiting research.
 ```
 
 The conventional H2 sections are `Job`, `Performer`, `Situation`, `Motivation`,
-`Intended progress`, `Outcomes`, `Steps`, `Progress cases`, and `Evidence`. All are
+`Intended progress`, `Outcomes`, `Steps`, and `Evidence`. All are
 optional, may be empty in a draft, and can be developed incrementally. Their
 names are case-sensitive, and duplicate conventional sections are errors.
 Additional sections and ordinary Markdown are retained. Existing three-section
@@ -208,8 +208,7 @@ This job and outcome are hypotheses awaiting research. No job map is recorded.
 Under `Steps`, each H3 introduces a step. Its `**ID:**` and optional `**Stage:**`
 fields belong in the introductory prose. A step's H4 `Outcomes` section contains
 outcomes declared by that step. Headings in code fences and blockquotes do
-not define steps or outcomes. Progress cases and evidence retain their full
-Markdown and named model fields; they are not interpreted as job-map steps.
+not define steps or outcomes. Evidence preserves the author’s account and links to research.
 
 Step order in the document defines the displayed map order, not a required
 execution sequence. Mark partial maps in the introductory prose under `Steps`
@@ -246,10 +245,9 @@ nonzero exit status. Missing sections and unfinished content remain readable.
 
 The default writing check suggests a missing job statement, performer, or empty
 outcome statement. Missing IDs, maps, stages and outcome collections are valid.
-Optional `--preset odi`, `--preset progress`, and `--preset job-story` guidance
+Optional `--preset odi` and `--preset job-story` guidance
 adds method-specific suggestions. ODI prompts for a functional boundary, an
-optional map, and measurable wording. Progress prompts for cases, circumstances,
-participants, struggling moments, alternatives and trade-offs. Job-story guidance
+optional map, and measurable wording. Job-story guidance
 prompts for situation, motivation and intended progress. All are advisory;
 none establishes completeness, correctness or research validation.
 
@@ -260,13 +258,13 @@ The same presets work with `job init`. `general` is the default, and the selecti
 is authoring guidance rather than a classification stored on the job:
 
 ```sh
-dotspec job init reach-work --preset progress
+dotspec job init reach-work --preset job-story
 dotspec job check reach-work --preset odi
 dotspec model needs
 ```
 
 See [Jobs and user needs](../../handbook/jobs.md) for the method distinctions,
-progress-case fields, optional capabilities, and research evidence boundaries.
+capability relationships and research evidence.
 The [generated job section](../../../examples/todo/specification/jobs/resume-interrupted-work.job.spec-report.md) shows how the restart requirement supports the
 outcome of spending less time reconstructing outstanding work.
 

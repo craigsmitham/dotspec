@@ -16,12 +16,6 @@ continue inspecting the remaining discovered specifications.
 
 Project-wide specification checks.
 
-## System verification plan
-
-Check a project containing two specifications with distinct structural errors.
-Verify that the report contains a finding for each specification. Exercise
-errors in different supported specification types and positions in scan order.
-
 ## Rationale
 
 One malformed specification must not hide problems in other files.

@@ -14,7 +14,7 @@ func TestBusinessRuleExportBindingsAndContextualReferences(t *testing.T) {
 	if result.ExitCode != 0 {
 		t.Fatalf("export status %d", result.ExitCode)
 	}
-	conformancePayloads(t, result.Snapshot)
+	checkSourceText(t, result.Snapshot)
 	var rule Record
 	for _, e := range result.Snapshot.Elements {
 		if String(e, "kind") == "BusinessRule" {

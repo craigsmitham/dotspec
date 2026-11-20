@@ -24,7 +24,6 @@ types:
   - supports
   - derived_from
   - relies_on
-  - assessment_plans
   Goal:
   - statement
   - supports
@@ -32,14 +31,12 @@ types:
   - statement
   - basis
   - applicability
-  - assessment_plans
   ObligationClause:
   - owner
   - statement
   - quality_attributes
   - refines
   - applies_to
-  - assessment_plans
   - criterion
   System:
   - purpose
@@ -74,7 +71,6 @@ types:
   - intended_progress
   - steps
   - outcomes
-  - progress_cases
   JobStep:
   - stage
   - description
@@ -85,17 +81,6 @@ types:
   - name
   - owner
   - applies_to
-  ProgressCase:
-  - current_approach
-  - desired_progress
-  - forces
-  - timeline
-  - evidence
-  - circumstances
-  - struggling_moment
-  - participants
-  - alternatives_considered
-  - tradeoffs_and_selection_criteria
   UseCase:
   - involves
   - obligations
@@ -127,35 +112,18 @@ types:
   Concept:
   - purpose
   - operational_principles
-  - type_parameters
-  - introduced_types
   - abstract_state
   - actions
   - effects_table
-  ConceptType:
-  - content
   ConceptUse:
   - definition
-  - bindings
   - configuration
   - dependencies
-  TypeBinding:
-  - parameter
-  - bound_type
-  - supplying_concept_use
-  - primitive
   Synchronization:
   - when
   - where
   - then
   - semantics
-  - when_actions
-  - then_actions
-  SynchronizationAction:
-  - concept_use
-  - action
-  - arguments
-  - result
   StateDescription:
   - content
   - initial_state
@@ -166,16 +134,9 @@ types:
   - description
   - value_description
   - derivation
-  ActionParameter:
-  - content
-  - type
-  - primitive
-  - type_description
   ConceptAction:
   - inputs
   - outputs
-  - input_parameters
-  - output_parameters
   - initiation
   - caller_assumptions
   - guards
@@ -192,7 +153,6 @@ types:
   - rationale
   - quality_attributes
   - criterion
-  - assessment_plans
   QualityModel:
   - description
   - edition
@@ -226,7 +186,6 @@ types:
   - applicability
   - rationale
   - refines
-  - assessment_plans
   - criterion
   Applicability:
   - content
@@ -263,38 +222,15 @@ types:
   - enablers
   OpenQuestion:
   - question
-  - raised_by
-  - raised_on
-  - resolve_by
-  - importance
-  - evidence_needed
-  - tracking_reference
   Interface:
   - owner
   - obligations
-  - assessment_plans
   - name
   - description
   - contracts
   - counterpart
   EffectsRow:
   - cells
-  AssessmentPlan:
-  - purpose
-  - subject
-  - basis
-  - participants
-  - method
-  - success_criteria
-  - conditions
-  - cases
-  - evidence_to_retain
-  AssessmentCase:
-  - name
-  - conditions
-  - procedure
-  - expected_result
-  - evidence_to_retain
 diagrams:
 - title: Specification types
   direction: TB
@@ -398,7 +334,7 @@ diagrams:
   inheritance: false
 - title: Shared obligation capabilities
   description: A Requirement specification and an embedded clause share statement, classification, applicability,
-    criterion and verification plan through Obligation. ObligationContainer separately grants clause ownership
+    and criterion through Obligation. ObligationContainer separately grants clause ownership
     to System, Component, Interface, UseCase, Concept, ConceptUse, ConceptAction and Synchronization. A Requirement
     states one obligation and contains no clauses. Business rules, jobs, goals, assumptions and desired outcomes
     retain traceability without containing clauses. Triangle arrows include explicitly mixed-in capabilities.
@@ -412,17 +348,15 @@ diagrams:
   - ObligationContainer.obligations
   inheritance: true
 - title: User progress
-  description: Jobs optionally declare functional steps, outcomes and progress cases. These edges describe
+  description: Jobs optionally declare functional steps and outcomes. These edges describe
     declaration ownership; step order is presentation order.
   nodes:
   - Job
   - JobStep
   - DesiredOutcome
-  - ProgressCase
   paths:
   - Job.steps
   - Job.outcomes
-  - Job.progress_cases
   - JobStep.outcomes
   inheritance: false
 - title: Outcome applicability
@@ -472,42 +406,17 @@ diagrams:
   - Obligation.quality_attributes
   - QualityAttribute.subattribute_of
   inheritance: false
-- title: Concept definitions and type bindings
-  description: Explicit named uses reference reusable definitions. Bindings distinguish a type declaration
-    from the use supplying its identities. Type parameters and introduced types share a declaration scope
-    but play different roles.
-  nodes:
-  - ConceptUse
-  - Concept
-  - ConceptType
-  - TypeBinding
-  paths:
-  - ConceptUse.definition
-  - ConceptUse.bindings
-  - Concept.type_parameters
-  - Concept.introduced_types
-  - TypeBinding.parameter
-  - TypeBinding.bound_type
-  - TypeBinding.supplying_concept_use
-  inheritance: false
 - title: System coordination
-  description: Systems explicitly include named uses and own synchronization rules. Each referenced action
-    is qualified by its use and must belong to that use's definition. Application dependencies are separately
-    declared and may cycle. None of these relations implies execution, atomicity or behavioral completeness.
+  description: Systems declare concept uses, dependencies, and coordination rules.
   nodes:
   - System
   - ConceptUse
   - Synchronization
-  - SynchronizationAction
   - ConceptAction
   paths:
   - System.concept_uses
   - System.synchronizations
   - ConceptUse.dependencies
-  - Synchronization.when_actions
-  - Synchronization.then_actions
-  - SynchronizationAction.concept_use
-  - SynchronizationAction.action
   inheritance: false
 - title: Explicit requirements relationships
   description: Explicit authoring distinguishes a use case boundary, support for user progress, and applicability
@@ -607,21 +516,4 @@ diagrams:
   - Capability.supports
   - Capability.depends_on
   - Capability.provided_by
-  inheritance: false
-
-- title: Assessment planning
-  description: Each plan records an [assessment purpose](index.md#assessmentpurpose) selected by its heading. Subject and basis can cite what is being assessed
-    and what it is judged against independently of where the plan is recorded.
-  nodes:
-  - TraceableElement
-  - AssessmentPlan
-  - AssessmentCase
-  - ContextualReferences
-  - SourceReference
-  paths:
-  - TraceableElement.assessment_plans
-  - AssessmentPlan.subject
-  - AssessmentPlan.basis
-  - ContextualReferences.references
-  - AssessmentPlan.cases
   inheritance: false

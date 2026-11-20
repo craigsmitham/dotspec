@@ -9,7 +9,7 @@ import (
 func TestJTBDAuthoringPresetsAndNeedsView(t *testing.T) {
 	root := t.TempDir()
 	t.Chdir(root)
-	for _, preset := range []string{"odi", "progress", "job-story"} {
+	for _, preset := range []string{"odi", "job-story"} {
 		code, out, errOut := invoke("job", "init", preset, "--preset", preset)
 		if code != 0 {
 			t.Fatal(out, errOut)
