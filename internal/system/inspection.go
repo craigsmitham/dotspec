@@ -13,39 +13,39 @@ func CheckType() check.Type {
 	return check.Type{Layout: Layout, References: readReferences, Inspect: inspect}
 }
 
-func inspect(path string) ([]diagnostic.Diagnostic, error) {
-	spec, err := Read(path)
+func inspect(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
+	spec, err := ReadFrom(files, path)
 	if err != nil {
 		return nil, err
 	}
-	return Check(spec), spec.checkGlossarySources()
+	return Check(spec), spec.checkGlossarySources(files)
 }
 
 // CheckContext preserves the same explicit selection or directory default as
 // Show and List, including ignored systems outside the selected subtree.
-var CheckContext = &check.ContextProvider{Inspect: func(path string) ([]diagnostic.Diagnostic, error) {
+var CheckContext = &check.ContextProvider{Inspect: func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
 	if AttributeLayout.Match(path) {
-		_, err := ReadQualityAttribute(path)
+		_, err := readAttribute(files, path)
 		return nil, err
 	}
 	if ComponentLayout.Match(path) {
-		_, err := ReadComponent(path)
+		_, err := readComponent(files, path)
 		return nil, err
 	}
-	return inspect(path)
+	return inspect(files, path)
 },
-	Resolve: SubjectChain,
-	ResolveSource: func(owner, source string) ([]string, error) {
-		data, err := os.ReadFile(source)
+	Resolve: subjectChain,
+	ResolveSource: func(files *specfile.SourceSet, owner, source string) ([]string, error) {
+		data, err := files.Markdown(source)
 		if err != nil {
 			return nil, err
 		}
-		_, explicit, err := specfile.SpecificationSystem(data)
+		_, explicit, err := data.SpecificationSystem()
 		if err != nil {
 			return nil, diagnostic.WithPath(err, source)
 		}
 		if explicit {
-			paths, err := contextPaths(Associated(owner, source))
+			paths, err := contextPaths(associated(files, owner, source))
 			if err != nil {
 				return paths, err
 			}
@@ -59,13 +59,14 @@ var CheckContext = &check.ContextProvider{Inspect: func(path string) ([]diagnost
 			if lookupErr == nil && local != "" && local != paths[len(paths)-1] {
 				if ComponentLayout.Match(local) {
 					paths = append([]string{local}, paths...)
-				} else if _, err := Read(local); err == nil {
+				} else if _, err := ReadFrom(files, local); err == nil {
 					paths = append([]string{local}, paths...)
 				}
 			}
-			return qualityContext(paths, nil)
+			return qualityContext(files, paths, nil)
 		}
-		return qualityContext(SubjectChain(owner))
+		paths, err := subjectChain(files, owner)
+		return qualityContext(files, paths, err)
 	},
 }
 
@@ -90,20 +91,20 @@ func contextPaths(spec *System, err error) ([]string, error) {
 	return []string{spec.Path}, nil
 }
 
-func readReferences(path string) (*specfile.ReferenceDocument, error) {
-	spec, err := Read(path)
+func readReferences(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error) {
+	spec, err := ReadFrom(files, path)
 	if err != nil {
 		return nil, err
 	}
 	return spec.References, nil
 }
 
-func qualityContext(paths []string, err error) ([]string, error) {
+func qualityContext(files *specfile.SourceSet, paths []string, err error) ([]string, error) {
 	if err != nil || len(paths) == 0 {
 		return paths, err
 	}
 	systemPath := paths[len(paths)-1]
-	sys, err := Read(systemPath)
+	sys, err := ReadFrom(files, systemPath)
 	if err != nil {
 		return paths, err
 	}

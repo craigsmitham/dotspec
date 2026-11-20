@@ -43,7 +43,7 @@ cp ../invalid.md specs/business-rules/invalid.business-rule.spec.md
 status 1 dotspec business-rule check invalid --json
 stdout 'structure.duplicate-section'
 status 1 dotspec model export
-stdout '"domain_decomposition": "failed"'
+stdout '"severity": "error"'
 cp stdout partial.json
 status 0 dotspec model validate partial.json --json
 stdout '"valid": true'

@@ -8,7 +8,7 @@ func (m *domainMapper) qualityModel(r Record, s *Section) bool {
 		m.section(r, "edition", s)
 	case "Sources":
 		m.contextField(r, "sources", s.Content)
-		m.sectionBindings(r, "sources.content", s)
+		m.markSection(r, "sources.content", s)
 	case "Quality attributes":
 		return m.system(r, s)
 	default:

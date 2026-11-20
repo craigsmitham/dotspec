@@ -4,28 +4,20 @@ import (
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
-	"github.com/yuin/goldmark/parser"
-	"github.com/yuin/goldmark/text"
 )
 
 func markdownOutline(data []byte) *Outline {
-	source := Normalize(data)
-	body := source
-	if strings.HasPrefix(string(body), "---\n") {
-		if end := strings.Index(string(body[4:]), "\n---\n"); end >= 0 {
-			body = body[4+end+5:]
-		}
-	}
-	md := goldmark.New(goldmark.WithParserOptions(parser.WithAutoHeadingID()))
-	return &Outline{Original: source, Source: body, AST: md.Parser().Parse(text.NewReader(body)), Anchors: map[string]bool{}}
+	return NewMarkdown(data).outline()
 }
 
 // SpecificationSystem reads the explicit association without resolving it.
 // Presence remains distinct from absence, including when the selection is invalid.
 func SpecificationSystem(data []byte) (Reference, bool, error) {
-	return markdownOutline(data).SpecificationSystem()
+	return NewMarkdown(data).SpecificationSystem()
+}
+func (md *Markdown) SpecificationSystem() (Reference, bool, error) {
+	return md.outline().SpecificationSystem()
 }
 
 func (o *Outline) SpecificationSystem() (Reference, bool, error) {
@@ -70,8 +62,10 @@ func (o *Outline) SingleSubjectLink(title, rule string) (Reference, bool, error)
 
 // MarkdownTitleAnchor returns only the document title's generated anchor.
 func MarkdownTitleAnchor(data []byte) string {
-	o := markdownOutline(data)
-	for n := o.AST.FirstChild(); n != nil; n = n.NextSibling() {
+	return NewMarkdown(data).TitleAnchor()
+}
+func (md *Markdown) TitleAnchor() string {
+	for n := md.Tree.FirstChild(); n != nil; n = n.NextSibling() {
 		if h, ok := n.(*ast.Heading); ok && h.Level == 1 {
 			if id, ok := h.AttributeString("id"); ok {
 				return string(id.([]byte))

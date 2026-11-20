@@ -36,10 +36,15 @@ inform or assess.
 
 ## Goals
 
-- Reduce the effort of finding structural problems and missing specification
-  content during authoring and review.
-- Reduce the effort of maintaining requirements as the product changes by
-  keeping each obligation with its authoritative source.
+### Find gaps during review
+
+Reduce the effort of finding structural problems and missing specification
+content during authoring and review.
+
+### Maintain requirements as the product changes
+
+Reduce the effort of maintaining requirements as the product changes by
+keeping each obligation with its authoritative source.
 
 ## Environment
 
@@ -48,6 +53,8 @@ version history and discovery rules. The CLI communicates through process
 arguments, standard streams, and exit statuses.
 
 ## Assumptions
+
+### Repeatable inspection conditions
 
 The execution conditions required for repeatability comparisons are defined in
 [Repeated inspections](quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#applies-to).
@@ -89,8 +96,3 @@ A finding that a specification violates a supported structural rule.
 
 A suggestion about specification content. Its exit-status consequences are
 specified by [Advice permits success](requirements/advice-permits-success.requirement.spec.md).
-
-## Quality attributes
-
-These are dotspec's declared quality attributes. The definitions identify concerns;
-individual quality requirements establish the obligations.

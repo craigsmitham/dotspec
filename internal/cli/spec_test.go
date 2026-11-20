@@ -75,7 +75,7 @@ func TestGeneratedSpecScopedSystemsAndComponents(t *testing.T) {
 	root := projectFixture(t)
 	writeFixture(t, filepath.Join(root, "dotspec.yaml"), "name: tool\ngenerated_spec: true\n")
 	writeFixture(t, filepath.Join(root, "README.md"), "# Tool\n\n[Read the spec](SPEC.md).\n")
-	writeFixture(t, filepath.Join(root, "specs/tool.system.spec.md"), "---\ntype: system-spec\n---\n# Tool\n\n## Purpose\nProcess work.\n\n## Scope\nQueued work.\n\n## Notes\n[Introduction](../README.md).\n")
+	writeFixture(t, filepath.Join(root, "specs/tool.system.spec.md"), "---\ntype: system-spec\n---\n# Tool\n\n## Purpose\nProcess work.\n\n## Scope\nQueued work.\n\n## Evidence\n[Introduction](../README.md).\n")
 	writeFixture(t, filepath.Join(root, "worker/specs/worker.system.spec.md"), "---\ntype: system-spec\n---\n# Worker\n\n## Description\nA **local** job executor.\n\n## Purpose\nClaim jobs.\n\n## Scope\nExecutors.\n\n## Part of\n[Tool](../../specs/tool.system.spec.md).\n")
 	const grandchild = "worker/queues/specs"
 	writeFixture(t, filepath.Join(root, grandchild, "queue.system.spec.md"), `---
@@ -100,7 +100,7 @@ type: quality-attribute-spec
 # Availability
 ## Definition
 Accept work while either A | B is available.
-## Limit
+### Limit
 Maintenance windows are excluded.
 ## Open questions
 - Which outages count?
@@ -153,7 +153,7 @@ Each submitted job must remain in the queue until accepted.
 ## Applies to
 **Targets:** [Intake](../../components/intake/specs/intake.component.spec.md) and [Journal](../../components/journal/specs/journal.component.spec.md).
 
-## Other applications
+### Conditions
 The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies examples.
 `)
 	if code, out, errOut := invoke("spec", "build"); code != 0 {
@@ -184,7 +184,7 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 	reader(section+"components.md", "- [Intake](<components/intake/intake.component.spec-report.md>)")
 	reader(section+"requirements.md", "- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>) — Each submitted job must remain in the queue until accepted.", "[Intake](<components/intake/requirements.md>)")
 	reader(section+"quality-attributes.md", "**[Availability](<quality/availability/availability.quality-attribute.spec-report.md>)** — Accept work while either A &#124; B is available.")
-	reader(section+"quality/availability/availability.quality-attribute.spec-report.md", "# Availability", "## Limit", "Maintenance windows are excluded.", "[Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)")
+	reader(section+"quality/availability/availability.quality-attribute.spec-report.md", "# Availability", "### Limit", "Maintenance windows are excluded.", "[Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)")
 	reader("specification/open-questions.md",
 		"[Which outages count?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>) — Availability",
 		"[How is uptime measured?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>) — Availability")
@@ -244,7 +244,7 @@ func TestGeneratedOpenQuestionsLifecycle(t *testing.T) {
 		t.Fatalf("obsolete review report after build: %v", err)
 	}
 
-	writeFixture(t, source, system+"\n## Open question\n")
+	writeFixture(t, source, system+"\n## Open questions\n")
 	build()
 	if _, err := os.Stat(index); !os.IsNotExist(err) || strings.Contains(read(overview), "open-questions.md") {
 		t.Fatalf("question index or link remains after resolving the last question: %v", err)
@@ -254,7 +254,7 @@ func TestGeneratedOpenQuestionsLifecycle(t *testing.T) {
 func TestOverviewKeepsNavigationOnlyCollectionsInTheMap(t *testing.T) {
 	t.Chdir(t.TempDir())
 	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
-	const system = "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nKeep notes.\n\n## Scope\nOne notebook.\n\n## Business rules\n"
+	const system = "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nKeep notes.\n\n## Scope\nOne notebook.\n\n"
 	for _, name := range []string{"Draft", "Review", "Publish", "Archive"} {
 		slug := strings.ToLower(name)
 		writeFixture(t, "specs/business-rules/"+slug+".business-rule.spec.md",
@@ -277,7 +277,7 @@ func TestOverviewKeepsNavigationOnlyCollectionsInTheMap(t *testing.T) {
 			}
 		}
 		if strings.Contains(page, "## Requirements\n") || strings.Contains(page, "## Features\n") ||
-			strings.Contains(page, "## Business rules\n") != (narrative != "") || !strings.Contains(page, narrative) {
+			strings.Contains(page, "## Business rules\n") || !strings.Contains(page, narrative) {
 			t.Fatal(page)
 		}
 	}
@@ -297,7 +297,7 @@ Keep notes according to the [storage promises](#obligations).
 ## Scope
 One local notebook.
 
-## Behavior
+### Behavior
 An author can close and reopen a notebook.
 
 ## Obligations
@@ -315,7 +315,7 @@ Preserve saved edits when the notebook closes.
 	}
 	for _, want := range []string{
 		"[storage promises](<#requirements>)",
-		"## Behavior\n\nAn author can close and reopen a notebook.",
+		"### Behavior\n\nAn author can close and reopen a notebook.",
 		"## Capabilities\n\n- [Notebook storage](<capabilities/notebook-storage.capability.spec-report.md>) — Stores notes on this device.",
 		"## Requirements\n\n### Retain edits",
 	} {
@@ -388,13 +388,13 @@ An example:
 `, "\n", "\r\n"))
 	writeFixture(t, "specs/quality/safety/safety.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\n---\n# Safety\n")
 	writeFixture(t, "specs/quality/reliability/durability/recovery/recovery.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nsubattribute_of: [durability]\n---\n# Recovery\n")
-	writeFixture(t, "specs/notes.system.spec.md", opening+"\n## Quality attributes\n\nProtect recorded work.\n")
+	writeFixture(t, "specs/notes.system.spec.md", opening+"\n## Quality attributes\n")
 	for name, labels := range map[string]string{"Save": "[durability, reliability]", "Restore": "[durability]"} {
 		writeFixture(t, filepath.Join("specs/requirements", strings.ToLower(name)+".requirement.spec.md"),
 			"---\ntype: requirement-spec\nquality_attributes: "+labels+"\n---\n# "+name+"\n\n## Statement\nKeep the note.\n")
 	}
 	page = build()
-	if !strings.Contains(page, "| [Quality attributes](<#quality-attributes>) | [Attribute index](<quality-attributes.md>)") || !strings.Contains(page, "## Quality attributes\n\nProtect recorded work.") {
+	if !strings.Contains(page, "| [Quality attributes](<#quality-attributes>) | [Attribute index](<quality-attributes.md>)") || !strings.Contains(page, "## Quality attributes") {
 		t.Fatalf("unexpected system reading order:\n%s", page)
 	}
 	durability := "- [Durability](<quality/reliability/durability/durability.quality-attribute.spec-report.md>) — The ID: below is permanent."
@@ -410,7 +410,7 @@ An example:
 		"**[Safety](<quality/safety/safety.quality-attribute.spec-report.md>)**", "",
 		durability,
 	}, "\n")
-	if strings.TrimSpace(overview) != wantOverview || strings.Contains(page, "[Durability]") || strings.Contains(page, "[Recovery]") ||
+	if !strings.HasPrefix(strings.TrimSpace(overview), wantOverview) || strings.Contains(page, "[Durability]") || strings.Contains(page, "[Recovery]") ||
 		!strings.Contains(page, "**[Reliability]") || !strings.Contains(page, "**[Safety]") {
 		t.Fatalf("quality attributes overview:\n%s\nwant:\n%s", overview, wantOverview)
 	}
@@ -444,7 +444,9 @@ Keep drafts.
 Local edits.
 
 ## Assumptions
-- The author is present.
+### The author is present
+
+The author is present.
 
 ### Local storage
 A draft stays on disk.
@@ -464,13 +466,13 @@ type: component-spec
 ## Responsibilities
 Apply the [retention constraint](#storage) and its [exception](#exception).
 
-## Notes
+## Evidence
 Storage layout.[^disk]
 
 [^disk]: A file on the author's device.
 `
 	writeFixture(t, source, component+`
-## Constraints
+## Boundary
 Writes occur locally.
 
 ### Storage
@@ -496,23 +498,14 @@ A separate archive retains old drafts.
 		return string(data)
 	}
 	overview := read("components/store/store.component.spec-report.md")
-	detail := read("components/store/constraints.md")
-	for _, want := range []string{"Writes occur locally.", "[Storage](<constraints.md#storage>) — Retain edits.", "[exception](<constraints.md#exception>)", "[Storage](<constraints.md#storage-1>)"} {
+	for _, want := range []string{"Writes occur locally.", "Retain edits.", "A reset clears the draft.", "A separate archive retains old drafts.", "[the basis](<../../assumptions.md#basis>)", "[^disk]: A file"} {
 		if !strings.Contains(overview, want) {
 			t.Fatalf("missing %q in %s", want, overview)
 		}
 	}
-	if strings.Contains(overview, "A reset clears") || strings.Contains(detail, "Writes occur locally.") ||
-		!strings.Contains(detail, "### Exception") || !strings.Contains(detail, "[^disk]: A file") ||
-		!strings.Contains(detail, "[the basis](<../../assumptions.md#basis>)") ||
-		!strings.Contains(detail, "[Store · Responsibilities](<store.component.spec-report.md#responsibilities>)") {
-		t.Fatalf("overview and detail: %s\n%s", overview, detail)
+	if !strings.Contains(read("assumptions.md"), "[store constraint](<components/store/store.component.spec-report.md#storage>)") {
+		t.Fatal(read("assumptions.md"))
 	}
-	if !strings.Contains(read("assumptions.md"), "[store constraint](<components/store/constraints.md#storage>)") ||
-		!strings.Contains(read("constraints.md"), "[Store](<components/store/constraints.md>)") {
-		t.Fatal("missing cross-scope passage or collection link")
-	}
-
 	// A rebuild retires both the component collection and its system navigation.
 	writeFixture(t, source, component[:strings.Index(component, "## Responsibilities")])
 	writeFixture(t, "specs/notes.system.spec.md", "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nKeep drafts.\n\n## Scope\nLocal edits.\n")

@@ -167,7 +167,7 @@ func leafFindings(leaf *jsonschema.ValidationError, prefix string) []Finding {
 
 func shapeRecordIndex(root Record) map[string]Record {
 	index := map[string]Record{}
-	for _, name := range []string{"sources", "documents", "content_nodes", "elements", "references", "label_occurrences", "fragments"} {
+	for _, name := range []string{"sources", "documents", "elements", "references", "label_occurrences", "fragments"} {
 		for _, r := range records(root[name]) {
 			if id := String(r, "id"); id != "" {
 				index[id] = r
@@ -192,30 +192,11 @@ func locateShapeFinding(f *Finding, root Record, index map[string]Record, record
 		source = String(index[String(record, "owner")], "source_document")
 	}
 	f.Source = String(index[source], "locator")
-	node := index[String(record, "content_node")]
-	relative := strings.TrimPrefix(f.Path, recordPath+"/")
-	best := -1
-	for _, binding := range records(root["content_bindings"]) {
-		if String(binding, "owner") != String(record, "id") {
-			continue
-		}
-		field := strings.ReplaceAll(String(binding, "field_path"), ".", "/")
-		if relative != field && !strings.HasPrefix(relative, field+"/") {
-			continue
-		}
-		if len(field) > best {
-			node = index[String(binding, "content_node")]
-			best = len(field)
-		}
-	}
-	span := Object(node["span"])
-	if span == nil {
-		span = Object(record["span"])
-	}
-	if span == nil {
-		roots := Strings(Object(record["name"])["content_nodes"])
-		if len(roots) > 0 {
-			span = Object(index[roots[0]]["span"])
+	span := Object(record["span"])
+	field, _, _ := strings.Cut(strings.TrimPrefix(f.Path, recordPath+"/"), "/")
+	for _, name := range []string{field, "name"} {
+		if spans := records(Object(record[name])["spans"]); span == nil && len(spans) > 0 {
+			span = spans[0]
 		}
 	}
 	if span != nil {

@@ -11,15 +11,15 @@ import (
 // after structural validation succeeds. Context is optional.
 type Type struct {
 	// References reads validated targets and outgoing links without following them.
-	References   func(path string) (*specfile.ReferenceDocument, error)
+	References   func(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error)
 	Layout       specfile.Layout
 	ValidateSlug func(string) error
-	Inspect      func(path string) ([]diagnostic.Diagnostic, error)
+	Inspect      func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error)
 	Context      *ContextProvider
 	// InspectContext checks cross-source relationships after successful context
 	// resolution. Sources are exactly those returned by Context, never ancestors
 	// inferred by the checker. It is skipped when context cannot be read.
-	InspectContext func(path string, sources []string) ([]diagnostic.Diagnostic, error)
+	InspectContext func(files *specfile.SourceSet, path string, sources []string) ([]diagnostic.Diagnostic, error)
 }
 
 // ContextProvider inspects additional sources needed by a type. Resolve returns
@@ -28,11 +28,11 @@ type Type struct {
 // Directory providers are shared per owner; source-aware providers resolve each
 // source independently so adjacent files may select different systems.
 type ContextProvider struct {
-	Resolve func(owner string) ([]string, error)
+	Resolve func(files *specfile.SourceSet, owner string) ([]string, error)
 	// ResolveSource optionally selects context per source, overriding the directory default.
-	ResolveSource func(owner, source string) ([]string, error)
+	ResolveSource func(files *specfile.SourceSet, owner, source string) ([]string, error)
 	// Inspect optionally contributes findings from each resolved context file.
-	Inspect func(path string) ([]diagnostic.Diagnostic, error)
+	Inspect func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error)
 }
 
 type contextKey struct {
@@ -44,7 +44,7 @@ type contextKey struct {
 type contextRequest struct {
 	key     contextKey
 	source  string
-	inspect func(string, []string) ([]diagnostic.Diagnostic, error)
+	inspect func(*specfile.SourceSet, string, []string) ([]diagnostic.Diagnostic, error)
 }
 
 func (r *Report) inspectContexts(requests []contextRequest, discovered map[string]bool) {
@@ -67,9 +67,9 @@ func (r *Report) inspectContexts(requests []contextRequest, discovered map[strin
 		result, found := resolved[key]
 		if !found {
 			if key.provider.ResolveSource != nil {
-				result.paths, result.err = key.provider.ResolveSource(key.owner, request.source)
+				result.paths, result.err = key.provider.ResolveSource(r.sources, key.owner, request.source)
 			} else {
-				result.paths, result.err = key.provider.Resolve(key.owner)
+				result.paths, result.err = key.provider.Resolve(r.sources, key.owner)
 			}
 			resolved[key] = result
 			if result.err != nil {
@@ -89,7 +89,7 @@ func (r *Report) inspectContexts(requests []contextRequest, discovered map[strin
 				err, found := inspected[inspection]
 				if !found {
 					var findings []diagnostic.Diagnostic
-					findings, err = key.provider.Inspect(path)
+					findings, err = key.provider.Inspect(r.sources, path)
 					r.Diagnostics = append(r.Diagnostics, findings...)
 					if err != nil {
 						r.record(err, "scan.context", path)
@@ -100,7 +100,7 @@ func (r *Report) inspectContexts(requests []contextRequest, discovered map[strin
 			}
 		}
 		if contextOK && request.inspect != nil {
-			findings, err := request.inspect(request.source, result.paths)
+			findings, err := request.inspect(r.sources, request.source, result.paths)
 			r.Diagnostics = append(r.Diagnostics, findings...)
 			if err != nil {
 				r.record(err, "scan.context", request.source)

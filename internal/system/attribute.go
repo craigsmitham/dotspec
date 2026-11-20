@@ -1,8 +1,6 @@
 package system
 
 import (
-	"os"
-
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
@@ -16,12 +14,16 @@ type AttributeDocument struct {
 }
 
 func ParseQualityAttribute(path string, data []byte) (*AttributeDocument, error) {
+	return ParseQualityAttributeMarkdown(path, specfile.NewMarkdown(data))
+}
+
+func ParseQualityAttributeMarkdown(path string, input *specfile.Markdown) (*AttributeDocument, error) {
 	var meta struct {
 		specfile.Metadata `yaml:",inline"`
 		ID                string   `yaml:"id"`
 		Parents           []string `yaml:"subattribute_of"`
 	}
-	doc, err := specfile.ParseOutline(data, AttributeLayout.Kind, &meta)
+	doc, err := input.TypedOutline(AttributeLayout.Kind, &meta)
 	if err != nil {
 		return nil, err
 	}
@@ -65,18 +67,22 @@ func ParseQualityAttribute(path string, data []byte) (*AttributeDocument, error)
 }
 
 func ReadQualityAttribute(path string) (*AttributeDocument, error) {
-	data, err := os.ReadFile(path)
+	return readAttribute(&specfile.SourceSet{}, path)
+}
+
+func readAttribute(files *specfile.SourceSet, path string) (*AttributeDocument, error) {
+	input, err := files.Markdown(path)
 	if err != nil {
 		return nil, err
 	}
-	doc, err := ParseQualityAttribute(path, data)
+	doc, err := ParseQualityAttributeMarkdown(path, input)
 	if err != nil {
 		return nil, diagnostic.WithPath(err, path)
 	}
 	return doc, nil
 }
 
-func (s *System) loadQualityTree() error {
+func (s *System) loadQualityTree(files *specfile.SourceSet) error {
 	dir := specfile.DeclarationDir(s.Path)
 	paths, err := specfile.OwnedPaths(dir, "*"+AttributeLayout.Suffix, AttributeLayout.Match)
 	if err != nil {
@@ -87,7 +93,7 @@ func (s *System) loadQualityTree() error {
 		ids[a.ID] = true
 	}
 	for _, path := range paths {
-		doc, err := ReadQualityAttribute(path)
+		doc, err := readAttribute(files, path)
 		if err != nil {
 			return err
 		}
@@ -102,7 +108,7 @@ func (s *System) loadQualityTree() error {
 }
 
 var attributeContext = &check.ContextProvider{
-	Resolve: func(owner string) ([]string, error) {
+	Resolve: func(_ *specfile.SourceSet, owner string) ([]string, error) {
 		boundary, err := specfile.ContextRoot(owner)
 		if err != nil {
 			return nil, err
@@ -120,11 +126,11 @@ var attributeContext = &check.ContextProvider{
 }
 
 func AttributeCheckType() check.Type {
-	return check.Type{Layout: AttributeLayout, Context: attributeContext, Inspect: func(path string) ([]diagnostic.Diagnostic, error) {
-		_, err := ReadQualityAttribute(path)
+	return check.Type{Layout: AttributeLayout, Context: attributeContext, Inspect: func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
+		_, err := readAttribute(files, path)
 		return nil, err
-	}, References: func(path string) (*specfile.ReferenceDocument, error) {
-		a, err := ReadQualityAttribute(path)
+	}, References: func(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error) {
+		a, err := readAttribute(files, path)
 		if err != nil {
 			return nil, err
 		}

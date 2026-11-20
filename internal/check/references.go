@@ -58,12 +58,12 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 		}
 		var result loaded
 		if kind := findType(path, types); kind != nil && kind.References != nil {
-			result.doc, result.err = kind.References(path)
+			result.doc, result.err = kind.References(r.sources, path)
 		} else {
-			var data []byte
-			data, result.err = os.ReadFile(path)
+			var md *specfile.Markdown
+			md, result.err = r.sources.Markdown(path)
 			if result.err == nil {
-				result.doc = specfile.MarkdownReferences(data)
+				result.doc = md.AnchorReferences()
 			}
 		}
 		cache[path] = result
@@ -85,10 +85,10 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 		var doc *specfile.ReferenceDocument
 		var err error
 		if glossaries[source] {
-			var data []byte
-			data, err = os.ReadFile(source)
+			var md *specfile.Markdown
+			md, err = r.sources.Markdown(source)
 			if err == nil {
-				doc, err = specfile.GlossaryDetailReferences(data)
+				doc, err = md.GlossaryDetailReferences()
 			}
 		} else {
 			doc, err = read(source)

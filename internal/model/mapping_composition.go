@@ -5,8 +5,7 @@ package model
 func (m *domainMapper) composition(r Record, s *Section) bool {
 	switch s.Title {
 	case "Concept uses":
-		m.section(r, "concept_uses_content", s)
-		r["concept_uses"] = []string{}
+		m.declared(r, "concept_uses", s)
 		for _, child := range s.Children {
 			x := m.named("ConceptUse", r, child)
 			m.section(x, "content", child)
@@ -15,34 +14,31 @@ func (m *domainMapper) composition(r Record, s *Section) bool {
 				case "Description":
 					m.section(x, "description", sub)
 				case "Definition":
-					x["definition_references"] = m.references(sub.Content)
-					m.bindDesignReferences(x, "definition_references")
-					m.bind(x, "definition_references", []string{sub.HeadingID}, "structural_wrapper", "concept-definition-heading")
+					m.relationship(x, "definition", sub.Content)
+					m.markHeading("definition", sub.HeadingID)
 				case "Configuration":
 					m.section(x, "configuration", sub)
 				case "Dependencies":
 					m.section(x, "dependencies_content", sub)
-					x["dependencies_references"] = m.references(sub.Content)
+					m.relationship(x, "dependencies", sub.Content)
 				default:
-					m.extension(x, sub)
+					m.subjectSection(x, sub)
 				}
 			}
 			appendID(r, "concept_uses", String(x, "id"))
 		}
 	case "Synchronizations":
-		m.section(r, "synchronizations_content", s)
-		r["synchronizations"] = []string{}
+		m.declared(r, "synchronizations", s)
 		for _, child := range s.Children {
 			x := m.named("Synchronization", r, child)
 			m.section(x, "content", child)
 			for _, sub := range child.Children {
 				field := map[string]string{"When": "when", "Where": "where", "Then": "then", "Semantics": "semantics"}[sub.Title]
 				if field == "" {
-					m.extension(x, sub)
+					m.subjectSection(x, sub)
 					continue
 				}
 				m.section(x, field, sub)
-
 			}
 			appendID(r, "synchronizations", String(x, "id"))
 		}
@@ -54,21 +50,26 @@ func (m *domainMapper) composition(r Record, s *Section) bool {
 
 func (m *domainMapper) designField(r Record, field string, s *Section, label string) {
 	if nodes := m.fieldNodes(s, label); nodes != nil {
-		r[field+"_references"] = m.references(nodes)
-		m.bindDesignReferences(r, field+"_references")
-		m.bind(r, field+"_references", m.fieldLabelNodes(s, label), "structural_wrapper", "design-reference-label/"+label)
+		m.relationship(r, field, nodes)
 	}
 }
 
-func (m *domainMapper) bindDesignReferences(r Record, field string) {
-	m.bindReferenceOccurrences(r, field, Strings(r[field]))
+func (m *domainMapper) relationship(owner Record, field string, nodes []string) {
+	selected := m.descendants(nodes)
+	for _, ref := range m.doc.References {
+		form := String(ref, "form")
+		if selected[String(ref, "content_node")] && (form == "inline_link" || form == "reference_link") {
+			ref["role"], ref["context_owner"] = field, owner["id"]
+		}
+	}
 }
 
 func (m *domainMapper) bindReferenceOccurrences(owner Record, field string, ids []string) {
 	for _, id := range ids {
 		for _, ref := range m.doc.References {
 			if String(ref, "id") == id {
-				m.bind(owner, field, []string{String(ref, "content_node")}, "named_field", "reference-occurrence")
+				node := m.doc.NodeByID[String(ref, "content_node")]
+				node["link_owner"], node["link_field"] = owner["id"], field
 			}
 		}
 	}

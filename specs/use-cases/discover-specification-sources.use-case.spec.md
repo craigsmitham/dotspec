@@ -37,17 +37,23 @@ paths to consult the original files in their native form.
 
 ### Unresolved reference
 
+#### Handling
+
 At step 2, a reference target cannot be resolved. Report the finding with the
 inventory according to the source-discovery contract. The contributor can repair
 the link and request another inventory.
 
 ### Operational failure
 
+#### Handling
+
 During discovery or reading, an operational failure prevents completing the
 inventory. Report the incomplete operation. End without achieving the goal;
 the contributor can repair access and retry.
 
 ### Multiple sources have the same slug
+
+#### Handling
 
 When locating an individual source within a subject, the contributor can give its
 typed filename and path. If a slug matches several owned files, dotspec lists
@@ -57,7 +63,7 @@ the matching paths so the contributor can select the intended source.
 
 Representative. Discovery order is not a required order of authoring or review.
 
-## Authority and evidence
+## Authority
 
 The [source-discovery reference](../../docs/reference/inspection.md#references) describes link behavior. The [source layout](../../docs/reference/layout.md) defines directory ownership and source selection.
 The [source-discovery executable examples](../../internal/integration/testdata/sources.txtar)

@@ -51,18 +51,15 @@ func TestLayeredTraceability(t *testing.T) {
 		if !slices.Equal(Strings(tc.r[tc.field]), []string{String(tc.target, "id")}) {
 			t.Fatalf("%s: %v", tc.field, tc.r)
 		}
-		if len(Strings(tc.r[tc.field+"_references"])) != 1 {
+		if len(newDesignResolver(s).refs(tc.r, tc.field)) != 1 {
 			t.Fatal("missing reference provenance", tc.r)
 		}
-	}
-	if String(s.Coverage, "status") != "complete_for_profile" || len(Strings(s.Coverage["extension_sections"])) != 0 {
-		t.Fatal(s.Coverage)
 	}
 	if !strings.Contains(newDesignResolver(s).text(req["refines_content"]), "without weakening") {
 		t.Fatal("rationale lost")
 	}
 	kinds := map[string]bool{}
-	for _, a := range s.Assertions {
+	for _, a := range s.Relationships() {
 		kinds[String(a, "projection_path")] = true
 	}
 	for _, kind := range []string{"TraceableElement.supports", "TraceableElement.derived_from", "Obligation.refines", "TraceableElement.relies_on", "UseCase.involves", "ObligationContainer.obligations", "Obligation.applies_to"} {
@@ -73,11 +70,15 @@ func TestLayeredTraceability(t *testing.T) {
 	checkSourceText(t, s)
 	forged := cloneSnapshot(t, s)
 	elementKind(t, forged, "Requirement")["refines"] = []string{String(elementKind(t, forged, "BusinessRule"), "id")}
-	requireFinding(t, forged, "concept.projection")
+	requireFinding(t, forged, "shape.invalid")
 	borrowed := cloneSnapshot(t, s)
-	br := elementKind(t, borrowed, "Requirement")
-	br["refines_references"] = br["relies_on_references"]
-	requireFinding(t, borrowed, "relationship.provenance")
+	for _, ref := range borrowed.References {
+		if ref["role"] == "refines" {
+			ref["context_owner"] = elementKind(t, borrowed, "Job")["id"]
+			break
+		}
+	}
+	requireFinding(t, borrowed, "reference.context")
 }
 func TestTraceTargetErrorsAndDeferredReferences(t *testing.T) {
 	for _, tc := range []struct {
@@ -127,14 +128,20 @@ func TestRefinementCycleRetainsSourceWithoutCyclicClaim(t *testing.T) {
 				t.Fatal("cyclic edge exported", e)
 			}
 		}
-		for _, a := range r.Snapshot.Assertions {
+		for _, a := range r.Snapshot.Relationships() {
 			if String(a, "projection_path") == "Obligation.refines" {
 				t.Fatal("cyclic assertion exported")
 			}
 		}
 		forged := cloneSnapshot(t, r.Snapshot)
 		req := elementKind(t, forged, "Requirement")
-		req["refines"] = []string{String(req, "id")}
+		for _, ref := range forged.References {
+			if ref["role"] == "refines" && ref["context_owner"] == req["id"] {
+				Object(ref["resolution"])["target"] = req["id"]
+				Object(ref["resolution"])["status"] = "resolved"
+				break
+			}
+		}
 		requireFinding(t, forged, "relationship.cycle")
 		checkSourceText(t, r.Snapshot)
 	}
@@ -216,7 +223,7 @@ func TestSeveralRefinementParentsAndNestedConceptObligation(t *testing.T) {
 Restoration must preserve the item identity.
 ###### Derived from
 [Recovery](../use-cases/restore.use-case.spec.md#restore-content)
-###### System verification plan
+###### Rationale
 Compare the item identity before deletion and after restoration.
 
 ### Expire`)

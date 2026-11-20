@@ -15,7 +15,11 @@ type: job-spec
 ---
 # Prepare a change
 ## Outcomes
-- **OUT-001:** Minimize the likelihood of missed needs.
+### Minimize the likelihood of missed needs
+
+**ID:** OUT-001
+
+Minimize the likelihood of missed needs.
 ## Steps
 ### Gather needs
 **ID:** gather
@@ -23,14 +27,18 @@ type: job-spec
 
 Talk to stakeholders.
 #### Outcomes
-- **OUT-002:** Minimize the time needed to identify stakeholders.
+##### Minimize the time needed to identify stakeholders
+
+**ID:** OUT-002
+
+Minimize the time needed to identify stakeholders.
 ### Reach agreement
 **ID:** agree
 
-## Progress cases
+## Situation
 ### Considering a new approach
 An ordinary research note.
-## Extra notes
+## Evidence
 Keep this text and its **formatting**.
 `
 
@@ -116,7 +124,7 @@ func TestOutcomeScopes(t *testing.T) {
 	if err := listOutcomes(spec, "", &out); err != nil {
 		t.Fatal(err)
 	}
-	want := "Outcomes: Prepare a change\n\nOutcomes declared by job\n  OUT-001: Minimize the likelihood of missed needs.\n\nOutcomes declared by step: Gather needs [gather] (locate)\n  OUT-002: Minimize the time needed to identify stakeholders.\n"
+	want := "Outcomes: Prepare a change\n\nOutcomes declared by job\n  Minimize the likelihood of missed needs [OUT-001]: Minimize the likelihood of missed needs.\n\nOutcomes declared by step: Gather needs [gather] (locate)\n  Minimize the time needed to identify stakeholders [OUT-002]: Minimize the time needed to identify stakeholders.\n"
 	if out.String() != want {
 		t.Fatalf("outcome scopes:\n%s\nwant:\n%s", out.String(), want)
 	}
@@ -154,7 +162,7 @@ func TestJobMapWithoutSteps(t *testing.T) {
 	if err := os.MkdirAll(filepath.Join(dir, "specs", "jobs"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	for _, outcome := range []string{"", "\n## Outcomes\n\n- **O1:** Minimize the likelihood of missed needs.\n"} {
+	for _, outcome := range []string{"", "\n## Outcomes\n\n### Minimize the likelihood of missed needs\n\n**ID:** O1\n\nMinimize the likelihood of missed needs.\n"} {
 		if err := os.WriteFile(filepath.Join(dir, "specs", "jobs", "draft.job.spec.md"), []byte("---\ntype: job-spec\n---\n# Draft\n"+outcome), 0o644); err != nil {
 			t.Fatal(err)
 		}
@@ -169,7 +177,7 @@ func TestJobMapWithoutSteps(t *testing.T) {
 					t.Fatalf("map without steps: %v: %d %q %q", args, code, out, errOut)
 				}
 				showOutcome := includeOutcomes && outcome != ""
-				if strings.Contains(out, "O1:") != showOutcome || strings.Contains(out, "Outcomes declared by job") != showOutcome {
+				if strings.Contains(out, "O1") != showOutcome || strings.Contains(out, "Outcomes declared by job") != showOutcome {
 					t.Errorf("outcomes with no steps: %v: %s", args, out)
 				}
 				if format == "mermaid" && (!strings.HasPrefix(out, "flowchart TD\n") || strings.Contains(out, "s1")) {

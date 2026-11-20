@@ -56,7 +56,7 @@ Representative. The [reporting contract](../../README.md#check-specifications) d
 ## Supports
 [Evaluate requirements](../jobs/develop-requirements.job.spec.md#evaluate-requirements).
 
-## Notes
+## Evidence
 See [the goal](#goal), [this use case](#check%2Dspecifications), and [external evidence](https://example.com).
 `
 
@@ -94,7 +94,7 @@ func TestParsePreservesUseCaseAndDistinctFields(t *testing.T) {
 }
 
 func TestDraftsAndAdvice(t *testing.T) {
-	for _, source := range []string{draft, draft + "\n## Primary actor\n", draft + "\n## Extensions\nAn unresolved failure condition.\n"} {
+	for _, source := range []string{draft, draft + "\n## Primary actor\n", draft + "\n## Extensions\n### An unresolved failure condition\n"} {
 		spec, err := Parse([]byte(source))
 		if err != nil {
 			t.Fatal(err)
@@ -113,7 +113,7 @@ func TestDraftsAndAdvice(t *testing.T) {
 			}
 		}
 	}
-	spec, err := Parse([]byte(strings.Replace(example, "## Sequence", "## Ordering notes", 1)))
+	spec, err := Parse([]byte(strings.Replace(example, "## Sequence", "## Stakeholder interests", 1)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -135,9 +135,9 @@ func TestStructureAndSourceLocations(t *testing.T) {
 		{"wrong level", draft + "### Goal\n", "structure.section-level", 5, 1, 0},
 		{"second title", draft + "# Another\n", "structure.title", 5, 1, 4},
 		{"before title", "---\ntype: use-case-spec\n---\n## Goal\n# Title\n", "structure.section-order", 4, 1, 0},
-		{"unresolved reference", draft + "## Notes\n[Unknown](#missing)\n", "reference.unresolved", 6, 1, 0},
-		{"unicode reference", draft + "## Notes\né [Unknown](#missing)\n", "reference.unresolved", 6, 3, 0},
-		{"malformed fragment", draft + "## Notes\n[Unknown](#bad%XX)\n", "reference.invalid", 6, 1, 0},
+		{"unresolved reference", draft + "## Evidence\n[Unknown](#missing)\n", "reference.unresolved", 6, 1, 0},
+		{"unicode reference", draft + "## Evidence\né [Unknown](#missing)\n", "reference.unresolved", 6, 3, 0},
+		{"malformed fragment", draft + "## Evidence\n[Unknown](#bad%XX)\n", "reference.invalid", 6, 1, 0},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, source := range []string{tt.source, "\ufeff" + strings.ReplaceAll(tt.source, "\n", "\r\n")} {
@@ -165,8 +165,8 @@ func TestEveryConventionalSectionRejectsDuplicates(t *testing.T) {
 }
 
 func TestExamplesAndUnknownProseRemainMarkdown(t *testing.T) {
-	extra := "\n## Notes\n\n```markdown\n# Example\n## Goal\n[not checked](#missing)\n```\n\n> ## Goal\n> quoted content\n\n## goal\nLowercase headings are ordinary prose.\n"
-	source := strings.Replace(example, "## Notes", "## Other notes", 1) + extra
+	extra := "\n## Evidence\n\n```markdown\n# Example\n## Goal\n[not checked](#missing)\n```\n\n> ## Goal\n> quoted content\n\n### Local goal\nLowercase headings are ordinary prose.\n"
+	source := strings.Replace(example, "## Evidence", "## Related specifications", 1) + extra
 	spec, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)

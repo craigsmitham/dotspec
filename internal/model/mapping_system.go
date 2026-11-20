@@ -18,7 +18,7 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 		m.section(r, "purpose", s)
 	case "Project context":
 		m.contextField(r, "project_context", s.Content)
-		m.sectionBindings(r, "project_context.content", s)
+		m.markSection(r, "project_context.content", s)
 	case "Scope":
 		m.section(r, "scope", s)
 	case "Environment":
@@ -34,17 +34,11 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 			field, kind = "assumptions", "Assumption"
 		}
 		m.declared(r, field, s)
-		for _, item := range m.listItems(s.Intro, false) {
-			x := m.record(kind, String(r, "id"))
-			x["statement"] = m.doc.Rich([]string{item})
-			m.bind(x, "statement", []string{item}, "structured_item", "system-list-item")
-			appendID(r, field, String(x, "id"))
-		}
 		for _, child := range s.Children {
 			x := m.named(kind, r, child)
 			if kind == "Assumption" {
 				x["statement"] = m.doc.Rich(child.Intro)
-				m.bind(x, "statement", child.Intro, "named_field", "assumption-statement")
+				m.markField(x, "statement", child.Intro)
 				m.assumptionDetails(x, child)
 			} else {
 				m.section(x, "statement", child)
@@ -55,9 +49,7 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 		m.declared(r, "glossary", s)
 		m.glossaryTerms(r, "glossary", s.Children)
 	case "Quality attributes":
-		m.section(r, "quality_attributes_content", s)
-		r["quality_attributes"] = []string{}
-		m.bind(r, "quality_attributes", []string{s.HeadingID}, "structural_wrapper", "quality-attributes-heading")
+		m.declared(r, "quality_attributes", s)
 		if String(r, "kind") == "System" {
 			break
 		}
@@ -66,17 +58,15 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 			a["authored_id"] = m.fieldText(child, "ID")
 			definition := m.withoutFields(child, child.Content, "ID", "Sub-attribute of")
 			a["definition"] = m.doc.Rich(definition)
-			m.bind(a, "definition", definition, "named_field", "attribute-definition")
-			m.bind(a, "authored_id", m.fieldNodes(child, "ID"), "record_identity", "attribute-id")
-			a["subattribute_of_labels"] = []string{}
+			m.markField(a, "definition", definition)
+			m.authoredFragment(a, m.fieldNodes(child, "ID"))
 			if ids := m.fieldNodes(child, "Sub-attribute of"); len(ids) > 0 {
 				for _, label := range strings.Split(m.fieldText(child, "Sub-attribute of"), ",") {
 					label = strings.TrimSpace(label)
 					if label != "" {
-						appendID(a, "subattribute_of_labels", m.label(a, label, ids[0], "subattribute_of"))
+						m.label(a, label, ids[0], "subattribute_of")
 					}
 				}
-				m.bind(a, "subattribute_of_labels", ids, "named_field", "subattribute-labels")
 			}
 			m.openQuestions(a, child.Children)
 			appendID(r, "quality_attributes", String(a, "id"))
@@ -94,8 +84,7 @@ func (m *domainMapper) openQuestions(owner Record, sections []*Section) {
 		if !openQuestionHeading(s.Title) {
 			continue
 		}
-		m.setRich(owner, "open_questions_content", s.Content)
-		m.sectionBindings(owner, "open_questions_content", s)
+		m.markHeading("open_questions", s.HeadingID)
 		values, _ := owner["open_questions"].([]Record)
 		if values == nil {
 			values = []Record{}
@@ -107,18 +96,17 @@ func (m *domainMapper) openQuestions(owner Record, sections []*Section) {
 			values = append(values, v)
 			owner["open_questions"] = values
 			path := fmt.Sprintf("open_questions.%d", index)
-			m.bind(owner, path+".question", question, "named_field", "open-question-question")
+			m.markField(owner, path+".question", question)
 			if item == nil {
 				return
 			}
-			m.bind(owner, path+".question", []string{item.HeadingID}, "structural_wrapper", "open-question-heading")
+			m.markHeading(path+".question", item.HeadingID)
 		}
-		plural := s.Title == "Open questions"
-		if plural && len(s.Children) > 0 {
+		if len(s.Children) > 0 {
 			for _, child := range s.Children {
 				add(append([]string{child.HeadingID}, child.Content...), child)
 			}
-		} else if items := m.listItems(s.Intro, false); plural && len(items) > 0 {
+		} else if items := m.listItems(s.Intro, false); len(items) > 0 {
 			for _, item := range items {
 				add([]string{item}, nil)
 			}
@@ -129,48 +117,42 @@ func (m *domainMapper) openQuestions(owner Record, sections []*Section) {
 }
 
 func openQuestionHeading(title string) bool {
-	return title == "Open question" || title == "Open questions"
+	return title == "Open questions"
 }
 
 func (m *domainMapper) glossaryTerms(r Record, field string, terms []*Section) {
 	for _, child := range terms {
 		x := m.named("GlossaryTerm", r, child)
 		m.section(x, "definition", child)
-		if refs := m.references(child.Content); len(refs) > 0 {
-			x["references"] = refs
-		}
 		for _, sub := range child.Children {
 			switch sub.Title {
-			case "Alternative names", "Aliases":
+			case "Alternative names":
 				names, _ := x["alternative_names"].([]Record)
 				items := m.listItems(sub.Intro, false)
 				for _, item := range items {
 					names = append(names, m.doc.Rich([]string{item}))
 					x["alternative_names"] = names
-					m.bind(x, fmt.Sprintf("alternative_names.%d", len(names)-1), []string{item}, "named_field", "glossary-alias")
+					m.markField(x, fmt.Sprintf("alternative_names.%d", len(names)-1), []string{item})
 				}
 				if len(items) == 0 {
 					names = append(names, m.doc.Rich(sub.Intro))
 					x["alternative_names"] = names
-					m.bind(x, fmt.Sprintf("alternative_names.%d", len(names)-1), sub.Intro, "named_field", "glossary-alias")
+					m.markField(x, fmt.Sprintf("alternative_names.%d", len(names)-1), sub.Intro)
 				}
 				x["alternative_names"] = names
-				m.bind(x, "alternative_names", []string{sub.HeadingID}, "structural_wrapper", "glossary-aliases-heading")
+				m.markHeading("alternative_names", sub.HeadingID)
 				for _, detail := range sub.Children {
-					m.extension(x, detail)
+					m.subjectSection(x, detail)
 				}
 			case "Topics":
 				m.glossaryTopics(x, sub)
-			case "Examples", "Example", "Illustrative examples":
-				m.section(x, "illustrative_examples", sub)
-				m.bindReferenceOccurrences(x, "illustrative_examples", m.references(sub.Content))
 			case "Relationships", "Related terms":
 				detail := "relationships"
 				if sub.Title == "Related terms" {
 					detail = "related_terms"
 				}
 				m.contextField(x, detail, sub.Content)
-				m.sectionBindings(x, detail+".content", sub)
+				m.markSection(x, detail+".content", sub)
 				m.bindReferenceOccurrences(x, detail+".references", m.references(sub.Content))
 			}
 		}
@@ -188,7 +170,7 @@ func (m *domainMapper) glossaryTopics(term Record, section *Section) {
 			if topic != "" {
 				index := len(Strings(term["topics"]))
 				term["topics"] = append(Strings(term["topics"]), topic)
-				m.bind(term, fmt.Sprintf("topics.%d", index), []string{block}, "named_field", "glossary-topic")
+				m.markField(term, fmt.Sprintf("topics.%d", index), []string{block})
 			}
 			break
 		}

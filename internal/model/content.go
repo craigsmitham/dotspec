@@ -5,48 +5,57 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"html"
-	"regexp"
-	"sort"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
-	"github.com/yuin/goldmark/extension"
 	east "github.com/yuin/goldmark/extension/ast"
-	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
-	"github.com/yuin/goldmark/util"
 )
 
 // ParseContent maps Markdown to normalized UTF-8 text and source locations. It performs no
 // I/O and imposes no dotspec authoring validity requirements on Markdown or YAML.
 func ParseContent(locator string, data []byte) *ParsedDocument {
-	validEncoding := utf8.Valid(data)
-	data = specfile.Normalize(data)
-	if !validEncoding {
-		data = bytes.ToValidUTF8(data, []byte("�"))
-	}
+	return parseMarkdownContent(locator, data, true)
+}
+
+func parseMarkdownContent(locator string, data []byte, domain bool) *ParsedDocument {
+	return extractMarkdown(locator, specfile.NewMarkdown(data), domain)
+}
+
+func extractMarkdown(locator string, md *specfile.Markdown, domain bool) *ParsedDocument {
+	data := md.Source
 	key := strings.TrimPrefix(SourceID(locator), "source:")
 	p := &ParsedDocument{Data: data, NodeByID: map[string]Record{}}
 	p.Source = sourceRecord(locator)
 	p.Source["markdown"] = string(data)
 	p.Source["media_type"] = "text/markdown"
-	p.Document = Record{"id": "document:" + key, "kind": "Document", "source": p.Source["id"], "parse_status": "parsed", "parser": "goldmark/1.8.7 (CommonMark, GFM, footnotes); yaml.v3/3.0.6", "domain_decomposition": "not_attempted", "coverage": Record{"status": "not_checked", "mapping_profile": MappingProfile}}
+	p.Document = Record{"id": "document:" + key, "kind": "Document", "source": p.Source["id"], "parse_status": "parsed"}
 	e := &contentExtractor{p: p, key: key, buffer: data, counts: map[string]int{}}
+	p.Syntax = md
+	if md.InvalidUTF8 {
+		e.diagnostic("content.encoding", "Source contains invalid UTF-8; unreadable sequences are represented by replacement characters.", 0, len(e.buffer))
+		p.Document["parse_status"] = "partial"
+	}
+	if !domain {
+		// Directly cited Markdown contributes source text and navigable anchors.
+		e.base = len(data) - len(p.Syntax.Body)
+		_ = ast.Walk(p.Syntax.Tree, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+			if h, ok := n.(*ast.Heading); entering && ok {
+				if anchor, ok := h.AttributeString("id"); ok {
+					start, end := e.bounds(h)
+					p.Fragments = append(p.Fragments, Record{"id": fmt.Sprintf("fragment:%s:%d", key, len(p.Fragments)), "kind": "SourceFragment", "source": p.Source["id"], "generated_anchor": string(anchor.([]byte)), "anchor_rule": "goldmark-auto-heading/1", "span": e.sourceSpan(start, end)})
+				}
+			}
+			return ast.WalkContinue, nil
+		})
+		return p
+	}
 	root := e.node("document", 0, len(e.buffer))
 	p.Document["root"] = root["id"]
-	body, front := e.frontmatter()
+	e.base = e.frontmatter()
 	children := []string{}
-	if front != "" {
-		children = append(children, front)
-	}
-	e.base = body
-	footnotes := &sourceFootnotes{}
-	md := goldmark.New(goldmark.WithExtensions(extension.GFM, footnotes), goldmark.WithParserOptions(parser.WithAutoHeadingID()))
-	tree := md.Parser().Parse(text.NewReader(e.buffer[body:]))
-	footnotes.restore(tree)
+	tree := p.Syntax.Tree
 	for n := tree.FirstChild(); n != nil; n = n.NextSibling() {
 		if _, ok := n.(*east.FootnoteList); ok {
 			for c := n.FirstChild(); c != nil; c = c.NextSibling() {
@@ -60,21 +69,9 @@ func ParseContent(locator string, data []byte) *ParsedDocument {
 			children = append(children, id)
 		}
 	}
-	children = e.fillGaps(root, children)
 	root["children"] = children
 	e.sections(children)
 	e.referenceDefinitions()
-	if !validEncoding {
-		e.diagnostic("content.encoding", "Source contains invalid UTF-8; unreadable sequences are represented by replacement characters.", 0, len(e.buffer))
-		p.Document["parse_status"] = "partial"
-	}
-	if len(p.Diagnostics) > 0 {
-		ids := []string{}
-		for _, d := range p.Diagnostics {
-			ids = append(ids, String(d, "id"))
-		}
-		p.Document["diagnostics"] = ids
-	}
 	return p
 }
 
@@ -104,6 +101,7 @@ func (e *contentExtractor) node(kind string, start, end int) Record {
 func (e *contentExtractor) diagnostic(code, message string, start, end int) {
 	r := Record{"id": fmt.Sprintf("diagnostic:%s:%d", e.key, len(e.p.Diagnostics)), "kind": "Diagnostic", "code": code, "severity": "error", "message": message, "source": e.p.Source["id"], "phase": "parse", "span": e.sourceSpan(max(0, min(start, len(e.buffer))), max(0, min(end, len(e.buffer))))}
 	e.p.Diagnostics = append(e.p.Diagnostics, r)
+	appendID(e.p.Document, "diagnostics", String(r, "id"))
 }
 func (e *contentExtractor) lineEnd(pos int) int {
 	pos = max(0, min(pos, len(e.buffer)))
@@ -124,48 +122,6 @@ func (e *contentExtractor) spanBounds(r Record) (int, int) {
 	return Number(s["start"]), Number(s["end"])
 }
 
-// fillGaps retains syntax delimiters and whitespace omitted by the parser. Child
-// nodes keep their own spans; no content node is invented from a rendered view.
-func (e *contentExtractor) fillGaps(parent Record, children []string) []string {
-	sort.SliceStable(children, func(i, j int) bool {
-		a, _ := e.spanBounds(e.p.NodeByID[children[i]])
-		b, _ := e.spanBounds(e.p.NodeByID[children[j]])
-		return a < b
-	})
-	begin, end := e.spanBounds(parent)
-	out := []string{}
-	at := begin
-	add := func(a, b int) {
-		if a >= b {
-			return
-		}
-		r := e.node("trivia", a, b)
-		if String(parent, "node_kind") == "document" && len(bytes.TrimSpace(e.p.Data[a:b])) > 0 {
-			r["node_kind"] = "opaque"
-			r["opaque_reason"] = "Source region not represented by the configured Markdown parser"
-		}
-		if String(parent, "node_kind") == "text" {
-			r["node_kind"] = "text"
-			r["decoded_text"] = decodeMarkdownText(string(e.p.Data[a:b]))
-		}
-		if bytes.HasPrefix(bytes.TrimSpace(e.p.Data[a:b]), []byte("<!--")) {
-			r["node_kind"] = "comment"
-		}
-		out = append(out, String(r, "id"))
-	}
-	for _, id := range children {
-		a, b := e.spanBounds(e.p.NodeByID[id])
-		if a > at {
-			add(at, a)
-		}
-		out = append(out, id)
-		at = max(at, b)
-	}
-	if at < end {
-		add(at, end)
-	}
-	return out
-}
 func (e *contentExtractor) bounds(n ast.Node) (int, int) {
 	start := n.Pos()
 	end := start
@@ -405,9 +361,6 @@ func (e *contentExtractor) balanced(start int, left, right byte) int {
 	return -1
 }
 
-func syntaxProperty(name, value string) Record {
-	return Record{"name": name, "value": value, "value_type": "string"}
-}
 func (e *contentExtractor) markdown(n ast.Node) string {
 	if _, ok := n.(*east.FootnoteBacklink); ok {
 		return ""
@@ -490,7 +443,6 @@ func (e *contentExtractor) markdown(n ast.Node) string {
 	case *ast.List:
 		r["list_ordered"] = x.IsOrdered()
 		r["list_start"] = x.Start
-		r["list_delimiter"] = string(x.Marker)
 	case *ast.FencedCodeBlock:
 		if x.Info != nil {
 			r["code_info"] = string(x.Info.Segment.Value(e.buffer[e.base:]))
@@ -527,10 +479,6 @@ func (e *contentExtractor) markdown(n ast.Node) string {
 		r["destination"] = string(x.URL(e.buffer[e.base:]))
 		r["decoded_text"] = string(x.Label(e.buffer[e.base:]))
 		e.reference(r, "autolink", String(r, "destination"))
-	case *east.TableHeader:
-		r["syntax_properties"] = []Record{syntaxProperty("header", "true")}
-	case *east.TableCell:
-		r["syntax_properties"] = []Record{syntaxProperty("alignment", x.Alignment.String())}
 	case *east.Footnote:
 		r["label"] = string(x.Ref)
 	case *east.FootnoteLink:
@@ -539,10 +487,6 @@ func (e *contentExtractor) markdown(n ast.Node) string {
 		r["label"] = target
 		e.reference(r, "footnote", target)
 	case *east.TaskCheckBox:
-		r["task_state"] = "unchecked"
-		if x.IsChecked {
-			r["task_state"] = "checked"
-		}
 		r["decoded_text"] = string(e.buffer[start:end])
 	}
 	children := []string{}
@@ -593,9 +537,6 @@ func (e *contentExtractor) markdown(n ast.Node) string {
 					children = append(children, String(br, "id"))
 				}
 			}
-			if state := String(e.p.NodeByID[child], "task_state"); state != "" {
-				r["task_state"] = state
-			}
 		}
 		c = next
 	}
@@ -603,7 +544,7 @@ func (e *contentExtractor) markdown(n ast.Node) string {
 		children = e.textSyntax(start, end)
 	}
 	if len(children) > 0 {
-		r["children"] = e.fillGaps(r, children)
+		r["children"] = children
 	}
 	return id
 }
@@ -612,7 +553,7 @@ func (e *contentExtractor) fragment(node, anchor, rule string) {
 	e.p.Fragments = append(e.p.Fragments, r)
 }
 func (e *contentExtractor) reference(node Record, form, target string) {
-	e.p.References = append(e.p.References, Record{"id": fmt.Sprintf("reference:%s:%d", e.key, len(e.p.References)), "kind": "SourceReference", "source_document": e.p.Source["id"], "content_node": node["id"], "form": form, "authored_target": target})
+	e.p.References = append(e.p.References, Record{"id": fmt.Sprintf("reference:%s:%d", e.key, len(e.p.References)), "kind": "SourceReference", "source_document": e.p.Source["id"], "content_node": node["id"], "span": node["span"], "form": form, "authored_target": target})
 }
 func (e *contentExtractor) linkReference(node Record, form, target string, start, end int) {
 	raw := e.buffer[start:end]
@@ -730,14 +671,12 @@ func (p *ParsedDocument) Rich(ids []string) Record {
 			nodes = append(nodes, id)
 		}
 	}
-	presence := "empty"
-	if len(nodes) > 0 {
-		presence = "authored"
+	spans := make([]Record, 0, len(nodes))
+	for _, id := range nodes {
+		spans = append(spans, Object(p.NodeByID[id]["span"]))
 	}
-	return Record{"presence": presence, "content_nodes": nodes, "decomposition": "unsegmented"}
+	return Record{"content_nodes": nodes, "spans": spans}
 }
-
-var markdownEntity = regexp.MustCompile(`&(?:#[0-9]+|#x[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]+);`)
 
 func decodeMarkdownText(s string) string {
 	var b strings.Builder
@@ -753,22 +692,8 @@ func (e *contentExtractor) textSyntax(start, end int) []string {
 	children := []string{}
 	for i := start; i < end; i++ {
 		if e.buffer[i] == '\\' && i+1 < end && strings.ContainsRune(`!"#$%&'()*+,-./:;<=>?@[\]^_`+"`"+`{|}~`, rune(e.buffer[i+1])) {
-			r := e.node("escape", i, i+2)
-			r["decoded_text"] = string(e.buffer[i+1 : i+2])
-			children = append(children, String(r, "id"))
 			i++
 			continue
-		}
-		if e.buffer[i] == '&' {
-			loc := markdownEntity.FindIndex(e.buffer[i:end])
-			if loc != nil && loc[0] == 0 {
-				stop := i + loc[1]
-				r := e.node("entity", i, stop)
-				r["decoded_text"] = html.UnescapeString(string(e.buffer[i:stop]))
-				children = append(children, String(r, "id"))
-				i = stop - 1
-				continue
-			}
 		}
 		// Goldmark leaves undefined reference-style links as text. Retain the authored
 		// notation as an occurrence without pretending it resolved or rendered as a link.
@@ -797,7 +722,6 @@ func (e *contentExtractor) textSyntax(start, end int) []string {
 			if label != "" {
 				r := e.node(kind, i, stop)
 				r["label"] = label
-				r["syntax_properties"] = []Record{syntaxProperty("interpretation", "undefined reference notation retained from text")}
 				e.reference(r, form, label)
 				children = append(children, String(r, "id"))
 				i = stop - 1
@@ -805,56 +729,6 @@ func (e *contentExtractor) textSyntax(start, end int) []string {
 		}
 	}
 	return children
-}
-
-// Goldmark's HTML-oriented footnote transformer drops unused definitions and
-// moves used ones to the end. Keep its syntax parsers but restore source parents
-// after inline parsing, so this content model retains definitions and source order.
-type footnotePlacement struct{ node, parent ast.Node }
-type sourceFootnotes struct{ placements []footnotePlacement }
-type sourceFootnoteBlockParser struct {
-	parser.BlockParser
-	owner *sourceFootnotes
-}
-
-func (p *sourceFootnoteBlockParser) Close(node ast.Node, reader text.Reader, pc parser.Context) {
-	p.owner.placements = append(p.owner.placements, footnotePlacement{node, node.Parent()})
-	p.BlockParser.Close(node, reader, pc)
-}
-func (f *sourceFootnotes) Extend(md goldmark.Markdown) {
-	md.Parser().AddOptions(parser.WithBlockParsers(util.Prioritized(&sourceFootnoteBlockParser{extension.NewFootnoteBlockParser(), f}, 999)), parser.WithInlineParsers(util.Prioritized(sourceFootnoteInline{extension.NewFootnoteParser()}, 101)))
-}
-func (f *sourceFootnotes) restore(root ast.Node) {
-	affected := map[ast.Node]bool{}
-	for _, p := range f.placements {
-		affected[p.parent] = true
-		p.node.Parent().RemoveChild(p.node.Parent(), p.node)
-		p.parent.AppendChild(p.parent, p.node)
-	}
-	var clean func(ast.Node)
-	clean = func(n ast.Node) {
-		for c := n.FirstChild(); c != nil; {
-			next := c.NextSibling()
-			if _, ok := c.(*east.FootnoteList); ok {
-				n.RemoveChild(n, c)
-			} else {
-				clean(c)
-			}
-			c = next
-		}
-		if affected[n] {
-			nodes := []ast.Node{}
-			for c := n.FirstChild(); c != nil; c = c.NextSibling() {
-				nodes = append(nodes, c)
-			}
-			sort.SliceStable(nodes, func(i, j int) bool { return nodes[i].Pos() < nodes[j].Pos() })
-			for _, c := range nodes {
-				n.RemoveChild(n, c)
-				n.AppendChild(n, c)
-			}
-		}
-	}
-	clean(root)
 }
 
 // SourceID identifies a locator within the snapshot independently of read state.
@@ -866,16 +740,6 @@ func SourceID(locator string) string {
 
 func sourceRecord(locator string) Record {
 	return Record{"id": SourceID(locator), "kind": "SourceDocument", "locator": locator, "read_status": "read"}
-}
-
-type sourceFootnoteInline struct{ parser.InlineParser }
-
-func (p sourceFootnoteInline) Parse(parent ast.Node, reader text.Reader, pc parser.Context) ast.Node {
-	line, _ := reader.PeekLine()
-	if !bytes.HasPrefix(line, []byte("[^")) && !bytes.HasPrefix(line, []byte("![^")) {
-		return nil
-	}
-	return p.InlineParser.Parse(parent, reader, pc)
 }
 
 // inlineText reads syntax leaves without the deprecated approximate Node.Text API.

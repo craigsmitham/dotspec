@@ -1,45 +1,108 @@
 package model
 
-import "slices"
+import (
+	"net/url"
+	"path"
+	"slices"
+	"strings"
+)
 
-func (v *graphValidator) checkComposition() {
-	d := &designResolver{index: map[string]Record{}, elements: records(v.root["elements"]), projected: map[string]map[string][]string{}}
-	for id, r := range v.records {
-		d.index[id] = r.value
-	}
-	d.run()
-	for _, p := range d.projections {
-		actual := []string{}
-		if p.many {
-			actual = Strings(p.owner[p.field])
-		} else if id := String(p.owner, p.field); id != "" {
-			actual = []string{id}
-		}
-		if !slices.Equal(actual, p.values) {
-			v.add("concept.projection", v.records[String(p.owner, "id")].path+"/"+p.field, "Resolved relationship must match explicit references and their concept/system scope.")
+// Populate navigation from canonical occurrences after validating the wire shape.
+// This index is also used to check membership, classification scope and cycles.
+func (v *graphValidator) occurrenceRelationships() {
+	for _, loc := range v.sortedRecords() {
+		r := loc.value
+		if system := String(r, "directory_system"); system != "" {
+			r["specification_system"] = system
 		}
 	}
-	for _, located := range v.sortedRecords() {
-		r := located.value
-		if designKind(String(r, "kind"), "SystemContextSpecification") && String(r, "specification_system_origin") != specificationSystemOrigin(r) {
-			v.add("relationship.system-origin", located.path+"/specification_system_origin", "System association provenance must match the explicit selection or directory default.")
+	for _, loc := range v.sortedRecords() {
+		r := loc.value
+		kind := String(r, "kind")
+		if kind != "SourceReference" && kind != "LabelOccurrence" {
+			continue
 		}
-		for field, slot := range v.catalog.Classes[String(r, "kind")].Slots {
-			if slot.Annotations["trace_targets"] == "" && slot.Annotations["relationship_source"] == "" {
-				continue
-			}
-			roots := Strings(Object(r[field+"_content"])["content_nodes"])
-			for _, id := range Strings(r[field+"_references"]) {
-				node := String(v.records[id].value, "content_node")
-				matched := false
-				for _, root := range roots {
-					matched = matched || v.descendsFrom(node, root)
-				}
-				if !matched {
-					v.add("relationship.provenance", located.path+"/"+field+"_references", "Traceability occurrences must come from their declared relationship section.")
-				}
-			}
+		resolution := Object(r["resolution"])
+		target := String(resolution, "target")
+		status := String(resolution, "status")
+		if (target != "") != (status == "resolved") {
+			v.add("resolution.state", loc.path+"/resolution", "A resolved occurrence must identify exactly one target.")
 		}
+		candidates := Strings(resolution["candidates"])
+		if status == "ambiguous" && len(uniqueStrings(candidates)) < 2 || status != "ambiguous" && len(candidates) > 0 {
+			v.add("resolution.ambiguity", loc.path+"/resolution", "Ambiguous occurrences require distinct candidates.")
+		}
+		owner := v.records[String(r, "context_owner")].value
+		role := String(r, "role")
+		if kind == "LabelOccurrence" {
+			owner = v.records[String(r, "owner")].value
+			if role == "quality_classification" {
+				role = "quality_attributes"
+			}
+		} else if String(r, "source_document") != String(Object(r["span"]), "source") {
+			v.add("reference.context", loc.path+"/span", "Occurrence must lie in its declared source document.")
+		}
+		if owner != nil && v.sourceOf(owner) != String(Object(r["span"]), "source") {
+			v.add("reference.context", loc.path+"/span", "Occurrence must be expressed in its owner's source.")
+		}
+		if role == "" {
+			continue
+		}
+		ownerKind := String(owner, "kind")
+		slot := v.catalog.Classes[ownerKind].Slots[role]
+		expected := "link"
+		if kind == "LabelOccurrence" {
+			expected = "label"
+		}
+		if slot.Annotations["occurrence_role"] != expected {
+			v.add("relationship.role", loc.path+"/role", "The owner does not declare this relationship.")
+			continue
+		}
+		if role == "specification_system" && owner["directory_system"] != nil {
+			v.add("relationship.system-origin", loc.path, "An explicitly selected system cannot also have a directory default.")
+		}
+		if target == "" {
+			continue
+		}
+		class := String(v.records[target].value, "kind")
+		if !slices.ContainsFunc(slot.ReferenceRanges, func(parent string) bool { return v.isA(class, parent) }) {
+			v.add("relationship.target", loc.path+"/resolution/target", "Expected "+strings.Join(slot.ReferenceRanges, " or ")+".")
+		}
+		if kind == "SourceReference" && v.isA(class, "DomainElement") {
+			v.checkLinkTarget(r, v.records[target].value, loc.path)
+		}
+		if role == "dependencies" && String(owner, "owner") != String(v.records[target].value, "owner") {
+			v.add("relationship.scope", loc.path+"/resolution/target", "Concept uses must belong to the same system.")
+		}
+		if slot.Multivalued {
+			owner[role] = appendUnique(Strings(owner[role]), target)
+		} else {
+			if owner[role] != nil {
+				v.add("relationship.cardinality", loc.path+"/resolution/target", "The owner already has a target for "+role+".")
+			}
+			owner[role] = target
+		}
+	}
+}
 
+func (v *graphValidator) checkLinkTarget(ref, target Record, location string) {
+	u, err := url.Parse(String(ref, "authored_target"))
+	source := String(v.records[String(ref, "source_document")].value, "locator")
+	targetPath := String(v.records[v.sourceOf(target)].value, "locator")
+	if err == nil && u.Path != "" {
+		source = path.Join(path.Dir(source), u.Path)
 	}
+	if err == nil && !u.IsAbs() && u.Host == "" && source == targetPath {
+		if u.Fragment == "" && (String(target, "owner") == "" || String(target, "kind") == "SystemQualityAttribute") ||
+			u.Fragment != "" && String(target, "authored_id") == u.Fragment {
+			return
+		}
+		for _, record := range v.sortedRecords() {
+			f := record.value
+			if String(f, "kind") == "SourceFragment" && u.Fragment != "" && String(f, "generated_anchor") == u.Fragment && namesFragment(target, f) {
+				return
+			}
+		}
+	}
+	v.add("relationship.destination", location+"/resolution/target", "Resolved subject must match the authored file and fragment.")
 }

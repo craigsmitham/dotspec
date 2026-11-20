@@ -73,6 +73,8 @@ The person previously used [Delete](../concepts/checklist.concept.spec.md#delete
 
 The list must make previously recorded entries available when the person returns.
 
+The [restart requirement](../requirements/restart.requirement.spec.md) specifies which entry data survives a service interruption.
+
 #### Derived from
 
 [Completion preserves a commitment](../business-rules/completion.business-rule.spec.md).
@@ -80,7 +82,3 @@ The list must make previously recorded entries available when the person returns
 #### Applies to
 
 **Targets:** [My checklist](../personal-task-list.system.spec.md#my-checklist).
-
-#### Notes
-
-The [restart requirement](../requirements/restart.requirement.spec.md) specifies which entry data survives a service interruption.

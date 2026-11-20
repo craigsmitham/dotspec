@@ -381,8 +381,16 @@ def generate_outputs() -> dict[Path, bytes]:
         "--no-generation-date", str(MODEL),
     ]).replace(b"\r\n", b"\n").rstrip(b"\n") + b"\n"
     schema = json.loads(schema_bytes)
-    Draft202012Validator.check_schema(schema)
     catalog = make_catalog(view, raw_model, model_bytes)
+    # Typed navigation is derived from the role and resolution of each occurrence.
+    # Its endpoint contracts also drive the diagrams and offline graph checks.
+    for name, definition in schema["$defs"].items():
+        cls = catalog["classes"].get(name, {})
+        for field_name, slot in cls.get("slots", {}).items():
+            if slot["annotations"].get("occurrence_role"):
+                definition.get("properties", {}).pop(field_name, None)
+    schema_bytes = (json.dumps(schema, indent=4, ensure_ascii=False) + "\n").encode()
+    Draft202012Validator.check_schema(schema)
     view_definition = yaml.safe_load((ROOT / "model/views/core-domain.yaml").read_text())
     core_reference = core_markdown(catalog, view_definition)
     return {

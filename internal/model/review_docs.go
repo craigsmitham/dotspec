@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"path/filepath"
-	"slices"
+
 	"sort"
 	"strings"
 
@@ -83,15 +83,6 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	v.questions()
 	v.out.WriteString("## Requirements quality\n\nRequirements verification examines individual statements and the set for clarity, consistency and assessability against declared quality criteria. Terminology checks and inspection findings below supply selected review prompts; passing them does not establish complete requirements verification.\n\n")
 	v.glossary()
-	v.out.WriteString("## Explanations and suggestions\n\nThese roles distinguish explanation, nonbinding implementation advice and examples from specified obligations. They do not record stakeholder endorsement.\n\n")
-	for _, r := range v.records {
-		for _, f := range []string{"notes", "implementation_suggestions", "illustrative_examples"} {
-			if strings.TrimSpace(v.d.text(r[f])) != "" {
-				fmt.Fprintf(&v.out, "### %s — %s\n\n", v.link(r), reviewLabel(f))
-				v.body(r, "", r[f])
-			}
-		}
-	}
 	if len(s.Diagnostics) > 0 {
 		v.out.WriteString("## Automated inspection findings\n\n")
 		for _, f := range s.Diagnostics {
@@ -168,6 +159,7 @@ type reviewView struct {
 }
 
 func newReviewView(s *Snapshot, relativeTo string) (*reviewView, error) {
+	s = s.navigation()
 	base, err := designOutputBase(relativeTo)
 	if err != nil {
 		return nil, err
@@ -200,7 +192,7 @@ func (v *reviewView) link(r Record) string {
 	}
 	target, _ := url.Parse(v.source(r))
 	for _, f := range v.snapshot.Fragments {
-		if String(f, "source") == String(r, "source_document") && slices.Contains(Strings(Object(r["name"])["content_nodes"]), String(f, "content_node")) {
+		if String(f, "source") == String(r, "source_document") && namesFragment(r, f) {
 			target.Fragment = String(f, "generated_anchor")
 			break
 		}
@@ -235,16 +227,10 @@ func (v *reviewView) body(r Record, label string, value any) bool {
 	if strings.TrimSpace(text) == "" {
 		return false
 	}
-	defs := []string{}
-	for _, n := range v.snapshot.ContentNodes {
-		if String(n, "node_kind") == "link_definition" && String(Object(n["span"]), "source") == String(r, "source_document") {
-			defs = append(defs, v.d.text(Record{"content_nodes": []string{String(n, "id")}}))
-		}
-	}
 	if label != "" {
 		fmt.Fprintf(&v.out, "**%s**\n\n", label)
 	}
-	fmt.Fprintf(&v.out, "%s\n\n", designHeadings(rebaseDesignMarkdown(text, v.source(r), strings.Join(defs, "\n")), 4))
+	fmt.Fprintf(&v.out, "%s\n\n", designHeadings(rebaseDesignMarkdown(text, v.source(r), v.d.definitions(r)), 4))
 	return true
 }
 func (v *reviewView) boundaries() {
@@ -269,10 +255,10 @@ func (v *reviewView) boundaries() {
 			fmt.Fprintf(&v.out, "Interacts with: %s.\n\n", v.links(ids))
 		}
 		for _, field := range []string{"required_interfaces", "provided_interfaces"} {
-			if r[field+"_content"] == nil {
+			if r[field] == nil {
 				continue
 			}
-			v.body(r, reviewLabel(field), r[field+"_content"])
+
 			items := Strings(r[field])
 			if len(items) == 0 {
 				v.out.WriteString("Review required: no named interfaces recorded.\n\n")

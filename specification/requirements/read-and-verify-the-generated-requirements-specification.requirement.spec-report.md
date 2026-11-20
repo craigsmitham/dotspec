@@ -34,13 +34,13 @@ appears under each declared parent, with its descendants expanded once. The
 business rules index lists all rules. When a small set explicitly applies to the system, the overview names those rules and includes
 their authored statement previews.
 
-System and component overviews introduce named goals, assumptions, and constraints
+System and component overviews introduce named goals and assumptions
 with a linked title and an authored statement preview when available. Each link
 opens the exact entry in the owner's collection. Readers can follow a relationship
 in either direction from the passages it connects. The detail entry keeps its
 qualifications and supporting references together. A citation in prose leads
-back to the citing passage through a “Referenced by” link. Prose and lists
-directly under the collection heading stay in the overview. The component’s
+back to the citing passage through a “Referenced by” link. Collection entries come from declared members. Constraints stay together in the system scope.
+The report selects authored fields, and inspection identifies misplaced collection prose and unrecognized sections at their source locations. The component’s
 requirements index lists each explicitly applicable requirement once. Its overview
 keeps authored citations beside the responsibilities they explain.
 

@@ -9,3 +9,10 @@ func TestReferenceExtractionUsesMarkdown(t *testing.T) {
 		t.Fatalf("extraction: %+v", doc)
 	}
 }
+
+func TestNativeMarkdownWithOpeningThematicBreak(t *testing.T) {
+	refs := NewMarkdown([]byte("---\n\n# Native heading\n")).AnchorReferences()
+	if !refs.Anchors["native-heading"] {
+		t.Fatal("a thematic break must preserve the native document's heading targets")
+	}
+}

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"path/filepath"
-	"slices"
+
 	"sort"
 	"strings"
 )
@@ -14,6 +14,7 @@ type traceEdge struct{ source, field, target string }
 // TraceMarkdown presents explicit instance relationships and their inverses.
 // Reachability only identifies review candidates, never satisfaction or evidence.
 func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
+	s = s.navigation()
 	base, err := designOutputBase(relativeTo)
 	if err != nil {
 		return "", err
@@ -54,7 +55,7 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		anchor := ""
 		for _, f := range s.Fragments {
-			if String(f, "source") == source && (String(f, "id") == id || slices.Contains(Strings(Object(r["name"])["content_nodes"]), String(f, "content_node"))) && String(f, "generated_anchor") != "" {
+			if String(f, "source") == source && (String(f, "id") == id || namesFragment(r, f)) && String(f, "generated_anchor") != "" {
 				anchor = String(f, "generated_anchor")
 				break
 			}

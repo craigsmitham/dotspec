@@ -12,6 +12,18 @@ def record_witnesses(snapshot, classes, expected, evidence, project, label):
     sources = {s["id"]: Path(s["locator"]) for s in snapshot["sources"]}
     documents = {d["id"]: sources[d["source"]] for d in snapshot["documents"]}
 
+    records = {r["id"]: r for r in snapshot["elements"]}
+    for occurrence in [*snapshot.get("references", []), *snapshot.get("label_occurrences", [])]:
+        target = occurrence.get("resolution", {}).get("target")
+        owner = records.get(occurrence.get("context_owner") or occurrence.get("owner"))
+        role = occurrence.get("role")
+        if target and owner and role:
+            field = "quality_attributes" if role == "quality_classification" else role
+            owner.setdefault(field, []).append(target)
+    for element in records.values():
+        if "directory_system" in element:
+            element["specification_system"] = element["directory_system"]
+
     def context(path):
         if path.is_relative_to(project):
             return f"{label}/{path.relative_to(project).as_posix()}"
@@ -32,7 +44,7 @@ def record_witnesses(snapshot, classes, expected, evidence, project, label):
             value = record.get(field)
             if value is None or value == [] or value == {} or value == "":
                 continue
-            if isinstance(value, dict) and value.get("presence") in {"empty", "absent"}:
+            if isinstance(value, dict) and value.get("spans") == []:
                 continue
             for ancestor in definition["ancestors"]:
                 key = f"{ancestor}.{field}"

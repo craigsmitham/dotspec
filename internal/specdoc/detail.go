@@ -1,46 +1,40 @@
 package specdoc
 
 import (
+	"github.com/craigsmitham/dotspec/internal/model"
 	"maps"
 	"slices"
-	"strings"
 
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 )
 
 func isDetailCollection(title string) bool {
-	return title == "Goals" || title == "Assumptions" || title == "Constraints"
+	return title == "Goals" || title == "Assumptions"
 }
 
-// Collect named entries with their nested qualifications in authored order.
-// Prose and lists directly under the collection heading stay on the overview.
+// A named goal or assumption owns its qualifications on the collection page.
 func (p *planner) collectOverviewDetails(s *subject) {
-	var collection string
 	var root *heading
+	var idx *collectionIndex
 	for _, h := range s.source.headings {
 		if h.owner != s {
 			continue
 		}
-		if h.level <= s.name.level+1 {
+		if root != nil && h.level <= root.level {
 			root = nil
-			collection = ""
-			if h != s.name && isDetailCollection(h.title) {
-				collection = h.title
-			}
-			continue
 		}
-		if collection == "" {
-			continue
-		}
-		idx := s.index(collection)
-		if root == nil || h.level <= root.level {
+		switch h.subjectKind {
+		case "Goal", "Assumption":
 			root = h
+			idx = s.index(h.subjectKind + "s")
 			idx.passages = append(idx.passages, nil)
 		}
-		h.detailEntry = root
-		i := len(idx.passages) - 1
-		idx.passages[i] = append(idx.passages[i], h)
+		if root != nil {
+			h.detailEntry = root
+			i := len(idx.passages) - 1
+			idx.passages[i] = append(idx.passages[i], h)
+		}
 	}
 }
 
@@ -86,14 +80,8 @@ func (p *planner) indexDetailReferences() {
 			}
 		}
 	}
-	resolved := map[string]*heading{}
-	for _, r := range p.snapshot.Resolutions {
-		if h := entries[p.targets[attr(r, "target")]]; h != nil {
-			resolved[attr(r, "occurrence")] = h
-		}
-	}
 	for _, ref := range p.snapshot.References {
-		h := resolved[id(ref)]
+		h := entries[p.targets[attr(model.Object(ref["resolution"]), "target")]]
 		src := p.sources[attr(ref, "source_document")]
 		n := p.nodes[attr(ref, "content_node")]
 		if h == nil || src == nil || attr(n, "node_kind") != "link" {
@@ -104,7 +92,7 @@ func (p *planner) indexDetailReferences() {
 			continue
 		}
 		subject := p.targets[attr(ref, "context_owner")]
-		relation, typed := relations[strings.TrimSuffix(attr(ref, "context_field"), "_references")]
+		relation, typed := relations[attr(ref, "role")]
 		if typed && slices.ContainsFunc(p.routes[h.node], func(r route) bool {
 			return r.label == relation.reverse && r.target == subject
 		}) {

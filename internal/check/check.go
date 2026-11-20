@@ -26,6 +26,7 @@ type Summary struct {
 }
 
 type Report struct {
+	sources       *specfile.SourceSet
 	files         map[string]*SourceFile
 	GeneratedSpec string                  `json:"generated_spec,omitempty"`
 	SchemaVersion int                     `json:"schema_version"`
@@ -58,6 +59,7 @@ func project(path string, inventory *Inventory, types ...Type) Report {
 	r := newReport(path, "unavailable", types)
 	if inventory != nil {
 		r.files = make(map[string]*SourceFile)
+		inventory.Sources = r.sources
 	}
 	match := func(name string) bool { return findType(name, types) != nil }
 	dir, err := specfile.Directory(path)
@@ -95,7 +97,7 @@ func project(path string, inventory *Inventory, types ...Type) Report {
 		discovered[path] = true
 		r.Summary.FilesChecked++
 		kind := findType(path, types) // Discovery returned only matching paths.
-		findings, err := kind.Inspect(path)
+		findings, err := kind.Inspect(r.sources, path)
 		if err != nil {
 			r.record(err, "scan.read", path)
 			continue
@@ -127,7 +129,7 @@ func newReport(path, discovery string, types []Type) Report {
 		names = append(names, kind.Layout.Kind)
 	}
 	scope := Scope{Path: path, Types: names, Discovery: discovery}
-	return Report{SchemaVersion: 1, Scope: scope, Complete: true, ContextFiles: []string{}, Diagnostics: []diagnostic.Diagnostic{}}
+	return Report{sources: &specfile.SourceSet{}, SchemaVersion: 1, Scope: scope, Complete: true, ContextFiles: []string{}, Diagnostics: []diagnostic.Diagnostic{}}
 }
 
 // record and finish keep report accounting, error identity, and deterministic

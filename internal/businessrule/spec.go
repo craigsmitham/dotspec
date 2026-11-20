@@ -3,7 +3,6 @@ package businessrule
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -84,6 +83,10 @@ func ValidateSlug(slug string) error {
 }
 
 func Read(path string) (*BusinessRule, error) {
+	return readFrom(&specfile.SourceSet{}, path)
+}
+
+func readFrom(files *specfile.SourceSet, path string) (*BusinessRule, error) {
 	name := filepath.Base(path)
 	if !strings.HasSuffix(name, Suffix) {
 		return nil, diagnostic.Error("layout.business-rule-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
@@ -92,11 +95,11 @@ func Read(path string) (*BusinessRule, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.business-rule-name", err.Error(), diagnostic.Location{Path: path})
 	}
-	data, err := os.ReadFile(path)
+	input, err := files.Markdown(path)
 	if err != nil {
 		return nil, err
 	}
-	spec, err := Parse(data)
+	spec, err := ParseMarkdown(input)
 	if err != nil {
 		return nil, diagnostic.WithPath(err, path)
 	}
@@ -107,14 +110,18 @@ func Read(path string) (*BusinessRule, error) {
 // Parse accepts unfinished content, but rejects ambiguous document structure
 // and unresolved same-document references. Check commands resolve file links.
 func Parse(data []byte) (*BusinessRule, error) {
+	return ParseMarkdown(specfile.NewMarkdown(data))
+}
+
+func ParseMarkdown(input *specfile.Markdown) (*BusinessRule, error) {
 	var meta metadata
-	doc, err := specfile.ParseOutline(data, Layout.Kind, &meta)
+	doc, err := input.TypedOutline(Layout.Kind, &meta)
 	if err != nil {
 		return nil, err
 	}
 	spec := &BusinessRule{ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
 	var ids specfile.Identifiers
-	if err := ids.Register(spec.ID, "business-rule", specfile.MetadataLocation(data, "id")); err != nil {
+	if err := ids.Register(spec.ID, "business-rule", input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
 	if err := ids.RegisterObligations(doc); err != nil {
@@ -128,9 +135,6 @@ func Parse(data []byte) (*BusinessRule, error) {
 	}
 
 	for _, section := range doc.Sections {
-		if section.Title == "Authority and evidence" {
-			section.Title = "Authority"
-		}
 		target, known := fields[section.Title]
 		if !known {
 			continue

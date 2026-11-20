@@ -1,57 +1,20 @@
 package model
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"strings"
 	"testing"
 )
 
-func TestContentPreservesOriginalAndOrderedTree(t *testing.T) {
-	source := "\ufeff---\r\n# metadata comment\r\ntype: use-case-spec\r\nid: sample\r\nlabels: [one, two]\r\nnested:\r\n  key: \"a # quoted\" # tail\r\n  enabled: true\r\n---\r\n# A *title*\r\n\r\nPreamble.\r\n\r\n## Scenario\r\n\r\n1. [x] **ID:** first\r\n   **Stage:** explain\r\n   - nested [link](other.md#part)\r\n\r\n### Arbitrary child\r\n\r\n| Head | Other |\r\n| :--- | ---: |\r\n| ~~strike~~ | ![picture](x.png) |\r\n\r\n> ## Quoted, not a section\r\n> next\r\n\r\n```mermaid custom\r\nflowchart LR\r\nA-->B\r\n## Not a section\r\n```\r\n\r\n<!-- author comment -->\r\n\r\n[shown][r] <https://example.test> [^note]\r\n\r\n[r]: other.md \"A title\"\r\n\r\n[^note]: Footnote text.\r\n\r\n## Empty\r\n"
-	p := ParseContent("specs/a.use-case.spec.md", []byte(source))
-	if String(p.Source, "markdown") != strings.ReplaceAll(strings.TrimPrefix(source, "\ufeff"), "\r\n", "\n") {
-		t.Fatal("normalized text differs")
+func TestReferencedMarkdownContributesOnlyTextAndAnchors(t *testing.T) {
+	p := parseMarkdownContent("guide.md", []byte("\ufeff# Guide\r\n## Local heading\r\n[more](unread.md)\r\n"), false)
+	if len(p.Fragments) != 2 || len(p.References) != 0 || len(p.Nodes) != 0 || !strings.Contains(String(p.Source, "markdown"), "[more](unread.md)") {
+		t.Fatal(p)
 	}
-	if p.Title != "A title" {
-		t.Fatalf("title %q", p.Title)
-	}
-	if len(p.Sections) != 2 || len(p.Sections[0].Children) != 1 || p.Sections[0].Children[0].Title != "Arbitrary child" {
-		t.Fatalf("sections %#v", p.Sections)
-	}
-	if len(p.Sections[1].Content) != 0 || String(p.Rich(p.Sections[1].Content), "presence") != "empty" {
-		t.Fatal("blank section gained body")
-	}
-	kinds := map[string]int{}
-	for _, n := range p.Nodes {
-		kinds[String(n, "node_kind")]++
-	}
-	for _, kind := range []string{"frontmatter", "yaml_mapping", "yaml_sequence", "yaml_scalar", "yaml_entry", "heading", "list", "list_item", "strong", "table", "table_row", "table_cell", "strikethrough", "image", "block_quote", "fenced_code", "comment", "link", "autolink", "link_definition", "footnote_definition", "footnote_reference", "trivia", "soft_break"} {
-		if kinds[kind] == 0 {
-			t.Errorf("missing %s", kind)
-		}
-	}
-	var foundFence bool
-	for _, n := range p.Nodes {
-		if String(n, "node_kind") == "fenced_code" {
-			foundFence = true
-			if String(n, "code_info") != "mermaid custom" || !strings.HasSuffix(p.Raw(String(n, "id")), "```\n") {
-				t.Errorf("fence metadata/span: %#v %q", n, p.Raw(String(n, "id")))
-			}
-		}
-	}
-	if !foundFence {
-		t.Fatal("missing fence")
-	}
-	if len(p.References) != 5 {
-		t.Errorf("references %d: %#v", len(p.References), p.References)
-	}
-	checkContentTree(t, p)
-	first, _ := json.Marshal(p)
-	second, _ := json.Marshal(ParseContent("specs/a.use-case.spec.md", []byte(source)))
-	if !bytes.Equal(first, second) {
-		t.Fatal("nondeterministic extraction")
+	span := Object(p.Fragments[1]["span"])
+	if text := string(p.Data[Number(span["start"]):Number(span["end"])]); text != "## Local heading\n" {
+		t.Fatal(text)
 	}
 }
 func checkContentTree(t *testing.T, p *ParsedDocument) {
@@ -94,16 +57,6 @@ func checkContentTree(t *testing.T, p *ParsedDocument) {
 		}
 	}
 }
-func TestContentMalformedYAMLRetainsMarkdown(t *testing.T) {
-	p := ParseContent("broken.spec.md", []byte("---\ntype: [broken\n---\n# Kept\n\n## Goal\nStill readable.\n"))
-	if String(p.Document, "frontmatter_parse_status") != "failed" || String(p.Document, "parse_status") != "partial" || len(p.Diagnostics) != 1 {
-		t.Fatalf("parse result %#v", p.Document)
-	}
-	if p.Title != "Kept" || len(p.Sections) != 1 {
-		t.Fatal("Markdown after bad metadata was discarded")
-	}
-	checkContentTree(t, p)
-}
 func TestContentMissingDelimiterAndInvalidUTF8(t *testing.T) {
 	for _, source := range [][]byte{[]byte("---\ntype: job-spec\n# never closed"), {'#', ' ', 0xff, '\n'}} {
 		p := ParseContent("bad.md", source)
@@ -113,44 +66,6 @@ func TestContentMissingDelimiterAndInvalidUTF8(t *testing.T) {
 		checkContentTree(t, p)
 	}
 }
-func TestContentSetextEscapesBreaksAndUndefinedReferences(t *testing.T) {
-	p := ParseContent("native.md", []byte("Title\n=====\n\nBody\n----\n\nEscaped \\* &amp; next  \nline\\\nagain\nsoft\n\n[missing][nope] [^missing]\n\n`[not a link](x)`\n"))
-	if p.Title != "Title" || len(p.Sections) != 1 || p.Sections[0].Title != "Body" {
-		t.Fatal("setext headings not retained")
-	}
-	kinds := map[string]int{}
-	for _, n := range p.Nodes {
-		kinds[String(n, "node_kind")]++
-	}
-	for _, kind := range []string{"escape", "entity", "hard_break", "soft_break", "code_span"} {
-		if kinds[kind] == 0 {
-			t.Errorf("missing %s", kind)
-		}
-	}
-	if len(p.References) != 2 {
-		t.Fatalf("references: %#v", p.References)
-	}
-	checkContentTree(t, p)
-}
-func TestContentYAMLTypesAliasesAndDuplicateKeys(t *testing.T) {
-	p := ParseContent("metadata.md", []byte("---\ntype: job-spec\nitems: &items\n  - name: first\n    count: 2\n  - name: second\n    count: 3\ncopy: *items\ncustom: !tag value\nmultiline: |\n  first\n  second\nwhen: 2020-01-01\nnullish: null\ndup: one\ndup: two\n---\n# Job\n"))
-	if String(p.Document, "frontmatter_parse_status") != "parsed" {
-		t.Fatalf("failed metadata: %#v", p.Diagnostics)
-	}
-	seen := map[string]bool{}
-	for _, n := range p.Nodes {
-		if String(n, "scalar_kind") != "" {
-			seen[String(n, "scalar_kind")] = true
-		}
-	}
-	for _, kind := range []string{"string", "integer", "timestamp", "null", "custom"} {
-		if !seen[kind] {
-			t.Errorf("missing scalar kind %s", kind)
-		}
-	}
-	checkContentTree(t, p)
-}
-
 func TestContentUnusedFootnotesRetainSourceOrderAndParent(t *testing.T) {
 	p := ParseContent("notes.md", []byte("# Title\n\n[^unused]: Definition **with emphasis**.\n\n> [^nested]: Nested definition.\n\nParagraph.\n"))
 	count := 0
@@ -192,72 +107,6 @@ func FuzzParseContent(f *testing.F) {
 	})
 }
 
-func TestContentYAMLScalarLexicalSpans(t *testing.T) {
-	cases := []struct{ name, body, value, raw, comment string }{
-		{"plain-final-continuation", "extra: first\n  next\n  last\n", "first next last", "first\n  next\n  last", ""},
-		{"plain-before-key", "extra: first\n  next\n  last\nother: value\n", "first next last", "first\n  next\n  last", ""},
-		{"plain-comma", "extra: one, two\n", "one, two", "one, two", ""},
-		{"literal-clip", "extra: |\n  first\n\n  second\n# trailing\n", "first\n\nsecond\n", "|\n  first\n\n  second\n", "# trailing\n"},
-		{"literal-keep", "extra: |+\n  first\n\n\n# trailing\n", "first\n\n\n", "|+\n  first\n\n\n", "# trailing\n"},
-		{"folded-strip", "extra: >-\n  first\n  second\n\n  third\n\n# trailing\n", "first second\nthird", ">-\n  first\n  second\n\n  third\n\n", "# trailing\n"},
-		{"explicit-indent-literal-hash", "extra: |2-\n  # literal\n  body\n# outside\n", "# literal\nbody", "|2-\n  # literal\n  body\n", "# outside\n"},
-	}
-	for _, test := range cases {
-		for _, crlf := range []bool{false, true} {
-			t.Run(fmt.Sprintf("%s/crlf=%v", test.name, crlf), func(t *testing.T) {
-				source := "---\ntype: concept-spec\n" + test.body + "---\n# T\n"
-				wantRaw, wantComment := test.raw, test.comment
-				if crlf {
-					source = "\ufeff" + strings.ReplaceAll(source, "\n", "\r\n")
-				}
-				p := ParseContent("scalar.md", []byte(source))
-				if len(p.Diagnostics) != 0 {
-					t.Fatalf("syntax diagnostics: %#v", p.Diagnostics)
-				}
-				found, comment := false, wantComment == ""
-				for _, n := range p.Nodes {
-					if String(n, "node_kind") == "yaml_scalar" && String(n, "decoded_text") == test.value {
-						found = true
-						if raw := p.Raw(String(n, "id")); raw != wantRaw {
-							t.Errorf("scalar span raw %q, want %q", raw, wantRaw)
-						}
-					}
-					if String(n, "node_kind") == "comment" && p.Raw(String(n, "id")) == wantComment {
-						comment = true
-					}
-				}
-				if !found || !comment {
-					t.Errorf("scalar found=%v, separate dedented comment found=%v", found, comment)
-				}
-				checkContentTree(t, p)
-			})
-		}
-	}
-}
-
-func TestContentYAMLFlowCommentCannotCloseCollection(t *testing.T) {
-	p := ParseContent("flow.md", []byte("---\ntype: concept-spec\nextra: [one, # ] is comment text\n  two, {inside: value}]\n---\n# T\n"))
-	if len(p.Diagnostics) != 0 {
-		t.Fatalf("syntax diagnostics: %#v", p.Diagnostics)
-	}
-	var sequence Record
-	comment, inside := false, false
-	for _, n := range p.Nodes {
-		switch String(n, "node_kind") {
-		case "yaml_sequence":
-			sequence = n
-		case "comment":
-			comment = comment || strings.Contains(p.Raw(String(n, "id")), "] is comment")
-		case "yaml_scalar":
-			inside = inside || String(n, "decoded_text") == "value"
-		}
-	}
-	if sequence == nil || p.Raw(String(sequence, "id")) != "[one, # ] is comment text\n  two, {inside: value}]" || !comment || !inside {
-		t.Fatalf("flow representation incomplete: %#v comment=%v inner scalar=%v", sequence, comment, inside)
-	}
-	checkContentTree(t, p)
-}
-
 func TestContentFenceSpanUsesActualClosingLine(t *testing.T) {
 	cases := []struct{ name, source, raw, body string }{
 		{"quoted-looking-literal", "```md\n> ```\nkept\n```\n", "```md\n> ```\nkept\n```\n", "> ```\nkept\n"},
@@ -289,62 +138,5 @@ func TestContentFenceSpanUsesActualClosingLine(t *testing.T) {
 			}
 			checkContentTree(t, p)
 		})
-	}
-}
-
-func TestContentYAMLBlockHeaderCommentIsAnOccurrence(t *testing.T) {
-	p := ParseContent("header.md", []byte("---\ntype: job-spec\nextra: | # header\n  body\n# trailing\n---\n# Job\n"))
-	comments := map[string]bool{}
-	for _, n := range p.Nodes {
-		if String(n, "node_kind") == "comment" {
-			comments[p.Raw(String(n, "id"))] = true
-		}
-	}
-	if !comments["# header\n"] || !comments["# trailing\n"] {
-		t.Fatalf("comments: %#v", comments)
-	}
-	checkContentTree(t, p)
-}
-
-func TestContentFrontmatterDelimiterMustBeUnindented(t *testing.T) {
-	source := "---\ntype: concept-spec\nextra: |\n  ---\n  retained\n  ...\n---\n# Real title\n"
-	p := ParseContent("separator.md", []byte(source))
-	if p.Title != "Real title" || len(p.Diagnostics) != 0 {
-		t.Fatalf("title=%q diagnostics=%#v", p.Title, p.Diagnostics)
-	}
-	found := false
-	for _, n := range p.Nodes {
-		if String(n, "node_kind") == "yaml_scalar" && String(n, "decoded_text") == "---\nretained\n...\n" {
-			found = true
-			if raw := p.Raw(String(n, "id")); raw != "|\n  ---\n  retained\n  ...\n" {
-				t.Errorf("scalar raw %q", raw)
-			}
-		}
-	}
-	if !found {
-		t.Fatal("indented delimiter split the frontmatter scalar")
-	}
-	checkContentTree(t, p)
-}
-
-func TestContentMetadataAliasesRetainSyntaxAndInterpretation(t *testing.T) {
-	for _, source := range []string{"---\ntype: &kind concept-spec\nid: *kind\n---\n# T\n", "---\nvalue: &kind concept-spec\ntype: *kind\nid: *kind\n---\n# T\n"} {
-		p := ParseContent("alias.md", []byte(source))
-		if String(p.Document, "declared_type") != "concept-spec" || String(p.Document, "authored_id") != "concept-spec" {
-			t.Fatalf("interpreted metadata: %#v", p.Document)
-		}
-		aliases := 0
-		for _, n := range p.Nodes {
-			if String(n, "node_kind") == "yaml_alias" {
-				aliases++
-				if String(n, "alias_name") != "kind" || p.Raw(String(n, "id")) != "*kind" {
-					t.Errorf("alias occurrence rewritten: %#v raw=%q", n, p.Raw(String(n, "id")))
-				}
-			}
-		}
-		if aliases == 0 {
-			t.Fatal("aliases lost")
-		}
-		checkContentTree(t, p)
 	}
 }

@@ -4,14 +4,10 @@ package specfile
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"os"
-	"regexp"
-	"strconv"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/yuin/goldmark/ast"
-	"go.yaml.in/yaml/v3"
 )
 
 type Document struct {
@@ -127,56 +123,5 @@ func BodyLocation(data, body []byte, offset int) diagnostic.Location {
 // MetadataLocation points to a YAML value; callers use it only after successful
 // metadata parsing. YAML's line numbers start after the opening fence.
 func MetadataLocation(data []byte, key string) diagnostic.Location {
-	lines := bytes.Split(Normalize(data), []byte("\n"))
-	end := 1
-	for end < len(lines) && string(bytes.TrimSpace(lines[end])) != "---" {
-		end++
-	}
-	var node yaml.Node
-	if end < len(lines) && yaml.Unmarshal(bytes.Join(lines[1:end], []byte("\n")), &node) == nil && len(node.Content) > 0 {
-		fields := node.Content[0].Content
-		for i := 0; i+1 < len(fields); i += 2 {
-			if fields[i].Value == key {
-				return diagnostic.Location{Line: fields[i+1].Line + 1, Column: fields[i+1].Column, Element: key}
-			}
-		}
-	}
-	return diagnostic.Location{Line: 1, Column: 1, Element: key}
-}
-
-var yamlLine = regexp.MustCompile(`line (\d+)`)
-
-func frontmatter(data []byte, kind string, metadata TypedMetadata) ([]byte, error) {
-	data = Normalize(data)
-	lines := bytes.Split(data, []byte("\n"))
-	if len(lines) == 0 || string(bytes.TrimSpace(lines[0])) != "---" {
-		return nil, diagnostic.Error("metadata.frontmatter", "expected YAML frontmatter beginning with ---", diagnostic.At(data, 0))
-	}
-	end := 1
-	for end < len(lines) && string(bytes.TrimSpace(lines[end])) != "---" {
-		end++
-	}
-	if end == len(lines) {
-		return nil, diagnostic.Error("metadata.frontmatter", "YAML frontmatter must end with ---", diagnostic.At(data, 0))
-	}
-	decoder := yaml.NewDecoder(bytes.NewReader(bytes.Join(lines[1:end], []byte("\n"))))
-	decoder.KnownFields(true)
-	if err := decoder.Decode(metadata); err != nil {
-		location := diagnostic.Location{Line: 2, Column: 1}
-		if match := yamlLine.FindStringSubmatch(err.Error()); match != nil {
-			line, _ := strconv.Atoi(match[1])
-			location.Line = line + 1
-		}
-		return nil, diagnostic.Error("metadata.invalid", fmt.Sprintf("invalid YAML frontmatter: %v", err), location)
-	}
-	if expected := AuthoredType(kind); metadata.SpecType() != expected {
-		return nil, diagnostic.Error("metadata.type", fmt.Sprintf("frontmatter must declare type: %s", expected), MetadataLocation(data, "type"))
-	}
-	var extra any
-	if err := decoder.Decode(&extra); err != io.EOF {
-		return nil, diagnostic.Error("metadata.invalid", "frontmatter must contain exactly one YAML document", diagnostic.Location{Line: 2, Column: 1})
-	}
-
-	body := bytes.Join(lines[end+1:], []byte("\n"))
-	return body, nil
+	return NewMarkdown(data).MetadataLocation(key)
 }

@@ -14,12 +14,11 @@ import (
 )
 
 func (b *snapshotBuilder) resolution(occurrence Record, status, target, rule string) Record {
-	r := Record{"id": b.next("resolution"), "kind": "Resolution", "occurrence": occurrence["id"], "status": status, "rule": rule}
+	r := Record{"status": status, "rule": rule}
 	if target != "" {
 		r["target"] = target
 	}
-	occurrence["resolution"] = r["id"]
-	b.snapshot.Resolutions = append(b.snapshot.Resolutions, r)
+	occurrence["resolution"] = r
 	return r
 }
 
@@ -56,6 +55,7 @@ func (b *snapshotBuilder) resolveReferences() {
 			if target == "" {
 				target = String(node, "destination")
 			}
+			reference["authored_target"] = target
 		}
 		u, err := url.Parse(target)
 		if err != nil {
@@ -84,7 +84,7 @@ func (b *snapshotBuilder) resolveReferences() {
 		mayFollow := b.follow[path] && b.rootByPath[path] != ""
 		if b.glossaries[path] != nil && String(node, "node_kind") == "link" {
 			switch String(reference, "context_field") {
-			case "relationships.references", "related_terms.references", "illustrative_examples":
+			case "relationships.references", "related_terms.references":
 				mayFollow = true
 			}
 		}
@@ -196,27 +196,25 @@ func (b *snapshotBuilder) fragmentForNode(doc *ParsedDocument, node string) stri
 }
 
 func (b *snapshotBuilder) referenceContext(reference Record, doc *ParsedDocument) {
+	if reference["role"] != nil {
+		return
+	}
 	span := Object(doc.NodeByID[String(reference, "content_node")]["span"])
 	best := int(^uint(0) >> 1)
-	for _, binding := range b.snapshot.ContentBindings {
-		if b.elements[String(binding, "owner")] == nil {
+	link := doc.NodeByID[String(reference, "content_node")]
+	if link["link_owner"] != nil {
+		reference["context_owner"], reference["context_field"] = link["link_owner"], link["link_field"]
+		return
+	}
+	for _, node := range doc.Nodes {
+		if node["field_owner"] == nil {
 			continue
-		}
-		node := doc.NodeByID[String(binding, "content_node")]
-		if node == nil {
-			continue
-		}
-		// An explicit binding to this occurrence is more specific than a
-		// surrounding paragraph, even when the link fills the paragraph.
-		if binding["content_node"] == reference["content_node"] && String(binding, "mapping_rule") == MappingProfile+"/reference-occurrence" {
-			reference["context_owner"], reference["context_field"] = binding["owner"], binding["field_path"]
-			return
 		}
 		bound := Object(node["span"])
 		width := Number(bound["end"]) - Number(bound["start"])
 		if Number(bound["start"]) <= Number(span["start"]) && Number(bound["end"]) >= Number(span["end"]) && width < best {
 			best = width
-			reference["context_owner"], reference["context_field"] = binding["owner"], binding["field_path"]
+			reference["context_owner"], reference["context_field"] = node["field_owner"], node["field_path"]
 		}
 	}
 }
@@ -334,109 +332,19 @@ func (b *snapshotBuilder) resolveLabels() {
 	}
 }
 
-func (b *snapshotBuilder) materializeAssertions() {
-	runtime := compiledModel()
-	if runtime.err != nil {
-		return // CLI validation reports unavailable schema/catalog as operational failure.
-	}
-	// Each assertion is a mechanical view of one canonical relationship field.
-	for _, projection := range runtime.catalog.Projections {
-		parent, path, found := strings.Cut(projection, ".")
-		if !found {
-			continue
-		}
-		for _, subject := range b.snapshot.Elements {
-			if !designKind(String(subject, "kind"), parent) {
-				continue
-			}
-			for _, object := range valuesAt(subject, path) {
-				assertion := Record{"id": b.next("assertion"), "kind": "Assertion", "projection_path": projection, "subject": subject["id"], "object": object, "mapping_rule": MappingProfile + "/projection/" + projection, "inputs": []string{String(subject, "id"), object}}
-				b.snapshot.Assertions = append(b.snapshot.Assertions, assertion)
+// Relationships derives navigation from the resolved domain fields.
+func (s *Snapshot) Relationships() []Record {
+	s = s.navigation()
+	var relationships []Record
+	for _, projection := range compiledModel().catalog.Projections {
+		parent, field, _ := strings.Cut(projection, ".")
+		for _, element := range s.Elements {
+			if designKind(String(element, "kind"), parent) {
+				for _, target := range valuesAt(element, field) {
+					relationships = append(relationships, Record{"projection_path": projection, "subject": element["id"], "object": target})
+				}
 			}
 		}
 	}
-}
-
-func (b *snapshotBuilder) finishCoverage() {
-	allUnbound, allExtensions, allOpaque := []string{}, []string{}, []string{}
-	allUnmapped := []Record{}
-	status := "complete_for_profile"
-	if b.readFailed {
-		status = "partial"
-	}
-	for _, path := range sortedKeys(b.byPath) {
-		doc := b.byPath[path]
-		covered := map[string]bool{}
-		expanded := map[string]bool{}
-		var cover func(string)
-		cover = func(id string) {
-			if expanded[id] {
-				return
-			}
-			expanded[id] = true
-			covered[id] = true
-			for _, child := range Strings(doc.NodeByID[id]["children"]) {
-				cover(child)
-			}
-		}
-		opaque, extensions, unbound := []string{}, []string{}, []string{}
-		unmapped := []Record{}
-		for _, binding := range b.snapshot.ContentBindings {
-			id := String(binding, "content_node")
-			node := doc.NodeByID[id]
-			if node == nil {
-				continue
-			}
-			role := String(binding, "role")
-			if role == "fallback" {
-				opaque = appendUnique(opaque, id)
-			}
-			if String(binding, "scope") == "subtree" && (role != "structural_wrapper" || String(node, "node_kind") == "heading") {
-				cover(id)
-			} else {
-				covered[id] = true
-			}
-			if role == "fallback" && String(binding, "known_role") != "" {
-				unmapped = append(unmapped, Record{"role": binding["known_role"], "content_nodes": []string{id}, "reason": binding["reason"]})
-			}
-		}
-		for _, node := range doc.Nodes {
-			id := String(node, "id")
-			if !covered[id] {
-				unbound = append(unbound, id)
-			}
-			if String(node, "node_kind") == "opaque" {
-				opaque = appendUnique(opaque, id)
-			}
-		}
-		for _, element := range b.snapshot.Elements {
-			if String(element, "source_document") == String(doc.Source, "id") && String(element, "kind") == "ExtensionSection" {
-				extensions = append(extensions, String(element, "id"))
-			}
-		}
-		docStatus := "complete_for_profile"
-		limitations := []string{}
-		if String(doc.Document, "domain_decomposition") == "failed" {
-			docStatus = "partial"
-			limitations = append(limitations, "The authoring parser rejected this document; domain extraction is unavailable.")
-		}
-		if len(unbound) != 0 || len(unmapped) != 0 {
-			docStatus = "partial"
-		}
-		if docStatus != "complete_for_profile" {
-			status = "partial"
-		}
-		for _, list := range [][]string{unbound, opaque, extensions} {
-			sort.Strings(list)
-		}
-		doc.Document["coverage"] = Record{"status": docStatus, "mapping_profile": MappingProfile, "unbound_content_nodes": unbound, "unmapped_known_roles": unmapped, "extension_sections": extensions, "uninterpreted_nodes": opaque, "limitations": limitations}
-		allUnbound = append(allUnbound, unbound...)
-		allUnmapped = append(allUnmapped, unmapped...)
-		allExtensions = append(allExtensions, extensions...)
-		allOpaque = append(allOpaque, opaque...)
-	}
-	for _, list := range [][]string{allUnbound, allExtensions, allOpaque} {
-		sort.Strings(list)
-	}
-	b.snapshot.Coverage = Record{"status": status, "mapping_profile": MappingProfile, "unbound_content_nodes": allUnbound, "unmapped_known_roles": allUnmapped, "extension_sections": allExtensions, "uninterpreted_nodes": allOpaque}
+	return relationships
 }

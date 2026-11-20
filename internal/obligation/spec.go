@@ -41,8 +41,12 @@ type Content struct {
 // Parse accepts unfinished content, but rejects ambiguous document structure
 // and unresolved same-document references. Check commands resolve file links.
 func Parse(data []byte, kind string) (*Content, error) {
+	return ParseMarkdown(specfile.NewMarkdown(data), kind)
+}
+
+func ParseMarkdown(input *specfile.Markdown, kind string) (*Content, error) {
 	var meta metadata
-	doc, err := specfile.ParseOutline(data, kind, &meta)
+	doc, err := input.TypedOutline(kind, &meta)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +56,7 @@ func Parse(data []byte, kind string) (*Content, error) {
 	}
 	spec.Classification = Classify(spec.QualityAttributes, nil)
 	var ids specfile.Identifiers
-	if err := ids.Register(spec.ID, kind, specfile.MetadataLocation(data, "id")); err != nil {
+	if err := ids.Register(spec.ID, kind, input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
 	if err := ids.RegisterObligations(doc); err != nil {

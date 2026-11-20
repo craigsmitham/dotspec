@@ -3,7 +3,6 @@ package system
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
@@ -41,33 +40,36 @@ Describe the system's boundary and what it includes.
 type System struct {
 	Description string `json:"description,omitempty"`
 
-	OutOfScope               string                      `json:"out_of_scope,omitempty"`
-	InteractsWith            string                      `json:"interacts_with,omitempty"`
-	RequiredInterfaces       string                      `json:"required_interfaces,omitempty"`
-	ProvidedInterfaces       string                      `json:"provided_interfaces,omitempty"`
-	ProjectContext           string                      `json:"project_context,omitempty"`
-	ID                       string                      `json:"id,omitempty"`
-	Components               string                      `json:"components,omitempty"`
-	PartOf                   string                      `json:"part_of,omitempty"`
-	ConceptUses              string                      `json:"concept_uses,omitempty"`
-	Synchronizations         string                      `json:"synchronizations,omitempty"`
-	References               *specfile.ReferenceDocument `json:"-"`
-	Name                     string                      `json:"name"`
-	Purpose                  string                      `json:"purpose"`
-	Scope                    string                      `json:"scope"`
-	Goals                    string                      `json:"goals,omitempty"`
-	Environment              string                      `json:"environment,omitempty"`
-	Stakeholders             string                      `json:"stakeholders,omitempty"`
-	Assumptions              string                      `json:"assumptions,omitempty"`
-	Constraints              string                      `json:"constraints,omitempty"`
-	GlossarySources          []string                    `json:"glossary_sources,omitempty"`
-	Glossary                 string                      `json:"glossary,omitempty"`
-	Path                     string                      `json:"path"`
-	QualityAttributes        []Attribute                 `json:"quality_attributes"`
-	QualityAttributesContent *string                     `json:"quality_attributes_content,omitempty"`
+	OutOfScope         string                      `json:"out_of_scope,omitempty"`
+	InteractsWith      string                      `json:"interacts_with,omitempty"`
+	RequiredInterfaces string                      `json:"required_interfaces,omitempty"`
+	ProvidedInterfaces string                      `json:"provided_interfaces,omitempty"`
+	ProjectContext     string                      `json:"project_context,omitempty"`
+	ID                 string                      `json:"id,omitempty"`
+	Components         string                      `json:"components,omitempty"`
+	PartOf             string                      `json:"part_of,omitempty"`
+	ConceptUses        string                      `json:"concept_uses,omitempty"`
+	Synchronizations   string                      `json:"synchronizations,omitempty"`
+	References         *specfile.ReferenceDocument `json:"-"`
+	Name               string                      `json:"name"`
+	Purpose            string                      `json:"purpose"`
+	Scope              string                      `json:"scope"`
+	Goals              string                      `json:"goals,omitempty"`
+	Environment        string                      `json:"environment,omitempty"`
+	Stakeholders       string                      `json:"stakeholders,omitempty"`
+	Assumptions        string                      `json:"assumptions,omitempty"`
+	Constraints        string                      `json:"constraints,omitempty"`
+	GlossarySources    []string                    `json:"glossary_sources,omitempty"`
+	Glossary           string                      `json:"glossary,omitempty"`
+	Path               string                      `json:"path"`
+	QualityAttributes  []Attribute                 `json:"quality_attributes"`
 }
 
 func Read(path string) (*System, error) {
+	return ReadFrom(&specfile.SourceSet{}, path)
+}
+
+func ReadFrom(files *specfile.SourceSet, path string) (*System, error) {
 	if !Layout.Match(filepath.Base(path)) {
 		return nil, diagnostic.Error("layout.system-location", fmt.Sprintf("expected a <name>%s filename", Suffix), diagnostic.Location{Path: path})
 	}
@@ -75,11 +77,11 @@ func Read(path string) (*System, error) {
 	if _, err := specfile.LocalDeclaration(owner); err != nil {
 		return nil, err
 	}
-	data, err := os.ReadFile(path)
+	input, err := files.Markdown(path)
 	if err != nil {
 		return nil, err
 	}
-	spec, err := Parse(data)
+	spec, err := ParseMarkdown(input)
 	if err != nil {
 		return nil, diagnostic.WithPath(err, path)
 	}
@@ -90,18 +92,23 @@ func Read(path string) (*System, error) {
 	for i := range spec.QualityAttributes {
 		spec.QualityAttributes[i].Location.Path = path
 	}
-	if err := spec.loadQualityTree(); err != nil {
+	if err := spec.loadQualityTree(files); err != nil {
 		return nil, err
 	}
 	return spec, nil
 }
 
 func Parse(data []byte) (*System, error) {
+	return ParseMarkdown(specfile.NewMarkdown(data))
+}
+
+func ParseMarkdown(input *specfile.Markdown) (*System, error) {
+
 	var meta struct {
 		metadata        `yaml:",inline"`
 		GlossarySources []string `yaml:"glossary_sources,omitempty"`
 	}
-	doc, err := specfile.ParseOutline(data, Layout.Kind, &meta)
+	doc, err := input.TypedOutline(Layout.Kind, &meta)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +116,7 @@ func Parse(data []byte) (*System, error) {
 	fields := map[string]*string{"Description": &spec.Description, "Out of scope": &spec.OutOfScope, "Interacts with": &spec.InteractsWith, "Required interfaces": &spec.RequiredInterfaces, "Provided interfaces": &spec.ProvidedInterfaces, "Project context": &spec.ProjectContext, "Components": &spec.Components, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Stakeholders": &spec.Stakeholders, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
 	locations := make(map[string]diagnostic.Location)
 	var ids specfile.Identifiers
-	if err := ids.Register(meta.ID, "system", specfile.MetadataLocation(data, "id")); err != nil {
+	if err := ids.Register(meta.ID, "system", input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
 	if err := ids.RegisterDeclarations(doc, "Components", "Concept uses", "Synchronizations"); err != nil {
@@ -141,8 +148,6 @@ func Parse(data []byte) (*System, error) {
 			*target = doc.Body(section)
 			continue
 		}
-		content := doc.Body(section)
-		spec.QualityAttributesContent = &content
 		if len(section.Children) > 0 {
 			return nil, diagnostic.Error("quality.attribute-source", "declare each system attribute in its own <name>.quality-attribute.spec.md file", location)
 		}
@@ -166,7 +171,7 @@ func Parse(data []byte) (*System, error) {
 		return nil, err
 	}
 	spec.References = doc.References()
-	if err := spec.glossaryReferences(data); err != nil {
+	if err := spec.glossaryReferences(input); err != nil {
 		return nil, err
 	}
 	return spec, nil

@@ -46,10 +46,10 @@ func TestNeedsRelationshipsAndEvidence(t *testing.T) {
 	// Ownership is not applicability, and provider claims must have source evidence.
 	forged := cloneSnapshot(t, s)
 	designRecord(t, forged, "DesiredOutcome", "Timely awareness")["applies_to"] = []string{String(j, "id")}
-	requireFinding(t, forged, "concept.projection")
+	requireFinding(t, forged, "shape.invalid")
 	forged = cloneSnapshot(t, s)
 	designRecord(t, forged, "Capability", "Service-change detection")["provided_by"] = []string{String(j, "id")}
-	requireFinding(t, forged, "reference.kind")
+	requireFinding(t, forged, "shape.invalid")
 }
 
 func TestNeedsReferencesRejectWrongKindsAndPreserveUnresolvedNarrative(t *testing.T) {
@@ -69,6 +69,16 @@ func TestNeedsReferencesRejectWrongKindsAndPreserveUnresolvedNarrative(t *testin
 				t.Fatal(result.Snapshot.Diagnostics)
 			}
 			checkSourceText(t, result.Snapshot)
+			if tc.name == "provider prose" {
+				before, err := NeedsMarkdown(result.Snapshot, root)
+				if err != nil || !strings.Contains(before, tc.replacement) {
+					t.Fatalf("provider qualification missing: %v", err)
+				}
+				after, err := NeedsMarkdown(cloneSnapshot(t, result.Snapshot), root)
+				if err != nil || before != after {
+					t.Fatalf("needs view changed after saving the snapshot: %v", err)
+				}
+			}
 		})
 	}
 }

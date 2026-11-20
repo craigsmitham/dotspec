@@ -3,7 +3,6 @@ package qualitymodel
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -48,20 +47,20 @@ var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 
 // QualityModel owns reusable definitions independently of any system.
 type QualityModel struct {
-	References               *specfile.ReferenceDocument    `json:"-"`
-	ID                       string                         `json:"id,omitempty"`
-	Slug                     string                         `json:"slug"`
-	Name                     string                         `json:"name"`
-	Description              string                         `json:"description"`
-	Edition                  string                         `json:"edition"`
-	Sources                  string                         `json:"sources"`
-	QualityAttributes        []system.Attribute             `json:"quality_attributes"`
-	QualityAttributesContent *string                        `json:"quality_attributes_content,omitempty"`
-	Markdown                 string                         `json:"markdown"`
-	Path                     string                         `json:"path"`
-	Builtin                  bool                           `json:"builtin"`
-	Location                 diagnostic.Location            `json:"location"`
-	SectionLocations         map[string]diagnostic.Location `json:"-"`
+	References        *specfile.ReferenceDocument `json:"-"`
+	ID                string                      `json:"id,omitempty"`
+	Slug              string                      `json:"slug"`
+	Name              string                      `json:"name"`
+	Description       string                      `json:"description"`
+	Edition           string                      `json:"edition"`
+	Sources           string                      `json:"sources"`
+	QualityAttributes []system.Attribute          `json:"quality_attributes"`
+
+	Markdown         string                         `json:"markdown"`
+	Path             string                         `json:"path"`
+	Builtin          bool                           `json:"builtin"`
+	Location         diagnostic.Location            `json:"location"`
+	SectionLocations map[string]diagnostic.Location `json:"-"`
 	// Data retains the full source for copying and reference relocation.
 	Data []byte `json:"-"`
 }
@@ -74,6 +73,10 @@ func ValidateSlug(slug string) error {
 }
 
 func Read(path string) (*QualityModel, error) {
+	return readFrom(&specfile.SourceSet{}, path)
+}
+
+func readFrom(files *specfile.SourceSet, path string) (*QualityModel, error) {
 	name := filepath.Base(path)
 	if !strings.HasSuffix(name, Suffix) {
 		return nil, diagnostic.Error("layout.quality-model-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
@@ -82,11 +85,11 @@ func Read(path string) (*QualityModel, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.quality-model-name", err.Error(), diagnostic.Location{Path: path})
 	}
-	data, err := os.ReadFile(path)
+	input, err := files.Markdown(path)
 	if err != nil {
 		return nil, err
 	}
-	spec, err := Parse(data)
+	spec, err := ParseMarkdown(input)
 	if err != nil {
 		return nil, diagnostic.WithPath(err, path)
 	}
@@ -100,14 +103,19 @@ func Read(path string) (*QualityModel, error) {
 // Parse accepts unfinished content, but rejects ambiguous document structure
 // and unresolved same-document references. Check commands resolve file links.
 func Parse(data []byte) (*QualityModel, error) {
+	return ParseMarkdown(specfile.NewMarkdown(data))
+}
+
+func ParseMarkdown(input *specfile.Markdown) (*QualityModel, error) {
+	data := input.Source
 	var meta metadata
-	doc, err := specfile.ParseOutline(data, Layout.Kind, &meta)
+	doc, err := input.TypedOutline(Layout.Kind, &meta)
 	if err != nil {
 		return nil, err
 	}
 	spec := &QualityModel{ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location), Data: append([]byte(nil), data...)}
 	var ids specfile.Identifiers
-	if err := ids.Register(spec.ID, "quality-model", specfile.MetadataLocation(data, "id")); err != nil {
+	if err := ids.Register(spec.ID, "quality-model", input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
 	fields := map[string]*string{"Description": &spec.Description, "Edition": &spec.Edition, "Sources": &spec.Sources}
@@ -128,8 +136,6 @@ func Parse(data []byte) (*QualityModel, error) {
 			*target = doc.Body(section)
 			continue
 		}
-		content := doc.Body(section)
-		spec.QualityAttributesContent = &content
 		spec.QualityAttributes, err = system.ParseQualityAttributes(doc, section, &ids)
 		if err != nil {
 			return nil, err

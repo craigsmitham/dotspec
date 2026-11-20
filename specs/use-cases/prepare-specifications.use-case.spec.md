@@ -41,11 +41,15 @@ and known unresolved questions for review. Preparation does not establish approv
 
 ### Behavior remains undecided
 
+#### Handling
+
 During steps 1–3, the team lacks an agreed response to an identified condition.
 Record the condition and explicitly unresolved handling. Continue preparation for
 review; the review must resolve it before a delivery relies on that promise.
 
 ### Inspection cannot finish
+
+#### Handling
 
 At step 3, the check follows its
 [operational-failure branch](check-specifications.use-case.spec.md#unreadable-input-or-failed-discovery).

@@ -5,10 +5,7 @@ import (
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
-	"github.com/yuin/goldmark/parser"
-	"github.com/yuin/goldmark/text"
 )
 
 // Section spans original Markdown, including any nested subsections.
@@ -33,14 +30,22 @@ type Outline struct {
 // fresh metadata destination defining its accepted fields and interprets the
 // resulting sections and metadata, including any explicit identifiers.
 func ParseOutline(data []byte, kind string, metadata TypedMetadata) (*Outline, error) {
-	data = Normalize(data)
-	body, err := frontmatter(data, kind, metadata)
-	if err != nil {
+	return NewMarkdown(data).TypedOutline(kind, metadata)
+}
+
+func (md *Markdown) TypedOutline(kind string, metadata TypedMetadata) (*Outline, error) {
+	if err := md.decode(kind, metadata); err != nil {
 		return nil, err
 	}
-	md := goldmark.New(goldmark.WithParserOptions(parser.WithAutoHeadingID()))
-	out := &Outline{Source: body, Original: data, AST: md.Parser().Parse(text.NewReader(body)), Anchors: make(map[string]bool)}
-	return out.parseHeadings(kind)
+	out, err := md.Outline(kind)
+	if err == nil {
+		err = out.checkFields(specificationClass(kind), out.Sections, 2)
+	}
+	return out, err
+}
+
+func (md *Markdown) Outline(kind string) (*Outline, error) {
+	return md.outline().parseHeadings(kind)
 }
 
 // MarkdownOutline reads ordinary Markdown with optional YAML frontmatter.

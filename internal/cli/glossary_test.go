@@ -25,8 +25,8 @@ Explain words.
 Examples. See [the local term](#draft).
 
 [^note]: Local terminology note.
-## Glossary
 Terms used by the documentation team.
+## Glossary
 ### Draft
 An early version of a document.[^note]
 `)
@@ -42,7 +42,7 @@ Examples.
 ## Part of
 [Docs](../../specs/docs.system.spec.md)
 `)
-	const vocab = "# Shared vocabulary\n\n[^note]: Vocabulary note.\n\n## Sketch\n\nA preliminary drawing.[^note]\n\n### Aliases\n\n- Draft\n"
+	const vocab = "# Shared vocabulary\n\n[^note]: Vocabulary note.\n\n## Sketch\n\nA preliminary drawing.[^note]\n\n### Alternative names\n\n- Draft\n"
 	writeFixture(t, "words.md", vocab)
 	run := func(code int, args ...string) string {
 		t.Helper()
@@ -153,7 +153,7 @@ context: Billing
 # Billing vocabulary
 ## Account
 A ledger of payments.
-### Aliases
+### Alternative names
 - Balance
 ### Topics
 - Customers
@@ -171,7 +171,7 @@ A request for payment.
 `
 	writeFixture(t, "billing.md", billing)
 	writeFixture(t, "collections.md", "---\ncontext: Billing\n---\n# Collections\n## Balance\nAn amount due.\n### Topics\n- Collections\n")
-	writeFixture(t, "identity.md", "---\ncontext: Identity\n---\n# Identity\n## Account\nA login.\n### Aliases\n- Balance\n### Topics\n- Customers\n")
+	writeFixture(t, "identity.md", "---\ncontext: Identity\n---\n# Identity\n## Account\nA login.\n### Alternative names\n- Balance\n### Topics\n- Customers\n")
 	run := func(code int, args ...string) string {
 		t.Helper()
 		got, stdout, stderr := invoke(args...)
@@ -219,7 +219,7 @@ A request for payment.
 			continue
 		}
 		found = true
-		if len(model.Strings(model.Object(term["illustrative_examples"])["content_nodes"])) == 0 || strings.Join(model.Strings(term["topics"]), ",") != "Customers,Payments" {
+		if term["illustrative_examples"] != nil || strings.Join(model.Strings(term["topics"]), ",") != "Customers,Payments" {
 			t.Fatal(term)
 		}
 	}

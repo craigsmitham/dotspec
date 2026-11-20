@@ -41,6 +41,7 @@ type sourceFile struct {
 // together to a page while narrative and unfamiliar sections keep source order.
 type heading struct {
 	node, title, anchor, explicitAnchor string
+	field                               string
 	start, end, bodyEnd, level          int
 	owner                               *subject
 	detailEntry                         *heading // root of a passage collected on a detail page
@@ -166,7 +167,7 @@ func (p *planner) read() error {
 			if !top[id(n)] {
 				continue
 			}
-			h := &heading{node: id(n), title: attr(n, "decoded_text"), level: model.Number(n["heading_level"]), start: position(n, "start"), end: position(n, "end")}
+			h := &heading{node: id(n), field: attr(n, "domain_field"), title: attr(n, "decoded_text"), level: model.Number(n["heading_level"]), start: position(n, "start"), end: position(n, "end")}
 			sf.headings = append(sf.headings, h)
 			headingByNode[id(n)] = h
 		case "footnote_definition", "footnote_reference":

@@ -73,9 +73,9 @@ The frontmatter accepts `type: system-spec` and an optional `id` for a stable au
 contain exactly one nonempty document-level H1 naming the system, followed by
 nonempty `Purpose` and `Scope` H2 sections. Section names are case-sensitive.
 Section bodies can contain Markdown, including lists, code blocks, and deeper
-headings. The optional `Quality attributes` section is also displayed by
-`system show`
-and interpreted as described below. Other sections remain authored Markdown.
+headings. Declare each system quality attribute in its own quality attribute
+specification. The optional empty `Quality attributes` heading makes an empty
+collection explicit.
 There is no requirement inheritance behavior.
 
 Use an optional `## Description` to introduce the system in one short paragraph.
@@ -137,11 +137,12 @@ A request for payment for goods or services.
 
 | Optional term subsection | Use |
 | --- | --- |
-| Aliases or Alternative names | List other names for the same meaning. |
+| Alternative names | List other names for the same meaning. |
 | Topics | List one plain-text topic name per Markdown list item. |
-| Example or Examples | Show how the term is used. Link to a scenario or requirement when it supplies the example. |
 | Relationships | Write a sentence explaining how this term relates to another. Link the other term by its source heading, including the file path for a different vocabulary. Its entry links back to this passage when both terms appear in the system glossary. |
 | Related terms | Point readers to neighboring terms or explain how two contexts use a word. |
+
+A usage example belongs in the term definition. A local heading can introduce it.
 
 Inline terms use the same subsections one heading level deeper. They share
 the system’s default context with imported vocabularies that omit `context`.

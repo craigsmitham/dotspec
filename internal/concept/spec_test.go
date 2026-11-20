@@ -31,7 +31,7 @@ A job, ordered steps, and outcomes associated with the job or one step.
 ### Add a step
 Describe a step in the job document.
 
-#### State
+#### Effects
 This subsection describes the action's state; it is not another concept section.
 
 ### View a map
@@ -40,10 +40,10 @@ Display steps in authored order. This does not require that execution order.
 ## Operational principles
 Describe the steps, attach outcomes, and view the map to see how they fit together.
 
-## Instantiation
+## Related specifications
 JobMap<StepId> binds identities without interpreting another concept's state.
 
-## Notes
+## Evidence
 See [this concept](#job%2Dmap), [the action](#add-a-step), and
 [an external definition](missing.spec.md#definition).
 `
@@ -57,7 +57,7 @@ func TestParsePreservesConceptAndDistinctFields(t *testing.T) {
 	if spec.Markdown != strings.TrimSpace(body) || spec.ID != "job-map" || spec.Name != "Job Map" || spec.System != nil {
 		t.Fatalf("authored content or identity changed: %+v", spec)
 	}
-	if spec.Purpose != "Understand an accomplishment and its success criteria." || !strings.Contains(spec.State, "| Step |") || !strings.Contains(spec.Actions, "#### State") || !strings.HasPrefix(spec.OperationalPrinciples, "Describe the steps") {
+	if spec.Purpose != "Understand an accomplishment and its success criteria." || !strings.Contains(spec.State, "| Step |") || !strings.Contains(spec.Actions, "#### Effects") || !strings.HasPrefix(spec.OperationalPrinciples, "Describe the steps") {
 		t.Fatalf("lost section content: %+v", spec)
 	}
 	if strings.Contains(spec.State, "This subsection") || strings.Contains(spec.OperationalPrinciples, "JobMap<StepId>") || len(Check(spec)) != 0 {
@@ -66,7 +66,7 @@ func TestParsePreservesConceptAndDistinctFields(t *testing.T) {
 }
 
 func TestDraftsAndAdvice(t *testing.T) {
-	for _, source := range []string{draft, draft + "\n## State\n", draft + "\n## Notes\nAn unfinished idea.\n"} {
+	for _, source := range []string{draft, draft + "\n## State\n", draft + "\n## Evidence\nAn unfinished idea.\n"} {
 		spec, err := Parse([]byte(source))
 		if err != nil {
 			t.Fatal(err)
@@ -104,9 +104,9 @@ func TestStructureAndSourceLocations(t *testing.T) {
 		{"second title", draft + "# Another\n", "structure.title", 5, 1, 4},
 		{"empty title", strings.Replace(draft, "# Job Map", "#", 1), "structure.title", 4, 1, 0},
 		{"before title", "---\ntype: concept-spec\n---\n## Purpose\n# Title\n", "structure.section-order", 4, 1, 0},
-		{"unresolved reference", draft + "## Notes\n[Unknown](#missing)\n", "reference.unresolved", 6, 1, 0},
-		{"unicode reference", draft + "## Notes\né [Unknown](#missing)\n", "reference.unresolved", 6, 3, 0},
-		{"malformed fragment", draft + "## Notes\n[Unknown](#bad%XX)\n", "reference.invalid", 6, 1, 0},
+		{"unresolved reference", draft + "## Evidence\n[Unknown](#missing)\n", "reference.unresolved", 6, 1, 0},
+		{"unicode reference", draft + "## Evidence\né [Unknown](#missing)\n", "reference.unresolved", 6, 3, 0},
+		{"malformed fragment", draft + "## Evidence\n[Unknown](#bad%XX)\n", "reference.invalid", 6, 1, 0},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, source := range []string{tt.source, "\ufeff" + strings.ReplaceAll(tt.source, "\n", "\r\n")} {
@@ -134,7 +134,7 @@ func TestEveryConventionalSectionRejectsDuplicates(t *testing.T) {
 }
 
 func TestExamplesAndUnknownProseRemainMarkdown(t *testing.T) {
-	extra := "\n## More notes\n\n```markdown\n# Example\n## Purpose\n[not checked](#missing)\n```\n\n> ## Purpose\n> quoted content\n\n## purpose\nLowercase headings are ordinary prose.\n"
+	extra := "\n### More notes\n\n```markdown\n# Example\n## Purpose\n[not checked](#missing)\n```\n\n> ## Purpose\n> quoted content\n\n### Local purpose\nLowercase headings are ordinary prose.\n"
 	spec, err := Parse([]byte(example + extra))
 	if err != nil {
 		t.Fatal(err)
@@ -160,7 +160,7 @@ func FuzzParse(f *testing.F) {
 }
 
 func TestOperationalPrinciplesAliasAndDuplicate(t *testing.T) {
-	source := "---\ntype: concept-spec\n---\n# Example\n## Type parameters\n### Item\nAn identity.\n## Introduced types\n### Token\nA token.\n## Operational principles\n### First story\nOne.\n### Second story\nTwo.\n"
+	source := "---\ntype: concept-spec\n---\n# Example\n## State\n### Item\nAn identity.\n### Token\nA token.\n## Operational principles\n### First story\nOne.\n### Second story\nTwo.\n"
 	spec, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)

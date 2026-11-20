@@ -9,8 +9,8 @@ import (
 
 func CheckType() check.Type {
 	return check.Type{Layout: Layout, References: readReferences, ValidateSlug: ValidateSlug, Context: system.CheckContext, InspectContext: inspectAttributes,
-		Inspect: func(path string) ([]diagnostic.Diagnostic, error) {
-			spec, err := Read(path)
+		Inspect: func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
+			spec, err := readFrom(files, path)
 			if err != nil {
 				return nil, err
 			}
@@ -18,23 +18,23 @@ func CheckType() check.Type {
 		}}
 }
 
-func inspectAttributes(path string, sources []string) ([]diagnostic.Diagnostic, error) {
+func inspectAttributes(files *specfile.SourceSet, path string, sources []string) ([]diagnostic.Diagnostic, error) {
 	if len(sources) == 0 {
 		return nil, nil
 	}
-	sys, err := system.Read(sources[len(sources)-1])
+	sys, err := system.ReadFrom(files, sources[len(sources)-1])
 	if err != nil {
 		return nil, err
 	}
-	spec, err := Read(path)
+	spec, err := readFrom(files, path)
 	if err != nil {
 		return nil, err
 	}
 	return CheckAttributes(spec, sys), nil
 }
 
-func readReferences(path string) (*specfile.ReferenceDocument, error) {
-	spec, err := Read(path)
+func readReferences(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error) {
+	spec, err := readFrom(files, path)
 	if err != nil {
 		return nil, err
 	}

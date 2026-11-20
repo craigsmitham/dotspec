@@ -34,7 +34,7 @@ func TestBusinessRuleDraftAndStructuralErrors(t *testing.T) {
 	cases := []struct{ source, code string }{
 		{prefix + "## Statement\nFirst\n## Statement\nSecond\n", "structure.duplicate-section"},
 		{prefix + "### Statement\nRule\n", "structure.section-level"},
-		{prefix + "## Authority\nFirst\n## Authority and evidence\nSecond\n", "structure.duplicate-section"},
+		{prefix + "## Authority\nFirst\n## Authority\nSecond\n", "structure.duplicate-section"},
 	}
 	for _, c := range cases {
 		_, err := Parse([]byte(c.source))
@@ -51,7 +51,7 @@ func TestBusinessRuleDraftAndStructuralErrors(t *testing.T) {
 			t.Fatalf("accepted invalid source %s", source)
 		}
 	}
-	rule, err := Parse([]byte(prefix + "## Statement\n\n## Authority and evidence\nPolicy.\n## Unrecognized\nRetain this.\n"))
+	rule, err := Parse([]byte(prefix + "## Statement\n\n## Authority\nPolicy.\n## Evidence\nRetain this.\n"))
 	if err != nil || rule.Statement != "" || rule.Authority != "Policy." || !strings.Contains(rule.Markdown, "Retain this.") {
 		t.Fatalf("empty/unknown content: %+v %v", rule, err)
 	}

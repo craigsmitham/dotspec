@@ -62,7 +62,7 @@ func InitComponent(path, name, parent string) (string, error) {
 				return "", "", err
 			}
 		case ComponentLayout.Match(parent):
-			if _, err := parentChain(parent, boundary); err != nil {
+			if _, err := parentChain(&specfile.SourceSet{}, parent, boundary); err != nil {
 				return "", "", err
 			}
 		default:

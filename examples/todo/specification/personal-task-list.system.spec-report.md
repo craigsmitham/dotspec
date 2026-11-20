@@ -104,6 +104,6 @@ flowchart LR
 
 ## Quality attributes
 
-The task list is stored locally. Its quality requirements cover what survives between sessions on the same database.
-
 **[Durability](<quality/durability/durability.quality-attribute.spec-report.md>)** — Preservation of acknowledged work between local sessions.
+
+Requirements classified under Durability: [Acknowledge after commit](<components/task-service/requirements/acknowledge-after-commit.requirement.spec-report.md>), [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>).

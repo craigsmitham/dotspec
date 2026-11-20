@@ -63,6 +63,7 @@ Find the executable specification.
 ## State
 Referenced project sources.
 ## Actions
+### Read definition
 Read the native definition.
 ## Operational principles
 Follow the link for required behavior.
@@ -77,7 +78,7 @@ type: requirement-spec
 Read commands.
 ## Statement
 Source files remain unchanged.
-## System verification plan
+## Evidence
 Compare before and after bytes.
 [Supporting material](../../native.tla)
 ## Rationale

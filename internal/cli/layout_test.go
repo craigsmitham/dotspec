@@ -90,19 +90,31 @@ func TestMoveRequirementAcrossSourceLayouts(t *testing.T) {
 				req = r
 			}
 		}
-		names := map[string]string{}
-		for _, node := range snapshot.ContentNodes {
-			names[model.String(node, "id")] = model.String(node, "decoded_text")
-		}
 		name := func(r model.Record) string {
-			ids := model.Strings(model.Object(r["name"])["content_nodes"])
-			if len(ids) != 1 {
+			spans, _ := model.Object(r["name"])["spans"].([]any)
+			if len(spans) == 0 {
 				return ""
 			}
-			return names[ids[0]]
+			span := model.Object(spans[0])
+			for _, src := range snapshot.Sources {
+				if src["id"] == span["source"] {
+					return strings.TrimSpace(strings.TrimLeft(model.String(src, "markdown")[model.Number(span["start"]):model.Number(span["end"])], "#"))
+				}
+			}
+			return ""
 		}
-		targets := model.Strings(req["applies_to"])
-		attributes := model.Strings(req["quality_attributes"])
+		var targets, attributes []string
+		for _, edge := range snapshot.Relationships() {
+			if edge["subject"] != req["id"] {
+				continue
+			}
+			switch edge["projection_path"] {
+			case "Obligation.applies_to":
+				targets = append(targets, model.String(edge, "object"))
+			case "Obligation.quality_attributes":
+				attributes = append(attributes, model.String(edge, "object"))
+			}
+		}
 		if name(records[model.String(req, "specification_owner")]) != stage.owner || len(targets) != 1 || name(records[targets[0]]) != "Product" || len(attributes) != 1 || name(records[attributes[0]]) != "Durable" {
 			t.Fatalf("unexpected ownership, targets or attributes in %v", req)
 		}

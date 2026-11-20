@@ -828,7 +828,7 @@ Export and validate complete specification snapshots
 dotspec model [flags]
 ```
 
-Represent Markdown text, document structure, and named domain content in a versioned specification model. Coverage describes the declared mapping profile, not requirements adequacy or satisfaction.
+Export source text, named domain fields, located relationships and inspection findings in a versioned specification model.
 
 | Flag | Default | Description |
 | --- | --- | --- |
@@ -1013,7 +1013,7 @@ dotspec model trace --path . --relative-to views
 
 ## dotspec model validate
 
-Check a snapshot's shape, references, source fidelity, and coverage
+Check a snapshot's shape, source ranges, and relationships
 
 ```sh
 dotspec model validate SNAPSHOT [flags]

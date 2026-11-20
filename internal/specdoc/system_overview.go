@@ -25,22 +25,21 @@ type overviewSection struct {
 
 func (p *planner) planOverview(s *subject) []overviewSection {
 	sections := []overviewSection{
-		{sources: []string{"Description"}},
-		{title: "Purpose", level: 2, sources: []string{"Purpose"}},
-		{title: "Goals", level: 2, sources: []string{"Goals"}, collections: []string{"Goals"}},
-		{title: "Business rules", level: 2, sources: []string{"Business rules"}, collections: []string{"Business rules"}},
-		{title: "User needs", level: 2, sources: []string{"User needs", "Stakeholders", "Jobs"}, collections: []string{"Jobs"}},
-		{title: "Scope", level: 2, sources: []string{"Scope", "Out of scope", "Environment", "Assumptions", "Constraints", "Project context", "Glossary"}, collections: []string{"Assumptions", "Constraints", "Glossary"}},
-		{title: "System topology", level: 2, sources: []string{"System topology", "Part of", "Child systems", "Systems", "Components", "Interacts with", "Required interfaces", "Provided interfaces", "Interfaces"}, collections: []string{"Systems", "Components", "Interfaces"}},
-		{title: "Behavior", level: 2, sources: []string{"Behavior"}},
-		{title: "Features", level: 2, sources: []string{"Features"}, collections: []string{"Features"}},
-		{title: "Capabilities", level: 2, sources: []string{"Capabilities"}, collections: []string{"Capabilities"}},
-		{title: "Use cases", level: 2, sources: []string{"Use cases"}, collections: []string{"Use cases"}},
-		{title: "Concepts", level: 2, sources: []string{"Concepts", "Concept uses", "Synchronizations"}, collections: []string{"Concepts", "Concept uses", "Synchronizations"}},
-		{title: "Requirements", level: 2, sources: []string{"Requirements", "Obligations", "Applicable requirements"}, collections: []string{"Requirements"}},
-		{title: "Quality attributes", level: 2, sources: []string{"Quality attributes", "Quality models"}, collections: []string{"Quality attributes", "Quality models"}},
-		{title: "Open questions", level: 2, sources: []string{"Open questions"}},
-		{title: "Reference", level: 2, sources: []string{"Reference", "Evidence"}},
+		{sources: []string{"description"}},
+		{title: "Purpose", level: 2, sources: []string{"purpose"}},
+		{title: "Goals", level: 2, sources: []string{"goals"}, collections: []string{"Goals"}},
+		{title: "Business rules", level: 2, collections: []string{"Business rules"}},
+		{title: "User needs", level: 2, sources: []string{"stakeholders"}, collections: []string{"Jobs"}},
+		{title: "Scope", level: 2, sources: []string{"scope", "out_of_scope", "environment", "assumptions", "constraints", "project_context", "glossary"}, collections: []string{"Assumptions", "Glossary"}},
+		{title: "System topology", level: 2, sources: []string{"part_of", "interacts_with", "required_interfaces", "provided_interfaces"}, collections: []string{"Systems", "Components", "Interfaces"}},
+		{title: "Features", level: 2, collections: []string{"Features"}},
+		{title: "Capabilities", level: 2, collections: []string{"Capabilities"}},
+		{title: "Use cases", level: 2, collections: []string{"Use cases"}},
+		{title: "Concepts", level: 2, sources: []string{"concept_uses", "synchronizations"}, collections: []string{"Concepts", "Concept uses", "Synchronizations"}},
+		{title: "Requirements", level: 2, sources: []string{"obligations"}, collections: []string{"Requirements"}},
+		{title: "Quality attributes", level: 2, collections: []string{"Quality attributes", "Quality models"}},
+		{title: "Open questions", level: 2, sources: []string{"open_questions"}},
+		{title: "Reference", level: 2, sources: []string{"related_specifications", "authority_and_evidence", "evidence", "supports", "derived_from", "relies_on"}},
 	}
 	groups := map[string][][]*heading{}
 	for _, passage := range s.passages {
@@ -48,7 +47,9 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 		if h == s.name {
 			sections[0].passages = append(sections[0].passages, passage)
 		} else {
-			groups[h.title] = append(groups[h.title], passage)
+			field, _, _ := strings.Cut(h.field, ".")
+			field = strings.TrimSuffix(field, "_content")
+			groups[field] = append(groups[field], passage)
 		}
 	}
 	for i := range sections {
@@ -59,15 +60,6 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 		}
 		section.collections = slices.DeleteFunc(section.collections, func(title string) bool { return s.indexes[title] == nil })
 	}
-	// Preserve unfamiliar sections in source order, including duplicate titles.
-	var extra [][]*heading
-	for _, gs := range groups {
-		extra = append(extra, gs...)
-	}
-	slices.SortFunc(extra, func(a, b []*heading) int { return a[0].start - b[0].start })
-	last := &sections[len(sections)-1]
-	last.passages = append(last.passages, extra...)
-
 	// Decide which headings exist before allocating their Markdown fragments.
 	// Keep a collection in the map even when it supplies no body content.
 	topologyCapabilities := map[string]bool{}
@@ -187,6 +179,24 @@ func (p *planner) overviewDetails(w *writer, s *subject, section overviewSection
 		for _, key := range model.Strings(s.r["quality_attributes"]) {
 			if a := p.pages[key]; a != nil && len(model.Strings(a.r["subattribute_of"])) == 0 {
 				w.text(attributeEntry(w, a, true))
+				var classified []entry
+				for _, r := range p.snapshot.Elements {
+					if !slices.Contains(model.Strings(r["quality_attributes"]), key) || (attr(r, "kind") != "Requirement" && attr(r, "kind") != "ObligationClause") {
+						continue
+					}
+					n := nameNode(r)
+					if target := p.targets[n]; target != "" {
+						classified = append(classified, entry{title: attr(p.nodes[n], "decoded_text"), target: target})
+					}
+				}
+				sortEntries(classified)
+				var links []string
+				for _, e := range classified {
+					links = append(links, w.link(inlineText(e.title), e.target))
+				}
+				if len(links) > 0 {
+					w.text("Requirements classified under " + inlineText(a.name.title) + ": " + strings.Join(links, ", ") + ".")
+				}
 			}
 		}
 	case "System topology":

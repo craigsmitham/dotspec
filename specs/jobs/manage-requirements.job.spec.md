@@ -31,10 +31,19 @@ to trust the requirements.
 
 ## Outcomes
 
-- **OUT-001:** Minimize the likelihood that a product change violates a
-  commitment that remains applicable.
-- **OUT-002:** Minimize the time needed to bring the agreed requirements into
-  alignment with an approved product change.
+### Preservation of applicable commitments
+
+**ID:** OUT-001
+
+Minimize the likelihood that a product change violates a
+commitment that remains applicable.
+
+### Time to align requirements
+
+**ID:** OUT-002
+
+Minimize the time needed to bring the agreed requirements into
+alignment with an approved product change.
 
 ## Steps
 
@@ -47,8 +56,12 @@ Establish what is changing and the decisions needed about existing requirements.
 
 #### Outcomes
 
-- **OUT-003:** Minimize the likelihood of assessing a different change from the
-  one stakeholders intend.
+##### Agreement on the intended change
+
+**ID:** OUT-003
+
+Minimize the likelihood of assessing a different change from the
+one stakeholders intend.
 
 ### Locate affected requirements
 
@@ -59,7 +72,11 @@ Identify relevant requirements, commitments, rationale, and supporting evidence.
 
 #### Outcomes
 
-- **OUT-004:** Minimize the time needed to find requirements affected by a proposed change.
+##### Discovery of affected requirements
+
+**ID:** OUT-004
+
+Minimize the time needed to find requirements affected by a proposed change.
 
 ### Assemble the change context
 
@@ -70,7 +87,11 @@ Bring together the current baseline, proposed change, dependencies, and open que
 
 #### Outcomes
 
-- **OUT-005:** Minimize the likelihood of assessing impact using an outdated baseline.
+##### Use of the current baseline
+
+**ID:** OUT-005
+
+Minimize the likelihood of assessing impact using an outdated baseline.
 
 ### Confirm applicable commitments
 
@@ -81,8 +102,12 @@ Establish which commitments remain applicable and who must participate in decisi
 
 #### Outcomes
 
-- **OUT-006:** Minimize the likelihood that an affected stakeholder is omitted
-  from a decision about changing a commitment.
+##### Participation in change decisions
+
+**ID:** OUT-006
+
+Minimize the likelihood that an affected stakeholder is omitted
+from a decision about changing a commitment.
 
 ### Assess impact and update requirements
 
@@ -93,8 +118,12 @@ Determine how the change affects the requirements and propose the necessary revi
 
 #### Outcomes
 
-- **OUT-007:** Minimize the likelihood of overlooking a dependency affected by
-  a requirements revision.
+##### Detection of affected dependencies
+
+**ID:** OUT-007
+
+Minimize the likelihood of overlooking a dependency affected by
+a requirements revision.
 
 ### Check alignment
 
@@ -106,8 +135,12 @@ agreed product change.
 
 #### Outcomes
 
-- **OUT-008:** Minimize the likelihood that the revised requirements conflict
-  with commitments that remain applicable.
+##### Consistency with existing commitments
+
+**ID:** OUT-008
+
+Minimize the likelihood that the revised requirements conflict
+with commitments that remain applicable.
 
 ### Resolve discrepancies
 
@@ -119,8 +152,12 @@ revisiting the impact assessment when needed.
 
 #### Outcomes
 
-- **OUT-009:** Minimize the time needed to resolve a discrepancy between the
-  agreed change and the revised requirements.
+##### Time to resolve discrepancies
+
+**ID:** OUT-009
+
+Minimize the time needed to resolve a discrepancy between the
+agreed change and the revised requirements.
 
 ### Communicate the updated baseline
 
@@ -132,8 +169,12 @@ to the affected people.
 
 #### Outcomes
 
-- **OUT-010:** Minimize the likelihood that affected people continue to use
-  superseded requirements after the change is agreed.
+##### Use of the revised requirements
+
+**ID:** OUT-010
+
+Minimize the likelihood that affected people continue to use
+superseded requirements after the change is agreed.
 
 ## Evidence
 

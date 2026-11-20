@@ -28,7 +28,7 @@ Use `dotspec job <command> --help` for command-specific options.
 
 - `init <slug>` creates `specs/jobs/<slug>.job.spec.md` with an editable template.
   It never overwrites an existing file. Edit the file in your text editor.
-- `show <slug>` displays all authored Markdown, including additional sections,
+- `show <slug>` displays the authored Markdown
   plus the associated system and source path. Select a unique slug in the local owner or pass its source path.
 - `list` discovers jobs within the selected subtree, grouped by associated
   system. Groups are ordered by system name and source path; jobs within each
@@ -104,8 +104,12 @@ those needs.
 
 ## Outcomes
 
-- **OUT-001:** Minimize the likelihood that an important stakeholder need is
-  discovered only after implementation begins.
+### Stakeholder needs
+
+**ID:** OUT-001
+
+Minimize the likelihood that an important stakeholder need is
+discovered only after implementation begins.
 
 ## Steps
 
@@ -118,7 +122,11 @@ Identify people whose needs or responsibilities may be affected.
 
 #### Outcomes
 
-- **OUT-002:** Minimize the time needed to identify affected stakeholders.
+##### Stakeholder identification time
+
+**ID:** OUT-002
+
+Minimize the time needed to identify affected stakeholders.
 
 ### Locate existing commitments
 
@@ -135,12 +143,7 @@ The conventional H2 sections are `Job`, `Performer`, `Situation`, `Motivation`,
 `Intended progress`, `Outcomes`, `Steps`, and `Evidence`. All are
 optional, may be empty in a draft, and can be developed incrementally. Their
 names are case-sensitive, and duplicate conventional sections are errors.
-Additional sections and ordinary Markdown are retained. Existing three-section
-job stories remain valid.
-
-`Intended progress` describes the narrative result the person seeks. Use that
-heading consistently: the old singular `Desired outcome` heading is now ordinary
-extension content and does not populate intended progress.
+Keep other narrative and local subheadings inside the relevant field. Use `Intended progress` for the result the performer seeks.
 
 `Outcomes` contains desired results or criteria for judging success. Each outcome
 has one declaration owner: the job or a step. Declaration ownership does not
@@ -148,12 +151,7 @@ establish applicability or inheritance. A shared outcome can explicitly apply to
 several jobs or steps; declare it once and link its subjects with `Applies to`.
 Step success does not establish overall job success.
 
-Each direct list item defines an outcome; use a bold ID followed by a colon, as in
-`- **OUT-001:** Minimize ...`, when it needs a reference. IDs are optional for list
-items. Continuation paragraphs and nested support bullets remain prose.
-
-For a concise map label and explicit applicability, use a named outcome under
-`Outcomes`, with an introductory `**ID:**` and full statement:
+Declare each outcome with a named heading and a full statement. Give it an introductory `**ID:**` when it needs a stable reference.
 
 ```markdown
 ### Timely awareness
@@ -169,8 +167,7 @@ Minimize the time before recognizing that the journey plan needs attention.
 ```
 
 Under a step's `#### Outcomes`, use H5 outcome names and H6 `Applies to` headings.
-A heading without an explicit ID remains supporting extension content; it does
-not silently become another outcome. The statement is separate from the short
+Each named heading at the member level declares an outcome, including entries without IDs. The statement is separate from the short
 heading label. `Supporting content`, `Supports`, and `Derived from` sections can
 retain qualifications and provenance. Ordinary links elsewhere remain citations.
 
@@ -198,7 +195,9 @@ A reviewer responsible for the affected product commitments.
 
 ## Outcomes
 
-- Minimize the likelihood of accepting a change that violates an applicable commitment.
+### Conformance before acceptance
+
+Minimize the likelihood of accepting a change that violates an applicable commitment.
 
 ## Evidence
 

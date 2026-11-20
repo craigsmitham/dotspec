@@ -34,7 +34,7 @@ repository discovery may still fail; those outcomes are handled below.
    records normalized Markdown and reference identities.
 3. Dotspec represents ordered document content, maps explicit domain structures,
    and inspects direct references within the declared boundary.
-4. Dotspec writes the snapshot with provenance, diagnostics, coverage and operation
+4. Dotspec writes the snapshot with provenance, diagnostics and operation
    completion information.
 5. The contributor saves or passes the snapshot to another tool and validates its
    representation when needed.
@@ -45,6 +45,8 @@ repository discovery may still fail; those outcomes are handled below.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#malformed-specification"} -->
 
+#### Handling
+
 During steps 2–3, a specification fails syntax or authoring validation. Retain the
 available text and locations, report the failure, omit an invalid domain object,
 and continue with other files. Resume step 4 with the retained findings. A
@@ -53,6 +55,8 @@ complete snapshot containing authoring errors still achieves the review goal.
 ### Unknown section or unfinished content
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#unknown-section-or-unfinished-content"} -->
+
+#### Handling
 
 During step 3, a section has no named domain mapping, or the author leaves content
 empty or handling explicitly unresolved. Preserve its content and appropriate
@@ -63,6 +67,8 @@ step 4. Do not invent missing behavior or claim stakeholder adequacy.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#unresolved-or-uninspected-reference"} -->
 
+#### Handling
+
 During step 3, a target cannot be resolved or lies outside the traversal boundary.
 Retain the occurrence and its resolution state. External resources are not
 fetched, and links within direct targets do not trigger a recursive scan.
@@ -71,6 +77,8 @@ Continue to step 4 so the contributor can inspect the result.
 ### Unreadable input or failed discovery
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#unreadable-input-or-failed-discovery"} -->
+
+#### Handling
 
 During steps 2–3, an operational failure prevents completion. Retain acquired
 material, identify the failed source or operation, and report an incomplete
@@ -81,6 +89,8 @@ goal; the contributor can repair access and retry.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#empty-scope"} -->
 
+#### Handling
+
 At step 2, the selected scope contains no supported specifications. Report a
 completed empty snapshot at step 4. This is an alternative successful outcome.
 
@@ -88,8 +98,10 @@ completed empty snapshot at step 4. This is an alternative successful outcome.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#invalid-saved-snapshot"} -->
 
+#### Handling
+
 At step 5, validation finds a malformed representation, invalid source location,
-invalid reference or dishonest coverage claim. Report the contract findings
+invalid reference or invalid source range. Report the contract findings
 without changing the snapshot or its source files. The contributor repairs or
 regenerates the representation before relying on it.
 
@@ -97,7 +109,7 @@ regenerates the representation before relying on it.
 
 The contributor receives a complete snapshot for the selected scope, with normalized
 Markdown and native reference identities, ordered document content, named domain mappings,
-reference resolutions, diagnostics and coverage results. Structural findings
+located relationship occurrences, resolutions and diagnostics. Structural findings
 about authored specifications can be part of this successful information-gathering
 outcome. The contributor can validate the saved representation without rereading
 its original source paths.
@@ -141,9 +153,9 @@ Representative. The source-fidelity requirement and model contract govern
 preservation, traversal, status and validation behavior. Numbered scenario order
 does not impose an additional authoring workflow.
 
-## Authority and evidence
+## Authority
 
-The linked source-fidelity requirement defines the preservation and coverage
+The linked source-fidelity requirement defines the preservation and location
 obligation. The [Markdown mapping profile](<../../model/markdown-mapping.md>)
 defines named mappings. The
 [model command examples](<../../internal/integration/testdata/model.txtar>) define

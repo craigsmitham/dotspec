@@ -93,25 +93,32 @@ def check_project(cli, project, tmp):
                   all(e.get(k) == v for k, v in fields.items())]
         return value
 
+    def targets(owner, role):
+        return {r["resolution"]["target"] for r in model["references"]
+                if r.get("context_owner") == owner["id"] and r.get("role") == role
+                and r["resolution"]["status"] == "resolved"}
+
     requirement = one("Requirement", slug="restart")
     use = one("UseCase", slug="resume-list")
     job = one("Job", slug="resume")
     clause = one("ObligationClause", owner=use["id"], authored_id="keep-recorded-work-available")
-    assert clause["id"] in requirement.get("refines", []), "missing restart refinement of keep-recorded-work-available"
-    assert one("BusinessRule", slug="completion")["id"] in clause["derived_from"]
-    assert job["id"] in use["supports"]
-    assert one("DesiredOutcome", owner=job["id"], authored_id="less-reconstruction")["id"] in requirement["supports"]
+    assert clause["id"] in targets(requirement, "refines"), "missing restart refinement"
+    assert one("BusinessRule", slug="completion")["id"] in targets(clause, "derived_from")
+    assert job["id"] in targets(use, "supports")
+    assert one("DesiredOutcome", owner=job["id"], authored_id="less-reconstruction")["id"] in targets(requirement, "supports")
+    sources = {s["id"]: s for s in model["sources"]}
     for kind in ("System", "Component", "Feature", "Capability", "ConceptUse"):
         subject = one(kind)
-        description = subject["description"]
-        assert description["presence"] == "authored" and description["content_nodes"], kind
-        bound = {b["content_node"] for b in model["content_bindings"]
-                 if b["owner"] == subject["id"] and b["field_path"] == "description"}
-        assert set(description["content_nodes"]) <= bound, kind
+        spans = subject["description"]["spans"]
+        assert spans and all(span["source"] == subject["source_document"] for span in spans), kind
+        data = sources[subject["source_document"]]["markdown"].encode()
+        assert all(data[span["start"]:span["end"]].strip() for span in spans), kind
     system = one("System")
-    assert system["id"] == use["subject_system"]
-    assert one("SystemQualityAttribute", owner=system["id"], authored_id="durability")["id"] in requirement["quality_attributes"]
-    assert one("Concept", slug="checklist")["id"] == one("ConceptUse")["definition"]
+    assert targets(use, "subject_system") == {system["id"]}
+    attribute = one("SystemQualityAttribute", owner=system["id"], authored_id="durability")
+    assert any(r["owner"] == requirement["id"] and r["resolution"].get("target") == attribute["id"]
+               for r in model["label_occurrences"])
+    assert targets(one("ConceptUse"), "definition") == {one("Concept", slug="checklist")["id"]}
     assert one("QualityModel", slug="personal-data")["quality_attributes"]
     for view, marker in VIEWS.items():
         assert marker in cli("model " + view, "--path", project), f"missing {marker} in {view}"
@@ -250,6 +257,11 @@ def spec_journey(cli, tmp):
     assert "## Goal" in follow(feature, "Return to my list").read_text(encoding="utf-8")
     qualities_index = follow(root, "Attribute index")
     qualities = follow(qualities_index, "Durability")
+    quality_section = overview.split("\n## Quality attributes\n", 1)[1].split("\n## ", 1)[0]
+    attribute_source = project / "specs/quality/durability/durability.quality-attribute.spec.md"
+    definition = attribute_source.read_text(encoding="utf-8").split("## Definition\n\n", 1)[1].split("\n\n", 1)[0].strip()
+    assert definition in quality_section
+    assert "[Acknowledge after commit](" in quality_section and "[Preserve tasks across restart](" in quality_section
     assert follow(promise, "Durability") == qualities
     for page in (qualities_index, promise):
         assert any(target == qualities and not fragment
@@ -264,7 +276,7 @@ def spec_journey(cli, tmp):
     assert claims[project / "specs/quality-models/personal-data.quality-model.spec.md", "personal-data-quality"] == definitions
     use_case = follow(feature, "Return to my list")
     passage = use_case.read_text(encoding="utf-8").split("### Keep recorded work available\n", 1)[1]
-    assert passage.index("#### Notes") < passage.index("## Related specifications")
+    assert passage.index("specifies which entry data survives") < passage.index("## Related specifications")
     assert claims[project / "specs/concepts/checklist.concept.spec.md", "checklist"] == follow(use_case, "Complete")
     headings = re.findall(r"^## (.+)$", promise.read_text(encoding="utf-8"), re.M)
     assert headings[:3] == ["Statement", "Applies to", "Criterion"]
@@ -410,7 +422,7 @@ def acceptance(project):
 
 def regressions(cli, tmp):
     for name, path, old, new, reason in [
-        ("relationship", REQUIREMENT, "## Refines", "## Notes", "missing restart refinement"),
+        ("relationship", REQUIREMENT, "## Refines", "## Related specifications", "missing restart refinement"),
         ("test-link", REQUIREMENT, "[restart acceptance test](../../tests/acceptance.py)",
          "restart acceptance test", "restart requirement must link"),
         ("persistence", Path("app/main.go"), 'sql.Open("sqlite3", file)',

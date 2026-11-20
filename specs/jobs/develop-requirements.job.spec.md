@@ -29,10 +29,19 @@ those needs.
 
 ## Outcomes
 
-- **OUT-001:** Minimize the likelihood that an important stakeholder need is
-  discovered only after implementation begins.
-- **OUT-002:** Minimize the time needed to reach agreement on requirements for
-  a proposed change.
+### Early discovery of stakeholder needs
+
+**ID:** OUT-001
+
+Minimize the likelihood that an important stakeholder need is
+discovered only after implementation begins.
+
+### Timely agreement on the proposed change
+
+**ID:** OUT-002
+
+Minimize the time needed to reach agreement on requirements for
+a proposed change.
 
 ## Steps
 
@@ -45,8 +54,12 @@ Establish the change's boundaries and the decisions the requirements must suppor
 
 #### Outcomes
 
-- **OUT-003:** Minimize the likelihood that stakeholders interpret the boundaries
-  of the proposed change differently.
+##### Shared scope
+
+**ID:** OUT-003
+
+Minimize the likelihood that stakeholders interpret the boundaries
+of the proposed change differently.
 
 ### Identify stakeholders and sources
 
@@ -57,9 +70,18 @@ Identify affected people and sources of relevant needs, constraints, and evidenc
 
 #### Outcomes
 
-- **OUT-004:** Minimize the time needed to identify affected stakeholders.
-- **OUT-005:** Minimize the likelihood of overlooking a stakeholder with a
-  relevant constraint.
+##### Stakeholder discovery time
+
+**ID:** OUT-004
+
+Minimize the time needed to identify affected stakeholders.
+
+##### Coverage of stakeholders
+
+**ID:** OUT-005
+
+Minimize the likelihood of overlooking a stakeholder with a
+relevant constraint.
 
 ### Organize the available information
 
@@ -70,7 +92,11 @@ Organize needs, evidence, constraints, and assumptions so they can be considered
 
 #### Outcomes
 
-- **OUT-006:** Minimize the time needed to find evidence supporting a stated need.
+##### Evidence retrieval time
+
+**ID:** OUT-006
+
+Minimize the time needed to find evidence supporting a stated need.
 
 ### Establish readiness to specify
 
@@ -82,8 +108,12 @@ and identify any assumptions that must remain explicit.
 
 #### Outcomes
 
-- **OUT-007:** Minimize the likelihood of treating an unresolved assumption as
-  an agreed stakeholder need.
+##### Explicit unresolved assumptions
+
+**ID:** OUT-007
+
+Minimize the likelihood of treating an unresolved assumption as
+an agreed stakeholder need.
 
 ### Formulate the requirements
 
@@ -95,8 +125,12 @@ and assess.
 
 #### Outcomes
 
-- **OUT-008:** Minimize the likelihood that a requirement admits conflicting
-  interpretations of the intended behavior.
+##### Consistent interpretations
+
+**ID:** OUT-008
+
+Minimize the likelihood that a requirement admits conflicting
+interpretations of the intended behavior.
 
 ### Evaluate the requirements
 
@@ -108,7 +142,11 @@ complete enough for the change, and possible to verify.
 
 #### Outcomes
 
-- **OUT-009:** Minimize the likelihood that conflicting requirements remain undetected.
+##### Detection of conflicts
+
+**ID:** OUT-009
+
+Minimize the likelihood that conflicting requirements remain undetected.
 
 ### Resolve gaps and disagreements
 
@@ -120,7 +158,11 @@ Revisit earlier steps as needed.
 
 #### Outcomes
 
-- **OUT-010:** Minimize the time needed to resolve a disagreement about intended behavior.
+##### Time to resolve disagreements
+
+**ID:** OUT-010
+
+Minimize the time needed to resolve a disagreement about intended behavior.
 
 ### Establish the agreed baseline
 
@@ -132,8 +174,12 @@ responsible for implementation and verification.
 
 #### Outcomes
 
-- **OUT-011:** Minimize the time needed to identify the agreed requirements
-  applicable to the proposed change.
+##### Baseline retrieval time
+
+**ID:** OUT-011
+
+Minimize the time needed to identify the agreed requirements
+applicable to the proposed change.
 
 ## Evidence
 

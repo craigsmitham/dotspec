@@ -26,9 +26,9 @@ func TestStructuralDiagnosticsHaveSourceLocations(t *testing.T) {
 		related    int
 	}{
 		{"## Intended progress\nOne\n## Intended progress\nTwo\n", "structure.duplicate-section", 7, 5},
-		{"## Outcomes\n- **same:** First\n- **same:** Second\n", "identity.duplicate", 7, 6},
+		{"## Outcomes\n### First\n\n**ID:** same\n\nFirst\n### Second\n\n**ID:** same\n\nSecond\n", "identity.duplicate", 11, 6},
 		{"## Steps\n### Gather\n**Stage:** locate\n**Stage:** execute\n", "structure.duplicate-field", 8, 7},
-		{"## Notes\n[Missing](#unknown)\n", "reference.unresolved", 6, 0},
+		{"## Evidence\n[Missing](#unknown)\n", "reference.unresolved", 6, 0},
 	} {
 		_, err := Parse([]byte("---\ntype: job-spec\n---\n# Example\n" + tt.body))
 		var d *diagnostic.Diagnostic
@@ -42,14 +42,14 @@ func TestStructuralDiagnosticsHaveSourceLocations(t *testing.T) {
 }
 
 func TestAdviceRetainsOutcomeScopeAndLocation(t *testing.T) {
-	source := "---\ntype: job-spec\n---\n# Example\n## Job\nPrepare a change for review.\n## Performer\nA reviewer.\n## Outcomes\n- **O1:** Better results.\n## Steps\n### Gather\n#### Outcomes\n- **O2:** Better results.\n"
+	source := "---\ntype: job-spec\n---\n# Example\n## Job\nPrepare a change for review.\n## Performer\nA reviewer.\n## Outcomes\n### Better results\n\n**ID:** O1\n\nBetter results.\n## Steps\n### Gather\n#### Outcomes\n##### Better results\n\n**ID:** O2\n\nBetter results.\n"
 	spec, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)
 	}
 	spec.Path = "example.job.spec.md"
 	advice := CheckWithPreset(spec, "odi")
-	if len(advice) != 2 || advice[0].Location.Line != 10 || advice[1].Location.Line != 14 {
+	if len(advice) != 2 || advice[0].Location.Line != 10 || advice[1].Location.Line != 18 {
 		t.Fatalf("outcome locations: %+v", advice)
 	}
 	if advice[0].Location.Element != "Outcomes declared by job / O1" || advice[1].Location.Element != "Outcomes declared by step: Gather / O2" {

@@ -1,7 +1,6 @@
 package system
 
 import (
-	"bytes"
 	"fmt"
 	"net/url"
 	"os"
@@ -14,11 +13,11 @@ import (
 	"go.yaml.in/yaml/v3"
 )
 
-func (s *System) glossaryReferences(data []byte) error {
+func (s *System) glossaryReferences(input *specfile.Markdown) error {
 	if len(s.GlossarySources) == 0 {
 		return nil
 	}
-	location := specfile.MetadataLocation(data, specfile.GlossarySourcesField)
+	location := input.MetadataLocation(specfile.GlossarySourcesField)
 	seen := map[string]bool{}
 	for _, name := range s.GlossarySources {
 		ext := strings.ToLower(filepath.Ext(name))
@@ -35,7 +34,7 @@ func (s *System) glossaryReferences(data []byte) error {
 	return nil
 }
 
-func (s *System) checkGlossarySources() error {
+func (s *System) checkGlossarySources(files *specfile.SourceSet) error {
 	if len(s.GlossarySources) == 0 {
 		return nil
 	}
@@ -54,11 +53,11 @@ func (s *System) checkGlossarySources() error {
 		if err != nil {
 			return err
 		}
-		data, err := os.ReadFile(path)
+		data, err := files.Markdown(path)
 		if err != nil {
 			return err
 		}
-		if _, err := ParseGlossary(data); err != nil {
+		if _, err := ParseGlossaryMarkdown(data); err != nil {
 			return diagnostic.WithPath(err, path)
 		}
 	}
@@ -67,7 +66,11 @@ func (s *System) checkGlossarySources() error {
 
 // ParseGlossary validates the vocabulary and reads its optional context name.
 func ParseGlossary(data []byte) (string, error) {
-	doc, err := specfile.MarkdownOutline(data, "glossary")
+	return ParseGlossaryMarkdown(specfile.NewMarkdown(data))
+}
+
+func ParseGlossaryMarkdown(input *specfile.Markdown) (string, error) {
+	doc, err := input.Outline("glossary")
 	if err != nil {
 		return "", err
 	}
@@ -79,20 +82,12 @@ func ParseGlossary(data []byte) (string, error) {
 	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
 		return "", err
 	}
-	if !bytes.HasPrefix(doc.Original, []byte("---\n")) {
-		return "", nil
+	if input.MetadataError != nil {
+		return "", input.MetadataError
 	}
-	end := len(doc.Original) - len(doc.Source)
-	location := specfile.MetadataLocation(data, "context")
-	if end < 8 {
-		return "", diagnostic.Error("metadata.frontmatter", "expected a closing glossary frontmatter delimiter", location)
-	}
-	var fields map[string]yaml.Node
-	if err := yaml.Unmarshal(bytes.TrimSuffix(doc.Original[4:end], []byte("---\n")), &fields); err != nil {
-		return "", diagnostic.Error("metadata.invalid", err.Error(), location)
-	}
-	node, ok := fields["context"]
-	if !ok {
+	location := input.MetadataLocation("context")
+	node := input.Value("context")
+	if node == nil {
 		return "", nil
 	}
 	if node.Kind != yaml.ScalarNode || node.ShortTag() != "!!str" || strings.TrimSpace(node.Value) == "" || strings.ContainsAny(strings.TrimSpace(node.Value), "\r\n") {

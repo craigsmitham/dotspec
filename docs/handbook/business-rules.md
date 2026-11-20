@@ -65,12 +65,12 @@ one software interaction governed by this rule.
 The `id` is optional and local to the document. A title-only draft is valid;
 missing Statement, Applies to, Rationale, or Authority content produces advice.
 Exceptions can be absent, empty, or described explicitly. Omission does not mean
-there are no exceptions. `Authority and evidence` is an alias for Authority.
+there are no exceptions.
 Repeated recognized sections, incorrect levels for those sections, invalid
 metadata, and unresolved local fragments remain structural errors.
 
-Related specifications, Notes, Evidence, and the other shared model sections
-retain their source content. Unknown sections survive as explicit extensions.
+Use Related specifications for links and Evidence for supporting sources. Put qualifications
+next to the statement or exception they explain.
 
 ## Refer to a rule from software specifications
 

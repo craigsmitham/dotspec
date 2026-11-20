@@ -28,7 +28,7 @@ func target(t *testing.T, raw string) string {
 const plain = "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n"
 
 func TestDefaultPreviewApplyAndConflict(t *testing.T) {
-	raw := "\ufeff" + strings.ReplaceAll(plain+"## Quality attributes\nLocal narrative.\n## Tail\n<!-- untouched -->\n", "\n", "\r\n")
+	raw := "\ufeff" + strings.ReplaceAll(plain+"## Quality attributes\n## Environment\n<!-- untouched -->\n", "\n", "\r\n")
 	path := target(t, raw)
 	m, err := qualitymodel.Show(".", qualitymodel.Default)
 	if err != nil {

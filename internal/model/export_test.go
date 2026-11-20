@@ -27,7 +27,7 @@ func TestExportEmptyScope(t *testing.T) {
 	if err != nil || result.ExitCode != 0 {
 		t.Fatalf("empty export: %v %+v", err, result)
 	}
-	if len(result.Snapshot.Sources) != 0 || String(result.Snapshot.Coverage, "status") != "complete_for_profile" {
+	if len(result.Snapshot.Sources) != 0 {
 		t.Fatalf("unexpected empty scope: %+v", result.Snapshot)
 	}
 	findings, err := Validate(result.Snapshot)
@@ -44,7 +44,7 @@ func TestExportDirectoryImageAndNativeFragments(t *testing.T) {
 		}
 	}
 	files := map[string][]byte{
-		"specs/concepts/media.concept.spec.md": []byte("---\ntype: concept-spec\n---\n# Media\n## Purpose\nInspect sources.\n## State\n![Image](../../assets/pixel.bin)\n[Directory](../../assets/)\n[Native selector](../../contract.txt#rule)\n## Actions\nRead.\n## Operational principles\nFollow links.\n"),
+		"specs/concepts/media.concept.spec.md": []byte("---\ntype: concept-spec\n---\n# Media\n## Purpose\nInspect sources.\n## State\n![Image](../../assets/pixel.bin)\n[Directory](../../assets/)\n[Native selector](../../contract.txt#rule)\n## Actions\n### Read\n## Operational principles\nFollow links.\n"),
 		"assets/pixel.bin":                     {0, 1, 0xff, 0x0d, 0x0a},
 		"contract.txt":                         []byte("native selector semantics\n"),
 	}
@@ -66,7 +66,8 @@ func TestExportDirectoryImageAndNativeFragments(t *testing.T) {
 		directory = directory || String(source, "kind") == "SourceDirectory"
 		image = image || filepath.Base(String(source, "locator")) == "pixel.bin"
 	}
-	for _, resolution := range result.Snapshot.Resolutions {
+	for _, ref := range append(result.Snapshot.References, result.Snapshot.LabelOccurrences...) {
+		resolution := Object(ref["resolution"])
 		native = native || String(resolution, "rule") == "native-fragment-semantics/1" && String(resolution, "status") == "not_attempted"
 	}
 	if !directory || !image || !native {
@@ -128,7 +129,7 @@ func TestExportReferencedClassificationDoesNotSkipNearerBoundary(t *testing.T) {
 		"specs/root.system.spec.md":                             "---\ntype: system-spec\n---\n# Root\n## Purpose\nRead.\n## Scope\nLocal.\n## Quality attributes\n",
 		"specs/quality/useful/useful.quality-attribute.spec.md": "---\ntype: quality-attribute-spec\nid: useful\n---\n# Useful\n\n## Definition\n\nA concern.\n",
 
-		"consumer/specs/concepts/entry.concept.spec.md":              "---\ntype: concept-spec\n---\n# Entry\n## Purpose\nRead.\n## State\n[Target](../../../middle/child/specs/requirements/target.requirement.spec.md)\n## Actions\nRead.\n## Operational principles\nRead a target.\n",
+		"consumer/specs/concepts/entry.concept.spec.md":              "---\ntype: concept-spec\n---\n# Entry\n## Purpose\nRead.\n## State\n[Target](../../../middle/child/specs/requirements/target.requirement.spec.md)\n## Actions\n### Read\n## Operational principles\nRead a target.\n",
 		"middle/child/specs/requirements/target.requirement.spec.md": "---\ntype: requirement-spec\nquality_attributes: [useful]\n---\n# Target\n## Criterion\nA criterion.\n",
 	}
 	for path, data := range files {
@@ -154,8 +155,9 @@ func TestExportReferencedClassificationDoesNotSkipNearerBoundary(t *testing.T) {
 		t.Fatalf("expected one retained label, got %d", len(result.Snapshot.LabelOccurrences))
 	}
 	label := result.Snapshot.LabelOccurrences[0]
-	for _, resolution := range result.Snapshot.Resolutions {
-		if String(resolution, "id") == String(label, "resolution") && String(resolution, "status") != "not_attempted" {
+	for _, ref := range append(result.Snapshot.References, result.Snapshot.LabelOccurrences...) {
+		resolution := Object(ref["resolution"])
+		if String(ref, "id") == String(label, "id") && String(resolution, "status") != "not_attempted" {
 			t.Fatalf("classification skipped nearer inaccessible attribute declarations: %+v", resolution)
 		}
 	}

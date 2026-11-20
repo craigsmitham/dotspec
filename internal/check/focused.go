@@ -38,7 +38,7 @@ func Focused(path, slug string, kind Type, referenceTypes ...Type) Report {
 	}
 	r.Summary.FilesDiscovered = 1
 	r.Summary.FilesChecked = 1
-	findings, err := kind.Inspect(source)
+	findings, err := kind.Inspect(r.sources, source)
 	if err != nil {
 		r.record(err, "scan.read", source)
 		return r.finish()

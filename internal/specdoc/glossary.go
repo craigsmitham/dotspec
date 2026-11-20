@@ -111,9 +111,10 @@ func (p *planner) glossaryBacklinks(s *subject, file string) {
 		}
 	}
 	targets := map[string]*glossaryPassage{}
-	for _, resolution := range p.snapshot.Resolutions {
+	for _, occurrence := range p.snapshot.References {
+		resolution := model.Object(occurrence["resolution"])
 		if target := fragments[attr(resolution, "target")]; target != nil {
-			targets[attr(resolution, "occurrence")] = target
+			targets[id(occurrence)] = target
 		}
 	}
 	links := map[string]model.Record{}

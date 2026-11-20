@@ -2,7 +2,6 @@ package system
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -43,13 +42,17 @@ type ProductSpec struct {
 }
 
 func ParseProductSpec(kind string, data []byte) (*ProductSpec, error) {
+	return ParseProductSpecMarkdown(kind, specfile.NewMarkdown(data))
+}
+
+func ParseProductSpecMarkdown(kind string, input *specfile.Markdown) (*ProductSpec, error) {
 	var meta metadata
-	doc, err := specfile.ParseOutline(data, kind, &meta)
+	doc, err := input.TypedOutline(kind, &meta)
 	if err != nil {
 		return nil, err
 	}
 	var ids specfile.Identifiers
-	if err := ids.Register(meta.ID, kind, specfile.MetadataLocation(data, "id")); err != nil {
+	if err := ids.Register(meta.ID, kind, input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
 	ids.AddAnchors(doc.Anchors)
@@ -87,6 +90,10 @@ func ValidateProductSlug(kind, slug string) error {
 }
 
 func ReadProductSpec(layout specfile.Layout, path string) (*ProductSpec, error) {
+	return readProduct(&specfile.SourceSet{}, layout, path)
+}
+
+func readProduct(files *specfile.SourceSet, layout specfile.Layout, path string) (*ProductSpec, error) {
 	slug, ok := strings.CutSuffix(filepath.Base(path), layout.Suffix)
 	if !ok {
 		return nil, fmt.Errorf("expected a %s source path", layout.Kind)
@@ -94,11 +101,11 @@ func ReadProductSpec(layout specfile.Layout, path string) (*ProductSpec, error) 
 	if err := ValidateProductSlug(layout.Kind, slug); err != nil {
 		return nil, diagnostic.Error("layout."+layout.Kind+"-name", err.Error(), diagnostic.Location{Path: path})
 	}
-	data, err := os.ReadFile(path)
+	input, err := files.Markdown(path)
 	if err != nil {
 		return nil, err
 	}
-	spec, err := ParseProductSpec(layout.Kind, data)
+	spec, err := ParseProductSpecMarkdown(layout.Kind, input)
 	if err != nil {
 		return nil, diagnostic.WithPath(err, path)
 	}
@@ -107,11 +114,11 @@ func ReadProductSpec(layout specfile.Layout, path string) (*ProductSpec, error) 
 }
 
 func ProductCheckType(layout specfile.Layout) check.Type {
-	return check.Type{Layout: layout, Context: CheckContext, Inspect: func(path string) ([]diagnostic.Diagnostic, error) {
-		_, err := ReadProductSpec(layout, path)
+	return check.Type{Layout: layout, Context: CheckContext, Inspect: func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
+		_, err := readProduct(files, layout, path)
 		return nil, err
-	}, References: func(path string) (*specfile.ReferenceDocument, error) {
-		spec, err := ReadProductSpec(layout, path)
+	}, References: func(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error) {
+		spec, err := readProduct(files, layout, path)
 		if err != nil {
 			return nil, err
 		}

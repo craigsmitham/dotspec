@@ -3,7 +3,6 @@ package system
 import (
 	"fmt"
 	"net/url"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -22,8 +21,12 @@ type Component struct {
 }
 
 func ParseComponent(data []byte) (*Component, error) {
+	return ParseComponentMarkdown(specfile.NewMarkdown(data))
+}
+
+func ParseComponentMarkdown(input *specfile.Markdown) (*Component, error) {
 	var meta metadata
-	doc, err := specfile.ParseOutline(data, "component", &meta)
+	doc, err := input.TypedOutline("component", &meta)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +39,7 @@ func ParseComponent(data []byte) (*Component, error) {
 		}
 	}
 	var ids specfile.Identifiers
-	if err := ids.Register(meta.ID, "component", specfile.MetadataLocation(data, "id")); err != nil {
+	if err := ids.Register(meta.ID, "component", input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
 	if err := ids.RegisterDeclarations(doc, "Concept uses", "Synchronizations"); err != nil {
@@ -63,15 +66,19 @@ func ParseComponent(data []byte) (*Component, error) {
 }
 
 func ReadComponent(path string) (*Component, error) {
+	return readComponent(&specfile.SourceSet{}, path)
+}
+
+func readComponent(files *specfile.SourceSet, path string) (*Component, error) {
 	owner := ComponentLayout.ContextDir(path)
 	if _, err := specfile.LocalDeclaration(owner); err != nil {
 		return nil, err
 	}
-	data, err := os.ReadFile(path)
+	input, err := files.Markdown(path)
 	if err != nil {
 		return nil, err
 	}
-	c, err := ParseComponent(data)
+	c, err := ParseComponentMarkdown(input)
 	if err != nil {
 		return nil, diagnostic.WithPath(err, path)
 	}
@@ -82,8 +89,11 @@ func ReadComponent(path string) (*Component, error) {
 }
 
 func ComponentCheckType() check.Type {
-	return check.Type{Layout: ComponentLayout, Context: CheckContext, Inspect: func(path string) ([]diagnostic.Diagnostic, error) { _, err := ReadComponent(path); return nil, err }, References: func(path string) (*specfile.ReferenceDocument, error) {
-		c, err := ReadComponent(path)
+	return check.Type{Layout: ComponentLayout, Context: CheckContext, Inspect: func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
+		_, err := readComponent(files, path)
+		return nil, err
+	}, References: func(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error) {
+		c, err := readComponent(files, path)
 		if err != nil {
 			return nil, err
 		}
@@ -94,6 +104,10 @@ func ComponentCheckType() check.Type {
 // SubjectChain returns the component declarations from the local owner to its
 // enclosing system. Directory discovery selects only the first declaration.
 func SubjectChain(owner string) ([]string, error) {
+	return subjectChain(&specfile.SourceSet{}, owner)
+}
+
+func subjectChain(files *specfile.SourceSet, owner string) ([]string, error) {
 	root, err := specfile.ContextRoot(owner)
 	if err != nil {
 		return nil, err
@@ -103,13 +117,13 @@ func SubjectChain(owner string) ([]string, error) {
 		return nil, err
 	}
 	if ComponentLayout.Match(path) {
-		return parentChain(path, root)
+		return parentChain(files, path, root)
 	}
 	_, err = Read(path)
 	return []string{path}, err
 }
 
-func parentChain(path, boundary string) ([]string, error) {
+func parentChain(files *specfile.SourceSet, path, boundary string) ([]string, error) {
 	var paths []string
 	seen := map[string]bool{}
 	for {
@@ -118,7 +132,7 @@ func parentChain(path, boundary string) ([]string, error) {
 		}
 		seen[path] = true
 		paths = append(paths, path)
-		c, err := ReadComponent(path)
+		c, err := readComponent(files, path)
 		if err != nil {
 			return paths, err
 		}
@@ -143,13 +157,13 @@ func parentChain(path, boundary string) ([]string, error) {
 		var parentID string
 		switch {
 		case Layout.Match(path):
-			parent, err := Read(path)
+			parent, err := ReadFrom(files, path)
 			if err != nil {
 				return paths, err
 			}
 			parentID = parent.ID
 		case ComponentLayout.Match(path):
-			parent, err := ReadComponent(path)
+			parent, err := readComponent(files, path)
 			if err != nil {
 				return paths, err
 			}
@@ -158,11 +172,11 @@ func parentChain(path, boundary string) ([]string, error) {
 			return paths, diagnostic.Error("structure.part-of", "expected a system or component declaration", ref.Location)
 		}
 		if u.Fragment != "" && u.Fragment != parentID {
-			data, err := os.ReadFile(path)
+			md, err := files.Markdown(path)
 			if err != nil {
 				return paths, err
 			}
-			if u.Fragment != specfile.MarkdownTitleAnchor(data) {
+			if u.Fragment != md.TitleAnchor() {
 				return paths, diagnostic.Error("structure.part-of", "Part of must identify the parent declaration itself", ref.Location)
 			}
 		}

@@ -85,9 +85,8 @@ If more work is needed, reopen the same task and complete it again.
 
 The four basic section names are case-sensitive H2 headings. Each may appear once, in any order.
 Use named subsections under `Operational principles` for individual stories. Missing or empty sections produce
-advice, so unfinished concepts remain readable. Additional sections and nested
-headings remain authored Markdown. A nested heading named `State`, for example,
-belongs to its containing section and does not replace the concept's H2 `State`.
+advice, so unfinished concepts remain readable. Keep examples and local headings in the field they explain. Under
+`Operational principles`, for example, name each story with an H3.
 
 State describes the information needed to explain behavior; it need not match a
 database schema. Actions can use prose, tables, code blocks, or links to governing

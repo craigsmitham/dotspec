@@ -20,10 +20,6 @@ func TemplateFor(preset string) (string, error) {
 		return Template + `
 ## Steps
 
-This is a partial functional map, not a required execution sequence.
-Use Define, Locate, Prepare, Confirm, Execute, Monitor, Modify and Conclude
-as elicitation prompts where useful; stages may repeat or be omitted.
-
 ### Accomplishment within the job
 
 **ID:** first-step

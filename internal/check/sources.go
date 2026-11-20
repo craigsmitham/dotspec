@@ -49,6 +49,7 @@ func Sources(path string, types ...Type) SourceReport {
 // Inventory retains the observed project boundary, selected specs and source report
 // for subsequent model mapping without a second discovery or source check.
 type Inventory struct {
+	Sources           *specfile.SourceSet
 	Report            Report
 	Files             []SourceFile
 	Selected          []string

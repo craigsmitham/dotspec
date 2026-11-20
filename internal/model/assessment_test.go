@@ -19,12 +19,12 @@ func TestMeasurementReviewAgreesAcrossCommandsAndModel(t *testing.T) {
 		{"measure without target", "## Applies to\nManaged production requests.\n## Criterion\n### Measure\nElapsed time.\n", []string{"target"}},
 		{"complete narrative criterion", "## Applies to\nManaged production requests.\n## Criterion\nThe 95th percentile is at most 100 ms.\n", nil},
 		{"structured criterion", "## Applies to\n### Conditions\nProduction requests.\n## Criterion\n### Measure\nElapsed time.\n### Target\nAt most 100 ms at the 95th percentile.\n", nil},
-		{"plan success criteria are assessment guidance", "## Criterion\n### Measure\nElapsed time.\n## System verification plan\n### Method\nCollect timings.\n### Conditions\nProduction requests.\n### Success criteria\nThe 95th percentile is at most 100 ms.\n", []string{"target", "conditions or applicability"}},
-		{"empty verification plan", "## Criterion\n### Measure\nElapsed time.\n## System verification plan\n", []string{"target", "conditions or applicability"}},
-		{"assessment conditions do not define applicability", "## Criterion\n### Measure\nElapsed time.\n### Target\nAt most 100 ms at the 95th percentile.\n## System verification plan\n### Conditions\nTest with ten synthetic requests.\n", []string{"conditions or applicability"}},
-		{"criterion references authoritative statement", "## Applies to\nManaged production requests.\n## Criterion\nUse the bound defined in [Statement](#statement).\n## System verification plan\nCollect timings and compare them to [Criterion](#criterion).\n", nil},
-		{"no explicitly recorded measure", "## Applies to\nManaged production requests.\n## System verification plan\nInspect compliance with the specified response behavior.\n", nil},
-		{"validation is distinct", "## System validation plan\nObserve whether the proposed latency serves user needs.\n## Criterion\n### Measure\nElapsed time.\n", []string{"target", "conditions or applicability"}},
+		{"plan success criteria are assessment guidance", "## Criterion\n### Measure\nElapsed time.\n## Evidence\n### Method\nCollect timings.\n### Conditions\nProduction requests.\n### Success criteria\nThe 95th percentile is at most 100 ms.\n", []string{"target", "conditions or applicability"}},
+		{"empty verification plan", "## Criterion\n### Measure\nElapsed time.\n## Evidence\n", []string{"target", "conditions or applicability"}},
+		{"assessment conditions do not define applicability", "## Criterion\n### Measure\nElapsed time.\n### Target\nAt most 100 ms at the 95th percentile.\n## Evidence\n### Conditions\nTest with ten synthetic requests.\n", []string{"conditions or applicability"}},
+		{"criterion references authoritative statement", "## Applies to\nManaged production requests.\n## Criterion\nUse the bound defined in [Statement](#statement).\n## Evidence\nCollect timings and compare them to [Criterion](#criterion).\n", nil},
+		{"no explicitly recorded measure", "## Applies to\nManaged production requests.\n## Evidence\nInspect compliance with the specified response behavior.\n", nil},
+		{"validation is distinct", "## Evidence\nObserve whether the proposed latency serves user needs.\n## Criterion\n### Measure\nElapsed time.\n", []string{"target", "conditions or applicability"}},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {

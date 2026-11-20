@@ -60,14 +60,10 @@ record would be appropriate if comparison across studies becomes a product need.
 
 An outcome has exactly one declaration owner, a Job or JobStep. Its optional
 `applies_to` links identify jobs or steps for which it is a success criterion.
-No applicability is inferred from ownership. Existing outcome lists remain
-useful narrative declarations; add explicit applicability when a typed scope is
-needed, including for an entire job.
-
-Use a named outcome with an introductory `**ID:**`, a concise heading, and the
-full statement. Place links under `Applies to`. A named outcome under a job uses
-H3 and H4 headings; under a step it uses H5 and H6. Headings without an ID remain
-supporting extensions. Ordinary links in supporting prose are citations.
+Use a named heading for each outcome and write the full statement underneath.
+Add an introductory `**ID:**` when the outcome needs a stable identifier. Put
+applicability links under `Applies to`. A job-level outcome uses H3 for its
+name and H4 for its fields. A step-level outcome uses H5 and H6. Ordinary links in supporting prose are citations.
 
 In [Resume interrupted work](../../examples/todo/specs/jobs/resume.job.spec.md),
 the job owns “Less reconstruction”. Its Applies to link identifies the particular

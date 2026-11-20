@@ -25,7 +25,7 @@ func TestJobWorkflow(t *testing.T) {
 			t.Fatalf("show missing %q: %d %q %q", want, code, out, errOut)
 		}
 	}
-	if strings.Contains(out, "## Desired outcome") {
+	if strings.Contains(out, "### Desired outcome") {
 		t.Fatalf("new template uses the legacy heading: %s", out)
 	}
 	code, out, errOut = invoke("job", "list")

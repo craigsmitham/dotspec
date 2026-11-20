@@ -5,9 +5,10 @@ exec git init -q
 status 0 dotspec system init
 status 0 dotspec requirement init preservation
 status 0 dotspec model export
-stdout '"model_version": "0.27.0-draft"'
+stdout '"model_version": "0.28.0-draft"'
 stdout '"kind": "Requirement"'
-stdout '"content_bindings":'
+! stdout '"content_bindings":'
+stdout '"spans":'
 stdout '"markdown":'
 ! stdout '"bytes_base64":'
 ! stderr .
@@ -28,7 +29,7 @@ mkdir specs/requirements
 cp ../invalid.md specs/requirements/invalid.requirement.spec.md
 status 1 dotspec model export
 stdout '"diagnostics":'
-stdout '"domain_decomposition": "failed"'
+stdout '"severity": "error"'
 ! stderr .
 cp stdout invalid-source.json
 status 0 dotspec model validate invalid-source.json --json

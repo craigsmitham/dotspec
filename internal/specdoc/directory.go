@@ -146,7 +146,7 @@ func (p *planner) planPassages(s *subject) {
 		if h.owner != s || h.inGlossary {
 			continue
 		}
-		if len(groups) == 0 || h.level <= s.name.level+1 {
+		if len(groups) == 0 || (h.level <= s.name.level+1 && (h.field != "" || h.subjectKind != "")) {
 			groups = append(groups, []*heading{h})
 		} else {
 			i := len(groups) - 1

@@ -3,7 +3,6 @@ package usecase
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -53,8 +52,16 @@ Keep internal implementation and interface details in their own sources.
 
 ## Extensions
 
-List alternative success paths and failure conditions before resolving their handling.
-Mark unknown responses as unresolved; expand the branches needed for the next decision.
+### An alternative path
+
+#### Condition
+
+Describe when this alternative arises.
+
+#### Handling
+
+Describe the response and where the interaction continues or ends.
+
 `
 
 const ExpandedTemplate = `---
@@ -110,11 +117,15 @@ State or link to what holds when the actor's goal is achieved.
 
 ## Extensions
 
-Describe alternative success paths and failure conditions. For each developed branch,
-identify where its condition arises, the response, and whether the interaction resumes,
-succeeds another way, or ends without achieving the goal. Link to governing rules.
-Condition-only entries with explicitly unresolved handling are useful drafts.
-Use descriptive subheadings when other sources need to link to a branch.
+### An alternative path
+
+#### Condition
+
+Describe when this alternative arises.
+
+#### Handling
+
+Describe the response and where the interaction continues or ends.
 
 ## Sequence
 
@@ -164,6 +175,10 @@ func ValidateSlug(slug string) error {
 }
 
 func Read(path string) (*UseCase, error) {
+	return readFrom(&specfile.SourceSet{}, path)
+}
+
+func readFrom(files *specfile.SourceSet, path string) (*UseCase, error) {
 	name := filepath.Base(path)
 	if !strings.HasSuffix(name, Suffix) {
 		return nil, diagnostic.Error("layout.use-case-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
@@ -172,11 +187,11 @@ func Read(path string) (*UseCase, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.use-case-name", err.Error(), diagnostic.Location{Path: path})
 	}
-	data, err := os.ReadFile(path)
+	input, err := files.Markdown(path)
 	if err != nil {
 		return nil, err
 	}
-	spec, err := Parse(data)
+	spec, err := ParseMarkdown(input)
 	if err != nil {
 		return nil, diagnostic.WithPath(err, path)
 	}
@@ -187,14 +202,18 @@ func Read(path string) (*UseCase, error) {
 // Parse accepts unfinished content, but rejects ambiguous document structure
 // and unresolved same-document references. Check commands resolve file links.
 func Parse(data []byte) (*UseCase, error) {
+	return ParseMarkdown(specfile.NewMarkdown(data))
+}
+
+func ParseMarkdown(input *specfile.Markdown) (*UseCase, error) {
 	var meta metadata
-	doc, err := specfile.ParseOutline(data, Layout.Kind, &meta)
+	doc, err := input.TypedOutline(Layout.Kind, &meta)
 	if err != nil {
 		return nil, err
 	}
 	spec := &UseCase{ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
 	var ids specfile.Identifiers
-	if err := ids.Register(spec.ID, "use case", specfile.MetadataLocation(data, "id")); err != nil {
+	if err := ids.Register(spec.ID, "use case", input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
 	if err := ids.RegisterObligations(doc); err != nil {

@@ -40,10 +40,14 @@ An existing target is preserved according to the
 
 ### More detailed use-case prompts
 
+#### Handling
+
 At step 1, the contributor selects the expanded use-case template. Dotspec creates
 additional context prompts in the same document format, then continues at step 3.
 
 ### Target already exists
+
+#### Handling
 
 At step 2, the target exists. Dotspec refuses to overwrite it. This creation attempt
 ends without a new draft; the contributor can edit the existing source instead.
@@ -53,7 +57,7 @@ ends without a new draft; the contributor can edit the existing source instead.
 Representative. Editing follows creation in this example; existing sources can
 be edited without invoking init.
 
-## Authority and evidence
+## Authority
 
 The [init commands](../../docs/reference/cli.md) and linked requirement define command behavior.
 The [use-case command examples](../../internal/integration/testdata/use-cases.txtar)

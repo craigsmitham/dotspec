@@ -3,64 +3,32 @@ package model
 func (m *domainMapper) concept(r Record, s *Section) bool {
 	switch s.Title {
 	case "Effects table":
-		m.effectsTable(r, s)
+		m.section(r, "effects_table", s)
 	case "Purpose":
 		m.section(r, "purpose", s)
 	case "Operational principles":
 		m.section(r, "operational_principles", s)
 	case "State":
-		v := Record{"content": m.doc.Rich(s.Content)}
-		r["abstract_state"] = v
-		m.sectionBindings(r, "abstract_state.content", s)
-		elements := []Record{}
-		for _, id := range m.listItems(s.Intro, false) {
-			elements = append(elements, Record{"description": m.doc.Rich([]string{id})})
-		}
-		for _, sub := range s.Children {
-			if sub.Title == "Initial state" {
-				m.setRich(v, "initial_state", sub.Content)
-				continue
-			}
-			if sub.Title == "Invariants" {
-				old, _ := v["invariants"].([]Record)
-				v["invariants"] = append(append([]Record{}, old...), m.conditions(sub)...)
-				continue
-			}
-			x := Record{"name": m.doc.Rich([]string{sub.HeadingID}), "description": m.doc.Rich(sub.Content)}
-			for _, detail := range sub.Children {
-				switch detail.Title {
-				case "Value", "Values", "Type":
-					m.setRich(x, "value_description", detail.Content)
-				case "Derivation":
-					m.setRich(x, "derivation", detail.Content)
-				default:
-					m.extension(r, detail)
-				}
-			}
-			elements = append(elements, x)
-		}
-		if len(elements) > 0 {
-			v["elements"] = elements
-		}
+		m.section(r, "abstract_state", s)
 	case "Actions":
 		m.declared(r, "actions", s)
 		for _, sub := range s.Children {
 			x := m.named("ConceptAction", r, sub)
 			m.section(x, "description", sub)
 			for _, detail := range sub.Children {
-				field := map[string]string{"Inputs": "inputs", "Outputs": "outputs", "Initiation": "initiation", "Effects": "effects", "Rejections": "rejections", "Rejection behavior": "rejections"}[detail.Title]
+				field := map[string]string{"Inputs": "inputs", "Outputs": "outputs", "Initiation": "initiation", "Effects": "effects", "Rejections": "rejections"}[detail.Title]
 				if field != "" {
 					m.section(x, field, detail)
 					continue
 				}
 				switch detail.Title {
-				case "Caller assumptions", "Assumptions":
-					m.conditionField(x, "caller_assumptions", detail)
+				case "Caller assumptions":
+					m.section(x, "caller_assumptions", detail)
 				case "Guards":
-					m.conditionField(x, "guards", detail)
+					m.section(x, "guards", detail)
 				default:
 					if !openQuestionHeading(detail.Title) {
-						m.extension(x, detail)
+						m.subjectSection(x, detail)
 					}
 				}
 			}
@@ -83,7 +51,7 @@ func (m *domainMapper) requirement(r Record, s *Section) bool {
 	case "Statement":
 		m.section(r, "statement", s)
 	case "Criterion":
-		m.wrapper(r, "criterion", s, map[string]string{"Measure": "measure", "Target": "target"}, "Open question", "Open questions")
+		m.wrapper(r, "criterion", s, map[string]string{"Measure": "measure", "Target": "target"})
 		m.openQuestions(r, s.Children)
 	default:
 		return false
@@ -91,25 +59,14 @@ func (m *domainMapper) requirement(r Record, s *Section) bool {
 	return true
 }
 
-func (m *domainMapper) wrapper(owner Record, field string, s *Section, details map[string]string, special ...string) {
+func (m *domainMapper) wrapper(owner Record, field string, s *Section, details map[string]string) {
 	v := Record{"content": m.doc.Rich(s.Content)}
 	owner[field] = v
-	m.sectionBindings(owner, field+".content", s)
+	m.markSection(owner, field+".content", s)
 	for _, sub := range s.Children {
 		if nested, ok := details[sub.Title]; ok {
 			m.setRich(v, nested, sub.Content)
-			m.sectionBindings(owner, field+"."+nested, sub)
-		} else {
-			accepted := false
-			for _, title := range special {
-				if sub.Title == title {
-					accepted = true
-					break
-				}
-			}
-			if !accepted {
-				m.extension(owner, sub)
-			}
+			m.markSection(owner, field+"."+nested, sub)
 		}
 	}
 }

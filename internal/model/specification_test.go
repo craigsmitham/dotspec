@@ -37,25 +37,9 @@ A single specification declaration.
 
 An authored definition.
 
-#### Notes
+#### Open questions
 
-Keep this note on the definition.
-
-#### Evidence
-
-##### Observation
-
-An observation awaiting assessment.
-
-#### Related specifications
-
-[This definition](#named-definition).
-
-#### System validation plan
-
-##### Method
-
-Review with the intended users.
+Which observation would confirm this definition?
 `, tc.section)
 			if err := os.MkdirAll(filepath.Join(root, "specs"), 0700); err != nil {
 				t.Fatal(err)
@@ -73,7 +57,7 @@ Review with the intended users.
 			if designKind(tc.kind, "Specification") || !designKind(tc.kind, "TraceableElement") || r["authored_id"] != "named-definition" {
 				t.Fatal("declared element must be traceable and addressable without being a specification", r)
 			}
-			for _, field := range []string{"notes"} {
+			for _, field := range []string{"open_questions"} {
 				if r[field] == nil {
 					t.Fatal("missing element content", field)
 				}
@@ -83,10 +67,7 @@ Review with the intended users.
 					t.Fatal("document-level content mapped onto a declared element", field)
 				}
 			}
-			// Sections that belong to specifications stay with the element as retained, unmodelled content.
-			if len(Strings(r["extension_sections"])) != 3 {
-				t.Fatal("Evidence and Related specifications should be retained as the element's extension sections", r["extension_sections"])
-			}
+
 		})
 	}
 }
@@ -129,7 +110,7 @@ type: feature-spec
 	}
 	for kind, object := range map[string]Record{"System.required_interfaces": required, "System.provided_interfaces": provided} {
 		count := 0
-		for _, a := range s.Assertions {
+		for _, a := range s.Relationships() {
 			if String(a, "projection_path") == kind && a["subject"] == sys["id"] && a["object"] == object["id"] {
 				count++
 			}

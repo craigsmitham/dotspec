@@ -12,7 +12,7 @@ import (
 
 func newModelCommand() *cobra.Command {
 	cmd := &cobra.Command{Use: "model", Short: "Export and validate complete specification snapshots", Args: cobra.NoArgs,
-		Long: "Represent Markdown text, document structure, and named domain content in a versioned specification model. Coverage describes the declared mapping profile, not requirements adequacy or satisfaction.",
+		Long: "Export source text, named domain fields, located relationships and inspection findings in a versioned specification model.",
 		RunE: func(cmd *cobra.Command, _ []string) error { return cmd.Help() },
 	}
 	export := &cobra.Command{Use: "export", Short: "Export a source-backed specification snapshot as JSON", Args: cobra.NoArgs,
@@ -58,7 +58,7 @@ func newModelCommand() *cobra.Command {
 			return err
 		}}
 	schema.Flags().Bool("workspace", false, "print the schema for a complete model export --all envelope")
-	validate := &cobra.Command{Use: "validate SNAPSHOT", Short: "Check a snapshot's shape, references, source fidelity, and coverage", Args: cobra.ExactArgs(1),
+	validate := &cobra.Command{Use: "validate SNAPSHOT", Short: "Check a snapshot's shape, source ranges, and relationships", Args: cobra.ExactArgs(1),
 		Long: "Validate a snapshot file, or use - to read standard input. Snapshot validation checks representation conformance and integrity, not requirements fitness or system behavior; faithfully represented authoring errors do not make a snapshot invalid. No source paths or external targets are fetched.\n\n" + exitPolicy,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			format, err := outputFormat(cmd)

@@ -3,7 +3,6 @@ package model
 import (
 	"crypto/sha256"
 	"fmt"
-	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -20,6 +19,7 @@ type ExportResult struct {
 }
 
 type snapshotBuilder struct {
+	inputs      *specfile.SourceSet
 	snapshot    *Snapshot
 	types       []check.Type
 	byPath      map[string]*ParsedDocument
@@ -67,7 +67,7 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 		"discovery_policy":    Record{"mode": report.Scope.Discovery, "rule": "dotspec-discovery/1", "follow_symlinks": false, "include_nested_repositories": false},
 		"reference_traversal": Record{"mode": "direct", "include_system_context": true, "follow_external_resources": false, "repository_bounded": repo != "", "maximum_depth": 1, "rule": "dotspec-direct-references/1"},
 	}
-	b := &snapshotBuilder{
+	b := &snapshotBuilder{inputs: inspection.Sources,
 		snapshot: NewSnapshot(scope), types: types, byPath: map[string]*ParsedDocument{},
 		sources: map[string]Record{}, elements: map[string]Record{}, rootByPath: map[string]string{},
 		primary: map[string]bool{}, follow: map[string]bool{}, contextPath: map[string]string{}, contextOK: map[string]bool{},
@@ -105,9 +105,9 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 		var contexts []string
 		var contextErr error
 		if explicit && kind.Context.ResolveSource != nil {
-			contexts, contextErr = kind.Context.ResolveSource(owner, filepath.FromSlash(path))
+			contexts, contextErr = kind.Context.ResolveSource(b.inputs, owner, filepath.FromSlash(path))
 		} else {
-			contexts, contextErr = kind.Context.Resolve(owner)
+			contexts, contextErr = kind.Context.Resolve(b.inputs, owner)
 		}
 		b.contextOK[path] = contextErr == nil
 		for _, context := range contexts {
@@ -144,7 +144,7 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 		if !system.Layout.Match(file) {
 			continue
 		}
-		sys, err := system.Read(file)
+		sys, err := system.ReadFrom(b.inputs, file)
 		if err != nil {
 			continue
 		}
@@ -182,8 +182,6 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 			source["project"] = Record{"name": p.Name, "root": cleanPath(p.Root)}
 		}
 	}
-	b.materializeAssertions()
-	b.finishCoverage()
 	b.snapshot.Scope["reads_complete"] = !b.readFailed
 	if b.readFailed || !inspection.DiscoveryComplete {
 		b.snapshot.Scope["inspection_complete"] = false
@@ -230,7 +228,7 @@ func (b *snapshotBuilder) load(path string) Record {
 	if source := b.sources[path]; source != nil {
 		return source
 	}
-	data, err := os.ReadFile(filepath.FromSlash(path))
+	_, err := b.inputs.Read(filepath.FromSlash(path))
 	if err != nil {
 		source := Record{"id": SourceID(path), "kind": "SourceDocument", "locator": path, "read_status": "failed"}
 		b.sources[path] = source
@@ -248,7 +246,8 @@ func (b *snapshotBuilder) load(path string) Record {
 		b.snapshot.Sources = append(b.snapshot.Sources, source)
 		return source
 	}
-	doc := ParseContent(path, data)
+	md, _ := b.inputs.Markdown(filepath.FromSlash(path))
+	doc := extractMarkdown(path, md, kind != nil || b.glossaries[path] != nil)
 	b.byPath[path], b.sources[path] = doc, doc.Source
 	kindName := ""
 	if kind != nil {
@@ -265,7 +264,6 @@ func (b *snapshotBuilder) load(path string) Record {
 	b.snapshot.References = append(b.snapshot.References, doc.References...)
 	b.snapshot.Elements = append(b.snapshot.Elements, mapping.Elements...)
 	b.snapshot.LabelOccurrences = append(b.snapshot.LabelOccurrences, mapping.Labels...)
-	b.snapshot.ContentBindings = append(b.snapshot.ContentBindings, mapping.Bindings...)
 	for _, finding := range doc.Diagnostics {
 		if kind == nil {
 			finding["severity"] = "advice"
@@ -453,7 +451,7 @@ func resourceID(prefix, locator string) string {
 }
 
 func (b *snapshotBuilder) sort() {
-	for _, records := range [][]Record{b.snapshot.Sources, b.snapshot.Documents, b.snapshot.ContentNodes, b.snapshot.Fragments, b.snapshot.Elements, b.snapshot.References, b.snapshot.LabelOccurrences, b.snapshot.Resolutions, b.snapshot.Assertions, b.snapshot.ContentBindings, b.snapshot.Diagnostics} {
+	for _, records := range [][]Record{b.snapshot.Sources, b.snapshot.Documents, b.snapshot.ContentNodes, b.snapshot.Fragments, b.snapshot.Elements, b.snapshot.References, b.snapshot.LabelOccurrences, b.snapshot.Diagnostics} {
 		sort.Slice(records, func(i, j int) bool { return String(records[i], "id") < String(records[j], "id") })
 	}
 	sort.Slice(b.snapshot.ContextSources, func(i, j int) bool {

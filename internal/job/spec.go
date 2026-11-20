@@ -4,7 +4,6 @@ package job
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -54,7 +53,6 @@ Use an optional Outcomes section for individual success criteria.
 
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 var fieldPattern = regexp.MustCompile(`^\*\*(ID|Stage):\*\*\s*(.*?)\s*$`)
-var outcomePattern = regexp.MustCompile(`^\*\*([^*]+):\*\*\s*`)
 
 type DesiredOutcome struct {
 	Name      string              `json:"name,omitempty"`
@@ -102,6 +100,10 @@ func ValidateSlug(slug string) error {
 }
 
 func Read(path string) (*Job, error) {
+	return readFrom(&specfile.SourceSet{}, path)
+}
+
+func readFrom(files *specfile.SourceSet, path string) (*Job, error) {
 	name := filepath.Base(path)
 	if !strings.HasSuffix(name, Suffix) {
 		return nil, diagnostic.Error("layout.job-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
@@ -110,11 +112,11 @@ func Read(path string) (*Job, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.job-name", err.Error(), diagnostic.Location{Path: path})
 	}
-	data, err := os.ReadFile(path)
+	input, err := files.Markdown(path)
 	if err != nil {
 		return nil, err
 	}
-	job, err := Parse(data)
+	job, err := ParseMarkdown(input)
 	if err != nil {
 		return nil, diagnostic.WithPath(err, path)
 	}
@@ -125,14 +127,18 @@ func Read(path string) (*Job, error) {
 // Parse recognizes structured sections but keeps all Markdown for display.
 // Missing content is a draft, while conflicting identities and structure are errors.
 func Parse(data []byte) (*Job, error) {
+	return ParseMarkdown(specfile.NewMarkdown(data))
+}
+
+func ParseMarkdown(input *specfile.Markdown) (*Job, error) {
 	var meta metadata
-	doc, err := specfile.ParseOutline(data, Layout.Kind, &meta)
+	doc, err := input.TypedOutline(Layout.Kind, &meta)
 	if err != nil {
 		return nil, err
 	}
 	job := &Job{Steps: []Step{}, Outcomes: []DesiredOutcome{}, ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
 	var ids specfile.Identifiers
-	if err := ids.Register(job.ID, "job", specfile.MetadataLocation(data, "id")); err != nil {
+	if err := ids.Register(job.ID, "job", input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
 	sections := make(map[string]*specfile.Section)
@@ -273,29 +279,6 @@ func parseStep(doc *specfile.Outline, section *specfile.Section) (Step, error) {
 
 func parseOutcomes(doc *specfile.Outline, section *specfile.Section) ([]DesiredOutcome, error) {
 	var outcomes []DesiredOutcome
-	for _, node := range doc.Nodes(section) {
-		list, ok := node.(*ast.List)
-		if !ok {
-			continue
-		}
-		for item := list.FirstChild(); item != nil; item = item.NextSibling() {
-			location := doc.Location(item.Pos(), section.Title)
-			var paragraphs []string
-			for block := item.FirstChild(); block != nil; block = block.NextSibling() {
-				switch block.(type) {
-				case *ast.Paragraph, *ast.TextBlock:
-					paragraphs = append(paragraphs, strings.TrimSpace(string(block.Lines().Value(doc.Source))))
-				}
-			}
-			statement := strings.TrimSpace(strings.Join(paragraphs, "\n\n"))
-			outcome := DesiredOutcome{Statement: statement, Location: location}
-			if match := outcomePattern.FindStringSubmatch(statement); match != nil {
-				outcome.ID = match[1]
-				outcome.Statement = strings.TrimSpace(strings.TrimPrefix(statement, match[0]))
-			}
-			outcomes = append(outcomes, outcome)
-		}
-	}
 	for _, child := range section.Children {
 		outcome := DesiredOutcome{Name: child.Title, Location: doc.Location(child.Start, child.Title)}
 		removed := map[int]bool{}
@@ -323,9 +306,6 @@ func parseOutcomes(doc *specfile.Outline, section *specfile.Section) ([]DesiredO
 				lines = append(lines, line)
 			}
 			offset += len(line) + 1
-		}
-		if outcome.ID == "" {
-			continue
 		}
 		if child.Level != section.Level+1 || child.Title == "" {
 			return nil, diagnostic.Error("structure.outcome-heading", "each named outcome must use the next heading level", doc.Location(child.Start, child.Title))

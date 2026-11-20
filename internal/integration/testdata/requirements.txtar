@@ -22,7 +22,7 @@ stdout '"name": "Preserve source"'
 stdout '"name": "Repeatable inspection"'
 stdout '"attribute": "reliability"'
 status 0 dotspec system show --json
-stdout '"goals": "Inspect drafts before review."'
+stdout '"goals": "### Earlier review'
 stdout '"glossary":'
 
 # Explicit links add bounded context. Checks do not change source files.
@@ -79,10 +79,12 @@ Help reviewers.
 ## Scope
 CLI.
 ## Goals
+### Earlier review
 Inspect drafts before review.
 ## Environment
 Markdown files.
 ## Assumptions
+### Stable sources
 Sources are stable during comparisons.
 ## Constraints
 Ordinary files.

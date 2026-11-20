@@ -16,7 +16,6 @@ func TestMappedCorpusGraphIntegrity(t *testing.T) {
 		"discovery_policy":    Record{"mode": "explicit", "rule": "mapping-test/1", "follow_symlinks": false, "include_nested_repositories": false},
 		"reference_traversal": Record{"mode": "none", "include_system_context": false, "follow_external_resources": false, "repository_bounded": true, "rule": "mapping-test/1"},
 	})
-	snapshot.Coverage["status"] = "complete_for_profile"
 	for _, root := range []string{"../../specs", "../../examples/todo/specs", "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
 		if err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
 			if err != nil {
@@ -31,7 +30,6 @@ func TestMappedCorpusGraphIntegrity(t *testing.T) {
 			}
 			doc := ParseContent(path, data)
 			mapped := MapDomain(doc, strings.TrimSuffix(String(doc.Document, "declared_type"), "-spec"))
-			Object(doc.Document["coverage"])["status"] = "complete_for_profile"
 			elementIDs := []string{}
 			for _, element := range mapped.Elements {
 				elementIDs = append(elementIDs, String(element, "id"))
@@ -41,10 +39,14 @@ func TestMappedCorpusGraphIntegrity(t *testing.T) {
 			snapshot.Documents = append(snapshot.Documents, doc.Document)
 			snapshot.ContentNodes = append(snapshot.ContentNodes, doc.Nodes...)
 			snapshot.Fragments = append(snapshot.Fragments, doc.Fragments...)
+			for _, occurrences := range [][]Record{doc.References, mapped.Labels} {
+				for _, ref := range occurrences {
+					ref["resolution"] = Record{"status": "not_attempted", "rule": "mapping-test/1"}
+				}
+			}
 			snapshot.References = append(snapshot.References, doc.References...)
 			snapshot.Elements = append(snapshot.Elements, mapped.Elements...)
 			snapshot.LabelOccurrences = append(snapshot.LabelOccurrences, mapped.Labels...)
-			snapshot.ContentBindings = append(snapshot.ContentBindings, mapped.Bindings...)
 			snapshot.Diagnostics = append(snapshot.Diagnostics, mapped.Diagnostics...)
 			return nil
 		}); err != nil {

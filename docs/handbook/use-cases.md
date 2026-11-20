@@ -69,28 +69,22 @@ Use nested prose when a response itself can fail. If branches become hard to rea
 link a decision table, state model, or substantial subfunction. Avoid enumerating
 all interleavings merely to make the narrative appear complete.
 
-For a nested branch that model export should distinguish, use a labelled heading
-or list item, or group descriptive headings under an `Extensions` subsection:
+Declare each independently addressable branch with a named heading under
+`Extensions`. Describe further decisions in its handling. For example,
 
 ```markdown
-### 1a. Equipment unavailable
+## Extensions
 
-Offer an alternative.
+### Equipment unavailable
 
-#### 1a1a. Alternative declined
+#### Condition
 
-End the request without a reservation.
+The requested equipment is already reserved.
 
-#### Notes
+#### Handling
 
-The equipment catalogue remains the source of availability information.
+Offer an alternative. If the requester declines, end the request without a reservation.
 ```
-
-Here the labelled child is a nested branch and Notes holds the notes of the `1a`
-branch. Labels such as `1a2a` and relative `.1a` are optional reading aids. Markdown
-nesting determines branch ownership. For casual prose, simply indent and keep
-writing; it remains fully represented even when it is not decomposed into branch
-records.
 
 Use `Condition` and `Handling` subsections only when that separation helps the
 reader. Say where the condition arises in the branch label or narrative. Handling
@@ -114,8 +108,7 @@ Distinguish the initiating event from preconditions already expected true. If th
 system must handle a condition being false, describe that behavior instead of
 assuming it away. Under Success guarantees, state what holds when the actor's goal
 is achieved. When consequential, state under Minimal guarantees what holds however
-the use case ends. List items or headed entries in either section are distinguished
-as separate conditions. Supporting actors and stakeholder interests, written as
+the use case ends. Use paragraphs or lists to express these guarantees. Supporting actors and stakeholder interests, written as
 prose, can expose promises that the primary actor's success alone misses.
 
 [Check specifications](../../specs/use-cases/check-specifications.use-case.spec.md)

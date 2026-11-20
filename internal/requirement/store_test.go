@@ -38,7 +38,7 @@ func TestInventoryClassifiesAgainstLocalModel(t *testing.T) {
 		t.Fatal("overwrote target")
 	}
 	put(t, path, example)
-	put(t, Layout.Path(dir, "preservation"), "---\ntype: requirement-spec\nquality_attributes: [source-preservation]\n---\n# Preservation\n## Statement\nUnchanged sources.\n## System verification plan\nCompare snapshots.\n")
+	put(t, Layout.Path(dir, "preservation"), "---\ntype: requirement-spec\nquality_attributes: [source-preservation]\n---\n# Preservation\n## Statement\nUnchanged sources.\n## Evidence\nCompare snapshots.\n")
 	groups, err := List(dir)
 	if err != nil {
 		t.Fatal(err)

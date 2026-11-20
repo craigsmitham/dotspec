@@ -29,9 +29,7 @@ class CatalogTests(unittest.TestCase):
         self.assertIn("Obligation", self.catalog["classes"]["Requirement"]["ancestors"])
         self.assertNotIn("ObligationContainer", self.catalog["classes"]["Requirement"]["ancestors"])
         self.assertEqual(self.slot("LabelOccurrence", "owner")["reference_ranges"], ["Obligation", "QualityAttribute"])
-        subject = self.slot("Assertion", "subject")
-        self.assertEqual(subject["reference_ranges"], ["DomainElement"])
-        self.assertTrue(subject["required"])
+        self.assertEqual(self.slot("SourceReference", "resolution")["inline_ranges"], ["Resolution"])
         # A union must not silently reopen the broad DomainElement parent range.
         owner = self.slot("ScenarioStep", "owner")
         self.assertEqual(owner["range"], "DomainElement")
@@ -72,8 +70,8 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(self.slot("UseCase", "kind")["equals_string"], "UseCase")
         self.assertTrue(self.slot("QualityAttribute", "authored_id")["required"])
         self.assertFalse(self.slot("Job", "authored_id")["required"])
-        self.assertEqual(len(classes["RichContent"]["rules"]), 2)
-        self.assertIn("json_schema_projection_gap", classes["RichContent"]["annotations"])
+        self.assertTrue(self.slot("RichContent", "spans")["ordered"])
+        self.assertTrue(self.slot("RichContent", "spans")["required"])
         self.assertIn("unresolved", self.slot("Resolution", "status")["enum_values"])
 
     def test_stale_canonical_membership_paths_cannot_generate(self):
@@ -118,7 +116,7 @@ class CatalogTests(unittest.TestCase):
         # Owner backlinks, citations and provenance are not separate relationship claims.
         for path in ("Goal.owner", "TraceableElement.supports_references", "DomainElement.source_document"):
             self.assertNotIn(path, projections)
-        self.assertEqual([n for n, c in self.catalog["classes"].items() if "Assertion" in c["ancestors"]], ["Assertion"])
+        self.assertNotIn("Assertion", self.catalog["classes"])
 
     def test_every_induced_slot_is_present(self):
         view = SchemaView(str(generate.MODEL))
@@ -133,22 +131,16 @@ class CatalogTests(unittest.TestCase):
         reference = relationships_markdown(self.catalog).decode()
         self.assertIn('ConceptUse.definition', reference)
         self.assertIn('ContextualReferences.references', reference)
-        self.assertIn('projection_path', reference)
         for name in ('System', 'QualityModel', 'UseCase', 'Requirement'):
             self.assertNotIn('system_context', self.catalog['classes'][name]['slots'])
         self.assertIn('TraceableElement.supports', reference)
         for mutate, message in [
-            (lambda c: c['classes']['Assertion']['slots']['subject'].update(required=False), 'must be required'),
-            (lambda c: c['classes']['Assertion'].update(abstract=True), 'one concrete assertion class'),
-            (lambda c: c['classes'].update(Supports=copy.deepcopy(c['classes']['Assertion'])), 'one concrete assertion class'),
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].pop('relationship_scope'), 'missing relationship metadata'),
-            (lambda c: c['classes']['Job']['slots']['steps']['annotations'].update(paired_with='missing'), 'reciprocal peer'),
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].update(relationship_cycles='guess'), 'cycle policy'),
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].update(relationship_category='guess'), 'invalid relationship category'),
             (lambda c: c['classes']['UseCase']['slots']['involves']['annotations'].update(trace_targets='Concept'), 'canonical endpoint ranges'),
             (lambda c: c['classes']['Requirement']['slots']['refines']['annotations'].pop('trace_heading'), 'paired and unique'),
             (lambda c: c['classes']['UseCase']['slots']['supports']['annotations'].update(trace_heading='Involves'), 'paired and unique'),
-            (lambda c: c['classes']['UseCase']['slots']['involves_references'].update(range='Record'), 'source-reference occurrences'),
         ]:
             catalog = copy.deepcopy(self.catalog)
             mutate(catalog)

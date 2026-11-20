@@ -75,12 +75,16 @@ requirements are complete, validated, or satisfied.
 
 ### Malformed specification
 
+#### Handling
+
 During steps 2–3, a specification is malformed. Report its structural error,
 skip dependent checks for that file, and continue according to the
 [continued-inspection requirement](../requirements/continue-after-invalid-spec.requirement.spec.md).
 Resume reporting at step 4. A complete report with errors still achieves this goal.
 
 ### Unreadable input or failed discovery
+
+#### Handling
 
 During steps 2–3, a file cannot be read or discovery fails, including a required
 Git invocation. Report the operational failure and mark the scan incomplete.
@@ -89,10 +93,14 @@ and start another check.
 
 ### Empty scope
 
+#### Handling
+
 At step 2, no supported specifications are found. Explicitly report an empty,
 completed scan at step 4. This is an alternative successful outcome.
 
 ### Unfinished content
+
+#### Handling
 
 At step 3, content is unfinished. Retain readable drafts, report applicable writing
 advice, and continue to step 4. The
@@ -122,7 +130,7 @@ describes the report and inspection behavior used in this interaction.
 Its [quality obligations](../concepts/specification-inspection.concept.spec.md#state)
 cover diagnostic severity, report repeatability, and source preservation.
 
-## Authority and evidence
+## Authority
 
 This narrative explains obligations defined by the linked report contract and
 requirements. Their definitions remain authoritative. The

@@ -9,7 +9,7 @@ import (
 func TestFocusedCheckSharesReportContract(t *testing.T) {
 	dir := t.TempDir()
 	write(t, filepath.Join(dir, "specs/product.system.spec.md"), "---\ntype: system-spec\n---\n# Product\n## Purpose\nHelp.\n## Scope\nThe project.\n")
-	write(t, filepath.Join(dir, "specs/jobs/work.job.spec.md"), "---\ntype: job-spec\n---\n# Work\n## Job\nImprove something.\n## Outcomes\n- **empty:**\n")
+	write(t, filepath.Join(dir, "specs/jobs/work.job.spec.md"), "---\ntype: job-spec\n---\n# Work\n## Job\nImprove something.\n## Outcomes\n### Empty\n")
 	focused, project := checkJob(dir, "work"), checkProject(dir)
 	if !reflect.DeepEqual(focused.Diagnostics, project.Diagnostics) {
 		t.Fatalf("focused/project findings differ:\n%+v\n%+v", focused.Diagnostics, project.Diagnostics)

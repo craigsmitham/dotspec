@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"slices"
+
 	"strings"
 	"testing"
 
@@ -21,7 +21,7 @@ func validationSnapshot(t *testing.T) *Snapshot {
 	t.Helper()
 	dir := t.TempDir()
 	files := map[string]string{
-		"specs/example.system.spec.md":                                                "---\ntype: system-spec\n---\n# Example\n## Purpose\nSupport explicit source-backed specifications.\n## Scope\nThese examples.\n## Goals\n- Preserve author intent.\n## Glossary\n### Source\nThe original authored bytes.\n## Quality attributes\n",
+		"specs/example.system.spec.md":                                                "---\ntype: system-spec\n---\n# Example\n## Purpose\nSupport explicit source-backed specifications.\n## Scope\nThese examples.\n## Goals\n### Preserve author intent\n\nPreserve author intent.\n## Glossary\n### Source\nThe original authored bytes.\n## Quality attributes\n",
 		"specs/quality/reliability/reliability.quality-attribute.spec.md":             "---\ntype: quality-attribute-spec\nid: reliable\n---\n# Reliability\n\n## Definition\n\nWorks as specified.\n",
 		"specs/quality/reliability/consistency/consistency.quality-attribute.spec.md": "---\ntype: quality-attribute-spec\nid: consistent\nsubattribute_of: [reliable]\n---\n# Consistency\n\n## Definition\n\nProduces the same result from the same source.\n",
 
@@ -47,6 +47,8 @@ An input is invalid.
 Unresolved
 ## Related specifications
 [The system](../example.system.spec.md) and [requirements](../requirements/).
+## Supports
+[Inspect intent](../jobs/inspect.job.spec.md).
 `,
 		"specs/jobs/inspect.job.spec.md": `---
 type: job-spec
@@ -69,7 +71,11 @@ An informed decision.
 **Stage:** custom
 Read the specifications.
 #### Outcomes
-- **clear:** Minimize overlooked constraints.
+##### Minimize overlooked constraints
+
+**ID:** clear
+
+Minimize overlooked constraints.
 `,
 		"specs/concepts/inspection.concept.spec.md": `---
 type: concept-spec
@@ -84,8 +90,8 @@ A set of source files.
 Return the authored content and findings.
 ## Operational principles
 Inspection preserves original sources.
-## Additional
-Keep this authored content even though its domain role is unknown.
+### Example
+Retain this characteristic example in the operational principles.
 `,
 		"specs/requirements/preserve.requirement.spec.md": `---
 type: requirement-spec
@@ -97,7 +103,7 @@ quality_attributes:
 Inspection preserves the original source bytes.
 ## Applies to
 Source inspection.
-## System verification plan
+## Evidence
 Compare the bytes before and after inspection.
 `,
 	}
@@ -172,7 +178,7 @@ func elementKind(t *testing.T, s *Snapshot, kind string) Record {
 }
 func snapshotRecord(t *testing.T, s *Snapshot, id string) Record {
 	t.Helper()
-	for _, collection := range [][]Record{s.Sources, s.Documents, s.ContentNodes, s.Elements, s.Fragments, s.References, s.LabelOccurrences, s.Resolutions, s.Assertions, s.ContentBindings, s.Diagnostics} {
+	for _, collection := range [][]Record{s.Sources, s.Documents, s.ContentNodes, s.Elements, s.Fragments, s.References, s.LabelOccurrences, s.Diagnostics} {
 		for _, r := range collection {
 			if String(r, "id") == id {
 				return r
@@ -183,226 +189,38 @@ func snapshotRecord(t *testing.T, s *Snapshot, id string) Record {
 	return nil
 }
 
-func TestValidationAcceptsCompleteSourceBackedExport(t *testing.T) {
-	snapshot := validationSnapshot(t)
-	if len(snapshot.Assertions) == 0 || len(snapshot.Resolutions) == 0 {
-		t.Fatal("fixture did not exercise materialized assertions and resolution")
-	}
-	system := elementKind(t, snapshot, "System")
-	attributeIDs := Strings(system["quality_attributes"])
-	if len(attributeIDs) != 2 {
-		t.Fatalf("system quality_attributes: %v", attributeIDs)
-	}
-	for _, id := range attributeIDs {
-		if String(snapshotRecord(t, snapshot, id), "owner") != String(system, "id") {
-			t.Fatal("attribute is not owned directly by its system")
-		}
-	}
-	declarations := 0
-	for _, assertion := range snapshot.Assertions {
-		if String(assertion, "projection_path") == "System.quality_attributes" {
-			declarations++
-			if String(assertion, "subject") != String(system, "id") || !slices.Contains(attributeIDs, String(assertion, "object")) {
-				t.Fatalf("incorrect direct declaration: %+v", assertion)
-			}
-		}
-	}
-	if declarations != len(attributeIDs) {
-		t.Fatalf("declaration count: %d", declarations)
-	}
-	for _, label := range snapshot.LabelOccurrences {
-		if String(label, "governing_system") != String(system, "id") {
-			t.Fatalf("label lacks its governing system: %+v", label)
-		}
-	}
-	data, err := json.Marshal(snapshot)
-	if err != nil {
-		t.Fatal(err)
-	}
-	findings, err := ValidateJSON(data)
-	if err != nil || len(findings) != 0 {
-		t.Fatalf("round-trip validation: %v, %+v", err, findings)
-	}
-}
-
-func TestValidationRejectsCorruptGraph(t *testing.T) {
+func TestValidationChecksCanonicalSourceAndGraph(t *testing.T) {
 	original := validationSnapshot(t)
+	requireValid(t, cloneSnapshot(t, original))
 	cases := []struct {
 		name, code string
 		mutate     func(*Snapshot)
 	}{
-		{"removed bound system section", "binding.field", func(s *Snapshot) { delete(elementKind(t, s, "System"), "quality_attributes_content") }},
-		{"removed attribute membership", "membership.missing", func(s *Snapshot) { delete(elementKind(t, s, "System"), "quality_attributes") }},
+		{"missing owned member", "reference.missing", func(s *Snapshot) { elementKind(t, s, "Job")["steps"] = []string{"absent"} }},
 		{"duplicate identity", "identity.duplicate", func(s *Snapshot) { s.Elements = append(s.Elements, s.Elements[0]) }},
-		{"missing typed reference", "reference.missing", func(s *Snapshot) { elementKind(t, s, "UseCase")["main_success_scenario"] = "missing" }},
-		{"wrong reference subtype", "reference.kind", func(s *Snapshot) {
-			elementKind(t, s, "UseCase")["main_success_scenario"] = elementKind(t, s, "Concept")["id"]
+		{"source outside field", "source.span", func(s *Snapshot) { records(Object(elementKind(t, s, "UseCase")["goal"])["spans"])[0]["end"] = 1000000 }},
+		{"overlapping ranges", "content.order", func(s *Snapshot) {
+			r := Object(elementKind(t, s, "Requirement")["statement"])
+			span := records(r["spans"])[0]
+			r["spans"] = []Record{span, span}
 		}},
-		{"any-of owner narrowing", "reference.kind", func(s *Snapshot) { elementKind(t, s, "ScenarioStep")["owner"] = elementKind(t, s, "Job")["id"] }},
-		{"missing inverse membership", "membership.missing", func(s *Snapshot) { delete(elementKind(t, s, "UseCase"), "main_success_scenario") }},
-		{"duplicate membership", "membership.duplicate", func(s *Snapshot) {
-			r := elementKind(t, s, "Scenario")
-			r["steps"] = append(Strings(r["steps"]), Strings(r["steps"])[0])
-		}},
-		{"authored identity scope", "identity.authored", func(s *Snapshot) {
-			elementKind(t, s, "UseCase")["authored_id"] = "duplicate"
-			elementKind(t, s, "Scenario")["authored_id"] = "duplicate"
-		}},
-		{"unjustified classification", "label.projection", func(s *Snapshot) { elementKind(t, s, "Requirement")["quality_attributes"] = []string{} }},
-		{"unbound quality attributes", "label.unbound", func(s *Snapshot) {
-			delete(elementKind(t, s, "Requirement"), "specification_system")
-			delete(elementKind(t, s, "Requirement"), "specification_system_origin")
-			for _, label := range s.LabelOccurrences {
-				if String(label, "role") == "quality_classification" {
-					delete(label, "governing_system")
-				}
-			}
-		}},
-		{"mismatched resolution backpointer", "resolution.reciprocal", func(s *Snapshot) { s.Resolutions[0]["occurrence"] = s.Resolutions[1]["occurrence"] }},
-		{"target on unresolved reference", "resolution.state", func(s *Snapshot) {
-			s.Resolutions[0]["status"] = "unresolved"
-			s.Resolutions[0]["target"] = s.Sources[0]["id"]
-		}},
-		{"assertion field disagreement", "assertion.projection", func(s *Snapshot) {
-			for _, r := range s.Assertions {
-				if String(r, "projection_path") == "UseCase.main_success_scenario" {
-					r["object"] = elementKind(t, s, "UseCase")["id"]
+		{"unresolved endpoint", "resolution.state", func(s *Snapshot) { Object(s.LabelOccurrences[0]["resolution"])["status"] = "unresolved" }},
+		{"wrong owner source", "reference.context", func(s *Snapshot) { s.References[0]["context_owner"] = elementKind(t, s, "Job")["id"] }},
+		{"changed authored destination", "relationship.destination", func(s *Snapshot) {
+			for _, ref := range s.References {
+				if ref["role"] != nil && String(Object(ref["resolution"]), "status") == "resolved" {
+					ref["authored_target"] = "different.spec.md#different"
 					return
 				}
 			}
 		}},
-		{"missing derivation input", "assertion.derivation", func(s *Snapshot) { s.Assertions[0]["inputs"] = []string{} }},
-		{"missing derivation rule", "shape.invalid", func(s *Snapshot) { delete(s.Assertions[0], "mapping_rule") }},
-		{"fallback binding without reason", "shape.invalid", func(s *Snapshot) {
-			for _, b := range s.ContentBindings {
-				if String(b, "role") == "named_field" {
-					b["role"] = "fallback"
-					return
-				}
-			}
-		}},
-		{"missing assertion provenance", "assertion.provenance", func(s *Snapshot) {
-			s.Assertions[0]["inputs"] = []string{}
-			delete(s.Assertions[0], "source_nodes")
-			delete(s.Assertions[0], "source_spans")
-		}},
+		{"unknown relationship", "relationship.role", func(s *Snapshot) { s.References[0]["role"] = "missing" }},
+		{"enclosing cycle", "system.enclosing-cycle", func(s *Snapshot) { r := elementKind(t, s, "System"); r["enclosing_system"] = r["id"] }},
 	}
-	for _, test := range cases {
-		t.Run(test.name, func(t *testing.T) { s := cloneSnapshot(t, original); test.mutate(s); requireFinding(t, s, test.code) })
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) { s := cloneSnapshot(t, original); c.mutate(s); requireFinding(t, s, c.code) })
 	}
 }
-
-func TestValidationRejectsCorruptSourceAndCoverage(t *testing.T) {
-	original := validationSnapshot(t)
-	usecaseSource := String(elementKind(t, original, "UseCase"), "source_document")
-	documentID := ""
-	for _, d := range original.Documents {
-		if String(d, "source") == usecaseSource {
-			documentID = String(d, "id")
-		}
-	}
-	cases := []struct {
-		name, code string
-		mutate     func(*Snapshot)
-	}{
-		{"failed read with text", "source.markdown", func(s *Snapshot) { snapshotRecord(t, s, usecaseSource)["read_status"] = "failed" }},
-		{"root span omits bytes", "content.root-span", func(s *Snapshot) {
-			d := snapshotRecord(t, s, documentID)
-			r := snapshotRecord(t, s, String(d, "root"))
-			Object(r["span"])["start"] = 1
-		}},
-		{"duplicate syntax parent", "content.parent", func(s *Snapshot) {
-			d := snapshotRecord(t, s, documentID)
-			r := snapshotRecord(t, s, String(d, "root"))
-			r["children"] = append(Strings(r["children"]), Strings(r["children"])[0])
-		}},
-		{"syntax cycle", "content.cycle", func(s *Snapshot) {
-			d := snapshotRecord(t, s, documentID)
-			r := snapshotRecord(t, s, String(d, "root"))
-			r["children"] = append(Strings(r["children"]), String(r, "id"))
-		}},
-		{"orphan syntax", "content.orphan", func(s *Snapshot) {
-			d := snapshotRecord(t, s, documentID)
-			r := snapshotRecord(t, s, String(d, "root"))
-			r["children"] = Strings(r["children"])[1:]
-		}},
-		{"invalid binding field", "binding.field", func(s *Snapshot) { s.ContentBindings[0]["field_path"] = "does_not_exist" }},
-		{"cross-source binding", "binding.source", func(s *Snapshot) {
-			s.ContentBindings[0]["owner"] = elementKind(t, s, "UseCase")["id"]
-			s.ContentBindings[0]["field_path"] = "goal"
-			if v := String(snapshotRecord(t, s, String(s.ContentBindings[0], "content_node")), "document"); v == documentID {
-				s.ContentBindings[0]["owner"] = elementKind(t, s, "Concept")["id"]
-				s.ContentBindings[0]["field_path"] = "purpose"
-			}
-		}},
-		{"rich presence mismatch", "content.presence", func(s *Snapshot) { Object(elementKind(t, s, "UseCase")["goal"])["presence"] = "empty" }},
-		{"rich content source mismatch", "content.ownership", func(s *Snapshot) {
-			Object(elementKind(t, s, "UseCase")["goal"])["content_nodes"] = Object(elementKind(t, s, "Concept")["purpose"])["content_nodes"]
-		}},
-		{"coverage profile mismatch", "coverage.profile", func(s *Snapshot) { s.Coverage["mapping_profile"] = "different/1" }},
-		{"coverage false inventory", "coverage.accounting", func(s *Snapshot) {
-			Object(snapshotRecord(t, s, documentID)["coverage"])["unbound_content_nodes"] = []string{String(snapshotRecord(t, s, documentID), "root")}
-		}},
-		{"aggregate inventory mismatch", "coverage.aggregate", func(s *Snapshot) {
-			s.Coverage["unbound_content_nodes"] = []string{String(snapshotRecord(t, s, documentID), "root")}
-		}},
-		{"root structural subtree laundering", "coverage.incomplete", func(s *Snapshot) {
-			root := String(snapshotRecord(t, s, documentID), "root")
-			kept := []Record{}
-			for _, b := range s.ContentBindings {
-				node := snapshotRecord(t, s, String(b, "content_node"))
-				if String(node, "document") != documentID {
-					kept = append(kept, b)
-				}
-			}
-			kept = append(kept, Record{"id": "laundered", "kind": "ContentBinding", "content_node": root, "scope": "subtree", "owner": documentID, "field_path": "root", "role": "structural_wrapper", "mapping_rule": "bad/1"})
-			s.ContentBindings = kept
-		}},
-	}
-	for _, test := range cases {
-		t.Run(test.name, func(t *testing.T) { s := cloneSnapshot(t, original); test.mutate(s); requireFinding(t, s, test.code) })
-	}
-}
-
-func TestValidationAllowsFaithfulFailuresAndUnboundLabels(t *testing.T) {
-	original := validationSnapshot(t)
-	t.Run("source diagnostic does not invalidate snapshot", func(t *testing.T) {
-		s := cloneSnapshot(t, original)
-		s.Diagnostics = append(s.Diagnostics, Record{"id": "source-error", "kind": "Diagnostic", "code": "source.invalid", "severity": "error", "message": "Authored source is invalid.", "source": elementKind(t, s, "UseCase")["source_document"], "phase": "parse", "element": "Example", "related": []Record{{"locator": "not-in-this-snapshot.md", "line": 2, "element": "Related"}}})
-		requireValid(t, s)
-	})
-	t.Run("unread source remains representable", func(t *testing.T) {
-		s := cloneSnapshot(t, original)
-		s.Sources = append(s.Sources, Record{"id": "unread", "kind": "SourceDocument", "locator": "unread.md", "read_status": "failed"})
-		s.Coverage["status"] = "partial"
-		s.Scope["reads_complete"] = false
-		s.Scope["inspection_complete"] = false
-		requireValid(t, s)
-	})
-	t.Run("Markdown source requires text", func(t *testing.T) {
-		s := cloneSnapshot(t, original)
-		delete(snapshotRecord(t, s, String(elementKind(t, s, "UseCase"), "source_document")), "markdown")
-		requireFinding(t, s, "source.markdown")
-	})
-	t.Run("unbound classification is not an invalid model", func(t *testing.T) {
-		s := cloneSnapshot(t, original)
-		r := elementKind(t, s, "Requirement")
-		delete(r, "specification_system")
-		delete(r, "specification_system_origin")
-		delete(r, "quality_attributes")
-		for _, label := range s.LabelOccurrences {
-			if String(label, "owner") == String(r, "id") {
-				delete(label, "governing_system")
-				result := snapshotRecord(t, s, String(label, "resolution"))
-				result["status"] = "unbound_label"
-				delete(result, "target")
-			}
-		}
-		s.Assertions = slices.DeleteFunc(s.Assertions, func(a Record) bool { return String(a, "subject") == String(r, "id") })
-		requireValid(t, s)
-	})
-}
-
 func TestValidationClosedShapesAndMalformedJSON(t *testing.T) {
 	snapshot := validationSnapshot(t)
 	elementKind(t, snapshot, "UseCase")["unexpected"] = true
@@ -410,123 +228,6 @@ func TestValidationClosedShapesAndMalformedJSON(t *testing.T) {
 	if findings, err := ValidateJSON([]byte(`{"model_version":`)); err != nil || len(findings) != 1 || findings[0].Code != "shape.json" {
 		t.Fatalf("invalid JSON must be a validation finding, got %v %+v", err, findings)
 	}
-}
-
-func TestValidationRejectsDomainCyclesAndAttributeScopeEscape(t *testing.T) {
-	original := validationSnapshot(t)
-	t.Run("quality hierarchy cycle", func(t *testing.T) {
-		s := cloneSnapshot(t, original)
-		reliable, consistent := Record(nil), Record(nil)
-		for _, r := range s.Elements {
-			if String(r, "kind") == "SystemQualityAttribute" {
-				if String(r, "authored_id") == "reliable" {
-					reliable = r
-				} else {
-					consistent = r
-				}
-			}
-		}
-		reliable["subattribute_of"] = []string{String(consistent, "id")}
-		reliable["subattribute_of_labels"] = []string{"cycle-label"}
-		s.LabelOccurrences = append(s.LabelOccurrences, Record{"id": "cycle-label", "kind": "LabelOccurrence", "owner": reliable["id"], "role": "subattribute_of", "label": consistent["authored_id"], "content_node": Strings(Object(consistent["definition"])["content_nodes"])[0], "resolution": "cycle-resolution"})
-		s.Resolutions = append(s.Resolutions, Record{"id": "cycle-resolution", "kind": "Resolution", "occurrence": "cycle-label", "status": "resolved", "target": consistent["id"], "rule": "explicit-test/1"})
-		requireFinding(t, s, "quality.subattribute-cycle")
-	})
-	t.Run("cross-system parent", func(t *testing.T) {
-		s := cloneSnapshot(t, original)
-		var broad Record
-		for _, r := range s.Elements {
-			if String(r, "authored_id") == "reliable" {
-				broad = r
-			}
-		}
-		old := snapshotRecord(t, s, String(broad, "owner"))
-		old["quality_attributes"] = slices.DeleteFunc(Strings(old["quality_attributes"]), func(id string) bool { return id == String(broad, "id") })
-		s.Elements = append(s.Elements, Record{"id": "other-system", "kind": "System", "source_document": broad["source_document"], "decomposition": "unsegmented", "quality_attributes_content": old["quality_attributes_content"], "quality_attributes": []string{String(broad, "id")}})
-		broad["owner"] = "other-system"
-		requireFinding(t, s, "quality.scope")
-	})
-	t.Run("nested branch cycle", func(t *testing.T) {
-		s := cloneSnapshot(t, original)
-		branch := elementKind(t, s, "UseCaseExtension")
-		second := Record{"id": "second-branch", "kind": "UseCaseExtension", "source_document": branch["source_document"], "decomposition": "unsegmented", "owner": branch["id"], "content": branch["content"], "branches": []string{String(branch, "id")}}
-		branch["owner"] = "second-branch"
-		branch["branches"] = []string{"second-branch"}
-		s.Elements = append(s.Elements, second)
-		elementKind(t, s, "UseCase")["extensions"] = []string{}
-		requireFinding(t, s, "ownership.cycle")
-	})
-	t.Run("system containment cycle", func(t *testing.T) {
-		s := cloneSnapshot(t, original)
-		sys := elementKind(t, s, "System")
-		sys["enclosing_system"] = "second-system"
-		s.Elements = append(s.Elements, Record{"id": "second-system", "kind": "System", "source_document": sys["source_document"], "decomposition": "unsegmented", "enclosing_system": sys["id"]})
-		requireFinding(t, s, "system.enclosing-cycle")
-	})
-}
-
-func TestValidationAllowsUndefinedQualityLabel(t *testing.T) {
-	s := validationSnapshot(t)
-	requirement := elementKind(t, s, "Requirement")
-	requirement["quality_attributes"] = []string{}
-	for _, label := range s.LabelOccurrences {
-		if String(label, "owner") == String(requirement, "id") {
-			label["label"] = "unavailable"
-			result := snapshotRecord(t, s, String(label, "resolution"))
-			result["status"] = "undefined_label"
-			delete(result, "target")
-		}
-	}
-	s.Assertions = slices.DeleteFunc(s.Assertions, func(r Record) bool {
-		return String(r, "projection_path") == "Obligation.quality_attributes" && String(r, "subject") == String(requirement, "id")
-	})
-	requireValid(t, s)
-}
-
-func TestValidationAllowsInvalidSourceWithHonestFallback(t *testing.T) {
-	s := validationSnapshot(t)
-	doc := ParseContent("invalid.use-case.spec.md", []byte("---\ntype: [\n---\n# Unfinished\n## Goal\nUnknown.\n"))
-	mapped := MapDomain(doc, "use-case")
-	s.Sources = append(s.Sources, doc.Source)
-	s.Documents = append(s.Documents, doc.Document)
-	s.ContentNodes = append(s.ContentNodes, doc.Nodes...)
-	s.Fragments = append(s.Fragments, doc.Fragments...)
-	s.ContentBindings = append(s.ContentBindings, mapped.Bindings...)
-	s.Diagnostics = append(s.Diagnostics, doc.Diagnostics...)
-	s.Diagnostics = append(s.Diagnostics, mapped.Diagnostics...)
-	if len(mapped.Elements) > 0 {
-		t.Fatal("invalid source unexpectedly had a domain root")
-	}
-	refreshTestCoverage(s)
-	requireValid(t, s)
-	if String(Object(doc.Document["coverage"]), "status") != "partial" {
-		t.Fatal("invalid source should expose partial domain coverage")
-	}
-}
-
-func refreshTestCoverage(s *Snapshot) {
-	b := snapshotBuilder{snapshot: s, byPath: map[string]*ParsedDocument{}}
-	for _, d := range s.Documents {
-		p := &ParsedDocument{Document: d, NodeByID: map[string]Record{}}
-		for _, source := range s.Sources {
-			if String(source, "id") == String(d, "source") {
-				p.Source = source
-			}
-		}
-		for _, node := range s.ContentNodes {
-			if String(node, "document") == String(d, "id") {
-				p.Nodes = append(p.Nodes, node)
-				p.NodeByID[String(node, "id")] = node
-			}
-		}
-		b.byPath[String(p.Source, "locator")] = p
-	}
-	for _, source := range s.Sources {
-		if String(source, "kind") == "SourceDocument" && String(source, "read_status") != "read" {
-			b.readFailed = true
-		}
-	}
-	b.finishCoverage()
 }
 
 func TestValidationRejectsAmbiguousJSONTransport(t *testing.T) {
@@ -559,21 +260,6 @@ func TestValidationAcceptsEquivalentIntegerJSONNotation(t *testing.T) {
 	if _, err := decodeSnapshotJSON([]byte(`{"emoji":"\ud83d\ude00","literal":"\\ud800"}`)); err != nil {
 		t.Fatalf("valid Unicode escapes: %v", err)
 	}
-}
-
-func TestValidationKnownRoleFallbackCannotClaimCompleteMapping(t *testing.T) {
-	snapshot := validationSnapshot(t)
-	for _, binding := range snapshot.ContentBindings {
-		if String(binding, "owner") == String(elementKind(t, snapshot, "UseCase"), "id") && String(binding, "field_path") == "goal" && String(binding, "role") == "named_field" {
-			binding["role"] = "fallback"
-			binding["known_role"] = "UseCase.goal"
-			binding["reason"] = "Mapping was not completed."
-		}
-	}
-	requireFinding(t, snapshot, "coverage.known-role")
-	requireFinding(t, snapshot, "coverage.incomplete")
-	refreshTestCoverage(snapshot)
-	requireValid(t, snapshot)
 }
 
 func TestValidationShapeFailureUsesConcreteRecordAndSource(t *testing.T) {
@@ -610,57 +296,5 @@ func TestValidationShapeFailureUsesConcreteRecordAndSource(t *testing.T) {
 				t.Fatalf("expected original source location: %+v", finding)
 			}
 		})
-	}
-}
-
-func TestValidationRejectsDeletedSourceSubtreeDespiteRetainedPayload(t *testing.T) {
-	snapshot := validationSnapshot(t)
-	extension := elementKind(t, snapshot, "ExtensionSection")
-	owner := snapshotRecord(t, snapshot, String(extension, "owner"))
-	removed := map[string]bool{}
-	var remove func(string)
-	remove = func(id string) {
-		if removed[id] {
-			return
-		}
-		removed[id] = true
-		for _, child := range Strings(snapshotRecord(t, snapshot, id)["children"]) {
-			remove(child)
-		}
-	}
-	for _, field := range []string{"heading", "content"} {
-		for _, id := range Strings(Object(extension[field])["content_nodes"]) {
-			remove(id)
-		}
-	}
-	extensionID := String(extension, "id")
-	owner["extension_sections"] = slices.DeleteFunc(Strings(owner["extension_sections"]), func(id string) bool { return id == extensionID })
-	for _, document := range snapshot.Documents {
-		document["elements"] = slices.DeleteFunc(Strings(document["elements"]), func(id string) bool { return id == extensionID })
-	}
-	for _, node := range snapshot.ContentNodes {
-		if node["children"] != nil {
-			node["children"] = slices.DeleteFunc(Strings(node["children"]), func(id string) bool { return removed[id] })
-		}
-	}
-	snapshot.ContentNodes = slices.DeleteFunc(snapshot.ContentNodes, func(r Record) bool { return removed[String(r, "id")] })
-	snapshot.Elements = slices.DeleteFunc(snapshot.Elements, func(r Record) bool { return String(r, "id") == extensionID })
-	snapshot.Fragments = slices.DeleteFunc(snapshot.Fragments, func(r Record) bool { return removed[String(r, "content_node")] })
-	snapshot.ContentBindings = slices.DeleteFunc(snapshot.ContentBindings, func(r Record) bool { return String(r, "owner") == extensionID || removed[String(r, "content_node")] })
-	snapshot.Assertions = slices.DeleteFunc(snapshot.Assertions, func(r Record) bool { return String(r, "subject") == extensionID || String(r, "object") == extensionID })
-	refreshTestCoverage(snapshot)
-	// The original payload, digest and root span still look intact, and all
-	// remaining records are internally bound. Byte partitioning reveals the loss.
-	findings, err := Validate(snapshot)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(findings) == 0 {
-		t.Fatal("unrepresented source subtree was accepted")
-	}
-	for _, finding := range findings {
-		if finding.Code != "content.gap" {
-			t.Errorf("unexpected collateral invalidity: %+v", finding)
-		}
 	}
 }

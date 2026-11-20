@@ -18,7 +18,7 @@ func TestParse(t *testing.T) {
 		{"setext headings", "---\ntype: system-spec\n---\nParser\n======\n\nPurpose\n-------\nRead specs.\n\nScope\n-----\nMarkdown files.", "Parser", "Read specs.", "Markdown files."},
 		{"closing heading markers", strings.ReplaceAll(strings.ReplaceAll(validSpec, "## Purpose", "## Purpose ##"), "## Scope", "## Scope ##"), "Parser", "Read specs.", "Markdown files."},
 		{"scope first", "---\ntype: system-spec\n---\n# Parser\n## Scope\nMarkdown files.\n## Purpose\nRead specs.", "Parser", "Read specs.", "Markdown files."},
-		{"extra section", validSpec + "\n## Notes\nNot part of scope.\n", "Parser", "Read specs.", "Markdown files."},
+		{"extra section", validSpec + "\n## Evidence\nNot part of scope.\n", "Parser", "Read specs.", "Markdown files."},
 		{"Markdown body", strings.Replace(validSpec, "Read specs.", "- Read specs.\n\n### Detail\n\nPreserve structure.\n\n```markdown\n# Fake title\n## Scope\n```\n\n> ## Scope\n> Quoted heading.", 1), "Parser", "- Read specs.\n\n### Detail\n\nPreserve structure.\n\n```markdown\n# Fake title\n## Scope\n```\n\n> ## Scope\n> Quoted heading.", "Markdown files."},
 	}
 	for _, tt := range tests {
@@ -50,12 +50,12 @@ func TestParseRejectsMalformedSpecs(t *testing.T) {
 		{"empty title", strings.Replace(validSpec, "# Parser", "#", 1), "nonempty top-level"},
 		{"two titles", validSpec + "\n# Another\n", "exactly one"},
 		{"title in code", strings.Replace(validSpec, "# Parser", "```\n# Parser\n```", 1), "name heading"},
-		{"no purpose", strings.Replace(validSpec, "## Purpose", "## Rationale", 1), "Purpose"},
+		{"no purpose", strings.Replace(validSpec, "## Purpose", "## Rationale", 1), "Rationale"},
 		{"empty purpose", strings.Replace(validSpec, "Read specs.", "", 1), "Purpose"},
 		{"no scope", strings.Replace(validSpec, "## Scope", "### Scope", 1), "Scope"},
 		{"empty scope", strings.Replace(validSpec, "Markdown files.", "", 1), "Scope"},
 		{"duplicate section", validSpec + "\n## Scope\nAgain.\n", "duplicate Scope"},
-		{"wrong heading case", strings.Replace(validSpec, "## Purpose", "## purpose", 1), "Purpose"},
+		{"wrong heading case", strings.Replace(validSpec, "## Purpose", "## purpose", 1), "purpose"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -77,7 +77,7 @@ func FuzzParse(f *testing.F) {
 }
 
 func TestSystemAndDeclarationIdentities(t *testing.T) {
-	source := strings.Replace(validSpec, "type: system-spec", "type: system-spec\nid: parser", 1) + "\n## Concept uses\n### Scanner\n**ID:** scanner\n#### Part of\n[Parser](#parser)\n## Synchronizations\n### Scan files\n**ID:** scan-files\n#### Notes\n[Scanner heading](#scanner)\n"
+	source := strings.Replace(validSpec, "type: system-spec", "type: system-spec\nid: parser", 1) + "\n## Concept uses\n### Scanner\n**ID:** scanner\n#### Description\n[Parser](#parser)\n## Synchronizations\n### Scan files\n**ID:** scan-files\n#### Semantics\n[Scanner heading](#scanner)\n"
 	spec, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)

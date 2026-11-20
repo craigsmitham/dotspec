@@ -25,7 +25,7 @@ func (d *designResolver) resolveSpecificationSystems() {
 			values := []string{String(r, "specification_system")}
 			d.projections[len(d.projections)-1].values = values
 			d.projected[String(r, "id")]["specification_system"] = values
-		} else if specificationSystemOrigin(r) == "explicit" && len(Strings(r["specification_system_references"])) == 0 {
+		} else if specificationSystemOrigin(r) == "explicit" && len(d.refs(r, "specification_system")) == 0 {
 			d.issue(r, "specification_system", "error", "Specification system requires exactly one explicit link to a system.")
 		}
 	}

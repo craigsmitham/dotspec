@@ -70,7 +70,7 @@ Prevent confirmation of orders that cannot be fulfilled from available stock.
 
 [Order submission contract](../../order-contract.md#order-submission-contract)
 
-## System verification plan
+## Evidence
 
 Submit concurrent orders against limited stock and verify that accepted quantities never exceed stock.
 -- specs/online-store.system.spec.md --
@@ -161,8 +161,6 @@ Accept a priced order and return its submission identity.
 #### Contracts
 
 [Order submission contract](../../../order-contract.md) defines the interaction contract.
-
-#### Notes
 
 The declaration specifies the boundary interaction; it is not a deployed endpoint.
 

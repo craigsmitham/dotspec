@@ -64,19 +64,11 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 		t.Fatal("ordinary references incorrectly promoted or explicit illustration lost", count)
 	}
 	concept := designRecord(t, s, "Concept", "Trash")
-	rows := reviewObjects(concept["effects_table"])
-	if len(rows) != 4 {
-		t.Fatal("lost effects table rows", rows)
-	}
-	last := reviewObjects(rows[3]["cells"])
-	if len(last) != 4 || strings.TrimSpace(d.text(last[3])) != "" || !strings.Contains(d.text(last[1]), "unchanged") {
-		t.Fatal("blank effects inferred as unchanged", last)
-	}
-	if strings.Count(d.text(concept["implementation_suggestions"]), "An index could") != 1 {
-		t.Fatal("explanation duplicated or lost")
+	if !strings.Contains(d.text(concept["effects_table"]), "| Expire | unchanged | false | |") {
+		t.Fatal("effects table lost")
 	}
 	assertions := map[string]int{}
-	for _, a := range s.Assertions {
+	for _, a := range s.Relationships() {
 		assertions[String(a, "projection_path")]++
 	}
 	if assertions["ScenarioStep.illustrates"] != 2 || assertions["System.interacts_with"] != 1 {
@@ -84,7 +76,7 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 	}
 	forged := cloneSnapshot(t, s)
 	designRecord(t, forged, "System", "Document workspace")["interacts_with"] = []string{String(concept, "id")}
-	requireFinding(t, forged, "reference.kind")
+	requireFinding(t, forged, "shape.invalid")
 	forged = cloneSnapshot(t, s)
 	for _, r := range forged.Elements {
 		if String(r, "kind") == "ScenarioStep" && String(r, "authored_label") == "1" {
@@ -92,7 +84,7 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 			break
 		}
 	}
-	requireFinding(t, forged, "reference.kind")
+	requireFinding(t, forged, "shape.invalid")
 }
 
 func TestReviewViewsAreAdvisoryAndRebaseSources(t *testing.T) {
@@ -105,7 +97,7 @@ func TestReviewViewsAreAdvisoryAndRebaseSources(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"No contribution path recorded", "Contribution path recorded", "ScenarioStep 2", "no rule or action relationship recorded", "no native contract reference recorded", "Before acceptance", "Review required for **recovery copy**", "../specs/document-workspace.system.spec.md#reduce-retention-cost", "../project-plan.md#retention-boundary-decision", "nonbinding"} {
+	for _, want := range []string{"No contribution path recorded", "Contribution path recorded", "ScenarioStep 2", "no rule or action relationship recorded", "no native contract reference recorded", "Before acceptance", "Review required for **recovery copy**", "../specs/document-workspace.system.spec.md#reduce-retention-cost", "../project-plan.md#retention-boundary-decision"} {
 		if !strings.Contains(text, want) {
 			t.Errorf("review missing %q", want)
 		}
@@ -123,7 +115,7 @@ func TestReviewViewsAreAdvisoryAndRebaseSources(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"Effects table", "| Expire | unchanged | false | |", "Blank effects cells are unspecified", "Implementation suggestions (nonbinding)"} {
+	for _, want := range []string{"Effects table", "| Expire | unchanged | false | |", "Blank cells are unspecified"} {
 		if !strings.Contains(design, want) {
 			t.Errorf("design missing %q", want)
 		}
@@ -135,10 +127,16 @@ func TestReviewViewsAreAdvisoryAndRebaseSources(t *testing.T) {
 	if !strings.Contains(overview, "Out of scope") || !strings.Contains(overview, "Time API") {
 		t.Fatal("overview omits boundary information")
 	}
-	// Review a serialized snapshot too; embedded values are then []any, not []Record.
-	again, err := ReviewMarkdown(cloneSnapshot(t, result.Snapshot), filepath.Join(root, "docs"))
-	if err != nil || again != text {
-		t.Fatal("review differs after JSON round trip", err)
+	saved := cloneSnapshot(t, result.Snapshot)
+	for _, view := range []struct {
+		name   string
+		render func(*Snapshot, string) (string, error)
+		want   string
+	}{{"review", ReviewMarkdown, text}, {"overview", OverviewMarkdown, overview}, {"design", DesignMarkdown, design}, {"pegs", PEGSMarkdown, pegs}} {
+		again, err := view.render(saved, filepath.Join(root, "docs"))
+		if err != nil || again != view.want {
+			t.Errorf("%s differs after JSON round trip: %v", view.name, err)
+		}
 	}
 }
 
@@ -198,7 +196,7 @@ Read the current time.
 
 Read retained items.
 
-## Implementation hints
+## Implementation
 
 A batch worker can use [Time readings](#component-time).
 `)
@@ -213,7 +211,7 @@ A batch worker can use [Time readings](#component-time).
 	if len(items) != 2 || len(Strings(Object(d.index[items[0]]["contracts"])["references"])) != 2 {
 		t.Fatal("repeated interface content overwritten", items)
 	}
-	if strings.Count(d.text(component["implementation_suggestions"]), "A batch worker") != 1 {
+	if strings.Count(d.text(Object(component["implementation"])["content"]), "A batch worker") != 1 {
 		t.Fatal("nested explanation duplicated")
 	}
 }

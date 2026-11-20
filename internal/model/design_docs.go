@@ -14,6 +14,7 @@ import (
 // resolved composition. It neither executes synchronizations nor infers edges.
 // relativeTo is the directory where the returned Markdown will be read.
 func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
+	s = s.navigation()
 	base, err := designOutputBase(relativeTo)
 	if err != nil {
 		return "", err
@@ -50,13 +51,7 @@ func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		text := d.text(value)
 		// Reference-style definitions may live outside this section. Supply them to
 		// the parser, then render references inline so labels cannot collide across concepts.
-		definitions := []string{}
-		for _, n := range s.ContentNodes {
-			if String(n, "node_kind") == "link_definition" && String(Object(n["span"]), "source") == String(r, "source_document") {
-				definitions = append(definitions, d.text(Record{"content_nodes": []string{String(n, "id")}}))
-			}
-		}
-		rendered := rebaseDesignMarkdown(text, sourceLink(r), strings.Join(definitions, "\n"))
+		rendered := rebaseDesignMarkdown(text, sourceLink(r), d.definitions(r))
 		if strings.TrimSpace(text) == "" {
 			return
 		}
@@ -72,15 +67,12 @@ func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		fmt.Fprintf(&out, "### %s\n\n[Source](%s).\n\n", d.name(r), sourceLink(r))
 		section("Purpose", r, r["purpose"])
 		section("Operational principles", r, r["operational_principles"])
-		section("State", r, Object(r["abstract_state"])["content"])
-		section("Actions", r, r["actions_content"])
-		if r["effects_table_content"] != nil {
-			section("Effects table", r, r["effects_table_content"])
-			out.WriteString("Blank effects cells are unspecified, not unchanged. This authored matrix is not a proof of completeness.\n\n")
+		section("State", r, r["abstract_state"])
+		for _, id := range Strings(r["actions"]) {
+			action := d.index[id]
+			section(d.name(action), action, action["description"])
 		}
-		section("Notes", r, r["notes"])
-		section("Implementation suggestions (nonbinding)", r, r["implementation_suggestions"])
-		section("Illustrative examples", r, r["illustrative_examples"])
+		section("Effects table", r, r["effects_table"])
 	}
 	if concepts == 0 {
 		out.WriteString("No concept definitions were acquired in this scope.\n\n")
@@ -128,8 +120,12 @@ func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			}
 			out.WriteString("```\n\n")
 		}
-		section("Concept use declarations", sys, sys["concept_uses_content"])
-		section("Synchronization rules", sys, sys["synchronizations_content"])
+		for _, field := range []string{"concept_uses", "synchronizations"} {
+			for _, id := range Strings(sys[field]) {
+				item := d.index[id]
+				section(d.name(item), item, item["content"])
+			}
+		}
 	}
 	if systems == 0 {
 		out.WriteString("No explicit system compositions were acquired. Directory association alone does not declare a concept use.\n\n")
@@ -335,4 +331,28 @@ func designOutputBase(relativeTo string) (string, error) {
 		base = filepath.Join(physical, suffix)
 	}
 	return base, nil
+}
+
+// Markdown views can be generated directly from an exported snapshot. Extract
+// reference definitions once per source, including definitions outside the field.
+func (d *designResolver) definitions(owner Record) string {
+	source := String(owner, "source_document")
+	if defs, ok := d.documentDefinitions[source]; ok {
+		return defs
+	}
+	if d.documentDefinitions == nil {
+		d.documentDefinitions = map[string]string{}
+	}
+	text := String(d.index[source], "markdown")
+	var definitions []string
+	if strings.Contains(text, "]:") {
+		doc := ParseContent(String(d.index[source], "locator"), []byte(text))
+		for _, n := range doc.Nodes {
+			if String(n, "node_kind") == "link_definition" {
+				definitions = append(definitions, doc.Raw(String(n, "id")))
+			}
+		}
+	}
+	d.documentDefinitions[source] = strings.Join(definitions, "\n")
+	return d.documentDefinitions[source]
 }

@@ -10,7 +10,7 @@ func TestObligationFormsShareAssessmentAndClassification(t *testing.T) {
 	conformanceWrite(t, root, "specs/service.system.spec.md", "---\ntype: system-spec\n---\n# Service\n\n## Purpose\n\nServe requests.\n\n## Scope\n\nThis service.\n\n## Quality attributes\n\n")
 	conformanceWrite(t, root, "specs/quality/speed/speed.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: speed\n---\n# Speed\n\n## Definition\n\nResponse speed.\n")
 
-	body := "## Statement\n\nRespond within one second.\n\n## Applies to\n\n**Targets:** [Service](../service.system.spec.md)\n\n## Criterion\n\n### Target\n\n1 second.\n\n## System verification plan\n\n### Method\n\nCheck the response to every request.\n"
+	body := "## Statement\n\nRespond within one second.\n\n## Applies to\n\n**Targets:** [Service](../service.system.spec.md)\n\n## Criterion\n\n### Target\n\n1 second.\n\n## Rationale\n\n### Method\n\nCheck the response to every request.\n"
 	conformanceWrite(t, root, "specs/requirements/speed.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [speed]\n---\n# Speed\n\n"+body)
 	clause := "---\ntype: use-case-spec\n---\n# Respond\n\n## Obligations\n\n### Response time\n\n**Quality attributes:** speed\n\nRespond within one second.\n\n" + strings.ReplaceAll(strings.TrimPrefix(body, "## Statement\n\nRespond within one second.\n\n"), "##", "####")
 	conformanceWrite(t, root, "specs/use-cases/respond.use-case.spec.md", clause)

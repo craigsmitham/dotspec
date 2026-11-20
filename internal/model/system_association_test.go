@@ -20,7 +20,7 @@ func associationFixture(t *testing.T) string {
 		conformanceWrite(t, root, entry.path, "---\ntype: system-spec\nid: "+entry.attribute+"-system\n---\n# "+entry.name+"\n## Purpose\nServe users.\n## Scope\nThis service.\n")
 		conformanceWrite(t, root, filepath.Join(filepath.Dir(entry.path), "quality/concern/concern.quality-attribute.spec.md"), "---\ntype: quality-attribute-spec\nid: "+entry.attribute+"\n---\n# Concern\n## Definition\nA quality concern.\n")
 	}
-	body := "## Statement\nRespond promptly.\n\n## Applies to\n**Targets:** [Directory default](../directory-default.system.spec.md)\n\n## Rationale\nKeep users informed.\n\n## System verification plan\nMeasure responses.\n"
+	body := "## Statement\nRespond promptly.\n\n## Applies to\n**Targets:** [Directory default](../directory-default.system.spec.md)\n\n## Rationale\nKeep users informed.\n\n## Evidence\nMeasure responses.\n"
 	conformanceWrite(t, root, "specs/requirements/explicit.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [selected]\n---\n# Explicit\n\n## Specification system\n[Selected](../../remote/specs/explicit-selection.system.spec.md#selected-system)\n\n"+body)
 	conformanceWrite(t, root, "specs/requirements/default.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [local]\n---\n# Default\n\n"+body)
 	return root
@@ -70,7 +70,7 @@ func TestSpecificationSystemSelectionIsConsistent(t *testing.T) {
 	}
 	forged := cloneSnapshot(t, s)
 	designRecord(t, forged, "Requirement", "Explicit")["specification_system"] = local["id"]
-	requireFinding(t, forged, "concept.projection")
+	requireFinding(t, forged, "shape.invalid")
 }
 
 func TestInvalidSpecificationSystemNeverFallsBack(t *testing.T) {
@@ -131,7 +131,7 @@ func TestSpecificationSelectionUsesLinkDestinationsNotLabelsOrImages(t *testing.
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	r := designRecord(t, result.Snapshot, "Requirement", "Explicit")
-	if len(Strings(r["quality_attributes"])) != 1 || len(Strings(r["specification_system_references"])) != 1 {
+	if len(Strings(r["quality_attributes"])) != 1 || len(newDesignResolver(result.Snapshot).refs(r, "specification_system")) != 1 {
 		t.Fatal(r)
 	}
 }
@@ -144,11 +144,15 @@ func TestOfflineValidationRejectsClassificationWhenExplicitSelectionIsUnresolved
 	r := designRecord(t, s, "Requirement", "Explicit")
 	selected := designRecord(t, s, "System", "Explicit selection")
 	attribute := Strings(selected["quality_attributes"])[0]
-	r["quality_attributes"] = []string{attribute}
-	index := conformanceIndex(s)
-	label := index[Strings(r["quality_attribute_labels"])[0]]
+	var label Record
+	for _, l := range s.LabelOccurrences {
+		if l["owner"] == r["id"] {
+			label = l
+			break
+		}
+	}
 	label["governing_system"] = selected["id"]
-	resolution := index[String(label, "resolution")]
+	resolution := Object(label["resolution"])
 	resolution["status"], resolution["target"] = "resolved", attribute
 	requireFinding(t, s, "label.context")
 }

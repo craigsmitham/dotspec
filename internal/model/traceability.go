@@ -33,8 +33,7 @@ func (m *domainMapper) traceSection(r Record, s *Section) bool {
 	}
 	if s.Title == "Obligations" {
 		if _, ok := cls.Slots["obligations"]; !ok {
-			// Report once and leave the section unmapped, so its content is
-			// retained as an extension section instead of being left unbound.
+			// Keep one finding per invalid declaration.
 			if m.traceMapped[key+"/rejected"] {
 				return false
 			}
@@ -46,11 +45,10 @@ func (m *domainMapper) traceSection(r Record, s *Section) bool {
 	m.traceMapped[key] = true
 	if field != "" {
 		m.section(r, field+"_content", s)
-		r[field+"_references"] = append(append([]string{}, Strings(r[field+"_references"])...), m.references(s.Content)...)
-		m.bindDesignReferences(r, field+"_references")
+		m.relationship(r, field, s.Content)
 		return true
 	}
-	m.section(r, "obligations_content", s)
+	m.declared(r, "obligations", s)
 	if r["obligations"] == nil {
 		r["obligations"] = []string{}
 	}
@@ -58,24 +56,20 @@ func (m *domainMapper) traceSection(r Record, s *Section) bool {
 		x := m.named("ObligationClause", r, child)
 		if id := m.fieldText(child, "ID"); id != "" {
 			x["authored_id"] = id
-			m.bind(x, "authored_id", m.fieldNodes(child, "ID"), "record_identity", "obligation-id")
-			m.bind(x, "authored_id", m.fieldLabelNodes(child, "ID"), "structural_wrapper", "obligation-id-label")
+			m.authoredFragment(x, m.fieldNodes(child, "ID"))
 		}
 		if nodes := m.fieldNodes(child, "Quality attributes"); nodes != nil {
-			x["quality_attribute_labels"] = []string{}
 			for _, label := range strings.Split(m.fieldText(child, "Quality attributes"), ",") {
 				label = strings.TrimSpace(label)
 				if label != "" {
-					appendID(x, "quality_attribute_labels", m.label(x, label, nodes[0], "quality_classification"))
+					m.label(x, label, nodes[0], "quality_classification")
 				}
 			}
-			m.bind(x, "quality_attribute_labels", nodes, "named_field", "clause-quality-labels")
-			m.bind(x, "quality_attribute_labels", m.fieldLabelNodes(child, "Quality attributes"), "structural_wrapper", "clause-quality-labels")
 		}
 
 		nodes := m.withoutFields(child, child.Intro, "ID", "Quality attributes")
 		x["statement"] = m.doc.Rich(nodes)
-		m.bind(x, "statement", nodes, "named_field", "obligation-statement")
+		m.markField(x, "statement", nodes)
 		for _, sub := range child.Children {
 			if m.traceSection(x, sub) {
 				continue
@@ -83,7 +77,7 @@ func (m *domainMapper) traceSection(r Record, s *Section) bool {
 			if sub.Title == "Criterion" || sub.Title == "Applies to" || sub.Title == "Rationale" {
 				m.requirement(x, sub)
 			} else {
-				m.extension(x, sub)
+				m.subjectSection(x, sub)
 			}
 		}
 		appendID(r, "obligations", String(x, "id"))
@@ -109,7 +103,6 @@ func (m *domainMapper) nestedTraceability() {
 			if s := sections[id]; s != nil {
 				for _, child := range s.Children {
 					m.traceSection(r, child)
-					m.explanatory(r, child)
 				}
 			}
 		}
@@ -169,7 +162,7 @@ func (d *designResolver) traceReview() {
 		if !designKind(String(r, "kind"), "Requirement or ObligationClause") {
 			continue
 		}
-		if len(Strings(r["supports_references"]))+len(Strings(r["derived_from_references"]))+len(Strings(r["refines_references"])) == 0 {
+		if len(d.refs(r, "supports"))+len(d.refs(r, "derived_from"))+len(d.refs(r, "refines")) == 0 {
 			d.issue(r, "motivation", "advice", "No explicit motivation or derivation is recorded for this obligation; review its justification.")
 		}
 

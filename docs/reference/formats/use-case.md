@@ -85,7 +85,15 @@ The contributor receives a complete report for the selected scope.
 
 ## Extensions
 
-- A file cannot be read: report the failure and mark the scan incomplete.
+### Unreadable file
+
+#### Condition
+
+A file cannot be read.
+
+#### Handling
+
+Report the failure and mark the scan incomplete.
 
 ## Sequence
 
@@ -102,7 +110,7 @@ optional, may appear in any order after the title, and may be empty in a draft.
 Duplicate conventional sections are errors, even if empty. A conventional section
 at document level must use H2. Deeper headings belong to the containing section;
 their names do not create additional conventional sections. Code examples and
-blockquotes do not define sections. Additional prose and sections are retained.
+blockquotes do not define sections. Keep additional prose, examples and local headings within the field they qualify.
 
 JSON exposes conventional section bodies as Markdown strings in `goal`,
 `boundary_description`, `primary_actor`, `goal_level`, `trigger`, `preconditions`,

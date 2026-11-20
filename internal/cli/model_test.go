@@ -99,7 +99,7 @@ func TestConceptDesignCommands(t *testing.T) {
 	if code != 0 || errOut != "" {
 		t.Fatalf("docs %d: %s", code, errOut)
 	}
-	for _, part := range []string{"## Concepts", "#### Synchronization rules", "#### Application dependencies", "../specs/concepts/shorthand.concept.spec.md"} {
+	for _, part := range []string{"## Concepts", "#### Start public lifetime", "#### Application dependencies", "../specs/concepts/shorthand.concept.spec.md"} {
 		if !strings.Contains(output, part) {
 			t.Fatalf("missing %q", part)
 		}
@@ -118,7 +118,7 @@ func TestConceptDesignCommands(t *testing.T) {
 		t.Fatal(err)
 	}
 	code, output, errOut = invoke("model", "docs")
-	if code != 1 || errOut != "" || !strings.Contains(output, "concept.definition") || !strings.Contains(output, "#### Synchronization rules") {
+	if code != 1 || errOut != "" || !strings.Contains(output, "concept.definition") || !strings.Contains(output, "#### Start public lifetime") {
 		t.Fatalf("source findings not retained: %d %s %s", code, output, errOut)
 	}
 	code, output, errOut = invoke("model", "export")

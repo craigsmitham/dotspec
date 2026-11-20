@@ -83,6 +83,8 @@ The example follows one errand across two work sessions.
 
 The list must make previously recorded entries available when the person returns.
 
+The [restart requirement](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>) specifies which entry data survives a service interruption.
+
 **Refined by** · [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
 
 #### Derived from
@@ -92,10 +94,6 @@ The list must make previously recorded entries available when the person returns
 #### Applies to
 
 **Targets:** [My checklist](<../concept-uses/my-checklist.concept-use.spec-report.md>).
-
-#### Notes
-
-The [restart requirement](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>) specifies which entry data survives a service interruption.
 
 ## Related specifications
 

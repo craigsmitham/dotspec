@@ -28,9 +28,7 @@ retain the available text and findings without acquiring a fabricated domain rec
 
 Consumers need both faithful source material and explicit domain meaning to
 review, navigate and transform a specification safely. Lossy exports hide
-qualifications and unresolved decisions. Combining source acquisition, mapping
-coverage and semantic adequacy into one success flag overstates what inspection
-established.
+qualifications and unresolved decisions. Source ranges let consumers trace each represented field back to its authored passage.
 
 ## Evidence
 

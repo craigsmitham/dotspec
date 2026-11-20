@@ -29,6 +29,8 @@ A contributor assembling material for review.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/discover-specification-sources.use-case.spec.md#unresolved-reference"} -->
 
+#### Handling
+
 At step 2, a reference target cannot be resolved. Report the finding with the
 inventory according to the source-discovery contract. The contributor can repair
 the link and request another inventory.
@@ -37,6 +39,8 @@ the link and request another inventory.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/discover-specification-sources.use-case.spec.md#operational-failure"} -->
 
+#### Handling
+
 During discovery or reading, an operational failure prevents completing the
 inventory. Report the incomplete operation. End without achieving the goal;
 the contributor can repair access and retry.
@@ -44,6 +48,8 @@ the contributor can repair access and retry.
 ### Multiple sources have the same slug
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/discover-specification-sources.use-case.spec.md#multiple-sources-have-the-same-slug"} -->
+
+#### Handling
 
 When locating an individual source within a subject, the contributor can give its
 typed filename and path. If a slug matches several owned files, dotspec lists
@@ -67,12 +73,12 @@ User task (sea).
 
 Representative. Discovery order is not a required order of authoring or review.
 
-## Authority and evidence
+## Authority
 
 The [source-discovery reference](<../../docs/reference/inspection.md#references>) describes link behavior. The [source layout](<../../docs/reference/layout.md>) defines directory ownership and source selection.
 The [source-discovery executable examples](<../../internal/integration/testdata/sources.txtar>)
 define required outcomes for their illustrated cases. Contributors use the
 inventory to assemble the material for review and decide whether it adequately
 specifies the system. The
-[source authority principle](<../constraints.md#source-authority>) explains how
+[source authority principle](<../dotspec.system.spec-report.md#source-authority>) explains how
 projects assign roles to those sources.

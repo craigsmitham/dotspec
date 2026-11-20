@@ -3,7 +3,6 @@ package concept
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -39,9 +38,10 @@ Describe the abstract information needed to explain the behavior, independently 
 
 ## Actions
 
-Describe or reference the available actions, their inputs and outputs, conditions, and effects.
+### Perform an action
+
+Describe the action, its inputs, outputs, conditions and effects.
 Distinguish caller assumptions from enforced guards, and state rejection behavior where it matters.
-Use subheadings for individual actions when useful.
 
 ## Operational principles
 
@@ -79,6 +79,10 @@ func ValidateSlug(slug string) error {
 }
 
 func Read(path string) (*Concept, error) {
+	return readFrom(&specfile.SourceSet{}, path)
+}
+
+func readFrom(files *specfile.SourceSet, path string) (*Concept, error) {
 	name := filepath.Base(path)
 	if !strings.HasSuffix(name, Suffix) {
 		return nil, diagnostic.Error("layout.concept-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
@@ -87,11 +91,11 @@ func Read(path string) (*Concept, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.concept-name", err.Error(), diagnostic.Location{Path: path})
 	}
-	data, err := os.ReadFile(path)
+	input, err := files.Markdown(path)
 	if err != nil {
 		return nil, err
 	}
-	spec, err := Parse(data)
+	spec, err := ParseMarkdown(input)
 	if err != nil {
 		return nil, diagnostic.WithPath(err, path)
 	}
@@ -102,14 +106,18 @@ func Read(path string) (*Concept, error) {
 // Parse accepts unfinished content, but rejects ambiguous document structure
 // and unresolved same-document references. Check commands resolve file links.
 func Parse(data []byte) (*Concept, error) {
+	return ParseMarkdown(specfile.NewMarkdown(data))
+}
+
+func ParseMarkdown(input *specfile.Markdown) (*Concept, error) {
 	var meta metadata
-	doc, err := specfile.ParseOutline(data, Layout.Kind, &meta)
+	doc, err := input.TypedOutline(Layout.Kind, &meta)
 	if err != nil {
 		return nil, err
 	}
 	spec := &Concept{ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location)}
 	var ids specfile.Identifiers
-	if err := ids.Register(spec.ID, "concept", specfile.MetadataLocation(data, "id")); err != nil {
+	if err := ids.Register(spec.ID, "concept", input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
 	if err := ids.RegisterObligations(doc); err != nil {

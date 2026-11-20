@@ -7,14 +7,15 @@ import (
 )
 
 func (d *designResolver) richIntro(value any) string {
-	nodes := []string{}
-	for _, id := range Strings(Object(value)["content_nodes"]) {
-		if String(d.index[id], "node_kind") == "heading" {
+	var intro []Record
+	for _, span := range records(Object(value)["spans"]) {
+		raw := d.text(Record{"spans": []Record{span}})
+		if strings.HasPrefix(strings.TrimSpace(raw), "#") {
 			break
 		}
-		nodes = append(nodes, id)
+		intro = append(intro, span)
 	}
-	return strings.TrimSpace(d.text(Record{"content_nodes": nodes}))
+	return strings.TrimSpace(d.text(Record{"spans": intro}))
 }
 func (d *designResolver) measurementGuidance(r Record) obligation.MeasurementGuidance {
 	criterion, applicability := Object(r["criterion"]), Object(r["applicability"])

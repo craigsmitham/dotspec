@@ -33,6 +33,8 @@ A contributor proposing a product change.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/prepare-specifications.use-case.spec.md#behavior-remains-undecided"} -->
 
+#### Handling
+
 During steps 1–3, the team lacks an agreed response to an identified condition.
 Record the condition and explicitly unresolved handling. Continue preparation for
 review; the review must resolve it before a delivery relies on that promise.
@@ -40,6 +42,8 @@ review; the review must resolve it before a delivery relies on that promise.
 ### Inspection cannot finish
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/prepare-specifications.use-case.spec.md#inspection-cannot-finish"} -->
+
+#### Handling
 
 At step 3, the check follows its
 [operational-failure branch](<check-specifications.use-case.spec-report.md#unreadable-input-or-failed-discovery>).

@@ -6,7 +6,7 @@ import (
 )
 
 func TestJTBDPresetsDoNotImposeODIOnOtherJobs(t *testing.T) {
-	source := "---\ntype: job-spec\n---\n# Travel\n## Job\nArrive confidently.\n## Performer\nA commuter.\n## Outcomes\n- Feel confident about keeping commitments.\n"
+	source := "---\ntype: job-spec\n---\n# Travel\n## Job\nArrive confidently.\n## Performer\nA commuter.\n## Outcomes\n### Feel confident about keeping commitments\n\nFeel confident about keeping commitments.\n"
 	j, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)
@@ -34,7 +34,7 @@ func TestJTBDPresetsDoNotImposeODIOnOtherJobs(t *testing.T) {
 		if err != nil {
 			t.Fatalf("%s: %v", preset, err)
 		}
-		if parsed.Statement == "" || strings.Contains(template, "## Desired outcome\n") {
+		if parsed.Statement == "" || strings.Contains(template, "### Desired outcome\n") {
 			t.Fatal(preset, parsed)
 		}
 		if preset == "odi" && (len(parsed.Outcomes) != 1 || parsed.Outcomes[0].AppliesTo == "") {
@@ -47,7 +47,7 @@ func TestJTBDPresetsDoNotImposeODIOnOtherJobs(t *testing.T) {
 }
 
 func TestNamedOutcomesPreserveFullStatementAndIdentity(t *testing.T) {
-	source := "---\ntype: job-spec\n---\n# Job\n## Steps\n### Plan\n**ID:** plan\n### Monitor\n**ID:** monitor\n## Outcomes\n### Confidence\n**ID:** confidence\nFeel confident about arrival.\n#### Applies to\n[Plan](#plan) and [Monitor](#monitor)\n### Research notes\nA heading without an ID remains supporting prose.\n"
+	source := "---\ntype: job-spec\n---\n# Job\n## Steps\n### Plan\n**ID:** plan\n### Monitor\n**ID:** monitor\n## Outcomes\n### Confidence\n**ID:** confidence\nFeel confident about arrival.\n#### Applies to\n[Plan](#plan) and [Monitor](#monitor)\n#### Supporting content\nA heading without an ID remains supporting prose.\n"
 	j, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)

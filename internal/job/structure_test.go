@@ -22,7 +22,11 @@ A product engineer working with stakeholders.
 
 ## Outcomes
 
-- **OUT-001:** Minimize the likelihood of missing a stakeholder need.
+### Minimize the likelihood of missing a stakeholder need
+
+**ID:** OUT-001
+
+Minimize the likelihood of missing a stakeholder need.
 
 ## Steps
 
@@ -35,7 +39,11 @@ Identify people whose needs may be affected.
 
 #### Outcomes
 
-- **OUT-002:** Minimize the time needed to identify
+##### Minimize the time needed to identify
+
+**ID:** OUT-002
+
+Minimize the time needed to identify
   affected stakeholders.
 
 ### Agree on the baseline
@@ -47,15 +55,23 @@ Reach agreement with stakeholders.
 
 #### Outcomes
 
-- **OUT-003:** Minimize the time needed to reach agreement.
+##### Minimize the time needed to reach agreement
 
-## Progress cases
+**ID:** OUT-003
+
+Minimize the time needed to reach agreement.
+
+## Situation
 
 ### Trying a new approach
 
 #### Outcomes
 
-- **CASE-NOTE:** This is ordinary case prose, not a job outcome.
+##### This is ordinary case prose, not a job outcome
+
+**ID:** CASE-NOTE
+
+This is ordinary case prose, not a job outcome.
 
 ## Evidence
 
@@ -100,7 +116,7 @@ func TestDraftsAndLegacyStoriesRemainValid(t *testing.T) {
 		"---\ntype: job-spec\n---\n# A job\n",
 		validJob,
 		"---\ntype: job-spec\n---\n# A job\n## Steps\n### An incomplete step\n",
-		"---\ntype: job-spec\n---\n# A job\n## Job\n\n## Outcomes\n- A preliminary success criterion.\n",
+		"---\ntype: job-spec\n---\n# A job\n## Job\n\n## Outcomes\n### A preliminary success criterion\n\nA preliminary success criterion.\n",
 	} {
 		got, err := Parse([]byte(source))
 		if err != nil {
@@ -115,7 +131,7 @@ func TestDraftsAndLegacyStoriesRemainValid(t *testing.T) {
 func TestStepIdentitySurvivesRenameAndReorder(t *testing.T) {
 	firstStart := strings.Index(structuredJob, "### Identify stakeholders")
 	secondStart := strings.Index(structuredJob, "### Agree on the baseline")
-	end := strings.Index(structuredJob, "## Progress cases")
+	end := strings.Index(structuredJob, "## Situation")
 	source := structuredJob[:firstStart] + structuredJob[secondStart:end] + structuredJob[firstStart:secondStart] + structuredJob[end:]
 	source = strings.Replace(source, "### Identify stakeholders", "### Identify affected people", 1)
 	got, err := Parse([]byte(source))
@@ -128,7 +144,7 @@ func TestStepIdentitySurvivesRenameAndReorder(t *testing.T) {
 }
 
 func TestHeadingsAndMetadataInExamplesAreNotStructure(t *testing.T) {
-	example := "\n```markdown\n### Fake step\n**ID:** identify-stakeholders\n#### Outcomes\n- **OUT-001:** Fake outcome.\n```\n\n> ### Quoted step\n> **ID:** agree-baseline\n"
+	example := "\n```markdown\n### Fake step\n**ID:** identify-stakeholders\n#### Outcomes\n- **ID:** OUT-001 Fake outcome.\n```\n\n> ### Quoted step\n> **ID:** agree-baseline\n"
 	source := strings.Replace(structuredJob, "Identify people whose needs may be affected.", "Identify people whose needs may be affected.\n"+example, 1)
 	got, err := Parse([]byte(source))
 	if err != nil {
@@ -145,16 +161,16 @@ func TestHeadingsAndMetadataInExamplesAreNotStructure(t *testing.T) {
 func TestStructuralErrors(t *testing.T) {
 	tests := []struct{ source, want string }{
 		{strings.Replace(structuredJob, "**ID:** agree-baseline", "**ID:** identify-stakeholders", 1), "duplicate ID"},
-		{strings.Replace(structuredJob, "**OUT-003:**", "**OUT-001:**", 1), "duplicate ID"},
-		{strings.Replace(structuredJob, "**OUT-003:**", "**identify-stakeholders:**", 1), "duplicate ID"},
+		{strings.Replace(structuredJob, "**ID:** OUT-003", "**ID:** OUT-001", 1), "duplicate ID"},
+		{strings.Replace(structuredJob, "**ID:** OUT-003", "**ID:** identify-stakeholders", 1), "duplicate ID"},
 		{strings.Replace(structuredJob, "**ID:** agree-baseline", "**ID:** invalid id", 1), "invalid ID"},
 		{strings.Replace(structuredJob, "id: prepare-change", "id: bad/id", 1), "invalid ID"},
 		{strings.Replace(structuredJob, "**ID:** agree-baseline", "**ID:** agree-baseline\n**ID:** another", 1), "duplicate ID field"},
 		{strings.Replace(structuredJob, "**Stage:** locate", "**Stage:** locate\n**Stage:** define", 1), "duplicate Stage field"},
 		{structuredJob + "\n## Steps\n", "duplicate Steps"},
-		{strings.Replace(structuredJob, "### Identify stakeholders", "#### Identify stakeholders", 1), "level-three"},
-		{strings.Replace(structuredJob, "### Identify stakeholders", "###", 1), "nonempty level-three"},
-		{strings.Replace(structuredJob, "#### Outcomes", "##### Outcomes", 1), "#### Outcomes"},
+		{strings.Replace(structuredJob, "### Identify stakeholders", "#### Identify stakeholders", 1), "member-heading"},
+		{strings.Replace(structuredJob, "### Identify stakeholders", "###", 1), "member-heading"},
+		{strings.Replace(structuredJob, "#### Outcomes", "##### Outcomes", 1), "section-level"},
 		{strings.Replace(structuredJob, "### Agree on the baseline", "#### Outcomes\n\n### Agree on the baseline", 1), "duplicate Outcomes"},
 		{strings.Replace(structuredJob, "(#OUT-002)", "(#missing-outcome)", 1), "unresolved local reference"},
 		{strings.Replace(structuredJob, "type: job-spec", "type: job-spec\nprofiles: [odi]", 1), "invalid YAML"},
@@ -168,18 +184,18 @@ func TestStructuralErrors(t *testing.T) {
 }
 
 func TestReferencesAndUnknownSections(t *testing.T) {
-	source := structuredJob + "\n## Additional notes\n\nText, [external](https://example.com), [file](notes.md), [local heading](#additional-notes), and [encoded ID](#OUT%2D002).\n"
+	source := structuredJob + "\n### Additional notes\n\nText, [external](https://example.com), [file](notes.md), [local heading](#additional-notes), and [encoded ID](#OUT%2D002).\n"
 	got, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(got.Markdown, "## Additional notes") {
+	if !strings.Contains(got.Markdown, "### Additional notes") {
 		t.Fatal("unknown section lost")
 	}
 }
 
 func TestCheckExplainsHeuristics(t *testing.T) {
-	source := "---\ntype: job-spec\n---\n# Maintain requirements\n## Job\nManage requirements.\n## Outcomes\n- **O1:** Make things better.\n## Steps\n### Review them\n"
+	source := "---\ntype: job-spec\n---\n# Maintain requirements\n## Job\nManage requirements.\n## Outcomes\n### Make things better\n\n**ID:** O1\n\nMake things better.\n## Steps\n### Review them\n"
 	got, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)
@@ -195,9 +211,9 @@ func TestCheckAllowsOptionalStructure(t *testing.T) {
 	for _, optional := range []string{
 		"",
 		"\n## Outcomes\n\n## Steps\n",
-		"\n## Outcomes\n\n- Minimize the time needed to assess the proposed change.\n",
+		"\n## Outcomes\n\n### Minimize the time needed to assess the proposed change\n\nMinimize the time needed to assess the proposed change.\n",
 		"\n## Steps\n\n### Locate commitments\n\n**Stage:** locate\n\n### Locate supporting evidence\n\n**Stage:** locate\n\n#### Outcomes\n",
-		"\n## Steps\n\n### Locate commitments\n\n#### Outcomes\n\n- Minimize the likelihood of overlooking an applicable commitment.\n",
+		"\n## Steps\n\n### Locate commitments\n\n#### Outcomes\n\n##### Minimize the likelihood of overlooking an applicable commitment\n\nMinimize the likelihood of overlooking an applicable commitment.\n",
 	} {
 		got, err := Parse([]byte(base + optional))
 		if err != nil {

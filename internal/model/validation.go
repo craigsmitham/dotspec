@@ -48,7 +48,7 @@ type classDefinition struct {
 
 type modelCatalog struct {
 	Classes map[string]classDefinition `json:"classes"`
-	// Projections lists the canonical Class.field paths an Assertion may project.
+	// Projections lists the canonical Class.field paths included in relationship views.
 	Projections []string `json:"projections"`
 }
 
@@ -106,7 +106,7 @@ func ValidateJSON(data []byte) ([]Finding, error) {
 	v := &graphValidator{catalog: runtime.catalog, root: Object(value), records: map[string]locatedRecord{}, findings: []Finding{}}
 	v.walk(Object(value), "Snapshot", "", true)
 	v.walk(Object(value), "Snapshot", "", false)
-	v.checkContent()
+	v.occurrenceRelationships()
 	v.checkDomain()
 	sort.Slice(v.findings, func(i, j int) bool {
 		a, b := v.findings[i], v.findings[j]

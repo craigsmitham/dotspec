@@ -100,7 +100,7 @@ stdout 'Resilient service'
 status 0 dotspec requirement list --attribute safe
 stdout 'No requirements found'
 status 0 dotspec model export
-stdout '"projection_path": "QualityAttribute.subattribute_of"'
+stdout '"role": "subattribute_of"'
 cp stdout snapshot.json
 status 0 dotspec model validate snapshot.json --json
 stdout '"valid": true'
@@ -150,7 +150,7 @@ quality_attributes: [resilience]
 Loss of one service instance.
 ## Statement
 At least one instance remains able to serve requests.
-## System verification plan
+## Evidence
 Stop one instance and send a request.
 ## Rationale
 Continue useful service during disruption.

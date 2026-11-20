@@ -29,8 +29,6 @@ Feel prepared to respond to disruptions and be dependable to colleagues.
 
 ## Steps
 
-This partial map describes accomplishments, not required execution order.
-
 ### Monitor the journey
 
 **ID:** monitor-journey
@@ -70,7 +68,7 @@ Feel confident about the ability to keep the commitment despite uncertain travel
 
 [Reach work predictably](#reach-work)
 
-## Progress cases
+## Evidence
 
 ### Repeated late arrivals
 
@@ -140,7 +138,7 @@ The notification service must submit a disruption notification for each affected
 
 **Targets:** [Notification service](../../components/notification-service/specs/notification-service.component.spec.md)
 
-## System verification plan
+## Evidence
 
 In a controlled test, record event receipt and notification submission timestamps for each affected subscription. Check that each elapsed duration is at most 30 seconds. This tests submission, not delivery, reading, or improved user confidence.
 -- specs/journey-service.system.spec.md --

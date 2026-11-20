@@ -3,7 +3,6 @@ package requirement
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -102,6 +101,10 @@ func ValidateSlug(slug string) error {
 }
 
 func Read(path string) (*Requirement, error) {
+	return readFrom(&specfile.SourceSet{}, path)
+}
+
+func readFrom(files *specfile.SourceSet, path string) (*Requirement, error) {
 	name := filepath.Base(path)
 	if !strings.HasSuffix(name, Suffix) {
 		return nil, diagnostic.Error("layout.requirement-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
@@ -110,11 +113,11 @@ func Read(path string) (*Requirement, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.requirement-name", err.Error(), diagnostic.Location{Path: path})
 	}
-	data, err := os.ReadFile(path)
+	input, err := files.Markdown(path)
 	if err != nil {
 		return nil, err
 	}
-	spec, err := Parse(data)
+	spec, err := ParseMarkdown(input)
 	if err != nil {
 		return nil, diagnostic.WithPath(err, path)
 	}
@@ -125,7 +128,11 @@ func Read(path string) (*Requirement, error) {
 
 // Parse interprets the requirement form without filesystem access.
 func Parse(data []byte) (*Requirement, error) {
-	content, err := obligation.Parse(data, Layout.Kind)
+	return ParseMarkdown(specfile.NewMarkdown(data))
+}
+
+func ParseMarkdown(input *specfile.Markdown) (*Requirement, error) {
+	content, err := obligation.ParseMarkdown(input, Layout.Kind)
 	if err != nil {
 		return nil, err
 	}

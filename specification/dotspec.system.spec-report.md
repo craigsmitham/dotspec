@@ -10,9 +10,9 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 | Section | Explore |
 | --- | --- |
 | [Purpose](<#purpose>) | Help teams develop and maintain software product requirements alongside the code they describe. Teams can describe what people need, what the system promises, and how to assess those promises. |
-| [Goals](<#goals>) |  |
+| [Goals](<#goals>) | [All goals](<goals.md>) |
 | [User needs](<#user-needs>) | [Jobs](<jobs.md>) |
-| [Scope](<#scope>) | [All constraints](<constraints.md>) · [Glossary](<glossary.md>) |
+| [Scope](<#scope>) | [All assumptions](<assumptions.md>) · [Glossary](<glossary.md>) |
 | Use cases | [All use cases](<use-cases.md>) |
 | [Concepts](<#concepts>) | [Concept definitions](<concepts.md>) |
 | Requirements | [All requirements](<requirements.md>) |
@@ -30,10 +30,9 @@ work dotspec supports.
 
 ## Goals
 
-- Reduce the effort of finding structural problems and missing specification
-  content during authoring and review.
-- Reduce the effort of maintaining requirements as the product changes by
-  keeping each obligation with its authoritative source.
+- [Find gaps during review](<goals.md#find-gaps-during-review>) — Reduce the effort of finding structural problems and missing specification content during authoring and review.
+
+- [Maintain requirements as the product changes](<goals.md#maintain-requirements-as-the-product-changes>) — Reduce the effort of maintaining requirements as the product changes by keeping each obligation with its authoritative source.
 
 ## User needs
 
@@ -62,14 +61,29 @@ arguments, standard streams, and exit statuses.
 
 ### Assumptions
 
-The execution conditions required for repeatability comparisons are defined in
-[Repeated inspections](<requirements/repeatable-inspection.requirement.spec-report.md#applies-to>).
+- [Repeatable inspection conditions](<assumptions.md#repeatable-inspection-conditions>) — The execution conditions required for repeatability comparisons are defined in Repeated inspections.
 
 ### Constraints
 
-- [Human-readable specifications](<constraints.md#human-readable-specifications>) — Prefer ordinary files, Markdown links, and explanatory prose. Add machine-readable structure only when a demonstrated authoring or inspection operation needs it.
+#### Human-readable specifications
 
-- [Source authority](<constraints.md#source-authority>) — Projects decide which sources define their obligations. Keep policies, contracts, and executable specifications in their native form and make them discoverable through ordinary file links from the relevant specifications.
+Prefer ordinary files, Markdown links, and explanatory prose. Add
+machine-readable structure only when a demonstrated authoring or inspection
+operation needs it.
+
+#### Source authority
+
+Projects decide which sources define their obligations. Keep policies,
+contracts, and executable specifications in their native form and make them
+discoverable through ordinary file links from the relevant specifications.
+
+An executable specification can define the required outcomes for its examples.
+Link to those examples where they apply. When a test checks an obligation
+defined elsewhere, keep the obligation at its source and explain the test's
+verification role beside the link. A link alone confers no authority.
+
+The [contributing guide](<../CONTRIBUTING.md#specification-tests-and-implementation-tests>)
+explains how this repository assigns those roles to its tests.
 
 ## Concepts
 
@@ -79,11 +93,10 @@ The execution conditions required for repeatability comparisons are defined in
 
 ## Quality attributes
 
-These are dotspec's declared quality attributes. The definitions identify concerns;
-individual quality requirements establish the obligations.
-
 **[Performance](<quality/performance/performance.quality-attribute.spec-report.md>)** — The time and computing resources required to perform operations under stated workloads.
 
 **[Reliability](<quality/reliability/reliability.quality-attribute.spec-report.md>)** — How consistently dotspec performs its intended operations under stated conditions.
 
 **[Usability](<quality/usability/usability.quality-attribute.spec-report.md>)** — How effectively contributors can author, inspect, and maintain specifications.
+
+Requirements classified under Usability: [Read and verify the generated requirements specification](<requirements/read-and-verify-the-generated-requirements-specification.requirement.spec-report.md>).

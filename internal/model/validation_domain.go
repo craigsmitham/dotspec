@@ -23,11 +23,8 @@ func modelPaths(expression string) [][2]string {
 
 func (v *graphValidator) checkDomain() {
 	v.checkAuthoredIDs()
-	v.checkComposition()
 	v.checkMemberships()
-	v.checkResolutions()
 	v.checkLabels()
-	v.checkAssertions()
 	v.checkRelationshipCycles()
 	for _, located := range v.sortedRecords() {
 		r, path := located.value, located.path
@@ -143,68 +140,17 @@ func (v *graphValidator) checkMemberships() {
 		if owner == "" || !v.isA(String(r, "kind"), "DomainElement") {
 			continue
 		}
-		parent := v.records[owner].value
-		// A Document indexes all mapped elements; only an explicitly document-owned
-		// unknown section is an ownership claim in that otherwise broad index.
-		if String(r, "kind") == "ExtensionSection" && String(parent, "kind") == "Document" {
-			if !slices.Contains(Strings(parent["elements"]), String(r, "id")) {
-				v.add("membership.missing", located.path+"/owner", "document-owned extension is absent from the document's element index")
-			}
-			if v.sourceOf(r) != v.sourceOf(parent) {
-				v.add("membership.source", located.path+"/owner", "document-owned extension has another source")
-			}
-			continue
-		}
 		if expected[String(r, "id")] != owner {
 			v.add("membership.missing", located.path+"/owner", "owner does not contain this record in a canonical membership field")
 		}
 	}
 }
 
-func (v *graphValidator) checkResolutions() {
-	for _, located := range v.sortedRecords() {
-		r, path := located.value, located.path
-		switch String(r, "kind") {
-		case "SourceReference", "LabelOccurrence":
-			if id := String(r, "resolution"); id != "" {
-				result := v.records[id].value
-				if result != nil && String(result, "occurrence") != String(r, "id") {
-					v.add("resolution.reciprocal", path+"/resolution", "resolution must point back to this occurrence")
-				}
-			}
-			node := v.records[String(r, "content_node")].value
-			source := String(r, "source_document")
-			if String(r, "kind") == "LabelOccurrence" {
-				source = v.sourceOf(v.records[String(r, "owner")].value)
-			}
-			if node != nil && v.sourceOf(node) != source {
-				v.add("reference.source", path+"/content_node", "authored occurrence must be in its source document")
-			}
-			if owner := v.records[String(r, "context_owner")].value; owner != nil && v.sourceOf(owner) != source {
-				v.add("reference.context", path+"/context_owner", "context owner must be expressed in the occurrence's source")
-			}
-			if definition := v.records[String(r, "definition_node")].value; definition != nil && v.sourceOf(definition) != source {
-				v.add("reference.definition", path+"/definition_node", "reference definition must be in the authored occurrence's document")
-			}
-		case "Resolution":
-			occurrence := v.records[String(r, "occurrence")].value
-			if occurrence != nil && String(occurrence, "resolution") != String(r, "id") {
-				v.add("resolution.reciprocal", path+"/occurrence", "occurrence must point back to this resolution")
-			}
-			candidates := Strings(r["candidates"])
-			if String(r, "status") == "ambiguous" {
-				if len(uniqueStrings(candidates)) < 2 {
-					v.add("resolution.ambiguity", path+"/candidates", "an ambiguous resolution requires at least two distinct candidates")
-				}
-			} else if len(candidates) > 0 {
-				v.add("resolution.candidates", path+"/candidates", "only an ambiguous resolution has candidates")
-			}
-		}
-	}
-}
-
 func (v *graphValidator) checkLabels() {
-	actual := map[string][]string{}
+	index := map[string]Record{}
+	for id, record := range v.records {
+		index[id] = record.value
+	}
 	for _, located := range v.sortedRecords() {
 		label, path := located.value, located.path
 		if String(label, "kind") != "LabelOccurrence" {
@@ -214,7 +160,6 @@ func (v *graphValidator) checkLabels() {
 		if owner == nil {
 			continue
 		}
-		field, targets := "quality_attribute_labels", "quality_attributes"
 		system := ""
 		switch String(label, "role") {
 		case "quality_classification":
@@ -222,21 +167,13 @@ func (v *graphValidator) checkLabels() {
 				v.add("label.owner", path+"/owner", "quality-classification labels belong to obligations")
 				continue
 			}
-			index := map[string]Record{}
-			for id, record := range v.records {
-				index[id] = record.value
-			}
 			system = obligationSystem(owner, index)
 		case "subattribute_of":
-			field, targets = "subattribute_of_labels", "subattribute_of"
 			if !v.isA(String(owner, "kind"), "QualityAttribute") {
 				v.add("label.owner", path+"/owner", "parent labels belong to quality attributes")
 				continue
 			}
 			system = String(owner, "owner")
-		}
-		if !slices.Contains(valuesAt(owner, field), String(label, "id")) {
-			v.add("label.membership", path+"/owner", "owner must retain this authored label occurrence")
 		}
 		if context := String(label, "governing_quality_model"); context != "" && (String(label, "role") != "subattribute_of" || context != system || String(v.records[system].value, "kind") != "QualityModel") {
 			v.add("label.context", path+"/governing_quality_model", "governing quality model must be the declaring model of a parent label")
@@ -244,7 +181,7 @@ func (v *graphValidator) checkLabels() {
 		if context := String(label, "governing_system"); context != "" && context != system {
 			v.add("label.context", path+"/governing_system", "governing system disagrees with the label owner's system")
 		}
-		result := v.records[String(label, "resolution")].value
+		result := Object(label["resolution"])
 		status := String(result, "status")
 		if result == nil || status == "not_attempted" {
 			continue
@@ -270,68 +207,8 @@ func (v *graphValidator) checkLabels() {
 				v.add("label.target", path+"/resolution", "label must resolve to the matching attribute in its owner's declared quality attributes")
 			}
 		}
-		if status == "resolved" {
-			key := String(owner, "id") + "\x00" + targets
-			actual[key] = appendUnique(actual[key], String(result, "target"))
-		}
-	}
-	for _, located := range v.sortedRecords() {
-		r := located.value
-		field, labelField := "", ""
-		if v.isA(String(r, "kind"), "Obligation") {
-			field, labelField = "quality_attributes", "quality_attribute_labels"
-		} else if v.isA(String(r, "kind"), "QualityAttribute") {
-			field, labelField = "subattribute_of", "subattribute_of_labels"
-		}
-		if field == "" {
-			continue
-		}
-		for _, id := range valuesAt(r, labelField) {
-			label := v.records[id].value
-			if label != nil && String(label, "owner") != String(r, "id") {
-				v.add("label.membership", located.path+"/"+labelField, "label occurrence names a different owner")
-			}
-		}
-		projected := valuesAt(r, field)
-		expected := actual[String(r, "id")+"\x00"+field]
-		if len(uniqueStrings(projected)) != len(projected) || !sameStrings(projected, expected) {
-			v.add("label.projection", located.path+"/"+field, "resolved semantic targets must agree exactly with authored label resolutions")
-		}
-	}
-}
-
-func (v *graphValidator) checkAssertions() {
-	seen := map[string]bool{}
-	for _, located := range v.sortedRecords() {
-		r, path := located.value, located.path
-		kind := String(r, "kind")
-		if !v.isA(kind, "Assertion") {
-			continue
-		}
-		key := String(r, "projection_path") + "\x00" + String(r, "subject") + "\x00" + String(r, "object")
-		if seen[key] {
-			v.add("assertion.duplicate", path, "a materialized semantic relation is repeated")
-		}
-		seen[key] = true
-		if String(r, "mapping_rule") == "" || len(Strings(r["inputs"])) == 0 {
-			v.add("assertion.derivation", path, "derived assertions require a mapping rule and input records")
-		}
-		provenance := len(Strings(r["source_nodes"])) > 0 || len(records(r["source_spans"])) > 0
-		for _, id := range Strings(r["inputs"]) {
-			if v.sourceOf(v.records[id].value) != "" {
-				provenance = true
-			}
-		}
-		if !provenance {
-			v.add("assertion.provenance", path, "assertion must retain source provenance directly or through input records")
-		}
-		// The projection path names one canonical field; the field decides the claim.
-		projection := String(r, "projection_path")
-		class, field, found := strings.Cut(projection, ".")
-		subject := v.records[String(r, "subject")].value
-		agrees := found && slices.Contains(v.catalog.Projections, projection) && v.isA(String(subject, "kind"), class) && slices.Contains(valuesAt(subject, field), String(r, "object"))
-		if !agrees {
-			v.add("assertion.projection", path, "materialized relation disagrees with its canonical typed membership or reference field")
+		if len(matches) > 1 && (status != "ambiguous" || !sameStrings(matches, Strings(result["candidates"]))) {
+			v.add("label.ambiguous", path+"/resolution", "ambiguous labels must identify the matching candidates in scope")
 		}
 	}
 }
@@ -373,10 +250,6 @@ func (v *graphValidator) sourceOf(r Record) string {
 	switch String(r, "kind") {
 	case "SourceDocument":
 		return String(r, "id")
-	case "ContentNode":
-		return String(v.records[String(r, "document")].value, "source")
-	case "SourceReference":
-		return String(r, "source_document")
 	case "LabelOccurrence":
 		return String(v.records[String(r, "owner")].value, "source_document")
 	}

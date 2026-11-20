@@ -11,8 +11,8 @@ func CheckType() check.Type { return CheckTypeWithPreset("general") }
 
 func CheckTypeWithPreset(preset string) check.Type {
 	return check.Type{Layout: Layout, References: readReferences, ValidateSlug: ValidateSlug, Context: system.CheckContext,
-		Inspect: func(path string) ([]diagnostic.Diagnostic, error) {
-			spec, err := Read(path)
+		Inspect: func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
+			spec, err := readFrom(files, path)
 			if err != nil {
 				return nil, err
 			}
@@ -20,8 +20,8 @@ func CheckTypeWithPreset(preset string) check.Type {
 		}}
 }
 
-func readReferences(path string) (*specfile.ReferenceDocument, error) {
-	spec, err := Read(path)
+func readReferences(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error) {
+	spec, err := readFrom(files, path)
 	if err != nil {
 		return nil, err
 	}

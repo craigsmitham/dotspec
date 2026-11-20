@@ -13,12 +13,6 @@ REQUIRED = ('relationship_category', 'relationship_scope', 'relationship_cycles'
 def validate_relationships(catalog: dict[str, Any]) -> None:
     classes = catalog['classes']
     categories = catalog['relationship_categories']
-    assertions = [name for name, cls in classes.items() if 'Assertion' in cls['ancestors']]
-    if assertions != ['Assertion'] or classes['Assertion']['abstract']:
-        raise ValueError('Assertion: relationship views use one concrete assertion class')
-    for endpoint in ('subject', 'object', 'projection_path'):
-        if not classes['Assertion']['slots'].get(endpoint, {}).get('required'):
-            raise ValueError(f'Assertion.{endpoint}: assertion endpoints and projection path must be required')
     for name, cls in classes.items():
         trace_headings = set()
         for prop, slot in cls['slots'].items():
@@ -34,19 +28,6 @@ def validate_relationships(catalog: dict[str, Any]) -> None:
                     raise ValueError(f'{path}: trace relationships require a domain element source and multiple targets')
                 if set(targets.split(' or ')) != set(slot['reference_ranges']):
                     raise ValueError(f'{path}: trace targets must match the canonical endpoint ranges')
-                refs = cls['slots'].get(prop + '_references', {})
-                if refs.get('range') != 'SourceReference' or not refs.get('multivalued'):
-                    raise ValueError(f'{path}: trace relationship needs source-reference occurrences')
-                if annotations.get('requires_content') != prop + '_content':
-                    raise ValueError(f'{path}: trace relationship needs its complete authored section')
-            if annotations.get('requires_content'):
-                _, content_slot = field(catalog, name + '.' + annotations['requires_content'])
-                if content_slot['range'] != 'RichContent':
-                    raise ValueError(f'{path}: requires_content must identify RichContent')
-            peer = annotations.get('paired_with')
-            if peer and (peer == prop or peer not in cls['slots'] or
-                         cls['slots'][peer]['annotations'].get('paired_with') != prop):
-                raise ValueError(f'{path}: paired_with must name a reciprocal peer field')
             if not slot['reference_ranges']:
                 continue
             for key in REQUIRED:
@@ -93,9 +74,7 @@ def relationships_markdown(catalog: dict[str, Any]) -> bytes:
         f'Model `{catalog["model_version"]}`. This lookup covers every record-reference field, '
         'including inherited endpoint refinements. Unchanged inherited fields are documented on their base class. '
         'Embedded values and their fields remain in the [complete reference](index.md).', '',
-        'Typed fields are authoritative. Assertions are optional derived views, not a complete substitute for those fields. '
-        '`projection_path` names the canonical field each assertion projects. Reverse navigation is derived; '
-        'stored owner backlinks are checked against canonical membership fields.', '',
+        'Reverse navigation is derived from declared relationships.', '',
         'In the model source a field states its category and only what differs from it. Scope, cycle policy and basis '
         'default from the category; an unstated inverse is none, an unstated label is the field name, and unstated '
         'ordering follows the field shape. This reference shows the completed contract.', '',
@@ -120,17 +99,5 @@ def relationships_markdown(catalog: dict[str, Any]) -> bytes:
                   f'- Basis: {text(a["relationship_basis"])}',
                   f'- Ordering: {text(a["relationship_ordering"])}. Cycles: {a["relationship_cycles"]}.',
                   f'- Stored inverse: `{text(a["relationship_inverse"])}`; other reverse navigation is derived.']
-        if a.get('paired_with'):
-            lines.append(f'- Declaration/content pair: `{name}.{a["paired_with"]}`; both fields are present or both absent.')
-        if a.get('requires_content'):
-            lines.append(f'- Complete section content required when this field is present: `{name}.{a["requires_content"]}`.')
         lines.append('')
-    lines += ['## Assertion projections', '',
-              'An ' + link('Assertion') + ' is a derived view of one canonical field. Every declaration membership, '
-              'semantic association and structural context field can be projected; `projection_path` must name one of '
-              'these paths and agree with that field’s subject, target and provenance.', '',
-              '| Projection path | Subject | Object |', '| --- | --- | --- |']
-    for path in catalog['projections']:
-        source, slot = field(catalog, path)
-        lines.append(f'| `{path}` | {link(source)} | ' + ' or '.join(link(t) for t in slot['reference_ranges']) + ' |')
     return ('\n'.join(lines).rstrip()+'\n').encode()

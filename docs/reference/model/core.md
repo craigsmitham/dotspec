@@ -4,7 +4,7 @@ Generated from [the canonical model](../../../model/metamodel.yaml) and [the vie
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.27.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.28.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
@@ -12,8 +12,8 @@ Model version: `0.27.0-draft`. See the [complete reference](index.md) for all fi
 | --- | --- | --- |
 | Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Goal](index.md#goal), [Assumption](index.md#assumption), [ObligationClause](index.md#obligationclause), [System](index.md#system), [BusinessRule](index.md#businessrule), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Applicability](index.md#applicability), [ObligationCriterion](index.md#obligationcriterion), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion) |
 | User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [ObligationClause](index.md#obligationclause), [Job](index.md#job), [JobStep](index.md#jobstep), [DesiredOutcome](index.md#desiredoutcome), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Applicability](index.md#applicability), [ObligationCriterion](index.md#obligationcriterion), [OpenQuestion](index.md#openquestion) |
-| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications and satisfaction criteria. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptUse](index.md#conceptuse), [Synchronization](index.md#synchronization), [StateDescription](index.md#statedescription), [StateElement](index.md#stateelement), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Applicability](index.md#applicability), [ObligationCriterion](index.md#obligationcriterion), [Component](index.md#component), [Feature](index.md#feature), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [Interface](index.md#interface), [EffectsRow](index.md#effectsrow) |
-| Specification traceability (`core`) | Explicit connections between specification meaning, authored occurrences, and resolved relationships. | [ContentBinding](index.md#contentbinding), [SourceReference](index.md#sourcereference), [Resolution](index.md#resolution) |
+| Software requirements (`core`) | Software interactions, concept behavior, obligations, quality classifications and satisfaction criteria. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [ObligationClause](index.md#obligationclause), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptUse](index.md#conceptuse), [Synchronization](index.md#synchronization), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [ObligationContainer](index.md#obligationcontainer), [Obligation](index.md#obligation), [Applicability](index.md#applicability), [ObligationCriterion](index.md#obligationcriterion), [Component](index.md#component), [Feature](index.md#feature), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [Interface](index.md#interface) |
+| Specification traceability (`core`) | Explicit connections between specification meaning, authored occurrences, and resolved relationships. | [SourceReference](index.md#sourcereference), [Resolution](index.md#resolution) |
 
 Subset membership organizes model definitions; it does not infer the level or importance of an authored instance. Shared types can appear in several subsets. Supporting and generic types appear as context where a diagram needs them.
 
@@ -225,7 +225,6 @@ classDiagram
     UseCase *-- "0..*" UseCaseExtension : branches
     Scenario *-- "0..*" ScenarioStep : steps
     UseCaseExtension *-- "0..*" ScenarioStep : steps
-    UseCaseExtension *-- "0..*" UseCaseExtension : branches
     Concept *-- "0..*" ConceptAction : actions
     ScenarioStep --> "0..*" Obligation : illustrates
     ScenarioStep --> "0..*" BusinessRule : illustrates
@@ -352,13 +351,11 @@ classDiagram
 
 ### Traceability to authored content
 
-Bindings associate model fields with content occurrences; references preserve authored targets and their resolution. Record and ContentNode provide context from the generic subsets. A resolved target does not prove compliance.
+References preserve authored targets and their resolution. Source ranges locate each field in the acquired Markdown.
 
 ```mermaid
 classDiagram
     direction LR
-    class ContentBinding
-    class ContentNode
     class Record
     <<abstract>> Record
     class SourceReference
@@ -368,8 +365,6 @@ classDiagram
     class SourceResource
     <<abstract>> SourceResource
     class SourceFragment
-    ContentBinding --> "1" ContentNode : content node
-    ContentBinding --> "1" Record : owner
     SourceReference --> "0..1" Resolution : resolution
     Resolution --> "0..1" DomainElement : target
     Resolution --> "0..1" SourceResource : target
@@ -413,7 +408,6 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | --- | --- | --- | --- |
 | `name` | [RichContent](index.md#richcontent) | optional | Authored title or item name, if present. |
 | `authored_id` | `string` | optional | An explicitly authored ID when present; no manufactured global identifier. |
-| `notes` | [RichContent](index.md#richcontent) | optional | Explanation of the element; not a separate obligation or endorsement. |
 | `open_questions` | [OpenQuestion](index.md#openquestion) | optional; ordered list | Explicitly distinguished questions, in authored order. |
 
 ### Specification
@@ -427,7 +421,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | `slug` | `string` | optional | Path-derived current slug where applicable. |
 | `preamble` | [RichContent](index.md#richcontent) | optional | Authored content between the title and the first named section. |
 | `evidence` | [RichContent](index.md#richcontent) | optional |  |
-| `authority_and_evidence` | [RichContent](index.md#richcontent) | optional | Maps both Authority and Authority and evidence headings; retain original heading nodes. |
+| `authority_and_evidence` | [RichContent](index.md#richcontent) | optional | Authored authority for the specification. |
 | `related_specifications` | [ContextualReferences](index.md#contextualreferences) | optional | Contextual citations of related specifications of any type, with their explanation; no implicit support, refinement, enforcement or compliance relation. |
 
 ### TraceableElement
@@ -518,7 +512,7 @@ Subsets: `business-requirements`. [BusinessRule](index.md#businessrule) contains
 | `applicability` | [Applicability](index.md#applicability) | optional |  |
 | `applies_to` | [DomainElement](index.md#domainelement) | optional; list |  |
 | `rationale` | [RichContent](index.md#richcontent) | optional |  |
-| `authority_and_evidence` | [RichContent](index.md#richcontent) | optional | Maps both Authority and Authority and evidence headings; retain original heading nodes. |
+| `authority_and_evidence` | [RichContent](index.md#richcontent) | optional | Authored authority for the specification. |
 | `exceptions` | [RichContent](index.md#richcontent) | optional | Authored qualifications or references to exception rules; no inferred exemption. |
 | `related_specifications` | [ContextualReferences](index.md#contextualreferences) | optional | Contextual citations of related specifications of any type, with their explanation; no implicit support, refinement, enforcement or compliance relation. |
 
@@ -577,11 +571,11 @@ Subsets: `software-requirements`. [UseCase](index.md#usecase) contains the compl
 | `boundary_description` | [RichContent](index.md#richcontent) | optional | Boundary description is independent of directory ownership. |
 | `subject_system` | [System](index.md#system) | optional |  |
 | `supports` | [Goal](index.md#goal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) or [UseCase](index.md#usecase) | optional; list | Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement. |
-| `primary_actor` | [ActorMention](index.md#actormention) | optional |  |
-| `goal_level` | `GoalLevelValue` | optional | Canonical classification, populated only for recognized explicit wording. |
-| `preconditions` | [Condition](index.md#condition) | optional; ordered list | Explicitly distinguished items; prose remains authoritative. |
-| `minimal_guarantees` | [Condition](index.md#condition) | optional; ordered list | Explicitly distinguished items; prose remains authoritative. |
-| `success_guarantees` | [Condition](index.md#condition) | optional; ordered list | Explicitly distinguished items; prose remains authoritative. |
+| `primary_actor` | [RichContent](index.md#richcontent) | optional |  |
+| `goal_level` | [RichContent](index.md#richcontent) | optional |  |
+| `preconditions` | [RichContent](index.md#richcontent) | optional |  |
+| `minimal_guarantees` | [RichContent](index.md#richcontent) | optional |  |
+| `success_guarantees` | [RichContent](index.md#richcontent) | optional |  |
 | `main_success_scenario` | [Scenario](index.md#scenario) | optional |  |
 | `extensions` | [UseCaseExtension](index.md#usecaseextension) | optional; ordered list | Explicitly authored alternative or failure branches, in authored order. |
 | `sequence` | [RichContent](index.md#richcontent) | optional | Authored statement about which ordering is representative or required; scenario step order alone creates no constraint. |
@@ -611,7 +605,7 @@ Subsets: `software-requirements`. [ScenarioStep](index.md#scenariostep) contains
 
 ### UseCaseExtension
 
-An explicitly distinguished alternative or failure branch. Full narrative is retained; condition and handling are optional decompositions. Where the condition arises is part of the label or narrative. Condition-only entries are valid.
+A named alternative or failure branch of a use case. Its narrative can include separate Condition and Handling sections. A condition can be recorded before handling is decided.
 
 Subsets: `software-requirements`. [UseCaseExtension](index.md#usecaseextension) contains the complete definition.
 
@@ -621,7 +615,6 @@ Subsets: `software-requirements`. [UseCaseExtension](index.md#usecaseextension) 
 | `condition` | [RichContent](index.md#richcontent) | optional |  |
 | `handling` | [RichContent](index.md#richcontent) | optional | Authored handling narrative, including any resumption, conclusion or unresolved question. |
 | `steps` | [ScenarioStep](index.md#scenariostep) | optional; ordered list | Explicit handling steps in source order; no execution semantics are inferred. |
-| `branches` | [UseCaseExtension](index.md#usecaseextension) | optional; ordered list | Explicitly authored nested branches, in document order. |
 
 ### Concept
 
@@ -633,9 +626,9 @@ Subsets: `software-requirements`. [Concept](index.md#concept) contains the compl
 | --- | --- | --- | --- |
 | `purpose` | [RichContent](index.md#richcontent) | optional |  |
 | `operational_principles` | [RichContent](index.md#richcontent) | optional |  |
-| `abstract_state` | [StateDescription](index.md#statedescription) | optional |  |
+| `abstract_state` | [RichContent](index.md#richcontent) | optional |  |
 | `actions` | [ConceptAction](index.md#conceptaction) | optional; ordered list | Explicitly named actions, in authored order. |
-| `effects_table` | [EffectsRow](index.md#effectsrow) | optional; ordered list | Rows of the optional authored operation-by-observable-property matrix. Empty cells mean unspecified, never unchanged. |
+| `effects_table` | [RichContent](index.md#richcontent) | optional |  |
 
 ### ConceptUse
 
@@ -662,32 +655,6 @@ Subsets: `software-requirements`. [Synchronization](index.md#synchronization) co
 | `then` | [RichContent](index.md#richcontent) | optional |  |
 | `semantics` | [RichContent](index.md#richcontent) | optional |  |
 
-### StateDescription
-
-The State section as narrative and optional explicitly named state components/invariants; no reverse-engineered implementation model.
-
-Subsets: `software-requirements`. [StateDescription](index.md#statedescription) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `content` | [RichContent](index.md#richcontent) | required |  |
-| `initial_state` | [RichContent](index.md#richcontent) | optional |  |
-| `elements` | [StateElement](index.md#stateelement) | optional; ordered list |  |
-| `invariants` | [Condition](index.md#condition) | optional; ordered list |  |
-
-### StateElement
-
-An explicitly named abstract state component.
-
-Subsets: `software-requirements`. [StateElement](index.md#stateelement) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `name` | [RichContent](index.md#richcontent) | optional |  |
-| `description` | [RichContent](index.md#richcontent) | optional |  |
-| `value_description` | [RichContent](index.md#richcontent) | optional |  |
-| `derivation` | [RichContent](index.md#richcontent) | optional |  |
-
 ### ConceptAction
 
 An explicitly named concept action. Caller assumptions and enforced guards are different authored claims.
@@ -699,8 +666,8 @@ Subsets: `software-requirements`. [ConceptAction](index.md#conceptaction) contai
 | `inputs` | [RichContent](index.md#richcontent) | optional |  |
 | `outputs` | [RichContent](index.md#richcontent) | optional |  |
 | `initiation` | [RichContent](index.md#richcontent) | optional | Authored initiation conditions, including user or system actions; no scheduler or caller is inferred. |
-| `caller_assumptions` | [Condition](index.md#condition) | optional; ordered list | Explicitly distinguished items; prose remains authoritative. |
-| `guards` | [Condition](index.md#condition) | optional; ordered list | Explicitly distinguished items; prose remains authoritative. |
+| `caller_assumptions` | [RichContent](index.md#richcontent) | optional |  |
+| `guards` | [RichContent](index.md#richcontent) | optional |  |
 | `effects` | [RichContent](index.md#richcontent) | optional |  |
 | `rejections` | [RichContent](index.md#richcontent) | optional |  |
 
@@ -734,8 +701,7 @@ Subsets: `software-requirements`. [QualityModel](index.md#qualitymodel) contains
 | `description` | [RichContent](index.md#richcontent) | optional |  |
 | `edition` | [RichContent](index.md#richcontent) | optional |  |
 | `sources` | [ContextualReferences](index.md#contextualreferences) | optional |  |
-| `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; ordered list | Ordered model definitions; must be present together with quality_attributes_content. |
-| `quality_attributes_content` | [RichContent](index.md#richcontent) | optional | Complete authored attribute section; absent and empty declarations remain distinct. |
+| `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; ordered list | Definitions in declaration order. |
 
 ### QualityAttribute
 
@@ -747,19 +713,6 @@ Subsets: `software-requirements`. [QualityAttribute](index.md#qualityattribute) 
 | --- | --- | --- | --- |
 | `definition` | [RichContent](index.md#richcontent) | optional |  |
 | `subattribute_of` | [QualityAttribute](index.md#qualityattribute) | optional; list | Resolved attributes under which this attribute is directly organized, within the same declaring owner. Derive subattributes by reversing this relation; preserve authored labels and provenance. |
-
-### ContentBinding
-
-Auditable mapping from source syntax to a named domain field, metadata, structural support, unknown extension, or uninterpreted fallback.
-
-Subsets: `specification-traceability`. [ContentBinding](index.md#contentbinding) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `owner` | [Record](index.md#record) | required | Owning Document, DomainElement, or other addressable record. |
-| `field_path` | `string` | required | Model slot path relative to owner; graph check verifies it exists and points to the represented value. |
-| `content_node` | [ContentNode](index.md#contentnode) | required |  |
-| `mapping_rule` | `string` | required | Versioned mapping rule, including recognized heading alias. |
 
 ### SourceReference
 
@@ -782,7 +735,6 @@ Subsets: `specification-traceability`. [Resolution](index.md#resolution) contain
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
-| `occurrence` | [SourceReference](index.md#sourcereference) or [LabelOccurrence](index.md#labeloccurrence) | required |  |
 | `status` | `ResolutionStatus` | required |  |
 | `target` | [DomainElement](index.md#domainelement) or [SourceResource](index.md#sourceresource) or [SourceFragment](index.md#sourcefragment) | optional | Only for resolved; target may be a domain element, source resource or source fragment. |
 | `rule` | `string` | required |  |
@@ -837,7 +789,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 | --- | --- | --- | --- |
 | `content` | [RichContent](index.md#richcontent) | required |  |
 | `measure` | [RichContent](index.md#richcontent) | optional | Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed. |
-| `target` | [RichContent](index.md#richcontent) | optional | Required value, bound or acceptable range, including the comparison. Preferred targets belong in rationale or notes and must be identified as nonbinding. |
+| `target` | [RichContent](index.md#richcontent) | optional | Required value, bound or acceptable range, including the comparison. Preferred targets belong in Rationale and should be identified as preferences. |
 
 ### Component
 
@@ -910,13 +862,3 @@ Subsets: `software-requirements`. [Interface](index.md#interface) contains the c
 | `description` | [RichContent](index.md#richcontent) | optional | Introductory description of the boundary interaction. |
 | `contracts` | [ContextualReferences](index.md#contextualreferences) | optional | References to authoritative native contracts; no conformance claim is inferred. |
 | `counterpart` | [ContextualReferences](index.md#contextualreferences) | optional | Contextual references to participants or corresponding interfaces; no compatibility claim is inferred. |
-
-### EffectsRow
-
-First row is the header. First cell names an operation; subsequent cells describe effects on the header properties. Blank cells remain unspecified.
-
-Subsets: `software-requirements`. [EffectsRow](index.md#effectsrow) contains the complete definition.
-
-| Field | Range | Shape | Meaning |
-| --- | --- | --- | --- |
-| `cells` | [RichContent](index.md#richcontent) | optional; ordered list |  |

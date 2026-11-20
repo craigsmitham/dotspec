@@ -56,7 +56,7 @@ func conformanceWrite(t *testing.T, root, path, body string) string {
 
 func conformanceIndex(snapshot *Snapshot) map[string]Record {
 	index := map[string]Record{}
-	for _, collection := range [][]Record{snapshot.Sources, snapshot.Documents, snapshot.ContentNodes, snapshot.Elements, snapshot.References, snapshot.LabelOccurrences, snapshot.Resolutions, snapshot.Fragments, snapshot.Assertions, snapshot.ContentBindings, snapshot.Diagnostics} {
+	for _, collection := range [][]Record{snapshot.Sources, snapshot.Documents, snapshot.ContentNodes, snapshot.Elements, snapshot.References, snapshot.LabelOccurrences, snapshot.Fragments, snapshot.Diagnostics} {
 		for _, record := range collection {
 			index[String(record, "id")] = record
 		}
@@ -89,165 +89,33 @@ func checkSourceText(t *testing.T, snapshot *Snapshot) {
 	}
 }
 
-func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
-	// Verify each project independently, then collect a deduplicated inventory for
-	// the corpus assertions below. This is not a merged exported snapshot.
-	result := ExportResult{Snapshot: &Snapshot{}}
-	seenElements := map[string]bool{}
-	snapshots := []*Snapshot{}
-	composition, trace := compositionFixture(t), traceFixture(t)
-	for _, path := range []string{"../..", "../../examples/todo", composition, trace} {
-		project := conformanceExport(t, path)
-		snapshots = append(snapshots, project.Snapshot)
-		if project.ExitCode != 0 {
-			t.Errorf("checked-in project %s exit %d", path, project.ExitCode)
+func TestExportConformanceCheckedInProjects(t *testing.T) {
+	for _, dir := range []string{"../..", "../../examples/todo"} {
+		result := conformanceExport(t, dir)
+		if result.ExitCode != 0 {
+			t.Fatal(result.Snapshot.Diagnostics)
 		}
-		checkSourceText(t, project.Snapshot)
-		result.Snapshot.Sources = append(result.Snapshot.Sources, project.Snapshot.Sources...)
-		result.Snapshot.Documents = append(result.Snapshot.Documents, project.Snapshot.Documents...)
-		result.Snapshot.ContentNodes = append(result.Snapshot.ContentNodes, project.Snapshot.ContentNodes...)
-		result.Snapshot.ContentBindings = append(result.Snapshot.ContentBindings, project.Snapshot.ContentBindings...)
-		for _, element := range project.Snapshot.Elements {
-			if !seenElements[String(element, "id")] {
-				result.Snapshot.Elements = append(result.Snapshot.Elements, element)
-				seenElements[String(element, "id")] = true
-			}
+		s := result.Snapshot
+		checkSourceText(t, s)
+		requireValid(t, cloneSnapshot(t, s))
+		if len(s.References) == 0 || len(s.Elements) == 0 {
+			t.Fatal("missing records", dir)
 		}
-	}
-	index := conformanceIndex(result.Snapshot)
-	docs := map[string]Record{}
-	for _, document := range result.Snapshot.Documents {
-		docs[String(document, "source")] = document
-	}
-	bindings := map[string][]Record{}
-	for _, binding := range result.Snapshot.ContentBindings {
-		bindings[String(binding, "content_node")] = append(bindings[String(binding, "content_node")], binding)
-	}
-	selectedSources := map[string]bool{}
-	expectedRoots := map[string]int{}
-	documents, sections := 0, 0
-	for _, root := range []string{"../../specs", "../../examples/todo/specs", filepath.Join(composition, "specs"), filepath.Join(trace, "specs"), "../../internal/integration/specs", "../../internal/qualitymodel/specs"} {
-		if err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
-			if err != nil {
-				return err
-			}
-			if entry.IsDir() || !strings.HasSuffix(path, ".spec.md") {
-				return nil
-			}
-			absolute, err := filepath.Abs(path)
-			if err != nil {
-				return err
-			}
-			absolute, err = filepath.EvalSymlinks(absolute)
-			if err != nil {
-				return err
-			}
-			absolute = filepath.ToSlash(absolute)
-			sourceID := SourceID(absolute)
-			selectedSources[sourceID] = true
-			document := docs[sourceID]
-			if document == nil {
-				t.Errorf("source missing from actual Export: %s", path)
-				return nil
-			}
-			coverage := Object(document["coverage"])
-			if String(coverage, "status") != "complete_for_profile" || len(Strings(coverage["unbound_content_nodes"])) != 0 || len(Strings(coverage["extension_sections"])) != 0 {
-				t.Errorf("%s domain coverage: %#v", path, coverage)
-			}
-			data, err := os.ReadFile(path)
-			if err != nil {
-				return err
-			}
-			parsed := ParseContent(absolute, data)
-			class := map[string]string{"feature": "Feature", "capability": "Capability", "quality-attribute": "SystemQualityAttribute", "quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement", "quality": "Requirement"}[strings.TrimSuffix(String(parsed.Document, "declared_type"), "-spec")]
-			if class == "" {
-				t.Errorf("%s: unknown specimen family", path)
-			}
-			expectedRoots[class]++
-			rootCount := 0
-			for _, id := range Strings(document["elements"]) {
-				if String(index[id], "kind") == class {
-					rootCount++
-				}
-			}
-			if rootCount != 1 {
-				t.Errorf("%s: exported %d %s roots, want one", path, rootCount, class)
-			}
-			for _, section := range parsed.Sections {
-				if section.Level != 2 {
-					continue
-				}
-				sections++
-				mapped := false
-				for _, binding := range bindings[section.HeadingID] {
-					owner := index[String(binding, "owner")]
-					if String(owner, "kind") != "Document" && String(owner, "kind") != "ExtensionSection" && String(binding, "role") != "fallback" && String(binding, "role") != "extension" {
-						mapped = true
-					}
-				}
-				if !mapped {
-					t.Errorf("%s section %q has no named domain-field binding", path, section.Title)
-				}
-			}
-			documents++
-			return nil
-		}); err != nil {
-			t.Fatal(err)
-		}
-	}
-	if documents < 23 || sections < 150 {
-		t.Errorf("inventory unexpectedly shrank: %d documents, %d sections (baseline 23/150)", documents, sections)
-	}
-	counts := map[string]int{}
-	for _, element := range result.Snapshot.Elements {
-		if selectedSources[String(element, "source_document")] {
-			counts[String(element, "kind")]++
-		}
-	}
-	for kind, want := range expectedRoots {
-		if counts[kind] != want {
-			t.Errorf("%s exported roots: got %d want %d inventoried sources", kind, counts[kind], want)
-		}
-	}
-	for kind, want := range map[string]int{"JobStep": 16, "DesiredOutcome": 21, "ConceptAction": 6, "GlossaryTerm": 3, "QualityAttribute": 285, "SystemQualityAttribute": 9} {
-		if counts[kind] < want {
-			t.Errorf("%s domain records: got %d want at least baseline %d", kind, counts[kind], want)
-		}
-	}
-	contexts, resolutions := 0, 0
-	for _, snapshot := range snapshots {
-		contexts += len(snapshot.ContextSources)
-		resolutions += len(snapshot.Resolutions)
-	}
-	if contexts == 0 || resolutions == 0 {
-		t.Error("actual corpus exports did not inspect context and direct references")
-	}
-	for _, snapshot := range snapshots {
-		encoded, err := json.Marshal(snapshot)
+		data, err := json.Marshal(s)
 		if err != nil {
 			t.Fatal(err)
 		}
-		var roundtrip Snapshot
-		if err := json.Unmarshal(encoded, &roundtrip); err != nil {
+		var doc map[string]json.RawMessage
+		if err := json.Unmarshal(data, &doc); err != nil {
 			t.Fatal(err)
 		}
-		again, err := json.Marshal(&roundtrip)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if !bytes.Equal(encoded, again) {
-			t.Error("snapshot JSON roundtrip loses subtype or rich-content fields")
-		}
-		findings, err := Validate(&roundtrip)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if len(findings) > 0 {
-			t.Errorf("roundtripped snapshot invalid: %#v", findings)
+		for _, key := range []string{"content_nodes", "content_bindings", "coverage", "resolutions", "assertions"} {
+			if doc[key] != nil {
+				t.Fatal("redundant interchange field", key)
+			}
 		}
 	}
 }
-
 func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/root.system.spec.md", "---\ntype: system-spec\n---\n# Root\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n\n")
@@ -275,7 +143,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 		if String(label, "role") != "quality_classification" {
 			continue
 		}
-		resolution := index[String(label, "resolution")]
+		resolution := Object(label["resolution"])
 		statuses[String(resolution, "status")]++
 		owner := index[String(label, "owner")]
 		if String(resolution, "status") == "resolved" {
@@ -356,9 +224,6 @@ func TestExportConformanceInvalidAndNativeSources(t *testing.T) {
 	if !duplicate {
 		t.Error("invalid source diagnostic missing")
 	}
-	if String(result.Snapshot.Coverage, "status") != "partial" {
-		t.Error("invalid domain extraction reported complete coverage")
-	}
 	checkSourceText(t, result.Snapshot)
 }
 
@@ -395,288 +260,16 @@ func TestExportConformanceDeterminismAndContext(t *testing.T) {
 	}
 }
 
-func conformanceRichText(snapshot *Snapshot, value any) string {
-	index := conformanceIndex(snapshot)
-	var out strings.Builder
-	for _, id := range Strings(Object(value)["content_nodes"]) {
-		span := Object(index[id]["span"])
-		data := String(index[String(span, "source")], "markdown")
-		a, b := Number(span["start"]), Number(span["end"])
-		if a >= 0 && b >= a && b <= len(data) {
-			out.WriteString(data[a:b])
-		}
-	}
-	return out.String()
-}
-
-func TestExportConformanceAdversarialDomainCompletion(t *testing.T) {
+func TestExportUsesTheSourceAcquiredDuringInspection(t *testing.T) {
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/system.system.spec.md", "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n## Glossary\n### Term\nA definition.\n#### Aliases\n- First alias\n#### Alternative names\n- Second alias\n## Quality attributes\n")
-	conformanceWrite(t, root, "specs/quality/concern/concern.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: concern\n---\n# Concern\n\n## Definition\n\nA definition.\n### Definition example\nOrdinary nested definition prose remains part of the definition.\n## Open question\nWhich threshold?\n### Evidence needed\nMeasure the baseline.\n### Decision caveat\nAn unmapped structured decision detail.\n")
-
-	conformanceWrite(t, root, "specs/jobs/inspect.job.spec.md", `---
-type: job-spec
----
-# Inspect
-## Outcomes
-- An actual outcome.
-### Supporting notes
-- A note, not another outcome.
-## Steps
-### Review
-**Stage:**
-#### Surprises
-Unmapped step detail.
-## Progress cases
-### Adoption
-#### Timeline
-First timeline.
-#### Timeline
-Second timeline.
-#### Forces
-- **Push:** First pressure.
-#### Forces
-- **Pull:** Second attraction.
-#### Custom case detail
-Unmapped case detail.
-## Open question
-Which option?
-### Evidence needed
-Collect evidence.
-`)
-	conformanceWrite(t, root, "specs/concepts/action.concept.spec.md", `---
-type: &family concept-spec
-id: *family
----
-# Action
-## Actions
-### Act
-#### Inputs
-#### Implementation details
-Unmapped action detail.
-`)
-	conformanceWrite(t, root, "specs/use-cases/inspect.use-case.spec.md", `---
-type: use-case-spec
----
-# Inspect
-## Main success scenario
-1. **Actor:**
-   **Action:**
-   **Response:**
-## Extensions
-### Failure
-**Condition:**
-**Response:**
-#### Flow
-1. Report a failure.
-##### Flow caveat
-1. This explanatory item is not a flow step.
-`)
-	conformanceWrite(t, root, "specs/requirements/measure.requirement.spec.md", `---
-type: requirement-spec
----
-# Measure
-## Criterion
-A qualitative criterion.
-### Custom protocol
-Unmapped protocol detail.
-`)
-	result := conformanceExport(t, root)
-	if result.ExitCode != 0 {
-		t.Errorf("accepted domain fixtures exit %d", result.ExitCode)
-	}
-	s := result.Snapshot
-	extensions := map[string]string{}
-	counts := map[string]int{}
-	index := conformanceIndex(s)
-	for _, element := range s.Elements {
-		kind := String(element, "kind")
-		counts[kind]++
-		switch kind {
-		case "ExtensionSection":
-			extensions[strings.TrimSpace(conformanceRichText(s, element["heading"]))] = String(index[String(element, "owner")], "kind")
-		case "Job":
-			decisions := records(element["open_questions"])
-			if len(decisions) != 1 || !strings.Contains(conformanceRichText(s, decisions[0]["question"]), "Which option?") || !strings.Contains(conformanceRichText(s, decisions[0]["question"]), "Collect evidence") {
-				t.Errorf("direct decision/evidence misbound: %#v", element["open_questions"])
-			}
-		case "JobStep":
-			if Object(element["stage"])["presence"] != "empty" {
-				t.Error("empty stage confused with absent/authored value")
-			}
-		case "Concept":
-			if String(element, "authored_id") != "concept-spec" || String(element, "source_fragment") == "" {
-				t.Error("YAML alias identity lacks its authored fragment")
-			}
-			bound := false
-			for _, binding := range s.ContentBindings {
-				if String(binding, "owner") == String(element, "id") && String(binding, "field_path") == "authored_id" {
-					bound = true
-				}
-			}
-			if !bound {
-				t.Error("YAML alias identity lacks a named binding")
-			}
-		case "ConceptAction":
-			if Object(element["inputs"])["presence"] != "empty" {
-				t.Error("empty action inputs lost")
-			}
-		case "UseCaseExtension":
-			if Object(element["condition"])["presence"] != "empty" {
-				t.Error("empty extension condition lost")
-			}
-			if !strings.Contains(conformanceRichText(s, element["handling"]), "Report a failure.") {
-				t.Error("flow narrative missing from handling")
-			}
-			if !strings.Contains(conformanceRichText(s, element["content"]), "**Response:**") {
-				t.Error("empty response field lost from source narrative")
-			}
-		case "ScenarioStep":
-			if String(index[String(element, "owner")], "kind") == "Scenario" {
-				text := conformanceRichText(s, element["content"])
-				for _, label := range []string{"**Actor:**", "**Action:**", "**Response:**"} {
-					if !strings.Contains(text, label) {
-						t.Errorf("empty step field %s lost from narrative", label)
-					}
-				}
-			}
-
-		case "GlossaryTerm":
-			if len(records(element["alternative_names"])) != 2 {
-				t.Error("alias sections overwritten")
-			}
-		case "SystemQualityAttribute":
-			if !strings.Contains(conformanceRichText(s, element["definition"]), "Ordinary nested definition prose") {
-				t.Error("nested quality definition prose lost")
-			}
-		}
-	}
-	for heading, owner := range map[string]string{"#### Surprises": "JobStep", "## Progress cases": "Job", "#### Custom case detail": "ExtensionSection", "#### Implementation details": "ConceptAction", "##### Flow caveat": "UseCaseExtension", "### Supporting notes": "Job", "### Custom protocol": "Requirement"} {
-		if extensions[heading] != owner {
-			t.Errorf("unknown section %q owner=%q want %q; extensions=%v", heading, extensions[heading], owner, extensions)
-		}
-	}
-	if counts["DesiredOutcome"] != 1 || counts["ScenarioStep"] != 2 {
-		t.Errorf("supporting lists fabricated domain items: outcomes=%d steps=%d", counts["DesiredOutcome"], counts["ScenarioStep"])
-	}
-	if len(Strings(s.Coverage["extension_sections"])) != counts["ExtensionSection"] {
-		t.Error("unknown nested sections missing from coverage inventory")
-	}
-}
-
-func TestExportUseCaseNarrativesAndExplicitNesting(t *testing.T) {
-	root := t.TempDir()
-	conformanceWrite(t, root, "specs/use-cases/reserve.use-case.spec.md", `---
-type: use-case-spec
----
-# Reserve equipment
-## Main success scenario
-A contributor requests equipment and the system confirms the reservation.
-## Extensions
-- 1a. Equipment unavailable:
-  - 1a1. Offer an alternative.
-    - 1a1a. Alternative unavailable:
-      - .1. Ask the contributor to return later.
-      - .1a. Contributor cannot return:
-        Handling unresolved.
-- *a. Contributor cancels.
-
-### Service unavailable
-**Continuation:** End without a reservation.
-**Response:** Explain the service outage.
-**At step:** At any time.
-#### Handling
-1. Preserve the request.
-2. Consult [the guide](../../guide.md).
-##### 2a. Guide unavailable
-Ask a colleague.
-#### Flow
-1. Report the result.
-#### Unresolved handling
-Can another service accept the request?
-#### Notes
-This explanatory heading is not an alternative path.
-#### Extensions
-##### Colleague unavailable
-Ask the contributor to return later.
-`)
-	conformanceWrite(t, root, "guide.md", "# Guide\n\nTry another service.\n")
-	result := conformanceExport(t, root)
-	if result.ExitCode != 0 {
-		t.Fatalf("export exit %d", result.ExitCode)
-	}
-	s := result.Snapshot
-	checkSourceText(t, s)
-	index := conformanceIndex(s)
-	labels := map[string]Record{}
-	var useCase, service Record
-	counts := map[string]int{}
-	for _, e := range s.Elements {
-		kind := String(e, "kind")
-		counts[kind]++
-		switch kind {
-		case "UseCase":
-			useCase = e
-		case "Scenario":
-			if len(Strings(e["steps"])) != 0 {
-				t.Error("paragraph scenario acquired invented steps")
-			}
-		case "UseCaseExtension":
-			labels[String(e, "authored_label")] = e
-			if strings.Contains(conformanceRichText(s, e["name"]), "Service unavailable") {
-				service = e
-			}
-			for _, removed := range []string{"at_step", "location", "response", "flow", "continuation", "handling_state", "governing_references"} {
-				if e[removed] != nil {
-					t.Errorf("obsolete extension field %s", removed)
-				}
-			}
-		case "ScenarioStep":
-			for _, removed := range []string{"actor", "action", "response", "outcome", "governing_references"} {
-				if e[removed] != nil {
-					t.Errorf("obsolete step field %s", removed)
-				}
-			}
-		}
-	}
-	if counts["UseCaseExtension"] != 7 || counts["ScenarioStep"] != 5 || counts["ExtensionSection"] != 0 {
-		t.Fatalf("unexpected decomposition: %v", counts)
-	}
-	if service == nil || !strings.Contains(conformanceRichText(s, service["notes"]), "not an alternative path") {
-		t.Fatal("Notes should be retained as its enclosing branch's notes, not as another branch")
-	}
-	rootBranches := Strings(useCase["extensions"])
-	if len(rootBranches) != 3 || rootBranches[0] != String(labels["1a"], "id") || rootBranches[1] != String(labels["*a"], "id") || rootBranches[2] != String(service, "id") {
-		t.Fatalf("branch source order lost: %v", rootBranches)
-	}
-	if String(labels["1a1a"], "owner") != String(labels["1a"], "id") || String(labels[".1a"], "owner") != String(labels["1a1a"], "id") {
-		t.Error("nested labels should follow Markdown containment, including branches under steps")
-	}
-	for label, want := range map[string]string{"1a": "1a1", "1a1a": ".1"} {
-		steps := Strings(labels[label]["steps"])
-		if len(steps) != 1 || String(index[steps[0]], "authored_label") != want {
-			t.Errorf("branch %s handling step label lost: %v", label, steps)
-		}
-	}
-	if labels["*a"]["handling"] != nil || labels["*a"]["condition"] != nil {
-		t.Error("condition-only prose acquired inferred semantic fields")
-	}
-	if len(Strings(service["branches"])) != 2 || len(Strings(service["steps"])) != 3 {
-		t.Error("explicit nested heading/grouping or handling steps missing")
-	}
-	handling := conformanceRichText(s, service["handling"])
-	previous := -1
-	for _, part := range []string{"End without a reservation.", "Explain the service outage.", "Preserve the request.", "Report the result.", "Unresolved handling", "Can another service accept the request?"} {
-		position := strings.Index(handling, part)
-		if position <= previous {
-			t.Errorf("handling absent or out of source order: %q in %q", part, handling)
-		}
-		previous = position
-	}
-	if !strings.Contains(conformanceRichText(s, service["content"]), "At any time.") {
-		t.Error("where the condition arises must stay in the branch narrative")
-	}
-	if len(Strings(service["references"])) != 1 {
-		t.Error("ordinary inline reference missing")
+	const path = "specs/requirements/save.requirement.spec.md"
+	const initial = "---\ntype: requirement-spec\n---\n# Save\n## Statement\nSave the record.\n"
+	conformanceWrite(t, root, path, initial)
+	inspection := check.InspectSources(root, conformanceTypes()...)
+	conformanceWrite(t, root, path, strings.ReplaceAll(initial, "Save the record.", "Save its revision."))
+	first := ExportInspection(inspection, conformanceTypes()...).Snapshot
+	next := conformanceExport(t, root).Snapshot
+	if first.Sources[0]["markdown"] != initial || next.Sources[0]["markdown"] == initial {
+		t.Fatal("an inspection must use one source revision throughout check and export")
 	}
 }

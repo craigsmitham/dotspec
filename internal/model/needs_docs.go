@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"path/filepath"
-	"slices"
+
 	"sort"
 	"strings"
 )
@@ -12,6 +12,7 @@ import (
 // NeedsMarkdown projects authored needs, contributions and capability dependencies.
 // It does not turn dependency into containment or contribution into achievement.
 func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
+	s = s.navigation()
 	base, err := designOutputBase(relativeTo)
 	if err != nil {
 		return "", err
@@ -56,7 +57,7 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		u := url.URL{Path: filepath.ToSlash(rel)}
 		for _, f := range s.Fragments {
-			if String(f, "source") == String(r, "source_document") && slices.Contains(Strings(Object(r["name"])["content_nodes"]), String(f, "content_node")) && String(f, "generated_anchor") != "" {
+			if String(f, "source") == String(r, "source_document") && namesFragment(r, f) && String(f, "generated_anchor") != "" {
 				u.Fragment = String(f, "generated_anchor")
 				break
 			}
@@ -117,12 +118,6 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	out.WriteString("\n## Definitions and evidence\n\nShort diagram labels do not replace full statements. Evidence describes its source and limits; importance, satisfaction and opportunity assessments belong to dated research about a population, not to the outcome itself. Requirements express commitments, separately from desired user results.\n\n")
 	for _, r := range elements {
 		fmt.Fprintf(&out, "### %s: %s\n\nSource: %s\n\n", String(r, "kind"), escape(label(r)), link(r))
-		definitions := []string{}
-		for _, n := range s.ContentNodes {
-			if String(n, "node_kind") == "link_definition" && String(Object(n["span"]), "source") == String(r, "source_document") {
-				definitions = append(definitions, d.text(Record{"content_nodes": []string{String(n, "id")}}))
-			}
-		}
 		for _, field := range []string{"statement", "description", "purpose", "performer", "situation", "motivation", "intended_progress", "enablers", "supporting_content", "supports_content", "applies_to_content", "depends_on_content", "provided_by_content", "evidence"} {
 			value := r[field]
 			text := strings.TrimSpace(d.text(value))
@@ -134,7 +129,7 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 				title = "supporting content"
 			}
 			title = strings.ToUpper(title[:1]) + title[1:]
-			fmt.Fprintf(&out, "#### %s\n\n%s\n\n", title, designHeadings(rebaseDesignMarkdown(text, sourceURL(r), strings.Join(definitions, "\n")), 5))
+			fmt.Fprintf(&out, "#### %s\n\n%s\n\n", title, designHeadings(rebaseDesignMarkdown(text, sourceURL(r), d.definitions(r)), 5))
 		}
 	}
 	if len(s.Diagnostics) > 0 {

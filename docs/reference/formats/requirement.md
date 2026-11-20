@@ -79,7 +79,7 @@ Unknown metadata fields are rejected.
 
 `Applies to`, `Statement`, `Criterion` and `Rationale` are optional, single H2
 sections. Missing statement, applicability or rationale produces advice. Deeper headings belong to their enclosing sections. Contract notation,
-tables, additional sections, links, and other authored Markdown are preserved.
+tables and links retain their original Markdown inside those sections.
 No sentence pattern or particular verification technique is required. Check
 commands validate relative file links using the shared [reference rules](../inspection.md#references).
 Model export reports an `Obligations` section inside a requirement as

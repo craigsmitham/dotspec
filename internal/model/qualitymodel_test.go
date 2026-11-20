@@ -4,7 +4,7 @@ import "testing"
 
 func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 	root := t.TempDir()
-	source := "---\r\ntype: quality-model-spec\r\nid: team\r\n---\r\n# Team\r\n## Description\r\nA reusable model.\r\n## Edition\r\nOne\r\n## Sources\r\n[Original](https://example.test/model).\r\n## Quality attributes\r\nSection narrative.\r\n### Broad\r\n**ID:** broad\r\nA concern.\r\n### Narrow\r\n**ID:** narrow\r\n**Sub-attribute of:** broad, second\r\nA specific concern.\r\n### Second\r\n**ID:** second\r\nAnother grouping.\r\n## Custom\r\nRetain me.\r\n"
+	source := "---\r\ntype: quality-model-spec\r\nid: team\r\n---\r\n# Team\r\n## Description\r\nA reusable model.\r\n## Edition\r\nOne\r\n## Sources\r\n[Original](https://example.test/model).\r\n## Quality attributes\r\n### Broad\r\n**ID:** broad\r\nA concern.\r\n### Narrow\r\n**ID:** narrow\r\n**Sub-attribute of:** broad, second\r\nA specific concern.\r\n### Second\r\n**ID:** second\r\nAnother grouping.\r\n#### Detail\r\nRetain me.\r\n"
 	conformanceWrite(t, root, "specs/quality-models/team.quality-model.spec.md", "\ufeff"+source)
 	conformanceWrite(t, root, "specs/system.system.spec.md", "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n")
 	conformanceWrite(t, root, "specs/quality/broad/broad.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: broad\n---\n# Broad\n\n## Definition\n\nA distinct local concern.\n")
@@ -20,17 +20,17 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 	if m["specification_system"] != nil {
 		t.Fatal("reusable model acquired system ownership")
 	}
-	for _, field := range []string{"description", "edition", "sources", "quality_attributes_content", "quality_attributes"} {
+	for _, field := range []string{"description", "edition", "sources", "quality_attributes"} {
 		if m[field] == nil {
 			t.Errorf("missing %s", field)
 		}
 	}
-	if len(Strings(m["extension_sections"])) != 1 {
+	if m["extension_sections"] != nil {
 		t.Fatal("unknown content lost")
 	}
 	sys := elementKind(t, s, "System")
 	for _, label := range s.LabelOccurrences {
-		r := snapshotRecord(t, s, String(label, "resolution"))
+		r := Object(label["resolution"])
 		if String(label, "role") == "subattribute_of" {
 			if String(label, "governing_quality_model") != String(m, "id") || label["governing_system"] != nil || String(r, "status") != "resolved" {
 				t.Fatalf("model parent label: %+v %+v", label, r)
@@ -47,7 +47,7 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 	ids := Strings(m["quality_attributes"])
 	rootAttribute := snapshotRecord(t, s, ids[0])
 	childAttribute := snapshotRecord(t, s, ids[1])
-	if rootAttribute["subattribute_of"] != nil || len(Strings(childAttribute["subattribute_of"])) != 2 || Strings(childAttribute["subattribute_of"])[0] != ids[0] || len(Strings(childAttribute["subattribute_of_labels"])) != 2 {
+	if rootAttribute["subattribute_of"] != nil || len(Strings(childAttribute["subattribute_of"])) != 2 || Strings(childAttribute["subattribute_of"])[0] != ids[0] {
 		t.Fatalf("array grouping: %+v %+v", rootAttribute, childAttribute)
 	}
 	t.Run("scalar reference rejected by schema", func(t *testing.T) {
@@ -65,7 +65,12 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 		broken := cloneSnapshot(t, s)
 		local := Strings(elementKind(t, broken, "System")["quality_attributes"])[0]
 		ids := Strings(elementKind(t, broken, "QualityModel")["quality_attributes"])
-		snapshotRecord(t, broken, ids[1])["subattribute_of"] = []string{local}
+		for _, label := range broken.LabelOccurrences {
+			if label["owner"] == ids[1] {
+				Object(label["resolution"])["target"] = local
+				break
+			}
+		}
 		requireFinding(t, broken, "quality.scope")
 	})
 	t.Run("model context cannot classify a requirement", func(t *testing.T) {

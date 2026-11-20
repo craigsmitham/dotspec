@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/businessrule"
@@ -14,7 +13,6 @@ import (
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/requirement"
-	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
 	"go.yaml.in/yaml/v3"
@@ -24,35 +22,21 @@ import (
 // remain authoritative for authoring errors. Mapping recognizes explicit
 // headings, lists and labelled fields; it never infers assertions from prose.
 func MapDomain(doc *ParsedDocument, kind string) Mapping {
-	m := &domainMapper{doc: doc, result: Mapping{Elements: []Record{}, Bindings: []Record{}, Labels: []Record{}, Diagnostics: []Record{}}}
+	m := &domainMapper{doc: doc, result: Mapping{Elements: []Record{}, Labels: []Record{}, Diagnostics: []Record{}}}
 	if kind == "glossary" {
-		context, err := system.ParseGlossary(doc.Data)
+		context, err := system.ParseGlossaryMarkdown(doc.Syntax)
 		if err != nil {
 			m.parseFailure(err)
 			return m.result
 		}
 		if context != "" {
 			doc.Document["glossary_context"] = strings.TrimSpace(context)
-			m.bind(doc.Document, "glossary_context", []string{m.metadataNode("context", context)}, "metadata", "glossary-context")
 		}
 		doc.Document["glossary_terms"] = []string{}
 		m.glossaryTerms(doc.Document, "glossary_terms", doc.Sections)
-		doc.Document["domain_decomposition"] = "complete"
-		m.bind(doc.Document, "root", []string{String(doc.Document, "root")}, "structural_wrapper", "document-root")
-		m.bind(doc.Document, "glossary_terms", append([]string{doc.TitleNode}, doc.Preamble...), "structural_wrapper", "glossary-introduction")
-		m.metadata(doc.Document)
 		return m.result
 	}
 	if kind == "" {
-		// Ordinary referenced Markdown has a content model, not a fabricated
-		// specification type. Unknown sections remain visible domain gaps.
-		for _, s := range doc.Sections {
-			m.extension(doc.Document, s)
-		}
-		doc.Document["domain_decomposition"] = "not_attempted"
-		if root := String(doc.Document, "root"); root != "" {
-			m.result.Bindings = append(m.result.Bindings, Record{"id": m.id("binding"), "kind": "ContentBinding", "content_node": root, "scope": "subtree", "owner": String(doc.Document, "id"), "field_path": "root", "role": "fallback", "mapping_rule": MappingProfile + "/ordinary-markdown", "reason": "Referenced Markdown is preserved without applying a dotspec domain authoring profile."})
-		}
 		return m.result
 	}
 	var err error
@@ -62,39 +46,39 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 	switch kind {
 	case "feature", "capability":
 		var v *system.ProductSpec
-		v, err = system.ParseProductSpec(kind, doc.Data)
+		v, err = system.ParseProductSpecMarkdown(kind, doc.Syntax)
 		if err == nil {
 			authoredID = v.ID
 		}
 	case "quality-attribute":
 		var a *system.AttributeDocument
-		a, err = system.ParseQualityAttribute(String(doc.Source, "locator"), doc.Data)
+		a, err = system.ParseQualityAttributeMarkdown(String(doc.Source, "locator"), doc.Syntax)
 		if err == nil {
 			authoredID = a.ID
 			labels = a.SubattributeOf
 		}
 	case "quality-model":
 		var v *qualitymodel.QualityModel
-		v, err = qualitymodel.Parse(doc.Data)
+		v, err = qualitymodel.ParseMarkdown(doc.Syntax)
 		if err == nil {
 			authoredID = v.ID
 		}
 	case "business-rule":
 		var v *businessrule.BusinessRule
-		v, err = businessrule.Parse(doc.Data)
+		v, err = businessrule.ParseMarkdown(doc.Syntax)
 		if err == nil {
 			authoredID = v.ID
 		}
 	case "component":
 		var v *system.Component
-		v, err = system.ParseComponent(doc.Data)
+		v, err = system.ParseComponentMarkdown(doc.Syntax)
 		if err == nil {
 			authoredID = v.ID
 			err = system.ComponentLayout.CheckName(String(doc.Source, "locator"), v.Name)
 		}
 	case "system":
 		var v *system.System
-		v, err = system.Parse(doc.Data)
+		v, err = system.ParseMarkdown(doc.Syntax)
 		if err == nil {
 			authoredID = v.ID
 			glossarySources = v.GlossarySources
@@ -102,25 +86,25 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		}
 	case "job":
 		var v *job.Job
-		v, err = job.Parse(doc.Data)
+		v, err = job.ParseMarkdown(doc.Syntax)
 		if err == nil {
 			authoredID = v.ID
 		}
 	case "concept":
 		var v *concept.Concept
-		v, err = concept.Parse(doc.Data)
+		v, err = concept.ParseMarkdown(doc.Syntax)
 		if err == nil {
 			authoredID = v.ID
 		}
 	case "use-case":
 		var v *usecase.UseCase
-		v, err = usecase.Parse(doc.Data)
+		v, err = usecase.ParseMarkdown(doc.Syntax)
 		if err == nil {
 			authoredID = v.ID
 		}
 	case "requirement":
 		var v *requirement.Requirement
-		v, err = requirement.Parse(doc.Data)
+		v, err = requirement.ParseMarkdown(doc.Syntax)
 		if err == nil {
 			authoredID, labels = v.ID, v.QualityAttributes
 		}
@@ -143,25 +127,19 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 	}
 	if doc.TitleNode != "" {
 		r["name"] = doc.Rich([]string{doc.TitleNode})
-		m.bind(r, "name", []string{doc.TitleNode}, "record_identity", "title")
 	}
 	if len(doc.Preamble) > 0 {
 		r["preamble"] = doc.Rich(doc.Preamble)
-		m.bind(r, "preamble", doc.Preamble, "named_field", "preamble")
+		m.markField(r, "preamble", doc.Preamble)
 	}
 	m.metadata(r)
 	if glossarySources != nil {
 		r["glossary_source_paths"] = glossarySources
 	}
-	for _, name := range glossarySources {
-		m.bind(r, "glossary_source_paths", []string{m.metadataNode(specfile.GlossarySourcesField, name)}, "metadata", "glossary-source")
-	}
 	if kind == "quality-attribute" {
 		for _, parent := range labels {
 			node := m.metadataNode("subattribute_of", parent)
-			label := m.label(r, parent, node, "subattribute_of")
-			appendID(r, "subattribute_of_labels", label)
-			m.bind(r, "subattribute_of_labels", []string{node}, "named_field", "attribute-parent")
+			m.label(r, parent, node, "subattribute_of")
 		}
 	}
 	if kind == "requirement" {
@@ -169,7 +147,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 	}
 	for _, section := range doc.Sections {
 		if section.Level != 2 {
-			m.extension(r, section)
+			m.subjectSection(r, section)
 			continue
 		}
 		if m.common(r, section) {
@@ -209,18 +187,10 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 			mapped = m.requirement(r, section)
 		}
 		if !mapped {
-			m.extension(r, section)
+			m.subjectSection(r, section)
 		}
 	}
 	m.nestedTraceability()
-	doc.Document["domain_decomposition"] = "complete"
-	m.authoredFragments()
-	m.bind(doc.Document, "root", []string{String(doc.Document, "root")}, "structural_wrapper", "document-root")
-	for _, node := range doc.Nodes {
-		if String(node, "node_kind") == "trivia" {
-			m.bind(doc.Document, "root", []string{String(node, "id")}, "structural_wrapper", "source-trivia")
-		}
-	}
 	return m.result
 }
 
@@ -237,7 +207,7 @@ func (m *domainMapper) id(suffix string) string {
 }
 
 func (m *domainMapper) record(kind, owner string) Record {
-	r := Record{"id": m.id("domain"), "kind": kind, "source_document": String(m.doc.Source, "id"), "decomposition": "unsegmented"}
+	r := Record{"id": m.id("domain"), "kind": kind, "source_document": String(m.doc.Source, "id")}
 	if owner != "" {
 		r["owner"] = owner
 	}
@@ -245,22 +215,30 @@ func (m *domainMapper) record(kind, owner string) Record {
 	return r
 }
 
-func (m *domainMapper) bind(owner Record, field string, nodes []string, role, rule string) {
-	for _, node := range nodes {
-		if node == "" {
-			continue
-		}
-		scope := "subtree"
-		if role == "structural_wrapper" && String(m.doc.NodeByID[node], "node_kind") != "heading" {
-			scope = "node"
-		}
-		m.result.Bindings = append(m.result.Bindings, Record{"id": m.id("binding"), "kind": "ContentBinding", "content_node": node, "scope": scope, "owner": String(owner, "id"), "field_path": field, "role": role, "mapping_rule": MappingProfile + "/" + rule})
+func (m *domainMapper) markField(owner Record, field string, nodes []string) {
+	for _, id := range nodes {
+		node := m.doc.NodeByID[id]
+		node["field_owner"], node["field_path"] = owner["id"], field
 	}
+}
+
+func (m *domainMapper) markHeading(field, id string) {
+	m.doc.NodeByID[id]["domain_field"] = field
+}
+
+func (m *domainMapper) authoredFragment(owner Record, nodes []string) {
+	if len(nodes) == 0 || owner["source_fragment"] != nil || String(owner, "authored_id") == "" {
+		return
+	}
+	id := nodes[0]
+	fragment := Record{"id": m.id("fragment"), "kind": "SourceFragment", "source": m.doc.Source["id"], "content_node": id, "authored_anchor": owner["authored_id"], "span": m.doc.NodeByID[id]["span"]}
+	m.doc.Fragments = append(m.doc.Fragments, fragment)
+	owner["source_fragment"] = fragment["id"]
 }
 
 func (m *domainMapper) section(owner Record, field string, s *Section) {
 	m.setRich(owner, field, s.Content)
-	m.sectionBindings(owner, field, s)
+	m.markSection(owner, field, s)
 }
 
 func (m *domainMapper) setRich(owner Record, field string, nodes []string) {
@@ -271,16 +249,20 @@ func (m *domainMapper) setRich(owner Record, field string, nodes []string) {
 	owner[field] = m.doc.Rich(nodes)
 }
 
-func (m *domainMapper) sectionBindings(owner Record, field string, s *Section) {
-	m.bind(owner, field, s.Content, "named_field", "section/"+s.Title)
-	m.bind(owner, field, []string{s.HeadingID}, "structural_wrapper", "section-heading/"+s.Title)
+func (m *domainMapper) markSection(owner Record, field string, s *Section) {
+	m.markField(owner, field, s.Content)
+	m.markHeading(field, s.HeadingID)
 }
 
-// declared starts or extends a section whose narrative and explicitly authored
-// members are sibling fields: field_content and field.
+// A declaration collection contains named members. Its heading records presence.
 func (m *domainMapper) declared(owner Record, field string, s *Section) {
-	m.setRich(owner, field+"_content", s.Content)
-	m.sectionBindings(owner, field+"_content", s)
+	m.markHeading(field, s.HeadingID)
+	for _, id := range s.Intro {
+		if String(m.doc.NodeByID[id], "node_kind") != "trivia" {
+			m.authoringFinding(owner, id, "structure.collection-content", fmt.Sprintf("%s contains named entries. Put this passage under its entry or move it to the field it qualifies.", s.Title))
+			break
+		}
+	}
 	if owner[field] == nil {
 		owner[field] = []string{}
 	}
@@ -289,12 +271,10 @@ func (m *domainMapper) declared(owner Record, field string, s *Section) {
 func (m *domainMapper) named(kind string, owner Record, s *Section) Record {
 	r := m.record(kind, String(owner, "id"))
 	r["name"] = m.doc.Rich([]string{s.HeadingID})
-	m.bind(r, "name", []string{s.HeadingID}, "record_identity", "item-heading")
 	if declaredWithID[kind] {
 		if id := m.fieldText(s, "ID"); id != "" {
 			r["authored_id"] = id
-			m.bind(r, "authored_id", m.fieldNodes(s, "ID"), "record_identity", "specification-id")
-			m.bind(r, "authored_id", m.fieldLabelNodes(s, "ID"), "structural_wrapper", "specification-id-label")
+			m.authoredFragment(r, m.fieldNodes(s, "ID"))
 		}
 	}
 	return r
@@ -332,12 +312,7 @@ func (m *domainMapper) parseFailure(err error) {
 		}
 	}
 	m.result.Diagnostics = append(m.result.Diagnostics, d)
-	m.doc.Document["domain_decomposition"] = "failed"
-	root := String(m.doc.Document, "root")
-	if root != "" {
-		b := Record{"id": m.id("binding"), "kind": "ContentBinding", "content_node": root, "scope": "subtree", "owner": String(m.doc.Document, "id"), "field_path": "root", "role": "fallback", "mapping_rule": MappingProfile + "/invalid-domain", "reason": "Authoring parser rejected the document; source and syntax are retained without a valid domain object."}
-		m.result.Bindings = append(m.result.Bindings, b)
-	}
+
 }
 
 // diagnosticSourceLocation preserves reported coordinates. A missing line or
@@ -362,66 +337,33 @@ func diagnosticSourceLocation(location diagnostic.Location, source string) Recor
 	return r
 }
 
-func (m *domainMapper) extension(owner Record, s *Section) Record {
+func (m *domainMapper) subjectSection(owner Record, s *Section) {
 	if designKind(String(owner, "kind"), "Specification") && m.common(owner, s) {
-		return nil
+		return
 	}
-	if m.traceSection(owner, s) || m.explanatory(owner, s) || m.boundarySection(owner, s) {
-		return nil
+	if m.traceSection(owner, s) || m.boundarySection(owner, s) {
+		return
 	}
 	// Any domain element can carry explicitly headed open questions.
-	if kind := String(owner, "kind"); openQuestionHeading(s.Title) && kind != "Document" && kind != "ExtensionSection" {
+	if kind := String(owner, "kind"); openQuestionHeading(s.Title) && kind != "Document" {
 		m.openQuestions(owner, []*Section{s})
-		return nil
+		return
 	}
-	r := m.record("ExtensionSection", String(owner, "id"))
-	r["heading"] = m.doc.Rich([]string{s.HeadingID})
-	r["content"] = m.doc.Rich(s.Content)
-	r["reason"] = "No named domain role is defined for this section in " + MappingProfile
-	m.bind(r, "heading", []string{s.HeadingID}, "extension", "unknown-section")
-	m.bind(r, "content", s.Content, "extension", "unknown-section")
-	for _, b := range m.result.Bindings {
-		if String(b, "owner") == String(r, "id") {
-			b["reason"] = r["reason"]
-		}
-	}
-	if String(owner, "kind") == "Document" {
-		appendID(owner, "elements", String(r, "id"))
-	} else if String(owner, "kind") == "ExtensionSection" {
-		appendID(owner, "children", String(r, "id"))
-	} else {
-		appendID(owner, "extension_sections", String(r, "id"))
-	}
-	for _, child := range s.Children {
-		m.extension(r, child)
-	}
-	return r
+	m.authoringFinding(owner, s.HeadingID, "structure.unknown-section", fmt.Sprintf("Unrecognized section %q. Move its prose into the field it qualifies or use a declared section.", s.Title))
 }
 
-func (m *domainMapper) authoredFragments() {
-	for _, element := range m.result.Elements {
-		anchor := String(element, "authored_id")
-		if anchor == "" {
-			continue
-		}
-		var node string
-		for _, binding := range m.result.Bindings {
-			if String(binding, "owner") == String(element, "id") && String(binding, "field_path") == "authored_id" {
-				node = String(binding, "content_node")
-				break
-			}
-		}
-		if node == "" {
-			continue
-		}
-		fragment := Record{"id": m.id("fragment"), "kind": "SourceFragment", "source": String(m.doc.Source, "id"), "content_node": node, "authored_anchor": anchor, "anchor_rule": MappingProfile + "/authored-id", "span": m.doc.NodeByID[node]["span"]}
-		m.doc.Fragments = append(m.doc.Fragments, fragment)
-		element["source_fragment"] = String(fragment, "id")
-	}
+func (m *domainMapper) authoringFinding(owner Record, node, code, message string) {
+	span := Object(m.doc.NodeByID[node]["span"])
+	start := Number(span["start"])
+	m.result.Diagnostics = append(m.result.Diagnostics, Record{
+		"id": m.id("diagnostic"), "kind": "Diagnostic", "severity": "error", "code": code,
+		"source": m.doc.Source["id"], "record": owner["id"], "span": span, "phase": "parse",
+		"line": 1 + bytes.Count(m.doc.Data[:start], []byte("\n")), "message": message,
+	})
 }
 
 func (m *domainMapper) common(r Record, s *Section) bool {
-	if m.traceSection(r, s) || m.explanatory(r, s) || m.boundarySection(r, s) {
+	if m.traceSection(r, s) || m.boundarySection(r, s) {
 		return true
 	}
 	switch s.Title {
@@ -432,12 +374,12 @@ func (m *domainMapper) common(r Record, s *Section) bool {
 		m.structureReference(r, "specification_system", s)
 	case "Related specifications":
 		m.contextField(r, "related_specifications", s.Content)
-		m.sectionBindings(r, "related_specifications.content", s)
-	case "Authority", "Authority and evidence":
+		m.markSection(r, "related_specifications.content", s)
+	case "Authority":
 		m.section(r, "authority_and_evidence", s)
 	case "Evidence":
 		m.section(r, "evidence", s)
-	case "Open question", "Open questions":
+	case "Open questions":
 		m.openQuestions(r, []*Section{s})
 	default:
 		return false
@@ -453,15 +395,7 @@ func (m *domainMapper) contextField(owner Record, field string, nodes []string) 
 }
 
 func (m *domainMapper) context(nodes []string) Record {
-	v := Record{"content": m.doc.Rich(nodes), "references": m.references(nodes)}
-	items := []Record{}
-	for _, id := range m.listItems(nodes, false) {
-		items = append(items, Record{"description": m.doc.Rich([]string{id}), "references": m.references([]string{id})})
-	}
-	if len(items) > 0 {
-		v["items"] = items
-	}
-	return v
+	return Record{"content": m.doc.Rich(nodes), "references": m.references(nodes)}
 }
 
 func (m *domainMapper) descendants(nodes []string) map[string]bool {
@@ -568,24 +502,6 @@ func (m *domainMapper) fieldText(s *Section, label string) string {
 	return ""
 }
 
-func (m *domainMapper) fieldLabelNodes(s *Section, label string) []string {
-	needle := "**" + label + ":**"
-	for _, id := range s.Intro {
-		if String(m.doc.NodeByID[id], "node_kind") != "paragraph" {
-			continue
-		}
-		for _, child := range Strings(m.doc.NodeByID[id]["children"]) {
-			if String(m.doc.NodeByID[child], "node_kind") == "strong" && strings.TrimSpace(m.doc.Text(child)) == needle {
-				return []string{child}
-			}
-		}
-	}
-	return nil
-}
-
-// withoutFields removes only explicit introductory metadata lines. Inline
-// nodes remain rooted in the document tree; no rewritten prose or fabricated
-// source ranges are introduced. Deeper examples with the same text are kept.
 func (m *domainMapper) withoutFields(s *Section, nodes []string, labels ...string) []string {
 	intro := map[string]bool{}
 	for _, id := range s.Intro {
@@ -633,85 +549,63 @@ func (m *domainMapper) withoutFields(s *Section, nodes []string, labels ...strin
 }
 
 func (m *domainMapper) metadata(r Record) {
-	if root := String(m.doc.Document, "metadata_root"); root != "" {
-		m.bind(m.doc.Document, "metadata_root", []string{root}, "metadata", "frontmatter")
-	}
-	for _, id := range Strings(m.doc.Document["frontmatter"]) {
-		m.bind(m.doc.Document, "frontmatter", []string{id}, "metadata", "frontmatter")
-	}
 	if String(r, "authored_id") != "" {
 		if node := m.metadataNode("id", String(r, "authored_id")); node != "" {
-			m.bind(r, "authored_id", []string{node}, "record_identity", "authored-id")
+			m.authoredFragment(r, []string{node})
 		}
 	}
 }
 
 func (m *domainMapper) metadataNode(key, value string) string {
-	// Prefer the YAML subtree under the named key so equal strings elsewhere do
-	// not accidentally become the source of a semantic label.
-	for _, n := range m.doc.Nodes {
-		if String(n, "node_kind") != "yaml_entry" {
+	root := m.doc.Syntax.Value(key)
+	if root == nil {
+		return ""
+	}
+	target := yamlScalarTarget(root)
+	if target == nil {
+		return ""
+	}
+	nodes := []*yaml.Node{root}
+	if target.Kind == yaml.SequenceNode {
+		nodes = target.Content
+	}
+	for _, n := range nodes {
+		if scalar := yamlScalarTarget(n); scalar == nil || scalar.Value != value {
 			continue
 		}
-		children := Strings(n["children"])
-		if len(children) < 2 || String(m.doc.NodeByID[children[0]], "scalar_string") != key {
-			continue
+		if root.Kind == yaml.AliasNode {
+			n = root
 		}
-		set := m.descendants(children[1:])
-		for _, candidate := range m.doc.Nodes {
-			if set[String(candidate, "id")] && String(candidate, "node_kind") == "yaml_scalar" && String(candidate, "scalar_string") == value {
-				return String(candidate, "id")
-			}
+		e := contentExtractor{p: m.doc, buffer: m.doc.Data}
+		start := e.yamlPosition(n, e.lineEnd(0))
+		end := e.yamlEnd(n, start, len(m.doc.Data)-len(m.doc.Syntax.Body), target.Style&yaml.FlowStyle != 0)
+		id := fmt.Sprintf("%s:metadata:%d", String(m.doc.Source, "id"), start)
+		if m.doc.NodeByID[id] == nil {
+			node := Record{"id": id, "span": e.sourceSpan(start, end), "node_kind": "metadata", "decoded_text": value}
+			m.doc.NodeByID[id] = node
+			m.doc.Nodes = append(m.doc.Nodes, node)
 		}
-		if authored := yamlValue(m.doc.Metadata, key); authored != nil && authored.Kind == yaml.AliasNode {
-			for _, candidate := range m.doc.Nodes {
-				if set[String(candidate, "id")] && String(candidate, "node_kind") == "yaml_alias" && String(candidate, "alias_name") == authored.Value {
-					return String(candidate, "id")
-				}
-			}
-		}
+		return id
 	}
 	return ""
 }
 
 func (m *domainMapper) classification(r Record, labels []string) {
-	if yamlValue(m.doc.Metadata, "quality_attributes") == nil {
+	if m.doc.Syntax.Value("quality_attributes") == nil {
 		return
 	}
-	r["quality_attribute_labels"] = []string{}
+
 	for _, label := range labels {
 		node := m.metadataNode("quality_attributes", label)
 		if node == "" {
 			continue
 		}
-		id := m.label(r, label, node, "quality_classification")
-		appendID(r, "quality_attribute_labels", id)
-		m.bind(r, "quality_attribute_labels", []string{node}, "named_field", "quality-label")
+		m.label(r, label, node, "quality_classification")
 	}
 }
 
 func (m *domainMapper) label(owner Record, label, node, role string) string {
-	r := Record{"id": m.id("label"), "kind": "LabelOccurrence", "owner": String(owner, "id"), "role": role, "label": label, "content_node": node}
+	r := Record{"id": m.id("label"), "kind": "LabelOccurrence", "owner": String(owner, "id"), "role": role, "label": label, "span": m.doc.NodeByID[node]["span"], "content_node": node}
 	m.result.Labels = append(m.result.Labels, r)
 	return String(r, "id")
 }
-
-func yamlValue(root *yaml.Node, key string) *yaml.Node {
-	if root == nil {
-		return nil
-	}
-	if root.Kind == yaml.DocumentNode && len(root.Content) > 0 {
-		root = root.Content[0]
-	}
-	if root.Kind != yaml.MappingNode {
-		return nil
-	}
-	for i := 0; i+1 < len(root.Content); i += 2 {
-		if root.Content[i].Value == key {
-			return root.Content[i+1]
-		}
-	}
-	return nil
-}
-
-var outcomeID = regexp.MustCompile(`^\s*(?:[-+*]|[0-9]+[.)])?\s*\*\*([^*]+):\*\*`)

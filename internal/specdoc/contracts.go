@@ -32,8 +32,8 @@ func addSourceContracts(p *planner) error {
 				requireRoute(page, relativeURL(s.file, s.file, section.anchor), section.title)
 			}
 		}
-		for _, h := range readingOrder(s) {
-			if h.owner != s {
+		for _, h := range s.source.headings {
+			if h.owner != s || h.inGlossary {
 				continue
 			}
 			file, fragment, _ := strings.Cut(p.targets[h.node], "#")
@@ -73,11 +73,21 @@ func addSourceContracts(p *planner) error {
 			}
 			if h.end < h.bodyEnd {
 				prose := sourceProse(s.source, h)
-				passagePage.RequiredContent = append(passagePage.RequiredContent, prose)
+
 				if fragment != "" {
 					passagePage.RequiredSectionContent[fragment] = prose
 				}
 			}
+		}
+		// Membership and section ownership are checked against the independent
+		// source inventory above. Page sequence follows its reader-facing outline.
+		for _, h := range readingOrder(s) {
+			if h.owner != s || h.end >= h.bodyEnd {
+				continue
+			}
+			file, _, _ := strings.Cut(p.targets[h.node], "#")
+			destination := p.plan.Pages[file]
+			destination.RequiredContent = append(destination.RequiredContent, sourceProse(s.source, h))
 		}
 		for title, idx := range s.indexes {
 			indexPage := p.plan.Pages[idx.file]
@@ -146,7 +156,7 @@ func addSourceContracts(p *planner) error {
 	}
 	// Read typed relation facts independently of the renderer's choice to
 	// present a relation inline, beside a section or in a related-items list.
-	for _, a := range p.snapshot.Assertions {
+	for _, a := range p.snapshot.Relationships() {
 		projection := attr(a, "projection_path")
 		_, field, _ := strings.Cut(projection, ".")
 		if _, ok := relations[field]; !ok || projection == "QualityModel.quality_attributes" || projection == "System.quality_attributes" {

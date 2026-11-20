@@ -12,7 +12,7 @@ func TestParseJob(t *testing.T) {
 		validJob,
 		"\xef\xbb\xbf" + strings.ReplaceAll(validJob, "\n", "\r\n"),
 		strings.Replace(validJob, "type: job-spec", "type: 'job-spec' # JTBD", 1),
-		validJob + "\n## Notes\nAn additional section.\n",
+		validJob + "\n## Evidence\nAn additional section.\n",
 	} {
 		got, err := Parse([]byte(source))
 		if err != nil {
@@ -25,12 +25,12 @@ func TestParseJob(t *testing.T) {
 }
 
 func TestIntendedProgressHasOneSpelling(t *testing.T) {
-	source := "---\ntype: job-spec\n---\n# A job\n## Intended progress\nConfidence in the change.\n## Desired outcome\nLegacy narrative.\n"
+	source := "---\ntype: job-spec\n---\n# A job\n## Intended progress\nConfidence in the change.\n### Desired outcome\nLegacy narrative.\n"
 	got, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got.IntendedProgress != "Confidence in the change." || !strings.Contains(got.Markdown, "Legacy narrative.") {
+	if !strings.HasPrefix(got.IntendedProgress, "Confidence in the change.") || !strings.Contains(got.Markdown, "Legacy narrative.") {
 		t.Fatal(got)
 	}
 	_, err = Parse([]byte(source + "\n## Intended progress\n"))

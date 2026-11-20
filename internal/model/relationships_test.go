@@ -13,7 +13,7 @@ func relationshipFixture(t *testing.T) string {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/authoring-context.system.spec.md", "---\ntype: system-spec\n---\n# Authoring context\n## Purpose\nProvide context.\n## Scope\nThis repository.\n")
 	conformanceWrite(t, root, "external/specs/delivery-system.system.spec.md", "---\ntype: system-spec\n---\n# Delivery system\n## Purpose\nDeliver links.\n## Scope\nExternal delivery.\n")
-	conformanceWrite(t, root, "specs/jobs/share.job.spec.md", "---\ntype: job-spec\n---\n# Share information\n## Job\nWhen collaborating, I want to share information so others can act.\n## Steps\n### Send a link\nSend the address to a recipient.\n## Outcomes\n- Minimize time to share a usable address.\n")
+	conformanceWrite(t, root, "specs/jobs/share.job.spec.md", "---\ntype: job-spec\n---\n# Share information\n## Job\nWhen collaborating, I want to share information so others can act.\n## Steps\n### Send a link\nSend the address to a recipient.\n## Outcomes\n### Minimize time to share a usable address\n\nMinimize time to share a usable address.\n")
 	conformanceWrite(t, root, "specs/use-cases/share.use-case.spec.md", `---
 type: use-case-spec
 ---
@@ -26,12 +26,12 @@ Deliver an address to the recipient.
 The actor submits the address through the delivery service.
 ## Supports
 [Sharing](../jobs/share.job.spec.md) and [sending](../jobs/share.job.spec.md#send-a-link).
-## Related jobs
+## Related specifications
 [Sharing](../jobs/share.job.spec.md) provides research context.
 ## Main success scenario
 1. The actor submits the address.
 2. The system confirms delivery.
-## Success criterion
+## Success guarantees
 The recipient can read the address.
 `)
 	conformanceWrite(t, root, "specs/business-rules/consent.business-rule.spec.md", `---
@@ -53,7 +53,7 @@ type: requirement-spec
 The service must confirm delivery.
 ## Applies to
 **Targets:** [Sharing](../use-cases/share.use-case.spec.md)
-### Subjects
+### Conditions
 [Delivery context](../../external/specs/delivery-system.system.spec.md) is contextual background.
 `)
 	return root
@@ -82,7 +82,7 @@ func TestExplicitSemanticRelationships(t *testing.T) {
 		}
 	}
 	projections := map[string]int{}
-	for _, a := range s.Assertions {
+	for _, a := range s.Relationships() {
 		projections[String(a, "projection_path")]++
 	}
 	for path, count := range map[string]int{"UseCase.subject_system": 1, "TraceableElement.supports": 2, "BusinessRule.applies_to": 1, "Obligation.applies_to": 1} {
@@ -92,7 +92,7 @@ func TestExplicitSemanticRelationships(t *testing.T) {
 	}
 	forged := cloneSnapshot(t, s)
 	elementKind(t, forged, "UseCase")["subject_system"] = context["id"]
-	requireFinding(t, forged, "concept.projection")
+	requireFinding(t, forged, "shape.invalid")
 	checkSourceText(t, s)
 }
 
@@ -104,13 +104,13 @@ func TestContextualLinksDoNotAssertSemanticRelations(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		text := strings.NewReplacer("**Subject system:** ", "", "**Targets:** ", "", "## Supports", "## Notes").Replace(string(data))
+		text := strings.NewReplacer("**Subject system:** ", "", "**Targets:** ", "", "## Supports", "## Evidence").Replace(string(data))
 		if err := os.WriteFile(p, []byte(text), 0644); err != nil {
 			t.Fatal(err)
 		}
 	}
 	s := conformanceExport(t, root).Snapshot
-	for _, a := range s.Assertions {
+	for _, a := range s.Relationships() {
 		if slices.Contains([]string{"UseCase.subject_system", "TraceableElement.supports", "Obligation.applies_to", "BusinessRule.applies_to"}, String(a, "projection_path")) {
 			t.Fatal("citation inferred a domain claim", a)
 		}
@@ -147,47 +147,17 @@ func TestUnknownConceptScopeDefersDependentRelationships(t *testing.T) {
 
 func TestRelationshipContractsRejectCorruptSnapshots(t *testing.T) {
 	s := conformanceExport(t, compositionFixture(t)).Snapshot
-	t.Run("assertions retain declaration role", func(t *testing.T) {
-		paths := map[string]bool{}
-		for _, a := range s.Assertions {
-			paths[String(a, "projection_path")] = true
-		}
-		if !paths["System.concept_uses"] || !paths["System.synchronizations"] {
-			t.Fatal(paths)
-		}
-		forged := cloneSnapshot(t, s)
-		for _, a := range forged.Assertions {
-			if String(a, "projection_path") == "System.concept_uses" {
-				a["projection_path"] = "System.synchronizations"
-				break
-			}
-		}
-		requireFinding(t, forged, "assertion.projection")
-	})
-	for _, path := range []string{"ConceptUse.definition", "System.concept_uses", "System.synchronizations", "ConceptUse.dependencies"} {
-		t.Run(path+" requires endpoints", func(t *testing.T) {
+	for _, role := range []string{"definition", "dependencies"} {
+		t.Run(role, func(t *testing.T) {
 			forged := cloneSnapshot(t, s)
-			for _, a := range forged.Assertions {
-				if String(a, "projection_path") == path {
-					delete(a, "subject")
-					delete(a, "object")
-					break
+			for _, ref := range forged.References {
+				if String(ref, "role") == role {
+					Object(ref["resolution"])["target"] = elementKind(t, forged, "Synchronization")["id"]
+					requireFinding(t, forged, "relationship.target")
+					return
 				}
 			}
-			requireFinding(t, forged, "shape.invalid")
+			t.Fatal("missing relationship", role)
 		})
 	}
-	t.Run("systems have only one hierarchy", func(t *testing.T) {
-		forged := cloneSnapshot(t, s)
-		sys := elementKind(t, forged, "System")
-		sys["specification_system"] = sys["id"]
-		requireFinding(t, forged, "shape.invalid")
-	})
-	t.Run("concept dependencies retain section content", func(t *testing.T) {
-		forged := cloneSnapshot(t, s)
-		use := designRecord(t, forged, "ConceptUse", "PublicExpiry")
-		delete(use, "dependencies_content")
-		forged.ContentBindings = slices.DeleteFunc(forged.ContentBindings, func(b Record) bool { return b["owner"] == use["id"] && b["field_path"] == "dependencies_content" })
-		requireFinding(t, forged, "declaration.content")
-	})
 }

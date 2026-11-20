@@ -33,25 +33,17 @@ func TestConceptCompositionExport(t *testing.T) {
 		t.Fatalf("unexpected findings: %d %v", result.ExitCode, s.Diagnostics)
 	}
 	checkSourceText(t, s)
-	if len(Strings(s.Coverage["extension_sections"])) != 0 || String(s.Coverage, "status") != "complete_for_profile" {
-		t.Fatal(s.Coverage)
-	}
 	public := designRecord(t, s, "ConceptUse", "PublicLinks")
 	internal := designRecord(t, s, "ConceptUse", "InternalLinks")
 	if public["definition"] != internal["definition"] || public["id"] == internal["id"] {
 		t.Fatal("shared definition conflated named uses")
 	}
 	shorthand := designRecord(t, s, "Concept", "Shorthand")
-	state := Object(shorthand["abstract_state"])
-	if state["initial_state"] == nil || len(records(state["invariants"])) != 1 {
-		t.Fatal("state details lost")
-	}
-	derived := false
-	for _, e := range records(state["elements"]) {
-		derived = derived || e["derivation"] != nil
-	}
-	if !derived {
-		t.Fatal("derived state lost")
+	state := newDesignResolver(s).text(shorthand["abstract_state"])
+	for _, field := range []string{"Initial state", "Invariants", "Derivation"} {
+		if !strings.Contains(state, field) {
+			t.Fatal("state passage lost", field)
+		}
 	}
 	expire := designRecord(t, s, "ConceptAction", "Expire")
 	if expire["initiation"] == nil || expire["outputs"] == nil {
@@ -134,7 +126,7 @@ S.
 A condition to investigate.
 #### Then
 Handling remains undecided.
-#### Notes
+#### Semantics
 A supporting note, not an action.
 `)
 	result := conformanceExport(t, root)
@@ -151,10 +143,10 @@ A supporting note, not an action.
 		t.Fatal("external definition invented")
 	}
 	rule := designRecord(t, result.Snapshot, "Synchronization", "Draft rule")
-	if rule["semantics"] != nil || rule["when_actions"] != nil || rule["then_actions"] != nil {
+	if rule["when_actions"] != nil || rule["then_actions"] != nil {
 		t.Fatal("semantics or actions inferred from prose")
 	}
-	if rule["extension_sections"] != nil || !strings.Contains(newDesignResolver(result.Snapshot).text(rule["notes"]), "supporting note") {
+	if rule["extension_sections"] != nil || !strings.Contains(newDesignResolver(result.Snapshot).text(rule["semantics"]), "supporting note") {
 		t.Fatal("supporting notes lost")
 	}
 }
@@ -165,7 +157,7 @@ func TestDesignMarkdownViews(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, part := range []string{"## Concepts", "#### Operational principles", "#### Application dependencies", "PublicLinks", "InternalLinks", "#### Synchronization rules", "##### Initial state\n\nNo codes are registered and no codes have been issued.\n\n##### Issued codes", "Event-based coordination"} {
+	for _, part := range []string{"## Concepts", "#### Operational principles", "#### Application dependencies", "PublicLinks", "InternalLinks", "#### Start public lifetime", "##### Initial state\n\nNo codes are registered and no codes have been issued.\n\n##### Issued codes", "Event-based coordination"} {
 		if !strings.Contains(output, part) {
 			t.Errorf("missing %q", part)
 		}

@@ -21,7 +21,7 @@ cp ../model2.md specs/quality/usability/accessibility/accessibility.quality-attr
 cp ../requirement.md specs/requirements/work.requirement.spec.md
 status 0 dotspec system show --json
 stdout '"quality_attributes": \['
-stdout '"quality_attributes_content":'
+! stdout '"quality_attributes_content":'
 ! stdout '"quality_model":'
 stdout '"subattribute_of":'
 status 0 dotspec requirement list --attribute usability --json
@@ -88,7 +88,7 @@ Every diagnostic identifies its severity in text.
 ## Criterion
 ### Measure
 Share of rendered diagnostics whose severity appears as text.
-## System verification plan
+## Evidence
 Capture output for every severity.
 ## Rationale
 Contributors can distinguish severities without color.

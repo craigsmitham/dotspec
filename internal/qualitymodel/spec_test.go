@@ -51,7 +51,7 @@ func TestBundledStarters(t *testing.T) {
 }
 
 func TestParseContentAndValidation(t *testing.T) {
-	source := "---\ntype: quality-model-spec\nid: local\n---\n# Local\n## Description\nA local model.\n## Edition\nTeam revision.\n## Sources\n[Origin](https://example.test).\n## Quality attributes\nA narrative.\n### Specific\n**ID:** specific\n**Sub-attribute of:** broad\nA definition.\n#### Detail\nPreserve this.\n### Broad\n**ID:** broad\nA broad concern.\n## Custom\nKeep unknown content.\n"
+	source := "---\ntype: quality-model-spec\nid: local\n---\n# Local\n## Description\nA local model.\n## Edition\nTeam revision.\n## Sources\n[Origin](https://example.test).\n## Quality attributes\n### Specific\n**ID:** specific\n**Sub-attribute of:** broad\nA definition.\n#### Detail\nPreserve this.\n### Broad\n**ID:** broad\nA broad concern.\n#### Detail\nKeep unknown content.\n"
 	m, err := Parse([]byte("\ufeff" + strings.ReplaceAll(source, "\n", "\r\n")))
 	if err != nil {
 		t.Fatal(err)
@@ -79,7 +79,7 @@ func TestParseContentAndValidation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if absent.QualityAttributes != nil || empty.QualityAttributes == nil || empty.QualityAttributesContent == nil {
+	if absent.QualityAttributes != nil || empty.QualityAttributes == nil {
 		t.Fatal("absent vs empty")
 	}
 }

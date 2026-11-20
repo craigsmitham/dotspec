@@ -28,15 +28,15 @@ func Check(spec *QualityModel) []diagnostic.Diagnostic {
 
 func CheckType() check.Type {
 	return check.Type{Layout: Layout, ValidateSlug: ValidateSlug,
-		Inspect: func(path string) ([]diagnostic.Diagnostic, error) {
-			m, err := Read(path)
+		Inspect: func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
+			m, err := readFrom(files, path)
 			if err != nil {
 				return nil, err
 			}
 			return Check(m), nil
 		},
-		References: func(path string) (*specfile.ReferenceDocument, error) {
-			m, err := Read(path)
+		References: func(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error) {
+			m, err := readFrom(files, path)
 			if err != nil {
 				return nil, err
 			}

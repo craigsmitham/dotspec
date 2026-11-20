@@ -188,6 +188,9 @@ func writeJobMap(spec *job.Job, options jobOptions, out io.Writer) error {
 
 func outcomeMapLabel(outcome job.DesiredOutcome) string {
 	if outcome.Name != "" {
+		if outcome.ID != "" {
+			return outcome.Name + " [" + outcome.ID + "]"
+		}
 		return outcome.Name
 	}
 	return outcomeLabel(outcome)

@@ -9,9 +9,7 @@ defines the basic file contract.
 A Concept is a specification with its own document. ConceptUse and Synchronization
 are elements declared inside a System specification, not specifications. They are
 traceable, addressable through heading anchors and optional introductory `**ID:**`
-values, and can carry Notes, Open questions, and trace sections.
-Evidence, Authority and Related specifications sections belong to specifications;
-under a declared element they are retained as unmodelled extension sections. See
+values. Use the declared fields for each element and place qualifications next to the behavior they describe. See
 [specification types and declared elements](../reference/specification-model.md#specification-types-and-declared-elements).
 
 ## Find a purposeful boundary
@@ -29,7 +27,7 @@ a composition rule.
 
 Create a draft with `dotspec concept init shorthand`. Purpose, State, Actions and
 Operational principles are conventional sections; unfinished descriptions remain
-valid. Model export preserves every section, including unknown details.
+valid. Use subheadings inside State or Operational principles to organize longer descriptions.
 
 ## Write the operational principles
 

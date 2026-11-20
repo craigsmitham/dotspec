@@ -117,10 +117,7 @@ interface sections express direction relative to the owning subject; named
 entries are independently addressable Interface elements, with heading
 anchors and optional introductory `**ID:**` values. Each belongs to one required
 or provided list under one System or Component. Entries carry descriptions,
-optional counterpart context and contract links, plus Notes, Open questions,
-and trace sections. An Interface is not a specification: Evidence,
-Authority and Related specifications sections under it are retained as unmodelled
-extension sections.
+optional counterpart context, contract links, open questions and trace sections.
 
 An interface may contain an Obligations section. Requirements can target it using
 `**Targets:** [Time readings](#time-readings)` under Applies to, and features may
@@ -177,22 +174,17 @@ intended. The [Checklist effects table](../../examples/todo/specification/concep
 shows what reopening an entry preserves. `dotspec model docs` also includes the matrix
 in its concept reference.
 
-This is an optional review aid. dotspec does not infer operations, query
-classifications, formal expressions or matrix entries from prose. The current
-mapping decomposes the first table in the section and preserves the whole section;
-keep one matrix there. General obligations and action contracts still own their
-behavioral statements.
+The report reproduces the authored effects table. Include qualifications and
+examples alongside the entries they explain. General obligations and action
+contracts own their behavioral statements.
 
 ## Distinguish explanation and review authority
 
-Use Notes for explanation, Implementation suggestions (or
-Implementation hints) for nonbinding design advice, and Illustrative examples
-for examples. These are separate model fields, including on named domain records.
-The review presents them separately; concept documentation also labels suggestions
-as nonbinding. The heading classifies content role, not stakeholder acceptance.
+Put an example or implementation suggestion inside the field it explains.
+State which behavior is required and which design choices are suggestions.
 
-Use one preferred glossary term consistently in prose. Alternative names or
-Aliases can record recognized synonyms and interface labels. The review checks
+Use one preferred glossary term consistently in prose. Use Alternative names
+for recognized synonyms and interface labels. The review checks
 preferred-term and alias collisions within each declaring System. It does not
 infer bounded contexts or scan prose for undeclared synonyms.
 

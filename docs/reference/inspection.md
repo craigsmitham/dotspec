@@ -192,7 +192,7 @@ for this repository's policy and the CI task that enforces file coverage.
 ## Output and automation
 
 The experimental [specification model](specification-model.md) exposes
-normalized Markdown, ordered document content, and named domain records together:
+normalized Markdown, named domain records and their source ranges.
 
 ```sh
 dotspec model export --path . > specification.json
@@ -201,17 +201,14 @@ dotspec model schema > specification.schema.json
 ```
 
 `model export` emits JSON directly. Invalid authored documents retain their source
-and diagnostics. Its exit status follows the authoring/operational findings;
-`model validate` instead checks whether the snapshot faithfully satisfies its
-schema, source, reference, ownership, and coverage invariants. A valid snapshot
-can describe invalid source documents.
+and diagnostics. Its exit status follows the findings from inspecting the source.
+`model validate` checks the saved snapshot’s schema, source ranges, ownership
+and relationships. A valid snapshot can describe an invalid source document.
 
-The model distinguishes empty fields, absent fields, undecomposed narrative,
-unknown sections, and failed extraction. Unknown content remains available with
-an explicit mapping limitation. `complete_for_profile` reports coverage under
-the declared mapping profile; it does not establish requirements completeness,
-agreement, or satisfaction. See the [canonical model](../../model/README.md) and
-[mapping reference](../../model/markdown-mapping.md).
+An omitted field is absent. A present, empty Markdown field has an empty span
+list. An unknown field heading produces a located error. Its original text is
+available in the normalized source. See the [canonical model](../../model/README.md)
+and [mapping reference](../../model/markdown-mapping.md).
 
 The system, job, use-case, concept, requirement, business-rule, and quality-model
 commands (including `init`), as well as `sources`, accept `--json`

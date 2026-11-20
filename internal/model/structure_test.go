@@ -43,7 +43,7 @@ func TestStructureAndFeatureMembership(t *testing.T) {
 	}
 	forged := cloneSnapshot(t, s)
 	designRecord(t, forged, "Feature", "Place an order")["groups"] = []string{String(inventory, "id")}
-	requireFinding(t, forged, "reference.kind")
+	requireFinding(t, forged, "shape.invalid")
 }
 
 func TestStructuralErrorsPreserveSourceWithoutInventingParents(t *testing.T) {
@@ -82,13 +82,13 @@ func TestStructuralErrorsPreserveSourceWithoutInventingParents(t *testing.T) {
 
 func TestComponentMapsSpecificationSections(t *testing.T) {
 	root := structureFixture(t)
-	traceEdit(t, root, "components/checkout/specs/checkout.component.spec.md", "## Implementation", "## Notes\n\nA component note.\n\n## Evidence\n\nEvidence to review.\n\n## Related specifications\n\n[Reservation](../../../specs/concepts/reservation.concept.spec.md)\n\n## Implementation")
+	traceEdit(t, root, "components/checkout/specs/checkout.component.spec.md", "## Implementation", "## Evidence\n\nA component note.\n\n## Evidence\n\nEvidence to review.\n\n## Related specifications\n\n[Reservation](../../../specs/concepts/reservation.concept.spec.md)\n\n## Implementation")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	checkout := designRecord(t, result.Snapshot, "Component", "Checkout")
-	if checkout["notes"] == nil || checkout["evidence"] == nil || checkout["related_specifications"] == nil {
+	if checkout["evidence"] == nil || checkout["related_specifications"] == nil {
 		t.Fatal("component specification sections missing", checkout)
 	}
 	checkSourceText(t, result.Snapshot)

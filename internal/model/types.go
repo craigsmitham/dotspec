@@ -5,13 +5,12 @@ package model
 
 import (
 	"encoding/json"
-
-	"go.yaml.in/yaml/v3"
+	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
-const ModelVersion = "0.27.0-draft"
-const RepresentationVersion = "0.2.0"
-const MappingProfile = "dotspec-markdown/21"
+const ModelVersion = "0.28.0-draft"
+const RepresentationVersion = "0.3.0"
+const MappingProfile = "dotspec-markdown/22"
 
 // Record is a schema-validated tagged record or an embedded model value.
 // Values remain JSON-compatible and are never decoded through a base class
@@ -25,17 +24,14 @@ type Snapshot struct {
 	Scope                 Record   `json:"scope"`
 	Sources               []Record `json:"sources"`
 	Documents             []Record `json:"documents"`
-	ContentNodes          []Record `json:"content_nodes"`
+	ContentNodes          []Record `json:"-"`
 	Fragments             []Record `json:"fragments,omitempty"`
 	Elements              []Record `json:"elements"`
 	References            []Record `json:"references,omitempty"`
 	LabelOccurrences      []Record `json:"label_occurrences,omitempty"`
-	Resolutions           []Record `json:"resolutions,omitempty"`
-	Assertions            []Record `json:"assertions,omitempty"`
-	ContentBindings       []Record `json:"content_bindings"`
-	Diagnostics           []Record `json:"diagnostics,omitempty"`
-	ContextSources        []Record `json:"context_sources,omitempty"`
-	Coverage              Record   `json:"coverage"`
+
+	Diagnostics    []Record `json:"diagnostics,omitempty"`
+	ContextSources []Record `json:"context_sources,omitempty"`
 }
 
 func NewSnapshot(scope Record) *Snapshot {
@@ -43,8 +39,7 @@ func NewSnapshot(scope Record) *Snapshot {
 		ModelVersion: ModelVersion, RepresentationVersion: RepresentationVersion,
 		MappingProfile: MappingProfile, Scope: scope,
 		Sources: []Record{}, Documents: []Record{}, ContentNodes: []Record{},
-		Elements: []Record{}, ContentBindings: []Record{},
-		Coverage: Record{"status": "not_checked", "mapping_profile": MappingProfile},
+		Elements: []Record{},
 	}
 }
 
@@ -52,6 +47,7 @@ func NewSnapshot(scope Record) *Snapshot {
 // Its records use normalized Markdown spans; sections expose the structure needed by
 // the explicit domain mapping without reparsing narrative as natural language.
 type ParsedDocument struct {
+	Syntax      *specfile.Markdown
 	Data        []byte
 	Source      Record
 	Document    Record
@@ -60,7 +56,6 @@ type ParsedDocument struct {
 	Fragments   []Record
 	References  []Record
 	Diagnostics []Record
-	Metadata    *yaml.Node
 	Title       string
 	TitleNode   string
 	Preamble    []string
@@ -78,9 +73,9 @@ type Section struct {
 }
 
 type Mapping struct {
-	RootID      string
-	Elements    []Record
-	Bindings    []Record
+	RootID   string
+	Elements []Record
+
 	Labels      []Record
 	Diagnostics []Record
 }
@@ -125,8 +120,7 @@ func Number(value any) int {
 	case float64:
 		return int(value)
 	case json.Number:
-		n, _ := value.Int64()
-		return int(n)
+		return validationNumber(value)
 	}
 	return 0
 }

@@ -12,7 +12,6 @@ types:
   DomainElement:
   - name
   - authored_id
-  - notes
   - open_questions
   Specification:
   - slug
@@ -108,7 +107,6 @@ types:
   - condition
   - handling
   - steps
-  - branches
   Concept:
   - purpose
   - operational_principles
@@ -124,16 +122,6 @@ types:
   - where
   - then
   - semantics
-  StateDescription:
-  - content
-  - initial_state
-  - elements
-  - invariants
-  StateElement:
-  - name
-  - description
-  - value_description
-  - derivation
   ConceptAction:
   - inputs
   - outputs
@@ -158,22 +146,15 @@ types:
   - edition
   - sources
   - quality_attributes
-  - quality_attributes_content
   QualityAttribute:
   - definition
   - subattribute_of
-  ContentBinding:
-  - owner
-  - field_path
-  - content_node
-  - mapping_rule
   SourceReference:
   - authored_target
   - context_owner
   - context_field
   - resolution
   Resolution:
-  - occurrence
   - status
   - target
   - rule
@@ -229,8 +210,6 @@ types:
   - description
   - contracts
   - counterpart
-  EffectsRow:
-  - cells
 diagrams:
 - title: Specification types
   direction: TB
@@ -387,7 +366,6 @@ diagrams:
   - UseCase.extensions
   - Scenario.steps
   - UseCaseExtension.steps
-  - UseCaseExtension.branches
   - Concept.actions
   - ScenarioStep.illustrates
   inheritance: false
@@ -482,12 +460,8 @@ diagrams:
   - ConceptUse.definition
   inheritance: false
 - title: Traceability to authored content
-  description: Bindings associate model fields with content occurrences; references preserve authored targets
-    and their resolution. Record and ContentNode provide context from the generic subsets. A resolved target
-    does not prove compliance.
+  description: References preserve authored targets and their resolution. Source ranges locate each field in the acquired Markdown.
   nodes:
-  - ContentBinding
-  - ContentNode
   - Record
   - SourceReference
   - Resolution
@@ -495,8 +469,6 @@ diagrams:
   - SourceResource
   - SourceFragment
   paths:
-  - ContentBinding.content_node
-  - ContentBinding.owner
   - SourceReference.resolution
   - Resolution.target
   inheritance: false

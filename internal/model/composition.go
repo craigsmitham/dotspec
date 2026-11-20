@@ -20,18 +20,28 @@ type designProjection struct {
 	many   bool
 }
 type designResolver struct {
-	index       map[string]Record
-	elements    []Record
-	projected   map[string]map[string][]string
-	projections []designProjection
-	issues      []designIssue
+	documentDefinitions map[string]string
+	links               map[[2]string][]string
+	index               map[string]Record
+	elements            []Record
+	projected           map[string]map[string][]string
+	projections         []designProjection
+	issues              []designIssue
+	occurrences         map[string]string
 }
 
 func newDesignResolver(s *Snapshot) *designResolver {
 	d := &designResolver{index: map[string]Record{}, elements: s.Elements, projected: map[string]map[string][]string{}}
-	for _, collection := range [][]Record{s.Elements, s.Sources, s.Documents, s.ContentNodes, s.References, s.Resolutions, s.Fragments} {
+	for _, collection := range [][]Record{s.Elements, s.Sources, s.Documents, s.ContentNodes, s.References, s.Fragments} {
 		for _, r := range collection {
 			d.index[String(r, "id")] = r
+		}
+	}
+	d.links = map[[2]string][]string{}
+	for _, ref := range s.References {
+		if role := String(ref, "role"); role != "" {
+			key := [2]string{String(ref, "context_owner"), role}
+			d.links[key] = append(d.links[key], String(ref, "id"))
 		}
 	}
 	return d
@@ -45,6 +55,10 @@ func (d *designResolver) values(r Record, field string) []string {
 
 // A heading reference resolves to its explicitly named domain record; a file
 // reference to its root concept. Ordinary reference resolution is kept intact.
+func (d *designResolver) refs(r Record, field string) []string {
+	return d.links[[2]string{String(r, "id"), field}]
+}
+
 func (d *designResolver) promote(target Record, kind string) []Record {
 	if String(target, "kind") != "SourceFragment" && designKind(String(target, "kind"), kind) {
 		return []Record{target}
@@ -57,7 +71,7 @@ func (d *designResolver) promote(target Record, kind string) []Record {
 		if String(target, "kind") == "SourceDocument" && String(r, "source_document") == String(target, "id") && String(r, "owner") == "" {
 			matches = append(matches, r)
 		}
-		if String(target, "kind") == "SourceFragment" && slices.Contains(Strings(Object(r["name"])["content_nodes"]), String(target, "content_node")) {
+		if String(target, "kind") == "SourceFragment" && namesFragment(r, target) {
 			matches = append(matches, r)
 		}
 	}
@@ -67,7 +81,7 @@ func (d *designResolver) promote(target Record, kind string) []Record {
 	return matches
 }
 func (d *designResolver) resolve(r Record, field, kind string, many bool, accepts func(Record) bool) {
-	refs := Strings(r[field+"_references"])
+	refs := d.refs(r, field)
 	values := []string{}
 	if !many && len(refs) > 1 {
 		d.issue(r, field, "error", "Expected one explicit reference.")
@@ -75,7 +89,7 @@ func (d *designResolver) resolve(r Record, field, kind string, many bool, accept
 		for _, id := range refs {
 			ref := d.index[id]
 			if field == "specification_system" {
-				u, err := url.Parse(d.referenceDestination(ref))
+				u, err := url.Parse(String(ref, "authored_target"))
 				if err != nil || u.RawQuery != "" || u.IsAbs() || u.Host != "" || strings.HasPrefix(u.Path, "/") {
 					d.issue(r, field, "error", "Specification system must link to a repository-local system document.")
 					continue
@@ -85,7 +99,7 @@ func (d *designResolver) resolve(r Record, field, kind string, many bool, accept
 				d.issue(r, field, "error", "Reference must be authored in this record's source.")
 				continue
 			}
-			resolution := d.index[String(ref, "resolution")]
+			resolution := Object(ref["resolution"])
 			status := String(resolution, "status")
 			if status != "resolved" {
 				severity := "error"
@@ -104,7 +118,11 @@ func (d *designResolver) resolve(r Record, field, kind string, many bool, accept
 				d.issue(r, field, "error", "Reference has the wrong declaring concept or system scope.")
 				continue
 			}
-			values = appendUnique(values, String(matches[0], "id"))
+			target := String(matches[0], "id")
+			if d.occurrences != nil {
+				d.occurrences[id] = target
+			}
+			values = appendUnique(values, target)
 		}
 	}
 	if d.projected[String(r, "id")] == nil {
@@ -149,9 +167,13 @@ func (d *designResolver) text(value any) string {
 	var out strings.Builder
 	previousSource := ""
 	previousEnd := -1
-	for _, id := range Strings(Object(value)["content_nodes"]) {
-		n := d.index[id]
-		span := Object(n["span"])
+	spans := records(Object(value)["spans"])
+	if spans == nil {
+		for _, id := range Strings(Object(value)["content_nodes"]) {
+			spans = append(spans, Object(d.index[id]["span"]))
+		}
+	}
+	for _, span := range spans {
 		source := d.index[String(span, "source")]
 		data := String(source, "markdown")
 		start, end := Number(span["start"]), Number(span["end"])
@@ -187,7 +209,7 @@ func (d *designResolver) checkDeclarations() {
 			names[key] = true
 		}
 		if kind == "ConceptUse" {
-			if len(Strings(r["definition_references"])) == 0 {
+			if len(d.refs(r, "definition")) == 0 {
 				d.issue(r, "definition", "advice", "Link the concept definition when this use is ready to resolve.")
 			}
 
@@ -197,8 +219,23 @@ func (d *designResolver) checkDeclarations() {
 
 func (b *snapshotBuilder) resolveComposition() bool {
 	d := newDesignResolver(b.snapshot)
+	d.occurrences = map[string]string{}
 	d.run()
 	for _, p := range d.projections {
+		for _, refID := range d.refs(p.owner, p.field) {
+			ref := d.index[refID]
+
+			resolution := Object(ref["resolution"])
+			if String(resolution, "status") != "resolved" {
+				continue
+			}
+			if target := d.occurrences[refID]; target != "" && slices.Contains(p.values, target) {
+				resolution["target"] = target
+			} else {
+				resolution["status"] = "invalid_target"
+				delete(resolution, "target")
+			}
+		}
 		if len(p.values) == 0 {
 			continue
 		}
@@ -234,16 +271,4 @@ func designIssueCode(field string) string {
 	default:
 		return "concept." + field
 	}
-}
-
-func (d *designResolver) referenceDestination(ref Record) string {
-	if String(ref, "form") == "reference_link" {
-		if destination := String(d.index[String(ref, "definition_node")], "destination"); destination != "" {
-			return destination
-		}
-		if destination := String(d.index[String(ref, "content_node")], "destination"); destination != "" {
-			return destination
-		}
-	}
-	return String(ref, "authored_target")
 }

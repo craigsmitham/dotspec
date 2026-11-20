@@ -53,11 +53,10 @@ Choose a section to read in order or open a collection index directly.
 | Use cases | Interactions and their authored goals |
 | Concepts | Concept definitions, named uses, and synchronizations. A named use links to its definition when it resolves to a report. |
 | Requirements | Standalone requirements and named obligations within other specifications. **All requirements** opens the index, including routes by component. |
-| Quality attributes | Top-level quality concerns and their definition previews, with links to the full attribute hierarchy and project quality models |
+| Quality attributes | Top-level quality attributes, their authored definition previews and the requirements classified under each |
 | Open questions | Decisions that remain open in the system specification |
 
-The map links directly to a collection when the overview has no project-specific detail to show for it. Additional authored sections remain
-available under **Reference**. When the project has authored questions, **All open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings. A topology edge represents a declared relationship.
+The map links directly to a collection when the overview has no project-specific detail to show for it. When the project has authored questions, **All open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings. A topology edge represents a declared relationship.
 A child system has its own overview showing the next level of detail.
 
 ### Browse subject reports
@@ -68,12 +67,7 @@ to `.spec-report.md`. For example, the Task service report lives at
 holds its local requirements, interfaces, and child components. The optional source
 `id` provides an anchor. The subject name determines the overview filename.
 
-System and component overviews introduce named goals, assumptions, and constraints
-with their title and first authored paragraph. Select the title to read the
-whole passage, including any qualifications and supporting references, in
-`goals.md`, `assumptions.md`, or `constraints.md` beside its owner. Prose and
-lists directly under the collection heading stay in the overview. For example,
-follow **Same local storage** to see which requirement relies on that assumption.
+System overviews introduce named goals and assumptions with their title and first authored paragraph. Follow a title to read its qualifications and supporting references in `goals.md` or `assumptions.md`. Constraints appear in the owning system’s scope. For example, follow **Same local storage** to see which requirement relies on that assumption.
 The requirement links back to the same entry. A **Referenced by** link returns
 to an authored passage that cites the entry in prose. [Task-list assumptions](../../examples/todo/specification/assumptions.md)
 

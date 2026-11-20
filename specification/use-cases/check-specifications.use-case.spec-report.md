@@ -43,6 +43,8 @@ assumed away by this precondition.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#malformed-specification"} -->
 
+#### Handling
+
 During steps 2–3, a specification is malformed. Report its structural error,
 skip dependent checks for that file, and continue according to the
 [continued-inspection requirement](<../requirements/continue-after-invalid-spec.requirement.spec-report.md>).
@@ -51,6 +53,8 @@ Resume reporting at step 4. A complete report with errors still achieves this go
 ### Unreadable input or failed discovery
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#unreadable-input-or-failed-discovery"} -->
+
+#### Handling
 
 During steps 2–3, a file cannot be read or discovery fails, including a required
 Git invocation. Report the operational failure and mark the scan incomplete.
@@ -61,12 +65,16 @@ and start another check.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#empty-scope"} -->
 
+#### Handling
+
 At step 2, no supported specifications are found. Explicitly report an empty,
 completed scan at step 4. This is an alternative successful outcome.
 
 ### Unfinished content
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#unfinished-content"} -->
+
+#### Handling
 
 At step 3, content is unfinished. Retain readable drafts, report applicable writing
 advice, and continue to step 4. The
@@ -126,7 +134,7 @@ in the Develop Requirements job, including its conflict-detection outcome
 Structural findings can inform that evaluation; human review still determines
 whether the requirements accurately represent stakeholder needs.
 
-## Authority and evidence
+## Authority
 
 This narrative explains obligations defined by the linked report contract and
 requirements. Their definitions remain authoritative. The

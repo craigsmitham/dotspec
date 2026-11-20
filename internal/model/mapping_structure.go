@@ -6,16 +6,7 @@ import "strings"
 // Declaration containment does not supply a missing structural parent.
 func (m *domainMapper) structureReference(r Record, field string, s *Section) {
 	m.section(r, field+"_content", s)
-	refs := append([]string{}, Strings(r[field+"_references"])...)
-	for _, id := range m.references(s.Content) {
-		for _, ref := range m.doc.References {
-			if String(ref, "id") == id && (String(ref, "form") == "inline_link" || String(ref, "form") == "reference_link") {
-				refs = append(refs, id)
-			}
-		}
-	}
-	r[field+"_references"] = refs
-	m.bindDesignReferences(r, field+"_references")
+	m.relationship(r, field, s.Content)
 }
 
 func (m *domainMapper) componentSection(r Record, s *Section) bool {
@@ -32,7 +23,7 @@ func (m *domainMapper) componentSection(r Record, s *Section) bool {
 	case "Contracts", "Architecture", "Implementation":
 		field := strings.ToLower(s.Title)
 		m.contextField(r, field, s.Content)
-		m.sectionBindings(r, field+".content", s)
+		m.markSection(r, field+".content", s)
 	default:
 		return false
 	}

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"path/filepath"
-	"slices"
+
 	"sort"
 	"strings"
 )
@@ -13,6 +13,7 @@ import (
 // Only authored part_of edges form the structural diagram; obligations are not
 // inherited, and feature involvement is derived solely from grouped obligations.
 func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
+	s = s.navigation()
 	base, err := designOutputBase(relativeTo)
 	if err != nil {
 		return "", err
@@ -42,7 +43,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		target, _ := url.Parse(sourceURL(r))
 		for _, f := range s.Fragments {
-			if String(f, "source") == String(r, "source_document") && slices.Contains(Strings(Object(r["name"])["content_nodes"]), String(f, "content_node")) && String(f, "generated_anchor") != "" {
+			if String(f, "source") == String(r, "source_document") && namesFragment(r, f) && String(f, "generated_anchor") != "" {
 				target.Fragment = String(f, "generated_anchor")
 				break
 			}
@@ -175,12 +176,6 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			continue
 		}
 		fmt.Fprintf(&out, "### %s: %s\n\n%s\n\n", String(r, "kind"), d.name(r), link(String(r, "id")))
-		definitions := []string{}
-		for _, n := range s.ContentNodes {
-			if String(n, "node_kind") == "link_definition" && String(Object(n["span"]), "source") == String(r, "source_document") {
-				definitions = append(definitions, d.text(Record{"content_nodes": []string{String(n, "id")}}))
-			}
-		}
 		for _, field := range []string{"description", "purpose", "scope", "responsibilities", "boundary_description", "contracts", "counterpart", "architecture", "implementation", "part_of_content", "groups_content", "statement", "criterion"} {
 			value := r[field]
 			if field == "counterpart" || field == "contracts" || field == "architecture" || field == "implementation" || field == "criterion" {
@@ -192,7 +187,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			}
 			title := strings.ReplaceAll(strings.TrimSuffix(field, "_content"), "_", " ")
 			title = strings.ToUpper(title[:1]) + title[1:]
-			fmt.Fprintf(&out, "#### %s\n\n%s\n\n", title, designHeadings(rebaseDesignMarkdown(text, sourceURL(r), strings.Join(definitions, "\n")), 5))
+			fmt.Fprintf(&out, "#### %s\n\n%s\n\n", title, designHeadings(rebaseDesignMarkdown(text, sourceURL(r), d.definitions(r)), 5))
 		}
 	}
 	if len(s.Diagnostics) > 0 {

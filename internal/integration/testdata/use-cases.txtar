@@ -109,14 +109,14 @@ Handling unresolved: investigate whether to offer a substitute.
 type: use-case-spec
 ---
 # Arrange equipment for a job
-## Related behavior
+## Related specifications
 [Substitution question](reserve.use-case.spec.md#preferred-equipment-unavailable).
 -- broken-branch-link.md --
 ---
 type: use-case-spec
 ---
 # Arrange equipment for a job
-## Related behavior
+## Related specifications
 [Substitution question](reserve.use-case.spec.md#missing-branch).
 -- draft.md --
 ---

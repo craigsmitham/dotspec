@@ -51,7 +51,7 @@ func TestSourcesCollectLinksFromEveryTypeWithoutInterpretingNativeFiles(t *testi
 		if err != nil {
 			t.Fatal(err)
 		}
-		content += "\n## Related material\n[Native source](" + filepath.ToSlash(rel) + "#native-fragment)\n"
+		content += "\n## Related specifications\n[Native source](" + filepath.ToSlash(rel) + "#native-fragment)\n"
 		write(t, path, content)
 		specs[path] = content
 	}

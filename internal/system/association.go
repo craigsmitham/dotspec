@@ -2,7 +2,6 @@ package system
 
 import (
 	"net/url"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -14,20 +13,24 @@ import (
 // Associated selects the explicitly linked system, falling back to directory
 // discovery only when no selection was authored. It never fetches external URLs.
 func Associated(owner, source string) (*System, error) {
-	data, err := os.ReadFile(source)
+	return associated(&specfile.SourceSet{}, owner, source)
+}
+
+func associated(files *specfile.SourceSet, owner, source string) (*System, error) {
+	data, err := files.Markdown(source)
 	if err != nil {
 		return nil, err
 	}
-	ref, explicit, err := specfile.SpecificationSystem(data)
+	ref, explicit, err := data.SpecificationSystem()
 	if err != nil {
 		return nil, diagnostic.WithPath(err, source)
 	}
 	if !explicit {
-		paths, err := SubjectChain(owner)
+		paths, err := subjectChain(files, owner)
 		if err != nil || len(paths) == 0 {
 			return nil, err
 		}
-		return Read(paths[len(paths)-1])
+		return ReadFrom(files, paths[len(paths)-1])
 	}
 	ref.Location.Path = source
 	invalid := func(message string) (*System, error) {
@@ -55,16 +58,16 @@ func Associated(owner, source string) (*System, error) {
 	if !info.Mode().IsRegular() {
 		return invalid("Specification system must identify a regular file.")
 	}
-	spec, err := Read(target)
+	spec, err := ReadFrom(files, target)
 	if err != nil {
 		return nil, err
 	}
 	if u.Fragment != "" && u.Fragment != spec.ID {
-		targetData, err := os.ReadFile(target)
+		targetData, err := files.Markdown(target)
 		if err != nil {
 			return nil, err
 		}
-		if u.Fragment != specfile.MarkdownTitleAnchor(targetData) {
+		if u.Fragment != targetData.TitleAnchor() {
 			return invalid("Specification system must identify the system itself, not an entry within it.")
 		}
 	}

@@ -139,8 +139,8 @@ The same inputs and environment produce the same observable results.
 
 Only `type: quality-model-spec` and one nonempty H1 are required. An authored `id` is
 optional. Conventional sections are optional, but cannot be repeated or placed
-at the wrong heading level. Unknown sections and deeper definition content are
-preserved. Each attribute needs a document-unique ID. Sub-attribute references stay
+at the wrong heading level. Keep examples and local subheadings inside the
+attribute definition. Each attribute needs a document-unique ID. Sub-attribute references stay
 within the same model, can name several grouping attributes, and must not form
 cycles. Use a comma-separated list of distinct IDs; omit the field for a root.
 All attributes use level-three headings, regardless of grouping depth.

@@ -54,7 +54,7 @@ func validateSlug(slug string) error {
 }
 
 func CheckType() check.Type {
-	return check.Type{Layout: Layout, ValidateSlug: validateSlug, Inspect: func(path string) ([]diagnostic.Diagnostic, error) {
+	return check.Type{Layout: Layout, ValidateSlug: validateSlug, Inspect: func(_ *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
 		if err := validateSlug(strings.TrimSuffix(filepath.Base(path), Layout.Suffix)); err != nil {
 			return nil, diagnostic.Error("layout.quality-name", err.Error(), diagnostic.Location{Path: path})
 		}

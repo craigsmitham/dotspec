@@ -211,22 +211,22 @@ func readingOrder(s *subject) []*heading {
 	var first []string
 	switch s.kind() {
 	case "Requirement":
-		first = []string{"Statement", "Applies to", "Conditions", "Criterion"}
+		first = []string{"statement", "applicability", "criterion"}
 	case "UseCase":
-		first = []string{"Goal", "Primary actor", "Trigger", "Preconditions", "Main success scenario", "Extensions", "Success guarantees", "Minimal guarantees"}
+		first = []string{"goal", "primary_actor", "trigger", "preconditions", "main_success_scenario", "extensions", "success_guarantees", "minimal_guarantees"}
 	default:
 		if hasDescriptionSection(s.kind()) {
-			first = []string{"Description"}
+			first = []string{"description"}
 		}
 	}
 	priority := func(group []*heading) int {
 		if group[0] == s.name {
 			return 0
 		}
-		if group[0].title == "Related specifications" {
+		if strings.HasPrefix(group[0].field, "related_specifications") {
 			return len(first) + 2 // Keep cross-references after the subject's own details.
 		}
-		if i := slices.Index(first, group[0].title); i >= 0 {
+		if i := slices.Index(first, strings.Split(group[0].field, ".")[0]); i >= 0 {
 			return i + 1
 		}
 		return len(first) + 1
@@ -461,7 +461,7 @@ type route struct {
 
 func (p *planner) indexRelationships() {
 	p.routes = map[string][]route{}
-	for _, a := range p.snapshot.Assertions {
+	for _, a := range p.snapshot.Relationships() {
 		projection := attr(a, "projection_path")
 		_, field, _ := strings.Cut(projection, ".")
 		words, ok := relations[field]

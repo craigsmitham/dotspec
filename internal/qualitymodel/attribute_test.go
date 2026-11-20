@@ -14,8 +14,8 @@ const modelPrefix = "---\ntype: quality-model-spec\n---\n# Example\n## Descripti
 func TestQualityAttributesStructure(t *testing.T) {
 	for _, tt := range []struct{ name, body, rule string }{
 		{"duplicate section", "## Quality attributes\n## Quality attributes\n", "structure.duplicate-section"},
-		{"wrong attribute level", "## Quality attributes\n#### Usability\n**ID:** usability", "structure.attribute-heading"},
-		{"empty attribute name", "## Quality attributes\n###\n**ID:** empty", "structure.attribute-heading"},
+		{"wrong attribute level", "## Quality attributes\n#### Usability\n**ID:** usability", "structure.member-heading"},
+		{"empty attribute name", "## Quality attributes\n###\n**ID:** empty", "structure.member-heading"},
 		{"missing ID", "## Quality attributes\n### Usability\nAn idea.", "identity.required"},
 		{"empty ID", "## Quality attributes\n### Usability\n**ID:**", "identity.required"},
 		{"invalid ID", "## Quality attributes\n### Usability\n**ID:** quality.usability", "identity.invalid"},
@@ -47,7 +47,7 @@ func TestQualityAttributesStructure(t *testing.T) {
 }
 
 func TestQualityMetadataOnlyComesFromIntroParagraphs(t *testing.T) {
-	body := "\n## Quality attributes\n### A\n**ID:** a\n\n```markdown\n**ID:** code\n**Sub-attribute of:** absent\n### Fake\n```\n\n> **ID:** quote\n\n- **Sub-attribute of:** absent\n\n#### Notes\n**ID:** documentation\n"
+	body := "\n## Quality attributes\n### A\n**ID:** a\n\n```markdown\n**ID:** code\n**Sub-attribute of:** absent\n### Fake\n```\n\n> **ID:** quote\n\n- **Sub-attribute of:** absent\n\n#### Evidence\n**ID:** documentation\n"
 	spec, err := Parse([]byte(modelPrefix + body))
 	if err != nil {
 		t.Fatal(err)

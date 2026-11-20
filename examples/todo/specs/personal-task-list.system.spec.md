@@ -68,7 +68,3 @@ The browser presents open and completed tasks and accepts changes through HTML f
 #### Contracts
 
 [Form template](../app/list.html) supplies the actions and fields.
-
-## Quality attributes
-
-The task list is stored locally. Its quality requirements cover what survives between sessions on the same database.

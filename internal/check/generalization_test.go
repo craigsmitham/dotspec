@@ -126,7 +126,7 @@ func TestContextProvidersAreExplicitAndShared(t *testing.T) {
 	evidence := filepath.Join(dir, "measurements.csv")
 	write(t, evidence, "latency\n150\n")
 	calls := 0
-	kind.Context = &check.ContextProvider{Resolve: func(owner string) ([]string, error) {
+	kind.Context = &check.ContextProvider{Resolve: func(_ *specfile.SourceSet, owner string) ([]string, error) {
 		calls++
 		if owner != filepath.Dir(first) {
 			t.Fatalf("wrong context owner: %s", owner)
@@ -148,8 +148,8 @@ func TestContextProvidersAreExplicitAndShared(t *testing.T) {
 	// still deduplicated. Sharing is by provider identity, not just directory.
 	otherCalls := 0
 	other := check.Type{Layout: specfile.Layout{Kind: "evidence", Collection: "quality", Filename: "evidence.spec.md"},
-		Inspect: func(string) ([]diagnostic.Diagnostic, error) { return nil, nil },
-		Context: &check.ContextProvider{Resolve: func(string) ([]string, error) {
+		Inspect: func(*specfile.SourceSet, string) ([]diagnostic.Diagnostic, error) { return nil, nil },
+		Context: &check.ContextProvider{Resolve: func(*specfile.SourceSet, string) ([]string, error) {
 			otherCalls++
 			return []string{evidence}, nil
 		}},
@@ -183,7 +183,7 @@ func TestContextFailuresKeepFileIdentityAndCompletion(t *testing.T) {
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			kind := quality.CheckType()
-			kind.Context = &check.ContextProvider{Resolve: func(string) ([]string, error) { return []string{contextPath}, tt.err }}
+			kind.Context = &check.ContextProvider{Resolve: func(*specfile.SourceSet, string) ([]string, error) { return []string{contextPath}, tt.err }}
 			for _, report := range []check.Report{check.Project(dir, kind), check.Focused(dir, "response-time", kind)} {
 				if report.Complete != tt.complete || report.ExitCode() != tt.code || report.Summary.Errors != 1 || report.Summary.ContextFilesChecked != 1 || report.Diagnostics[0].Location.Path != contextPath {
 					t.Fatalf("context failure contract: %+v", report)
@@ -197,7 +197,7 @@ func TestMalformedTypeSkipsDependentContext(t *testing.T) {
 	dir := testScope(t)
 	write(t, quality.Layout.Path(dir, "broken"), "broken frontmatter")
 	kind := quality.CheckType()
-	kind.Context = &check.ContextProvider{Resolve: func(string) ([]string, error) {
+	kind.Context = &check.ContextProvider{Resolve: func(*specfile.SourceSet, string) ([]string, error) {
 		t.Fatal("resolved context after structural failure")
 		return nil, nil
 	}}
@@ -217,10 +217,13 @@ func TestContextInspectionAndDependentChecks(t *testing.T) {
 	resolveCalls, inspectCalls, dependentCalls := 0, 0, 0
 	var inspectionError error
 	kind.Context = &check.ContextProvider{
-		Resolve: func(string) ([]string, error) { resolveCalls++; return []string{path}, nil },
-		Inspect: func(string) ([]diagnostic.Diagnostic, error) { inspectCalls++; return nil, inspectionError },
+		Resolve: func(*specfile.SourceSet, string) ([]string, error) { resolveCalls++; return []string{path}, nil },
+		Inspect: func(*specfile.SourceSet, string) ([]diagnostic.Diagnostic, error) {
+			inspectCalls++
+			return nil, inspectionError
+		},
 	}
-	kind.InspectContext = func(source string, paths []string) ([]diagnostic.Diagnostic, error) {
+	kind.InspectContext = func(_ *specfile.SourceSet, source string, paths []string) ([]diagnostic.Diagnostic, error) {
 		dependentCalls++
 		if !reflect.DeepEqual(paths, []string{path}) {
 			t.Fatalf("resolved paths: %v", paths)

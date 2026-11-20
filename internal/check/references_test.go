@@ -26,7 +26,7 @@ func TestCrossFileReferencesAndContext(t *testing.T) {
 	git(t, dir, "init", "-q")
 	path := requirement.Layout.Path(dir, "rule")
 	source := requirement.Template + `
-## References
+## Related specifications
 [Heading](../concepts/inspection.concept.spec.md#actions)
 [ID](../concepts/inspection.concept.spec.md#stable-inspection)
 [Job step](../jobs/work.job.spec.md#prepare)
