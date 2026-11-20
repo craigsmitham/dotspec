@@ -175,7 +175,7 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 	reader("specification/tool.system.spec-report.md", "## Child systems\n\n- [Worker](<systems/worker/worker.system.spec-report.md>) — A local job executor.")
 	reader("specification/systems/worker/worker.system.spec-report.md", "[Tool](<../../tool.system.spec-report.md>)", "## Child systems\n\n- [Queue](<systems/queue/queue.system.spec-report.md>)\n")
 	reader(section+"queue.system.spec-report.md", "[Worker](<../../worker.system.spec-report.md>) · [Requirements](<#requirements>)", "## Components\n\n- [Intake](<components/intake/intake.component.spec-report.md>)", "## Requirements\n\n- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>) — Each submitted job must remain in the queue until accepted.")
-	reader(section+"queue.system.spec-report.md", "[Availability](<quality/availability/availability.quality-attribute.spec-report.md>) | Accept work while either A &#124; B is available. |")
+	reader(section+"queue.system.spec-report.md", "**[Availability](<quality/availability/availability.quality-attribute.spec-report.md>)** — Accept work while either A &#124; B is available.")
 	reader(section+"quality/availability/availability.quality-attribute.spec-report.md", "# Availability", "## Limit", "Maintenance windows are excluded.", "[Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)")
 	reader("specification/requirements-review.report.md",
 		"[Which outages count?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>)",
@@ -229,7 +229,7 @@ Individual authors.
 	writeFixture(t, "specs/quality/reliability/reliability.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\n---\n# Reliability\n")
 	writeFixture(t, "specs/quality/reliability/durability/durability.quality-attribute.spec.md", strings.ReplaceAll(`---
 type: quality-attribute-spec
-subattribute_of: [reliability]
+subattribute_of: [reliability, safety]
 ---
 # Durability
 ## Definition
@@ -242,29 +242,37 @@ An example:
 **Sub-attribute of:** example-parent
 ~~~
 `, "\n", "\r\n"))
+	writeFixture(t, "specs/quality/safety/safety.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\n---\n# Safety\n")
+	writeFixture(t, "specs/quality/reliability/durability/recovery/recovery.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nsubattribute_of: [durability]\n---\n# Recovery\n")
+	writeFixture(t, "specs/notes.system.spec.md", opening+"\n## Quality attributes\n\nProtect recorded work.\n")
 	for name, labels := range map[string]string{"Save": "[durability, reliability]", "Restore": "[durability]"} {
 		writeFixture(t, filepath.Join("specs/requirements", strings.ToLower(name)+".requirement.spec.md"),
 			"---\ntype: requirement-spec\nquality_attributes: "+labels+"\n---\n# "+name+"\n\n## Statement\nKeep the note.\n")
 	}
 	page = build()
-	for _, want := range []string{
-		"Local files.\n\n---\n\n[Requirements](<#requirements>) · " + nav + "\n\n## Quality attributes",
-		"| Quality attribute | Description |",
-		"| [Durability](<quality/reliability/durability/durability.quality-attribute.spec-report.md>) | The ID: below is permanent. |",
-	} {
-		if !strings.Contains(page, want) {
-			t.Errorf("overview missing %q:\n%s", want, page)
-		}
+	if !strings.Contains(page, "Local files.\n\n---\n\n[Requirements](<#requirements>) · "+nav+"\n\n## Quality attributes") {
+		t.Fatalf("unexpected system reading order:\n%s", page)
 	}
-	if strings.Contains(page, "**Classifies**") || strings.Contains(page, "**ID:**") {
-		t.Fatalf("overview repeated attribute detail:\n%s", page)
+	durability := "- [Durability](<quality/reliability/durability/durability.quality-attribute.spec-report.md>) — The ID: below is permanent."
+	_, overview, _ := strings.Cut(page, "## Quality attributes\n\n")
+	overview, _, _ = strings.Cut(overview, "\n## ")
+	wantOverview := strings.Join([]string{
+		"Protect recorded work.", "",
+		"**[Reliability](<quality/reliability/reliability.quality-attribute.spec-report.md>)**", "",
+		durability,
+		"  - [Recovery](<quality/reliability/durability/recovery/recovery.quality-attribute.spec-report.md>)", "",
+		"**[Safety](<quality/safety/safety.quality-attribute.spec-report.md>)**", "",
+		durability,
+	}, "\n")
+	if strings.TrimSpace(overview) != wantOverview {
+		t.Fatalf("quality attributes overview:\n%s\nwant:\n%s", overview, wantOverview)
 	}
 	attributesPage, err := os.ReadFile("specification/quality/reliability/durability/durability.quality-attribute.spec-report.md")
 	if err != nil {
 		t.Fatal(err)
 	}
 	for _, want := range []string{
-		"**Parent attribute** · [Reliability]",
+		"**Parent attribute**\n\n- [Reliability](<../reliability.quality-attribute.spec-report.md>)\n- [Safety](<../../safety/safety.quality-attribute.spec-report.md>)",
 		"~~~md\n**ID:** example\n**Sub-attribute of:** example-parent\n~~~",
 		"**Classifies**\n\n- [Restore](<../../../requirements/restore.requirement.spec-report.md>)\n- [Save](<../../../requirements/save.requirement.spec-report.md>)",
 	} {

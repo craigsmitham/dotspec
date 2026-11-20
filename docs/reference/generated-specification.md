@@ -39,7 +39,7 @@ to `.spec-report.md`. For example, the Task service report lives at
 holds its local requirements, interfaces, and child components. The optional source
 `id` provides an anchor. The subject name determines the overview filename.
 
-In a system overview, select an attribute in the name-and-description table to read its full entry. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability, criterion, and verification plan together. Links beside the requirement lead back to the precise attribute or use-case passage.
+In a system overview, the Quality attributes section introduces each declared attribute with its definition preview. Shared attributes appear under each declared parent. Their own subattributes expand under the first parent. Select an attribute to read its full definition. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability, criterion, and verification plan together. Links beside the requirement lead back to the precise attribute or use-case passage.
 
 For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with its authored description of the behavior it offers. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
 

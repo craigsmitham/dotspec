@@ -144,7 +144,7 @@ func (p *planner) renderSubject(s *subject) {
 	p.renderHeadings(w, s, headings)
 	if s.kind() == "System" && len(model.Strings(s.r["quality_attributes"])) > 0 && s.section("Quality attributes") == nil {
 		w.heading("Quality attributes")
-		p.attributeTable(w, s)
+		p.attributeOverview(w, s)
 	}
 	for _, label := range slices.Sorted(maps.Keys(s.directories)) {
 		if d := s.directories[label]; d.section == nil && d != earlyDirectory {
@@ -188,7 +188,7 @@ func (p *planner) renderHeadings(w *writer, s *subject, headings []*heading) {
 		}
 		p.body(w, s.source, h)
 		if s.kind() == "System" && h.title == "Quality attributes" && h.level == 2 && len(model.Strings(s.r["quality_attributes"])) > 0 {
-			p.attributeTable(w, s)
+			p.attributeOverview(w, s)
 		}
 		if h.level == s.name.level+1 && h.title == "Related specifications" {
 			p.relationships(w, s.name, false)

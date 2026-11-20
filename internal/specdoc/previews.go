@@ -48,20 +48,56 @@ func inlineText(s string) string {
 	return inlineEscapes.Replace(s)
 }
 
-func (p *planner) attributeTable(w *writer, system *subject) {
-	w.text("| Quality attribute | Description |\n| --- | --- |")
+func (p *planner) attributeOverview(w *writer, system *subject) {
+	var roots []*subject
+	children := map[string][]*subject{}
 	for _, id := range model.Strings(system.r["quality_attributes"]) {
 		a := p.pages[id]
 		if a == nil {
 			continue
 		}
-		heading := a.name
-		if definition := a.section("Definition"); definition != nil {
-			heading = definition
+		parents := model.Strings(a.r["subattribute_of"])
+		if len(parents) == 0 {
+			roots = append(roots, a)
 		}
-		preview := paragraphPreview(sourceProse(a.source, heading))
-		fmt.Fprintf(&w.out, "| %s | %s |\n", w.link(inlineText(a.name.title), a.file), inlineText(preview))
+		for _, parent := range parents {
+			children[parent] = append(children[parent], a)
+		}
 	}
+
+	var renderChildren func(parent string, indent string)
+	renderChildren = func(parent string, indent string) {
+		for _, child := range children[parent] {
+			fmt.Fprintf(&w.out, "%s- %s\n", indent, attributeEntry(w, child, false))
+			// Show every declared grouping, but expand a shared subtree only
+			// under the first parent, where its report also lives.
+			if model.Strings(child.r["subattribute_of"])[0] == parent {
+				renderChildren(id(child.r), indent+"  ")
+			}
+		}
+	}
+	for _, root := range roots {
+		w.text(attributeEntry(w, root, true))
+		if key := id(root.r); len(children[key]) > 0 {
+			w.out.WriteByte('\n')
+			renderChildren(key, "")
+		}
+	}
+}
+
+func attributeEntry(w *writer, a *subject, root bool) string {
+	name := w.link(inlineText(a.name.title), a.file)
+	if root {
+		name = "**" + name + "**"
+	}
+	heading := a.section("Definition")
+	if heading == nil {
+		heading = a.name
+	}
+	if preview := paragraphPreview(sourceProse(a.source, heading)); preview != "" {
+		return name + " — " + inlineText(preview)
+	}
+	return name
 }
 
 func (s *subject) section(title string) *heading {
