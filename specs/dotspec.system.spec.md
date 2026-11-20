@@ -28,7 +28,7 @@ The system includes the authoring framework, the `dotspec` CLI, and the
 [structural checks](use-cases/check-specifications.use-case.spec.md), and a
 [generated requirements specification](requirements/generated-specification.requirement.spec.md).
 
-The specification records stakeholder needs, product obligations, the conditions
+The specification records stakeholder needs, product requirements, the conditions
 in which they apply, and the criteria for satisfaction. Teams maintain test
 procedures, validation studies, research records, and issue tracking in their
 own tools or documents. Authors can link to them beside the requirements they
@@ -44,7 +44,7 @@ content during authoring and review.
 ### Maintain requirements as the product changes
 
 Reduce the effort of maintaining requirements as the product changes by
-keeping each obligation with its authoritative source.
+keeping each requirement with its authoritative source.
 
 ## Environment
 
@@ -69,14 +69,9 @@ operation needs it.
 
 ### Source authority
 
-Projects decide which sources define their obligations. Keep policies,
-contracts, and executable specifications in their native form and make them
-discoverable through ordinary file links from the relevant specifications.
+Each authored specification declares one primary subject of its stated type. That file owns the subject and its named parts. A use case owns the interaction and its guarantees. A concept owns its actions and effects. Each product requirement has one requirement specification. Other specifications cite that file or declare a relationship to it.
 
-An executable specification can define the required outcomes for its examples.
-Link to those examples where they apply. When a test checks an obligation
-defined elsewhere, keep the obligation at its source and explain the test's
-verification role beside the link. A link alone confers no authority.
+External policies and native contracts govern their own provisions. Cite the relevant provision where it applies. Executable examples record inputs and assertions. Link them to the specifications they exercise so reviewers can compare expected behavior with observed results.
 
 The [contributing guide](../CONTRIBUTING.md#specification-tests-and-implementation-tests)
 explains how this repository assigns those roles to its tests.

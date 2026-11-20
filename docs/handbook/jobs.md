@@ -46,9 +46,7 @@ provide a concise presentation using fields already present on Job.
 “Minimize time before discovering a disruption” is a candidate ODI criterion.
 “Submit a notification within 30 seconds of receiving the event” is a software
 commitment. Satisfying that commitment does not prove that either user outcome
-has been achieved. Jobs and job steps do not contain obligation clauses; state the
-commitment in a requirement, or in a clause of a use case or concept, and relate it
-with Supports.
+has been achieved. State the commitment in a requirement and link it to the outcome with Supports.
 
 Keep importance, satisfaction and opportunity scores in dated research with a
 defined population, method and source. Do not store them as enduring properties

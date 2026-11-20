@@ -101,7 +101,7 @@ func TestQualityPresetCreatesAnOrdinaryRequirement(t *testing.T) {
 		}
 		return text
 	}
-	if general, quality := messages(draft), messages(classified); !strings.Contains(general, "required result, rule, property, or restriction") || !strings.Contains(quality, "assessable quality obligation") || !strings.Contains(quality, "requirement.statement") {
+	if general, quality := messages(draft), messages(classified); !strings.Contains(general, "required result, rule, property, or restriction") || !strings.Contains(quality, "assessable quality requirement") || !strings.Contains(quality, "requirement.statement") {
 		t.Fatalf("advice wording should follow classification:\n%s\n%s", general, quality)
 	}
 }

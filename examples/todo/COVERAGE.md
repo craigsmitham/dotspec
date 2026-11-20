@@ -23,7 +23,7 @@ For the model views, run `go run . model VIEW --path examples/todo` from the rep
 | `pegs` | The completion policy appears in the environment and boundaries perspective. |
 | `needs` | Less reconstruction appears as a desired outcome. |
 | `docs` | The checklist effects table preserves identity and title on Reopen. |
-| `trace` | The restart requirement refines the use case's named obligation. |
+| `trace` | The restart requirement refines the standalone availability requirement. |
 | `review` | The return scenario illustrates the Reopen action. Decide whether its contribution to the user's goal is adequate. |
 
 ## Handbook and authoring exercises
@@ -37,10 +37,19 @@ Use `dotspec guide TOPIC` for each topic below. The questions identify the decis
 | `system`, `component`, `business-rule` | Find the [task service's implementation](app/specs/task-service.component.spec.md#implementation). Explain why the completion policy would survive a change of database. |
 | `feature`, `capability` | Follow [Pick up where I left off](specs/features/pick-up-where-i-left-off.feature.spec.md) to the restart guarantee and [Local task storage](specs/capabilities/local-task-storage.capability.spec.md) to its provider. |
 | `concept`, `use-case` | Follow the [return scenario](specs/use-cases/resume-list.use-case.spec.md) to the Reopen action. Predict the effects on identity, title and state. Try the deletion alternative. |
-| `requirement`, `obligation`, `relationships` | Starting at [restart](specs/requirements/restart.requirement.spec.md), locate its governing clause, underlying policy, local-storage assumption and job outcome. Turn Refines into Related specifications on a copy and observe the exact missing-edge diagnostic. |
+| `requirement`, `authority`, `relationships` | Starting at [restart](specs/requirements/restart.requirement.spec.md), locate the availability requirement it refines, underlying policy, local-storage assumption and job outcome. Turn Refines into Related specifications on a copy and observe the exact missing-edge diagnostic. |
 | `quality-model`, `quality` | Compare the reusable definition with the system's selected attribute. Find the zero-discrepancy target and its operating conditions. |
 | `inspection`, `core-domain`, `mapping` | Compare sources JSON, the typed export and the trace view. Locate the two endpoints of the refinement. Inspect which source file contributed the link and which test the requirement designates. Use the [Markdown mapping](../../model/markdown-mapping.md) for declared headings, metadata and optional fields. |
 | `verification`, `review`, `maintaining` | Compare restart results with the [participant exercise](README.md#try-the-workflow-with-a-participant). Ask a person to perform the exercise and retain actual observations. |
+
+## Review the return scenario
+
+1. Recording and completing the errand use Checklist’s Add and Complete actions. The completion rule keeps the commitment on the list.
+2. On returning to the same database, the availability requirement puts each saved entry in the appropriate view. This step can succeed without a process restart.
+3. Reopen acts on the original entry. Its effects preserve identity and title while changing the completion state.
+4. In the deletion extension, Delete removes the entry and availability excludes it from both views. The minimal guarantee on a rejected rename follows from the Rename guard.
+
+The [form acceptance test](tests/acceptance.py) checks the return interaction while the service is running, then starts a new process on the same database to exercise the additional restart condition.
 
 ## Field inventory and remaining work
 
@@ -60,7 +69,6 @@ These are the review assignments for fields that currently have no populated wit
 | `BusinessRule.refines`, `BusinessRule.refines_content` | In recovery, introduce a specific retention policy and check that its Refines endpoint is the general business rule. |
 | `Component.concept_uses`, `Component.synchronizations` | In a scratch copy, declare a local feature and its capability under Task service. Link a pair of local concept uses through a synchronization and trace their owners. |
 | `Component.interacts_with`, `Component.interacts_with_content`, `Component.required_interfaces`, `Component.out_of_scope`, `System.part_of`, `System.part_of_content` | Use recovery's external clock and an explicitly declared subsystem. Compare interaction, interface direction and structural membership in the overview. |
-| `Component.obligations`, `Concept.obligations`, `ConceptAction.obligations`, `ConceptUse.obligations`, `Synchronization.obligations`, `System.obligations`, `ObligationClause.refines`, `ObligationClause.quality_attributes` | Place a retention or authorization clause with the behavior that owns it. Check its owner, quality classification and refinement endpoint. The [obligation tests](../../internal/model/obligation_capabilities_test.go) compare embedded and standalone forms. |
 | `JobStep.outcomes` | Extend a temporary copy of the resume job. Give one step a local outcome. Compare job-owned and step-owned results. |
 | `GlossaryTerm.related_terms`, `Specification.preamble`, `System.constraints` | In a temporary recovery spec, add a preamble, a system constraint and a glossary cross-reference using a Markdown reference definition. Inspect original text, occurrence and resolved target. |
 | `ConceptAction.caller_assumptions` | Extend a scratch checklist concept with a caller assumption. Compare it with the enforced guards. |
@@ -68,7 +76,7 @@ These are the review assignments for fields that currently have no populated wit
 | `Document.diagnostics`, `SourceDocument.diagnostics`, `Resolution.candidates`, `Resolution.diagnostics`, `SourceLocation.source` | Compare a malformed specification and ambiguous target with a valid unresolved reference. Inspect the diagnostic's owning record, candidates and source span. The [diagnostic scenarios](../../internal/integration/testdata/diagnostics.txtar) exercise user-visible findings. |
 | `Applicability.exclusions`, `Applicability.population`, `Assumption.applicability`, `Assumption.basis` | In a scratch copy of the restart requirement, identify the population, exclusions and assumptions that qualify the promise. |
 | `Capability.depends_on`, `Capability.depends_on_content`, `Capability.enablers`, `Capability.purpose`, `DesiredOutcome.supporting_content`, `Feature.purpose` | Review a system that needs a supporting capability. Trace its providers and dependencies to a user outcome. |
-| `Component.architecture`, `Component.boundary_description`, `Component.provided_interfaces`, `Component.purpose`, `Interface.counterpart`, `Interface.obligations`, `SystemContextSpecification.specification_system_content` | Describe an external service contract, its owning component and the system responsible for the specification. Inspect the system overview. |
+| `Component.architecture`, `Component.boundary_description`, `Component.provided_interfaces`, `Component.purpose`, `Interface.counterpart`, `SystemContextSpecification.specification_system_content` | Describe an external service contract, its owning component and the system responsible for the specification. Inspect the system overview. |
 | `ConceptAction.effects`, `ConceptAction.initiation`, `ConceptAction.outputs`, `ConceptUse.configuration`, `ConceptUse.dependencies`, `ConceptUse.dependencies_content` | Declare two concept uses in a scratch system. Inspect its state descriptions, action outputs and resolved dependencies. |
 | `Synchronization.content`, `Synchronization.owner`, `Synchronization.semantics`, `Synchronization.then`, `Synchronization.when`, `Synchronization.where` | Describe two cooperating concepts and verify which action triggers which response, with what arguments and result. |
 | `DomainElement.open_questions`, `GlossaryTerm.alternative_names`, `GlossaryTerm.definition`, `GlossaryTerm.owner`, `OpenQuestion.question` | Record a consequential open question in a scratch project. Link its research basis and identify the terms that need definitions. |

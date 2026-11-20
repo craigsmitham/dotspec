@@ -32,5 +32,4 @@ func TestSubjectDocumentsMirrorTheModel(t *testing.T) {
 		}
 	}
 	check("QualityAttribute")
-	check("ObligationClause")
 }

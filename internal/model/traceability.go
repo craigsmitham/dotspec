@@ -2,9 +2,8 @@ package model
 
 import (
 	"slices"
-	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/obligation"
+	"github.com/craigsmitham/dotspec/internal/requirement"
 )
 
 // Traceability uses the schema's heading and endpoint contracts. Ordinary links
@@ -21,7 +20,7 @@ func (m *domainMapper) traceSection(r Record, s *Section) bool {
 			break
 		}
 	}
-	if field == "" && s.Title != "Obligations" {
+	if field == "" {
 		return false
 	}
 	if m.traceMapped == nil {
@@ -31,57 +30,9 @@ func (m *domainMapper) traceSection(r Record, s *Section) bool {
 	if m.traceMapped[key] {
 		return true
 	}
-	if s.Title == "Obligations" {
-		if _, ok := cls.Slots["obligations"]; !ok {
-			// Keep one finding per invalid declaration.
-			if m.traceMapped[key+"/rejected"] {
-				return false
-			}
-			m.traceMapped[key+"/rejected"] = true
-			m.result.Diagnostics = append(m.result.Diagnostics, Record{"id": m.id("diagnostic"), "kind": "Diagnostic", "code": "obligation.container", "severity": "error", "message": "This kind of element does not declare obligation clauses; link an obligation using traceability instead.", "source": r["source_document"], "record": r["id"], "phase": "parse"})
-			return false
-		}
-	}
 	m.traceMapped[key] = true
-	if field != "" {
-		m.section(r, field+"_content", s)
-		m.relationship(r, field, s.Content)
-		return true
-	}
-	m.declared(r, "obligations", s)
-	if r["obligations"] == nil {
-		r["obligations"] = []string{}
-	}
-	for _, child := range s.Children {
-		x := m.named("ObligationClause", r, child)
-		if id := m.fieldText(child, "ID"); id != "" {
-			x["authored_id"] = id
-			m.authoredFragment(x, m.fieldNodes(child, "ID"))
-		}
-		if nodes := m.fieldNodes(child, "Quality attributes"); nodes != nil {
-			for _, label := range strings.Split(m.fieldText(child, "Quality attributes"), ",") {
-				label = strings.TrimSpace(label)
-				if label != "" {
-					m.label(x, label, nodes[0], "quality_classification")
-				}
-			}
-		}
-
-		nodes := m.withoutFields(child, child.Intro, "ID", "Quality attributes")
-		x["statement"] = m.doc.Rich(nodes)
-		m.markField(x, "statement", nodes)
-		for _, sub := range child.Children {
-			if m.traceSection(x, sub) {
-				continue
-			}
-			if sub.Title == "Criterion" || sub.Title == "Applies to" || sub.Title == "Rationale" {
-				m.requirement(x, sub)
-			} else {
-				m.subjectSection(x, sub)
-			}
-		}
-		appendID(r, "obligations", String(x, "id"))
-	}
+	m.section(r, field+"_content", s)
+	m.relationship(r, field, s.Content)
 	return true
 }
 
@@ -159,21 +110,21 @@ func (d *designResolver) resolveTraceability() {
 
 func (d *designResolver) traceReview() {
 	for _, r := range d.elements {
-		if !designKind(String(r, "kind"), "Requirement or ObligationClause") {
+		if !designKind(String(r, "kind"), "Requirement") {
 			continue
 		}
 		if len(d.refs(r, "supports"))+len(d.refs(r, "derived_from"))+len(d.refs(r, "refines")) == 0 {
-			d.issue(r, "motivation", "advice", "No explicit motivation or derivation is recorded for this obligation; review its justification.")
+			d.issue(r, "motivation", "advice", "No explicit motivation or derivation is recorded for this requirement; review its justification.")
 		}
 
 		if missing := d.measurementGuidance(r).Missing(); len(missing) > 0 {
-			d.issue(r, "measurement_basis", "advice", obligation.MeasurementMessage(missing))
+			d.issue(r, "measurement_basis", "advice", requirement.MeasurementMessage(missing))
 		}
 	}
 }
 
-// Obligation classification follows declaration ownership, never semantic links.
-func obligationSystem(r Record, index map[string]Record) string {
+// Requirement classification follows declaration ownership, never semantic links.
+func governingSystem(r Record, index map[string]Record) string {
 	seen := map[string]bool{}
 	for r != nil && !seen[String(r, "id")] {
 		seen[String(r, "id")] = true

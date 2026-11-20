@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/22` maps authored specifications to the domain classes and fields in the [model reference](../docs/reference/model/index.md). Each file declares its specification type in YAML frontmatter and names its subject in a level-one heading. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
+`dotspec-markdown/23` maps authored specifications to the domain classes and fields in the [model reference](../docs/reference/model/index.md). Each file declares its specification type in YAML frontmatter and names its subject in a level-one heading. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
 
 ## Shared mapping rules
 
@@ -30,7 +30,7 @@ Statement, rationale, exceptions and authority describe a rule. A rule can cite 
 
 ## Requirement
 
-A requirement or named obligation clause keeps its statement, applicability, criterion and rationale. Conditions, workload, population and exclusions qualify applicability. Measure and target qualify a criterion. A quality classification is a label occurrence resolved within its governing vocabulary.
+Only a `*.requirement.spec.md` file declares a Requirement. It keeps its statement, applicability, criterion and rationale. Conditions, workload, population and exclusions qualify applicability. Measure and target qualify a criterion. A quality classification is a label occurrence resolved within its governing vocabulary.
 
 ## Relationship contract
 

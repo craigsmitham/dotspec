@@ -175,33 +175,10 @@ func (p *planner) planPassages(s *subject) {
 	}
 }
 
-func (p *planner) requirementPreview(r model.Record) string {
-	if s := p.pages[id(r)]; s != nil {
-		return subjectPreview(s)
-	}
-	if page := p.ownerPage(r); page != nil {
-		for _, h := range page.source.headings {
-			if h.node == nameNode(r) {
-				return paragraphPreview(sourceProse(page.source, h))
-			}
-		}
-	}
-	return ""
-}
-
 func sortEntries(entries []entry) {
 	slices.SortFunc(entries, func(a, b entry) int {
 		return cmp.Or(strings.Compare(a.title, b.title), strings.Compare(a.target, b.target))
 	})
-}
-
-// Directory entries for embedded obligations retain the element ID until
-// overview planning has allocated every authored heading's final fragment.
-func (p *planner) entryDestination(key string) string {
-	if dest := p.targets[key]; dest != "" {
-		return dest
-	}
-	return key
 }
 
 func collectionTitle(title string) string {
@@ -220,13 +197,6 @@ type entryRelation struct {
 
 func (p *planner) indexEntryRelations() {
 	p.entryRelations = map[string][]entryRelation{}
-	for _, r := range p.snapshot.Elements {
-		if attr(r, "kind") == "ObligationClause" {
-			if owner := p.ownerPage(r); owner != nil {
-				p.entryRelations[id(r)] = []entryRelation{{label: "In", title: owner.name.title, element: id(owner.r)}}
-			}
-		}
-	}
 	for _, ref := range p.snapshot.References {
 		field := attr(ref, "role")
 		if field != "definition" && field != "refines" {
@@ -259,7 +229,6 @@ func (p *planner) indexEntryRelations() {
 
 func (p *planner) collectionEntryLine(w *writer, e entry) string {
 	relations := p.entryRelations[e.target]
-	e.target = p.entryDestination(e.target)
 	var related []string
 	for _, r := range relations {
 		var dest string
@@ -329,7 +298,7 @@ func (p *planner) relationshipIndex(owner *subject, label, target string) *colle
 		if idx := owner.indexes["Business rules"]; idx.contains(applicableRules(owner), target) {
 			return idx
 		}
-		if idx := owner.indexes["Requirements"]; idx != nil && slices.ContainsFunc(idx.groups["Applicable requirements"], func(e entry) bool { return p.entryDestination(e.target) == target }) {
+		if idx := owner.indexes["Requirements"]; idx != nil && slices.ContainsFunc(idx.groups["Applicable requirements"], func(e entry) bool { return e.target == target }) {
 			return idx
 		}
 	}

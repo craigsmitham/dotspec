@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/craigsmitham/dotspec/internal/check"
+	"github.com/craigsmitham/dotspec/internal/model"
 )
 
 func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
@@ -277,60 +278,9 @@ func TestOverviewKeepsNavigationOnlyCollectionsInTheMap(t *testing.T) {
 			}
 		}
 		if strings.Contains(page, "## Requirements\n") || strings.Contains(page, "## Features\n") ||
-			!strings.Contains(page, "## Business rules\n") || !strings.Contains(page, narrative) {
+			strings.Contains(page, "## Business rules\n") || !strings.Contains(page, narrative) {
 			t.Fatal(page)
 		}
-		for _, name := range []string{"draft", "review", "publish", "archive"} {
-			if !strings.Contains(page, " — Keep the "+name+" record.") {
-				t.Fatalf("missing %s rule statement in %s", name, page)
-			}
-		}
-	}
-}
-
-func TestSystemOverviewPreservesAuthoredObligationsUnderRequirements(t *testing.T) {
-	t.Chdir(t.TempDir())
-	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
-	writeFixture(t, "specs/notes.system.spec.md", `---
-type: system-spec
----
-# Notes
-
-## Purpose
-Keep notes according to the [storage promises](#obligations).
-
-## Scope
-One local notebook.
-
-### Behavior
-An author can close and reopen a notebook.
-
-## Obligations
-
-### Retain edits
-Preserve saved edits when the notebook closes.
-`)
-	writeFixture(t, "specs/capabilities/storage.capability.spec.md", "---\ntype: capability-spec\n---\n# Notebook storage\n\n## Description\nStores notes on this device.\n")
-	if code, out, errOut := invoke("spec", "build"); code != 0 {
-		t.Fatal(code, out, errOut)
-	}
-	data, err := os.ReadFile("specification/notes.system.spec-report.md")
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, want := range []string{
-		"[storage promises](<#requirements>)",
-		"### Behavior\n\nAn author can close and reopen a notebook.",
-		"## Capabilities\n\n- [Notebook storage](<capabilities/notebook-storage.capability.spec-report.md>) — Stores notes on this device.",
-		"## Requirements\n\n### Retain edits",
-	} {
-		if !strings.Contains(string(data), want) {
-			t.Errorf("missing %q in %s", want, data)
-		}
-	}
-	index, err := os.ReadFile("specification/requirements.md")
-	if err != nil || !strings.Contains(string(index), "[Retain edits](<notes.system.spec-report.md#retain-edits>)") {
-		t.Fatalf("requirements index: %s, %v", index, err)
 	}
 }
 
@@ -637,16 +587,20 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 		writeFixture(t, "specs/use-cases/"+strings.ToLower(name)+".use-case.spec.md",
 			"---\ntype: use-case-spec\n---\n# "+name+"\n\n## Goal\n"+name+" a note.\n"+extra)
 	}
-	addUseCase("Archive", "\n## Obligations\n\n### Keep notes\nSaved notes remain available.\n")
-	addUseCase("Edit", "")
+	const sharedFile = "specs/requirements/keep-notes.requirement.spec.md"
+	const sharedSource = "---\ntype: requirement-spec\n---\n# Keep notes\n\n## Statement\nSaved notes remain available.\n"
+	writeFixture(t, sharedFile, sharedSource)
+	const illustrates = "\n## Main success scenario\n1. The author opens a note.\n   - **Illustrates:** [Keep notes](../requirements/keep-notes.requirement.spec.md).\n"
+	addUseCase("Archive", illustrates)
+	addUseCase("Edit", illustrates)
 	addUseCase("Review", "")
 	addRequirement := func(name string) {
 		writeFixture(t, "specs/requirements/"+strings.ToLower(name)+".requirement.spec.md",
-			"---\ntype: requirement-spec\n---\n# "+name+"\n\n## Statement\nKeep a "+name+" copy.\n\n## Refines\n[Keep notes](../use-cases/archive.use-case.spec.md#keep-notes).\n")
+			"---\ntype: requirement-spec\n---\n# "+name+"\n\n## Statement\nKeep a "+name+" copy.\n\n## Refines\n[Keep notes](keep-notes.requirement.spec.md).\n")
 	}
 	addRequirement("Local")
 	const featureFile = "specs/features/editing.feature.spec.md"
-	const feature = "---\ntype: feature-spec\n---\n# Editing\n\n## Groups\n[Edit](../use-cases/edit.use-case.spec.md).\n"
+	const feature = "---\ntype: feature-spec\n---\n# Editing\n\n## Groups\n[Edit](../use-cases/edit.use-case.spec.md).\n[Keep notes](../requirements/keep-notes.requirement.spec.md).\n"
 	writeFixture(t, featureFile, feature)
 	read := func(file string) string {
 		t.Helper()
@@ -680,28 +634,29 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	if !strings.Contains(read(featureReport), editGoal) {
 		t.Fatal(read(featureReport))
 	}
-	definition := "### Concept definitions\n\n- [Notebook](<concepts/notebook.concept.spec-report.md>) — Keep written ideas."
-	if section(before, "Concepts") != definition || !strings.Contains(read("concepts.md"), "\n# Concept definitions\n") {
-		t.Fatal(before)
+	for _, heading := range []string{"Concepts", "Use cases", "Requirements"} {
+		if strings.Contains(before, "\n## "+heading+"\n") {
+			t.Fatal(before)
+		}
 	}
-	useCases := section(before, "Use cases")
-	if strings.Count(useCases, "- [") != 3 || !strings.Contains(useCases, "Review a note.") {
-		t.Fatal(useCases)
+	if !strings.Contains(read("concepts.md"), "\n# Concept definitions\n") || !strings.Contains(read("use-cases.md"), "Review a note.") {
+		t.Fatal("missing index entries")
 	}
-	refines := "\n  - Refines [Keep notes](<use-cases/archive.use-case.spec-report.md#keep-notes>)"
-	if strings.Count(section(before, "Requirements"), refines) != 1 {
-		t.Fatal(before)
+	refines := "\n  - Refines [Keep notes](<requirements/keep-notes.requirement.spec-report.md>)"
+	if strings.Count(read("requirements.md"), refines) != 1 {
+		t.Fatal(read("requirements.md"))
 	}
+	writeFixture(t, sharedFile, strings.Replace(sharedSource, "Saved notes remain available.", "Reopened notes retain their text.", 1))
 
 	addUseCase("Share", "")
 	writeFixture(t, featureFile, feature+"[Share](../use-cases/share.use-case.spec.md).\n")
 	addRequirement("Remote")
 	writeFixture(t, systemFile, system+goals+fourthGoal+uses+"\n## Synchronizations\n\n### Archive updates\n\n#### When\nThe note is saved.\n\n#### Then\nArchive the current version.\n")
 	after := build()
-	if !strings.Contains(read(featureReport), editGoal+"\n- [Share](<../use-cases/share.use-case.spec-report.md#goal>) — Share a note.") {
+	if !strings.Contains(read(featureReport), "- [Share](<../use-cases/share.use-case.spec-report.md#goal>) — Share a note.") {
 		t.Fatal(read(featureReport))
 	}
-	if section(after, "Use cases") != useCases+"\n- [Share](<use-cases/share.use-case.spec-report.md>) — Share a note." || !strings.Contains(read("use-cases.md"), "Share a note.") {
+	if strings.Contains(after, "\n## Use cases\n") || !strings.Contains(read("use-cases.md"), "Share a note.") {
 		t.Fatal(after)
 	}
 	if section(after, "Goals") != section(before, "Goals")+"\n\n- [Four](<goals.md#four>) — Fourth goal." || !strings.Contains(read("goals.md"), "Fourth goal.") {
@@ -709,18 +664,53 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	}
 	use := "- [My notebook](<concept-uses/my-notebook.concept-use.spec-report.md>) — The current author's notes.\n  - Uses [Notebook](<concepts/notebook.concept.spec-report.md>)"
 	sync := "### Synchronizations\n\n- [Archive updates](<synchronizations/archive-updates.synchronization.spec-report.md>) — When — The note is saved. · Then — Archive the current version."
-	if section(after, "Concepts") != definition+"\n\n### Concept uses\n\n"+use+"\n\n"+sync || !strings.Contains(read("concept-uses.md"), use) {
+	if section(after, "Concepts") != "### Concept uses\n\n"+use+"\n\n"+sync || !strings.Contains(read("concept-uses.md"), use) {
 		t.Fatal(after)
 	}
 	if !strings.Contains(read("concept-uses/my-notebook.concept-use.spec-report.md"), "\n## Uses\n\n[Notebook](<../concepts/notebook.concept.spec-report.md>)") {
 		t.Fatal("concept use report lost its definition")
 	}
-	for _, page := range []string{section(after, "Requirements"), read("requirements.md")} {
-		for _, name := range []string{"Local", "Remote"} {
-			want := "- [" + name + "](<requirements/" + strings.ToLower(name) + ".requirement.spec-report.md>) — Keep a " + name + " copy." + refines
-			if !strings.Contains(page, want) {
-				t.Fatalf("missing requirement with refinement:\n%s", page)
-			}
+	for _, name := range []string{"Local", "Remote"} {
+		want := "- [" + name + "](<requirements/" + strings.ToLower(name) + ".requirement.spec-report.md>) — Keep a " + name + " copy." + refines
+		if !strings.Contains(read("requirements.md"), want) {
+			t.Fatalf("missing refinement for %s", name)
+		}
+	}
+	for _, file := range []string{"requirements.md", "requirements/keep-notes.requirement.spec-report.md"} {
+		page := read(file)
+		if !strings.Contains(page, "Reopened notes retain their text.") || strings.Contains(page, "Saved notes remain available.") {
+			t.Fatalf("stale shared requirement in %s:\n%s", file, page)
+		}
+	}
+	if !strings.Contains(read(featureReport), "[Keep notes](<../requirements/keep-notes.requirement.spec-report.md>)") {
+		t.Fatal("feature lost its link to the shared requirement")
+	}
+	code, output, msg := invoke("model", "export")
+	var snapshot model.Snapshot
+	if code != 0 || json.Unmarshal([]byte(output), &snapshot) != nil {
+		t.Fatal("model export failed", msg)
+	}
+	var sharedIDs []string
+	for _, element := range snapshot.Elements {
+		if element["kind"] == "Requirement" && element["slug"] == "keep-notes" {
+			sharedIDs = append(sharedIDs, model.String(element, "id"))
+		}
+	}
+	if len(sharedIDs) != 1 {
+		t.Fatalf("expected one Keep notes requirement, got %v", sharedIDs)
+	}
+	roles := map[string]int{}
+	for _, ref := range snapshot.References {
+		if model.Object(ref["resolution"])["target"] == sharedIDs[0] {
+			roles[model.String(ref, "role")]++
+		}
+	}
+	if roles["illustrates"] != 2 || roles["groups"] != 1 || roles["refines"] != 2 {
+		t.Fatalf("unexpected references to Keep notes: %v", roles)
+	}
+	for _, name := range []string{"archive", "edit"} {
+		if !strings.Contains(read("use-cases/"+name+".use-case.spec-report.md"), "requirements/keep-notes.requirement.spec-report.md") {
+			t.Fatalf("scenario lost shared requirement: %s", name)
 		}
 	}
 
@@ -736,10 +726,8 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 		t.Fatal(err)
 	}
 	writeFixture(t, localFile, string(local)+"[Retention](../../"+rulePath+").\n")
-	withPolicy := build()
-	for _, page := range []string{section(withPolicy, "Requirements"), read("requirements.md")} {
-		if !strings.Contains(page, refines+"\n  - Refines [Retention](<../"+rulePath+">)") {
-			t.Fatalf("missing refinement parents:\n%s", page)
-		}
+	build()
+	if !strings.Contains(read("requirements.md"), refines+"\n  - Refines [Retention](<../"+rulePath+">)") {
+		t.Fatalf("missing refinement parents:\n%s", read("requirements.md"))
 	}
 }

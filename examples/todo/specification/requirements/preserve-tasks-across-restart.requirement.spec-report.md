@@ -34,7 +34,7 @@ Zero discrepancies across the two views.
 
 ## Refines
 
-[Keep recorded work available](<../use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>).
+[Keep recorded work available](<keep-recorded-work-available.requirement.spec-report.md>).
 
 ## Relies on
 

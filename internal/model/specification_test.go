@@ -93,16 +93,16 @@ type: feature-spec
 	sys := designRecord(t, s, "System", "Document workspace")
 	provided := designRecord(t, s, "Interface", "Restoration requests")
 	required := designRecord(t, s, "Interface", "Time readings")
-	clause := designRecord(t, s, "ObligationClause", "Preserve request identity")
+	identityRequirement := designRecord(t, s, "Requirement", "Preserve request identity")
 	feature := designRecord(t, s, "Feature", "Reliable recovery")
-	if provided["owner"] != sys["id"] || required["owner"] != sys["id"] || clause["owner"] != provided["id"] {
-		t.Fatal("interface or clause ownership lost")
+	if provided["owner"] != sys["id"] || required["owner"] != sys["id"] || identityRequirement["source_document"] == provided["source_document"] {
+		t.Fatal("interface or identityRequirement ownership lost")
 	}
 	if ids := Strings(feature["groups"]); len(ids) != 1 || ids[0] != provided["id"] {
 		t.Fatal("feature cannot group an interface", feature)
 	}
-	if ids := Strings(clause["applies_to"]); len(ids) != 1 || ids[0] != provided["id"] {
-		t.Fatal("interface ID did not resolve as a subject", clause)
+	if ids := Strings(identityRequirement["applies_to"]); len(ids) != 1 || ids[0] != provided["id"] {
+		t.Fatal("interface ID did not resolve as a subject", identityRequirement)
 	}
 	req := designRecord(t, s, "Requirement", "Preserve document metadata on restoration")
 	if ids := Strings(req["applies_to"]); len(ids) != 3 || ids[2] != provided["id"] {

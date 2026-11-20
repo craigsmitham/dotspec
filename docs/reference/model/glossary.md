@@ -45,7 +45,7 @@ A behavior-bearing concept described by purpose, abstract state, actions and an 
 
 ## Feature
 
-A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own obligations.
+A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own requirements.
 
 [Model reference](index.md#feature)
 
@@ -56,7 +56,6 @@ A recognizable grouping of specified product behavior valued by stakeholders, in
 ### Relationships
 
 - Can group a [requirement](#requirement).
-- Can group an [obligation clause](#obligation-clause).
 - Can group a [use case](#use-case).
 - Can group a [concept](#concept).
 
@@ -74,21 +73,9 @@ What a performer seeks to accomplish or change in particular circumstances, inde
 
 - User requirements
 
-## Obligation clause
-
-An explicitly distinguished obligation inside another specification or behavioral model. Its content is the authored expression, not a duplicate requirement document. Project authority determines acceptance; declaration alone does not.
-
-[Model reference](index.md#obligationclause)
-
-### Topics
-
-- Business requirements
-- User requirements
-- Software requirements
-
 ## Quality attribute
 
-A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit obligations, thresholds, or satisfaction.
+A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit requirements, thresholds, or satisfaction.
 
 [Model reference](index.md#qualityattribute)
 
@@ -98,7 +85,7 @@ A named quality attribute owned by exactly one system or reusable quality model.
 
 ## Requirement
 
-A specification that gives one obligation its own document. An obligation is what ISO/IEC/IEEE 29148 calls a requirement, wherever it is written; this class names the specification type, not every normative expression. Functional and quality requirements share this type. Either can reference a quality attribute.
+One required property or behavior, declared in its own requirement specification. Functional and quality requirements share this type. Either can reference a system quality attribute.
 
 [Model reference](index.md#requirement)
 

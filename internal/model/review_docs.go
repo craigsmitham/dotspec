@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/obligation"
+	"github.com/craigsmitham/dotspec/internal/requirement"
 )
 
 // ReviewMarkdown assembles advisory questions from recorded content and links.
@@ -20,7 +20,7 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	}
 	v.out.WriteString("# Requirements review\n\nGenerated from acquired specifications. Findings below are advisory review prompts, not completeness, acceptance or implementation claims. Missing links mean **no relationship recorded in this scope**. Drafts may conform to the authoring format while requirements verification and validation remain unfinished.\n\n")
 	fmt.Fprintf(&v.out, "Model `%s`; mapping `%s`.\n\n", s.ModelVersion, s.MappingProfile)
-	v.out.WriteString("## Needs and intent\n\nRequirements validation asks whether the specification expresses the right needs. System validation asks whether a proposed or realized solution serves intended use. The relationships below identify review questions, not either conclusion.\n\n### Goal contribution paths\n\nPaths follow explicit supports, derived-from and refinement links from obligations, concept actions or use cases. A recorded path identifies intent; reviewers must assess whether the behavior is sufficient.\n\n")
+	v.out.WriteString("## Needs and intent\n\nRequirements validation asks whether the specification expresses the right needs. System validation asks whether a proposed or realized solution serves intended use. The relationships below identify review questions, not either conclusion.\n\n### Goal contribution paths\n\nPaths follow explicit supports, derived-from and refinement links from requirements, concept actions or use cases. A recorded path identifies intent; reviewers must assess whether the behavior is sufficient.\n\n")
 	reached := map[string]bool{}
 	var reach func(string, map[string]bool)
 	reach = func(id string, seen map[string]bool) {
@@ -39,7 +39,7 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 	}
 	for _, r := range v.records {
-		if designKind(String(r, "kind"), "Obligation or ConceptAction or UseCase") {
+		if designKind(String(r, "kind"), "Requirement or ConceptAction or UseCase") {
 			reach(String(r, "id"), map[string]bool{})
 		}
 	}
@@ -52,7 +52,7 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			fmt.Fprintf(&v.out, "- %s: %s\n", v.link(r), status)
 		}
 	}
-	v.out.WriteString("\n### Scenario grounding\n\nAn Illustrates link identifies a rule or action behind a step. Participation links and ordinary citations do not establish this relationship; not every conversational step needs a separate obligation.\n\n")
+	v.out.WriteString("\n### Scenario grounding\n\nWalk the main path, extensions and guarantees. Could a system meet the written specifications and still prevent the actor from completing a step? An Illustrates link identifies a requirement, business rule or concept action exercised by that step.\n\n")
 	for _, r := range v.records {
 		switch String(r, "kind") {
 		case "ScenarioStep":
@@ -69,15 +69,15 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	}
 	v.boundaries()
 	v.assumptions()
-	v.out.WriteString("## Obligation review\n\nReview the criterion recorded on each obligation.\n\n")
+	v.out.WriteString("## Requirement review\n\nReview the criterion recorded on each requirement.\n\n")
 	for _, r := range v.records {
-		if !designKind(String(r, "kind"), "Obligation") {
+		if !designKind(String(r, "kind"), "Requirement") {
 			continue
 		}
 		fmt.Fprintf(&v.out, "### %s\n\n", v.link(r))
 		v.body(r, "Criterion", Object(r["criterion"])["content"])
 		if missing := v.d.measurementGuidance(r).Missing(); len(missing) > 0 {
-			fmt.Fprintf(&v.out, "Review required: %s\n\n", obligation.MeasurementMessage(missing))
+			fmt.Fprintf(&v.out, "Review required: %s\n\n", requirement.MeasurementMessage(missing))
 		}
 	}
 	v.questions()
@@ -125,9 +125,9 @@ func PEGSMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			fmt.Fprintf(&v.out, "Supports: %s.\n\n", v.links(ids))
 		}
 	}
-	v.out.WriteString("## System\n\nSpecifications below describe the solution's subjects, concepts, interactions and obligations. Declaration, structural parentage, applicability and behavioral relationships retain their distinct meanings.\n\n")
+	v.out.WriteString("## System\n\nSpecifications below describe the solution's subjects, concepts, interactions and requirements. Declaration, structural parentage, applicability and behavioral relationships retain their distinct meanings.\n\n")
 	for _, r := range v.records {
-		if !designKind(String(r, "kind"), "System or Component or Feature or Capability or Concept or ConceptUse or Synchronization or Interface or UseCase or Obligation") {
+		if !designKind(String(r, "kind"), "System or Component or Feature or Capability or Concept or ConceptUse or Synchronization or Interface or UseCase or Requirement") {
 			continue
 		}
 		fmt.Fprintf(&v.out, "### %s: %s\n\n", String(r, "kind"), v.link(r))

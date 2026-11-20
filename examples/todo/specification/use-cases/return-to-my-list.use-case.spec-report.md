@@ -26,7 +26,7 @@ The person who keeps the list.
 1. The person records an errand and later marks it complete.
    - **Illustrates:** [Complete](<../concepts/checklist.concept.spec-report.md#complete>).
 2. On returning, the person finds the errand among the completed tasks.
-   - **Illustrates:** [Keep recorded work available](<#keep-recorded-work-available>).
+   - **Illustrates:** [Keep recorded work available](<../requirements/keep-recorded-work-available.requirement.spec-report.md>).
 3. The person discovers a follow-up and reopens the errand.
    - **Illustrates:** [Reopen](<../concepts/checklist.concept.spec-report.md#reopen>).
 
@@ -72,30 +72,6 @@ User task.
 ## Sequence
 
 The example follows one errand across two work sessions.
-
-## Obligations
-
-### Keep recorded work available
-
-<!-- dotspec-doc {"type":"obligation-clause-spec-report","documents":"../../specs/use-cases/resume-list.use-case.spec.md#keep-recorded-work-available"} -->
-
-**ID:** keep-recorded-work-available
-
-The list must make previously recorded entries available when the person returns.
-
-The [restart requirement](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>) specifies which entry data survives a service interruption.
-
-**Refined by**
-
-- [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
-
-#### Derived from
-
-[Completion preserves a commitment](<../business-rules/completion-preserves-a-commitment.business-rule.spec-report.md>).
-
-#### Applies to
-
-**Targets:** [My checklist](<../concept-uses/my-checklist.concept-use.spec-report.md>).
 
 ## Related specifications
 

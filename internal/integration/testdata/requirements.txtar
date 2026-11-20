@@ -133,9 +133,9 @@ type: requirement-spec
 ---
 # Duplicate
 ## Statement
-First obligation.
+First requirement.
 ## Statement
-Another obligation.
+Another requirement.
 -- bad-link.md --
 ---
 type: requirement-spec

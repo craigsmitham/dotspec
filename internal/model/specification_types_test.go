@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"slices"
 	"strings"
 	"testing"
@@ -191,47 +192,6 @@ This sequence is representative.
 	}
 }
 
-// Jobs, business rules and requirements state needs, rules and one obligation.
-// They do not contain further obligation clauses.
-func TestObligationClausesBelongOnlyToTheirContainers(t *testing.T) {
-	clause := "\n## Obligations\n\n### Extra\n\nAn embedded obligation.\n"
-	for _, tc := range []struct{ path, source string }{
-		{"specs/jobs/borrow.job.spec.md", "---\ntype: job-spec\n---\n# Borrow\n\n## Job\n\nBorrow equipment.\n" + clause},
-		{"specs/business-rules/limit.business-rule.spec.md", "---\ntype: business-rule-spec\n---\n# Limit\n\n## Statement\n\nAt most three items.\n" + clause},
-		{"specs/requirements/record.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Record\n\n## Statement\n\nRecord each loan.\n" + clause},
-	} {
-		t.Run(tc.path, func(t *testing.T) {
-			root := t.TempDir()
-			conformanceWrite(t, root, "specs/lending-desk.system.spec.md", typedSystem)
-			conformanceWrite(t, root, tc.path, tc.source)
-			result := conformanceExport(t, root)
-			found := false
-			for _, d := range result.Snapshot.Diagnostics {
-				found = found || String(d, "code") == "obligation.container"
-			}
-			if !found || result.ExitCode == 0 {
-				t.Fatal("embedded obligations must be rejected here", result.ExitCode, result.Snapshot.Diagnostics)
-			}
-			// The rejected section stays visible as retained content, never as unbound source.
-			checkSourceText(t, result.Snapshot)
-			for _, e := range result.Snapshot.Elements {
-				if String(e, "kind") == "ObligationClause" {
-					t.Fatal("clause created without a container", e)
-				}
-			}
-		})
-	}
-	t.Run("use cases still contain clauses", func(t *testing.T) {
-		root := t.TempDir()
-		conformanceWrite(t, root, "specs/lending-desk.system.spec.md", typedSystem)
-		conformanceWrite(t, root, "specs/use-cases/borrow.use-case.spec.md", "---\ntype: use-case-spec\n---\n# Borrow\n\n## Goal\n\nBorrow.\n"+clause)
-		result := conformanceExport(t, root)
-		if result.ExitCode != 0 || len(Strings(designRecord(t, result.Snapshot, "UseCase", "Borrow")["obligations"])) != 1 {
-			t.Fatal(result.Snapshot.Diagnostics)
-		}
-	})
-}
-
 func TestBusinessRuleRefinesOnlyBusinessRules(t *testing.T) {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/lending-desk.system.spec.md", typedSystem)
@@ -268,5 +228,41 @@ func TestOpenQuestionsBelongToAnyElement(t *testing.T) {
 	step := designRecord(t, result.Snapshot, "JobStep", "Reserve")
 	if len(records(step["open_questions"])) != 1 || step["extension_sections"] != nil {
 		t.Fatal("open question under a job step should be its own field", step)
+	}
+}
+
+func TestFormerInlineDeclarationsAreLocatedAtTheirHeading(t *testing.T) {
+	for _, tc := range []struct{ kind, container string }{
+		{"system", ""}, {"component", ""}, {"use-case", ""}, {"concept", ""},
+		{"system", "## Provided interfaces\n### Requests\n"}, {"concept", "## Actions\n### Restore\n"},
+		{"system", "## Concept uses\n### Archive\n"}, {"component", "## Synchronizations\n### Restore entry\n"},
+		{"requirement", ""}, {"business-rule", ""}, {"job", ""},
+	} {
+		t.Run(tc.kind+"/"+tc.container, func(t *testing.T) {
+			heading := "##"
+			if tc.container != "" {
+				heading = "####"
+			}
+			prefix := fmt.Sprintf("---\ntype: %s-spec\n---\n# Service\n%s", tc.kind, tc.container)
+			path := "service." + tc.kind + ".spec.md"
+			doc := ParseContent(path, []byte(prefix+heading+" Obligations\n"+heading+"# Keep entries\nRetain every entry.\n"))
+			mapped := MapDomain(doc, tc.kind)
+			if len(mapped.Elements) != 0 || len(mapped.Diagnostics) != 1 {
+				t.Fatal(mapped)
+			}
+			finding := mapped.Diagnostics[0]
+			if finding["code"] != "structure.inline-requirement" || finding["line"] != strings.Count(prefix, "\n")+1 || !strings.Contains(String(finding, "message"), "*.requirement.spec.md") {
+				t.Fatal(finding)
+			}
+		})
+	}
+}
+
+func TestScenarioExamplesRetainTheirSource(t *testing.T) {
+	source := "---\ntype: use-case-spec\n---\n# Return\n## Main success scenario\n1. The person returns.\n## Success guarantees\nSaved entries are available.\n\n~~~markdown\n## Obligations\n~~~\n"
+	doc := ParseContent("return.use-case.spec.md", []byte(source))
+	mapped := MapDomain(doc, "use-case")
+	if len(mapped.Diagnostics) != 0 || len(mapped.Elements) != 3 || mapped.Elements[1]["kind"] != "Scenario" || mapped.Elements[2]["kind"] != "ScenarioStep" || doc.Source["markdown"] != source {
+		t.Fatal(mapped)
 	}
 }

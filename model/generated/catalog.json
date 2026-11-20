@@ -13,7 +13,7 @@
         "Applicability"
       ],
       "annotations": {},
-      "description": "Operating context covered by an obligation or business rule, with optional explicit dimensions. For outcomes of use, identify users, tasks, equipment or assistance, and environment. Record the required operating context here.",
+      "description": "Operating context covered by an requirement or business rule, with optional explicit dimensions. For outcomes of use, identify users, tasks, equipment or assistance, and environment. Record the required operating context here.",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -181,7 +181,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -624,7 +624,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -1343,7 +1343,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -1896,7 +1896,6 @@
       "abstract": false,
       "ancestors": [
         "Component",
-        "ObligationContainer",
         "SystemContextSpecification",
         "Specification",
         "TraceableElement",
@@ -1908,9 +1907,7 @@
       },
       "description": "A named part of a system with a described responsibility and boundary. Neither its declaration nor code location establishes structural parentage.",
       "is_a": "SystemContextSpecification",
-      "mixins": [
-        "ObligationContainer"
-      ],
+      "mixins": [],
       "rules": [],
       "slots": {
         "architecture": {
@@ -1962,7 +1959,7 @@
         "boundary_description": {
           "annotations": {},
           "any_of": [],
-          "description": "What the component includes, excludes and delegates; normative commitments remain obligations.",
+          "description": "What the component includes, excludes and delegates; normative commitments remain requirements.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -2032,7 +2029,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -2225,30 +2222,6 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
-          "required": false
-        },
-        "obligations": {
-          "annotations": {
-            "relationship_basis": "Explicit authored clause declarations; no semantic inference from prose.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ObligationClause.owner",
-            "relationship_label": "obligations",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ObligationClause",
-          "reference_ranges": [
-            "ObligationClause"
-          ],
           "required": false
         },
         "open_questions": {
@@ -2757,7 +2730,6 @@
       "abstract": false,
       "ancestors": [
         "Concept",
-        "ObligationContainer",
         "SystemContextSpecification",
         "Specification",
         "TraceableElement",
@@ -2769,9 +2741,7 @@
       },
       "description": "A behavior-bearing concept described by purpose, abstract state, actions and an operational principle.",
       "is_a": "SystemContextSpecification",
-      "mixins": [
-        "ObligationContainer"
-      ],
+      "mixins": [],
       "rules": [],
       "slots": {
         "abstract_state": {
@@ -2861,7 +2831,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -2991,30 +2961,6 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
-          "required": false
-        },
-        "obligations": {
-          "annotations": {
-            "relationship_basis": "Explicit authored clause declarations; no semantic inference from prose.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ObligationClause.owner",
-            "relationship_label": "obligations",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ObligationClause",
-          "reference_ranges": [
-            "ObligationClause"
-          ],
           "required": false
         },
         "open_questions": {
@@ -3333,7 +3279,6 @@
       "abstract": false,
       "ancestors": [
         "ConceptAction",
-        "ObligationContainer",
         "TraceableElement",
         "DomainElement",
         "Record"
@@ -3341,9 +3286,7 @@
       "annotations": {},
       "description": "An explicitly named concept action. Caller assumptions and enforced guards are different authored claims.",
       "is_a": "TraceableElement",
-      "mixins": [
-        "ObligationContainer"
-      ],
+      "mixins": [],
       "rules": [],
       "slots": {
         "authored_id": {
@@ -3393,7 +3336,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -3547,30 +3490,6 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
-          "required": false
-        },
-        "obligations": {
-          "annotations": {
-            "relationship_basis": "Explicit authored clause declarations; no semantic inference from prose.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ObligationClause.owner",
-            "relationship_label": "obligations",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ObligationClause",
-          "reference_ranges": [
-            "ObligationClause"
-          ],
           "required": false
         },
         "open_questions": {
@@ -3912,7 +3831,6 @@
       "abstract": false,
       "ancestors": [
         "ConceptUse",
-        "ObligationContainer",
         "TraceableElement",
         "DomainElement",
         "Record"
@@ -3920,9 +3838,7 @@
       "annotations": {},
       "description": "An explicitly named design-time inclusion of a concept in a system or component specification. Multiple uses of one definition remain distinct; directory association creates no use.",
       "is_a": "TraceableElement",
-      "mixins": [
-        "ObligationContainer"
-      ],
+      "mixins": [],
       "rules": [],
       "slots": {
         "authored_id": {
@@ -4054,7 +3970,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -4144,30 +4060,6 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
-          "required": false
-        },
-        "obligations": {
-          "annotations": {
-            "relationship_basis": "Explicit authored clause declarations; no semantic inference from prose.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ObligationClause.owner",
-            "relationship_label": "obligations",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ObligationClause",
-          "reference_ranges": [
-            "ObligationClause"
-          ],
           "required": false
         },
         "open_questions": {
@@ -4689,7 +4581,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -5793,7 +5685,7 @@
         "Record"
       ],
       "annotations": {},
-      "description": "A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own obligations.",
+      "description": "A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own requirements.",
       "is_a": "SystemContextSpecification",
       "mixins": [],
       "rules": [],
@@ -5845,7 +5737,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -5944,7 +5836,6 @@
           },
           "any_of": [
             "Requirement",
-            "ObligationClause",
             "UseCase",
             "Concept",
             "ConceptUse",
@@ -5961,7 +5852,6 @@
           "range": "DomainElement",
           "reference_ranges": [
             "Requirement",
-            "ObligationClause",
             "UseCase",
             "Concept",
             "ConceptUse",
@@ -6765,7 +6655,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -7107,7 +6997,6 @@
       "abstract": false,
       "ancestors": [
         "Interface",
-        "ObligationContainer",
         "TraceableElement",
         "DomainElement",
         "Record"
@@ -7115,9 +7004,7 @@
       "annotations": {},
       "description": "An independently addressable description of interaction at a System or Component boundary, declared by that System or Component. Required or provided membership states direction relative to the declaring subject. Native protocol contracts retain their authority; neither declaration nor citation proves implementation or compatibility.",
       "is_a": "TraceableElement",
-      "mixins": [
-        "ObligationContainer"
-      ],
+      "mixins": [],
       "rules": [],
       "slots": {
         "authored_id": {
@@ -7199,7 +7086,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -7289,30 +7176,6 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
-          "required": false
-        },
-        "obligations": {
-          "annotations": {
-            "relationship_basis": "Explicit authored clause declarations; no semantic inference from prose.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ObligationClause.owner",
-            "relationship_label": "obligations",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ObligationClause",
-          "reference_ranges": [
-            "ObligationClause"
-          ],
           "required": false
         },
         "open_questions": {
@@ -7630,7 +7493,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -8258,7 +8121,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -8659,7 +8522,7 @@
             "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
           },
           "any_of": [],
-          "description": "Quality model whose definitions govern a parent label on a reusable definition; never used for obligation classification.",
+          "description": "Quality model whose definitions govern a parent label on a reusable definition; never used for requirement classification.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -8683,7 +8546,7 @@
             "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
           },
           "any_of": [],
-          "description": "System whose declared quality attributes govern this label, if established. This is the declaring System or the specification system of a classified obligation, or the System declaring a sub-attribute.",
+          "description": "System whose declared quality attributes govern this label, if established. This is the declaring System or the specification system of a classified requirement, or the System declaring a sub-attribute.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -8748,10 +8611,10 @@
             "relationship_inverse": "none",
             "relationship_label": "owner",
             "relationship_ordering": "single target",
-            "relationship_scope": "Obligation for a quality-classification label, or QualityAttribute for a sub-attribute label; retained in the corresponding occurrence list."
+            "relationship_scope": "Requirement for a quality-classification label, or QualityAttribute for a sub-attribute label; retained in the corresponding occurrence list."
           },
           "any_of": [
-            "Obligation",
+            "Requirement",
             "QualityAttribute"
           ],
           "description": "",
@@ -8763,7 +8626,7 @@
           "ordered": false,
           "range": "DomainElement",
           "reference_ranges": [
-            "Obligation",
+            "Requirement",
             "QualityAttribute"
           ],
           "required": true
@@ -8823,1369 +8686,6 @@
         "specification-traceability"
       ]
     },
-    "Obligation": {
-      "abstract": true,
-      "ancestors": [
-        "Obligation",
-        "TraceableElement",
-        "DomainElement",
-        "Record"
-      ],
-      "annotations": {},
-      "description": "An obligation, expressed in its own Requirement specification or as a clause inside another specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines or references the satisfaction rule.",
-      "is_a": "TraceableElement",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "applicability": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "Applicability"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "Applicability",
-          "reference_ranges": [],
-          "required": false
-        },
-        "applies_to": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored reference or label occurrences.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "applies to",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicitly referenced acquired domain records; cross-system links are permitted."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "DomainElement",
-          "reference_ranges": [
-            "DomainElement"
-          ],
-          "required": false
-        },
-        "authored_id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "An explicitly authored ID when present; no manufactured global identifier.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "criterion": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source.",
-          "identifier": false,
-          "inline_ranges": [
-            "ObligationCriterion"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ObligationCriterion",
-          "reference_ranges": [],
-          "required": false
-        },
-        "derived_from": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "derived from",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
-          },
-          "any_of": [
-            "DomainElement",
-            "SourceFragment"
-          ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "Record",
-          "reference_ranges": [
-            "DomainElement",
-            "SourceFragment"
-          ],
-          "required": false
-        },
-        "derived_from_content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored Markdown qualifying the derived from relationship.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-          "identifier": true,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "pattern": "[\\s\\S]+",
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Concrete record type discriminator.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "name": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored title or item name, if present.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Explicitly distinguished questions, in authored order.",
-          "identifier": false,
-          "inline_ranges": [
-            "OpenQuestion"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "OpenQuestion",
-          "reference_ranges": [],
-          "required": false
-        },
-        "quality_attributes": {
-          "annotations": {
-            "occurrence_role": "label",
-            "relationship_basis": "Projection of explicit authored reference or label occurrences.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "classified by",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Attributes declared by the System that declares this obligation, or by the effective specification system of its declaring specification."
-          },
-          "any_of": [],
-          "description": "Only resolved classifications; original occurrences remain separately addressable.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "QualityAttribute",
-          "reference_ranges": [
-            "QualityAttribute"
-          ],
-          "required": false
-        },
-        "rationale": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "refines": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "none",
-            "relationship_label": "refines",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Refines",
-            "trace_targets": "Requirement or BusinessRule or ObligationClause"
-          },
-          "any_of": [
-            "Requirement",
-            "BusinessRule",
-            "ObligationClause"
-          ],
-          "description": "Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "DomainElement",
-          "reference_ranges": [
-            "Requirement",
-            "BusinessRule",
-            "ObligationClause"
-          ],
-          "required": false
-        },
-        "refines_content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored Markdown qualifying the refines relationship.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "relies_on": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "relies on",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
-          },
-          "any_of": [],
-          "description": "Assumptions on which the validity of this element depends.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "Assumption",
-          "reference_ranges": [
-            "Assumption"
-          ],
-          "required": false
-        },
-        "relies_on_content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored Markdown qualifying the relies on relationship.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "source_document": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source document",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceDocument",
-          "reference_ranges": [
-            "SourceDocument"
-          ],
-          "required": true
-        },
-        "source_fragment": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source fragment",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceFragment",
-          "reference_ranges": [
-            "SourceFragment"
-          ],
-          "required": false
-        },
-        "statement": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "supports": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "supports",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
-          },
-          "any_of": [
-            "Goal",
-            "Job",
-            "JobStep",
-            "DesiredOutcome",
-            "UseCase"
-          ],
-          "description": "Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "DomainElement",
-          "reference_ranges": [
-            "Goal",
-            "Job",
-            "JobStep",
-            "DesiredOutcome",
-            "UseCase"
-          ],
-          "required": false
-        },
-        "supports_content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored Markdown qualifying the supports relationship.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        }
-      },
-      "subsets": [
-        "business-requirements",
-        "user-requirements",
-        "software-requirements"
-      ]
-    },
-    "ObligationClause": {
-      "abstract": false,
-      "ancestors": [
-        "ObligationClause",
-        "Obligation",
-        "TraceableElement",
-        "DomainElement",
-        "Record"
-      ],
-      "annotations": {},
-      "description": "An explicitly distinguished obligation inside another specification or behavioral model. Its content is the authored expression, not a duplicate requirement document. Project authority determines acceptance; declaration alone does not.",
-      "is_a": "TraceableElement",
-      "mixins": [
-        "Obligation"
-      ],
-      "rules": [],
-      "slots": {
-        "applicability": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "Applicability"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "Applicability",
-          "reference_ranges": [],
-          "required": false
-        },
-        "applies_to": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored reference or label occurrences.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "applies to",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicitly referenced acquired domain records; cross-system links are permitted."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "DomainElement",
-          "reference_ranges": [
-            "DomainElement"
-          ],
-          "required": false
-        },
-        "authored_id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "An explicitly authored ID when present; no manufactured global identifier.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "criterion": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source.",
-          "identifier": false,
-          "inline_ranges": [
-            "ObligationCriterion"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ObligationCriterion",
-          "reference_ranges": [],
-          "required": false
-        },
-        "derived_from": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "derived from",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
-          },
-          "any_of": [
-            "DomainElement",
-            "SourceFragment"
-          ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "Record",
-          "reference_ranges": [
-            "DomainElement",
-            "SourceFragment"
-          ],
-          "required": false
-        },
-        "derived_from_content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored Markdown qualifying the derived from relationship.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-          "identifier": true,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "pattern": "[\\s\\S]+",
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Concrete record type discriminator.",
-          "equals_string": "ObligationClause",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "name": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored title or item name, if present.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "open_questions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Explicitly distinguished questions, in authored order.",
-          "identifier": false,
-          "inline_ranges": [
-            "OpenQuestion"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "OpenQuestion",
-          "reference_ranges": [],
-          "required": false
-        },
-        "owner": {
-          "annotations": {
-            "relationship_basis": "Checked inverse of canonical membership fields.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ObligationContainer.obligations",
-            "relationship_label": "owner",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ObligationContainer",
-          "reference_ranges": [
-            "ObligationContainer"
-          ],
-          "required": true
-        },
-        "quality_attributes": {
-          "annotations": {
-            "occurrence_role": "label",
-            "relationship_basis": "Projection of explicit authored reference or label occurrences.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "classified by",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Attributes declared by the System that declares this obligation, or by the effective specification system of its declaring specification."
-          },
-          "any_of": [],
-          "description": "Only resolved classifications; original occurrences remain separately addressable.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "QualityAttribute",
-          "reference_ranges": [
-            "QualityAttribute"
-          ],
-          "required": false
-        },
-        "rationale": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "refines": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "none",
-            "relationship_label": "refines",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Refines",
-            "trace_targets": "Requirement or BusinessRule or ObligationClause"
-          },
-          "any_of": [
-            "Requirement",
-            "BusinessRule",
-            "ObligationClause"
-          ],
-          "description": "Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "DomainElement",
-          "reference_ranges": [
-            "Requirement",
-            "BusinessRule",
-            "ObligationClause"
-          ],
-          "required": false
-        },
-        "refines_content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored Markdown qualifying the refines relationship.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "relies_on": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "relies on",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
-          },
-          "any_of": [],
-          "description": "Assumptions on which the validity of this element depends.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "Assumption",
-          "reference_ranges": [
-            "Assumption"
-          ],
-          "required": false
-        },
-        "relies_on_content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored Markdown qualifying the relies on relationship.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "source_document": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source document",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceDocument",
-          "reference_ranges": [
-            "SourceDocument"
-          ],
-          "required": true
-        },
-        "source_fragment": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source fragment",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceFragment",
-          "reference_ranges": [
-            "SourceFragment"
-          ],
-          "required": false
-        },
-        "statement": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "supports": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "supports",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
-          },
-          "any_of": [
-            "Goal",
-            "Job",
-            "JobStep",
-            "DesiredOutcome",
-            "UseCase"
-          ],
-          "description": "Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "DomainElement",
-          "reference_ranges": [
-            "Goal",
-            "Job",
-            "JobStep",
-            "DesiredOutcome",
-            "UseCase"
-          ],
-          "required": false
-        },
-        "supports_content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored Markdown qualifying the supports relationship.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        }
-      },
-      "subsets": [
-        "business-requirements",
-        "user-requirements",
-        "software-requirements"
-      ]
-    },
-    "ObligationClauseSpecReport": {
-      "abstract": false,
-      "ancestors": [
-        "ObligationClauseSpecReport",
-        "SubjectSpecReport",
-        "GeneratedDocument"
-      ],
-      "annotations": {},
-      "description": "Preserves an addressable promise within the interaction or other subject that declares it.",
-      "is_a": "SubjectSpecReport",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "documents": {
-          "annotations": {
-            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "documents",
-            "relationship_ordering": "single target",
-            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
-          },
-          "any_of": [],
-          "description": "The documented subject, serialized as a relative URI to its authored heading.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ObligationClause",
-          "reference_ranges": [
-            "ObligationClause"
-          ],
-          "required": true
-        },
-        "type": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Serialized document type fixed by the concrete class.",
-          "equals_string": "obligation-clause-spec-report",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        }
-      },
-      "subsets": [
-        "specification-documentation"
-      ]
-    },
-    "ObligationContainer": {
-      "abstract": true,
-      "ancestors": [
-        "ObligationContainer",
-        "TraceableElement",
-        "DomainElement",
-        "Record"
-      ],
-      "annotations": {
-        "owned_memberships": "ObligationContainer.obligations"
-      },
-      "description": "Explicit declaration container for embedded obligation clauses. Traceability alone does not confer containment.",
-      "is_a": "TraceableElement",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "authored_id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "An explicitly authored ID when present; no manufactured global identifier.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "derived_from": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "derived from",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
-          },
-          "any_of": [
-            "DomainElement",
-            "SourceFragment"
-          ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "Record",
-          "reference_ranges": [
-            "DomainElement",
-            "SourceFragment"
-          ],
-          "required": false
-        },
-        "derived_from_content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored Markdown qualifying the derived from relationship.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "id": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
-          "identifier": true,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "pattern": "[\\s\\S]+",
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "kind": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Concrete record type discriminator.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        },
-        "name": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored title or item name, if present.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "obligations": {
-          "annotations": {
-            "relationship_basis": "Explicit authored clause declarations; no semantic inference from prose.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ObligationClause.owner",
-            "relationship_label": "obligations",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ObligationClause",
-          "reference_ranges": [
-            "ObligationClause"
-          ],
-          "required": false
-        },
-        "open_questions": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Explicitly distinguished questions, in authored order.",
-          "identifier": false,
-          "inline_ranges": [
-            "OpenQuestion"
-          ],
-          "inlined": true,
-          "inlined_as_list": true,
-          "multivalued": true,
-          "ordered": true,
-          "range": "OpenQuestion",
-          "reference_ranges": [],
-          "required": false
-        },
-        "relies_on": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "relies on",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
-          },
-          "any_of": [],
-          "description": "Assumptions on which the validity of this element depends.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "Assumption",
-          "reference_ranges": [
-            "Assumption"
-          ],
-          "required": false
-        },
-        "relies_on_content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored Markdown qualifying the relies on relationship.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "source_document": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source document",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceDocument",
-          "reference_ranges": [
-            "SourceDocument"
-          ],
-          "required": true
-        },
-        "source_fragment": {
-          "annotations": {
-            "relationship_basis": "Recorded source or inspection evidence.",
-            "relationship_category": "provenance",
-            "relationship_cycles": "not-applicable",
-            "relationship_inverse": "none",
-            "relationship_label": "source fragment",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "SourceFragment",
-          "reference_ranges": [
-            "SourceFragment"
-          ],
-          "required": false
-        },
-        "supports": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "supports",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
-          },
-          "any_of": [
-            "Goal",
-            "Job",
-            "JobStep",
-            "DesiredOutcome",
-            "UseCase"
-          ],
-          "description": "Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "DomainElement",
-          "reference_ranges": [
-            "Goal",
-            "Job",
-            "JobStep",
-            "DesiredOutcome",
-            "UseCase"
-          ],
-          "required": false
-        },
-        "supports_content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored Markdown qualifying the supports relationship.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        }
-      },
-      "subsets": [
-        "business-requirements",
-        "user-requirements",
-        "software-requirements"
-      ]
-    },
-    "ObligationCriterion": {
-      "abstract": false,
-      "ancestors": [
-        "ObligationCriterion"
-      ],
-      "annotations": {},
-      "description": "Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define each bound once or reference its authoritative statement or source. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": true
-        },
-        "measure": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "target": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Required value, bound or acceptable range, including the comparison. Preferred targets belong in Rationale and should be identified as preferences.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        }
-      },
-      "subsets": [
-        "business-requirements",
-        "user-requirements",
-        "software-requirements"
-      ]
-    },
     "OpenQuestion": {
       "abstract": false,
       "ancestors": [
@@ -10227,7 +8727,7 @@
         "Record"
       ],
       "annotations": {},
-      "description": "A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit obligations, thresholds, or satisfaction.",
+      "description": "A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit requirements, thresholds, or satisfaction.",
       "is_a": "DomainElement",
       "mixins": [],
       "rules": [],
@@ -10551,7 +9051,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -11136,7 +9636,6 @@
       "abstract": false,
       "ancestors": [
         "Requirement",
-        "Obligation",
         "SystemContextSpecification",
         "Specification",
         "TraceableElement",
@@ -11144,11 +9643,9 @@
         "Record"
       ],
       "annotations": {},
-      "description": "A specification that gives one obligation its own document. An obligation is what ISO/IEC/IEEE 29148 calls a requirement, wherever it is written; this class names the specification type, not every normative expression. Functional and quality requirements share this type. Either can reference a quality attribute.",
+      "description": "One required property or behavior, declared in its own requirement specification. Functional and quality requirements share this type. Either can reference a system quality attribute.",
       "is_a": "SystemContextSpecification",
-      "mixins": [
-        "Obligation"
-      ],
+      "mixins": [],
       "rules": [],
       "slots": {
         "applicability": {
@@ -11228,13 +9725,13 @@
           "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source.",
           "identifier": false,
           "inline_ranges": [
-            "ObligationCriterion"
+            "RequirementCriterion"
           ],
           "inlined": true,
           "inlined_as_list": false,
           "multivalued": false,
           "ordered": false,
-          "range": "ObligationCriterion",
+          "range": "RequirementCriterion",
           "reference_ranges": [],
           "required": false
         },
@@ -11255,7 +9752,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -11412,7 +9909,7 @@
             "relationship_inverse": "none",
             "relationship_label": "classified by",
             "relationship_ordering": "unordered",
-            "relationship_scope": "Attributes declared by the System that declares this obligation, or by the effective specification system of its declaring specification."
+            "relationship_scope": "Attributes declared by the requirement\u2019s effective specification system."
           },
           "any_of": [],
           "description": "Only resolved classifications; original occurrences remain separately addressable.",
@@ -11455,14 +9952,13 @@
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
             "trace_heading": "Refines",
-            "trace_targets": "Requirement or BusinessRule or ObligationClause"
+            "trace_targets": "Requirement or BusinessRule"
           },
           "any_of": [
             "Requirement",
-            "BusinessRule",
-            "ObligationClause"
+            "BusinessRule"
           ],
-          "description": "Adds precision while preserving the referenced obligation; not replacement, duplication or proof. Multiple parents are permitted.",
+          "description": "Adds precision while preserving the referenced requirement or business rule; not replacement, duplication or proof. Multiple parents are permitted.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -11472,8 +9968,7 @@
           "range": "DomainElement",
           "reference_ranges": [
             "Requirement",
-            "BusinessRule",
-            "ObligationClause"
+            "BusinessRule"
           ],
           "required": false
         },
@@ -11754,6 +10249,71 @@
         }
       },
       "subsets": [
+        "software-requirements"
+      ]
+    },
+    "RequirementCriterion": {
+      "abstract": false,
+      "ancestors": [
+        "RequirementCriterion"
+      ],
+      "annotations": {},
+      "description": "Optional explicit rule for satisfaction of an requirement, qualitative or measured. Define each bound once or reference its authoritative statement or source. Operating context belongs to the requirement's applicability. A criterion is not a measurement procedure or an observation, and quality classification does not supply a criterion.",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "content": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": true
+        },
+        "measure": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Property observed and its operational definition or reference, including units, calculation, aggregation and observation window where needed.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "target": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required value, bound or acceptable range, including the comparison. Preferred targets belong in Rationale and should be identified as preferences.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        }
+      },
+      "subsets": [
+        "business-requirements",
+        "user-requirements",
         "software-requirements"
       ]
     },
@@ -12485,14 +11045,14 @@
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
             "trace_heading": "Illustrates",
-            "trace_targets": "Obligation or BusinessRule or ConceptAction"
+            "trace_targets": "Requirement or BusinessRule or ConceptAction"
           },
           "any_of": [
-            "Obligation",
+            "Requirement",
             "BusinessRule",
             "ConceptAction"
           ],
-          "description": "Obligations, business rules or actions explicitly illustrated by this step. No completeness or execution assertion.",
+          "description": "Requirements, business rules or actions explicitly illustrated by this step. No completeness or execution assertion.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -12501,7 +11061,7 @@
           "ordered": false,
           "range": "DomainElement",
           "reference_ranges": [
-            "Obligation",
+            "Requirement",
             "BusinessRule",
             "ConceptAction"
           ],
@@ -12775,7 +11335,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.28.0-draft",
+          "equals_string": "0.29.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -13621,7 +12181,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -14027,7 +12587,6 @@
       "abstract": false,
       "ancestors": [
         "Synchronization",
-        "ObligationContainer",
         "TraceableElement",
         "DomainElement",
         "Record"
@@ -14035,9 +12594,7 @@
       "annotations": {},
       "description": "A composition rule declared in a system or component specification. Narrative and action references describe coordination; no atomicity, execution or completeness is inferred.",
       "is_a": "TraceableElement",
-      "mixins": [
-        "ObligationContainer"
-      ],
+      "mixins": [],
       "rules": [],
       "slots": {
         "authored_id": {
@@ -14087,7 +12644,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -14161,30 +12718,6 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
-          "required": false
-        },
-        "obligations": {
-          "annotations": {
-            "relationship_basis": "Explicit authored clause declarations; no semantic inference from prose.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ObligationClause.owner",
-            "relationship_label": "obligations",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ObligationClause",
-          "reference_ranges": [
-            "ObligationClause"
-          ],
           "required": false
         },
         "open_questions": {
@@ -14505,7 +13038,6 @@
       "abstract": false,
       "ancestors": [
         "System",
-        "ObligationContainer",
         "Specification",
         "TraceableElement",
         "DomainElement",
@@ -14516,9 +13048,7 @@
       },
       "description": "The system described by a system document; subordinate systems retain their own boundaries and quality attributes.",
       "is_a": "Specification",
-      "mixins": [
-        "ObligationContainer"
-      ],
+      "mixins": [],
       "rules": [],
       "slots": {
         "assumptions": {
@@ -14632,7 +13162,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -14911,30 +13441,6 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
-          "required": false
-        },
-        "obligations": {
-          "annotations": {
-            "relationship_basis": "Explicit authored clause declarations; no semantic inference from prose.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ObligationClause.owner",
-            "relationship_label": "obligations",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ObligationClause",
-          "reference_ranges": [
-            "ObligationClause"
-          ],
           "required": false
         },
         "open_questions": {
@@ -15428,7 +13934,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -15906,7 +14412,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -16270,7 +14776,7 @@
         "GeneratedDocument"
       ],
       "annotations": {},
-      "description": "Explains the system\u2019s purpose and scope and links to its immediate child systems, local subjects, and obligations.",
+      "description": "Explains the system\u2019s purpose and scope and links to its immediate child systems, local subjects, and requirements.",
       "is_a": "SubjectSpecReport",
       "mixins": [],
       "rules": [],
@@ -16363,7 +14869,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -16609,7 +15115,6 @@
       "abstract": false,
       "ancestors": [
         "UseCase",
-        "ObligationContainer",
         "SystemContextSpecification",
         "Specification",
         "TraceableElement",
@@ -16621,9 +15126,7 @@
       },
       "description": "An actor goal and its interactions at a stated system boundary, with alternative paths and protections.",
       "is_a": "SystemContextSpecification",
-      "mixins": [
-        "ObligationContainer"
-      ],
+      "mixins": [],
       "rules": [],
       "slots": {
         "authored_id": {
@@ -16689,7 +15192,7 @@
             "DomainElement",
             "SourceFragment"
           ],
-          "description": "Source or rationale for this element, including rules, decisions and obligations; not logical entailment.",
+          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -16942,30 +15445,6 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
-          "required": false
-        },
-        "obligations": {
-          "annotations": {
-            "relationship_basis": "Explicit authored clause declarations; no semantic inference from prose.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "ObligationClause.owner",
-            "relationship_label": "obligations",
-            "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": true,
-          "range": "ObligationClause",
-          "reference_ranges": [
-            "ObligationClause"
-          ],
           "required": false
         },
         "open_questions": {
@@ -17823,7 +16302,7 @@
       "requirement-spec"
     ]
   },
-  "model_version": "0.28.0-draft",
+  "model_version": "0.29.0-draft",
   "projections": [
     "BusinessRule.applies_to",
     "BusinessRule.refines",
@@ -17844,12 +16323,11 @@
     "Job.outcomes",
     "Job.steps",
     "JobStep.outcomes",
-    "Obligation.applies_to",
-    "Obligation.quality_attributes",
-    "Obligation.refines",
-    "ObligationContainer.obligations",
     "QualityAttribute.subattribute_of",
     "QualityModel.quality_attributes",
+    "Requirement.applies_to",
+    "Requirement.quality_attributes",
+    "Requirement.refines",
     "Scenario.steps",
     "ScenarioStep.illustrates",
     "System.assumptions",
@@ -17933,7 +16411,7 @@
   },
   "representation_version": "0.3.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "1eb142f1922b4e2ff8b2e067f070928f63584ecfe7fc06c3c3b0de9536c39fa1",
+  "source_sha256": "452420812af7a648835527f66fec23a25d8e55de6b73d1ed06f00980727b7bb2",
   "subsets": {
     "business-requirements": {
       "classification": "core",
@@ -17952,7 +16430,7 @@
     },
     "software-requirements": {
       "classification": "core",
-      "description": "Software interactions, concept behavior, obligations, quality classifications and satisfaction criteria.",
+      "description": "Software interactions, concept behavior, requirements, quality classifications and satisfaction criteria.",
       "title": "Software requirements"
     },
     "source-artifacts": {

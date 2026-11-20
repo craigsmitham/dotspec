@@ -16,7 +16,7 @@ Both commands write the selected perspective to standard output. If you save one
 to a file, pass its containing directory with `--relative-to` so readers can
 follow source and contract links.
 
-When a project records an open question, `dotspec spec build` includes **All open questions** in the root system’s section map. Follow a question to read it in context. To prepare a broader review, run `dotspec model review` for goal contributions, scenario steps, obligation criteria, and inspection findings.
+When a project records an open question, `dotspec spec build` includes **All open questions** in the root system’s section map. Follow a question to read it in context. To prepare a broader review, run `dotspec model review` for goal contributions, scenario steps, requirement criteria, and inspection findings.
 
 `dotspec model pegs --project todo` arranges the example into Project,
 Environment, Goals and System reading perspectives. Business, user and software
@@ -119,8 +119,8 @@ anchors and optional introductory `**ID:**` values. Each belongs to one required
 or provided list under one System or Component. Entries carry descriptions,
 optional counterpart context, contract links, open questions and trace sections.
 
-An interface may contain an Obligations section. Requirements can target it using
-`**Targets:** [Time readings](#time-readings)` under Applies to, and features may
+Requirements can target an interface using
+`**Targets:** [Time readings](../platform.system.spec.md#time-readings)` under Applies to, and features may
 include it under Groups. Counterpart links are contextual; they do not establish
 implementation or compatibility between declarations. Two declarations can cite
 the same native contract without sharing identity. The [task list interface](../../examples/todo/specs/personal-task-list.system.spec.md#task-list-forms) links to its HTML form contract.
@@ -132,9 +132,9 @@ system overview also includes exclusions, partners and interface descriptions.
 
 ## Relate scenarios to general behavior
 
-A scenario illustrates particular interactions; general obligations, business
+A scenario illustrates particular interactions; general requirements, business
 rules and concept actions describe behavior that should apply beyond that one
-sequence. Identify a relevant obligation, business rule or action with an explicit
+sequence. Identify a relevant requirement, business rule or action with an explicit
 nested bullet:
 
 ```markdown
@@ -142,14 +142,14 @@ nested bullet:
 
 1. The member selects a retained document.
 2. The workspace restores the document.
-   - **Illustrates:** [Restore retained content](#restore-content), [Restore](../concepts/trash.concept.spec.md#restore).
+   - **Illustrates:** [Restore retained content](../requirements/restore-content.requirement.spec.md), [Restore](../concepts/trash.concept.spec.md#restore).
 3. The member resumes work.
 ```
 
 Only the labelled bullet creates `ScenarioStep.illustrates`. Ordinary links in
 step prose remain citations; use-case Involves remains participation. The review
 asks about steps with no recorded rule or action. Assess whether a relationship
-would help; do not create a duplicate obligation for every conversational step.
+would help; do not create a duplicate requirement for every conversational step.
 Recorded links do not prove scenario completeness.
 
 ## Review a concept's effects
@@ -175,7 +175,7 @@ shows what reopening an entry preserves. `dotspec model docs` also includes the 
 in its concept reference.
 
 The report reproduces the authored effects table. Include qualifications and
-examples alongside the entries they explain. General obligations and action
+examples alongside the entries they explain. General requirements and action
 contracts own their behavioral statements.
 
 ## Distinguish explanation and review authority

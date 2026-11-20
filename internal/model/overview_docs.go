@@ -10,8 +10,8 @@ import (
 )
 
 // OverviewMarkdown describes the acquired specification subjects and features.
-// Only authored part_of edges form the structural diagram; obligations are not
-// inherited, and feature involvement is derived solely from grouped obligations.
+// Only authored part_of edges form the structural diagram; requirements are not
+// inherited, and feature involvement is derived solely from grouped requirements.
 func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	s = s.navigation()
 	base, err := designOutputBase(relativeTo)
@@ -105,7 +105,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			}
 		}
 	}
-	out.WriteString("\n## Features\n\nFeature membership is many-to-many and does not own the grouped records. Component involvement below is derived only from the direct `applies_to` targets of grouped requirements or obligation clauses. It is not an implementation or allocation claim.\n\n| Feature | Owner | Grouped specifications | Components involved (derived) |\n| --- | --- | --- | --- |\n")
+	out.WriteString("\n## Features\n\nFeature membership is many-to-many and does not own the grouped records. Component involvement below is derived only from the direct `applies_to` targets of grouped requirements. It is not an implementation or allocation claim.\n\n| Feature | Owner | Grouped specifications | Components involved (derived) |\n| --- | --- | --- | --- |\n")
 	for _, r := range elements {
 		if String(r, "kind") != "Feature" {
 			continue
@@ -113,7 +113,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		components := []string{}
 		for _, member := range Strings(r["groups"]) {
 			grouped := d.index[member]
-			if !designKind(String(grouped, "kind"), "Obligation") {
+			if !designKind(String(grouped, "kind"), "Requirement") {
 				continue
 			}
 			for _, subject := range Strings(grouped["applies_to"]) {
@@ -124,7 +124,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		fmt.Fprintf(&out, "| %s | %s | %s | %s |\n", link(String(r, "id")), link(String(r, "specification_owner")), links(Strings(r["groups"])), links(components))
 	}
-	out.WriteString("\n## Applicable obligations\n\nOnly explicit applicability to acquired systems and components is listed. Declaration inside a component does not implicitly supply an applicability target.\n\n| Obligation | Subjects | Criterion |\n| --- | --- | --- |\n")
+	out.WriteString("\n## Applicable requirements\n\nOnly explicit applicability to acquired systems and components is listed. Declaration inside a component does not implicitly supply an applicability target.\n\n| Requirement | Subjects | Criterion |\n| --- | --- | --- |\n")
 	guidance := func(recorded bool) string {
 		if recorded {
 			return "Recorded in source"
@@ -132,7 +132,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		return "Not recorded"
 	}
 	for _, r := range elements {
-		if !designKind(String(r, "kind"), "Obligation") {
+		if !designKind(String(r, "kind"), "Requirement") {
 			continue
 		}
 		subjects := []string{}
@@ -164,10 +164,10 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			fmt.Fprintf(&out, "| %s | %s | %s |\n", link(String(r, "owner")), link(String(r, "id")), link(String(r, "definition")))
 		}
 	}
-	out.WriteString("\n## Descriptions and native references\n\nLinked contracts, architecture decisions, and implementation artifacts retain their own authority. Normative commitments belong in requirements or obligation clauses.\n\n")
+	out.WriteString("\n## Descriptions and native references\n\nLinked contracts, architecture decisions, and implementation artifacts retain their own authority. A requirement can explicitly target a system or component.\n\n")
 	for _, r := range elements {
 		included := designKind(String(r, "kind"), "System or Component or Feature or Interface")
-		if designKind(String(r, "kind"), "Obligation") {
+		if designKind(String(r, "kind"), "Requirement") {
 			for _, target := range Strings(r["applies_to"]) {
 				included = included || ids[target] != ""
 			}

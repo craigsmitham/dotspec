@@ -17,4 +17,4 @@ content during authoring and review.
 <!-- dotspec-doc {"type":"goal-spec-report","documents":"../specs/dotspec.system.spec.md#maintain-requirements-as-the-product-changes"} -->
 
 Reduce the effort of maintaining requirements as the product changes by
-keeping each obligation with its authoritative source.
+keeping each requirement with its authoritative source.

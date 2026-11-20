@@ -145,11 +145,10 @@ layers are explained in [Specification model](../../docs/reference/specification
 
 ## Authority
 
-The linked source-fidelity requirement defines the preservation and location
-obligation. The [Markdown mapping profile](../../model/markdown-mapping.md)
+The linked source-fidelity requirement specifies source preservation and location fidelity. The [Markdown mapping profile](../../model/markdown-mapping.md)
 defines named mappings. The
-[model command examples](../../internal/integration/testdata/model.txtar) define
-the required CLI outcomes for their illustrated cases. The
+[model command examples](../../internal/integration/testdata/model.txtar) verify
+the CLI outcomes for their illustrated cases. The
 [export conformance tests](../../internal/model/export_conformance_test.go) and
 [CLI model tests](../../internal/cli/model_test.go) provide evidence for exercised
 export and validation cases; the references do not assert complete behavioral

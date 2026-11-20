@@ -132,8 +132,8 @@ func (d *designResolver) resolve(r Record, field, kind string, many bool, accept
 	d.projections = append(d.projections, designProjection{r, field, values, many})
 }
 func (d *designResolver) sameSystem(r Record, candidate Record) bool {
-	system := obligationSystem(r, d.index)
-	return system != "" && system == obligationSystem(candidate, d.index)
+	system := governingSystem(r, d.index)
+	return system != "" && system == governingSystem(candidate, d.index)
 }
 func (d *designResolver) run() {
 	d.resolveSpecificationSystems()
@@ -149,10 +149,10 @@ func (d *designResolver) run() {
 		case "Component":
 			d.resolve(r, "part_of", "System or Component", false, nil)
 		case "Feature":
-			d.resolve(r, "groups", "Requirement or ObligationClause or UseCase or Concept or ConceptUse or Synchronization or Interface", true, nil)
+			d.resolve(r, "groups", "Requirement or UseCase or Concept or ConceptUse or Synchronization or Interface", true, nil)
 		case "UseCase":
 			d.resolve(r, "subject_system", "System", false, nil)
-		case "Requirement", "BusinessRule", "ObligationClause":
+		case "Requirement", "BusinessRule":
 			d.resolve(r, "applies_to", "DomainElement", true, nil)
 		case "ConceptUse":
 			d.resolve(r, "dependencies", "ConceptUse", true, func(t Record) bool { return d.sameSystem(r, t) })

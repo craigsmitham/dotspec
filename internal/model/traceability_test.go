@@ -36,18 +36,18 @@ func TestLayeredTraceability(t *testing.T) {
 	if result.ExitCode != 0 || len(s.Diagnostics) != 0 {
 		t.Fatalf("unexpected findings: %d %v", result.ExitCode, s.Diagnostics)
 	}
-	clause := elementKind(t, s, "ObligationClause")
+	parent := designRecord(t, s, "Requirement", "Restore retained content")
 	uc := elementKind(t, s, "UseCase")
-	req := elementKind(t, s, "Requirement")
+	req := designRecord(t, s, "Requirement", "Preserve document metadata on restoration")
 	use := elementKind(t, s, "ConceptUse")
-	if clause["authored_id"] != "restore-content" || clause["owner"] != uc["id"] {
-		t.Fatal(clause)
+	if parent["authored_id"] != "restore-content" || parent["source_document"] == uc["source_document"] {
+		t.Fatal(parent)
 	}
 	for _, tc := range []struct {
 		r      Record
 		field  string
 		target Record
-	}{{req, "refines", clause}, {uc, "involves", use}, {clause, "derived_from", elementKind(t, s, "BusinessRule")}, {req, "relies_on", elementKind(t, s, "Assumption")}, {elementKind(t, s, "Job"), "supports", elementKind(t, s, "Goal")}} {
+	}{{req, "refines", parent}, {uc, "involves", use}, {parent, "derived_from", elementKind(t, s, "BusinessRule")}, {req, "relies_on", elementKind(t, s, "Assumption")}, {elementKind(t, s, "Job"), "supports", elementKind(t, s, "Goal")}} {
 		if !slices.Equal(Strings(tc.r[tc.field]), []string{String(tc.target, "id")}) {
 			t.Fatalf("%s: %v", tc.field, tc.r)
 		}
@@ -62,14 +62,14 @@ func TestLayeredTraceability(t *testing.T) {
 	for _, a := range s.Relationships() {
 		kinds[String(a, "projection_path")] = true
 	}
-	for _, kind := range []string{"TraceableElement.supports", "TraceableElement.derived_from", "Obligation.refines", "TraceableElement.relies_on", "UseCase.involves", "ObligationContainer.obligations", "Obligation.applies_to"} {
+	for _, kind := range []string{"TraceableElement.supports", "TraceableElement.derived_from", "Requirement.refines", "TraceableElement.relies_on", "UseCase.involves", "Requirement.applies_to"} {
 		if !kinds[kind] {
 			t.Fatal("missing projection", kind)
 		}
 	}
 	checkSourceText(t, s)
 	forged := cloneSnapshot(t, s)
-	elementKind(t, forged, "Requirement")["refines"] = []string{String(elementKind(t, forged, "BusinessRule"), "id")}
+	designRecord(t, forged, "Requirement", "Preserve document metadata on restoration")["refines"] = []string{String(elementKind(t, forged, "BusinessRule"), "id")}
 	requireFinding(t, forged, "shape.invalid")
 	borrowed := cloneSnapshot(t, s)
 	for _, ref := range borrowed.References {
@@ -86,10 +86,10 @@ func TestTraceTargetErrorsAndDeferredReferences(t *testing.T) {
 		code                                int
 	}{
 		{"definition is not use", "specs/use-cases/restore.use-case.spec.md", "[DocumentTrash](../document-workspace.system.spec.md#documenttrash)", "[Trash](../concepts/trash.concept.spec.md)", "involves", 1},
-		{"goal is not obligation", "specs/requirements/restoration.requirement.spec.md", "[Restore retained content](../use-cases/restore.use-case.spec.md#restore-content)", "[Goal](../document-workspace.system.spec.md#reduce-lost-work)", "refines", 1},
+		{"goal cannot be refined", "specs/requirements/restoration.requirement.spec.md", "[Restore retained content](restore-content.requirement.spec.md)", "[Goal](../document-workspace.system.spec.md#reduce-lost-work)", "refines", 1},
 		{"goal is not assumption", "specs/requirements/restoration.requirement.spec.md", "[Trusted time](../document-workspace.system.spec.md#trusted-time)", "[Goal](../document-workspace.system.spec.md#reduce-lost-work)", "relies_on", 1},
 		{"concept is not motivation", "specs/jobs/recover.job.spec.md", "[Reduce lost work](../document-workspace.system.spec.md#reduce-lost-work)", "[Trash](../concepts/trash.concept.spec.md)", "supports", 1},
-		{"external basis deferred", "specs/use-cases/restore.use-case.spec.md", "[Recovery window](../business-rules/retention.business-rule.spec.md)", "[Policy](https://example.com/policy)", "derived_from", 0},
+		{"external basis deferred", "specs/requirements/restore-content.requirement.spec.md", "[Recovery window](../business-rules/retention.business-rule.spec.md)", "[Policy](https://example.com/policy)", "derived_from", 0},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			root := traceFixture(t)
@@ -115,9 +115,9 @@ func TestRefinementCycleRetainsSourceWithoutCyclicClaim(t *testing.T) {
 	for _, self := range []bool{true, false} {
 		root := traceFixture(t)
 		if self {
-			traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "[Restore retained content](../use-cases/restore.use-case.spec.md#restore-content)", "[This requirement](restoration.requirement.spec.md)")
+			traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "[Restore retained content](restore-content.requirement.spec.md)", "[This requirement](restoration.requirement.spec.md)")
 		} else {
-			traceEdit(t, root, "specs/use-cases/restore.use-case.spec.md", "#### Derived from", "#### Refines\n\n[Metadata](../requirements/restoration.requirement.spec.md)\n\n#### Derived from")
+			traceEdit(t, root, "specs/requirements/restore-content.requirement.spec.md", "## Derived from", "## Refines\n\n[Metadata](restoration.requirement.spec.md)\n\n## Derived from")
 		}
 		r := conformanceExport(t, root)
 		if r.ExitCode != 1 {
@@ -129,12 +129,12 @@ func TestRefinementCycleRetainsSourceWithoutCyclicClaim(t *testing.T) {
 			}
 		}
 		for _, a := range r.Snapshot.Relationships() {
-			if String(a, "projection_path") == "Obligation.refines" {
+			if String(a, "projection_path") == "Requirement.refines" {
 				t.Fatal("cyclic assertion exported")
 			}
 		}
 		forged := cloneSnapshot(t, r.Snapshot)
-		req := elementKind(t, forged, "Requirement")
+		req := designRecord(t, forged, "Requirement", "Preserve document metadata on restoration")
 		for _, ref := range forged.References {
 			if ref["role"] == "refines" && ref["context_owner"] == req["id"] {
 				Object(ref["resolution"])["target"] = req["id"]
@@ -153,7 +153,7 @@ func TestTraceCitationsAndDrafts(t *testing.T) {
 	if r.ExitCode != 0 {
 		t.Fatal(r.Snapshot.Diagnostics)
 	}
-	if len(Strings(elementKind(t, r.Snapshot, "Requirement")["refines"])) != 0 {
+	if len(Strings(designRecord(t, r.Snapshot, "Requirement", "Preserve document metadata on restoration")["refines"])) != 0 {
 		t.Fatal("citation inferred refinement")
 	}
 	codes := map[string]bool{}
@@ -171,7 +171,7 @@ func TestTraceCitationsAndDrafts(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	selected := strings.NewReplacer("../use-cases/", "../../../specs/use-cases/", "../document-workspace.system.spec.md", "../../../specs/document-workspace.system.spec.md").Replace(string(data))
+	selected := strings.NewReplacer("](restore-content.requirement.spec.md)", "](../../../specs/requirements/restore-content.requirement.spec.md)", "../use-cases/", "../../../specs/use-cases/", "../document-workspace.system.spec.md", "../../../specs/document-workspace.system.spec.md").Replace(string(data))
 	conformanceWrite(t, root, "selected/specs/requirements/restoration.requirement.spec.md", selected)
 	bounded := conformanceExport(t, filepath.Join(root, "selected"))
 	found := false
@@ -190,7 +190,7 @@ func TestTraceViewIsPortableAndDoesNotClaimProof(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, part := range []string{"## Why:", "## Behavior:", "## Change review", "#restore-retained-content", "refines", "supports", "Further review candidates"} {
+	for _, part := range []string{"## Why:", "## Behavior:", "## Change review", "restore-content.requirement.spec.md", "refines", "supports", "Further review candidates"} {
 		if !strings.Contains(view, part) {
 			t.Fatal("missing", part)
 		}
@@ -215,29 +215,15 @@ func TestTraceViewIsPortableAndDoesNotClaimProof(t *testing.T) {
 		t.Fatal("nondeterministic view", err)
 	}
 }
-func TestSeveralRefinementParentsAndNestedConceptObligation(t *testing.T) {
+func TestSeveralRefinementParents(t *testing.T) {
 	root := traceFixture(t)
 	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "## Refines", "## Refines\n\n[Policy](../business-rules/retention.business-rule.spec.md)\n")
-	traceEdit(t, root, "specs/concepts/trash.concept.spec.md", "### Expire", `#### Obligations
-##### Preserve identity
-Restoration must preserve the item identity.
-###### Derived from
-[Recovery](../use-cases/restore.use-case.spec.md#restore-content)
-###### Rationale
-Compare the item identity before deletion and after restoration.
-
-### Expire`)
 	r := conformanceExport(t, root)
 	if r.ExitCode != 0 {
 		t.Fatal(r.Snapshot.Diagnostics)
 	}
-	if len(Strings(elementKind(t, r.Snapshot, "Requirement")["refines"])) != 2 {
+	if len(Strings(designRecord(t, r.Snapshot, "Requirement", "Preserve document metadata on restoration")["refines"])) != 2 {
 		t.Fatal("multiple refinement parents lost")
-	}
-	clause := designRecord(t, r.Snapshot, "ObligationClause", "Preserve identity")
-	owner := conformanceIndex(r.Snapshot)[String(clause, "owner")]
-	if String(owner, "kind") != "ConceptAction" {
-		t.Fatal("nested clause misowned", clause)
 	}
 	requireValid(t, r.Snapshot)
 }

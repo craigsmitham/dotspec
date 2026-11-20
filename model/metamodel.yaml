@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/metamodel.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.28.0-draft
+version: 0.29.0-draft
 description: Source-backed specifications and their reader-facing reports. Domain fields retain the authored
   Markdown through ordered byte ranges. Explicit declarations, links and classification labels supply identity
   and relationships.
@@ -34,7 +34,7 @@ subsets:
       classification: core
   software-requirements:
     title: Software requirements
-    description: Software interactions, concept behavior, obligations, quality classifications and satisfaction criteria.
+    description: Software interactions, concept behavior, requirements, quality classifications and satisfaction criteria.
     annotations:
       classification: core
   specification-traceability:
@@ -88,7 +88,7 @@ classes:
           relationship_basis: Identity of the domain record mapped from the referenced heading.
   SystemSpecReport:
     is_a: SubjectSpecReport
-    description: Explains the system’s purpose and scope and links to its immediate child systems, local subjects, and obligations.
+    description: Explains the system’s purpose and scope and links to its immediate child systems, local subjects, and requirements.
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -202,15 +202,6 @@ classes:
         equals_string: quality-attribute-spec-report
       documents:
         range: QualityAttribute
-  ObligationClauseSpecReport:
-    is_a: SubjectSpecReport
-    description: Preserves an addressable promise within the interaction or other subject that declares it.
-    in_subset: [specification-documentation]
-    slot_usage:
-      type:
-        equals_string: obligation-clause-spec-report
-      documents:
-        range: ObligationClause
   GoalSpecReport:
     is_a: SubjectSpecReport
     in_subset: [specification-documentation]
@@ -300,7 +291,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.28.0-draft
+        equals_string: 0.29.0-draft
       mapping_profile:
         range: string
         description: Versioned rules for mapping declared sections, metadata and references.
@@ -622,7 +613,7 @@ classes:
       derived_from:
         range: Record
         multivalued: true
-        description: Source or rationale for this element, including rules, decisions and obligations; not
+        description: Source or rationale for this element, including rules, decisions and requirements; not
           logical entailment.
         annotations:
           occurrence_role: link
@@ -963,8 +954,6 @@ classes:
       owned_memberships: System.goals or System.assumptions or System.glossary or System.quality_attributes
         or System.concept_uses or System.synchronizations
         or System.required_interfaces or System.provided_interfaces
-    mixins:
-    - ObligationContainer
   Goal:
     in_subset:
     - business-requirements
@@ -1071,7 +1060,7 @@ classes:
     - software-requirements
     description: A named quality attribute owned by exactly one system or reusable quality model. Attributes
       may be organized under several other attributes within that owner. This acyclic grouping supports trees
-      and overlapping classifications; it does not inherit obligations, thresholds, or satisfaction.
+      and overlapping classifications; it does not inherit requirements, thresholds, or satisfaction.
     is_a: DomainElement
     slot_usage:
       kind:
@@ -1317,8 +1306,6 @@ classes:
           relationship_label: has subject system
     annotations:
       owned_memberships: UseCase.main_success_scenario or UseCase.extensions
-    mixins:
-    - ObligationContainer
   Scenario:
     in_subset:
     - software-requirements
@@ -1363,15 +1350,15 @@ classes:
       illustrates:
         range: DomainElement
         multivalued: true
-        description: Obligations, business rules or actions explicitly illustrated by this step. No completeness
+        description: Requirements, business rules or actions explicitly illustrated by this step. No completeness
           or execution assertion.
         annotations:
           occurrence_role: link
           relationship_category: semantic-association
           trace_heading: Illustrates
-          trace_targets: Obligation or BusinessRule or ConceptAction
+          trace_targets: Requirement or BusinessRule or ConceptAction
         any_of:
-        - range: Obligation
+        - range: Requirement
         - range: BusinessRule
         - range: ConceptAction
       illustrates_content:
@@ -1465,8 +1452,6 @@ classes:
         inlined: true
     annotations:
       owned_memberships: Concept.actions
-    mixins:
-    - ObligationContainer
   ConceptAction:
     in_subset:
     - software-requirements
@@ -1510,8 +1495,6 @@ classes:
         inlined: true
         description: Authored initiation conditions, including user or system actions; no scheduler or caller
           is inferred.
-    mixins:
-    - ObligationContainer
   ConceptUse:
     in_subset:
     - software-requirements
@@ -1562,8 +1545,6 @@ classes:
         range: RichContent
         inlined: true
         description: Authored Markdown qualifying the dependencies relationship.
-    mixins:
-    - ObligationContainer
   Synchronization:
     in_subset:
     - software-requirements
@@ -1600,48 +1581,72 @@ classes:
       semantics:
         range: RichContent
         inlined: true
-    mixins:
-    - ObligationContainer
-  ObligationClause:
-    in_subset:
-    - business-requirements
-    - user-requirements
-    - software-requirements
-    description: An explicitly distinguished obligation inside another specification or behavioral model. Its
-      content is the authored expression, not a duplicate requirement document. Project authority determines
-      acceptance; declaration alone does not.
-    is_a: TraceableElement
-    slot_usage:
-      kind:
-        equals_string: ObligationClause
-    attributes:
-      owner:
-        range: ObligationContainer
-        required: true
-        annotations:
-          relationship_category: declaration-containment
-          relationship_basis: Checked inverse of canonical membership fields.
-          relationship_inverse: ObligationContainer.obligations
-    mixins:
-    - Obligation
   Requirement:
     in_subset:
     - software-requirements
-    description: A specification that gives one obligation its own document. An obligation is what ISO/IEC/IEEE
-      29148 calls a requirement, wherever it is written; this class names the specification type, not every
-      normative expression. Functional and quality requirements share this type. Either can reference a quality attribute.
+    description: One required property or behavior, declared in its own requirement specification. Functional
+      and quality requirements share this type. Either can reference a system quality attribute.
     is_a: SystemContextSpecification
-    mixins:
-    - Obligation
     slot_usage:
       kind:
         equals_string: Requirement
+    attributes:
+      applies_to:
+        range: DomainElement
+        multivalued: true
+        annotations:
+          occurrence_role: link
+          relationship_category: semantic-association
+          relationship_scope: Explicitly referenced acquired domain records; cross-system links are permitted.
+          relationship_basis: Projection of explicit authored reference or label occurrences.
+      applicability:
+        range: Applicability
+        inlined: true
+      rationale:
+        range: RichContent
+        inlined: true
+      refines:
+        range: DomainElement
+        multivalued: true
+        description: Adds precision while preserving the referenced requirement or business rule; not replacement, duplication
+          or proof. Multiple parents are permitted.
+        annotations:
+          occurrence_role: link
+          relationship_category: semantic-association
+          relationship_cycles: forbidden
+          trace_heading: Refines
+          trace_targets: Requirement or BusinessRule
+        any_of:
+        - range: Requirement
+        - range: BusinessRule
+      refines_content:
+        range: RichContent
+        inlined: true
+        description: Authored Markdown qualifying the refines relationship.
+      quality_attributes:
+        range: QualityAttribute
+        description: Only resolved classifications; original occurrences remain separately addressable.
+        multivalued: true
+        annotations:
+          occurrence_role: label
+          relationship_category: semantic-association
+          relationship_scope: Attributes declared by the requirement’s effective specification system.
+          relationship_basis: Projection of explicit authored reference or label occurrences.
+          relationship_label: classified by
+      statement:
+        range: RichContent
+        inlined: true
+      criterion:
+        range: RequirementCriterion
+        inlined: true
+        description: Optional explicit satisfaction rule, defining or referencing the required bounds once.
+          The criterion can cite an authoritative source.
   Applicability:
     in_subset:
     - business-requirements
     - user-requirements
     - software-requirements
-    description: Operating context covered by an obligation or business rule, with optional explicit dimensions.
+    description: Operating context covered by an requirement or business rule, with optional explicit dimensions.
       For outcomes of use, identify users, tasks, equipment or assistance, and environment. Record the required operating context here.
     attributes:
       content:
@@ -1660,13 +1665,13 @@ classes:
       exclusions:
         range: RichContent
         inlined: true
-  ObligationCriterion:
+  RequirementCriterion:
     in_subset:
     - business-requirements
     - user-requirements
     - software-requirements
-    description: Optional explicit rule for satisfaction of an obligation, qualitative or measured. Define
-      each bound once or reference its authoritative statement or source. Operating context belongs to the obligation's applicability. A criterion is not a measurement procedure
+    description: Optional explicit rule for satisfaction of an requirement, qualitative or measured. Define
+      each bound once or reference its authoritative statement or source. Operating context belongs to the requirement's applicability. A criterion is not a measurement procedure
       or an observation, and quality classification does not supply a criterion.
     attributes:
       content:
@@ -1767,11 +1772,11 @@ classes:
         range: DomainElement
         required: true
         any_of:
-        - range: Obligation
+        - range: Requirement
         - range: QualityAttribute
         annotations:
           relationship_category: provenance
-          relationship_scope: Obligation for a quality-classification label, or QualityAttribute for a sub-attribute
+          relationship_scope: Requirement for a quality-classification label, or QualityAttribute for a sub-attribute
             label; retained in the corresponding occurrence list.
       role:
         range: LabelRole
@@ -1785,14 +1790,14 @@ classes:
       governing_system:
         range: System
         description: System whose declared quality attributes govern this label, if established. This is the
-          declaring System or the specification system of a classified obligation, or the System declaring a
+          declaring System or the specification system of a classified requirement, or the System declaring a
           sub-attribute.
         annotations:
           relationship_category: provenance
       governing_quality_model:
         range: QualityModel
         description: Quality model whose definitions govern a parent label on a reusable definition; never
-          used for obligation classification.
+          used for requirement classification.
         annotations:
           relationship_category: provenance
   Resolution:
@@ -1980,91 +1985,6 @@ classes:
       span:
         range: ByteSpan
         inlined: true
-  ObligationContainer:
-    in_subset:
-    - business-requirements
-    - user-requirements
-    - software-requirements
-    description: Explicit declaration container for embedded obligation clauses. Traceability alone does not
-      confer containment.
-    is_a: TraceableElement
-    abstract: true
-    mixin: true
-    attributes:
-      obligations:
-        range: ObligationClause
-        multivalued: true
-        list_elements_ordered: true
-        annotations:
-          relationship_category: declaration-containment
-          relationship_basis: Explicit authored clause declarations; no semantic inference from prose.
-          relationship_inverse: ObligationClause.owner
-    annotations:
-      owned_memberships: ObligationContainer.obligations
-  Obligation:
-    in_subset:
-    - business-requirements
-    - user-requirements
-    - software-requirements
-    description: An obligation, expressed in its own Requirement specification or as a clause inside another
-      specification. This is what ISO/IEC/IEEE 29148 calls a requirement. An optional explicit criterion defines
-      or references the satisfaction rule.
-    is_a: TraceableElement
-    abstract: true
-    mixin: true
-    attributes:
-      applies_to:
-        range: DomainElement
-        multivalued: true
-        annotations:
-          occurrence_role: link
-          relationship_category: semantic-association
-          relationship_scope: Explicitly referenced acquired domain records; cross-system links are permitted.
-          relationship_basis: Projection of explicit authored reference or label occurrences.
-      applicability:
-        range: Applicability
-        inlined: true
-      rationale:
-        range: RichContent
-        inlined: true
-      refines:
-        range: DomainElement
-        multivalued: true
-        description: Adds precision while preserving the referenced obligation; not replacement, duplication
-          or proof. Multiple parents are permitted.
-        annotations:
-          occurrence_role: link
-          relationship_category: semantic-association
-          relationship_cycles: forbidden
-          trace_heading: Refines
-          trace_targets: Requirement or BusinessRule or ObligationClause
-        any_of:
-        - range: Requirement
-        - range: BusinessRule
-        - range: ObligationClause
-      refines_content:
-        range: RichContent
-        inlined: true
-        description: Authored Markdown qualifying the refines relationship.
-      quality_attributes:
-        range: QualityAttribute
-        description: Only resolved classifications; original occurrences remain separately addressable.
-        multivalued: true
-        annotations:
-          occurrence_role: label
-          relationship_category: semantic-association
-          relationship_scope: Attributes declared by the System that declares this obligation, or by the effective
-            specification system of its declaring specification.
-          relationship_basis: Projection of explicit authored reference or label occurrences.
-          relationship_label: classified by
-      statement:
-        range: RichContent
-        inlined: true
-      criterion:
-        range: ObligationCriterion
-        inlined: true
-        description: Optional explicit satisfaction rule, defining or referencing the required bounds once.
-          The criterion can cite an authoritative source.
   Component:
     in_subset:
     - software-requirements
@@ -2147,7 +2067,7 @@ classes:
       boundary_description:
         range: RichContent
         inlined: true
-        description: What the component includes, excludes and delegates; normative commitments remain obligations.
+        description: What the component includes, excludes and delegates; normative commitments remain requirements.
       part_of:
         range: DomainElement
         annotations:
@@ -2181,14 +2101,12 @@ classes:
           or satisfaction claim is inferred.
     annotations:
       owned_memberships: Component.concept_uses or Component.synchronizations or Component.required_interfaces or Component.provided_interfaces
-    mixins:
-    - ObligationContainer
   Feature:
     in_subset:
     - software-requirements
     is_a: SystemContextSpecification
     description: A recognizable grouping of specified product behavior valued by stakeholders, independent
-      of component structure. Membership does not duplicate or own obligations.
+      of component structure. Membership does not duplicate or own requirements.
     slot_usage:
       kind:
         equals_string: Feature
@@ -2210,7 +2128,6 @@ classes:
           relationship_basis: Projection of explicit authored reference occurrences.
         any_of:
         - range: Requirement
-        - range: ObligationClause
         - range: UseCase
         - range: Concept
         - range: ConceptUse
@@ -2286,8 +2203,6 @@ classes:
       declared by that System or Component. Required or provided membership states direction relative to the
       declaring subject. Native protocol contracts retain their authority; neither declaration nor citation
       proves implementation or compatibility.
-    mixins:
-    - ObligationContainer
     slot_usage:
       kind:
         equals_string: Interface
@@ -2388,7 +2303,7 @@ enums:
     description: Semantic label occurrences preserved before resolution.
     permissible_values:
       quality_classification:
-        description: An obligation's quality attribute label.
+        description: An requirement's quality attribute label.
       subattribute_of:
         description: A quality attribute parent label.
   Severity:

@@ -433,10 +433,15 @@ func (p *planner) indexTargets() {
 	}
 	for _, s := range p.subjects {
 		switch s.kind() {
-		case "BusinessRule":
+		case "BusinessRule", "Requirement":
 			for _, target := range model.Strings(s.r["applies_to"]) {
 				if owner := p.pages[target]; owner != nil && (owner.kind() == "System" || owner.kind() == "Component") {
-					owner.index("Business rules").classify(applicableRules(owner), entry{s.name.title, s.file, subjectPreview(s)})
+					e := entry{s.name.title, s.file, subjectPreview(s)}
+					if s.kind() == "Requirement" {
+						owner.index("Requirements").classify("Applicable requirements", e)
+					} else {
+						owner.index("Business rules").classify(applicableRules(owner), e)
+					}
 				}
 			}
 		case "Capability":
@@ -448,40 +453,6 @@ func (p *planner) indexTargets() {
 		}
 	}
 	p.indexOpenQuestions()
-	// Embedded obligations get their final fragments after the overview headings are planned.
-	clauses := map[string]bool{}
-	for _, r := range p.snapshot.Elements {
-		if attr(r, "kind") == "ObligationClause" {
-			page := p.ownerPage(r)
-			if page != nil {
-				sys := page.system
-				if page.parent != nil && page.parent.kind() == "Component" {
-					sys = page.parent
-				}
-				if page.kind() == "System" || page.kind() == "Component" {
-					sys = page
-				}
-				n := p.nodes[nameNode(r)]
-				sys.index("Requirements").add("", entry{attr(n, "decoded_text"), id(r), p.requirementPreview(r)})
-				clauses[id(r)] = true
-			}
-		}
-	}
-	for _, r := range p.snapshot.Elements {
-		if attr(r, "kind") != "Requirement" && attr(r, "kind") != "ObligationClause" {
-			continue
-		}
-		for _, target := range model.Strings(r["applies_to"]) {
-			owner := p.pages[target]
-			dest := p.targets[id(r)]
-			if clauses[id(r)] {
-				dest = id(r)
-			}
-			if owner != nil && (owner.kind() == "Component" || owner.kind() == "System") && dest != "" {
-				owner.index("Requirements").classify("Applicable requirements", entry{attr(p.nodes[nameNode(r)], "decoded_text"), dest, p.requirementPreview(r)})
-			}
-		}
-	}
 	// A system index also leads to the same collection in its components.
 	// Walk to the enclosing system so nested components remain discoverable
 	// regardless of the order in which their sources were read.
@@ -524,7 +495,6 @@ func (p *planner) indexTargets() {
 		}
 	}
 	p.indexEntryRelations()
-	// Plan section visibility before resolving links to embedded obligations.
 	for _, s := range p.subjects {
 		if s.isOverview() {
 			s.overview = p.planOverview(s)

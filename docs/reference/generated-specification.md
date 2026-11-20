@@ -30,8 +30,8 @@ Commit the authored changes, `SPEC.md` and the generated Markdown in `specificat
 | `specification/<name>.system.spec-report.md` | Root system overview and links into its specification |
 | `specification/glossary.md` | Alphabetical definitions linked to their sources, a topic index when terms declare topics, context names for distinct meanings, and links back to authored relationships |
 | `specification/use-cases.md` | Use cases with their authored goals and links to the scenarios |
-| `specification/quality/<attribute>/<attribute>.quality-attribute.spec-report.md` | One system attribute, its definition, parent and child attributes, and classified obligations |
-| `specification/requirements.md` | Requirements and embedded obligations in this system, each linked to its canonical page or passage |
+| `specification/quality/<attribute>/<attribute>.quality-attribute.spec-report.md` | One system attribute, its definition, parent and child attributes, and classified requirements |
+| `specification/requirements.md` | Requirements in this system, each linked to its canonical page or passage |
 | `specification/systems/<child>/<child>.system.spec-report.md` | Child system overview with its own local directories |
 | `specification/open-questions.md` | Questions recorded across the project, each with its subject and a link to the passage. The index appears when at least one authored question exists. |
 
@@ -44,16 +44,16 @@ Choose a section to read in order or open a collection index directly.
 | --- | --- |
 | Purpose | The system’s authored purpose |
 | Goals | Authored goals. Select a named goal to read its full statement and see which specifications support it. |
-| Business rules | Applicable rules with their authored statements. **All business rules** opens the full index. |
-| User needs | Stakeholders, jobs, and desired outcomes |
+| Business rules | **All business rules** opens the index of applicable and local rules. |
+| User needs | Authored stakeholder needs and a link to the jobs index |
 | Scope | Inclusions, exclusions, environment, assumptions, constraints, project context, and glossary |
 | System topology | Immediate parts, boundary partners, and required or provided interfaces, with a Mermaid diagram and linked descriptions |
 | Features | Product features and their authored descriptions |
 | Capabilities | Capabilities the system provides. When topology identifies a provider, its entry describes the capability. |
-| Use cases | Interactions and their authored goals |
-| Concepts | Concept definitions, concept uses, and synchronizations, each under its own heading when there is detail to show. |
-| Requirements | Standalone requirements and named obligations within other specifications. **All requirements** opens the index, including routes by component. |
-| Quality attributes | Top-level quality attributes, their authored definition previews and the requirements classified under each |
+| Use cases | The use-case index, where each interaction is listed with its authored goal |
+| Concepts | Links to concept definitions, uses and synchronizations. The body introduces named uses and synchronizations under their own headings. |
+| Requirements | **All requirements** opens the index, including routes by component. |
+| Quality attributes | Top-level attributes and their definition previews. Each attribute page lists the requirements classified under it. |
 | Open questions | Decisions that remain open in the system specification |
 
 Overview sections list all entries with project-specific detail in index order.
@@ -62,8 +62,7 @@ and quality hierarchy show their declared structure in full.
 
 Across overviews and indexes, each entry uses the same linked name and authored
 preview. **Uses** beside a concept use leads to its concept definition.
-**Refines** beside a requirement leads to each promise it refines, including a
-named obligation inside another subject. Open the requirement to read its full
+**Refines** beside a requirement leads to each promise it refines, whether a requirement or business rule. Open the requirement to read its full
 statement, conditions, and criteria together.
 
 When the project has authored questions, **All open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings. A topology edge represents a declared relationship.
@@ -101,7 +100,7 @@ on the parent index leads to the component’s index of the same name.
 
 On subject reports, collections that only provide navigation appear with the page’s index links. Sections with authored descriptions keep that text in the body. Within a component, `interfaces.md` groups required and provided interfaces.
 A provider’s `capabilities.md` groups explicitly provided capabilities, including
-those specified elsewhere. Its `requirements.md` lists local requirements and embedded obligations, plus
+those specified elsewhere. Its `requirements.md` lists local requirements, plus
 requirements owned elsewhere that explicitly apply to the component. The
 **Applicable requirements** group collects explicit applicability links, including
 local requirements. Each entry links to the canonical page or passage.

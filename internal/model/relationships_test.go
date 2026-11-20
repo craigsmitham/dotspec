@@ -85,7 +85,7 @@ func TestExplicitSemanticRelationships(t *testing.T) {
 	for _, a := range s.Relationships() {
 		projections[String(a, "projection_path")]++
 	}
-	for path, count := range map[string]int{"UseCase.subject_system": 1, "TraceableElement.supports": 2, "BusinessRule.applies_to": 1, "Obligation.applies_to": 1} {
+	for path, count := range map[string]int{"UseCase.subject_system": 1, "TraceableElement.supports": 2, "BusinessRule.applies_to": 1, "Requirement.applies_to": 1} {
 		if projections[path] != count {
 			t.Fatalf("projection %s: %d, want %d", path, projections[path], count)
 		}
@@ -111,7 +111,7 @@ func TestContextualLinksDoNotAssertSemanticRelations(t *testing.T) {
 	}
 	s := conformanceExport(t, root).Snapshot
 	for _, a := range s.Relationships() {
-		if slices.Contains([]string{"UseCase.subject_system", "TraceableElement.supports", "Obligation.applies_to", "BusinessRule.applies_to"}, String(a, "projection_path")) {
+		if slices.Contains([]string{"UseCase.subject_system", "TraceableElement.supports", "Requirement.applies_to", "BusinessRule.applies_to"}, String(a, "projection_path")) {
 			t.Fatal("citation inferred a domain claim", a)
 		}
 	}

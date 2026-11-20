@@ -215,7 +215,7 @@ See [structure and feature authoring](../../handbook/relationships.md#describe-s
 and the [To-do system overview](../../../examples/todo/specification/personal-task-list.system.spec-report.md).
 Use `dotspec spec build` in an [opted-in project](../generated-specification.md)
 to generate its overview and supporting pages. To inspect system structure and
-applicable obligations as a standalone Markdown report, run `dotspec model overview`.
+applicable requirements as a standalone Markdown report, run `dotspec model overview`.
 
 Source paths in command output are relative to the current directory.
 
@@ -264,6 +264,6 @@ specs/
 
 The system’s [quality attributes index](../../../examples/todo/specification/quality-attributes.md) links each attribute’s name and short definition to its
 individual report. Readers can follow parent and child links or browse all
-obligations classified by that attribute. For a complete example, read the
+requirements classified by that attribute. For a complete example, read the
 [Durability source](../../../examples/todo/specs/quality/durability/durability.quality-attribute.spec.md)
 and its [attribute report](../../../examples/todo/specification/quality/durability/durability.quality-attribute.spec-report.md).

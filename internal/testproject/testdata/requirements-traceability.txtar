@@ -93,7 +93,7 @@ For the restoration required by Restore retained content, the restored metadata 
 
 ## Refines
 
-[Restore retained content](../use-cases/restore.use-case.spec.md#restore-content).
+[Restore retained content](restore-content.requirement.spec.md).
 
 The refinement makes the required metadata explicit without weakening the parent's recovery window or authorization condition.
 
@@ -107,7 +107,7 @@ The refinement makes the required metadata explicit without weakening the parent
 
 ## Rationale
 
-Preserving these metadata fields lets members resume work with the same document identity and attribution. The Refines section identifies the governing obligation.
+Preserving these metadata fields lets members resume work with the same document identity and attribution. The Refines section identifies the governing requirement.
 -- specs/document-workspace.system.spec.md --
 ---
 type: system-spec
@@ -176,36 +176,16 @@ The workspace owns retention and restoration; external backups are outside this 
 ## Main success scenario
 
 1. The member selects a retained document.
-2. The workspace restores it according to [Restore retained content](#restore-content).
+2. The workspace restores it according to [Restore retained content](../requirements/restore-content.requirement.spec.md).
 3. The member resumes work.
 
 ## Success guarantees
 
 The member can resume work on the restored document.
 
-## Obligations
-
-### Restore retained content
-
-**ID:** restore-content
-
-When an authorized workspace member requests restoration before the 30-day recovery period ends, the workspace must restore the retained document content and metadata.
-
-#### Derived from
-
-[Recovery window](../business-rules/retention.business-rule.spec.md) supplies the time boundary.
-
-#### Supports
-
-[Recover lost work](../jobs/recover.job.spec.md).
-
-#### Applies to
-
-**Targets:** [DocumentTrash](../document-workspace.system.spec.md#documenttrash)
-
 ## Authority
 
-For this example, the workspace team accepts the named obligation above as the authoritative behavioral expression. The scenario refers to it rather than defining a second rule.
+The use case specifies the interaction. [Restore retained content](../requirements/restore-content.requirement.spec.md) specifies the recovery behavior.
 
 ## Primary actor
 
@@ -217,7 +197,7 @@ User task.
 
 ## Sequence
 
-The scenario order is representative; the named obligation governs restoration.
+The scenario order is representative; the recovery requirement governs restoration.
 
 ## Extensions
 
@@ -228,3 +208,30 @@ The workspace declines restoration from retained state and explains that the rec
 ### The member lacks authorization
 
 The workspace declines restoration and leaves the retained document unchanged.
+
+-- specs/requirements/restore-content.requirement.spec.md --
+---
+type: requirement-spec
+id: restore-content
+---
+# Restore retained content
+
+## Statement
+
+When an authorized workspace member requests restoration before the 30-day recovery period ends, the workspace must restore the retained document content and metadata.
+
+## Derived from
+
+[Recovery window](../business-rules/retention.business-rule.spec.md) supplies the time boundary.
+
+## Supports
+
+[Recover lost work](../jobs/recover.job.spec.md).
+
+## Applies to
+
+**Targets:** [DocumentTrash](../document-workspace.system.spec.md#documenttrash)
+
+## Rationale
+
+Restoration lets members resume work with the document they retained.

@@ -7,9 +7,9 @@ generated_by: dotspec
 
 ## Browse by topic
 
-- **Business requirements** · [Business rule](<#term.business-rule>), [Capability](<#term.capability>), [Obligation clause](<#term.obligation-clause>), [System](<#term.system>)
-- **Software requirements** · [Capability](<#term.capability>), [Component](<#term.component>), [Concept](<#term.concept>), [Feature](<#term.feature>), [Obligation clause](<#term.obligation-clause>), [Quality attribute](<#term.quality-attribute>), [Requirement](<#term.requirement>), [System](<#term.system>), [Use case](<#term.use-case>)
-- **User requirements** · [Job](<#term.job>), [Obligation clause](<#term.obligation-clause>)
+- **Business requirements** · [Business rule](<#term.business-rule>), [Capability](<#term.capability>), [System](<#term.system>)
+- **Software requirements** · [Capability](<#term.capability>), [Component](<#term.component>), [Concept](<#term.concept>), [Feature](<#term.feature>), [Quality attribute](<#term.quality-attribute>), [Requirement](<#term.requirement>), [System](<#term.system>), [Use case](<#term.use-case>)
+- **User requirements** · [Job](<#term.job>)
 
 <a id="term.business-rule"></a>
 
@@ -103,7 +103,7 @@ Relationships from [Feature](<#term.feature.relationships>)
 
 <!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#feature"} -->
 
-A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own obligations.
+A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own requirements.
 
 [Model reference](<../docs/reference/model/index.md#feature>)
 
@@ -118,7 +118,6 @@ A recognizable grouping of specified product behavior valued by stakeholders, in
 ### Relationships
 
 - Can group a [requirement](<#term.requirement>).
-- Can group an [obligation clause](<#term.obligation-clause>).
 - Can group a [use case](<#term.use-case>).
 - Can group a [concept](<#term.concept>).
 
@@ -148,35 +147,13 @@ What a performer seeks to accomplish or change in particular circumstances, inde
 
 [View term source](<../docs/reference/model/glossary.md#job>)
 
-<a id="term.obligation-clause"></a>
-
-## Obligation clause
-
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#obligation-clause"} -->
-
-An explicitly distinguished obligation inside another specification or behavioral model. Its content is the authored expression, not a duplicate requirement document. Project authority determines acceptance; declaration alone does not.
-
-[Model reference](<../docs/reference/model/index.md#obligationclause>)
-
-Relationships from [Feature](<#term.feature.relationships>)
-
-<a id="term.obligation-clause.topics"></a>
-
-### Topics
-
-- Business requirements
-- User requirements
-- Software requirements
-
-[View term source](<../docs/reference/model/glossary.md#obligation-clause>)
-
 <a id="term.quality-attribute"></a>
 
 ## Quality attribute
 
 <!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#quality-attribute"} -->
 
-A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit obligations, thresholds, or satisfaction.
+A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit requirements, thresholds, or satisfaction.
 
 [Model reference](<../docs/reference/model/index.md#qualityattribute>)
 
@@ -194,7 +171,7 @@ A named quality attribute owned by exactly one system or reusable quality model.
 
 <!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#requirement"} -->
 
-A specification that gives one obligation its own document. An obligation is what ISO/IEC/IEEE 29148 calls a requirement, wherever it is written; this class names the specification type, not every normative expression. Functional and quality requirements share this type. Either can reference a quality attribute.
+One required property or behavior, declared in its own requirement specification. Functional and quality requirements share this type. Either can reference a system quality attribute.
 
 [Model reference](<../docs/reference/model/index.md#requirement>)
 

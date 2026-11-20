@@ -50,25 +50,26 @@ func TestOverviewIsPortableAndSeparatesRelationships(t *testing.T) {
 	}
 }
 
-func TestComponentClausesAndCrossDocumentStructure(t *testing.T) {
+func TestComponentRequirementsAndCrossDocumentStructure(t *testing.T) {
 	root := structureFixture(t)
-	traceEdit(t, root, "components/checkout/specs/checkout.component.spec.md", "## Implementation", `## Obligations
+	conformanceWrite(t, root, "components/checkout/specs/requirements/submission.requirement.spec.md", `---
+type: requirement-spec
+id: idempotent-submission
+---
+# Idempotent submission
 
-### Idempotent submission
-
-**ID:** idempotent-submission
+## Statement
 
 A repeated submission must not duplicate the order.
 
-#### Applies to
+## Applies to
 
-**Targets:** [Checkout](#checkout)
+**Targets:** [Checkout](../checkout.component.spec.md)
 
-#### Rationale
+## Rationale
 
 Repeat a submission and count orders.
-
-## Implementation`)
+`)
 	conformanceWrite(t, root, "worker/specs/worker.system.spec.md", `---
 type: system-spec
 id: worker
@@ -94,10 +95,10 @@ id: worker-queue
 		t.Fatal(result.Snapshot.Diagnostics)
 	}
 	s := result.Snapshot
-	clause := designRecord(t, s, "ObligationClause", "Idempotent submission")
+	req := designRecord(t, s, "Requirement", "Idempotent submission")
 	checkout := designRecord(t, s, "Component", "Checkout")
-	if clause["owner"] != checkout["id"] || Strings(clause["applies_to"])[0] != checkout["id"] {
-		t.Fatal(clause)
+	if Strings(req["applies_to"])[0] != checkout["id"] {
+		t.Fatal(req)
 	}
 	worker := designRecord(t, s, "System", "Worker")
 	store := designRecord(t, s, "System", "Online Store")

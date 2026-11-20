@@ -73,7 +73,7 @@
   {
     "topic": "requirement",
     "page": "docs/handbook/requirements.md",
-    "description": "Author assessable obligations and satisfaction criteria.",
+    "description": "Author assessable requirements and satisfaction criteria.",
     "rules": [
       "requirement.applies-to",
       "requirement.statement",
@@ -81,9 +81,10 @@
     ]
   },
   {
-    "topic": "obligation",
-    "page": "docs/handbook/requirements-layers.md#distinguish-an-obligation-from-its-document",
-    "description": "Locate the authoritative expression of an obligation."
+    "topic": "authority",
+    "page": "docs/handbook/requirements-layers.md#choose-the-authoritative-specification",
+    "description": "Find the editable specification for a subject or its named parts.",
+    "rules": ["structure.inline-requirement"]
   },
   {
     "topic": "quality-model",

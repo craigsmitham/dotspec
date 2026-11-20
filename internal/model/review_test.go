@@ -145,12 +145,12 @@ func TestIllustrationIsExplicitAndRejectsWrongEndpoint(t *testing.T) {
 		name, replacement string
 		invalid           bool
 	}{
-		{"citation", "Related: [Restore retained content](#restore-content).", false},
+		{"citation", "Related: [Restore retained content](../requirements/restore-content.requirement.spec.md).", false},
 		{"wrong endpoint", "**Illustrates:** [Workspace](../document-workspace.system.spec.md).", true},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			root := reviewFixture(t)
-			traceEdit(t, root, "specs/use-cases/restore.use-case.spec.md", "**Illustrates:** [Restore retained content](#restore-content), [Restore](../concepts/trash.concept.spec.md#restore).", tc.replacement)
+			traceEdit(t, root, "specs/use-cases/restore.use-case.spec.md", "**Illustrates:** [Restore retained content](../requirements/restore-content.requirement.spec.md), [Restore](../concepts/trash.concept.spec.md#restore).", tc.replacement)
 			result := conformanceExport(t, root)
 			if (result.ExitCode != 0) != tc.invalid {
 				t.Fatal(result.Snapshot.Diagnostics)

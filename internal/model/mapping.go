@@ -13,6 +13,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/requirement"
+	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
 	"go.yaml.in/yaml/v3"
@@ -115,8 +116,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.parseFailure(err)
 		return m.result
 	}
-	class := map[string]string{"feature": "Feature", "capability": "Capability", "quality-attribute": "SystemQualityAttribute", "component": "Component", "quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "concept": "Concept", "use-case": "UseCase", "requirement": "Requirement"}[kind]
-	r := m.record(class, "")
+	r := m.record(specfile.SpecificationClass(kind), "")
 	m.result.RootID = String(r, "id")
 	if authoredID != "" {
 		r["authored_id"] = authoredID

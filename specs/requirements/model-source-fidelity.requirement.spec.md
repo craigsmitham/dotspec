@@ -24,6 +24,10 @@ An unreadable source retains its identity and diagnostic. Inspection must contin
 the remaining sources and report an incomplete read. A malformed specification must
 retain the available text and findings without acquiring a fabricated domain record.
 
+## Criterion
+
+Every valid mapped specification file contributes one primary record of its declared type. A named part retains the identity of its declaring source. Only requirement files contribute Requirement records. Multiple references to one requirement resolve to that same record. Offline validation reports a mismatched primary record or multiple primary subjects for one source.
+
 ## Rationale
 
 Consumers need both faithful source material and explicit domain meaning to
@@ -37,11 +41,11 @@ Checks for this requirement include [content tests](../../internal/model/content
 ## Related specifications
 
 [Inspection preserves source material](../quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md)
-defines the existing source-preservation quality obligation.
+defines the existing source-preservation quality requirement.
 [Continue checking after a structural error](continue-after-invalid-spec.requirement.spec.md)
 defines continued inspection. The
 [export use case](../use-cases/export-specification-model.use-case.spec.md)
-places these obligations in the contributor's interaction.
+places these requirements in the contributor's interaction.
 
 The [specification model documentation](../../docs/reference/specification-model.md) and
 [Markdown mapping profile](../../model/markdown-mapping.md) describe the

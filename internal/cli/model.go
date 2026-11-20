@@ -138,7 +138,7 @@ func newModelCommand() *cobra.Command {
 			return nil
 		}}
 	trace := &cobra.Command{Use: "trace", Short: "Generate layered requirements traceability and change-review views as Markdown", Args: cobra.NoArgs,
-		Long:    "Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and obligation criteria. Resolved explicit relationships only; paths do not establish satisfaction or evidence.",
+		Long:    "Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and requirement criteria. Resolved explicit relationships only; paths do not establish satisfaction or evidence.",
 		Example: "dotspec model trace --path . --relative-to views",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
@@ -172,8 +172,8 @@ func newModelCommand() *cobra.Command {
 			}
 			return nil
 		}}
-	overview := &cobra.Command{Use: "overview", Short: "Generate system structure, features, and applicable obligations as Markdown", Args: cobra.NoArgs,
-		Long:    "Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and obligation criteria. Directory context remains separate; no implementation or requirement inheritance is inferred.",
+	overview := &cobra.Command{Use: "overview", Short: "Generate system structure, features, and applicable requirements as Markdown", Args: cobra.NoArgs,
+		Long:    "Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and requirement criteria. Directory context remains separate; no implementation or requirement inheritance is inferred.",
 		Example: "dotspec model overview --path . --relative-to views",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
@@ -208,7 +208,7 @@ func newModelCommand() *cobra.Command {
 			return nil
 		}}
 	needs := &cobra.Command{Use: "needs", Short: "Generate a needs-to-specification map with capability dependencies", Args: cobra.NoArgs,
-		Long:    "Show jobs, shared outcomes, features, obligations and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.",
+		Long:    "Show jobs, shared outcomes, features, requirements and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.",
 		Example: "dotspec model needs --path . --relative-to views",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)

@@ -81,12 +81,12 @@ are made self-contained. Code examples are preserved. A dry run makes these
 changes reviewable before writing.
 
 After copying, edit definitions to explain their meaning for your system. Add
-quality requirements separately when you know the actual obligations, conditions,
+quality requirements separately when you know the actual requirements, conditions,
 and measures. For example, `dotspec requirement init preserve-tasks --attribute durability`
 creates a functional requirement in `specs/requirements/` with a durability classification.
-For a quality obligation such as a data-loss tolerance, add `--preset quality` to include a criterion prompt.
+For a quality requirement such as a data-loss tolerance, add `--preset quality` to include a criterion prompt.
 Use [Develop requirements](requirements.md) to turn selected concerns into
-scoped obligations with criteria and assessment guidance. Product properties and
+scoped requirements with criteria and assessment guidance. Product properties and
 outcomes for users in a context of use need different evidence.
 
 ## Define or customize a model
@@ -156,7 +156,7 @@ Consider continued useful service under adversity.
 
 Here `reliable` and `secure` must also be declared in the model.
 See [the grouping rationale](../reference/specification-model.md#quality-attribute-grouping)
-for the distinction between organization and inherited obligations.
+for the distinction between organization and inherited requirements.
 
 Older `Broader` or provisional `Parents` fields must be renamed to
 `Sub-attribute of`. Checks report these old fields explicitly so a relationship

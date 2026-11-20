@@ -8,8 +8,9 @@ import (
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/obligation"
 	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/craigsmitham/dotspec/internal/system"
+	"go.yaml.in/yaml/v3"
 )
 
 const Suffix = ".requirement.spec.md"
@@ -30,11 +31,11 @@ Identify the subject and operating conditions, including any exclusions. Disting
 ## Statement
 
 State one required result, rule, property, or restriction. Use general rules or contracts where they fit; prescribe ordering only when it is required.
-What observable result would violate this obligation? Add a Criterion section if an explicit assessment rule helps, defining or referencing each required bound once.
+What observable result would violate this requirement? Add a Criterion section if an explicit assessment rule helps, defining or referencing each required bound once.
 
 ## Rationale
 
-Explain why this obligation is needed and reference its source or governing goal.
+Explain why this requirement is needed and reference its source or governing goal.
 
 `
 
@@ -53,7 +54,7 @@ For outcomes of use, identify the users, their task, available assistance, and e
 
 ## Statement
 
-State one coherent quality obligation. What observable result would violate it?
+State one coherent quality requirement. What observable result would violate it?
 
 ## Criterion
 
@@ -87,10 +88,30 @@ func TemplateFor(preset string) (string, error) {
 
 var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 
-// Requirement keeps obligations as authored Markdown. Classification resolves
-// against the associated system without establishing applicability or satisfaction.
+type metadata struct {
+	specfile.Metadata `yaml:",inline"`
+	ID                string    `yaml:"id"`
+	QualityAttributes yaml.Node `yaml:"quality_attributes"`
+}
+
 type Requirement struct {
-	*obligation.Content
+	MeasurementGuidance MeasurementGuidance            `json:"-"`
+	References          *specfile.ReferenceDocument    `json:"-"`
+	ID                  string                         `json:"id,omitempty"`
+	Slug                string                         `json:"slug"`
+	Name                string                         `json:"name"`
+	Applicability       string                         `json:"applicability"`
+	Statement           string                         `json:"statement"`
+	Criterion           string                         `json:"criterion,omitempty"`
+	Rationale           string                         `json:"rationale"`
+	QualityAttributes   []string                       `json:"quality_attributes"`
+	Classification      Classification                 `json:"classification"`
+	Markdown            string                         `json:"markdown"`
+	Path                string                         `json:"path"`
+	System              *system.System                 `json:"system"`
+	Location            diagnostic.Location            `json:"location"`
+	SectionLocations    map[string]diagnostic.Location `json:"-"`
+	AttributeLocations  map[string]diagnostic.Location `json:"-"`
 }
 
 func ValidateSlug(slug string) error {
@@ -132,9 +153,73 @@ func Parse(data []byte) (*Requirement, error) {
 }
 
 func ParseMarkdown(input *specfile.Markdown) (*Requirement, error) {
-	content, err := obligation.ParseMarkdown(input, Layout.Kind)
+	var meta metadata
+	doc, err := input.TypedOutline(Layout.Kind, &meta)
 	if err != nil {
 		return nil, err
 	}
-	return &Requirement{Content: content}, nil
+	spec := &Requirement{
+		ID: meta.ID, Name: doc.Name, Location: doc.NameLocation,
+		Markdown:           strings.TrimSpace(string(doc.Source)),
+		QualityAttributes:  []string{},
+		SectionLocations:   make(map[string]diagnostic.Location),
+		AttributeLocations: make(map[string]diagnostic.Location),
+	}
+	if err := parseAttributes(spec, &meta.QualityAttributes); err != nil {
+		return nil, err
+	}
+	spec.Classification = Classify(spec.QualityAttributes, nil)
+	var ids specfile.Identifiers
+	if err := ids.Register(spec.ID, Layout.Kind, input.MetadataLocation("id")); err != nil {
+		return nil, err
+	}
+	ids.AddAnchors(doc.Anchors)
+	fields := map[string]*string{
+		"Applies to": &spec.Applicability, "Statement": &spec.Statement,
+		"Criterion": &spec.Criterion, "Rationale": &spec.Rationale,
+	}
+	for _, section := range doc.Sections {
+		target, known := fields[section.Title]
+		if !known {
+			continue
+		}
+		location := doc.Location(section.Start, section.Title)
+		if section.Level != 2 {
+			return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), location)
+		}
+		if previous, exists := spec.SectionLocations[section.Title]; exists {
+			return nil, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", section.Title), location, previous)
+		}
+		spec.SectionLocations[section.Title] = location
+		*target = doc.Body(section)
+	}
+	spec.MeasurementGuidance = measurementGuidance(doc)
+	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
+		return nil, err
+	}
+	spec.References = doc.References()
+	return spec, nil
+}
+
+func parseAttributes(spec *Requirement, node *yaml.Node) error {
+	if node.Kind == 0 {
+		return nil
+	}
+	location := diagnostic.Location{Line: node.Line + 1, Column: node.Column, Element: "quality_attributes"}
+	if node.Kind != yaml.SequenceNode {
+		return diagnostic.Error("requirement.attributes", "attributes must be a list of unique, nonempty string IDs", location)
+	}
+	var ids specfile.Identifiers
+	for _, value := range node.Content {
+		location := diagnostic.Location{Line: value.Line + 1, Column: value.Column, Element: "quality_attributes"}
+		if value.Kind != yaml.ScalarNode || value.Tag != "!!str" || strings.TrimSpace(value.Value) == "" {
+			return diagnostic.Error("requirement.attributes", "each attribute must be a nonempty string ID", location)
+		}
+		if err := ids.Register(value.Value, "attribute", location); err != nil {
+			return err
+		}
+		spec.QualityAttributes = append(spec.QualityAttributes, value.Value)
+		spec.AttributeLocations[value.Value] = location
+	}
+	return nil
 }

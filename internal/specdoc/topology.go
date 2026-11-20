@@ -11,7 +11,7 @@ import (
 
 // Containment and boundary interactions have distinct meanings. Only explicit
 // model relationships supply edges; directory membership is navigation.
-func (p *planner) renderTopology(w *writer, owner *subject, shownCapabilities map[string]bool) {
+func (p *planner) renderTopology(w *writer, owner *subject) {
 	type connection struct{ target, edge, role string }
 	var connections []connection
 	if owner.parent != nil && attr(owner.r, "part_of") == id(owner.parent.r) {
@@ -36,6 +36,9 @@ func (p *planner) renderTopology(w *writer, owner *subject, shownCapabilities ma
 		for _, target := range model.Strings(owner.r[role.field]) {
 			connections = append(connections, connection{target, role.edge, role.label})
 		}
+	}
+	for _, capability := range providers[id(owner.r)] {
+		connections = append(connections, connection{id(capability.r), "provides", "Provided capability"})
 	}
 	nodes := map[string]int{id(owner.r): 0}
 	var diagram strings.Builder
@@ -62,7 +65,6 @@ func (p *planner) renderTopology(w *writer, owner *subject, shownCapabilities ma
 					line += " — " + inlineText(preview)
 				}
 				lines = append(lines, line)
-				shownCapabilities[capability.file] = true
 			}
 		}
 	}

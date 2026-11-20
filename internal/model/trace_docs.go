@@ -149,26 +149,23 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	} else {
 		out.WriteString("No resolved relationships acquired.\n\n")
 	}
-	out.WriteString("## Behavior: use cases and concept uses\n\nUse cases and concepts are complementary views. Participation is many-to-many and identifies a named use, not a reusable definition alone.\n\n| Use case | Participating concept uses | Explicit obligations applying to this use case |\n| --- | --- | --- |\n")
+	out.WriteString("## Behavior: use cases and concept uses\n\nUse cases and concepts are complementary views. Participation is many-to-many and identifies a named use, not a reusable definition alone.\n\n| Use case | Participating concept uses | Explicit requirements applying to this use case |\n| --- | --- | --- |\n")
 	count := 0
 	for _, r := range elements {
 		if String(r, "kind") != "UseCase" {
 			continue
 		}
 		count++
-		uses, obligations := []string{}, []string{}
+		uses, requirements := []string{}, []string{}
 		for _, id := range Strings(r["involves"]) {
 			uses = append(uses, link(id))
 		}
-		for _, id := range Strings(r["obligations"]) {
-			obligations = append(obligations, link(id)+" (declared here)")
-		}
 		for _, e := range edges {
-			if e.target == String(r, "id") && e.field == "applies_to" {
-				obligations = append(obligations, link(e.source))
+			if e.target == String(r, "id") && e.field == "applies_to" && String(d.index[e.source], "kind") == "Requirement" {
+				requirements = append(requirements, link(e.source))
 			}
 		}
-		fmt.Fprintf(&out, "| %s | %s | %s |\n", link(String(r, "id")), traceList(uses), traceList(obligations))
+		fmt.Fprintf(&out, "| %s | %s | %s |\n", link(String(r, "id")), traceList(uses), traceList(requirements))
 	}
 	if count == 0 {
 		out.WriteString("| — | No use cases acquired | — |\n")

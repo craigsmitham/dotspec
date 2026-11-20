@@ -22,8 +22,8 @@ exec dotspec guide job
 stdout 'progress'
 exec dotspec guide use-case
 stdout 'Start with actors and goals'
-exec dotspec guide obligation
-stdout 'ObligationClause'
+exec dotspec guide authority
+stdout 'Choose the authoritative specification'
 exec dotspec guide examples/todo/specs/use-cases/resume-list.use-case.spec.md
 stdout 'Keep recorded work available'
 exec dotspec guide examples/todo/specs/requirements/restart.requirement.spec.md

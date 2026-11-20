@@ -3,6 +3,7 @@ package model
 import (
 	"bytes"
 	"encoding/json"
+	"maps"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -196,6 +197,23 @@ func TestValidationChecksCanonicalSourceAndGraph(t *testing.T) {
 		name, code string
 		mutate     func(*Snapshot)
 	}{
+		{"retired inline kind", "shape.invalid", func(s *Snapshot) { elementKind(t, s, "Requirement")["kind"] = "ObligationClause" }},
+		{"unrecognized declared type", "specification.source", func(s *Snapshot) {
+			for _, doc := range s.Documents {
+				if doc["declared_type"] == "requirement-spec" {
+					doc["declared_type"] = "requirement"
+				}
+			}
+		}},
+		{"wrong specification source", "specification.source", func(s *Snapshot) {
+			r := elementKind(t, s, "Requirement")
+			r["source_document"] = elementKind(t, s, "UseCase")["source_document"]
+		}},
+		{"second primary subject", "specification.root", func(s *Snapshot) {
+			duplicate := maps.Clone(elementKind(t, s, "Requirement"))
+			duplicate["id"] = "duplicate-requirement"
+			s.Elements = append(s.Elements, duplicate)
+		}},
 		{"missing owned member", "reference.missing", func(s *Snapshot) { elementKind(t, s, "Job")["steps"] = []string{"absent"} }},
 		{"duplicate identity", "identity.duplicate", func(s *Snapshot) { s.Elements = append(s.Elements, s.Elements[0]) }},
 		{"source outside field", "source.span", func(s *Snapshot) { records(Object(elementKind(t, s, "UseCase")["goal"])["spans"])[0]["end"] = 1000000 }},

@@ -62,12 +62,12 @@ The recipient must have consented to delivery.
 Applies when the address is sent to a recipient outside the organization.
 ```
 
-Requirements, obligation clauses and business rules use this form. Targets
+Requirements and business rules use this form. Targets
 may identify any acquired domain record, including a system, concept use, use case
 or explicitly named step. Cross-system applicability is permitted.
 
 The complete section remains `applicability: Applicability`. Source occurrences and
-resolved domain targets are retained on the obligation or business-rule record as
+resolved domain targets are retained on the requirement or business-rule record as
 `applies_to_references` and `applies_to`. Only the Targets field declares targets;
 links elsewhere in the section do not silently become Targets. Conditions,
 Workload, Population and Exclusions subsections remain authored explanations.
@@ -108,7 +108,7 @@ Consumers should read the typed fields as authoritative. The optional `assertion
 collection provides derived views of those fields. Every assertion has both
 endpoints, source-backed inputs, and a `projection_path` naming its canonical
 field, such as `UseCase.subject_system`, `TraceableElement.supports` or
-`Obligation.applies_to`. That path also distinguishes roles, such as
+`Requirement.applies_to`. That path also distinguishes roles, such as
 `System.required_interfaces` from `System.provided_interfaces`. Assertions are a view
 of the typed graph; their absence does not remove a typed relationship.
 
@@ -149,66 +149,20 @@ Every link in one of these sections declares a target. Keep incidental citations
 in Notes or Related specifications so they do not declare unintended relationships.
 Empty sections are valid drafts. No links are inferred from prose.
 
-## Identify an obligation without creating another document
+## Refine a requirement or business rule
 
-Use an Obligations section within a System, Component, Interface, UseCase, Concept,
-ConceptAction, ConceptUse or Synchronization when a rule needs its own identity:
-
-```markdown
-## Obligations
-
-### Restore retained content
-
-**ID:** restore-content
-**Quality attributes:** recoverability
-
-The workspace must restore retained document content and metadata when an
-authorized member requests restoration within the recovery window.
-
-#### Derived from
-
-[Recovery policy](../business-rules/retention.business-rule.spec.md).
-
-#### Applies to
-
-**Targets:** [DocumentTrash](../document-workspace.system.spec.md#documenttrash)
-
-```
-
-The introductory prose becomes the clause's statement. Applies to, Rationale
-and Criterion use the same forms as in a requirement
-specification. The optional comma-separated Quality attributes field classifies
-the clause against its declaring system; it uses the same IDs as a requirement's
-`quality_attributes` metadata. Relationship
-headings can appear beneath the clause. An optional ID must be nonempty and unique
-among declared IDs in the document; otherwise link to the generated heading anchor.
-IDs and anchors work in same-file and cross-file links. Generated reader links use
-Markdown heading anchors so they also work in ordinary Markdown viewers.
-
-This creates an owned `ObligationClause`, not a new file. Do not copy the statement
-into a requirement specification just to link it. If a narrative already owns the
-obligation, refer to that clause from scenarios or other views. The declaration
-does not itself record acceptance; retain the consuming project's authority policy.
-
-A requirement specification states one obligation and cannot contain an Obligations
-section. Jobs, job steps, business rules, features, capabilities and quality models
-do not contain clauses either; model export reports `obligation.container` for an
-Obligations section in any of them.
-
-## Refine an obligation
-
-Use Refines on a requirement, obligation clause or business rule:
+Use Refines on a requirement or business rule:
 
 ```markdown
 ## Refines
 
-[Restore retained content](../use-cases/restore.use-case.spec.md#restore-content).
+[Restore retained content](restore-content.requirement.spec.md).
 
 This requirement identifies the metadata fields while preserving the parent's
 recovery window and authorization condition.
 ```
 
-A requirement or clause can refine Requirement, BusinessRule or ObligationClause
+A requirement can refine Requirement or BusinessRule
 records. A business rule refines only other business rules. Multiple parents are
 permitted. Explain the added precision in the section or Rationale.
 Refinement preserves the parent commitment; it is not supersession, duplication
@@ -242,9 +196,9 @@ participation, direct and transitive change-review candidates, and inspection fi
 fields and emits only resolved relationships. It does not write files unless
 output is redirected. A nonzero authoring exit still produces the review document.
 
-Missing motivation prompts review of the obligation’s justification.
+Missing motivation prompts review of the requirement’s justification.
 The [To-do restart requirement](../../examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md)
-links to the scenario obligation it refines, the storage assumption it relies on
+links to the availability requirement it refines, the storage assumption it relies on
 and the desired outcome it supports. See [Requirements layers](requirements-layers.md)
 for the meaning of those relationships.
 
@@ -299,12 +253,12 @@ Each component declares one parent system or component. A nested component links
 to its immediate parent. Subsystems use a single system link in their own
 `Part of` section. The root system omits that section.
 
-`Groups` can reference requirements, obligation clauses, use cases, concepts,
+`Groups` can reference requirements, use cases, concepts,
 named concept uses, synchronizations and interfaces. Several features can group the same
 record. The nearest enclosing system or component owns the feature source. Its overview
 lists the feature automatically, using the first paragraph of its Description.
 
-In a requirement or embedded obligation, explicitly target a component:
+In a requirement, explicitly target a component:
 
 ```markdown
 ## Applies to
@@ -312,11 +266,7 @@ In a requirement or embedded obligation, explicitly target a component:
 **Targets:** [Checkout](../../components/checkout/specs/checkout.component.spec.md)
 ```
 
-Components can also contain a `## Obligations` section with named clauses,
-using the existing obligation authoring conventions at the corresponding heading
-levels. Declaration alone does not supply an applicability target. Purpose,
-Responsibilities and Boundary explain a component; put normative commitments in
-requirements or clauses so they can carry rationale and satisfaction criteria.
+Purpose, Responsibilities and Boundary explain a component. A requirement targeting that component owns the required behavior, rationale and criterion.
 Contracts, Architecture and Implementation are ordinary narrative and references
 to authoritative native artifacts, not separately modeled architecture definitions.
 
@@ -336,7 +286,7 @@ a broken, external, non-system, empty or ambiguous explicit selection does not
 fall back. Relative links obey the existing repository and direct-reference
 boundaries; external systems are not fetched. The association governs grouping
 and quality classification in show, list, check and model export. It does not set
-`subject_system` for a use case or change an obligation's `applies_to` targets.
+`subject_system` for a use case or change a requirement's `applies_to` targets.
 
 ### Review the overview
 
@@ -345,13 +295,13 @@ dotspec model overview
 ```
 
 The command reports explicit part relationships, feature groups, directly
-applicable obligations, criteria, concept uses,
+applicable requirements, criteria, concept uses,
 descriptions and native references. To read the same subjects in context, open
 the [To-do system specification](../../examples/todo/specification/personal-task-list.system.spec-report.md) and follow the
 feature, component or interface that interests you.
 
 The command derives feature involvement from the direct applicability targets
-of grouped obligations.
+of grouped requirements.
 The overview distinguishes declaration location, selected system and directory
 context, and retains unresolved authored references in the descriptions and
 inspection findings. It makes no completeness, allocation or satisfaction claim.
@@ -375,6 +325,6 @@ its steps and the outcome supported by the restart requirement.
 
 Use Interacts with on Systems or Components for explicit boundary partners, separate
 from Part of. Use an Illustrates bullet inside a scenario step to identify its
-underlying obligation, business rule or concept action. See [Review requirements](review.md)
+underlying requirement, business rule or concept action. See [Review requirements](review.md)
 for these forms, exclusions, required/provided interfaces, assumption validation,
 open questions and the generated review and PEGS perspectives.

@@ -60,8 +60,6 @@ Use the [documentation map](docs/README.md) to find the source for a CLI guide t
   metadata schemas, layouts, templates, and repository operations. Their `CheckType`
   functions supply inspection behavior; the CLI registers the supported types.
   Parsing functions accept bytes without I/O.
-- `internal/obligation` is the authoring model for the obligation a requirement
-  states: content parsing, quality-attribute classification and measurement-basis guidance.
 - `internal/specfile` owns common frontmatter, Goldmark outlines, source locations,
   document-local identifiers, reference extraction, and shared filesystem/discovery
   behavior. All specification types use the same Markdown extraction path.
@@ -128,31 +126,13 @@ come from the type packages. Edit those sources, then run `mise run generate`.
 ## Specification tests and implementation tests
 
 This repository applies dotspec's [source authority principle](specs/dotspec.system.spec.md#source-authority)
-by linking to native sources and enforcing file coverage with a small consumer
-script. Test roles are an authoring decision, not a classification inferred by
-dotspec or a consequence of using a particular test framework.
+by keeping each product decision in the specification for its subject. When adding or changing a CLI example, identify the governing requirement, concept action, use case, or native interface contract. If the example introduces a product requirement, author its requirement file in the same change.
 
-- `internal/integration/testdata/*.txtar` are designated executable specification
-  examples. Their assertions define required CLI outcomes for the illustrated
-  inputs and conditions. Sequences are representative unless a required ordering
-  is explicitly stated. New cases belong here only when reviewers intend to
-  preserve their behavior across changes in implementation.
-- `internal/cli/quality_contracts_test.go` verifies the quality obligations
-  stated in the requirement specifications that link to it. Those prose criteria retain
-  authority; a test passing is evidence for its exercised cases.
-- Other Go tests and the integration harness remain development artifacts by
-  default. They can test private structure, parser mechanics, and regressions
-  without making every expectation a product obligation. A unit test may be
-  deliberately adopted as a specification test; an integration test may instead
-  be implementation-specific. Choose by intent and scope, not test level.
+- The scripts in `internal/integration/testdata/*.txtar` own their example inputs, commands and expected observations. They verify the public behavior identified alongside their links in Command Invocation.
+- `internal/cli/quality_contracts_test.go` checks the conditions and criteria in the quality requirements that cite it.
+- Implementation tests can exercise private parser decisions and regressions. Changing the implementation can change these checks while preserving the specified behavior.
 
-When a new test only freezes incidental behavior, keep it outside the designated
-collection. When a test file mixes normative examples and implementation checks,
-separate those concerns before designating the file. Review changes to designated
-assertions as specification changes, including fixtures that determine expected
-results. Existing general rules and executable examples can constrain the same
-behavior; resolve disagreements explicitly rather than treating a green run as
-precedence.
+Review changes to example assertions against their governing source. Update that source when the intended behavior changes.
 
 The [CLI Interaction concept](internal/integration/specs/concepts/cli-interaction.concept.spec.md)
 links to the acceptance scripts. Quality requirements explain their verification links.

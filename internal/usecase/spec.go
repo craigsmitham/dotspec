@@ -216,9 +216,6 @@ func ParseMarkdown(input *specfile.Markdown) (*UseCase, error) {
 	if err := ids.Register(spec.ID, "use case", input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
-	if err := ids.RegisterObligations(doc); err != nil {
-		return nil, err
-	}
 	ids.AddAnchors(doc.Anchors)
 	fields := map[string]*string{
 		"Goal": &spec.Goal, "System boundary": &spec.BoundaryDescription,

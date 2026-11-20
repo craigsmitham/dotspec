@@ -116,6 +116,14 @@ def verify(binary, db):
         finished = completed.entries()
         assert finished == {errand: "Call Pat & Lee <today>"} and "/" in completed.links
 
+        # Return in a fresh view while the service is still running.
+        returned = page(base, "/completed")
+        assert returned.entries() == finished and page(base).entries() == open_entries
+        submit(base, returned, errand + "/reopen")
+        assert page(base).entries() == open_entries | finished
+        submit(base, page(base), errand + "/complete")
+        assert page(base, "/completed").entries() == finished
+
     with running(binary, db) as base:
         assert page(base).entries() == open_entries, "restart lost or changed open tasks"
         completed = page(base, "/completed")

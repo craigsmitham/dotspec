@@ -141,9 +141,6 @@ func ParseMarkdown(input *specfile.Markdown) (*QualityModel, error) {
 			return nil, err
 		}
 	}
-	if err := ids.RegisterObligations(doc); err != nil {
-		return nil, err
-	}
 	ids.AddAnchors(doc.Anchors)
 	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
 		return nil, err

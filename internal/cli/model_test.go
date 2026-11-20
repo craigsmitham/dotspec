@@ -138,7 +138,7 @@ func TestRequirementsTraceCommand(t *testing.T) {
 	root := testproject.Open(t, "requirements-traceability")
 	t.Chdir(root)
 	code, output, errOut := invoke("model", "trace", "--relative-to", "docs")
-	if code != 0 || errOut != "" || !strings.Contains(output, "## Change review") || !strings.Contains(output, "../specs/use-cases/restore.use-case.spec.md#restore-retained-content") {
+	if code != 0 || errOut != "" || !strings.Contains(output, "## Change review") || !strings.Contains(output, "../specs/requirements/restore-content.requirement.spec.md") {
 		t.Fatalf("trace: %d %s %s", code, output, errOut)
 	}
 	var stderr bytes.Buffer
@@ -176,7 +176,7 @@ func TestSystemOverviewCommand(t *testing.T) {
 func TestModelReviewAndPEGSCommandsKeepAdvisoryDraftsValid(t *testing.T) {
 	root := testproject.Open(t, "requirements-review")
 	t.Chdir(root)
-	for _, tc := range []struct{ command, want string }{{"review", "## Obligation review"}, {"pegs", "## Project"}} {
+	for _, tc := range []struct{ command, want string }{{"review", "## Requirement review"}, {"pegs", "## Project"}} {
 		code, output, errOut := invoke("model", tc.command, "--relative-to", "docs")
 		if code != 0 || errOut != "" || !strings.Contains(output, tc.want) || !strings.Contains(output, "../specs/document-workspace.system.spec.md") {
 			t.Fatalf("%s: %d %s %s", tc.command, code, errOut, output)

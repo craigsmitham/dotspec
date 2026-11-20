@@ -2,12 +2,15 @@ package specfile
 
 import (
 	"fmt"
+	"regexp"
 	"slices"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/yuin/goldmark/ast"
 )
+
+var declarationID = regexp.MustCompile(`^\*\*ID:\*\*\s*(.*?)\s*$`)
 
 // RegisterDeclarations reads IDs only from the introduction of named entries.
 // Examples in code, quotations, or nested detail sections do not declare IDs.
@@ -62,7 +65,7 @@ func (ids *Identifiers) registerEntries(o *Outline, section *Section) error {
 			}
 			for i := 0; i < paragraph.Lines().Len(); i++ {
 				line := paragraph.Lines().At(i)
-				match := obligationID.FindStringSubmatch(strings.TrimSpace(string(line.Value(o.Source))))
+				match := declarationID.FindStringSubmatch(strings.TrimSpace(string(line.Value(o.Source))))
 				if match == nil {
 					continue
 				}

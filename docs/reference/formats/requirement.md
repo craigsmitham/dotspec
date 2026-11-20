@@ -7,8 +7,7 @@ requirements classified with that ID.
 
 ## Requirements
 
-Use a requirement to state an obligation without first writing a concept
-or use case. A requirement can express a response, postcondition, invariant,
+Define a required result in a `*.requirement.spec.md` file. A requirement can express a response, postcondition, invariant,
 relationship, or imposed restriction. Its type does not implicitly mean
 “functional”; functional/non-functional classification is not required.
 Functional and quality requirements share the same type, commands, and format. Both can reference quality attributes.
@@ -45,7 +44,7 @@ conventions as other types.
 
 ### Requirement format
 
-A requirement spec states one obligation.
+A requirement spec states one requirement.
 
 ```markdown
 ---
@@ -82,8 +81,7 @@ sections. Missing statement, applicability or rationale produces advice. Deeper 
 tables and links retain their original Markdown inside those sections.
 No sentence pattern or particular verification technique is required. Check
 commands validate relative file links using the shared [reference rules](../inspection.md#references).
-Model export reports an `Obligations` section inside a requirement as
-`obligation.container`.
+A structural `## Obligations` section produces `structure.inline-requirement`. Move each general requirement to its own requirement file, carry over its conditions and links, and update incoming links. If the old passage describes only a scenario outcome, keep it in the use case’s guarantees or extension handling.
 
 `Criterion` defines or references what counts as satisfaction. It can be prose,
 or it can separate what is measured from the required bound:
@@ -120,11 +118,11 @@ system has neither an attribute tree nor an explicit quality overview section, l
 When the section is present, each undefined label produces
 `requirement.undefined-attribute` advice at its source location. An explicitly empty
 section consequently reports every used label as undefined. Statement and
-rationale advice is worded for a quality obligation when a requirement has
+rationale advice is worded for a quality requirement when a requirement has
 quality attributes.
 
-Use multiple attributes when they classify the same coherent obligation. Split
-obligations that need independent management, even if they share an attribute.
+Use multiple attributes when they classify the same coherent requirement. Split
+requirements that need independent management, even if they share an attribute.
 Choose the most specific applicable labels; broad attributes can also be used.
 Grouping beneath an attribute does not establish that the attribute is satisfied.
 
@@ -141,10 +139,10 @@ and `undefined` IDs in authored order. Without a system quality vocabulary,
 `system_path` is empty and all three arrays are empty. Ancestor attributes are
 computed navigation, not additional authored labels or inherited requirements.
 
-Keep one authoritative statement of each obligation. Concepts organize related
+Keep one authoritative statement of each requirement. Concepts organize related
 rules and quality requirements; use cases illustrate interactions and link to
 the rules that govern them. Preserve required logical dependencies without
-turning a representative sequence into an obligation. Distinguish caller
+turning a representative sequence into a requirement. Distinguish caller
 assumptions from conditions the system must enforce or reject.
 
 Examples are [existing-target rejection](../../../specs/requirements/reject-existing-target.requirement.spec.md),

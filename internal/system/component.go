@@ -48,9 +48,6 @@ func ParseComponentMarkdown(input *specfile.Markdown) (*Component, error) {
 	if err := ids.RegisterInterfaces(doc); err != nil {
 		return nil, err
 	}
-	if err := ids.RegisterObligations(doc); err != nil {
-		return nil, err
-	}
 	ids.AddAnchors(doc.Anchors)
 	parent, present, err := doc.SingleSubjectLink("Part of", "structure.part-of")
 	if err != nil {

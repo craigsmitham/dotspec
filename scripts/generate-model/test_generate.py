@@ -24,11 +24,11 @@ class CatalogTests(unittest.TestCase):
         return self.catalog["classes"][class_name]["slots"][slot_name]
 
     def test_inherited_and_narrowed_reference_ranges(self):
-        # One concrete Requirement; a mixed-in capability narrows a reference range.
+        # Requirements are concrete specification roots and may carry classification labels.
         self.assertFalse(self.catalog["classes"]["Requirement"]["abstract"])
-        self.assertIn("Obligation", self.catalog["classes"]["Requirement"]["ancestors"])
-        self.assertNotIn("ObligationContainer", self.catalog["classes"]["Requirement"]["ancestors"])
-        self.assertEqual(self.slot("LabelOccurrence", "owner")["reference_ranges"], ["Obligation", "QualityAttribute"])
+        self.assertIn("SystemContextSpecification", self.catalog["classes"]["Requirement"]["ancestors"])
+        self.assertNotIn("ObligationClause", self.catalog["classes"])
+        self.assertEqual(self.slot("LabelOccurrence", "owner")["reference_ranges"], ["Requirement", "QualityAttribute"])
         self.assertEqual(self.slot("SourceReference", "resolution")["inline_ranges"], ["Resolution"])
         # A union must not silently reopen the broad DomainElement parent range.
         owner = self.slot("ScenarioStep", "owner")
@@ -99,7 +99,7 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(self.slot("UseCase", "subject_system")["annotations"]["relationship_ordering"], "single target")
         self.assertEqual(self.slot("QualityAttribute", "subattribute_of")["annotations"]["relationship_ordering"], "unordered")
         # A stated value wins over the category default.
-        self.assertEqual(self.slot("Obligation", "refines")["annotations"]["relationship_cycles"], "forbidden")
+        self.assertEqual(self.slot("Requirement", "refines")["annotations"]["relationship_cycles"], "forbidden")
         self.assertEqual(self.slot("Goal", "owner")["annotations"]["relationship_inverse"], "System.goals")
         broken = copy.deepcopy(raw)
         del broken["enums"]["RelationshipCategory"]
@@ -109,8 +109,8 @@ class CatalogTests(unittest.TestCase):
     def test_projection_paths_are_derived_from_relationship_fields(self):
         projections = self.catalog["projections"]
         self.assertEqual(projections, sorted(set(projections)))
-        for path in ("TraceableElement.supports", "Obligation.refines", "BusinessRule.refines", "System.goals",
-                     "Job.steps", "ObligationContainer.obligations", "Capability.provided_by",
+        for path in ("TraceableElement.supports", "Requirement.refines", "BusinessRule.refines", "System.goals",
+                     "Job.steps", "Capability.provided_by",
                      "System.enclosing_system", "SystemContextSpecification.specification_system"):
             self.assertIn(path, projections)
         # Owner backlinks, citations and provenance are not separate relationship claims.

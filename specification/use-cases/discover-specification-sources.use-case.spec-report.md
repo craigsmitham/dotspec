@@ -77,7 +77,7 @@ Representative. Discovery order is not a required order of authoring or review.
 
 The [source-discovery reference](<../../docs/reference/inspection.md#references>) describes link behavior. The [source layout](<../../docs/reference/layout.md>) defines directory ownership and source selection.
 The [source-discovery executable examples](<../../internal/integration/testdata/sources.txtar>)
-define required outcomes for their illustrated cases. Contributors use the
+verify outcomes for their illustrated cases. Contributors use the
 inventory to assemble the material for review and decide whether it adequately
 specifies the system. The
 [source authority principle](<../dotspec.system.spec-report.md#source-authority>) explains how

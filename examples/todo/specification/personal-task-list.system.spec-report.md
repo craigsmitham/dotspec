@@ -11,15 +11,15 @@ A single-user task list that stores open and completed tasks on one computer.
 | --- | --- |
 | [Purpose](<#purpose>) | Help a person pick up unfinished work after an interruption. |
 | [Goals](<#goals>) | [All goals](<goals.md>) |
-| [Business rules](<#business-rules>) | [All business rules](<business-rules.md>) |
+| Business rules | [All business rules](<business-rules.md>) |
 | [User needs](<#user-needs>) | [Jobs](<jobs.md>) |
 | [Scope](<#scope>) | [All assumptions](<assumptions.md>) |
 | [System topology](<#system-topology>) | [Components](<components.md>) · [Interfaces](<interfaces.md>) · [Provided interfaces](<interfaces.md#provided-interfaces>) |
 | [Features](<#features>) | [All features](<features.md>) |
 | Capabilities | [All capabilities](<capabilities.md>) |
-| [Use cases](<#use-cases>) | [All use cases](<use-cases.md>) |
+| Use cases | [All use cases](<use-cases.md>) |
 | [Concepts](<#concepts>) | [Concept definitions](<concepts.md>) · [Concept uses](<concept-uses.md>) |
-| [Requirements](<#requirements>) | [All requirements](<requirements.md>) |
+| Requirements | [All requirements](<requirements.md>) |
 | [Quality attributes](<#quality-attributes>) | [All quality attributes](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
 
 ## Purpose
@@ -30,17 +30,11 @@ Help a person pick up unfinished work after an interruption.
 
 - [Resume unfinished work](<goals.md#resume-unfinished-work>) — Reduce the effort of working out what still needs attention.
 
-## Business rules
-
-- [Completion preserves a commitment](<business-rules/completion-preserves-a-commitment.business-rule.spec-report.md>) — A finished commitment stays on the person's list until they explicitly delete it.
-
 ## User needs
 
 ### Stakeholders
 
 The person who keeps the list also decides which entries can be discarded.
-
-- [Resume interrupted work](<jobs/resume-interrupted-work.job.spec-report.md>) — When I put work down, I want to remember what remains so I can pick it up again.
 
 ## Scope
 
@@ -81,30 +75,13 @@ flowchart LR
 
 - [Pick up where I left off](<features/pick-up-where-i-left-off.feature.spec-report.md>) — Reopens the task list with each task in its last saved state.
 
-## Use cases
-
-- [Return to my list](<use-cases/return-to-my-list.use-case.spec-report.md>) — Pick up an outstanding task and bring a finished one back for follow-up.
-
 ## Concepts
-
-### Concept definitions
-
-- [Checklist](<concepts/checklist.concept.spec-report.md>) — Keep track of which commitments still need attention.
 
 ### Concept uses
 
 - [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — The checklist used to track one person’s open and completed tasks.
   - Uses [Checklist](<concepts/checklist.concept.spec-report.md>)
 
-## Requirements
-
-- [Keep recorded work available](<use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>) — The list must make previously recorded entries available when the person returns.
-  - In [Return to my list](<use-cases/return-to-my-list.use-case.spec-report.md>)
-- [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>) — After the service acknowledges a change, stopping and restarting it on the same database must preserve each surviving entry's identity, title and completion state. Deleted entries must stay absent.
-  - Refines [Keep recorded work available](<use-cases/return-to-my-list.use-case.spec-report.md#keep-recorded-work-available>)
-
 ## Quality attributes
 
 **[Durability](<quality/durability/durability.quality-attribute.spec-report.md>)** — Preservation of acknowledged work between local sessions.
-
-Requirements classified under Durability: [Acknowledge after commit](<components/task-service/requirements/acknowledge-after-commit.requirement.spec-report.md>), [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>).

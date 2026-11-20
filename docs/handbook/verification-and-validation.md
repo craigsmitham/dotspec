@@ -9,7 +9,7 @@ The subject is what you examine. The basis is what you judge it against.
 | --- | --- | --- |
 | Requirements verification | A requirement or set of requirements | Do the requirement statements and set meet the applicable criteria for clarity, consistency and verifiability? |
 | Requirements validation | A proposed requirement or set of requirements | Do the proposed requirements faithfully express stakeholder needs, higher-level intent and constraints? |
-| System verification | A system, component or process realization | Does the realization fulfill the specified obligations under the assessed conditions? |
+| System verification | A system, component or process realization | Does the realization fulfill the specified requirements under the assessed conditions? |
 | System validation | A proposed or realized solution | Can the intended users accomplish their work with the proposed or realized solution in its intended context? |
 
 The requirements distinction follows ISO/IEC/IEEE 24765:2017, entries 3.3452–3.3453,
@@ -22,7 +22,7 @@ fields: human review is needed for qualities that automated checks cannot establ
 The system distinction follows
 [NASA's product verification and validation definitions](https://nodis3.gsfc.nasa.gov/displayDir.cfm?Internal_ID=N_PR_7123_001D_&page_name=AppendixA).
 A system can conform to a poor specification. Conversely, a promising prototype
-can demonstrate useful behavior without conforming to all specified obligations.
+can demonstrate useful behavior without conforming to all specified requirements.
 
 For document recovery, these are four different questions:
 

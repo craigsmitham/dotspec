@@ -109,9 +109,9 @@ func TestMoveRequirementAcrossSourceLayouts(t *testing.T) {
 				continue
 			}
 			switch edge["projection_path"] {
-			case "Obligation.applies_to":
+			case "Requirement.applies_to":
 				targets = append(targets, model.String(edge, "object"))
-			case "Obligation.quality_attributes":
+			case "Requirement.quality_attributes":
 				attributes = append(attributes, model.String(edge, "object"))
 			}
 		}

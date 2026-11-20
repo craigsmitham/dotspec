@@ -136,17 +136,12 @@ whether the requirements accurately represent stakeholder needs.
 
 ## Authority
 
-This narrative explains obligations defined by the linked report contract and
-requirements. Their definitions remain authoritative. The
-[use-case command examples](<../../internal/integration/testdata/use-cases.txtar>)
-define the illustrated CLI outcomes; they do not prove every narrative branch is
-covered. A reference to [unreadable input](<#unreadable-input-or-failed-discovery>)
-identifies a branch, not a successful execution of it.
+This use case specifies the contributor’s inspection interaction. The linked report contract governs output and the linked requirements govern diagnostic severity, repeatability and preservation of the input. The [use-case command examples](<../../internal/integration/testdata/use-cases.txtar>) check CLI outcomes for selected paths, including focused inspection of an unfinished use case.
 
 ## Related specifications
 
 [Specification Inspection](<../concepts/specification-inspection.concept.spec-report.md>)
 describes the report and inspection behavior used in this interaction.
 
-Its [quality obligations](<../concepts/specification-inspection.concept.spec-report.md#state>)
+Its [quality requirements](<../concepts/specification-inspection.concept.spec-report.md#state>)
 cover diagnostic severity, report repeatability, and source preservation.

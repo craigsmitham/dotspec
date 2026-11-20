@@ -137,20 +137,9 @@ readers locate a branch, but they are not durable identities. dotspec does not
 parse step numbering into a control-flow graph. You do not need separate files
 or authored IDs for branches; model export creates source-backed branch records.
 
-Choose where each obligation is defined. Accepted use-case prose can carry a
-behavioral obligation directly; it need not be duplicated in a requirement file.
-Alternatively, a narrative can explain and link to a rule owned by another source.
-Explain that role around the link. To record which obligation, business rule or
-concept action a scenario step illustrates, add an
-[Illustrates bullet](review.md#relate-scenarios-to-general-behavior)
-under that step. Keep general rules and complementary data specifications or
-quality requirements where they can state obligations more clearly.
+Use the main path, extensions and guarantees to discover needed functionality. On review, walk each path and ask whether a system could satisfy the specifications and still prevent the actor from completing a step. Follow the relevant concept action, business rule, interface or requirement. A gap may call for a corrected precondition, a more precise action effect or a new requirement. This scenario-completeness review follows Bertrand Meyer, *Handbook of Requirements and Business Analysis*, §§7.4–7.6 and §11.3.
 
-Tests may define accepted examples or verify an existing rule. State which role
-they play. Link resolution establishes that a target exists; it does not establish
-execution, branch coverage, completeness, stakeholder agreement, or customer value.
-See [Obligations and documents](requirements-layers.md#distinguish-an-obligation-from-its-document)
-for choosing where an obligation belongs.
+Record each general requirement in its own requirement file. Use an [Illustrates bullet](review.md#relate-scenarios-to-general-behavior) when a step demonstrates a specific requirement, rule or action. The use case owns its actor, goal, essential interaction and guarantees. A passing test supplies evidence under the conditions it exercised.
 
 ## Plan growth without weakening promises
 

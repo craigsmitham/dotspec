@@ -9,7 +9,7 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 	conformanceWrite(t, root, "specs/system.system.spec.md", "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n")
 	conformanceWrite(t, root, "specs/quality/broad/broad.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: broad\n---\n# Broad\n\n## Definition\n\nA distinct local concern.\n")
 
-	conformanceWrite(t, root, "specs/requirements/obligation.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [broad, narrow]\n---\n# Obligation\n")
+	conformanceWrite(t, root, "specs/requirements/requirement.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [broad, narrow]\n---\n# Requirement\n")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {
 		t.Fatalf("exit %d", result.ExitCode)

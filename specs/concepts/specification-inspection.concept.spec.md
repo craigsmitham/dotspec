@@ -22,7 +22,7 @@ there is no stored finding lifecycle or acknowledgement state. The
 [check report contract](../../docs/reference/inspection.md#check-specifications) defines report
 fields, diagnostic identifiers, and exit statuses.
 
-Quality obligations are defined by
+Quality requirements are defined by
 [textual diagnostic severity](../quality/usability/diagnosability/diagnostic-severity.requirement.spec.md),
 [repeatable reports](../quality/reliability/repeatability/repeatable-inspection.requirement.spec.md),
 and [source preservation](../quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md).

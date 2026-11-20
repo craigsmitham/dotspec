@@ -40,7 +40,7 @@ User task.
 1. The person records an errand and later marks it complete.
    - **Illustrates:** [Complete](../concepts/checklist.concept.spec.md#complete).
 2. On returning, the person finds the errand among the completed tasks.
-   - **Illustrates:** [Keep recorded work available](#keep-recorded-work-available).
+   - **Illustrates:** [Keep recorded work available](../requirements/availability.requirement.spec.md).
 3. The person discovers a follow-up and reopens the errand.
    - **Illustrates:** [Reopen](../concepts/checklist.concept.spec.md#reopen).
 
@@ -64,21 +64,3 @@ The person previously used [Delete](../concepts/checklist.concept.spec.md#delete
 
 1. The person looks through the two views. Neither contains the deleted entry.
 2. If the commitment still matters, the person records a new entry.
-
-## Obligations
-
-### Keep recorded work available
-
-**ID:** keep-recorded-work-available
-
-The list must make previously recorded entries available when the person returns.
-
-The [restart requirement](../requirements/restart.requirement.spec.md) specifies which entry data survives a service interruption.
-
-#### Derived from
-
-[Completion preserves a commitment](../business-rules/completion.business-rule.spec.md).
-
-#### Applies to
-
-**Targets:** [My checklist](../personal-task-list.system.spec.md#my-checklist).

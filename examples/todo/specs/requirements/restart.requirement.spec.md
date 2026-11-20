@@ -12,7 +12,7 @@ Deleted entries must stay absent.
 
 ## Refines
 
-[Keep recorded work available](../use-cases/resume-list.use-case.spec.md#keep-recorded-work-available).
+[Keep recorded work available](availability.requirement.spec.md).
 
 ## Relies on
 

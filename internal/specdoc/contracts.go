@@ -116,7 +116,7 @@ func addSourceContracts(p *planner) error {
 					anchor = specfile.NameSlug(collectionTitle(title))
 				}
 				for _, e := range members {
-					dest := relative(idx.file, p.entryDestination(e.target))
+					dest := relative(idx.file, e.target)
 					indexPage.DirectoryMembers[anchor] = append(indexPage.DirectoryMembers[anchor], dest)
 					requireRoute(indexPage, dest, inlineText(e.title))
 				}

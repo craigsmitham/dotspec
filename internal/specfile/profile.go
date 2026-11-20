@@ -36,13 +36,13 @@ var headingFields = map[string]string{
 	"Relationships": "relationships", "Related terms": "related_terms",
 	"Goals": "goals", "Assumptions": "assumptions", "Steps": "steps", "Outcomes": "outcomes", "Actions": "actions",
 	"Required interfaces": "required_interfaces", "Provided interfaces": "provided_interfaces", "Quality attributes": "quality_attributes",
-	"Glossary": "glossary", "Obligations": "obligations", "Extensions": "extensions", "Concept uses": "concept_uses", "Synchronizations": "synchronizations",
+	"Glossary": "glossary", "Extensions": "extensions", "Concept uses": "concept_uses", "Synchronizations": "synchronizations",
 }
 
 var collectionKinds = map[string]string{
 	"Goals": "Goal", "Assumptions": "Assumption", "Steps": "JobStep", "Outcomes": "DesiredOutcome",
 	"Actions": "ConceptAction", "Required interfaces": "Interface", "Provided interfaces": "Interface",
-	"Quality attributes": "QualityAttribute", "Glossary": "GlossaryTerm", "Obligations": "ObligationClause",
+	"Quality attributes": "QualityAttribute", "Glossary": "GlossaryTerm",
 	"Extensions": "UseCaseExtension", "Concept uses": "ConceptUse", "Synchronizations": "Synchronization",
 }
 
@@ -61,18 +61,22 @@ var classSlots = sync.OnceValue(func() map[string]struct{ Slots map[string]json.
 	return catalog.Classes
 })
 
-func specificationClass(kind string) string {
-	if kind == "quality-attribute" {
-		return "SystemQualityAttribute"
-	}
-	var class string
-	for part := range strings.SplitSeq(kind, "-") {
-		if part != "" {
-			class += strings.ToUpper(part[:1]) + part[1:]
-		}
-	}
-	return class
+var specificationClasses = map[string]string{
+	"business-rule":     "BusinessRule",
+	"capability":        "Capability",
+	"component":         "Component",
+	"concept":           "Concept",
+	"feature":           "Feature",
+	"job":               "Job",
+	"quality-attribute": "SystemQualityAttribute",
+	"quality-model":     "QualityModel",
+	"requirement":       "Requirement",
+	"system":            "System",
+	"use-case":          "UseCase",
 }
+
+// SpecificationClass identifies the primary subject of a built-in authoring form.
+func SpecificationClass(kind string) string { return specificationClasses[kind] }
 
 func (o *Outline) checkFields(class string, sections []*Section, level int) error {
 	schema, builtIn := classSlots()[class]
@@ -101,8 +105,8 @@ func (o *Outline) checkFields(class string, sections []*Section, level int) erro
 			known = class == "QualityModel" || class == "System"
 		}
 		loc := o.Location(s.Start, s.Title)
-		if !known && s.Title == "Obligations" {
-			return diagnostic.Error("obligation.container", "This element cannot declare obligation clauses.", loc)
+		if s.Title == "Obligations" || s.Title == "Requirements" {
+			return diagnostic.Error("structure.inline-requirement", "Declare each requirement in a *.requirement.spec.md file and link to it here. Keep scenario outcomes in the use case.", loc)
 		}
 		if !known {
 			return diagnostic.Error("structure.unknown-section", fmt.Sprintf("Unrecognized %s section %q. Move its prose into the field it qualifies or use a declared section.", class, s.Title), loc)

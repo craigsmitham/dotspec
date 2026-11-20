@@ -120,9 +120,6 @@ func ParseMarkdown(input *specfile.Markdown) (*Concept, error) {
 	if err := ids.Register(spec.ID, "concept", input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
-	if err := ids.RegisterObligations(doc); err != nil {
-		return nil, err
-	}
 	ids.AddAnchors(doc.Anchors)
 	fields := map[string]*string{
 		"Effects table": &spec.EffectsTable,

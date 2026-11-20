@@ -153,7 +153,7 @@ func (s *System) FindQualityAttribute(id string) *Attribute {
 }
 
 // QualityAttributeAncestors returns distinct ancestor IDs in declaration order. It does not
-// turn those classifications into authored labels or inherited obligations.
+// turn those classifications into authored labels or inherited requirements.
 func (s *System) QualityAttributeAncestors(ids []string) []string {
 	seen := make(map[string]bool)
 	queue := append([]string(nil), ids...)

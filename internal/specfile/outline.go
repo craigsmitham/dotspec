@@ -39,7 +39,7 @@ func (md *Markdown) TypedOutline(kind string, metadata TypedMetadata) (*Outline,
 	}
 	out, err := md.Outline(kind)
 	if err == nil {
-		err = out.checkFields(specificationClass(kind), out.Sections, 2)
+		err = out.checkFields(SpecificationClass(kind), out.Sections, 2)
 	}
 	return out, err
 }

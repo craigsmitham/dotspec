@@ -101,12 +101,28 @@ def check_project(cli, project, tmp):
     requirement = one("Requirement", slug="restart")
     use = one("UseCase", slug="resume-list")
     job = one("Job", slug="resume")
-    clause = one("ObligationClause", owner=use["id"], authored_id="keep-recorded-work-available")
-    assert clause["id"] in targets(requirement, "refines"), "missing restart refinement"
-    assert one("BusinessRule", slug="completion")["id"] in targets(clause, "derived_from")
+    availability = one("Requirement", slug="availability", authored_id="keep-recorded-work-available")
+    assert availability["id"] in targets(requirement, "refines"), "missing restart refinement"
+    assert one("BusinessRule", slug="completion")["id"] in targets(availability, "derived_from")
+    assert any(availability["id"] in targets(step, "illustrates") for step in elements
+               if step["kind"] == "ScenarioStep" and step["source_document"] == use["source_document"])
     assert job["id"] in targets(use, "supports")
     assert one("DesiredOutcome", owner=job["id"], authored_id="less-reconstruction")["id"] in targets(requirement, "supports")
     sources = {s["id"]: s for s in model["sources"]}
+    # This project exercises every supported specification file type.
+    root_types = {"System", "Component", "Job", "UseCase", "Concept", "BusinessRule",
+                  "Requirement", "Feature", "Capability", "QualityModel", "SystemQualityAttribute"}
+    primary = {e["id"]: e for e in elements if e["kind"] in root_types}
+    assert {e["kind"] for e in primary.values()} == root_types
+    for doc in model["documents"]:
+        source = sources[doc["source"]]
+        if not source.get("selected"):
+            continue
+        root_id, = [key for key in doc["elements"] if key in primary]
+        kind = doc["declared_type"].removesuffix("-spec")
+        expected = "SystemQualityAttribute" if kind == "quality-attribute" else kind.title().replace("-", "")
+        assert primary[root_id]["kind"] == expected and primary[root_id]["source_document"] == doc["source"]
+        assert source["locator"].endswith("." + kind + ".spec.md")
     for kind in ("System", "Component", "Feature", "Capability", "ConceptUse"):
         subject = one(kind)
         spans = subject["description"]["spans"]
@@ -160,8 +176,8 @@ def spec_journey(cli, tmp):
     assert all(target != entry for page in (project / "specification").rglob("*.md")
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")
-    sections = ["Purpose", "Goals", "Business rules", "User needs", "Scope", "System topology",
-                "Features", "Use cases", "Concepts", "Requirements", "Quality attributes"]
+    sections = ["Purpose", "Goals", "User needs", "Scope", "System topology",
+                "Features", "Concepts", "Quality attributes"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
     navigation = overview.split("\n## Purpose\n", 1)[0]
     rows = [line for line in navigation.splitlines() if line.startswith("| ")]
@@ -187,15 +203,14 @@ def spec_journey(cli, tmp):
         assert "**Referenced by**" not in detail.read_text(encoding="utf-8")
         for page in (root, follow(detail, related)):
             assert any(target == detail and fragment == anchor for _, target, fragment, _ in markdown_links(page))
-    rules = overview.split("\n## Business rules\n", 1)[1].split("\n## ", 1)[0]
-    rule = follow(root, "Completion preserves a commitment")
+    rules = follow(root, "All business rules")
+    rule = follow(rules, "Completion preserves a commitment")
     statement = rule.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
-    assert statement in rules and "[All business rules](<business-rules.md>)" in navigation
-    assert "[Business rules](" not in rules
+    assert statement in rules.read_text(encoding="utf-8")
     for section in sections:
         assert f"[{section}](<#{section.lower().replace(' ', '-')}>)" in navigation
     assert all(f"[{name}]" in navigation for name in (
-        "Jobs", "Business rules", "Components", "Interfaces", "All features", "All capabilities",
+        "Jobs", "All business rules", "Components", "Interfaces", "All features", "All capabilities",
         "Concept definitions", "Concept uses", "All use cases", "All requirements", "All quality attributes", "Quality models"))
     topology = overview.split("## System topology\n", 1)[1].split("\n## ", 1)[0]
     assert "```mermaid" in topology and "contains" in topology and "provides interface" in topology
@@ -203,9 +218,6 @@ def spec_journey(cli, tmp):
     assert "Provides [Local task storage]" in topology and "## Capabilities" not in overview
     concepts = overview.split("\n## Concepts\n", 1)[1].split("\n## ", 1)[0]
     assert "[My checklist]" in concepts and "Uses [Checklist](<concepts/" in concepts
-    requirements_body = overview.split("\n## Requirements\n", 1)[1].split("\n## ", 1)[0]
-    assert "use-case.spec-report.md#keep-recorded-work-available>" in requirements_body
-    assert "Deleted entries must stay absent." in requirements_body
     for name in ("Components", "Interfaces"):
         assert follow(root, name).name == name.lower() + ".md"
     feature = follow(follow(root, "All features"), "Pick up where I left off")
@@ -261,7 +273,7 @@ def spec_journey(cli, tmp):
     attribute_source = project / "specs/quality/durability/durability.quality-attribute.spec.md"
     definition = attribute_source.read_text(encoding="utf-8").split("## Definition\n\n", 1)[1].split("\n\n", 1)[0].strip()
     assert definition in quality_section
-    assert "[Acknowledge after commit](" in quality_section and "[Preserve tasks across restart](" in quality_section
+    assert "[Acknowledge after commit](" not in quality_section and "[Preserve tasks across restart](" not in quality_section
     assert follow(promise, "Durability") == qualities
     for page in (qualities_index, promise):
         assert any(target == qualities and not fragment
@@ -275,8 +287,10 @@ def spec_journey(cli, tmp):
     assert definitions == project / "specification/quality-models/personal-data-quality.quality-model.spec-report.md"
     assert claims[project / "specs/quality-models/personal-data.quality-model.spec.md", "personal-data-quality"] == definitions
     use_case = follow(feature, "Return to my list")
-    passage = use_case.read_text(encoding="utf-8").split("### Keep recorded work available\n", 1)[1]
-    assert passage.index("specifies which entry data survives") < passage.index("## Related specifications")
+    availability = follow(use_case, "Keep recorded work available")
+    assert availability == claims[project / "specs/requirements/availability.requirement.spec.md", "keep-recorded-work-available"]
+    assert follow(promise, "Keep recorded work available") == availability
+    assert follow(follow(root, "All requirements"), "Keep recorded work available") == availability
     assert claims[project / "specs/concepts/checklist.concept.spec.md", "checklist"] == follow(use_case, "Complete")
     headings = re.findall(r"^## (.+)$", promise.read_text(encoding="utf-8"), re.M)
     assert headings[:3] == ["Statement", "Applies to", "Criterion"]
@@ -285,9 +299,6 @@ def spec_journey(cli, tmp):
                    "Deleted entries must stay absent", "Zero discrepancies across the two views"):
         assert phrase in text, phrase
     assert follow(promise, "restart acceptance test") == project / ACCEPTANCE
-    targets = markdown_links(promise)
-    assert any("return-to-my-list" in target.name and fragment.endswith("keep-recorded-work-available")
-               for _, target, fragment, _ in targets), "missing refinement of the scenario clause"
     requirements = follow(root, "All requirements")
     assert requirements == root.parent / "requirements.md"
     assert follow(requirements, "Preserve tasks across restart") == promise

@@ -5,6 +5,8 @@ import (
 	pathpkg "path"
 	"slices"
 	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
 // modelPaths is deliberately a small grammar shared by projection and ownership
@@ -22,6 +24,7 @@ func modelPaths(expression string) [][2]string {
 }
 
 func (v *graphValidator) checkDomain() {
+	v.checkSpecificationSources()
 	v.checkAuthoredIDs()
 	v.checkMemberships()
 	v.checkLabels()
@@ -46,6 +49,50 @@ func (v *graphValidator) checkDomain() {
 					v.add("quality.scope", path+"/subattribute_of", "parent attributes must belong to the same declaring owner")
 				}
 			}
+		}
+	}
+}
+
+// A mapped specification must be the sole primary subject of its source.
+// A source rejected during parsing can still be exported with its diagnostics.
+func (v *graphValidator) checkSpecificationSources() {
+	docs := map[string]Record{}
+	failed := map[string]bool{}
+	for _, record := range v.sortedRecords() {
+		r := record.value
+		switch String(r, "kind") {
+		case "Document":
+			docs[String(r, "source")] = r
+		case "Diagnostic":
+			if r["phase"] == "parse" && r["severity"] == "error" {
+				failed[String(r, "source")] = true
+			}
+		}
+	}
+	roots := map[string]int{}
+	for _, record := range v.sortedRecords() {
+		r := record.value
+		kind := String(r, "kind")
+		if !v.isA(kind, "Specification") {
+			continue
+		}
+		source := String(r, "source_document")
+		doc := docs[source]
+		form, typed := strings.CutSuffix(String(doc, "declared_type"), "-spec")
+		name := String(v.records[source].value, "locator")
+		roots[source]++
+		if !typed || kind != specfile.SpecificationClass(form) || !strings.HasSuffix(name, "."+form+".spec.md") || !slices.Contains(Strings(doc["elements"]), String(r, "id")) {
+			v.add("specification.source", record.path+"/source_document", "a specification must be declared by its corresponding file and document type")
+		}
+	}
+	for _, record := range v.sortedRecords() {
+		r := record.value
+		if String(r, "kind") != "Document" {
+			continue
+		}
+		source := String(r, "source")
+		if roots[source] > 1 || (roots[source] == 0 && v.records[source].value["selected"] == true && !failed[source]) {
+			v.add("specification.root", record.path+"/elements", "each successfully mapped specification file declares one primary subject")
 		}
 	}
 }
@@ -163,11 +210,11 @@ func (v *graphValidator) checkLabels() {
 		system := ""
 		switch String(label, "role") {
 		case "quality_classification":
-			if !v.isA(String(owner, "kind"), "Obligation") {
-				v.add("label.owner", path+"/owner", "quality-classification labels belong to obligations")
+			if !v.isA(String(owner, "kind"), "Requirement") {
+				v.add("label.owner", path+"/owner", "quality-classification labels belong to requirements")
 				continue
 			}
-			system = obligationSystem(owner, index)
+			system = governingSystem(owner, index)
 		case "subattribute_of":
 			if !v.isA(String(owner, "kind"), "QualityAttribute") {
 				v.add("label.owner", path+"/owner", "parent labels belong to quality attributes")

@@ -1,6 +1,6 @@
 # Develop requirements
 
-Use this guide when turning a need, rule, or quality concern into an obligation
+Use this guide when turning a need, rule, or quality concern into a requirement
 that people can understand and assess. Start with a short statement, identify its
 scope, and add assessment detail where it resolves ambiguity.
 
@@ -18,11 +18,9 @@ Keep a requirement alongside the code or attribute definition when that helps
 readers find it. For a recovery-time limit, use `--preset quality --attribute recovery`
 to create a requirement with a criterion prompt and an explicit recovery classification.
 
-An obligation can also live inside a concept or use case. Keep one authoritative
-definition and link to it from scenarios or other specifications. A separate file
-is useful when the obligation needs independent navigation and discussion.
+Each product requirement has one authoritative requirement file. Reference it from the scenarios that exercise it and the features that group it. Keep concept action effects in their concept and interaction outcomes in their use case.
 
-## State one obligation and its operating context
+## State one requirement and its operating context
 
 Identify the subject under **Applies to**, with relevant operating conditions,
 workload, population and exclusions. Use explicit `**Targets:**` links when you
@@ -57,7 +55,7 @@ behavior. Describe any reliance on an environmental premise separately; see
 
 ## Define or reference the criterion once
 
-**Criterion** makes an obligation's satisfaction rule explicit when that helps.
+**Criterion** makes a requirement's satisfaction rule explicit when that helps.
 It can be qualitative, quantitative, or a reference to a rule already defined in
 Statement or another authoritative specification. There is no need to restate a
 bound that already has an authoritative definition.
@@ -65,8 +63,8 @@ bound that already has an authoritative definition.
 | Content | Authoritative role |
 | --- | --- |
 | Quality attributes | Classify the concern; they do not establish thresholds. |
-| Applies to | Defines the subject and operating context covered by the obligation. |
-| Statement and optional Criterion | State the obligation and define or reference its satisfaction rule. |
+| Applies to | Defines the subject and operating context covered by the requirement. |
+| Statement and optional Criterion | State the requirement and define or reference its satisfaction rule. |
 
 For a measured property, identify the measure and the required bound. The measure
 carries its units, aggregation and observation window where needed. Define the
@@ -101,9 +99,9 @@ The [To-do validation exercise](../../examples/todo/README.md#try-the-workflow-w
 gives the participant real errands to resume. Ask what they recognize after
 returning to the app and record where they need help.
 
-Use **Supports** to relate an obligation to a job or desired outcome, **Derived
+Use **Supports** to relate a requirement to a job or desired outcome, **Derived
 from** for its source, and **Refines** only when it adds precision while preserving
-the referenced obligation. Meeting a latency bound alone does not refine or prove
+the referenced requirement. Meeting a latency bound alone does not refine or prove
 a user-task completion requirement. See [requirements layers](requirements-layers.md).
 
 ## Link supporting evidence
@@ -126,7 +124,7 @@ for adequacy.
 
 Advice can be resolved by identifying
 or linking existing content; do not duplicate an authoritative target merely to
-satisfy a prompt. Qualitative obligations do not need invented numeric measures.
+satisfy a prompt. Qualitative requirements do not need invented numeric measures.
 
 Review individual requirements for necessity, clarity, feasibility and assessability.
 Review the set for conflicting rules, inconsistent terminology or units, missing

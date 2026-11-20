@@ -3,7 +3,7 @@ package model
 import (
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/obligation"
+	"github.com/craigsmitham/dotspec/internal/requirement"
 )
 
 func (d *designResolver) richIntro(value any) string {
@@ -17,10 +17,10 @@ func (d *designResolver) richIntro(value any) string {
 	}
 	return strings.TrimSpace(d.text(Record{"spans": intro}))
 }
-func (d *designResolver) measurementGuidance(r Record) obligation.MeasurementGuidance {
+func (d *designResolver) measurementGuidance(r Record) requirement.MeasurementGuidance {
 	criterion, applicability := Object(r["criterion"]), Object(r["applicability"])
 	present := func(v any) bool { return strings.TrimSpace(d.text(v)) != "" }
-	return obligation.MeasurementGuidance{
+	return requirement.MeasurementGuidance{
 		Measurement: present(criterion["measure"]),
 		Criterion:   present(criterion["content"]),
 		Comparison:  d.richIntro(criterion["content"]) != "" || present(criterion["target"]),

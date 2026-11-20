@@ -14,7 +14,10 @@ Use `--project` to select a project or `--all` to export a workspace envelope. E
 
 ## Specification types and declared elements
 
-A specification declares its subject through its frontmatter type and title. Systems, components, jobs, use cases, concepts, requirements, business rules, quality models, system quality attributes, features and capabilities each have their own specification type. A named item such as an interface, obligation clause, job step or desired outcome identifies its declaring owner. Each subject report type identifies the subject it documents.
+A specification declares its subject through its frontmatter type and title. Systems, components, jobs, use cases, concepts, requirements, business rules, quality models, system quality attributes, features and capabilities each have their own specification type. A named item such as an interface, job step or desired outcome identifies its declaring owner. Each subject report type identifies the subject it documents.
+
+Model `0.29.0-draft` uses mapping profile `dotspec-markdown/23`. Regenerate saved snapshots after moving former inline requirements to their own files. For scenario outcomes, retain the prose in the use case. Update incoming links before rebuilding reports. [Migration guidance](formats/requirement.md#requirement-format)
+
 
 ## Source text and locations
 
@@ -26,7 +29,7 @@ Start with `references`. For each link, `authored_target` preserves the destinat
 
 ### Quality attribute grouping
 
-A label occurrence records its owner, authored label and governing vocabulary. Successful resolution identifies a specific quality attribute. An obligation can name several attributes. A quality attribute can have multiple declared parents. Each attribute page links to the obligations classified under it.
+A label occurrence records its owner, authored label and governing vocabulary. Successful resolution identifies a specific quality attribute. A requirement can name several attributes. A quality attribute can have multiple declared parents. Each attribute page links to the requirements classified under it.
 
 ## Use-case narratives
 

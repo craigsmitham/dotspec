@@ -39,10 +39,9 @@ func overviewOutline() []overviewSection {
 		{title: "Capabilities", level: 2, collections: []string{"Capabilities"}},
 		{title: "Use cases", level: 2, collections: []string{"Use cases"}},
 		{title: "Concepts", level: 2, collections: []string{"Concepts", "Concept uses", "Synchronizations"}},
-		{title: "Concept definitions", level: 3, collections: []string{"Concepts"}},
 		{title: "Concept uses", level: 3, sources: []string{"concept_uses"}, collections: []string{"Concept uses"}},
 		{title: "Synchronizations", level: 3, sources: []string{"synchronizations"}, collections: []string{"Synchronizations"}},
-		{title: "Requirements", level: 2, sources: []string{"obligations"}, collections: []string{"Requirements"}},
+		{title: "Requirements", level: 2, collections: []string{"Requirements"}},
 		{title: "Quality attributes", level: 2, collections: []string{"Quality attributes", "Quality models"}},
 		{title: "Contracts", level: 2, sources: []string{"contracts"}},
 		{title: "Architecture", level: 2, sources: []string{"architecture"}},
@@ -75,12 +74,11 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 	}
 	// Decide which headings exist before allocating their Markdown fragments.
 	// Keep a collection in the map even when it supplies no body content.
-	topologyCapabilities := map[string]bool{}
 	var parent *overviewSection
 	for i := range sections {
 		section := &sections[i]
 		detail := &writer{file: s.file, page: &Page{}}
-		p.overviewDetails(detail, s, section, topologyCapabilities)
+		p.overviewDetails(detail, s, section)
 		section.detail = detail.out.String()
 		section.detailLinks = detail.page.RequiredLinks
 		section.hasBody = len(section.passages) > 0 || section.detail != "" || len(section.preview) > 0 || len(section.attributes) > 0
@@ -100,7 +98,7 @@ func (section overviewSection) merges(i int) bool {
 	if section.level == 0 {
 		return h.title == "Description" && i == 1
 	}
-	return i == 0 && (h.title == section.title || (section.title == "Requirements" && h.title == "Obligations"))
+	return i == 0 && h.title == section.title
 }
 
 func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
@@ -183,7 +181,7 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 		}
 		w.out.WriteString(section.detail)
 		for _, attribute := range section.attributes {
-			p.renderOverviewAttribute(w, attribute)
+			w.text(attributeEntry(w, attribute, true))
 		}
 		if len(section.preview) > 0 {
 			var lines []string
@@ -198,7 +196,7 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 	}
 }
 
-func (p *planner) overviewDetails(w *writer, s *subject, section *overviewSection, topologyCapabilities map[string]bool) {
+func (p *planner) overviewDetails(w *writer, s *subject, section *overviewSection) {
 	switch section.title {
 	case "Quality attributes":
 		for _, key := range model.Strings(s.r["quality_attributes"]) {
@@ -207,8 +205,8 @@ func (p *planner) overviewDetails(w *writer, s *subject, section *overviewSectio
 			}
 		}
 	case "System topology":
-		p.renderTopology(w, s, topologyCapabilities)
-	case "Business rules", "Features", "Capabilities", "Use cases", "Concept definitions", "Concept uses", "Synchronizations", "User needs", "Requirements":
+		p.renderTopology(w, s)
+	case "Features", "Concept uses", "Synchronizations":
 		for _, title := range section.collections {
 			idx := s.indexes[title]
 			for _, group := range slices.Sorted(maps.Keys(idx.groups)) {
@@ -217,45 +215,14 @@ func (p *planner) overviewDetails(w *writer, s *subject, section *overviewSectio
 				}
 				entries := idx.groups[group]
 				sortEntries(entries)
-				if title == "Business rules" && group != applicableRules(s) {
-					continue
-				}
 				for _, e := range entries {
-					if topologyCapabilities[e.target] || (e.preview == "" && len(p.entryRelations[e.target]) == 0) {
-						continue
-					}
-					// System obligations already have their full passage on this page.
-					if clause := p.elements[e.target]; clause != nil && p.ownerPage(clause) == s {
+					if e.preview == "" && len(p.entryRelations[e.target]) == 0 {
 						continue
 					}
 					section.preview = append(section.preview, e)
 				}
 			}
 		}
-	}
-}
-
-// System-owned clauses receive their final fragments along with the overview.
-func (p *planner) renderOverviewAttribute(w *writer, a *subject) {
-	key := id(a.r)
-	w.text(attributeEntry(w, a, true))
-	var classified []entry
-	for _, r := range p.snapshot.Elements {
-		if !slices.Contains(model.Strings(r["quality_attributes"]), key) || (attr(r, "kind") != "Requirement" && attr(r, "kind") != "ObligationClause") {
-			continue
-		}
-		n := nameNode(r)
-		if target := p.targets[n]; target != "" {
-			classified = append(classified, entry{title: attr(p.nodes[n], "decoded_text"), target: target})
-		}
-	}
-	sortEntries(classified)
-	var links []string
-	for _, e := range classified {
-		links = append(links, w.link(inlineText(e.title), e.target))
-	}
-	if len(links) > 0 {
-		w.text("Requirements classified under " + inlineText(a.name.title) + ": " + strings.Join(links, ", ") + ".")
 	}
 }
 

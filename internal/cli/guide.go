@@ -14,7 +14,7 @@ func newGuideCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "guide [TOPIC|RULE|PATH]", Short: "Read the offline authoring handbook and worked examples",
 		Long:    "Open guidance from this version of dotspec. With no argument, list topics and help choose an authoring form. Use --list to see topic descriptions and source paths. Use examples to browse worked specifications or a diagnostic's suggested rule ID to read its guidance.",
-		Example: "dotspec guide\ndotspec guide --list\ndotspec guide obligation\ndotspec guide requirement.measurement-basis\ndotspec guide examples",
+		Example: "dotspec guide\ndotspec guide --list\ndotspec guide requirement\ndotspec guide requirement.measurement-basis\ndotspec guide examples",
 		Args:    cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if list {

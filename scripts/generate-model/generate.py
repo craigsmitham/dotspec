@@ -331,7 +331,7 @@ def reference_markdown(catalog: dict[str, Any], raw_model: dict[str, Any]) -> by
 def glossary_markdown(catalog: dict[str, Any]) -> bytes:
     terms = {
         "Business rule": "BusinessRule", "Capability": "Capability", "Component": "Component",
-        "Concept": "Concept", "Feature": "Feature", "Job": "Job", "Obligation clause": "ObligationClause",
+        "Concept": "Concept", "Feature": "Feature", "Job": "Job",
         "Quality attribute": "QualityAttribute", "Requirement": "Requirement", "System": "System",
         "Use case": "UseCase",
     }
@@ -352,8 +352,7 @@ def glossary_markdown(catalog: dict[str, Any]) -> bytes:
                 lines.extend(["### Relationships", ""])
                 for member in members:
                     anchor = member.lower().replace(" ", "-")
-                    article = "an" if member == "Obligation clause" else "a"
-                    lines.append(f"- Can group {article} [{member.lower()}](#{anchor}).")
+                    lines.append(f"- Can group a [{member.lower()}](#{anchor}).")
                 lines.append("")
             if "Use case" in members:
                 examples = "../../../examples/todo/specs"

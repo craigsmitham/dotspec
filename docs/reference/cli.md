@@ -588,7 +588,7 @@ Open guidance from this version of dotspec. With no argument, list topics and he
 ```sh
 dotspec guide
 dotspec guide --list
-dotspec guide obligation
+dotspec guide requirement
 dotspec guide requirement.measurement-basis
 dotspec guide examples
 ```
@@ -888,7 +888,7 @@ Generate a needs-to-specification map with capability dependencies
 dotspec model needs [flags]
 ```
 
-Show jobs, shared outcomes, features, obligations and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.
+Show jobs, shared outcomes, features, requirements and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.
 
 ```sh
 dotspec model needs --path . --relative-to views
@@ -904,13 +904,13 @@ dotspec model needs --path . --relative-to views
 
 ## dotspec model overview
 
-Generate system structure, features, and applicable obligations as Markdown
+Generate system structure, features, and applicable requirements as Markdown
 
 ```sh
 dotspec model overview [flags]
 ```
 
-Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and obligation criteria. Directory context remains separate; no implementation or requirement inheritance is inferred.
+Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and requirement criteria. Directory context remains separate; no implementation or requirement inheritance is inferred.
 
 ```sh
 dotspec model overview --path . --relative-to views
@@ -997,7 +997,7 @@ Generate layered requirements traceability and change-review views as Markdown
 dotspec model trace [flags]
 ```
 
-Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and obligation criteria. Resolved explicit relationships only; paths do not establish satisfaction or evidence.
+Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and requirement criteria. Resolved explicit relationships only; paths do not establish satisfaction or evidence.
 
 ```sh
 dotspec model trace --path . --relative-to views

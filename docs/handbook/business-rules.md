@@ -88,8 +88,7 @@ The model preserves the explanation and reference occurrences in
 target; it does not create a typed enforcement or compliance assertion.
 
 Use a typed relationship when the connection itself matters. `Derived from` on
-another element names the rule as its basis. `Refines` on a requirement or
-obligation clause adds precision to the rule. The `**Targets:**` field in the
+another element names the rule as its basis. `Refines` on a requirement adds precision to the rule. The `**Targets:**` field in the
 rule's own `Applies to` section identifies what the rule governs, and an
 `Illustrates:` bullet under a scenario step names a rule that the step illustrates.
 See [Declare relationships](relationships.md). None of these establishes
@@ -101,9 +100,7 @@ enforcement or compliance.
 subset. Statement, applicability, rationale, authority, and exceptions have
 named source-backed model fields. The rule's constraint is independent of any
 software requirement that implements it. A rule's own `Refines` section targets
-only other business rules, and a rule does not contain obligation clauses: state
-software enforcement in a requirement or in a clause of the specification that
-describes the behavior.
+only other business rules. Specify required software enforcement in a requirement.
 
 The [core domain reference](../reference/model/core.md) shows its place among the
 specification types. The [complete reference](../reference/model/index.md#businessrule)

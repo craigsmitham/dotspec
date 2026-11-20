@@ -6,7 +6,6 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/obligation"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 )
 
@@ -40,7 +39,7 @@ func TestMeasurementReviewAgreesAcrossCommandsAndModel(t *testing.T) {
 			if err := os.WriteFile(filepath.Join(root, "specs", "service.system.spec.md"), []byte("---\ntype: system-spec\n---\n# Service\n## Purpose\nServe requests.\n## Scope\nRequest handling.\n"), 0644); err != nil {
 				t.Fatal(err)
 			}
-			native, err := obligation.Parse([]byte(source), "requirement")
+			native, err := requirement.Parse([]byte(source))
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -48,11 +47,7 @@ func TestMeasurementReviewAgreesAcrossCommandsAndModel(t *testing.T) {
 				t.Fatalf("native: %v", native.MeasurementGuidance.Missing())
 			}
 			hasAdvice := false
-			q, err := requirement.Parse([]byte(source))
-			if err != nil {
-				t.Fatal(err)
-			}
-			for _, f := range requirement.Check(q) {
+			for _, f := range requirement.Check(native) {
 				hasAdvice = hasAdvice || f.Rule == "requirement.measurement-basis"
 				if f.Rule == "requirement.measurement-basis" && (f.Location.Line == 0 || f.Location.Element != "Criterion") {
 					t.Fatalf("measurement advice has wrong source location: %+v", f.Location)

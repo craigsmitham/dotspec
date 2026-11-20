@@ -260,8 +260,7 @@ or directory, or a Markdown heading or declared ID in another specification,
 for example `../jobs/develop-requirements.job.spec.md#OUT-009`.
 IDs remain document-local; the file path disambiguates identical IDs in different
 files. The target parser supplies recognized IDs, including job steps and
-outcomes, system quality attributes, and obligation clauses given an `**ID:**`
-under an `Obligations` section. This does not introduce IDs for arbitrary
+outcomes and system quality attributes. This does not introduce IDs for arbitrary
 paragraphs.
 
 Direct targets can be outside the selected subtree or ignored by discovery.

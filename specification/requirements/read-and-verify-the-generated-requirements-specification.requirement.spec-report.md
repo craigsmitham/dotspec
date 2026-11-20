@@ -25,27 +25,13 @@ business rules, user needs, scope, system topology, features, capabilities,
 use cases, concepts, requirements, quality attributes, and open questions in
 that order when present. Features, capabilities, use cases, concepts, and
 requirements have separate rows. Concept definitions, named uses, and
-synchronizations share the Concepts row. The Requirements row leads to
-standalone requirements and embedded obligations. The topology shows declared immediate
-parts and boundary relationships in a Mermaid diagram and in linked text.
-The overview introduces the top-level quality attributes with their definition
-previews. The attribute index shows the full hierarchy. A shared attribute
-appears under each declared parent, with its descendants expanded once. The
-business rules index lists all rules. The overview previews explicitly applicable rules with their authored statements.
+synchronizations share the Concepts row. The section map links to the full indexes of business rules, jobs, capabilities, use cases, concept definitions and requirements. Authored stakeholder needs stay in the body. Capabilities appear beside their declared providers in topology. The topology shows immediate parts and boundary relationships in a Mermaid diagram and in linked text.
 
-Each overview section shows every substantive entry that belongs in that
-section, in index order, regardless of collection size. The topology and
-quality hierarchy retain their complete structure.
+The Concepts body appears when the overview introduces a named concept use or synchronization. Its populated groups have the stable headings Concept uses and Synchronizations in that order. The definitions index is titled Concept definitions. Each overview shows every substantive entry belonging in a body section, in index order, regardless of collection size.
 
-Within Concepts, each group with content has a level-three heading. Concept
-definitions come first, followed by Concept uses and Synchronizations. Adding the first
-named use preserves the definitions heading and its entries. The definitions
-index is titled Concept definitions. Overviews and indexes reuse each subject’s
-linked name, authored preview, and declared relationship labels. A concept use
-identifies its definition with Uses. A requirement identifies each promise it
-refines with Refines and links to its exact page or passage. Adding a second
-refinement preserves the first relationship. The same labels identify these
-relationships on subject pages.
+The overview introduces the top-level quality attributes with their definition previews. The attribute index shows the full hierarchy. A shared attribute appears under each declared parent, with its descendants expanded once. Each attribute page links to its classified requirements.
+
+Overviews, indexes and subject reports reuse each subject’s linked name, authored preview, and declared relationship labels. A concept use identifies its definition with Uses. A requirement index entry identifies each requirement or business rule it refines with Refines. Adding a second refinement preserves the first relationship.
 
 System and component overviews introduce named goals and assumptions
 with a linked title and an authored statement preview when available. Each link

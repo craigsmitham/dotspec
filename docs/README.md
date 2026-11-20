@@ -2,7 +2,7 @@
 
 | What do you need? | Start here |
 | --- | --- |
-| Decide how to express a user need, rule, interaction, or obligation | [Authoring handbook](handbook/README.md) |
+| Decide how to express a user need, rule, interaction, or requirement | [Authoring handbook](handbook/README.md) |
 | Look up a file format, command, check, or model field | [Reference](reference/README.md) |
 | Follow one specification from intent to a running app | [To-do walkthrough and model views](../examples/todo/README.md) |
 | Change a domain decision, CLI convention, or release | [Handbook maintenance](maintainers/handbook.md) · [CLI design](maintainers/cli-design.md) · [Releasing](maintainers/releasing.md) · [Contributing](../CONTRIBUTING.md) |
@@ -15,6 +15,7 @@ Run `dotspec guide TOPIC` to open the page or section below. Use `dotspec guide 
 
 | Topic | Use it to | Source |
 | --- | --- | --- |
+| `authority` | Find the editable specification for a subject or its named parts. | [`docs/handbook/requirements-layers.md#choose-the-authoritative-specification`](handbook/requirements-layers.md#choose-the-authoritative-specification) |
 | `business-rule` | State business constraints and link their enforcement. | [`docs/handbook/business-rules.md`](handbook/business-rules.md) |
 | `capability` | Describe an ability, its dependencies and its providers. | [`docs/handbook/jobs.md#connect-needs-to-capabilities-and-specifications`](handbook/jobs.md#connect-needs-to-capabilities-and-specifications) |
 | `component` | Name a component, declare its parent and organize its local specifications. | [`docs/reference/formats/system.md#component-spec-format`](reference/formats/system.md#component-spec-format) |
@@ -29,11 +30,10 @@ Run `dotspec guide TOPIC` to open the page or section below. Use `dotspec guide 
 | `layout` | Find a specification by source path or owning directory. | [`docs/reference/layout.md`](reference/layout.md) |
 | `maintaining` | Audit domain choices, their sources and the effects of a change. | [`docs/maintainers/handbook.md`](maintainers/handbook.md) |
 | `mapping` | Look up how authored Markdown maps to model elements. | [`model/markdown-mapping.md`](../model/markdown-mapping.md) |
-| `obligation` | Locate the authoritative expression of an obligation. | [`docs/handbook/requirements-layers.md#distinguish-an-obligation-from-its-document`](handbook/requirements-layers.md#distinguish-an-obligation-from-its-document) |
 | `quality` | Define a criterion and distinguish a measure from its required bound. | [`docs/handbook/requirements.md#define-or-reference-the-criterion-once`](handbook/requirements.md#define-or-reference-the-criterion-once) |
 | `quality-model` | Select quality attributes and apply them to a system. | [`docs/handbook/quality-models.md`](handbook/quality-models.md) |
 | `relationships` | Connect specifications through explicit relationships. | [`docs/handbook/relationships.md`](handbook/relationships.md) |
-| `requirement` | Author assessable obligations and satisfaction criteria. | [`docs/handbook/requirements.md`](handbook/requirements.md) |
+| `requirement` | Author assessable requirements and satisfaction criteria. | [`docs/handbook/requirements.md`](handbook/requirements.md) |
 | `review` | Review a requirement set and surface unresolved decisions. | [`docs/handbook/review.md`](handbook/review.md) |
 | `system` | Describe a system, its boundary, goals and quality attributes. | [`docs/reference/formats/system.md`](reference/formats/system.md) |
 | `use-case` | Describe actor goals, boundaries and alternative paths. | [`docs/handbook/use-cases.md`](handbook/use-cases.md) |

@@ -54,7 +54,7 @@ stderr 'metadata.frontmatter'
 ! stdout .
 # Brief and expanded prompts share a format and never overwrite existing drafts.
 # The create-specification use case's "More detailed use-case prompts" branch
-# is illustrated here; these assertions define only the outcomes exercised.
+# is illustrated here; the assertions check the command outcomes for these inputs.
 cd ..
 mkdir elaboration
 cd elaboration

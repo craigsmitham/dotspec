@@ -1,4 +1,4 @@
-package obligation
+package requirement
 
 import (
 	"strings"
@@ -29,7 +29,7 @@ func (g MeasurementGuidance) Missing() []string {
 	return missing
 }
 func MeasurementMessage(missing []string) string {
-	return "A measure is recorded, but no separately identified " + strings.Join(missing, ", ") + " is recorded for the obligation. Define or reference the required bound under Criterion and its operating context under Applies to."
+	return "A measure is recorded, but no separately identified " + strings.Join(missing, ", ") + " is recorded for the requirement. Define or reference the required bound under Criterion and its operating context under Applies to."
 }
 func measurementGuidance(doc *specfile.Outline) MeasurementGuidance {
 	sections := map[string]*specfile.Section{}

@@ -47,24 +47,17 @@ this concept.
 
 ## Related specifications
 
-These scripts are the authoritative executable examples for the cases they
-exercise. They can supplement general rules defined elsewhere without
-restating those rules here. A passing example does not settle untested cases.
+Each script supplies its inputs, commands and expected observations. Read the governing specification alongside the cases it exercises.
 
-- [Create and inspect specifications](../../testdata/workflow.txtar)
-- [Repository discovery](../../testdata/discovery.txtar)
-- [Diagnostics and exit statuses](../../testdata/diagnostics.txtar)
-- [Discover authoring guidance in an installed CLI](../../testdata/guide.txtar)
-- [Help and redirected output](../../testdata/help.txtar)
-- [Use-case commands](../../testdata/use-cases.txtar)
-- [Concept commands](../../testdata/concepts.txtar)
-- [Quality models and system population](../../testdata/quality-models.txtar)
-- [Classified requirements and quality attributes](../../testdata/classified-requirements.txtar)
-- [Business-rule commands](../../testdata/business-rules.txtar)
-- [General requirements](../../testdata/requirements.txtar)
-- [Source discovery through ordinary file references](../../testdata/sources.txtar)
-- [Export and validate source-backed specification models](../../testdata/model.txtar)
+| Governing source | Executable cases |
+| --- | --- |
+| [Create a specification](../../../../specs/use-cases/create-specification.use-case.spec.md), including the linked non-overwrite requirement | [Create and inspect](../../testdata/workflow.txtar), [use-case presets and inspection](../../testdata/use-cases.txtar) |
+| [Inspection interaction](../../../../specs/use-cases/check-specifications.use-case.spec.md) and [source selection](../../../../docs/reference/layout.md) | [Repository discovery](../../testdata/discovery.txtar), [diagnostics and exit statuses](../../testdata/diagnostics.txtar) |
+| [Command arguments](../../../../docs/reference/cli.md) and [process output](../../../../docs/reference/inspection.md#output-and-automation) | [Offline guidance](../../testdata/guide.txtar), [help, redirected output, completions and manual](../../testdata/help.txtar) |
+| [Concept format](../../../../docs/reference/formats/concept.md) and [business-rule authoring guide](../../../../docs/handbook/business-rules.md) | [Concept commands](../../testdata/concepts.txtar), [business-rule commands](../../testdata/business-rules.txtar) |
+| [System quality attributes](../../../../docs/reference/formats/system.md#system-quality-attributes), [quality-model population](../../../../docs/handbook/quality-models.md) and [requirement format](../../../../docs/reference/formats/requirement.md) | [Quality models and system population](../../testdata/quality-models.txtar), [classified requirements](../../testdata/classified-requirements.txtar), [general requirements](../../testdata/requirements.txtar) |
+| [Discover specification sources](../../../../specs/use-cases/discover-specification-sources.use-case.spec.md) and [export a specification model](../../../../specs/use-cases/export-specification-model.use-case.spec.md) | [Source discovery through ordinary references](../../testdata/sources.txtar), [export and offline validation](../../testdata/model.txtar) |
 
 The Go test harness executes these scripts; it does not define additional
-product obligations. The repository's [specification-test convention](../../../../CONTRIBUTING.md#specification-tests-and-implementation-tests)
+product requirements. The repository's [specification-test convention](../../../../CONTRIBUTING.md#specification-tests-and-implementation-tests)
 identifies the sources that its coverage script requires.

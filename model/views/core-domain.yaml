@@ -30,13 +30,6 @@ types:
   - statement
   - basis
   - applicability
-  ObligationClause:
-  - owner
-  - statement
-  - quality_attributes
-  - refines
-  - applies_to
-  - criterion
   System:
   - purpose
   - scope
@@ -82,7 +75,6 @@ types:
   - applies_to
   UseCase:
   - involves
-  - obligations
   - goal
   - boundary_description
   - subject_system
@@ -158,23 +150,13 @@ types:
   - status
   - target
   - rule
-  ObligationContainer:
-  - obligations
-  Obligation:
-  - statement
-  - quality_attributes
-  - applies_to
-  - applicability
-  - rationale
-  - refines
-  - criterion
   Applicability:
   - content
   - conditions
   - workload
   - population
   - exclusions
-  ObligationCriterion:
+  RequirementCriterion:
   - content
   - measure
   - target
@@ -186,7 +168,6 @@ types:
   - contracts
   - architecture
   - implementation
-  - obligations
   - out_of_scope
   - interacts_with
   - required_interfaces
@@ -205,7 +186,6 @@ types:
   - question
   Interface:
   - owner
-  - obligations
   - name
   - description
   - contracts
@@ -274,8 +254,7 @@ diagrams:
   inheritance: false
 - title: Boundary interfaces
   description: Required and provided are relative to the declaring System or Component. Each Interface is an
-    addressable element with one declaration membership. Requirements can apply to it and it may own
-    obligation clauses. Native contract references do not establish implementation or compatibility.
+    addressable element with one declaration membership. Requirements can apply to it through explicit applicability. Native contract references do not establish implementation or compatibility.
   nodes:
   - System
   - Component
@@ -298,7 +277,6 @@ diagrams:
   - Requirement
   - UseCase
   - Concept
-  - ObligationClause
   - ConceptUse
   - Synchronization
   - Interface
@@ -311,21 +289,6 @@ diagrams:
   - System.interacts_with
   - Component.interacts_with
   inheritance: false
-- title: Shared obligation capabilities
-  description: A Requirement specification and an embedded clause share statement, classification, applicability,
-    and criterion through Obligation. ObligationContainer separately grants clause ownership
-    to System, Component, Interface, UseCase, Concept, ConceptUse, ConceptAction and Synchronization. A Requirement
-    states one obligation and contains no clauses. Business rules, jobs, goals, assumptions and desired outcomes
-    retain traceability without containing clauses. Triangle arrows include explicitly mixed-in capabilities.
-  direction: TB
-  nodes:
-  - Obligation
-  - ObligationContainer
-  - Requirement
-  - ObligationClause
-  paths:
-  - ObligationContainer.obligations
-  inheritance: true
 - title: User progress
   description: Jobs optionally declare functional steps and outcomes. These edges describe
     declaration ownership; step order is presentation order.
@@ -351,7 +314,7 @@ diagrams:
 - title: Software behavior
   description: Use cases describe interactions and alternatives; concepts describe purposeful state and actions.
     These are complementary views, with no mandatory authoring or execution order. Steps may explicitly illustrate
-    obligations, business rules or actions; this does not prove completeness.
+    requirements, business rules or actions; this does not prove completeness.
   nodes:
   - UseCase
   - Scenario
@@ -359,7 +322,7 @@ diagrams:
   - UseCaseExtension
   - Concept
   - ConceptAction
-  - Obligation
+  - Requirement
   - BusinessRule
   paths:
   - UseCase.main_success_scenario
@@ -371,17 +334,17 @@ diagrams:
   inheritance: false
 - title: Quality classification
   description: 'Systems and reusable quality models declare attributes. Each attribute has exactly one declaring
-    owner: a System or a QualityModel. Obligations reference attributes for classification. Sub-attribute
+    owner: a System or a QualityModel. Requirements reference attributes for classification. Sub-attribute
     of permits multiple parents within the same declaring owner and must be acyclic.'
   nodes:
   - System
   - QualityModel
   - QualityAttribute
-  - Obligation
+  - Requirement
   paths:
   - System.quality_attributes
   - QualityModel.quality_attributes
-  - Obligation.quality_attributes
+  - Requirement.quality_attributes
   - QualityAttribute.subattribute_of
   inheritance: false
 - title: System coordination
@@ -436,24 +399,19 @@ diagrams:
   - TraceableElement.derived_from
   - TraceableElement.relies_on
   inheritance: false
-- title: Obligations and complementary behavioral views
-  description: Requirement is the specification type that gives one obligation its own document, not every normative
-    expression. Explicit clauses identify obligations within other specifications without duplicating them.
+- title: Requirements and use cases
+  description: A requirement file specifies one general property. Use cases describe interactions that exercise it.
     Refinement preserves a parent commitment and must be acyclic; multiple parents are permitted. A business
     rule refines only another business rule. Use cases involve named concept uses many-to-many; neither view
     is the mandatory parent of the other.
   nodes:
   - TraceableElement
-  - ObligationClause
   - Requirement
   - BusinessRule
   - UseCase
   - ConceptUse
   - Concept
-  - ObligationContainer
   paths:
-  - ObligationContainer.obligations
-  - ObligationClause.refines
   - Requirement.refines
   - BusinessRule.refines
   - UseCase.involves

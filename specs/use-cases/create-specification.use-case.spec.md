@@ -61,4 +61,4 @@ be edited without invoking init.
 
 The [init commands](../../docs/reference/cli.md) and linked requirement define command behavior.
 The [use-case command examples](../../internal/integration/testdata/use-cases.txtar)
-define the illustrated template-selection and non-overwrite outcomes.
+verify the illustrated template-selection and non-overwrite outcomes.

@@ -163,9 +163,6 @@ func ParseMarkdown(input *specfile.Markdown) (*System, error) {
 			return nil, diagnostic.Error("structure.required-section", fmt.Sprintf("missing or empty %s section (use ## %s)", name, name), location)
 		}
 	}
-	if err := ids.RegisterObligations(doc); err != nil {
-		return nil, err
-	}
 	ids.AddAnchors(doc.Anchors)
 	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
 		return nil, err
