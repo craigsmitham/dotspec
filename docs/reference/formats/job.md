@@ -29,9 +29,7 @@ Use `dotspec job <command> --help` for command-specific options.
 - `init <slug>` creates `specs/jobs/<slug>.job.spec.md` with an editable template.
   It never overwrites an existing file. Edit the file in your text editor.
 - `show <slug>` displays all authored Markdown, including additional sections,
-  plus the associated system and source path. It selects the job in the chosen
-  project directory's `specs/jobs/` folder without searching other scopes for the
-  same slug.
+  plus the associated system and source path. Select a unique slug in the local owner or pass its source path.
 - `list` discovers jobs within the selected subtree, grouped by associated
   system. Groups are ordered by system name and source path; jobs within each
   group are ordered by source path. Jobs without a system appear last under
@@ -61,11 +59,8 @@ hyphens: for example, `develop-requirements`. Slugs cannot contain paths, spaces
 or file extensions. Different directories can reuse a slug. Changing a job's
 name does not change its file slug.
 
-Each job belongs to the project directory containing its `specs/` tree. It is
-associated with that directory's `specs/<name>.system.spec.md`, or the nearest ancestor
-project directory's system, even if that system is outside the subtree selected for
-`job list`. Lookup stops at the Git repository or worktree root, or the filesystem
-root outside Git. A job without an enclosing system is valid and displays
+The nearest subject owns the job. Its system supplies the default association
+even when the job is discovered in a narrower subtree. See [project layout](../layout.md#project-layout). A job without an enclosing system is valid and displays
 `System: None`. A malformed enclosing system is an error. System association does
 not mean that the software performs every step of the customer's job.
 

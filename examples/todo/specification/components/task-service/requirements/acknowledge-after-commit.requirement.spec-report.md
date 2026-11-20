@@ -1,7 +1,7 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
-documents: "../../../../components/task-service/specs/requirements/acknowledge-after-commit.requirement.spec.md#acknowledge-after-commit"
+documents: "../../../../app/specs/requirements/acknowledge-after-commit.requirement.spec.md#acknowledge-after-commit"
 ---
 # Acknowledge after commit
 
@@ -27,4 +27,4 @@ A successful response tells the person that it is safe to close the task list.
 
 **Quality attribute** · [Durability](<../../../quality/durability/durability.quality-attribute.spec-report.md>)
 
-[Edit source](<../../../../components/task-service/specs/requirements/acknowledge-after-commit.requirement.spec.md#acknowledge-after-commit>)
+[Edit source](<../../../../app/specs/requirements/acknowledge-after-commit.requirement.spec.md#acknowledge-after-commit>)

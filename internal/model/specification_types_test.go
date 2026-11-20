@@ -51,7 +51,7 @@ func TestSpecificationTypesCorrespondToDocumentRoots(t *testing.T) {
 		}
 	}
 	slices.Sort(roots)
-	if want := []string{"BusinessRule", "Component", "Concept", "Job", "QualityModel", "Requirement", "System", "SystemQualityAttribute", "UseCase"}; !slices.Equal(roots, want) {
+	if want := []string{"BusinessRule", "Capability", "Component", "Concept", "Feature", "Job", "QualityModel", "Requirement", "System", "SystemQualityAttribute", "UseCase"}; !slices.Equal(roots, want) {
 		t.Fatalf("specification classes %v, want %v", roots, want)
 	}
 	root := t.TempDir()

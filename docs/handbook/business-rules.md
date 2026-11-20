@@ -20,7 +20,7 @@ dotspec business-rule list
 dotspec business-rule check purchase-approval --json
 ```
 
-The file lives at `specs/business-rules/purchase-approval.business-rule.spec.md`
+The default destination is `specs/business-rules/purchase-approval.business-rule.spec.md`
 under the selected project directory. Commands accept `--path`; read commands
 leave the file unchanged, and `init` refuses to overwrite an existing file.
 System association follows the same repository context rules as other specs.

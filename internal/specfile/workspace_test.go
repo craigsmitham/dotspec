@@ -110,12 +110,12 @@ func TestWorkspaceDiscoveryBoundaries(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			want := []Project{{Name: "demo", Root: filepath.Join(root, "apps/demo")}, {Name: "tool", Root: root}}
+			want := []Project{{Name: "demo", Root: filepath.Join(root, "apps/demo")}, {Name: "metadata", Root: filepath.Join(root, "specs")}, {Name: "tool", Root: root}}
 			if w.Root != root || !reflect.DeepEqual(w.Projects, want) {
 				t.Fatal(w)
 			}
 			p, err := FindProject(filepath.Join(root, "specs"))
-			if err != nil || p == nil || p.Root != root {
+			if err != nil || p == nil || p.Root != filepath.Join(root, "specs") {
 				t.Fatal(p, err)
 			}
 			writeManifest(t, filepath.Join(root, "apps/demo"), "name: tool")

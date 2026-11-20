@@ -46,6 +46,9 @@ func newUseCaseCommand() *cobra.Command {
 		if action.name == "check" {
 			cmd.Long = action.short + ".\n\n" + exitPolicy
 		}
+		if action.name == "show" || action.name == "check" {
+			cmd.Use = action.name + " <slug-or-source-path>"
+		}
 		cmd.RunE = func(cmd *cobra.Command, args []string) error {
 			path, err := projectPath(cmd)
 			if err != nil {
@@ -58,7 +61,7 @@ func newUseCaseCommand() *cobra.Command {
 			if action.name == "list" {
 				return listUseCases(path, format, overview, cmd.OutOrStdout())
 			}
-			if err := usecase.ValidateSlug(args[0]); err != nil {
+			if err := usecase.ValidateSlug(args[0]); err != nil && (action.name == "init" || !usecase.Layout.Match(args[0])) {
 				return err
 			}
 			return runUseCase(action.name, path, args[0], format, template, cmd.OutOrStdout())

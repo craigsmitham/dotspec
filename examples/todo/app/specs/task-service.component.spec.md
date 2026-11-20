@@ -9,7 +9,7 @@ The local service that handles browser requests and saves changes to the task li
 
 ## Part of
 
-[Personal task list](../../../specs/personal-task-list.system.spec.md).
+[Personal task list](../../specs/personal-task-list.system.spec.md).
 
 ## Responsibilities
 
@@ -17,8 +17,8 @@ Accept browser changes and persist them locally. See [Acknowledge after commit](
 
 ## Contracts
 
-- The browser uses the [HTML forms](../../../app/list.html) to submit changes.
+- The browser uses the [HTML forms](../list.html) to submit changes.
 
 ## Implementation
 
-The [Go server](../../../app/main.go) owns form handling and storage.
+The [Go server](../main.go) owns form handling and storage.

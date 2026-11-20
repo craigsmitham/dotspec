@@ -222,3 +222,32 @@ func TestWriteRespectsNestedProjectBoundaries(t *testing.T) {
 		})
 	}
 }
+
+func TestDuplicateReportClaimsIdentifyBothFiles(t *testing.T) {
+	dir, err := filepath.EvalSymlinks(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	plan := testPlan()
+	if _, err := Write(dir, plan); err != nil {
+		t.Fatal(err)
+	}
+	extra := filepath.Join(dir, "specification", "extra.requirement.spec-report.md")
+	copied := strings.ReplaceAll(plan.Pages[detailPath].Markdown, "../../specs/", "../specs/")
+	if err := os.WriteFile(extra, []byte(copied), 0644); err != nil {
+		t.Fatal(err)
+	}
+	ds, err := Check(dir, plan)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, d := range ds {
+		if d.Rule == "spec.duplicate-report" && len(d.Related) == 1 {
+			paths := []string{d.Location.Path, d.Related[0].Path}
+			if slices.Contains(paths, extra) && slices.Contains(paths, filepath.Join(dir, detailPath)) {
+				return
+			}
+		}
+	}
+	t.Fatalf("missing duplicate claim: %+v", ds)
+}

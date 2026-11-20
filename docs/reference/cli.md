@@ -45,7 +45,7 @@ Authoring guide: dotspec guide business-rule
 Check structure and suggest missing business-rule content
 
 ```sh
-dotspec business-rule check <slug> [flags]
+dotspec business-rule check <slug-or-source-path> [flags]
 ```
 
 Check structure and suggest missing business-rule content.
@@ -114,11 +114,110 @@ dotspec business-rule list --path .
 Show authored Markdown and the associated system
 
 ```sh
-dotspec business-rule show <slug> [flags]
+dotspec business-rule show <slug-or-source-path> [flags]
 ```
 
 ```sh
 dotspec business-rule show purchase-approval --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for show |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+
+## dotspec capability
+
+Describe an ability and its providers
+
+```sh
+dotspec capability [flags]
+```
+
+Authoring guide: dotspec guide capability
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for capability |
+
+## dotspec capability check
+
+Check the specification and its references
+
+```sh
+dotspec capability check <slug-or-source-path> [flags]
+```
+
+Authoring guide: dotspec guide capability
+
+```sh
+dotspec capability check local-storage
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for check |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+
+## dotspec capability init
+
+Create a standalone specification
+
+```sh
+dotspec capability init <slug> [flags]
+```
+
+Authoring guide: dotspec guide capability
+
+```sh
+dotspec capability init local-storage
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for init |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+
+## dotspec capability list
+
+List specifications in the selected subtree
+
+```sh
+dotspec capability list [flags]
+```
+
+```sh
+dotspec capability list --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--all` | `false` | inspect all discovered projects separately |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for list |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+
+## dotspec capability show
+
+Show the authored specification
+
+```sh
+dotspec capability show <slug-or-source-path> [flags]
+```
+
+```sh
+dotspec capability show local-storage
 ```
 
 | Flag | Default | Description |
@@ -134,7 +233,7 @@ dotspec business-rule show purchase-approval --path .
 Check all supported specifications in a project subtree
 
 ```sh
-dotspec check [flags]
+dotspec check [source-path] [flags]
 ```
 
 Check authored specifications using the same discovery rules as list. A whole-project check also inspects generated Markdown when dotspec.yaml enables generated_spec. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.
@@ -293,7 +392,7 @@ Authoring guide: dotspec guide concept
 Check structure and suggest missing concept content
 
 ```sh
-dotspec concept check <slug> [flags]
+dotspec concept check <slug-or-source-path> [flags]
 ```
 
 Check structure and suggest missing concept content.
@@ -362,11 +461,110 @@ dotspec concept list --path .
 Show authored Markdown and the associated system
 
 ```sh
-dotspec concept show <slug> [flags]
+dotspec concept show <slug-or-source-path> [flags]
 ```
 
 ```sh
 dotspec concept show job-map --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for show |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+
+## dotspec feature
+
+Group stakeholder-visible behavior
+
+```sh
+dotspec feature [flags]
+```
+
+Authoring guide: dotspec guide feature
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for feature |
+
+## dotspec feature check
+
+Check the specification and its references
+
+```sh
+dotspec feature check <slug-or-source-path> [flags]
+```
+
+Authoring guide: dotspec guide feature
+
+```sh
+dotspec feature check resume-work
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for check |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+
+## dotspec feature init
+
+Create a standalone specification
+
+```sh
+dotspec feature init <slug> [flags]
+```
+
+Authoring guide: dotspec guide feature
+
+```sh
+dotspec feature init resume-work
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for init |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+
+## dotspec feature list
+
+List specifications in the selected subtree
+
+```sh
+dotspec feature list [flags]
+```
+
+```sh
+dotspec feature list --path .
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--all` | `false` | inspect all discovered projects separately |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for list |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+
+## dotspec feature show
+
+Show the authored specification
+
+```sh
+dotspec feature show <slug-or-source-path> [flags]
+```
+
+```sh
+dotspec feature show resume-work
 ```
 
 | Flag | Default | Description |
@@ -434,7 +632,7 @@ Authoring guide: dotspec guide job
 Check structure and suggest writing improvements
 
 ```sh
-dotspec job check <slug> [flags]
+dotspec job check <slug-or-source-path> [flags]
 ```
 
 Check structure and suggest writing improvements.
@@ -559,7 +757,7 @@ dotspec job outcome list develop-requirements --path .
 Show authored Markdown and the associated system
 
 ```sh
-dotspec job show <slug> [flags]
+dotspec job show <slug-or-source-path> [flags]
 ```
 
 ```sh
@@ -877,7 +1075,7 @@ dotspec quality-model apply --system specs/new-system.system.spec.md --dry-run
 Check quality-model structure and suggest missing content
 
 ```sh
-dotspec quality-model check <slug> [flags]
+dotspec quality-model check <slug-or-source-path> [flags]
 ```
 
 Check quality-model structure and suggest missing content.
@@ -947,7 +1145,7 @@ dotspec quality-model list --path .
 Show a bundled starter or a local quality model
 
 ```sh
-dotspec quality-model show <slug> [flags]
+dotspec quality-model show <slug-or-source-path> [flags]
 ```
 
 ```sh
@@ -981,7 +1179,7 @@ Authoring guide: dotspec guide requirement
 Check requirement specifications and attribute references
 
 ```sh
-dotspec requirement check <slug> [flags]
+dotspec requirement check <slug-or-source-path> [flags]
 ```
 
 Check requirement specifications and attribute references.
@@ -1018,7 +1216,7 @@ dotspec requirement init reject-existing-target --path .
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--attribute` | `` | Classify by a governing system attribute ID. At the declaring system, --preset quality places the requirement in the attribute folder. |
+| `--attribute` | `` | Write this governing system attribute ID in quality_attributes. |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for init |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
@@ -1053,7 +1251,7 @@ dotspec requirement list --path .
 Show authored Markdown and the associated system
 
 ```sh
-dotspec requirement show <slug> [flags]
+dotspec requirement show <slug-or-source-path> [flags]
 ```
 
 ```sh
@@ -1188,7 +1386,7 @@ dotspec system list --path .
 Describe the nearest system and its enclosing system document
 
 ```sh
-dotspec system show [flags]
+dotspec system show [source-path] [flags]
 ```
 
 ```sh
@@ -1222,7 +1420,7 @@ Authoring guide: dotspec guide use-case
 Check structure and suggest missing use-case content
 
 ```sh
-dotspec use-case check <slug> [flags]
+dotspec use-case check <slug-or-source-path> [flags]
 ```
 
 Check structure and suggest missing use-case content.
@@ -1295,7 +1493,7 @@ dotspec use-case list --overview --path .
 Show authored Markdown and the associated system
 
 ```sh
-dotspec use-case show <slug> [flags]
+dotspec use-case show <slug-or-source-path> [flags]
 ```
 
 ```sh

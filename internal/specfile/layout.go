@@ -2,13 +2,10 @@ package specfile
 
 import (
 	"errors"
-	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
 )
 
 const Folder = "specs"
@@ -17,7 +14,6 @@ const Folder = "specs"
 // files. The owning type supplies its kind; layout never infers domain identity
 // from a directory name. Slug validation remains the type's responsibility.
 type Layout struct {
-	QualityTree  bool
 	NamedSubject bool
 	Kind         string
 	Collection   string
@@ -45,131 +41,50 @@ func (l Layout) Path(owner, slug string) string {
 }
 
 func (l Layout) path(owner, filename string) string {
-	return filepath.Join(owner, Folder, l.Collection, filename)
+	return filepath.Join(defaultSpecDir(owner), l.Collection, filename)
 }
 
 func (l Layout) Create(owner, slug, template string) (string, error) {
-	return Create(owner, filepath.Join(Folder, l.Collection, l.filename(slug)), template)
-}
-
-// Scope resolves a project directory. The reserved specs tree contains metadata,
-// so it cannot introduce another project scope.
-func Scope(path string) (string, error) {
-	dir, err := Directory(path)
+	target := l.Path(owner, slug)
+	rel, err := filepath.Rel(owner, target)
 	if err != nil {
 		return "", err
 	}
-	metadata, err := metadataDirectory(dir)
-	if err != nil {
-		return "", err
-	}
-	if metadata != "" {
-		return "", fmt.Errorf("%s is inside a specs directory; --path selects a project directory, use %s", path, filepath.Dir(metadata))
-	}
-	return dir, nil
+	return Create(owner, rel, template)
 }
 
-// Owner validates a spec's placement and returns the directory it describes.
-// An empty collection places a spec directly under specs/.
-func (l Layout) Owner(path string) (string, error) {
+// DeclarationDir is the directory claimed by a subject declaration.
+func DeclarationDir(path string) string {
 	dir := filepath.Dir(path)
-	metadata, err := metadataDirectory(dir)
-	if err != nil {
-		return "", err
+	if specsAlias(dir) {
+		return filepath.Dir(dir)
 	}
-	if l.QualityTree && metadata != "" {
-		folders := QualityFolders(path)
-		if len(folders) > 0 && dir == filepath.Join(metadata, "quality", filepath.Join(folders...)) {
-			return filepath.Dir(metadata), nil
-		}
-	}
-	if metadata != "" && l.Kind != "quality-attribute" && dir == filepath.Join(metadata, l.Collection) {
-		return filepath.Dir(metadata), nil
-	}
-	if l.Kind == "quality-attribute" {
-		owner := "<project-dir>"
-		if metadata != "" {
-			owner = filepath.Dir(metadata)
-		}
-		return "", l.misplaced(path, filepath.Join(owner, Folder, "quality", strings.TrimSuffix(filepath.Base(path), l.Suffix), filepath.Base(path)))
-	}
-	expected := l.path("<project-dir>", filepath.Base(path))
-	if metadata != "" {
-		expected = l.path(filepath.Dir(metadata), filepath.Base(path))
-	}
-	return "", l.misplaced(path, expected)
+	return dir
 }
 
-func (l Layout) misplaced(path, expected string) error {
-	return diagnostic.Error("layout."+l.Kind+"-location", fmt.Sprintf("misplaced spec: expected %s", expected), diagnostic.Location{Path: path})
+// ContextDir supplies the starting directory for local subject resolution.
+func (l Layout) ContextDir(path string) string {
+	if l.NamedSubject {
+		return DeclarationDir(path)
+	}
+	return filepath.Dir(path)
 }
 
-// ValidateLocal rejects misplaced specs in this scope, including adjacent files
-// and singular collection folders. Child project scopes are checked separately.
-func (l Layout) ValidateLocal(owner string) error {
-	entries, err := os.ReadDir(owner)
-	if err != nil {
-		return err
+func defaultSpecDir(owner string) string {
+	if specsAlias(owner) {
+		return owner
 	}
-	for _, entry := range entries {
-		if entry.Type().IsRegular() && l.Match(entry.Name()) {
-			return l.misplaced(filepath.Join(owner, entry.Name()), l.path(owner, entry.Name()))
-		}
-	}
-	metadata := filepath.Join(owner, Folder)
-	info, err := os.Lstat(metadata)
-	if errors.Is(err, fs.ErrNotExist) {
-		return nil
-	}
-	if err != nil {
-		return err
-	}
-	if !info.IsDir() {
-		return diagnostic.Error("layout.directory", "must be a directory, not a file or symlink", diagnostic.Location{Path: metadata})
-	}
-	if l.Collection != "" {
-		dir := filepath.Join(metadata, l.Collection)
-		info, err := os.Lstat(dir)
-		if err != nil && !errors.Is(err, fs.ErrNotExist) {
-			return err
-		}
-		if err == nil && !info.IsDir() {
-			return diagnostic.Error("layout.directory", "must be a directory, not a file or symlink", diagnostic.Location{Path: dir})
-		}
-	}
-	// Like direct reads, local validation does not need Git or apply ignore
-	// rules. Discovery retains its separate Git-aware visibility rules.
-	paths, err := walkPaths(metadata, l.Match)
-	if err != nil {
-		return err
-	}
-	for _, path := range paths {
-		if _, err := l.Owner(path); err != nil {
-			return err
-		}
-	}
-	return nil
+	return filepath.Join(owner, Folder)
 }
 
-// Return the outermost specs directory inside this repository (or up to the
-// filesystem root outside Git), so nested specs/ trees cannot create scopes.
-func metadataDirectory(dir string) (string, error) {
-	root, err := RepositoryRoot(dir)
-	if err != nil {
-		return "", err
+// A project or repository root owns its declarations even when named specs.
+func specsAlias(dir string) bool {
+	if filepath.Base(dir) != Folder {
+		return false
 	}
-	return metadataDirectoryWithin(dir, root), nil
-}
-
-func metadataDirectoryWithin(dir, root string) string {
-	var metadata string
-	for current := dir; current != root; current = filepath.Dir(current) {
-		if filepath.Base(current) == Folder {
-			metadata = current
-		}
-		if filepath.Dir(current) == current {
-			break
-		}
+	if _, err := os.Lstat(filepath.Join(dir, ".git")); !errors.Is(err, fs.ErrNotExist) {
+		return false
 	}
-	return metadata
+	project, err := hasManifest(dir)
+	return err == nil && !project
 }

@@ -43,8 +43,8 @@ stdout '"complete": true'
 status 2 dotspec sources --path absent --json
 stdout '"complete": false'
 ! stderr .
-status 2 dotspec sources --path specs --json
-stdout '"complete": false'
+status 1 dotspec sources --path specs --json
+stdout '"complete": true'
 ! stderr .
 status 2 dotspec sources --format mermaid
 ! stdout .

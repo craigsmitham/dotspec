@@ -36,8 +36,8 @@ func TestLifecycleDiscoveryAndContext(t *testing.T) {
 	if err != nil || got.System == nil || got.Statement == "" {
 		t.Fatalf("read/context: %+v %v", got, err)
 	}
-	if _, err := Show(root, "approval"); !os.IsNotExist(err) {
-		t.Fatalf("show searched descendants: %v", err)
+	if rule, err := Show(root, "approval"); err != nil || rule.Path != path {
+		t.Fatalf("owner lookup: %v", err)
 	}
 	groups, err := List(root)
 	if err != nil || len(groups) != 1 || len(groups[0].BusinessRules) != 1 {

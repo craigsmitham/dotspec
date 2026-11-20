@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/metamodel.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.22.0-draft
+version: 0.23.0-draft
 description: Experimental first-class metamodel for source-backed specification snapshots. The exported model
   is distinct from Markdown authoring checks. Source fidelity, syntax interpretation, named domain mapping,
   and optional structured decomposition are separate concerns. Existing prose is valid domain content; fields
@@ -361,7 +361,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.22.0-draft
+        equals_string: 0.23.0-draft
       mapping_profile:
         range: string
         description: Versioned set of recognized sections, aliases, metadata keys, and explicit decomposition
@@ -1190,9 +1190,12 @@ classes:
     is_a: Specification
     abstract: true
     attributes:
-      specification_component:
-        range: Component
-        description: Local component that owns this specification by directory scope.
+      specification_owner:
+        range: Specification
+        any_of:
+        - range: System
+        - range: Component
+        description: Nearest system or component declaration owning this document within its project.
         annotations:
           relationship_category: structural-context
       specification_system_content:
@@ -1533,44 +1536,9 @@ classes:
           requires_content: part_of_content
           relationship_source: part_of_content
         description: Optional explicit parent System. Directory context does not supply this relationship.
-      features_content:
-        range: RichContent
-        inlined: true
-        annotations:
-          paired_with: features
-      features:
-        range: Feature
-        multivalued: true
-        list_elements_ordered: true
-        annotations:
-          relationship_category: declaration-containment
-          relationship_scope: Exactly one declaring System in the same source document.
-          relationship_basis: Explicit named declarations.
-          relationship_inverse: Feature.owner
-          relationship_label: declares features
-          paired_with: features_content
-        description: Named feature declarations in authored order; each feature belongs to this System.
-      capabilities_content:
-        range: RichContent
-        inlined: true
-        annotations:
-          paired_with: capabilities
-      capabilities:
-        range: Capability
-        multivalued: true
-        list_elements_ordered: true
-        annotations:
-          relationship_category: declaration-containment
-          relationship_scope: Exactly one declaring System in the same source document.
-          relationship_basis: Explicit named declarations.
-          relationship_inverse: Capability.owner
-          relationship_label: declares capabilities
-          paired_with: capabilities_content
-        description: Capability declarations; the declaring System is a documentation home, not an inferred
-          provider.
     annotations:
       owned_memberships: System.goals or System.assumptions or System.glossary or System.quality_attributes
-        or System.concept_uses or System.synchronizations or System.features or System.capabilities
+        or System.concept_uses or System.synchronizations
         or System.required_interfaces or System.provided_interfaces
     mixins:
     - ObligationContainer
@@ -1665,7 +1633,7 @@ classes:
     is_a: QualityAttribute
     mixins:
     - Specification
-    description: A system's named quality attribute, authored in its own quality folder.
+    description: A system's named quality attribute, authored in a standalone quality attribute specification.
     slot_usage:
       kind:
         equals_string: SystemQualityAttribute
@@ -3650,41 +3618,6 @@ classes:
           relationship_category: declaration-containment
           relationship_inverse: Synchronization.owner
           paired_with: synchronizations_content
-      features_content:
-        range: RichContent
-        inlined: true
-        annotations:
-          paired_with: features
-      features:
-        range: Feature
-        multivalued: true
-        list_elements_ordered: true
-        annotations:
-          relationship_category: declaration-containment
-          relationship_scope: Exactly one declaring Component in the same source document.
-          relationship_basis: Explicit named declarations.
-          relationship_inverse: Feature.owner
-          relationship_label: declares features
-          paired_with: features_content
-        description: Named feature declarations in authored order; each feature belongs to this Component.
-      capabilities_content:
-        range: RichContent
-        inlined: true
-        annotations:
-          paired_with: capabilities
-      capabilities:
-        range: Capability
-        multivalued: true
-        list_elements_ordered: true
-        annotations:
-          relationship_category: declaration-containment
-          relationship_scope: Exactly one declaring Component in the same source document.
-          relationship_basis: Explicit named declarations.
-          relationship_inverse: Capability.owner
-          relationship_label: declares capabilities
-          paired_with: capabilities_content
-        description: Capability declarations; the declaring Component is a documentation home, not an inferred
-          provider.
       out_of_scope:
         range: RichContent
         inlined: true
@@ -3804,35 +3737,19 @@ classes:
         description: Links and narrative; external native artifacts remain authoritative. No implementation
           or satisfaction claim is inferred.
     annotations:
-      owned_memberships: Component.concept_uses or Component.synchronizations or Component.features or Component.capabilities or Component.required_interfaces or Component.provided_interfaces
+      owned_memberships: Component.concept_uses or Component.synchronizations or Component.required_interfaces or Component.provided_interfaces
     mixins:
     - ObligationContainer
   Feature:
     in_subset:
     - software-requirements
-    is_a: TraceableElement
+    is_a: SystemContextSpecification
     description: A recognizable grouping of specified product behavior valued by stakeholders, independent
       of component structure. Membership does not duplicate or own obligations.
     slot_usage:
       kind:
         equals_string: Feature
     attributes:
-      owner:
-        range: DomainElement
-        any_of:
-        - range: System
-        - range: Component
-        required: true
-        annotations:
-          relationship_category: declaration-containment
-          relationship_scope: Exactly one declaring System or Component in the same source document.
-          relationship_basis: Checked inverse of canonical declaration membership.
-          relationship_inverse: System.features or Component.features
-          relationship_label: declared by
-      content:
-        range: RichContent
-        inlined: true
-        required: true
       description:
         range: RichContent
         inlined: true
@@ -3873,29 +3790,13 @@ classes:
     in_subset:
     - business-requirements
     - software-requirements
-    is_a: TraceableElement
+    is_a: SystemContextSpecification
     description: An ability needed to deliver value, potentially combining people, procedures and technology.
       Distinct from a product feature or structural component; its declaration does not establish a provider.
     slot_usage:
       kind:
         equals_string: Capability
     attributes:
-      owner:
-        range: DomainElement
-        any_of:
-        - range: System
-        - range: Component
-        required: true
-        annotations:
-          relationship_category: declaration-containment
-          relationship_scope: Exactly one declaring System or Component in the same source document.
-          relationship_basis: Checked inverse of canonical declaration membership.
-          relationship_inverse: System.capabilities or Component.capabilities
-          relationship_label: declared by
-      content:
-        range: RichContent
-        inlined: true
-        required: true
       description:
         range: RichContent
         inlined: true
@@ -4309,6 +4210,10 @@ enums:
     permissible_values:
       quality-attribute-spec:
         description: Named system quality attribute.
+      feature-spec:
+        description: Stakeholder-visible behavior grouped across specifications.
+      capability-spec:
+        description: An enabling ability and its explicit providers.
       component-spec:
         description: Named component specification.
       system-spec:

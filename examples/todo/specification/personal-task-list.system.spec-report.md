@@ -57,10 +57,6 @@ The person returns to the same writable database file.
 
 The person who keeps the list also decides which entries can be discarded.
 
-## Capabilities
-
-- [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>) — Retains accepted task changes between sessions on the same computer.
-
 ## Project context
 
 The [walkthrough](<../README.md>) identifies the setup, checks and validation exercise.
@@ -107,6 +103,10 @@ explanation. Review mismatches before deciding whether the workflow meets the ne
 ## Business rules
 
 - [Completion preserves a commitment](<business-rules/completion-preserves-a-commitment.business-rule.spec-report.md>) — A finished commitment stays on the person's list until they explicitly delete it.
+
+## Capabilities
+
+- [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>) — Retains accepted task changes between sessions on the same computer.
 
 ## Components
 

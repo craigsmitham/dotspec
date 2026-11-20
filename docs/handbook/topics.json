@@ -149,14 +149,16 @@
   {
     "topic": "layout",
     "page": "docs/reference/layout.md",
-    "description": "Find the expected location of each specification.",
+    "description": "Find a specification by source path or owning directory.",
     "rules": [
       "layout.business-rule-name",
       "layout.concept-name",
-      "layout.directory",
       "layout.job-name",
       "layout.quality-model-name",
       "layout.requirement-name",
+      "layout.subject-ambiguous",
+      "layout.subject-link",
+      "layout.subject-name",
       "layout.system-location",
       "layout.use-case-name"
     ]
@@ -175,5 +177,21 @@
     "topic": "mapping",
     "page": "model/markdown-mapping.md",
     "description": "Look up how authored Markdown maps to model elements."
+  },
+  {
+    "topic": "feature",
+    "page": "docs/handbook/relationships.md#describe-systems-components-and-features",
+    "description": "Group stakeholder-visible behavior across specifications.",
+    "rules": [
+      "structure.feature-source"
+    ]
+  },
+  {
+    "topic": "capability",
+    "page": "docs/handbook/jobs.md#connect-needs-to-capabilities-and-specifications",
+    "description": "Describe an ability, its dependencies and its providers.",
+    "rules": [
+      "structure.capability-source"
+    ]
   }
 ]

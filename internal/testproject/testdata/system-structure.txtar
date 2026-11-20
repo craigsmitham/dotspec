@@ -89,33 +89,6 @@ Let customers buy available products.
 
 Order placement, stock reservation, and confirmation. Payment processing is external.
 
-## Features
-
-### Place an order
-
-**ID:** place-order
-
-#### Purpose
-
-Let a customer purchase products with confidence that stock is reserved.
-
-#### Groups
-
-- [Reserve purchased stock](requirements/reserve-stock.requirement.spec.md)
-
-### Prevent overselling
-
-**ID:** prevent-overselling
-
-#### Purpose
-
-Keep accepted orders within available stock.
-
-#### Groups
-
-- [Reserve purchased stock](requirements/reserve-stock.requirement.spec.md)
-
-
 ## Concept uses
 
 ### Stock holds
@@ -123,6 +96,36 @@ Keep accepted orders within available stock.
 #### Definition
 
 [Reservation](concepts/reservation.concept.spec.md)
+-- specs/features/place-an-order.feature.spec.md --
+---
+type: feature-spec
+id: place-order
+---
+
+# Place an order
+
+## Purpose
+
+Let a customer purchase products with confidence that stock is reserved.
+
+## Groups
+
+- [Reserve purchased stock](../requirements/reserve-stock.requirement.spec.md)
+-- specs/features/prevent-overselling.feature.spec.md --
+---
+type: feature-spec
+id: prevent-overselling
+---
+
+# Prevent overselling
+
+## Purpose
+
+Keep accepted orders within available stock.
+
+## Groups
+
+- [Reserve purchased stock](../requirements/reserve-stock.requirement.spec.md)
 -- components/checkout/specs/checkout.component.spec.md --
 ---
 type: component-spec

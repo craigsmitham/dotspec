@@ -37,6 +37,12 @@ func Create(path, filename, template string) (string, error) {
 		if !info.IsDir() {
 			return "", fmt.Errorf("%s must be a directory, not a file or symlink", parent)
 		}
+		if parent != dir {
+			if err := CheckProjectBoundary(parent); err != nil {
+				return "", err
+			}
+		}
+
 	}
 	file, err := os.OpenFile(target, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
 	if errors.Is(err, fs.ErrExist) {
@@ -53,8 +59,31 @@ func Create(path, filename, template string) (string, error) {
 	return target, nil
 }
 
+// CheckProjectBoundary prevents an initializer from writing through a nested project or repository root.
+func CheckProjectBoundary(dir string) error {
+	project, err := hasManifest(dir)
+	if err != nil {
+		return err
+	}
+	if project {
+		return fmt.Errorf("destination belongs to another project: %s", dir)
+	}
+	_, err = os.Lstat(filepath.Join(dir, ".git"))
+	if err == nil {
+		return fmt.Errorf("destination belongs to another repository: %s", dir)
+	}
+	if !errors.Is(err, fs.ErrNotExist) {
+		return err
+	}
+	return nil
+}
+
 // Discover finds matching files using the same ignore and symlink rules for all types.
 func Discover(path string, match func(string) bool) ([]string, error) {
+	return discover(path, ".", match)
+}
+
+func discover(path, pathspec string, match func(string) bool) ([]string, error) {
 	dir, err := Directory(path)
 	if err != nil {
 		return nil, err
@@ -70,16 +99,13 @@ func Discover(path string, match func(string) bool) ([]string, error) {
 		if value, ok := boundaries[child]; ok {
 			return value, nil
 		}
-		if metadataDirectoryWithin(child, dir) != "" {
-			return false, nil
-		}
 		found, err := hasManifest(child)
 		boundaries[child] = found
 		return found, err
 	}
 	var paths []string
 	if root != "" {
-		paths, err = gitPaths(dir, root, ".", match, skip)
+		paths, err = gitPaths(dir, root, pathspec, match, skip)
 	} else {
 		paths, err = walkSelectedPaths(dir, match, skip)
 	}
@@ -184,9 +210,6 @@ func regularPath(path, boundary string, skip func(string) (bool, error)) (bool, 
 	return true, nil
 }
 
-func walkPaths(dir string, match func(string) bool) ([]string, error) {
-	return walkSelectedPaths(dir, match, func(string) (bool, error) { return false, nil })
-}
 func walkSelectedPaths(dir string, match func(string) bool, skip func(string) (bool, error)) ([]string, error) {
 	var paths []string
 	err := filepath.WalkDir(dir, func(path string, entry fs.DirEntry, err error) error {

@@ -1,110 +1,15 @@
 package cli
 
 import (
+	"encoding/json"
+	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/craigsmitham/dotspec/internal/model"
 )
-
-func TestMisplacedSpecsFailLocalCommands(t *testing.T) {
-	for _, tt := range []struct {
-		name, kind, filename, expected string
-		commands                       [][]string
-	}{
-		{"adjacent business rule", "business-rule", "work.business-rule.spec.md", "specs/business-rules/work.business-rule.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"adjacent system", "system", "new-system.system.spec.md", "specs/new-system.system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
-		{"system collection", "system", "specs/systems/new-system.system.spec.md", "specs/new-system.system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
-		{"nested system", "system", "specs/child/specs/new-system.system.spec.md", "specs/new-system.system.spec.md", [][]string{{"init"}, {"show"}, {"list"}}},
-		{"adjacent use case", "use-case", "work.use-case.spec.md", "specs/use-cases/work.use-case.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"adjacent requirement", "requirement", "work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"nested requirement", "requirement", "specs/requirements/group/work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"singular quality-model folder", "quality-model", "specs/quality-model/work.quality-model.spec.md", "specs/quality-models/work.quality-model.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"singular requirement folder", "requirement", "specs/requirement/work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"wrong requirement collection", "requirement", "specs/jobs/work.requirement.spec.md", "specs/requirements/work.requirement.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"adjacent concept", "concept", "work.concept.spec.md", "specs/concepts/work.concept.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"singular use-case folder", "use-case", "specs/use-case/work.use-case.spec.md", "specs/use-cases/work.use-case.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"singular concept folder", "concept", "specs/concept/work.concept.spec.md", "specs/concepts/work.concept.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"nested use cases", "use-case", "specs/use-cases/group/work.use-case.spec.md", "specs/use-cases/work.use-case.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"nested concepts", "concept", "specs/concepts/group/work.concept.spec.md", "specs/concepts/work.concept.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"wrong use-case collection", "use-case", "specs/jobs/work.use-case.spec.md", "specs/use-cases/work.use-case.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"wrong concept collection", "concept", "specs/jobs/work.concept.spec.md", "specs/concepts/work.concept.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"check", "work"}}},
-		{"adjacent job", "job", "work.job.spec.md", "specs/jobs/work.job.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}, {"map", "work"}, {"check", "work"}}},
-		{"ungrouped job", "job", "specs/work.job.spec.md", "specs/jobs/work.job.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}}},
-		{"singular jobs folder", "job", "specs/job/work.job.spec.md", "specs/jobs/work.job.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}}},
-		{"wrong collection", "job", "specs/use-cases/work.job.spec.md", "specs/jobs/work.job.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}}},
-		{"nested jobs", "job", "specs/jobs/group/work.job.spec.md", "specs/jobs/work.job.spec.md", [][]string{{"init", "work"}, {"show", "work"}, {"list"}}},
-	} {
-		t.Run(tt.name, func(t *testing.T) {
-			dir := t.TempDir()
-			writeFixture(t, filepath.Join(dir, tt.filename), "misplaced user content")
-			for _, command := range tt.commands {
-				args := append([]string{tt.kind}, command...)
-				args = append(args, "--path", dir)
-				code, out, errOut := invoke(args...)
-				if command[0] == "check" {
-					out, errOut = errOut, out
-				}
-				if code == 0 || out != "" || !strings.Contains(errOut, "misplaced spec") || !strings.Contains(filepath.ToSlash(errOut), tt.expected) {
-					t.Errorf("%v: %d %q %q", args, code, out, errOut)
-				}
-			}
-			content, err := os.ReadFile(filepath.Join(dir, tt.filename))
-			if err != nil || string(content) != "misplaced user content" {
-				t.Fatalf("commands changed the misplaced file: %s, %v", content, err)
-			}
-			if _, err := os.Stat(filepath.Join(dir, tt.expected)); !os.IsNotExist(err) {
-				t.Fatalf("init must not create a second spec: %v", err)
-			}
-		})
-	}
-}
-
-func TestDiscoveryRejectsLegacyFilesAlongsideCanonicalSpecs(t *testing.T) {
-	for _, repository := range []bool{false, true} {
-		for _, kind := range []string{"system", "job"} {
-			t.Run(kind+map[bool]string{false: " outside Git", true: " inside Git"}[repository], func(t *testing.T) {
-				dir := t.TempDir()
-				if repository {
-					if output, err := exec.Command("git", "-C", dir, "init", "-q").CombinedOutput(); err != nil {
-						t.Fatalf("git init: %v, %s", err, output)
-					}
-				}
-				args := []string{kind, "init"}
-				filename := "new-system.system.spec.md"
-				if kind == "job" {
-					args = append(args, "work")
-					filename = "work.job.spec.md"
-				}
-				args = append(args, "--path", dir)
-				if code, _, errOut := invoke(args...); code != 0 {
-					t.Fatal(errOut)
-				}
-				writeFixture(t, filepath.Join(dir, filename), "legacy duplicate")
-				if code, out, errOut := invoke(kind, "list", "--path", dir); code == 0 || out != "" || !strings.Contains(errOut, "misplaced spec") {
-					t.Fatalf("mixed layout: %d %q %q", code, out, errOut)
-				}
-			})
-		}
-	}
-}
-
-func TestMetadataDirectoriesCannotBecomeProjectScopes(t *testing.T) {
-	dir := t.TempDir()
-	for _, subdir := range []string{"specs", "specs/jobs", "specs/jobs/extra", "specs/use-cases", "specs/concepts", "specs/requirements"} {
-		path := filepath.Join(dir, subdir)
-		if err := os.MkdirAll(path, 0o755); err != nil {
-			t.Fatal(err)
-		}
-		for _, args := range [][]string{{"system", "init"}, {"system", "show"}, {"system", "list"}, {"job", "init", "work"}, {"job", "show", "work"}, {"job", "list"}, {"use-case", "init", "work"}, {"use-case", "show", "work"}, {"use-case", "list"}, {"concept", "init", "work"}, {"concept", "show", "work"}, {"concept", "list"}, {"requirement", "init", "work"}, {"requirement", "show", "work"}, {"requirement", "list"}} {
-			args = append(args, "--path", path)
-			if code, out, errOut := invoke(args...); code == 0 || out != "" || !strings.Contains(errOut, "--path selects a project directory") {
-				t.Errorf("metadata scope: %v: %d %q %q", args, code, out, errOut)
-			}
-		}
-	}
-}
 
 func TestInitDoesNotWriteThroughMetadataSymlinks(t *testing.T) {
 	for _, subdir := range []string{"specs", "specs/jobs", "specs/concepts", "specs/requirements"} {
@@ -135,23 +40,120 @@ func TestInitDoesNotWriteThroughMetadataSymlinks(t *testing.T) {
 	}
 }
 
-func TestMisplacedAssociatedSystemDoesNotFallBackToAncestor(t *testing.T) {
-	dir := t.TempDir()
-	if code, _, errOut := invoke("system", "init", "--path", dir); code != 0 {
-		t.Fatal(errOut)
-	}
-	child := filepath.Join(dir, "child")
-	writeFixture(t, filepath.Join(child, "new-system.system.spec.md"), "legacy child system")
-	if code, _, errOut := invoke("job", "init", "work", "--path", child); code != 0 {
-		t.Fatal(errOut)
-	}
-	if code, _, errOut := invoke("use-case", "init", "work", "--path", child); code != 0 {
-		t.Fatal(errOut)
-	}
-	for _, args := range [][]string{{"system", "show"}, {"job", "show", "work"}, {"job", "list"}, {"use-case", "show", "work"}, {"use-case", "list"}} {
-		args = append(args, "--path", child)
-		if code, out, errOut := invoke(args...); code == 0 || out != "" || !strings.Contains(errOut, "misplaced spec") {
-			t.Errorf("legacy child system: %v: %d %q %q", args, code, out, errOut)
+func TestMoveRequirementAcrossSourceLayouts(t *testing.T) {
+	t.Chdir(t.TempDir())
+	writeFixture(t, "dotspec.yaml", "name: movement\ngenerated_spec: true\n")
+	writeFixture(t, "product.system.spec.md", "---\ntype: system-spec\n---\n# Product\n## Purpose\nStore work.\n## Scope\nThe product.\n")
+	writeFixture(t, "app/specs/service.component.spec.md", "---\ntype: component-spec\n---\n# Service\n## Part of\n[Product](../../product.system.spec.md)\n")
+	writeFixture(t, "app/specs/storage/storage.component.spec.md", "---\ntype: component-spec\n---\n# Storage\n## Part of\n[Service](../service.component.spec.md)\n")
+	writeFixture(t, "qualities/reliable.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\n---\n# Reliable\n")
+	writeFixture(t, "qualities/durable.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nsubattribute_of: [reliable]\n---\n# Durable\n")
+	const requirement = "---\ntype: requirement-spec\nquality_attributes: [durable]\n---\n# Save\n## Statement\nPersist each accepted edit.\n## Applies to\n**Targets:** [Product](%sproduct.system.spec.md).\n"
+	run := func(args ...string) string {
+		t.Helper()
+		code, out, stderr := invoke(args...)
+		if code != 0 {
+			t.Fatalf("%v: exit %d\n%s\n%s", args, code, out, stderr)
 		}
+		return out
+	}
+	var previous string
+	for _, stage := range []struct{ file, up, owner, report string }{
+		{"app/specs/requirements/save.requirement.spec.md", "../../../", "Service", "components/service"},
+		{"app/handlers/save.requirement.spec.md", "../../", "Service", "components/service"},
+		{"app/specs/storage/save.requirement.spec.md", "../../../", "Storage", "components/service/components/storage"},
+	} {
+		if previous != "" {
+			if err := os.Remove(previous); err != nil {
+				t.Fatal(err)
+			}
+		}
+		writeFixture(t, stage.file, fmt.Sprintf(requirement, stage.up))
+		previous = stage.file
+		run("check", stage.file)
+		out := run("requirement", "show", "save", "--path", filepath.Dir(stage.file))
+		if !strings.Contains(out, "Ancestor quality attributes: reliable") {
+			t.Fatal(out)
+		}
+		var snapshot model.Snapshot
+		if err := json.Unmarshal([]byte(run("model", "export")), &snapshot); err != nil {
+			t.Fatal(err)
+		}
+		if findings, err := model.Validate(&snapshot); err != nil || len(findings) > 0 {
+			t.Fatal(findings, err)
+		}
+		records := map[string]model.Record{}
+		var req model.Record
+		for _, r := range snapshot.Elements {
+			records[model.String(r, "id")] = r
+			if model.String(r, "kind") == "Requirement" {
+				req = r
+			}
+		}
+		names := map[string]string{}
+		for _, node := range snapshot.ContentNodes {
+			names[model.String(node, "id")] = model.String(node, "decoded_text")
+		}
+		name := func(r model.Record) string {
+			ids := model.Strings(model.Object(r["name"])["content_nodes"])
+			if len(ids) != 1 {
+				return ""
+			}
+			return names[ids[0]]
+		}
+		targets := model.Strings(req["applies_to"])
+		attributes := model.Strings(req["quality_attributes"])
+		if name(records[model.String(req, "specification_owner")]) != stage.owner || len(targets) != 1 || name(records[targets[0]]) != "Product" || len(attributes) != 1 || name(records[attributes[0]]) != "Durable" {
+			t.Fatalf("unexpected ownership, targets or attributes in %v", req)
+		}
+		run("spec", "build")
+		report := filepath.Join("specification", stage.report, "requirements/save.requirement.spec-report.md")
+		content, err := os.ReadFile(report)
+		if err != nil || !strings.Contains(string(content), "Persist each accepted edit.") {
+			t.Fatal(report, err)
+		}
+		run("check")
+	}
+}
+
+func TestOwnerLookupAmbiguityAndExactPaths(t *testing.T) {
+	t.Chdir(t.TempDir())
+	writeFixture(t, "dotspec.yaml", "name: local\n")
+	writeFixture(t, "app/app.system.spec.md", "---\ntype: system-spec\n---\n# App\n## Purpose\nSupport work.\n## Scope\nThe app.\n")
+	const a = "app/handlers/retry.requirement.spec.md"
+	const b = "app/specs/retry.requirement.spec.md"
+	for _, file := range []string{a, b} {
+		writeFixture(t, file, "---\ntype: requirement-spec\n---\n# Retry\n")
+	}
+	for _, action := range []string{"show", "check"} {
+		code, out, errOut := invoke("requirement", action, "retry", "--path", "app")
+		if code == 0 || !strings.Contains(out+errOut, a) || !strings.Contains(out+errOut, b) {
+			t.Fatal(code, out, errOut)
+		}
+		for _, file := range []string{a, b} {
+			if code, out, errOut := invoke("requirement", action, file); code != 0 {
+				t.Fatal(code, out, errOut)
+			}
+		}
+	}
+	writeFixture(t, "app/specs/wrong.component.spec.md", "---\ntype: component-spec\n---\n# Wrong\n")
+	if code, out, errOut := invoke("check"); code != 1 || !strings.Contains(out, "layout.subject-ambiguous") {
+		t.Fatal(code, out, errOut)
+	}
+}
+
+func TestSpecsDirectoryAtProjectBoundary(t *testing.T) {
+	t.Chdir(t.TempDir())
+	writeFixture(t, "dotspec.yaml", "name: outer\n")
+	writeFixture(t, "specs/dotspec.yaml", "name: inner\n")
+	writeFixture(t, "specs/tool.system.spec.md", "---\ntype: system-spec\n---\n# Tool\n## Purpose\nHelp.\n## Scope\nInner project.\n")
+	if code, out, errOut := invoke("system", "list"); code != 0 || !strings.Contains(out, "No systems") {
+		t.Fatal(code, out, errOut)
+	}
+	if code, out, errOut := invoke("system", "show", "--path", "specs"); code != 0 || !strings.Contains(out, "Inner project.") {
+		t.Fatal(code, out, errOut)
+	}
+	if code, out, errOut := invoke("system", "init", "Outer"); code == 0 || !strings.Contains(errOut, "another project") {
+		t.Fatal(code, out, errOut)
 	}
 }

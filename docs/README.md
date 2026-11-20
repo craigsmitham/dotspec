@@ -16,15 +16,17 @@ Run `dotspec guide TOPIC` to open the page or section below. Use `dotspec guide 
 | Topic | Use it to | Source |
 | --- | --- | --- |
 | `business-rule` | State business constraints and link their enforcement. | [`docs/handbook/business-rules.md`](handbook/business-rules.md) |
+| `capability` | Describe an ability, its dependencies and its providers. | [`docs/handbook/jobs.md#connect-needs-to-capabilities-and-specifications`](handbook/jobs.md#connect-needs-to-capabilities-and-specifications) |
 | `component` | Name a component, declare its parent and organize its local specifications. | [`docs/reference/formats/system.md#component-spec-format`](reference/formats/system.md#component-spec-format) |
 | `concept` | Explain purposeful behavior through state and actions. | [`docs/handbook/concepts.md`](handbook/concepts.md) |
 | `conventions` | Identify a project’s local specification authorities. | [`docs/handbook/project-conventions.md`](handbook/project-conventions.md) |
 | `core-domain` | Inspect the core domain types, relationships and diagrams. | [`docs/reference/model/core.md`](reference/model/core.md) |
 | `examples` | Browse the files bundled from the To-do example. | Listing built from [embedded example files](../examples/embed.go) |
+| `feature` | Group stakeholder-visible behavior across specifications. | [`docs/handbook/relationships.md#describe-systems-components-and-features`](handbook/relationships.md#describe-systems-components-and-features) |
 | `handbook` | Choose what to write using the runnable To-do example. | [`docs/handbook/README.md`](handbook/README.md) |
 | `inspection` | Interpret check results, source discovery and references. | [`docs/reference/inspection.md`](reference/inspection.md) |
 | `job` | Distinguish jobs, steps, outcomes and commitments. | [`docs/handbook/jobs.md`](handbook/jobs.md) |
-| `layout` | Find the expected location of each specification. | [`docs/reference/layout.md`](reference/layout.md) |
+| `layout` | Find a specification by source path or owning directory. | [`docs/reference/layout.md`](reference/layout.md) |
 | `maintaining` | Audit domain choices, their sources and the effects of a change. | [`docs/maintainers/handbook.md`](maintainers/handbook.md) |
 | `mapping` | Look up how authored Markdown maps to model elements. | [`model/markdown-mapping.md`](../model/markdown-mapping.md) |
 | `obligation` | Locate the authoritative expression of an obligation. | [`docs/handbook/requirements-layers.md#distinguish-an-obligation-from-its-document`](handbook/requirements-layers.md#distinguish-an-obligation-from-its-document) |

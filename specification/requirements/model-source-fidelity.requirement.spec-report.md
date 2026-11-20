@@ -72,7 +72,7 @@ established.
 
 ## Related specifications
 
-[Inspection preserves source material](<../quality/reliability/source-preservation/inspection-preserves-source.requirement.spec-report.md>)
+[Inspection preserves source material](<inspection-preserves-source.requirement.spec-report.md>)
 defines the existing source-preservation quality obligation.
 [Continue checking after a structural error](<continue-after-invalid-spec.requirement.spec-report.md>)
 defines continued inspection. The

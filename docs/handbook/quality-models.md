@@ -68,7 +68,7 @@ automatically, including shared dimensions only once. Selecting a grouping alone
 does not select its sub-attributes; select their IDs or omit `--attributes` to copy
 the complete model. For example, selecting ISO `availability` copies `reliability`
 and `availability`; selecting Q42 `resilience` copies `reliable`, `secure`, and
-`resilience`. The first parent determines the folder. Other parents are carried across in the `subattribute_of` field.
+`resilience`. The first parent determines the initial folder. Every parent appears in the copied definition’s `subattribute_of` field.
 
 Any selected ID already present in the system causes the operation to fail
 without writing, including a second application of the same selection. Unknown
@@ -84,8 +84,7 @@ After copying, edit definitions to explain their meaning for your system. Add
 quality requirements separately when you know the actual obligations, conditions,
 and measures. For example, `dotspec requirement init preserve-tasks --attribute durability`
 creates a functional requirement in `specs/requirements/` with a durability classification.
-For a quality obligation such as a data-loss tolerance, add `--preset quality` at
-the declaring system to create it beside the attribute.
+For a quality obligation such as a data-loss tolerance, add `--preset quality` to include a criterion prompt.
 Use [Develop requirements](requirements.md) to turn selected concerns into
 scoped obligations with criteria and assessment guidance. Product properties and
 outcomes for users in a context of use need different evidence.

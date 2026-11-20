@@ -60,7 +60,7 @@ func project(path string, inventory *Inventory, types ...Type) Report {
 		r.files = make(map[string]*SourceFile)
 	}
 	match := func(name string) bool { return findType(name, types) != nil }
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		r.Complete = false
 		r.record(err, "scan.scope", path)
@@ -103,11 +103,7 @@ func project(path string, inventory *Inventory, types ...Type) Report {
 		r.Diagnostics = append(r.Diagnostics, findings...)
 		referenceSources = append(referenceSources, path)
 		if kind.Context != nil {
-			owner, err := kind.Layout.Owner(path)
-			if err != nil {
-				r.record(err, "scan.context", path)
-				continue
-			}
+			owner := kind.Layout.ContextDir(path)
 			contexts = append(contexts, contextRequest{contextKey{provider: kind.Context, owner: owner}, path, kind.InspectContext})
 		}
 	}

@@ -43,6 +43,8 @@ func prepareExample(t *testing.T, command string) {
 		writeFixture(t, "dotspec.yaml", "name: demo\ngenerated_spec: true\n")
 		return
 	}
+	writeFixture(t, "specs/features/resume-work.feature.spec.md", "---\ntype: feature-spec\n---\n# Resume work\n")
+	writeFixture(t, "specs/capabilities/local-storage.capability.spec.md", "---\ntype: capability-spec\n---\n# Local storage\n")
 	writeFixture(t, "specs/jobs/develop-requirements.job.spec.md", viewFixture)
 	writeFixture(t, "specs/use-cases/check-specifications.use-case.spec.md", usecase.Template)
 	writeFixture(t, "specs/concepts/job-map.concept.spec.md", concept.Template)
@@ -170,15 +172,15 @@ func TestVersionMetadata(t *testing.T) {
 func TestExitPolicyForSelectorsAndSpecifications(t *testing.T) {
 	prepareExample(t, "selectors")
 	for _, args := range [][]string{
-		{"system", "show", "--path", "specs"}, {"system", "list", "--path", "specs"},
-		{"job", "init", "new", "--path", "specs"}, {"job", "show", "absent"},
+		{"system", "show", "--path", "missing-scope"}, {"system", "list", "--path", "missing-scope"},
+		{"job", "init", "new", "--path", "missing-scope"}, {"job", "show", "absent"},
 	} {
 		if code, out, errOut := invoke(args...); code != 2 || out != "" || errOut == "" {
 			t.Fatalf("invocation/operation %v: %d %q %q", args, code, out, errOut)
 		}
 	}
 	for _, args := range [][]string{
-		{"check", "--path", "specs", "--json"}, {"job", "check", "absent", "--json"},
+		{"check", "--path", "missing-scope", "--json"}, {"job", "check", "absent", "--json"},
 	} {
 		code, out, errOut := invoke(args...)
 		if code != 2 || !strings.Contains(out, `"complete": false`) || errOut != "" {

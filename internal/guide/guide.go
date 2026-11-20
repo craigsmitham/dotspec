@@ -75,6 +75,9 @@ func readPage(name string) ([]byte, error) {
 	case "specs":
 		return specs.Files.ReadFile(file)
 	case "examples":
+		if content, ok := examples.AppSpecs[file]; ok {
+			return []byte(content), nil
+		}
 		return examples.Files.ReadFile(file)
 	}
 	return nil, fs.ErrNotExist
@@ -126,6 +129,9 @@ func Read(query string) (string, error) {
 			}
 			return err
 		})
+		for _, file := range slices.Sorted(maps.Keys(examples.AppSpecs)) {
+			fmt.Fprintf(&list, "- examples/%s\n", file)
+		}
 		return list.String(), err
 	}
 	key := query

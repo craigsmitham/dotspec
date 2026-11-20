@@ -646,8 +646,13 @@
                 "source_fragment": {
                     "type": "string"
                 },
-                "specification_component": {
-                    "description": "Local component that owns this specification by directory scope.",
+                "specification_owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Nearest system or component declaration owning this document within its project.",
                     "type": "string"
                 },
                 "specification_system": {
@@ -760,8 +765,9 @@
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
                 },
-                "content": {
-                    "$ref": "#/$defs/RichContent"
+                "authority_and_evidence": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -813,6 +819,9 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Human, procedural or other enabling context, including external references. Typed providers describe only explicitly linked systems and components."
                 },
+                "evidence": {
+                    "$ref": "#/$defs/EvidenceCollection"
+                },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
                     "items": {
@@ -857,13 +866,9 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions."
                 },
-                "owner": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "type": "string"
+                "preamble": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored content between the title and the first named section."
                 },
                 "provided_by": {
                     "description": "Explicitly identified system or component providers. Optional and non-exhaustive: human and procedural providers can be described in enablers. Does not assert verified implementation or satisfaction.",
@@ -891,6 +896,10 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "What this ability enables and why it matters."
                 },
+                "related_specifications": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual citations of related specifications of any type, with their explanation; no implicit support, refinement, enforcement or compliance relation."
+                },
                 "relies_on": {
                     "description": "Assumptions on which the validity of this element depends.",
                     "items": {
@@ -908,11 +917,41 @@
                     },
                     "type": "array"
                 },
+                "slug": {
+                    "description": "Path-derived current slug where applicable.",
+                    "type": "string"
+                },
                 "source_document": {
                     "type": "string"
                 },
                 "source_fragment": {
                     "type": "string"
+                },
+                "specification_owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Nearest system or component declaration owning this document within its project.",
+                    "type": "string"
+                },
+                "specification_system": {
+                    "description": "System association for inventory grouping and quality classification. An explicit selection takes precedence over the directory default; an invalid selection never falls back.",
+                    "type": "string"
+                },
+                "specification_system_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "specification_system_origin": {
+                    "$ref": "#/$defs/SystemAssociationOrigin",
+                    "description": "Records whether the association was explicitly selected or supplied by directory discovery."
+                },
+                "specification_system_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "supports": {
                     "description": "Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement.",
@@ -942,8 +981,6 @@
                 }
             },
             "required": [
-                "owner",
-                "content",
                 "source_document",
                 "decomposition",
                 "id",
@@ -992,16 +1029,6 @@
                 "boundary_description": {
                     "$ref": "#/$defs/RichContent",
                     "description": "What the component includes, excludes and delegates; normative commitments remain obligations."
-                },
-                "capabilities": {
-                    "description": "Capability declarations; the declaring Component is a documentation home, not an inferred provider.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "capabilities_content": {
-                    "$ref": "#/$defs/RichContent"
                 },
                 "concept_uses": {
                     "items": {
@@ -1054,16 +1081,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "features": {
-                    "description": "Named feature declarations in authored order; each feature belongs to this Component.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "features_content": {
-                    "$ref": "#/$defs/RichContent"
                 },
                 "id": {
                     "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
@@ -1224,8 +1241,13 @@
                 "source_fragment": {
                     "type": "string"
                 },
-                "specification_component": {
-                    "description": "Local component that owns this specification by directory scope.",
+                "specification_owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Nearest system or component declaration owning this document within its project.",
                     "type": "string"
                 },
                 "specification_system": {
@@ -1479,8 +1501,13 @@
                 "source_fragment": {
                     "type": "string"
                 },
-                "specification_component": {
-                    "description": "Local component that owns this specification by directory scope.",
+                "specification_owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Nearest system or component declaration owning this document within its project.",
                     "type": "string"
                 },
                 "specification_system": {
@@ -3259,8 +3286,9 @@
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
                 },
-                "content": {
-                    "$ref": "#/$defs/RichContent"
+                "authority_and_evidence": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
                 },
                 "decomposition": {
                     "$ref": "#/$defs/DecompositionStatus"
@@ -3290,6 +3318,9 @@
                 "description": {
                     "$ref": "#/$defs/RichContent",
                     "description": "The behavior available through this feature."
+                },
+                "evidence": {
+                    "$ref": "#/$defs/EvidenceCollection"
                 },
                 "extension_sections": {
                     "description": "Only unknown sections, not a substitute for known domain fields.",
@@ -3356,17 +3387,17 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Complete explicitly headed open-question section; omitted fields are not inferred decisions."
                 },
-                "owner": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "type": "string"
+                "preamble": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored content between the title and the first named section."
                 },
                 "purpose": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Stakeholder benefit expressed by this feature."
+                },
+                "related_specifications": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Contextual citations of related specifications of any type, with their explanation; no implicit support, refinement, enforcement or compliance relation."
                 },
                 "relies_on": {
                     "description": "Assumptions on which the validity of this element depends.",
@@ -3385,11 +3416,41 @@
                     },
                     "type": "array"
                 },
+                "slug": {
+                    "description": "Path-derived current slug where applicable.",
+                    "type": "string"
+                },
                 "source_document": {
                     "type": "string"
                 },
                 "source_fragment": {
                     "type": "string"
+                },
+                "specification_owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Nearest system or component declaration owning this document within its project.",
+                    "type": "string"
+                },
+                "specification_system": {
+                    "description": "System association for inventory grouping and quality classification. An explicit selection takes precedence over the directory default; an invalid selection never falls back.",
+                    "type": "string"
+                },
+                "specification_system_content": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "specification_system_origin": {
+                    "$ref": "#/$defs/SystemAssociationOrigin",
+                    "description": "Records whether the association was explicitly selected or supplied by directory discovery."
+                },
+                "specification_system_references": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "supports": {
                     "description": "Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement.",
@@ -3419,8 +3480,6 @@
                 }
             },
             "required": [
-                "owner",
-                "content",
                 "source_document",
                 "decomposition",
                 "id",
@@ -4122,8 +4181,13 @@
                 "source_fragment": {
                     "type": "string"
                 },
-                "specification_component": {
-                    "description": "Local component that owns this specification by directory scope.",
+                "specification_owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Nearest system or component declaration owning this document within its project.",
                     "type": "string"
                 },
                 "specification_system": {
@@ -5920,8 +5984,13 @@
                 "source_fragment": {
                     "type": "string"
                 },
-                "specification_component": {
-                    "description": "Local component that owns this specification by directory scope.",
+                "specification_owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Nearest system or component declaration owning this document within its project.",
                     "type": "string"
                 },
                 "specification_system": {
@@ -6599,12 +6668,6 @@
                                 "$ref": "#/$defs/ObligationClause"
                             },
                             {
-                                "$ref": "#/$defs/Feature"
-                            },
-                            {
-                                "$ref": "#/$defs/Capability"
-                            },
-                            {
                                 "$ref": "#/$defs/Interface"
                             },
                             {
@@ -6630,6 +6693,12 @@
                             },
                             {
                                 "$ref": "#/$defs/Job"
+                            },
+                            {
+                                "$ref": "#/$defs/Feature"
+                            },
+                            {
+                                "$ref": "#/$defs/Capability"
                             }
                         ]
                     },
@@ -6652,7 +6721,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.22.0-draft",
+                    "const": "0.23.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -7148,6 +7217,8 @@
             "description": "Markdown frontmatter types for authored specifications. Each type has exactly one concrete Specification class.",
             "enum": [
                 "quality-attribute-spec",
+                "feature-spec",
+                "capability-spec",
                 "component-spec",
                 "system-spec",
                 "job-spec",
@@ -7600,16 +7671,6 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Maps both Authority and Authority and evidence headings; retain original heading nodes."
                 },
-                "capabilities": {
-                    "description": "Capability declarations; the declaring System is a documentation home, not an inferred provider.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "capabilities_content": {
-                    "$ref": "#/$defs/RichContent"
-                },
                 "concept_uses": {
                     "items": {
                         "type": "string"
@@ -7669,16 +7730,6 @@
                         "type": "string"
                     },
                     "type": "array"
-                },
-                "features": {
-                    "description": "Named feature declarations in authored order; each feature belongs to this System.",
-                    "items": {
-                        "type": "string"
-                    },
-                    "type": "array"
-                },
-                "features_content": {
-                    "$ref": "#/$defs/RichContent"
                 },
                 "glossary": {
                     "description": "Explicitly named terms, in authored order.",
@@ -8041,8 +8092,13 @@
                 "source_fragment": {
                     "type": "string"
                 },
-                "specification_component": {
-                    "description": "Local component that owns this specification by directory scope.",
+                "specification_owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Nearest system or component declaration owning this document within its project.",
                     "type": "string"
                 },
                 "specification_system": {
@@ -8100,7 +8156,7 @@
         },
         "SystemQualityAttribute": {
             "additionalProperties": false,
-            "description": "A system's named quality attribute, authored in its own quality folder.",
+            "description": "A system's named quality attribute, authored in a standalone quality attribute specification.",
             "properties": {
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -8793,8 +8849,13 @@
                 "source_fragment": {
                     "type": "string"
                 },
-                "specification_component": {
-                    "description": "Local component that owns this specification by directory scope.",
+                "specification_owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "description": "Nearest system or component declaration owning this document within its project.",
                     "type": "string"
                 },
                 "specification_system": {
@@ -9152,12 +9213,6 @@
                         "$ref": "#/$defs/ObligationClause"
                     },
                     {
-                        "$ref": "#/$defs/Feature"
-                    },
-                    {
-                        "$ref": "#/$defs/Capability"
-                    },
-                    {
                         "$ref": "#/$defs/Interface"
                     },
                     {
@@ -9183,6 +9238,12 @@
                     },
                     {
                         "$ref": "#/$defs/Job"
+                    },
+                    {
+                        "$ref": "#/$defs/Feature"
+                    },
+                    {
+                        "$ref": "#/$defs/Capability"
                     }
                 ]
             },
@@ -9205,7 +9266,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.22.0-draft",
+            "const": "0.23.0-draft",
             "type": "string"
         },
         "references": {
@@ -9259,5 +9320,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.22.0-draft"
+    "version": "0.23.0-draft"
 }

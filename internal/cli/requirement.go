@@ -48,8 +48,11 @@ func newRequirementCommand() *cobra.Command {
 			cmd.Long = action.short + ".\n\n" + exitPolicy
 		}
 		if action.name == "init" {
-			cmd.Flags().String("attribute", "", "Classify by a governing system attribute ID. At the declaring system, --preset quality places the requirement in the attribute folder.")
+			cmd.Flags().String("attribute", "", "Write this governing system attribute ID in quality_attributes.")
 			cmd.Flags().String("preset", "general", "Authoring template: general, or quality to prompt for an explicit criterion")
+		}
+		if action.name == "show" || action.name == "check" {
+			cmd.Use = action.name + " <slug-or-source-path>"
 		}
 		cmd.RunE = func(cmd *cobra.Command, args []string) error {
 			path, err := projectPath(cmd)
@@ -83,7 +86,7 @@ func newRequirementCommand() *cobra.Command {
 				}
 				return listRequirement(path, format, attribute, cmd.OutOrStdout())
 			}
-			if err := requirement.ValidateSlug(args[0]); err != nil {
+			if err := requirement.ValidateSlug(args[0]); err != nil && (action.name == "init" || !requirement.Layout.Match(args[0])) {
 				return err
 			}
 			attribute := ""

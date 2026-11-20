@@ -16,9 +16,7 @@ Each command accepts `--path DIR` (the existing project directory, defaulting to
 - `init <slug>` creates `specs/use-cases/<slug>.use-case.spec.md` from an editable
   brief template without overwriting existing content. Use `--template expanded`
   for additional prompts in the same format; neither option sets a maturity state.
-- `show <slug>` selects that file in the chosen project directory, displays all
-  authored Markdown, and reports its enclosing system and source path. It does
-  not search ancestor directories for the same slug.
+- `show <slug-or-source-path>` displays the authored Markdown, associated system and source path.
 - `list` discovers use cases in the selected subtree and groups them by enclosing
   system. Groups are ordered by system name and source path, with unassociated
   use cases last; use cases within each group are ordered by source path.

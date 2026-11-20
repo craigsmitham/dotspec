@@ -34,7 +34,7 @@ func TestSystemAttributeFiles(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := strings.Join(sys.FindQualityAttribute("recovery").SubattributeOf, ","); got != "dependable,serviceability" {
+	if got := strings.Join(sys.FindQualityAttribute("recovery").SubattributeOf, ","); got != "serviceability" {
 		t.Fatal(got)
 	}
 	write("serviceability", "Serviceability", "subattribute_of: [recovery]\n")

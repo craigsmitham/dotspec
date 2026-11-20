@@ -1,14 +1,14 @@
 # Markdown mapping profile
 
-`dotspec-markdown/16` maps specification Markdown to the
+`dotspec-markdown/17` maps specification Markdown to the
 [canonical model](metamodel.yaml). This reference defines the recognized syntax
 and domain roles. For reading or validating an exported snapshot, start with
 [Specification model](../docs/reference/specification-model.md).
 
-The profile covers nine specification types: system, component, job, quality attribute, quality model,
+The profile covers the following specification types: system, component, feature, capability, job, quality attribute, quality model,
 business rule, use case, concept and requirement. A specification is one authored
 `*.spec.md` document, and its root record is the one concrete class of its type:
-`System`, `Component`, `SystemQualityAttribute`, `Job`, `QualityModel`, `BusinessRule`, `UseCase`, `Concept` or
+`System`, `Component`, `Feature`, `Capability`, `SystemQualityAttribute`, `Job`, `QualityModel`, `BusinessRule`, `UseCase`, `Concept` or
 `Requirement`. Existing type parsers
 remain authoritative for authoring structure and validity. The exporter retains
 source and syntax before invoking those parsers. Rejection produces diagnostics
@@ -74,8 +74,7 @@ specification.
 A specification's root record also carries its `preamble` and, for every type
 except system, the `slug` taken from its file name. Related specifications is
 the single contextual-reference section: cite a business rule, job, use case or
-concept there, or use Derived from for a typed basis link. Beneath a Component,
-Feature, Capability, ConceptUse, Synchronization or Interface, which are
+concept there, or use Derived from for a typed basis link. Beneath a ConceptUse, Synchronization or Interface, which are
 elements and not specifications, Related specifications, Authority and Evidence
 headings are retained as extension sections.
 
@@ -154,8 +153,7 @@ no synchronization, equivalence, or satisfaction relationship is inferred.
 | Named interface | Heading `name`, complete `content`, introductory `description`, declaring System/Component `owner`, optional introductory `**ID:**`; Contracts and Counterpart subsections are contextual references; Notes, Open questions, Validation plan, trace sections and Obligations are supported |
 | Project context | `project_context: ContextualReferences`; authoritative project artifacts remain external |
 | Part of | `part_of_content`, explicit `part_of_references`, resolved scalar System `part_of`; no inferred parent |
-| Features; Capabilities | Paired section content and ordered declaration membership in `features` or `capabilities` on a system or component |
-| Named Feature/Capability | `name`, complete `content`, declaring System `owner`, optional introductory `**ID:**` |
+| Feature or capability source | Root Feature or Capability with a name from its H1, optional frontmatter `id` and nearest `specification_owner`. |
 | Component/Feature/Capability: Purpose | `purpose` |
 | Component: Responsibilities; Boundary | `responsibilities`; `boundary_description` |
 | Component: Part of | Narrative and explicit references; resolved scalar System or Component `part_of` |
@@ -185,18 +183,17 @@ structured detail fields, such as a glossary alias list, receive extension
 records. An absent section leaves both system fields absent. An explicitly empty section retains empty content and an empty attribute list. Directory-derived enclosing system documents
 and a specification's `specification_system` are associations; they introduce no inheritance.
 
-A component is the root of a named `component-spec` document. Its required `Part of` link supplies its structural parent. Local specifications record their component in `specification_component`. Systems and components can declare features, capabilities, concept uses, synchronizations and interfaces. There
+A component is the root of a named `component-spec` document. Its required `Part of` link supplies its structural parent. Local specifications record their nearest system or component in `specification_owner`. An explicit classification system can differ from this owner. Systems and components can declare concept uses, synchronizations and interfaces. There
 is no constraint record: an individually addressable constraint is a requirement
 or a business rule.
 
 ## System quality attribute
 
 A `quality-attribute-spec` root maps to `SystemQualityAttribute`, with a
-`definition` from the Definition section. The source directory determines the
-declaring system and any immediate physical parent. A `subattribute_of` list
-adds parent labels. Requirement sources in the same directory receive a
-classification by the owning attribute. These directory-derived relationships
-can be replayed from source locators and do not create authored label occurrences.
+`definition` from the Definition section. The nearest declared subject must be a system to own an attribute.
+A `subattribute_of` list names each parent. A requirement’s `quality_attributes`
+list names each classification. Both fields produce authored label occurrences.
+
 
 ## Job
 
@@ -414,7 +411,7 @@ criteria and applicability. See [Develop requirements](../docs/handbook/requirem
 
 ## Bindings, fallback and completeness
 
-Bindings record a rule under `dotspec-markdown/16`, an owner and field path, source
+Bindings record a rule under `dotspec-markdown/17`, an owner and field path, source
 occurrence and role. A field path is relative to its owner and uses canonical
 field names. A section's narrative binds to `<field>_content`, or to
 `<field>.content` on an embedded value such as `criterion.content`. Items of an
@@ -465,7 +462,7 @@ canonical field, with a required `projection_path`, subject and object. There is
 one concrete assertion class. `projection_path` names the projected field, such
 as `UseCase.subject_system`, `TraceableElement.supports`, `Obligation.applies_to`
 or `BusinessRule.applies_to`, and `mapping_rule` is
-`dotspec-markdown/16/projection/<path>`. The path also carries a membership's
+`dotspec-markdown/17/projection/<path>`. The path also carries a membership's
 role, as with `Concept.type_parameters` and `Concept.introduced_types`. The
 generated catalog lists the projectable paths in `projections`: every
 declaration membership and every semantic-association or structural-context
@@ -491,7 +488,7 @@ and applicability occurrences likewise require their narrative sections.
 `TraceableElement` supplies explicit Supports, Derived from and Relies on sections.
 It is the base of Specification and of named Goal, Assumption,
 JobStep, DesiredOutcome, ConceptAction and ObligationClause records. It is also
-the base of the Component, Feature, Capability, ConceptUse, Synchronization and
+the base of the ConceptUse, Synchronization and
 Interface elements declared inside a System specification; an Interface can also
 be declared inside a Component. These declared elements are not specifications.
 Notes, Open questions, Validation plan and trace sections work beneath each of

@@ -77,7 +77,7 @@ func FuzzParse(f *testing.F) {
 }
 
 func TestSystemAndDeclarationIdentities(t *testing.T) {
-	source := strings.Replace(validSpec, "type: system-spec", "type: system-spec\nid: parser", 1) + "\n## Capabilities\n### Scanner\n**ID:** scanner\n#### Part of\n[Parser](#parser)\n## Features\n### Scan files\n**ID:** scan-files\n#### Notes\n[Scanner heading](#scanner)\n"
+	source := strings.Replace(validSpec, "type: system-spec", "type: system-spec\nid: parser", 1) + "\n## Concept uses\n### Scanner\n**ID:** scanner\n#### Part of\n[Parser](#parser)\n## Synchronizations\n### Scan files\n**ID:** scan-files\n#### Notes\n[Scanner heading](#scanner)\n"
 	spec, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)
@@ -93,6 +93,19 @@ func TestSystemAndDeclarationIdentities(t *testing.T) {
 	} {
 		if _, err := Parse([]byte(bad)); err == nil {
 			t.Fatal("accepted invalid declaration identity", bad)
+		}
+	}
+}
+
+func TestFeaturesAndCapabilitiesRequireStandaloneSources(t *testing.T) {
+	for _, collection := range []string{"Features", "Capabilities"} {
+		section := "\n## " + collection + "\n\n### Resume work\n"
+		if _, err := Parse([]byte(validSpec + section)); err == nil {
+			t.Fatalf("accepted inline %s on a system", collection)
+		}
+		component := "---\ntype: component-spec\n---\n# Worker\n\n## Part of\n\n[System](example.system.spec.md)\n"
+		if _, err := ParseComponent([]byte(component + section)); err == nil {
+			t.Fatalf("accepted inline %s on a component", collection)
 		}
 	}
 }

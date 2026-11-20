@@ -40,7 +40,7 @@ func TestStructuredJobCommands(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Chdir(dir)
-	if err := os.Mkdir(".git", 0o755); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "dotspec.yaml"), []byte("name: jobs\n"), 0644); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile("specs/jobs/change.job.spec.md", []byte(viewFixture), 0o644); err != nil {

@@ -293,9 +293,25 @@ func validateRendered(root string, plan *Plan, files map[string][]byte) ([]diagn
 	cache := map[string]*specfile.ReferenceDocument{}
 	edges := map[string][]string{}
 	var ds []diagnostic.Diagnostic
+	claims := map[string]string{}
 	for _, rel := range slices.Sorted(maps.Keys(pages)) {
 		p := pages[rel]
+		if p.header.GeneratedBy == "dotspec" && p.header.Documents != "" {
+			source, err := url.Parse(p.header.Documents)
+			if err == nil && !source.IsAbs() {
+				key := (&url.URL{Path: path.Join(path.Dir(rel), source.Path), Fragment: source.Fragment}).String()
+				if previous, ok := claims[key]; ok {
+					ds = append(ds, *diagnostic.Error("spec.duplicate-report", "two report pages document "+key,
+						diagnostic.Location{Path: filepath.Join(root, rel)}, diagnostic.Location{Path: filepath.Join(root, previous)}))
+				} else {
+					claims[key] = rel
+				}
+			}
+		}
 		expected := plan.Pages[rel]
+		if expected == nil {
+			continue // Obsolete pages can duplicate a claim but have no current content contract.
+		}
 		report := func(rule, message string) {
 			ds = append(ds, *diagnostic.Error(rule, message, diagnostic.Location{Path: filepath.Join(root, filepath.FromSlash(rel)), Element: expected.Title}))
 		}
@@ -381,7 +397,7 @@ func validateRendered(root string, plan *Plan, files map[string][]byte) ([]diagn
 			}
 		}
 		for _, rel := range slices.Sorted(maps.Keys(pages)) {
-			if !seen[rel] {
+			if plan.Pages[rel] != nil && !seen[rel] {
 				ds = append(ds, *diagnostic.Error("spec.unreachable", "no visible route from SPEC.md", diagnostic.Location{Path: filepath.Join(root, filepath.FromSlash(rel))}))
 			}
 		}

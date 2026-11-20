@@ -48,7 +48,7 @@ cp stdout partial.json
 status 0 dotspec model validate partial.json --json
 stdout '"valid": true'
 status 2 dotspec business-rule init ../escape
-status 2 dotspec business-rule show approval --path specs
+status 0 dotspec business-rule show approval --path specs
 -- approval.md --
 ---
 type: business-rule-spec

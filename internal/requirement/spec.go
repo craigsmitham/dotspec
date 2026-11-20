@@ -3,11 +3,9 @@ package requirement
 
 import (
 	"fmt"
-	"github.com/craigsmitham/dotspec/internal/system"
 	"os"
 	"path/filepath"
 	"regexp"
-	"slices"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
@@ -18,7 +16,7 @@ import (
 const Suffix = ".requirement.spec.md"
 const Collection = "requirements"
 
-var Layout = specfile.Layout{Kind: "requirement", QualityTree: true, Collection: Collection, Suffix: Suffix}
+var Layout = specfile.Layout{Kind: "requirement", Collection: Collection, Suffix: Suffix}
 
 const Template = `---
 type: requirement-spec
@@ -118,9 +116,6 @@ func Read(path string) (*Requirement, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.requirement-name", err.Error(), diagnostic.Location{Path: path})
 	}
-	if _, err := Layout.Owner(path); err != nil {
-		return nil, err
-	}
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -131,14 +126,6 @@ func Read(path string) (*Requirement, error) {
 	}
 	spec.Slug, spec.Path = slug, path
 	spec.Location.Path = path
-	if len(specfile.QualityFolders(path)) > 0 {
-		a, err := system.ReadQualityAttribute(specfile.AttributePath(filepath.Dir(path)))
-		if err != nil {
-			return nil, err
-		}
-		additional := slices.DeleteFunc(spec.QualityAttributes, func(id string) bool { return id == a.ID })
-		spec.QualityAttributes = append([]string{a.ID}, additional...)
-	}
 	return spec, nil
 }
 

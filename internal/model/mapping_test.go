@@ -76,7 +76,7 @@ func TestMappingAllCheckedInSpecimens(t *testing.T) {
 			if len(m.Diagnostics) > 0 || m.RootID == "" {
 				t.Errorf("%s: root=%q diagnostics=%#v", path, m.RootID, m.Diagnostics)
 			}
-			expectedClass := map[string]string{"quality-attribute": "SystemQualityAttribute", "quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "component": "Component", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement"}[kind]
+			expectedClass := map[string]string{"feature": "Feature", "capability": "Capability", "quality-attribute": "SystemQualityAttribute", "quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "component": "Component", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement"}[kind]
 			rootMatches := false
 			for _, element := range m.Elements {
 				if String(element, "id") == m.RootID && String(element, "kind") == expectedClass {

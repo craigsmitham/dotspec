@@ -143,6 +143,7 @@ func inspectFiles(root string, plan *Plan) (*inventory, error) {
 		}
 		header, _ := splitHeader(actual)
 		if header.GeneratedBy == "dotspec" {
+			result.files[rel] = actual
 			result.changes.Removed = append(result.changes.Removed, rel)
 		}
 		return nil

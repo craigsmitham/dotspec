@@ -37,7 +37,7 @@ type File struct {
 }
 
 // Run stages independent attribute sources. The first declared parent supplies
-// the directory. Additional parents remain explicit in the new source.
+// the directory. All parents are explicit in the new source.
 func Run(source *qualitymodel.QualityModel, target string, selected []string, dryRun bool) (Result, error) {
 	result := Result{SchemaVersion: 2, Source: source.Path, DryRun: dryRun}
 	target, err := filepath.Abs(target)
@@ -52,13 +52,7 @@ func Run(source *qualitymodel.QualityModel, target string, selected []string, dr
 	if !info.Mode().IsRegular() {
 		return result, fmt.Errorf("target must be a regular system file: %s", target)
 	}
-	owner, err := system.Layout.Owner(target)
-	if err != nil {
-		return result, err
-	}
-	if err := system.Layout.ValidateLocal(owner); err != nil {
-		return result, err
-	}
+	owner := system.Layout.ContextDir(target)
 	lock := lockedfile.MutexAt(filepath.Join(os.TempDir(), fmt.Sprintf("dotspec-quality-%x.lock", sha256.Sum256([]byte(target)))))
 	unlock, err := lock.Lock()
 	if err != nil {
@@ -82,7 +76,7 @@ func Run(source *qualitymodel.QualityModel, target string, selected []string, dr
 			return result, fmt.Errorf("attribute ID %q already exists in %s", a.ID, target)
 		}
 	}
-	root := filepath.Join(filepath.Dir(target), "quality")
+	root := filepath.Join(owner, specfile.Folder, "quality")
 	var folder func(system.Attribute) string
 	folder = func(a system.Attribute) string {
 		parent := root
@@ -130,9 +124,9 @@ func Run(source *qualitymodel.QualityModel, target string, selected []string, dr
 		}
 		var body strings.Builder
 		fmt.Fprintf(&body, "---\ntype: quality-attribute-spec\nid: %s\n", strconv.Quote(a.ID))
-		if len(a.SubattributeOf) > 1 {
+		if len(a.SubattributeOf) > 0 {
 			body.WriteString("subattribute_of:\n")
-			for _, id := range a.SubattributeOf[1:] {
+			for _, id := range a.SubattributeOf {
 				fmt.Fprintf(&body, "  - %s\n", strconv.Quote(id))
 			}
 		}
@@ -158,6 +152,24 @@ func Run(source *qualitymodel.QualityModel, target string, selected []string, dr
 // Publish complete top-level folders. Roll back only directories installed by
 // this operation if a later rename fails.
 func publish(root string, files []File) error {
+	metadata := filepath.Dir(root)
+	if err := os.Mkdir(metadata, 0755); err != nil && !errors.Is(err, fs.ErrExist) {
+		return err
+	}
+	for _, dir := range []string{metadata, root} {
+		info, err := os.Lstat(dir)
+		if err == nil {
+			if !info.IsDir() {
+				return fmt.Errorf("%s must be a directory, not a file or symlink", dir)
+			}
+			if err := specfile.CheckProjectBoundary(dir); err != nil {
+				return err
+			}
+		}
+		if err != nil && !errors.Is(err, fs.ErrNotExist) {
+			return err
+		}
+	}
 	stage, err := os.MkdirTemp(filepath.Dir(root), ".dotspec-quality-")
 	if err != nil {
 		return err

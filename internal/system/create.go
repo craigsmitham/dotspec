@@ -37,7 +37,7 @@ func InitComponent(path, name, parent string) (string, error) {
 			}
 			parent = filepath.Join(cwd, parent)
 		}
-		owner := filepath.Dir(filepath.Dir(target))
+		owner := specfile.DeclarationDir(target)
 		boundary, err := specfile.ContextRoot(owner)
 		if err != nil {
 			return "", "", err
@@ -49,7 +49,7 @@ func InitComponent(path, name, parent string) (string, error) {
 		if !ok || !info.Mode().IsRegular() {
 			return "", "", fmt.Errorf("unavailable parent declaration: %s", parent)
 		}
-		parentBoundary, err := specfile.ContextRoot(filepath.Dir(filepath.Dir(parent)))
+		parentBoundary, err := specfile.ContextRoot(specfile.DeclarationDir(parent))
 		if err != nil {
 			return "", "", err
 		}
@@ -83,7 +83,7 @@ func InitComponent(path, name, parent string) (string, error) {
 }
 
 func createSubject(path, name string, layout specfile.Layout, template func(target string) (source, title string, err error)) (string, error) {
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		return "", err
 	}
@@ -92,6 +92,10 @@ func createSubject(path, name string, layout specfile.Layout, template func(targ
 		return "", fmt.Errorf("invalid %s name %q", layout.Kind, name)
 	}
 	target := layout.Path(dir, slug)
+	if owner := specfile.DeclarationDir(target); owner != dir && filepath.Dir(target) != dir {
+		return "", fmt.Errorf("destination belongs to another project or repository: %s", owner)
+	}
+	dir = specfile.DeclarationDir(target)
 	source, title, err := template(target)
 	if err != nil {
 		return "", err
@@ -108,17 +112,16 @@ func createSubject(path, name string, layout specfile.Layout, template func(targ
 		return "", err
 	}
 	defer unlock()
-	for _, kind := range []specfile.Layout{Layout, ComponentLayout} {
-		if err := kind.ValidateLocal(dir); err != nil {
-			return "", err
-		}
-		existing, err := kind.LocalSubject(dir)
-		if err != nil {
-			return "", err
-		}
-		if existing != "" {
-			return "", fmt.Errorf("%s already exists; refusing to overwrite it", existing)
-		}
+	existing, err := specfile.LocalDeclaration(dir)
+	if err != nil {
+		return "", err
 	}
-	return layout.Create(dir, slug, source)
+	if existing != "" {
+		return "", fmt.Errorf("%s already exists; refusing to overwrite it", existing)
+	}
+	rel, err := filepath.Rel(dir, target)
+	if err != nil {
+		return "", err
+	}
+	return specfile.Create(dir, rel, source)
 }

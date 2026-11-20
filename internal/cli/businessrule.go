@@ -36,6 +36,9 @@ func newBusinessRuleCommand() *cobra.Command {
 		if action.name == "check" {
 			cmd.Long = action.short + ".\n\n" + exitPolicy
 		}
+		if action.name == "show" || action.name == "check" {
+			cmd.Use = action.name + " <slug-or-source-path>"
+		}
 		cmd.RunE = func(cmd *cobra.Command, args []string) error {
 			path, err := projectPath(cmd)
 			if err != nil {
@@ -48,7 +51,7 @@ func newBusinessRuleCommand() *cobra.Command {
 			if action.name == "list" {
 				return listBusinessRules(path, format, cmd.OutOrStdout())
 			}
-			if err := businessrule.ValidateSlug(args[0]); err != nil {
+			if err := businessrule.ValidateSlug(args[0]); err != nil && (action.name == "init" || !businessrule.Layout.Match(args[0])) {
 				return err
 			}
 			return runBusinessRule(action.name, path, args[0], format, cmd.OutOrStdout())

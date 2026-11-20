@@ -21,7 +21,7 @@ The default file is `todo.sqlite` in the app's working directory. Use `-db PATH`
 
 Start with the [job of resuming interrupted work](specs/jobs/resume.job.spec.md). The [business rule](specs/business-rules/completion.business-rule.spec.md) explains why finishing an errand keeps it available. The [return scenario](specs/use-cases/resume-list.use-case.spec.md) connects that policy to the [checklist actions](specs/concepts/checklist.concept.spec.md).
 
-The [Task service specification](components/task-service/specs/task-service.component.spec.md) links back to the system and owns the [acknowledgement requirement](components/task-service/specs/requirements/acknowledge-after-commit.requirement.spec.md). Its [component report](specification/components/task-service/task-service.component.spec-report.md) brings those sources together.
+The [Task service specification](app/specs/task-service.component.spec.md) links back to the system and owns the [acknowledgement requirement](app/specs/requirements/acknowledge-after-commit.requirement.spec.md). Its [component report](specification/components/task-service/task-service.component.spec-report.md) brings those sources together.
 
 The [restart requirement](specs/requirements/restart.requirement.spec.md) refines the scenario's promise and classifies it against the system's [durability concern](specs/quality/durability/durability.quality-attribute.spec.md). Follow its verification link to the [acceptance test](tests/acceptance.py). Compare the fields it reads through the [forms](app/list.html) with the updates the [server](app/main.go) commits before redirecting.
 

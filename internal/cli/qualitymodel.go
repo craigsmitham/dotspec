@@ -32,6 +32,9 @@ func newQualityModelCommand() *cobra.Command {
 		if action.name == "check" {
 			cmd.Long = action.short + ".\n\n" + exitPolicy
 		}
+		if action.name == "show" || action.name == "check" {
+			cmd.Use = action.name + " <slug-or-source-path>"
+		}
 		cmd.RunE = func(cmd *cobra.Command, args []string) error {
 			path, err := projectPath(cmd)
 			if err != nil {

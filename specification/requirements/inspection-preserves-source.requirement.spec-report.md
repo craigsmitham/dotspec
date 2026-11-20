@@ -1,11 +1,11 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
-documents: "../../../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material"
+documents: "../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material"
 ---
 # Inspection preserves source material
 
-[dotspec](<../../../dotspec.system.spec-report.md>)
+[dotspec](<../dotspec.system.spec-report.md>)
 
 ## Statement
 
@@ -35,7 +35,7 @@ and malformed specifications, missing input, and unavailable context. Evaluate
 differences against [Criterion](<#criterion>).
 Retain the differing paths and contents on test failure.
 
-The [CLI quality-contract tests](<../../../../internal/cli/quality_contracts_test.go>)
+The [CLI quality-contract tests](<../../internal/cli/quality_contracts_test.go>)
 check this criterion. The obligation remains defined in this document.
 
 ## Rationale
@@ -45,10 +45,10 @@ changing the material they are reviewing.
 
 ## Related specifications
 
-[Specification Inspection](<../../../concepts/specification-inspection.concept.spec-report.md>)
+[Specification Inspection](<../concepts/specification-inspection.concept.spec-report.md>)
 describes the read-and-report operation. File creation belongs to the separate
 `init` commands.
 
-**Quality attribute** · [Source preservation](<source-preservation.quality-attribute.spec-report.md>)
+**Quality attribute** · [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)
 
-[Edit source](<../../../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material>)
+[Edit source](<../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material>)

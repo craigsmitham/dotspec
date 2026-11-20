@@ -12,7 +12,6 @@ import (
 // traceable, but only an authored document is a specification.
 func TestDeclaredElementsAreNotSpecifications(t *testing.T) {
 	for _, tc := range []struct{ kind, section string }{
-		{"Feature", "Features"}, {"Capability", "Capabilities"},
 		{"ConceptUse", "Concept uses"}, {"Synchronization", "Synchronizations"}, {"Interface", "Required interfaces"},
 	} {
 		t.Run(tc.kind, func(t *testing.T) {
@@ -94,15 +93,15 @@ Review with the intended users.
 
 func TestInterfaceSpecificationRelationships(t *testing.T) {
 	root := reviewFixture(t)
-	traceEdit(t, root, "specs/document-workspace.system.spec.md", "## Assumptions", `## Features
+	conformanceWrite(t, root, "specs/recovery.feature.spec.md", `---
+type: feature-spec
+---
+# Reliable recovery
 
-### Reliable recovery
+## Groups
 
-#### Groups
-
-[Restoration requests](#restoration-requests).
-
-## Assumptions`)
+[Restoration requests](document-workspace.system.spec.md#restoration-requests).
+`)
 	traceEdit(t, root, "specs/requirements/restoration.requirement.spec.md", "[DocumentTrash](../document-workspace.system.spec.md#documenttrash)", "[DocumentTrash](../document-workspace.system.spec.md#documenttrash), [Restoration requests](../document-workspace.system.spec.md#restoration-requests)")
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {

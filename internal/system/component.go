@@ -12,7 +12,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
-var ComponentLayout = specfile.Layout{Kind: "component", Suffix: ".component.spec.md", NamedSubject: true}
+var ComponentLayout = specfile.ComponentLayout
 
 type Component struct {
 	Name       string
@@ -28,8 +28,8 @@ func ParseComponent(data []byte) (*Component, error) {
 		return nil, err
 	}
 	for _, section := range doc.Sections {
-		if section.Title == "Components" && len(section.Children) > 0 {
-			return nil, diagnostic.Error("structure.component-source", "declare each component in its own <name>.component.spec.md file", doc.Location(section.Start, section.Title))
+		if err := rejectInlineSubject(doc, section); err != nil {
+			return nil, err
 		}
 		if section.Title == "Specification system" {
 			return nil, diagnostic.Error("structure.part-of", "a component selects its governing system through Part of", doc.Location(section.Start, section.Title))
@@ -39,7 +39,7 @@ func ParseComponent(data []byte) (*Component, error) {
 	if err := ids.Register(meta.ID, "component", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err
 	}
-	if err := ids.RegisterDeclarations(doc, "Features", "Capabilities", "Concept uses", "Synchronizations"); err != nil {
+	if err := ids.RegisterDeclarations(doc, "Concept uses", "Synchronizations"); err != nil {
 		return nil, err
 	}
 	if err := ids.RegisterInterfaces(doc); err != nil {
@@ -63,11 +63,8 @@ func ParseComponent(data []byte) (*Component, error) {
 }
 
 func ReadComponent(path string) (*Component, error) {
-	owner, err := ComponentLayout.Owner(path)
-	if err != nil {
-		return nil, err
-	}
-	if _, err := localSubject(owner); err != nil {
+	owner := ComponentLayout.ContextDir(path)
+	if _, err := specfile.LocalDeclaration(owner); err != nil {
 		return nil, err
 	}
 	data, err := os.ReadFile(path)
@@ -101,7 +98,7 @@ func SubjectChain(owner string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	path, err := nearestSubject(owner, root)
+	path, err := specfile.NearestDeclaration(owner, root)
 	if err != nil || path == "" {
 		return nil, err
 	}
@@ -110,38 +107,6 @@ func SubjectChain(owner string) ([]string, error) {
 	}
 	_, err = Read(path)
 	return []string{path}, err
-}
-
-func nearestSubject(owner, boundary string) (string, error) {
-	for dir := owner; ; dir = filepath.Dir(dir) {
-		for _, layout := range []specfile.Layout{Layout, ComponentLayout} {
-			if err := layout.ValidateLocal(dir); err != nil {
-				return "", err
-			}
-		}
-		path, err := localSubject(dir)
-		if path != "" || err != nil || dir == boundary || filepath.Dir(dir) == dir {
-			return path, err
-		}
-	}
-}
-
-func localSubject(dir string) (string, error) {
-	system, err := Layout.LocalSubject(dir)
-	if err != nil {
-		return "", err
-	}
-	component, err := ComponentLayout.LocalSubject(dir)
-	if err != nil {
-		return "", err
-	}
-	if system != "" && component != "" {
-		return "", diagnostic.Error("layout.subject-ambiguous", "directory contains both a system and a component declaration", diagnostic.Location{Path: component}, diagnostic.Location{Path: system})
-	}
-	if component != "" {
-		return component, nil
-	}
-	return system, nil
 }
 
 func parentChain(path, boundary string) ([]string, error) {
@@ -168,7 +133,7 @@ func parentChain(path, boundary string) ([]string, error) {
 		if err != nil || !ok || !info.Mode().IsRegular() {
 			return paths, diagnostic.Error("structure.part-of", "unavailable parent declaration: "+path, ref.Location)
 		}
-		parentBoundary, err := specfile.ContextRoot(filepath.Dir(filepath.Dir(path)))
+		parentBoundary, err := specfile.ContextRoot(specfile.DeclarationDir(path))
 		if err != nil {
 			return paths, err
 		}

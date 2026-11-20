@@ -13,8 +13,8 @@ The canonical [LinkML model](../../model/metamodel.yaml) defines the records and
 relationships. The [generated reference](model/index.md) describes
 every field. The [relationship reference](model/relationships.md) describes edge categories, scopes, inverses, cycle policies and projections. The [Markdown mapping profile](../../model/markdown-mapping.md) defines
 how authored syntax becomes those records. The current model is experimental:
-`model_version` is `0.22.0-draft`, `representation_version` is `0.1.0`, and
-`mapping_profile` is `dotspec-markdown/16`.
+`model_version` is `0.23.0-draft`, `representation_version` is `0.1.0`, and
+`mapping_profile` is `dotspec-markdown/17`.
 
 The [verification and validation vocabulary](../handbook/verification-and-validation.md)
 distinguishes requirements quality, requirements fitness, system conformance and
@@ -24,13 +24,14 @@ separate through their owning fields and explicit subject and basis.
 ## Specification types and declared elements
 
 Each authored `*.spec.md` document has one root `Specification` record defining
-a subject, behavior, obligation or classification scheme. There are nine authored
-specification types, each corresponding to one concrete `Specification` class.
+a subject, behavior, obligation or classification scheme. Each authored type corresponds to one concrete `Specification` class.
 
 | Specification type | Class |
 | --- | --- |
 | `system-spec` | System |
 | `component-spec` | Component |
+| `feature-spec` | Feature |
+| `capability-spec` | Capability |
 | `quality-attribute-spec` | SystemQualityAttribute |
 | `job-spec` | Job |
 | `quality-model-spec` | QualityModel |
@@ -54,7 +55,7 @@ running system or deployment inventory. The same distinction applies to a
 Component, Feature or Interface record. We do not require a second
 “SystemSpecification” record to repeat that definition.
 
-A Component specification identifies one structural parent through `part_of`. Locally owned specifications identify their Component through `specification_component`. Feature, Capability, ConceptUse, Synchronization and Interface are named elements declared inside a System or Component specification. An Interface is declared
+A Component specification identifies one structural parent through `part_of`. Locally owned specifications identify their nearest System or Component through `specification_owner`. Feature and Capability each have their own source. ConceptUse, Synchronization and Interface are named elements declared inside a System or Component specification. An Interface is declared
 under a System or Component's Required interfaces or Provided interfaces section.
 These elements are not specifications:
 
@@ -382,13 +383,13 @@ applicability. Classification labels retain their authored occurrences
 and the selected system as label `governing_system`; resolved targets populate the corresponding typed fields.
 Sub-attribute references stay within their declaring owner. Reusable-model
 grouping labels use `governing_quality_model`; obligation labels use `governing_system`.
-The system’s `quality_attributes` lists its standalone attribute records. An optional system overview section supplies `quality_attributes_content`. The physical parent folder contributes a parent edge for a nested attribute and a classification edge for a colocated requirement. These edges have source-path provenance. Additional frontmatter IDs have label occurrences.
+The system’s `quality_attributes` lists its standalone attribute records. An optional system overview section supplies `quality_attributes_content`. Attribute parentage and requirement classification come from the authored `subattribute_of` and `quality_attributes` labels.
 
 Typed relationship fields are authoritative. An `Assertion` is an optional derived
 view of one canonical field, with required endpoints and provenance. Its
 `projection_path`, such as `TraceableElement.supports`, `System.goals` or
 `Obligation.refines`, names that field and preserves roles such as type parameters
-versus introduced types. Its `mapping_rule` is `dotspec-markdown/16/projection/<path>`.
+versus introduced types. Its `mapping_rule` is `dotspec-markdown/17/projection/<path>`.
 The catalog lists the projectable paths in `projections`: every declaration
 membership and every semantic-association or structural-context field. The
 assertions collection is not a replacement for the typed graph. Reverse navigation

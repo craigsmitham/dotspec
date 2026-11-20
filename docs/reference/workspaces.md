@@ -50,9 +50,7 @@ dotspec model schema --workspace > workspace.schema.json
 ```
 
 dotspec finds the nearest ancestor `dotspec.yaml`, stopping at the Git/worktree
-boundary (or filesystem root outside Git). With no explicit selector, the
-containing project is selected; running from one of its subdirectories still
-selects that project root. Use `--path` to narrow the scan. On its own, `--path` is
+boundary (or filesystem root outside Git). With no explicit selector, project inventories start at the containing project root. Initialization, show, and focused checks start at the working directory. Use `--path` to narrow the scan. On its own, `--path` is
 relative to the working directory. With `--project`, it is relative to that
 project's root and cannot select another project. Absolute paths within that
 project also work.
@@ -60,7 +58,7 @@ project also work.
 For `--project` and `--all`, dotspec searches the entire Git worktree from any
 subdirectory. Tracked and non-ignored manifests participate. Outside Git, the
 search starts at the outermost enclosing project or, if there is none, at the
-working directory. Discovery skips symlinks, `specs/` trees and nested repositories.
+working directory. Discovery skips symlinks and nested repositories. A project manifest or repository root creates a boundary even in a directory named `specs/`.
 A local manifest still bounds direct lookup and parent scans even when Git ignores
 it. Track it to include that project in worktree-wide commands.
 

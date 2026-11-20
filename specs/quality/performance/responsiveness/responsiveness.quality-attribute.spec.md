@@ -1,5 +1,6 @@
 ---
 type: quality-attribute-spec
+subattribute_of: [performance]
 ---
 
 # Responsiveness

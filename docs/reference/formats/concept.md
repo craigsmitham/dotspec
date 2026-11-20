@@ -21,8 +21,7 @@ and `--json` or `--format json`.
 - `init <slug>` creates `specs/concepts/<slug>.concept.spec.md` from an editable
   template. It creates missing metadata folders but never overwrites a file or
   writes through a symlinked metadata directory.
-- `show <slug>` selects the concept in that project's `specs/concepts/` folder,
-  without searching ancestor projects for the slug. Text includes the complete
+- `show <slug-or-source-path>` selects a concept by its owner-scoped slug or its source path. Text includes the complete
   authored Markdown, associated system, and source path. JSON also exposes
   `purpose`, `state`, `actions`, and `operational_principles` as Markdown strings.
 - `list` discovers concepts in the selected subtree, grouped by enclosing system.

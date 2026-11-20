@@ -5,6 +5,7 @@ import (
 	"io"
 	"strings"
 
+	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/spf13/cobra"
 )
@@ -44,6 +45,10 @@ func newSystemCommand() *cobra.Command {
 				return runSystem(cmd.Name(), path, format, cmd.OutOrStdout(), args...)
 			},
 		}
+		if action.name == "show" {
+			cmd.Use = "show [source-path]"
+			cmd.Args = cobra.MaximumNArgs(1)
+		}
 		if action.name == "init" {
 			cmd.Use = "init [name]"
 			cmd.Args = cobra.MaximumNArgs(1)
@@ -72,6 +77,13 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 		_, err = fmt.Fprintf(out, "Created %s\nEdit Description, Purpose, and Scope. Keep the filename in sync if you rename the system.\nAuthoring guide: dotspec guide system\n", displayPath(target))
 		return err
 	case "show":
+		if len(args) > 0 {
+			file, err := system.Layout.SourcePath(path, args[0])
+			if err != nil {
+				return err
+			}
+			path = specfile.DeclarationDir(file)
+		}
 		spec, parent, err := system.Show(path)
 		if err != nil {
 			return err
@@ -85,7 +97,7 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 			parentText = fmt.Sprintf("%s (%s)", result.EnclosingSystem.Name, displayPath(result.EnclosingSystem.Path))
 		}
 		modelText := ""
-		for _, field := range []struct{ name, value string }{{"Goals", spec.Goals}, {"Environment", spec.Environment}, {"Stakeholders", spec.Stakeholders}, {"Assumptions", spec.Assumptions}, {"Constraints", spec.Constraints}, {"Glossary", spec.Glossary}, {"Part of", spec.PartOf}, {"Components", spec.Components}, {"Features", spec.Features}, {"Concept uses", spec.ConceptUses}, {"Synchronizations", spec.Synchronizations}} {
+		for _, field := range []struct{ name, value string }{{"Goals", spec.Goals}, {"Environment", spec.Environment}, {"Stakeholders", spec.Stakeholders}, {"Assumptions", spec.Assumptions}, {"Constraints", spec.Constraints}, {"Glossary", spec.Glossary}, {"Part of", spec.PartOf}, {"Components", spec.Components}, {"Concept uses", spec.ConceptUses}, {"Synchronizations", spec.Synchronizations}} {
 			if field.value != "" {
 				modelText += "\n\n" + field.name + "\n" + indent(field.value)
 			}

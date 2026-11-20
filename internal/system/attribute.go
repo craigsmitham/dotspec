@@ -1,19 +1,14 @@
 package system
 
 import (
-	"errors"
-	"fmt"
-	"io/fs"
 	"os"
-	"path/filepath"
-	"slices"
 
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
-var AttributeLayout = specfile.Layout{Kind: "quality-attribute", Suffix: specfile.AttributeSuffix, Collection: "quality", QualityTree: true}
+var AttributeLayout = specfile.Layout{Kind: "quality-attribute", Suffix: specfile.AttributeSuffix, Collection: "quality"}
 
 type AttributeDocument struct {
 	Attribute
@@ -32,9 +27,6 @@ func ParseQualityAttribute(path string, data []byte) (*AttributeDocument, error)
 	}
 	if err := AttributeLayout.CheckName(path, doc.Name); err != nil {
 		return nil, err
-	}
-	if filepath.Base(path) != filepath.Base(filepath.Dir(path))+AttributeLayout.Suffix {
-		return nil, fmt.Errorf("%s: attribute directory must match the filename", path)
 	}
 	if meta.ID == "" {
 		meta.ID = specfile.NameSlug(doc.Name)
@@ -56,7 +48,7 @@ func ParseQualityAttribute(path string, data []byte) (*AttributeDocument, error)
 	seenDefinition := false
 	for _, s := range doc.Sections {
 		if s.Title == "Specification system" {
-			return nil, diagnostic.Error("quality.scope", "the quality folder determines the declaring system", doc.Location(s.Start, s.Title))
+			return nil, diagnostic.Error("quality.scope", "the nearest subject declares this quality attribute", doc.Location(s.Start, s.Title))
 		}
 		if s.Title == "Definition" {
 			if seenDefinition || s.Level != 2 {
@@ -73,9 +65,6 @@ func ParseQualityAttribute(path string, data []byte) (*AttributeDocument, error)
 }
 
 func ReadQualityAttribute(path string) (*AttributeDocument, error) {
-	if _, err := AttributeLayout.Owner(path); err != nil {
-		return nil, err
-	}
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -88,37 +77,16 @@ func ReadQualityAttribute(path string) (*AttributeDocument, error) {
 }
 
 func (s *System) loadQualityTree() error {
-	root := filepath.Join(filepath.Dir(s.Path), "quality")
-	info, err := os.Lstat(root)
-	if errors.Is(err, fs.ErrNotExist) {
-		return nil
-	}
+	dir := specfile.DeclarationDir(s.Path)
+	paths, err := specfile.OwnedPaths(dir, "*"+AttributeLayout.Suffix, AttributeLayout.Match)
 	if err != nil {
 		return err
 	}
-	if !info.IsDir() {
-		return fmt.Errorf("%s must be a directory", root)
-	}
-	byDir := map[string]string{}
 	ids := map[string]bool{}
 	for _, a := range s.QualityAttributes {
 		ids[a.ID] = true
 	}
-	err = filepath.WalkDir(root, func(dir string, entry fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if !entry.IsDir() || dir == root {
-			return nil
-		}
-		path := specfile.AttributePath(dir)
-		info, err := os.Lstat(path)
-		if err != nil {
-			return fmt.Errorf("quality folder requires its named declaration: %w", err)
-		}
-		if !info.Mode().IsRegular() {
-			return fmt.Errorf("expected a regular attribute source: %s", path)
-		}
+	for _, path := range paths {
 		doc, err := ReadQualityAttribute(path)
 		if err != nil {
 			return err
@@ -128,28 +96,23 @@ func (s *System) loadQualityTree() error {
 			return diagnostic.Error("quality.identity", "duplicate quality attribute ID "+a.ID, a.Location)
 		}
 		ids[a.ID] = true
-		byDir[dir] = a.ID
-		if parent := byDir[filepath.Dir(dir)]; parent != "" {
-			additional := slices.DeleteFunc(a.SubattributeOf, func(id string) bool { return id == parent })
-			a.SubattributeOf = append([]string{parent}, additional...)
-		}
 		s.QualityAttributes = append(s.QualityAttributes, a)
-		return nil
-	})
-	if err != nil {
-		return err
 	}
 	return validateQualityAttributes(s.QualityAttributes)
 }
 
 var attributeContext = &check.ContextProvider{
 	Resolve: func(owner string) ([]string, error) {
-		file, err := Layout.LocalSubject(owner)
+		boundary, err := specfile.ContextRoot(owner)
 		if err != nil {
 			return nil, err
 		}
-		if file == "" {
-			return nil, diagnostic.Error("quality.scope", "quality attributes require a system in the owning specs directory", diagnostic.Location{Path: owner})
+		file, err := specfile.NearestDeclaration(owner, boundary)
+		if err != nil {
+			return nil, err
+		}
+		if !Layout.Match(file) {
+			return nil, diagnostic.Error("quality.scope", "quality attributes require an owning system", diagnostic.Location{Path: owner})
 		}
 		return []string{file}, nil
 	},

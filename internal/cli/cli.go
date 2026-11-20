@@ -166,7 +166,7 @@ func NewRoot() *cobra.Command {
 	}
 	root.SetVersionTemplate("dotspec {{.Version}}\n")
 	root.AddCommand(newGuideCommand(), newCheckCommand(), newSpecCommand(), newSourcesCommand(), newModelCommand(), newManCommand(), newCompletionCommand())
-	for _, parent := range []*cobra.Command{newQualityModelCommand(), newBusinessRuleCommand(), newSystemCommand(), newComponentCommand(), newJobCommand(), newUseCaseCommand(), newConceptCommand(), newRequirementCommand()} {
+	for _, parent := range []*cobra.Command{newQualityModelCommand(), newBusinessRuleCommand(), newSystemCommand(), newComponentCommand(), newProductCommand(system.FeatureLayout), newProductCommand(system.CapabilityLayout), newJobCommand(), newUseCaseCommand(), newConceptCommand(), newRequirementCommand()} {
 		root.AddCommand(parent)
 		for _, cmd := range append(parent.Commands(), parent) {
 			if cmd != parent && cmd.Name() != "init" && cmd.Name() != "check" {
@@ -206,7 +206,7 @@ func projectPath(cmd *cobra.Command) (string, error) {
 	// Checks and inventories include scope failures in reports. Other commands report an
 	// invalid project selector as an invocation error rather than a spec finding.
 	if cmd.Name() != "check" && cmd.Name() != "sources" {
-		resolved, scopeErr := specfile.Scope(path)
+		resolved, scopeErr := specfile.Directory(path)
 		if scopeErr != nil {
 			return path, &exitError{code: 2, err: scopeErr}
 		}

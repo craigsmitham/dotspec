@@ -104,7 +104,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			}
 		}
 	}
-	out.WriteString("\n## Features\n\nFeature membership is many-to-many and does not own the grouped records. Component involvement below is derived only from the direct `applies_to` targets of grouped requirements or obligation clauses. It is not an implementation or allocation claim.\n\n| Feature | System | Grouped specifications | Components involved (derived) |\n| --- | --- | --- | --- |\n")
+	out.WriteString("\n## Features\n\nFeature membership is many-to-many and does not own the grouped records. Component involvement below is derived only from the direct `applies_to` targets of grouped requirements or obligation clauses. It is not an implementation or allocation claim.\n\n| Feature | Owner | Grouped specifications | Components involved (derived) |\n| --- | --- | --- | --- |\n")
 	for _, r := range elements {
 		if String(r, "kind") != "Feature" {
 			continue
@@ -121,7 +121,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 				}
 			}
 		}
-		fmt.Fprintf(&out, "| %s | %s | %s | %s |\n", link(String(r, "id")), link(String(r, "owner")), links(Strings(r["groups"])), links(components))
+		fmt.Fprintf(&out, "| %s | %s | %s | %s |\n", link(String(r, "id")), link(String(r, "specification_owner")), links(Strings(r["groups"])), links(components))
 	}
 	out.WriteString("\n## Applicable obligations\n\nOnly explicit applicability to acquired systems and components is listed. Declaration inside a component does not implicitly supply an applicability target. Plans describe intended system verification; their presence does not prove satisfaction.\n\n| Obligation | Subjects | Verification plan | Criterion |\n| --- | --- | --- | --- |\n")
 	guidance := func(r Record, field string) string {

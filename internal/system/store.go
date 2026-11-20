@@ -40,7 +40,7 @@ func Show(path string) (spec, parent *System, err error) {
 }
 
 func enclosing(path string, limit int) ([]*System, error) {
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		return nil, err
 	}
@@ -50,9 +50,6 @@ func enclosing(path string, limit int) ([]*System, error) {
 	}
 	var specs []*System
 	for current := dir; ; current = filepath.Dir(current) {
-		if err := Layout.ValidateLocal(current); err != nil {
-			return nil, err
-		}
 		file, err := Layout.LocalSubject(current)
 		if err != nil {
 			return nil, err
@@ -79,7 +76,7 @@ func enclosing(path string, limit int) ([]*System, error) {
 // List returns directory nesting in source-path order, not declared part_of structure.
 // Enclosing documents outside the selected subtree are absent from the forest.
 func List(path string) ([]*Node, error) {
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		return nil, err
 	}
@@ -96,17 +93,14 @@ func List(path string) ([]*Node, error) {
 		}
 		node := &Node{System: spec, Children: []*Node{}}
 		nodes = append(nodes, node)
-		owner, err := Layout.Owner(path)
-		if err != nil {
-			return nil, err
-		}
+		owner := Layout.ContextDir(path)
 		byDir[owner] = node
 	}
 	var roots []*Node
 	for _, node := range nodes {
 		var parent *Node
-		owner, _ := Layout.Owner(node.System.Path) // Read already validated placement.
-		for current := owner; current != dir; {
+		owner := Layout.ContextDir(node.System.Path)
+		for current := owner; current != dir && filepath.Dir(current) != current; {
 			current = filepath.Dir(current)
 			if parent = byDir[current]; parent != nil {
 				break

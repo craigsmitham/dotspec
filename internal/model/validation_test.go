@@ -24,7 +24,7 @@ func validationSnapshot(t *testing.T) *Snapshot {
 	files := map[string]string{
 		"specs/example.system.spec.md":                                                "---\ntype: system-spec\n---\n# Example\n## Purpose\nSupport explicit source-backed specifications.\n## Scope\nThese examples.\n## Goals\n- Preserve author intent.\n## Glossary\n### Source\nThe original authored bytes.\n## Quality attributes\n",
 		"specs/quality/reliability/reliability.quality-attribute.spec.md":             "---\ntype: quality-attribute-spec\nid: reliable\n---\n# Reliability\n\n## Definition\n\nWorks as specified.\n",
-		"specs/quality/reliability/consistency/consistency.quality-attribute.spec.md": "---\ntype: quality-attribute-spec\nid: consistent\n---\n# Consistency\n\n## Definition\n\nProduces the same result from the same source.\n",
+		"specs/quality/reliability/consistency/consistency.quality-attribute.spec.md": "---\ntype: quality-attribute-spec\nid: consistent\nsubattribute_of: [reliable]\n---\n# Consistency\n\n## Definition\n\nProduces the same result from the same source.\n",
 
 		"specs/use-cases/check.use-case.spec.md": `---
 type: use-case-spec

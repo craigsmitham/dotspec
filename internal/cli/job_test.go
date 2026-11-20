@@ -89,7 +89,7 @@ func TestJobEmptyMissingUnassociatedAndMalformed(t *testing.T) {
 	if code == 0 || out != "" || !strings.Contains(errOut, "missing.job.spec.md") {
 		t.Fatalf("missing: %d %q %q", code, out, errOut)
 	}
-	if err := os.Mkdir(filepath.Join(dir, ".git"), 0o755); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "dotspec.yaml"), []byte("name: jobs\n"), 0644); err != nil {
 		t.Fatal(err)
 	}
 	if code, _, errOut := invoke("job", "init", "work", "--path", dir); code != 0 {
@@ -99,7 +99,7 @@ func TestJobEmptyMissingUnassociatedAndMalformed(t *testing.T) {
 	if code != 0 || !strings.Contains(out, "System: None") || errOut != "" {
 		t.Fatalf("unassociated: %d %q %q", code, out, errOut)
 	}
-	if err := os.Remove(filepath.Join(dir, ".git")); err != nil {
+	if err := os.Remove(filepath.Join(dir, "dotspec.yaml")); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile(filepath.Join(dir, "specs", "jobs", "work.job.spec.md"), []byte("invalid"), 0o644); err != nil {

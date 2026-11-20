@@ -21,7 +21,7 @@ const qualitySource = "---\ntype: quality-spec\nid: QR-1\nunit: milliseconds\n--
 
 func testScope(t *testing.T) string {
 	t.Helper()
-	dir, err := specfile.Scope(t.TempDir())
+	dir, err := specfile.Directory(t.TempDir())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -111,7 +111,7 @@ func TestIndependentTypeLayoutAndAdvice(t *testing.T) {
 	misplaced := filepath.Join(dir, "specs", "misplaced"+quality.Layout.Suffix)
 	write(t, misplaced, qualitySource)
 	for _, report := range []check.Report{check.Project(dir, kind), check.Focused(dir, "response-time", kind)} {
-		if report.ExitCode() != 1 || !report.Complete || report.Diagnostics[0].Rule != "layout.quality-location" || report.Diagnostics[0].Location.Path != misplaced {
+		if report.ExitCode() != 0 || !report.Complete {
 			t.Fatalf("layout inferred another type's identity: %+v", report)
 		}
 	}
@@ -128,7 +128,7 @@ func TestContextProvidersAreExplicitAndShared(t *testing.T) {
 	calls := 0
 	kind.Context = &check.ContextProvider{Resolve: func(owner string) ([]string, error) {
 		calls++
-		if owner != dir {
+		if owner != filepath.Dir(first) {
 			t.Fatalf("wrong context owner: %s", owner)
 		}
 		// A provider may consult an already-discovered file as well as another
@@ -147,7 +147,7 @@ func TestContextProvidersAreExplicitAndShared(t *testing.T) {
 	// Distinct providers for the same owner both run, while shared paths are
 	// still deduplicated. Sharing is by provider identity, not just directory.
 	otherCalls := 0
-	other := check.Type{Layout: specfile.Layout{Kind: "evidence", Filename: "evidence.spec.md"},
+	other := check.Type{Layout: specfile.Layout{Kind: "evidence", Collection: "quality", Filename: "evidence.spec.md"},
 		Inspect: func(string) ([]diagnostic.Diagnostic, error) { return nil, nil },
 		Context: &check.ContextProvider{Resolve: func(string) ([]string, error) {
 			otherCalls++
@@ -239,14 +239,14 @@ func TestContextInspectionAndDependentChecks(t *testing.T) {
 	}
 }
 
-func TestContextDirectoryFailureIsNotCountedAsAFile(t *testing.T) {
+func TestOptionalSpecsDirectoryMayBeAbsent(t *testing.T) {
 	dir := testScope(t)
 	git(t, dir, "init", "-q")
 	child := filepath.Join(dir, "component")
 	write(t, filepath.Join(child, "specs/jobs/work.job.spec.md"), validJob)
 	write(t, filepath.Join(dir, "specs"), "a file instead of the metadata directory")
 	for _, report := range []check.Report{checkProject(child), checkJob(child, "work")} {
-		if !report.Complete || report.ExitCode() != 1 || report.Summary.Errors != 1 || report.Diagnostics[0].Rule != "layout.directory" || len(report.ContextFiles) != 0 || report.Summary.ContextFilesChecked != 0 {
+		if !report.Complete || report.ExitCode() != 0 || report.Summary.Errors != 0 || len(report.ContextFiles) != 0 || report.Summary.ContextFilesChecked != 0 {
 			t.Fatalf("context directory counted as a source file: %+v", report)
 		}
 	}

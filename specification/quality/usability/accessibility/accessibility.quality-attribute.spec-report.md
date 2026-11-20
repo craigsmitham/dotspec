@@ -14,7 +14,7 @@ can use dotspec.
 
 ## Related specifications
 
-**Classifies** · [Diagnostic severity is available without styling](<../diagnosability/diagnostic-severity.requirement.spec-report.md>)
+**Classifies** · [Diagnostic severity is available without styling](<../../../requirements/diagnostic-severity.requirement.spec-report.md>)
 
 **Parent attribute** · [Usability](<../usability.quality-attribute.spec-report.md>)
 

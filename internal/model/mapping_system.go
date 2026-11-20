@@ -12,8 +12,6 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 	switch s.Title {
 	case "Part of":
 		m.structureReference(r, "part_of", s)
-	case "Features", "Capabilities":
-		m.systemDeclarations(r, s)
 	case "Description":
 		m.section(r, "description", s)
 	case "Purpose":

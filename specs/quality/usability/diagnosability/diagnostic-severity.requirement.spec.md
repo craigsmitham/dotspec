@@ -1,7 +1,7 @@
 ---
 type: requirement-spec
 id: diagnostic-severity
-quality_attributes: [accessibility]
+quality_attributes: [diagnosability, accessibility]
 ---
 
 # Diagnostic severity is available without styling

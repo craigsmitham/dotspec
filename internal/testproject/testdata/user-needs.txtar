@@ -157,61 +157,66 @@ Help commuters respond to changing travel conditions.
 ## Scope
 
 Journey information and disruption notifications. Transport operations remain external.
+-- specs/features/disruption-alerts.feature.spec.md --
+---
+type: feature-spec
+id: disruption-alerts
+---
 
-## Features
+# Disruption alerts
 
-### Disruption alerts
-
-**ID:** disruption-alerts
-
-#### Purpose
+## Purpose
 
 Help a commuter discover that their travel plan needs attention.
 
-#### Supports
+## Supports
 
-[Timely awareness](jobs/reach-work.job.spec.md#timely-awareness)
+[Timely awareness](../jobs/reach-work.job.spec.md#timely-awareness)
 
-#### Groups
+## Groups
 
-[Notify affected commuters](requirements/notify-commuters.requirement.spec.md)
+[Notify affected commuters](../requirements/notify-commuters.requirement.spec.md)
+-- specs/capabilities/disruption-communication.capability.spec.md --
+---
+type: capability-spec
+id: disruption-communication
+---
 
-## Capabilities
+# Disruption communication
 
-### Disruption communication
-
-**ID:** disruption-communication
-
-#### Purpose
+## Purpose
 
 Make relevant changes understandable and available to affected travelers.
 
-#### Supports
+## Supports
 
-[Timely awareness](jobs/reach-work.job.spec.md#timely-awareness)
-[Confidence in arrival](jobs/reach-work.job.spec.md#arrival-confidence)
+[Timely awareness](../jobs/reach-work.job.spec.md#timely-awareness)
+[Confidence in arrival](../jobs/reach-work.job.spec.md#arrival-confidence)
 
-#### Depends on
+## Depends on
 
-[Service-change detection](#change-detection)
+[Service-change detection](service-change-detection.capability.spec.md)
 
-#### Provided by
+## Provided by
 
-[Notification service](../components/notification-service/specs/notification-service.component.spec.md)
+[Notification service](../../components/notification-service/specs/notification-service.component.spec.md)
 
-#### Enablers
+## Enablers
 
 Transport staff interpret ambiguous reports and provide explanations. The software provider link is non-exhaustive.
+-- specs/capabilities/service-change-detection.capability.spec.md --
+---
+type: capability-spec
+id: change-detection
+---
 
-### Service-change detection
+# Service-change detection
 
-**ID:** change-detection
-
-#### Purpose
+## Purpose
 
 Recognize changes that could affect a planned journey.
 
-#### Enablers
+## Enablers
 
 Transport operations staff and external information feeds. No software provider is specified here.
 -- components/notification-service/specs/notification-service.component.spec.md --

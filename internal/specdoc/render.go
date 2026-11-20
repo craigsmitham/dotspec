@@ -135,13 +135,19 @@ func (p *planner) renderSubject(s *subject) {
 		}
 		w.text(w.link(parent.name.title, parent.file))
 	}
+	var earlyDirectory *directory
+	if features := s.directories["Features"]; s.kind() == "System" && features != nil && features.section == nil {
+		earlyDirectory = features
+		w.heading("Features")
+		features.render(w)
+	}
 	p.renderHeadings(w, s, headings)
 	if s.kind() == "System" && len(model.Strings(s.r["quality_attributes"])) > 0 && s.section("Quality attributes") == nil {
 		w.heading("Quality attributes")
 		p.attributeTable(w, s)
 	}
 	for _, label := range slices.Sorted(maps.Keys(s.directories)) {
-		if d := s.directories[label]; d.section == nil {
+		if d := s.directories[label]; d.section == nil && d != earlyDirectory {
 			w.heading(label)
 			d.render(w)
 		}

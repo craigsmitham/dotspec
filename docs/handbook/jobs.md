@@ -111,10 +111,13 @@ printed pp. 39–49; the mapping below is a dotspec design choice.
 | Feature | A recognizable grouping of specified product behavior |
 | System / Component | The subject or structural part being specified |
 
-Declare optional named capabilities under `## Capabilities` in a system file.
-Each H3 capability can have an `**ID:**`, `Purpose`, `Supports`, `Depends on`,
-`Provided by`, and `Enablers` sections. Its declaring system is its documentation
-home; declaration does not make that system a provider.
+Create a capability with `dotspec capability init local-task-storage`. The
+`*.capability.spec.md` file starts with `type: capability-spec`, an optional
+frontmatter `id`, and an H1 naming the ability. Use level-two headings for
+Description, Purpose, Supports, Depends on, Provided by and Enablers as needed.
+The nearest enclosing system or component owns the file. Record providers
+explicitly, including when a different component provides the ability.
+See [Local task storage](../../examples/todo/specs/capabilities/local-task-storage.capability.spec.md).
 
 - `supports` links to goals, jobs, steps, outcomes or use cases; it expresses intended contribution.
 - `depends_on` links to other capabilities; dependencies can be many-to-many and cyclic.

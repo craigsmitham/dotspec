@@ -4,7 +4,7 @@ Generated from [the canonical model](../../../model/metamodel.yaml) and [the vie
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.22.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.23.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
@@ -25,7 +25,7 @@ Arrows use schema-owned relationship labels; reference tables retain exact canon
 
 ### Specification types
 
-A Specification is the root record of one authored specification document. The nine specification types correspond one-to-one with these concrete classes. Subsets classify concerns separately from this hierarchy.
+A Specification is the root record of one authored specification document. The specification types correspond one-to-one with these concrete classes. Subsets classify concerns separately from this hierarchy.
 
 ```mermaid
 classDiagram
@@ -35,6 +35,8 @@ classDiagram
     class SystemContextSpecification
     <<abstract>> SystemContextSpecification
     class SystemQualityAttribute
+    class Feature
+    class Capability
     class System
     class Component
     class QualityModel
@@ -45,6 +47,8 @@ classDiagram
     class Requirement
     Specification <|-- SystemContextSpecification
     Specification <|-- SystemQualityAttribute
+    SystemContextSpecification <|-- Feature
+    SystemContextSpecification <|-- Capability
     Specification <|-- System
     SystemContextSpecification <|-- Component
     Specification <|-- QualityModel
@@ -57,26 +61,20 @@ classDiagram
 
 ### Elements declared in system and component specifications
 
-Components link to their structural parents. Systems and components can each declare features, capabilities, concept uses, synchronizations, and interfaces.
+Components link to their structural parents. Systems and components can each declare concept uses, synchronizations, and interfaces.
 
 ```mermaid
 classDiagram
     direction LR
     class System
     class Component
-    class Feature
-    class Capability
     class ConceptUse
     class Synchronization
     class Interface
     Component --> "0..1" System : part of
     Component --> "0..1" Component : part of
-    System *-- "0..*" Feature : declares features
-    System *-- "0..*" Capability : declares capabilities
     System *-- "0..*" ConceptUse : concept uses
     System *-- "0..*" Synchronization : synchronizations
-    Component *-- "0..*" Feature : declares features
-    Component *-- "0..*" Capability : declares capabilities
     Component *-- "0..*" ConceptUse : concept uses
     Component *-- "0..*" Synchronization : synchronizations
     System *-- "0..*" Interface : requires interface
@@ -103,7 +101,8 @@ classDiagram
     Job --> System : specification system
     UseCase --> System : specification system
     Concept --> System : specification system
-    Requirement ..> Component : specification component
+    Requirement ..> System : specification owner
+    Requirement ..> Component : specification owner
     Requirement --> System : specification system
 ```
 
@@ -145,7 +144,6 @@ classDiagram
     System --> "0..1" System : part of
     Component --> "0..1" System : part of
     Component --> "0..1" Component : part of
-    System *-- "0..*" Feature : declares features
     Feature --> "0..*" Requirement : groups
     Feature --> "0..*" ObligationClause : groups
     Feature --> "0..*" UseCase : groups
@@ -550,8 +548,6 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 | `synchronizations` | [Synchronization](index.md#synchronization) | optional; ordered list |  |
 | `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; ordered list | Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. |
 | `part_of` | [System](index.md#system) | optional | Optional explicit parent System. Directory context does not supply this relationship. |
-| `features` | [Feature](index.md#feature) | optional; ordered list | Named feature declarations in authored order; each feature belongs to this System. |
-| `capabilities` | [Capability](index.md#capability) | optional; ordered list | Capability declarations; the declaring System is a documentation home, not an inferred provider. |
 | `out_of_scope` | [RichContent](index.md#richcontent) | optional | Explicit boundary exclusions; absence is not a statement of scope. |
 | `interacts_with` | [System](index.md#system) or [Component](index.md#component) | optional; list | Explicit interaction partners across this subject boundary; does not establish structural containment. |
 | `required_interfaces` | [Interface](index.md#interface) | optional; ordered list | Services this subject expects from its environment. |
@@ -999,7 +995,7 @@ Subsets: `software-requirements`. [Feature](index.md#feature) contains the compl
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `purpose` | [RichContent](index.md#richcontent) | optional | Stakeholder benefit expressed by this feature. |
-| `owner` | [System](index.md#system) or [Component](index.md#component) | required |  |
+| `specification_owner` | [System](index.md#system) or [Component](index.md#component) | optional | Nearest system or component declaration owning this document within its project. |
 | `groups` | [Requirement](index.md#requirement) or [ObligationClause](index.md#obligationclause) or [UseCase](index.md#usecase) or [Concept](index.md#concept) or [ConceptUse](index.md#conceptuse) or [Synchronization](index.md#synchronization) or [Interface](index.md#interface) | optional; list | Non-owning specification membership; the same record may participate in several features. |
 
 ### Capability

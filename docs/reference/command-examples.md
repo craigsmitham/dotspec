@@ -654,6 +654,8 @@ dotspec sources --json
       "business-rule",
       "system",
       "component",
+      "feature",
+      "capability",
       "quality-attribute",
       "job",
       "use-case",

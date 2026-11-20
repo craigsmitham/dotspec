@@ -42,7 +42,7 @@ type snapshotBuilder struct {
 // direct reference boundary as check. It retains source bytes before mapping,
 // including invalid specifications. It never rewrites an input.
 func Export(path string, types ...check.Type) (ExportResult, error) {
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		return ExportResult{}, err
 	}
@@ -88,10 +88,7 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 			b.contextOK[path] = true
 			continue
 		}
-		owner, ownerErr := kind.Layout.Owner(filepath.FromSlash(path))
-		if ownerErr != nil {
-			continue
-		}
+		owner := kind.Layout.ContextDir(filepath.FromSlash(path))
 		_, explicit := b.elements[b.rootByPath[path]]["specification_system_content"]
 		var contexts []string
 		var contextErr error
@@ -109,10 +106,6 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 			}
 			if system.ComponentLayout.Match(context) {
 				b.load(context)
-				subject := b.elements[b.rootByPath[path]]
-				if subject != nil && b.rootByPath[context] != "" && subject["specification_component"] == nil && String(subject, "kind") != "Component" {
-					subject["specification_component"] = b.rootByPath[context]
-				}
 				b.follow[context] = true
 				continue
 			}
@@ -122,6 +115,16 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 			b.contextPath[path], b.follow[context] = context, true
 			b.load(context)
 			b.context(context, "system_context", path, "")
+		}
+		subject := b.elements[b.rootByPath[path]]
+		if subject != nil && designKind(String(subject, "kind"), "SystemContextSpecification") && String(subject, "kind") != "Component" {
+			boundary, err := specfile.ContextRoot(owner)
+			if err == nil {
+				declaration, err := specfile.NearestDeclaration(owner, boundary)
+				if ownerID := b.rootByPath[filepath.ToSlash(declaration)]; err == nil && ownerID != "" {
+					subject["specification_owner"] = ownerID
+				}
+			}
 		}
 	}
 	// Attribute declarations are part of each acquired system's classification vocabulary.
@@ -300,10 +303,7 @@ func (b *snapshotBuilder) associateSystems() {
 		if String(root, "kind") != "System" {
 			continue
 		}
-		owner, err := system.Layout.Owner(filepath.FromSlash(path))
-		if err != nil {
-			continue
-		}
+		owner := system.Layout.ContextDir(filepath.FromSlash(path))
 		repository, boundaryErr := specfile.ContextRoot(owner)
 		if boundaryErr != nil {
 			continue

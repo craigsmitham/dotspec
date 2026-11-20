@@ -209,6 +209,18 @@ func (b *snapshotBuilder) referenceContext(reference Record, doc *ParsedDocument
 	}
 }
 
+func (b *snapshotBuilder) associateAttributeOwners() {
+	for _, file := range sortedKeys(b.attributeOwners) {
+		r := b.elements[b.rootByPath[file]]
+		sys := b.elements[b.rootByPath[b.attributeOwners[file]]]
+		if r == nil || sys == nil {
+			continue
+		}
+		r["owner"] = sys["id"]
+		sys["quality_attributes"] = appendUnique(Strings(sys["quality_attributes"]), String(r, "id"))
+	}
+}
+
 func (b *snapshotBuilder) resolveLabels() {
 	// Direct targets may be associated with already acquired system context,
 	// but no additional context is read merely to complete their classifications.
@@ -223,11 +235,11 @@ func (b *snapshotBuilder) resolveLabels() {
 		if kind == nil || kind.Context == nil {
 			continue
 		}
-		owner, err := kind.Layout.Owner(filepath.FromSlash(path))
+		owner := kind.Layout.ContextDir(filepath.FromSlash(path))
+		repo, err := specfile.ContextRoot(owner)
 		if err != nil {
 			continue
 		}
-		repo, _ := specfile.RepositoryRoot(owner)
 		for current := owner; ; current = filepath.Dir(current) {
 			file, err := system.Layout.LocalSubject(current)
 			if err != nil {
@@ -253,7 +265,7 @@ func (b *snapshotBuilder) resolveLabels() {
 		}
 	}
 	b.associateSpecificationSystems()
-	b.associateQualityTree()
+	b.associateAttributeOwners()
 	attributes := map[string]map[string][]string{}
 	for _, element := range b.snapshot.Elements {
 		if !designKind(String(element, "kind"), "QualityAttribute") {

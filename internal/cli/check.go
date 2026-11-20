@@ -19,10 +19,10 @@ import (
 )
 
 func newCheckCommand() *cobra.Command {
-	cmd := &cobra.Command{Use: "check", Short: "Check all supported specifications in a project subtree",
+	cmd := &cobra.Command{Use: "check [source-path]", Short: "Check all supported specifications in a project subtree",
 		Long:    "Check authored specifications using the same discovery rules as list. A whole-project check also inspects generated Markdown when dotspec.yaml enables generated_spec. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.\n\n" + exitPolicy,
-		Example: "dotspec check\ndotspec check --path internal --json", Args: cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, _ []string) error {
+		Example: "dotspec check\ndotspec check --path internal --json", Args: cobra.MaximumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
 			path, err := projectPath(cmd)
 			if err != nil {
 				return err
@@ -30,6 +30,15 @@ func newCheckCommand() *cobra.Command {
 			format, err := outputFormat(cmd)
 			if err != nil {
 				return err
+			}
+			if len(args) > 0 {
+				types := supportedTypes()
+				for _, kind := range types {
+					if kind.Layout.Match(args[0]) {
+						return emitCheckReport(cmd.OutOrStdout(), check.Focused(path, args[0], kind, types...), format)
+					}
+				}
+				return fmt.Errorf("unknown specification source type: %s", args[0])
 			}
 			return emitCheckReport(cmd.OutOrStdout(), inspectProject(path), format)
 		},
@@ -101,5 +110,5 @@ func diagnosticPath(location diagnostic.Location) string {
 }
 
 func supportedTypes() []check.Type {
-	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), system.AttributeCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
+	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), system.ProductCheckType(system.FeatureLayout), system.ProductCheckType(system.CapabilityLayout), system.AttributeCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
 }

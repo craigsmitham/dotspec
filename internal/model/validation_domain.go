@@ -185,20 +185,6 @@ func (v *graphValidator) checkResolutions() {
 
 func (v *graphValidator) checkLabels() {
 	actual := map[string][]string{}
-	attrs := map[string]Record{}
-	for _, item := range v.sortedRecords() {
-		r := item.value
-		if String(r, "kind") == "SystemQualityAttribute" {
-			attrs[String(v.records[String(r, "source_document")].value, "locator")] = r
-		}
-	}
-	for _, item := range v.sortedRecords() {
-		r := item.value
-		file := String(v.records[String(r, "source_document")].value, "locator")
-		if field, attr := folderClassification(r, file, attrs); attr != nil {
-			actual[String(r, "id")+"\x00"+field] = []string{String(attr, "id")}
-		}
-	}
 	for _, located := range v.sortedRecords() {
 		label, path := located.value, located.path
 		if String(label, "kind") != "LabelOccurrence" {

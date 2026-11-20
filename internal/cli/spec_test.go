@@ -229,6 +229,7 @@ Individual authors.
 	writeFixture(t, "specs/quality/reliability/reliability.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\n---\n# Reliability\n")
 	writeFixture(t, "specs/quality/reliability/durability/durability.quality-attribute.spec.md", strings.ReplaceAll(`---
 type: quality-attribute-spec
+subattribute_of: [reliability]
 ---
 # Durability
 ## Definition

@@ -44,7 +44,7 @@ func TestProjectContinuesAcrossMalformedFiles(t *testing.T) {
 		write(t, filepath.Join(dir, path), source)
 	}
 	r := checkProject(dir)
-	if !r.Complete || r.ExitCode() != 1 || r.Summary.FilesDiscovered != 5 || r.Summary.FilesChecked != 5 || r.Summary.Errors != 3 || r.Summary.Advice != 2 {
+	if !r.Complete || r.ExitCode() != 1 || r.Summary.FilesDiscovered != 5 || r.Summary.FilesChecked != 5 || r.Summary.Errors != 2 || r.Summary.Advice != 2 {
 		t.Fatalf("report: %+v", r)
 	}
 	rules := map[string]int{}
@@ -56,7 +56,7 @@ func TestProjectContinuesAcrossMalformedFiles(t *testing.T) {
 			}
 		}
 	}
-	want := map[string]int{"layout.job-location": 1, "metadata.invalid": 1, "identity.duplicate": 1, "job.statement": 1, "job.performer": 1}
+	want := map[string]int{"metadata.invalid": 1, "identity.duplicate": 1, "job.statement": 1, "job.performer": 1}
 	if !reflect.DeepEqual(rules, want) {
 		t.Fatalf("unexpected or cascading findings: %v", rules)
 	}
@@ -149,17 +149,11 @@ func TestIncompleteScanIsNotAValidationFailure(t *testing.T) {
 	if r.Complete || r.ExitCode() != 2 || len(r.Diagnostics) != 1 || r.Diagnostics[0].Rule != "scan.discovery" {
 		t.Fatalf("failed discovery must not look like an empty successful scan: %+v", r)
 	}
-	for _, path := range []string{filepath.Join(dir, "missing"), filepath.Join(dir, "specs")} {
-		if strings.HasSuffix(path, "specs") {
-			if err := os.Mkdir(path, 0o755); err != nil {
-				t.Fatal(err)
-			}
-		}
-		r = checkProject(path)
-		if r.Complete || r.ExitCode() != 2 || r.Diagnostics[0].Rule != "scan.scope" {
-			t.Fatalf("invalid scope: %+v", r)
-		}
+	r = checkProject(filepath.Join(dir, "missing"))
+	if r.Complete || r.ExitCode() != 2 || r.Diagnostics[0].Rule != "scan.scope" {
+		t.Fatalf("invalid scope: %+v", r)
 	}
+
 }
 
 func TestUnreadableSpecDoesNotPreventOtherChecks(t *testing.T) {

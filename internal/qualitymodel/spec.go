@@ -82,9 +82,6 @@ func Read(path string) (*QualityModel, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.quality-model-name", err.Error(), diagnostic.Location{Path: path})
 	}
-	if _, err := Layout.Owner(path); err != nil {
-		return nil, err
-	}
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err

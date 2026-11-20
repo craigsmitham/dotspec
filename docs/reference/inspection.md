@@ -9,6 +9,7 @@ dotspec check
 dotspec check --path internal/parser
 dotspec check --format json
 dotspec job check develop-requirements
+dotspec check specs/jobs/develop-requirements.job.spec.md
 ```
 
 `check` discovers system, job, use-case, concept, requirement, business-rule, and
@@ -18,7 +19,7 @@ not affect discovery. It reports the selected scope, supported types, discovery
 mode, files examined, and whether the scan completed. An empty completed scan
 succeeds and explicitly reports `No supported specifications found.`
 
-Structural errors fail the check: misplaced files, invalid metadata, missing
+Structural errors fail the check: conflicting subject declarations, invalid metadata, missing
 required system sections, duplicate IDs or conventional sections, malformed
 step structure, and unresolved same-document references. All supported types
 check Markdown heading references. Jobs, use cases, concepts, requirements,
@@ -108,7 +109,7 @@ The current rules are:
 
 | Rule IDs | Meaning |
 | --- | --- |
-| `layout.system-location`, `layout.job-location`, `layout.job-name`, `layout.use-case-location`, `layout.use-case-name`, `layout.concept-location`, `layout.concept-name`, `layout.directory` | File placement, filenames, or spec-directory structure. |
+| `layout.subject-ambiguous`, `layout.subject-name`, `layout.job-name`, `layout.use-case-name`, `layout.concept-name` | Conflicting subject declarations or invalid filenames. |
 | `metadata.frontmatter`, `metadata.invalid`, `metadata.type` | Frontmatter fences, valid YAML and accepted fields, or the declared type. |
 | `structure.title`, `structure.section-order`, `structure.required-section`, `structure.duplicate-section`, `structure.section-level`, `structure.step-heading`, `structure.duplicate-field` | Required document structure and unambiguous definitions. |
 | `identity.invalid`, `identity.duplicate` | Explicit ID syntax and uniqueness within one document. |

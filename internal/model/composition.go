@@ -217,7 +217,7 @@ func (d *designResolver) checkDeclarations() {
 	for _, r := range d.elements {
 		kind := String(r, "kind")
 		switch kind {
-		case "Interface", "Component", "Feature", "Capability", "ConceptUse", "ConceptType", "ConceptAction", "ActionParameter", "Synchronization":
+		case "Interface", "Component", "ConceptUse", "ConceptType", "ConceptAction", "ActionParameter", "Synchronization":
 			role := ""
 			if kind == "ActionParameter" && d.isMember(d.index[String(r, "owner")], "output_parameters", r) {
 				role = "output"

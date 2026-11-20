@@ -51,10 +51,10 @@ func TestConceptFailuresAndMissingInput(t *testing.T) {
 		write(t, filepath.Join(dir, name), source)
 	}
 	r := checkProject(dir)
-	if !r.Complete || r.ExitCode() != 1 || r.Summary.FilesChecked != 4 || r.Summary.Errors != 2 || r.Summary.Advice != 0 {
+	if !r.Complete || r.ExitCode() != 1 || r.Summary.FilesChecked != 4 || r.Summary.Errors != 1 || r.Summary.Advice != 0 {
 		t.Fatalf("independent checks did not continue: %+v", r)
 	}
-	if r.Diagnostics[0].Rule != "layout.concept-location" || r.Diagnostics[1].Rule != "metadata.frontmatter" {
+	if r.Diagnostics[0].Rule != "metadata.frontmatter" {
 		t.Fatalf("unexpected findings: %+v", r.Diagnostics)
 	}
 	if err := os.Remove(filepath.Join(dir, "misplaced.concept.spec.md")); err != nil {

@@ -34,7 +34,7 @@ func TestStructureAndFeatureMembership(t *testing.T) {
 	}
 	for _, name := range []string{"Place an order", "Prevent overselling"} {
 		f := designRecord(t, s, "Feature", name)
-		if f["owner"] != store["id"] || len(Strings(f["groups"])) != 1 || Strings(f["groups"])[0] != req["id"] {
+		if f["specification_owner"] != store["id"] || len(Strings(f["groups"])) != 1 || Strings(f["groups"])[0] != req["id"] {
 			t.Fatal(f)
 		}
 	}
@@ -53,8 +53,8 @@ func TestStructuralErrorsPreserveSourceWithoutInventingParents(t *testing.T) {
 	}{
 		{"cycle", "components/inventory/specs/inventory.component.spec.md", "[Online Store](../../../specs/online-store.system.spec.md#store)", "[Reservations](../../reservations/specs/reservations.component.spec.md)", true},
 		{"two parents", "components/reservations/specs/reservations.component.spec.md", "[Inventory](../../inventory/specs/inventory.component.spec.md)", "[Inventory](../../inventory/specs/inventory.component.spec.md) and [Online Store](../../../specs/online-store.system.spec.md)", true},
-		{"wrong parent kind", "components/reservations/specs/reservations.component.spec.md", "[Inventory](../../inventory/specs/inventory.component.spec.md)", "[Feature](../../../specs/online-store.system.spec.md#place-order)", true},
-		{"wrong group kind", "specs/online-store.system.spec.md", "[Reserve purchased stock](requirements/reserve-stock.requirement.spec.md)", "[Inventory](../components/inventory/specs/inventory.component.spec.md)", true},
+		{"wrong parent kind", "components/reservations/specs/reservations.component.spec.md", "[Inventory](../../inventory/specs/inventory.component.spec.md)", "[Feature](../../../specs/features/place-an-order.feature.spec.md)", true},
+		{"wrong group kind", "specs/features/place-an-order.feature.spec.md", "[Reserve purchased stock](../requirements/reserve-stock.requirement.spec.md)", "[Inventory](../../components/inventory/specs/inventory.component.spec.md)", true},
 		{"draft parent", "components/reservations/specs/reservations.component.spec.md", "[Inventory](../../inventory/specs/inventory.component.spec.md)", "To be decided.", true},
 	} {
 		t.Run(tc.name, func(t *testing.T) {

@@ -2,71 +2,58 @@
 
 ## Project layout
 
-Each part of the project can have a `specs/` directory. It describes its parent
-project directory; folders inside `specs/` organize specifications and do not create
-subsystems or new scopes.
+A directory can declare one system or component. Place the declaration directly
+in that directory or directly in its optional `specs/` folder. For example,
+`app/task-service.component.spec.md` and `app/specs/task-service.component.spec.md`
+both claim `app/`. Creating both is a conflict. The filename follows the
+[subject naming rule](formats/system.md#match-the-filename-to-the-heading).
+
+Each other directory can claim its own subject. For example,
+`app/specs/storage/storage.component.spec.md` claims `app/specs/storage/`.
+A component declares its architectural parent with its `Part of` link. An independent project or repository rooted at a directory named `specs/` owns its own declarations.
+
+The nearest enclosing declaration owns a source. Lookup stops at the project
+boundary. A requirement with no enclosing declaration still appears in discovery.
+Moving a requirement within its owner's directory tree preserves its ownership
+until it crosses into another subject. Update relative Markdown links when moving files.
 
 ```text
 specs/
-  dotspec.system.spec.md
-  jobs/
-    develop-requirements.job.spec.md
-    manage-requirements.job.spec.md
-  use-cases/
-    check-specifications.use-case.spec.md
-  concepts/
-    job-map.concept.spec.md
-    specification-inspection.concept.spec.md
-  requirements/
-    specification-project-isolation.requirement.spec.md
-  quality/
-    reliability/
-      reliability.quality-attribute.spec.md
-      repeatability/
-        repeatability.quality-attribute.spec.md
-        repeatable-inspection.requirement.spec.md
-internal/
-  parser/
-    parser.go
-    specs/
-      spec-parser.component.spec.md
-      jobs/
-        interpret-specification.job.spec.md
+  personal-task-list.system.spec.md
+app/
+  main.go
+  specs/
+    task-service.component.spec.md
+    requirements/
+      acknowledge-after-commit.requirement.spec.md
+  handlers/
+    retry.requirement.spec.md
 ```
 
-The layout is required:
+Both requirements here belong to Task service. A requirement's `Applies to`
+section identifies what it governs. Its `quality_attributes` field names its
+qualities. Attribute definitions declare their parents with `subattribute_of`.
 
-- A directory can describe one system or component. Its declaration lives at `specs/<name>.system.spec.md` or `specs/<name>.component.spec.md`. Derive `<name>` from the document heading using the [subject naming rule](formats/system.md#match-the-filename-to-the-heading). Both subjects can own the collections below.
-- System quality attributes live in `specs/quality/<attribute>/<attribute>.quality-attribute.spec.md`. Every nested folder identifies a subattribute. A quality requirement that sets an expectation for that attribute can live beside its definition.
-- Jobs are `specs/jobs/<slug>.job.spec.md`, directly inside the plural `jobs/` folder.
-- Use cases are `specs/use-cases/<slug>.use-case.spec.md`, directly inside the
-  plural `use-cases/` folder.
-- Concepts are `specs/concepts/<slug>.concept.spec.md`, directly inside the
-  plural `concepts/` folder.
-- Functional requirements live in the owning system or component’s `specs/requirements/<slug>.requirement.spec.md`. Use `quality_attributes` to link relevant qualities. For example, the To-do restart requirement lives in `requirements/` and links to Durability.
-- Business rules are `specs/business-rules/<slug>.business-rule.spec.md`, and
-  quality models are `specs/quality-models/<slug>.quality-model.spec.md`,
-  directly inside their plural folders.
-- CLI namespaces and file type suffixes remain singular: `dotspec job` and
-  `.job.spec.md`, `dotspec use-case` and `.use-case.spec.md`, `dotspec concept`
-  and `.concept.spec.md`, or `dotspec requirement` and `.requirement.spec.md`.
-  Collections use plural names such as `jobs` and `concepts`.
-- Create folders only when needed. `init` creates the required spec directories;
-  the selected project directory must already exist.
+## Creating and finding sources
 
-`--path` always selects a project directory, such as `internal/parser`, rather
-than `internal/parser/specs` or its `jobs/` folder. Using a metadata directory as
-a project scope is an error. A nested `specs/` tree inside another `specs/` tree
-is not a separate scope.
+`init` uses predictable destinations beneath the selected directory. Systems
+and components go in `specs/`. Collection defaults are `specs/jobs/`,
+`specs/use-cases/`, `specs/concepts/`, `specs/requirements/`,
+`specs/features/`, `specs/capabilities/`, `specs/business-rules/` and `specs/quality-models/`. You can move the files
+next to code or group them by feature. Keep their typed filename suffixes.
 
-Adjacent spec files and singular collection folders are not supported. Move an
-existing `<name>.system.spec.md` to `specs/<name>.system.spec.md`, and move each adjacent
-`<slug>.job.spec.md` to `specs/jobs/<slug>.job.spec.md`. Discovery rejects misplaced
-files of the requested type with an expected-location diagnostic. Local lookup
-and initialization also reject misplaced specs of that type directly in the
-selected project directory or anywhere within its `specs/` tree. Having both
-old and new locations is an error; there is no location precedence or automatic
-migration. Revise any relative file links when moving documents.
+For `show` and focused `check`, a slug searches the selected owner's files
+and skips child subjects. With no enclosing subject, it searches the selected
+subtree up to child subjects. If several files match, the diagnostic lists each
+path. A source path selects one file directly and resolves relative to the
+selected directory (the working directory by default for a single source). Use `--path` to select a directory or `--project` to start at
+a named project root.
+
+```sh
+dotspec requirement show retry --path app
+dotspec requirement show handlers/retry.requirement.spec.md --path app
+dotspec check app/handlers/retry.requirement.spec.md
+```
 
 ## Independent projects and monorepos
 
@@ -82,4 +69,4 @@ This repository has a root manifest for dotspec and a second manifest for the
 
 ## File formats
 
-Look up the recognized sections for each of the seven [specification formats](formats/README.md).
+Look up the recognized sections for each of the [specification formats](formats/README.md).

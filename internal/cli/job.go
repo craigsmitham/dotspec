@@ -73,6 +73,9 @@ func newJobCommand() *cobra.Command {
 		if command == "check" {
 			cmd.Long = action.short + ".\n\n" + exitPolicy
 		}
+		if action.name == "show" || action.name == "check" {
+			cmd.Use = action.name + " <slug-or-source-path>"
+		}
 		cmd.RunE = func(cmd *cobra.Command, args []string) error {
 			path, err := projectPath(cmd)
 			if err != nil {
@@ -98,7 +101,7 @@ func newJobCommand() *cobra.Command {
 			if command == "list" {
 				return listJobs(path, format, cmd.OutOrStdout())
 			}
-			if err := job.ValidateSlug(args[0]); err != nil {
+			if err := job.ValidateSlug(args[0]); err != nil && (action.name == "init" || !job.Layout.Match(args[0])) {
 				return err
 			}
 			return runJob(command, args[0], options, cmd.OutOrStdout())

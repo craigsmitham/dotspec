@@ -83,7 +83,7 @@ func TestQualityDirectoryCyclePreservesInvalidSources(t *testing.T) {
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/system.system.spec.md", "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n")
 	conformanceWrite(t, root, "specs/quality/reliability/reliability.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nsubattribute_of: [recovery]\n---\n# Reliability\n## Definition\nReliable service.\n")
-	conformanceWrite(t, root, "specs/quality/reliability/recovery/recovery.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\n---\n# Recovery\n## Definition\nRestoration of service.\n")
+	conformanceWrite(t, root, "specs/quality/reliability/recovery/recovery.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nsubattribute_of: [reliability]\n---\n# Recovery\n## Definition\nRestoration of service.\n")
 
 	result := conformanceExport(t, root)
 	if result.ExitCode != 1 {

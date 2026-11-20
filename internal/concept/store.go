@@ -2,6 +2,7 @@ package concept
 
 import (
 	"fmt"
+	"path/filepath"
 	"sort"
 
 	"github.com/craigsmitham/dotspec/internal/specfile"
@@ -17,34 +18,33 @@ func Init(path, slug string) (string, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return "", err
 	}
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
-		return "", err
-	}
-	if err := Layout.ValidateLocal(dir); err != nil {
 		return "", err
 	}
 	return Layout.Create(dir, slug, Template)
 }
 
-// Show selects exactly one concept in the requested directory, without searching
-// ancestor directories for a matching slug.
+// Show resolves a source path or unique slug within the selected owner.
 func Show(path, slug string) (*Concept, error) {
-	if err := ValidateSlug(slug); err != nil {
-		return nil, err
+	if !Layout.Match(slug) {
+		if err := ValidateSlug(slug); err != nil {
+			return nil, err
+		}
 	}
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		return nil, err
 	}
-	if err := Layout.ValidateLocal(dir); err != nil {
-		return nil, err
-	}
-	spec, err := Read(Layout.Path(dir, slug))
+	file, err := Layout.LocalPath(dir, slug)
 	if err != nil {
 		return nil, err
 	}
-	spec.System, err = associatedSystem(dir, spec.Path)
+	spec, err := Read(file)
+	if err != nil {
+		return nil, err
+	}
+	spec.System, err = associatedSystem(filepath.Dir(spec.Path), spec.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func Show(path, slug string) (*Concept, error) {
 // Groups are ordered by system name then path, with unassociated concepts last.
 // Concepts within a group are ordered by source path.
 func List(path string) ([]*Group, error) {
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		return nil, err
 	}
@@ -70,10 +70,7 @@ func List(path string) ([]*Group, error) {
 		if err != nil {
 			return nil, err
 		}
-		dir, err := Layout.Owner(path)
-		if err != nil {
-			return nil, err
-		}
+		dir := Layout.ContextDir(path)
 		associated, err := associatedSystem(dir, path)
 		if err != nil {
 			return nil, err

@@ -173,9 +173,6 @@ func Read(path string) (*UseCase, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.use-case-name", err.Error(), diagnostic.Location{Path: path})
 	}
-	if _, err := Layout.Owner(path); err != nil {
-		return nil, err
-	}
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err

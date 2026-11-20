@@ -67,13 +67,13 @@ func TestNeedsReferencesRejectWrongKindsAndPreserveUnresolvedNarrative(t *testin
 		name, old, replacement string
 		invalid                bool
 	}{
-		{"wrong capability", "[Service-change detection](#change-detection)", "[Feature](#disruption-alerts)", true},
-		{"wrong provider", "[Notification service](../components/notification-service/specs/notification-service.component.spec.md)", "[Feature](#disruption-alerts)", true},
-		{"provider prose", "[Notification service](../components/notification-service/specs/notification-service.component.spec.md)", "Provider not yet selected.", false},
+		{"wrong capability", "[Service-change detection](service-change-detection.capability.spec.md)", "[Feature](../features/disruption-alerts.feature.spec.md)", true},
+		{"wrong provider", "[Notification service](../../components/notification-service/specs/notification-service.component.spec.md)", "[Feature](../features/disruption-alerts.feature.spec.md)", true},
+		{"provider prose", "[Notification service](../../components/notification-service/specs/notification-service.component.spec.md)", "Provider not yet selected.", false},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			root := needsFixture(t)
-			traceEdit(t, root, "specs/journey-service.system.spec.md", tc.old, tc.replacement)
+			traceEdit(t, root, "specs/capabilities/disruption-communication.capability.spec.md", tc.old, tc.replacement)
 			result := conformanceExport(t, root)
 			if (result.ExitCode != 0) != tc.invalid {
 				t.Fatal(result.Snapshot.Diagnostics)

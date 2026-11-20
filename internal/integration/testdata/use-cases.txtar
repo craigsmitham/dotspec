@@ -29,8 +29,7 @@ stderr 'refusing to overwrite'
 status 2 dotspec use-case init invalid --format mermaid
 ! stdout .
 ! exists specs/use-cases/invalid.use-case.spec.md
-status 2 dotspec use-case show check-specifications --path specs/use-cases
-stderr 'selects a project directory'
+status 0 dotspec use-case show check-specifications --path specs/use-cases
 status 2 dotspec use-case check absent --json
 stdout '"complete": false'
 ! stderr .

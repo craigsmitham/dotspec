@@ -2,6 +2,7 @@ package job
 
 import (
 	"fmt"
+	"path/filepath"
 	"sort"
 
 	"github.com/craigsmitham/dotspec/internal/specfile"
@@ -23,34 +24,33 @@ func InitWithPreset(path, slug, preset string) (string, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return "", err
 	}
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
-		return "", err
-	}
-	if err := Layout.ValidateLocal(dir); err != nil {
 		return "", err
 	}
 	return Layout.Create(dir, slug, template)
 }
 
-// Show selects exactly one job in the requested directory, without searching
-// ancestor directories for a matching slug.
+// Show resolves a source path or unique slug within the selected owner.
 func Show(path, slug string) (*Job, error) {
-	if err := ValidateSlug(slug); err != nil {
-		return nil, err
+	if !Layout.Match(slug) {
+		if err := ValidateSlug(slug); err != nil {
+			return nil, err
+		}
 	}
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		return nil, err
 	}
-	if err := Layout.ValidateLocal(dir); err != nil {
-		return nil, err
-	}
-	job, err := Read(Layout.Path(dir, slug))
+	file, err := Layout.LocalPath(dir, slug)
 	if err != nil {
 		return nil, err
 	}
-	job.System, err = associatedSystem(dir, job.Path)
+	job, err := Read(file)
+	if err != nil {
+		return nil, err
+	}
+	job.System, err = associatedSystem(filepath.Dir(job.Path), job.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func Show(path, slug string) (*Job, error) {
 // Groups are ordered by system name then path, with unassociated jobs last.
 // Jobs within a group are ordered by source path.
 func List(path string) ([]*Group, error) {
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		return nil, err
 	}
@@ -76,10 +76,7 @@ func List(path string) ([]*Group, error) {
 		if err != nil {
 			return nil, err
 		}
-		dir, err := Layout.Owner(path)
-		if err != nil {
-			return nil, err
-		}
+		dir := Layout.ContextDir(path)
 		associated, err := associatedSystem(dir, path)
 		if err != nil {
 			return nil, err

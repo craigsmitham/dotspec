@@ -40,7 +40,7 @@ status 2 dotspec requirement init bad --format mermaid
 ! exists specs/requirements/bad.requirement.spec.md
 status 2 dotspec requirement list --attribute ''
 ! stdout .
-status 2 dotspec requirement show work --path specs/requirements
+status 0 dotspec requirement show work --path specs/requirements
 status 2 dotspec requirement check missing --json
 stdout '"complete": false'
 ! stderr .
@@ -158,6 +158,7 @@ Consistent operation.
 ---
 type: quality-attribute-spec
 id: preservation
+subattribute_of: [reliability]
 ---
 # Preservation
 

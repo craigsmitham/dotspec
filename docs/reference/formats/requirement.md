@@ -1,11 +1,9 @@
 # Requirements reference
 
-Functional requirements live in their owner’s `specs/requirements/` folder.
-Use `dotspec requirement init <slug> --attribute <id>` to record a related
-quality in frontmatter and link the requirement from the attribute report.
-For a quality obligation owned by the declaring system, use `--preset quality --attribute <id>` to create it beside the attribute definition. That folder
-supplies its primary classification. Use `quality_attributes` for additional
-IDs. Component-owned requirements stay under the component’s `requirements/`.
+A requirement can live anywhere under its owning subject. The CLI creates it in
+`specs/requirements/` by default. Use `--attribute <id>` to write the selected
+quality in its `quality_attributes` frontmatter. The attribute report links to
+requirements classified with that ID.
 
 ## Requirements
 
@@ -32,10 +30,10 @@ conventions as other types.
   without overwriting an existing file or following symlinked metadata directories.
   `--preset quality` selects a template that also prompts for a `Criterion`;
   `general` is the default. The preset is authoring guidance: either one creates
-  an ordinary requirement, and the selection is not stored. At the declaring system, combining `--preset quality` with `--attribute` selects the attribute folder.
+  an ordinary requirement, and the selection is not stored. Both presets accept `--attribute`.
 - `show <slug>` reads the requirement in that project, displays its authored
   Markdown and classifications, and reports its associated system and source.
-  Slug lookup does not search ancestor projects.
+  A source path selects one file when the slug is ambiguous.
 - `list` discovers requirements in the selected subtree, grouped by associated
   system. `--attribute ID` includes exact labels and sub-attributes of
   that ID among the attributes each requirement's system declares. Each matching
@@ -145,7 +143,7 @@ The show envelope uses `requirement`; the inventory uses `groups` containing
 `classification`, `markdown`, source identity, and associated system; `criterion`
 and `validation_plan` appear when authored. Empty collections are arrays.
 
-Requirement JSON lists the containing attribute followed by additional frontmatter IDs, once each. The snapshot separately preserves the authored label occurrences. The separate `classification`
+Requirement JSON lists the authored attribute IDs. The snapshot separately preserves the authored label occurrences. The separate `classification`
 object exposes `system_path` for the system supplying attribute declarations,
 `resolved` attribute definitions, `ancestors` IDs in declaration order,
 and `undefined` IDs in authored order. Without a system quality vocabulary,
@@ -173,8 +171,8 @@ Additional rules for requirements and system quality attributes:
 
 | Rule ID | Meaning |
 | --- | --- |
-| `layout.requirement-location`, `layout.requirement-name` | Required layout and slug |
-| `quality.attribute-source` | Give a system attribute a named source in its own quality folder |
+| `layout.requirement-location`, `layout.requirement-name` | Filename and slug |
+| `quality.attribute-source` | Give a system attribute a named attribute specification |
 | `identity.required` | Attribute definition needs an explicit ID |
 | `quality.subattribute` | Sub-attribute list is empty or contains an undefined reference |
 | `quality.cycle` | Sub-attribute graph contains a cycle |

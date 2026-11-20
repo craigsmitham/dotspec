@@ -47,7 +47,7 @@ arguments, standard streams, and exit statuses.
 ## Assumptions
 
 The execution conditions required for repeatability comparisons are defined in
-[Repeated inspections](<quality/reliability/repeatability/repeatable-inspection.requirement.spec-report.md#applies-to>).
+[Repeated inspections](<requirements/repeatable-inspection.requirement.spec-report.md#applies-to>).
 
 ## Constraints
 
@@ -130,13 +130,13 @@ individual quality requirements establish the obligations.
 
 - [Advice permits a successful check](<requirements/advice-permits-success.requirement.spec-report.md>) — When a completed check reports only advisory findings, dotspec must return exit status zero.
 - [Continue checking after a structural error](<requirements/continue-after-invalid-spec.requirement.spec-report.md>) — When a discovered specification contains a structural error, dotspec must continue inspecting the remaining discovered specifications.
-- [Diagnostic severity is available without styling](<quality/usability/diagnosability/diagnostic-severity.requirement.spec-report.md>) — Every diagnostic must identify its severity using a text label independently of terminal styling.
-- [Inspection preserves source material](<quality/reliability/source-preservation/inspection-preserves-source.requirement.spec-report.md>) — Inspection must leave source-file contents and paths unchanged, without creating, deleting, or renaming source files.
+- [Diagnostic severity is available without styling](<requirements/diagnostic-severity.requirement.spec-report.md>) — Every diagnostic must identify its severity using a text label independently of terminal styling.
+- [Inspection preserves source material](<requirements/inspection-preserves-source.requirement.spec-report.md>) — Inspection must leave source-file contents and paths unchanged, without creating, deleting, or renaming source files.
 - [Isolate specification projects in a workspace](<requirements/isolate-specification-projects-in-a-workspace.requirement.spec-report.md>)
 - [Preserve source and represented content in model exports](<requirements/model-source-fidelity.requirement.spec-report.md>)
 - [Read and verify the generated requirements specification](<requirements/read-and-verify-the-generated-requirements-specification.requirement.spec-report.md>)
 - [Reject initialization at an existing target](<requirements/reject-existing-target.requirement.spec-report.md>) — When the target path already exists, initialization must terminate with an unsuccessful exit status.
-- [Repeated inspections produce equivalent reports](<quality/reliability/repeatability/repeatable-inspection.requirement.spec-report.md>) — Repeated inspections must produce equivalent structured reports, including the ordering of array elements.
+- [Repeated inspections produce equivalent reports](<requirements/repeatable-inspection.requirement.spec-report.md>) — Repeated inspections must produce equivalent structured reports, including the ordering of array elements.
 
 ## Use cases
 

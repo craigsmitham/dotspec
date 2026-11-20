@@ -54,8 +54,6 @@ types:
   - synchronizations
   - quality_attributes
   - part_of
-  - features
-  - capabilities
   - out_of_scope
   - interacts_with
   - required_interfaces
@@ -255,7 +253,7 @@ types:
   - provided_interfaces
   Feature:
   - purpose
-  - owner
+  - specification_owner
   - groups
   Capability:
   - purpose
@@ -300,13 +298,15 @@ diagrams:
 - title: Specification types
   direction: TB
   show_cardinality: false
-  description: A Specification is the root record of one authored specification document. The nine specification
+  description: A Specification is the root record of one authored specification document. The specification
     types correspond one-to-one with these concrete classes. Subsets classify concerns separately from this
     hierarchy.
   nodes:
   - Specification
   - SystemContextSpecification
   - SystemQualityAttribute
+  - Feature
+  - Capability
   - System
   - Component
   - QualityModel
@@ -318,23 +318,17 @@ diagrams:
   paths: []
   inheritance: true
 - title: Elements declared in system and component specifications
-  description: Components link to their structural parents. Systems and components can each declare features, capabilities, concept uses, synchronizations, and interfaces.
+  description: Components link to their structural parents. Systems and components can each declare concept uses, synchronizations, and interfaces.
   nodes:
   - System
   - Component
-  - Feature
-  - Capability
   - ConceptUse
   - Synchronization
   - Interface
   paths:
   - Component.part_of
-  - System.features
-  - System.capabilities
   - System.concept_uses
   - System.synchronizations
-  - Component.features
-  - Component.capabilities
   - Component.concept_uses
   - Component.synchronizations
   - System.required_interfaces
@@ -359,7 +353,7 @@ diagrams:
   - Job.specification_system
   - UseCase.specification_system
   - Concept.specification_system
-  - Requirement.specification_component
+  - Requirement.specification_owner
   - Requirement.specification_system
   inheritance: false
 - title: Boundary interfaces
@@ -396,7 +390,6 @@ diagrams:
   paths:
   - System.part_of
   - Component.part_of
-  - System.features
   - Feature.groups
   - Requirement.applies_to
   - System.interacts_with

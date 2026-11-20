@@ -40,6 +40,12 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 	var authoredID string
 	var labels []string
 	switch kind {
+	case "feature", "capability":
+		var v *system.ProductSpec
+		v, err = system.ParseProductSpec(kind, doc.Data)
+		if err == nil {
+			authoredID = v.ID
+		}
 	case "quality-attribute":
 		var a *system.AttributeDocument
 		a, err = system.ParseQualityAttribute(String(doc.Source, "locator"), doc.Data)
@@ -104,7 +110,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.parseFailure(err)
 		return m.result
 	}
-	class := map[string]string{"quality-attribute": "SystemQualityAttribute", "component": "Component", "quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "concept": "Concept", "use-case": "UseCase", "requirement": "Requirement"}[kind]
+	class := map[string]string{"feature": "Feature", "capability": "Capability", "quality-attribute": "SystemQualityAttribute", "component": "Component", "quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "concept": "Concept", "use-case": "UseCase", "requirement": "Requirement"}[kind]
 	r := m.record(class, "")
 	m.result.RootID = String(r, "id")
 	if authoredID != "" {
@@ -144,6 +150,15 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		}
 		mapped := false
 		switch kind {
+		case "feature", "capability":
+			switch {
+			case section.Title == "Description" || section.Title == "Purpose" || (kind == "capability" && section.Title == "Enablers"):
+				m.section(r, strings.ToLower(section.Title), section)
+				mapped = true
+			case kind == "feature" && section.Title == "Groups":
+				m.structureReference(r, "groups", section)
+				mapped = true
+			}
 		case "quality-attribute":
 			if section.Title == "Definition" {
 				m.section(r, "definition", section)
@@ -272,7 +287,7 @@ func (m *domainMapper) named(kind string, owner Record, s *Section) Record {
 }
 
 // Elements declared by name inside a specification may carry an explicit ID.
-var declaredWithID = map[string]bool{"Component": true, "Feature": true, "Capability": true, "ConceptUse": true, "Synchronization": true, "Interface": true}
+var declaredWithID = map[string]bool{"Component": true, "ConceptUse": true, "Synchronization": true, "Interface": true}
 
 func appendID(r Record, field, id string) { r[field] = append(Strings(r[field]), id) }
 

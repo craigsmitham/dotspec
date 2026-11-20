@@ -62,7 +62,7 @@ func newSpecCommand() *cobra.Command {
 }
 
 func inspectProject(path string) check.Report {
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		return check.Project(path, supportedTypes()...)
 	}

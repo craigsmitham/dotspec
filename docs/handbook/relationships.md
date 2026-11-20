@@ -280,19 +280,25 @@ Calculate totals and coordinate submission.
 Checkout owns order submission. Inventory owns stock availability.
 ```
 
-In the system source, group behavior with a feature:
+Group stakeholder-visible behavior in a standalone file such as
+`specs/features/place-order.feature.spec.md`. Create it with
+`dotspec feature init place-order`.
 
 ```markdown
-## Features
+---
+type: feature-spec
+id: place-order
+---
+# Place an order
 
-### Place an order
-**ID:** place-order
+## Description
+A customer places an order for available products.
 
-#### Purpose
+## Purpose
 Let a customer buy available products.
 
-#### Groups
-- [Reserve stock](requirements/reserve-stock.requirement.spec.md)
+## Groups
+- [Reserve stock](../requirements/reserve-stock.requirement.spec.md)
 ```
 
 Each component declares one parent system or component. A nested component links
@@ -301,9 +307,8 @@ to its immediate parent. Subsystems use a single system link in their own
 
 `Groups` can reference requirements, obligation clauses, use cases, concepts,
 named concept uses, synchronizations and interfaces. Several features can group the same
-record. Membership leaves that record's declaration ownership unchanged. Each
-feature belongs to the system or component declaring it. There is no separate feature/component
-implementation edge to maintain.
+record. The nearest enclosing system or component owns the feature source. Its overview
+lists the feature automatically, using the first paragraph of its Description.
 
 In a requirement or embedded obligation, explicitly target a component:
 

@@ -58,11 +58,8 @@ func Init(path, slug, from string) (string, error) {
 	} else if m != nil {
 		return "", fmt.Errorf("%q is a reserved built-in name; choose a project-specific slug", slug)
 	}
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
-		return "", err
-	}
-	if err := Layout.ValidateLocal(dir); err != nil {
 		return "", err
 	}
 	content := Template
@@ -79,22 +76,25 @@ func Init(path, slug, from string) (string, error) {
 	return Layout.Create(dir, slug, content)
 }
 
-// Show uses reserved built-in slugs or exactly one model in the selected project directory.
+// Show resolves a source path or unique slug within the selected owner.
 func Show(path, slug string) (*QualityModel, error) {
-	if err := ValidateSlug(slug); err != nil {
-		return nil, err
+	if !Layout.Match(slug) {
+		if err := ValidateSlug(slug); err != nil {
+			return nil, err
+		}
 	}
 	if m, err := builtin(slug); err != nil || m != nil {
 		return m, err
 	}
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		return nil, err
 	}
-	if err := Layout.ValidateLocal(dir); err != nil {
+	file, err := Layout.LocalPath(dir, slug)
+	if err != nil {
 		return nil, err
 	}
-	return Read(Layout.Path(dir, slug))
+	return Read(file)
 }
 
 func List(path string) ([]*QualityModel, error) {
@@ -102,7 +102,7 @@ func List(path string) ([]*QualityModel, error) {
 	if err != nil {
 		return nil, err
 	}
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		return nil, err
 	}

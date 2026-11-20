@@ -1,7 +1,7 @@
 ---
 generated_by: dotspec
 type: component-spec-report
-documents: "../../../components/task-service/specs/task-service.component.spec.md#task-service"
+documents: "../../../app/specs/task-service.component.spec.md#task-service"
 ---
 # Task service
 
@@ -35,4 +35,4 @@ The [Go server](<../../../app/main.go>) owns form handling and storage.
 
 - [Acknowledge after commit](<requirements/acknowledge-after-commit.requirement.spec-report.md>) — The task service must commit a change to the local database before acknowledging it to the browser.
 
-[Edit source](<../../../components/task-service/specs/task-service.component.spec.md#task-service>)
+[Edit source](<../../../app/specs/task-service.component.spec.md#task-service>)

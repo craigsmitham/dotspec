@@ -18,46 +18,11 @@ func (m *domainMapper) structureReference(r Record, field string, s *Section) {
 	m.bindDesignReferences(r, field+"_references")
 }
 
-func (m *domainMapper) systemDeclarations(system Record, s *Section) {
-	kind, field := "Feature", "features"
-	if s.Title == "Capabilities" {
-		kind, field = "Capability", "capabilities"
-	}
-	m.section(system, field+"_content", s)
-	system[field] = []string{}
-	for _, child := range s.Children {
-		r := m.named(kind, system, child)
-		m.section(r, "content", child)
-		for _, sub := range child.Children {
-			if m.traceSection(r, sub) {
-				continue
-			}
-			switch {
-			case openQuestionHeading(sub.Title):
-				m.openQuestions(r, []*Section{sub})
-			case sub.Title == "Description":
-				m.section(r, "description", sub)
-			case sub.Title == "Purpose":
-				m.section(r, "purpose", sub)
-			case kind == "Capability" && sub.Title == "Enablers":
-				m.section(r, "enablers", sub)
-			case kind == "Feature" && sub.Title == "Groups":
-				m.structureReference(r, "groups", sub)
-			default:
-				m.extension(r, sub)
-			}
-		}
-		appendID(system, field, String(r, "id"))
-	}
-}
-
 func (m *domainMapper) componentSection(r Record, s *Section) bool {
 	if m.composition(r, s) {
 		return true
 	}
 	switch s.Title {
-	case "Features", "Capabilities":
-		m.systemDeclarations(r, s)
 	case "Purpose", "Description", "Responsibilities":
 		m.section(r, strings.ToLower(s.Title), s)
 	case "Part of":

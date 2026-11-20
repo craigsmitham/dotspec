@@ -30,11 +30,8 @@ func InitWithAttribute(path, slug, preset, attribute string) (string, error) {
 	if err := ValidateSlug(slug); err != nil {
 		return "", err
 	}
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
-		return "", err
-	}
-	if err := Layout.ValidateLocal(dir); err != nil {
 		return "", err
 	}
 	if attribute == "" {
@@ -51,34 +48,22 @@ func InitWithAttribute(path, slug, preset, attribute string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	a := sys.FindQualityAttribute(attribute)
-	if a == nil {
+	if sys.FindQualityAttribute(attribute) == nil {
 		return "", fmt.Errorf("unknown quality attribute %q in %s", attribute, sys.Path)
-	}
-	// Only a quality obligation authored at the declaring system belongs in its attribute folder.
-	if preset == "quality" && filepath.Dir(filepath.Dir(sys.Path)) == dir {
-		dest := filepath.Join(filepath.Dir(a.Location.Path), slug+Suffix)
-		rel, err := filepath.Rel(dir, dest)
-		if err != nil {
-			return "", err
-		}
-		return specfile.Create(dir, rel, template)
 	}
 	template = strings.Replace(template, "type: requirement-spec\n", fmt.Sprintf("type: requirement-spec\nquality_attributes: [%q]\n", attribute), 1)
 	return Layout.Create(dir, slug, template)
 }
 
-// Show selects exactly one requirement spec in the requested directory, without searching
-// ancestor directories for a matching slug.
+// Show resolves a source path or unique slug within the selected owner.
 func Show(path, slug string) (*Requirement, error) {
-	if err := ValidateSlug(slug); err != nil {
-		return nil, err
+	if !Layout.Match(slug) {
+		if err := ValidateSlug(slug); err != nil {
+			return nil, err
+		}
 	}
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
-		return nil, err
-	}
-	if err := Layout.ValidateLocal(dir); err != nil {
 		return nil, err
 	}
 	file, err := Layout.LocalPath(dir, slug)
@@ -89,7 +74,7 @@ func Show(path, slug string) (*Requirement, error) {
 	if err != nil {
 		return nil, err
 	}
-	spec.System, err = associatedSystem(dir, spec.Path)
+	spec.System, err = associatedSystem(filepath.Dir(spec.Path), spec.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +86,7 @@ func Show(path, slug string) (*Requirement, error) {
 // Groups are ordered by system name then path, with unassociated requirement specs last.
 // Requirements within a group are ordered by source path.
 func List(path string) ([]*Group, error) {
-	dir, err := specfile.Scope(path)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		return nil, err
 	}
@@ -116,10 +101,7 @@ func List(path string) ([]*Group, error) {
 		if err != nil {
 			return nil, err
 		}
-		dir, err := Layout.Owner(path)
-		if err != nil {
-			return nil, err
-		}
+		dir := Layout.ContextDir(path)
 		associated, err := associatedSystem(dir, path)
 		if err != nil {
 			return nil, err

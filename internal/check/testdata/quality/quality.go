@@ -58,9 +58,6 @@ func CheckType() check.Type {
 		if err := validateSlug(strings.TrimSuffix(filepath.Base(path), Layout.Suffix)); err != nil {
 			return nil, diagnostic.Error("layout.quality-name", err.Error(), diagnostic.Location{Path: path})
 		}
-		if _, err := Layout.Owner(path); err != nil {
-			return nil, err
-		}
 		data, err := os.ReadFile(path)
 		if err != nil {
 			return nil, err

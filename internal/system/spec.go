@@ -12,7 +12,7 @@ import (
 
 const Suffix = ".system.spec.md"
 
-var Layout = specfile.Layout{Kind: "system", Suffix: Suffix, NamedSubject: true}
+var Layout = specfile.SystemLayout
 
 type metadata struct {
 	specfile.Metadata `yaml:",inline"`
@@ -47,9 +47,7 @@ type System struct {
 	ProvidedInterfaces       string                      `json:"provided_interfaces,omitempty"`
 	ProjectContext           string                      `json:"project_context,omitempty"`
 	ID                       string                      `json:"id,omitempty"`
-	Capabilities             string                      `json:"capabilities,omitempty"`
 	Components               string                      `json:"components,omitempty"`
-	Features                 string                      `json:"features,omitempty"`
 	PartOf                   string                      `json:"part_of,omitempty"`
 	ConceptUses              string                      `json:"concept_uses,omitempty"`
 	Synchronizations         string                      `json:"synchronizations,omitempty"`
@@ -72,11 +70,8 @@ func Read(path string) (*System, error) {
 	if !Layout.Match(filepath.Base(path)) {
 		return nil, diagnostic.Error("layout.system-location", fmt.Sprintf("expected a <name>%s filename", Suffix), diagnostic.Location{Path: path})
 	}
-	owner, err := Layout.Owner(path)
-	if err != nil {
-		return nil, err
-	}
-	if _, err := localSubject(owner); err != nil {
+	owner := Layout.ContextDir(path)
+	if _, err := specfile.LocalDeclaration(owner); err != nil {
 		return nil, err
 	}
 	data, err := os.ReadFile(path)
@@ -107,21 +102,21 @@ func Parse(data []byte) (*System, error) {
 		return nil, err
 	}
 	spec := &System{Name: doc.Name, ID: meta.ID}
-	fields := map[string]*string{"Description": &spec.Description, "Validation plan": &spec.ValidationPlan, "Out of scope": &spec.OutOfScope, "Interacts with": &spec.InteractsWith, "Required interfaces": &spec.RequiredInterfaces, "Provided interfaces": &spec.ProvidedInterfaces, "Project context": &spec.ProjectContext, "Capabilities": &spec.Capabilities, "Components": &spec.Components, "Features": &spec.Features, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Stakeholders": &spec.Stakeholders, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
+	fields := map[string]*string{"Description": &spec.Description, "Validation plan": &spec.ValidationPlan, "Out of scope": &spec.OutOfScope, "Interacts with": &spec.InteractsWith, "Required interfaces": &spec.RequiredInterfaces, "Provided interfaces": &spec.ProvidedInterfaces, "Project context": &spec.ProjectContext, "Components": &spec.Components, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Stakeholders": &spec.Stakeholders, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
 	locations := make(map[string]diagnostic.Location)
 	var ids specfile.Identifiers
 	if err := ids.Register(meta.ID, "system", specfile.MetadataLocation(data, "id")); err != nil {
 		return nil, err
 	}
-	if err := ids.RegisterDeclarations(doc, "Components", "Features", "Capabilities", "Concept uses", "Synchronizations"); err != nil {
+	if err := ids.RegisterDeclarations(doc, "Components", "Concept uses", "Synchronizations"); err != nil {
 		return nil, err
 	}
 	if err := ids.RegisterInterfaces(doc); err != nil {
 		return nil, err
 	}
 	for _, section := range doc.Sections {
-		if section.Title == "Components" && len(section.Children) > 0 {
-			return nil, diagnostic.Error("structure.component-source", "declare each component in its own <name>.component.spec.md file", doc.Location(section.Start, section.Title))
+		if err := rejectInlineSubject(doc, section); err != nil {
+			return nil, err
 		}
 		if section.Level != 2 {
 			if _, known := fields[section.Title]; known || section.Title == "Quality attributes" {
@@ -145,7 +140,7 @@ func Parse(data []byte) (*System, error) {
 		content := doc.Body(section)
 		spec.QualityAttributesContent = &content
 		if len(section.Children) > 0 {
-			return nil, diagnostic.Error("quality.attribute-source", "declare each system attribute in specs/quality/<name>/<name>.quality-attribute.spec.md", location)
+			return nil, diagnostic.Error("quality.attribute-source", "declare each system attribute in its own <name>.quality-attribute.spec.md file", location)
 		}
 		spec.QualityAttributes = []Attribute{}
 	}

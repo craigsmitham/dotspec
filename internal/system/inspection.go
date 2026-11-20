@@ -49,15 +49,19 @@ var CheckContext = &check.ContextProvider{Inspect: func(path string) ([]diagnost
 			if err != nil {
 				return paths, err
 			}
-			// An explicit selection can override an invalid directory system. Only a local
-			// component contributes additional ownership context.
+			// Keep local ownership alongside the explicit classification system. A malformed
+			// directory default does not invalidate an explicit selection.
 			boundary, err := specfile.ContextRoot(owner)
 			if err != nil {
 				return nil, err
 			}
-			local, lookupErr := nearestSubject(owner, boundary)
-			if lookupErr == nil && local != "" && ComponentLayout.Match(local) {
-				paths = append([]string{local}, paths...)
+			local, lookupErr := specfile.NearestDeclaration(owner, boundary)
+			if lookupErr == nil && local != "" && local != paths[len(paths)-1] {
+				if ComponentLayout.Match(local) {
+					paths = append([]string{local}, paths...)
+				} else if _, err := Read(local); err == nil {
+					paths = append([]string{local}, paths...)
+				}
 			}
 			return qualityContext(paths, nil)
 		}

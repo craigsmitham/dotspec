@@ -34,9 +34,7 @@ func writeSystem(t *testing.T, dir, name string) {
 
 func boundLookup(t *testing.T, dir string) {
 	t.Helper()
-	if err := os.Mkdir(filepath.Join(dir, ".git"), 0o755); err != nil {
-		t.Fatal(err)
-	}
+	git(t, dir, "init", "-q")
 }
 
 func git(t *testing.T, dir string, args ...string) {
@@ -127,7 +125,7 @@ func TestInvalidSlugsAndPaths(t *testing.T) {
 		if _, err := Init(dir, slug); err == nil {
 			t.Errorf("init accepted %q", slug)
 		}
-		if _, err := Show(dir, slug); err == nil || !strings.Contains(err.Error(), "invalid job slug") {
+		if _, err := Show(dir, slug); err == nil || (!Layout.Match(slug) && !strings.Contains(err.Error(), "invalid job slug")) {
 			t.Errorf("show accepted %q: %v", slug, err)
 		}
 	}
@@ -213,7 +211,7 @@ func TestAssociationStopsAtRepositoryBoundary(t *testing.T) {
 		dir := filepath.Join(outer, map[bool]string{false: "repository", true: "worktree"}[worktree])
 		writeJob(t, dir, "work", "Work")
 		if worktree {
-			writeFile(t, filepath.Join(dir, ".git"), "gitdir: elsewhere\n")
+			git(t, dir, "init", "-q", "--separate-git-dir="+filepath.Join(outer, "worktree-git"))
 		} else {
 			boundLookup(t, dir)
 		}

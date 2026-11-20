@@ -88,6 +88,16 @@ func selectProject(cmd *cobra.Command, path string) (string, error) {
 			return "", fmt.Errorf("%s is outside any specification project; select --project NAME or --all", dir)
 		}
 	} else if !cmd.Flags().Changed("path") {
+		// Project inventories start at the manifest. Single-source operations
+		// start where the contributor is working, including inside a component.
+		switch cmd.Name() {
+		case "init", "show", "map":
+			return dir, nil
+		case "check", "list":
+			if len(cmd.Flags().Args()) > 0 {
+				return dir, nil
+			}
+		}
 		return p.Root, nil
 	}
 	return path, nil
@@ -100,7 +110,7 @@ func addProjectSelection(cmd *cobra.Command) {
 	default:
 		return
 	}
-	if len(strings.Fields(cmd.Use)) != 1 {
+	if len(strings.Fields(cmd.Use)) != 1 && cmd.Use != "check [source-path]" {
 		return
 	}
 	cmd.Flags().Bool("all", false, "inspect all discovered projects separately")

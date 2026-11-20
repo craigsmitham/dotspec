@@ -39,32 +39,6 @@ The person returns to the same writable database file.
 
 The person who keeps the list also decides which entries can be discarded.
 
-## Capabilities
-
-### Local task storage
-
-#### Description
-
-Retains accepted task changes between sessions on the same computer.
-
-#### Provided by
-
-[Task service](../components/task-service/specs/task-service.component.spec.md).
-
-## Features
-
-### Pick up where I left off
-
-#### Description
-
-Reopens the task list with each task in its last saved state.
-
-#### Groups
-
-Follow the interaction in [Return to my list](use-cases/resume-list.use-case.spec.md).
-For the storage guarantee and its acceptance test, see
-[Preserve tasks across restart](requirements/restart.requirement.spec.md).
-
 ## Project context
 
 The [walkthrough](../README.md) identifies the setup, checks and validation exercise.

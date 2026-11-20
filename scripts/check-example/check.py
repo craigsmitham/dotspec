@@ -16,6 +16,8 @@ REQUIREMENT = Path("specs/requirements/restart.requirement.spec.md")
 ACCEPTANCE = Path("tests/acceptance.py")
 TYPES = {
     "system": ("", "Personal task list"),
+    "feature": ("pick-up-where-i-left-off", "Pick up where I left off"),
+    "capability": ("local-task-storage", "Local task storage"),
     "business-rule": ("completion", "Completion preserves a commitment"),
     "job": ("resume", "Resume interrupted work"),
     "use-case": ("resume-list", "Return to my list"),
@@ -148,18 +150,40 @@ def spec_journey(cli, tmp):
                for _, target, _, _ in markdown_links(page))
     feature = follow(root, "Pick up where I left off")
     promise = follow(feature, "Preserve tasks across restart")
-    source = (project / "specs/personal-task-list.system.spec.md").read_text(encoding="utf-8")
     overview = root.read_text(encoding="utf-8")
-    for name in ("Personal task list", "Pick up where I left off", "Task service",
-                 "Local task storage", "My checklist"):
-        declaration = (project / "components/task-service/specs/task-service.component.spec.md").read_text(encoding="utf-8") if name == "Task service" else source
+    for name, source in {
+        "Personal task list": "specs/personal-task-list.system.spec.md",
+        "Pick up where I left off": "specs/features/pick-up-where-i-left-off.feature.spec.md",
+        "Task service": "app/specs/task-service.component.spec.md",
+        "Local task storage": "specs/capabilities/local-task-storage.capability.spec.md",
+        "My checklist": "specs/personal-task-list.system.spec.md",
+    }.items():
+        declaration = (project / source).read_text(encoding="utf-8")
         subject = re.search(r"^#+ " + re.escape(name) + r"\n\n#+ Description\n\n([^\n]+)", declaration, re.M)
         description = subject[1]
         page = root if name == "Personal task list" else follow(root, name)
         text = page.read_text(encoding="utf-8")
         assert text.split("---\n", 2)[2].startswith(f"# {name}\n\n## Description\n\n{description}")
         assert text.count(description) == overview.count(description) == 1
+    # Every source in this fixture gets one report documenting its H1. Pages
+    # for inline subjects document a deeper heading in that same source.
+    claims = {}
+    for page in (project / "specification").rglob("*.spec-report.md"):
+        edits = [(target, fragment) for label, target, fragment, _ in markdown_links(page)
+                 if label == "Edit source"]
+        (target, fragment), = edits
+        header = re.search(r'^documents: "([^"]+)"$', page.read_text(encoding="utf-8"), re.M)
+        url = urlsplit(header[1])
+        assert (page.parent / unquote(url.path)).resolve() == target and unquote(url.fragment) == fragment
+        key = (target, fragment)
+        assert key not in claims, (page, claims.get(key))
+        claims[key] = page
+    for source in project.rglob("*.spec.md"):
+        title = re.search(r"^# (.+)$", source.read_text(encoding="utf-8"), re.M)[1]
+        anchor = re.sub(r"[^a-z0-9 -]", "", title.lower()).replace(" ", "-")
+        assert (source.resolve(), anchor) in claims, source
     component = follow(root, "Task service")
+    assert follow(follow(root, "Local task storage"), "Task service") == component
     assert component == project / "specification/components/task-service/task-service.component.spec-report.md"
     acknowledgement = follow(component, "Acknowledge after commit")
     assert acknowledgement.parent == component.parent / "requirements"
@@ -286,7 +310,9 @@ def author(cli, tmp):
     cli("requirement init", "commit-data", "--attribute", "durability", "--path", draft, cwd=project)
     assert (draft / "specs/requirements/commit-data.requirement.spec.md").is_file()
     cli("requirement init", "data-loss-tolerance", "--preset", "quality", "--attribute", "durability", "--path", draft, cwd=project)
-    assert copied.with_name("data-loss-tolerance.requirement.spec.md").is_file()
+    quality_requirement = draft / "specs/requirements/data-loss-tolerance.requirement.spec.md"
+    shown = json.loads(cli("requirement show", quality_requirement, "--json", cwd=project))
+    assert shown["requirement"]["quality_attributes"] == ["durability"]
     cli("requirement init", "save-draft", "--attribute", "durability", "--path", component, cwd=project)
     assert (component / "specs/requirements/save-draft.requirement.spec.md").is_file()
     assert "durability" in cli("requirement show", "commit-data", "--path", draft, cwd=project)

@@ -28,7 +28,7 @@ func TestInventoryClassifiesAgainstLocalModel(t *testing.T) {
 	}
 	put(t, filepath.Join(dir, "specs/system.system.spec.md"), "---\ntype: system-spec\n---\n# System\n## Purpose\nSupport work.\n## Scope\nThis project.\n## Quality attributes\n")
 	put(t, filepath.Join(dir, "specs/quality/reliability/reliability.quality-attribute.spec.md"), "---\ntype: quality-attribute-spec\nid: reliability\n---\n# Reliability\n\n## Definition\n\nConsistent operation.\n")
-	put(t, filepath.Join(dir, "specs/quality/reliability/preservation/preservation.quality-attribute.spec.md"), "---\ntype: quality-attribute-spec\nid: source-preservation\n---\n# Preservation\n\n## Definition\n\nUnchanged sources.\n")
+	put(t, filepath.Join(dir, "specs/quality/reliability/preservation/preservation.quality-attribute.spec.md"), "---\ntype: quality-attribute-spec\nid: source-preservation\nsubattribute_of: [reliability]\n---\n# Preservation\n\n## Definition\n\nUnchanged sources.\n")
 
 	path, err := Init(dir, "work")
 	if err != nil {

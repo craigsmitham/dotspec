@@ -22,7 +22,7 @@ import (
 )
 
 func conformanceTypes() []check.Type {
-	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), system.AttributeCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
+	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), system.ProductCheckType(system.FeatureLayout), system.ProductCheckType(system.CapabilityLayout), system.AttributeCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
 }
 
 func conformanceExport(t *testing.T, path string) ExportResult {
@@ -162,7 +162,7 @@ func TestExportConformanceCheckedInDomainCoverage(t *testing.T) {
 				return err
 			}
 			parsed := ParseContent(absolute, data)
-			class := map[string]string{"quality-attribute": "SystemQualityAttribute", "quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement", "quality": "Requirement"}[strings.TrimSuffix(String(parsed.Document, "declared_type"), "-spec")]
+			class := map[string]string{"feature": "Feature", "capability": "Capability", "quality-attribute": "SystemQualityAttribute", "quality-model": "QualityModel", "business-rule": "BusinessRule", "system": "System", "job": "Job", "use-case": "UseCase", "concept": "Concept", "requirement": "Requirement", "quality": "Requirement"}[strings.TrimSuffix(String(parsed.Document, "declared_type"), "-spec")]
 			if class == "" {
 				t.Errorf("%s: unknown specimen family", path)
 			}

@@ -21,9 +21,8 @@ for usage.
   sections for description, purpose, and scope. With no argument it uses “New system”. The
   [existing-target requirement](../../../specs/requirements/reject-existing-target.requirement.spec.md)
   governs initialization at an existing path.
-- `show` reads the selected project directory's `specs/<name>.system.spec.md`, or the
-  nearest ancestor's if there is no local spec. It displays the name, optional description, purpose, scope, nearest parent
-  system, and source path. Ancestor lookup stops at the Git repository root
+- `show` reads the nearest enclosing system. Give `show` its source path to select it directly. It displays the name, optional description, purpose, scope, nearest parent
+  system, and source path. Ancestor lookup stops at the project boundary, the Git repository root
   (including a worktree root), or the filesystem root outside Git.
 - `list` displays a tree of systems within the selected directory and its
   descendants, ordered by source path. It does not include ancestor systems
@@ -48,7 +47,7 @@ read the systems associated with their specifications.
 
 ## System spec format
 
-Each project directory can contain one system spec at `specs/<name>.system.spec.md`:
+Each project directory can contain one system declaration, directly or in its immediate `specs/` folder:
 
 ```markdown
 ---
@@ -95,10 +94,9 @@ expected filename when the two names disagree.
 
 ## Component spec format
 
-Give each component its own code directory with a `specs/` folder. Put one
-named declaration directly under that folder. A component uses the same filename
+Place a component declaration in the directory it describes or its immediate `specs/` folder. A component uses the same filename
 rule as a system, with the suffix `.component.spec.md`. For example,
-`components/task-service/specs/task-service.component.spec.md` contains:
+`app/specs/task-service.component.spec.md` contains:
 
 ```markdown
 ---
@@ -113,14 +111,14 @@ Records task changes and acknowledges each committed update.
 
 ## Part of
 
-[Personal task list](../../../specs/personal-task-list.system.spec.md)
+[Personal task list](../../specs/personal-task-list.system.spec.md)
 ```
 
 From the To-do project root, the equivalent initializer for an empty component
 directory is:
 
 ```sh
-dotspec component init "Task service" --path components/task-service \
+dotspec component init "Task service" --path app \
   --part-of specs/personal-task-list.system.spec.md
 ```
 
@@ -136,7 +134,8 @@ component's parent links identifies the default system for quality classificatio
 A requirement can explicitly select a different specification system and can
 name any applicable targets in `Applies to`.
 
-For a feature, capability, or concept use, put `Description` one heading level
+Write each feature and capability in its own typed file with an H1 and a
+level-two `Description`. For an inline concept use, put `Description` one level
 below its declaration. The report opens with the description and reuses the
 first paragraph in its parent's directory.
 
@@ -150,14 +149,14 @@ Source paths in command output are relative to the current directory.
 
 ## System quality attributes
 
-Give each quality attribute a directory under the system’s `specs/quality/`.
-The directory and filename use the name from the H1. For example,
+Place each quality attribute in a named source owned by its system. The filename uses the name from the H1. For example,
 `specs/quality/reliability/durability/durability.quality-attribute.spec.md` contains:
 
 ```markdown
 ---
 type: quality-attribute-spec
 id: durability
+subattribute_of: [reliability]
 ---
 
 # Durability
@@ -168,16 +167,14 @@ Preservation of acknowledged work between local sessions.
 ```
 
 The ID defaults to the name slug. Supply an explicit ID to keep references stable
-when renaming the attribute. Each ID is unique within the system. Nesting the
-Durability folder under Reliability makes Reliability a parent. For additional
-parents, add a frontmatter list such as `subattribute_of: [recoverability]`. A
-flat folder can use that list for every parent. All parents belong to the same
-system, and the graph must be acyclic.
+when renaming the attribute. Each ID is unique within the system. The
+`subattribute_of` list names every parent. All parents belong to the same system,
+and the graph must be acyclic.
 
-Keep functional requirements under the owner’s `specs/requirements/`. They can name relevant attributes in `quality_attributes`. A quality obligation beside an attribute source takes its primary classification from that folder.
-Use `quality_attributes` in its frontmatter for any additional IDs. Requirements
-in a component's own `specs/requirements/` can use the same IDs through their
-governing system. Subsystems have independent vocabularies.
+A requirement names each applicable quality in `quality_attributes`.
+Component-owned requirements resolve these IDs through their governing system.
+Subsystems have independent vocabularies. One possible source layout is:
+
 
 ```text
 specs/

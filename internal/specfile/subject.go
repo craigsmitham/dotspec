@@ -41,39 +41,76 @@ func (l Layout) CheckName(path, name string) error {
 	return nil
 }
 
-// LocalSubject finds the single declaration in a subject's own specs directory.
+// LocalSubject looks in both locations that claim dir. Direct declarations in
+// a specs directory belong to its parent and are inspected at that parent.
 func (l Layout) LocalSubject(dir string) (string, error) {
-	base := filepath.Join(dir, Folder)
-	info, err := os.Lstat(base)
-	if errors.Is(err, fs.ErrNotExist) {
-		return "", nil
+	var bases []string
+	if !specsAlias(dir) {
+		bases = append(bases, dir)
 	}
-	if err != nil {
-		return "", err
-	}
-	if !info.IsDir() {
-		return "", diagnostic.Error("layout.directory", "expected a regular specs directory", diagnostic.Location{Path: base})
-	}
-	entries, err := os.ReadDir(base)
-	if errors.Is(err, fs.ErrNotExist) {
-		return "", nil
-	}
-	if err != nil {
-		return "", err
+	if metadata := filepath.Join(dir, Folder); specsAlias(metadata) {
+		bases = append(bases, metadata)
 	}
 	var result string
-	for _, e := range entries {
-		if !l.Match(e.Name()) {
+	for _, base := range bases {
+		info, err := os.Lstat(base)
+		if errors.Is(err, fs.ErrNotExist) {
 			continue
 		}
-		file := filepath.Join(base, e.Name())
-		if e.Type()&os.ModeSymlink != 0 {
-			return "", diagnostic.Error("layout.subject-link", "subject declaration must be a regular file, not a symlink", diagnostic.Location{Path: file})
+		if err != nil {
+			return "", err
 		}
-		if result != "" {
-			return "", diagnostic.Error("layout.subject-ambiguous", fmt.Sprintf("multiple %s declarations in %s: %s and %s", l.Kind, base, filepath.Base(result), e.Name()), diagnostic.Location{Path: file})
+		if !info.IsDir() {
+			continue
 		}
-		result = file
+		entries, err := os.ReadDir(base)
+		if err != nil {
+			return "", err
+		}
+		for _, e := range entries {
+			if !l.Match(e.Name()) {
+				continue
+			}
+			file := filepath.Join(base, e.Name())
+			if !e.IsDir() && !e.Type().IsRegular() {
+				return "", diagnostic.Error("layout.subject-link", "subject declaration must be a regular file", diagnostic.Location{Path: file})
+			}
+			if result != "" {
+				return "", diagnostic.Error("layout.subject-ambiguous", fmt.Sprintf("multiple %s declarations in %s: %s and %s", l.Kind, dir, result, file), diagnostic.Location{Path: file}, diagnostic.Location{Path: result})
+			}
+			result = file
+		}
 	}
 	return result, nil
+}
+
+var SystemLayout = Layout{Kind: "system", Suffix: ".system.spec.md", NamedSubject: true}
+var ComponentLayout = Layout{Kind: "component", Suffix: ".component.spec.md", NamedSubject: true}
+
+func LocalDeclaration(dir string) (string, error) {
+	sys, err := SystemLayout.LocalSubject(dir)
+	if err != nil {
+		return "", err
+	}
+	comp, err := ComponentLayout.LocalSubject(dir)
+	if err != nil {
+		return "", err
+	}
+	if sys != "" && comp != "" {
+		return "", diagnostic.Error("layout.subject-ambiguous", "directory contains both a system and a component declaration", diagnostic.Location{Path: comp}, diagnostic.Location{Path: sys})
+	}
+	if sys != "" {
+		return sys, nil
+	}
+	return comp, nil
+}
+
+func NearestDeclaration(dir, boundary string) (string, error) {
+	for {
+		file, err := LocalDeclaration(dir)
+		if file != "" || err != nil || dir == boundary || filepath.Dir(dir) == dir {
+			return file, err
+		}
+		dir = filepath.Dir(dir)
+	}
 }

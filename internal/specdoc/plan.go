@@ -204,6 +204,20 @@ func (p *planner) read() error {
 		p.pages[id(r)] = s
 		p.subjects = append(p.subjects, s)
 	}
+	// Every selected source is a discovered authored specification. Its H1 must
+	// have exactly one page even when other headings also get their own pages.
+	rootsBySource := make(map[*sourceFile]int)
+	for _, subject := range p.subjects {
+		if subject.name.level == 1 {
+			rootsBySource[subject.source]++
+		}
+	}
+	for _, key := range slices.Sorted(maps.Keys(p.sources)) {
+		source := p.sources[key]
+		if count := rootsBySource[source]; count != 1 {
+			return fmt.Errorf("%s: expected one standalone report for the source title, found %d", source.path, count)
+		}
+	}
 	slices.SortFunc(p.subjects, func(a, b *subject) int {
 		if n := strings.Compare(a.source.path, b.source.path); n != 0 {
 			return n
@@ -265,7 +279,7 @@ func (p *planner) place() error {
 		case "System":
 			s.parent = p.pages[parent]
 		default:
-			s.parent = p.pages[attr(s.r, "specification_component")]
+			s.parent = p.pages[attr(s.r, "specification_owner")]
 		}
 		if s.parent == nil {
 			s.parent = p.pages[attr(s.r, "owner")]
@@ -326,10 +340,18 @@ func (p *planner) place() error {
 			slug += fmt.Sprintf("-%x", sum[:5])
 		}
 		base := path.Join(s.collectionDir(), slug)
-		folders := specfile.QualityFolders(s.source.path)
-		if len(folders) > 0 && (s.kind() == "SystemQualityAttribute" || s.kind() == "Requirement") {
-			s.dir = path.Join(s.system.dir, "quality", path.Join(folders...))
-			s.file = path.Join(s.dir, strings.TrimSuffix(path.Base(s.source.path), ".md")+"-report.md")
+		if s.kind() == "SystemQualityAttribute" {
+			dir := path.Join(s.system.dir, "quality")
+			if parents := model.Strings(s.r["subattribute_of"]); len(parents) > 0 {
+				if parent := p.pages[parents[0]]; parent != nil {
+					if err := assign(parent); err != nil {
+						return err
+					}
+					dir = parent.dir
+				}
+			}
+			s.dir = path.Join(dir, slug)
+			s.file = path.Join(s.dir, slug+".quality-attribute.spec-report.md")
 		} else if s.kind() == "System" || s.kind() == "Component" {
 			s.placeOverview(base)
 		} else {

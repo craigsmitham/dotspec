@@ -74,12 +74,6 @@ func FindProject(path string) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	// Source attribution can start inside specs/. Only its owner's directories
-	// can declare projects.
-	metadata := metadataDirectoryWithin(dir, root)
-	if metadata != "" {
-		dir = filepath.Dir(metadata)
-	}
 	for current := dir; ; current = filepath.Dir(current) {
 		found, err := hasManifest(current)
 		if err != nil {
@@ -107,9 +101,6 @@ func FindWorkspace(dir string) (*Workspace, error) {
 	}
 	root := repo
 	if root == "" {
-		if metadata := metadataDirectoryWithin(dir, ""); metadata != "" {
-			dir = filepath.Dir(metadata)
-		}
 		root = dir
 		for current := dir; ; current = filepath.Dir(current) {
 			found, err := hasManifest(current)
@@ -147,7 +138,7 @@ func FindWorkspace(dir string) (*Workspace, error) {
 
 func manifestPaths(root, repo string) ([]string, error) {
 	match := func(name string) bool { return name == ProjectFilename }
-	skip := func(dir string) (bool, error) { return filepath.Base(dir) == Folder, nil }
+	skip := func(dir string) (bool, error) { return false, nil }
 	if repo != "" {
 		return gitPaths(root, repo, ":(glob)**/"+ProjectFilename, match, skip)
 	}

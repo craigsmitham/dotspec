@@ -58,7 +58,7 @@ func TestSpecificationSystemSelectionIsConsistent(t *testing.T) {
 	r := designRecord(t, s, "Requirement", "Explicit")
 	selected := designRecord(t, s, "System", "Explicit selection")
 	local := designRecord(t, s, "System", "Directory default")
-	if r["specification_system"] != selected["id"] || r["specification_system"] == local["id"] || r["specification_system_origin"] != "explicit" {
+	if r["specification_system"] != selected["id"] || r["specification_owner"] != local["id"] || r["specification_system_origin"] != "explicit" {
 		t.Fatal(r)
 	}
 	if len(Strings(r["quality_attributes"])) != 1 || Strings(r["applies_to"])[0] != local["id"] {
@@ -163,7 +163,7 @@ func TestExplicitSystemPreservesLocalComponentOwnership(t *testing.T) {
 	}
 	s := result.Snapshot
 	req := designRecord(t, s, "Requirement", "Dispatch")
-	if req["specification_component"] != designRecord(t, s, "Component", "Intake")["id"] || req["specification_system"] != designRecord(t, s, "System", "Explicit selection")["id"] || len(Strings(req["quality_attributes"])) != 1 || len(Strings(req["applies_to"])) != 0 {
+	if req["specification_owner"] != designRecord(t, s, "Component", "Intake")["id"] || req["specification_system"] != designRecord(t, s, "System", "Explicit selection")["id"] || len(Strings(req["quality_attributes"])) != 1 || len(Strings(req["applies_to"])) != 0 {
 		t.Fatal(req)
 	}
 }

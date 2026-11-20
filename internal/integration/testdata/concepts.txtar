@@ -29,8 +29,7 @@ stderr 'refusing to overwrite'
 status 2 dotspec concept init invalid --format mermaid
 ! stdout .
 ! exists specs/concepts/invalid.concept.spec.md
-status 2 dotspec concept show job-map --path specs/concepts
-stderr 'selects a project directory'
+status 0 dotspec concept show job-map --path specs/concepts
 status 2 dotspec concept check absent --json
 stdout '"complete": false'
 ! stderr .

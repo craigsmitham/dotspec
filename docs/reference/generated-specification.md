@@ -39,7 +39,7 @@ to `.spec-report.md`. For example, the Task service report lives at
 holds its local requirements, interfaces, and child components. The optional source
 `id` provides an anchor. The subject name determines the overview filename.
 
-In a system overview, select an attribute in the name-and-description table to read its full entry. Nested attribute folders mirror the source beneath the system’s `quality/` directory. Functional requirement reports live under their owner’s `requirements/` folder. A quality obligation authored beside an attribute has its report beside that attribute. The attribute page links to classified requirements in both locations. On a requirement page, read the statement, applicability, criterion, and verification plan together. Links beside the requirement lead back to the precise attribute or use-case passage.
+In a system overview, select an attribute in the name-and-description table to read its full entry. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability, criterion, and verification plan together. Links beside the requirement lead back to the precise attribute or use-case passage.
 
 For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with its authored description of the behavior it offers. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
 
@@ -55,6 +55,8 @@ Each system lists its immediate child systems and the specifications in its scop
 Each component lists its structural children, declared interfaces, and requirements
 that explicitly apply to it. A promise applicable to two components appears in
 both directories and leads to the same page or heading.
+
+Each standalone authored specification in the selected project has exactly one standalone report page. Both `documents` and **Edit source** point to the source H1. The owning system or component automatically lists its features and capabilities. Inline subjects can also have a report page for their own heading.
 
 Authored Markdown uses `<subject>-spec`. The corresponding generated Markdown
 uses `<subject>-spec-report`. For example, `<name>.system.spec.md` declares
