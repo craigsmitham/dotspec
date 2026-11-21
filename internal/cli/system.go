@@ -115,6 +115,9 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 		if spec.Description != "" {
 			description = "\n\nDescription\n" + indent(spec.Description)
 		}
+		if spec.Framing != "" {
+			description += "\n\nFraming\n" + indent(spec.Framing)
+		}
 		_, err = fmt.Fprintf(out, "%s%s\n\nPurpose\n%s\n\nScope\n%s%s\n\nEnclosing system document: %s\nSource: %s\n",
 			result.System.Name, description, indent(result.System.Purpose), indent(result.System.Scope), modelText, parentText, displayPath(result.System.Path))
 		return err

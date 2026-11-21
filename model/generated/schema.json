@@ -2919,7 +2919,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.29.0-draft",
+                    "const": "0.30.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -3460,6 +3460,10 @@
                 },
                 "evidence": {
                     "$ref": "#/$defs/RichContent"
+                },
+                "framing": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "An evolving account of how the authors understand the situation, approaches worth exploring and questions that could change their direction."
                 },
                 "glossary": {
                     "description": "Explicitly named terms, in authored order.",
@@ -4226,7 +4230,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.29.0-draft",
+            "const": "0.30.0-draft",
             "type": "string"
         },
         "references": {
@@ -4271,5 +4275,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.29.0-draft"
+    "version": "0.30.0-draft"
 }

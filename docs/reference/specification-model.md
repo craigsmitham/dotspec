@@ -16,7 +16,7 @@ Use `--project` to select a project or `--all` to export a workspace envelope. E
 
 A specification declares its subject through its frontmatter type and title. Systems, components, jobs, use cases, concepts, requirements, business rules, quality models, system quality attributes, features and capabilities each have their own specification type. A named item such as an interface, job step or desired outcome identifies its declaring owner. Each subject report type identifies the subject it documents.
 
-Model `0.29.0-draft` uses mapping profile `dotspec-markdown/23`. Regenerate saved snapshots after moving former inline requirements to their own files. For scenario outcomes, retain the prose in the use case. Update incoming links before rebuilding reports. [Migration guidance](formats/requirement.md#requirement-format)
+Model `0.30.0-draft` uses mapping profile `dotspec-markdown/24`. Regenerate saved snapshots after moving former inline requirements to their own files. For scenario outcomes, retain the prose in the use case. Update incoming links before rebuilding reports. [Migration guidance](formats/requirement.md#requirement-format)
 
 
 ## Source text and locations

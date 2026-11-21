@@ -11335,7 +11335,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.29.0-draft",
+          "equals_string": "0.30.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -13252,6 +13252,22 @@
           "annotations": {},
           "any_of": [],
           "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "framing": {
+          "annotations": {},
+          "any_of": [],
+          "description": "An evolving account of how the authors understand the situation, approaches worth exploring and questions that could change their direction.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -16302,7 +16318,7 @@
       "requirement-spec"
     ]
   },
-  "model_version": "0.29.0-draft",
+  "model_version": "0.30.0-draft",
   "projections": [
     "BusinessRule.applies_to",
     "BusinessRule.refines",
@@ -16411,7 +16427,7 @@
   },
   "representation_version": "0.3.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "707c89830617b7945fcb28562a552382c2ec22a1dcf23cace278eddae344ace5",
+  "source_sha256": "874e6ddccddbe31edef0c2c80f3b7acdea7d1e9f9a6725b13113fe95d34779ea",
   "subsets": {
     "business-requirements": {
       "classification": "core",

@@ -74,6 +74,14 @@ Derived from for a typed derivation and Relies on to identify consumers of the
 assumption. Applicability here is prose describing conditions, not a duplicate
 requirement `applies_to` relationship. Review the evidence for the premise and whether reliance is justified.
 
+## Frame the system
+
+Use an optional `## Framing` section after Description. How are you thinking about this system, and what are you still trying to figure out? Explain what you have observed, an approach worth exploring, or a question that could change your direction. As decisions settle, record them under Purpose, Scope, Goals, or in a requirement. Keep the reasoning in Framing when it helps readers understand those decisions.
+
+For a personal task list, Framing might begin, “Coming back to a list after a week away is partly a problem of remembering where you left off. Would seeing recently finished errands alongside unfinished ones help you pick up the thread?”
+
+This use of framing draws on Kees Dorst’s account of how a designer’s view of a situation shapes the approaches worth exploring. [Dorst on frame creation](https://pure.tue.nl/ws/files/3801566/dorst2013.pdf)
+
 ## Delimit the boundary and its interfaces
 
 Add Out of scope, Interacts with, Required interfaces and Provided interfaces to a

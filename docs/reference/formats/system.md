@@ -21,7 +21,7 @@ for usage.
   sections for description, purpose, and scope. With no argument it uses “New system”. The
   [existing-target requirement](../../../specs/requirements/reject-existing-target.requirement.spec.md)
   governs initialization at an existing path.
-- `show` reads the nearest enclosing system. Give `show` its source path to select it directly. It displays the name, optional description, purpose, scope, nearest parent
+- `show` reads the nearest enclosing system. Give `show` its source path to select it directly. It displays the name, optional description and framing, purpose, scope, nearest parent
   system, and source path. Ancestor lookup stops at the project boundary, the Git repository root
   (including a worktree root), or the filesystem root outside Git.
 - `list` displays a tree of systems within the selected directory and its
@@ -82,7 +82,7 @@ There is no requirement inheritance behavior.
 
 Use this reading order for the sections that apply. Only Purpose and Scope are required.
 
-1. **Description, Purpose, Goals.** Introduce the system in a sentence. In Purpose, describe the situation that motivates it and the benefit it should provide. Include business background here when it helps explain that benefit. Give a goal its own named entry when readers need to discuss the outcome or trace what contributes to it.
+1. **Description, Framing, Purpose, Goals.** Introduce the system in a sentence. Use the optional Framing section to describe what you are considering and the choices still taking shape. In Purpose, describe the situation that motivates it and the benefit it should provide. Include business background here when it helps explain that benefit. Give a goal its own named entry when readers need to discuss the outcome or trace what contributes to it.
 2. **Stakeholders, Scope, Out of scope.** Identify the people and organizations with an interest in the system. Describe the work, users and situations it serves, then name exclusions that clarify its boundary.
 3. **Environment, Assumptions, Constraints.** Describe the conditions the system must accommodate, the premises the specification relies on, and any externally imposed limits. For the personal task list, stopping the service between sessions is an operating condition. Returning to the same database file is an assumption behind recovering the list.
 4. **System declarations.** Describe the relevant components, interaction partners, interfaces and concept uses. Use the glossary for terms with a project-specific meaning.

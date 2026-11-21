@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/metamodel.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.29.0-draft
+version: 0.30.0-draft
 description: Source-backed specifications and their reader-facing reports. Domain fields retain the authored
   Markdown through ordered byte ranges. Explicit declarations, links and classification labels supply identity
   and relationships.
@@ -291,7 +291,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.29.0-draft
+        equals_string: 0.30.0-draft
       mapping_profile:
         range: string
         description: Versioned rules for mapping declared sections, metadata and references.
@@ -796,6 +796,10 @@ classes:
       kind:
         equals_string: System
     attributes:
+      framing:
+        range: RichContent
+        inlined: true
+        description: An evolving account of how the authors understand the situation, approaches worth exploring and questions that could change their direction.
       project_references:
         range: ContextualReferences
         inlined: true

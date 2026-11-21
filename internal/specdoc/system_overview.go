@@ -33,6 +33,7 @@ func overviewOutline(kind string) []overviewSection {
 	}
 	return []overviewSection{
 		{sources: []string{"description"}},
+		{title: "Framing", level: 2, sources: []string{"framing"}},
 		{title: "Purpose", level: 2, sources: []string{"purpose"}},
 		{title: "Goals", level: 2, sources: []string{"goals"}, collections: []string{"Goals"}},
 		{title: "Business rules", level: 2, collections: []string{"Business rules"}},

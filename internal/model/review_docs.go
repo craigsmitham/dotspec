@@ -131,7 +131,7 @@ func PEGSMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			continue
 		}
 		fmt.Fprintf(&v.out, "### %s: %s\n\n", String(r, "kind"), v.link(r))
-		for _, f := range []string{"description", "purpose", "scope", "responsibilities", "statement", "goal", "configuration", "when", "where", "then", "semantics"} {
+		for _, f := range []string{"description", "framing", "purpose", "scope", "responsibilities", "statement", "goal", "configuration", "when", "where", "then", "semantics"} {
 			v.body(r, reviewLabel(f), r[f])
 		}
 		if definition := String(r, "definition"); definition != "" {

@@ -42,6 +42,7 @@ Choose a section to read in order or open a collection index directly.
 
 | Section | What you can find |
 | --- | --- |
+| Framing | How the authors understand the situation and what they are still exploring |
 | Purpose | The system’s authored purpose |
 | Goals | Authored goals. Select a named goal to read its full statement and see which specifications support it. |
 | Business rules | **All business rules** opens the index of applicable and local rules. |

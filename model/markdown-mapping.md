@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/23` maps authored specifications to the domain classes and fields in the [model reference](../docs/reference/model/index.md). Each file declares its specification type in YAML frontmatter and names its subject in a level-one heading. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
+`dotspec-markdown/24` maps authored specifications to the domain classes and fields in the [model reference](../docs/reference/model/index.md). Each file declares its specification type in YAML frontmatter and names its subject in a level-one heading. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
 
 ## Shared mapping rules
 
@@ -10,7 +10,7 @@ Omitting a narrative field leaves it absent. An explicitly empty field has an em
 
 ## System
 
-Purpose, scope, environment, stakeholders and constraints hold authored Markdown. The Project references section maps to `System.project_references`: its content preserves the explanation and its references identify the cited project records. Goals, assumptions, interfaces, concept uses, synchronizations and inline glossary terms have named entries. Declare a system quality attribute in its own specification under the system’s quality directory. A reusable quality model declares its attributes by name under Quality attributes. Find the [system format](../docs/reference/formats/system.md).
+The optional `## Framing` section maps to `System.framing` and preserves authored Markdown, including local subheadings. Purpose, scope, environment, stakeholders and constraints hold authored Markdown. The Project references section maps to `System.project_references`: its content preserves the explanation and its references identify the cited project records. Goals, assumptions, interfaces, concept uses, synchronizations and inline glossary terms have named entries. Declare a system quality attribute in its own specification under the system’s quality directory. A reusable quality model declares its attributes by name under Quality attributes. Find the [system format](../docs/reference/formats/system.md).
 
 ## Job
 

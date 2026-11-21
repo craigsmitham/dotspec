@@ -30,6 +30,9 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 	if d.text(sys["out_of_scope"]) == "" || d.text(Object(sys["project_references"])["content"]) == "" {
 		t.Fatal("unmapped system context")
 	}
+	if !strings.Contains(d.text(sys["framing"]), "Could a restore preview help?") || partner["framing"] != nil {
+		t.Fatal("system framing lost its nested prose or appeared on another system")
+	}
 	required := Strings(sys["required_interfaces"])
 	provided := Strings(sys["provided_interfaces"])
 	if len(required) != 1 || len(provided) != 1 || len(Strings(Object(d.index[required[0]]["contracts"])["references"])) != 1 || d.index[provided[0]]["contracts"] != nil {

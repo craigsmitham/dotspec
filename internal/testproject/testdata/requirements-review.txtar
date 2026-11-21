@@ -374,6 +374,14 @@ Reduce unnecessary storage cost without shortening the recovery commitment.
 
 Mobile clients sometimes lose connectivity. The service must accommodate retries after reconnection; connectivity loss is an operating condition, not a premise that excuses restoration requirements.
 
+## Framing
+
+Explore recovery workflows.
+
+### Working idea
+
+Could a restore preview help?
+
 ## Out of scope
 
 Recovering documents after their retained copies expire. External backup restoration has a separate boundary.
