@@ -2,272 +2,109 @@
 
 ## Job commands
 
-```sh
-dotspec job init develop-requirements
-dotspec job show develop-requirements
-dotspec job list
-dotspec job step list develop-requirements
-dotspec job outcome list develop-requirements
-dotspec job outcome list develop-requirements --step identify-stakeholders
-dotspec job map develop-requirements
-dotspec job map develop-requirements --outcomes
-dotspec job map develop-requirements --format mermaid
-dotspec job check develop-requirements
-```
+Use the following commands from a project directory. Add `--path DIR` to select an existing directory, or use `--project todo` from the dotspec workspace for the bundled example.
 
-The `--path DIR` project directory must already exist and defaults to the current
-working directory. It can appear before or after the slug. For example:
+| Command | Result |
+| --- | --- |
+| `dotspec job init personal-commitments --preset odi` | Creates an editable starter under `specs/jobs/`. An existing file is preserved and the command reports an error. |
+| `dotspec job show personal-commitments` | Displays the authored Markdown, source path and associated system. |
+| `dotspec job list` | Lists jobs in the selected subtree, grouped by associated system. Jobs without an enclosing system appear under `System: None`. |
+| `dotspec job step list personal-commitments` | Lists the steps in document order with their descriptions, stages and explicit IDs where supplied. |
+| `dotspec job outcome list personal-commitments` | Lists desired outcomes grouped by declaration owner. |
+| `dotspec job outcome list personal-commitments --step recall` | Selects the outcomes declared under the step with that explicit ID. In the To-do example the selection is empty. An unknown step ID is an error. |
+| `dotspec job map personal-commitments --outcomes` | Shows the job and authored step order, with outcomes attached to their declaration owner. Omit `--outcomes` for the steps alone. Use `--format mermaid` for flowchart source. |
+| `dotspec model needs` | Shows explicit outcome applicability and contributions from other specifications. |
+| `dotspec job check personal-commitments --preset odi` | Checks structure and references and suggests improvements. Use `--json` for structured findings. |
 
-```sh
-dotspec job init understand-tokens --path internal/parser
-dotspec job show understand-tokens --path internal/parser
-dotspec job list --path internal/parser
-```
-
-Use `dotspec job <command> --help` for command-specific options.
-
-- `init <slug>` creates `specs/jobs/<slug>.job.spec.md` with an editable template.
-  It never overwrites an existing file. Edit the file in your text editor.
-- `show <slug>` displays the authored Markdown
-  plus the associated system and source path. Select a unique slug in the local owner or pass its source path.
-- `list` discovers jobs within the selected subtree, grouped by associated
-  system. Groups are ordered by system name and source path; jobs within each
-  group are ordered by source path. Jobs without a system appear last under
-  `System: None`. An empty list is successful.
-- `step list <slug>` displays steps in document order with their IDs, optional
-  stages, and descriptions.
-- `outcome list <slug>` displays success criteria under `Outcomes declared by job`
-  and `Outcomes declared by step: ...`. `--step ID` selects outcomes declared by that step. Use `model needs` to inspect
-  explicit applicability across declaration owners. An unknown step is an error; an existing step
-  without outcomes is a successful empty result.
-- `map <slug>` displays the job and its documented steps in authored order.
-  `--format mermaid` emits standalone Mermaid flowchart source for a renderer
-  or a fenced `mermaid` block. `--outcomes` includes the whole job's outcomes and
-  attaches declared outcomes to their owner, with declaration labels in text and Mermaid.
-  This view describes declaration structure; `model needs` shows explicit applicability.
-  Without steps, the command displays the job, any requested overall outcomes,
-  and `No steps defined.`. Arrows show authored step order; they do not require
-  that execution sequence. No format assesses the map's completeness.
-  Loops and branches are not modeled in this first version.
-- `check <slug>` reports structural errors and advisory writing suggestions on
-  stdout. Use `--json` for the same structured report as the project-wide check.
-  Suggestions do not produce a failure exit status. Ordinary reading and mapping
-  commands do not emit writing advice.
-
-A file slug contains lowercase ASCII letters or digits, separated by single
-hyphens: for example, `develop-requirements`. Slugs cannot contain paths, spaces,
-or file extensions. Different directories can reuse a slug. Changing a job's
-name does not change its file slug.
-
-The nearest subject owns the job. Its system supplies the default association
-even when the job is discovered in a narrower subtree. See [project layout](../layout.md#project-layout). A job without an enclosing system is valid and displays
-`System: None`. A malformed enclosing system is an error. System association does
-not mean that the software performs every step of the customer's job.
+The filename slug uses lowercase ASCII letters and digits with single hyphens between words. Changing an H1 leaves the selector unchanged. Jobs in different directories may share a slug. For `show` and `check`, a source path selects a specific file. The nearest owning subject determines the default system association. [Project layout](../layout.md#project-layout) · [Command reference](../cli.md).
 
 ## Job spec format
 
-Jobs use one Markdown convention with no profiles or method selection. Only
-`type: job-spec` frontmatter and one nonempty document-level H1 are required. An
-optional `id` in frontmatter supplies an explicit job identity; the file slug
-remains the CLI selector. Other frontmatter keys are currently rejected.
+A job file requires `type: job-spec` in its frontmatter and one nonempty H1. The only other supported frontmatter key is an optional `id`. A minimal draft can consist of the frontmatter and a title.
 
-For example, a draft with a partial map:
+| Conventional H2 | Content |
+| --- | --- |
+| `Job` | The accomplishment or change the performer seeks. |
+| `Performer` | Who carries out the job. |
+| `Situation`, `Motivation`, `Intended progress` | The circumstances, reason to act and change sought. Useful together for a job story. |
+| `Steps` | H3 headings naming accomplishments in authored map order. Use introductory prose to identify a partial map. |
+| `Outcomes` | H3 headings naming desired results or success criteria declared by the job. |
+| `Evidence` | Source and limits of an account, study links or hypotheses still to investigate. |
+
+These sections are optional, case-sensitive and may appear once each. Add a map when it helps describe the work. Arrows in the map view show document order. Real work can loop or branch. A job without steps can still declare outcomes. Use explicit [relationships](../../guides/relationships.md) such as `Supports` to connect specifications.
+
+### Steps, stages and desired outcomes
+
+This partial example shows the heading levels for a step-owned outcome and a job-owned outcome that applies to two steps.
 
 ```markdown
 ---
 type: job-spec
-id: develop-requirements
 ---
-
-# Develop Requirements
+# See personal commitments through
 
 ## Job
 
-Define an agreed set of requirements for a proposed software change.
+See personal commitments through from accepting responsibility for an errand to settling it.
 
 ## Performer
 
-The person responsible for defining the change, working with stakeholders.
-
-## Situation
-
-I’m defining a new product or changing an existing capability.
-
-## Motivation
-
-I want to turn stakeholder needs and product intent into clear requirements.
-
-## Intended progress
-
-The team can agree on what to build and how to determine whether it meets
-those needs.
-
-## Outcomes
-
-### Stakeholder needs
-
-**ID:** OUT-001
-
-Minimize the likelihood that an important stakeholder need is
-discovered only after implementation begins.
+The person responsible for the errand.
 
 ## Steps
 
-### Identify affected stakeholders
+Partial map covering a return after an interruption.
 
-**ID:** identify-stakeholders
+### Recall outstanding work
+
+**ID:** recall
 **Stage:** locate
 
-Identify people whose needs or responsibilities may be affected.
+Recover the commitments that may need attention.
+
+### Check what remains
+
+**Stage:** monitor
+
+Compare what has happened with what was promised.
 
 #### Outcomes
 
-##### Stakeholder identification time
+##### Notice a stalled errand
 
-**ID:** OUT-002
-
-Minimize the time needed to identify affected stakeholders.
-
-### Locate existing commitments
-
-**Stage:** locate
-
-Find the commitments that may constrain the proposed change.
-
-## Evidence
-
-This partial map and its outcomes are hypotheses awaiting research.
-```
-
-The conventional H2 sections are `Job`, `Performer`, `Situation`, `Motivation`,
-`Intended progress`, `Outcomes`, `Steps`, and `Evidence`. All are
-optional, may be empty in a draft, and can be developed incrementally. Their
-names are case-sensitive, and duplicate conventional sections are errors.
-Keep other narrative and local subheadings inside the relevant field. Use `Intended progress` for the result the performer seeks.
-
-`Outcomes` contains desired results or criteria for judging success. Each outcome
-has one declaration owner: the job or a step. Declaration ownership does not
-establish applicability or inheritance. A shared outcome can explicitly apply to
-several jobs or steps; declare it once and link its subjects with `Applies to`.
-Step success does not establish overall job success.
-
-Declare each outcome with a named heading and a full statement. Give it an introductory `**ID:**` when it needs a stable reference.
-
-```markdown
-### Timely awareness
-
-**ID:** timely-awareness
-
-Minimize the time before recognizing that the journey plan needs attention.
-
-#### Applies to
-
-[Monitor the journey](#monitor-journey)
-[Adapt travel plans](#adapt-plans)
-```
-
-Under a step's `#### Outcomes`, use H5 outcome names and H6 `Applies to` headings.
-Each named heading at the member level declares an outcome, including entries without IDs. The statement is separate from the short
-heading label. `Supporting content`, `Supports`, and `Derived from` sections can
-retain qualifications and provenance. Ordinary links elsewhere remain citations.
-
-Empty statements receive advisory guidance. ODI direction/measurement wording
-advice is enabled only by `job check --preset odi`; qualitative emotional and
-social outcomes are accepted by the default check.
-
-A job can have overall outcomes without any steps or IDs, for example:
-
-```markdown
----
-type: job-spec
----
-
-# Assess a proposed change
-
-## Job
-
-Assess a proposed product change from receiving the proposal to deciding
-whether to accept it.
-
-## Performer
-
-A reviewer responsible for the affected product commitments.
+Minimize the time a commitment goes unattended after an expected reply is overdue.
 
 ## Outcomes
 
-### Conformance before acceptance
+### Less reconstruction
 
-Minimize the likelihood of accepting a change that violates an applicable commitment.
+**ID:** less-reconstruction
+
+Minimize the time it takes to identify the next outstanding action when returning to an errand after an interruption.
+
+#### Applies to
+
+[Recall outstanding work](#recall-outstanding-work) and [Check what remains](#check-what-remains).
 
 ## Evidence
 
-This job and outcome are hypotheses awaiting research. No job map is recorded.
+Both criteria are hypotheses to investigate with people returning to unfinished errands.
 ```
 
-Under `Steps`, each H3 introduces a step. Its `**ID:**` and optional `**Stage:**`
-fields belong in the introductory prose. A step's H4 `Outcomes` section contains
-outcomes declared by that step. Headings in code fences and blockquotes do
-not define steps or outcomes. Evidence preserves the author’s account and links to research.
+- **Steps.** Place optional `**ID:**` and `**Stage:**` in the introductory prose beneath the H3. Stage accepts a free-text label. You may omit or repeat a stage. The [universal job steps](../../guides/write-a-job.md#identify-the-steps) provide conventional labels and questions for elicitation.
+- **Outcomes.** Give each outcome a short heading and write its full statement beneath. Each outcome has one declaration owner. Under a job's H2 `Outcomes`, use an H3 for each name and an H4 for its fields. Under a step's H4 `Outcomes`, use H5 names and H6 fields. `Applies to` links to the jobs or steps for which it is a criterion. Ownership alone establishes no applicability. Other supported outcome fields include `Supporting content`, `Supports` and `Derived from`.
+- **Identifiers.** An explicit job, step or outcome ID starts with an ASCII letter or digit and may also contain hyphens and underscores after the first character. IDs are case-sensitive and share a namespace within the file. Use a step ID for `--step`. Local fragments can resolve to explicit IDs or heading anchors. Heading anchors also work in ordinary Markdown viewers. [Reference checking](../inspection.md#references).
 
-Step order in the document defines the displayed map order, not a required
-execution sequence. Mark partial maps in the introductory prose under `Steps`
-or in `Evidence`; these notes remain authored Markdown available through `show`.
-IDs remain independent of names and positions. Explicit IDs use ASCII letters
-or digits followed by letters, digits, hyphens, or underscores, and are
-case-sensitive. Job, step, and outcome
-IDs share a namespace inside one job document. Duplicate explicit IDs are errors;
-IDs may be reused in other job documents. Add an ID when a step or outcome needs
-stable references, or when selecting a step with `--step`. Missing IDs are valid;
-if a selection fails and the job contains unidentified steps, the diagnostic
-explains how to assign one.
-
-`Stage` is an optional label. The eight ODI stages are useful conventions:
-`define`, `locate`, `prepare`, `confirm`, `execute`, `monitor`, `modify`, and
-`conclude`. Custom stage labels are accepted without configuration. Stages can
-repeat or be omitted; they are elicitation aids rather than required slots.
-The partial example above includes two `locate` steps, one with no recorded
-outcomes or ID.
-
-Local Markdown links such as `[the criterion](#OUT-002)` are checked against
-explicit IDs and document heading anchors. An unresolved local fragment is an
-error. Explicit ID links are semantic references understood by dotspec; an
-ordinary Markdown renderer may require an HTML anchor to make those IDs clickable.
-Relative file links and cross-file fragments are checked by check commands;
-see [References](../inspection.md#references). Parsing and ordinary show/list commands do not
-follow those links. Remote URLs remain navigation.
+In the example, selecting `--step recall` returns no declared outcomes even though “Less reconstruction” explicitly applies to that step. Use `model needs` to inspect that link. Map and outcome-list JSON use `schema_version: 2` and `declared_by_job` for job-owned outcomes. [Complete To-do job](../../../../examples/todo/specs/jobs/personal-commitments.job.spec.md).
 
 ### Checks and incomplete work
 
-Malformed metadata, duplicate IDs or conventional sections, invalid step heading
-structure, duplicate step metadata, and unresolved local references fail with a
-nonzero exit status. Missing sections and unfinished content remain readable.
+`init` and `check` accept the same presets. The choice affects the starter text or writing advice for that invocation. All three use the same file format.
 
-The default writing check suggests a missing job statement, performer, or empty
-outcome statement. Missing IDs, maps, stages and outcome collections are valid.
-Optional `--preset odi` and `--preset job-story` guidance
-adds method-specific suggestions. ODI prompts for a functional boundary, an
-optional map, and measurable wording. Job-story guidance
-prompts for situation, motivation and intended progress. All are advisory;
-none establishes completeness, correctness or research validation.
+| Preset | Writing guidance |
+| --- | --- |
+| `general` (default) | Prompts for a job statement, a performer and text for declared outcomes. Qualitative results are valid. |
+| `odi` | Adds prompts about the functional boundary, an optional map and outcome statements with a direction and measure. |
+| `job-story` | Adds prompts for situation, motivation and intended progress. |
 
-Job-map and outcome-list JSON use `schema_version: 2` and `declared_by_job`
-for outcomes declared by the job. The name describes ownership, not inferred scope.
-
-The same presets work with `job init`. `general` is the default, and the selection
-is authoring guidance rather than a classification stored on the job:
-
-```sh
-dotspec job init reach-work --preset job-story
-dotspec job check reach-work --preset odi
-dotspec model needs
-```
-
-See [What makes something a job to be done?](../../explanations/jobs-to-be-done.md) for the method distinctions and [Map needs to capabilities](../../guides/map-needs-to-capabilities.md) for the relationships.
-The [generated job section](../../../../examples/todo/specification/jobs/resume-interrupted-work.job.spec-report.md) shows how the restart requirement supports the
-outcome of spending less time reconstructing outstanding work.
-
-The repository's [Develop Requirements](../../../../specs/jobs/develop-requirements.job.spec.md) and
-[Manage Requirements](../../../../specs/jobs/manage-requirements.job.spec.md) examples each contain a
-bounded job statement, performer, proposed steps, and outcomes. Both are marked
-as hypotheses pending research. They cover collaboration and judgment outside
-the CLI as well as work dotspec may support.
+Structural errors such as duplicate conventional sections, malformed metadata, conflicting explicit IDs and unresolved local references fail the check. Advisory findings allow a successful exit. Wording checks can recognize a measure word. Establishing that the proposed measure matters to performers requires research. [Write a job from a concrete situation](../../guides/write-a-job.md) · [JTBD perspectives](../../explanations/jobs-to-be-done.md).

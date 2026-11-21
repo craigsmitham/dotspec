@@ -63,17 +63,21 @@
   },
   {
     "topic": "job",
-    "description": "Describe the progress someone seeks and the success criteria they use to judge it.",
+    "description": "Map a functional job and its success criteria, investigate switching, and connect user needs to capabilities.",
     "title": "Jobs to be done",
     "synonyms": [
       "jtbd",
-      "jobs to be done"
+      "jobs to be done",
+      "odi",
+      "universal job map",
+      "switch interview",
+      "user needs mapping"
     ],
     "pages": [
       {
         "page": "docs/cli-handbook/guides/write-a-job.md",
         "rules": {
-          "job.boundary": "reconstruct-one-occasion",
+          "job.boundary": "state-the-progress",
           "job.map": "identify-the-steps",
           "job.outcome-empty": "describe-success",
           "job.outcome-measure": "describe-success",
@@ -89,7 +93,10 @@
         "page": "docs/cli-handbook/reference/formats/job.md#job-spec-format"
       },
       {
-        "page": "examples/todo/specs/jobs/resume.job.spec.md"
+        "page": "examples/todo/specs/jobs/personal-commitments.job.spec.md"
+      },
+      {
+        "page": "docs/cli-handbook/guides/map-needs-to-capabilities.md#connect-needs-to-capabilities-and-specifications"
       }
     ]
   },

@@ -16,7 +16,7 @@ takes that question from user intent to a real process restart.
 
 | Question | Follow it in the app | Authoring guide |
 | --- | --- | --- |
-| What progress does someone seek? | The [job](../../examples/todo/specs/jobs/resume.job.spec.md) describes the effort of reconstructing unfinished work. | [Write a job from a concrete situation](guides/write-a-job.md) |
+| What progress does someone seek? | The [job](../../examples/todo/specs/jobs/personal-commitments.job.spec.md) follows an errand from accepting responsibility to settling it, including what happens after an interruption. | [Write a job from a concrete situation](guides/write-a-job.md) |
 | What is in scope? | The [system](../../examples/todo/specs/personal-task-list.system.spec.md) serves one person returning to the same computer. | [Boundaries and interfaces](guides/review.md#delimit-the-boundary-and-its-interfaces) |
 | Which policy governs completion? | The [business rule](../../examples/todo/specs/business-rules/completion.business-rule.spec.md) explains why a completed errand is still available for follow-up. | [Business rules](guides/business-rules.md) |
 | How does a person act on that policy? | The [use case](../../examples/todo/specs/use-cases/resume-list.use-case.spec.md) follows a person revisiting a finished errand. The [checklist concept](../../examples/todo/specs/concepts/checklist.concept.spec.md) defines how reopening changes its state. | [Use cases](guides/use-cases.md) · [Concepts](guides/concepts.md) |
@@ -115,12 +115,13 @@ Interpret check results, source discovery and references. Run `dotspec docs insp
 
 ### Jobs to be done
 
-Describe the progress someone seeks and the success criteria they use to judge it. Run `dotspec docs job`.
+Map a functional job and its success criteria, investigate switching, and connect user needs to capabilities. Run `dotspec docs job`.
 
 - [Write a job from a concrete situation](guides/write-a-job.md) (How-to)
 - [What makes something a job to be done?](explanations/jobs-to-be-done.md) (Explanation)
 - [Job spec format](reference/formats/job.md#job-spec-format) (Reference)
-- [Resume interrupted work](../../examples/todo/specs/jobs/resume.job.spec.md) (Example)
+- [See personal commitments through](../../examples/todo/specs/jobs/personal-commitments.job.spec.md) (Example)
+- [Connect needs to capabilities and specifications](guides/map-needs-to-capabilities.md#connect-needs-to-capabilities-and-specifications) (How-to)
 
 ### Project layout
 

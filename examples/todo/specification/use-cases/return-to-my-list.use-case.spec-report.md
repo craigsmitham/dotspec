@@ -63,7 +63,7 @@ User task.
 
 ## Supports
 
-[Resume interrupted work](<../jobs/resume-interrupted-work.job.spec-report.md>).
+[See personal commitments through](<../jobs/see-personal-commitments-through.job.spec-report.md>).
 
 ## Involves
 

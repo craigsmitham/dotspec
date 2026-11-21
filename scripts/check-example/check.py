@@ -19,7 +19,7 @@ TYPES = {
     "feature": ("pick-up-where-i-left-off", "Pick up where I left off"),
     "capability": ("local-task-storage", "Local task storage"),
     "business-rule": ("completion", "Completion preserves a commitment"),
-    "job": ("resume", "Resume interrupted work"),
+    "job": ("personal-commitments", "See personal commitments through"),
     "use-case": ("resume-list", "Return to my list"),
     "concept": ("checklist", "Checklist"),
     "requirement": ("restart", "Preserve tasks across restart"),
@@ -100,7 +100,7 @@ def check_project(cli, project, tmp):
 
     requirement = one("Requirement", slug="restart")
     use = one("UseCase", slug="resume-list")
-    job = one("Job", slug="resume")
+    job = one("Job", slug="personal-commitments")
     availability = one("Requirement", slug="availability", authored_id="keep-recorded-work-available")
     assert availability["id"] in targets(requirement, "refines"), "missing restart refinement"
     assert one("BusinessRule", slug="completion")["id"] in targets(availability, "derived_from")
@@ -193,7 +193,7 @@ def spec_journey(cli, tmp):
     assert "Reduce the effort of working out what still needs attention." in goals
     assert "**Supported by**" not in goals and "**Relied on by**" not in overview
     for title, collection, anchor, related, inverse in (
-        ("Resume unfinished work", "goals", "resume-unfinished-work", "Resume interrupted work", "Supported by"),
+        ("Resume unfinished work", "goals", "resume-unfinished-work", "See personal commitments through", "Supported by"),
         ("Same local storage", "assumptions", "same-local-storage", "Preserve tasks across restart", "Relied on by"),
     ):
         detail = follow(root, title)
@@ -354,11 +354,11 @@ def inspect(cli):
     assert "Preserve tasks across restart" in cli("requirement list", "--attribute", "durability", "--project", "todo")
     for command, detail in [
         ("job map", "Recall outstanding work"),
-        ("job step list", "Reconsider finished work"),
+        ("job step list", "Revise the plan"),
         ("job outcome list", "Less reconstruction"),
     ]:
-        assert detail in cli(command, "resume", "--path", TODO)
-    assert "s1 --> s2" in cli("job map", "resume", "--format", "mermaid", "--path", TODO)
+        assert detail in cli(command, "personal-commitments", "--path", TODO)
+    assert "s1 --> s2" in cli("job map", "personal-commitments", "--format", "mermaid", "--path", TODO)
     assert "Snapshot" in json.loads(cli("model schema"))["$defs"]
     assert "To-do" in cli("docs")
     assert "examples/todo/specs/personal-task-list.system.spec.md" in cli("docs", "examples")

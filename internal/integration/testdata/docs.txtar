@@ -39,13 +39,13 @@ exec dotspec docs 'reference/formats/job#job-spec-format'
 stdout '^## Job spec format'
 ! stdout '^## Job commands'
 exec dotspec docs examples
-stdout 'examples/todo/specs/jobs/resume.job.spec.md'
-exec dotspec docs examples/todo/specs/jobs/resume.job.spec.md
+stdout 'examples/todo/specs/jobs/personal-commitments.job.spec.md'
+exec dotspec docs examples/todo/specs/jobs/personal-commitments.job.spec.md
 stdout '^type: job-spec'
 stdout '## Evidence'
 ! stdout 'Read linked pages'
 cp stdout saved
-exec dotspec docs examples/todo/specs/jobs/resume.job.spec.md
+exec dotspec docs examples/todo/specs/jobs/personal-commitments.job.spec.md
 cmp stdout saved
 
 # A finding keeps its stable ID and the plain text guidance leads to the section.

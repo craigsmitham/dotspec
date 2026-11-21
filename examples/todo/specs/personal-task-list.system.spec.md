@@ -9,7 +9,7 @@ A single-user task list that stores open and completed tasks on one computer.
 
 ## Framing
 
-An errand can need another action after it seemed finished. The [job of resuming interrupted work](jobs/resume.job.spec.md) gives the reason to keep both open and completed commitments available when the person returns.
+An errand can need another action after it seemed finished. The [job of seeing personal commitments through](jobs/personal-commitments.job.spec.md) gives the reason to keep both open and completed commitments available when the person returns.
 
 ## Purpose
 
@@ -57,7 +57,7 @@ The checklist used to track one person’s open and completed tasks.
 
 #### Supports
 
-[Resume interrupted work](jobs/resume.job.spec.md).
+[See personal commitments through](jobs/personal-commitments.job.spec.md).
 
 ## Provided interfaces
 

@@ -20,7 +20,7 @@ Deleted entries must stay absent.
 
 ## Supports
 
-[Less reconstruction](../jobs/resume.job.spec.md#less-reconstruction).
+[Less reconstruction](../jobs/personal-commitments.job.spec.md#less-reconstruction).
 
 ## Applies to
 

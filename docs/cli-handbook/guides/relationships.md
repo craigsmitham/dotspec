@@ -318,7 +318,7 @@ boundary intent while allowing implementation structure to change:
 For enabling abilities that may combine people, procedures and technology, use
 the optional [Capability model](map-needs-to-capabilities.md#connect-needs-to-capabilities-and-specifications).
 Its dependencies and providers are distinct from feature membership and structural
-parentage. The [To-do job section](../../../examples/todo/specification/jobs/resume-interrupted-work.job.spec-report.md) shows the job,
+parentage. The [To-do job section](../../../examples/todo/specification/jobs/see-personal-commitments-through.job.spec-report.md) shows the job,
 its steps and the outcome supported by the restart requirement.
 
 ## Review boundaries and scenario grounding

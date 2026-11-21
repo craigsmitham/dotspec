@@ -11,6 +11,10 @@ Retains accepted task changes between sessions on the same computer.
 
 [Personal task list](<../personal-task-list.system.spec-report.md>)
 
+## Supports
+
+[Less reconstruction](<../jobs/see-personal-commitments-through.job.spec-report.md#less-reconstruction>).
+
 ## Provided by
 
 [Task service](<../components/task-service/task-service.component.spec-report.md>).

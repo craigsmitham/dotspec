@@ -34,6 +34,25 @@ dotspec provides a rich but simple model for specifying requirements. Not all ne
 - provide affordances for ensuring verification coverage/traceability
 - non goal: perform verification of requirements or implementation
 
+### Inspiration
+
+Chad Fowler’s writing on regenerative software inspires dotspec’s practice of
+recording which behaviors a component’s replacement must preserve. A team can
+return to those requirements when it rewrites the component.
+[The Phoenix Architecture](<https://chadfowler.com/regenerative-software/>)
+
+Joel Spolsky’s case for functional specifications motivates dotspec’s use of
+ordinary prose. Describing a feature gives teammates and customers something
+concrete to question while the design is still cheap to change.
+[Painless Functional Specifications – Part 1: Why Bother?](<https://www.joelonsoftware.com/2000/10/02/painless-functional-specifications-part-1-why-bother/>)
+
+Hillel Wayne explains how several implementations can satisfy the same
+specification. This gives dotspec authors a way to judge when a requirement
+needs more detail. If a reasonable implementation could satisfy the wording
+and still disappoint its users, refine the requirement. When the remaining
+choices all meet the need, leave them to the implementer.
+[A sufficiently comprehensive spec is not (necessarily) code](<https://buttondown.com/hillelwayne/archive/a-sufficiently-comprehensive-spec-is-not/>)
+
 ## Purpose
 
 Help teams develop and maintain software requirements alongside the

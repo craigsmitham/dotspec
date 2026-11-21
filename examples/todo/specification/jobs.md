@@ -5,4 +5,4 @@ generated_by: dotspec
 
 [Personal task list](<personal-task-list.system.spec-report.md>)
 
-- [Resume interrupted work](<jobs/resume-interrupted-work.job.spec-report.md>) — When an errand needs attention again after a break, I want to recover what I already did and what I still owe, so I can take the next action without repeating a finished step or overlooking a follow-up.
+- [See personal commitments through](<jobs/see-personal-commitments-through.job.spec-report.md>) — See personal commitments through from accepting responsibility for an errand to establishing that it is settled or that someone else has agreed to take it on.

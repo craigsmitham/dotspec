@@ -87,7 +87,7 @@ func TestDocumentationLinks(t *testing.T) {
 }
 
 func TestExampleMatchesRepositoryBytes(t *testing.T) {
-	const file = "examples/todo/specs/jobs/resume.job.spec.md"
+	const file = "examples/todo/specs/jobs/personal-commitments.job.spec.md"
 	want, err := os.ReadFile("../../" + file)
 	if err != nil {
 		t.Fatal(err)

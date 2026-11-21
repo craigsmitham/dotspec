@@ -4,12 +4,7 @@ Use this guide to trace which abilities support a job and which parts of the sys
 
 ## Connect needs to capabilities and specifications
 
-Richard Allen's [User Needs Mapping](https://leanpub.com/userneedsmapping) connects
-user needs to enabling capabilities and their dependencies, then considers
-technical systems and organizational design. dotspec adopts the needs and
-capability relationships while leaving team design and Wardley evolution in
-external artifacts. The distinction is informed by *User Needs Mapping*,
-printed pp. 39–49; the mapping below is a dotspec design choice.
+Choose a user need at the level of the decision. A broad job can anchor a workshop about the whole service. For a question about delays after an interruption, use the specific desired outcome. Ask which abilities support it, what each ability depends on and who or what provides it. Preserve the user's full criterion behind the short map label. [JTBD and User Needs Mapping](../explanations/jobs-to-be-done.md#from-a-job-map-to-a-user-needs-map) · [Richard Allen's User Needs Mapping](https://www.userneedsmapping.com/).
 
 | Type | Role |
 | --- | --- |
@@ -50,7 +45,4 @@ full statements and evidence. Short labels keep the graph readable; the
 statements retain their meaning. Unresolved references remain in the authored
 narrative and inspection findings rather than becoming invented edges.
 
-In the [To-do job](../../../examples/todo/specification/jobs/resume-interrupted-work.job.spec-report.md#less-reconstruction),
-Less reconstruction links to the restart requirement that supports it and the job
-step where it applies. To inspect contributions together in the diagram and table,
-run `dotspec model needs --project todo` from the dotspec repository.
+From the repository root, run `dotspec model needs --project todo`. Find **Less reconstruction** and follow its applicability to **Recall outstanding work** and **Check what remains**. Follow the contributions in the other direction. Both **Local task storage** and **Preserve tasks across restart** support this outcome, and **Task service** provides the capability. The linked [outcome statement](../../../examples/todo/specification/jobs/see-personal-commitments-through.job.spec-report.md#less-reconstruction) tells you what a person would have to experience for that support to matter.

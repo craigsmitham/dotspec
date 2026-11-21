@@ -21,7 +21,7 @@ User task.
 
 ## Supports
 
-[Resume interrupted work](../jobs/resume.job.spec.md).
+[See personal commitments through](../jobs/personal-commitments.job.spec.md).
 
 ## Involves
 

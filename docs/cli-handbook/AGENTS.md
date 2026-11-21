@@ -1,5 +1,6 @@
 # Writing the CLI handbook
 
 - **Use dotspec terms consistently.** Check the [metamodel](../../model/metamodel.yaml) for what a concept or relationship means and the [Markdown mapping](../../model/markdown-mapping.md) for how authors express it. Use the same meaning in guides, references, and examples.
+- **Teach authors how to judge their work.** In a how-to, describe what a good result looks like and give readers a way to tell whether they have achieved it. Leave room for authors and agents to choose how to get there. When a technique helps, explain when to use it and what it can reveal. Prescribe a sequence only when the result depends on doing things in that order.
 - **Connect related pages.** Link to the page that explains an idea. When the explanation changes, check the guides and examples that rely on it.
 - **Give credit where it helps readers.** When guidance draws on someone’s work, name the author, work, or standard and add a link when practical. A sentence is usually enough to say which idea dotspec borrows and how it adapts or departs from it.
