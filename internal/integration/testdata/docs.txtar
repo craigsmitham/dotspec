@@ -13,7 +13,7 @@ exec dotspec docs job
 stdout 'Jobs to be done'
 stdout 'Write a job from a concrete situation \(How-to\)'
 stdout 'What makes something a job to be done.*Explanation'
-stdout 'dotspec docs jobs/job-spec-format#job-spec-format'
+! stdout 'Job spec format'
 cp stdout topic
 exec dotspec docs jtbd
 cmp stdout topic
@@ -34,10 +34,11 @@ exec dotspec job init resume
 stdout 'dotspec docs guides/write-a-job'
 exec dotspec docs guides/write-a-job
 stdout '## Where does the job end'
-stdout 'dotspec docs jobs/job-spec-format#job-spec-format'
-exec dotspec docs 'jobs/job-spec-format#job-spec-format'
-stdout '^## Job spec format'
-! stdout '^## Job commands'
+stdout 'dotspec docs guides/write-a-job#record-steps-and-shared-outcomes'
+exec dotspec docs 'guides/write-a-job#record-steps-and-shared-outcomes'
+stdout '^## Record steps and shared outcomes'
+stdout '#### Applies to'
+! stdout '^## Check the draft'
 exec dotspec docs job
 stdout 'examples/todo/specs/jobs/personal-commitments.job.spec.md'
 exec dotspec docs examples/todo/specs/jobs/personal-commitments.job.spec.md

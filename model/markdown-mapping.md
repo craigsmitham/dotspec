@@ -14,7 +14,7 @@ The optional `## Framing` section maps to `System.framing` and preserves authore
 
 ## Job
 
-Use a named heading for each step and outcome. An outcome can belong to the job or an individual step. Its body holds its statement and an optional **ID** gives it a stable authored identifier. An Applies to link can identify a step independently of containment. See the [job format](../docs/cli-handbook/jobs/job-spec-format.md).
+Use a named heading for each step and outcome. An outcome can belong to the job or an individual step. Its body holds its statement and an optional **ID** gives it a stable authored identifier. An Applies to link can identify a step independently of containment. See the [worked heading structure](../docs/cli-handbook/guides/write-a-job.md#record-steps-and-shared-outcomes).
 
 ## Use case
 

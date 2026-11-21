@@ -2,6 +2,12 @@
 
 Describe what the performer is trying to accomplish in terms that hold across different ways of doing the work. In the To-do example, someone crosses “Call the plumber” off their list. Ask **“When the call is finished, what does the person still owe?”**
 
+## Start a job specification
+
+From the directory that owns the job, run `dotspec job init personal-commitments`, substituting your job’s name. This creates `specs/jobs/personal-commitments.job.spec.md`. The filename slug selects the file even if you change the title. If two files share a slug, use the source path when inspecting the draft. [Project layout](../../reference/layout.md#project-layout).
+
+For a hand-written draft, start with `type: job-spec` in YAML frontmatter and a single H1 naming the job. You can add an optional `id` in frontmatter. Add sections as you learn more. Use each conventional heading at most once and match its capitalization.
+
 ## Who owns the result?
 
 Name the **Performer** whose progress you are describing. The person who promised their guest a working sink owns the errand. The plumber owns the repair work. Each could finish their part at a different time.
@@ -18,7 +24,7 @@ Include **Steps** when they help locate a difficulty. If the draft only covers t
 
 ## How would the performer recognize success?
 
-Give each desired outcome a name and a statement under the job’s or step’s **Outcomes** heading. If several steps share the criterion, declare it once and link those steps under **Applies to**. [Outcome syntax](../jobs/job-spec-format.md#steps-stages-and-desired-outcomes).
+Give each desired outcome a name and a statement under the job’s or step’s **Outcomes** heading. If several steps share the criterion, declare it once and link those steps under **Applies to**. [Record steps and shared outcomes](#record-steps-and-shared-outcomes).
 
 For a functional job, Outcome-Driven Innovation (ODI) describes a direction of improvement and a measure in context. “Make follow-up easier” could mean either of these things. [Ulwick on desired outcomes](https://strategyn.com/customer-needs-through-a-jobs-to-be-done-lens/).
 
@@ -33,4 +39,56 @@ Use **Evidence** to distinguish observations from hypotheses. The repair errand 
 
 For a job story, use **Situation**, **Motivation**, and **Intended progress** to express what prompted someone to act, what they wanted, and why it mattered. To investigate why they changed approaches on a particular occasion, ask about the switch. [Switching and job stories](../explanations/jobs-to-be-done.md#understand-a-switch).
 
-In your project directory, substitute your job’s name for `personal-commitments`. Use `dotspec job init personal-commitments --preset odi` to start an ODI draft and `dotspec job check personal-commitments --preset odi` to review its structure, references and wording. To check the account itself, ask the performer when they last considered a similar errand settled and what told them so. [Job spec format](../jobs/job-spec-format.md#job-spec-format).
+## Record steps and shared outcomes
+
+Give each step a level-three heading under `## Steps`. Order the steps as you want readers to see the map. Work may repeat or branch. If a stage label helps, add `**Stage:**` beneath the step heading. Labels are free text and may repeat.
+
+This partial draft records one outcome under *Check what remains* and a shared outcome under the job. The links under `Applies to` identify both steps where the shared outcome matters.
+
+```markdown
+---
+type: job-spec
+---
+# See personal commitments through
+
+## Steps
+
+### Recall outstanding work
+
+**ID:** recall
+**Stage:** locate
+
+Recover the commitments that may need attention.
+
+### Check what remains
+
+Compare what has happened with what was promised.
+
+#### Outcomes
+
+##### Notice a stalled errand
+
+Minimize the time a commitment goes unattended after an expected reply is overdue.
+
+## Outcomes
+
+### Less reconstruction
+
+Minimize the time it takes to identify the next outstanding action after an interruption.
+
+#### Applies to
+
+[Recall outstanding work](#recall-outstanding-work) and [Check what remains](#check-what-remains).
+```
+
+Use a heading one level below the outcome name for fields such as `Applies to`, `Supporting content`, `Supports`, or `Derived from`. A job can declare outcomes before you know its steps. [Connect needs to capabilities](map-needs-to-capabilities.md).
+
+Use an explicit ID when you need a stable link or want to select a step with `--step`. Put `**ID:**` beneath the step or outcome heading. Job, step, and outcome IDs are case-sensitive and unique within the file. Start with an ASCII letter or digit and use letters, digits, hyphens, or underscores thereafter. Links within the file can also use heading anchors, as in the example. [Reference checking](../../reference/inspection.md#references).
+
+In a project containing this draft, `dotspec job outcome list personal-commitments --step recall` returns no outcomes because *Recall outstanding work* declares none. Run `dotspec model needs` to see the shared outcome’s explicit link to that step. [Worked applicability links](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md#applies-to).
+
+## Check the draft
+
+In your project directory, run `dotspec job check personal-commitments` with your job’s slug or path. The default `general` preset looks for the job statement, performer, and statements for any declared outcomes. Qualitative criteria can be useful. For a functional job, `--preset odi` adds prompts about its boundary, map, and measures of success. For a job story, `--preset job-story` prompts for the situation, motivation, and intended progress. You can use the same preset with `job init` when starting a file.
+
+Fix structural errors such as duplicate headings for the same field, conflicting IDs, and unresolved local links. Wording suggestions are advisory. To check the account itself, ask the performer when they last considered a similar errand settled and what told them so.

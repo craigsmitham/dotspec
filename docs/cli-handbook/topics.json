@@ -54,9 +54,6 @@
         "page": "docs/cli-handbook/explanations/jobs-to-be-done.md"
       },
       {
-        "page": "docs/cli-handbook/jobs/job-spec-format.md#job-spec-format"
-      },
-      {
         "page": "examples/todo/specs/jobs/personal-commitments.job.spec.md"
       },
       {

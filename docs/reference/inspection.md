@@ -233,7 +233,7 @@ The JSON results below use `schema_version: 1` except for `job outcome list` and
 Object keys use snake case. Empty collections are arrays; absent system associations
 are `null`. Paths are absolute in JSON and relative where possible in text. Source
 locations use one-based lines and Unicode-code-point columns. Step descriptions and
-Markdown remain authored content. For `job outcome list`, `--step ID` leaves `declared_by_job` empty and selects only outcomes declared under that step. To see which steps an outcome applies to, use `dotspec model needs`. [Outcome ownership and applicability](../cli-handbook/jobs/job-spec-format.md#steps-stages-and-desired-outcomes).
+Markdown remain authored content. For `job outcome list`, `--step ID` leaves `declared_by_job` empty and selects only outcomes declared under that step. To see which steps an outcome applies to, use `dotspec model needs`. [Outcome ownership and applicability](../cli-handbook/guides/write-a-job.md#record-steps-and-shared-outcomes).
 
 Use `dotspec --version` for build metadata, `dotspec completion bash|zsh|fish|powershell`
 for shell completion scripts, and `dotspec man` for the root manual in roff format.

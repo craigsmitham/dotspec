@@ -19,7 +19,7 @@ and outcomes declared by individual steps. Steps and outcomes can
 have explicit IDs for reference and selection.
 
 This state is authored in a job specification. The
-[job format](<../../docs/cli-handbook/jobs/job-spec-format.md#job-spec-format>) defines its representation.
+[job mapping](<../../model/markdown-mapping.md#job>) defines its representation.
 Declaration ownership is separate from explicit outcome applicability; shared
 outcomes can apply to multiple jobs or steps without duplication.
 
@@ -51,8 +51,7 @@ declared elsewhere are excluded from this selection; the needs map shows their
 explicit applicability. An existing step without outcomes
 returns an empty result; an unknown step is an error.
 
-The [job commands](<../../docs/cli-handbook/jobs/job-spec-format.md#job-commands>) define the CLI operations and
-output formats for these views.
+The command reference describes how to [view the map](<../../docs/reference/cli.md#dotspec-job-map>) and [inspect a step’s outcomes](<../../docs/reference/cli.md#dotspec-job-outcome-list>).
 
 ## Operational principles
 

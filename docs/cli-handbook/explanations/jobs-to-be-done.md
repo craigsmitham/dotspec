@@ -25,7 +25,7 @@ Bettencourt and Ulwick describe eight kinds of accomplishment that can reveal wo
 | Modify | What changes when the plumber asks for a photo? |
 | Conclude | Is the sink working, or has someone else accepted responsibility? |
 
-A map names the accomplishments in the performer's terms, such as “Check what remains.” Someone may check readiness several times or finish without changing the plan. In dotspec a map can be partial, and each step's stage label is optional. See Jim Kalbach, *The Jobs to Be Done Playbook* (2020), ch. 3. [Steps in the To-do job](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md#steps) · [Step and stage syntax](../jobs/job-spec-format.md#steps-stages-and-desired-outcomes).
+A map names the accomplishments in the performer's terms, such as “Check what remains.” Someone may check readiness several times or finish without changing the plan. In dotspec a map can be partial, and each step's stage label is optional. See Jim Kalbach, *The Jobs to Be Done Playbook* (2020), ch. 3. [Steps in the To-do job](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md#steps) · [Step and stage syntax](../guides/write-a-job.md#record-steps-and-shared-outcomes).
 
 ## Understand a switch
 
@@ -33,7 +33,7 @@ Bob Moesta and the Re-Wired Group use a switch interview to investigate **“Why
 
 Suppose someone moved their errands from messages to a notebook. Losing an agreement in a long thread could supply the **push** to change. Seeing all the errands together could be the **pull**. Worry about leaving the notebook at home could create **anxiety**, while replying in the original thread was already a **habit**. Asking about the actual decision can reveal which of these forces mattered. Keep that timeline with the evidence for the choice.
 
-A **job story** expresses a circumstance, motivation and intended progress in one sentence. “When my guest asks for an update after a few days, I want to recover what we agreed, so I can give them an answer they can rely on.” A story can carry an interview finding or a hypothesis into design discussion. Its evidence tells the reader which. [Paul Adams on job stories](https://www.intercom.com/blog/accidentally-invented-job-stories) · [Job-story preset](../jobs/job-spec-format.md#checks-and-incomplete-work).
+A **job story** expresses a circumstance, motivation and intended progress in one sentence. “When my guest asks for an update after a few days, I want to recover what we agreed, so I can give them an answer they can rely on.” A story can carry an interview finding or a hypothesis into design discussion. Its evidence tells the reader which. [Paul Adams on job stories](https://www.intercom.com/blog/accidentally-invented-job-stories) · [Job-story preset](../guides/write-a-job.md#check-the-draft).
 
 ## From a job map to a user needs map
 

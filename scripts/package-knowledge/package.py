@@ -65,8 +65,7 @@ def page_form(page):
         return 'example'
     if root == 'model' or path.is_relative_to('docs/reference'):
         return 'reference'
-    return {'explanations': 'explanation', 'tutorials': 'tutorial',
-            'jobs': 'reference'}.get(path.relative_to(HANDBOOK).parts[0], 'guide')
+    return {'explanations': 'explanation', 'tutorials': 'tutorial'}.get(path.relative_to(HANDBOOK).parts[0], 'guide')
 
 
 def publication_pages(catalog):

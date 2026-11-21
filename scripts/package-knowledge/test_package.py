@@ -37,13 +37,13 @@ class KnowledgePackageTest(unittest.TestCase):
                     self.assertNotIn('/maintainers/', name)
                     self.assertNotIn('/plans/', name)
                     self.assertNotEqual(Path(name).name, 'AGENTS.md')
-                source = 'docs/cli-handbook/jobs/job-spec-format.md'
+                source = 'docs/cli-handbook/guides/write-a-job.md'
                 sample = (ROOT / source).read_text().split('```markdown\n')[1].split('```')[0]
                 matches = [name for name in archive.namelist()
-                           if name.startswith(root + 'docs/cli-handbook/jobs/samples/job-spec-format-')]
+                           if name.startswith(root + 'docs/cli-handbook/guides/samples/write-a-job-')]
                 self.assertEqual(len(matches), 1)
                 self.assertEqual(archive.read(matches[0]).decode(), sample)
                 guide = archive.read(root + source).decode()
-                self.assertIn(matches[0].split('jobs/')[1], guide)
+                self.assertIn(matches[0].split('guides/')[1], guide)
                 todo = 'examples/todo/specs/requirements/restart.requirement.spec.md'
                 self.assertIn('Keep recorded work available', archive.read(root + todo).decode())
