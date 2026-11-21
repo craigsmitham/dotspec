@@ -27,7 +27,7 @@ A job file requires `type: job-spec` in its frontmatter and one nonempty H1. The
 | `Job` | The accomplishment or change the performer seeks. |
 | `Performer` | Who carries out the job. |
 | `Situation`, `Motivation`, `Intended progress` | The circumstances, reason to act and change sought. Useful together for a job story. |
-| `Steps` | H3 headings naming accomplishments in authored map order. Use introductory prose to identify a partial map. |
+| `Steps` | H3 headings naming accomplishments in authored map order. For a partial map, describe the limits under `Evidence`. |
 | `Outcomes` | H3 headings naming desired results or success criteria declared by the job. |
 | `Evidence` | Source and limits of an account, study links or hypotheses still to investigate. |
 
@@ -52,8 +52,6 @@ See personal commitments through from accepting responsibility for an errand to 
 The person responsible for the errand.
 
 ## Steps
-
-Partial map covering a return after an interruption.
 
 ### Recall outstanding work
 
@@ -88,14 +86,14 @@ Minimize the time it takes to identify the next outstanding action when returnin
 
 ## Evidence
 
-Both criteria are hypotheses to investigate with people returning to unfinished errands.
+This partial map covers follow-up after an interruption. Both criteria are hypotheses.
 ```
 
 - **Steps.** Place optional `**ID:**` and `**Stage:**` in the introductory prose beneath the H3. Stage accepts a free-text label. You may omit or repeat a stage. The [universal job steps](../../explanations/jobs-to-be-done.md#the-universal-job-map) offer conventional labels for exploring the work.
 - **Outcomes.** Give each outcome a short heading and write its full statement beneath. Each outcome has one declaration owner. Under a job's H2 `Outcomes`, use an H3 for each name and an H4 for its fields. Under a step's H4 `Outcomes`, use H5 names and H6 fields. `Applies to` links to the jobs or steps for which it is a criterion. Ownership alone establishes no applicability. Other supported outcome fields include `Supporting content`, `Supports` and `Derived from`.
 - **Identifiers.** An explicit job, step or outcome ID starts with an ASCII letter or digit and may also contain hyphens and underscores after the first character. IDs are case-sensitive and share a namespace within the file. Use a step ID for `--step`. Local fragments can resolve to explicit IDs or heading anchors. Heading anchors also work in ordinary Markdown viewers. [Reference checking](../inspection.md#references).
 
-In the example, selecting `--step recall` returns no declared outcomes even though “Less reconstruction” explicitly applies to that step. Use `model needs` to inspect that link. Map and outcome-list JSON use `schema_version: 2` and `declared_by_job` for job-owned outcomes. [Complete To-do job](../../../../examples/todo/specs/jobs/personal-commitments.job.spec.md).
+In the example, selecting `--step recall` returns no declared outcomes even though “Less reconstruction” explicitly applies to that step. Use `model needs` to inspect that link. [Worked applicability links](../../../../examples/todo/specs/jobs/personal-commitments.job.spec.md#applies-to) · [JSON result fields](../inspection.md#output-and-automation).
 
 ### Checks and incomplete work
 

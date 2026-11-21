@@ -114,7 +114,7 @@ The current rules are:
 | `structure.title`, `structure.section-order`, `structure.required-section`, `structure.duplicate-section`, `structure.section-level`, `structure.step-heading`, `structure.duplicate-field` | Required document structure and unambiguous definitions. |
 | `identity.invalid`, `identity.duplicate` | Explicit ID syntax and uniqueness within one document. |
 | `reference.invalid`, `reference.unresolved`, `reference.boundary` | Local reference syntax, target resolution, and repository boundaries. |
-| `job.statement`, `job.performer`, `job.boundary`, `job.outcome-empty`, `job.outcome-measure` | Advisory job-writing suggestions. |
+| `job.statement`, `job.performer`, `job.boundary`, `job.map`, `job.outcome-empty`, `job.outcome-measure`, `job.story-context` | Advisory job-writing suggestions. |
 | `use-case.goal`, `use-case.system-boundary`, `use-case.primary-actor`, `use-case.goal-level`, `use-case.success-guarantees`, `use-case.main-success-scenario`, `use-case.extensions`, `use-case.sequence` | Advice about missing use-case content or scenario order. |
 | `concept.purpose`, `concept.state`, `concept.actions`, `concept.operational-principle` | Advice about missing concept content. |
 | `scan.scope`, `scan.discovery`, `scan.read`, `scan.context`, `scan.reference` | Operational failures that prevent a complete check. |
@@ -217,8 +217,8 @@ accepts `--format mermaid` and emits standalone diagram source. Redirecting outp
 does not change its format. JSON, Mermaid, and redirected output contain no ANSI
 styling. `NO_COLOR` disables terminal styling, including help and errors.
 
-Every JSON result has `schema_version: 1`. Check results use the report documented
-above. Other results contain:
+The JSON results below use `schema_version: 1` except for `job outcome list` and
+`job map`, which use version 2. Check results use the report documented above.
 
 | Command | Result fields |
 | --- | --- |
@@ -235,14 +235,13 @@ above. Other results contain:
 | `requirement show` | `requirement`, including its authored Markdown, statement, criterion, attributes, and nullable `system` |
 | `requirement list` | `groups`, each with a nullable `system` and a `requirements` array; `attribute` when `--attribute` selects one |
 | `job step list` | `name`, `path`, and `steps` in authored order |
-| `job outcome list` | `name`, `path`, `overall` outcomes, and selected `steps` with their outcomes |
-| `job map` | `name`, `path`, `overall`, and `steps`; outcomes are included only with `--outcomes` |
+| `job outcome list` | `name`, `path`, `declared_by_job` outcomes, and selected `steps` with their outcomes |
+| `job map` | `name`, `path`, `declared_by_job` and `steps`. Outcome arrays are empty unless `--outcomes` is set. |
 
 Object keys use snake case. Empty collections are arrays; absent system associations
 are `null`. Paths are absolute in JSON and relative where possible in text. Source
 locations use one-based lines and Unicode-code-point columns. Step descriptions and
-Markdown remain authored content. Overall outcomes are never inherited by steps.
-`--step ID` leaves `overall` empty and selects only that step.
+Markdown remain authored content. For `job outcome list`, `--step ID` leaves `declared_by_job` empty and selects only outcomes declared under that step. To see which steps an outcome applies to, use `dotspec model needs`. [Outcome ownership and applicability](formats/job.md#steps-stages-and-desired-outcomes).
 
 Use `dotspec --version` for build metadata, `dotspec completion bash|zsh|fish|powershell`
 for shell completion scripts, and `dotspec man` for the root manual in roff format.

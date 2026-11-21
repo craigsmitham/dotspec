@@ -1,48 +1,26 @@
 # Map needs to capabilities
 
-Use this guide to trace which abilities support a job and which parts of the system provide them. Start with the [job and its desired outcomes](write-a-job.md).
-
 ## Connect needs to capabilities and specifications
 
-Choose a user need at the level of the decision. A broad job can anchor a workshop about the whole service. For a question about delays after an interruption, use the specific desired outcome. Ask which abilities support it, what each ability depends on and who or what provides it. Preserve the user's full criterion behind the short map label. [JTBD and User Needs Mapping](../explanations/jobs-to-be-done.md#from-a-job-map-to-a-user-needs-map) · [Richard Allen's User Needs Mapping](https://www.userneedsmapping.com/).
+Choose the need that explains why an ability matters. A job can anchor a map of the whole service. To investigate a delay, choose the desired outcome that identifies where the performer loses time. In To-do, **Less reconstruction** means spending less time identifying the next outstanding action after an interruption. Keep that full criterion in the job and link to it from the capability. [Desired outcome](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md#less-reconstruction) · [How User Needs Mapping uses a job or outcome](../explanations/jobs-to-be-done.md#from-a-job-map-to-a-user-needs-map).
 
-| Type | Role |
+Name the capability as an ability. **Local task storage** retains accepted changes between sessions. **Task service** is the component that provides that ability. A feature can group the product behavior a person recognizes, such as **Pick up where I left off**. [Worked capability](../../../examples/todo/specs/capabilities/local-task-storage.capability.spec.md) · [Feature in the To-do specification](../../../examples/todo/specs/features/pick-up-where-i-left-off.feature.spec.md).
+
+Use `dotspec capability init local-task-storage` to start a `*.capability.spec.md` file under its owning system or component. The starter sets `type: capability-spec` in frontmatter. Name the ability in the H1 and describe it under `Description`. Choose level-two headings for the relationships you can explain.
+
+| Heading | What belongs there |
 | --- | --- |
-| Capability | An ability needed to deliver value, possibly combining people, procedures and technology |
-| Feature | A recognizable grouping of specified product behavior |
-| System / Component | The subject or structural part being specified |
-
-Create a capability with `dotspec capability init local-task-storage`. The
-`*.capability.spec.md` file starts with `type: capability-spec`, an optional
-frontmatter `id`, and an H1 naming the ability. Use level-two headings for
-Description, Purpose, Supports, Depends on, Provided by and Enablers as needed.
-The nearest enclosing system or component owns the file. Record providers
-explicitly, including when a different component provides the ability.
-See [Local task storage](../../../examples/todo/specs/capabilities/local-task-storage.capability.spec.md).
-
-- `supports` links to goals, jobs, steps, outcomes or use cases; it expresses intended contribution.
-- `depends_on` links to other capabilities; dependencies can be many-to-many and cyclic.
-- `provided_by` links to explicitly identified systems or components; it is optional and non-exhaustive.
-- `enablers` describes human, procedural or other enabling context and external references.
-
-A dependency is not a structural `part_of` relationship, and a provider link is
-not verified implementation. Capabilities can span systems. Human and procedural
-providers do not need to be falsely represented as software components.
-
-Job, JobStep and DesiredOutcome remain in the core
-`user-requirements` subset. Capability participates in the core
-`business-requirements` and `software-requirements` subsets; these memberships
-organize model definitions, not the strategic importance of each capability.
+| `Supports` | Link to the goal, job, step, desired outcome or use case the ability helps. |
+| `Depends on` | Link to other capabilities this ability needs. Several capabilities can depend on each other. |
+| `Provided by` | Link to the systems or components known to provide the ability. A provider can differ from the file's owner. |
+| `Enablers` | Describe people, procedures or other conditions the ability depends on. Cite external material where helpful. |
 
 ## Generate a needs-to-specification view
 
-```sh
-dotspec model needs
-```
+Run `dotspec model needs` in your project, or `dotspec model needs --project todo` from the dotspec repository root. In the relationship table, check that each link answers the question its label asks. The To-do example has three routes worth checking.
 
-The generated Markdown includes a Mermaid diagram, linked relationship table,
-full statements and evidence. Short labels keep the graph readable; the
-statements retain their meaning. Unresolved references remain in the authored
-narrative and inspection findings rather than becoming invented edges.
+- **Where does the criterion apply?** Less reconstruction applies to both *Recall outstanding work* and *Check what remains*. [Authored applicability](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md#applies-to).
+- **What contributes to it?** Local task storage and the requirement *Preserve tasks across restart* each support the same outcome. [Capability’s contribution](../../../examples/todo/specs/capabilities/local-task-storage.capability.spec.md#supports) · [Requirement’s contribution](../../../examples/todo/specs/requirements/restart.requirement.spec.md#supports).
+- **What provides the ability?** Local task storage names Task service as its provider. [Provider declaration](../../../examples/todo/specs/capabilities/local-task-storage.capability.spec.md#provided-by).
 
-From the repository root, run `dotspec model needs --project todo`. Find **Less reconstruction** and follow its applicability to **Recall outstanding work** and **Check what remains**. Follow the contributions in the other direction. Both **Local task storage** and **Preserve tasks across restart** support this outcome, and **Task service** provides the capability. The linked [outcome statement](../../../examples/todo/specification/jobs/see-personal-commitments-through.job.spec-report.md#less-reconstruction) tells you what a person would have to experience for that support to matter.
+If an expected link is missing, inspect its heading and target in the source. Even when all three routes resolve, an entry titled “Plumber” may give the person too little to act on. To judge whether storage helped, observe what they recorded and how they found their next action after the break. [To-do participant exercise](../../../examples/todo/README.md#try-the-workflow-with-a-participant).
