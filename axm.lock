@@ -43,12 +43,39 @@ dependencies = [
 ]
 
 [[package]]
+id = "registry.agentxm.ai/@craigsmitham/packs/software-maintenance"
+source = { registry = "https://registry.agentxm.ai" }
+version = "0.2.1"
+archive = "sha512-PIZWobWn4FLEVCyLjAE80O4efoaq2KVK5fDS2W91o79U6h4Nn7a+Hu+UwD18FdODpy3rgZLplGZxI7u3YoUCow=="
+publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
+tree = "sha256-tree-v2:c271f3d3f408bf7c578d16899c18c91825cc96ff03643c5019f16a4297a0f8db"
+manifest-version = "0.2.1"
+manifest-identity = "94add8716366b16a35316c693f4496e12b540f803619c7409be01a60b736bfb8"
+dependencies = [
+  { name = "@craigsmitham/skills/assess", range = ">=0.1.0" },
+  { name = "@craigsmitham/skills/improve", range = ">=0.2.0" },
+  { name = "@craigsmitham/skills/modularize", range = ">=0.2.0" },
+  { name = "@craigsmitham/skills/prune", range = ">=0.2.0" },
+  { name = "@craigsmitham/skills/refresh", range = ">=0.1.0" },
+  { name = "@craigsmitham/skills/simplify", range = ">=0.1.0" },
+  { name = "@craigsmitham/skills/stabilize", range = ">=0.1.0" },
+]
+
+[[package]]
 id = "registry.agentxm.ai/@craigsmitham/skills/align"
 source = { registry = "https://registry.agentxm.ai" }
 version = "0.1.1"
 archive = "sha512-MWDkK1XswRc5Y2UQ5AGSEjKkjlBepHd0sAigsmWI9S8XHlmW9+WCnx/EtfLiSIWMI4PR7YPxT2fjx1KmofNaPQ=="
 publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
 tree = "sha256-tree-v2:94a5255bfef060ce66f5fab677c3b854d0a28cbe12a4e291d4231f4b5902e149"
+
+[[package]]
+id = "registry.agentxm.ai/@craigsmitham/skills/assess"
+source = { registry = "https://registry.agentxm.ai" }
+version = "0.1.0"
+archive = "sha512-kUfQpCLdcRJgOwK5JubM8jlyIY/+E7yMQ3OlM0M/Izqt+hLuRLwn+A6bK9X3slDIXisTMoGYnwFPYLKQkpMifA=="
+publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
+tree = "sha256-tree-v2:ccecca46a0d78776406613a7cbfe5000d0fdd5ee757684ece9f402a2ee20ebfc"
 
 [[package]]
 id = "registry.agentxm.ai/@craigsmitham/skills/docs"
@@ -91,6 +118,14 @@ publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
 tree = "sha256-tree-v2:ac3884a893ef8b5a33e947c46398dfd2d594ce9badc8fb7a6e3b65b6f4a81803"
 
 [[package]]
+id = "registry.agentxm.ai/@craigsmitham/skills/modularize"
+source = { registry = "https://registry.agentxm.ai" }
+version = "0.2.0"
+archive = "sha512-0fuL9UnoD8Dw9vEF7HriVLGbjYjmPWDMYnYMrTNZvi65q4Wp5NFGIbJyisYmW8qX1/3Fv00uqY2X/Ov2jx/8mw=="
+publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
+tree = "sha256-tree-v2:21852950f35fca76035c94fc03e165e66d007224a241d602649136484141272b"
+
+[[package]]
 id = "registry.agentxm.ai/@craigsmitham/skills/prune"
 source = { registry = "https://registry.agentxm.ai" }
 version = "0.2.0"
@@ -106,15 +141,44 @@ archive = "sha512-0asO6yAA/4AhGSAGTOwWIWI3/Z/nJamq+osLE7rmvlhTtbP9YKsH64QVFcsxB4
 publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
 tree = "sha256-tree-v2:f6bdd9a12f15fb880687dcf01a609190b6fd194615e239a3b71f43bb6ea7f10b"
 
+[[package]]
+id = "registry.agentxm.ai/@craigsmitham/skills/refresh"
+source = { registry = "https://registry.agentxm.ai" }
+version = "0.1.0"
+archive = "sha512-rp6LIXPhB4CiP1G/yBSng09DlrSRtBOAa2i9Kb7QDWVgYQ2k0kw1OZJ+aPzP3PDBjl9WDEpbt/sEVbArtMEBXw=="
+publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
+tree = "sha256-tree-v2:61a345578d22e27b606b5845a7b9d79f1d349eae2a3711e5cd67c013833fa1b7"
+
+[[package]]
+id = "registry.agentxm.ai/@craigsmitham/skills/simplify"
+source = { registry = "https://registry.agentxm.ai" }
+version = "0.1.0"
+archive = "sha512-RBwIpPMDmyWnRTAfzmmOiJZexEOSZLNoHBy9aZZy2n7rq/HDI3yXjyDJ3pzlzdqViBKuhRisxdjbQAbe2D/WEQ=="
+publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
+tree = "sha256-tree-v2:52096be31e6359c68df2f013e76ae4e9276c118f8a911fdb0353949dc4d554ef"
+
+[[package]]
+id = "registry.agentxm.ai/@craigsmitham/skills/stabilize"
+source = { registry = "https://registry.agentxm.ai" }
+version = "0.1.0"
+archive = "sha512-TVVURWsqsvMdU9C9Syg4V65rtCeVFpLkvf8Ut/vAhBphnGT4Vc3A2O6sEyDxyLXDgy3pbi1vNhPluqAN5BZqPA=="
+publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
+tree = "sha256-tree-v2:c3e39f003ebc199718d21b9b9716be66c9098dc910eb410f6663757a7934e859"
+
 [skills]
 align = { package = "registry.agentxm.ai/@craigsmitham/skills/align", name = "@craigsmitham/skills/align" }
+assess = { package = "registry.agentxm.ai/@craigsmitham/skills/assess", name = "@craigsmitham/skills/assess" }
 docs = { package = "registry.agentxm.ai/@craigsmitham/skills/docs", name = "@craigsmitham/skills/docs" }
 experiment = { package = "registry.agentxm.ai/@craigsmitham/skills/experiment", name = "@craigsmitham/skills/experiment" }
 generalize = { package = "registry.agentxm.ai/@craigsmitham/skills/generalize", name = "@craigsmitham/skills/generalize" }
 improve = { package = "registry.agentxm.ai/@craigsmitham/skills/improve", name = "@craigsmitham/skills/improve" }
 improve-whatever = { package = "registry.agentxm.ai/@craigsmitham/skills/improve-whatever", name = "@craigsmitham/skills/improve-whatever" }
+modularize = { package = "registry.agentxm.ai/@craigsmitham/skills/modularize", name = "@craigsmitham/skills/modularize" }
 prune = { package = "registry.agentxm.ai/@craigsmitham/skills/prune", name = "@craigsmitham/skills/prune" }
 reconcile = { package = "registry.agentxm.ai/@craigsmitham/skills/reconcile", name = "@craigsmitham/skills/reconcile" }
+refresh = { package = "registry.agentxm.ai/@craigsmitham/skills/refresh", name = "@craigsmitham/skills/refresh" }
+simplify = { package = "registry.agentxm.ai/@craigsmitham/skills/simplify", name = "@craigsmitham/skills/simplify" }
+stabilize = { package = "registry.agentxm.ai/@craigsmitham/skills/stabilize", name = "@craigsmitham/skills/stabilize" }
 
 [knowledge]
 docs = { package = "registry.agentxm.ai/@craigsmitham/knowledge/docs", name = "@craigsmitham/knowledge/docs" }
@@ -122,6 +186,7 @@ docs = { package = "registry.agentxm.ai/@craigsmitham/knowledge/docs", name = "@
 [packs]
 codebase-renewal = { package = "registry.agentxm.ai/@craigsmitham/packs/codebase-renewal", name = "@craigsmitham/packs/codebase-renewal" }
 docs = { package = "registry.agentxm.ai/@craigsmitham/packs/docs", name = "@craigsmitham/packs/docs" }
+software-maintenance = { package = "registry.agentxm.ai/@craigsmitham/packs/software-maintenance", name = "@craigsmitham/packs/software-maintenance" }
 
 [projections.knowledge]
 contract = 1
@@ -134,5 +199,5 @@ output = "sha256:4a7b7cb466a12f9ae58fc198e245469ebac3c66cb5139f6686c9659d9740853
 contract = 1
 
 [projections.instructions.units.".gitignore"]
-gen = "sha256:ae64c0b285c2038ba34e54fadd10fe8140ad4b80f692c3029a1e907a8622cd26"
-output = "sha256:a5272edad73cf6a53581f2fe4c831a74b665ef5edb4b20374559b502da557aeb"
+gen = "sha256:535fd4e909e3e14886b8744bf9f6cbfd00bfe744779fe78c344cca7311c32bad"
+output = "sha256:2ed038cf25b3ce79f9fb4a2ee0de8b7514eee570c23839b7b4217c05d316731b"

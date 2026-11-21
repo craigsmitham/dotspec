@@ -4,6 +4,7 @@
 *.axm-backup/
 # axm:instruction-aliases
 /CLAUDE.md
+/docs/cli-handbook/CLAUDE.md
 # /axm:instruction-aliases
 
 /dist/
