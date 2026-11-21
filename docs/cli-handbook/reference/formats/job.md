@@ -2,7 +2,7 @@
 
 ## Job commands
 
-Use the following commands from a project directory. Add `--path DIR` to select an existing directory, or use `--project todo` from the dotspec workspace for the bundled example.
+In your project directory, choose a name for the new job in place of `personal-commitments`. For an existing job, use its filename slug and its own step IDs. To inspect the worked example, run the read commands with `--project todo` from the dotspec checkout. To read its specification from any directory, use `dotspec docs examples`.
 
 | Command | Result |
 | --- | --- |

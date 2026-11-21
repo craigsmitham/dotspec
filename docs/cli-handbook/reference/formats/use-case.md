@@ -2,6 +2,8 @@
 
 ## Use-case commands
 
+From your project directory, choose a name for the new use case in place of `check-specifications`. Use the same name to show or check it.
+
 ```sh
 dotspec use-case init check-specifications
 dotspec use-case show check-specifications

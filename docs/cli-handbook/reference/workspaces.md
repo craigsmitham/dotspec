@@ -102,7 +102,7 @@ from other projects.
 
 ## This repository
 
-The root manifest declares `dotspec`. The To-do example has
+In the dotspec checkout, the root manifest declares `dotspec`. The To-do example has
 its own manifest. Both projects use the default generated reports. From the root,
 `dotspec check` checks the product and its generated spec. Use
 `dotspec check --all` to include To-do. To add a reference app, place a

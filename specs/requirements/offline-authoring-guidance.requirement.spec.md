@@ -10,7 +10,7 @@ Contributors using an installed version of dotspec, including in an empty direct
 
 ## Statement
 
-A contributor must be able to reach the relevant versioned guidance from a specification type, a question in their own words, or a mapped diagnostic, then read the selected page, section, or worked example offline.
+A contributor must be able to reach the relevant versioned guidance from a specification type, a question in their own words, or a mapped diagnostic, then read the selected page, section, or worked example offline. The guidance must identify what the contributor needs to carry out its instructions with that installation.
 
 ## Criterion
 
@@ -20,9 +20,13 @@ A section includes its subordinate content. Offline reading commands for linked 
 
 Only the Markdown in `docs/cli-handbook/` and the selected worked examples and model or specification references are available for offline reading. Search and shell completion follow the same publication boundary. A nested handbook page becomes addressable when the CLI is rebuilt. Repository-only citations identify their repository paths. Maintainer pages and plans are excluded from the executable, knowledge bundle and platform archives.
 
+Required local reading in handbook pages and linked walkthroughs opens in the installed CLI, including the requested heading. A supplemental checkout citation identifies its purpose and checkout prerequisite at the link. Such a citation can be skipped while completing the stated authoring task.
+
+Before an instruction to run a command, the reader can identify the working directory, selected project and files it assumes. When an example uses the dotspec checkout, the guidance identifies how to do the same work in the reader’s own project where applicable. A bundled specification can be read from an empty directory. Inspecting or editing a project uses files in the selected project.
+
 ## Evidence
 
-The [offline discovery scenarios](../../internal/integration/testdata/docs.txtar) exercise help, topic selection, search, diagnostic lookup, exact destinations, completion and redirection. The [package check](../../scripts/package-knowledge/test_package.py) compares index links with the topic catalog.
+The [publication check](../../internal/integration/handbook_test.go) follows authored local links from outside the checkout and checks supplemental citations against their repository targets. The [offline discovery scenarios](../../internal/integration/testdata/docs.txtar) exercise help, topic selection, search, diagnostic lookup, exact destinations, completion and redirection. The [package check](../../scripts/package-knowledge/test_package.py) compares index links with the topic catalog.
 
 ### Reader exercise
 

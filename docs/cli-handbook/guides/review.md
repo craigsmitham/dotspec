@@ -7,6 +7,8 @@ produces advisory prompts; it does not make a draft that conforms to the authori
 
 ## Generate the review
 
+Run these commands in the project that contains your specifications.
+
 ```sh
 dotspec model review
 dotspec model pegs
@@ -18,7 +20,7 @@ follow source and contract links.
 
 When a project records an open question, `dotspec spec build` includes **All open questions** in the root system’s section map. Follow a question to read it in context. To prepare a broader review, run `dotspec model review` for goal contributions, scenario steps, requirement criteria, and inspection findings.
 
-`dotspec model pegs --project todo` arranges the example into Project,
+From the dotspec checkout, `dotspec model pegs --project todo` arranges the example into Project,
 Environment, Goals and System reading perspectives. Business, user and software
 requirements remain the model's concern subsets. PEGS neither replaces those
 subsets nor introduces a required authoring order.

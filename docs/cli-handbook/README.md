@@ -5,14 +5,14 @@ read, question, verify and change. Start with the decision you need to make.
 
 From an installed CLI, run `dotspec docs` to browse, `dotspec docs job` to choose
 a Jobs to be Done page, or `dotspec docs success criteria` to search. Run
-`dotspec docs examples` to browse the bundled To-do files. Adopt
+`dotspec docs examples` to read the bundled To-do files from any directory. Adopt
 [project conventions](guides/project-conventions.md) to point contributors at local sources of authority.
 
 ## Start with the To-do app
 
 Add an errand, mark it complete, stop the app and return to it tomorrow. What
 would you expect to find? The [runnable walkthrough](../../examples/todo/README.md)
-takes that question from user intent to a real process restart.
+takes that question from user intent to a real process restart. You can read the specifications below offline. Running the app or inspecting it with `--project todo` requires the To-do project files in the dotspec checkout.
 
 | Question | Follow it in the app | Authoring guide |
 | --- | --- | --- |

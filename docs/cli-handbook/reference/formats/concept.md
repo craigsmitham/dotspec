@@ -2,6 +2,8 @@
 
 ## Concept commands
 
+In your project directory, use your own concept name in place of `job-map`. The first command creates the draft used by the others.
+
 ```sh
 dotspec concept init job-map
 dotspec concept show job-map
@@ -113,13 +115,7 @@ Model export resolves these declarations within the acquired reference scope and
 reports mistyped or incorrectly scoped references. Unresolved drafts retain their
 source. See [Develop concepts](../../guides/concepts.md) for the
 complete Markdown conventions. The [Checklist section](../../../../examples/todo/specification/concepts/checklist.concept.spec-report.md)
-includes the effects table and a link to the concept's named use. To inspect
-all concept definitions and their composition together, run the following from the
-repository root.
-
-```sh
-dotspec model docs --project todo
-```
+includes the effects table and a link to the concept's named use. Run `dotspec model docs` in your project to inspect its concepts and their composition. To inspect the To-do concepts, run `dotspec model docs --project todo` from the dotspec checkout.
 
 See [Job Map](../../../../specs/concepts/job-map.concept.spec.md) and
 [Specification Inspection](../../../../specs/concepts/specification-inspection.concept.spec.md)

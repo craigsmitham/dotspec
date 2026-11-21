@@ -66,8 +66,9 @@ each item. [IREB glossary, attribution appendix](https://hub.ireb.org/media/page
 
 ## Try the guidance from an installation
 
-Give a reader a copy of `examples/todo/` and the installed CLI outside the
-checkout. Let them discover the guides from `--help` and try these prompts:
+Give a reader the installed CLI and an empty directory outside the dotspec checkout. Ask them to find the To-do job via `dotspec docs job` and open its **Job** section offline. In a temporary project, ask them to create a job with a name they choose and inspect it with `dotspec job show`. From the capability guide, ask where they would run `dotspec model needs` for their work and what they would need to reproduce the To-do result. Record where they guessed a project name, path or prerequisite.
+
+For the following exercises, start the reader in `examples/todo/` in a disposable copy of the dotspec checkout.
 
 - Find the promise that governs a task's identity across restart. Which test would detect a change?
 - Someone wants to pick up unfinished errands after a break. Identify the job and the interaction that supports it.
@@ -88,6 +89,10 @@ The CLI publishes the handbook landing page, topic catalog and Markdown beneath 
 `docs/cli-handbook/tutorials/`, and lookup material in `docs/cli-handbook/reference/`. Use the H1 for the
 page title. A CLI page ID is its path under `docs/cli-handbook/` without the `.md` suffix.
 Worked examples keep their repository paths. New handbook Markdown is available by page ID and search at build time. Add it to a topic to give readers a route from the index. Keep contributor procedures and plans in `docs/maintainers/`.
+
+Review command context separately from link resolution. For each instruction, including those in a linked walkthrough, ask “Where do I run this, and which files must already exist?” Try commands whose prerequisites changed in a temporary consumer project. A fenced specimen can show paths or partial commands as authored.
+
+The [publication test](../../internal/integration/handbook_test.go) reads local links from published prose and opens their targets with the built CLI from an empty directory. For a supplemental file that genuinely requires the checkout, put the purpose in the sentence and end the link label with `(dotspec checkout)`. This marks just that citation. The test checks its repository file and any linked heading. Contributor procedures belong here or in [Contributing](../../CONTRIBUTING.md#specification-tests-and-implementation-tests).
 
 In the [topic catalog](../cli-handbook/topics.json), list each topic's pages in
 reading order. The first is the direct destination after creating a draft.

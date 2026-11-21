@@ -10,7 +10,7 @@ requirements classified with that ID.
 Define a required result in a `*.requirement.spec.md` file. A requirement can express a response, postcondition, invariant,
 relationship, or imposed restriction. Its type does not implicitly mean
 “functional”; functional/non-functional classification is not required.
-Functional and quality requirements share the same type, commands, and format. Both can reference quality attributes.
+Functional and quality requirements share the same type, commands, and format. Both can reference quality attributes. Run the examples from your project directory, substituting names for the requirements you create or inspect.
 
 ```sh
 dotspec requirement init reject-existing-target

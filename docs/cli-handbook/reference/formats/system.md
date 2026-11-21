@@ -2,6 +2,8 @@
 
 ## System commands
 
+From your project directory, use a new system name for `init` and existing directories for `--path`.
+
 ```sh
 dotspec system init "Spec parser"       # Create specs/spec-parser.system.spec.md
 dotspec system show                     # Describe the nearest enclosing system
@@ -9,9 +11,6 @@ dotspec system list                     # Discover systems in this subtree
 dotspec system show --path internal/cli
 dotspec system list --path internal
 ```
-
-Use `./dotspec` for a local build, or replace `dotspec` with `go run .` when
-running from the repository root.
 
 Every system command accepts `--path DIR`, defaulting to the current project directory.
 The project directory must already exist. Use `dotspec system <command> --help`
@@ -157,10 +156,7 @@ the system’s default context with imported vocabularies that omit `context`.
 `dotspec model review` flags preferred names and aliases shared by different
 terms within the same system and context. Topic membership has no effect on review.
 
-Dotspec’s `mise run model-generate` takes definitions from class descriptions,
-topics from metamodel subsets, and the Feature relationships from its allowed
-group members. Run `dotspec spec build` to combine that vocabulary with inline
-terms. [Generated vocabulary](../model/glossary.md) · [System glossary](../../../../specification/glossary.md)
+In a project that declares glossary sources, run `dotspec spec build` to combine imported vocabulary with inline terms. The [dotspec vocabulary](../model/glossary.md) illustrates the source format. To compare that source with the published result, see the [generated system glossary (dotspec checkout)](../../../../specification/glossary.md).
 
 ### Match the filename to the heading
 
@@ -194,8 +190,7 @@ Records task changes and acknowledges each committed update.
 [Personal task list](../../specs/personal-task-list.system.spec.md)
 ```
 
-From the To-do project root, the equivalent initializer for an empty component
-directory is:
+In a project with `specs/personal-task-list.system.spec.md` and an empty `app/` directory, run this initializer from the project root. Substitute your own system path and component directory as needed.
 
 ```sh
 dotspec component init "Task service" --path app \

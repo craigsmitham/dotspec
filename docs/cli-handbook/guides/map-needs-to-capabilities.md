@@ -6,7 +6,7 @@ Choose the need that explains why an ability matters. A job can anchor a map of 
 
 Name the capability as an ability. **Local task storage** retains accepted changes between sessions. **Task service** is the component that provides that ability. A feature can group the product behavior a person recognizes, such as **Pick up where I left off**. [Worked capability](../../../examples/todo/specs/capabilities/local-task-storage.capability.spec.md) · [Feature in the To-do specification](../../../examples/todo/specs/features/pick-up-where-i-left-off.feature.spec.md).
 
-Use `dotspec capability init local-task-storage` to start a `*.capability.spec.md` file under its owning system or component. The starter sets `type: capability-spec` in frontmatter. Name the ability in the H1 and describe it under `Description`. Choose level-two headings for the relationships you can explain.
+From the owning system or component directory, substitute your ability’s name for `local-task-storage`. Use `dotspec capability init local-task-storage` to start a `*.capability.spec.md` file under its owning system or component. The starter sets `type: capability-spec` in frontmatter. Name the ability in the H1 and describe it under `Description`. Choose level-two headings for the relationships you can explain.
 
 | Heading | What belongs there |
 | --- | --- |

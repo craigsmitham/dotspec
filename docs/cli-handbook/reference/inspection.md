@@ -2,7 +2,7 @@
 
 ## Check specifications
 
-Before committing specification changes, check the selected project subtree:
+Run these checks in your project directory. Substitute an existing subtree for `internal/parser` and your job’s slug or path for `develop-requirements` or its filename.
 
 ```sh
 dotspec check
@@ -124,6 +124,8 @@ it does not move files, rewrite prose, assign IDs, or apply fixes.
 
 ## Discover specification sources
 
+Run from your project directory. For a narrower inventory, substitute a directory containing your specifications for `internal/integration`.
+
 ```sh
 dotspec sources
 dotspec sources --path internal/integration --json
@@ -143,11 +145,7 @@ These scripts specify required outcomes for the illustrated command inputs:
 - [Discovery behavior](../../testdata/discovery.txtar)
 ```
 
-The [CLI Interaction concept](../../../internal/integration/specs/concepts/cli-interaction.concept.spec.md)
-is a working example beside its executable acceptance scripts. The
-[source-preservation quality requirement](../../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md)
-instead links to tests that check its prose criterion. dotspec exposes both
-links without assigning either file a semantic role.
+The To-do [restart requirement](../../../examples/todo/specs/requirements/restart.requirement.spec.md#evidence) links to the test that checks its criterion. The inventory includes that test and identifies the requirement that cited it.
 
 The command uses the same scan, diagnostics, reference rules, and exit statuses
 as `check`, including advisory findings. Results go to stdout even when the scan
@@ -181,13 +179,7 @@ navigation. Images and links in code samples are excluded. Native files are not
 parsed or executed, and native fragments are not resolved by dotspec. Markdown
 heading and declared spec-ID fragments retain the existing reference checks.
 
-Projects can compare their expected specification sources with `files[].path`
-and use the paths to read or assemble original content. Our
-[coverage script](../../../scripts/check-spec-sources/main.go) invokes this command and
-requires links to the repository's designated acceptance and quality-verification
-tests. It intentionally does not select every test file. See
-[Specification tests and implementation tests](../../../CONTRIBUTING.md#specification-tests-and-implementation-tests)
-for this repository's policy and the CI task that enforces file coverage.
+To check coverage, compare the source files your project expects with `files[].path` in a complete inventory. Use `referenced_by` to find the specification that links to a test or contract.
 
 ## Output and automation
 
@@ -207,7 +199,7 @@ and relationships. A valid snapshot can describe an invalid source document.
 
 An omitted field is absent. A present, empty Markdown field has an empty span
 list. An unknown field heading produces a located error. Its original text is
-available in the normalized source. See the [canonical model](../../../model/README.md)
+available in the normalized source. See the [specification model](specification-model.md#source-text-and-locations)
 and [mapping reference](../../../model/markdown-mapping.md).
 
 The system, job, use-case, concept, requirement, business-rule, and quality-model

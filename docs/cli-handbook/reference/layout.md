@@ -64,8 +64,7 @@ inspect every project in the Git worktree. Implicit System lookup stops at the
 project root. Explicit links can cross project boundaries.
 See [project discovery and selection](workspaces.md).
 
-This repository has a root manifest for dotspec and a second manifest for the
-[To-do project](../../../examples/todo/README.md). Run `dotspec check --all` to check both.
+From the dotspec checkout, `dotspec check --all` checks both dotspec and the [To-do project](../../../examples/todo/README.md). In your own workspace it checks the projects declared there.
 
 ## File formats
 

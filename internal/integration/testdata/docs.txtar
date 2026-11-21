@@ -91,6 +91,27 @@ stderr 'run dotspec docs'
 status 2 dotspec docs CONTRIBUTING.md
 status 2 dotspec docs 'Snapshot builds never publish'
 
+# Bundled reading needs no project. A consumer inspects files in their own project.
+mkdir reader
+cd reader
+exec dotspec docs 'examples/todo/specs/jobs/personal-commitments.job.spec.md#job'
+stdout '^## Job$'
+! stdout '^## Performer'
+exec dotspec docs guides/map-needs-to-capabilities
+stdout 'in your project, or `dotspec model needs --project todo` from the dotspec repository root'
+status 2 dotspec model needs --project todo
+stderr 'unknown project "todo"'
+cp ../manifest dotspec.yaml
+exec dotspec job init local-errands
+exec dotspec job show local-errands
+stdout 'local-errands.job.spec.md'
+exec dotspec model needs
+stdout 'Needs and specification map'
+cd ..
+
+-- manifest --
+name: reader
+
 -- draft --
 ---
 type: requirement-spec

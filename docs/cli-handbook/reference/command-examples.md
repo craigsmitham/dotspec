@@ -1,6 +1,6 @@
 # Command examples
 
-Generated from the CLI and its starter templates. `$PROJECT` stands for the absolute project directory.
+These commands run in order in a new Git repository. The init commands create the specifications used by later commands. `$PROJECT` stands for that directory’s absolute path.
 
 ## system init
 
