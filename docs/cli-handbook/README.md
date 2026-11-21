@@ -2,7 +2,7 @@
 
 ## What am I trying to specify?
 
-Choose the subject you want to write about. Each topic pairs an explanation with a guide to writing and assessing its specification. The Jobs to be done pages are available now. The other topic pairs are placeholders for the handbook rewrite.
+Choose the subject you want to write about. Each topic pairs an explanation with a guide to writing and assessing its specification. The Jobs to be done and Business rules pages are available now. The other topic pairs are placeholders for the handbook rewrite.
 
 Run `dotspec docs` from any directory to browse the topics offline.
 
@@ -48,7 +48,7 @@ Group product behaviors that a stakeholder recognizes and values. Run `dotspec d
 
 ### Business rules
 
-Identify a policy, its authority, and the circumstances in which it applies. Run `dotspec docs business-rule`.
+State what governs a business decision, identify its authority, and test its scope with concrete cases. Run `dotspec docs business-rule`.
 
 - [Write a business rule](guides/write-a-business-rule.md) (How-to)
 - [Business rules](explanations/business-rules.md) (Explanation)

@@ -99,15 +99,15 @@
   {
     "topic": "business-rule",
     "title": "Business rules",
-    "description": "Identify a policy, its authority, and the circumstances in which it applies.",
+    "description": "State what governs a business decision, identify its authority, and test its scope with concrete cases.",
     "pages": [
       {
         "page": "docs/cli-handbook/guides/write-a-business-rule.md",
         "rules": {
-          "business-rule.statement": "",
-          "business-rule.applies-to": "",
-          "business-rule.authority": "",
-          "business-rule.rationale": ""
+          "business-rule.statement": "state-one-decision",
+          "business-rule.applies-to": "try-the-boundaries-and-exceptions",
+          "business-rule.authority": "establish-the-authority-and-rationale",
+          "business-rule.rationale": "establish-the-authority-and-rationale"
         }
       },
       {
