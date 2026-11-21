@@ -2,7 +2,7 @@
 
 A personal task list you can close today and pick up tomorrow. One local Go process serves HTML forms and keeps the list in SQLite.
 
-From any directory, use `dotspec docs examples` to find a file’s reading command. For example, `dotspec docs examples/todo/specs/jobs/personal-commitments.job.spec.md#job` opens the job statement. Running the app, editing its specifications and running its tests require the dotspec checkout.
+From any directory, use `dotspec docs job` to find the worked job’s reading command. For example, `dotspec docs examples/todo/specs/jobs/personal-commitments.job.spec.md#job` opens the job statement. Running the app, editing its specifications and running its tests require the dotspec checkout.
 
 ## Run the app
 

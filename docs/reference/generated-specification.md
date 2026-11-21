@@ -1,0 +1,142 @@
+# Generate a requirements specification
+
+Use a generated spec when readers need one entry point for requirements authored across a project. Open the project’s `SPEC.md` and follow its link to read the system’s purpose and scope, choose a feature, and follow its promises to the source and supporting evidence. The To-do example includes a [complete generated spec](../../examples/todo/SPEC.md).
+
+## Set up a project
+
+Declare the project in its root `dotspec.yaml`. Generated reports are enabled by default.
+
+```yaml
+name: todo
+```
+
+For a source-only project, add this section to the manifest. The project check still validates authored files.
+
+```yaml
+report:
+  enabled: false
+```
+
+A project with generated reports needs one root system. Declare child systems with `Part of`; directory nesting alone establishes discovery context. Explicit specification-system selections and directory defaults place subjects in their system. Standalone quality models are reusable reference material. Links into other projects retain their original targets.
+
+Run the following in the project:
+
+```sh
+dotspec spec build
+dotspec check
+```
+
+Commit the authored changes, `SPEC.md` and the generated Markdown in `specification/` together. To edit a subject, open the file named in the report’s `source` field, change the authored text, then rebuild. Build refreshes generator-owned files, removes obsolete generated pages, and reports a collision if an authored file occupies a planned destination.
+
+## Read the generated files
+
+| Destination | Contents |
+| --- | --- |
+| `SPEC.md` | System name and a single link to its full report |
+| `specification/<name>.system.spec-report.md` | Root system overview and links into its specification |
+| `specification/glossary.md` | Alphabetical definitions linked to their sources, a topic index when terms declare topics, context names for distinct meanings, and links back to authored relationships |
+| `specification/use-cases.md` | Use cases with their authored goals and links to the scenarios |
+| `specification/quality/<attribute>/<attribute>.quality-attribute.spec-report.md` | One system attribute, its definition, parent and child attributes, and classified requirements |
+| `specification/requirements.md` | Requirements in this system, each linked to its canonical page or passage |
+| `specification/systems/<child>/<child>.system.spec-report.md` | Child system overview with its own local directories |
+| `specification/open-questions.md` | Questions recorded across the project, each with its subject and a link to the passage. The index appears when at least one authored question exists. |
+
+### Navigate an overview
+
+System and component overviews open with the subject name, authored description, and a linked section map. Component overviews also show their responsibilities, contracts, architecture, and implementation where authored.
+Choose a section to read in order or open a collection index directly.
+
+| Section | What you can find |
+| --- | --- |
+| Framing | How the authors understand the situation and what they are still exploring |
+| Purpose | The system’s authored purpose |
+| Goals | Authored goals. Select a named goal to read its full statement and see which specifications support it. |
+| Business rules | **All business rules** opens the index of applicable and local rules. |
+| Stakeholders and user needs | Who has an interest in the system, their authored needs and the jobs index |
+| Scope and environment | The work the system covers, explicit exclusions, operating conditions, assumptions and constraints |
+| System topology | Immediate parts, boundary partners, and required or provided interfaces, with a Mermaid diagram and linked descriptions |
+| Features | Product features and their authored descriptions |
+| Capabilities | Capabilities the system provides. When topology identifies a provider, its entry describes the capability. |
+| Use cases | The use-case index, where each interaction is listed with its authored goal |
+| Concepts | Links to concept definitions, uses and synchronizations. The body introduces named uses and synchronizations under their own headings. |
+| Requirements | **All requirements** opens the index, including routes by component. |
+| Quality attributes | Top-level attributes and their definition previews. Each attribute page lists the requirements classified under it. |
+| Open questions | Decisions that remain open in the system specification |
+| Glossary | Terms defined for this system and links to their definitions |
+| Project references | Authored explanations and links to delivery plans, responsibilities, risks and decisions, when supplied |
+
+Overview sections list all entries with project-specific detail in index order.
+A collection with only navigation stays in the section map. The topology
+and quality hierarchy show their declared structure in full.
+
+Across overviews and indexes, each entry uses the same linked name and authored
+preview. **Uses** beside a concept use leads to its concept definition.
+**Refines** beside a requirement leads to each promise it refines, whether a requirement or business rule. Open the requirement to read its full
+statement, conditions, and criteria together.
+
+When the project has authored questions, **All open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings. A topology edge represents a declared relationship.
+A child system has its own overview showing the next level of detail.
+
+### Browse subject reports
+
+System and component overviews keep the source basename and change `.spec.md`
+to `.spec-report.md`. For example, the Task service report lives at
+`components/task-service/task-service.component.spec-report.md`. Its directory also
+holds its local requirements, interfaces, and child components. The optional source
+`id` provides an anchor. The subject name determines the overview filename.
+
+System overviews introduce named goals and assumptions with their title and first authored paragraph. Follow a title to read its qualifications and supporting references in `goals.md` or `assumptions.md`. Constraints appear in the owning system’s scope. For example, follow **Same local storage** to see which requirement relies on that assumption.
+The requirement links back to the same entry. A **Referenced by** link returns
+to an authored passage that cites the entry in prose. [Task-list assumptions](../../examples/todo/specification/assumptions.md)
+
+The system’s `quality-attributes.md` index introduces each declared attribute with its definition preview. Shared attributes appear under each declared parent. Their own subattributes expand under the first parent. Select an attribute to read its full definition. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability and criterion together. Links beside the requirement lead back to the precise attribute or use-case passage.
+
+For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with its authored description of the behavior it offers. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
+
+A system, component, feature, capability, or concept use can supply a short
+Description. System and component overviews use the description as their lead. Other subject reports open with the Description section. The index entry reuses
+the visible text of the first paragraph. An entry with no description shows
+the subject name alone. Interfaces use their introductory description and quality
+models use their Description section. For requirements and business rules, a
+short Statement introduces the promise or rule. Use cases use their Goal and
+jobs use their Job statement. Concept definitions use their Purpose.
+
+Each overview links to the populated collections in its directory. For example,
+open `use-cases.md` to choose an interaction by its goal, or `components.md` to
+choose a component by its description. A system’s `systems.md` lists its immediate
+child systems. When a component has entries in a collection, **By component**
+on the parent index leads to the component’s index of the same name.
+
+On subject reports, collections that only provide navigation appear with the page’s index links. Sections with authored descriptions keep that text in the body. Within a component, `interfaces.md` groups required and provided interfaces.
+A provider’s `capabilities.md` groups explicitly provided capabilities, including
+those specified elsewhere. Its `requirements.md` lists local requirements, plus
+requirements owned elsewhere that explicitly apply to the component. The
+**Applicable requirements** group collects explicit applicability links, including
+local requirements. Each entry links to the canonical page or passage.
+
+Each standalone authored specification in the selected project has exactly one standalone report page. The owning system or component links to indexes of its features and capabilities. Inline subjects can also have a report page for their own heading.
+
+Authored Markdown uses `<subject>-spec`. The corresponding generated Markdown
+uses `<subject>-spec-report`. For example, `<name>.system.spec.md` declares
+`type: system-spec`, and its generated `<name>.system.spec-report.md` declares `type: system-spec-report`.
+
+Each subject report records its source in a YAML `source` field using a URI
+relative to the report, including the fragment for the exact authored heading.
+For example, the todo system report declares
+`source: "../specs/personal-task-list.system.spec.md#personal-task-list"`.
+This identifies the source for the whole report. For a subject defined inside
+another spec, the fragment identifies its nested heading.
+
+A subject rendered as a section carries its type and exact authored heading in a
+`dotspec-doc` comment. Links to supporting specifications and external evidence
+stay beside the passages that use them. On the glossary index, **View term source**
+opens the defining passage for each term.
+
+Each system quality attribute has a `quality-attribute-spec-report` file. Reusable quality model entries remain sections of the model’s report. The file’s `generated_by: dotspec` marker identifies generator
+ownership. See the [document model](model/index.md#generateddocument).
+
+## Check a workspace
+
+Use `dotspec spec build --project NAME` to refresh a selected project. Run `dotspec check --all` on a clean checkout in CI, with a pinned dotspec version. Whole-project checks include the generated files for each project unless its manifest sets `report.enabled` to `false`. A missing, obsolete or stale file is a finding. The check also inspects the visible content and navigation. A subtree or individual-subject check covers only its selected source scope.
+
+For early feedback, add `dotspec check --all` to a pre-push hook. Use CI to verify the committed tree. A pre-commit hook that enforces synchronization must check staged contents when contributors stage only part of a change.

@@ -24,4 +24,4 @@ not prevent contributors from checking a draft.
 
 [Specification Inspection](../concepts/specification-inspection.concept.spec.md)
 provides the conceptual context. The
-[report contract](../../docs/cli-handbook/reference/inspection.md#check-specifications) defines other exit statuses.
+[report contract](../../docs/reference/inspection.md#check-specifications) defines other exit statuses.

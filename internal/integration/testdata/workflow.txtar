@@ -42,7 +42,7 @@ status 2 dotspec unknown
 -- created.txt --
 Created specs/new-system.system.spec.md
 Edit Description, Purpose, and Scope. Keep the filename in sync if you rename the system.
-Authoring guide: dotspec docs reference/formats/system
+Authoring guide: dotspec docs guides/describe-a-system
 -- new-system.system.spec.md --
 ---
 type: system-spec

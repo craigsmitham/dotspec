@@ -1,0 +1,30 @@
+[
+  {
+    "page": "docs/reference/inspection.md",
+    "rules": {
+      "reference.boundary": "references",
+      "reference.invalid": "references",
+      "reference.unresolved": "references",
+      "scan.context": "discover-specification-sources",
+      "scan.discovery": "discover-specification-sources",
+      "scan.read": "discover-specification-sources",
+      "scan.reference": "references",
+      "scan.scope": "discover-specification-sources"
+    }
+  },
+  {
+    "page": "docs/reference/layout.md",
+    "rules": {
+      "layout.business-rule-name": "project-layout",
+      "layout.concept-name": "project-layout",
+      "layout.job-name": "project-layout",
+      "layout.quality-model-name": "project-layout",
+      "layout.requirement-name": "project-layout",
+      "layout.subject-ambiguous": "project-layout",
+      "layout.subject-link": "project-layout",
+      "layout.subject-name": "project-layout",
+      "layout.system-location": "project-layout",
+      "layout.use-case-name": "project-layout"
+    }
+  }
+]

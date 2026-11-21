@@ -1,5 +1,6 @@
 # Writing the CLI handbook
 
+- **Organize the handbook around the dotspec concepts people write specifications for.** Each specification document type has a topic. The baseline for each topic is an explainer that helps readers understand the concept and a how-to guide that helps them write and assess the specification. Keep supporting material with the topic it serves.
 - **Write the shortest version a reader can use.** Lead with the answer. Keep only what helps the reader act, decide, or judge the result. Give an example only when it clarifies a decision. Link to detail that already has a home.
 - **Use dotspec terms consistently.** Check the [metamodel](../../model/metamodel.yaml) for what a concept or relationship means and the [Markdown mapping](../../model/markdown-mapping.md) for how authors express it. Use the same meaning in guides, references, and examples.
 - **Teach authors how to judge their work.** In a how-to, describe what a good result looks like and give readers a way to tell whether they have achieved it. Leave room for authors and agents to choose how to get there. When a technique helps, explain when to use it and what it can reveal. Prescribe a sequence only when the result depends on doing things in that order.

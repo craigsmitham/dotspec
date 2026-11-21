@@ -28,6 +28,8 @@ archives:
       - docs/cli-handbook/README.md
       - docs/cli-handbook/**/*.md
       - docs/cli-handbook/topics.json
+      - docs/reference/*.md
+      - docs/reference/**/*.md
       - examples/todo/README.md
       - examples/todo/SPEC.md
       - examples/todo/dotspec.yaml

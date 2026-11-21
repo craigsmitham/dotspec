@@ -1,117 +1,26 @@
 # The dotspec handbook
 
-dotspec helps people express what matters about a system in a form they can
-read, question, verify and change. Start with the decision you need to make.
+## What am I trying to specify?
 
-From an installed CLI, run `dotspec docs` to browse, `dotspec docs job` to choose
-a Jobs to be Done page, or `dotspec docs success criteria` to search. Run
-`dotspec docs examples` to read the bundled To-do files from any directory. Adopt
-[project conventions](guides/project-conventions.md) to point contributors at local sources of authority.
+Choose the subject you want to write about. Each topic pairs an explanation with a guide to writing and assessing its specification. The Jobs to be done pages are available now. The other topic pairs are placeholders for the handbook rewrite.
 
-## Start with the To-do app
-
-Add an errand, mark it complete, stop the app and return to it tomorrow. What
-would you expect to find? The [runnable walkthrough](../../examples/todo/README.md)
-takes that question from user intent to a real process restart. You can read the specifications below offline. Running the app or inspecting it with `--project todo` requires the To-do project files in the dotspec checkout.
-
-| Question | Follow it in the app | Authoring guide |
-| --- | --- | --- |
-| What progress does someone seek? | The [job](../../examples/todo/specs/jobs/personal-commitments.job.spec.md) follows an errand from accepting responsibility to settling it, including what happens after an interruption. | [Write a job from a concrete situation](guides/write-a-job.md) |
-| What is in scope? | The [system](../../examples/todo/specs/personal-task-list.system.spec.md) serves one person returning to the same computer. | [Boundaries and interfaces](guides/review.md#delimit-the-boundary-and-its-interfaces) |
-| Which policy governs completion? | The [business rule](../../examples/todo/specs/business-rules/completion.business-rule.spec.md) explains why a completed errand is still available for follow-up. | [Business rules](guides/business-rules.md) |
-| How does a person act on that policy? | The [use case](../../examples/todo/specs/use-cases/resume-list.use-case.spec.md) follows a person revisiting a finished errand. The [checklist concept](../../examples/todo/specs/concepts/checklist.concept.spec.md) defines how reopening changes its state. | [Use cases](guides/use-cases.md) · [Concepts](guides/concepts.md) |
-| Where should a promise live? | The return scenario illustrates [Keep recorded work available](../../examples/todo/specs/requirements/availability.requirement.spec.md). The [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md) refines what must survive and links to its executable verification. | [Choose an authoring form](guides/requirements.md#choose-an-authoring-form) · [Declare relationships](guides/relationships.md) |
-| What does durability mean here? | The [quality model](../../examples/todo/specs/quality-models/personal-data.quality-model.spec.md) names the concern. The requirement supplies the measure and the acceptable result. | [Quality models](guides/quality-models.md) · [Define a criterion](guides/requirements.md#define-or-reference-the-criterion-once) |
-
-## Review what the specification says
-
-What would violate the restart requirement? Losing a title, bringing a deleted
-task back or quietly giving a reopened task a different identity would each
-matter. Run the walkthrough to see how the acceptance test compares what the
-person recorded with what the new process serves. [Review requirements](guides/review.md).
-
-To assess whether the workflow helps a person resume work, follow
-the [participant exercise](../../examples/todo/README.md#try-the-workflow-with-a-participant).
-Record what the participant tried and where they needed help.
-[Verification and validation](explanations/verification-and-validation.md).
-
-## Find the corresponding tool or definition
-
-The [reference index](reference/README.md) lists commands, file formats, workspaces and model fields.
-
-- To create, inspect or check a spec, look up its command and starter. [CLI reference](reference/cli.md) · [Command examples](reference/command-examples.md).
-- To understand what a type or relationship means across the domain, start with the explanation and follow it to the model. [Requirements layers](explanations/requirements-layers.md) · [Core domain reference](reference/model/core.md).
-- To determine how particular Markdown becomes a model record, consult the mapping and its source-preservation rules. [Markdown mapping](../../model/markdown-mapping.md) · [Specification model](reference/specification-model.md).
-
-## Browse by topic
+Run `dotspec docs` from any directory to browse the topics offline.
 
 <!-- Generated topic navigation -->
 
-### Specification authority
+### Systems
 
-Find the editable specification for a subject or its named parts. Run `dotspec docs authority`.
+Describe the system as a whole and establish what falls within its boundary. Run `dotspec docs system`.
 
-- [Choose the authoritative specification](explanations/requirements-layers.md#choose-the-authoritative-specification) (Explanation)
-
-### Business rules
-
-State business constraints and link their enforcement. Run `dotspec docs business-rule`.
-
-- [Business rules](guides/business-rules.md) (How-to)
-
-### Capabilities
-
-Describe an ability, its dependencies and its providers. Run `dotspec docs capability`.
-
-- [Connect needs to capabilities and specifications](guides/map-needs-to-capabilities.md#connect-needs-to-capabilities-and-specifications) (How-to)
+- [Describe a system and its boundary](guides/describe-a-system.md) (How-to)
+- [Systems and their boundaries](explanations/systems.md) (Explanation)
 
 ### Components
 
-Name a component, declare its parent and organize its local specifications. Run `dotspec docs component`.
+Describe a part of a system and the responsibilities it carries. Run `dotspec docs component`.
 
-- [Component spec format](reference/formats/system.md#component-spec-format) (Reference)
-
-### Concepts
-
-Explain purposeful behavior through state and actions. Run `dotspec docs concept`.
-
-- [Develop concepts](guides/concepts.md) (How-to)
-
-### Project conventions
-
-Identify a project’s local specification authorities. Run `dotspec docs conventions`.
-
-- [Project conventions](guides/project-conventions.md) (How-to)
-
-### Core domain
-
-Inspect the core domain types, relationships and diagrams. Run `dotspec docs core-domain`.
-
-- [Core domain model](reference/model/core.md) (Reference)
-
-### Worked examples
-
-Browse the bundled To-do project and its specifications. Run `dotspec docs examples`.
-
-- [To-do](../../examples/todo/README.md) (Example)
-
-### Features
-
-Group stakeholder-visible behavior across specifications. Run `dotspec docs feature`.
-
-- [Describe systems, components and features](guides/relationships.md#describe-systems-components-and-features) (How-to)
-
-### Authoring handbook
-
-Choose what to write using the runnable To-do example. Run `dotspec docs handbook`.
-
-- [Start with the To-do app](README.md#start-with-the-to-do-app) (Handbook)
-
-### Inspection
-
-Interpret check results, source discovery and references. Run `dotspec docs inspection`.
-
-- [Checking and discovering specifications](reference/inspection.md) (Reference)
+- [Specify a component](guides/specify-a-component.md) (How-to)
+- [Components and their responsibilities](explanations/components.md) (Explanation)
 
 ### Jobs to be done
 
@@ -119,66 +28,63 @@ Map a functional job and its success criteria, investigate switching, and connec
 
 - [Write a job from a concrete situation](guides/write-a-job.md) (How-to)
 - [What makes something a job to be done?](explanations/jobs-to-be-done.md) (Explanation)
-- [Job spec format](reference/formats/job.md#job-spec-format) (Reference)
+- [Job spec format](jobs/job-spec-format.md#job-spec-format) (Reference)
 - [See personal commitments through](../../examples/todo/specs/jobs/personal-commitments.job.spec.md) (Example)
 - [Connect needs to capabilities and specifications](guides/map-needs-to-capabilities.md#connect-needs-to-capabilities-and-specifications) (How-to)
 
-### Project layout
+### Capabilities
 
-Find a specification by source path or owning directory. Run `dotspec docs layout`.
+Identify an ability needed to serve a goal and what can provide it. Run `dotspec docs capability`.
 
-- [Specification layout](reference/layout.md) (Reference)
+- [Specify a capability](guides/specify-a-capability.md) (How-to)
+- [Capabilities](explanations/capabilities.md) (Explanation)
+- [Map needs to capabilities](guides/map-needs-to-capabilities.md) (How-to)
 
-### Markdown mapping
+### Features
 
-Look up how authored Markdown maps to model elements. Run `dotspec docs mapping`.
+Group product behaviors that a stakeholder recognizes and values. Run `dotspec docs feature`.
 
-- [Markdown mapping profile](../../model/markdown-mapping.md) (Reference)
+- [Define the scope of a feature](guides/define-the-scope-of-a-feature.md) (How-to)
+- [Features](explanations/features.md) (Explanation)
 
-### Quality criteria
+### Business rules
 
-Define a criterion and distinguish a measure from its required bound. Run `dotspec docs quality`.
+Identify a policy, its authority, and the circumstances in which it applies. Run `dotspec docs business-rule`.
 
-- [Define or reference the criterion once](guides/requirements.md#define-or-reference-the-criterion-once) (How-to)
-
-### Quality models
-
-Select quality attributes and apply them to a system. Run `dotspec docs quality-model`.
-
-- [Populate system quality attributes from a model](guides/quality-models.md) (How-to)
-
-### Relationships
-
-Connect specifications through explicit relationships. Run `dotspec docs relationships`.
-
-- [Declare relationships between specifications](guides/relationships.md) (How-to)
-
-### Requirements
-
-Author assessable requirements and satisfaction criteria. Run `dotspec docs requirement`.
-
-- [Develop requirements](guides/requirements.md) (How-to)
-
-### Requirements review
-
-Review a requirement set and surface unresolved decisions. Run `dotspec docs review`.
-
-- [Review requirements and unresolved questions](guides/review.md) (How-to)
-
-### Systems
-
-Describe a system, its boundary, goals and quality attributes. Run `dotspec docs system`.
-
-- [Systems](reference/formats/system.md) (Reference)
+- [Write a business rule](guides/write-a-business-rule.md) (How-to)
+- [Business rules](explanations/business-rules.md) (Explanation)
 
 ### Use cases
 
-Describe actor goals, boundaries and alternative paths. Run `dotspec docs use-case`.
+Describe how an actor interacts with a system to achieve a goal. Run `dotspec docs use-case`.
 
-- [Develop use cases](guides/use-cases.md) (How-to)
+- [Write a use case](guides/write-a-use-case.md) (How-to)
+- [Use cases](explanations/use-cases.md) (Explanation)
 
-### Verification and validation
+### Concepts
 
-Distinguish the four review questions and the evidence each needs. Run `dotspec docs verification`.
+Explain a coherent piece of software behavior through its purpose, state, and actions. Run `dotspec docs concept`.
 
-- [Verification and validation](explanations/verification-and-validation.md) (Explanation)
+- [Specify a concept](guides/specify-a-concept.md) (How-to)
+- [Concepts in software design](explanations/concepts.md) (Explanation)
+
+### Requirements
+
+State a commitment and the conditions and criteria for assessing it. Run `dotspec docs requirement`.
+
+- [Write an assessable requirement](guides/write-an-assessable-requirement.md) (How-to)
+- [Requirements and their satisfaction criteria](explanations/requirements.md) (Explanation)
+
+### Quality models
+
+Define a reusable vocabulary of qualities that systems can draw on. Run `dotspec docs quality-model`.
+
+- [Define a quality model](guides/define-a-quality-model.md) (How-to)
+- [Quality models](explanations/quality-models.md) (Explanation)
+
+### System quality attributes
+
+Define what a quality means for a particular system. Run `dotspec docs quality-attribute`.
+
+- [Define a quality attribute for a system](guides/define-a-system-quality-attribute.md) (How-to)
+- [System quality attributes](explanations/system-quality-attributes.md) (Explanation)

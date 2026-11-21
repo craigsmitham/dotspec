@@ -4,7 +4,6 @@ package guide
 import (
 	"encoding/json"
 	"fmt"
-	"maps"
 	"slices"
 	"strings"
 
@@ -51,7 +50,7 @@ func (d Destination) Form() string {
 		return "How-to"
 	case strings.HasPrefix(d.Page, "examples/"), strings.HasPrefix(d.Page, "specs/"):
 		return "Example"
-	case strings.HasPrefix(d.Page, docs.Root+"/reference/"), strings.HasPrefix(d.Page, "model/"):
+	case strings.HasPrefix(d.Page, docs.Root+"/jobs/"), strings.HasPrefix(d.Page, "docs/reference/"), strings.HasPrefix(d.Page, "model/"):
 		return "Reference"
 	default:
 		return "Handbook"
@@ -59,9 +58,10 @@ func (d Destination) Form() string {
 }
 
 type catalog struct {
-	topics map[string]Topic
-	names  map[string]string
-	rules  map[string]string
+	ordered []Topic
+	topics  map[string]Topic
+	names   map[string]string
+	rules   map[string]string
 }
 
 var handbook = loadCatalog()
@@ -75,15 +75,23 @@ func loadCatalog() catalog {
 	if err := json.Unmarshal(data, &entries); err != nil {
 		panic(err)
 	}
-	c, err := indexTopics(entries)
+	data, err = docs.DiagnosticFiles.ReadFile("reference/diagnostics.json")
+	if err != nil {
+		panic(err)
+	}
+	var references []Destination
+	if err := json.Unmarshal(data, &references); err != nil {
+		panic(err)
+	}
+	c, err := indexTopics(entries, references...)
 	if err != nil {
 		panic(err)
 	}
 	return c
 }
 
-func indexTopics(entries []Topic) (catalog, error) {
-	c := catalog{map[string]Topic{}, map[string]string{}, map[string]string{}}
+func indexTopics(entries []Topic, references ...Destination) (catalog, error) {
+	c := catalog{ordered: entries, topics: map[string]Topic{}, names: map[string]string{}, rules: map[string]string{}}
 	used := make(map[string]bool)
 	// Pages can be shared across topics, but a topic or rule must never
 	// intercept the command printed for a page.
@@ -105,31 +113,28 @@ func indexTopics(entries []Topic) (catalog, error) {
 			c.names[key] = t.Name
 		}
 		c.topics[t.Name] = t
-		for _, d := range t.Pages {
-			for rule, fragment := range d.Rules {
-				key := strings.ToLower(rule)
-				if key == "" || used[key] {
-					return c, fmt.Errorf("duplicate documentation lookup %q", rule)
-				}
-				used[key] = true
-				target := d.Page
-				if fragment != "" {
-					file, _, _ := strings.Cut(target, "#")
-					target = file + "#" + fragment
-				}
-				c.rules[rule] = target
+		references = append(references, t.Pages...)
+	}
+	for _, d := range references {
+		for rule, fragment := range d.Rules {
+			key := strings.ToLower(rule)
+			if key == "" || used[key] {
+				return c, fmt.Errorf("duplicate documentation lookup %q", rule)
 			}
+			used[key] = true
+			target := d.Page
+			if fragment != "" {
+				file, _, _ := strings.Cut(target, "#")
+				target = file + "#" + fragment
+			}
+			c.rules[rule] = target
 		}
 	}
 	return c, nil
 }
 
 func Topics() []Topic {
-	var result []Topic
-	for _, name := range slices.Sorted(maps.Keys(handbook.topics)) {
-		result = append(result, handbook.topics[name])
-	}
-	return result
+	return slices.Clone(handbook.ordered)
 }
 
 func HasRule(rule string) bool { return handbook.rules[rule] != "" }

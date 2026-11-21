@@ -8,6 +8,7 @@ def check(root):
     handbook = root / "docs/cli-handbook"
     pages = {path.relative_to(root).as_posix() for path in handbook.glob("*/**/*.md")}
     pages.update({"docs/cli-handbook/README.md", "docs/cli-handbook/topics.json"})
+    pages.update(path.relative_to(root).as_posix() for path in (root / "docs/reference").rglob("*.md"))
     examples = {path.relative_to(root).as_posix() for path in (root / "examples/todo").rglob("*.spec.md")}
     dist = root / "dist"
     archives = sorted([*dist.glob("dotspec_*.tar.gz"), *dist.glob("dotspec_*.zip")])

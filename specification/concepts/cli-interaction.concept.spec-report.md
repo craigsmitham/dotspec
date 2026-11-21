@@ -19,8 +19,8 @@ an eventual exit status. The command reference defines available operations;
 individual concept and requirement specifications define their effects on files.
 The invocation concept does not own those operations' domain behavior.
 
-The [command reference](<../../docs/cli-handbook/reference/cli.md>) describes the available inputs.
-The [output contract](<../../docs/cli-handbook/reference/inspection.md#output-and-automation>) defines process
+The [command reference](<../../docs/reference/cli.md>) describes the available inputs.
+The [output contract](<../../docs/reference/inspection.md#output-and-automation>) defines process
 outputs, formats and exit statuses.
 
 ## Actions
@@ -58,10 +58,10 @@ Each script supplies its inputs, commands and expected observations. Read the go
 | Governing source | Executable cases |
 | --- | --- |
 | [Create a specification](<../use-cases/create-specification.use-case.spec-report.md>), including the linked non-overwrite requirement | [Create and inspect](<../../internal/integration/testdata/workflow.txtar>), [use-case presets and inspection](<../../internal/integration/testdata/use-cases.txtar>) |
-| [Inspection interaction](<../use-cases/check-specifications.use-case.spec-report.md>) and [source selection](<../../docs/cli-handbook/reference/layout.md>) | [Repository discovery](<../../internal/integration/testdata/discovery.txtar>), [diagnostics and exit statuses](<../../internal/integration/testdata/diagnostics.txtar>) |
-| [Offline authoring guidance](<../requirements/find-authoring-guidance-in-the-installed-cli.requirement.spec-report.md>), [command arguments](<../../docs/cli-handbook/reference/cli.md>) and [process output](<../../docs/cli-handbook/reference/inspection.md#output-and-automation>) | [Offline guidance](<../../internal/integration/testdata/docs.txtar>), [help, redirected output, completions and manual](<../../internal/integration/testdata/help.txtar>) |
-| [Concept format](<../../docs/cli-handbook/reference/formats/concept.md>) and [business-rule authoring guide](<../../docs/cli-handbook/guides/business-rules.md>) | [Concept commands](<../../internal/integration/testdata/concepts.txtar>), [business-rule commands](<../../internal/integration/testdata/business-rules.txtar>) |
-| [System quality attributes](<../../docs/cli-handbook/reference/formats/system.md#system-quality-attributes>), [quality-model population](<../../docs/cli-handbook/guides/quality-models.md>) and [requirement format](<../../docs/cli-handbook/reference/formats/requirement.md>) | [Quality models and system population](<../../internal/integration/testdata/quality-models.txtar>), [classified requirements](<../../internal/integration/testdata/classified-requirements.txtar>), [general requirements](<../../internal/integration/testdata/requirements.txtar>) |
+| [Inspection interaction](<../use-cases/check-specifications.use-case.spec-report.md>) and [source selection](<../../docs/reference/layout.md>) | [Repository discovery](<../../internal/integration/testdata/discovery.txtar>), [diagnostics and exit statuses](<../../internal/integration/testdata/diagnostics.txtar>) |
+| [Offline authoring guidance](<../requirements/find-authoring-guidance-in-the-installed-cli.requirement.spec-report.md>), [command arguments](<../../docs/reference/cli.md>) and [process output](<../../docs/reference/inspection.md#output-and-automation>) | [Offline guidance](<../../internal/integration/testdata/docs.txtar>), [help, redirected output, completions and manual](<../../internal/integration/testdata/help.txtar>) |
+| [Concept format](<../../model/markdown-mapping.md#concept>) and [business-rule mapping](<../../model/markdown-mapping.md#business-rule>) | [Concept commands](<../../internal/integration/testdata/concepts.txtar>), [business-rule commands](<../../internal/integration/testdata/business-rules.txtar>) |
+| [System quality attributes](<../../docs/reference/model/index.md#systemqualityattribute>), [quality-model application](<../../docs/reference/cli.md#dotspec-quality-model-apply>) and [requirement format](<../../model/markdown-mapping.md#requirement>) | [Quality models and system population](<../../internal/integration/testdata/quality-models.txtar>), [classified requirements](<../../internal/integration/testdata/classified-requirements.txtar>), [general requirements](<../../internal/integration/testdata/requirements.txtar>) |
 | [Discover specification sources](<../use-cases/discover-specification-sources.use-case.spec-report.md>) and [export a specification model](<../use-cases/export-specification-model.use-case.spec-report.md>) | [Source discovery through ordinary references](<../../internal/integration/testdata/sources.txtar>), [export and offline validation](<../../internal/integration/testdata/model.txtar>) |
 
 The Go test harness executes these scripts; it does not define additional

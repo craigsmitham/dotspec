@@ -12,7 +12,7 @@ Run `mise run example-check` from the repository root. For the individual public
 | Authoring and diagnostics | In a temporary To-do copy, initialize a system and each collection. Exercise general, ODI and job-story jobs, brief and expanded use cases, and general and quality requirements. Preview and apply the local quality model, check duplicate rejection leaves the target intact and break a link to obtain a structural finding. The [quality-model fixture](../../internal/integration/testdata/quality-models.txtar) also exercises bundled starters and ancestor copying. |
 | Job navigation | Map the personal commitments job in text and Mermaid. List its steps in authored order and find the named outcome in the job's outcome list. |
 | Source inventory and model interchange | Find the acceptance file and its referring requirement, export a snapshot to a temporary file and validate it. Inspect the typed edges. Compare the scope with the [independent snapshot exercise](../../internal/integration/testdata/model.txtar). |
-| Guides and diagnostics | Follow each topic to its bundled pages and each diagnostic to its assigned passage. Open To-do through the offline example index. The [guide scenario](../../internal/integration/testdata/docs.txtar) starts in a consumer directory. |
+| Guides and diagnostics | Follow each topic to its bundled pages and each diagnostic to its assigned passage. Open the worked job from the Jobs topic. The [guide scenario](../../internal/integration/testdata/docs.txtar) starts in a consumer directory. |
 | Help, completion and manual | Visit the command groups through public help. Run the existing [subprocess scenario](../../internal/integration/testdata/help.txtar) for version, plain output, four shell completions and the roff manual. |
 
 For the model views, run `go run . model VIEW --path examples/todo` from the repository root.
@@ -32,15 +32,12 @@ Use `dotspec docs TOPIC` for each topic below. The questions identify the decisi
 
 | Topics | Concrete exercise |
 | --- | --- |
-| `handbook`, `examples`, `layout`, `conventions` | Start the [app](README.md). Find the project marker, the specs tree, the file that owns the restart promise and the file that tests it. |
 | `job` | Read the [job](specs/jobs/personal-commitments.job.spec.md). Distinguish the job-owned outcome from the two steps to which it applies. |
 | `system`, `component`, `business-rule` | Find the [task service's implementation](app/specs/task-service.component.spec.md#implementation). Explain why the completion policy would survive a change of database. |
 | `feature`, `capability` | Follow [Pick up where I left off](specs/features/pick-up-where-i-left-off.feature.spec.md) to the restart guarantee and [Local task storage](specs/capabilities/local-task-storage.capability.spec.md) to its provider. |
 | `concept`, `use-case` | Follow the [return scenario](specs/use-cases/resume-list.use-case.spec.md) to the Reopen action. Predict the effects on identity, title and state. Try the deletion alternative. |
-| `requirement`, `authority`, `relationships` | Starting at [restart](specs/requirements/restart.requirement.spec.md), locate the availability requirement it refines, underlying policy, local-storage assumption and job outcome. Turn Refines into Related specifications on a copy and observe the exact missing-edge diagnostic. |
-| `quality-model`, `quality` | Compare the reusable definition with the system's selected attribute. Find the zero-discrepancy target and its operating conditions. |
-| `inspection`, `core-domain`, `mapping` | Compare sources JSON, the typed export and the trace view. Locate the two endpoints of the refinement. Inspect which source file contributed the link and which test the requirement designates. Use the [Markdown mapping](../../model/markdown-mapping.md) for declared headings, metadata and optional fields. |
-| `verification`, `review` | Compare restart results with the [participant exercise](README.md#try-the-workflow-with-a-participant). Ask a person to perform the exercise and retain actual observations. |
+| `requirement` | Starting at [restart](specs/requirements/restart.requirement.spec.md), locate the availability requirement it refines, underlying policy, local-storage assumption and job outcome. Turn Refines into Related specifications on a copy and observe the exact missing-edge diagnostic. |
+| `quality-model`, `quality-attribute` | Compare the reusable definition with the system's selected attribute. Find the zero-discrepancy target and its operating conditions. |
 
 ## Review the return scenario
 
@@ -53,7 +50,7 @@ The [form acceptance test](tests/acceptance.py) checks the return interaction wh
 
 ## Field inventory and remaining work
 
-The detailed inventory compares each field in the generated [relationship reference](../../docs/cli-handbook/reference/model/relationships.md) and structured content fields (including export containers) in the [model catalog](../../model/generated/catalog.json) with exported records and generated subject documents. It scans To-do and the temporary authoring and diagnostic project. Each populated field names a source or an export to inspect. Read the cited source alongside the typed value to assess its meaning. Presence alone establishes only that the mapping was exercised.
+The detailed inventory compares each field in the generated [relationship reference](../../docs/reference/model/relationships.md) and structured content fields (including export containers) in the [model catalog](../../model/generated/catalog.json) with exported records and generated subject documents. It scans To-do and the temporary authoring and diagnostic project. Each populated field names a source or an export to inspect. Read the cited source alongside the typed value to assess its meaning. Presence alone establishes only that the mapping was exercised.
 
 The single-user list covers one actor and one database. The second implementation can give multi-actor authorization, timed retention, nested exception handling, policy refinement and inter-system coordination genuine product consequences. Malformed sources, ambiguous references, failed scans and corrupt snapshots belong in temporary diagnostic or conformance cases. The [model tests](../../internal/model) exercise additional representations outside these example exports.
 
@@ -80,6 +77,6 @@ These are the review assignments for fields that currently have no populated wit
 | `Synchronization.content`, `Synchronization.owner`, `Synchronization.semantics`, `Synchronization.then`, `Synchronization.when`, `Synchronization.where` | Describe two cooperating concepts and verify which action triggers which response, with what arguments and result. |
 | `DomainElement.open_questions`, `GlossaryTerm.alternative_names`, `GlossaryTerm.definition`, `GlossaryTerm.owner`, `OpenQuestion.question` | Record a consequential open question in a scratch project. Link its research basis and identify the terms that need definitions. |
 | `System.glossary`, `System.interacts_with`, `System.interacts_with_content`, `System.required_interfaces`, `System.synchronizations` | In a multi-system design, inspect the declared partner, required interfaces, capabilities, glossary and coordinated actions. |
-| `Document.glossary_terms`, `GlossaryTerm.relationships`, `System.glossary_sources` | Inspect the [dotspec model vocabulary](../../docs/cli-handbook/reference/model/glossary.md) and follow a term in the [system glossary](../../specification/glossary.md) back to its defining heading. Inspect Feature’s topics and relationship to Use case. In a scratch project import two vocabularies defining Account in different contexts and check the distinct entries. |
+| `Document.glossary_terms`, `GlossaryTerm.relationships`, `System.glossary_sources` | Inspect the [dotspec model vocabulary](../../docs/reference/model/glossary.md) and follow a term in the [system glossary](../../specification/glossary.md) back to its defining heading. Inspect Feature’s topics and relationship to Use case. In a scratch project import two vocabularies defining Account in different contexts and check the distinct entries. |
 | `GlossaryTermSpecReport.documents` | Follow a generated glossary term to its authored declaration. |
 | `SynchronizationSpecReport.documents` | Follow a coordination rule back to its source heading. |

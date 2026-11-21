@@ -9,9 +9,9 @@ is the shared entry point for authors, agents and maintainers.
 | Principle | Question to ask in review |
 | --- | --- |
 | Optimize for human readability. | Can the author state the idea in ordinary prose? If a new field is proposed, which authoring or inspection task requires the structure? [Human-readable specifications](../../AGENTS.md#design-principles) |
-| Keep each requirement with its authoritative source. | Does each requirement have one requirement file? Can a reader locate the owning use case, concept action, external provision or verification example? [Specification authority](../cli-handbook/explanations/requirements-layers.md#choose-the-authoritative-specification) |
-| Let authors develop precision as decisions are made. | Can someone record a useful sketch, a consequential exception or an unresolved threshold, then improve it when they have evidence? [Use-case authoring](../cli-handbook/guides/use-cases.md#sketch-the-interaction-then-investigate-alternatives) |
-| Say exactly what an inspection establishes. | Could someone read a passing check or a resolved link as proof of stakeholder agreement or satisfaction? Identify the observation that would support the stronger claim. [Assessment purposes](../cli-handbook/explanations/verification-and-validation.md#dotspec-commands-and-model-roles) |
+| Keep each requirement with its authoritative source. | Does each requirement have one requirement file? Can a reader locate the owning use case, concept action, external provision or verification example? [Specification authority](../../CONTRIBUTING.md#specification-tests-and-implementation-tests) |
+| Let authors develop precision as decisions are made. | Can someone record a useful sketch, a consequential exception or an unresolved threshold, then improve it when they have evidence? |
+| Say exactly what an inspection establishes. | Could someone read a passing check or a resolved link as proof of stakeholder agreement or satisfaction? Identify the observation that would support the stronger claim. |
 
 ## Trace a choice to its sources
 
@@ -23,15 +23,13 @@ can illuminate the same decision. The following are starting points for review.
 | Source | Contribution and dotspec choice | Where to audit the interpretation |
 | --- | --- | --- |
 | Craig's product-engineering practice | The practice of giving a requirement an authoritative home informs how dotspec links prose, contracts and tests. The consuming project decides which expression it accepts. The sibling research sketch also contains proposals. Check current behavior before carrying one into a guide. | In a sibling checkout, see `../me/projects/dotspec/dotspec-sketch.md`, “Relationship to the product-engineering bundle” and “Method lineage and connected views”. In `@craigsmitham/knowledge/product-engineering` v2.2.0 see `solution/requirements/foundations/one-authority-many-witnesses.md`. Compare with [dotspec's authority policy](../../CONTRIBUTING.md#specification-tests-and-implementation-tests). |
-| Bertrand Meyer, *Handbook of Requirements and Business Analysis* | PEGS supplies reading perspectives over existing specifications. The violation question helps authors make a promise assessable. dotspec explicitly distinguishes verification and validation where Meyer sometimes uses a collective shorthand. | [Review guidance and chapter references](../cli-handbook/guides/review.md#basis-and-limits) · [Requirement guidance](../cli-handbook/guides/requirements.md#basis) · [Terminology decision](../cli-handbook/explanations/verification-and-validation.md#other-established-usages) |
-| Alistair Cockburn, *The Mini-Book on Use Cases*, v1.1b | Actor goals, boundaries, extensions and progressive precision inform the use-case guide. A sketch can grow as consequential alternatives become known. Markdown headings and reference behavior are dotspec choices. | [Use-case guide and source sections](../cli-handbook/guides/use-cases.md#review-and-check) |
-| Daniel Jackson, concept design | Purpose, state, actions and operational principles explain a unit of behavior. dotspec distinguishes the concept definition from a named use in a system. | [Concept guide](../cli-handbook/guides/concepts.md) · [Concepts and use cases](../cli-handbook/explanations/requirements-layers.md#concepts-and-use-cases-are-complementary) |
-| ISO/IEC/IEEE 29148:2018 §§5.2.4–5.2.6 | Construction and quality criteria guide review of individual requirements and sets. Each requirement is stated in its own specification. | [Requirement authoring basis](../cli-handbook/guides/requirements.md#basis) · [Specification authority](../cli-handbook/explanations/requirements-layers.md#choose-the-authoritative-specification) |
-| ISO/IEC 25010:2023, 25030:2019 and 25020:2019 | The first supplies product-quality categories, the second informs quality requirements in context, and the third informs measurement. Selecting an attribute classifies a concern. An author still needs to establish what result is acceptable. | [Edition-specific starter](../cli-handbook/reference/quality-models/iso-25010-2023.md) · [Applicable clauses and quality-in-use distinction](../cli-handbook/guides/requirements.md#basis) |
+| Bertrand Meyer, *Handbook of Requirements and Business Analysis* | PEGS supplies reading perspectives over existing specifications. The violation question helps authors make a promise assessable. dotspec explicitly distinguishes verification and validation where Meyer sometimes uses a collective shorthand. | [Meyer, §§7.4–7.6 and §11.3](https://doi.org/10.1007/978-3-031-06739-6) |
+| Alistair Cockburn, *The Mini-Book on Use Cases*, v1.1b | Actor goals, boundaries, extensions and progressive precision inform the use-case guide. A sketch can grow as consequential alternatives become known. Markdown headings and reference behavior are dotspec choices. | [Cockburn’s Use Case Foundation](https://alistaircockburn.com/Use%20Case%20Foundation.pdf) |
+| Daniel Jackson, concept design | Purpose, state, actions and operational principles explain a unit of behavior. dotspec distinguishes the concept definition from a named use in a system. | [Jackson’s concept criteria](https://essenceofsoftware.com/tutorials/concept-basics/criteria/) |
+| ISO/IEC/IEEE 29148:2018 §§5.2.4–5.2.6 | Construction and quality criteria guide review of individual requirements and sets. Each requirement is stated in its own specification. | [ISO/IEC/IEEE 29148:2018](https://www.iso.org/standard/72089.html) · [Specification authority](../../CONTRIBUTING.md#specification-tests-and-implementation-tests) |
+| ISO/IEC 25010:2023, 25030:2019 and 25020:2019 | The first supplies product-quality categories, the second informs quality requirements in context, and the third informs measurement. Selecting an attribute classifies a concern. An author still needs to establish what result is acceptable. | [Edition-specific starter](../reference/quality-models/iso-25010-2023.md) |
 
-The [requirements layers](../cli-handbook/explanations/requirements-layers.md#method-basis) and
-[jobs guide](../cli-handbook/explanations/jobs-to-be-done.md#choose-a-useful-perspective) give the
-basis for the business and user perspectives. Keep book and standards citations
+The [Jobs explainer](../cli-handbook/explanations/jobs-to-be-done.md#choose-a-useful-perspective) identifies the research behind each JTBD perspective. Keep book and standards citations
 usable by title, edition and passage so contributors can use their own copies. When a new edition changes a term, follow its row to the
 guides and examples, compare the old and new meanings, and record which edition
 dotspec adopts. For a deliberate departure, give the reason beside the local
@@ -43,8 +41,7 @@ choice so it is visible in the same review.
    rationale. Edit the [metamodel](../../model/metamodel.yaml) for a type or
    relationship contract and the [mapping](../../model/markdown-mapping.md) for
    its Markdown representation. Commands and starters have their own
-   [implementation sources](../../CONTRIBUTING.md). The handbook indexes these
-   sources so a reviewer can find the relevant diff.
+   [implementation sources](../../CONTRIBUTING.md).
 2. **Review a case that exposes the distinction.** If a contributor proposes
    requiring a numeric target whenever a quality attribute is used, read the
    [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md).
@@ -66,7 +63,7 @@ each item. [IREB glossary, attribution appendix](https://hub.ireb.org/media/page
 
 ## Try the guidance from an installation
 
-Give a reader the installed CLI and an empty directory outside the dotspec checkout. Ask them to find the To-do job via `dotspec docs job` and open its **Job** section offline. In a temporary project, ask them to create a job with a name they choose and inspect it with `dotspec job show`. From the capability guide, ask where they would run `dotspec model needs` for their work and what they would need to reproduce the To-do result. Record where they guessed a project name, path or prerequisite.
+Give a reader the installed CLI and an empty directory outside the dotspec checkout. Ask them to find the To-do job via `dotspec docs job` and open its **Job** section offline. In a temporary project, ask them to create a job with a name they choose and inspect it with `dotspec job show`. From the needs-to-capabilities guide, ask where they would run `dotspec model needs` for their work and what they would need to reproduce the To-do result. Record where they guessed a project name, path or prerequisite.
 
 For the following exercises, start the reader in `examples/todo/` in a disposable copy of the dotspec checkout.
 
@@ -85,8 +82,7 @@ The research basis includes the OneDrive library copies of Anthony Ulwick's *Job
 ## Distribute the same guides
 
 The CLI publishes the handbook landing page, topic catalog and Markdown beneath the documentation-form directories. Keep repository authoring instructions in the handbook root or maintainer documentation. Put a how-to in
-`docs/cli-handbook/guides/`, an explanation in `docs/cli-handbook/explanations/`, a guided exercise in
-`docs/cli-handbook/tutorials/`, and lookup material in `docs/cli-handbook/reference/`. Use the H1 for the
+`docs/cli-handbook/guides/`, an explanation in `docs/cli-handbook/explanations/`, and supporting material with its topic. Publish technical contracts and generated lookup material in `docs/reference/`. Use the H1 for the
 page title. A CLI page ID is its path under `docs/cli-handbook/` without the `.md` suffix.
 Worked examples keep their repository paths. New handbook Markdown is available by page ID and search at build time. Add it to a topic to give readers a route from the index. Keep contributor procedures and plans in `docs/maintainers/`.
 
@@ -98,8 +94,8 @@ In the [topic catalog](../cli-handbook/topics.json), list each topic's pages in
 reading order. The first is the direct destination after creating a draft.
 Include synonyms people use for the topic. On a page, map each diagnostic
 rule ID to a heading fragment or an empty string for the listed destination.
-A page can serve several topics. Run `mise run generate` to refresh the
-[handbook topic index](../cli-handbook/README.md#browse-by-topic) and reference, then `mise run check` to check
+A page can serve several topics. Map cross-type inspection and layout findings in [the technical diagnostic destinations](../reference/diagnostics.json). Run `mise run generate` to refresh the
+[handbook topic index](../cli-handbook/README.md#what-am-i-trying-to-specify) and reference, then `mise run check` to check
 the installed commands, destinations, anchors, and package.
 
 For AXM, `mise run knowledge-bundle` creates `dist/dotspec-knowledge.zip`.
@@ -112,11 +108,11 @@ version. Edit the linked handbook and authoring guides to change the knowledge i
 
 ## Changing a reference
 
-Edit the linked format, layout, workspace, inspection, or mapping page directly to clarify its explanation. The following references are generated.
+Edit the technical contract in `docs/reference/` or the Markdown mapping in `model/` to clarify its explanation. The following references are generated.
 
 | Published material | Edit here | Regenerate with |
 | --- | --- | --- |
 | CLI reference and output gallery | [Cobra commands](../../internal/cli) and the [gallery scenarios](../../scripts/generate/main.go) | `mise run generate` |
 | Quality-model starter catalogs | [Bundled starter specifications](../../internal/qualitymodel/specs/quality-models) | `mise run generate` |
 | Core domain, fields, and relationships | [Metamodel](../../model/metamodel.yaml) and [core view definition](../../model/views/core-domain.yaml) | `mise run model-generate` |
-| [To-do requirements specification](../../examples/todo/SPEC.md) and [generation guide](../cli-handbook/reference/generated-specification.md) | [To-do specifications](../../examples/todo/specs) for the example, [document generator](../../internal/specdoc) for presentation | `mise run generate` |
+| [To-do requirements specification](../../examples/todo/SPEC.md) and [generation guide](../reference/generated-specification.md) | [To-do specifications](../../examples/todo/specs) for the example, [document generator](../../internal/specdoc) for presentation | `mise run generate` |

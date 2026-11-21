@@ -63,17 +63,20 @@ def page_form(page):
     root = path.parts[0]
     if root in ('examples', 'specs'):
         return 'example'
-    if root == 'model':
+    if root == 'model' or path.is_relative_to('docs/reference'):
         return 'reference'
     return {'explanations': 'explanation', 'tutorials': 'tutorial',
-            'reference': 'reference'}.get(path.relative_to(HANDBOOK).parts[0], 'guide')
+            'jobs': 'reference'}.get(path.relative_to(HANDBOOK).parts[0], 'guide')
 
 
 def publication_pages(catalog):
     public = ROOT / HANDBOOK
     pages = {file.relative_to(ROOT).as_posix(): file.stem.replace('-', ' ')
              for file in sorted(public.glob('*/**/*.md'))}
-    pages[str(HANDBOOK / 'README.md')] = 'Choose an authoring guide or worked example.'
+    pages[str(HANDBOOK / 'README.md')] = 'Choose a specification type to understand or write.'
+    for destination in json.loads((ROOT / 'docs/reference/diagnostics.json').read_text()):
+        page = destination['page']
+        pages[page] = (ROOT / page).read_text().splitlines()[0].removeprefix('# ')
     pages['model/markdown-mapping.md'] = "Markdown mapping profile."
     pages['examples/todo/README.md'] = "Walk through the To-do application."
     for folder in ('examples/todo/specs', 'examples/todo/app/specs'):
@@ -109,15 +112,12 @@ def build(version, target):
     navigation = re.sub(r'\]\(([^)]+)\)', lambda m: '](' + posixpath.normpath(
         posixpath.join(str(HANDBOOK), m[1])) + ')', navigation)
     index = ['---', 'okf_version: "0.2"', '---', '', '# dotspec handbook', '',
-             'Choose a topic and follow its pages in reading order.', navigation.strip(), '',
-             '## Worked specifications', '']
+             'Choose a topic and follow its pages in reading order.', navigation.strip()]
     for page, description in pages.items():
         body = (ROOT / page).read_text()
         if page.endswith('.spec.md'):
             # Native spec metadata belongs to the original example. AXM uses OKF frontmatter.
             _, _, body = body.partition('\n---\n')
-            title = re.search(r'^# (.+)$', body, re.MULTILINE)[1]
-            index.append(f'- [{title}]({page}) — {description}')
         form = page_form(page)
         tags = ['dotspec', form, Path(page).stem.split('.')[0].lower()]
         metadata = ('---\ntype: ' + form +

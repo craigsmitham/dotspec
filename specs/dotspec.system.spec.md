@@ -1,7 +1,7 @@
 ---
 type: system-spec
 glossary_sources:
-  - ../docs/cli-handbook/reference/model/glossary.md
+  - ../docs/reference/model/glossary.md
 ---
 
 # dotspec

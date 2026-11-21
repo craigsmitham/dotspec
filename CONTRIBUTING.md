@@ -125,8 +125,7 @@ come from the type packages. Edit those sources, then run `mise run generate`.
 
 ## Specification tests and implementation tests
 
-This repository applies dotspec's [source authority principle](docs/cli-handbook/explanations/requirements-layers.md#choose-the-authoritative-specification)
-by keeping each product decision in the specification for its subject. When adding or changing a CLI example, identify the governing requirement, concept action, use case, or native interface contract. If the example introduces a product requirement, author its requirement file in the same change.
+This repository keeps each product decision in the specification for its subject. When adding or changing a CLI example, identify the governing requirement, concept action, use case, or native interface contract. If the example introduces a product requirement, author its requirement file in the same change.
 
 - The scripts in `internal/integration/testdata/*.txtar` own their example inputs, commands and expected observations. They verify the public behavior identified alongside their links in Command Invocation.
 - `internal/cli/quality_contracts_test.go` checks the conditions and criteria in the quality requirements that cite it.

@@ -1,63 +1,27 @@
 [
   {
-    "topic": "handbook",
-    "description": "Choose what to write using the runnable To-do example.",
-    "title": "Authoring handbook",
+    "topic": "system",
+    "title": "Systems",
+    "description": "Describe the system as a whole and establish what falls within its boundary.",
     "pages": [
       {
-        "page": "docs/cli-handbook/README.md#start-with-the-to-do-app"
-      }
-    ]
-  },
-  {
-    "topic": "business-rule",
-    "description": "State business constraints and link their enforcement.",
-    "title": "Business rules",
-    "pages": [
+        "page": "docs/cli-handbook/guides/describe-a-system.md"
+      },
       {
-        "page": "docs/cli-handbook/guides/business-rules.md",
-        "rules": {
-          "business-rule.statement": "authoring-format",
-          "business-rule.applies-to": "authoring-format",
-          "business-rule.authority": "authoring-format",
-          "business-rule.rationale": "authoring-format"
-        }
+        "page": "docs/cli-handbook/explanations/systems.md"
       }
     ]
   },
   {
     "topic": "component",
-    "description": "Name a component, declare its parent and organize its local specifications.",
     "title": "Components",
+    "description": "Describe a part of a system and the responsibilities it carries.",
     "pages": [
       {
-        "page": "docs/cli-handbook/reference/formats/system.md#component-spec-format"
-      }
-    ]
-  },
-  {
-    "topic": "concept",
-    "description": "Explain purposeful behavior through state and actions.",
-    "title": "Concepts",
-    "pages": [
+        "page": "docs/cli-handbook/guides/specify-a-component.md"
+      },
       {
-        "page": "docs/cli-handbook/guides/concepts.md",
-        "rules": {
-          "concept.actions": "describe-state-and-actions",
-          "concept.operational-principle": "write-the-operational-principles",
-          "concept.purpose": "find-a-purposeful-boundary",
-          "concept.state": "describe-state-and-actions"
-        }
-      }
-    ]
-  },
-  {
-    "topic": "conventions",
-    "description": "Identify a project’s local specification authorities.",
-    "title": "Project conventions",
-    "pages": [
-      {
-        "page": "docs/cli-handbook/guides/project-conventions.md"
+        "page": "docs/cli-handbook/explanations/components.md"
       }
     ]
   },
@@ -90,7 +54,7 @@
         "page": "docs/cli-handbook/explanations/jobs-to-be-done.md"
       },
       {
-        "page": "docs/cli-handbook/reference/formats/job.md#job-spec-format"
+        "page": "docs/cli-handbook/jobs/job-spec-format.md#job-spec-format"
       },
       {
         "page": "examples/todo/specs/jobs/personal-commitments.job.spec.md"
@@ -101,224 +65,157 @@
     ]
   },
   {
-    "topic": "system",
-    "description": "Describe a system, its boundary, goals and quality attributes.",
-    "title": "Systems",
+    "topic": "capability",
+    "title": "Capabilities",
+    "description": "Identify an ability needed to serve a goal and what can provide it.",
     "pages": [
       {
-        "page": "docs/cli-handbook/reference/formats/system.md"
-      }
-    ]
-  },
-  {
-    "topic": "use-case",
-    "description": "Describe actor goals, boundaries and alternative paths.",
-    "title": "Use cases",
-    "pages": [
-      {
-        "page": "docs/cli-handbook/guides/use-cases.md",
+        "page": "docs/cli-handbook/guides/specify-a-capability.md",
         "rules": {
-          "use-case.goal": "start-with-actors-and-goals",
-          "use-case.goal-level": "start-with-actors-and-goals",
-          "use-case.primary-actor": "start-with-actors-and-goals",
-          "use-case.system-boundary": "start-with-actors-and-goals",
-          "use-case.main-success-scenario": "sketch-the-interaction-then-investigate-alternatives",
-          "use-case.sequence": "add-context-where-it-changes-the-promise",
-          "use-case.success-guarantees": "add-context-where-it-changes-the-promise",
-          "use-case.extensions": "sketch-the-interaction-then-investigate-alternatives"
+          "structure.capability-source": ""
         }
-      }
-    ]
-  },
-  {
-    "topic": "requirement",
-    "description": "Author assessable requirements and satisfaction criteria.",
-    "title": "Requirements",
-    "pages": [
+      },
       {
-        "page": "docs/cli-handbook/guides/requirements.md",
-        "rules": {
-          "requirement.applies-to": "state-one-requirement-and-its-operating-context",
-          "requirement.statement": "state-one-requirement-and-its-operating-context",
-          "requirement.rationale": "state-one-requirement-and-its-operating-context"
-        }
-      }
-    ]
-  },
-  {
-    "topic": "authority",
-    "description": "Find the editable specification for a subject or its named parts.",
-    "title": "Specification authority",
-    "pages": [
+        "page": "docs/cli-handbook/explanations/capabilities.md"
+      },
       {
-        "page": "docs/cli-handbook/explanations/requirements-layers.md#choose-the-authoritative-specification",
-        "rules": {
-          "structure.inline-requirement": ""
-        }
-      }
-    ]
-  },
-  {
-    "topic": "quality-model",
-    "description": "Select quality attributes and apply them to a system.",
-    "title": "Quality models",
-    "pages": [
-      {
-        "page": "docs/cli-handbook/guides/quality-models.md",
-        "rules": {
-          "quality-model.attributes": "define-or-customize-a-model",
-          "quality-model.description": "define-or-customize-a-model",
-          "quality.cycle": "define-or-customize-a-model",
-          "quality.definition": "define-or-customize-a-model",
-          "quality.legacy-hierarchy": "define-or-customize-a-model",
-          "quality.subattribute": "define-or-customize-a-model",
-          "requirement.undefined-attribute": "preview-and-copy"
-        }
-      }
-    ]
-  },
-  {
-    "topic": "quality",
-    "description": "Define a criterion and distinguish a measure from its required bound.",
-    "title": "Quality criteria",
-    "pages": [
-      {
-        "page": "docs/cli-handbook/guides/requirements.md#define-or-reference-the-criterion-once",
-        "rules": {
-          "requirement.measurement-basis": "",
-          "relationship.measurement_basis": ""
-        }
-      }
-    ]
-  },
-  {
-    "topic": "relationships",
-    "description": "Connect specifications through explicit relationships.",
-    "title": "Relationships",
-    "pages": [
-      {
-        "page": "docs/cli-handbook/guides/relationships.md",
-        "rules": {
-          "relationship.specification_system": "identify-a-use-cases-system-boundary"
-        }
-      }
-    ]
-  },
-  {
-    "topic": "verification",
-    "description": "Distinguish the four review questions and the evidence each needs.",
-    "title": "Verification and validation",
-    "pages": [
-      {
-        "page": "docs/cli-handbook/explanations/verification-and-validation.md"
-      }
-    ]
-  },
-  {
-    "topic": "review",
-    "description": "Review a requirement set and surface unresolved decisions.",
-    "title": "Requirements review",
-    "pages": [
-      {
-        "page": "docs/cli-handbook/guides/review.md"
-      }
-    ]
-  },
-  {
-    "topic": "inspection",
-    "description": "Interpret check results, source discovery and references.",
-    "title": "Inspection",
-    "pages": [
-      {
-        "page": "docs/cli-handbook/reference/inspection.md",
-        "rules": {
-          "reference.boundary": "references",
-          "reference.invalid": "references",
-          "reference.unresolved": "references",
-          "scan.context": "discover-specification-sources",
-          "scan.discovery": "discover-specification-sources",
-          "scan.read": "discover-specification-sources",
-          "scan.reference": "references",
-          "scan.scope": "discover-specification-sources"
-        }
-      }
-    ]
-  },
-  {
-    "topic": "layout",
-    "description": "Find a specification by source path or owning directory.",
-    "title": "Project layout",
-    "pages": [
-      {
-        "page": "docs/cli-handbook/reference/layout.md",
-        "rules": {
-          "layout.business-rule-name": "project-layout",
-          "layout.concept-name": "project-layout",
-          "layout.job-name": "project-layout",
-          "layout.quality-model-name": "project-layout",
-          "layout.requirement-name": "project-layout",
-          "layout.subject-ambiguous": "project-layout",
-          "layout.subject-link": "project-layout",
-          "layout.subject-name": "project-layout",
-          "layout.system-location": "project-layout",
-          "layout.use-case-name": "project-layout"
-        }
-      }
-    ]
-  },
-  {
-    "topic": "core-domain",
-    "description": "Inspect the core domain types, relationships and diagrams.",
-    "title": "Core domain",
-    "pages": [
-      {
-        "page": "docs/cli-handbook/reference/model/core.md"
-      }
-    ]
-  },
-  {
-    "topic": "mapping",
-    "description": "Look up how authored Markdown maps to model elements.",
-    "title": "Markdown mapping",
-    "pages": [
-      {
-        "page": "model/markdown-mapping.md"
+        "page": "docs/cli-handbook/guides/map-needs-to-capabilities.md"
       }
     ]
   },
   {
     "topic": "feature",
-    "description": "Group stakeholder-visible behavior across specifications.",
     "title": "Features",
+    "description": "Group product behaviors that a stakeholder recognizes and values.",
     "pages": [
       {
-        "page": "docs/cli-handbook/guides/relationships.md#describe-systems-components-and-features",
+        "page": "docs/cli-handbook/guides/define-the-scope-of-a-feature.md",
         "rules": {
           "structure.feature-source": ""
         }
+      },
+      {
+        "page": "docs/cli-handbook/explanations/features.md"
       }
     ]
   },
   {
-    "topic": "capability",
-    "description": "Describe an ability, its dependencies and its providers.",
-    "title": "Capabilities",
+    "topic": "business-rule",
+    "title": "Business rules",
+    "description": "Identify a policy, its authority, and the circumstances in which it applies.",
     "pages": [
       {
-        "page": "docs/cli-handbook/guides/map-needs-to-capabilities.md#connect-needs-to-capabilities-and-specifications",
+        "page": "docs/cli-handbook/guides/write-a-business-rule.md",
         "rules": {
-          "structure.capability-source": ""
+          "business-rule.statement": "",
+          "business-rule.applies-to": "",
+          "business-rule.authority": "",
+          "business-rule.rationale": ""
         }
+      },
+      {
+        "page": "docs/cli-handbook/explanations/business-rules.md"
       }
     ]
   },
   {
-    "topic": "examples",
-    "title": "Worked examples",
-    "description": "Browse the bundled To-do project and its specifications.",
+    "topic": "use-case",
+    "title": "Use cases",
+    "description": "Describe how an actor interacts with a system to achieve a goal.",
     "pages": [
       {
-        "page": "examples/todo/README.md"
+        "page": "docs/cli-handbook/guides/write-a-use-case.md",
+        "rules": {
+          "use-case.goal": "",
+          "use-case.goal-level": "",
+          "use-case.primary-actor": "",
+          "use-case.system-boundary": "",
+          "use-case.main-success-scenario": "",
+          "use-case.sequence": "",
+          "use-case.success-guarantees": "",
+          "use-case.extensions": "",
+          "relationship.specification_system": ""
+        }
+      },
+      {
+        "page": "docs/cli-handbook/explanations/use-cases.md"
+      }
+    ]
+  },
+  {
+    "topic": "concept",
+    "title": "Concepts",
+    "description": "Explain a coherent piece of software behavior through its purpose, state, and actions.",
+    "pages": [
+      {
+        "page": "docs/cli-handbook/guides/specify-a-concept.md",
+        "rules": {
+          "concept.actions": "",
+          "concept.operational-principle": "",
+          "concept.purpose": "",
+          "concept.state": ""
+        }
+      },
+      {
+        "page": "docs/cli-handbook/explanations/concepts.md"
+      }
+    ]
+  },
+  {
+    "topic": "requirement",
+    "title": "Requirements",
+    "description": "State a commitment and the conditions and criteria for assessing it.",
+    "pages": [
+      {
+        "page": "docs/cli-handbook/guides/write-an-assessable-requirement.md",
+        "rules": {
+          "requirement.applies-to": "",
+          "requirement.statement": "",
+          "requirement.rationale": "",
+          "structure.inline-requirement": "",
+          "requirement.undefined-attribute": "",
+          "requirement.measurement-basis": "",
+          "relationship.measurement_basis": ""
+        }
+      },
+      {
+        "page": "docs/cli-handbook/explanations/requirements.md"
+      }
+    ]
+  },
+  {
+    "topic": "quality-model",
+    "title": "Quality models",
+    "description": "Define a reusable vocabulary of qualities that systems can draw on.",
+    "pages": [
+      {
+        "page": "docs/cli-handbook/guides/define-a-quality-model.md",
+        "rules": {
+          "quality-model.attributes": "",
+          "quality-model.description": ""
+        }
+      },
+      {
+        "page": "docs/cli-handbook/explanations/quality-models.md"
+      }
+    ]
+  },
+  {
+    "topic": "quality-attribute",
+    "title": "System quality attributes",
+    "description": "Define what a quality means for a particular system.",
+    "pages": [
+      {
+        "page": "docs/cli-handbook/guides/define-a-system-quality-attribute.md",
+        "rules": {
+          "quality.cycle": "",
+          "quality.definition": "",
+          "quality.legacy-hierarchy": "",
+          "quality.subattribute": ""
+        }
+      },
+      {
+        "page": "docs/cli-handbook/explanations/system-quality-attributes.md"
       }
     ]
   }

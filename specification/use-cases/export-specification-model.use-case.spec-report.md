@@ -114,7 +114,7 @@ about authored specifications can be part of this successful information-gatheri
 outcome. The contributor can validate the saved representation without rereading
 its original source paths.
 
-The [model contract](<../../docs/cli-handbook/reference/specification-model.md>) defines command output,
+The [model contract](<../../docs/reference/specification-model.md>) defines command output,
 validation and completion distinctions. A conforming snapshot does not establish
 that its specifications are accepted, adequate or satisfied.
 
@@ -168,4 +168,4 @@ coverage or successful execution of every branch.
 
 [Specification Inspection](<../concepts/specification-inspection.concept.spec-report.md>)
 provides the existing inspection context. The source, document-content and domain
-layers are explained in [Specification model](<../../docs/cli-handbook/reference/specification-model.md>).
+layers are explained in [Specification model](<../../docs/reference/specification-model.md>).

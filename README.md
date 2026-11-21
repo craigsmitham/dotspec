@@ -20,6 +20,6 @@ Run `dotspec docs` to browse the offline handbook. Use `dotspec docs job` to cho
 ## Documentation
 
 - [Authoring handbook](docs/cli-handbook/README.md) and [runnable To-do example](examples/todo/README.md)
-- [Generate a requirements specification](docs/cli-handbook/reference/generated-specification.md) and [browse the To-do spec](examples/todo/SPEC.md)
-- [CLI reference](docs/cli-handbook/reference/cli.md) and [documentation index](docs/README.md)
+- [Generate a requirements specification](docs/reference/generated-specification.md) and [browse the To-do spec](examples/todo/SPEC.md)
+- [CLI reference](docs/reference/cli.md) and [documentation index](docs/README.md)
 - [dotspec's requirements specification](SPEC.md) and [contributing guide](CONTRIBUTING.md)

@@ -47,6 +47,6 @@ defines continued inspection. The
 [export use case](../use-cases/export-specification-model.use-case.spec.md)
 places these requirements in the contributor's interaction.
 
-The [specification model documentation](../../docs/cli-handbook/reference/specification-model.md) and
+The [specification model documentation](../../docs/reference/specification-model.md) and
 [Markdown mapping profile](../../model/markdown-mapping.md) describe the
 representation and named mappings.

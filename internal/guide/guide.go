@@ -30,6 +30,9 @@ func readFile(name string) ([]byte, error) {
 	if root == "docs" && path.Ext(file) != ".md" && file != "cli-handbook/topics.json" {
 		return nil, fs.ErrNotExist
 	}
+	if root == "docs" && strings.HasPrefix(file, "reference/") {
+		return fs.ReadFile(docs.DiagnosticFiles, file)
+	}
 	if files := roots[root]; files != nil {
 		return fs.ReadFile(files, file)
 	}
@@ -98,7 +101,7 @@ func Read(query string) (string, error) {
 	query = strings.TrimSpace(query)
 	if query == "" {
 		var out strings.Builder
-		fmt.Fprintf(&out, "# Authoring handbook\n\nStart with the To-do walkthrough: dotspec docs %s\n\n", StartingPage("handbook"))
+		out.WriteString("# The dotspec handbook\n\nWhat am I trying to specify? Choose a topic.\n\n")
 		for _, t := range Topics() {
 			fmt.Fprintf(&out, "%s — %s\n  dotspec docs %s\n", t.Title, t.Description, t.Name)
 		}
@@ -114,17 +117,6 @@ func Read(query string) (string, error) {
 				return "", err
 			}
 			fmt.Fprintf(&out, "%s (%s)\n  dotspec docs %s\n", title, d.Form(), d.ID())
-		}
-		if name == "examples" {
-			files, err := bundledFiles("examples")
-			if err != nil {
-				return "", err
-			}
-			out.WriteString("\n## Bundled files\n")
-			for _, file := range files {
-				fmt.Fprintf(&out, "\n  dotspec docs %s", file)
-			}
-			out.WriteByte('\n')
 		}
 		return out.String(), nil
 	}
@@ -215,6 +207,10 @@ func destinations() ([]string, error) {
 		for _, file := range files {
 			set[file] = true
 		}
+	}
+	for _, target := range handbook.rules {
+		file, _, _ := strings.Cut(target, "#")
+		set[file] = true
 	}
 	for _, t := range handbook.topics {
 		for _, d := range t.Pages {

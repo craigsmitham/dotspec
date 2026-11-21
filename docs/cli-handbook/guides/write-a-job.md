@@ -18,7 +18,7 @@ Include **Steps** when they help locate a difficulty. If the draft only covers t
 
 ## How would the performer recognize success?
 
-Give each desired outcome a name and a statement under the job’s or step’s **Outcomes** heading. If several steps share the criterion, declare it once and link those steps under **Applies to**. [Outcome syntax](../reference/formats/job.md#steps-stages-and-desired-outcomes).
+Give each desired outcome a name and a statement under the job’s or step’s **Outcomes** heading. If several steps share the criterion, declare it once and link those steps under **Applies to**. [Outcome syntax](../jobs/job-spec-format.md#steps-stages-and-desired-outcomes).
 
 For a functional job, Outcome-Driven Innovation (ODI) describes a direction of improvement and a measure in context. “Make follow-up easier” could mean either of these things. [Ulwick on desired outcomes](https://strategyn.com/customer-needs-through-a-jobs-to-be-done-lens/).
 
@@ -33,4 +33,4 @@ Use **Evidence** to distinguish observations from hypotheses. The repair errand 
 
 For a job story, use **Situation**, **Motivation**, and **Intended progress** to express what prompted someone to act, what they wanted, and why it mattered. To investigate why they changed approaches on a particular occasion, ask about the switch. [Switching and job stories](../explanations/jobs-to-be-done.md#understand-a-switch).
 
-In your project directory, substitute your job’s name for `personal-commitments`. Use `dotspec job init personal-commitments --preset odi` to start an ODI draft and `dotspec job check personal-commitments --preset odi` to review its structure, references and wording. To check the account itself, ask the performer when they last considered a similar errand settled and what told them so. [Job spec format](../reference/formats/job.md#job-spec-format).
+In your project directory, substitute your job’s name for `personal-commitments`. Use `dotspec job init personal-commitments --preset odi` to start an ODI draft and `dotspec job check personal-commitments --preset odi` to review its structure, references and wording. To check the account itself, ask the performer when they last considered a similar errand settled and what told them so. [Job spec format](../jobs/job-spec-format.md#job-spec-format).

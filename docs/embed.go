@@ -11,3 +11,8 @@ const Root = "docs/cli-handbook"
 //
 //go:embed cli-handbook/README.md cli-handbook/topics.json cli-handbook/*/*
 var Files embed.FS
+
+// DiagnosticFiles contains the technical references used by cross-type diagnostics.
+//
+//go:embed reference/diagnostics.json reference/inspection.md reference/layout.md
+var DiagnosticFiles embed.FS

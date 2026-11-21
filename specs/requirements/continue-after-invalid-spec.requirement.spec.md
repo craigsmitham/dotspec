@@ -23,5 +23,5 @@ One malformed specification must not hide problems in other files.
 
 [Specification Inspection](../concepts/specification-inspection.concept.spec.md)
 provides the conceptual context. The
-[report contract](../../docs/cli-handbook/reference/inspection.md#check-specifications) describes report fields
+[report contract](../../docs/reference/inspection.md#check-specifications) describes report fields
 and handling within an individual malformed file.

@@ -1,14 +1,14 @@
 # One authoritative specification per subject
 
-**Implementation plan.** Each valid authored `*.spec.md` file specifies one primary subject. Each specification kind has one declaration form. A requirement is declared in a `*.requirement.spec.md` file. The product specification brings those sources together through links and generated views. The [specification authority guide](../../cli-handbook/explanations/requirements-layers.md#choose-the-authoritative-specification) governs this convention.
+**Implementation plan.** Each valid authored `*.spec.md` file specifies one primary subject. Each specification kind has one declaration form. A requirement is declared in a `*.requirement.spec.md` file. The product specification brings those sources together through links and generated views. The [contributor guide](../../../CONTRIBUTING.md#specification-tests-and-implementation-tests) governs this convention.
 
 ## What each source owns
 
-The [authority guide](../../cli-handbook/explanations/requirements-layers.md#choose-the-authoritative-specification) identifies the editable source for each specification kind.
+The [Markdown mapping](../../../model/markdown-mapping.md) identifies how authors declare specifications and their parts.
 
 An action belongs to its concept, a step to its use case, a criterion to its requirement, and a named concept use to its declaring system or component. Each can have a heading, an ID, links, and a generated report or passage. Its owner remains the place to edit it. Keep existing identity and scoping rules. Equal titles across scopes are insufficient evidence of duplicate authorship. The current model already tests the correspondence between document roots and concrete specification classes. [Specification type tests](../../../internal/model/specification_types_test.go)
 
-External policies and native contracts retain authority over their own provisions. A dotspec subject can cite an exact provision and state how it applies. An executable check owns its inputs, assertions and observations. Where this repository currently treats a test assertion as the sole definition of required product behavior, identify the governing spec or author the missing requirement before changing the test’s designation. Preserve links to the executable examples. The system policy and contributing guide define these roles. [Specification authority](../../cli-handbook/explanations/requirements-layers.md#choose-the-authoritative-specification) · [Test roles](../../../CONTRIBUTING.md#specification-tests-and-implementation-tests)
+External policies and native contracts retain authority over their own provisions. A dotspec subject can cite an exact provision and state how it applies. An executable check owns its inputs, assertions and observations. Where this repository currently treats a test assertion as the sole definition of required product behavior, identify the governing spec or author the missing requirement before changing the test’s designation. Preserve links to the executable examples. The system policy and contributing guide define these roles. [Test roles](../../../CONTRIBUTING.md#specification-tests-and-implementation-tests)
 
 ## How use cases relate to requirements
 
@@ -16,7 +16,7 @@ An essential use case identifies an interaction the system must support. During 
 
 This is Meyer's scenario-completeness test. One scenario can exercise several specifications, and several scenarios can exercise the same requirement. Passing an acceptance test supplies evidence for the exercised conditions. Deciding whether the specified functionality covers the identified scenarios requires review. A universal link-per-step check would measure a different property. See Bertrand Meyer, *Handbook of Requirements and Business Analysis*, §§7.4–7.6, pp. 133–136, and §11.3, p. 207. [Book](https://doi.org/10.1007/978-3-031-06739-6)
 
-Keep the existing relationship meanings. A step’s **Illustrates** link identifies the requirement, business rule or concept action it demonstrates. **Refines** identifies a more precise statement that preserves the parent commitment. **Derived from** records a basis. **Applies to** records an explicit target. Each forward declaration lives at its source and supplies reverse navigation. Ordinary Markdown citations stay available wherever they help. A scenario, a shared title, and directory placement each provide insufficient grounds to infer refinement. [Relationship guide](../../cli-handbook/guides/relationships.md)
+Keep the existing relationship meanings. A step’s **Illustrates** link identifies the requirement, business rule or concept action it demonstrates. **Refines** identifies a more precise statement that preserves the parent commitment. **Derived from** records a basis. **Applies to** records an explicit target. Each forward declaration lives at its source and supplies reverse navigation. Ordinary Markdown citations stay available wherever they help. A scenario, a shared title, and directory placement each provide insufficient grounds to infer refinement. [Relationship contract](../../../model/markdown-mapping.md#relationship-contract)
 
 ## Worked migration for the personal task list
 

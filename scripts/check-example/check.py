@@ -360,8 +360,8 @@ def inspect(cli):
         assert detail in cli(command, "personal-commitments", "--path", TODO)
     assert "s1 --> s2" in cli("job map", "personal-commitments", "--format", "mermaid", "--path", TODO)
     assert "Snapshot" in json.loads(cli("model schema"))["$defs"]
-    assert "To-do" in cli("docs")
-    assert "examples/todo/specs/personal-task-list.system.spec.md" in cli("docs", "examples")
+    assert "Jobs to be done" in cli("docs")
+    assert "examples/todo/specs/jobs/personal-commitments.job.spec.md" in cli("docs", "job")
     catalog = json.loads((ROOT / "docs/cli-handbook/topics.json").read_bytes())
     coverage = (TODO / "COVERAGE.md").read_text(encoding="utf-8")
     exercises = coverage.split("## Handbook and authoring exercises", 1)[1].split("## Field inventory", 1)[0]
