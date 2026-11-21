@@ -22,7 +22,7 @@ dotspec job init develop-requirements
 
 ````text
 Created specs/jobs/develop-requirements.job.spec.md
-Start with a recent occasion when someone faced this situation.
+Describe what the performer wants to accomplish and how they judge success.
 Write a job from a concrete situation: dotspec docs guides/write-a-job
 ````
 

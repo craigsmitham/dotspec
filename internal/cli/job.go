@@ -130,7 +130,7 @@ func runJob(command, slug string, options jobOptions, out io.Writer) error {
 		if options.format == "json" {
 			return writeJSON(out, createdResult{1, target})
 		}
-		_, err = fmt.Fprintf(out, "Created %s\nStart with a recent occasion when someone faced this situation.\nWrite a job from a concrete situation: %s\n", displayPath(target), authoringPage("job"))
+		_, err = fmt.Fprintf(out, "Created %s\nDescribe what the performer wants to accomplish and how they judge success.\nWrite a job from a concrete situation: %s\n", displayPath(target), authoringPage("job"))
 		return err
 	}
 	if command == "check" {

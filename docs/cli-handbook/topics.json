@@ -77,13 +77,13 @@
       {
         "page": "docs/cli-handbook/guides/write-a-job.md",
         "rules": {
-          "job.boundary": "state-the-progress",
-          "job.map": "identify-the-steps",
-          "job.outcome-empty": "describe-success",
-          "job.outcome-measure": "describe-success",
-          "job.performer": "identify-the-performer",
-          "job.statement": "state-the-progress",
-          "job.story-context": "reconstruct-one-occasion"
+          "job.boundary": "where-does-the-job-end",
+          "job.map": "what-work-is-easy-to-overlook",
+          "job.outcome-empty": "how-would-the-performer-recognize-success",
+          "job.outcome-measure": "how-would-the-performer-recognize-success",
+          "job.performer": "who-owns-the-result",
+          "job.statement": "where-does-the-job-end",
+          "job.story-context": "what-supports-the-account"
         }
       },
       {

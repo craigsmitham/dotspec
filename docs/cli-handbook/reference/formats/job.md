@@ -91,7 +91,7 @@ Minimize the time it takes to identify the next outstanding action when returnin
 Both criteria are hypotheses to investigate with people returning to unfinished errands.
 ```
 
-- **Steps.** Place optional `**ID:**` and `**Stage:**` in the introductory prose beneath the H3. Stage accepts a free-text label. You may omit or repeat a stage. The [universal job steps](../../guides/write-a-job.md#identify-the-steps) provide conventional labels and questions for elicitation.
+- **Steps.** Place optional `**ID:**` and `**Stage:**` in the introductory prose beneath the H3. Stage accepts a free-text label. You may omit or repeat a stage. The [universal job steps](../../explanations/jobs-to-be-done.md#the-universal-job-map) offer conventional labels for exploring the work.
 - **Outcomes.** Give each outcome a short heading and write its full statement beneath. Each outcome has one declaration owner. Under a job's H2 `Outcomes`, use an H3 for each name and an H4 for its fields. Under a step's H4 `Outcomes`, use H5 names and H6 fields. `Applies to` links to the jobs or steps for which it is a criterion. Ownership alone establishes no applicability. Other supported outcome fields include `Supporting content`, `Supports` and `Derived from`.
 - **Identifiers.** An explicit job, step or outcome ID starts with an ASCII letter or digit and may also contain hyphens and underscores after the first character. IDs are case-sensitive and share a namespace within the file. Use a step ID for `--step`. Local fragments can resolve to explicit IDs or heading anchors. Heading anchors also work in ordinary Markdown viewers. [Reference checking](../inspection.md#references).
 

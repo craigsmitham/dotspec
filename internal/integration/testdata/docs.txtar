@@ -33,7 +33,7 @@ stdout '^job$'
 exec dotspec job init resume
 stdout 'dotspec docs guides/write-a-job'
 exec dotspec docs guides/write-a-job
-stdout '## Reconstruct one occasion'
+stdout '## Where does the job end'
 stdout 'dotspec docs reference/formats/job#job-spec-format'
 exec dotspec docs 'reference/formats/job#job-spec-format'
 stdout '^## Job spec format'
@@ -61,8 +61,8 @@ exec dotspec docs requirement.measurement-basis
 stdout '^## Define or reference the criterion once'
 ! stdout '^## Describe context of use explicitly'
 exec dotspec docs job.performer
-stdout '^## Identify the performer'
-! stdout '^## State the progress'
+stdout '^## Who owns the result'
+! stdout '^## Where does the job end'
 
 status 2 dotspec docs job.misspelled
 stderr 'job.misspelled.*run dotspec docs'

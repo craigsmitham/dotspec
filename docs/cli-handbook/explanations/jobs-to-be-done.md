@@ -4,26 +4,36 @@ A person calls a plumber, crosses the call off a list and leaves to collect some
 
 ## Choose a useful perspective
 
-The handbook starts with Anthony Ulwick's **Outcome-Driven Innovation (ODI)** for requirements discovery. Its anchor is a functional job a performer wants to accomplish across different solutions. A job map breaks the work into accomplishments and gives researchers specific places to ask how performers judge success. In the repair example, checking what remains is an accomplishment. Time spent identifying the next action after a break is one measure of success. A researcher can investigate how important that criterion is and how well current approaches serve it. See Ulwick, *Jobs to Be Done: Theory to Practice*, chs. 2 and 4. [Strategyn on customer needs](https://strategyn.com/customer-needs-through-a-jobs-to-be-done-lens/).
+The handbook starts with Anthony Ulwick's **Outcome-Driven Innovation (ODI)** for requirements discovery. Its anchor is a functional job a performer wants to accomplish across different solutions. A job map breaks the work into accomplishments and gives researchers specific places to ask how performers judge success. In the repair example, checking what remains is an accomplishment. Time spent identifying the next action after a break is one measure of success. ODI research asks performers how important that criterion is and how satisfied they are with current approaches. Those ratings belong with the study because their interpretation depends on who took part and when. See Ulwick, *Jobs to Be Done: Theory to Practice*, chs. 2 and 4. [Strategyn on customer needs](https://strategyn.com/customer-needs-through-a-jobs-to-be-done-lens/).
 
 Christensen's theory asks what **progress in particular circumstances** explains a choice. The same person may use a notebook for their own errands and agree to exchange texts with a guest about the repair. A written exchange might help them coordinate access (functional), feel reassured (emotional), or be seen as someone who keeps a promise (social). Each is a possible explanation to investigate with the person. Their choice can also involve carrying on as before. [Christensen Institute, *Jobs to Be Done Theory*](https://www.christenseninstitute.org/theory/jobs-to-be-done/).
 
 These inquiries can inform each other. A switch account might reveal how much work it took to establish who owed the next action. That is a reason to investigate the **Monitor** step with other performers. A job map might reveal that people have several ways to confirm a handoff. A switch interview can explain why one of those ways became worth trying on a particular occasion. Evidence about one choice has the scope of that case. [Jim Kalbach on functional jobs and aspirations](https://experiencinginformation.com/2020/10/23/drills-and-milkshakes-say-yes-to-the-mess/).
 
+## The universal job map
+
+Bettencourt and Ulwick describe eight kinds of accomplishment that can make up a functional job. They are useful when an obvious activity, such as making a phone call, hides work on either side of it. The stage names give authors a way to look for that work. The step names in a particular map describe what matters to its performer. [Bettencourt and Ulwick, *The Customer-Centered Innovation Map*](https://hbr.org/2008/05/the-customer-centered-innovation-map) · [Strategyn, *Build Your Job Map*](https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/build-your-job-map/).
+
+| Universal step | What it brings into view | In the repair errand |
+| --- | --- | --- |
+| Define | The result to achieve and the constraints that matter | Agree that the sink needs to work before the guest arrives. |
+| Locate | The people, materials or information the work depends on | Find the plumber’s reply and recover what they need. |
+| Prepare | The work of getting those inputs into usable condition | Assemble the address, a description of the leak and possible visit times. |
+| Confirm | How the performer knows they can proceed | Establish that someone can let the plumber in at the proposed time. |
+| Execute | The action that advances the commitment | Arrange the visit. |
+| Monitor | Signs that the work is on track or has stalled | Notice that the plumber has yet to confirm. |
+| Modify | Adjustments when circumstances change | Supply the requested photo or arrange a different visit. |
+| Conclude | What allows the performer to consider the work settled | Check that the sink works or confirm who has taken responsibility. |
+
+A performer may check readiness several times or finish an errand without changing the plan. Some stages may have no distinct step worth recording. The value of the map is the work it reveals and the criteria it helps explain. [Worked job and its outcomes](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md#steps). See also Jim Kalbach, *The Jobs to Be Done Playbook* (2020), ch. 3.
+
 ## Understand a switch
 
-Use Bob Moesta and the Re-Wired Group's switching model when the question is “Why change now?” Find someone who recently made the choice in question. Ask what they used before and reconstruct specific events from first doubts, through looking and deciding, to first use. Include the alternatives they actually considered, who influenced the decision, what almost stopped them and what they gave up. If the buyer and performer differ, identify whose choice the account explains. See Moesta, *Learning to Build*, ch. 3. [Re-Wired Group on JTBD interviews](https://therewiredgroup.com/learn/complete-guide-jobs-to-be-done/) · [Re-Wired Group, *The six stages of the buyers’ timeline*](https://therewiredgroup.com/learn/the-six-stages-of-the-buyers-timeline/).
+Bob Moesta and the Re-Wired Group's switching model addresses “Why change now?” A useful account identifies the previous approach, what made someone reconsider it, the alternatives they took seriously, and the trade-off they accepted. A timeline can tie the explanation to actual events, from first doubts to trying the new approach. If a buyer chose for someone else, the account explains the buyer’s choice. See Moesta, *Learning to Build*, ch. 3. [Re-Wired Group on JTBD interviews](https://therewiredgroup.com/learn/complete-guide-jobs-to-be-done/) · [The buyer’s timeline](https://therewiredgroup.com/learn/the-six-stages-of-the-buyers-timeline/).
 
-Suppose someone began keeping commitments in a notebook after relying on messages. Use their recollection to investigate the four **forces of progress**.
+Suppose someone starts keeping commitments in a notebook. Losing an agreement in a long message thread might supply the **push** of the old situation. Seeing all their errands in one place might supply the **pull** of the new approach. Worry about leaving the notebook at home could create **anxiety**. The **habit** of replying in the same thread where a request arrived might explain why messages remained attractive. These are candidate explanations. A switch interview can establish which forces the person actually experienced and which mattered to their choice.
 
-| Force | Ask about a particular event |
-| --- | --- |
-| Push of the current situation | When did finding an agreement in old messages first become a problem? What happened as a result? |
-| Pull of the new approach | What did you see or try that made a notebook worth considering? |
-| Anxiety about the change | What worried you about relying on it? When did that concern come up? |
-| Habit of the present | When did you still turn to messages? What made the familiar way worth keeping? |
-
-Keep the timeline, forces and trade-offs together in the interview record. Link it under **Evidence**. Use **Situation**, **Motivation** and **Intended progress** for a concise account of what the person sought. A switch timeline follows the decision to change tools. A functional job map follows the work of seeing commitments through, including occasions when the person keeps the same tool.
+The switch timeline belongs with the evidence for that decision. The functional job map describes how someone sees commitments through, whether they switch tools or carry on as before.
 
 A **job story** is a writing form for carrying a finding into design discussion. For example, “When someone asks me for an update after a few days, I want to recover what we agreed, so I can give them an answer they can rely on.” Use `dotspec job init give-an-update --preset job-story` to draft those three fields. Keep the source of the story under **Evidence**, including whether it is still a hypothesis. [Paul Adams, *How we accidentally invented Job Stories*](https://www.intercom.com/blog/accidentally-invented-job-stories).
 

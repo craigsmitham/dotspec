@@ -1,57 +1,42 @@
 # Write a job from a concrete situation
 
-Start with an occasion someone remembers. Use Outcome-Driven Innovation (ODI) to work out whose job it is, where it begins and ends, and how that person judges success. You can start a draft with `dotspec job init personal-commitments --preset odi` and edit the resulting Markdown as you learn.
+A useful job description lets a reader explain who wants to accomplish what, where that work ends, and how the person judges success. In the To-do example, someone crosses “Call the plumber” off their list. The question that reveals the job is **“When the call is finished, what does the person still owe?”**
 
-## Reconstruct one occasion
+## Who owns the result?
 
-Ask “Take me back to the last time this happened. What had you agreed to do? What happened before you opened the list? What happened after you closed it?” Record the person's words, the occasion and anything they consulted. If you start from an imagined situation, label it as a hypothesis under **Evidence**.
+Name the **Performer** precisely enough that a reader knows whose decisions count. The person who promised their guest a working sink owns the errand. The plumber owns the repair work. Both have a reason to care about the same visit, but each could finish their part at a different time.
 
-Suppose someone calls the plumber, marks the call complete, and moves on to collect some keys. The plumber asks for a photo the next day. “Reopen a task” describes the interface action. “Recover the next action after a break” describes a difficulty that could also arise with a paper list. Follow the errand back to the original promise and forward to the result the person owes.
+## Where does the job end?
 
-For a job story, put the occasion under **Situation** (the plumber asked for a photo the day after the call), what the person wants to do under **Motivation** (recover what they agreed), and what that enables under **Intended progress** (get the visit booked in time). Check all three against the account.
-
-## Identify the performer
-
-Ask who took responsibility and who can say the work is done. In the example, the person arranging the repair has made a commitment to their guest. The plumber performs a different job. Under **Performer**, describe the person whose decisions the map will follow. If a different person chose or bought the tool, seek their account of that choice separately.
-
-## Identify the steps
-
-Try a first boundary, such as “resume an interrupted errand.” Walk through Bettencourt and Ulwick's eight universal job steps with the performer. For each, ask what they need to accomplish. Listen for work outside the boundary you guessed, including work done by hand or in conversation. Use the person's terms for the resulting step names. [Bettencourt and Ulwick, *The Customer-Centered Innovation Map*](https://hbr.org/2008/05/the-customer-centered-innovation-map) · [Strategyn, *Build Your Job Map*](https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/build-your-job-map/).
-
-| Universal step | Ask the performer | What the repair errand brings into view |
-| --- | --- | --- |
-| Define | What result did you take responsibility for? | Establish what is owed. A working sink by the guest's visit is a different promise from making a call. |
-| Locate | Where could you find what you needed to act? | Recall outstanding work. The plumber's reply may be the only record of what they need. |
-| Prepare | What had to be put in order? | Arrange the information and access needed for a visit. |
-| Confirm | What told you it was practical to go ahead? | Decide which errand can go ahead while another awaits a reply. |
-| Execute | What did you do that advanced the commitment? | Arrange the visit or send the requested photo. |
-| Monitor | How did you know whether things were on track? | Check what remains, including a reply that is now overdue. |
-| Modify | What changed, and what did you reconsider? | Revise the plan when the plumber needs more information or can no longer come in time. |
-| Conclude | What allowed you to stop following up? | Settle the commitment by checking the repair or confirming that someone accepted the handoff. |
-
-Pursue an unexpected answer. If “done” means the call ended, ask who is still responsible for getting the sink fixed. If someone else has taken over, ask what counted as acceptance. Either answer can move the end of the job. Steps can repeat, several can belong to one stage, and some stages may have no distinct work here. Write down gaps to investigate. Keep only meaningful accomplishments under **Steps**. See Jim Kalbach, *The Jobs to Be Done Playbook* (2020), ch. 3.
-
-## State the progress
-
-Read the map back as a whole. Which objective explains why the same person would do these things? Use a verb and its object, adding context that fixes the boundary. In this case the map suggests this **Job** statement.
+Write the **Job** in terms that would still make sense if the performer used a notebook, exchanged messages, or kept the agreement in their head. “Reopen a task” depends on a particular tool. “Resume an interrupted errand” captures a real difficulty, but someone who remembers the errand perfectly still owes their guest a working sink. The worked example uses this boundary.
 
 > See personal commitments through from accepting responsibility for an errand to establishing that it is settled or that someone else has agreed to take it on.
 
-The earlier draft about resuming work accounts for a difficult moment. The broader statement also explains why the person clarifies a promise, waits for a reply, or checks a handoff. Test the statement against an uninterrupted errand, a different errand and a different way of keeping track. Narrow it if the performer or the test of completion changes. Record occasions that challenge it. [Strategyn, *Define Your Market*](https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/define-your-market/).
+That statement explains why the person checks for a reply, sends a photo, or confirms a handoff. It also gives a reviewer something to challenge. If asking a housemate to meet the plumber leaves the original person responsible for the repair, that handoff settles only one action. [Worked To-do job](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md) · [Strategyn on defining a functional job](https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/define-your-market/).
 
-## Describe success
+## What work is easy to overlook?
 
-At each step ask “What takes too long, goes wrong or has to be done again? How can you tell?” For an ODI desired outcome, name the direction of improvement, one measure, the thing being measured and the circumstance that matters. “Make follow-up easier” might mean either of these:
+When a draft starts and ends inside the product, the universal job steps from Outcome-Driven Innovation (ODI) can reveal a larger job. In the repair example, **Define** brings the original promise into view. **Monitor** reveals an overdue reply while there is still time to act. **Conclude** raises the question of who can say the commitment is settled. Those discoveries change the job statement itself. [The eight universal job steps](../explanations/jobs-to-be-done.md#the-universal-job-map).
 
-- **Notice a stalled errand.** Minimize the time a commitment goes unattended after an expected reply is overdue.
-- **Less reconstruction.** Minimize the time it takes to identify the next outstanding action when returning to an errand after an interruption.
+Include **Steps** if they help a reader understand the work or locate a difficulty. Give each step a name the performer could recognize, such as “Check what remains.” A partial map can be useful when only part of the work is understood.
 
-The first delay can last days even when the person immediately remembers what to do. Keeping the criteria distinct lets people rate them independently. Ask about whole-job success too. Someone might remember every action and still miss the deadline. Keep importance and current satisfaction ratings with the dated study, its participants and method. [Ulwick, *Customer Needs Through a Jobs-to-be-Done Lens*](https://strategyn.com/customer-needs-through-a-jobs-to-be-done-lens/).
+## How would the performer recognize success?
 
-Declare an outcome once under the job or a step. In the worked example, the job owns **Less reconstruction**, and its **Applies to** section links both steps where it matters. A restart requirement supports that outcome. A participant can still recover every saved entry and have no idea whom to call next. Ask them to identify their actual next action and explain what helped. [Worked job](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md) · [Job spec format](../reference/formats/job.md#job-spec-format).
+A useful **Outcome** distinguishes two ways the job could turn out. “Make follow-up easier” leaves open at least two quite different improvements.
 
-## Review the draft with a performer
+| Possible desired outcome | What a performer could judge |
+| --- | --- |
+| Minimize the time a commitment goes unattended after an expected reply is overdue. | How long did the stalled errand escape notice? |
+| Minimize the time it takes to identify the next outstanding action when returning to an errand after an interruption. | Once I returned to the errand, how long did it take to work out what to do? |
 
-Run `dotspec job map personal-commitments --outcomes` to read the map in order, then `dotspec job check personal-commitments --preset odi` for structural checks and wording suggestions. Take the map to someone who has recently done the work. Have them walk it against their experience, point out a missing piece and explain how they judged the result. Revise **Job**, **Steps** and **Outcomes** in light of that account and record its source and limits under **Evidence**.
+Someone could notice the delay days late and still know immediately whom to call. ODI expresses each success criterion with a direction and a measure so that performers can assess it independently. A whole-job criterion might concern meeting the agreed deadline. A job about reassurance or trust may call for the person’s own account of what changed. [Ulwick on desired outcomes](https://strategyn.com/customer-needs-through-a-jobs-to-be-done-lens/) · [JTBD perspectives](../explanations/jobs-to-be-done.md#choose-a-useful-perspective).
 
-If your question is why a person changed how they handle errands, reconstruct that choice in a switch interview. If you need to identify which abilities support a particular outcome, take it into a User Needs Map. [Switching and progress](../explanations/jobs-to-be-done.md#understand-a-switch) · [From a job map to a user needs map](../explanations/jobs-to-be-done.md#from-a-job-map-to-a-user-needs-map).
+When the decision is which capabilities could help, a desired outcome can anchor a User Needs Map. In To-do, the need to recover the next action explains why keeping an entry available across a restart matters. [From a job map to a user needs map](../explanations/jobs-to-be-done.md#from-a-job-map-to-a-user-needs-map).
+
+## What supports the account?
+
+Under **Evidence**, give readers enough context to tell what was observed, what was inferred, and what remains open. The repair errand is fictional. A real message requesting a photo could establish that the errand continued after the call. It would take more evidence to say that the person struggled to remember their next action or that a saved entry helped.
+
+If a particular occasion explains the progress sought, a job story can express it in **Situation**, **Motivation**, and **Intended progress**. If the question is why someone changed how they handle errands, a switch account can explain the choice. [Switching and job stories](../explanations/jobs-to-be-done.md#understand-a-switch).
+
+To start an ODI draft, use `dotspec job init personal-commitments --preset odi`. To inspect its structure and wording, use `dotspec job check personal-commitments --preset odi`. The [job spec format](../reference/formats/job.md#job-spec-format) shows how to declare steps, outcomes and the links between them.
