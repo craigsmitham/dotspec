@@ -63,7 +63,7 @@ func writeManifest(t *testing.T, dir, body string) {
 }
 
 func TestProjectManifestValidation(t *testing.T) {
-	for _, body := range []string{"", "{}", "name: ''", "name: invalid/name", "projects: {tool: .}", "name: demo\nunknown: true", "name: demo\ngenerated_spec: perhaps", "name: demo\nname: other", "name: demo\n---\nname: other"} {
+	for _, body := range []string{"", "{}", "name: ''", "name: invalid/name", "projects: {tool: .}", "name: demo\nunknown: true", "name: demo\ngenerated_spec: false", "name: demo\nreport: true", "name: demo\nreport:\n  enabled: perhaps", "name: demo\nreport:\n  unknown: false", "name: demo\nname: other", "name: demo\n---\nname: other"} {
 		t.Run(body, func(t *testing.T) {
 			root := workspaceFixture(t)
 			child := filepath.Join(root, "apps/demo")
@@ -79,6 +79,28 @@ func TestProjectManifestValidation(t *testing.T) {
 				t.Fatal(paths, err)
 			}
 		})
+	}
+}
+
+func TestReportConfig(t *testing.T) {
+	for _, tc := range []struct {
+		section string
+		enabled bool
+	}{
+		{"", true},
+		{"report: {}", true},
+		{"report:\n  enabled: true", true},
+		{"report:\n  enabled: false", false},
+	} {
+		root := t.TempDir()
+		writeManifest(t, root, "name: demo\n"+tc.section)
+		project, err := readProject(root)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if project.Report.Enabled != tc.enabled {
+			t.Errorf("report.enabled for %q = %t, want %t", tc.section, project.Report.Enabled, tc.enabled)
+		}
 	}
 }
 
@@ -110,7 +132,11 @@ func TestWorkspaceDiscoveryBoundaries(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			want := []Project{{Name: "demo", Root: filepath.Join(root, "apps/demo")}, {Name: "metadata", Root: filepath.Join(root, "specs")}, {Name: "tool", Root: root}}
+			want := []Project{
+				{Name: "demo", Root: filepath.Join(root, "apps/demo"), Report: ReportConfig{Enabled: true}},
+				{Name: "metadata", Root: filepath.Join(root, "specs"), Report: ReportConfig{Enabled: true}},
+				{Name: "tool", Root: root, Report: ReportConfig{Enabled: true}},
+			}
 			if w.Root != root || !reflect.DeepEqual(w.Projects, want) {
 				t.Fatal(w)
 			}

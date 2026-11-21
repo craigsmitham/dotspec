@@ -20,7 +20,7 @@ import (
 
 func newCheckCommand() *cobra.Command {
 	cmd := &cobra.Command{Use: "check [source-path]", Short: "Check all supported specifications in a project subtree",
-		Long:    "Check authored specifications using the same discovery rules as list. A whole-project check also inspects generated Markdown when dotspec.yaml enables generated_spec. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.\n\n" + exitPolicy,
+		Long:    "Check authored specifications using the same discovery rules as list. A whole-project check also inspects generated Markdown for projects declared with dotspec.yaml unless report.enabled is false. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.\n\n" + exitPolicy,
 		Example: "dotspec check\ndotspec check --path internal --json", Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			path, err := projectPath(cmd)

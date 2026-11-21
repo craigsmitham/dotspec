@@ -42,7 +42,7 @@ func TestInitDoesNotWriteThroughMetadataSymlinks(t *testing.T) {
 
 func TestMoveRequirementAcrossSourceLayouts(t *testing.T) {
 	t.Chdir(t.TempDir())
-	writeFixture(t, "dotspec.yaml", "name: movement\ngenerated_spec: true\n")
+	writeFixture(t, "dotspec.yaml", "name: movement\n")
 	writeFixture(t, "product.system.spec.md", "---\ntype: system-spec\n---\n# Product\n## Purpose\nStore work.\n## Scope\nThe product.\n")
 	writeFixture(t, "app/specs/service.component.spec.md", "---\ntype: component-spec\n---\n# Service\n## Part of\n[Product](../../product.system.spec.md)\n")
 	writeFixture(t, "app/specs/storage/storage.component.spec.md", "---\ntype: component-spec\n---\n# Storage\n## Part of\n[Service](../service.component.spec.md)\n")

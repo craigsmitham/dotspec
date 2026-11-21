@@ -293,8 +293,8 @@ documents the metamodel's edge categories, cardinalities, scope and projections.
 
 ## Check the generated requirements specification
 
-A whole-project check includes the generated Markdown when the project manifest
-enables `generated_spec`. Commit the output of `dotspec spec build` with its
+A whole-project check includes the generated Markdown by default for projects
+declared with `dotspec.yaml`. Set `report.enabled` to `false` for source-only checks. Commit the output of `dotspec spec build` with its
 sources. Check all configured projects in CI with `dotspec check --all`.
 See [Generate a requirements specification](generated-specification.md) for
 document types, workspace boundaries, reader navigation and recovery from drift.

@@ -221,7 +221,7 @@ first paragraph in the parent’s collection index.
 
 See [structure and feature authoring](../../handbook/relationships.md#describe-systems-components-and-features)
 and the [To-do system overview](../../../examples/todo/specification/personal-task-list.system.spec-report.md).
-Use `dotspec spec build` in an [opted-in project](../generated-specification.md)
+Use `dotspec spec build` in a [declared project](../generated-specification.md)
 to generate its overview and supporting pages. To inspect system structure and
 applicable requirements as a standalone Markdown report, run `dotspec model overview`.
 

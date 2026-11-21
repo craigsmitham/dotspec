@@ -26,7 +26,7 @@ name: billing
 The name identifies the project in commands and reports. It starts with a letter
 or digit and can contain letters, digits, dots, underscores and hyphens. Moving a
 directory carries its project name and boundary with it. Use one YAML document
-with a required `name` field and optional boolean `generated_spec` field. Workspace-wide selection requires unique names.
+with a required `name` field and optional `report` section. Its boolean `enabled` field defaults to `true`. Workspace-wide selection requires unique names.
 
 A spec belongs to its nearest enclosing project. A parent scan skips nested
 project directories. Ordinary subdirectories can contain colocated specs, and
@@ -103,7 +103,7 @@ from other projects.
 ## This repository
 
 The root manifest declares `dotspec`. The To-do example has
-its own manifest. Both projects enable generated specifications. From the root,
+its own manifest. Both projects use the default generated reports. From the root,
 `dotspec check` checks the product and its generated spec. Use
 `dotspec check --all` to include To-do. To add a reference app, place a
 `dotspec.yaml` beside its code and specs.

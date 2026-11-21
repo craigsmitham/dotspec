@@ -48,17 +48,6 @@ An ability needed to deliver value, potentially combining people, procedures and
 
 [View term source](<../docs/reference/model/glossary.md#capability>)
 
-<a id="term.complete-scan"></a>
-
-## Complete scan
-
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../specs/dotspec.system.spec.md#complete-scan"} -->
-
-An inspection that finished its selected scope and required context without an
-operational failure. A complete scan can contain structural error findings.
-
-[View term source](<../specs/dotspec.system.spec.md#complete-scan>)
-
 <a id="term.component"></a>
 
 ## Component
@@ -185,16 +174,6 @@ Relationships from [Feature](<#term.feature.relationships>)
 
 [View term source](<../docs/reference/model/glossary.md#requirement>)
 
-<a id="term.structural-error"></a>
-
-## Structural error
-
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../specs/dotspec.system.spec.md#structural-error"} -->
-
-A finding that a specification violates a supported structural rule.
-
-[View term source](<../specs/dotspec.system.spec.md#structural-error>)
-
 <a id="term.system"></a>
 
 ## System
@@ -233,16 +212,5 @@ Relationships from [Feature](<#term.feature.relationships>)
 - Software requirements
 
 [View term source](<../docs/reference/model/glossary.md#use-case>)
-
-<a id="term.writing-advice"></a>
-
-## Writing advice
-
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../specs/dotspec.system.spec.md#writing-advice"} -->
-
-A suggestion about specification content. Its exit-status consequences are
-specified by [Advice permits success](<requirements/advice-permits-success.requirement.spec-report.md>).
-
-[View term source](<../specs/dotspec.system.spec.md#writing-advice>)
 
 [View source for “Glossary”](<../specs/dotspec.system.spec.md#glossary>)

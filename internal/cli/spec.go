@@ -19,7 +19,7 @@ func newSpecCommand() *cobra.Command {
 	cmd := group("spec", "Generate the project's readable requirements specification")
 	build := &cobra.Command{
 		Use: "build", Short: "Build SPEC.md and the supporting Markdown tree",
-		Long:    "Build the requirements specification for one whole project with generated_spec enabled in dotspec.yaml. Validate the candidate before replacing generator-owned output. Run dotspec check to verify the resulting documents.",
+		Long:    "Build the requirements specification for one whole project. Reports are enabled by default in projects declared with dotspec.yaml. Validate the candidate before replacing generator-owned output. Run dotspec check to verify the resulting documents.",
 		Example: "dotspec spec build", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
@@ -30,8 +30,11 @@ func newSpecCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if project == nil || !project.GeneratedSpec {
-				return fmt.Errorf("enable generated_spec: true in the project's dotspec.yaml to build its specification")
+			if project == nil {
+				return fmt.Errorf("spec build requires a project declared in dotspec.yaml")
+			}
+			if !project.Report.Enabled {
+				return fmt.Errorf("report.enabled is false in %s. Remove that setting to build the specification", project.Manifest())
 			}
 			if path != project.Root {
 				return fmt.Errorf("spec build requires the whole project; select --path %s or --project %s", project.Root, project.Name)
@@ -67,7 +70,7 @@ func inspectProject(path string) check.Report {
 		return check.Project(path, supportedTypes()...)
 	}
 	project, err := specfile.FindProject(dir)
-	if err != nil || project == nil || !project.GeneratedSpec || dir != project.Root {
+	if err != nil || project == nil || !project.Report.Enabled || dir != project.Root {
 		return check.Project(path, supportedTypes()...)
 	}
 	plan, report := planSpec(dir)

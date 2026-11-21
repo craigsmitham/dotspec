@@ -200,7 +200,7 @@ func (r *Report) collectManifest() {
 		return
 	}
 	r.Scope.Project = p
-	if p != nil && p.GeneratedSpec && (r.Scope.Path != p.Root || r.Scope.Discovery == "direct") {
+	if p != nil && p.Report.Enabled && (r.Scope.Path != p.Root || r.Scope.Discovery == "direct") {
 		r.GeneratedSpec = "out-of-scope"
 	}
 	if p != nil {

@@ -16,7 +16,7 @@ import (
 func TestLiftedSectionPreservesAuthoredMarkdown(t *testing.T) {
 	root := t.TempDir()
 	files := map[string]string{
-		"dotspec.yaml": "name: reader\ngenerated_spec: true\n",
+		"dotspec.yaml": "name: reader\n",
 		"module#1/specs/sample-system.system.spec.md":          "---\ntype: system-spec\n---\n# Sample system\n\n## Scope\n\nLocal.\n\n## Purpose\n\nKeep notes.\n\n## Concept uses\n\n### Display a note\n\nSee [![diagram](icon.svg)](guide%23a.md?mode=reader#setup) and [details][SUBJECT-SOURCE].[^note]\n\n## Evidence\n\n[SUBJECT-SOURCE]: guide%23a.md#setup\n\n[^note]: See [setup][SUBJECT-SOURCE].\n",
 		"module#1/specs/guide#a.md":                            "# Setup\n",
 		"module#1/specs/icon.svg":                              "<svg/>",

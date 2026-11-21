@@ -236,7 +236,7 @@ Check all supported specifications in a project subtree
 dotspec check [source-path] [flags]
 ```
 
-Check authored specifications using the same discovery rules as list. A whole-project check also inspects generated Markdown when dotspec.yaml enables generated_spec. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.
+Check authored specifications using the same discovery rules as list. A whole-project check also inspects generated Markdown for projects declared with dotspec.yaml unless report.enabled is false. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
@@ -1312,7 +1312,7 @@ Build SPEC.md and the supporting Markdown tree
 dotspec spec build [flags]
 ```
 
-Build the requirements specification for one whole project with generated_spec enabled in dotspec.yaml. Validate the candidate before replacing generator-owned output. Run dotspec check to verify the resulting documents.
+Build the requirements specification for one whole project. Reports are enabled by default in projects declared with dotspec.yaml. Validate the candidate before replacing generator-owned output. Run dotspec check to verify the resulting documents.
 
 ```sh
 dotspec spec build

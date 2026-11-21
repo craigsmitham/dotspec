@@ -24,9 +24,13 @@ type Workspace struct {
 }
 
 type Project struct {
-	Name          string `json:"name" yaml:"name"`
-	GeneratedSpec bool   `json:"-" yaml:"generated_spec,omitempty"`
-	Root          string `json:"root" yaml:"-"`
+	Name   string       `json:"name" yaml:"name"`
+	Report ReportConfig `json:"-" yaml:"report"`
+	Root   string       `json:"root" yaml:"-"`
+}
+
+type ReportConfig struct {
+	Enabled bool `yaml:"enabled"`
 }
 
 func (p Project) Manifest() string {
@@ -43,7 +47,7 @@ func hasManifest(dir string) (bool, error) {
 }
 
 func readProject(root string) (*Project, error) {
-	p := &Project{Root: root}
+	p := &Project{Root: root, Report: ReportConfig{Enabled: true}}
 	path := p.Manifest()
 	data, err := os.ReadFile(path)
 	if err != nil {

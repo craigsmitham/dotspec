@@ -36,6 +36,10 @@ code they describe.
 
 ## Scope
 
+dotspec covers the authoring framework, the `*.spec.md` files teams maintain
+alongside their code, and the CLI that discovers and checks those files and
+builds a requirements specification from them.
+
 ## Environment
 
 Contributors edit Markdown in ordinary text editors. Git repositories provide

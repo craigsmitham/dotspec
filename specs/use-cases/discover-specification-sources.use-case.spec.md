@@ -70,5 +70,5 @@ The [source-discovery executable examples](../../internal/integration/testdata/s
 verify outcomes for their illustrated cases. Contributors use the
 inventory to assemble the material for review and decide whether it adequately
 specifies the system. The
-[source authority principle](../dotspec.system.spec.md#source-authority) explains how
+[handbook guidance on source authority](../../docs/handbook/requirements-layers.md#choose-the-authoritative-specification) explains how
 projects assign roles to those sources.

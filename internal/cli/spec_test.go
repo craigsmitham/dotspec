@@ -14,7 +14,7 @@ import (
 func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 	root := projectFixture(t)
 	demo := filepath.Join(root, "apps/demo")
-	writeFixture(t, filepath.Join(demo, "dotspec.yaml"), "name: demo\ngenerated_spec: true\n")
+	writeFixture(t, filepath.Join(root, "dotspec.yaml"), "name: tool\nreport:\n  enabled: false\n")
 	readReport := func(wantCode int, state string, args ...string) check.Report {
 		t.Helper()
 		code, out, errOut := invoke(append(args, "--json")...)
@@ -25,7 +25,7 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 		return report
 	}
 
-	// The manifest opts in even before there are any generated files.
+	// A name-only manifest requires reports from the first whole-project check.
 	readReport(1, "checked", "check", "--project", "demo")
 	readReport(0, "", "check", "--project", "tool")
 	readReport(0, "out-of-scope", "check", "--project", "demo", "--path", "internal")
@@ -33,7 +33,7 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 	if code, _, errOut := invoke("spec", "build", "--project", "demo", "--path", "internal"); code != 2 || !strings.Contains(errOut, "whole project") {
 		t.Fatal(code, errOut)
 	}
-	if code, _, errOut := invoke("spec", "build", "--project", "tool"); code != 2 || errOut == "" {
+	if code, _, errOut := invoke("spec", "build", "--project", "tool"); code != 2 || !strings.Contains(errOut, "report.enabled is false") {
 		t.Fatal(code, errOut)
 	}
 	if code, out, errOut := invoke("spec", "build", "--project", "demo"); code != 0 || !strings.Contains(out, "SPEC.md") || errOut != "" {
@@ -51,6 +51,8 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 	if code != 1 || json.Unmarshal([]byte(out), &workspace) != nil || len(workspace.Projects) != 2 || workspace.Projects[0].ExitCode != 1 || workspace.Projects[1].ExitCode != 0 || errOut != "" {
 		t.Fatal(code, out, errOut)
 	}
+	writeFixture(t, filepath.Join(root, "specs/tool.system.spec.md"), "broken\n")
+	readReport(1, "", "check", "--project", "tool")
 	writeFixture(t, filepath.Join(demo, "specs/demo.system.spec.md"), "broken\n")
 	report := readReport(1, "blocked-by-source", "check", "--project", "demo")
 	for _, finding := range report.Diagnostics {
@@ -64,7 +66,6 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 
 func TestGeneratedSpecificationMultipleRoots(t *testing.T) {
 	root := projectFixture(t)
-	writeFixture(t, filepath.Join(root, "dotspec.yaml"), "name: tool\ngenerated_spec: true\n")
 	writeFixture(t, filepath.Join(root, "other/specs/other.system.spec.md"), "---\ntype: system-spec\n---\n# Other\n\n## Purpose\nOther work.\n\n## Scope\nOther only.\n")
 	code, out, errOut := invoke("check")
 	if code != 1 || errOut != "" || !strings.Contains(out, "root") {
@@ -74,7 +75,6 @@ func TestGeneratedSpecificationMultipleRoots(t *testing.T) {
 
 func TestGeneratedSpecScopedSystemsAndComponents(t *testing.T) {
 	root := projectFixture(t)
-	writeFixture(t, filepath.Join(root, "dotspec.yaml"), "name: tool\ngenerated_spec: true\n")
 	writeFixture(t, filepath.Join(root, "README.md"), "# Tool\n\n[Read the spec](SPEC.md).\n")
 	writeFixture(t, filepath.Join(root, "specs/tool.system.spec.md"), "---\ntype: system-spec\n---\n# Tool\n\n## Purpose\nProcess work.\n\n## Scope\nQueued work.\n\n## Evidence\n[Introduction](../README.md).\n")
 	writeFixture(t, filepath.Join(root, "worker/specs/worker.system.spec.md"), "---\ntype: system-spec\n---\n# Worker\n\n## Description\nA **local** job executor.\n\n## Framing\nCould workers recover interrupted jobs?\n\n## Purpose\nClaim jobs.\n\n## Scope\nExecutors.\n\n## Part of\n[Tool](../../specs/tool.system.spec.md).\n")
@@ -212,7 +212,7 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 
 func TestGeneratedOpenQuestionsLifecycle(t *testing.T) {
 	t.Chdir(t.TempDir())
-	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
+	writeFixture(t, "dotspec.yaml", "name: notes\n")
 	const system = "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nKeep notes.\n\n## Scope\nOne notebook.\n"
 	const source = "specs/notes.system.spec.md"
 	const index = "specification/open-questions.md"
@@ -255,7 +255,7 @@ func TestGeneratedOpenQuestionsLifecycle(t *testing.T) {
 
 func TestOverviewKeepsNavigationOnlyCollectionsInTheMap(t *testing.T) {
 	t.Chdir(t.TempDir())
-	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
+	writeFixture(t, "dotspec.yaml", "name: notes\n")
 	const system = "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nKeep notes.\n\n## Scope\nOne notebook.\n\n"
 	for _, name := range []string{"Draft", "Review", "Publish", "Archive"} {
 		slug := strings.ToLower(name)
@@ -287,7 +287,7 @@ func TestOverviewKeepsNavigationOnlyCollectionsInTheMap(t *testing.T) {
 
 func TestGeneratedSystemReadingLayout(t *testing.T) {
 	t.Chdir(t.TempDir())
-	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
+	writeFixture(t, "dotspec.yaml", "name: notes\n")
 	opening := `---
 type: system-spec
 ---
@@ -391,7 +391,7 @@ An example:
 
 func TestNamedOverviewEntriesKeepScopedDetailAndLinks(t *testing.T) {
 	t.Chdir(t.TempDir())
-	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
+	writeFixture(t, "dotspec.yaml", "name: notes\n")
 	writeFixture(t, "specs/notes.system.spec.md", `---
 type: system-spec
 ---
@@ -484,7 +484,7 @@ A separate archive retains old drafts.
 // destinations through both changes.
 func TestSystemOverviewRichTitleAndCollidingHeadings(t *testing.T) {
 	t.Chdir(t.TempDir())
-	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
+	writeFixture(t, "dotspec.yaml", "name: notes\n")
 	writeFixture(t, "specs/guide.md", "# Guide\n")
 	writeFixture(t, "specs/scope.system.spec.md", `---
 type: system-spec
@@ -525,7 +525,7 @@ See [the boundary detail](#open-questions).
 func TestGeneratedSpecificationMissingSystem(t *testing.T) {
 	root := t.TempDir()
 	t.Chdir(root)
-	writeFixture(t, "dotspec.yaml", "name: empty\ngenerated_spec: true\n")
+	writeFixture(t, "dotspec.yaml", "name: empty\n")
 	code, out, errOut := invoke("check")
 	if code != 1 || errOut != "" || !strings.Contains(out, "root") {
 		t.Fatalf("expected missing root finding: %d %s %s", code, out, errOut)
@@ -580,7 +580,7 @@ func TestNamedSubjectFilesAgreeWithTheirHeadings(t *testing.T) {
 
 func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	t.Chdir(t.TempDir())
-	writeFixture(t, "dotspec.yaml", "name: notes\ngenerated_spec: true\n")
+	writeFixture(t, "dotspec.yaml", "name: notes\n")
 	const systemFile = "specs/notes.system.spec.md"
 	const system = "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nRecord notes.\n\n## Scope\nLocal work.\n"
 	const goals = "\n## Goals\n\n### One\nFirst goal.\n\n### Two\nSecond goal.\n\n### Three\nThird goal.\n"

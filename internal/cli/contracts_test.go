@@ -40,7 +40,7 @@ func prepareExample(t *testing.T, command string) {
 		t.Fatal(err)
 	}
 	if command == "dotspec spec build" {
-		writeFixture(t, "dotspec.yaml", "name: demo\ngenerated_spec: true\n")
+		writeFixture(t, "dotspec.yaml", "name: demo\n")
 		return
 	}
 	writeFixture(t, "specs/features/resume-work.feature.spec.md", "---\ntype: feature-spec\n---\n# Resume work\n")

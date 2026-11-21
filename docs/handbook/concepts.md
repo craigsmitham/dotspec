@@ -102,8 +102,7 @@ use `--relative-to DIR` to resolve links from its destination directory.
 
 In the [To-do spec](../../examples/todo/specification/concepts/checklist.concept.spec-report.md), the
 Checklist section keeps the state, actions and effects table together and links to
-the system's named use, My checklist. Generate that reading path for an opted-in
-project with `dotspec spec build`.
+the system's named use, My checklist. Generate that reading path from the project root with `dotspec spec build`.
 
 Review purpose, independence, adequate state, end-to-end behavior and composition
 promises with people who understand the intended use. Structural validation cannot

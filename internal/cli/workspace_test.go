@@ -49,6 +49,11 @@ func TestProjectSelectorsAndSeparateWorkspaceResults(t *testing.T) {
 			t.Fatal(out)
 		}
 	}
+	for _, project := range []string{"tool", "demo"} {
+		if code, out, errOut := invoke("spec", "build", "--project", project); code != 0 {
+			t.Fatal(code, out, errOut)
+		}
+	}
 	code, out, errOut := invoke("check", "--all", "--json")
 	var result workspaceResult
 	if code != 0 || json.Unmarshal([]byte(out), &result) != nil || len(result.Projects) != 2 {
@@ -193,6 +198,9 @@ func TestWorkspaceRootWithoutProjectAndPathNarrowing(t *testing.T) {
 	code, _, _ = invoke("check")
 	if code != 2 {
 		t.Fatal(code)
+	}
+	if code, out, errOut := invoke("spec", "build", "--project", "demo"); code != 0 {
+		t.Fatal(code, out, errOut)
 	}
 	code, _, errOut = invoke("check", "--all")
 	if code != 0 {

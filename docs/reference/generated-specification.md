@@ -4,14 +4,20 @@ Use a generated spec when readers need one entry point for requirements authored
 
 ## Set up a project
 
-Enable the spec in the project root's `dotspec.yaml`:
+Declare the project in its root `dotspec.yaml`. Generated reports are enabled by default.
 
 ```yaml
 name: todo
-generated_spec: true
 ```
 
-The project needs one root system. Declare child systems with `Part of`; directory nesting alone establishes discovery context. Explicit specification-system selections and directory defaults place subjects in their system. Standalone quality models are reusable reference material. Links into other projects retain their original targets.
+For a source-only project, add this section to the manifest. The project check still validates authored files.
+
+```yaml
+report:
+  enabled: false
+```
+
+A project with generated reports needs one root system. Declare child systems with `Part of`; directory nesting alone establishes discovery context. Explicit specification-system selections and directory defaults place subjects in their system. Standalone quality models are reusable reference material. Links into other projects retain their original targets.
 
 Run the following in the project:
 
@@ -131,6 +137,6 @@ ownership. See the [document model](model/index.md#generateddocument).
 
 ## Check a workspace
 
-Use `dotspec spec build --project NAME` to refresh a selected project. Run `dotspec check --all` on a clean checkout in CI, with a pinned dotspec version. Whole-project checks include the generated files for each opted-in project. A missing, obsolete or stale file is a finding. The check also inspects the visible content and navigation. A subtree or individual-subject check covers only its selected source scope.
+Use `dotspec spec build --project NAME` to refresh a selected project. Run `dotspec check --all` on a clean checkout in CI, with a pinned dotspec version. Whole-project checks include the generated files for each project unless its manifest sets `report.enabled` to `false`. A missing, obsolete or stale file is a finding. The check also inspects the visible content and navigation. A subtree or individual-subject check covers only its selected source scope.
 
 For early feedback, add `dotspec check --all` to a pre-push hook. Use CI to verify the committed tree. A pre-commit hook that enforces synchronization must check staged contents when contributors stage only part of a change.

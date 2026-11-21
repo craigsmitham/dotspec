@@ -9,11 +9,11 @@ source: "../../specs/requirements/generated-specification.requirement.spec.md#re
 
 ## Statement
 
-For an opted-in project with one root system, contributors must be able to generate a deterministic Markdown requirements specification and check its fidelity, navigation, and freshness with the project-wide check. A reader must be able to reach each authored promise in scope, read its qualifications, follow its declared relationships and supporting references, and locate the editable source.
+For a project with one root system and reports enabled, contributors must be able to generate a deterministic Markdown requirements specification and check its fidelity, navigation, and freshness with the project-wide check. A reader must be able to reach each authored promise in scope, read its qualifications, follow its declared relationships and supporting references, and locate the editable source.
 
 ## Applies to
 
-Whole-project builds and checks for projects that enable generated specifications.
+Whole-project builds and checks for projects declared with `dotspec.yaml`. Reports are enabled by default. A project can opt out by setting `report.enabled` to `false`.
 
 ## Criterion
 

@@ -13,7 +13,7 @@ import (
 // imported term's alias as a preferred term.
 func TestSharedGlossarySources(t *testing.T) {
 	t.Chdir(t.TempDir())
-	writeFixture(t, "dotspec.yaml", "name: docs\ngenerated_spec: true\n")
+	writeFixture(t, "dotspec.yaml", "name: docs\n")
 	writeFixture(t, "specs/docs.system.spec.md", `---
 type: system-spec
 glossary_sources: [../words.md]
@@ -119,7 +119,7 @@ Examples.
 
 func TestVocabularyContextsTopicsAndRelationships(t *testing.T) {
 	t.Chdir(t.TempDir())
-	writeFixture(t, "dotspec.yaml", "name: ledger\ngenerated_spec: true\n")
+	writeFixture(t, "dotspec.yaml", "name: ledger\n")
 	writeFixture(t, "specs/ledger.system.spec.md", `---
 type: system-spec
 glossary_sources: [../billing.md, ../collections.md, ../identity.md]
