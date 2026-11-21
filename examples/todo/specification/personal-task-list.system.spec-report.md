@@ -9,6 +9,7 @@ A single-user task list that stores open and completed tasks on one computer.
 
 | Section | Explore |
 | --- | --- |
+| [Framing](<#framing>) | An errand can need another action after it seemed finished. The job of resuming interrupted work gives the reason to keep both open and completed commitments available when the person returns. |
 | [Purpose](<#purpose>) | Help a person pick up unfinished work after an interruption. |
 | [Goals](<#goals>) | [All goals](<goals.md>) |
 | Business rules | [All business rules](<business-rules.md>) |
@@ -21,6 +22,10 @@ A single-user task list that stores open and completed tasks on one computer.
 | [Concepts](<#concepts>) | [Concept definitions](<concepts.md>) · [Concept uses](<concept-uses.md>) |
 | Requirements | [All requirements](<requirements.md>) |
 | [Quality attributes](<#quality-attributes>) | [All quality attributes](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
+
+## Framing
+
+An errand can need another action after it seemed finished. The [job of resuming interrupted work](<jobs/resume-interrupted-work.job.spec-report.md>) gives the reason to keep both open and completed commitments available when the person returns.
 
 ## Purpose
 

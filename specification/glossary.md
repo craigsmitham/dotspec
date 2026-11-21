@@ -15,11 +15,11 @@ generated_by: dotspec
 
 ## Business rule
 
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#business-rule"} -->
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/cli-handbook/reference/model/glossary.md#business-rule"} -->
 
 A declarative business constraint independent of the software or process that enforces it.
 
-[Model reference](<../docs/reference/model/index.md#businessrule>)
+[Model reference](<../docs/cli-handbook/reference/model/index.md#businessrule>)
 
 <a id="term.business-rule.topics"></a>
 
@@ -27,17 +27,17 @@ A declarative business constraint independent of the software or process that en
 
 - Business requirements
 
-[View term source](<../docs/reference/model/glossary.md#business-rule>)
+[View term source](<../docs/cli-handbook/reference/model/glossary.md#business-rule>)
 
 <a id="term.capability"></a>
 
 ## Capability
 
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#capability"} -->
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/cli-handbook/reference/model/glossary.md#capability"} -->
 
 An ability needed to deliver value, potentially combining people, procedures and technology. Distinct from a product feature or structural component; its declaration does not establish a provider.
 
-[Model reference](<../docs/reference/model/index.md#capability>)
+[Model reference](<../docs/cli-handbook/reference/model/index.md#capability>)
 
 <a id="term.capability.topics"></a>
 
@@ -46,17 +46,17 @@ An ability needed to deliver value, potentially combining people, procedures and
 - Business requirements
 - Software requirements
 
-[View term source](<../docs/reference/model/glossary.md#capability>)
+[View term source](<../docs/cli-handbook/reference/model/glossary.md#capability>)
 
 <a id="term.component"></a>
 
 ## Component
 
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#component"} -->
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/cli-handbook/reference/model/glossary.md#component"} -->
 
 A named part of a system with a described responsibility and boundary. Neither its declaration nor code location establishes structural parentage.
 
-[Model reference](<../docs/reference/model/index.md#component>)
+[Model reference](<../docs/cli-handbook/reference/model/index.md#component>)
 
 <a id="term.component.topics"></a>
 
@@ -64,17 +64,17 @@ A named part of a system with a described responsibility and boundary. Neither i
 
 - Software requirements
 
-[View term source](<../docs/reference/model/glossary.md#component>)
+[View term source](<../docs/cli-handbook/reference/model/glossary.md#component>)
 
 <a id="term.concept"></a>
 
 ## Concept
 
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#concept"} -->
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/cli-handbook/reference/model/glossary.md#concept"} -->
 
 A behavior-bearing concept described by purpose, abstract state, actions and an operational principle.
 
-[Model reference](<../docs/reference/model/index.md#concept>)
+[Model reference](<../docs/cli-handbook/reference/model/index.md#concept>)
 
 Relationships from [Feature](<#term.feature.relationships>)
 
@@ -84,17 +84,17 @@ Relationships from [Feature](<#term.feature.relationships>)
 
 - Software requirements
 
-[View term source](<../docs/reference/model/glossary.md#concept>)
+[View term source](<../docs/cli-handbook/reference/model/glossary.md#concept>)
 
 <a id="term.feature"></a>
 
 ## Feature
 
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#feature"} -->
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/cli-handbook/reference/model/glossary.md#feature"} -->
 
 A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own requirements.
 
-[Model reference](<../docs/reference/model/index.md#feature>)
+[Model reference](<../docs/cli-handbook/reference/model/index.md#feature>)
 
 <a id="term.feature.topics"></a>
 
@@ -116,17 +116,17 @@ A recognizable grouping of specified product behavior valued by stakeholders, in
 
 [Pick up where I left off](<../examples/todo/specs/features/pick-up-where-i-left-off.feature.spec.md>) groups the [Return to my list](<../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) use case.
 
-[View term source](<../docs/reference/model/glossary.md#feature>)
+[View term source](<../docs/cli-handbook/reference/model/glossary.md#feature>)
 
 <a id="term.job"></a>
 
 ## Job
 
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#job"} -->
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/cli-handbook/reference/model/glossary.md#job"} -->
 
 What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps and job-story phrasing are optional complementary perspectives.
 
-[Model reference](<../docs/reference/model/index.md#job>)
+[Model reference](<../docs/cli-handbook/reference/model/index.md#job>)
 
 <a id="term.job.topics"></a>
 
@@ -134,17 +134,17 @@ What a performer seeks to accomplish or change in particular circumstances, inde
 
 - User requirements
 
-[View term source](<../docs/reference/model/glossary.md#job>)
+[View term source](<../docs/cli-handbook/reference/model/glossary.md#job>)
 
 <a id="term.quality-attribute"></a>
 
 ## Quality attribute
 
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#quality-attribute"} -->
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/cli-handbook/reference/model/glossary.md#quality-attribute"} -->
 
 A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit requirements, thresholds, or satisfaction.
 
-[Model reference](<../docs/reference/model/index.md#qualityattribute>)
+[Model reference](<../docs/cli-handbook/reference/model/index.md#qualityattribute>)
 
 <a id="term.quality-attribute.topics"></a>
 
@@ -152,17 +152,17 @@ A named quality attribute owned by exactly one system or reusable quality model.
 
 - Software requirements
 
-[View term source](<../docs/reference/model/glossary.md#quality-attribute>)
+[View term source](<../docs/cli-handbook/reference/model/glossary.md#quality-attribute>)
 
 <a id="term.requirement"></a>
 
 ## Requirement
 
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#requirement"} -->
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/cli-handbook/reference/model/glossary.md#requirement"} -->
 
 One required property or behavior, declared in its own requirement specification. Functional and quality requirements share this type. Either can reference a system quality attribute.
 
-[Model reference](<../docs/reference/model/index.md#requirement>)
+[Model reference](<../docs/cli-handbook/reference/model/index.md#requirement>)
 
 Relationships from [Feature](<#term.feature.relationships>)
 
@@ -172,17 +172,17 @@ Relationships from [Feature](<#term.feature.relationships>)
 
 - Software requirements
 
-[View term source](<../docs/reference/model/glossary.md#requirement>)
+[View term source](<../docs/cli-handbook/reference/model/glossary.md#requirement>)
 
 <a id="term.system"></a>
 
 ## System
 
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#system"} -->
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/cli-handbook/reference/model/glossary.md#system"} -->
 
 The system described by a system document; subordinate systems retain their own boundaries and quality attributes.
 
-[Model reference](<../docs/reference/model/index.md#system>)
+[Model reference](<../docs/cli-handbook/reference/model/index.md#system>)
 
 <a id="term.system.topics"></a>
 
@@ -191,17 +191,17 @@ The system described by a system document; subordinate systems retain their own 
 - Business requirements
 - Software requirements
 
-[View term source](<../docs/reference/model/glossary.md#system>)
+[View term source](<../docs/cli-handbook/reference/model/glossary.md#system>)
 
 <a id="term.use-case"></a>
 
 ## Use case
 
-<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#use-case"} -->
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/cli-handbook/reference/model/glossary.md#use-case"} -->
 
 An actor goal and its interactions at a stated system boundary, with alternative paths and protections.
 
-[Model reference](<../docs/reference/model/index.md#usecase>)
+[Model reference](<../docs/cli-handbook/reference/model/index.md#usecase>)
 
 Relationships from [Feature](<#term.feature.relationships>)
 
@@ -211,6 +211,6 @@ Relationships from [Feature](<#term.feature.relationships>)
 
 - Software requirements
 
-[View term source](<../docs/reference/model/glossary.md#use-case>)
+[View term source](<../docs/cli-handbook/reference/model/glossary.md#use-case>)
 
 [View source for “Glossary”](<../specs/dotspec.system.spec.md#glossary>)

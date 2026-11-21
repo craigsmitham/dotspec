@@ -1,0 +1,108 @@
+# A consumer starts outside a project and discovers the same topic in everyday terms.
+exec dotspec --help
+stdout 'docs +Browse the offline authoring handbook'
+stdout 'dotspec docs job'
+exec dotspec help
+stdout 'dotspec docs job'
+exec dotspec help job
+stdout 'dotspec docs job'
+exec dotspec docs
+stdout 'Start with the To-do'
+stdout 'dotspec docs job'
+exec dotspec docs job
+stdout 'Jobs to be done'
+stdout 'Write a job from a concrete situation \(How-to\)'
+stdout 'What makes something a job to be done.*Explanation'
+stdout 'dotspec docs reference/formats/job#job-spec-format'
+cp stdout topic
+exec dotspec docs jtbd
+cmp stdout topic
+exec dotspec docs jobs to be done
+cmp stdout topic
+exec dotspec docs success criteria
+stdout 'dotspec docs '
+cp stdout search
+exec dotspec docs 'success criteria'
+cmp stdout search
+exec dotspec __complete docs guides/write
+stdout 'guides/write-a-job'
+exec dotspec __complete docs jo
+stdout '^job$'
+
+# Creating a draft leads directly to the how-to, and its links work offline.
+exec dotspec job init resume
+stdout 'dotspec docs guides/write-a-job'
+exec dotspec docs guides/write-a-job
+stdout '## Reconstruct one occasion'
+stdout 'dotspec docs reference/formats/job#job-spec-format'
+exec dotspec docs 'reference/formats/job#job-spec-format'
+stdout '^## Job spec format'
+! stdout '^## Job commands'
+exec dotspec docs examples
+stdout 'examples/todo/specs/jobs/resume.job.spec.md'
+exec dotspec docs examples/todo/specs/jobs/resume.job.spec.md
+stdout '^type: job-spec'
+stdout '## Evidence'
+! stdout 'Read linked pages'
+cp stdout saved
+exec dotspec docs examples/todo/specs/jobs/resume.job.spec.md
+cmp stdout saved
+
+# A finding keeps its stable ID and the plain text guidance leads to the section.
+exec dotspec requirement init feedback
+stdout 'dotspec docs guides/requirements'
+cp draft specs/requirements/feedback.requirement.spec.md
+exec dotspec requirement check feedback --json
+stdout '"rule": "requirement.measurement-basis"'
+! stdout 'dotspec docs'
+exec dotspec requirement check feedback
+stdout 'Guide: dotspec docs requirement.measurement-basis'
+exec dotspec docs requirement.measurement-basis
+stdout '^## Define or reference the criterion once'
+! stdout '^## Describe context of use explicitly'
+exec dotspec docs job.performer
+stdout '^## Identify the performer'
+! stdout '^## State the progress'
+
+status 2 dotspec docs job.misspelled
+stderr 'job.misspelled.*run dotspec docs'
+! stdout .
+status 2 dotspec docs 'guides/write-a-job#typo'
+stderr 'typo.*run dotspec docs'
+status 2 dotspec docs guides/missing
+stderr 'guides/missing.*run dotspec docs'
+status 2 dotspec docs ../draft
+stderr 'run dotspec docs'
+status 2 dotspec docs xyzzy-missing
+stderr 'no documentation matches.*run dotspec docs'
+status 2 dotspec guide
+
+# Public reading is bounded by the installed handbook.
+exec dotspec docs README
+stdout 'The dotspec handbook'
+exec dotspec docs
+! stdout 'dotspec docs maintaining'
+exec dotspec __complete docs maintainers/
+! stdout 'maintainers/'
+status 2 dotspec docs maintainers/releasing
+stderr 'run dotspec docs'
+status 2 dotspec docs handbook/requirements
+stderr 'run dotspec docs'
+status 2 dotspec docs CONTRIBUTING.md
+status 2 dotspec docs 'Snapshot builds never publish'
+
+-- draft --
+---
+type: requirement-spec
+---
+# Timely feedback
+
+## Statement
+
+Members receive feedback promptly.
+
+## Criterion
+
+### Measure
+
+Elapsed time to visible feedback.

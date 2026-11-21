@@ -1,0 +1,33 @@
+---
+type: requirement-spec
+quality_attributes: [usability]
+---
+# Find authoring guidance in the installed CLI
+
+## Applies to
+
+Contributors using an installed version of dotspec, including in an empty directory without a project or network connection.
+
+## Statement
+
+A contributor must be able to reach the relevant versioned guidance from a specification type, a question in their own words, or a mapped diagnostic, then read the selected page, section, or worked example offline.
+
+## Criterion
+
+Root help identifies the handbook. Type help opens a route to the topic. Creating a draft reports its path and a direct reading command. A topic and its synonym show the same ordered destinations, each with its title, documentation form and reading command. Searching by words gives title and topic matches priority over body matches, with repeatable ordering. An exact address opens its destination. An invalid address reports the failed lookup with a route back to browsing.
+
+A section includes its subordinate content. Offline reading commands for linked sections preserve their anchors. Redirecting a whole example reproduces the bundled source. The CLI handbook index and knowledge index lead readers to the same catalog destinations as the installed CLI.
+
+Only the Markdown in `docs/cli-handbook/` and the selected worked examples and model or specification references are available for offline reading. Search and shell completion follow the same publication boundary. A nested handbook page becomes addressable when the CLI is rebuilt. Repository-only citations identify their repository paths. Maintainer pages and plans are excluded from the executable, knowledge bundle and platform archives.
+
+## Evidence
+
+The [offline discovery scenarios](../../internal/integration/testdata/docs.txtar) exercise help, topic selection, search, diagnostic lookup, exact destinations, completion and redirection. The [package check](../../scripts/package-knowledge/test_package.py) compares index links with the topic catalog.
+
+### Reader exercise
+
+The [handbook reader exercise](../../docs/maintainers/handbook.md#try-the-guidance-from-an-installation) asks a contributor to revise a thin job statement and identify what still needs evidence.
+
+## Rationale
+
+A structurally complete draft can still leave the reader guessing about the performer’s circumstances. Authors need guidance while they are writing.

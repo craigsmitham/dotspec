@@ -1,9 +1,7 @@
-// Package guide resolves handbook topics and worked examples in the installed binary.
 package guide
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io/fs"
 	"maps"
@@ -17,172 +15,273 @@ import (
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	modelschema "github.com/craigsmitham/dotspec/model"
 	"github.com/craigsmitham/dotspec/specs"
-	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
-	"github.com/yuin/goldmark/parser"
-	"github.com/yuin/goldmark/text"
 )
 
-// Topic is a named route into the versioned documentation.
-type Topic struct {
-	Name        string `json:"topic"`
-	Page        string
-	Description string
-	Rules       []string
-}
+var roots = map[string]fs.FS{"docs": docs.Files, "model": modelschema.GuideFiles, "examples": examples.Files, "specs": specs.Files}
 
-// The CLI and AXM distributions use the same maintainer-owned catalog.
-var topics, ruleTopics = loadTopics()
-
-func loadTopics() (map[string]Topic, map[string]string) {
-	data, err := docs.Files.ReadFile("handbook/topics.json")
-	if err != nil {
-		panic(err)
-	}
-	var catalog []Topic
-	if err := json.Unmarshal(data, &catalog); err != nil {
-		panic(err)
-	}
-	topics := map[string]Topic{"examples": {Name: "examples", Description: "Browse the files bundled from the To-do example."}}
-	rules := map[string]string{}
-	for _, entry := range catalog {
-		if _, exists := topics[entry.Name]; exists {
-			panic("duplicate guide topic: " + entry.Name)
-		}
-		topics[entry.Name] = entry
-		for _, rule := range entry.Rules {
-			if _, exists := rules[rule]; exists {
-				panic("duplicate guide rule: " + rule)
-			}
-			rules[rule] = entry.Name
-		}
-	}
-	return topics, rules
-}
-
-// HasRule reports whether a diagnostic links to an authored explanation.
-func HasRule(rule string) bool { return ruleTopics[rule] != "" }
-
-func readPage(name string) ([]byte, error) {
+func readFile(name string) ([]byte, error) {
 	root, file, _ := strings.Cut(name, "/")
-	switch root {
-	case "docs":
-		if path.Ext(file) == ".md" || file == "handbook/topics.json" {
-			return docs.Files.ReadFile(file)
-		}
-	case "model":
-		return modelschema.GuideFiles.ReadFile(file)
-	case "specs":
-		return specs.Files.ReadFile(file)
-	case "examples":
+	if root == "examples" {
 		if content, ok := examples.AppSpecs[file]; ok {
 			return []byte(content), nil
 		}
-		return examples.Files.ReadFile(file)
+	}
+	if root == "docs" && path.Ext(file) != ".md" && file != "cli-handbook/topics.json" {
+		return nil, fs.ErrNotExist
+	}
+	if files := roots[root]; files != nil {
+		return fs.ReadFile(files, file)
 	}
 	return nil, fs.ErrNotExist
 }
 
-// section returns an authored section, retaining nested headings and fenced examples.
-func section(data []byte, id string) ([]byte, error) {
-	md := goldmark.New(goldmark.WithParserOptions(parser.WithAutoHeadingID()))
-	doc := md.Parser().Parse(text.NewReader(data))
+func readDestination(source string) ([]byte, error) {
+	file, anchor, section := strings.Cut(source, "#")
+	data, err := readFile(file)
+	if err != nil {
+		return nil, err
+	}
+	if !section {
+		return data, nil
+	}
+	md := specfile.NewMarkdown(data)
 	start, level := 0, 0
-	for n := doc.FirstChild(); n != nil; n = n.NextSibling() {
+	for n := md.Tree.FirstChild(); n != nil; n = n.NextSibling() {
 		h, ok := n.(*ast.Heading)
 		if !ok {
 			continue
 		}
-		line := bytes.LastIndexByte(data[:h.Pos()], '\n') + 1
+		line := bytes.LastIndexByte(md.Body[:h.Pos()], '\n') + 1
 		if level > 0 && h.Level <= level {
-			return data[start:line], nil
+			return md.Body[start:line], nil
 		}
-		anchor, ok := h.AttributeString("id")
-		if ok && string(anchor.([]byte)) == id {
+		id, ok := h.AttributeString("id")
+		if ok && string(id.([]byte)) == anchor {
 			start, level = line, h.Level
 		}
 	}
 	if level > 0 {
-		return data[start:], nil
+		return md.Body[start:], nil
 	}
-	return nil, fmt.Errorf("unknown guide section %q", id)
+	return nil, fmt.Errorf("unknown section %q in %s", anchor, file)
 }
 
-// Topics returns the available guide routes in alphabetical order.
-// The examples route builds its listing from embedded files and has no source page.
-func Topics() []Topic {
-	var result []Topic
-	for _, name := range slices.Sorted(maps.Keys(topics)) {
-		result = append(result, topics[name])
+func headingTitle(data []byte, source string) string {
+	_, _, section := strings.Cut(source, "#")
+	md := specfile.NewMarkdown(data)
+	for n := md.Tree.FirstChild(); n != nil; n = n.NextSibling() {
+		if h, ok := n.(*ast.Heading); ok && (h.Level == 1 || section) {
+			return strings.TrimSpace(string(h.Lines().Value(md.Body)))
+		}
+	}
+	return path.Base(source)
+}
+
+func sourceFor(id string) string {
+	file, anchor, section := strings.Cut(id, "#")
+	// Check the documentation file first so IDs can contain dots.
+	if _, err := fs.Stat(docs.Files, "cli-handbook/"+file+".md"); err == nil {
+		file = docs.Root + "/" + file + ".md"
+	} else if file == "topics.json" {
+		file = docs.Root + "/" + file
+	}
+	if section {
+		return file + "#" + anchor
+	}
+	return file
+}
+
+// Read uses only versioned, embedded sources. Explicit addresses never fall
+// through to search, so a broken link is visible even if its words occur elsewhere.
+func Read(query string) (string, error) {
+	query = strings.TrimSpace(query)
+	if query == "" {
+		var out strings.Builder
+		fmt.Fprintf(&out, "# Authoring handbook\n\nStart with the To-do walkthrough: dotspec docs %s\n\n", StartingPage("handbook"))
+		for _, t := range Topics() {
+			fmt.Fprintf(&out, "%s — %s\n  dotspec docs %s\n", t.Title, t.Description, t.Name)
+		}
+		return out.String(), nil
+	}
+	if name := handbook.names[strings.ToLower(query)]; name != "" {
+		t := handbook.topics[name]
+		var out strings.Builder
+		fmt.Fprintf(&out, "# %s\n\n%s\n\n", t.Title, t.Description)
+		for _, d := range t.Pages {
+			title, err := d.PageTitle()
+			if err != nil {
+				return "", err
+			}
+			fmt.Fprintf(&out, "%s (%s)\n  dotspec docs %s\n", title, d.Form(), d.ID())
+		}
+		if name == "examples" {
+			files, err := bundledFiles("examples")
+			if err != nil {
+				return "", err
+			}
+			out.WriteString("\n## Bundled files\n")
+			for _, file := range files {
+				fmt.Fprintf(&out, "\n  dotspec docs %s", file)
+			}
+			out.WriteByte('\n')
+		}
+		return out.String(), nil
+	}
+	source := handbook.rules[query]
+	if source == "" {
+		source = sourceFor(query)
+	}
+	data, err := readDestination(source)
+	if err == nil {
+		if strings.HasPrefix(source, "examples/") || strings.HasPrefix(source, "specs/") {
+			return string(data), nil
+		}
+		file, _, _ := strings.Cut(source, "#")
+		if path.Ext(file) != ".md" {
+			return string(data), nil
+		}
+		return linkedPage(source, data), nil
+	}
+	if strings.ContainsAny(query, "/#.\\") || handbook.rules[query] != "" {
+		return "", fmt.Errorf("cannot open %q: %w; run dotspec docs to browse topics", query, err)
+	}
+	return search(query)
+}
+
+func linkedPage(source string, data []byte) string {
+	var out strings.Builder
+	out.Write(data)
+	name, _, _ := strings.Cut(source, "#")
+	seen := map[string]bool{}
+	var offline, repository strings.Builder
+	for _, link := range specfile.MarkdownReferences(data).Links {
+		u, err := url.Parse(link.Destination)
+		if err != nil || u.IsAbs() || u.Host != "" || path.IsAbs(u.Path) {
+			continue
+		}
+		file := name
+		if u.Path != "" {
+			file = path.Join(path.Dir(name), u.Path)
+		}
+		id := pageID(file)
+		if u.Fragment != "" {
+			id += "#" + u.Fragment
+		}
+		if seen[id] {
+			continue
+		}
+		seen[id] = true
+		if _, err := readFile(file); err == nil {
+			fmt.Fprintf(&offline, "- `dotspec docs %s`\n", id)
+		} else {
+			fmt.Fprintf(&repository, "- `%s`\n", id)
+		}
+	}
+	if offline.Len() > 0 {
+		out.WriteString("\n## Read linked pages offline\n\n" + offline.String())
+	}
+	if repository.Len() > 0 {
+		out.WriteString("\n## Repository references\n\n" + repository.String())
+	}
+	return out.String()
+}
+
+func bundledFiles(root string) ([]string, error) {
+	var files []string
+	err := fs.WalkDir(roots[root], ".", func(file string, d fs.DirEntry, err error) error {
+		if err == nil && !d.IsDir() && (path.Ext(file) == ".md" || root == "examples") {
+			files = append(files, root+"/"+file)
+		}
+		return err
+	})
+	if root == "examples" {
+		for file := range examples.AppSpecs {
+			files = append(files, "examples/"+file)
+		}
+	}
+	slices.Sort(files)
+	return files, err
+}
+
+// destinations includes searchable pages outside the curated topic collections.
+func destinations() ([]string, error) {
+	set := map[string]bool{}
+	for _, root := range []string{"docs", "examples", "model", "specs"} {
+		files, err := bundledFiles(root)
+		if err != nil {
+			return nil, err
+		}
+		for _, file := range files {
+			set[file] = true
+		}
+	}
+	for _, t := range handbook.topics {
+		for _, d := range t.Pages {
+			set[d.Page] = true
+		}
+	}
+	return slices.Sorted(maps.Keys(set)), nil
+}
+
+func Complete(prefix string) []string {
+	set := map[string]bool{}
+	for name := range handbook.topics {
+		set[name] = true
+	}
+	files, _ := destinations() // Only embedded, build-time filesystems.
+	for _, file := range files {
+		set[pageID(file)] = true
+	}
+	var result []string
+	for _, id := range slices.Sorted(maps.Keys(set)) {
+		if strings.HasPrefix(id, prefix) {
+			result = append(result, id)
+		}
 	}
 	return result
 }
 
-// Read returns Markdown and never consults the current project or the network.
-func Read(query string) (string, error) {
-	if query == "examples" {
-		var list strings.Builder
-		list.WriteString("# Worked examples\n\nOpen a file with `dotspec guide PATH`.\n\n")
-		err := fs.WalkDir(examples.Files, ".", func(p string, entry fs.DirEntry, err error) error {
-			if err == nil && !entry.IsDir() {
-				fmt.Fprintf(&list, "- examples/%s\n", p)
-			}
-			return err
-		})
-		for _, file := range slices.Sorted(maps.Keys(examples.AppSpecs)) {
-			fmt.Fprintf(&list, "- examples/%s\n", file)
-		}
-		return list.String(), err
-	}
-	key := query
-	if topic := ruleTopics[key]; topic != "" {
-		key = topic
-	}
-	target := key
-	if key == "" {
-		target = topics["handbook"].Page
-	} else if file := topics[key].Page; file != "" {
-		target = file
-	}
-	name, fragment, _ := strings.Cut(target, "#")
-	data, err := readPage(name)
+func search(query string) (string, error) {
+	files, err := destinations()
 	if err != nil {
-		return "", fmt.Errorf("unknown guide topic or file %q; run dotspec guide for topics", query)
+		return "", err
 	}
-	if fragment != "" {
-		data, err = section(data, fragment)
+	subject := map[string]string{}
+	for _, t := range handbook.topics {
+		for _, d := range t.Pages {
+			subject[d.Page] += " " + strings.Join(append([]string{t.Name, t.Title, t.Description}, t.Synonyms...), " ")
+		}
+	}
+	terms := strings.Fields(strings.ToLower(query))
+	matches := func(s string) bool {
+		s = strings.ToLower(s)
+		for _, term := range terms {
+			if !strings.Contains(s, term) {
+				return false
+			}
+		}
+		return true
+	}
+	var primary, secondary strings.Builder
+	for _, file := range files {
+		data, err := readDestination(file)
 		if err != nil {
 			return "", err
 		}
-	}
-	// Return example files verbatim so the reader can also save them as fixtures.
-	if strings.HasPrefix(name, "examples/") || strings.HasPrefix(name, "specs/") || path.Ext(name) != ".md" {
-		return string(data), nil
-	}
-
-	var out strings.Builder
-	if query == "" {
-		fmt.Fprintf(&out, "Topics: %s\n\n", strings.Join(slices.Sorted(maps.Keys(topics)), ", "))
-	}
-	out.Write(data)
-	seen := map[string]bool{}
-	for _, link := range specfile.MarkdownReferences(data).Links {
-		u, err := url.Parse(link.Destination)
-		if err != nil || u.IsAbs() || u.Host != "" || u.Path == "" || path.IsAbs(u.Path) {
-			continue
+		d := Destination{Page: file}
+		title := headingTitle(data, file)
+		out := &primary
+		if !matches(title + " " + subject[file]) {
+			if !matches(string(data)) {
+				continue
+			}
+			out = &secondary
 		}
-		file := path.Join(path.Dir(name), u.Path)
-		if seen[file] {
-			continue
-		}
-		if _, err := readPage(file); err != nil {
-			continue
-		}
-		if len(seen) == 0 {
-			out.WriteString("\n## Read linked pages offline\n\n")
-		}
-		seen[file] = true
-		fmt.Fprintf(&out, "- `dotspec guide %s`\n", file)
+		fmt.Fprintf(out, "%s (%s)\n  dotspec docs %s\n", title, d.Form(), d.ID())
 	}
-	return out.String(), nil
+	if primary.Len()+secondary.Len() == 0 {
+		return "", fmt.Errorf("no documentation matches %q; run dotspec docs to browse topics", query)
+	}
+	return primary.String() + secondary.String(), nil
 }

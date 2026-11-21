@@ -72,7 +72,7 @@ func runConcept(command, path, slug, format string, out io.Writer) error {
 		if format == "json" {
 			return writeJSON(out, createdResult{1, target})
 		}
-		_, err = fmt.Fprintf(out, "Created %s\nDescribe the purpose, state, actions, and operational principle as they become known.\nAuthoring guide: dotspec guide concept\n", displayPath(target))
+		_, err = fmt.Fprintf(out, "Created %s\nDescribe the purpose, state, actions, and operational principle as they become known.\nAuthoring guide: %s\n", displayPath(target), authoringPage("concept"))
 		return err
 	}
 	if command == "check" {

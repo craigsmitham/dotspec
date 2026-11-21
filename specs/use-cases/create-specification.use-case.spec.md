@@ -33,7 +33,7 @@ An existing target is preserved according to the
 ## Main success scenario
 
 1. The contributor selects a project directory, specification type, and local name.
-2. Dotspec creates the draft and reports its path.
+2. Dotspec creates the draft and reports its path with a direct command for the [authoring guidance](../requirements/offline-authoring-guidance.requirement.spec.md).
 3. The contributor opens the document and replaces prompts with known behavior.
 
 ## Extensions
@@ -59,6 +59,6 @@ be edited without invoking init.
 
 ## Authority
 
-The [init commands](../../docs/reference/cli.md) and linked requirement define command behavior.
+The [init commands](../../docs/cli-handbook/reference/cli.md) and linked requirement define command behavior.
 The [use-case command examples](../../internal/integration/testdata/use-cases.txtar)
 verify the illustrated template-selection and non-overwrite outcomes.

@@ -15,11 +15,11 @@ binary on your PATH. From your project directory:
 4. Run `dotspec spec build` to generate `SPEC.md` and its supporting reports.
 5. Run `dotspec check` to check the sources and report freshness. Commit the generated files with their sources.
 
-Run `dotspec guide` to read the built-in handbook offline.
+Run `dotspec docs` to browse the offline handbook. Use `dotspec docs job` to choose guidance on jobs to be done, or `dotspec docs success criteria` to search.
 
 ## Documentation
 
-- [Authoring handbook](docs/handbook/README.md) and [runnable To-do example](examples/todo/README.md)
-- [Generate a requirements specification](docs/reference/generated-specification.md) and [browse the To-do spec](examples/todo/SPEC.md)
-- [CLI reference](docs/reference/cli.md) and [documentation index](docs/README.md)
+- [Authoring handbook](docs/cli-handbook/README.md) and [runnable To-do example](examples/todo/README.md)
+- [Generate a requirements specification](docs/cli-handbook/reference/generated-specification.md) and [browse the To-do spec](examples/todo/SPEC.md)
+- [CLI reference](docs/cli-handbook/reference/cli.md) and [documentation index](docs/README.md)
 - [dotspec's requirements specification](SPEC.md) and [contributing guide](CONTRIBUTING.md)

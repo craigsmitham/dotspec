@@ -68,7 +68,7 @@ source metadata.
 
 ## Evidence
 
-Checks for this requirement include [To-do reader journey and regression probes](<../../scripts/check-example/check.py>), [generated specification guide](<../../docs/reference/generated-specification.md>).
+Checks for this requirement include [To-do reader journey and regression probes](<../../scripts/check-example/check.py>), [generated specification guide](<../../docs/cli-handbook/reference/generated-specification.md>).
 
 ## Rationale
 

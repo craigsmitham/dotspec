@@ -176,10 +176,10 @@ def spec_journey(cli, tmp):
     assert all(target != entry for page in (project / "specification").rglob("*.md")
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")
-    sections = ["Purpose", "Goals", "Stakeholders and user needs", "Scope and environment", "System topology",
+    sections = ["Framing", "Purpose", "Goals", "Stakeholders and user needs", "Scope and environment", "System topology",
                 "Features", "Concepts", "Quality attributes"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
-    navigation = overview.split("\n## Purpose\n", 1)[0]
+    navigation = overview.split("\n## Framing\n", 1)[0]
     rows = [line for line in navigation.splitlines() if line.startswith("| ")]
     for title, index in (("Features", "features"), ("Capabilities", "capabilities"),
                          ("Use cases", "use-cases"), ("Requirements", "requirements")):
@@ -360,16 +360,22 @@ def inspect(cli):
         assert detail in cli(command, "resume", "--path", TODO)
     assert "s1 --> s2" in cli("job map", "resume", "--format", "mermaid", "--path", TODO)
     assert "Snapshot" in json.loads(cli("model schema"))["$defs"]
-    assert "To-do" in cli("guide")
-    assert "examples/todo/specs/personal-task-list.system.spec.md" in cli("guide", "examples")
-    catalog = json.loads((ROOT / "docs/handbook/topics.json").read_bytes())
+    assert "To-do" in cli("docs")
+    assert "examples/todo/specs/personal-task-list.system.spec.md" in cli("docs", "examples")
+    catalog = json.loads((ROOT / "docs/cli-handbook/topics.json").read_bytes())
     coverage = (TODO / "COVERAGE.md").read_text(encoding="utf-8")
     exercises = coverage.split("## Handbook and authoring exercises", 1)[1].split("## Field inventory", 1)[0]
     for entry in catalog:
         assert f"`{entry['topic']}`" in exercises, f"assign a review exercise for {entry['topic']}"
-        assert cli("guide", entry["topic"]) == cli("guide", entry["page"]), entry["topic"]
-        for rule in entry.get("rules", []):
-            assert cli("guide", rule) == cli("guide", entry["topic"]), rule
+        menu = cli("docs", entry["topic"])
+        for destination in entry["pages"]:
+            page = destination["page"]
+            address = page.removeprefix("docs/cli-handbook/").replace(".md", "", 1) if page.startswith("docs/cli-handbook/") else page
+            assert f"dotspec docs {address}\n" in menu, address
+            assert cli("docs", address), address
+            for rule, anchor in destination.get("rules", {}).items():
+                target = address.split("#")[0] + "#" + anchor if anchor else address
+                assert cli("docs", rule) == cli("docs", target), rule
 
 
 def author(cli, tmp):

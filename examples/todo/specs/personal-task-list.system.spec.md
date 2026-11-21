@@ -7,6 +7,10 @@ type: system-spec
 
 A single-user task list that stores open and completed tasks on one computer.
 
+## Framing
+
+An errand can need another action after it seemed finished. The [job of resuming interrupted work](jobs/resume.job.spec.md) gives the reason to keep both open and completed commitments available when the person returns.
+
 ## Purpose
 
 Help a person pick up unfinished work after an interruption.

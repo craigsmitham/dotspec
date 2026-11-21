@@ -15,7 +15,7 @@ mise run fuzz
 mise run snapshot
 ```
 
-Inspect `dist/`, verify the host executable's version and help, and verify archive
+The snapshot task checks each archive for the public handbook and worked specifications and rejects repository-only documentation. Inspect `dist/`, verify the host executable's version and help, and verify archive
 checksums. Snapshot builds never publish and may be run from an uncommitted worktree.
 Review and commit the final changes before creating a release tag.
 

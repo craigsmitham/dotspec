@@ -74,7 +74,7 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 		if format == "json" {
 			return writeJSON(out, createdResult{1, target})
 		}
-		_, err = fmt.Fprintf(out, "Created %s\nEdit Description, Purpose, and Scope. Keep the filename in sync if you rename the system.\nAuthoring guide: dotspec guide system\n", displayPath(target))
+		_, err = fmt.Fprintf(out, "Created %s\nEdit Description, Purpose, and Scope. Keep the filename in sync if you rename the system.\nAuthoring guide: %s\n", displayPath(target), authoringPage("system"))
 		return err
 	case "show":
 		if len(args) > 0 {
@@ -167,7 +167,7 @@ func newComponentCommand() *cobra.Command {
 			if format == "json" {
 				return writeJSON(cmd.OutOrStdout(), createdResult{1, target})
 			}
-			_, err = fmt.Fprintf(cmd.OutOrStdout(), "Created %s\n", displayPath(target))
+			_, err = fmt.Fprintf(cmd.OutOrStdout(), "Created %s\nAuthoring guide: %s\n", displayPath(target), authoringPage("component"))
 			return err
 		}}
 	cmd.Flags().StringVar(&parent, "part-of", "", "Parent system or component source file, relative to the working directory")

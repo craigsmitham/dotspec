@@ -82,7 +82,7 @@ func newProductCommand(layout specfile.Layout) *cobra.Command {
 				if format == "json" {
 					return writeJSON(out, createdResult{1, path})
 				}
-				_, err = fmt.Fprintf(out, "Created %s\n", displayPath(path))
+				_, err = fmt.Fprintf(out, "Created %s\nAuthoring guide: %s\n", displayPath(path), authoringPage(layout.Kind))
 				return err
 			case "check":
 				return emitCheckReport(out, check.Focused(dir, selector, system.ProductCheckType(layout), supportedTypes()...), format)

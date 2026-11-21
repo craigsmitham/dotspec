@@ -11,6 +11,7 @@ from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 
 ROOT = Path(__file__).resolve().parents[2]
+HANDBOOK = PurePosixPath("docs/cli-handbook")
 PACKAGE = Path(__file__).with_name("knowledge.json")
 
 
@@ -57,37 +58,73 @@ def bundle_links(markdown, page, included, revision, contents):
     return ''.join(lines)
 
 
+def page_form(page):
+    path = PurePosixPath(page)
+    root = path.parts[0]
+    if root in ('examples', 'specs'):
+        return 'example'
+    if root == 'model':
+        return 'reference'
+    return {'explanations': 'explanation', 'tutorials': 'tutorial',
+            'reference': 'reference'}.get(path.relative_to(HANDBOOK).parts[0], 'guide')
+
+
+def publication_pages(catalog):
+    public = ROOT / HANDBOOK
+    pages = {file.relative_to(ROOT).as_posix(): file.stem.replace('-', ' ')
+             for file in sorted(public.glob('*/**/*.md'))}
+    pages[str(HANDBOOK / 'README.md')] = 'Choose an authoring guide or worked example.'
+    pages['model/markdown-mapping.md'] = "Markdown mapping profile."
+    pages['examples/todo/README.md'] = "Walk through the To-do application."
+    for folder in ('examples/todo/specs', 'examples/todo/app/specs'):
+        for file in sorted((ROOT / folder).rglob('*.spec.md')):
+            pages[file.relative_to(ROOT).as_posix()] = "Worked specification from the To-do app."
+
+    # Other public specifications are copied when an editor selects them for a topic.
+    selectable = {file.relative_to(ROOT).as_posix() for file in (ROOT / 'specs').rglob('*.spec.md')}
+    selectable.update(file.relative_to(ROOT).as_posix()
+                      for file in (ROOT / 'examples/todo/specification').rglob('*.md'))
+    selectable.add('examples/todo/SPEC.md')
+    for entry in catalog:
+        for destination in entry['pages']:
+            page = destination['page'].partition('#')[0]
+            if page not in pages and page not in selectable:
+                raise ValueError(f"Catalog destination outside the published handbook and examples: {page}")
+            pages[page] = entry['description']
+    return pages
+
+
 def build(version, target):
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     manifest = json.loads(PACKAGE.read_text())
     if version:
         manifest["version"] = version
     contents = {"knowledge.json": json.dumps(manifest, indent=2) + "\n"}
-    catalog = json.loads((ROOT / "docs/handbook/topics.json").read_text())
-    pages = {}
-    for entry in catalog:
-        pages.setdefault(entry["page"].split("#")[0], entry["description"])
-    for file in sorted((ROOT / "examples/todo").rglob("*.spec.md")):
-        pages[file.relative_to(ROOT).as_posix()] = "Worked specification from the To-do app."
+    public = ROOT / HANDBOOK
+    catalog = json.loads((public / 'topics.json').read_text())
+    pages = publication_pages(catalog)
 
+    # The bundle index lives at src/, the repository navigation at the handbook root.
+    navigation = (public / 'README.md').read_text().split("<!-- Generated topic navigation -->", 1)[1]
+    navigation = re.sub(r'\]\(([^)]+)\)', lambda m: '](' + posixpath.normpath(
+        posixpath.join(str(HANDBOOK), m[1])) + ')', navigation)
     index = ['---', 'okf_version: "0.2"', '---', '', '# dotspec handbook', '',
-             'Start with the authoring handbook or open a topic for the decision at hand.', '',
-             '## Guides', '']
-    for entry in catalog:
-        index.append(f'- [{entry["topic"]}]({entry["page"]}) — {entry["description"]}')
-    index.extend(['', '## Worked examples', ''])
+             'Choose a topic and follow its pages in reading order.', navigation.strip(), '',
+             '## Worked specifications', '']
     for page, description in pages.items():
         body = (ROOT / page).read_text()
-        example = page.startswith('examples/')
-        if example:
+        if page.endswith('.spec.md'):
             # Native spec metadata belongs to the original example. AXM uses OKF frontmatter.
             _, _, body = body.partition('\n---\n')
             title = re.search(r'^# (.+)$', body, re.MULTILINE)[1]
             index.append(f'- [{title}]({page}) — {description}')
-        tags = ['dotspec', 'example' if example else 'authoring', Path(page).stem.split('.')[0].lower()]
-        metadata = ('---\ntype: ' + ('example' if example else 'guide') +
+        form = page_form(page)
+        tags = ['dotspec', form, Path(page).stem.split('.')[0].lower()]
+        metadata = ('---\ntype: ' + form +
                     '\ndescription: ' + json.dumps(description) +
                     '\ntags: ' + json.dumps(tags) + '\n---\n\n')
+        if PurePosixPath(page).name == "index.md":
+            metadata = ""  # OKF reserves nested indexes for navigation.
         contents["src/" + page] = metadata + bundle_links(body.lstrip(), page, pages, revision, contents)
     contents["src/index.md"] = '\n'.join(index) + '\n'
 

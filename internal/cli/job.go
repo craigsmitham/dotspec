@@ -130,7 +130,7 @@ func runJob(command, slug string, options jobOptions, out io.Writer) error {
 		if options.format == "json" {
 			return writeJSON(out, createdResult{1, target})
 		}
-		_, err = fmt.Fprintf(out, "Created %s\nEdit the job statement and performer; add context, steps, and outcomes as they become known.\nAuthoring guide: dotspec guide job\n", displayPath(target))
+		_, err = fmt.Fprintf(out, "Created %s\nStart with a recent occasion when someone faced this situation.\nWrite a job from a concrete situation: %s\n", displayPath(target), authoringPage("job"))
 		return err
 	}
 	if command == "check" {

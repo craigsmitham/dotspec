@@ -17,7 +17,7 @@ and outcomes declared by individual steps. Steps and outcomes can
 have explicit IDs for reference and selection.
 
 This state is authored in a job specification. The
-[job format](../../docs/reference/formats/job.md#job-spec-format) defines its representation.
+[job format](../../docs/cli-handbook/reference/formats/job.md#job-spec-format) defines its representation.
 Declaration ownership is separate from explicit outcome applicability; shared
 outcomes can apply to multiple jobs or steps without duplication.
 
@@ -43,7 +43,7 @@ declared elsewhere are excluded from this selection; the needs map shows their
 explicit applicability. An existing step without outcomes
 returns an empty result; an unknown step is an error.
 
-The [job commands](../../docs/reference/formats/job.md#job-commands) define the CLI operations and
+The [job commands](../../docs/cli-handbook/reference/formats/job.md#job-commands) define the CLI operations and
 output formats for these views.
 
 ## Operational principles

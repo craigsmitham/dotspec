@@ -17,5 +17,5 @@ var CatalogJSON []byte
 
 // GuideFiles contains the authored snapshot and Markdown mapping references.
 //
-//go:embed README.md markdown-mapping.md
+//go:embed markdown-mapping.md metamodel.yaml views/core-domain.yaml generated/*.json
 var GuideFiles embed.FS

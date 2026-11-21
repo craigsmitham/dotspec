@@ -45,7 +45,7 @@ includes errcheck, govet, ineffassign, staticcheck, and unused.
 
 ## Documentation
 
-Use the [documentation map](docs/README.md) to find the source for a CLI guide topic. The [reference index](docs/reference/README.md) identifies the inputs and regeneration commands for published tables, starters and examples.
+Use the [documentation map](docs/README.md) to find the source for a CLI guide topic. The [handbook maintenance guide](docs/maintainers/handbook.md#changing-a-reference) identifies the inputs and regeneration commands for published tables, starters and examples.
 
 ## Architecture
 
@@ -125,7 +125,7 @@ come from the type packages. Edit those sources, then run `mise run generate`.
 
 ## Specification tests and implementation tests
 
-This repository applies dotspec's [source authority principle](specs/dotspec.system.spec.md#source-authority)
+This repository applies dotspec's [source authority principle](docs/cli-handbook/explanations/requirements-layers.md#choose-the-authoritative-specification)
 by keeping each product decision in the specification for its subject. When adding or changing a CLI example, identify the governing requirement, concept action, use case, or native interface contract. If the example introduces a product requirement, author its requirement file in the same change.
 
 - The scripts in `internal/integration/testdata/*.txtar` own their example inputs, commands and expected observations. They verify the public behavior identified alongside their links in Command Invocation.

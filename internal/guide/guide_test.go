@@ -5,18 +5,29 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
 func TestPublishedRoutes(t *testing.T) {
-	for topic := range topics {
+	files, err := destinations()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, file := range files {
+		id := pageID(file)
+		if handbook.names[strings.ToLower(id)] != "" || HasRule(id) {
+			t.Errorf("topic or diagnostic shadows page address %q", id)
+		}
+	}
+	for topic := range handbook.topics {
 		if _, err := Read(topic); err != nil {
 			t.Errorf("topic %q: %v", topic, err)
 		}
 	}
-	for rule := range ruleTopics {
+	for rule := range handbook.rules {
 		if _, err := Read(rule); err != nil {
 			t.Errorf("diagnostic %q: %v", rule, err)
 		}
@@ -71,6 +82,42 @@ func TestDocumentationLinks(t *testing.T) {
 			if !anchors[target][u.Fragment] {
 				t.Errorf("%s: missing heading in %s", source, link.Destination)
 			}
+		}
+	}
+}
+
+func TestExampleMatchesRepositoryBytes(t *testing.T) {
+	const file = "examples/todo/specs/jobs/resume.job.spec.md"
+	want, err := os.ReadFile("../../" + file)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := Read(file)
+	if err != nil || got != string(want) {
+		t.Fatalf("example differs from %s: %v", file, err)
+	}
+}
+
+func TestSearchRanksTopicAboveBody(t *testing.T) {
+	results, err := Read("success criteria")
+	if err != nil {
+		t.Fatal(err)
+	}
+	guide := strings.Index(results, "dotspec docs guides/write-a-job\n")
+	index := strings.Index(results, "dotspec docs README\n")
+	if guide < 0 || index <= guide {
+		t.Fatalf("expected the Jobs topic's how-to above the index page:\n%s", results)
+	}
+}
+
+func TestTopicLookupNamesAreUnique(t *testing.T) {
+	topics := []Topic{{Name: "job", Title: "Jobs", Description: "Write a job.", Synonyms: []string{"jtbd"}, Pages: []Destination{{Page: "docs/cli-handbook/guides/write-a-job.md"}}}}
+	for _, collision := range []string{"job", "JTBD", "guides/write-a-job"} {
+		conflict := topics[0]
+		conflict.Name = collision
+		conflict.Synonyms = nil
+		if _, err := indexTopics(append(topics, conflict)); err == nil {
+			t.Errorf("accepted duplicate lookup %q", collision)
 		}
 	}
 }

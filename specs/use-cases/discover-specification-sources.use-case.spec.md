@@ -65,10 +65,10 @@ Representative. Discovery order is not a required order of authoring or review.
 
 ## Authority
 
-The [source-discovery reference](../../docs/reference/inspection.md#references) describes link behavior. The [source layout](../../docs/reference/layout.md) defines directory ownership and source selection.
+The [source-discovery reference](../../docs/cli-handbook/reference/inspection.md#references) describes link behavior. The [source layout](../../docs/cli-handbook/reference/layout.md) defines directory ownership and source selection.
 The [source-discovery executable examples](../../internal/integration/testdata/sources.txtar)
 verify outcomes for their illustrated cases. Contributors use the
 inventory to assemble the material for review and decide whether it adequately
 specifies the system. The
-[handbook guidance on source authority](../../docs/handbook/requirements-layers.md#choose-the-authoritative-specification) explains how
+[handbook guidance on source authority](../../docs/cli-handbook/explanations/requirements-layers.md#choose-the-authoritative-specification) explains how
 projects assign roles to those sources.

@@ -64,6 +64,6 @@ Representative. Drafting, discovery, and checking can repeat in any useful order
 
 This is a summary of a contributor workflow, not a mandatory approval process or
 an additional CLI contract. Linked user tasks explain existing command behavior.
-The [authoring guide](../../docs/handbook/use-cases.md#plan-growth-without-weakening-promises)
+The [authoring guide](../../docs/cli-handbook/guides/use-cases.md#plan-growth-without-weakening-promises)
 explains how delivery increments can span these narratives without changing their
 behavioral authority.

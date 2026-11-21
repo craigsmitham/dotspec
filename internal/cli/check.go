@@ -80,7 +80,7 @@ func writeCheckReport(out io.Writer, report check.Report, format string) error {
 		}
 		fmt.Fprintf(&text, "\n%s\n", indent(d.Message))
 		if guide.HasRule(d.Rule) {
-			fmt.Fprintf(&text, "  Guide: dotspec guide %s\n", d.Rule)
+			fmt.Fprintf(&text, "  Guide: dotspec docs %s\n", d.Rule)
 		}
 		for _, related := range d.Related {
 			fmt.Fprintf(&text, "  Related: %s", diagnosticPath(related))

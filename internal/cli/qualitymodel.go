@@ -54,7 +54,7 @@ func newQualityModelCommand() *cobra.Command {
 				if format == "json" {
 					return writeJSON(out, createdResult{1, target})
 				}
-				_, err = fmt.Fprintf(out, "Created %s\nAuthoring guide: dotspec guide quality-model\n", displayPath(target))
+				_, err = fmt.Fprintf(out, "Created %s\nAuthoring guide: %s\n", displayPath(target), authoringPage("quality-model"))
 				return err
 			}
 			if action.name == "list" {

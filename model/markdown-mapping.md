@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/24` maps authored specifications to the domain classes and fields in the [model reference](../docs/reference/model/index.md). Each file declares its specification type in YAML frontmatter and names its subject in a level-one heading. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
+`dotspec-markdown/24` maps authored specifications to the domain classes and fields in the [model reference](../docs/cli-handbook/reference/model/index.md). Each file declares its specification type in YAML frontmatter and names its subject in a level-one heading. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
 
 ## Shared mapping rules
 
@@ -10,15 +10,15 @@ Omitting a narrative field leaves it absent. An explicitly empty field has an em
 
 ## System
 
-The optional `## Framing` section maps to `System.framing` and preserves authored Markdown, including local subheadings. Purpose, scope, environment, stakeholders and constraints hold authored Markdown. The Project references section maps to `System.project_references`: its content preserves the explanation and its references identify the cited project records. Goals, assumptions, interfaces, concept uses, synchronizations and inline glossary terms have named entries. Declare a system quality attribute in its own specification under the system’s quality directory. A reusable quality model declares its attributes by name under Quality attributes. Find the [system format](../docs/reference/formats/system.md).
+The optional `## Framing` section maps to `System.framing` and preserves authored Markdown, including local subheadings. Purpose, scope, environment, stakeholders and constraints hold authored Markdown. The Project references section maps to `System.project_references`: its content preserves the explanation and its references identify the cited project records. Goals, assumptions, interfaces, concept uses, synchronizations and inline glossary terms have named entries. Declare a system quality attribute in its own specification under the system’s quality directory. A reusable quality model declares its attributes by name under Quality attributes. Find the [system format](../docs/cli-handbook/reference/formats/system.md).
 
 ## Job
 
-Use a named heading for each step and outcome. An outcome can belong to the job or an individual step. Its body holds its statement and an optional **ID** gives it a stable authored identifier. An Applies to link can identify a step independently of containment. See the [job format](../docs/reference/formats/job.md).
+Use a named heading for each step and outcome. An outcome can belong to the job or an individual step. Its body holds its statement and an optional **ID** gives it a stable authored identifier. An Applies to link can identify a step independently of containment. See the [job format](../docs/cli-handbook/reference/formats/job.md).
 
 ## Use case
 
-Goal, primary actor, supporting actors, goal level, guarantees and preconditions hold Markdown. The main success scenario retains the authored passage. Its ordered list items identify steps. An extension has a name and can describe its Condition and Handling in separate fields. Step numbers in prose carry their ordinary authored meaning. See the [use-case format](../docs/reference/formats/use-case.md).
+Goal, primary actor, supporting actors, goal level, guarantees and preconditions hold Markdown. The main success scenario retains the authored passage. Its ordered list items identify steps. An extension has a name and can describe its Condition and Handling in separate fields. Step numbers in prose carry their ordinary authored meaning. See the [use-case format](../docs/cli-handbook/reference/formats/use-case.md).
 
 ## Concept
 
@@ -34,4 +34,4 @@ Only a `*.requirement.spec.md` file declares a Requirement. It keeps its stateme
 
 ## Relationship contract
 
-A relationship section preserves its authored Markdown, including qualifications and unresolved choices, in its named content field. A semantic link carries its authored destination, source span, owner, role and resolution. An ordinary citation has no semantic role. A successful resolution identifies one endpoint. Other statuses record missing, invalid, ambiguous, external or uninspected targets. Membership fields record declarations in source order. Reverse navigation follows the recorded memberships and resolved occurrences. See the [relationship reference](../docs/reference/model/relationships.md).
+A relationship section preserves its authored Markdown, including qualifications and unresolved choices, in its named content field. A semantic link carries its authored destination, source span, owner, role and resolution. An ordinary citation has no semantic role. A successful resolution identifies one endpoint. Other statuses record missing, invalid, ambiguous, external or uninspected targets. Membership fields record declarations in source order. Reverse navigation follows the recorded memberships and resolved occurrences. See the [relationship reference](../docs/cli-handbook/reference/model/relationships.md).

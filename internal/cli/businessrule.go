@@ -72,7 +72,7 @@ func runBusinessRule(command, path, slug, format string, out io.Writer) error {
 		if format == "json" {
 			return writeJSON(out, createdResult{1, target})
 		}
-		_, err = fmt.Fprintf(out, "Created %s\nDescribe the business constraint, applicability, rationale, authority, and exceptions as they become known.\nAuthoring guide: dotspec guide business-rule\n", displayPath(target))
+		_, err = fmt.Fprintf(out, "Created %s\nDescribe the business constraint, applicability, rationale, authority, and exceptions as they become known.\nAuthoring guide: %s\n", displayPath(target), authoringPage("business-rule"))
 		return err
 	}
 	if command == "check" {

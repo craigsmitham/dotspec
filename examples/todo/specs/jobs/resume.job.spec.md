@@ -5,11 +5,15 @@ type: job-spec
 
 ## Job
 
-When I put work down, I want to remember what remains so I can pick it up again.
+When an errand needs attention again after a break, I want to recover what I already did and what I still owe, so I can take the next action without repeating a finished step or overlooking a follow-up.
 
 ## Performer
 
-A person managing their own errands or work.
+The person responsible for seeing their own errands through to completion.
+
+## Situation
+
+Suppose I called the plumber yesterday and moved on to other errands. Today the plumber asks for a photo. I need to recover where we left off before I decide what to do next.
 
 ## Supports
 
@@ -22,14 +26,14 @@ A person managing their own errands or work.
 **ID:** recall
 **Stage:** locate
 
-Identify the commitments that still need attention.
+Distinguish the errands that still need action from the ones already settled.
 
 ### Reconsider finished work
 
 **ID:** reconsider
 **Stage:** modify
 
-Recognize when a previously finished commitment needs another action.
+Determine what a new request adds to an errand that previously seemed finished.
 
 ## Outcomes
 
@@ -37,8 +41,12 @@ Recognize when a previously finished commitment needs another action.
 
 **ID:** less-reconstruction
 
-Minimize the time spent reconstructing outstanding commitments after an interruption.
+Minimize the time between returning to an interrupted errand and identifying both the last completed action and the next outstanding commitment. In the repair example, I can say that the call is finished and sending the photo is next.
 
 #### Applies to
 
 [Recall outstanding work](#recall-outstanding-work).
+
+## Evidence
+
+This example assumes that reconstructing earlier work costs the performer time. The [return scenario](../use-cases/resume-list.use-case.spec.md) illustrates a finished errand that needs follow-up. In the [participant exercise](../../README.md#try-the-workflow-with-a-participant), ask what the person consulted to recover the next action and which details they still had to check.

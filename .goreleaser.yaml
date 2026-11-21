@@ -25,18 +25,24 @@ archives:
         formats: [zip]
     files:
       - README.md
-      - CONTRIBUTING.md
-      - docs/*.md
-      - docs/**/*.md
-      - docs/handbook/topics.json
-      - examples/**/*.md
-      - examples/**/*.yaml
+      - docs/cli-handbook/README.md
+      - docs/cli-handbook/**/*.md
+      - docs/cli-handbook/topics.json
+      - examples/todo/README.md
+      - examples/todo/SPEC.md
+      - examples/todo/dotspec.yaml
+      - examples/todo/specs/*.spec.md
+      - examples/todo/specs/**/*.spec.md
+      - examples/todo/app/**/*.spec.md
+      - examples/todo/specification/*.md
+      - examples/todo/specification/**/*.md
+      - examples/todo/tests/acceptance.py
       - specs/*.md
       - specs/**/*.md
-      - model/README.md
       - model/markdown-mapping.md
       - model/metamodel.yaml
-      - model/views/*.yaml
+      - model/views/core-domain.yaml
+      - model/generated/*.json
       - go.mod
 checksum:
   extra_files:
