@@ -9,8 +9,7 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 
 | Section | Explore |
 | --- | --- |
-| [Purpose](<#purpose>) | Help teams develop and maintain software product requirements alongside the code they describe. Teams can describe what people need, what the system promises, and how to assess those promises. |
-| [Goals](<#goals>) | [All goals](<goals.md>) |
+| [Purpose](<#purpose>) | Help teams develop and maintain software requirements alongside the code they describe. |
 | Stakeholders and user needs | [Jobs](<jobs.md>) |
 | [Scope and environment](<#scope-and-environment>) | [All assumptions](<assumptions.md>) |
 | Use cases | [All use cases](<use-cases.md>) |
@@ -21,19 +20,8 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 
 ## Purpose
 
-Help teams develop and maintain software product requirements alongside the
-code they describe. Teams can describe what people need, what the system
-promises, and how to assess those promises.
-
-The [Develop Requirements](<jobs/develop-requirements.job.spec-report.md>) and
-[Manage Requirements](<jobs/manage-requirements.job.spec-report.md>) jobs describe the
-work dotspec supports.
-
-## Goals
-
-- [Find gaps during review](<goals.md#find-gaps-during-review>) — Reduce the effort of finding structural problems and missing specification content during authoring and review.
-
-- [Maintain requirements as the product changes](<goals.md#maintain-requirements-as-the-product-changes>) — Reduce the effort of maintaining requirements as the product changes by keeping each requirement with its authoritative source.
+Help teams develop and maintain software requirements alongside the
+code they describe.
 
 ## Scope and environment
 
@@ -83,3 +71,5 @@ explains how this repository assigns those roles to its tests.
 **[Reliability](<quality/reliability/reliability.quality-attribute.spec-report.md>)** — How consistently dotspec performs its intended operations under stated conditions.
 
 **[Usability](<quality/usability/usability.quality-attribute.spec-report.md>)** — How effectively contributors can author, inspect, and maintain specifications.
+
+<a id="empty.goals"></a>
