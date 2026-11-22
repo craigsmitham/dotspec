@@ -2,7 +2,7 @@
   {
     "topic": "system",
     "title": "Systems",
-    "description": "Describe the system as a whole and establish what falls within its boundary.",
+    "description": "Establish which promises the system makes and which conditions it relies on.",
     "pages": [
       {
         "page": "docs/cli-handbook/guides/describe-a-system.md"
@@ -15,7 +15,7 @@
   {
     "topic": "component",
     "title": "Components",
-    "description": "Describe a part of a system and the responsibilities it carries.",
+    "description": "Identify the part responsible for a behavior, its parent and its contracts.",
     "pages": [
       {
         "page": "docs/cli-handbook/guides/specify-a-component.md"
@@ -64,7 +64,7 @@
   {
     "topic": "capability",
     "title": "Capabilities",
-    "description": "Identify an ability needed to serve a goal and what can provide it.",
+    "description": "Connect an ability to the need it supports, the abilities it depends on and the parts that provide it.",
     "pages": [
       {
         "page": "docs/cli-handbook/guides/specify-a-capability.md",
@@ -83,7 +83,7 @@
   {
     "topic": "feature",
     "title": "Features",
-    "description": "Group product behaviors that a stakeholder recognizes and values.",
+    "description": "Group the behaviors that together deliver a benefit a stakeholder can recognize.",
     "pages": [
       {
         "page": "docs/cli-handbook/guides/define-the-scope-of-a-feature.md",
@@ -142,15 +142,15 @@
   {
     "topic": "concept",
     "title": "Concepts",
-    "description": "Explain a coherent piece of software behavior through its purpose, state, and actions.",
+    "description": "Explain how a concept’s actions serve its purpose and how a system uses that behavior.",
     "pages": [
       {
         "page": "docs/cli-handbook/guides/specify-a-concept.md",
         "rules": {
-          "concept.actions": "",
-          "concept.operational-principle": "",
-          "concept.purpose": "",
-          "concept.state": ""
+          "concept.actions": "connect-the-actions-to-a-purpose",
+          "concept.operational-principle": "connect-the-actions-to-a-purpose",
+          "concept.purpose": "connect-the-actions-to-a-purpose",
+          "concept.state": "connect-the-actions-to-a-purpose"
         }
       },
       {
@@ -161,7 +161,7 @@
   {
     "topic": "requirement",
     "title": "Requirements",
-    "description": "State a commitment and the conditions and criteria for assessing it.",
+    "description": "State what a requirement promises, when it applies and what result would violate it.",
     "pages": [
       {
         "page": "docs/cli-handbook/guides/write-an-assessable-requirement.md",
@@ -183,7 +183,7 @@
   {
     "topic": "quality-model",
     "title": "Quality models",
-    "description": "Define a reusable vocabulary of qualities that systems can draw on.",
+    "description": "Choose a shared vocabulary for the qualities that matter across systems.",
     "pages": [
       {
         "page": "docs/cli-handbook/guides/define-a-quality-model.md",
@@ -200,7 +200,7 @@
   {
     "topic": "quality-attribute",
     "title": "System quality attributes",
-    "description": "Define what a quality means for a particular system.",
+    "description": "Define a quality for one system and connect it to requirements with assessable criteria.",
     "pages": [
       {
         "page": "docs/cli-handbook/guides/define-a-system-quality-attribute.md",

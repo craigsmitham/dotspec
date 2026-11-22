@@ -1,10 +1,8 @@
 # Separate specification projects in one repository
 
-Use a workspace when a repository contains independent products, a reference app,
-or example collections that should not enter the product's own specification
-scan. A **specification project** is a tooling partition. A **System** is a domain
-subject described by specifications. Project membership creates no `part_of`,
-implementation, ownership or requirement-inheritance relationship between Systems.
+The To-do example lives inside the dotspec checkout so a contributor can run it alongside the CLI. If directory nesting alone put it in the product specification, a reader could mistake keeping a personal task list for a responsibility of dotspec. Each has its own project manifest, so checking the CLI from its project root leaves the example to its own check.
+
+A **specification project** determines which sources a scan discovers together. A **System** is a subject the authors describe. They can declare that one system forms part of another or link to a contract in a neighboring project. Those decisions require evidence about the products, beyond where their files live. [Project isolation requirement](../../specs/requirements/specification-project-isolation.requirement.spec.md) · [Describe a system and its boundary](../cli-handbook/guides/describe-a-system.md).
 
 ## Declare the boundaries
 

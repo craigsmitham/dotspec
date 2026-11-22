@@ -1,3 +1,9 @@
-# Capabilities
+# How capabilities connect needs to providers
 
-Placeholder for the explainer. What ability is needed, who needs it, and what might provide it?
+When someone returns to a task list after a break, they want to spend less time reconstructing what to do next. One ability that helps is retaining accepted changes between sessions. dotspec calls this a **capability**. The desired outcome tells us who cares and why. Naming the ability lets a team consider different ways to provide it. [Less reconstruction](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md#less-reconstruction) · [Local task storage](../../../examples/todo/specs/capabilities/local-task-storage.capability.spec.md).
+
+In the To-do example, **Task service** provides local task storage. If the browser took over storage, the provider would change while the ability and the need would still make sense. Conversely, a service could faithfully store an entry called “Plumber” and leave its owner wondering what to do. The provider link records who is expected to supply the ability. Whether the ability helped the person resume work is a question about their experience. [Provider declaration](../../../examples/todo/specs/capabilities/local-task-storage.capability.spec.md#provided-by).
+
+Richard Allen's *User Needs Mapping* traces a need through the abilities required to meet it, including abilities on which others depend. An organization can deliver an ability through skills and procedures as well as technology. Suppose a repair desk promises to arrange visits. Scheduling depends on knowing when a technician is available, whether a dispatcher phones each technician or consults a shared calendar. dotspec lets a capability describe the dispatcher's role under **Enablers**, link to another capability under **Depends on**, and name a known system or component under **Provided by**. That leaves room to record the dependency before anyone selects a scheduling tool. [Allen, *User Needs Mapping* (1st ed., 2025), ch. 4, steps 4–5](https://www.userneedsmapping.com/moviegoer-walkthrough).
+
+To describe the ability in your project, see [Specify a capability](../guides/specify-a-capability.md). To follow the links from a need to its providers, see [Map needs to capabilities](../guides/map-needs-to-capabilities.md).

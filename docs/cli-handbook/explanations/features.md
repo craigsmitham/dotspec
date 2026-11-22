@@ -1,3 +1,9 @@
-# Features
+# What holds a feature together?
 
-Placeholder for the explainer. What makes a set of behaviors recognizable and valuable to a stakeholder?
+What makes several behaviors one feature? Someone with a stake in the product can recognize what those behaviors let them do together. In To-do, **Pick up where I left off** means that a person returning after a break can find an errand as they left it and reopen it if there is follow-up work. The interaction depends on two things going right. The person must be able to find the entry again, and the system must preserve its identity and state when the service restarts. [Pick up where I left off](../../../examples/todo/specs/features/pick-up-where-i-left-off.feature.spec.md#groups).
+
+That gives the feature a scope a reader can question. Suppose the team adds a count of open tasks to the same screen. A count of three helps someone judge their workload. They could still have no idea which errand they were working on. If selecting the count brought back their last unfinished errand, that behavior would help them resume it. Sharing a screen tells us where the change lives. Its contribution to the returning person’s task tells us whether it belongs in this feature.
+
+IREB's glossary describes features in terms of stakeholder value and explains why one feature can span several requirements. dotspec makes that grouping explicit. **Groups** links to the specifications that describe the behavior. In To-do the use case carries the return interaction, and the restart requirement carries the exact storage promise. If another feature needs that same promise, both features can point to the one requirement. Changing the guarantee then takes one edit for both audiences. [IREB, *Glossary of Requirements Engineering Terminology*, v2.2.0, “Feature”](https://cpre.ireb.org/en/downloads-and-resources/glossary?first-letter=F&tag=cpre-glossary) · [Return interaction](../../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#main-success-scenario) · [Restart guarantee](../../../examples/todo/specs/requirements/restart.requirement.spec.md#statement).
+
+To choose which specifications belong together, see [Define the scope of a feature](../guides/define-the-scope-of-a-feature.md).

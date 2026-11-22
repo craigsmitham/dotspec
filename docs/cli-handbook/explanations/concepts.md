@@ -1,3 +1,17 @@
 # Concepts in software design
 
-Placeholder for the explainer. How do purpose, state, and actions explain a coherent piece of behavior?
+In the To-do example, finishing an errand and deleting it both take it off the open list. Why have two actions? A person who discovers a follow-up can reopen the finished errand with its original identity and title. Deleting the entry removes it altogether. From the open list alone, those outcomes look identical. [Checklist actions and effects](../../../examples/todo/specs/concepts/checklist.concept.spec.md#effects-table).
+
+A **concept**, in Daniel Jackson’s sense, is a unit of behavior a person can understand through the purpose it serves. The purpose of Checklist is to keep track of commitments that still need attention. A checkbox gives someone a way to mark an entry complete. Understanding Checklist also lets them predict where the entry goes and what they can do with it later. [Jackson, “Concept criteria,” “Two sides of a coin” and “The criteria” (2023)](https://essenceofsoftware.com/tutorials/concept-basics/criteria/).
+
+## What must the concept remember?
+
+An **operational principle** tells a characteristic story in which using the concept delivers its benefit. Here a person records an errand, finishes it, discovers the follow-up and reopens it. For that story to work, an entry must have an identity that survives completion, and the list must distinguish open and completed entries. If completion discarded the entry, there would be nothing for Reopen to act on. Adding another entry with the same title would give the person a new entry to track. [Checklist operational principle](../../../examples/todo/specs/concepts/checklist.concept.spec.md#operational-principles).
+
+This is how the actions give the **abstract state** its shape. State captures the distinctions that affect what an action can do or what someone can observe afterward. Checklist can explain reopening without saying which database holds an entry or how the completed list looks. Jackson illustrates state with relations. In dotspec, authors can describe the same distinctions in ordinary Markdown, so a reviewer can reason through the actions before a storage design exists. [Jackson, “Concept state,” “The Role of State” (2023)](https://essenceofsoftware.com/tutorials/concept-basics/state/) · [Checklist state](../../../examples/todo/specs/concepts/checklist.concept.spec.md#state).
+
+## Why name a use of a concept?
+
+The Checklist definition makes sense wherever someone needs to track unfinished work. In the To-do system, **My checklist** names a particular use of that definition for one person’s tasks. A different system might use Checklist twice, once for equipment to pack and once for inspections to finish. Both uses could share the meaning of Complete and Reopen while referring to different entries. dotspec gives each use a name in its system or component so a reader can tell which one participates in an interaction. The concept file alone leaves that choice open. [My checklist in the To-do system](../../../examples/todo/specs/personal-task-list.system.spec.md#my-checklist).
+
+To describe a concept and test its purpose against a change in the story, see [Specify a concept](../guides/specify-a-concept.md).

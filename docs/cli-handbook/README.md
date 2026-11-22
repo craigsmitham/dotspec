@@ -2,7 +2,7 @@
 
 ## What am I trying to specify?
 
-Choose the subject you want to write about. Each topic pairs an explanation with a guide to writing and assessing its specification. The Jobs to be done, Business rules, and Use cases pages are available now. The other topic pairs are placeholders for the handbook rewrite.
+Choose the subject you want to write about. Open its explanation to understand which decisions belong there, or its how-to guide to draft and assess a specification.
 
 Run `dotspec docs` from any directory to browse the topics offline.
 
@@ -10,14 +10,14 @@ Run `dotspec docs` from any directory to browse the topics offline.
 
 ### Systems
 
-Describe the system as a whole and establish what falls within its boundary. Run `dotspec docs system`.
+Establish which promises the system makes and which conditions it relies on. Run `dotspec docs system`.
 
 - [Describe a system and its boundary](guides/describe-a-system.md) (How-to)
 - [Systems and their boundaries](explanations/systems.md) (Explanation)
 
 ### Components
 
-Describe a part of a system and the responsibilities it carries. Run `dotspec docs component`.
+Identify the part responsible for a behavior, its parent and its contracts. Run `dotspec docs component`.
 
 - [Specify a component](guides/specify-a-component.md) (How-to)
 - [Components and their responsibilities](explanations/components.md) (Explanation)
@@ -33,18 +33,18 @@ Map a functional job and its success criteria, investigate switching, and connec
 
 ### Capabilities
 
-Identify an ability needed to serve a goal and what can provide it. Run `dotspec docs capability`.
+Connect an ability to the need it supports, the abilities it depends on and the parts that provide it. Run `dotspec docs capability`.
 
 - [Specify a capability](guides/specify-a-capability.md) (How-to)
-- [Capabilities](explanations/capabilities.md) (Explanation)
+- [How capabilities connect needs to providers](explanations/capabilities.md) (Explanation)
 - [Map needs to capabilities](guides/map-needs-to-capabilities.md) (How-to)
 
 ### Features
 
-Group product behaviors that a stakeholder recognizes and values. Run `dotspec docs feature`.
+Group the behaviors that together deliver a benefit a stakeholder can recognize. Run `dotspec docs feature`.
 
 - [Define the scope of a feature](guides/define-the-scope-of-a-feature.md) (How-to)
-- [Features](explanations/features.md) (Explanation)
+- [What holds a feature together?](explanations/features.md) (Explanation)
 
 ### Business rules
 
@@ -62,28 +62,28 @@ Describe the paths an actor can take toward a goal and what the system promises 
 
 ### Concepts
 
-Explain a coherent piece of software behavior through its purpose, state, and actions. Run `dotspec docs concept`.
+Explain how a concept’s actions serve its purpose and how a system uses that behavior. Run `dotspec docs concept`.
 
 - [Specify a concept](guides/specify-a-concept.md) (How-to)
 - [Concepts in software design](explanations/concepts.md) (Explanation)
 
 ### Requirements
 
-State a commitment and the conditions and criteria for assessing it. Run `dotspec docs requirement`.
+State what a requirement promises, when it applies and what result would violate it. Run `dotspec docs requirement`.
 
 - [Write an assessable requirement](guides/write-an-assessable-requirement.md) (How-to)
-- [Requirements and their satisfaction criteria](explanations/requirements.md) (Explanation)
+- [What makes a requirement assessable?](explanations/requirements.md) (Explanation)
 
 ### Quality models
 
-Define a reusable vocabulary of qualities that systems can draw on. Run `dotspec docs quality-model`.
+Choose a shared vocabulary for the qualities that matter across systems. Run `dotspec docs quality-model`.
 
 - [Define a quality model](guides/define-a-quality-model.md) (How-to)
-- [Quality models](explanations/quality-models.md) (Explanation)
+- [What does a quality model help a team decide?](explanations/quality-models.md) (Explanation)
 
 ### System quality attributes
 
-Define what a quality means for a particular system. Run `dotspec docs quality-attribute`.
+Define a quality for one system and connect it to requirements with assessable criteria. Run `dotspec docs quality-attribute`.
 
 - [Define a quality attribute for a system](guides/define-a-system-quality-attribute.md) (How-to)
-- [System quality attributes](explanations/system-quality-attributes.md) (Explanation)
+- [What does a quality mean for one system?](explanations/system-quality-attributes.md) (Explanation)

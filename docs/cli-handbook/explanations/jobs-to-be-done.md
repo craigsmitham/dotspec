@@ -1,6 +1,6 @@
 # What makes something a job to be done?
 
-A job is what a performer seeks to accomplish or change in particular circumstances, whichever solution they use. Someone who promised a guest a working sink might call a plumber, arrange a visit by text or ask a housemate to take over. Finishing the call still leaves them responsible. A working sink or an agreed transfer of responsibility settles the commitment. [Worked To-do job](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md#job).
+A job is what a performer seeks to accomplish or change in particular circumstances, whichever solution they use. In the fictional To-do example, someone who promised a guest a working sink might call a plumber, arrange a visit by text or ask a housemate to take over. Finishing the call still leaves them responsible. A working sink or an agreed transfer of responsibility settles the commitment. [Worked To-do job](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md#job).
 
 ## Choose a useful perspective
 
@@ -12,7 +12,7 @@ The questions can inform each other. If one person switched tools because they l
 
 ## The universal job map
 
-Bettencourt and Ulwick describe eight kinds of accomplishment that can reveal work hidden on either side of an obvious activity. For the person arranging the repair, even a successful call leaves several questions open. [Bettencourt and Ulwick, *The Customer-Centered Innovation Map*](https://hbr.org/2008/05/the-customer-centered-innovation-map) · [Strategyn, *Build Your Job Map*](https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/build-your-job-map/).
+Bettencourt and Ulwick originally described eight stages common to every job. In the revised *Jobs to Be Done: Theory to Practice* (2023), ch. 4, p. 93, Ulwick allows that a job may involve only some of them. The stages can reveal work hidden on either side of an obvious activity. For the person arranging the repair, even a successful call leaves several questions open. [Bettencourt and Ulwick, *The Customer-Centered Innovation Map* (2008), “Anatomy of a Customer Job,” p. 3](https://strategyn.com/wp-content/uploads/2019/10/The_Customer_Centered_Innovation_Map___HBR.pdf).
 
 | Universal step | What it reveals in the repair errand |
 | --- | --- |
@@ -25,11 +25,13 @@ Bettencourt and Ulwick describe eight kinds of accomplishment that can reveal wo
 | Modify | What changes when the plumber asks for a photo? |
 | Conclude | Is the sink working, or has someone else accepted responsibility? |
 
-A map names the accomplishments in the performer's terms, such as “Check what remains.” Someone may check readiness several times or finish without changing the plan. In dotspec a map can be partial, and each step's stage label is optional. See Jim Kalbach, *The Jobs to Be Done Playbook* (2020), ch. 3. [Steps in the To-do job](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md#steps) · [Step and stage syntax](../guides/write-a-job.md#record-steps-and-shared-outcomes).
+A map names the accomplishments in the performer's terms, such as “Check what remains.” Strategyn orders them for efficient execution. Kalbach reconstructs the sequence of subgoals from interviews and uses the eight stages to look for omissions. Someone may check readiness several times or finish without changing the plan. In dotspec, the map keeps the order the author gives the steps and makes stage labels optional. A team that has only heard about the call and the overdue reply can record those findings while it investigates the rest. See Jim Kalbach, *The Jobs to Be Done Playbook* (2020), ch. 3, pp. 72–73. [Strategyn on the order of a job map](https://strategyn.com/jobs-to-be-done/jobs-to-be-done-playbook/build-your-job-map/) · [Steps in the To-do job](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md#steps).
+
+Ulwick elicits desired outcomes at each step. A criterion can matter at several points. The person may need to recover the next action both when recalling a commitment and when checking its progress. In dotspec the job can declare that outcome once and name both steps where it applies. A change to what the person counts as success then has one place to be made. See Ulwick, *Jobs to Be Done: Theory to Practice*, ch. 4, pp. 93–94. [Record steps and shared outcomes](../guides/write-a-job.md#record-steps-and-shared-outcomes).
 
 ## Understand a switch
 
-Bob Moesta and the Re-Wired Group use a switch interview to investigate **“Why change now?”** A timeline ties a person’s first doubts, alternatives and eventual choice to events they recall. If a buyer chose for someone else, the interview explains the buyer’s decision. See Moesta, *Learning to Build*, ch. 3. [Re-Wired Group on switch interviews](https://therewiredgroup.com/learn/complete-guide-jobs-to-be-done/) · [The buyer’s timeline](https://therewiredgroup.com/learn/the-six-stages-of-the-buyers-timeline/).
+Bob Moesta and the Re-Wired Group use a switch interview to investigate **“Why change now?”** A timeline ties a person’s first doubts, alternatives and eventual choice to events they recall. If a buyer chose for someone else, the interview explains the buyer’s decision. See Moesta, *Learning to Build* (2022), ch. 3, “The Forces of Progress” and “The Timeline for Progress.” [Re-Wired Group on switch interviews](https://therewiredgroup.com/learn/complete-guide-jobs-to-be-done/) · [The buyer’s timeline](https://therewiredgroup.com/learn/the-six-stages-of-the-buyers-timeline/).
 
 Suppose someone moved their errands from messages to a notebook. Losing an agreement in a long thread could supply the **push** to change. Seeing all the errands together could be the **pull**. Worry about leaving the notebook at home could create **anxiety**, while replying in the original thread was already a **habit**. Asking about the actual decision can reveal which of these forces mattered. Keep that timeline with the evidence for the choice.
 
@@ -37,6 +39,6 @@ A **job story** expresses a circumstance, motivation and intended progress in on
 
 ## From a job map to a user needs map
 
-A job map describes what the performer does. Richard Allen's *User Needs Mapping* follows what the performer depends on to meet a need. A broad job can anchor a map of the whole service. A desired outcome lets a team investigate a particular difficulty and trace it to supporting capabilities, their providers and the teams involved. See *User Needs Mapping* (1st ed., 2025), ch. 4, steps 3–7. [Allen's worked moviegoer map](https://www.userneedsmapping.com/moviegoer-walkthrough).
+A job map describes what the performer seeks to accomplish at each step. Richard Allen's *User Needs Mapping* follows what the performer depends on to meet a need. A broad job can anchor a map of the whole service. A desired outcome lets a team investigate a particular difficulty and trace it to supporting capabilities, their providers and the teams involved. See *User Needs Mapping* (1st ed., 2025), ch. 4, steps 3–7. [Allen's worked moviegoer map](https://www.userneedsmapping.com/moviegoer-walkthrough).
 
 Allen uses short labels on the map. In dotspec, the label **Less reconstruction** links back to the full desired outcome, including the time cost and the circumstance of returning after a break. That gives a team a way to judge a proposed capability. Keeping an entry available tomorrow helps only if the person recorded enough to recover the next action. [Full desired outcome](../../../examples/todo/specs/jobs/personal-commitments.job.spec.md#less-reconstruction) · [Trace its supporting capabilities and specifications](../guides/map-needs-to-capabilities.md#connect-needs-to-capabilities-and-specifications).

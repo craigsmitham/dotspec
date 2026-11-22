@@ -4,13 +4,19 @@ A model export contains the acquired source text, declared subjects, relationshi
 
 ## Export and validate a snapshot
 
+Why can an export report a broken link and the saved snapshot still pass validation? Suppose a use case links to a requirement that has moved. The export preserves the destination the author wrote and the finding that it could not be resolved. A tool reading the saved snapshot can now show the author which link needs repair. Dropping the link to make the export look clean would lose precisely the information that reader needs.
+
+Snapshot validation checks the representation. To judge the inspected project, read its diagnostics and the discovery, read and inspection completion flags. An unreadable source can leave a gap even when the rest of the project was inspected. [Model source fidelity](../../specs/requirements/model-source-fidelity.requirement.spec.md) · [Interpret a check report](inspection.md#check-specifications).
+
+In your project directory, export its specifications and validate the saved snapshot offline.
+
 ```sh
 dotspec model export --path . > snapshot.json
 dotspec model validate snapshot.json
 dotspec model schema
 ```
 
-Use `--project` to select a project or `--all` to export a workspace envelope. Each project retains its own acquisition scope and identities. Validation runs offline. A valid snapshot can describe invalid authored input. Read the diagnostics and the discovery, read and inspection completion flags before using the result.
+Use `--project` to select a project or `--all` to export a workspace envelope. Each project retains its own acquisition scope and identities.
 
 ## Specification types and declared elements
 

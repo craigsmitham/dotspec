@@ -1,3 +1,13 @@
-# System quality attributes
+# What does a quality mean for one system?
 
-Placeholder for the explainer. What does a quality such as reliability mean for this particular system?
+Someone asks whether the personal task list is durable. The answer depends on what the person expects to survive. Retaining the last *acknowledged* change across local sessions matters in the To-do example. Recovering an unsubmitted edit after a browser closes would be a different concern. A **system quality attribute** gives that distinction a name and a definition that authors of requirements for this system can share. [Durability in the personal task list](../../../examples/todo/specs/quality/durability/durability.quality-attribute.spec.md#definition).
+
+## From a shared meaning to a specific promise
+
+The example's reusable model describes durability across application stops and starts. Its local definition identifies the work in question as acknowledged work between local sessions. A single definition could classify several commitments about that work. An author looking up requirements classified as *durability* would still have to read each one to learn what the system promises. [Source definition](../../../examples/todo/specs/quality-models/personal-data.quality-model.spec.md#durability) · [Quality models](quality-models.md).
+
+For example, the restart requirement covers functioning storage and a restart on the same database. Suppose the service restores the same number of entries but moves a completed task back to the open list. The requirement counts changed entries as well as missing or unexpected ones, and permits zero discrepancies. Restoring the count would still violate the requirement. ISO/IEC 25030 distinguishes the selected quality from the conditions, measure and values required for a particular target. ISO/IEC 25020 explains why a measurement result needs a criterion for interpretation. The dotspec format keeps the local definition reusable by placing that decision with the requirement, where an author can express it qualitatively or with a measure and target. [Restart requirement](../../../examples/todo/specs/requirements/restart.requirement.spec.md) · [ISO/IEC 25030:2019, §7.4.2, step 5](https://www.iso.org/standard/72116.html) · [ISO/IEC 25020:2019, §§6.1 and 6.6](https://www.iso.org/standard/72117.html).
+
+A system can also group a specific attribute under a broader one. Grouping durability under reliability, for example, would help a reader browsing reliability find the restart requirement. Preserving the entries through a restart could still take longer than the person can wait. Group membership supplies a route to related requirements. Each commitment keeps its own conditions and criteria.
+
+To give a concern its local definition and classify the relevant requirements, follow [Define a quality attribute for a system](../guides/define-a-system-quality-attribute.md).
