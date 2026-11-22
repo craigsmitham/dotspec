@@ -24,6 +24,7 @@ Each entry follows one commitment through the owner's next action, an outstandin
 **Applies here**
 
 - [Keep recorded work available](<../requirements/keep-recorded-work-available.requirement.spec-report.md>)
+- [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
 - [When a reply needs chasing](<../business-rules/when-a-reply-needs-chasing.business-rule.spec-report.md>)
 
 **Used in**

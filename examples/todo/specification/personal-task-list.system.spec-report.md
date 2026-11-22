@@ -49,7 +49,7 @@ Sending reminders, reading messages, managing delivery deadlines, sharing lists,
 
 ### Operating environment
 
-The browser and service run on the same computer. The person can close either between visits. The service uses that computer’s local calendar when the person loads Waiting.
+The browser and service run on the same computer. The owner can close either between visits and return on a different local calendar day. The [follow-up requirement](<requirements/show-which-replies-need-follow-up.requirement.spec-report.md#conditions>) explains what they should see when they open Waiting again.
 
 ### Assumptions
 
@@ -67,7 +67,7 @@ flowchart LR
 ```
 
 - **Component** · [Task service](<components/task-service/task-service.component.spec-report.md>) — The local service that decides whether a submitted action still applies to the selected entry and records accepted changes.
-  - Provides [Follow-up review](<capabilities/follow-up-review.capability.spec-report.md>) — Identifies the outstanding replies the owner planned to chase by today. A person returning after the weekend can see both which errand needs attention and what to ask for.
+  - Provides [Follow-up review](<capabilities/follow-up-review.capability.spec-report.md>) — When the owner reviews waiting errands, they can see which replies they planned to chase by today and what to ask for.
   - Provides [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>) — Keeps a commitment and the owner's last recorded decision together between visits. Finding the title alone would leave someone who returns to a waiting errand searching their messages for the reply they meant to chase.
 - **Provided interface** · [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — Open offers work the owner can advance. Waiting shows the expected reply and when to chase it. Completed holds settled errands the owner may reopen. After an accepted change the browser returns to the view where the person submitted it.
 
@@ -84,4 +84,4 @@ flowchart LR
 
 ## Quality attributes
 
-**[Durability](<quality/durability/durability.quality-attribute.spec-report.md>)** — Preservation of the owner’s acknowledged decisions between local sessions, including the reply and day they recorded for a waiting errand. The follow-up cue can change overnight even though those decisions survive intact.
+**[Durability](<quality/durability/durability.quality-attribute.spec-report.md>)** — Preservation of the owner’s acknowledged decisions between local sessions, including the reply they expect for a waiting errand and the day they chose to follow up. The follow-up cue can change overnight even though those decisions survive intact.

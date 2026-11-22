@@ -11,7 +11,7 @@ The local service that decides whether a submitted action still applies to the s
 
 | Section | Explore |
 | --- | --- |
-| [Responsibilities](<#responsibilities>) | A browser tab can still show Open after the owner has moved an errand to Waiting in another tab. The service checks the entry’s current state when applying the form and reports a conflict if the view has changed. It also supplies the current local day when it prepares the Waiting view. Acknowledge after commit governs when it may return success. |
+| [Responsibilities](<#responsibilities>) | A browser tab can still show Open after the owner has moved an errand to Waiting in another tab. When the service receives the old form, it compares the submitting view with the entry’s current state. A mismatch leaves the entry as it was and the browser receives a conflict. Checklist action effects. |
 | [System topology](<#system-topology>) | Part of |
 | Capabilities | [All capabilities](<capabilities.md>) |
 | Requirements | [All requirements](<requirements.md>) |
@@ -20,7 +20,9 @@ The local service that decides whether a submitted action still applies to the s
 
 ## Responsibilities
 
-A browser tab can still show Open after the owner has moved an errand to Waiting in another tab. The service checks the entry’s current state when applying the form and reports a conflict if the view has changed. It also supplies the current local day when it prepares the Waiting view. [Acknowledge after commit](<requirements/acknowledge-after-commit.requirement.spec-report.md>) governs when it may return success.
+A browser tab can still show Open after the owner has moved an errand to Waiting in another tab. When the service receives the old form, it compares the submitting view with the entry’s current state. A mismatch leaves the entry as it was and the browser receives a conflict. [Checklist action effects](<../../concepts/checklist.concept.spec-report.md#effects-table>).
+
+The service supplies the current local day when it prepares the Waiting view. [Acknowledge after commit](<requirements/acknowledge-after-commit.requirement.spec-report.md>) governs when it may report a successful change.
 
 ## System topology
 
@@ -40,7 +42,7 @@ flowchart LR
 ```
 
 - **Parent system** · [Personal task list](<../../personal-task-list.system.spec-report.md>) — A personal list of errands the owner can act on, replies they are waiting for and commitments they have settled.
-- **Provided capability** · [Follow-up review](<../../capabilities/follow-up-review.capability.spec-report.md>) — Identifies the outstanding replies the owner planned to chase by today. A person returning after the weekend can see both which errand needs attention and what to ask for.
+- **Provided capability** · [Follow-up review](<../../capabilities/follow-up-review.capability.spec-report.md>) — When the owner reviews waiting errands, they can see which replies they planned to chase by today and what to ask for.
 - **Provided capability** · [Local task storage](<../../capabilities/local-task-storage.capability.spec-report.md>) — Keeps a commitment and the owner's last recorded decision together between visits. Finding the title alone would leave someone who returns to a waiting errand searching their messages for the reply they meant to chase.
 
 ## Contracts

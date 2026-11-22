@@ -9,7 +9,7 @@ source: "../../specs/business-rules/follow-up.business-rule.spec.md#when-a-reply
 
 ## Statement
 
-A reply the person is still waiting for is due for follow-up if its current follow-up day is today or has passed.
+For a reply the person is still waiting for, follow-up is upcoming before the currently chosen day and due from that day onward.
 
 ## Applies to
 

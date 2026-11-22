@@ -52,6 +52,8 @@ Describe what the actor and system do that the other can observe. A paragraph ca
 
 Check the verbs with the reviewer. “The reviewer approves” describes a decision. “The application confirms” tells the reviewer what became of it. If confirmation merely acknowledges receipt, the last step promises more than the team has agreed.
 
+Walk the last step as the actor. What observation tells them they reached their goal? Jacobson and Cockburn’s *Browse and shop* lists a missing purchase confirmation among the paths to investigate. In the To-do example the repair disappears from Waiting after either Resume or Complete. The owner can establish what happened by opening the destination list and finding the same errand there. Include that observation when it matters to the goal. [*Use-Case Foundation*, v1.1, “Browse and shop,” p. 5](https://alistaircockburn.com/Use%20Case%20Foundation.pdf#page=5) · [To-do return scenario](../../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#main-success-scenario).
+
 ## Explore what can change the outcome
 
 List conditions worth investigating while the successful path is fresh. Start with one alternative way to finish and one circumstance that could leave the actor short of the goal. Give each extension a descriptive heading. Its **Condition** identifies when the path diverges. Its **Handling** explains what happens next, where the interaction resumes or ends, or which decision remains open.

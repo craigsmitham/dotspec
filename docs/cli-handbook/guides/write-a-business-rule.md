@@ -10,6 +10,8 @@ Under **Authority**, cite the decision that establishes the rule. Give enough de
 
 For a rule that classifies a case, ask which facts determine membership. If a club counts visits in the year they were completed, try a December booking completed in January. Record the completion criterion and the authority that chose it. [Definitional and behavioral rules](../explanations/business-rules.md#what-does-the-rule-let-someone-decide).
 
+Check whether the condition settles every case the reader must classify. RuleSpeak’s high-risk customer example identifies a balance history that qualifies a customer. Ask the policy owner whether other histories can qualify. In the To-do example the chosen day settles both sides of the boundary for a reply still outstanding. Moving a due follow-up to tomorrow makes it upcoming again. Write the agreed distinction in the terms the person uses. [Ross, *RuleSpeak Sentence Forms*, v2.2, Table 2, §1.3, p. 9](https://www.rulespeak.com/en/RuleSpeak%20Sentence%20Forms%20v2-2-3.pdf#page=9) · [When a reply needs chasing](../../../examples/todo/specs/business-rules/follow-up.business-rule.spec.md#statement).
+
 Under **Rationale**, explain why the distinction matters. In the fictional example below, Finance wants a second person to catch errors before money leaves the business. That explains the independent review. The threshold itself comes from the cited policy.
 
 ## State one decision

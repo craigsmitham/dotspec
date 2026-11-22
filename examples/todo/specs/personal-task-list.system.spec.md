@@ -35,7 +35,7 @@ Sending reminders, reading messages, managing delivery deadlines, sharing lists,
 
 ## Environment
 
-The browser and service run on the same computer. The person can close either between visits. The service uses that computer’s local calendar when the person loads Waiting.
+The browser and service run on the same computer. The owner can close either between visits and return on a different local calendar day. The [follow-up requirement](requirements/follow-up.requirement.spec.md#conditions) explains what they should see when they open Waiting again.
 
 ## Assumptions
 

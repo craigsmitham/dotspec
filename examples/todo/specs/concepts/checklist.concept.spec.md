@@ -22,7 +22,7 @@ A new list has no entries.
 ### Invariants
 
 - Each entry appears in exactly one view, named for its state.
-- Only Waiting entries carry a reply description and follow-up day. The day determines when to check back under [When a reply needs chasing](../business-rules/follow-up.business-rule.spec.md).
+- Every Waiting entry carries both an expected reply and a follow-up day. Open and Completed entries carry neither. The day determines when to check back under [When a reply needs chasing](../business-rules/follow-up.business-rule.spec.md).
 - Actions select entries by identity. Two errands can have the same title. Acting on one leaves the other alone.
 
 ## Actions

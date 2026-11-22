@@ -37,7 +37,7 @@ mise exec -- python -I examples/todo/tests/acceptance.py
 mise run example-check
 ```
 
-The acceptance test builds the app, submits its HTML forms and starts a second process on the same disposable database. It checks the entry identities and visible details in each view, including the saved reply and day. The [coverage inventory (dotspec checkout)](COVERAGE.md) gives cases to try against each authored specification and identifies concerns left for a larger system.
+The acceptance test builds the app, submits its HTML forms and starts a second process on the same disposable database. It checks the entry identities and visible details in each view, including the expected reply and chosen follow-up day. The [coverage inventory (dotspec checkout)](COVERAGE.md) gives cases to try against each authored specification and identifies concerns left for a larger system.
 
 To follow the specifications with an installed CLI, run `dotspec docs job` from any directory and open the worked job listed there. To inspect your edits in the checkout, run `mise run generate` from its root, then `mise exec -- go run . model trace --path examples/todo` to inspect the relationships.
 

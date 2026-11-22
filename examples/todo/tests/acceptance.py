@@ -110,12 +110,15 @@ def submit(base, current, action, **fields):
     return page(base, action, urlencode(form).encode())
 
 
-def rejected(status, base, current, action, **fields):
+def rejected(status, base, current, action, *, message=None, **fields):
     try:
         submit(base, current, action, **fields)
     except HTTPError as error:
-        assert error.code == status, (action, error.code)
-        error.close()
+        with error:
+            assert error.code == status, (action, error.code)
+            if message:
+                body = error.read().decode()
+                assert message in body, (action, body)
     else:
         raise AssertionError(f"{action} accepted a submission that should return {status}")
 
@@ -191,7 +194,7 @@ def verify(binary, db):
         current, replacement = add(base, "Collect keys")
         assert replacement != second_keys
         assert current.entries() == {keys: "Collect keys", replacement: "Collect keys"}
-        rejected(404, base, waiting, second_keys + "/resume")
+        rejected(404, base, waiting, second_keys + "/resume", message="entry is no longer on your list")
         submit(base, current, replacement + "/delete")
 
         # A return while the service runs, including a follow-up to a settled errand.
@@ -220,13 +223,15 @@ def verify(binary, db):
         expect_waiting(waiting, parts, "Delivery receipt", parts_day, "Upcoming")
 
         # Two replies: Lee needs a photo, but the receipt establishes delivery.
-        submit(base, waiting, repair + "/resume")
+        after_resume = submit(base, waiting, repair + "/resume")
+        assert after_resume.entries() == {parts: waiting_entries[parts]} and "/" in after_resume.links
         open_page = page(base)
         assert open_page.entries() == open_entries | {repair: waiting_entries[repair]}
         assert "Visit time from Lee" not in open_page.text_for(repair) and visit_day not in open_page.text_for(repair)
         wait_form = open_page.forms[repair + "/wait"]
         assert wait_form["waiting_for"] == wait_form["follow_up"] == ""
-        submit(base, waiting, parts + "/complete")
+        after_complete = submit(base, after_resume, parts + "/complete")
+        assert after_complete.entries() == {} and "/completed" in after_complete.links
         completed = page(base, "/completed")
         assert completed.entries() == finished | {parts: waiting_entries[parts]}
         assert "Delivery receipt" not in completed.text_for(parts) and parts_day not in completed.text_for(parts)

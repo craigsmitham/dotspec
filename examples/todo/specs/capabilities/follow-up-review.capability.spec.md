@@ -5,11 +5,11 @@ type: capability-spec
 
 ## Description
 
-Identifies the outstanding replies the owner planned to chase by today. A person returning after the weekend can see both which errand needs attention and what to ask for.
+When the owner reviews waiting errands, they can see which replies they planned to chase by today and what to ask for.
 
 ## Depends on
 
-[Local task storage](local-task-storage.capability.spec.md) supplies the recorded reply and day. The owner can return after the chosen day has passed.
+[Local task storage](local-task-storage.capability.spec.md) keeps the owner's note about the expected reply and their chosen follow-up day available between visits.
 
 ## Supports
 

@@ -27,7 +27,7 @@ The person who promised to get the errand done.
 2. The list shows “Fix the guest sink” with the saved note “Waiting for the plumber’s visit time”. The Wednesday follow-up reads “Follow up now”.
    - **Illustrates:** [Keep recorded work available](<../requirements/keep-recorded-work-available.requirement.spec-report.md>) and [Show which replies need follow-up](<../requirements/show-which-replies-need-follow-up.requirement.spec-report.md>).
 3. The person checks their messages. The plumber needs a photo before offering a visit, so the person takes back the next action on the repair.
-4. The list shows the same repair in Open. The person knows it is theirs to act on.
+4. The repair disappears from Waiting. The person opens the Open list and finds the same repair there, ready for them to act on.
    - **Illustrates:** [Resume](<../concepts/checklist.concept.spec-report.md#resume>).
 
 ## Extensions
@@ -56,7 +56,7 @@ At step 3 the plumber confirms the sink was repaired during an earlier visit, an
 
 #### Handling
 
-1. The person chooses Complete in Waiting and finds the repair in Completed.
+1. The person chooses Complete in Waiting. The repair disappears from that view. They open Completed and find the settled repair there.
    - **Illustrates:** [Complete](<../concepts/checklist.concept.spec-report.md#complete>).
 
 ### The person intentionally deleted the errand
@@ -103,10 +103,6 @@ Calls and replies happen outside the list. The person interprets what they hear 
 The person can act on a reply as soon as it arrives. Their chosen day governs when to chase an unanswered message. [When a reply needs chasing](<../business-rules/when-a-reply-needs-chasing.business-rule.spec-report.md>).
 
 ## Related specifications
-
-**Applies here**
-
-- [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
 
 **Feature**
 

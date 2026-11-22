@@ -23,7 +23,7 @@ database must preserve each surviving entry’s identity, title and state. For a
 
 ## Applies to
 
-**Targets:** [Decide what to do about a waiting errand](../use-cases/resume-list.use-case.spec.md).
+**Targets:** [My checklist](../personal-task-list.system.spec.md#my-checklist).
 
 ### Conditions
 
@@ -34,7 +34,7 @@ before the process stops.
 
 ### Measure
 
-Match entries by identity against the last acknowledged list. Count missing, unexpected or changed entries across all views. Compare the recorded follow-up date. The cue for that date is assessed on the day of return under [Show which replies need follow-up](follow-up.requirement.spec.md).
+Use the acknowledged changes to establish which entries should survive and in which view. Match each identity across all three views after restart. Count a discrepancy for each identity that is missing, appears unexpectedly or more than once, or has a different title, state or saved waiting detail. The cue for the saved date is assessed on the day of return under [Show which replies need follow-up](follow-up.requirement.spec.md).
 
 ### Target
 

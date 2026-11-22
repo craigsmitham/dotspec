@@ -179,7 +179,7 @@ func (a app) change(w http.ResponseWriter, r *http.Request) {
 	if action != "" {
 		err := tx.QueryRowContext(ctx, "SELECT state FROM task_list WHERE id = ?", id).Scan(&state)
 		if err == sql.ErrNoRows {
-			http.NotFound(w, r)
+			http.Error(w, "This entry is no longer on your list.", http.StatusNotFound)
 			return
 		}
 		if err != nil {

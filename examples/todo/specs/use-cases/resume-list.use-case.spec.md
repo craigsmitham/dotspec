@@ -39,7 +39,7 @@ Calls and replies happen outside the list. The person interprets what they hear 
 2. The list shows “Fix the guest sink” with the saved note “Waiting for the plumber’s visit time”. The Wednesday follow-up reads “Follow up now”.
    - **Illustrates:** [Keep recorded work available](../requirements/availability.requirement.spec.md) and [Show which replies need follow-up](../requirements/follow-up.requirement.spec.md).
 3. The person checks their messages. The plumber needs a photo before offering a visit, so the person takes back the next action on the repair.
-4. The list shows the same repair in Open. The person knows it is theirs to act on.
+4. The repair disappears from Waiting. The person opens the Open list and finds the same repair there, ready for them to act on.
    - **Illustrates:** [Resume](../concepts/checklist.concept.spec.md#resume).
 
 ## Success guarantees
@@ -76,7 +76,7 @@ At step 3 the plumber confirms the sink was repaired during an earlier visit, an
 
 #### Handling
 
-1. The person chooses Complete in Waiting and finds the repair in Completed.
+1. The person chooses Complete in Waiting. The repair disappears from that view. They open Completed and find the settled repair there.
    - **Illustrates:** [Complete](../concepts/checklist.concept.spec.md#complete).
 
 ### The person intentionally deleted the errand
