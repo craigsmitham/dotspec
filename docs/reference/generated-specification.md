@@ -2,6 +2,8 @@
 
 Use a generated spec when readers need one entry point for requirements authored across a project. Open the project’s `SPEC.md` and follow its link to read the system’s purpose and scope, choose a feature, and follow its promises to the source and supporting evidence. The To-do example includes a [complete generated spec](../../examples/todo/SPEC.md).
 
+For a review, start with one stakeholder goal and use the generated links to follow the promises across their owners. [Review a set of requirements](../cli-handbook/guides/review-a-set-of-requirements.md).
+
 ## Set up a project
 
 Work in the directory that owns your project's `dotspec.yaml`. If you are starting a project, create that file with your project name. The To-do example uses the following manifest. Generated reports are enabled by default.

@@ -10,6 +10,10 @@ The more general To-do requirement says where a person can find saved work on re
 
 ISO/IEC/IEEE 29148 distinguishes the qualities of an individual requirement, including singularity and verifiability, from the completeness and consistency of a set. The one-file convention is dotspec's way to give each requirement an address. A qualitative statement can already say what would violate it. For instance, a deleted task appearing in any view violates the general requirement. A separate numeric target adds value when the decision depends on a measured bound. [ISO/IEC/IEEE 29148:2018, §§5.2.4–5.2.6](https://www.iso.org/standard/72089.html).
 
+## Can individually assessable requirements conflict?
+
+Two readers could agree on how to verify each requirement and still disagree about what the system owes the owner. Imagine an exact copy of Thursday’s list restored on Friday. That would preserve the words on the screen, including yesterday’s follow-up cue. The owner needs the saved follow-up day and a cue appropriate to the day of return. Reading the restart and follow-up promises together exposes which information is durable and which is calculated. [Review a set of requirements](../guides/review-a-set-of-requirements.md).
+
 ## What would count as evidence?
 
 Bertrand Meyer suggests looking for a counterexample when judging verifiability. Wording that rules out an observable result can guide a test before any test has run. The restart test records entries in all three views, restarts the application and compares the entries it gets back. A passing run is verification evidence for those conditions. Validation asks whether preserving that information actually helps a person resume unfinished work. Observing someone return to their list could reveal that they also need a reminder of the next step. The existing test could still pass. [Meyer, *Handbook of Requirements and Business Analysis* (2022), §4.12](https://doi.org/10.1007/978-3-031-06739-6) · [ISO/IEC/IEEE 29148:2018, §§6.5.2–6.5.3](https://www.iso.org/standard/72089.html) · [To-do verification example](../../../examples/todo/specs/requirements/restart.requirement.spec.md#evidence).

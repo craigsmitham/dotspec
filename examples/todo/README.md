@@ -26,7 +26,7 @@ Open the address printed in the terminal. The person keeping the list is the onl
 
 Start at [SPEC.md](SPEC.md) and open the system specification. Under **Goals**, open **Resume unfinished work**. Under **Supported by**, choose the job **See personal commitments through**. In the job’s **Evidence** section, follow the **return scenario**. At step 2, open **Show which replies need follow-up**. Its **Derived from** link takes you to the rule that explains why an unanswered errand is still yours after the day passes. Its **Evidence** link takes you to the test that reads the cue on the rendered form.
 
-For the distinction between facts the owner saved and a cue that can change overnight, start with the restart requirement. The feature groups both promises for the returning owner. [Pick up where I left off](specs/features/pick-up-where-i-left-off.feature.spec.md) · [Preserve tasks across restart](specs/requirements/restart.requirement.spec.md).
+For the distinction between facts the owner saved and a cue that can change overnight, start with the restart requirement. Try predicting Friday’s screen from Thursday’s saved entry before reading the test. The feature groups the promises, and the handbook shows how to review them together. [Pick up where I left off](specs/features/pick-up-where-i-left-off.feature.spec.md) · [Preserve tasks across restart](specs/requirements/restart.requirement.spec.md) · [Review a set of requirements](../../docs/cli-handbook/guides/review-a-set-of-requirements.md).
 
 ## Verify the example
 

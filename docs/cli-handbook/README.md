@@ -69,10 +69,11 @@ Explain how a concept’s actions serve its purpose and how a system uses that b
 
 ### Requirements
 
-State what a requirement promises, when it applies and what result would violate it. Run `dotspec docs requirement`.
+Write a promise a reader can assess and review whether related requirements can serve a stakeholder goal together. Run `dotspec docs requirement`.
 
 - [Write an assessable requirement](guides/write-an-assessable-requirement.md) (How-to)
 - [What makes a requirement assessable?](explanations/requirements.md) (Explanation)
+- [Review a set of requirements](guides/review-a-set-of-requirements.md) (How-to)
 
 ### Quality models
 
