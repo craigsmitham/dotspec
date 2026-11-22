@@ -1,0 +1,8 @@
+{
+  "$schema": "https://axm.sh/schemas/skill.schema.json",
+  "owner": "@craigsmitham",
+  "type": "skill",
+  "name": "refine-guidance",
+  "version": "0.0.1",
+  "description": "Compare dotspec example specs with worked examples from sources cited by the CLI handbook, then refine the guidance, specs, and example app behavior where the evidence warrants a change."
+}

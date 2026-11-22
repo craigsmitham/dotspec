@@ -15,11 +15,13 @@
       "source": "workspace",
       "origin": "bundled"
     },
-    "improve-whatever": "agentxm:@craigsmitham/skills/improve-whatever"
+    "improve-whatever": "agentxm:@craigsmitham/skills/improve-whatever",
+    "refine-guidance": "workspace"
   },
   "packs": {
     "codebase-renewal": "agentxm:@craigsmitham/packs/codebase-renewal",
     "docs": "agentxm:@craigsmitham/packs/docs",
     "software-maintenance": "agentxm:@craigsmitham/packs/software-maintenance"
-  }
+  },
+  "owner": "@craigsmitham"
 }
