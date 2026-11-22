@@ -114,7 +114,7 @@ A recognizable grouping of specified product behavior valued by stakeholders, in
 
 ### Example
 
-[Pick up where I left off](<../examples/todo/specs/features/pick-up-where-i-left-off.feature.spec.md>) groups the [Return to my list](<../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) use case.
+[Pick up where I left off](<../examples/todo/specs/features/pick-up-where-i-left-off.feature.spec.md>) groups the [Decide what to do about a waiting errand](<../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) use case.
 
 [View term source](<../docs/reference/model/glossary.md#feature>)
 

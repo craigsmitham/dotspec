@@ -23,7 +23,7 @@ database must preserve each surviving entry’s identity, title and state. For a
 
 ## Applies to
 
-**Targets:** [Return to my list](../use-cases/resume-list.use-case.spec.md).
+**Targets:** [Decide what to do about a waiting errand](../use-cases/resume-list.use-case.spec.md).
 
 ### Conditions
 

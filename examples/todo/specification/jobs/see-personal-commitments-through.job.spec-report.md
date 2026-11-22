@@ -156,11 +156,11 @@ Minimize the time it takes to identify the next outstanding action when returnin
 
 This map and its outcomes are hypotheses drawn from a fictional errand. Ask someone to walk through the last commitment they carried over several days. What counted as accepting it? What sign told them another action was due? Who could say it was settled? If they still had to chase the result after asking someone else to do the work, ask what would have confirmed a transfer of responsibility.
 
-The [return scenario](<../use-cases/return-to-my-list.use-case.spec-report.md>) illustrates how a person might keep track of a reply between calls. The [participant exercise](<../../README.md#try-the-workflow-with-a-participant>) examines that interaction. Whether keeping the entry helps the person recover their actual next action is a separate question.
+The [return scenario](<../use-cases/decide-what-to-do-about-a-waiting-errand.use-case.spec-report.md>) illustrates how a person might keep track of a reply between calls. The [participant exercise](<../../README.md#try-the-workflow-with-a-participant>) examines that interaction. Whether keeping the entry helps the person recover their actual next action is a separate question.
 
 ## Related specifications
 
 **Supported by**
 
+- [Decide what to do about a waiting errand](<../use-cases/decide-what-to-do-about-a-waiting-errand.use-case.spec-report.md>)
 - [My checklist](<../concept-uses/my-checklist.concept-use.spec-report.md>)
-- [Return to my list](<../use-cases/return-to-my-list.use-case.spec-report.md>)

@@ -17,6 +17,6 @@ Someone can finish making calls for the day while still owing several results. W
 
 ## Groups
 
-- [Return to my list](<../use-cases/return-to-my-list.use-case.spec-report.md>) follows one errand through a break and a reply.
+- [Decide what to do about a waiting errand](<../use-cases/decide-what-to-do-about-a-waiting-errand.use-case.spec-report.md>) shows how the owner decides whether to take up the work, keep waiting or mark the errand settled.
 - [Show which replies need follow-up](<../requirements/show-which-replies-need-follow-up.requirement.spec-report.md>) specifies the cue for deciding where to act.
 - [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>) covers returning after the service itself has stopped.

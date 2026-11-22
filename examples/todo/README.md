@@ -1,6 +1,6 @@
 # To-do
 
-Suppose you promised a guest a working sink by Friday. You’ve asked the plumber for a visit time. What should your list say while you wait? This example follows that decision from a personal commitment to a working browser form and a restart test.
+Suppose you promised a guest a working sink by Friday. On Monday you ask the plumber for a visit time and decide to chase the reply on Wednesday. What should the list tell you on Wednesday? If the plumber asks for a photo, whose turn is it to act? This example follows that decision from a personal commitment to a working browser form and a restart test.
 
 ## Run the app
 

@@ -4,7 +4,11 @@ Ask someone who does the work to describe the last time they finished it. What d
 
 ## Name the actor, boundary, and finish
 
-Give the use case a verb phrase the primary actor would recognize. In this fictional draft, *Decide a refund request* is a user task. *Obtain a refund* would switch to the customer’s goal. Selecting a request is one step in the reviewer’s work. Under **System boundary**, describe what the narrative covers in the actor’s terms. If the subject system has a specification, a **Subject system:** link there can identify it, as in [the To-do use case](../../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#system-boundary). File location determines which system the CLI groups the use case under by default. To choose that association explicitly, put one relative Markdown link to the system’s `*.system.spec.md` file under **Specification system**. [Actors and goal levels](../explanations/use-cases.md#whose-goal-belongs-at-this-boundary).
+If the story spans several visits, ask what brought the person to the system each time and what they had accomplished by the time they left. On Monday the errand owner leaves knowing the list will remember which reply they need from the plumber and when to chase it. On Wednesday they return to decide what to do about the repair. For Wednesday’s use case, the recorded wait is a precondition. Cockburn uses what a person can accomplish in one sitting as a clue to a user task’s scope. A summary use case can follow a goal across several visits. [Cockburn, *The Mini-Book on Use Cases*, v1.1b, §4.2](https://alistaircockburn.com/Books).
+
+Name the use case for the result the primary actor wants. In the refund example below, *Decide a refund request* is a user task. *Obtain a refund* would switch to the customer’s goal. Selecting a request is one step in the reviewer’s work. [Actors and goal levels](../explanations/use-cases.md#whose-goal-belongs-at-this-boundary).
+
+Under **System boundary**, describe what the narrative covers in the actor’s terms. If the subject system has a specification, a **Subject system:** link there can identify it, as in the To-do example. File location determines which system the CLI groups the use case under by default. To choose that association explicitly, put one relative Markdown link to the system’s `*.system.spec.md` file under **Specification system**. [To-do system boundary (dotspec checkout)](../../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#system-boundary).
 
 From your project directory, run `dotspec use-case init decide-refund` to create `specs/use-cases/decide-refund.use-case.spec.md`. Use your own slug for a different task. For a new draft whose trigger, participants or guarantees need discussion, add `--template expanded` to that command. For an existing draft, edit its current sections and add headings where you have more to say. The following passages make up one worked draft.
 
@@ -84,7 +88,7 @@ The refusal is an alternative success for this actor. In the second branch, loss
 
 ## Review guarantees and ordering
 
-Ask the reviewer what must be true at either successful ending, then ask Finance which protection must hold even if the connection fails. Suppose they agree on the following guarantees. The recovery procedure can remain open while the protection is explicit.
+At the end of each successful path, what can the actor establish? Read the proposed success guarantee against each ending. Here the reviewer must be able to establish the recorded decision after either approval or refusal. Ask Finance which protection must hold even if confirmation is lost. Suppose they agree on the following guarantees. The recovery procedure can remain open while the protection is explicit.
 
 ```markdown
 ## Success guarantees

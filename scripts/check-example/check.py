@@ -20,7 +20,7 @@ TYPES = {
     "capability": ("local-task-storage", "Local task storage"),
     "business-rule": ("completion", "Completion preserves a commitment"),
     "job": ("personal-commitments", "See personal commitments through"),
-    "use-case": ("resume-list", "Return to my list"),
+    "use-case": ("resume-list", "Decide what to do about a waiting errand"),
     "concept": ("checklist", "Checklist"),
     "requirement": ("restart", "Preserve tasks across restart"),
     "quality-model": ("personal-data", "Personal data quality"),
@@ -30,7 +30,7 @@ VIEWS = {
     "pegs": "A finished commitment stays",
     "trace": "| refines | [Keep recorded work available]",
     "needs": "DesiredOutcome: Less reconstruction",
-    "review": "illustrates [Reopen]",
+    "review": "illustrates [Complete]",
     "docs": "| Reopen | unchanged | unchanged | open |",
 }
 
@@ -269,7 +269,7 @@ def spec_journey(cli, tmp):
     assert follow(component, "Acknowledge after commit") == acknowledgement
     statement = acknowledgement.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
     assert component_requirements.read_text(encoding="utf-8").count(statement) == 1
-    assert "## Goal" in follow(feature, "Return to my list").read_text(encoding="utf-8")
+    assert "## Goal" in follow(feature, "Decide what to do about a waiting errand").read_text(encoding="utf-8")
     qualities_index = follow(root, "All quality attributes")
     qualities = follow(qualities_index, "Durability")
     quality_section = overview.split("\n## Quality attributes\n", 1)[1].split("\n## ", 1)[0]
@@ -289,7 +289,7 @@ def spec_journey(cli, tmp):
     definitions = follow(qualities, "Source definition")
     assert definitions == project / "specification/quality-models/personal-data-quality.quality-model.spec-report.md"
     assert claims[project / "specs/quality-models/personal-data.quality-model.spec.md", "personal-data-quality"] == definitions
-    use_case = follow(feature, "Return to my list")
+    use_case = follow(feature, "Decide what to do about a waiting errand")
     availability = follow(use_case, "Keep recorded work available")
     assert availability == claims[project / "specs/requirements/availability.requirement.spec.md", "keep-recorded-work-available"]
     assert follow(promise, "Keep recorded work available") == availability
@@ -312,7 +312,7 @@ def spec_journey(cli, tmp):
     assert follow(requirements, "Task service") == component_requirements
     use_cases = follow(root, "All use cases")
     assert use_cases == root.parent / "use-cases.md"
-    assert follow(use_cases, "Return to my list") == use_case
+    assert follow(use_cases, "Decide what to do about a waiting errand") == use_case
     assert not (component.parent / "use-cases.md").exists()
     assert not list((project / "specification").rglob("index.md"))
     cli("check", cwd=project)

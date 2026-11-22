@@ -28,4 +28,4 @@ Each entry follows one commitment through the owner's next action, an outstandin
 
 **Used in**
 
-- [Return to my list](<../use-cases/return-to-my-list.use-case.spec-report.md>)
+- [Decide what to do about a waiting errand](<../use-cases/decide-what-to-do-about-a-waiting-errand.use-case.spec-report.md>)

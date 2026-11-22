@@ -14,7 +14,7 @@ database must preserve each surviving entry’s identity, title and state. For a
 
 ## Applies to
 
-**Targets:** [Return to my list](<../use-cases/return-to-my-list.use-case.spec-report.md>).
+**Targets:** [Decide what to do about a waiting errand](<../use-cases/decide-what-to-do-about-a-waiting-errand.use-case.spec-report.md>).
 
 ### Conditions
 
