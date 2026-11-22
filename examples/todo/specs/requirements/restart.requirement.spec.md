@@ -7,8 +7,7 @@ quality_attributes: [durability]
 ## Statement
 
 After the service acknowledges a change, stopping and restarting it on the same
-database must preserve each surviving entry's identity, title and completion state.
-Deleted entries must stay absent.
+database must preserve each surviving entry’s identity, title and state. For a waiting entry, the expected reply and follow-up date must also survive. Deleted entries must stay absent.
 
 ## Refines
 
@@ -35,11 +34,11 @@ before the process stops.
 
 ### Measure
 
-Count missing, unexpected or changed entries compared with the last acknowledged list.
+Match entries by identity against the last acknowledged list. Count missing, unexpected or changed entries across all views. Compare the recorded follow-up date. The cue for that date is assessed on the day of return under [Show which replies need follow-up](follow-up.requirement.spec.md).
 
 ### Target
 
-Zero discrepancies across the two views.
+Zero discrepancies across Open, Waiting and Completed.
 
 ## Evidence
 

@@ -7,7 +7,7 @@ source: "../../specs/personal-task-list.system.spec.md#my-checklist"
 
 ## Description
 
-The checklist used to track one person’s open and completed tasks.
+Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. Two errands with the same title can be at different stages.
 
 [Personal task list](<../personal-task-list.system.spec-report.md>)
 
@@ -24,6 +24,7 @@ The checklist used to track one person’s open and completed tasks.
 **Applies here**
 
 - [Keep recorded work available](<../requirements/keep-recorded-work-available.requirement.spec-report.md>)
+- [When a reply needs chasing](<../business-rules/when-a-reply-needs-chasing.business-rule.spec-report.md>)
 
 **Used in**
 

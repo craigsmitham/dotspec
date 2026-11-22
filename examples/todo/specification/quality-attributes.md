@@ -5,4 +5,4 @@ generated_by: dotspec
 
 [Personal task list](<personal-task-list.system.spec-report.md>)
 
-**[Durability](<quality/durability/durability.quality-attribute.spec-report.md>)** — Preservation of acknowledged work between local sessions.
+**[Durability](<quality/durability/durability.quality-attribute.spec-report.md>)** — Preservation of the owner’s acknowledged decisions between local sessions, including the reply and day they recorded for a waiting errand. The follow-up cue can change overnight even though those decisions survive intact.

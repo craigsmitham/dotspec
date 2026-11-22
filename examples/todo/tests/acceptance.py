@@ -1,6 +1,13 @@
-"""Exercise task forms across two independent server processes on one SQLite file."""
+"""Submit the task-list forms to one local database across independent processes.
+
+The actions follow specs/concepts/checklist.concept.spec.md. The cue shown on
+each date comes from specs/requirements/follow-up.requirement.spec.md. The
+live and restarted list comparisons exercise specs/requirements/availability.requirement.spec.md
+and specs/requirements/restart.requirement.spec.md.
+"""
 import argparse
 from contextlib import contextmanager
+from datetime import date, datetime, timedelta, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 import os
@@ -20,30 +27,44 @@ class TaskPage(HTMLParser):
         self.form = None
         self.titles = []
         self.in_title = False
+        self.item_text = {}
+        self.item = None
         self.feed(body)
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
+        if tag == "li":
+            self.item = []
         if tag == "a":
             self.links.add(attrs["href"])
         if tag == "form":
             assert attrs["method"].lower() == "post"
             self.form = {}
-            self.forms[attrs["action"]] = self.form
+            action = attrs["action"]
+            self.forms[action] = self.form
+            if self.item is not None and action.endswith("/rename"):
+                self.item_text[action.removesuffix("/rename")] = self.item
         if tag == "input" and self.form is not None:
             self.form[attrs["name"]] = attrs.get("value", "")
         if tag == "p" and attrs.get("class") == "task":
             self.in_title = True
 
     def handle_data(self, data):
+        if self.item is not None:
+            self.item.append(data)
         if self.in_title:
             self.titles.append(data)
 
     def handle_endtag(self, tag):
+        if tag == "li":
+            self.item = None
         if tag == "form":
             self.form = None
         if tag == "p":
             self.in_title = False
+
+    def text_for(self, entry):
+        return " ".join(" ".join(self.item_text[entry]).split())
 
     def entries(self):
         entries = {action.removesuffix("/rename"): fields["title"]
@@ -53,9 +74,12 @@ class TaskPage(HTMLParser):
 
 
 @contextmanager
-def running(binary, db):
+def running(binary, db, *, zone=None):
+    env = os.environ.copy()
+    if zone:
+        env["TZ"] = zone
     with tempfile.TemporaryFile() as errors, (db.parent / "address").open("wb") as address:
-        process = subprocess.Popen([binary, "-port", "0", "-db", db], stdout=address, stderr=errors)
+        process = subprocess.Popen([binary, "-port", "0", "-db", db], stdout=address, stderr=errors, env=env)
         try:
             deadline = time.monotonic() + 30
             while time.monotonic() < deadline:
@@ -86,51 +110,147 @@ def submit(base, current, action, **fields):
     return page(base, action, urlencode(form).encode())
 
 
+def rejected(status, base, current, action, **fields):
+    try:
+        submit(base, current, action, **fields)
+    except HTTPError as error:
+        assert error.code == status, (action, error.code)
+        error.close()
+    else:
+        raise AssertionError(f"{action} accepted a submission that should return {status}")
+
+
+def add(base, title):
+    start = page(base)
+    before = start.entries()
+    current = submit(base, start, "/tasks", title=title)
+    after = current.entries()
+    entry, = after.keys() - before.keys()
+    assert after == before | {entry: title}
+    return current, entry
+
+
+def expect_waiting(waiting, entry, reason, follow_up, cue):
+    text = waiting.text_for(entry)
+    assert reason in text and follow_up in text, (entry, text)
+    form = waiting.forms[entry + "/update-follow-up"]
+    assert form["waiting_for"] == reason and form["follow_up"] == follow_up, (entry, form)
+    assert cue in text, (entry, text)
+    other = "Upcoming" if cue == "Follow up now" else "Follow up now"
+    assert other not in text, (entry, text)
+
+
 def verify(binary, db):
     with running(binary, db) as base:
         current = page(base)
-        assert current.entries() == {} and "/completed" in current.links
-        try:
-            submit(base, current, "/tasks", title="  ")
-        except HTTPError as error:
-            assert error.code == 400
-        else:
-            raise AssertionError("blank task accepted")
-        current = submit(base, current, "/tasks", title="Call the plumber")
-        errand, = current.entries()
-        try:
-            submit(base, current, errand + "/rename", title=" ")
-        except HTTPError as error:
-            assert error.code == 400 and page(base).entries() == {errand: "Call the plumber"}
-        else:
-            raise AssertionError("blank rename accepted")
+        assert current.entries() == {} and {"/waiting", "/completed"} <= current.links
+        rejected(400, base, current, "/tasks", title="  ")
+        current, errand = add(base, "Call the plumber")
+        rejected(400, base, current, errand + "/rename", title=" ")
+        assert page(base).entries() == {errand: "Call the plumber"}
         current = submit(base, current, errand + "/rename", title="Call Pat & Lee <today>")
-        current = submit(base, current, "/tasks", title="Collect keys")
-        current = submit(base, current, "/tasks", title="Discard this task")
-        discarded, = [key for key, title in current.entries().items() if title == "Discard this task"]
-        current = submit(base, current, discarded + "/delete")
-        current = submit(base, current, errand + "/complete")
-        open_entries = current.entries()
-        assert list(open_entries.values()) == ["Collect keys"]
-        completed = page(base, "/completed")
-        finished = completed.entries()
-        assert finished == {errand: "Call Pat & Lee <today>"} and "/" in completed.links
+        submit(base, current, errand + "/complete")
+        _, keys = add(base, "Collect keys")
+        current, repair = add(base, "Arrange repair")
+        today = date.today()
+        visit_day = today.isoformat()
+        parts_day = (today + timedelta(days=7)).isoformat()
+        yesterday = (today - timedelta(days=1)).isoformat()
 
-        # Return in a fresh view while the service is still running.
-        returned = page(base, "/completed")
-        assert returned.entries() == finished and page(base).entries() == open_entries
-        submit(base, returned, errand + "/reopen")
-        assert page(base).entries() == open_entries | finished
+        # An incomplete handoff leaves the errand actionable.
+        for reason, day in [("   ", visit_day), ("Visit time", ""), ("Visit time", "2025-02-29")]:
+            rejected(400, base, current, repair + "/wait", waiting_for=reason, follow_up=day)
+            assert page(base).entries()[repair] == "Arrange repair" and not page(base, "/waiting").entries()
+
+        submit(base, current, repair + "/wait", waiting_for="  Visit time from Lee  ", follow_up=visit_day)
+        # The Complete button in an earlier Open tab belongs to the old state.
+        rejected(409, base, current, repair + "/complete")
+        waiting = page(base, "/waiting")
+        waiting = submit(base, waiting, repair + "/rename", title="Book sink repair")
+        expect_waiting(waiting, repair, "Visit time from Lee", visit_day, "Follow up now")
+
+        current, parts = add(base, "Get replacement parts")
+        submit(base, current, parts + "/wait", waiting_for="Dispatch notice", follow_up=yesterday)
+        waiting = page(base, "/waiting")
+        expect_waiting(waiting, parts, "Dispatch notice", yesterday, "Follow up now")
+
+        # The supplier promises a delivery receipt next week. Both details change together.
+        update = parts + "/update-follow-up"
+        rejected(400, base, waiting, update, waiting_for="Delivery receipt", follow_up="")
+        expect_waiting(page(base, "/waiting"), parts, "Dispatch notice", yesterday, "Follow up now")
+        waiting = submit(base, waiting, update, waiting_for="Delivery receipt", follow_up=parts_day)
+        expect_waiting(waiting, parts, "Delivery receipt", parts_day, "Upcoming")
+
+        # Two key collections share a title. Only the second needs a pickup time.
+        current, second_keys = add(base, "Collect keys")
+        submit(base, current, second_keys + "/wait", waiting_for="Pickup time", follow_up=yesterday)
+        assert page(base).entries() == {keys: "Collect keys"}
+        waiting = page(base, "/waiting")
+        expect_waiting(waiting, second_keys, "Pickup time", yesterday, "Follow up now")
+        submit(base, waiting, second_keys + "/delete")
+        current, replacement = add(base, "Collect keys")
+        assert replacement != second_keys
+        assert current.entries() == {keys: "Collect keys", replacement: "Collect keys"}
+        rejected(404, base, waiting, second_keys + "/resume")
+        submit(base, current, replacement + "/delete")
+
+        # A return while the service runs, including a follow-up to a settled errand.
+        completed = page(base, "/completed")
+        finished = {errand: "Call Pat & Lee <today>"}
+        assert completed.entries() == finished and "/" in completed.links
+        submit(base, completed, errand + "/reopen")
+        assert page(base).entries() == {keys: "Collect keys"} | finished
         submit(base, page(base), errand + "/complete")
+
+        open_entries = {keys: "Collect keys"}
+        waiting_entries = {repair: "Book sink repair", parts: "Get replacement parts"}
+        assert page(base).entries() == open_entries
         assert page(base, "/completed").entries() == finished
+        waiting = page(base, "/waiting")
+        assert waiting.entries() == waiting_entries
+        expect_waiting(waiting, repair, "Visit time from Lee", visit_day, "Follow up now")
+        expect_waiting(waiting, parts, "Delivery receipt", parts_day, "Upcoming")
 
     with running(binary, db) as base:
         assert page(base).entries() == open_entries, "restart lost or changed open tasks"
+        assert page(base, "/completed").entries() == finished, "restart lost or changed completed tasks"
+        waiting = page(base, "/waiting")
+        assert waiting.entries() == waiting_entries, "restart lost or changed waiting tasks"
+        expect_waiting(waiting, repair, "Visit time from Lee", visit_day, "Follow up now")
+        expect_waiting(waiting, parts, "Delivery receipt", parts_day, "Upcoming")
+
+        # Two replies: Lee needs a photo, but the receipt establishes delivery.
+        submit(base, waiting, repair + "/resume")
+        open_page = page(base)
+        assert open_page.entries() == open_entries | {repair: waiting_entries[repair]}
+        assert "Visit time from Lee" not in open_page.text_for(repair) and visit_day not in open_page.text_for(repair)
+        wait_form = open_page.forms[repair + "/wait"]
+        assert wait_form["waiting_for"] == wait_form["follow_up"] == ""
+        submit(base, waiting, parts + "/complete")
         completed = page(base, "/completed")
-        assert completed.entries() == finished, "restart lost or changed completed tasks"
-        completed = submit(base, completed, errand + "/reopen")
-        assert completed.entries() == {}
-        assert page(base).entries() == open_entries | finished, "reopen changed task identity"
+        assert completed.entries() == finished | {parts: waiting_entries[parts]}
+        assert "Delivery receipt" not in completed.text_for(parts) and parts_day not in completed.text_for(parts)
+        assert page(base, "/waiting").entries() == {}
+        submit(base, completed, parts + "/reopen")
+        open_page = page(base)
+        assert open_page.entries() == open_entries | waiting_entries
+        wait_form = open_page.forms[parts + "/wait"]
+        assert wait_form["waiting_for"] == wait_form["follow_up"] == ""
+
+
+def verify_changed_day(binary, db):
+    # UTC+14 is 26 hours ahead of UTC-12. A date due in the eastern zone
+    # is still in the future in the western zone, even near either midnight.
+    east = timezone(timedelta(hours=14))
+    day = datetime.now(east).date().isoformat()
+    with running(binary, db, zone="Etc/GMT+12") as base:
+        current, room = add(base, "Reserve library room")
+        submit(base, current, room + "/wait", waiting_for="Room confirmation", follow_up=day)
+        expect_waiting(page(base, "/waiting"), room, "Room confirmation", day, "Upcoming")
+    with running(binary, db, zone="Etc/GMT-14") as base:
+        waiting = page(base, "/waiting")
+        assert waiting.entries() == {room: "Reserve library room"}
+        expect_waiting(waiting, room, "Room confirmation", day, "Follow up now")
 
 
 def run(app):
@@ -138,6 +258,8 @@ def run(app):
         binary = Path(tmp) / ("todo.exe" if os.name == "nt" else "todo")
         subprocess.run(["go", "build", "-mod=readonly", "-o", binary, "."], cwd=app, check=True)
         verify(binary, Path(tmp) / "tasks.sqlite")
+        if os.name == "posix":  # Go on Unix reads the process's TZ setting.
+            verify_changed_day(binary, Path(tmp) / "calendar.sqlite")
 
 
 if __name__ == "__main__":

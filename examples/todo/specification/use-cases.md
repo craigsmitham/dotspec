@@ -5,4 +5,4 @@ generated_by: dotspec
 
 [Personal task list](<personal-task-list.system.spec-report.md>)
 
-- [Return to my list](<use-cases/return-to-my-list.use-case.spec-report.md>) — Pick up an outstanding task and bring a finished one back for follow-up.
+- [Return to my list](<use-cases/return-to-my-list.use-case.spec-report.md>) — After a break, recover what I was waiting for and decide what to do about the errand.

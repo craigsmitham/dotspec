@@ -5,12 +5,12 @@ source: "../specs/personal-task-list.system.spec.md#personal-task-list"
 ---
 # Personal task list
 
-A single-user task list that stores open and completed tasks on one computer.
+A personal list of errands the owner can act on, replies they are waiting for and commitments they have settled.
 
 | Section | Explore |
 | --- | --- |
-| [Framing](<#framing>) | An errand can need another action after it seemed finished. The job of seeing personal commitments through gives the reason to keep both open and completed commitments available when the person returns. |
-| [Purpose](<#purpose>) | Help a person pick up unfinished work after an interruption. |
+| [Framing](<#framing>) | Suppose a guest needs a working sink by Friday. Sending the plumber a photo finishes today's action. The owner still owes the repair. The job of seeing personal commitments through explains what the owner needs to establish when they return. |
+| [Purpose](<#purpose>) | Help one person pick up an errand after an interruption and recognize when to chase an outstanding reply. |
 | [Goals](<#goals>) | [All goals](<goals.md>) |
 | Business rules | [All business rules](<business-rules.md>) |
 | [Stakeholders and user needs](<#stakeholders-and-user-needs>) | [Jobs](<jobs.md>) |
@@ -25,11 +25,11 @@ A single-user task list that stores open and completed tasks on one computer.
 
 ## Framing
 
-An errand can need another action after it seemed finished. The [job of seeing personal commitments through](<jobs/see-personal-commitments-through.job.spec-report.md>) gives the reason to keep both open and completed commitments available when the person returns.
+Suppose a guest needs a working sink by Friday. Sending the plumber a photo finishes today's action. The owner still owes the repair. The [job of seeing personal commitments through](<jobs/see-personal-commitments-through.job.spec-report.md>) explains what the owner needs to establish when they return.
 
 ## Purpose
 
-Help a person pick up unfinished work after an interruption.
+Help one person pick up an errand after an interruption and recognize when to chase an outstanding reply.
 
 ## Goals
 
@@ -41,15 +41,15 @@ The person who keeps the list also decides which entries can be discarded.
 
 ## Scope and environment
 
-The list tracks one person’s open and completed tasks on one computer.
+One person records commitments on one computer and reviews them in Open, Waiting and Completed. They choose what reply to watch for and the day to check back. They receive the reply and judge the result outside the list.
 
 ### Out of scope
 
-Sharing lists, synchronizing devices and recovering from loss of the database file.
+Sending reminders, reading messages, managing delivery deadlines, sharing lists, synchronizing devices and recovering from loss of the database file.
 
 ### Operating environment
 
-The person may close the browser or stop the service between work sessions.
+The browser and service run on the same computer. The person can close either between visits. The service uses that computer’s local calendar when the person loads Waiting.
 
 ### Assumptions
 
@@ -66,21 +66,22 @@ flowchart LR
     n0 -->|provides interface| n2
 ```
 
-- **Component** · [Task service](<components/task-service/task-service.component.spec-report.md>) — The local service that handles browser requests and saves changes to the task list.
-  - Provides [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>) — Retains accepted task changes between sessions on the same computer.
-- **Provided interface** · [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — The browser presents open and completed tasks and accepts changes through HTML forms.
+- **Component** · [Task service](<components/task-service/task-service.component.spec-report.md>) — The local service that decides whether a submitted action still applies to the selected entry and records accepted changes.
+  - Provides [Follow-up review](<capabilities/follow-up-review.capability.spec-report.md>) — Identifies the outstanding replies the owner planned to chase by today. A person returning after the weekend can see both which errand needs attention and what to ask for.
+  - Provides [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>) — Keeps a commitment and the owner's last recorded decision together between visits. Finding the title alone would leave someone who returns to a waiting errand searching their messages for the reply they meant to chase.
+- **Provided interface** · [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — Open offers work the owner can advance. Waiting shows the expected reply and when to chase it. Completed holds settled errands the owner may reopen. After an accepted change the browser returns to the view where the person submitted it.
 
 ## Features
 
-- [Pick up where I left off](<features/pick-up-where-i-left-off.feature.spec-report.md>) — Reopens the task list with each task in its last saved state.
+- [Pick up where I left off](<features/pick-up-where-i-left-off.feature.spec-report.md>) — Find an errand after a break, see whether a reply needs chasing and take up the work again when an answer arrives.
 
 ## Concepts
 
 ### Concept uses
 
-- [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — The checklist used to track one person’s open and completed tasks.
+- [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. Two errands with the same title can be at different stages.
   - Uses [Checklist](<concepts/checklist.concept.spec-report.md>)
 
 ## Quality attributes
 
-**[Durability](<quality/durability/durability.quality-attribute.spec-report.md>)** — Preservation of acknowledged work between local sessions.
+**[Durability](<quality/durability/durability.quality-attribute.spec-report.md>)** — Preservation of the owner’s acknowledged decisions between local sessions, including the reply and day they recorded for a waiting errand. The follow-up cue can change overnight even though those decisions survive intact.

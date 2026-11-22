@@ -20,24 +20,31 @@ For the model views, run `mise exec -- go run . model VIEW --path examples/todo`
 | View | What to look for |
 | --- | --- |
 | `overview` | The system provides Task list forms. |
-| `pegs` | The completion policy appears in the environment and boundaries perspective. |
+| `pegs` | The follow-up policy says who still owns a result when the chosen day passes. |
 | `needs` | Less reconstruction appears as a desired outcome. |
 | `docs` | The checklist effects table preserves identity and title on Reopen. |
 | `trace` | The restart requirement refines the standalone availability requirement. |
-| `review` | The return scenario illustrates the Reopen action. Decide whether its contribution to the user's goal is adequate. |
+| `review` | The return scenario illustrates Resume after a request for a photo, and Complete when a reply settles the commitment. |
 
 ## Handbook and authoring exercises
 
 With dotspec on your PATH, use `dotspec docs TOPIC` for each topic below. To use this checkout’s CLI from the repository root, substitute `mise exec -- go run . docs TOPIC`. The questions identify the decision a reader should be able to review.
 
-| Topics | Concrete exercise |
-| --- | --- |
-| `job` | Read the [job](specs/jobs/personal-commitments.job.spec.md). Distinguish the job-owned outcome from the two steps to which it applies. |
-| `system`, `component`, `business-rule` | Find the [task service's implementation](app/specs/task-service.component.spec.md#implementation). Explain why the completion policy would survive a change of database. |
-| `feature`, `capability` | Follow [Pick up where I left off](specs/features/pick-up-where-i-left-off.feature.spec.md) to the restart guarantee and [Local task storage](specs/capabilities/local-task-storage.capability.spec.md) to its provider. |
-| `concept`, `use-case` | Follow the [return scenario](specs/use-cases/resume-list.use-case.spec.md) to the Reopen action. Predict the effects on identity, title and state. Try the deletion alternative. |
-| `requirement` | Starting at [restart](specs/requirements/restart.requirement.spec.md), locate the availability requirement it refines, underlying policy, local-storage assumption and job outcome. Try changing the role of the link as described below. |
-| `quality-model`, `quality-attribute` | Compare the reusable definition with the system's selected attribute. Find the zero-discrepancy target and its operating conditions. |
+Each case changes one fact from the walkthrough. The answers come from the authored specifications.
+
+| Kind | Case | Answer and source |
+| --- | --- | --- |
+| `job` | A neighbor agrees to collect a parcel. Have I finished the job of getting it to my guest? | Only if the guest has received it or somebody has accepted responsibility for the remaining result. I might establish that by phone even if I never open the list. [Job endpoint](specs/jobs/personal-commitments.job.spec.md#settle-the-commitment) |
+| `system` | The courier emails a delivery receipt. Does the entry move? | The owner reads the message elsewhere and decides what to record. The list has no inbox. [Scope](specs/personal-task-list.system.spec.md#scope) |
+| `feature` | I closed my laptop while waiting on three shops. Which behavior helps me pick one to chase? | Recovering the replies and seeing which one needs follow-up lets me choose whom to call. [Feature scope](specs/features/pick-up-where-i-left-off.feature.spec.md#groups) |
+| `capability` | The app remembers “Collect parcel” but loses the expected dispatch confirmation. Can it still provide follow-up review? | The owner has lost what to ask for. Review depends on retaining the reply and day. [Capability dependency](specs/capabilities/follow-up-review.capability.spec.md#depends-on) |
+| `business-rule` | I owe delivery on Saturday and planned to chase on Thursday. Where does the errand belong on Friday morning? | Still waiting, with follow-up due. Saturday is the promise to the recipient. Thursday is my decision about when to act on silence. [Follow-up rule](specs/business-rules/follow-up.business-rule.spec.md#statement) |
+| `use-case` | Two couriers reply. One asks for the door code. The other confirms delivery, which I verify. | Resume the first errand to supply the code. Complete the second. Receiving a message alone settles neither decision. [Return paths](specs/use-cases/resume-list.use-case.spec.md#main-success-scenario) |
+| `concept` | Two entries have the same title. I revise the first wait, rename it, complete it and reopen it. | Its identity and revised title survive, its wait is cleared, and the second entry is untouched. [Checklist invariants and effects](specs/concepts/checklist.concept.spec.md#effects-table) |
+| `component` | One tab still offers Complete in Open after another tab moved the parcel to Waiting. Which part decides whether the old form is valid? | The local service checks the current state at submission. It rejects the old form and leaves the parcel waiting. [Task service responsibilities](app/specs/task-service.component.spec.md#responsibilities) |
+| `requirement` | I leave Waiting open on Thursday night with a Friday follow-up. When do I expect “Follow up now”? | When I reload on Friday. A freshly loaded page that still says “Upcoming” violates the criterion. [Requirement and conditions](specs/requirements/follow-up.requirement.spec.md#applies-to) |
+| `quality-model` | An expense journal replaces a saved amount with its earlier value after restart. Is that the same kind of loss as forgetting a revised follow-up? | Both lose an acknowledged decision between sessions. Durability gives the two tools a shared term. [Personal data quality](specs/quality-models/personal-data.quality-model.spec.md#durability) |
+| `quality-attribute` | After restart on Friday my Thursday entry keeps its identity and saved Friday date but shows a different cue. Is that a durability failure? | The cue reflects today. Losing the recorded date would be a failure even if the title and entry count matched. [To-do durability](specs/quality/durability/durability.quality-attribute.spec.md#definition) · [Restart measure](specs/requirements/restart.requirement.spec.md#measure) |
 
 ### Try changing a refinement into an ordinary citation
 
@@ -45,20 +52,11 @@ Use a disposable copy of the To-do project and a dotspec CLI on your PATH. In th
 
 The example gate tests this specific relationship by applying the same edit in its own temporary copy. Its success output includes `Rejected relationship regression: missing restart refinement`. That message comes from comparing the exported relationships with the example’s expected refinement. [Example gate](../../scripts/check-example/check.py).
 
-## Review the return scenario
-
-1. Recording and completing the errand use Checklist’s Add and Complete actions. The completion rule keeps the commitment on the list.
-2. On returning to the same database, the availability requirement puts each saved entry in the appropriate view. This step can succeed without a process restart.
-3. Reopen acts on the original entry. Its effects preserve identity and title while changing the completion state.
-4. In the deletion extension, Delete removes the entry and availability excludes it from both views. The minimal guarantee on a rejected rename follows from the Rename guard.
-
-The [form acceptance test](tests/acceptance.py) checks the return interaction while the service is running, then starts a new process on the same database to exercise the additional restart condition.
-
 ## Field inventory and remaining work
 
 The detailed inventory compares each field in the generated [relationship reference](../../docs/reference/model/relationships.md) and structured content fields (including export containers) in the [model catalog](../../model/generated/catalog.json) with exported records and generated subject documents. It scans To-do and the temporary authoring and diagnostic project. Each populated field names a source or an export to inspect. Read the cited source alongside the typed value to assess its meaning. Presence alone establishes only that the mapping was exercised.
 
-The single-user list covers one actor and one database. The second implementation can give multi-actor authorization, timed retention, nested exception handling, policy refinement and inter-system coordination genuine product consequences. Malformed sources, ambiguous references, failed scans and corrupt snapshots belong in temporary diagnostic or conformance cases. The [model tests](../../internal/model) exercise additional representations outside these example exports.
+The owner is the only actor at the forms. Delivery deadlines, notifications and message collection are outside this list. A shared repair desk could justify authorization, a calendar contract and coordination between systems. A single checklist needs no synchronization between concepts. Leaving those subjects to a larger example keeps the decisions here reviewable in one sitting. Malformed sources, ambiguous references, failed scans and corrupt snapshots belong in temporary diagnostic or conformance cases. The [model tests](../../internal/model) exercise additional representations outside these example exports.
 
 A human still needs to judge whether the requirement is sufficient and whether a person can resume their own work. The walkthrough provides the protocol. User observations are pending.
 
@@ -77,7 +75,7 @@ These are the review assignments for fields that currently have no populated wit
 | `Applicability.workload` | Specify the workload under which recovery must succeed. |
 | `Document.diagnostics`, `SourceDocument.diagnostics`, `Resolution.candidates`, `Resolution.diagnostics`, `SourceLocation.source` | Compare a malformed specification and ambiguous target with a valid unresolved reference. Inspect the diagnostic's owning record, candidates and source span. The [diagnostic scenarios](../../internal/integration/testdata/diagnostics.txtar) exercise user-visible findings. |
 | `Applicability.exclusions`, `Applicability.population`, `Assumption.applicability`, `Assumption.basis` | In a scratch copy of the restart requirement, identify the population, exclusions and assumptions that qualify the promise. |
-| `Capability.depends_on`, `Capability.depends_on_content`, `Capability.enablers`, `Capability.purpose`, `DesiredOutcome.supporting_content`, `Feature.purpose` | Review a system that needs a supporting capability. Trace its providers and dependencies to a user outcome. |
+| `Capability.enablers`, `Capability.purpose`, `DesiredOutcome.supporting_content` | Review a system that needs a supporting capability. Trace its providers and dependencies to a user outcome. |
 | `Component.architecture`, `Component.boundary_description`, `Component.provided_interfaces`, `Component.purpose`, `Interface.counterpart`, `SystemContextSpecification.specification_system_content` | Describe an external service contract, its owning component and the system responsible for the specification. Inspect the system overview. |
 | `ConceptAction.effects`, `ConceptAction.initiation`, `ConceptAction.outputs`, `ConceptUse.configuration`, `ConceptUse.dependencies`, `ConceptUse.dependencies_content` | Declare two concept uses in a scratch system. Inspect its state descriptions, action outputs and resolved dependencies. |
 | `Synchronization.content`, `Synchronization.owner`, `Synchronization.semantics`, `Synchronization.then`, `Synchronization.when`, `Synchronization.where` | Describe two cooperating concepts and verify which action triggers which response, with what arguments and result. |

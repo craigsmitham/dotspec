@@ -5,7 +5,7 @@ type: job-spec
 
 ## Job
 
-See personal commitments through from accepting responsibility for an errand to establishing that it is settled or that someone else has agreed to take it on.
+See personal commitments through from accepting responsibility for an errand to establishing that the promised result has been delivered or someone else has agreed to take responsibility for it.
 
 ## Performer
 
@@ -13,7 +13,7 @@ The person who has taken responsibility for the errand and must decide what stil
 
 ## Situation
 
-Suppose I agree to arrange a plumbing repair before a guest arrives. I also have keys to collect. I call the plumber between errands. The next day they ask for a photo before they can book a visit. The call is finished, but I still owe my guest a working sink.
+Suppose I promise a guest a working sink by Friday. On Monday I call the plumber for a visit time, then leave to collect keys. I decide to chase the reply on Wednesday, while I still have time to arrange another visit. I might pencil a note in my diary or ask my housemate to remind me. Either way a request for a photo puts the next action back with me.
 
 ## Supports
 
@@ -107,6 +107,6 @@ Minimize the time it takes to identify the next outstanding action when returnin
 
 ## Evidence
 
-This map and its outcomes are hypotheses drawn from a fictional errand. Ask someone to walk through the last commitment they carried over several days. What counted as accepting it? What sign told them another action was due? Who could say it was settled? A handoff that left them still responsible would change the proposed endpoint.
+This map and its outcomes are hypotheses drawn from a fictional errand. Ask someone to walk through the last commitment they carried over several days. What counted as accepting it? What sign told them another action was due? Who could say it was settled? If they still had to chase the result after asking someone else to do the work, ask what would have confirmed a transfer of responsibility.
 
-The [return scenario](../use-cases/resume-list.use-case.spec.md) illustrates the list's contribution when a finished action needs follow-up. The [participant exercise](../../README.md#try-the-workflow-with-a-participant) examines that interaction. Whether keeping the entry helps the person recover their actual next action is a separate question.
+The [return scenario](../use-cases/resume-list.use-case.spec.md) illustrates how a person might keep track of a reply between calls. The [participant exercise](../../README.md#try-the-workflow-with-a-participant) examines that interaction. Whether keeping the entry helps the person recover their actual next action is a separate question.

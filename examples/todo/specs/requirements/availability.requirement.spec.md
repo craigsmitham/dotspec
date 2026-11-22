@@ -6,7 +6,7 @@ id: keep-recorded-work-available
 
 ## Statement
 
-When the person returns to the same local database, each saved entry must be available in its open or completed view. An intentionally deleted entry must remain absent from both views.
+When the person returns to the same local database, each saved entry must appear once in the view for its recorded state (Open, Waiting or Completed). An intentionally deleted entry must remain absent from every view.
 
 ## Applies to
 
@@ -18,4 +18,4 @@ When the person returns to the same local database, each saved entry must be ava
 
 ## Rationale
 
-The person needs to pick up unfinished work and revisit completed commitments.
+The owner can return after closing a tab while the service is still running. A waiting errand that also appears in Open would give them two different answers about whose action comes next.

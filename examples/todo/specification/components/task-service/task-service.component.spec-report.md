@@ -5,13 +5,13 @@ source: "../../../app/specs/task-service.component.spec.md#task-service"
 ---
 # Task service
 
-The local service that handles browser requests and saves changes to the task list.
+The local service that decides whether a submitted action still applies to the selected entry and records accepted changes.
 
 [Personal task list](<../../personal-task-list.system.spec-report.md>)
 
 | Section | Explore |
 | --- | --- |
-| [Responsibilities](<#responsibilities>) | Accept browser changes and persist them locally. See Acknowledge after commit for the confirmation guarantee. |
+| [Responsibilities](<#responsibilities>) | A browser tab can still show Open after the owner has moved an errand to Waiting in another tab. The service checks the entry’s current state when applying the form and reports a conflict if the view has changed. It also supplies the current local day when it prepares the Waiting view. Acknowledge after commit governs when it may return success. |
 | [System topology](<#system-topology>) | Part of |
 | Capabilities | [All capabilities](<capabilities.md>) |
 | Requirements | [All requirements](<requirements.md>) |
@@ -20,7 +20,7 @@ The local service that handles browser requests and saves changes to the task li
 
 ## Responsibilities
 
-Accept browser changes and persist them locally. See [Acknowledge after commit](<requirements/acknowledge-after-commit.requirement.spec-report.md>) for the confirmation guarantee.
+A browser tab can still show Open after the owner has moved an errand to Waiting in another tab. The service checks the entry’s current state when applying the form and reports a conflict if the view has changed. It also supplies the current local day when it prepares the Waiting view. [Acknowledge after commit](<requirements/acknowledge-after-commit.requirement.spec-report.md>) governs when it may return success.
 
 ## System topology
 
@@ -33,12 +33,15 @@ flowchart LR
     n0["Task service"]
     n1["Personal task list"]
     n0 -->|part of| n1
-    n2["Local task storage"]
+    n2["Follow-up review"]
     n0 -->|provides| n2
+    n3["Local task storage"]
+    n0 -->|provides| n3
 ```
 
-- **Parent system** · [Personal task list](<../../personal-task-list.system.spec-report.md>) — A single-user task list that stores open and completed tasks on one computer.
-- **Provided capability** · [Local task storage](<../../capabilities/local-task-storage.capability.spec-report.md>) — Retains accepted task changes between sessions on the same computer.
+- **Parent system** · [Personal task list](<../../personal-task-list.system.spec-report.md>) — A personal list of errands the owner can act on, replies they are waiting for and commitments they have settled.
+- **Provided capability** · [Follow-up review](<../../capabilities/follow-up-review.capability.spec-report.md>) — Identifies the outstanding replies the owner planned to chase by today. A person returning after the weekend can see both which errand needs attention and what to ask for.
+- **Provided capability** · [Local task storage](<../../capabilities/local-task-storage.capability.spec-report.md>) — Keeps a commitment and the owner's last recorded decision together between visits. Finding the title alone would leave someone who returns to a waiting errand searching their messages for the reply they meant to chase.
 
 ## Contracts
 

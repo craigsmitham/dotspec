@@ -1,59 +1,48 @@
 # To-do
 
-A personal task list you can close today and pick up tomorrow. One local Go process serves HTML forms and keeps the list in SQLite.
-
-With the dotspec CLI on your PATH, use `dotspec docs job` from any directory to find the worked job’s reading command. For example, `dotspec docs examples/todo/specs/jobs/personal-commitments.job.spec.md#job` opens the job statement. Running the app, editing its specifications and running its tests require the dotspec checkout.
+Suppose you promised a guest a working sink by Friday. You’ve asked the plumber for a visit time. What should your list say while you wait? This example follows that decision from a personal commitment to a working browser form and a restart test.
 
 ## Run the app
 
-Start in the dotspec checkout with mise installed. The first build needs access to the Go dependencies. From the repository root, install the pinned tools and start the app.
+From the root of the dotspec checkout, install the pinned tools and start the local Go service. The first build needs access to the Go dependencies. Use a temporary directory so you can repeat the exercise with an empty list.
 
 ```sh
 mise trust
 mise install
 cd examples/todo/app
-mise exec -- go run .
+todo_dir=$(mktemp -d)
+mise exec -- go run . -port 0 -db "$todo_dir/list.sqlite"
 ```
 
-Open the loopback URL printed in the terminal. Add “Call the plumber” and “Collect keys”. Rename the first task, mark it complete and look in **Completed**. Stop the process with Ctrl+C and run the same command again in the same directory. Both lists should look as you left them. Reopen the finished errand and find it in **Open**. Expand **Edit task** to rename or delete an entry.
+Open the address printed in the terminal. The person keeping the list is the only one who uses it. Calls and messages in the walkthrough are fictional.
 
-The default database is `todo.sqlite` in the app’s working directory. If port 8080 is busy, run `mise exec -- go run . -port 0` from the same directory and open the new address it prints. For a separate session, use `-db PATH` to choose a file. If both lists are unexpectedly empty after a restart, check the working directory and database path before adding a task. Stop the app and restart it with the original file.
+1. In **Open**, add **Fix the guest sink** and **Collect keys**. You have called the plumber. Under the sink entry, expand **Wait for reply**. Enter **Plumber’s visit time** and choose today as the **Follow-up date**. Submit the form. Open now contains just the keys.
+2. Open **Waiting**. The sink entry shows your expected reply, today’s date and **Follow up now**. Suppose you chase the plumber and agree to check back tomorrow. Expand **Update follow-up**, change just the date to tomorrow and submit. The same entry now reads **Upcoming**. That day is when to chase the plumber. Friday is still when you owe your guest a working sink.
+3. Stop the service with Ctrl+C. In the same shell, run the last command again and open the new address. Check Waiting for the visit time and the day you agreed. If the list is empty, check that you restarted with the same database path. With the default invocation the service uses `todo.sqlite` in its working directory.
+4. Try two replies. “Send a photo” means you have work to do. Choose **Resume** and look in Open for the sink. **Wait for reply** now starts with empty fields. After sending the photo, put the errand back in Waiting for **Confirmation the repair is finished**, using yesterday as the follow-up date. It immediately reads **Follow up now** and stays in Waiting.
+5. This time the plumber says the repair is done and you confirm the sink works. Choose **Complete** and open **Completed**. If the leak recurs, **Reopen** returns that entry to Open. Under **Edit task**, **Delete task** removes the entry entirely.
 
 ## Follow one decision
 
-Start with the [job of seeing personal commitments through](specs/jobs/personal-commitments.job.spec.md). The [business rule](specs/business-rules/completion.business-rule.spec.md) explains why finishing an errand keeps it available. The [return scenario](specs/use-cases/resume-list.use-case.spec.md) connects that policy to the [checklist actions](specs/concepts/checklist.concept.spec.md).
+Start at [SPEC.md](SPEC.md) and open the system specification. Under **Goals**, open **Resume unfinished work**. Under **Supported by**, choose the job **See personal commitments through**. In the job’s **Evidence** section, follow the **return scenario**. At step 2, open **Show which replies need follow-up**. Its **Derived from** link takes you to the rule that explains why an unanswered errand is still yours after the day passes. Its **Evidence** link takes you to the test that reads the cue on the rendered form.
 
-The [Task service specification](app/specs/task-service.component.spec.md) links back to the system and links to the [acknowledgement requirement](app/specs/requirements/acknowledge-after-commit.requirement.spec.md). Its [component report](specification/components/task-service/task-service.component.spec-report.md) brings those sources together.
-
-The [restart requirement](specs/requirements/restart.requirement.spec.md) refines [Keep recorded work available](specs/requirements/availability.requirement.spec.md) for a service interruption and is classified under the system's [durability concern](specs/quality/durability/durability.quality-attribute.spec.md). Read the [acceptance test](tests/acceptance.py) to see what it compares. For implementation detail, inspect the [HTML forms (dotspec checkout)](app/list.html) and the [server’s update handler (dotspec checkout)](app/main.go).
-
-## Read the requirements specification
-
-Start with the [system overview](specification/personal-task-list.system.spec-report.md) or its [requirements index](specification/requirements.md). The pages are generated from the [To-do system](specs/personal-task-list.system.spec.md) and its related specifications. With the CLI on your PATH, run `dotspec spec build` and `dotspec check` in your project after editing an authored source. For To-do, use the checkout’s `examples/todo/` directory. If you have only the checkout, run `mise run build` from its root and use `../../dist/dotspec` in place of `dotspec` from `examples/todo/`.
-
-| Question | Start here |
-| --- | --- |
-| Which features, interfaces and behaviors does the system expose? | [System overview](specification/personal-task-list.system.spec-report.md) |
-| How do the user's goals connect to the specifications? | [User job](specification/jobs/see-personal-commitments-through.job.spec-report.md) |
-| What changes when someone reopens a task? | [Checklist](specification/concepts/checklist.concept.spec-report.md) |
-| Which promise does the restart requirement refine? | [Restart requirement](specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md) |
-| Which scenarios and decisions need review? | Run `dotspec model review` in the checkout’s `examples/todo/` directory |
-| How do project, environment, goals and system fit together? | [Purpose, environment and scope](specification/personal-task-list.system.spec-report.md) |
+For the distinction between facts the owner saved and a cue that can change overnight, start with the restart requirement. The feature groups both promises for the returning owner. [Pick up where I left off](specs/features/pick-up-where-i-left-off.feature.spec.md) · [Preserve tasks across restart](specs/requirements/restart.requirement.spec.md).
 
 ## Verify the example
 
-From the root of the dotspec checkout, run the acceptance test alone, inspect the authored relationships, or run the whole example gate.
+From the root of the dotspec checkout, run the acceptance test by itself or run the full example gate.
 
 ```sh
 mise exec -- python -I examples/todo/tests/acceptance.py
-mise exec -- go run . model trace --path examples/todo
 mise run example-check
 ```
 
-The acceptance test builds the app in a temporary directory, submits the rendered forms and restarts the server on a temporary database. It compares entry identities and titles in both views. If it reports a changed list, compare the last acknowledged entries with the ones served after restart. The [example coverage inventory (dotspec checkout)](COVERAGE.md) shows which fields the example exercises.
+The acceptance test builds the app, submits its HTML forms and starts a second process on the same disposable database. It checks the entry identities and visible details in each view, including the saved reply and day. The [coverage inventory (dotspec checkout)](COVERAGE.md) gives cases to try against each authored specification and identifies concerns left for a larger system.
+
+To follow the specifications with an installed CLI, run `dotspec docs job` from any directory and open the worked job listed there. To inspect your edits in the checkout, run `mise run generate` from its root, then `mise exec -- go run . model trace --path examples/todo` to inspect the relationships.
 
 ## Try the workflow with a participant
 
-Use a separate database for the session. Start the app from the checkout’s `examples/todo/app/` directory, adding `-db session.sqlite` with an unused filename to the run command above. Invite the participant to record two errands they are comfortable sharing and mark one finished. After a break, restart on the same file and open the address printed by the new process.
+Use a fresh database. Invite someone to recall a recent errand where they needed an answer from another person. What had they promised, what did they do while waiting, and how did they tell it was finished? Let them record an example they are comfortable sharing, take a break, and then return to the list. Ask what needs attention today and what they would do if a reply requested more work. Let them choose the controls.
 
-Ask which errand still needs attention and how they know. Give the finished errand a follow-up and ask how they would resume it. Let them choose the controls. With their consent, record the cue they recognized, the action they took and any help they needed. If the entry is present but they cannot tell what to do next, capture the words that left them guessing. Compare the observation with the [desired outcome for returning after an interruption](specs/jobs/personal-commitments.job.spec.md#less-reconstruction). The acceptance test can check persistence with its own saved entries. To investigate a missing errand from this session, check which database each process opened and what the participant saw after submitting it.
+With their consent, record the cue they used, the action they took and anything they had to reconstruct elsewhere. The job and its outcomes are hypotheses. A passing restart test establishes what the software preserved. Whether those details help someone resume a real commitment is still open. [Less reconstruction](specs/jobs/personal-commitments.job.spec.md#less-reconstruction).

@@ -5,15 +5,15 @@ type: system-spec
 
 ## Description
 
-A single-user task list that stores open and completed tasks on one computer.
+A personal list of errands the owner can act on, replies they are waiting for and commitments they have settled.
 
 ## Framing
 
-An errand can need another action after it seemed finished. The [job of seeing personal commitments through](jobs/personal-commitments.job.spec.md) gives the reason to keep both open and completed commitments available when the person returns.
+Suppose a guest needs a working sink by Friday. Sending the plumber a photo finishes today's action. The owner still owes the repair. The [job of seeing personal commitments through](jobs/personal-commitments.job.spec.md) explains what the owner needs to establish when they return.
 
 ## Purpose
 
-Help a person pick up unfinished work after an interruption.
+Help one person pick up an errand after an interruption and recognize when to chase an outstanding reply.
 
 ## Goals
 
@@ -27,15 +27,15 @@ The person who keeps the list also decides which entries can be discarded.
 
 ## Scope
 
-The list tracks one person’s open and completed tasks on one computer.
+One person records commitments on one computer and reviews them in Open, Waiting and Completed. They choose what reply to watch for and the day to check back. They receive the reply and judge the result outside the list.
 
 ## Out of scope
 
-Sharing lists, synchronizing devices and recovering from loss of the database file.
+Sending reminders, reading messages, managing delivery deadlines, sharing lists, synchronizing devices and recovering from loss of the database file.
 
 ## Environment
 
-The person may close the browser or stop the service between work sessions.
+The browser and service run on the same computer. The person can close either between visits. The service uses that computer’s local calendar when the person loads Waiting.
 
 ## Assumptions
 
@@ -49,7 +49,7 @@ The person returns to the same writable database file.
 
 #### Description
 
-The checklist used to track one person’s open and completed tasks.
+Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. Two errands with the same title can be at different stages.
 
 #### Definition
 
@@ -63,7 +63,7 @@ The checklist used to track one person’s open and completed tasks.
 
 ### Task list forms
 
-The browser presents open and completed tasks and accepts changes through HTML forms.
+Open offers work the owner can advance. Waiting shows the expected reply and when to chase it. Completed holds settled errands the owner may reopen. After an accepted change the browser returns to the view where the person submitted it.
 
 #### Contracts
 

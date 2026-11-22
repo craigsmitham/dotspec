@@ -123,8 +123,9 @@ def check_project(cli, project, tmp):
         expected = "SystemQualityAttribute" if kind == "quality-attribute" else kind.title().replace("-", "")
         assert primary[root_id]["kind"] == expected and primary[root_id]["source_document"] == doc["source"]
         assert source["locator"].endswith("." + kind + ".spec.md")
-    for kind in ("System", "Component", "Feature", "Capability", "ConceptUse"):
-        subject = one(kind)
+    described = {"System", "Component", "Feature", "Capability", "ConceptUse"}
+    for subject in (e for e in elements if e["kind"] in described):
+        kind = subject["kind"]
         spans = subject["description"]["spans"]
         assert spans and all(span["source"] == subject["source_document"] for span in spans), kind
         data = sources[subject["source_document"]]["markdown"].encode()
@@ -215,7 +216,8 @@ def spec_journey(cli, tmp):
     topology = overview.split("## System topology\n", 1)[1].split("\n## ", 1)[0]
     assert "```mermaid" in topology and "contains" in topology and "provides interface" in topology
     assert "Task service" in topology and "Task list forms" in topology
-    assert "Provides [Local task storage]" in topology and "## Capabilities" not in overview
+    assert all(label in topology for label in ("Provides", "[Local task storage]", "[Follow-up review]"))
+    assert "## Capabilities" not in overview
     concepts = overview.split("\n## Concepts\n", 1)[1].split("\n## ", 1)[0]
     assert "[My checklist]" in concepts and "Uses [Checklist](<concepts/" in concepts
     for name in ("Components", "Interfaces"):
@@ -227,6 +229,7 @@ def spec_journey(cli, tmp):
         "Pick up where I left off": ("All features", "specs/features/pick-up-where-i-left-off.feature.spec.md"),
         "Task service": ("Components", "app/specs/task-service.component.spec.md"),
         "Local task storage": ("All capabilities", "specs/capabilities/local-task-storage.capability.spec.md"),
+        "Follow-up review": ("All capabilities", "specs/capabilities/follow-up-review.capability.spec.md"),
         "My checklist": ("Concept uses", "specs/personal-task-list.system.spec.md"),
     }.items():
         declaration = (project / source).read_text(encoding="utf-8")
@@ -295,10 +298,14 @@ def spec_journey(cli, tmp):
     headings = re.findall(r"^## (.+)$", promise.read_text(encoding="utf-8"), re.M)
     assert headings[:3] == ["Statement", "Applies to", "Criterion"]
     text = " ".join(promise.read_text(encoding="utf-8").split())
-    for phrase in ("acknowledges a change", "same database", "identity, title and completion state",
-                   "Deleted entries must stay absent", "Zero discrepancies across the two views"):
+    for phrase in ("acknowledges a change", "same database", "identity, title and state", "expected reply and follow-up date",
+                   "Deleted entries must stay absent", "Zero discrepancies across Open, Waiting and Completed"):
         assert phrase in text, phrase
     assert follow(promise, "restart acceptance test") == project / ACCEPTANCE
+    cue = follow(use_case, "Show which replies need follow-up")
+    assert follow(feature, "Show which replies need follow-up") == cue
+    assert follow(cue, "When a reply needs chasing") == follow(rules, "When a reply needs chasing")
+    assert follow(cue, "form acceptance test") == project / ACCEPTANCE
     requirements = follow(root, "All requirements")
     assert requirements == root.parent / "requirements.md"
     assert follow(requirements, "Preserve tasks across restart") == promise
@@ -327,7 +334,7 @@ def spec_journey(cli, tmp):
             changed, count = re.subn(r"same\s+database", "different database", body)
             assert count >= 1
         elif page == qualities:
-            changed = body.replace("acknowledged work", "submitted work")
+            changed = body.replace("acknowledged decisions", "submitted decisions")
         else:
             changed = body
             destination = qualities_index if page == root else promise

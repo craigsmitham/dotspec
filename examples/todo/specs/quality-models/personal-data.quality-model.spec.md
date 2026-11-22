@@ -5,7 +5,7 @@ type: quality-model-spec
 
 ## Description
 
-Select concerns for tools in which a person keeps work between sessions.
+A task list and an expense journal both hold decisions a person expects to find again. Use durability to ask which acknowledged records and revisions survive an interruption. Each tool chooses the records and interruptions its own requirements cover.
 
 ## Quality attributes
 

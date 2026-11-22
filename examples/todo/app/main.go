@@ -10,6 +10,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -23,16 +24,51 @@ var markup string
 var listPage = template.Must(template.New("list").Parse(markup))
 
 type task struct {
-	ID    int64
-	Title string
+	ID          int64
+	Title       string
+	WaitingFor  string
+	FollowUp    string
+	FollowUpNow bool
 }
 
 type list struct {
-	Completed bool
-	Tasks     []task
+	State string
+	Title string
+	Tasks []task
 }
 
 type app struct{ db *sql.DB }
+
+// A pending reply belongs to one unfinished task. Its presence distinguishes
+// waiting commitments from errands the person can act on now.
+const schema = `CREATE TABLE IF NOT EXISTS tasks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    completed INTEGER NOT NULL DEFAULT 0 CHECK (completed IN (0, 1))
+);
+CREATE TABLE IF NOT EXISTS pending_replies (
+    task_id INTEGER PRIMARY KEY REFERENCES tasks(id),
+    waiting_for TEXT NOT NULL,
+    follow_up TEXT NOT NULL
+);
+CREATE VIEW IF NOT EXISTS task_list AS
+    SELECT id, title, waiting_for, follow_up,
+        CASE WHEN completed THEN 'completed'
+             WHEN task_id IS NOT NULL THEN 'waiting'
+             ELSE 'open' END AS state
+    FROM tasks LEFT JOIN pending_replies ON task_id = id`
+
+var listTitles = map[string]string{"open": "Open", "waiting": "Waiting", "completed": "Completed"}
+
+var allowedStates = map[string][]string{
+	"wait":             {"open"},
+	"resume":           {"waiting"},
+	"update-follow-up": {"waiting"},
+	"complete":         {"open", "waiting"},
+	"reopen":           {"completed"},
+	"rename":           {"open", "waiting", "completed"},
+	"delete":           {"open", "waiting", "completed"},
+}
 
 func main() {
 	file := flag.String("db", "todo.sqlite", "SQLite database file")
@@ -50,17 +86,14 @@ func serve(file string, port int) error {
 	}
 	defer db.Close()
 	db.SetMaxOpenConns(1)
-	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS tasks (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		title TEXT NOT NULL,
-		completed INTEGER NOT NULL DEFAULT 0 CHECK (completed IN (0, 1))
-	)`)
+	_, err = db.Exec(schema)
 	if err != nil {
 		return err
 	}
 	a := app{db}
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /{$}", a.show)
+	mux.HandleFunc("GET /waiting", a.show)
 	mux.HandleFunc("GET /completed", a.show)
 	mux.HandleFunc("POST /tasks", a.change)
 	mux.HandleFunc("POST /tasks/{id}/{action}", a.change)
@@ -82,8 +115,14 @@ func serve(file string, port int) error {
 }
 
 func (a app) show(w http.ResponseWriter, r *http.Request) {
-	view := list{Completed: r.URL.Path == "/completed"}
-	rows, err := a.db.QueryContext(r.Context(), "SELECT id, title FROM tasks WHERE completed = ? ORDER BY id", view.Completed)
+	state := strings.TrimPrefix(r.URL.Path, "/")
+	if state == "" {
+		state = "open"
+	}
+	view := list{State: state, Title: listTitles[state]}
+	today := time.Now().Format(time.DateOnly)
+	rows, err := a.db.QueryContext(r.Context(), `SELECT id, title, coalesce(waiting_for, ''), coalesce(follow_up, '')
+        FROM task_list WHERE state = ? ORDER BY id`, state)
 	if err != nil {
 		storageError(w, err)
 		return
@@ -91,10 +130,11 @@ func (a app) show(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 	for rows.Next() {
 		var item task
-		if err := rows.Scan(&item.ID, &item.Title); err != nil {
+		if err := rows.Scan(&item.ID, &item.Title, &item.WaitingFor, &item.FollowUp); err != nil {
 			storageError(w, err)
 			return
 		}
+		item.FollowUpNow = state == "waiting" && item.FollowUp <= today
 		view.Tasks = append(view.Tasks, item)
 	}
 	if err := rows.Err(); err != nil {
@@ -123,8 +163,31 @@ func (a app) change(w http.ResponseWriter, r *http.Request) {
 	if action != "" {
 		var err error
 		id, err = strconv.ParseInt(r.PathValue("id"), 10, 64)
-		if err != nil || id < 1 {
+		if err != nil || id < 1 || allowedStates[action] == nil {
 			http.NotFound(w, r)
+			return
+		}
+	}
+	ctx := r.Context()
+	tx, err := a.db.BeginTx(ctx, nil)
+	if err != nil {
+		storageError(w, err)
+		return
+	}
+	defer tx.Rollback()
+	state := "open"
+	if action != "" {
+		err := tx.QueryRowContext(ctx, "SELECT state FROM task_list WHERE id = ?", id).Scan(&state)
+		if err == sql.ErrNoRows {
+			http.NotFound(w, r)
+			return
+		}
+		if err != nil {
+			storageError(w, err)
+			return
+		}
+		if state != r.PostForm.Get("view") || !slices.Contains(allowedStates[action], state) {
+			http.Error(w, "This action is no longer available. Return to the list and refresh it.", http.StatusConflict)
 			return
 		}
 	}
@@ -133,38 +196,49 @@ func (a app) change(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Enter a task name.", http.StatusBadRequest)
 		return
 	}
-	var result sql.Result
-	var err error
-	ctx := r.Context()
+	waitingFor := strings.TrimSpace(r.PostForm.Get("waiting_for"))
+	followUp := r.PostForm.Get("follow_up")
+	if action == "wait" || action == "update-follow-up" {
+		date, err := time.Parse(time.DateOnly, followUp)
+		if waitingFor == "" || err != nil || date.Year() < 1 {
+			http.Error(w, "Enter the expected reply and a valid follow-up date.", http.StatusBadRequest)
+			return
+		}
+	}
+	// Leaving Waiting discards the old reply details in the same commit.
+	if state == "waiting" && (action == "complete" || action == "resume" || action == "delete") {
+		if _, err := tx.ExecContext(ctx, "DELETE FROM pending_replies WHERE task_id = ?", id); err != nil {
+			storageError(w, err)
+			return
+		}
+	}
 	switch action {
 	case "":
-		result, err = a.db.ExecContext(ctx, "INSERT INTO tasks (title) VALUES (?)", title)
+		_, err = tx.ExecContext(ctx, "INSERT INTO tasks (title) VALUES (?)", title)
 	case "rename":
-		result, err = a.db.ExecContext(ctx, "UPDATE tasks SET title = ? WHERE id = ?", title, id)
+		_, err = tx.ExecContext(ctx, "UPDATE tasks SET title = ? WHERE id = ?", title, id)
 	case "complete", "reopen":
-		result, err = a.db.ExecContext(ctx, "UPDATE tasks SET completed = ? WHERE id = ?", action == "complete", id)
+		_, err = tx.ExecContext(ctx, "UPDATE tasks SET completed = ? WHERE id = ?", action == "complete", id)
+	case "wait", "update-follow-up":
+		_, err = tx.ExecContext(ctx, `INSERT INTO pending_replies (task_id, waiting_for, follow_up)
+            VALUES (?, ?, ?) ON CONFLICT(task_id) DO UPDATE
+            SET waiting_for = excluded.waiting_for, follow_up = excluded.follow_up`, id, waitingFor, followUp)
+	case "resume":
+		// Removing the pending reply returns the unfinished task to Open.
 	case "delete":
-		result, err = a.db.ExecContext(ctx, "DELETE FROM tasks WHERE id = ?", id)
-	default:
-		http.NotFound(w, r)
-		return
+		_, err = tx.ExecContext(ctx, "DELETE FROM tasks WHERE id = ?", id)
 	}
 	if err != nil {
 		storageError(w, err)
 		return
 	}
-	changed, err := result.RowsAffected()
-	if err != nil {
+	if err := tx.Commit(); err != nil {
 		storageError(w, err)
-		return
-	}
-	if changed == 0 {
-		http.NotFound(w, r)
 		return
 	}
 	dest := "/"
-	if r.PostForm.Get("view") == "completed" {
-		dest = "/completed"
+	if state != "open" {
+		dest += state
 	}
 	http.Redirect(w, r, dest, http.StatusSeeOther)
 }
