@@ -27,29 +27,36 @@ change, and selected quality improvements.
 
 ### Retaining former members
 
-Declare any former member you still need directly before replacing the pack:
+Decide which former members you still use. Before replacing the pack, install
+each of those skills directly. For example, to keep `align`, run:
 
 ```bash
 axm install @craigsmitham/skills/align
-axm install @craigsmitham/skills/reconcile
-axm install @craigsmitham/skills/reuse
-axm install @craigsmitham/skills/generalize
 ```
 
-Install only the companions you intend to retain. Direct selections are
-independent of membership. For a clean migration from 0.1.0 with AXM 0.51.0,
-preview removal, uninstall the old pack, and install the new one:
+Use the same command with `reconcile`, `reuse`, or `generalize` for any
+others you want to keep. If you need none of them, skip this step. For a
+clean migration from 0.1.0, first preview removal:
 
 ```bash
 axm uninstall @craigsmitham/packs/software-maintenance --preview
+```
+
+Compare the proposed removals with your selection. If the preview would
+remove a former member you meant to keep independently, declare it directly
+and repeat the preview. Preserve any local modifications before proceeding.
+When the preview matches your intent,
+replace the pack and inspect the result:
+
+```bash
 axm uninstall @craigsmitham/packs/software-maintenance
 axm install @craigsmitham/packs/software-maintenance
 axm list
 ```
 
-Review the preview for local modifications and retained direct selections.
-The verified sequence removes pack-only members and preserves directly
-installed companions. Version 0.1.0 remains a historical release.
+Look for the seven members of the new pack and any companions you selected
+directly. Former members that were only supplied by the old pack should be
+gone. This sequence was exercised with AXM 0.51.0 and 0.53.1.
 
 If you already used `axm update`, inspect `axm list` for unmanaged former
 members. With AXM 0.51.0, successful lint and sync checks do not establish that

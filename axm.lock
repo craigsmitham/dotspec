@@ -5,10 +5,10 @@ version = 1
 [[package]]
 id = "registry.agentxm.ai/@craigsmitham/knowledge/docs"
 source = { registry = "https://registry.agentxm.ai" }
-version = "0.15.1"
-archive = "sha512-UJ5iWos/ptJq7cDgYVapZxvvH2IOUaZZm/rTG2bFSZBbUsta1A7FcMbjltnUJLUOpacD2BP9YRUHN8smnYwy9A=="
+version = "0.16.0"
+archive = "sha512-44O6jBYjejWAZ4VIfJtqs5JfckwN40Tp+8/BWR4L7dsbnY8AjVg/Q/VqLC2Vo1Gi625P6Pi5x4wpEWzAXw9VRQ=="
 publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
-tree = "sha256-tree-v2:a8b233fd933262afc8097d6cf9bd67aa62fc4f29768af2e6e8dc7d5efcf73f80"
+tree = "sha256-tree-v2:8e0f1c21f578a0296cf83d49b0a5ba8c8770557dd4d1609cf0df0e6c0e66515c"
 
 [[package]]
 id = "registry.agentxm.ai/@craigsmitham/packs/codebase-renewal"
@@ -31,26 +31,26 @@ dependencies = [
 [[package]]
 id = "registry.agentxm.ai/@craigsmitham/packs/docs"
 source = { registry = "https://registry.agentxm.ai" }
-version = "0.9.1"
-archive = "sha512-tqdPnnJptFcuj+pWmfCfOi5kP0uPMOAcgq/Lxpt86nmnVjDxGx6iRKheQA8J/PYQFHW6C4ocIVCyKpXP6Z2UCg=="
+version = "0.9.2"
+archive = "sha512-oYRf2AiHxLBE2ueXUA2mxZMyLeuqEDBV0YWq6NfPSYmJgmbUTtk09QMoBJ/ptJPjltLx28XCtRB+3vw70rVrNA=="
 publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
-tree = "sha256-tree-v2:2e9a6f3ad9e21704deac423e4bcc4e0f5e426db5f0466b51a44f364ac66e7eb7"
-manifest-version = "0.9.1"
-manifest-identity = "8ff240dab5ad268ee0b2afc115933d731dbc9e9f059a64377dbf8784cf751555"
+tree = "sha256-tree-v2:8518cd243e03395d1524397e55a46d0aa7dd0adfb92123df9c3099aca0cb9c53"
+manifest-version = "0.9.2"
+manifest-identity = "2354cc3d4f784d153f607cea527e6a37ad53e95987ee6fe0b7eb13ad9a926902"
 dependencies = [
-  { name = "@craigsmitham/knowledge/docs", range = ">=0.15.0" },
-  { name = "@craigsmitham/skills/docs", range = ">=0.6.0" },
+  { name = "@craigsmitham/knowledge/docs", range = ">=0.16.0" },
+  { name = "@craigsmitham/skills/docs", range = ">=0.7.0" },
 ]
 
 [[package]]
 id = "registry.agentxm.ai/@craigsmitham/packs/software-maintenance"
 source = { registry = "https://registry.agentxm.ai" }
-version = "0.2.1"
-archive = "sha512-PIZWobWn4FLEVCyLjAE80O4efoaq2KVK5fDS2W91o79U6h4Nn7a+Hu+UwD18FdODpy3rgZLplGZxI7u3YoUCow=="
+version = "0.2.2"
+archive = "sha512-DAnt1duGEkfasgqGVvLae8vdFwIxbvMhtQ6Dd9HtDIcrawRpFn4Spb+RKEj0eSDW3bTAPaBtI337yugPwqgxDg=="
 publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
-tree = "sha256-tree-v2:c271f3d3f408bf7c578d16899c18c91825cc96ff03643c5019f16a4297a0f8db"
-manifest-version = "0.2.1"
-manifest-identity = "94add8716366b16a35316c693f4496e12b540f803619c7409be01a60b736bfb8"
+tree = "sha256-tree-v2:491325c7f8f8eb927c013f2f9ddc92a77e54e9f672ceeacf2378fbc85b6e21c9"
+manifest-version = "0.2.2"
+manifest-identity = "4a58d80723f4426b797b8a8c0e49f5478d8d12581781b401627fb48002adebbf"
 dependencies = [
   { name = "@craigsmitham/skills/assess", range = ">=0.1.0" },
   { name = "@craigsmitham/skills/improve", range = ">=0.2.0" },
@@ -80,10 +80,10 @@ tree = "sha256-tree-v2:ccecca46a0d78776406613a7cbfe5000d0fdd5ee757684ece9f402a2e
 [[package]]
 id = "registry.agentxm.ai/@craigsmitham/skills/docs"
 source = { registry = "https://registry.agentxm.ai" }
-version = "0.6.1"
-archive = "sha512-YhuBjtj4vCr553hVsdG3eIIzj5dLBaw0LilAFu+K8c2Sp031iStlpXMiMm/tXKEZv6cVzuuEvhXhTkIDmPuY7g=="
+version = "0.7.0"
+archive = "sha512-VQ1TB+nng60x6D55c0HVSbTNGkUTbTfFc9ng6GJYv8DxtNKXpPbAPGP2v9FrR3D/LYyrkrpaEy5O+RU5S/V6nA=="
 publisher = "hbnd_01ks5vvdf0fx08m9gcaq7y2wv7"
-tree = "sha256-tree-v2:16956fc9014f9ad3dccfbd1e302bdea173b892b0afbf906d080c348186a70317"
+tree = "sha256-tree-v2:f60f5a54ae74de2b00ce01f4fc730198c998bd36f200f466b81f3521da7974c2"
 
 [[package]]
 id = "registry.agentxm.ai/@craigsmitham/skills/experiment"
@@ -192,8 +192,8 @@ software-maintenance = { package = "registry.agentxm.ai/@craigsmitham/packs/soft
 contract = 1
 
 [projections.knowledge.units."AGENTS.md"]
-gen = "sha256:b428b4e8dc28dc23bb77a96260c0849be3d3690ea10d4613cc0ba445264efa95"
-output = "sha256:4a7b7cb466a12f9ae58fc198e245469ebac3c66cb5139f6686c9659d9740853c"
+gen = "sha256:01c3ef438f6e234191c121c2943bd3b6961a751bc611b3aa47b2f53d16456364"
+output = "sha256:46cdbd8fc7d0e1c6fdc73322034d080e823bf6111f15c920049bcc6bb6d7fc82"
 
 [projections.instructions]
 contract = 1

@@ -31,5 +31,5 @@ Use `axm knowledge concepts --help` to search, read, and explore these bundles.
 
 | Bundle | Description |
 | --- | --- |
-| [docs](agent_extensions/registry.agentxm.ai/@craigsmitham/knowledge/docs/src/index.md) | Documentation craft and patterns for authoring, reviewing, organizing, and maintaining documents, reusable checklists, and pattern collections across domains |
+| [docs](agent_extensions/registry.agentxm.ai/@craigsmitham/knowledge/docs/src/index.md) | Explainers, authoring guides, and patterns for documentation across domains, including knowledge bases, product guides, and reusable checklists |
 <!-- /axm:knowledge -->

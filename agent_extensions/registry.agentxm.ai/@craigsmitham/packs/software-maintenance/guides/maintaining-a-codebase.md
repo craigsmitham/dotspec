@@ -5,9 +5,6 @@ or establishing a recurring maintenance practice. The aim is a worthwhile,
 supported improvement in dependability, supportability, understandability, or
 cost of change. Adapt the guidance to the task's consequence and scope.
 
-The [pack README](../README.md) describes skill selection and installation.
-This guide does not require running every member or installing companion skills.
-
 ## Establish the decision
 
 Start with the scope, intended purpose, affected consumers, applicable
@@ -18,7 +15,8 @@ State gaps that limit the conclusion; missing telemetry is not proof of disuse.
 
 An opportunity question requests assessment and recommendations. An
 implementation request authorizes the requested bounded change and its necessary
-verification. `assess` itself remains read-only. Publishing, deployment, consumer
+verification. If you use the [maintenance pack](../README.md), choose
+`assess` for the read-only assessment. Publishing, deployment, consumer
 retirement, and other external actions follow the authority of the actual task.
 
 Required behavior constrains maintenance. Existing behavior may contain defects,
@@ -48,9 +46,20 @@ and confidence. Urgent failures and support deadlines can override ordinary
 cost-benefit ordering. Prefer a small actionable selection to an unranked smell
 inventory; preserve the requested breadth and identify unassessed areas.
 
+For recurring operational work, ask the operator which manual steps they
+repeat as the service grows and what lasting improvement would remove that
+work.[^toil]
+
 Separate supported findings from hypotheses needing investigation. Retaining
 the current arrangement is a valid decision when benefit is insufficient or
 uncertainty prevents a responsible intervention.
+
+For example, suppose a maintainer asks whether they can retire an old importer.
+The scheduled job now calls its replacement, but a support runbook still tells
+operators to use the old command to replay failed imports. Check a recent
+replay with the people who handle failures. If they still need it, identify
+what the replacement must do before they can switch. If you were asked only
+for an assessment, return that dependency and the evidence for it here.
 
 ## Sequence by prerequisites
 
@@ -80,11 +89,19 @@ Completion concerns the affected system, including its supporting artifacts.
 Update configuration, tests, examples, documentation, and operational guidance
 where obligations changed. Remove dependencies, adapters, flags, compatibility
 paths, and delivery machinery whose sole purpose ended.
+Where a procedure changed, check that the operator can find and follow the
+current directions.[^docs]
 
 If a transition remains open, identify remaining consumers, an owner or the
 unresolved ownership decision, and a concrete exit condition. Do not describe
 an installed replacement as a completed migration while its predecessor still
 requires support.
+
+For the importer, try replaying a failed row for customer `007` in a test
+environment. Suppose the replacement reports success but stores the ID as
+`7`. An operator following the runbook still cannot recover the record for
+`007`. Keep the old path available until the replacement preserves the ID
+and the operator can recover the expected record using the revised runbook.
 
 Report the starting point, actual change, evidence, material costs and tradeoffs,
 and remaining uncertainty. A passing build does not establish external
@@ -117,6 +134,8 @@ Measure outcomes related to the selected problem: recurring failures, flaky-test
 rate, feedback delay, unsupported components, unfinished migrations, recurring
 manual effort, or effort required for representative changes. Size and complexity
 measures can support investigation but do not form a universal health score.
+If the intended gain is developer productivity, pair activity counts with
+evidence of what maintainers can now accomplish.[^space]
 
 Revisit the intervention after enough relevant use to judge its effect.
 Distinguish a demonstrated gain from an expected one and record material
@@ -126,15 +145,10 @@ Stop when the selected outcome is supported or further intervention is unjustifi
 
 ## Foundations and limits
 
-The [pack's source discussion](../README.md#sources-and-rationale) explains the
-engineering foundations. [DORA's documentation research](https://dora.dev/capabilities/documentation-quality/)
-informs attention to supporting knowledge;
-[Google SRE's toil guidance](https://sre.google/sre-book/eliminating-toil/)
-informs recurring operational burden; and the
-[SPACE framework](https://www.microsoft.com/en-us/research/publication/the-space-of-developer-productivity-theres-more-to-it-than-you-think/)
-informs using multiple contextual measures rather than equating activity with
-productivity.
+The [pack's source discussion](../README.md#sources-and-rationale) explains
+the engineering foundations. This guide combines those practices. Refine
+local choices from observed use and report what the evidence establishes.
 
-This guide is an original synthesis, not a conformance standard or a claim of
-validated behavioral effectiveness. Maintainers should refine it from observed
-use, preserving the distinction between source-backed practices and local choices.
+[^toil]: Vivek Rau, [Eliminating Toil](https://sre.google/sre-book/eliminating-toil/).
+[^docs]: DORA, [Documentation quality](https://dora.dev/capabilities/documentation-quality/).
+[^space]: Nicole Forsgren and colleagues, [The SPACE of Developer Productivity](https://www.microsoft.com/en-us/research/publication/the-space-of-developer-productivity-theres-more-to-it-than-you-think/).

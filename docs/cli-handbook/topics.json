@@ -118,20 +118,20 @@
   {
     "topic": "use-case",
     "title": "Use cases",
-    "description": "Describe how an actor interacts with a system to achieve a goal.",
+    "description": "Describe the paths an actor can take toward a goal and what the system promises at each ending.",
     "pages": [
       {
         "page": "docs/cli-handbook/guides/write-a-use-case.md",
         "rules": {
-          "use-case.goal": "",
-          "use-case.goal-level": "",
-          "use-case.primary-actor": "",
-          "use-case.system-boundary": "",
-          "use-case.main-success-scenario": "",
-          "use-case.sequence": "",
-          "use-case.success-guarantees": "",
-          "use-case.extensions": "",
-          "relationship.specification_system": ""
+          "use-case.goal": "name-the-actor-boundary-and-finish",
+          "use-case.goal-level": "name-the-actor-boundary-and-finish",
+          "use-case.primary-actor": "name-the-actor-boundary-and-finish",
+          "use-case.system-boundary": "name-the-actor-boundary-and-finish",
+          "use-case.main-success-scenario": "describe-an-ordinary-success",
+          "use-case.sequence": "review-guarantees-and-ordering",
+          "use-case.success-guarantees": "review-guarantees-and-ordering",
+          "use-case.extensions": "explore-what-can-change-the-outcome",
+          "relationship.specification_system": "name-the-actor-boundary-and-finish"
         }
       },
       {

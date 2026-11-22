@@ -2,7 +2,7 @@
 
 ## What am I trying to specify?
 
-Choose the subject you want to write about. Each topic pairs an explanation with a guide to writing and assessing its specification. The Jobs to be done and Business rules pages are available now. The other topic pairs are placeholders for the handbook rewrite.
+Choose the subject you want to write about. Each topic pairs an explanation with a guide to writing and assessing its specification. The Jobs to be done, Business rules, and Use cases pages are available now. The other topic pairs are placeholders for the handbook rewrite.
 
 Run `dotspec docs` from any directory to browse the topics offline.
 
@@ -55,7 +55,7 @@ State what governs a business decision, identify its authority, and test its sco
 
 ### Use cases
 
-Describe how an actor interacts with a system to achieve a goal. Run `dotspec docs use-case`.
+Describe the paths an actor can take toward a goal and what the system promises at each ending. Run `dotspec docs use-case`.
 
 - [Write a use case](guides/write-a-use-case.md) (How-to)
 - [Use cases](explanations/use-cases.md) (Explanation)

@@ -1,7 +1,7 @@
 {
   "$schema": "https://axm.sh/schemas/pack.schema.json",
   "owner": "@craigsmitham",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Seven standalone skills for explicit maintenance: assess, stabilize, refresh, prune, simplify, modularize, and improve.",
   "keywords": [
     "software maintenance",

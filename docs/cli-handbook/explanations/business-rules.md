@@ -16,7 +16,7 @@ The policy owner can change the refund threshold. The product team can change ho
 | --- | --- |
 | Business rule | Establishes which refunds require independent approval and when it is due. Its authority might be a finance policy, a recorded decision, or a binding external provision. |
 | Requirement | Commits the payment service to hold a refund while approval required by the rule is outstanding. Its criterion says how to tell whether the service kept that commitment. |
-| Use case | Describes how an approver reviews a request and what happens if they decline it. The scenario can cite the same rule wherever the decision arises. |
+| Use case | Describes how an approver reviews a request and what happens if they decline it. The scenario can cite the same rule wherever the decision arises. [Refund review paths](../guides/write-a-use-case.md#explore-what-can-change-the-outcome). |
 
 A team could meet the policy through a manual review. Holding a payment in software is an additional product decision. Keeping one rule to cite makes it possible to review the consequences of a threshold change across every workflow that uses it. This follows the Business Rules Group’s principle of rule independence and the distinction ISO makes between business policies and the system requirements that address them. [Business Rules Manifesto, arts. 2 and 4](https://www.businessrulesgroup.org/brmanifesto/BRManifesto.pdf) · [ISO/IEC/IEEE 29148:2018, §9.4.11](https://www.iso.org/standard/72089.html).
 
