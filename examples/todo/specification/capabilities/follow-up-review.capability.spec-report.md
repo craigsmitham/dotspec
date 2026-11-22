@@ -19,6 +19,10 @@ When the owner reviews waiting errands, they can see which replies they planned 
 
 [Notice a stalled errand](<../jobs/see-personal-commitments-through.job.spec-report.md#notice-a-stalled-errand>).
 
+## Enablers
+
+The owner records what answer they need and chooses when to check back. When they review the list, they consult their messages to decide whether to chase the reply.
+
 ## Provided by
 
 [Task service](<../components/task-service/task-service.component.spec-report.md>).

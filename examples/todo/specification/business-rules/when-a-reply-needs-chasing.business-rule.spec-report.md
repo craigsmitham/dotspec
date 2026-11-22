@@ -19,7 +19,7 @@ The person chooses a day to check back for each reply they are waiting for. Reac
 
 ## Authority
 
-A product decision for this worked example. The person keeping the list decides what counts as settling each commitment.
+The worked example sets the policy for when follow-up becomes due. The person keeping the list chooses the date for each outstanding reply.
 
 ## Rationale
 

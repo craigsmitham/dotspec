@@ -17,13 +17,13 @@ The person who promised to get the errand done.
 
 ## Preconditions
 
-- The person has access to their local list. On Monday they recorded “Fix the guest sink” as waiting for the plumber’s visit time and chose Wednesday to follow up. [Wait for reply](<../concepts/checklist.concept.spec-report.md#wait-for-reply>).
+- The person can open their local list and has a waiting errand with a recorded reply to watch for and a chosen follow-up day. [Wait for reply](<../concepts/checklist.concept.spec-report.md#wait-for-reply>).
 
 ## Main success scenario
 
 <!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/resume-list.use-case.spec.md#main-success-scenario"} -->
 
-1. On Wednesday the person checks which waiting errands need attention.
+1. On Wednesday the person opens Waiting to see whether it is time to chase the plumber about the sink.
 2. The list shows “Fix the guest sink” with the saved note “Waiting for the plumber’s visit time”. The Wednesday follow-up reads “Follow up now”.
    - **Illustrates:** [Keep recorded work available](<../requirements/keep-recorded-work-available.requirement.spec-report.md>) and [Show which replies need follow-up](<../requirements/show-which-replies-need-follow-up.requirement.spec-report.md>).
 3. The person checks their messages. The plumber needs a photo before offering a visit, so the person takes back the next action on the repair.

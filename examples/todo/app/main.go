@@ -70,6 +70,28 @@ var allowedStates = map[string][]string{
 	"delete":           {"open", "waiting", "completed"},
 }
 
+func validFollowUpDate(day string) bool {
+	year, _, _ := strings.Cut(day, "-")
+	if len(year) < 4 || strings.Trim(year, "0123456789") != "" || strings.Trim(year, "0") == "" {
+		return false
+	}
+	// HTML dates allow longer years. Gregorian leap years repeat every 400
+	// years, so the last four digits suffice for the month and day check.
+	_, err := time.Parse(time.DateOnly, day[len(year)-4:])
+	return err == nil
+}
+
+func onOrBefore(day, other string) bool {
+	// The month and day have fixed widths. Compare the significant year
+	// lengths first so 10000 sorts after 9999.
+	day = strings.TrimLeft(day, "0")
+	other = strings.TrimLeft(other, "0")
+	if len(day) != len(other) {
+		return len(day) < len(other)
+	}
+	return day <= other
+}
+
 func main() {
 	file := flag.String("db", "todo.sqlite", "SQLite database file")
 	port := flag.Int("port", 8080, "loopback port (0 selects an available port)")
@@ -134,7 +156,7 @@ func (a app) show(w http.ResponseWriter, r *http.Request) {
 			storageError(w, err)
 			return
 		}
-		item.FollowUpNow = state == "waiting" && item.FollowUp <= today
+		item.FollowUpNow = state == "waiting" && onOrBefore(item.FollowUp, today)
 		view.Tasks = append(view.Tasks, item)
 	}
 	if err := rows.Err(); err != nil {
@@ -199,8 +221,7 @@ func (a app) change(w http.ResponseWriter, r *http.Request) {
 	waitingFor := strings.TrimSpace(r.PostForm.Get("waiting_for"))
 	followUp := r.PostForm.Get("follow_up")
 	if action == "wait" || action == "update-follow-up" {
-		date, err := time.Parse(time.DateOnly, followUp)
-		if waitingFor == "" || err != nil || date.Year() < 1 {
+		if waitingFor == "" || !validFollowUpDate(followUp) {
 			http.Error(w, "Enter the expected reply and a valid follow-up date.", http.StatusBadRequest)
 			return
 		}

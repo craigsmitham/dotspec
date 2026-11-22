@@ -29,4 +29,4 @@ Someone who has already called three shops needs to know which call to make agai
 
 ## Evidence
 
-The [form acceptance test](../../tests/acceptance.py) compares the cues for replies due before, on and after the local day.
+The [form acceptance test](../../tests/acceptance.py) checks the reply, date and cue for entries dated before, on and after today. On Unix it also opens the same saved entry with the service in two time zones. The reply and date stay the same while its cue changes from **Upcoming** to **Follow up now**.

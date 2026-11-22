@@ -26,4 +26,4 @@ A successful response tells the person that it is safe to close the task list.
 
 ## Evidence
 
-Inspect the [change handler](../../main.go) to check that database success precedes the redirect. The [restart test](../../../tests/acceptance.py) checks what the browser receives on the next visit after acknowledged changes.
+The [form acceptance test](../../../tests/acceptance.py) submits Complete for a waiting errand and makes the database reject the write that would mark it completed. The form receives an error directly. Waiting still shows the same entry, expected reply and follow-up day. The restart scenario in that test checks the saved entries after acknowledged changes. Inspect the [change handler](../../main.go) to verify that every path to the success redirect passes through a successful commit.

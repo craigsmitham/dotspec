@@ -70,7 +70,7 @@ Take back the next action on a waiting commitment when the person can move the w
 
 ### Complete
 
-Mark an open or waiting commitment settled. The [completion rule](../business-rules/completion.business-rule.spec.md) governs retention.
+Mark an open or waiting commitment settled. If the person selected Complete in Open and the entry is now Waiting, reject the old action. They can still choose Complete from Waiting. See the [shared check for actions on an entry](#effects-table) and the [completion rule](../business-rules/completion.business-rule.spec.md).
 
 ### Reopen
 

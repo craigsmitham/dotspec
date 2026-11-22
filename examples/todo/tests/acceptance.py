@@ -6,11 +6,12 @@ live and restarted list comparisons exercise specs/requirements/availability.req
 and specs/requirements/restart.requirement.spec.md.
 """
 import argparse
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from datetime import date, datetime, timedelta, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 import os
+import sqlite3
 import subprocess
 import tempfile
 import time
@@ -119,6 +120,7 @@ def rejected(status, base, current, action, *, message=None, **fields):
             if message:
                 body = error.read().decode()
                 assert message in body, (action, body)
+            return error.url
     else:
         raise AssertionError(f"{action} accepted a submission that should return {status}")
 
@@ -258,11 +260,45 @@ def verify_changed_day(binary, db):
         expect_waiting(waiting, room, "Room confirmation", day, "Follow up now")
 
 
+def verify_follow_up_calendar(binary, db):
+    with running(binary, db) as base:
+        current, visit = add(base, "Arrange a visit")
+        submit(base, current, visit + "/wait", waiting_for="Visit time", follow_up="10000-02-29")
+        waiting = page(base, "/waiting")
+        expect_waiting(waiting, visit, "Visit time", "10000-02-29", "Upcoming")
+        rejected(400, base, waiting, visit + "/update-follow-up", follow_up="10100-02-29")
+        expect_waiting(page(base, "/waiting"), visit, "Visit time", "10000-02-29", "Upcoming")
+
+
+def verify_failed_completion(binary, db):
+    day = date.today().isoformat()
+    with running(binary, db) as base:
+        current, repair = add(base, "Book sink repair")
+        submit(base, current, repair + "/wait", waiting_for="Visit time", follow_up=day)
+
+    # Fail the write that marks the task complete after the service has
+    # removed its waiting details within the same transaction.
+    with closing(sqlite3.connect(db)) as connection:
+        connection.execute("""CREATE TRIGGER reject_completion BEFORE UPDATE OF completed ON tasks
+                              BEGIN SELECT RAISE(ABORT, 'simulated write failure'); END""")
+
+    with running(binary, db) as base:
+        waiting = page(base, "/waiting")
+        action = repair + "/complete"
+        assert rejected(500, base, waiting, action) == base + action, "failed completion redirected"
+        waiting = page(base, "/waiting")
+        assert waiting.entries() == {repair: "Book sink repair"}
+        expect_waiting(waiting, repair, "Visit time", day, "Follow up now")
+        assert page(base).entries() == page(base, "/completed").entries() == {}
+
+
 def run(app):
     with tempfile.TemporaryDirectory() as tmp:
         binary = Path(tmp) / ("todo.exe" if os.name == "nt" else "todo")
         subprocess.run(["go", "build", "-mod=readonly", "-o", binary, "."], cwd=app, check=True)
         verify(binary, Path(tmp) / "tasks.sqlite")
+        verify_follow_up_calendar(binary, Path(tmp) / "dates.sqlite")
+        verify_failed_completion(binary, Path(tmp) / "failed-completion.sqlite")
         if os.name == "posix":  # Go on Unix reads the process's TZ setting.
             verify_changed_day(binary, Path(tmp) / "calendar.sqlite")
 

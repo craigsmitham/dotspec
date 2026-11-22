@@ -4,7 +4,9 @@ Ask someone who does the work to describe the last time they finished it. What d
 
 ## Name the actor, boundary, and finish
 
-If the story spans several visits, ask what brought the person to the system each time and what they had accomplished by the time they left. On Monday the errand owner leaves knowing the list will remember which reply they need from the plumber and when to chase it. On Wednesday they return to decide what to do about the repair. For Wednesday’s use case, the recorded wait is a precondition. Cockburn uses what a person can accomplish in one sitting as a clue to a user task’s scope. A summary use case can follow a goal across several visits. [Cockburn, *The Mini-Book on Use Cases*, v1.1b, §4.2](https://alistaircockburn.com/Books).
+If the story spans several visits, ask what brought the person to the system each time and what they had accomplished by the time they left. The errand owner records a wait on one visit and decides what to do about the repair on another. Cockburn uses what a person can accomplish in one sitting as a clue to a user task’s scope. A summary use case can follow a goal across several visits. [Cockburn, *The Mini-Book on Use Cases*, v1.1b, §4.2](https://alistaircockburn.com/Books).
+
+Vary one detail of the story to check a precondition. If the owner chose Wednesday to chase the plumber, could they act on a reply on Tuesday? The decision requires a recorded wait. The day the owner returns belongs in the scenario. Cockburn makes this distinction in *Request benefits summary*, where someone can ask about benefits even before filing a claim. [Cockburn, *Writing Effective Use Cases*, 1999 draft, ch. 8, “Precondition”](https://jpaulgibson.synology.me/~jpaulgibson/TSP/Teaching/Teaching-ReadingMaterial/Cockburn00.pdf#page=54).
 
 Name the use case for the result the primary actor wants. In the refund example below, *Decide a refund request* is a user task. *Obtain a refund* would switch to the customer’s goal. Selecting a request is one step in the reviewer’s work. [Actors and goal levels](../explanations/use-cases.md#whose-goal-belongs-at-this-boundary).
 
