@@ -109,6 +109,7 @@ Minimize the time a commitment goes unattended after an expected reply is overdu
 **Supported by**
 
 - [Follow-up review](<../capabilities/follow-up-review.capability.spec-report.md>)
+- [Show which replies need follow-up](<../requirements/show-which-replies-need-follow-up.requirement.spec-report.md>)
 
 ### Revise the plan
 

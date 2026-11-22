@@ -3,7 +3,8 @@
 The actions follow specs/concepts/checklist.concept.spec.md. The cue shown on
 each date comes from specs/requirements/follow-up.requirement.spec.md. The
 live and restarted list comparisons exercise specs/requirements/availability.requirement.spec.md
-and specs/requirements/restart.requirement.spec.md.
+and specs/requirements/restart.requirement.spec.md. The failed saves exercise
+app/specs/requirements/acknowledge-after-commit.requirement.spec.md.
 """
 import argparse
 from contextlib import closing, contextmanager
@@ -131,7 +132,7 @@ def add(base, title):
     current = submit(base, start, "/tasks", title=title)
     after = current.entries()
     entry, = after.keys() - before.keys()
-    assert after == before | {entry: title}
+    assert after == before | {entry: title.strip()}
     return current, entry
 
 
@@ -153,9 +154,9 @@ def verify(binary, db):
         current, errand = add(base, "Call the plumber")
         rejected(400, base, current, errand + "/rename", title=" ")
         assert page(base).entries() == {errand: "Call the plumber"}
-        current = submit(base, current, errand + "/rename", title="Call Pat & Lee <today>")
+        current = submit(base, current, errand + "/rename", title="  Call Pat & Lee <today>  ")
         submit(base, current, errand + "/complete")
-        _, keys = add(base, "Collect keys")
+        _, keys = add(base, "  Collect keys  ")
         current, repair = add(base, "Arrange repair")
         today = date.today()
         visit_day = today.isoformat()
@@ -167,7 +168,8 @@ def verify(binary, db):
             rejected(400, base, current, repair + "/wait", waiting_for=reason, follow_up=day)
             assert page(base).entries()[repair] == "Arrange repair" and not page(base, "/waiting").entries()
 
-        submit(base, current, repair + "/wait", waiting_for="  Visit time from Lee  ", follow_up=visit_day)
+        after_wait = submit(base, current, repair + "/wait", waiting_for="  Visit time from Lee  ", follow_up=visit_day)
+        assert after_wait.entries() == {keys: "Collect keys"}
         # The Complete button in an earlier Open tab belongs to the old state.
         rejected(409, base, current, repair + "/complete")
         waiting = page(base, "/waiting")
@@ -203,7 +205,7 @@ def verify(binary, db):
         completed = page(base, "/completed")
         finished = {errand: "Call Pat & Lee <today>"}
         assert completed.entries() == finished and "/" in completed.links
-        submit(base, completed, errand + "/reopen")
+        assert submit(base, completed, errand + "/reopen").entries() == {}
         assert page(base).entries() == {keys: "Collect keys"} | finished
         submit(base, page(base), errand + "/complete")
 
@@ -270,22 +272,21 @@ def verify_follow_up_calendar(binary, db):
         expect_waiting(page(base, "/waiting"), visit, "Visit time", "10000-02-29", "Upcoming")
 
 
-def verify_failed_completion(binary, db):
+def verify_failed_save(binary, db, decision, failing_write):
     day = date.today().isoformat()
     with running(binary, db) as base:
         current, repair = add(base, "Book sink repair")
         submit(base, current, repair + "/wait", waiting_for="Visit time", follow_up=day)
 
-    # Fail the write that marks the task complete after the service has
-    # removed its waiting details within the same transaction.
     with closing(sqlite3.connect(db)) as connection:
-        connection.execute("""CREATE TRIGGER reject_completion BEFORE UPDATE OF completed ON tasks
-                              BEGIN SELECT RAISE(ABORT, 'simulated write failure'); END""")
+        connection.execute(f"""CREATE TRIGGER simulated_failure BEFORE {failing_write}
+                               BEGIN SELECT RAISE(ABORT, 'simulated write failure'); END""")
 
     with running(binary, db) as base:
         waiting = page(base, "/waiting")
-        action = repair + "/complete"
-        assert rejected(500, base, waiting, action) == base + action, "failed completion redirected"
+        action = f"{repair}/{decision}"
+        assert rejected(500, base, waiting, action, message="Could not access the task list.") == base + action, \
+            f"failed {decision} redirected"
         waiting = page(base, "/waiting")
         assert waiting.entries() == {repair: "Book sink repair"}
         expect_waiting(waiting, repair, "Visit time", day, "Follow up now")
@@ -298,7 +299,10 @@ def run(app):
         subprocess.run(["go", "build", "-mod=readonly", "-o", binary, "."], cwd=app, check=True)
         verify(binary, Path(tmp) / "tasks.sqlite")
         verify_follow_up_calendar(binary, Path(tmp) / "dates.sqlite")
-        verify_failed_completion(binary, Path(tmp) / "failed-completion.sqlite")
+        # Complete fails at its second write, after the waiting details were removed in the same transaction.
+        verify_failed_save(binary, Path(tmp) / "failed-completion.sqlite", "complete", "UPDATE OF completed ON tasks")
+        # Resume fails at its only write, the removal of the waiting details.
+        verify_failed_save(binary, Path(tmp) / "failed-resume.sqlite", "resume", "DELETE ON pending_replies")
         if os.name == "posix":  # Go on Unix reads the process's TZ setting.
             verify_changed_day(binary, Path(tmp) / "calendar.sqlite")
 

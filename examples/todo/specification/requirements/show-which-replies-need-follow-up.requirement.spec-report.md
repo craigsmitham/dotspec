@@ -23,6 +23,10 @@ Use the local calendar day on the computer serving the list when it prepares the
 
 For an entry marked for Friday, Thursday’s view reads **Upcoming**. Friday’s and Saturday’s views read **Follow up now** if the owner is still waiting. In all three cases the owner can see what reply they are chasing. Moving the entry to Open at midnight would violate the promise even if the follow-up date were still visible there.
 
+## Supports
+
+[Notice a stalled errand](<../jobs/see-personal-commitments-through.job.spec-report.md#notice-a-stalled-errand>).
+
 ## Derived from
 
 [When a reply needs chasing](<../business-rules/when-a-reply-needs-chasing.business-rule.spec-report.md>).

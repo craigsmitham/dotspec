@@ -5,11 +5,11 @@ type: business-rule-spec
 
 ## Statement
 
-A finished commitment stays on the person's list until they explicitly delete it.
+A settled commitment must stay on the person's list until they delete it.
 
 ## Applies to
 
-**Targets:** [Personal task list](../personal-task-list.system.spec.md).
+**Targets:** [My checklist](../personal-task-list.system.spec.md#my-checklist).
 
 The rule applies whether the person did the last piece of work themselves or learned by reply that someone else had finished it.
 

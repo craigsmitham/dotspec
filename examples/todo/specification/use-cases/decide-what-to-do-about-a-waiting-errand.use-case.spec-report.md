@@ -72,6 +72,21 @@ At step 3 the person tries to resume the repair from their Waiting page after de
 1. The list reports that it cannot find the entry.
 2. The person opens the list again and sees that the deleted repair is still absent.
 
+### The list cannot record the decision
+
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/resume-list.use-case.spec.md#the-list-cannot-record-the-decision"} -->
+
+#### Condition
+
+At step 3 the person chooses Resume or Complete, but the list cannot save the change.
+
+#### Handling
+
+1. The list shows “Could not access the task list.” instead of returning to Waiting.
+   - **Illustrates:** [Acknowledge after commit](<../components/task-service/requirements/acknowledge-after-commit.requirement.spec-report.md>).
+2. The person opens Waiting again and finds the repair with the same expected reply and follow-up day. The decision was not recorded, and the errand is still waiting.
+   - **Illustrates:** [Keep recorded work available](<../requirements/keep-recorded-work-available.requirement.spec-report.md>).
+
 ## Success guarantees
 
 The list reflects the person’s decision about the same errand. They can tell whether it is theirs to act on, still waiting for a reply with a chosen follow-up day, or settled.

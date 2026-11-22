@@ -26,11 +26,11 @@ Purpose, state, operational principles and the effects table hold Markdown. A na
 
 ## Business rule
 
-Statement, rationale, exceptions and authority describe a rule. A rule can cite related specifications and explicitly identify applicability and traceability targets. An ordinary citation remains navigable wherever it occurs.
+Statement, rationale, exceptions and authority describe a rule. A rule can cite related specifications and explicitly identify applicability and traceability targets. Under **Applies to**, a line beginning `**Targets:**` names the subjects a rule or a requirement applies to. An ordinary citation remains navigable wherever it occurs.
 
 ## Requirement
 
-Only a `*.requirement.spec.md` file declares a Requirement. It keeps its statement, applicability, criterion and rationale. Conditions, workload, population and exclusions qualify applicability. Measure and target qualify a criterion. A quality classification is a label occurrence resolved within its governing vocabulary.
+Only a `*.requirement.spec.md` file declares a Requirement. It keeps its statement, applicability, criterion and rationale. A `**Targets:**` line under **Applies to** names its subjects. Conditions, workload, population and exclusions qualify applicability. Measure and target qualify a criterion. A quality classification is a label occurrence resolved within its governing vocabulary.
 
 ## Relationship contract
 

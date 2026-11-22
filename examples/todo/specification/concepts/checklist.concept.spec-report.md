@@ -13,7 +13,7 @@ Decide what I can do next, which replies I need to chase and which commitments I
 
 ## Operational principles
 
-I promise to get the sink fixed. Once I've asked the plumber for a visit time, I can turn to another errand and still find the reply I need when I return. If the plumber asks me for a photo, I resume the same repair entry. After the repair I can complete it. If the sink leaks again, I can reopen that entry without having to remember its title or reconstruct the old wait.
+I promise to get the sink fixed. Once I've asked the plumber for a visit time and chosen a day to chase the reply, I can turn to another errand. When I return, I still find the reply I need and the day I chose. If the plumber asks me for a photo, I resume the same repair entry. After the repair I can complete it. If the sink leaks again, I can reopen that entry without having to remember its title or reconstruct the old wait.
 
 ## State
 

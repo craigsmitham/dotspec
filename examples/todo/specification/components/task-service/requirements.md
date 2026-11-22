@@ -7,4 +7,4 @@ generated_by: dotspec
 
 ## Applicable requirements
 
-- [Acknowledge after commit](<requirements/acknowledge-after-commit.requirement.spec-report.md>) — The task service must commit a change to the local database before acknowledging it to the browser.
+- [Acknowledge after commit](<requirements/acknowledge-after-commit.requirement.spec-report.md>) — The task service must record each change in a single commit to the local database and acknowledge it to the browser only after that commit succeeds.

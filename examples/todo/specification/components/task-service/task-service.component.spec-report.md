@@ -15,7 +15,7 @@ The local service that decides whether a submitted action still applies to the s
 | [System topology](<#system-topology>) | Part of |
 | Capabilities | [All capabilities](<capabilities.md>) |
 | Requirements | [All requirements](<requirements.md>) |
-| [Contracts](<#contracts>) | The browser uses the HTML forms to submit changes. |
+| [Contracts](<#contracts>) | The browser submits changes through Task list forms, whose form template supplies the actions and fields. |
 | [Implementation](<#implementation>) | The Go server owns form handling and storage. |
 
 ## Responsibilities
@@ -47,7 +47,7 @@ flowchart LR
 
 ## Contracts
 
-- The browser uses the [HTML forms](<../../../app/list.html>) to submit changes.
+- The browser submits changes through [Task list forms](<../../interfaces/task-list-forms.interface.spec-report.md>), whose [form template](<../../../app/list.html>) supplies the actions and fields.
 
 ## Implementation
 

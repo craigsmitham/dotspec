@@ -18,7 +18,7 @@ Before choosing the item for development, ask the team what makes it feasible, w
 
 ## Decide when it applies
 
-Under **Applies to**, identify the subject and the circumstances in which the promise holds. Change one condition and judge the result again. The To-do restart promise covers acknowledged changes on functioning local storage. A missing task after acknowledgement can violate the promise. A request still awaiting acknowledgement falls outside its scope. Qualify the workload, population or exclusions when they change what the system owes. [Restart conditions](../../../examples/todo/specs/requirements/restart.requirement.spec.md#applies-to).
+Under **Applies to**, identify the subject and the circumstances in which the promise holds. Name the subject on a line that begins with `**Targets:**`, as the restart requirement does for **My checklist**. From your project directory, `dotspec model trace` then lists the requirement as applying to that subject. A link elsewhere in the section remains an ordinary citation. Change one condition and judge the result again. The To-do restart promise covers acknowledged changes on functioning local storage. A missing task after acknowledgement can violate the promise. A request still awaiting acknowledgement falls outside its scope. Qualify the workload, population or exclusions when they change what the system owes. [Restart conditions](../../../examples/todo/specs/requirements/restart.requirement.spec.md#applies-to).
 
 ## State how to judge a result
 

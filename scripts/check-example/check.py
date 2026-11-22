@@ -27,7 +27,7 @@ TYPES = {
 }
 VIEWS = {
     "overview": "Task list forms",
-    "pegs": "A finished commitment stays",
+    "pegs": "A settled commitment must stay",
     "trace": "| refines | [Keep recorded work available]",
     "needs": "DesiredOutcome: Less reconstruction",
     "review": "illustrates [Complete]",

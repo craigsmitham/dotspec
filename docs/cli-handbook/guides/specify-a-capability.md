@@ -1,6 +1,6 @@
 # Specify a capability
 
-Describe what a person or organization needs to be able to do. Try substituting another provider. If replacing “Task service” with a different component leaves the need to retain task changes between sessions intact, **Local task storage** names the ability. Richard Allen uses this distinction to identify capabilities even when a team has yet to select a tool. [Allen, *User Needs Mapping* (1st ed., 2025), ch. 4, step 4](https://www.userneedsmapping.com/moviegoer-walkthrough) · [How capabilities connect needs to providers](../explanations/capabilities.md).
+Describe what a person or organization needs to be able to do. Try substituting another provider. If replacing “Task service” with a different component leaves the need to retain task changes between sessions intact, **Local task storage** names the ability. Richard Allen names the function rather than the system so that a team can later substitute another technology. [Allen, *User Needs Mapping* (1st ed., 2025), ch. 4, step 4, pp. 47–50](https://leanpub.com/userneedsmapping) · [How capabilities connect needs to providers](../explanations/capabilities.md).
 
 Start in the directory of the system or component that will own the file. For a new capability, use `dotspec capability init local-task-storage`, substituting a lowercase, hyphenated name. If the capability is already specified, edit its `*.capability.spec.md` file. Name the ability in the top-level heading and describe what it makes possible under **Description**.
 

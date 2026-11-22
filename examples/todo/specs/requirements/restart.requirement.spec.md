@@ -42,8 +42,7 @@ Zero discrepancies across Open, Waiting and Completed.
 
 ## Evidence
 
-The [restart acceptance test](../../tests/acceptance.py) compares the acknowledged list
-with the entries served after restarting on the same database.
+The [restart acceptance test](../../tests/acceptance.py) records entries in Open, Waiting and Completed through the forms, kills the service process without a clean shutdown and starts it again on the same database. It compares each view’s identities and titles with the acknowledged list. A missing, duplicated or unexpected entry fails the run, as would the return of either entry deleted before the stop. For both waiting entries it also compares the expected reply and follow-up date. The test does not stop the service during a change or simulate a power loss.
 
 ## Rationale
 

@@ -43,6 +43,14 @@ The browser and service run on the same computer. The owner can close either bet
 
 The person returns to the same writable database file.
 
+#### Basis
+
+The owner names the database file when starting the service, or accepts `todo.sqlite` in its working directory. Starting it again the same way reopens the same list. Another path opens a different list, which the restart requirement does not cover.
+
+#### Applicability
+
+Each return to the list on the owner's computer, including after the service restarts.
+
 ## Concept uses
 
 ### My checklist

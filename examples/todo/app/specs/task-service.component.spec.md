@@ -19,7 +19,7 @@ The service supplies the current local day when it prepares the Waiting view. [A
 
 ## Contracts
 
-- The browser uses the [HTML forms](../list.html) to submit changes.
+- The browser submits changes through [Task list forms](../../specs/personal-task-list.system.spec.md#task-list-forms), whose [form template](../list.html) supplies the actions and fields.
 
 ## Implementation
 

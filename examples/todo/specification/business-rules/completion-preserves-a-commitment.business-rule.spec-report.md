@@ -9,11 +9,11 @@ source: "../../specs/business-rules/completion.business-rule.spec.md#completion-
 
 ## Statement
 
-A finished commitment stays on the person's list until they explicitly delete it.
+A settled commitment must stay on the person's list until they delete it.
 
 ## Applies to
 
-**Targets:** [Personal task list](<../personal-task-list.system.spec-report.md>).
+**Targets:** [My checklist](<../concept-uses/my-checklist.concept-use.spec-report.md>).
 
 The rule applies whether the person did the last piece of work themselves or learned by reply that someone else had finished it.
 

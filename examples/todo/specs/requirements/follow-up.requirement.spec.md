@@ -7,6 +7,10 @@ type: requirement-spec
 
 Each time the owner opens or refreshes Waiting, the list must show each waiting entry’s expected reply, recorded follow-up date and whether follow-up is due under the [follow-up policy](../business-rules/follow-up.business-rule.spec.md).
 
+## Supports
+
+[Notice a stalled errand](../jobs/personal-commitments.job.spec.md#notice-a-stalled-errand).
+
 ## Applies to
 
 **Targets:** [Task list forms](../personal-task-list.system.spec.md#task-list-forms).
