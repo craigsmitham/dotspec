@@ -80,8 +80,10 @@ unknown prose and distinguish draft omissions from structural errors.
 
 ### Adding a specification type
 
+First decide whether the subject needs an independent specification or belongs to an existing one. For example, a new concept action already has an editable home and an address within its concept. A new primary subject needs a concrete specification class and a Markdown mapping that explains its declaration. Add its frontmatter value to `SpecificationType` in the metamodel. [Specification authority](docs/maintainers/plans/specification-authority.md#what-each-source-owns) · [Model maintenance](model/README.md#regeneration).
+
 Define a `specfile.Layout` in the owning type package with its specification type
-(the `Kind` field), collection, and either a singleton filename or a slug suffix. Use that layout for discovery,
+(the `Kind` field) and its filename or suffix. For a collection such as jobs, provide the default collection directory. For a named directory owner, see the system and component declarations in `internal/specfile/subject.go`. Use that layout for discovery,
 placement validation, creation, and direct lookup so those operations agree.
 Keep slug rules and filename diagnostics in the type package.
 
@@ -109,12 +111,13 @@ context. Pass the supported target types to `check.Focused` so target parsers
 can expose type-specific IDs. Targets contribute structural diagnostics and
 context accounting, but do not recursively expand the scan.
 
-Register the type in the CLI's project check and pass the same integration to any
-focused check command. Preserve the existing command and report contracts.
+Connect the kind to its class in `internal/specfile/profile.go` so its headings can be checked against the model. Register the checker in `supportedTypes()` in `internal/cli/check.go` and pass the same integration to any focused check command. Map the parsed subject and its fields in `internal/model/mapping.go`. Give its report an address in the document plan and add its concrete class to the specification-type tests. [Document planning](internal/specdoc/plan.go) · [Specification-type checks](internal/model/specification_types_test.go).
 `internal/check/testdata/quality` is a minimal integration fixture demonstrating
 another type with its own metadata and no dependency on existing domain packages;
 its deliberately different metadata is test-only. It is not a supported
 specification type.
+
+From the repository root, run `mise exec -- go test ./internal/check -run IndependentType` to exercise the fixture’s discovery, direct inspection and advice. For a public type, follow a real authored example from creation and inspection through model export and generated report. Check that its source yields one primary record and that the report leads back to it. Add its authoring topic and diagnostic destinations, exercise the public commands in the example gate, regenerate, and run the full check. [Model export criteria](specs/requirements/model-source-fidelity.requirement.spec.md#criterion) · [Handbook publication](docs/maintainers/handbook.md#distribute-the-same-guides).
 
 ## CLI changes and generated artifacts
 
@@ -151,8 +154,7 @@ code; `stdout`, `stderr`, and `cmp` verify results. Add scenarios there for chan
 to path handling, pipelines, command composition, or error behavior. Keep parser
 edge cases in package-local Go tests and seed relevant cases into the fuzz targets.
 
-Tests also execute the examples declared on the command tree and the quick-start
-commands in the README, so documentation syntax cannot silently drift.
+The command-example test executes examples declared on the Cobra tree. When the README quick start changes, try it in a new directory with the rebuilt binary on PATH and follow the link in the resulting `SPEC.md`.
 
 The model generation pipeline also validates subset classifications, explicit class
 memberships, and the focused documentation view. Edit `model/views/core-domain.yaml`
@@ -163,10 +165,7 @@ See [Releasing](docs/maintainers/releasing.md) for snapshot and publication proc
 Bundled quality models are authored Markdown under
 `internal/qualitymodel/specs/quality-models/`. The CLI embeds those files; the
 standard generator produces their reference pages. Add or edit definitions in
-the source files, retain attribution, and run `mise run generate`. The
-`internal/qualitymodel/apply` package uses the source-content parser to relocate
-Markdown references while copying into systems; it validates the entire result
-before replacing a target file.
+the source files, retain attribution, and run `mise run generate`. The `internal/qualitymodel/apply` package relocates Markdown references while copying definitions into system attribute files. Try a selective copy in a disposable project and inspect its source attribution. [Apply selected attributes](docs/cli-handbook/guides/define-a-system-quality-attribute.md).
 
 The Q42 starter is adapted from arc42's CC BY-SA 4.0 catalog at the revision named
 in its Edition section. Preserve the per-attribute source and license notices so

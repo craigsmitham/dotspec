@@ -59,7 +59,7 @@ stdout '"rule": "requirement.measurement-basis"'
 exec dotspec requirement check feedback
 stdout 'Guide: dotspec docs requirement.measurement-basis'
 exec dotspec docs requirement.measurement-basis
-stdout '^# Write an assessable requirement'
+stdout '^## State how to judge a result'
 exec dotspec docs job.performer
 stdout '^## Who owns the result'
 ! stdout '^## Where does the job end'
@@ -98,7 +98,8 @@ exec dotspec docs 'examples/todo/specs/jobs/personal-commitments.job.spec.md#job
 stdout '^## Job$'
 ! stdout '^## Performer'
 exec dotspec docs guides/map-needs-to-capabilities
-stdout 'in your project, or `dotspec model needs --project todo` from the dotspec repository root'
+stdout '`dotspec model needs` from your project root'
+stdout '`dotspec model needs --project todo` from the dotspec repository root'
 status 2 dotspec model needs --project todo
 stderr 'unknown project "todo"'
 cp ../manifest dotspec.yaml

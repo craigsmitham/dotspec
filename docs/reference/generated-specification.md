@@ -4,7 +4,7 @@ Use a generated spec when readers need one entry point for requirements authored
 
 ## Set up a project
 
-Declare the project in its root `dotspec.yaml`. Generated reports are enabled by default.
+Work in the directory that owns your project's `dotspec.yaml`. If you are starting a project, create that file with your project name. The To-do example uses the following manifest. Generated reports are enabled by default.
 
 ```yaml
 name: todo
@@ -17,16 +17,18 @@ report:
   enabled: false
 ```
 
-A project with generated reports needs one root system. Declare child systems with `Part of`; directory nesting alone establishes discovery context. Explicit specification-system selections and directory defaults place subjects in their system. Standalone quality models are reusable reference material. Links into other projects retain their original targets.
+A project with generated reports needs one root system. If you have none yet, create it in the project root and fill in its purpose and scope. If the build finds several roots, decide which systems are parts of another and give each child a **Part of** link. An independent product can have its own project manifest. [Describe a system](../cli-handbook/guides/describe-a-system.md) · [Separate specification projects](workspaces.md).
 
-Run the following in the project:
+Explicit specification-system selections and directory defaults place subjects in their system. Standalone quality models are reusable reference material. Links into other projects retain their original targets.
+
+From the project root, build the reports and check them against the authored specifications.
 
 ```sh
 dotspec spec build
 dotspec check
 ```
 
-Commit the authored changes, `SPEC.md` and the generated Markdown in `specification/` together. To edit a subject, open the file named in the report’s `source` field, change the authored text, then rebuild. Build refreshes generator-owned files, removes obsolete generated pages, and reports a collision if an authored file occupies a planned destination.
+Commit the authored changes, `SPEC.md` and the generated Markdown in `specification/` together. From `SPEC.md`, open the overview. If the project has requirements, follow one to its statement and conditions. If the wording needs to change, follow the report’s `source` field, edit that file, rebuild, and check again. Build refreshes generator-owned files and removes obsolete generated pages. If it reports that an authored file occupies a planned destination, move the authored file to a permanent location, update any links to it, then rerun the build.
 
 ## Read the generated files
 

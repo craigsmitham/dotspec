@@ -2,11 +2,11 @@
 
 A personal task list you can close today and pick up tomorrow. One local Go process serves HTML forms and keeps the list in SQLite.
 
-From any directory, use `dotspec docs job` to find the worked job’s reading command. For example, `dotspec docs examples/todo/specs/jobs/personal-commitments.job.spec.md#job` opens the job statement. Running the app, editing its specifications and running its tests require the dotspec checkout.
+With the dotspec CLI on your PATH, use `dotspec docs job` from any directory to find the worked job’s reading command. For example, `dotspec docs examples/todo/specs/jobs/personal-commitments.job.spec.md#job` opens the job statement. Running the app, editing its specifications and running its tests require the dotspec checkout.
 
 ## Run the app
 
-From a fresh dotspec checkout, install the project's pinned tools using mise. Run the following from the repository root.
+Start in the dotspec checkout with mise installed. The first build needs access to the Go dependencies. From the repository root, install the pinned tools and start the app.
 
 ```sh
 mise trust
@@ -17,7 +17,7 @@ mise exec -- go run .
 
 Open the loopback URL printed in the terminal. Add “Call the plumber” and “Collect keys”. Rename the first task, mark it complete and look in **Completed**. Stop the process with Ctrl+C and run the same command again in the same directory. Both lists should look as you left them. Reopen the finished errand and find it in **Open**. Expand **Edit task** to rename or delete an entry.
 
-The default file is `todo.sqlite` in the app's working directory. Use `-db PATH` to choose a file or `-port 0` to choose a free port. The first build downloads the Go dependencies. The app runs locally after that.
+The default database is `todo.sqlite` in the app’s working directory. If port 8080 is busy, run `mise exec -- go run . -port 0` from the same directory and open the new address it prints. For a separate session, use `-db PATH` to choose a file. If both lists are unexpectedly empty after a restart, check the working directory and database path before adding a task. Stop the app and restart it with the original file.
 
 ## Follow one decision
 
@@ -29,7 +29,7 @@ The [restart requirement](specs/requirements/restart.requirement.spec.md) refine
 
 ## Read the requirements specification
 
-Start with the [system overview](specification/personal-task-list.system.spec-report.md) or its [requirements index](specification/requirements.md). The pages are generated from the [To-do system](specs/personal-task-list.system.spec.md) and its related specifications. To rebuild after an edit, run `dotspec spec build` and `dotspec check` in your project. For this example, run those commands in `examples/todo/` in the dotspec checkout.
+Start with the [system overview](specification/personal-task-list.system.spec-report.md) or its [requirements index](specification/requirements.md). The pages are generated from the [To-do system](specs/personal-task-list.system.spec.md) and its related specifications. With the CLI on your PATH, run `dotspec spec build` and `dotspec check` in your project after editing an authored source. For To-do, use the checkout’s `examples/todo/` directory. If you have only the checkout, run `mise run build` from its root and use `../../dist/dotspec` in place of `dotspec` from `examples/todo/`.
 
 | Question | Start here |
 | --- | --- |
@@ -50,12 +50,10 @@ mise exec -- go run . model trace --path examples/todo
 mise run example-check
 ```
 
-The acceptance test builds the app in a temporary directory, submits the rendered forms and restarts the server on a temporary database. The [example coverage inventory (dotspec checkout)](COVERAGE.md) shows which fields the example exercises.
+The acceptance test builds the app in a temporary directory, submits the rendered forms and restarts the server on a temporary database. It compares entry identities and titles in both views. If it reports a changed list, compare the last acknowledged entries with the ones served after restart. The [example coverage inventory (dotspec checkout)](COVERAGE.md) shows which fields the example exercises.
 
 ## Try the workflow with a participant
 
-With the To-do app running from the dotspec checkout, invite someone to record two real errands and mark one finished. After a break,
-restart the app on the same database. Ask which errand still needs attention,
-then ask them to resume the finished errand for a follow-up. Let them choose the
-controls. With their consent, record what they recognized and where they needed
-help. Compare those observations with the [user’s job](specs/jobs/personal-commitments.job.spec.md).
+Use a separate database for the session. Start the app from the checkout’s `examples/todo/app/` directory, adding `-db session.sqlite` with an unused filename to the run command above. Invite the participant to record two errands they are comfortable sharing and mark one finished. After a break, restart on the same file and open the address printed by the new process.
+
+Ask which errand still needs attention and how they know. Give the finished errand a follow-up and ask how they would resume it. Let them choose the controls. With their consent, record the cue they recognized, the action they took and any help they needed. If the entry is present but they cannot tell what to do next, capture the words that left them guessing. Compare the observation with the [desired outcome for returning after an interruption](specs/jobs/personal-commitments.job.spec.md#less-reconstruction). The acceptance test can check persistence with its own saved entries. To investigate a missing errand from this session, check which database each process opened and what the participant saw after submitting it.

@@ -8,13 +8,14 @@ Why can an export report a broken link and the saved snapshot still pass validat
 
 Snapshot validation checks the representation. To judge the inspected project, read its diagnostics and the discovery, read and inspection completion flags. An unreadable source can leave a gap even when the rest of the project was inspected. [Model source fidelity](../../specs/requirements/model-source-fidelity.requirement.spec.md) · [Interpret a check report](inspection.md#check-specifications).
 
-In your project directory, export its specifications and validate the saved snapshot offline.
+In the project directory containing the specifications you want to inspect, save the export and check its exit status before validating the file. An export can write a snapshot and return 1 for source findings. Run the validation command on the saved file even in that case.
 
 ```sh
 dotspec model export --path . > snapshot.json
 dotspec model validate snapshot.json
-dotspec model schema
 ```
+
+If validation succeeds, read the snapshot’s `diagnostics` and `scope.discovery_complete`, `scope.reads_complete` and `scope.inspection_complete`. For a broken link, correct the destination in the referring specification and re-export. If validation itself fails, use the reported path to locate the problem in the snapshot. An export interrupted while writing may need to be created again. Run `dotspec model schema` to inspect the single-project format.
 
 Use `--project` to select a project or `--all` to export a workspace envelope. Each project retains its own acquisition scope and identities.
 
@@ -23,7 +24,6 @@ Use `--project` to select a project or `--all` to export a workspace envelope. E
 A specification declares its subject through its frontmatter type and title. Systems, components, jobs, use cases, concepts, requirements, business rules, quality models, system quality attributes, features and capabilities each have their own specification type. A named item such as an interface, job step or desired outcome identifies its declaring owner. Each subject report type identifies the subject it documents.
 
 Model `0.30.0-draft` uses mapping profile `dotspec-markdown/24`. Regenerate saved snapshots after moving former inline requirements to their own files. For scenario outcomes, retain the prose in the use case. Update incoming links before rebuilding reports. [Requirement mapping](../../model/markdown-mapping.md#requirement)
-
 
 ## Source text and locations
 

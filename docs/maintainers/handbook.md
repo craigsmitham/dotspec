@@ -63,7 +63,9 @@ each item. [IREB glossary, attribution appendix](https://hub.ireb.org/media/page
 
 ## Try the guidance from an installation
 
-Give a reader the installed CLI and an empty directory outside the dotspec checkout. Ask them to find the To-do job via `dotspec docs job` and open its **Job** section offline. In a temporary project, ask them to create a job with a name they choose and inspect it with `dotspec job show`. From the needs-to-capabilities guide, ask where they would run `dotspec model needs` for their work and what they would need to reproduce the To-do result. Record where they guessed a project name, path or prerequisite.
+From the checkout root, run `mise run build` and put the absolute path to its `dist` directory on PATH. Use a new project directory outside the checkout. From there, run `dotspec --version` and open the changed page with `dotspec docs PAGE`, using the page ID shown in the topic menu. Check for your revised wording before trying its commands. A binary built before the edit still contains the earlier handbook.
+
+Give a reader this CLI and the prerequisites named by the guide. If you are reviewing alone, follow the directions on a fresh case and inspect what the next reader would see. Vary one decision that matters, such as which system owns a quality definition. Record where each case led and revise any instruction that required an unstated path or input. Ask them to find the To-do job via `dotspec docs job` and open its **Job** section offline. In a temporary project, ask them to create a job with a name they choose and inspect it with `dotspec job show`. From the needs-to-capabilities guide, ask where they would run `dotspec model needs` for their work and what they would need to reproduce the To-do result. Record where they guessed a project name, path or prerequisite.
 
 For the following exercises, start the reader in `examples/todo/` in a disposable copy of the dotspec checkout.
 
@@ -98,21 +100,20 @@ A page can serve several topics. Map cross-type inspection and layout findings i
 [handbook topic index](../cli-handbook/README.md#what-am-i-trying-to-specify) and reference, then `mise run check` to check
 the installed commands, destinations, anchors, and package.
 
-For AXM, `mise run knowledge-bundle` creates `dist/dotspec-knowledge.zip`.
-Extract it and use `axm knowledge lint --path <extracted>/dotspec` to inspect
-the package. In a consuming workspace, `axm knowledge install <extracted>/dotspec --knowledge dotspec`
-installs it on request. Its index preserves each catalog topic and section link. Topics that share a page use one packaged copy. The bundle preserves fenced examples containing relative
+To distribute the handbook for AXM, run `mise run knowledge-bundle` in the dotspec checkout. Extract `dist/dotspec-knowledge.zip` into an empty directory. With AXM installed, run `axm knowledge lint --path /absolute/path/to/extracted/dotspec`, substituting the directory that contains `knowledge.json`. A reachability finding identifies a page to link from the package index or another reachable page.
+
+To try the package, change to a disposable AXM workspace configured for your agent. Run `axm knowledge install /absolute/path/to/extracted/dotspec --knowledge dotspec` with that same bundle path. Open `axm knowledge concepts get '@craigsmitham/knowledge/dotspec#docs/cli-handbook/guides/write-a-job'` and compare the published guidance with its source. Its index preserves each catalog topic and section link. Topics that share a page use one packaged copy. The bundle preserves fenced examples containing relative
 links as downloadable text so link indexing treats their contents as sample
 source. Release builds package the same sources with the release
 version. Edit the linked handbook and authoring guides to change the knowledge itself.
 
 ## Changing a reference
 
-Edit the technical contract in `docs/reference/` or the Markdown mapping in `model/` to clarify its explanation. The following references are generated.
+Edit the technical contract in `docs/reference/` or the Markdown mapping in `model/` to clarify its explanation. The [guide to generating a specification](../reference/generated-specification.md) is hand-authored. The following references are generated.
 
 | Published material | Edit here | Regenerate with |
 | --- | --- | --- |
 | CLI reference and output gallery | [Cobra commands](../../internal/cli) and the [gallery scenarios](../../scripts/generate/main.go) | `mise run generate` |
 | Quality-model starter catalogs | [Bundled starter specifications](../../internal/qualitymodel/specs/quality-models) | `mise run generate` |
 | Core domain, fields, and relationships | [Metamodel](../../model/metamodel.yaml) and [core view definition](../../model/views/core-domain.yaml) | `mise run model-generate` |
-| [To-do requirements specification](../../examples/todo/SPEC.md) and [generation guide](../reference/generated-specification.md) | [To-do specifications](../../examples/todo/specs) for the example, [document generator](../../internal/specdoc) for presentation | `mise run generate` |
+| [To-do requirements specification](../../examples/todo/SPEC.md) | [To-do specifications](../../examples/todo/specs) for the example, [document generator](../../internal/specdoc) for presentation | `mise run generate` |

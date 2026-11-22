@@ -1,6 +1,6 @@
 # One authoritative specification per subject
 
-**Implementation plan.** Each valid authored `*.spec.md` file specifies one primary subject. Each specification kind has one declaration form. A requirement is declared in a `*.requirement.spec.md` file. The product specification brings those sources together through links and generated views. The [contributor guide](../../../CONTRIBUTING.md#specification-tests-and-implementation-tests) governs this convention.
+This plan records the transition to one authoritative specification per subject. To migrate an older project, follow [Move an inline declaration](#move-an-inline-declaration). Each valid authored `*.spec.md` file specifies one primary subject. Each specification kind has one declaration form. A requirement is declared in a `*.requirement.spec.md` file. The product specification brings those sources together through links and generated views. The [contributor guide](../../../CONTRIBUTING.md#specification-tests-and-implementation-tests) governs this convention.
 
 ## What each source owns
 
@@ -18,6 +18,17 @@ This is Meyer's scenario-completeness test. One scenario can exercise several sp
 
 Keep the existing relationship meanings. A step’s **Illustrates** link identifies the requirement, business rule or concept action it demonstrates. **Refines** identifies a more precise statement that preserves the parent commitment. **Derived from** records a basis. **Applies to** records an explicit target. Each forward declaration lives at its source and supplies reverse navigation. Ordinary Markdown citations stay available wherever they help. A scenario, a shared title, and directory placement each provide insufficient grounds to infer refinement. [Relationship contract](../../../model/markdown-mapping.md#relationship-contract)
 
+## Move an inline declaration
+
+Work in a project with the current CLI. Start at the source location reported by `structure.inline-requirement`. Read the text under the old heading and look for incoming links to that file and fragment. Decide which claim those readers need to reach.
+
+- If the text describes what happens on one path, put the outcome in the use case's scenario, extension or guarantees. Update readers' links to that passage.
+- If it promises something the system must do whenever stated conditions hold, find the requirement that owns that promise. If it needs a new home, create a requirement from the owning directory, move the statement, conditions and criterion together, and link to its source. A scenario step can link to it under **Illustrates**. A feature can include it under **Groups**. Use the relationship that describes what each reader needs. [Write an assessable requirement](../../cli-handbook/guides/write-an-assessable-requirement.md) · [Write a use case](../../cli-handbook/guides/write-a-use-case.md).
+
+Replace links to the retired fragment, then remove the old declaration heading. Read the changed use case through each ending. A reader should still be able to tell what happened to the actor and follow any independent promise to the place that governs it.
+
+From the directory containing the project's `dotspec.yaml`, run `dotspec model trace` and inspect which steps illustrate the requirement. For a project with reports enabled, run `dotspec spec build` and open the requirement from the affected scenario and feature, where applicable. Follow the report's `source` back to the editable file. Run `dotspec check` from that directory. For an unresolved fragment, inspect the reported source link and its destination heading, repair it in the authored file, then rebuild and check again. [Build and inspect the reports](../../reference/generated-specification.md).
+
 ## Worked migration for the personal task list
 
 In *Return to my list*, a person completes an errand, returns, finds it, and reopens it. The person’s return is explicit. A service restart is absent from the scenario. *Preserve tasks across restart* specifies what survives after acknowledgement when the service restarts on the same database, including what happens to deleted entries. A test could find the completed errand after a restart by matching its title while overlooking that the service had assigned it a new identity. That test would miss a violation of the restart requirement. The acceptance test compares identities as well as the visible list state. [Use case](../../../examples/todo/specs/use-cases/resume-list.use-case.spec.md) · [Restart requirement](../../../examples/todo/specs/requirements/restart.requirement.spec.md) · [Acceptance test](../../../examples/todo/tests/acceptance.py)
@@ -25,6 +36,8 @@ In *Return to my list*, a person completes an errand, returns, finds it, and reo
 **Decision.** Returning to the same local database has its own [availability requirement](../../../examples/todo/specs/requirements/availability.requirement.spec.md). The return step illustrates it. The restart requirement refines it by specifying which data survives an acknowledged change followed by a restart.
 
 ## Implementation sequence
+
+The following sequence records the implementation decisions and the evidence requested at each stage.
 
 | Order | Change | Evidence for proceeding |
 | --- | --- | --- |
@@ -42,9 +55,11 @@ Choose placement by the reader’s task and collection role, independent of the 
 
 ## Acceptance and release
 
+Use these cases when reviewing a change to specification ownership. Work from the root of a dotspec checkout with the [contributor tools](../../../CONTRIBUTING.md) installed. Make the source and generated-file mutations in a disposable copy. The To-do project covers all supported specification types. From the checkout root, `go run . model export --project todo` reads that fixture. From `examples/todo/`, an installed `dotspec` selects it directly.
+
 1. Export a fixture covering all supported spec types. Each valid spec file declares one primary subject of its declared type. Named parts resolve to their owning source and heading. The requirements collection consists entirely of requirement-file roots.
 2. Reference one requirement from two use cases and one feature. Export one requirement, preserve all authored references, and resolve every typed relationship to the intended endpoint. Edit its statement once and rebuild. Every generated summary reflects the change and points back to that file.
 3. Check a legacy inline declaration in each formerly supported container. Expect a located error and no inline requirement record. Check ordinary outcome prose, a named scenario step, and an example code block containing the same heading text. Expect the prose and addresses to survive. Reject a forged snapshot containing a retired record or endpoint under the new schema.
-4. Review the migrated todo scenario against its specifications step by step. Record what supports finding the completed entry, preserving its identity and reopening it, and what supports the deleted-entry extension. Independently run the restart acceptance test. A passing restart test and a successful scenario review answer different questions.
+4. Review the migrated todo scenario against its specifications step by step. Record what supports finding the completed entry, preserving its identity and reopening it, and what supports the deleted-entry extension. From the checkout root, run `python examples/todo/tests/acceptance.py` to exercise the application against a temporary database. A passing restart test and a successful scenario review answer different questions.
 5. Compare the generated todo and dotspec reports. An index-only category has a working section-map link for one or many members. A contextual reference opens the exact subject or passage. Empty collections stay absent. Editing a generated statement or breaking a required link triggers a check finding.
 6. Run `mise run model-generate`, `mise run model-test`, and `mise run model-check`. Run `mise run generate` and `mise run check`, including project-wide specification checks and the todo reader journey. Repeat generation and verify zero drift. Document the breaking format change and the two migration choices for existing inline declarations. [Model workflow](../../../model/README.md) · [Repository checks](../../../mise.toml)

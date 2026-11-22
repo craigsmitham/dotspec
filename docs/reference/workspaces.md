@@ -36,15 +36,14 @@ with no project manifests still support ordinary path-based commands.
 
 ## Select what to inspect
 
+Run the following commands in the example workspace root. Substitute your manifest names for `product`, `reference-app` and `billing`. For the narrower check, use an existing directory inside the selected project.
+
 ```sh
 dotspec check                           # current project
 dotspec check --project reference-app
 dotspec check --project product --path internal/parser
 dotspec model overview --project billing
 dotspec check --all                     # every discovered project separately
-dotspec model export --all > workspace.json
-dotspec model validate workspace.json
-dotspec model schema --workspace > workspace.schema.json
 ```
 
 dotspec finds the nearest ancestor `dotspec.yaml`, stopping at the Git/worktree
@@ -73,6 +72,16 @@ Workspace text/Markdown output separates projects with headings. JSON output has
 instead supply `error` without a result. All projects are attempted. The aggregate
 exit code is the highest result: 0 success, 1 specification findings, 2 invocation
 or operational failure.
+
+Check that the workspace report names each project you expected and that findings appear under their owning project. If a project is missing, check its manifest name and whether Git ignores its directory. When two manifests use the same name, give the projects distinct names before running the workspace command again. If a project’s generated specification is missing or out of date, run `dotspec spec build --project billing` with that project’s name, review the result, and repeat the check. [Generate a requirements specification](generated-specification.md).
+
+To save the independent project snapshots together, export the workspace to a file in your working directory, then validate the saved envelope. Generate its schema if you need it for another tool.
+
+```sh
+dotspec model export --all > workspace.json
+dotspec model validate workspace.json
+dotspec model schema --workspace > workspace.schema.json
+```
 
 Workspace model exports contain independent snapshots rather than one combined
 System. `model validate` checks each snapshot and its envelope identity offline;

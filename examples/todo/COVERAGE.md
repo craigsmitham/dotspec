@@ -1,6 +1,6 @@
 # Capability coverage
 
-Run `mise run example-check` from the repository root. For the individual public command paths and their evidence, run `mise exec -- python -I scripts/check-example/check.py --inventory`. The checker walks the freshly built binary's help tree and compares it with the commands exercised by the walkthrough, scratch authoring exercises and subprocess tests.
+Use this inventory when reviewing what the To-do example demonstrates or adding a new CLI path. In the dotspec checkout, complete the [pinned tool setup](README.md#run-the-app). From the repository root, run `mise run example-check`. For the command-by-command and field-by-field results, run `mise exec -- python -I scripts/check-example/check.py --inventory`. Both commands build their own CLI. Find the public command in the output and follow its evidence to the walkthrough, group help or subprocess test. For a field marked `GAP`, find its review assignment below.
 
 ## CLI workflows
 
@@ -15,7 +15,7 @@ Run `mise run example-check` from the repository root. For the individual public
 | Guides and diagnostics | Follow each topic to its bundled pages and each diagnostic to its assigned passage. Open the worked job from the Jobs topic. The [guide scenario](../../internal/integration/testdata/docs.txtar) starts in a consumer directory. |
 | Help, completion and manual | Visit the command groups through public help. Run the existing [subprocess scenario](../../internal/integration/testdata/help.txtar) for version, plain output, four shell completions and the roff manual. |
 
-For the model views, run `go run . model VIEW --path examples/todo` from the repository root.
+For the model views, run `mise exec -- go run . model VIEW --path examples/todo` from the repository root, substituting one of the view names below.
 
 | View | What to look for |
 | --- | --- |
@@ -28,7 +28,7 @@ For the model views, run `go run . model VIEW --path examples/todo` from the rep
 
 ## Handbook and authoring exercises
 
-Use `dotspec docs TOPIC` for each topic below. The questions identify the decision a reader should be able to review.
+With dotspec on your PATH, use `dotspec docs TOPIC` for each topic below. To use this checkout’s CLI from the repository root, substitute `mise exec -- go run . docs TOPIC`. The questions identify the decision a reader should be able to review.
 
 | Topics | Concrete exercise |
 | --- | --- |
@@ -36,8 +36,14 @@ Use `dotspec docs TOPIC` for each topic below. The questions identify the decisi
 | `system`, `component`, `business-rule` | Find the [task service's implementation](app/specs/task-service.component.spec.md#implementation). Explain why the completion policy would survive a change of database. |
 | `feature`, `capability` | Follow [Pick up where I left off](specs/features/pick-up-where-i-left-off.feature.spec.md) to the restart guarantee and [Local task storage](specs/capabilities/local-task-storage.capability.spec.md) to its provider. |
 | `concept`, `use-case` | Follow the [return scenario](specs/use-cases/resume-list.use-case.spec.md) to the Reopen action. Predict the effects on identity, title and state. Try the deletion alternative. |
-| `requirement` | Starting at [restart](specs/requirements/restart.requirement.spec.md), locate the availability requirement it refines, underlying policy, local-storage assumption and job outcome. Turn Refines into Related specifications on a copy and observe the exact missing-edge diagnostic. |
+| `requirement` | Starting at [restart](specs/requirements/restart.requirement.spec.md), locate the availability requirement it refines, underlying policy, local-storage assumption and job outcome. Try changing the role of the link as described below. |
 | `quality-model`, `quality-attribute` | Compare the reusable definition with the system's selected attribute. Find the zero-discrepancy target and its operating conditions. |
+
+### Try changing a refinement into an ordinary citation
+
+Use a disposable copy of the To-do project and a dotspec CLI on your PATH. In the copy’s root, run `dotspec model trace` and find the `refines` row from *Preserve tasks across restart* to *Keep recorded work available*. Change only the heading `## Refines` in the restart requirement to `## Related specifications`. Run `dotspec requirement check restart` and then `dotspec model trace` again. The citation still resolves and the focused check succeeds. The refinement row disappears. Restore the heading and rerun the trace to recover the row.
+
+The example gate tests this specific relationship by applying the same edit in its own temporary copy. Its success output includes `Rejected relationship regression: missing restart refinement`. That message comes from comparing the exported relationships with the example’s expected refinement. [Example gate](../../scripts/check-example/check.py).
 
 ## Review the return scenario
 

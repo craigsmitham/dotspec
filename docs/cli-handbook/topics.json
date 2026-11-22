@@ -166,13 +166,13 @@
       {
         "page": "docs/cli-handbook/guides/write-an-assessable-requirement.md",
         "rules": {
-          "requirement.applies-to": "",
-          "requirement.statement": "",
-          "requirement.rationale": "",
-          "structure.inline-requirement": "",
-          "requirement.undefined-attribute": "",
-          "requirement.measurement-basis": "",
-          "relationship.measurement_basis": ""
+          "requirement.applies-to": "decide-when-it-applies",
+          "requirement.statement": "give-the-commitment-a-home",
+          "requirement.rationale": "give-the-commitment-a-home",
+          "structure.inline-requirement": "give-the-commitment-a-home",
+          "requirement.undefined-attribute": "check-the-classification-and-the-promise",
+          "requirement.measurement-basis": "state-how-to-judge-a-result",
+          "relationship.measurement_basis": "state-how-to-judge-a-result"
         }
       },
       {
@@ -188,8 +188,9 @@
       {
         "page": "docs/cli-handbook/guides/define-a-quality-model.md",
         "rules": {
-          "quality-model.attributes": "",
-          "quality-model.description": ""
+          "quality-model.attributes": "define-and-group-the-shared-terms",
+          "quality-model.description": "set-the-scope-and-basis",
+          "quality.legacy-hierarchy": "define-and-group-the-shared-terms"
         }
       },
       {
@@ -205,10 +206,9 @@
       {
         "page": "docs/cli-handbook/guides/define-a-system-quality-attribute.md",
         "rules": {
-          "quality.cycle": "",
-          "quality.definition": "",
-          "quality.legacy-hierarchy": "",
-          "quality.subattribute": ""
+          "quality.cycle": "group-the-attribute-within-its-owner",
+          "quality.definition": "select-or-define-the-term",
+          "quality.subattribute": "group-the-attribute-within-its-owner"
         }
       },
       {

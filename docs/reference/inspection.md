@@ -2,18 +2,18 @@
 
 ## Check specifications
 
-Run these checks in your project directory. Substitute an existing subtree for `internal/parser` and your job’s slug or path for `develop-requirements` or its filename.
+From the root of your project, run `dotspec check` to locate specification findings. Use a narrower check while correcting a particular file. For the examples below, substitute an existing subtree for `internal/parser` and an existing job’s slug or file path for the illustrated ones.
 
 ```sh
-dotspec check
 dotspec check --path internal/parser
 dotspec check --format json
 dotspec job check develop-requirements
 dotspec check specs/jobs/develop-requirements.job.spec.md
 ```
 
-`check` discovers system, job, use-case, concept, requirement, business-rule, and
-quality-model specifications using the same
+Use the first finding’s path and location to inspect the source. Correct a structural error and repeat the check. For advice, judge whether the suggested information is known and worth recording. A missing file or an incomplete scan calls for checking the path or restoring access before relying on the report.
+
+`check` discovers the specification types listed in its `scope.types` using the same
 Git ignore, repository-boundary, and symlink rules as `list`. Outside Git, ignore files do
 not affect discovery. It reports the selected scope, supported types, discovery
 mode, files examined, and whether the scan completed. An empty completed scan
@@ -87,8 +87,7 @@ specification, its enclosing system, and their direct reference targets, with `s
 `scope.types: ["job"]`, `["use-case"]`, `["concept"]`, `["requirement"]`, or `["business-rule"]`. A missing specification
 is an incomplete check (exit `2`). File counts represent the selected candidate and attempted read,
 including a missing file. All check commands send their reports to stdout;
-ordinary read-command errors go to stderr. This replaces the earlier focused
-check behavior that mixed findings into stderr and used only `0`/`1`.
+ordinary read-command errors go to stderr.
 
 JSON schema version `1` contains:
 
@@ -105,7 +104,7 @@ Locations contain `path` and optional `line`, `column`, and `element`. Report
 source paths are absolute; text displays them relative to the current directory
 when possible. Use rule IDs rather than matching message text in automation.
 
-The current rules are:
+Examples of diagnostic rules include the following.
 
 | Rule IDs | Meaning |
 | --- | --- |
@@ -179,12 +178,11 @@ navigation. Images and links in code samples are excluded. Native files are not
 parsed or executed, and native fragments are not resolved by dotspec. Markdown
 heading and declared spec-ID fragments retain the existing reference checks.
 
-To check coverage, compare the source files your project expects with `files[].path` in a complete inventory. Use `referenced_by` to find the specification that links to a test or contract.
+To check coverage, compare the source files your project expects with `files[].path` in a complete inventory. For an absent specification, verify the selected directory, typed filename suffix, project boundary and Git ignore rules. For a missing contract or test, inspect the relative link in the referring specification and rerun `dotspec sources` after correcting it. Use `referenced_by` to find the specification that links to a test or contract.
 
 ## Output and automation
 
-The experimental [specification model](specification-model.md) exposes
-normalized Markdown, named domain records and their source ranges.
+From the project directory containing the specifications, save the export and schema for use by other tools. The [specification model](specification-model.md) exposes normalized Markdown, named domain records and their source ranges.
 
 ```sh
 dotspec model export --path . > specification.json

@@ -4,7 +4,7 @@
 
 ## Regeneration
 
-Run `mise run model-setup` to install the pinned generator environment. After editing the model, run `mise run model-generate`, `mise run model-test` and `mise run model-check`. Commit the regenerated schema, catalog and [reference pages](../docs/reference/model/index.md) with the model change.
+Work from the root of a dotspec checkout with mise and the pinned tools installed. Run `mise run model-setup` to install the pinned generator environment. Edit `model/metamodel.yaml` for a type, field, or relationship. For a change to the selection or presentation in the core diagram, edit `model/views/core-domain.yaml`. Then run `mise run model-generate`, `mise run model-test` and `mise run model-check`. If `model-check` reports drift, inspect the change to its input, regenerate, and review the affected class or diagram. Commit the regenerated schema, catalog and [reference pages](../docs/reference/model/index.md) with the model change.
 
 ## Runtime catalog contract
 

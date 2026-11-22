@@ -2,6 +2,8 @@
 
 ## Project layout
 
+Choose a directory for the subject you are specifying. Keeping a requirement beside the code it governs can make both easier to change together. When reorganizing existing files, check which subject will own a source at its destination.
+
 A directory can declare one system or component. Place the declaration directly
 in that directory or directly in its optional `specs/` folder. For example,
 `app/task-service.component.spec.md` and `app/specs/task-service.component.spec.md`
@@ -43,16 +45,19 @@ next to code or group them by feature. Keep their typed filename suffixes.
 
 For `show` and focused `check`, a slug searches the selected owner's files
 and skips child subjects. With no enclosing subject, it searches the selected
-subtree up to child subjects. If several files match, the diagnostic lists each
-path. A source path selects one file directly and resolves relative to the
+subtree up to child subjects. If several files match, use a listed source path to select the one you intend. A source path selects one file directly and resolves relative to the
 selected directory (the working directory by default for a single source). Use `--path` to select a directory or `--project` to start at
 a named project root.
+
+From the root of the example tree above, these commands select the retry requirement by slug and path, then check the file and its links. In your project, substitute the directory that owns the requirement and its path within that directory.
 
 ```sh
 dotspec requirement show retry --path app
 dotspec requirement show handlers/retry.requirement.spec.md --path app
 dotspec check app/handlers/retry.requirement.spec.md
 ```
+
+After a move, run `dotspec check` from the project root as well. The focused check reads outgoing links from the selected file. The project check can also find other specifications still pointing at its former location. Update each reported link relative to its referring file.
 
 ## Independent projects and monorepos
 

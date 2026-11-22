@@ -4,17 +4,15 @@ A contributor running a check in a terminal and a build saving its JSON report b
 
 ## Commands and input
 
-Use Cobra command definitions as the source of command names, flags, help, and
-examples. Keep the tree organized by singular concept and action, as in `job show` and `requirement check`.
+For a new or changed command, start with the result its caller needs and the specification that governs the operation. Decide which arguments identify its subject and what the caller can learn from an empty result or a failure. Declare the arguments, flags, short description and a worked invocation in the Cobra definition under `internal/cli`. Supply the files that invocation needs in the [command example test](../../internal/cli/contracts_test.go).
+
+Keep the tree organized by singular concept and action, as in `job show` and `requirement check`.
 Project-wide `check` and `sources` are direct operations over the selected scope.
 Each leaf operation validates its arguments before filesystem access. `--path`
 selects an existing project directory; flags may precede or follow positional
 arguments. `--` ends flag parsing. Commands must work without interactive prompts.
 
-Every new command gets a short description and at least one working example.
-Machine-readable formats are explicit, never inferred from pipes. `--json` is the
-convenience spelling of `--format json`; using both is a usage error. Mermaid and
-other standalone artifacts remain directly redirectable.
+For commands with a format choice, use `--json` as the convenience spelling of `--format json`. Passing both is a usage error. For a command that already returns an artifact, such as `model export`, write that artifact directly so a caller can redirect it to a file.
 
 ## Output and errors
 
@@ -33,10 +31,11 @@ other standalone artifacts remain directly redirectable.
 
 ## Verification
 
-Test stdout, stderr, and exact exit status together. Test successful empty results,
-malformed input, incomplete scans, output failure, flag placement, and current-directory
-behavior. Check JSON semantics separately from text snapshots. The generated output
-examples and testscript golden files make changes to the human interface reviewable.
+From the root of a checkout with the pinned tools installed, run `mise exec -- go test ./internal/cli -run TestDeclaredCommandExamples`. If your example fails, compare its flags with the command definition and its input paths with the test fixture. Fix the invocation or supply the missing fixture, then rerun.
+
+For a change in process behavior, extend the relevant script in `internal/integration/testdata/`. Assert the exact exit status and both output streams. For example, the diagnostics script checks three different outcomes for a draft, a malformed specification and an unavailable source. Run it with `mise exec -- go test ./internal/integration -run TestCLI/diagnostics`. For another script, substitute its filename without the extension. [Diagnostics scenario](../../internal/integration/testdata/diagnostics.txtar).
+
+Test a changed JSON result by parsing its fields. Include empty results, output failure, flag placement or current-directory behavior when they affect the change. Regenerate and review the public reference and command output examples from the checkout with `mise run generate`. [Contributor workflow](../../CONTRIBUTING.md#cli-changes-and-generated-artifacts).
 
 Keep parser and checker logic independent of command presentation. Add a dependency
 only for an actual boundary or capability; shared document extraction stays in

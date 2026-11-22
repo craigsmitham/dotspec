@@ -111,7 +111,8 @@ def build(version, target):
     navigation = re.sub(r'\]\(([^)]+)\)', lambda m: '](' + posixpath.normpath(
         posixpath.join(str(HANDBOOK), m[1])) + ')', navigation)
     index = ['---', 'okf_version: "0.2"', '---', '', '# dotspec handbook', '',
-             'Choose a topic and follow its pages in reading order.', navigation.strip()]
+             'For offline CLI reading instructions, see the [handbook introduction](docs/cli-handbook/README.md).',
+             '', navigation.strip()]
     for page, description in pages.items():
         body = (ROOT / page).read_text()
         if page.endswith('.spec.md'):
