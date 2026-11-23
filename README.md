@@ -23,3 +23,7 @@ Run `dotspec docs` to browse the offline handbook. Use `dotspec docs job` to cho
 - [Generate a requirements specification](docs/reference/generated-specification.md) and [browse the To-do spec](examples/todo/SPEC.md)
 - [CLI reference](docs/reference/cli.md) and [documentation index](docs/README.md)
 - [dotspec's requirements specification](SPEC.md) and [contributing guide](CONTRIBUTING.md)
+
+## License
+
+dotspec is released under the [MIT License](LICENSE).
