@@ -134,8 +134,7 @@ another spec, the fragment identifies its nested heading.
 
 A subject rendered as a section carries its type and exact authored heading in a
 `dotspec-doc` comment. **View section source** opens the authored declaration. Links to supporting specifications and external evidence
-stay beside the passages that use them. On the glossary index, **View term source**
-opens the defining passage for each term.
+stay beside the passages that use them. On the glossary index, **Term source** opens the defining passage. Plain topic lists and a trailing model reference share that line. The topic index jumps to term headings, and incoming relationship links return to the passage that describes the connection.
 
 Each system quality attribute has a `quality-attribute-spec-report` file. Reusable quality model entries remain sections of the model’s report. The file’s `generated_by: dotspec` marker identifies generator
 ownership. See the [document model](model/index.md#generateddocument).

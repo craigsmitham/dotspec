@@ -17,7 +17,7 @@ import (
 func addSourceContracts(p *planner) error {
 	for _, page := range p.plan.Pages {
 		page.SectionDocs = map[string]Document{}
-		page.RequiredSectionContent = map[string]string{}
+		page.RequiredSectionContent = map[string][]string{}
 	}
 	for _, s := range p.subjects {
 		page := p.plan.Pages[s.file]
@@ -78,7 +78,7 @@ func addSourceContracts(p *planner) error {
 				prose := sourceProse(s.source, h)
 
 				if fragment != "" {
-					passagePage.RequiredSectionContent[fragment] = prose
+					passagePage.RequiredSectionContent[fragment] = []string{prose}
 				}
 			}
 		}
@@ -127,15 +127,29 @@ func addSourceContracts(p *planner) error {
 			if title == "Glossary" {
 				for _, term := range s.glossary {
 					for i, h := range term.headings {
+						if h == term.topicsHeading {
+							continue
+						}
 						anchor := term.anchors[i]
 						if h.subjectKind != "" {
 							indexPage.SectionDocs[anchor] = subjectDocument(idx.file, term.source, h)
 						}
 						edits := term.source.footnoteEdits(h.end, h.bodyEnd, term.notePrefix)
-						indexPage.RequiredSectionContent[anchor] = sourceProse(term.source, h, edits...)
+						body := sourceProse(term.source, h, edits...)
+						if i == 0 {
+							definition, ref := glossaryDefinition(body)
+							indexPage.RequiredSectionContent[anchor] = []string{definition, ref}
+						} else {
+							indexPage.RequiredSectionContent[anchor] = []string{body}
+						}
+					}
+					if term.topicsHeading != nil {
+						anchor := term.anchors[0]
+						topics := strings.Join(model.Strings(term.record["topics"]), ", ")
+						indexPage.RequiredSectionContent[anchor] = append(indexPage.RequiredSectionContent[anchor], inlineText(topics))
 					}
 					dest := relativeURL(idx.file, term.source.path, term.headings[0].anchor)
-					requireRoute(indexPage, dest, "View term source")
+					requireRoute(indexPage, dest, "Term source")
 					requireSectionRoute(indexPage, term.anchors[0], dest)
 				}
 			}

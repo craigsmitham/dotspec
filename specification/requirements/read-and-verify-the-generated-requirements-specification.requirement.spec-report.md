@@ -45,7 +45,7 @@ navigation belong in the section map or page navigation. Definitions of dotspec
 categories belong in the handbook.
 
 A reader can look up a term from an inline or imported glossary and follow it
-to its defining heading. Declared topics link to that same definition. When two
+to its defining heading. The topic index links to native Markdown headings. A term’s definition leads into a single line with its plain topic labels, model reference when supplied, and term source. When two
 contexts define the same word, each entry names its context. A relationship
 between terms links in both reading directions, with the original statement
 and examples available in the declaring entry.

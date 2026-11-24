@@ -63,7 +63,7 @@ Examples.
 	run(0, "spec", "build")
 	run(0, "check")
 	overview := read("specification/docs.system.spec-report.md")
-	if !strings.Contains(overview, "Terms used by the documentation team.") || !strings.Contains(overview, "glossary.md#term.draft") || strings.Contains(overview, "An early version") {
+	if !strings.Contains(overview, "Terms used by the documentation team.") || !strings.Contains(overview, "glossary.md#draft") || strings.Contains(overview, "An early version") {
 		t.Fatal(overview)
 	}
 	index := read("specification/glossary.md")
@@ -153,6 +153,8 @@ context: Billing
 # Billing vocabulary
 ## Account
 A ledger of payments.
+
+[Model reference](identity.md#account)
 ### Alternative names
 - Balance
 ### Topics
@@ -187,19 +189,23 @@ A request for payment.
 		t.Fatal(err)
 	}
 	page := string(data)
-	for _, want := range []string{"## Account (Billing)", "## Account (Identity)", "## Account (Ledger)", "## Browse by topic", "- **Customers**", "- **Payments**", "A ledger of payments.", "#term.identity.account", "Relationships from [Account (Billing)](<#term.billing.account.relationships>)"} {
+	for _, want := range []string{"## Account (Billing)", "## Account (Identity)", "## Account (Ledger)", "**Browse by topic**", "- **Customers**", "- **Payments**", "A ledger of payments.", "#account-identity", "From [Account (Billing)](<#account-billing-relationships>) · Uses the login."} {
 		if !strings.Contains(page, want) {
 			t.Fatalf("missing %q\n%s", want, page)
 		}
 	}
-	if strings.Count(page, "A ledger of payments.") != 1 || strings.Count(page, "Relationships from ") != 1 || strings.Contains(page, "Relationships from [Invoice]") {
+	if strings.Contains(page, `<a id=`) || strings.Contains(page, "### Topics\n") ||
+		!strings.Contains(page, "Customers, Payments · [Model reference](<#account-identity>) · [Term source](<../billing.md#account>)") {
+		t.Fatal(page)
+	}
+	if strings.Count(page, "A ledger of payments.") != 1 || strings.Count(page, "From [") != 1 || strings.Contains(page, "From [Invoice]") {
 		t.Fatal(page)
 	}
 	child, err := os.ReadFile("specification/systems/child/glossary.md")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(child), "Relationships from [Account (Billing)](<#term.billing.account.relationships>)") || strings.Contains(string(child), "Account (Ledger)") {
+	if !strings.Contains(string(child), "From [Account (Billing)](<#account-billing-relationships>) · Uses the login.") || strings.Contains(string(child), "Account (Ledger)") {
 		t.Fatal(string(child))
 	}
 	review := run(0, "model", "review")

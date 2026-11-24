@@ -250,9 +250,13 @@ func checkPage(expected *Page, p parsedPage, report func(string, string)) {
 		}
 	}
 	for _, anchor := range slices.Sorted(maps.Keys(expected.RequiredSectionContent)) {
-		needle := contentText(expected.RequiredSectionContent[anchor])
-		if needle != "" && !strings.Contains(strings.Join(p.sectionContent[anchor], " "), needle) {
-			report("spec.content", fmt.Sprintf("source content missing or altered in section %q", anchor))
+		body := strings.Join(p.sectionContent[anchor], " ")
+		for _, part := range expected.RequiredSectionContent[anchor] {
+			needle := contentText(part)
+			if needle != "" && !strings.Contains(body, needle) {
+				report("spec.content", fmt.Sprintf("source content missing or altered in section %q", anchor))
+				break
+			}
 		}
 	}
 	for _, resource := range expected.RequiredResources {

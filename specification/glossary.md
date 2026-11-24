@@ -5,13 +5,11 @@ generated_by: dotspec
 
 # Glossary
 
-## Browse by topic
+**Browse by topic**
 
-- **Business requirements** · [Business rule](<#term.business-rule>), [Capability](<#term.capability>), [System](<#term.system>)
-- **Software requirements** · [Capability](<#term.capability>), [Component](<#term.component>), [Concept](<#term.concept>), [Feature](<#term.feature>), [Quality attribute](<#term.quality-attribute>), [Requirement](<#term.requirement>), [System](<#term.system>), [Use case](<#term.use-case>)
-- **User requirements** · [Job](<#term.job>)
-
-<a id="term.business-rule"></a>
+- **Business requirements** · [Business rule](<#business-rule>), [Capability](<#capability>), [System](<#system>)
+- **Software requirements** · [Capability](<#capability>), [Component](<#component>), [Concept](<#concept>), [Feature](<#feature>), [Quality attribute](<#quality-attribute>), [Requirement](<#requirement>), [System](<#system>), [Use case](<#use-case>)
+- **User requirements** · [Job](<#job>)
 
 ## Business rule
 
@@ -19,17 +17,7 @@ generated_by: dotspec
 
 A declarative business constraint independent of the software or process that enforces it.
 
-[Model reference](<../docs/reference/model/index.md#businessrule>)
-
-<a id="term.business-rule.topics"></a>
-
-### Topics
-
-- Business requirements
-
-[View term source](<../docs/reference/model/glossary.md#business-rule>)
-
-<a id="term.capability"></a>
+Business requirements · [Model reference](<../docs/reference/model/index.md#businessrule>) · [Term source](<../docs/reference/model/glossary.md#business-rule>)
 
 ## Capability
 
@@ -37,18 +25,7 @@ A declarative business constraint independent of the software or process that en
 
 An ability needed to deliver value, potentially combining people, procedures and technology. Distinct from a product feature or structural component; its declaration does not establish a provider.
 
-[Model reference](<../docs/reference/model/index.md#capability>)
-
-<a id="term.capability.topics"></a>
-
-### Topics
-
-- Business requirements
-- Software requirements
-
-[View term source](<../docs/reference/model/glossary.md#capability>)
-
-<a id="term.component"></a>
+Business requirements, Software requirements · [Model reference](<../docs/reference/model/index.md#capability>) · [Term source](<../docs/reference/model/glossary.md#capability>)
 
 ## Component
 
@@ -56,17 +33,7 @@ An ability needed to deliver value, potentially combining people, procedures and
 
 A named part of a system with a described responsibility and boundary. Neither its declaration nor code location establishes structural parentage.
 
-[Model reference](<../docs/reference/model/index.md#component>)
-
-<a id="term.component.topics"></a>
-
-### Topics
-
-- Software requirements
-
-[View term source](<../docs/reference/model/glossary.md#component>)
-
-<a id="term.concept"></a>
+Software requirements · [Model reference](<../docs/reference/model/index.md#component>) · [Term source](<../docs/reference/model/glossary.md#component>)
 
 ## Concept
 
@@ -74,19 +41,9 @@ A named part of a system with a described responsibility and boundary. Neither i
 
 A behavior-bearing concept described by purpose, abstract state, actions and an operational principle.
 
-[Model reference](<../docs/reference/model/index.md#concept>)
+Software requirements · [Model reference](<../docs/reference/model/index.md#concept>) · [Term source](<../docs/reference/model/glossary.md#concept>)
 
-Relationships from [Feature](<#term.feature.relationships>)
-
-<a id="term.concept.topics"></a>
-
-### Topics
-
-- Software requirements
-
-[View term source](<../docs/reference/model/glossary.md#concept>)
-
-<a id="term.feature"></a>
+From [Feature](<#feature-relationships>) · Can group a concept.
 
 ## Feature
 
@@ -94,31 +51,17 @@ Relationships from [Feature](<#term.feature.relationships>)
 
 A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own requirements.
 
-[Model reference](<../docs/reference/model/index.md#feature>)
+Software requirements · [Model reference](<../docs/reference/model/index.md#feature>) · [Term source](<../docs/reference/model/glossary.md#feature>)
 
-<a id="term.feature.topics"></a>
+### Feature relationships
 
-### Topics
+- Can group a [requirement](<#requirement>).
+- Can group a [use case](<#use-case>).
+- Can group a [concept](<#concept>).
 
-- Software requirements
-
-<a id="term.feature.relationships"></a>
-
-### Relationships
-
-- Can group a [requirement](<#term.requirement>).
-- Can group a [use case](<#term.use-case>).
-- Can group a [concept](<#term.concept>).
-
-<a id="term.feature.example"></a>
-
-### Example
+### Feature example
 
 [Pick up where I left off](<../examples/todo/specs/features/pick-up-where-i-left-off.feature.spec.md>) groups the [Decide what to do about a waiting errand](<../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) use case.
-
-[View term source](<../docs/reference/model/glossary.md#feature>)
-
-<a id="term.job"></a>
 
 ## Job
 
@@ -126,17 +69,7 @@ A recognizable grouping of specified product behavior valued by stakeholders, in
 
 What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps and job-story phrasing are optional complementary perspectives.
 
-[Model reference](<../docs/reference/model/index.md#job>)
-
-<a id="term.job.topics"></a>
-
-### Topics
-
-- User requirements
-
-[View term source](<../docs/reference/model/glossary.md#job>)
-
-<a id="term.quality-attribute"></a>
+User requirements · [Model reference](<../docs/reference/model/index.md#job>) · [Term source](<../docs/reference/model/glossary.md#job>)
 
 ## Quality attribute
 
@@ -144,17 +77,7 @@ What a performer seeks to accomplish or change in particular circumstances, inde
 
 A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit requirements, thresholds, or satisfaction.
 
-[Model reference](<../docs/reference/model/index.md#qualityattribute>)
-
-<a id="term.quality-attribute.topics"></a>
-
-### Topics
-
-- Software requirements
-
-[View term source](<../docs/reference/model/glossary.md#quality-attribute>)
-
-<a id="term.requirement"></a>
+Software requirements · [Model reference](<../docs/reference/model/index.md#qualityattribute>) · [Term source](<../docs/reference/model/glossary.md#quality-attribute>)
 
 ## Requirement
 
@@ -162,19 +85,9 @@ A named quality attribute owned by exactly one system or reusable quality model.
 
 One required property or behavior, declared in its own requirement specification. Functional and quality requirements share this type. Either can reference a system quality attribute.
 
-[Model reference](<../docs/reference/model/index.md#requirement>)
+Software requirements · [Model reference](<../docs/reference/model/index.md#requirement>) · [Term source](<../docs/reference/model/glossary.md#requirement>)
 
-Relationships from [Feature](<#term.feature.relationships>)
-
-<a id="term.requirement.topics"></a>
-
-### Topics
-
-- Software requirements
-
-[View term source](<../docs/reference/model/glossary.md#requirement>)
-
-<a id="term.system"></a>
+From [Feature](<#feature-relationships>) · Can group a requirement.
 
 ## System
 
@@ -182,18 +95,7 @@ Relationships from [Feature](<#term.feature.relationships>)
 
 The system described by a system document; subordinate systems retain their own boundaries and quality attributes.
 
-[Model reference](<../docs/reference/model/index.md#system>)
-
-<a id="term.system.topics"></a>
-
-### Topics
-
-- Business requirements
-- Software requirements
-
-[View term source](<../docs/reference/model/glossary.md#system>)
-
-<a id="term.use-case"></a>
+Business requirements, Software requirements · [Model reference](<../docs/reference/model/index.md#system>) · [Term source](<../docs/reference/model/glossary.md#system>)
 
 ## Use case
 
@@ -201,16 +103,8 @@ The system described by a system document; subordinate systems retain their own 
 
 An actor goal and its interactions at a stated system boundary, with alternative paths and protections.
 
-[Model reference](<../docs/reference/model/index.md#usecase>)
+Software requirements · [Model reference](<../docs/reference/model/index.md#usecase>) · [Term source](<../docs/reference/model/glossary.md#use-case>)
 
-Relationships from [Feature](<#term.feature.relationships>)
-
-<a id="term.use-case.topics"></a>
-
-### Topics
-
-- Software requirements
-
-[View term source](<../docs/reference/model/glossary.md#use-case>)
+From [Feature](<#feature-relationships>) · Can group a use case.
 
 [View source for “Glossary”](<../specs/dotspec.system.spec.md#glossary>)

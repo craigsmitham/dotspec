@@ -27,7 +27,7 @@ type Page struct {
 	DirectoryMembers                                map[string][]string
 	RequiredLinks, RequiredContent, RequiredAnchors []string
 	RequiredLabels, RequiredSectionLinks            map[string][]string
-	RequiredSectionContent                          map[string]string
+	RequiredSectionContent                          map[string][]string
 	RequiredResources                               []string
 }
 

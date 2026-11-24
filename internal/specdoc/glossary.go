@@ -9,7 +9,9 @@ import (
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/model"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/yuin/goldmark/ast"
+	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/text"
 )
 
 type glossaryPassage struct {
@@ -18,12 +20,57 @@ type glossaryPassage struct {
 	incoming           []entry
 	source             *sourceFile
 	headings           []*heading
+	topicsHeading      *heading
 	notePrefix         string
 	anchors            []string // local to this system's combined glossary
 }
 
 func (term glossaryPassage) title() string {
 	return term.headings[0].title + term.qualifier
+}
+
+// Fold a plain topic list into the term. Rich lists and qualified passages
+// retain their Markdown and their own heading.
+func (term glossaryPassage) compactTopics() *heading {
+	topics := model.Strings(term.record["topics"])
+	if len(topics) == 0 {
+		return nil
+	}
+headings:
+	for i, h := range term.headings {
+		if h.level != term.headings[0].level+1 || h.title != "Topics" || (i+1 < len(term.headings) && term.headings[i+1].level > h.level) {
+			continue
+		}
+		var labels []string
+		for line := range strings.SplitSeq(strings.TrimSpace(term.source.data[h.end:h.bodyEnd]), "\n") {
+			line = strings.TrimSpace(line)
+			if line == "" {
+				continue
+			}
+			if len(line) < 3 || !strings.ContainsRune("-*+", rune(line[0])) || line[1] != ' ' {
+				continue headings
+			}
+			labels = append(labels, strings.TrimSpace(line[2:]))
+		}
+		if slices.Equal(labels, topics) {
+			return h
+		}
+	}
+	return nil
+}
+
+func (term glossaryPassage) caption(i int) string {
+	if i == 0 {
+		return inlineText(term.title())
+	}
+	h := term.headings[i]
+	if h.level == term.headings[0].level+1 {
+		switch h.title {
+		case "Relationships", "Example":
+			return inlineText(term.title() + " " + strings.ToLower(h.title))
+		}
+	}
+	return inlineText(h.title)
 }
 
 func (p *planner) planGlossary(s *subject) {
@@ -56,7 +103,8 @@ func (p *planner) planGlossary(s *subject) {
 		return cmp.Or(strings.Compare(strings.ToLower(left.title), strings.ToLower(right.title)), strings.Compare(strings.ToLower(a.context), strings.ToLower(b.context)), strings.Compare(a.source.path, b.source.path), cmp.Compare(left.start, right.start))
 	})
 	prefixes := map[*sourceFile]string{}
-	used := map[string]bool{}
+	ids := parser.NewContext().IDs()
+	ids.Generate([]byte("Glossary"), ast.KindHeading)
 	for i := range s.glossary {
 		term := &s.glossary[i]
 		if prefixes[term.source] == "" {
@@ -70,18 +118,14 @@ func (p *planner) planGlossary(s *subject) {
 			}
 			term.qualifier = " (" + context + ")"
 		}
+		term.topicsHeading = term.compactTopics()
 		for j, h := range term.headings {
-			base := "term." + specfile.NameSlug(h.title)
-			if j > 0 {
-				base = term.anchors[0] + "." + specfile.NameSlug(h.title)
-			} else if term.context != "" {
-				base = "term." + specfile.NameSlug(term.context) + "." + specfile.NameSlug(h.title)
+			var anchor string
+			if h == term.topicsHeading {
+				anchor = term.anchors[0]
+			} else {
+				anchor = string(ids.Generate([]byte(term.caption(j)), ast.KindHeading))
 			}
-			anchor := base
-			for n := 2; used[anchor]; n++ {
-				anchor = fmt.Sprintf("%s-%d", base, n)
-			}
-			used[anchor] = true
 			term.anchors = append(term.anchors, anchor)
 			local[sourceKey(term.source.path, h.anchor)] = idx.file + "#" + anchor
 			if term.source == s.source {
@@ -136,11 +180,51 @@ func (p *planner) glossaryBacklinks(s *subject, file string) {
 				continue
 			}
 			from := entry{title: term.title(), target: file + "#" + term.anchors[i]}
+			from.preview = term.relationshipPreview(term.headings[i], pos)
 			if !slices.Contains(target.incoming, from) {
 				target.incoming = append(target.incoming, from)
 			}
 		}
 	}
+}
+
+// Quote the paragraph containing the cited term without inferring its inverse.
+func (term glossaryPassage) relationshipPreview(h *heading, pos int) string {
+	var preview string
+	body := []byte(term.source.data[h.end:h.bodyEnd])
+	offset := pos - h.end
+	_ = ast.Walk(markdownParser.Parse(text.NewReader(body)), func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+		if entering && (n.Kind() == ast.KindParagraph || n.Kind() == ast.KindTextBlock) && n.Lines().Len() > 0 {
+			first, last := n.Lines().At(0), n.Lines().At(n.Lines().Len()-1)
+			if first.Start <= offset && offset < last.Stop {
+				start := h.end
+				preview = indexPreview(contentText(term.source.passageMarkdown(start+first.Start, start+last.Stop)))
+				return ast.WalkStop, nil
+			}
+		}
+		return ast.WalkContinue, nil
+	})
+	return preview
+}
+
+// A model reference can share the metadata line when it occupies the final
+// paragraph by itself. Keep all other authored blocks and inline links intact.
+func glossaryDefinition(body string) (string, string) {
+	data := []byte(body)
+	last := markdownParser.Parse(text.NewReader(data)).LastChild()
+	if last == nil || last.Kind() != ast.KindParagraph || last.ChildCount() != 1 {
+		return body, ""
+	}
+	ref, ok := last.FirstChild().(*ast.Link)
+	if !ok || visibleText(ref, data) != "Model reference" {
+		return body, ""
+	}
+	lines := last.Lines()
+	start, end := lines.At(0).Start, lines.At(lines.Len()-1).Stop
+	if strings.TrimSpace(body[end:]) != "" {
+		return body, ""
+	}
+	return strings.TrimSpace(body[:start]), strings.TrimSpace(body[start:])
 }
 
 func renderGlossaryTopics(w *writer, terms []glossaryPassage) {
@@ -156,7 +240,7 @@ func renderGlossaryTopics(w *writer, terms []glossaryPassage) {
 	if len(topics) == 0 {
 		return
 	}
-	w.heading("Browse by topic")
+	w.text("**Browse by topic**")
 	rows := []string{}
 	for _, topic := range slices.Sorted(maps.Keys(topics)) {
 		rows = append(rows, "- **"+inlineText(topic)+"** · "+strings.Join(topics[topic], ", "))
@@ -173,13 +257,15 @@ func (p *planner) renderGlossary(w *writer, s *subject) {
 		ranges[term.source] = append(ranges[term.source], term)
 		first := term.headings[0]
 		for i, h := range term.headings {
-			anchor := term.anchors[i]
-			w.text(`<a id="` + anchor + `"></a>`)
-			title := p.headingMarkdown(w, term.source, h)
-			if i == 0 {
-				title += inlineText(term.qualifier)
+			if h == term.topicsHeading {
+				continue
 			}
-			w.text(strings.Repeat("#", min(6, 2+h.level-first.level)) + " " + title)
+			w.text(strings.Repeat("#", min(6, 2+h.level-first.level)) + " " + term.caption(i))
+			// Native fragments use the plain caption. Keep references authored in a
+			// heading accessible even when their destination changes on this page.
+			if slices.ContainsFunc(term.source.links, func(n model.Record) bool { return position(n, "start") >= h.start && position(n, "end") <= h.end }) {
+				w.text(p.headingMarkdown(w, term.source, h))
+			}
 			if h.subjectKind != "" {
 				doc := subjectDocument(w.file, term.source, h)
 				meta, _ := json.Marshal(doc)
@@ -188,17 +274,33 @@ func (p *planner) renderGlossary(w *writer, s *subject) {
 			if i == 0 && term.qualifier == "" && term.context != "" {
 				w.text("Context · " + inlineText(term.context))
 			}
-			p.body(w, term.source, h)
-			if i == 0 && len(term.incoming) > 0 {
-				var from []string
-				for _, origin := range term.incoming {
-					from = append(from, w.link(origin.title, origin.target))
+			if i != 0 {
+				p.body(w, term.source, h)
+				continue
+			}
+			body, ref := glossaryDefinition(p.rebasedText(w, term.source, h.end, h.bodyEnd))
+			var metadata []string
+			w.text(body)
+			if term.topicsHeading != nil {
+				var labels []string
+				for _, topic := range model.Strings(term.record["topics"]) {
+					labels = append(labels, inlineText(topic))
 				}
-				w.text("Relationships from " + strings.Join(from, ", "))
+				metadata = append(metadata, strings.Join(labels, ", "))
+			}
+			if ref != "" {
+				metadata = append(metadata, ref)
+			}
+			metadata = append(metadata, link("Term source", relativeURL(w.file, term.source.path, first.anchor)))
+			w.text(strings.Join(metadata, " · "))
+			for _, origin := range term.incoming {
+				line := "From " + w.link(inlineText(origin.title), origin.target)
+				if origin.preview != "" {
+					line += " · " + inlineText(origin.preview)
+				}
+				w.text(line)
 			}
 		}
-		dest := relativeURL(w.file, term.source.path, first.anchor)
-		w.text(link("View term source", dest))
 	}
 	for _, term := range s.glossary {
 		passages := ranges[term.source]
