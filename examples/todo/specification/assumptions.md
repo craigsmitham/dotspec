@@ -1,13 +1,15 @@
 ---
 generated_by: dotspec
 ---
-# Assumptions
-
 [Personal task list](<personal-task-list.system.spec-report.md>)
+
+# Assumptions
 
 ## Same local storage
 
 <!-- dotspec-doc {"type":"assumption-spec-report","documents":"../specs/personal-task-list.system.spec.md#same-local-storage"} -->
+
+[View section source](<../specs/personal-task-list.system.spec.md#same-local-storage>)
 
 The person returns to the same writable database file.
 

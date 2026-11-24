@@ -3,9 +3,11 @@ generated_by: dotspec
 type: requirement-spec-report
 source: "../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material"
 ---
+[dotspec](<../dotspec.system.spec-report.md>) › [Requirements](<../requirements.md>)
+
 # Inspection preserves source material
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[View source](<../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material>)
 
 ## Statement
 

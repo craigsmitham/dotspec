@@ -3,20 +3,17 @@ generated_by: dotspec
 type: component-spec-report
 source: "../../../app/specs/task-service.component.spec.md#task-service"
 ---
+[Personal task list](<../../personal-task-list.system.spec-report.md>) › [Components](<../../components.md>)
+
 # Task service
+
+[View source](<../../../app/specs/task-service.component.spec.md#task-service>)
 
 The local service that decides whether a submitted action still applies to the selected entry and records accepted changes.
 
-[Personal task list](<../../personal-task-list.system.spec-report.md>)
+**On this page** · [Responsibilities](<#responsibilities>) · [System topology](<#system-topology>) · [Contracts](<#contracts>) · [Implementation](<#implementation>)
 
-| Section | Explore |
-| --- | --- |
-| [Responsibilities](<#responsibilities>) | A browser tab can still show Open after the owner has moved an errand to Waiting in another tab. When the service receives the old form, it compares the submitting view with the entry’s current state. A mismatch leaves the entry as it was and the browser receives a conflict. Checklist action effects. |
-| [System topology](<#system-topology>) | Part of |
-| Capabilities | [All capabilities](<capabilities.md>) |
-| Requirements | [All requirements](<requirements.md>) |
-| [Contracts](<#contracts>) | The browser submits changes through Task list forms, whose form template supplies the actions and fields. |
-| [Implementation](<#implementation>) | The Go server owns form handling and storage. |
+**Browse specifications** · [All capabilities](<capabilities.md>) · [All requirements](<requirements.md>)
 
 ## Responsibilities
 

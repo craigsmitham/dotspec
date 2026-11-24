@@ -1,9 +1,9 @@
 ---
 generated_by: dotspec
 ---
-# Requirements
+[Personal task list](<../../personal-task-list.system.spec-report.md>) › [Task service](<task-service.component.spec-report.md>)
 
-[Task service](<task-service.component.spec-report.md>)
+# Requirements
 
 ## Applicable requirements
 

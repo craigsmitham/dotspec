@@ -3,9 +3,11 @@ generated_by: dotspec
 type: requirement-spec-report
 source: "../../../../app/specs/requirements/acknowledge-after-commit.requirement.spec.md#acknowledge-after-commit"
 ---
+[Personal task list](<../../../personal-task-list.system.spec-report.md>) › [Task service](<../task-service.component.spec-report.md>) › [Requirements](<../requirements.md>)
+
 # Acknowledge after commit
 
-[Task service](<../task-service.component.spec-report.md>)
+[View source](<../../../../app/specs/requirements/acknowledge-after-commit.requirement.spec.md#acknowledge-after-commit>)
 
 ## Statement
 

@@ -465,7 +465,7 @@ func (p *planner) indexTargets() {
 				continue
 			}
 			for child := s; child.kind() == "Component"; child = child.parent {
-				child.parent.index(title).add("By component", entry{child.name.title, child.indexes[title].file, subjectPreview(child)})
+				child.parent.index(title).add("By component", entry{child.name.title + " " + strings.ToLower(collectionTitle(title)), child.indexes[title].file, ""})
 			}
 		}
 	}

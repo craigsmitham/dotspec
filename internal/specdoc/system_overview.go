@@ -1,7 +1,6 @@
 package specdoc
 
 import (
-	"fmt"
 	"maps"
 	"slices"
 	"strings"
@@ -181,9 +180,6 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 			p.renderPassage(w, s, group, offset, merged)
 		}
 		if i == 0 {
-			if s.parent != nil {
-				w.text(w.link(s.parent.name.title, s.parent.file))
-			}
 			p.overviewNavigation(w, s)
 			continue
 		}
@@ -243,15 +239,14 @@ func entryLine(w *writer, e entry) string {
 }
 
 func (p *planner) overviewNavigation(w *writer, s *subject) {
-	if len(s.overview) <= 1 {
-		return
-	}
-	w.text("| Section | Explore |\n| --- | --- |")
+	var sections, links []string
 	for _, section := range s.overview {
 		if section.level != 2 {
 			continue
 		}
-		var links []string
+		if section.hasBody {
+			sections = append(sections, w.link(section.title, s.file+"#"+section.anchor))
+		}
 		for _, title := range section.collections {
 			idx := s.indexes[title]
 			links = append(links, w.link(overviewIndexLabel(title), idx.file))
@@ -261,29 +256,11 @@ func (p *planner) overviewNavigation(w *writer, s *subject) {
 				}
 			}
 		}
-
-		if len(links) == 0 {
-			for i, group := range section.passages {
-				h := group[0]
-				if section.merges(i) {
-					continue
-				}
-				links = append(links, inlineText(h.title))
-			}
-		}
-		if len(links) == 0 && len(section.passages) > 0 {
-			h := section.passages[0][0]
-			prose := sourceProse(s.source, h)
-			preview := paragraphPreview(prose)
-			if preview == "" {
-				preview = contentText(prose)
-			}
-			links = append(links, inlineText(preview))
-		}
-		label := section.title
-		if section.hasBody {
-			label = w.link(label, s.file+"#"+section.anchor)
-		}
-		fmt.Fprintf(&w.out, "| %s | %s |\n", label, strings.Join(links, " · "))
+	}
+	if len(sections) > 0 {
+		w.text("**On this page** · " + strings.Join(sections, " · "))
+	}
+	if len(links) > 0 {
+		w.text("**Browse specifications** · " + strings.Join(links, " · "))
 	}
 }

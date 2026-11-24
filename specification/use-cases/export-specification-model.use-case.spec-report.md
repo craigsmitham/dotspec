@@ -3,9 +3,11 @@ generated_by: dotspec
 type: use-case-spec-report
 source: "../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-model-for-review-or-integration"
 ---
+[dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../use-cases.md>)
+
 # Export a specification model for review or integration
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[View source](<../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-model-for-review-or-integration>)
 
 ## Goal
 
@@ -29,6 +31,8 @@ repository discovery may still fail; those outcomes are handled below.
 
 <!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#main-success-scenario"} -->
 
+[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#main-success-scenario>)
+
 1. The contributor selects a project subtree and requests a model export.
 2. Dotspec discovers specifications and their required enclosing context and
    records normalized Markdown and reference identities.
@@ -41,9 +45,13 @@ repository discovery may still fail; those outcomes are handled below.
 
 ## Extensions
 
+[Malformed specification](<#malformed-specification>) · [Unknown section or unfinished content](<#unknown-section-or-unfinished-content>) · [Unresolved or uninspected reference](<#unresolved-or-uninspected-reference>) · [Unreadable input or failed discovery](<#unreadable-input-or-failed-discovery>) · [Empty scope](<#empty-scope>) · [Invalid saved snapshot](<#invalid-saved-snapshot>)
+
 ### Malformed specification
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#malformed-specification"} -->
+
+[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#malformed-specification>)
 
 #### Handling
 
@@ -56,6 +64,8 @@ complete snapshot containing authoring errors still achieves the review goal.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#unknown-section-or-unfinished-content"} -->
 
+[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#unknown-section-or-unfinished-content>)
+
 #### Handling
 
 During step 3, a section has no named domain mapping, or the author leaves content
@@ -66,6 +76,8 @@ step 4. Do not invent missing behavior or claim stakeholder adequacy.
 ### Unresolved or uninspected reference
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#unresolved-or-uninspected-reference"} -->
+
+[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#unresolved-or-uninspected-reference>)
 
 #### Handling
 
@@ -78,6 +90,8 @@ Continue to step 4 so the contributor can inspect the result.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#unreadable-input-or-failed-discovery"} -->
 
+[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#unreadable-input-or-failed-discovery>)
+
 #### Handling
 
 During steps 2–3, an operational failure prevents completion. Retain acquired
@@ -89,6 +103,8 @@ goal; the contributor can repair access and retry.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#empty-scope"} -->
 
+[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#empty-scope>)
+
 #### Handling
 
 At step 2, the selected scope contains no supported specifications. Report a
@@ -97,6 +113,8 @@ completed empty snapshot at step 4. This is an alternative successful outcome.
 ### Invalid saved snapshot
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#invalid-saved-snapshot"} -->
+
+[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#invalid-saved-snapshot>)
 
 #### Handling
 

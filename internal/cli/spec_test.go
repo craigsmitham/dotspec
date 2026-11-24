@@ -184,7 +184,7 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 	reader("specification/systems/worker/systems.md", "- [Queue](<systems/queue/queue.system.spec-report.md>)")
 	reader(section+"queue.system.spec-report.md", "[Worker](<../../worker.system.spec-report.md>)", "[All requirements](<requirements.md>)", "[Components](<components.md>)")
 	reader(section+"components.md", "- [Intake](<components/intake/intake.component.spec-report.md>)")
-	reader(section+"requirements.md", "- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>) — Each submitted job must remain in the queue until accepted.", "[Intake](<components/intake/requirements.md>)")
+	reader(section+"requirements.md", "- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>) — Each submitted job must remain in the queue until accepted.", "[Intake requirements](<components/intake/requirements.md>)")
 	reader(section+"quality-attributes.md", "**[Availability](<quality/availability/availability.quality-attribute.spec-report.md>)** — Accept work while either A &#124; B is available.")
 	reader(section+"quality/availability/availability.quality-attribute.spec-report.md", "# Availability", "### Limit", "Maintenance windows are excluded.", "[Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)")
 	reader("specification/open-questions.md",
@@ -203,7 +203,7 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 	}
 	reader(intake+"interfaces.md", "## Required interfaces\n\n- [Storage](<interfaces/storage.interface.spec-report.md>)", "## Provided interfaces\n\n- [Submission](<interfaces/submission.interface.spec-report.md>)")
 	reader(intake+"components.md", "- [Journal](<components/journal/journal.component.spec-report.md>)")
-	reader(intake+"requirements.md", "## Applicable requirements\n\n- [Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)", "[Journal](<components/journal/requirements.md>)")
+	reader(intake+"requirements.md", "## Applicable requirements\n\n- [Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)", "[Journal requirements](<components/journal/requirements.md>)")
 	reader(section+"requirements/retain-jobs.requirement.spec-report.md", "../components/intake/intake.component.spec-report.md", "../components/intake/components/journal/journal.component.spec-report.md", "apps/demo/specs/demo.system.spec.md", "../quality/availability/availability.quality-attribute.spec-report.md")
 	if _, err := os.Stat(filepath.Join(root, "apps/demo/SPEC.md")); !os.IsNotExist(err) {
 		t.Fatalf("referenced project must not acquire generated files: %v", err)
@@ -273,7 +273,7 @@ func TestOverviewKeepsNavigationOnlyCollectionsInTheMap(t *testing.T) {
 			t.Fatal(err)
 		}
 		page := string(data)
-		for _, route := range []string{"[All business rules](<business-rules.md>)", "| Features | [All features](<features.md>) |"} {
+		for _, route := range []string{"[All business rules](<business-rules.md>)", "[All features](<features.md>)"} {
 			if strings.Count(page, route) != 1 {
 				t.Fatalf("expected one navigation route %s in %s", route, page)
 			}
@@ -318,7 +318,7 @@ Individual authors.
 		return string(data)
 	}
 	page := build()
-	if !strings.Contains(page, "| Section | Explore |") ||
+	if !strings.Contains(page, "**On this page**") ||
 		!strings.Contains(page, "## Purpose\n\nKeep notes.") || strings.Contains(page, "## Goals\n") ||
 		!strings.Contains(page, "## Scope and environment\n\nOne notebook.") ||
 		strings.Index(page, "## Scope") < strings.Index(page, "Individual authors.") ||
@@ -351,7 +351,7 @@ An example:
 			"---\ntype: requirement-spec\nquality_attributes: "+labels+"\n---\n# "+name+"\n\n## Statement\nKeep the note.\n")
 	}
 	page = build()
-	if !strings.Contains(page, "| [Quality attributes](<#quality-attributes>) | [All quality attributes](<quality-attributes.md>)") || !strings.Contains(page, "## Quality attributes") {
+	if !strings.Contains(page, "[Quality attributes](<#quality-attributes>)") || !strings.Contains(page, "[All quality attributes](<quality-attributes.md>)") || !strings.Contains(page, "## Quality attributes") {
 		t.Fatalf("unexpected system reading order:\n%s", page)
 	}
 	if !strings.Contains(page, "## Project references\n\nThe [release plan](<../plan.md>) names the reviewer.") || strings.Index(page, "## Project references") < strings.Index(page, "## Quality attributes") {
@@ -362,7 +362,7 @@ An example:
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, overview, _ := strings.Cut(string(index), "[Notes](<notes.system.spec-report.md>)")
+	_, overview, _ := strings.Cut(string(index), "# Quality attributes\n")
 	wantOverview := strings.Join([]string{
 		"**[Reliability](<quality/reliability/reliability.quality-attribute.spec-report.md>)**", "",
 		durability,

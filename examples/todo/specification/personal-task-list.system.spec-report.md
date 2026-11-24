@@ -5,23 +5,13 @@ source: "../specs/personal-task-list.system.spec.md#personal-task-list"
 ---
 # Personal task list
 
+[View source](<../specs/personal-task-list.system.spec.md#personal-task-list>)
+
 A personal list of errands the owner can act on, replies they are waiting for and commitments they have settled.
 
-| Section | Explore |
-| --- | --- |
-| [Framing](<#framing>) | Suppose a guest needs a working sink by Friday. Sending the plumber a photo finishes today's action. The owner still owes the repair. The job of seeing personal commitments through explains what the owner needs to establish when they return. |
-| [Purpose](<#purpose>) | Help one person pick up an errand after an interruption and recognize when to chase an outstanding reply. |
-| [Goals](<#goals>) | [All goals](<goals.md>) |
-| Business rules | [All business rules](<business-rules.md>) |
-| [Stakeholders and user needs](<#stakeholders-and-user-needs>) | [Jobs](<jobs.md>) |
-| [Scope and environment](<#scope-and-environment>) | [All assumptions](<assumptions.md>) |
-| [System topology](<#system-topology>) | [Components](<components.md>) · [Interfaces](<interfaces.md>) · [Provided interfaces](<interfaces.md#provided-interfaces>) |
-| [Features](<#features>) | [All features](<features.md>) |
-| Capabilities | [All capabilities](<capabilities.md>) |
-| Use cases | [All use cases](<use-cases.md>) |
-| [Concepts](<#concepts>) | [Concept definitions](<concepts.md>) · [Concept uses](<concept-uses.md>) |
-| Requirements | [All requirements](<requirements.md>) |
-| [Quality attributes](<#quality-attributes>) | [All quality attributes](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
+**On this page** · [Framing](<#framing>) · [Purpose](<#purpose>) · [Goals](<#goals>) · [Stakeholders and user needs](<#stakeholders-and-user-needs>) · [Scope and environment](<#scope-and-environment>) · [System topology](<#system-topology>) · [Features](<#features>) · [Concepts](<#concepts>) · [Quality attributes](<#quality-attributes>)
+
+**Browse specifications** · [All goals](<goals.md>) · [All business rules](<business-rules.md>) · [Jobs](<jobs.md>) · [All assumptions](<assumptions.md>) · [Components](<components.md>) · [Interfaces](<interfaces.md>) · [Provided interfaces](<interfaces.md#provided-interfaces>) · [All features](<features.md>) · [All capabilities](<capabilities.md>) · [All use cases](<use-cases.md>) · [Concept definitions](<concepts.md>) · [Concept uses](<concept-uses.md>) · [All requirements](<requirements.md>) · [All quality attributes](<quality-attributes.md>) · [Quality models](<quality-models.md>)
 
 ## Framing
 

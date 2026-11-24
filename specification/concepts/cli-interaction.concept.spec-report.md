@@ -3,9 +3,11 @@ generated_by: dotspec
 type: concept-spec-report
 source: "../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#command-invocation"
 ---
+[dotspec](<../dotspec.system.spec-report.md>) › [Concept definitions](<../concepts.md>)
+
 # Command Invocation
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[View source](<../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#command-invocation>)
 
 ## Purpose
 
@@ -25,9 +27,13 @@ outputs, formats and exit statuses.
 
 ## Actions
 
+[Invoke](<#invoke>) · [Observe the result](<#observe-the-result>)
+
 ### Invoke
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#invoke"} -->
+
+[View section source](<../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#invoke>)
 
 Submit a supported operation and its arguments. Invalid invocation syntax produces
 an error result rather than performing the requested operation.
@@ -35,6 +41,8 @@ an error result rather than performing the requested operation.
 ### Observe the result
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#observe-the-result"} -->
+
+[View section source](<../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#observe-the-result>)
 
 Read the output and error streams and the exit status when the process completes.
 A successful invocation reports exit status 0; specification findings and invocation

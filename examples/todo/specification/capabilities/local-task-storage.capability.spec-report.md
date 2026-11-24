@@ -3,13 +3,15 @@ generated_by: dotspec
 type: capability-spec-report
 source: "../../specs/capabilities/local-task-storage.capability.spec.md#local-task-storage"
 ---
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Capabilities](<../capabilities.md>)
+
 # Local task storage
+
+[View source](<../../specs/capabilities/local-task-storage.capability.spec.md#local-task-storage>)
 
 ## Description
 
 Keeps a commitment and the owner's last recorded decision together between visits. Finding the title alone would leave someone who returns to a waiting errand searching their messages for the reply they meant to chase.
-
-[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Supports
 

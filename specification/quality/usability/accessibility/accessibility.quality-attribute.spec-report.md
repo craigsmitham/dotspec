@@ -3,9 +3,11 @@ generated_by: dotspec
 type: quality-attribute-spec-report
 source: "../../../../specs/quality/usability/accessibility/accessibility.quality-attribute.spec.md#accessibility"
 ---
+[dotspec](<../../../dotspec.system.spec-report.md>) › [Quality attributes](<../../../quality-attributes.md>)
+
 # Accessibility
 
-[dotspec](<../../../dotspec.system.spec-report.md>)
+[View source](<../../../../specs/quality/usability/accessibility/accessibility.quality-attribute.spec.md#accessibility>)
 
 ## Definition
 

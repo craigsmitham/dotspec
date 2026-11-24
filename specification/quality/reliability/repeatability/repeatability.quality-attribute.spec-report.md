@@ -3,9 +3,11 @@ generated_by: dotspec
 type: quality-attribute-spec-report
 source: "../../../../specs/quality/reliability/repeatability/repeatability.quality-attribute.spec.md#repeatability"
 ---
+[dotspec](<../../../dotspec.system.spec-report.md>) › [Quality attributes](<../../../quality-attributes.md>)
+
 # Repeatability
 
-[dotspec](<../../../dotspec.system.spec-report.md>)
+[View source](<../../../../specs/quality/reliability/repeatability/repeatability.quality-attribute.spec.md#repeatability>)
 
 ## Definition
 

@@ -3,13 +3,15 @@ generated_by: dotspec
 type: capability-spec-report
 source: "../../specs/capabilities/follow-up-review.capability.spec.md#follow-up-review"
 ---
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Capabilities](<../capabilities.md>)
+
 # Follow-up review
+
+[View source](<../../specs/capabilities/follow-up-review.capability.spec.md#follow-up-review>)
 
 ## Description
 
 When the owner reviews waiting errands, they can see which replies they planned to chase by today and what to ask for.
-
-[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Depends on
 

@@ -3,9 +3,11 @@ generated_by: dotspec
 type: concept-spec-report
 source: "../../specs/concepts/checklist.concept.spec.md#checklist"
 ---
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Concept definitions](<../concepts.md>)
+
 # Checklist
 
-[Personal task list](<../personal-task-list.system.spec-report.md>)
+[View source](<../../specs/concepts/checklist.concept.spec.md#checklist>)
 
 ## Purpose
 
@@ -31,15 +33,21 @@ A new list has no entries.
 
 ## Actions
 
+[Add](<#add>) · [Rename](<#rename>) · [Wait for reply](<#wait-for-reply>) · [Update follow-up](<#update-follow-up>) · [Resume](<#resume>) · [Complete](<#complete>) · [Reopen](<#reopen>) · [Delete](<#delete>)
+
 ### Add
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#add"} -->
+
+[View section source](<../../specs/concepts/checklist.concept.spec.md#add>)
 
 Record a commitment under a title. Ignore surrounding whitespace. Reject an empty or whitespace-only title without creating an entry.
 
 ### Rename
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#rename"} -->
+
+[View section source](<../../specs/concepts/checklist.concept.spec.md#rename>)
 
 Change how the person will recognize the entry on their next visit.
 
@@ -59,6 +67,8 @@ A blank title leaves the entry as it was.
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#wait-for-reply"} -->
 
+[View section source](<../../specs/concepts/checklist.concept.spec.md#wait-for-reply>)
+
 Set an open entry aside until the person wants to check back. Record what reply they expect and the calendar day they choose for follow-up.
 
 #### Guards
@@ -74,11 +84,15 @@ If either detail is missing or invalid, the entry stays Open.
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#update-follow-up"} -->
 
+[View section source](<../../specs/concepts/checklist.concept.spec.md#update-follow-up>)
+
 Revise a wait after chasing the reply. Start with the saved description and day, change either or both, and keep the commitment in Waiting. The same [guards as Wait for reply](<#wait-for-reply>) apply. An invalid edit leaves both saved details intact.
 
 ### Resume
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#resume"} -->
+
+[View section source](<../../specs/concepts/checklist.concept.spec.md#resume>)
 
 Take back the next action on a waiting commitment when the person can move the work forward.
 
@@ -86,17 +100,23 @@ Take back the next action on a waiting commitment when the person can move the w
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#complete"} -->
 
+[View section source](<../../specs/concepts/checklist.concept.spec.md#complete>)
+
 Mark an open or waiting commitment settled. If the person selected Complete in Open and the entry is now Waiting, reject the old action. They can still choose Complete from Waiting. See the [shared check for actions on an entry](<#effects-table>) and the [completion rule](<../business-rules/completion-preserves-a-commitment.business-rule.spec-report.md>).
 
 ### Reopen
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#reopen"} -->
 
+[View section source](<../../specs/concepts/checklist.concept.spec.md#reopen>)
+
 Return a completed entry to Open when there is more to do.
 
 ### Delete
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#delete"} -->
+
+[View section source](<../../specs/concepts/checklist.concept.spec.md#delete>)
 
 Discard the selected entry from any view. Adding another errand with the same title creates a new identity.
 

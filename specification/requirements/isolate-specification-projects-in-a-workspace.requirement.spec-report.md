@@ -3,9 +3,11 @@ generated_by: dotspec
 type: requirement-spec-report
 source: "../../specs/requirements/specification-project-isolation.requirement.spec.md#isolate-specification-projects-in-a-workspace"
 ---
+[dotspec](<../dotspec.system.spec-report.md>) › [Requirements](<../requirements.md>)
+
 # Isolate specification projects in a workspace
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[View source](<../../specs/requirements/specification-project-isolation.requirement.spec.md#isolate-specification-projects-in-a-workspace>)
 
 ## Statement
 

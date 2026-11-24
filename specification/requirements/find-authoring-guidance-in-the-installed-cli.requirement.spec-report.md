@@ -3,9 +3,11 @@ generated_by: dotspec
 type: requirement-spec-report
 source: "../../specs/requirements/offline-authoring-guidance.requirement.spec.md#find-authoring-guidance-in-the-installed-cli"
 ---
+[dotspec](<../dotspec.system.spec-report.md>) › [Requirements](<../requirements.md>)
+
 # Find authoring guidance in the installed CLI
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[View source](<../../specs/requirements/offline-authoring-guidance.requirement.spec.md#find-authoring-guidance-in-the-installed-cli>)
 
 ## Statement
 

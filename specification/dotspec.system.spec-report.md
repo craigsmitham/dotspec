@@ -5,19 +5,13 @@ source: "../specs/dotspec.system.spec.md#dotspec"
 ---
 # dotspec
 
+[View source](<../specs/dotspec.system.spec.md#dotspec>)
+
 A requirements authoring framework and command-line toolkit for Markdown specifications stored alongside source code.
 
-| Section | Explore |
-| --- | --- |
-| [Framing](<#framing>) | The idea beheind dotspec is that having a distinctly seperated functional specification for a system and its parts is beneficial for both humans and agents |
-| [Purpose](<#purpose>) | Help teams develop and maintain software requirements alongside the code they describe. |
-| Stakeholders and user needs | [Jobs](<jobs.md>) |
-| [Scope and environment](<#scope-and-environment>) | Environment · Constraints |
-| Use cases | [All use cases](<use-cases.md>) |
-| Concepts | [Concept definitions](<concepts.md>) |
-| Requirements | [All requirements](<requirements.md>) |
-| [Quality attributes](<#quality-attributes>) | [All quality attributes](<quality-attributes.md>) · [Quality models](<quality-models.md>) |
-| Glossary | [Glossary](<glossary.md>) |
+**On this page** · [Framing](<#framing>) · [Purpose](<#purpose>) · [Scope and environment](<#scope-and-environment>) · [Quality attributes](<#quality-attributes>)
+
+**Browse specifications** · [Jobs](<jobs.md>) · [All use cases](<use-cases.md>) · [Concept definitions](<concepts.md>) · [All requirements](<requirements.md>) · [All quality attributes](<quality-attributes.md>) · [Quality models](<quality-models.md>) · [Glossary](<glossary.md>)
 
 ## Framing
 

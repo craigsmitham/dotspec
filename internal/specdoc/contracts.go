@@ -26,6 +26,7 @@ func addSourceContracts(p *planner) error {
 		}
 		page.Document = subjectDocument(s.file, s.source, s.name)
 		page.Title = s.name.title
+		requireRoute(page, page.Documents, "View source")
 		page.RequiredContent = nil
 		for _, section := range s.overview {
 			if section.level == 2 && section.hasBody {
@@ -52,7 +53,9 @@ func addSourceContracts(p *planner) error {
 					}
 				}
 				if h.subjectKind != "" {
-					passagePage.SectionDocs[fragment] = subjectDocument(file, s.source, h)
+					doc := subjectDocument(file, s.source, h)
+					passagePage.SectionDocs[fragment] = doc
+					requireSectionRoute(passagePage, fragment, doc.Documents)
 				}
 			}
 			for _, n := range s.source.links {

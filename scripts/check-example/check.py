@@ -181,14 +181,9 @@ def spec_journey(cli, tmp):
                 "Features", "Concepts", "Quality attributes"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
     navigation = overview.split("\n## Framing\n", 1)[0]
-    rows = [line for line in navigation.splitlines() if line.startswith("| ")]
-    for title, index in (("Features", "features"), ("Capabilities", "capabilities"),
-                         ("Use cases", "use-cases"), ("Requirements", "requirements")):
-        row, = [line for line in rows if line.split(" | ")[0] in
-                (f"| [{title}](<#{index}>)", f"| {title}")]
-        assert f"[All {title.lower()}](<{index}.md>)" in row, row
-    concepts_row, = [line for line in rows if line.startswith("| [Concepts]")]
-    assert "[Concept definitions](<concepts.md>)" in concepts_row and "[Concept uses](<concept-uses.md>)" in concepts_row
+    local, browse = navigation.split("**On this page**", 1)[1].split("**Browse specifications**")
+    assert all(not urlsplit(dest).path for dest in re.findall(r"\]\(<([^>]+)>\)", local))
+    assert all(urlsplit(dest).path for dest in re.findall(r"\]\(<([^>]+)>\)", browse))
     assert "### Behavior" not in overview and "### Obligations" not in overview
     goals = overview.split("\n## Goals\n", 1)[1].split("\n## ", 1)[0]
     assert "Reduce the effort of working out what still needs attention." in goals
@@ -239,8 +234,12 @@ def spec_journey(cli, tmp):
         page = follow(directory, name) if collection else root
         text = page.read_text(encoding="utf-8")
         lead = description if name in ("Personal task list", "Task service") else f"## Description\n\n{description}"
-        assert text.split("---\n", 2)[2].startswith(f"# {name}\n\n{lead}")
-        assert text.count(description) == directory.read_text(encoding="utf-8").count(description) == 1
+        assert re.search(r"^# " + re.escape(name) + r"\n\n\[View source\].*\n\n" + re.escape(lead), text, re.M)
+        assert text.count(description) == 1
+        if collection:
+            line, = [line for line in directory.read_text(encoding="utf-8").splitlines() if line.startswith(f"- [{name}]")]
+            preview = line.split(" — ", 1)[1]
+            assert preview == description or (preview.endswith(" …") and description.startswith(preview[:-2]))
     # Every source in this fixture gets one report documenting its H1. Pages
     # for inline subjects document a deeper heading in that same source.
     claims = {}
@@ -250,7 +249,7 @@ def spec_journey(cli, tmp):
         uri = urlsplit(primary)
         key = ((page.parent / unquote(uri.path)).resolve(), unquote(uri.fragment))
         assert key[0].is_file() and key[1], page
-        assert all(dest != key[0] for _, dest, _, _ in markdown_links(page)), page
+        assert [(dest, frag) for label, dest, frag, _ in markdown_links(page) if label == "View source"] == [key]
         assert key not in claims, (page, claims.get(key))
         claims[key] = page
     for source in project.rglob("*.spec.md"):
@@ -263,6 +262,8 @@ def spec_journey(cli, tmp):
     assert component == project / "specification/components/task-service/task-service.component.spec-report.md"
     component_requirements = follow(component, "All requirements")
     acknowledgement = follow(component_requirements, "Acknowledge after commit")
+    assert follow(acknowledgement, "Requirements") == component_requirements
+    assert follow(acknowledgement, "Task service") == component
     assert acknowledgement.parent == component.parent / "requirements"
     assert "## Applicable requirements" in component_requirements.read_text(encoding="utf-8")
     assert "**Applies here**" not in component.read_text(encoding="utf-8")
@@ -290,6 +291,8 @@ def spec_journey(cli, tmp):
     assert definitions == project / "specification/quality-models/personal-data-quality.quality-model.spec-report.md"
     assert claims[project / "specs/quality-models/personal-data.quality-model.spec.md", "personal-data-quality"] == definitions
     use_case = follow(feature, "Decide what to do about a waiting errand")
+    assert any(label == "The list cannot record the decision" and target == use_case and fragment == "the-list-cannot-record-the-decision"
+               for label, target, fragment, _ in markdown_links(use_case))
     availability = follow(use_case, "Keep recorded work available")
     assert availability == claims[project / "specs/requirements/availability.requirement.spec.md", "keep-recorded-work-available"]
     assert follow(promise, "Keep recorded work available") == availability
@@ -309,7 +312,7 @@ def spec_journey(cli, tmp):
     requirements = follow(root, "All requirements")
     assert requirements == root.parent / "requirements.md"
     assert follow(requirements, "Preserve tasks across restart") == promise
-    assert follow(requirements, "Task service") == component_requirements
+    assert follow(requirements, "Task service requirements") == component_requirements
     use_cases = follow(root, "All use cases")
     assert use_cases == root.parent / "use-cases.md"
     assert follow(use_cases, "Decide what to do about a waiting errand") == use_case

@@ -3,13 +3,15 @@ generated_by: dotspec
 type: concept-use-spec-report
 source: "../../specs/personal-task-list.system.spec.md#my-checklist"
 ---
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Concept uses](<../concept-uses.md>)
+
 # My checklist
+
+[View source](<../../specs/personal-task-list.system.spec.md#my-checklist>)
 
 ## Description
 
 Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. Two errands with the same title can be at different stages.
-
-[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Uses
 

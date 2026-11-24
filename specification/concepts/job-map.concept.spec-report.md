@@ -3,9 +3,11 @@ generated_by: dotspec
 type: concept-spec-report
 source: "../../specs/concepts/job-map.concept.spec.md#job-map"
 ---
+[dotspec](<../dotspec.system.spec-report.md>) › [Concept definitions](<../concepts.md>)
+
 # Job Map
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[View source](<../../specs/concepts/job-map.concept.spec.md#job-map>)
 
 ## Purpose
 
@@ -25,9 +27,13 @@ outcomes can apply to multiple jobs or steps without duplication.
 
 ## Actions
 
+[Describe the job and its steps](<#describe-the-job-and-its-steps>) · [View the map](<#view-the-map>) · [Inspect a step's outcomes](<#inspect-a-steps-outcomes>)
+
 ### Describe the job and its steps
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/job-map.concept.spec.md#describe-the-job-and-its-steps"} -->
+
+[View section source](<../../specs/concepts/job-map.concept.spec.md#describe-the-job-and-its-steps>)
 
 Edit the job specification to describe the accomplishment, add or reorder steps,
 and associate outcomes with the whole job or a particular step. These are file
@@ -37,6 +43,8 @@ edits; the CLI supplies a starting document and reads the authored state.
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/job-map.concept.spec.md#view-the-map"} -->
 
+[View section source](<../../specs/concepts/job-map.concept.spec.md#view-the-map>)
+
 Display the job's steps in authored order, optionally including outcomes beside
 their owning job or step. A job with no steps still has a view that explicitly
 reports their absence. The order expresses the author's map; it does not require
@@ -45,6 +53,8 @@ that execution sequence or establish completeness.
 ### Inspect a step's outcomes
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/job-map.concept.spec.md#inspect-a-steps-outcomes"} -->
+
+[View section source](<../../specs/concepts/job-map.concept.spec.md#inspect-a-steps-outcomes>)
 
 Select a step by its explicit ID and display outcomes it declares. Outcomes
 declared elsewhere are excluded from this selection; the needs map shows their

@@ -3,9 +3,11 @@ generated_by: dotspec
 type: quality-attribute-spec-report
 source: "../../../specs/quality/performance/performance.quality-attribute.spec.md#performance"
 ---
+[dotspec](<../../dotspec.system.spec-report.md>) › [Quality attributes](<../../quality-attributes.md>)
+
 # Performance
 
-[dotspec](<../../dotspec.system.spec-report.md>)
+[View source](<../../../specs/quality/performance/performance.quality-attribute.spec.md#performance>)
 
 ## Definition
 

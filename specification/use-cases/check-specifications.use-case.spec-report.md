@@ -3,9 +3,11 @@ generated_by: dotspec
 type: use-case-spec-report
 source: "../../specs/use-cases/check-specifications.use-case.spec.md#check-specifications-before-committing"
 ---
+[dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../use-cases.md>)
+
 # Check specifications before committing
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[View source](<../../specs/use-cases/check-specifications.use-case.spec.md#check-specifications-before-committing>)
 
 ## Goal
 
@@ -30,6 +32,8 @@ assumed away by this precondition.
 
 <!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#main-success-scenario"} -->
 
+[View section source](<../../specs/use-cases/check-specifications.use-case.spec.md#main-success-scenario>)
+
 1. The contributor selects the project subtree to inspect and requests a check.
 2. Dotspec discovers supported specifications and reads the system context
    needed to interpret them.
@@ -39,9 +43,13 @@ assumed away by this precondition.
 
 ## Extensions
 
+[Malformed specification](<#malformed-specification>) · [Unreadable input or failed discovery](<#unreadable-input-or-failed-discovery>) · [Empty scope](<#empty-scope>) · [Unfinished content](<#unfinished-content>)
+
 ### Malformed specification
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#malformed-specification"} -->
+
+[View section source](<../../specs/use-cases/check-specifications.use-case.spec.md#malformed-specification>)
 
 #### Handling
 
@@ -54,6 +62,8 @@ Resume reporting at step 4. A complete report with errors still achieves this go
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#unreadable-input-or-failed-discovery"} -->
 
+[View section source](<../../specs/use-cases/check-specifications.use-case.spec.md#unreadable-input-or-failed-discovery>)
+
 #### Handling
 
 During steps 2–3, a file cannot be read or discovery fails, including a required
@@ -65,6 +75,8 @@ and start another check.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#empty-scope"} -->
 
+[View section source](<../../specs/use-cases/check-specifications.use-case.spec.md#empty-scope>)
+
 #### Handling
 
 At step 2, no supported specifications are found. Explicitly report an empty,
@@ -73,6 +85,8 @@ completed scan at step 4. This is an alternative successful outcome.
 ### Unfinished content
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#unfinished-content"} -->
+
+[View section source](<../../specs/use-cases/check-specifications.use-case.spec.md#unfinished-content>)
 
 #### Handling
 

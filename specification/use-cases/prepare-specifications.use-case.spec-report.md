@@ -3,9 +3,11 @@ generated_by: dotspec
 type: use-case-spec-report
 source: "../../specs/use-cases/prepare-specifications.use-case.spec.md#prepare-specifications-for-review"
 ---
+[dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../use-cases.md>)
+
 # Prepare specifications for review
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[View source](<../../specs/use-cases/prepare-specifications.use-case.spec.md#prepare-specifications-for-review>)
 
 ## Goal
 
@@ -19,6 +21,8 @@ A contributor proposing a product change.
 
 <!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/prepare-specifications.use-case.spec.md#main-success-scenario"} -->
 
+[View section source](<../../specs/use-cases/prepare-specifications.use-case.spec.md#main-success-scenario>)
+
 1. The contributor [creates a specification draft](<create-specification.use-case.spec-report.md>)
    or edits an existing source to describe the proposed behavior.
 2. The contributor links its governing rules and evidence, then
@@ -29,9 +33,13 @@ A contributor proposing a product change.
 
 ## Extensions
 
+[Behavior remains undecided](<#behavior-remains-undecided>) · [Inspection cannot finish](<#inspection-cannot-finish>)
+
 ### Behavior remains undecided
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/prepare-specifications.use-case.spec.md#behavior-remains-undecided"} -->
+
+[View section source](<../../specs/use-cases/prepare-specifications.use-case.spec.md#behavior-remains-undecided>)
 
 #### Handling
 
@@ -42,6 +50,8 @@ review; the review must resolve it before a delivery relies on that promise.
 ### Inspection cannot finish
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/prepare-specifications.use-case.spec.md#inspection-cannot-finish"} -->
+
+[View section source](<../../specs/use-cases/prepare-specifications.use-case.spec.md#inspection-cannot-finish>)
 
 #### Handling
 

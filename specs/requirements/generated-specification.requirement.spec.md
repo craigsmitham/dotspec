@@ -16,19 +16,13 @@ For a project with one root system and reports enabled, contributors must be abl
 
 The project's `SPEC.md` gives the system name and one link to `specification/<name>.system.spec-report.md`. Each system and component overview uses the basename of its named source with `.spec.md` changed to `.spec-report.md`. Each overview links to a plural-named index beside it for each populated collection, such as `use-cases.md` or `requirements.md`. An index entry links to the subject and includes its authored goal, statement, or description when available. Empty collections produce no index. From the overview, reach the same promise through its feature and through the system’s requirements index. Both routes explain why the promise is listed and lead to its canonical page or passage. The statement, conditions and criterion agree with the authored text. Editing a condition only in the generated spec or removing the feature link produces a check finding. A second build over identical inputs produces identical files.
 
-System and component overviews open with their subject name and authored description. Each
-section map links directly to populated indexes. Readers can follow goals,
-business rules, user needs, scope, system topology, features, capabilities,
-use cases, concepts, requirements, quality attributes, and open questions in
-that order when present. Features, capabilities, use cases, concepts, and
-requirements have separate rows. Concept definitions, named uses, and
-synchronizations share the Concepts row. The section map links to the full indexes of business rules, jobs, capabilities, use cases, concept definitions and requirements. Authored stakeholder needs stay in the body. Capabilities appear beside their declared providers in topology. The topology shows immediate parts and boundary relationships in a Mermaid diagram and in linked text.
+System and component overviews open with their subject name and authored description. On this page links to the overview’s populated body sections in reading order. Browse specifications links directly to populated collection indexes in that scope. Neither group repeats section prose. Authored stakeholder needs stay in the body. Capabilities appear beside their declared providers in topology. The topology shows immediate parts and boundary relationships in a Mermaid diagram and in linked text.
 
 The Concepts body appears when the overview introduces a named concept use or synchronization. Its populated groups have the stable headings Concept uses and Synchronizations in that order. The definitions index is titled Concept definitions. Each overview shows every substantive entry belonging in a body section, in index order, regardless of collection size.
 
 The overview introduces the top-level quality attributes with their definition previews. The attribute index shows the full hierarchy. A shared attribute appears under each declared parent, with its descendants expanded once. Each attribute page links to its classified requirements.
 
-Overviews, indexes and subject reports reuse each subject’s linked name, authored preview, and declared relationship labels. A concept use identifies its definition with Uses. A requirement index entry identifies each requirement or business rule it refines with Refines. Adding a second refinement preserves the first relationship.
+Index entries use the subject’s linked name and a short excerpt of its authored preview. An ellipsis marks shortened wording. Links to a component collection name both the component and the collection. A concept use identifies its definition with Uses. A requirement index entry identifies each requirement or business rule it refines with Refines. Adding a second refinement preserves the first relationship.
 
 System and component overviews introduce named goals and assumptions
 with a linked title and an authored statement preview when available. Each link
@@ -59,6 +53,9 @@ Resolving the last question removes the index and its navigation link on rebuild
 Each subject report identifies its authored file and heading once in the YAML
 `source` field using a URI relative to the report. This field supplies the
 source attribution for the page and its passages.
+The visible View source link opens that same heading. Each embedded subject links to its own authored heading.
+Above each subject or collection title, the breadcrumb links to its owners in order. A subject’s final breadcrumb opens its collection. The root system is the starting point.
+A use case with multiple extensions links to each named extension under Extensions. Concepts and quality models provide the same navigation for their named actions and attributes.
 Readers can follow supporting references beside the content they supply.
 The project check identifies duplicate page claims and missing or misdirected
 source metadata.

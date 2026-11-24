@@ -1,9 +1,9 @@
 ---
 generated_by: dotspec
 ---
-# Use cases
-
 [dotspec](<dotspec.system.spec-report.md>)
+
+# Use cases
 
 - [Check specifications before committing](<use-cases/check-specifications.use-case.spec-report.md>) — Identify structural problems and missing-content advice in the specifications affected by a proposed change before committing it.
 - [Create a specification draft](<use-cases/create-specification.use-case.spec-report.md>) — Obtain an editable starting document for a selected kind of specification.

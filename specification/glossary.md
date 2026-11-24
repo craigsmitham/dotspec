@@ -1,9 +1,9 @@
 ---
 generated_by: dotspec
 ---
-# Glossary
-
 [dotspec](<dotspec.system.spec-report.md>)
+
+# Glossary
 
 ## Browse by topic
 

@@ -3,9 +3,11 @@ generated_by: dotspec
 type: quality-attribute-spec-report
 source: "../../../../specs/quality/usability/diagnosability/diagnosability.quality-attribute.spec.md#diagnosability"
 ---
+[dotspec](<../../../dotspec.system.spec-report.md>) › [Quality attributes](<../../../quality-attributes.md>)
+
 # Diagnosability
 
-[dotspec](<../../../dotspec.system.spec-report.md>)
+[View source](<../../../../specs/quality/usability/diagnosability/diagnosability.quality-attribute.spec.md#diagnosability>)
 
 ## Definition
 

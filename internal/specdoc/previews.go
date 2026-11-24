@@ -34,6 +34,26 @@ func paragraphPreview(md string) string {
 	return ""
 }
 
+// A directory excerpt ends at a word boundary. Mark omitted wording explicitly.
+func indexPreview(preview string) string {
+	const limit = 36
+	words := strings.Fields(preview)
+	if len(words) <= 24 {
+		return preview
+	}
+	end := min(limit, len(words))
+	for i, word := range words[:end] {
+		if strings.HasSuffix(word, ".") || strings.HasSuffix(word, "?") || strings.HasSuffix(word, "!") {
+			end = i + 1
+			break
+		}
+	}
+	if end == len(words) {
+		return preview
+	}
+	return strings.Join(words[:end], " ") + " …"
+}
+
 func attributeField(line string) bool {
 	return strings.HasPrefix(line, "**ID:**") || strings.HasPrefix(line, "**Sub-attribute of:**")
 }
@@ -94,6 +114,9 @@ func attributeEntry(w *writer, a *subject, root bool) string {
 		heading = a.name
 	}
 	if preview := paragraphPreview(sourceProse(a.source, heading)); preview != "" {
+		if w.file != a.system.file {
+			preview = indexPreview(preview)
+		}
 		return name + " — " + inlineText(preview)
 	}
 	return name

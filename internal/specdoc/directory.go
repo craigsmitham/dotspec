@@ -45,8 +45,15 @@ func (idx *collectionIndex) add(group string, member entry) {
 	}
 }
 
+func (s *subject) collection() string {
+	if s.name.qualityAttribute {
+		return "Quality attributes"
+	}
+	return sentenceCase(strings.ReplaceAll(families[s.kind()], "-", " "))
+}
+
 func (p *planner) placeDirectoryEntry(s *subject) {
-	title := sentenceCase(strings.ReplaceAll(families[s.kind()], "-", " "))
+	title := s.collection()
 	group := ""
 	if s.kind() == "Interface" {
 		group = "Provided interfaces"
@@ -246,7 +253,7 @@ func (p *planner) collectionEntryLine(w *writer, e entry) string {
 
 func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex) {
 	w := p.newPage(idx.file, Document{}, collectionTitle(title))
-	w.text(w.link(owner.name.title, owner.file))
+	w.setBreadcrumb(owner, "")
 	if title == "Glossary" {
 		p.renderGlossary(w, owner)
 	}
@@ -261,6 +268,9 @@ func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex
 		sortEntries(members)
 		w.out.WriteByte('\n')
 		for _, e := range members {
+			if title != "Open questions" {
+				e.preview = indexPreview(e.preview)
+			}
 			fmt.Fprintln(&w.out, p.collectionEntryLine(w, e))
 		}
 		for _, h := range idx.sources[group] {

@@ -3,13 +3,15 @@ generated_by: dotspec
 type: feature-spec-report
 source: "../../specs/features/pick-up-where-i-left-off.feature.spec.md#pick-up-where-i-left-off"
 ---
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Features](<../features.md>)
+
 # Pick up where I left off
+
+[View source](<../../specs/features/pick-up-where-i-left-off.feature.spec.md#pick-up-where-i-left-off>)
 
 ## Description
 
 Find an errand after a break, see whether a reply needs chasing and take up the work again when an answer arrives.
-
-[Personal task list](<../personal-task-list.system.spec-report.md>)
 
 ## Purpose
 

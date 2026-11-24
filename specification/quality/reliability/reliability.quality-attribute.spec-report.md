@@ -3,9 +3,11 @@ generated_by: dotspec
 type: quality-attribute-spec-report
 source: "../../../specs/quality/reliability/reliability.quality-attribute.spec.md#reliability"
 ---
+[dotspec](<../../dotspec.system.spec-report.md>) › [Quality attributes](<../../quality-attributes.md>)
+
 # Reliability
 
-[dotspec](<../../dotspec.system.spec-report.md>)
+[View source](<../../../specs/quality/reliability/reliability.quality-attribute.spec.md#reliability>)
 
 ## Definition
 

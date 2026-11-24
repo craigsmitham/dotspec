@@ -3,9 +3,11 @@ generated_by: dotspec
 type: concept-spec-report
 source: "../../specs/concepts/specification-inspection.concept.spec.md#specification-inspection"
 ---
+[dotspec](<../dotspec.system.spec-report.md>) › [Concept definitions](<../concepts.md>)
+
 # Specification Inspection
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[View source](<../../specs/concepts/specification-inspection.concept.spec.md#specification-inspection>)
 
 ## Purpose
 
@@ -31,9 +33,13 @@ and [source preservation](<../requirements/inspection-preserves-source.requireme
 
 ## Actions
 
+[Inspect a project](<#inspect-a-project>) · [Inspect one specification](<#inspect-one-specification>)
+
 ### Inspect a project
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/specification-inspection.concept.spec.md#inspect-a-project"} -->
+
+[View section source](<../../specs/concepts/specification-inspection.concept.spec.md#inspect-a-project>)
 
 Select an existing project directory and inspect supported specifications in its
 subtree, consulting enclosing system specifications and direct reference targets
@@ -43,6 +49,8 @@ supported specifications were found.
 ### Inspect one specification
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/specification-inspection.concept.spec.md#inspect-one-specification"} -->
+
+[View section source](<../../specs/concepts/specification-inspection.concept.spec.md#inspect-one-specification>)
 
 Select a supported specification by type, local slug, and project directory.
 Inspect it and its required system and reference context using the same

@@ -3,9 +3,11 @@ generated_by: dotspec
 type: use-case-spec-report
 source: "../../specs/use-cases/resume-list.use-case.spec.md#decide-what-to-do-about-a-waiting-errand"
 ---
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Use cases](<../use-cases.md>)
+
 # Decide what to do about a waiting errand
 
-[Personal task list](<../personal-task-list.system.spec-report.md>)
+[View source](<../../specs/use-cases/resume-list.use-case.spec.md#decide-what-to-do-about-a-waiting-errand>)
 
 ## Goal
 
@@ -23,6 +25,8 @@ The person who promised to get the errand done.
 
 <!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/resume-list.use-case.spec.md#main-success-scenario"} -->
 
+[View section source](<../../specs/use-cases/resume-list.use-case.spec.md#main-success-scenario>)
+
 1. On Wednesday the person opens Waiting to see whether it is time to chase the plumber about the sink.
 2. The list shows “Fix the guest sink” with the saved note “Waiting for the plumber’s visit time”. The Wednesday follow-up reads “Follow up now”.
    - **Illustrates:** [Keep recorded work available](<../requirements/keep-recorded-work-available.requirement.spec-report.md>) and [Show which replies need follow-up](<../requirements/show-which-replies-need-follow-up.requirement.spec-report.md>).
@@ -32,9 +36,13 @@ The person who promised to get the errand done.
 
 ## Extensions
 
+[The plumber has not answered](<#the-plumber-has-not-answered>) · [The reply settles the repair](<#the-reply-settles-the-repair>) · [The person intentionally deleted the errand](<#the-person-intentionally-deleted-the-errand>) · [The list cannot record the decision](<#the-list-cannot-record-the-decision>)
+
 ### The plumber has not answered
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/resume-list.use-case.spec.md#the-plumber-has-not-answered"} -->
+
+[View section source](<../../specs/use-cases/resume-list.use-case.spec.md#the-plumber-has-not-answered>)
 
 #### Condition
 
@@ -50,6 +58,8 @@ At step 3 the person finds no reply, even though the chosen day has arrived.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/resume-list.use-case.spec.md#the-reply-settles-the-repair"} -->
 
+[View section source](<../../specs/use-cases/resume-list.use-case.spec.md#the-reply-settles-the-repair>)
+
 #### Condition
 
 At step 3 the plumber confirms the sink was repaired during an earlier visit, and the person is satisfied it works.
@@ -63,6 +73,8 @@ At step 3 the plumber confirms the sink was repaired during an earlier visit, an
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/resume-list.use-case.spec.md#the-person-intentionally-deleted-the-errand"} -->
 
+[View section source](<../../specs/use-cases/resume-list.use-case.spec.md#the-person-intentionally-deleted-the-errand>)
+
 #### Condition
 
 At step 3 the person tries to resume the repair from their Waiting page after deleting the entry in another window. [Delete](<../concepts/checklist.concept.spec-report.md#delete>).
@@ -75,6 +87,8 @@ At step 3 the person tries to resume the repair from their Waiting page after de
 ### The list cannot record the decision
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/resume-list.use-case.spec.md#the-list-cannot-record-the-decision"} -->
+
+[View section source](<../../specs/use-cases/resume-list.use-case.spec.md#the-list-cannot-record-the-decision>)
 
 #### Condition
 

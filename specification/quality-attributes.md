@@ -1,9 +1,9 @@
 ---
 generated_by: dotspec
 ---
-# Quality attributes
-
 [dotspec](<dotspec.system.spec-report.md>)
+
+# Quality attributes
 
 **[Performance](<quality/performance/performance.quality-attribute.spec-report.md>)** — The time and computing resources required to perform operations under stated workloads.
 

@@ -30,7 +30,7 @@ dotspec spec build
 dotspec check
 ```
 
-Commit the authored changes, `SPEC.md` and the generated Markdown in `specification/` together. From `SPEC.md`, open the overview. If the project has requirements, follow one to its statement and conditions. If the wording needs to change, follow the report’s `source` field, edit that file, rebuild, and check again. Build refreshes generator-owned files and removes obsolete generated pages. If it reports that an authored file occupies a planned destination, move the authored file to a permanent location, update any links to it, then rerun the build.
+Commit the authored changes, `SPEC.md` and the generated Markdown in `specification/` together. From `SPEC.md`, open the overview. If the project has requirements, follow one to its statement and conditions. If the wording needs to change, select **View source**, edit that file, rebuild, and check again. Build refreshes generator-owned files and removes obsolete generated pages. If it reports that an authored file occupies a planned destination, move the authored file to a permanent location, update any links to it, then rerun the build.
 
 ## Read the generated files
 
@@ -48,7 +48,7 @@ Commit the authored changes, `SPEC.md` and the generated Markdown in `specificat
 ### Navigate an overview
 
 System and component overviews open with the subject name, authored description, and a linked section map. Component overviews also show their responsibilities, contracts, architecture, and implementation where authored.
-Choose a section to read in order or open a collection index directly.
+Use **On this page** to jump to a heading and **Browse specifications** to open a collection.
 
 | Section | What you can find |
 | --- | --- |
@@ -73,8 +73,7 @@ Overview sections list all entries with project-specific detail in index order.
 A collection with only navigation stays in the section map. The topology
 and quality hierarchy show their declared structure in full.
 
-Across overviews and indexes, each entry uses the same linked name and authored
-preview. **Uses** beside a concept use leads to its concept definition.
+Across overviews and indexes, each entry uses the subject’s linked name and authored wording. Indexes shorten long previews and mark an excerpt with an ellipsis. **Uses** beside a concept use leads to its concept definition.
 **Refines** beside a requirement leads to each promise it refines, whether a requirement or business rule. Open the requirement to read its full
 statement, conditions, and criteria together.
 
@@ -99,7 +98,7 @@ For example, [Pick up where I left off](../../examples/todo/specification/featur
 
 A system, component, feature, capability, or concept use can supply a short
 Description. System and component overviews use the description as their lead. Other subject reports open with the Description section. The index entry reuses
-the visible text of the first paragraph. An entry with no description shows
+an excerpt from the first paragraph. An entry with no description shows
 the subject name alone. Interfaces use their introductory description and quality
 models use their Description section. For requirements and business rules, a
 short Statement introduces the promise or rule. Use cases use their Goal and
@@ -110,6 +109,8 @@ open `use-cases.md` to choose an interaction by its goal, or `components.md` to
 choose a component by its description. A system’s `systems.md` lists its immediate
 child systems. When a component has entries in a collection, **By component**
 on the parent index leads to the component’s index of the same name.
+
+Above the title, breadcrumbs lead to the owning system or component and the subject’s collection. Under **Extensions**, **Actions**, and a quality model’s **Quality attributes**, select a named entry to jump to its section when several are present. Longer lists can be expanded.
 
 On subject reports, collections that only provide navigation appear with the page’s index links. Sections with authored descriptions keep that text in the body. Within a component, `interfaces.md` groups required and provided interfaces.
 A provider’s `capabilities.md` groups explicitly provided capabilities, including
@@ -128,11 +129,11 @@ Each subject report records its source in a YAML `source` field using a URI
 relative to the report, including the fragment for the exact authored heading.
 For example, the todo system report declares
 `source: "../specs/personal-task-list.system.spec.md#personal-task-list"`.
-This identifies the source for the whole report. For a subject defined inside
+The visible **View source** link opens this same heading. For a subject defined inside
 another spec, the fragment identifies its nested heading.
 
 A subject rendered as a section carries its type and exact authored heading in a
-`dotspec-doc` comment. Links to supporting specifications and external evidence
+`dotspec-doc` comment. **View section source** opens the authored declaration. Links to supporting specifications and external evidence
 stay beside the passages that use them. On the glossary index, **View term source**
 opens the defining passage for each term.
 

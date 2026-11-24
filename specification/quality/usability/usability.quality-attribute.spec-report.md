@@ -3,9 +3,11 @@ generated_by: dotspec
 type: quality-attribute-spec-report
 source: "../../../specs/quality/usability/usability.quality-attribute.spec.md#usability"
 ---
+[dotspec](<../../dotspec.system.spec-report.md>) › [Quality attributes](<../../quality-attributes.md>)
+
 # Usability
 
-[dotspec](<../../dotspec.system.spec-report.md>)
+[View source](<../../../specs/quality/usability/usability.quality-attribute.spec.md#usability>)
 
 ## Definition
 

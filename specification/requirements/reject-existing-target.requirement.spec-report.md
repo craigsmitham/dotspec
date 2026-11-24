@@ -3,9 +3,11 @@ generated_by: dotspec
 type: requirement-spec-report
 source: "../../specs/requirements/reject-existing-target.requirement.spec.md#reject-initialization-at-an-existing-target"
 ---
+[dotspec](<../dotspec.system.spec-report.md>) › [Requirements](<../requirements.md>)
+
 # Reject initialization at an existing target
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[View source](<../../specs/requirements/reject-existing-target.requirement.spec.md#reject-initialization-at-an-existing-target>)
 
 ## Statement
 

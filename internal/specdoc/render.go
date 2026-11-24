@@ -18,10 +18,10 @@ import (
 )
 
 type writer struct {
-	page                             *Page
-	file, titleMarkdown, titleAnchor string
-	out                              strings.Builder
-	notePrefixes                     map[*sourceFile]string // keep footnote labels local when combining sources
+	page                                         *Page
+	file, titleMarkdown, titleAnchor, breadcrumb string
+	out                                          strings.Builder
+	notePrefixes                                 map[*sourceFile]string // keep footnote labels local when combining sources
 }
 
 func (p *planner) newPage(file string, document Document, title string) *writer {
@@ -39,6 +39,9 @@ func (w *writer) finish() {
 		fmt.Fprintf(&header, "source: %q\n", source)
 	}
 	header.WriteString("---\n")
+	if w.breadcrumb != "" {
+		header.WriteString(w.breadcrumb + "\n\n")
+	}
 	if w.titleAnchor != "" {
 		fmt.Fprintf(&header, "<a id=\"%s\"></a>\n\n", html.EscapeString(w.titleAnchor))
 	}
@@ -97,10 +100,25 @@ func (h *heading) sourceLabel() string {
 	return "View source for “" + inlineText(h.title) + "”"
 }
 
+// The title supplies the current location. Each ancestor leads to its overview.
+func (w *writer) setBreadcrumb(owner *subject, collection string) {
+	var steps []string
+	for ancestor := owner; ancestor != nil; ancestor = ancestor.parent {
+		steps = append(steps, w.link(inlineText(ancestor.name.title), ancestor.file))
+	}
+	slices.Reverse(steps)
+	if owner != nil && owner.indexes[collection] != nil {
+		steps = append(steps, w.link(collectionTitle(collection), owner.indexes[collection].file))
+	}
+	w.breadcrumb = strings.Join(steps, " › ")
+}
+
 func (p *planner) renderSubject(s *subject) {
 	w := p.newPage(s.file, subjectDocument(s.file, s.source, s.name), s.name.title)
 	w.titleMarkdown = p.headingMarkdown(w, s.source, s.name)
 	w.titleAnchor = s.name.explicitAnchor
+	w.setBreadcrumb(s.parent, s.collection())
+	w.text(link("View source", w.page.Documents))
 	if s.isOverview() {
 		p.renderOverview(w, s)
 	} else {
@@ -125,14 +143,9 @@ func (p *planner) renderSubjectBody(w *writer, s *subject) {
 		if end < 0 {
 			end = len(headings)
 		}
-		p.renderHeadings(w, s, headings[:end])
+		p.renderPassage(w, s, headings[:end], 0, false)
 		headings = headings[end:]
 	}
-	parent := s.parent
-	if parent == nil {
-		parent = s.system
-	}
-	w.text(w.link(parent.name.title, parent.file))
 	var indexes []string
 	for _, title := range slices.Sorted(maps.Keys(s.indexes)) {
 		idx := s.indexes[title]
@@ -146,17 +159,13 @@ func (p *planner) renderSubjectBody(w *writer, s *subject) {
 		indexes = append(indexes, line)
 	}
 	w.text(strings.Join(indexes, "\n"))
-	p.renderHeadings(w, s, headings)
-}
-
-func (p *planner) renderHeadings(w *writer, s *subject, headings []*heading) {
 	p.renderPassage(w, s, headings, 0, false)
 }
 
 // A system overview can introduce an authored passage under a shared section
 // heading or at a deeper level. Its authored hierarchy stays together.
 func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offset int, merged bool) {
-	for _, h := range headings {
+	for i, h := range headings {
 		if h.owner != s {
 			continue
 		}
@@ -176,14 +185,19 @@ func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offs
 				w.text(strings.Repeat("#", min(6, max(2, h.level-s.name.level+1+offset))) + " " + caption)
 			}
 			if h.subjectKind != "" {
-				meta, _ := json.Marshal(subjectDocument(w.file, s.source, h))
+				doc := subjectDocument(w.file, s.source, h)
+				meta, _ := json.Marshal(doc)
 				w.text("<!-- dotspec-doc " + string(meta) + " -->")
+				w.text(link("View section source", doc.Documents))
 			}
 		}
 		if h == s.name && s.kind() == "Feature" {
 			p.featureGoals(w, s)
 		}
 		p.body(w, s.source, h)
+		if h.level == s.name.level+1 && (h.title == "Extensions" || h.title == "Actions" || h.title == "Quality attributes") && !s.isOverview() {
+			p.sectionNavigation(w, h, headings[i+1:])
+		}
 		if !s.isOverview() && h.level == s.name.level+1 {
 			if dest := s.sectionIndex(h.title); dest != "" && !isDetailCollection(h.title) {
 				w.text(w.link("Browse "+strings.ToLower(h.title), dest))
@@ -195,6 +209,31 @@ func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offs
 		if h != s.name {
 			p.relationships(w, h, false)
 		}
+	}
+}
+
+// Link to the planned fragments, including explicit anchors and duplicate suffixes.
+func (p *planner) sectionNavigation(w *writer, parent *heading, rest []*heading) {
+	var children []*heading
+	for _, h := range rest {
+		if h.level <= parent.level {
+			break
+		}
+		if h.owner == parent.owner && h.level == parent.level+1 {
+			children = append(children, h)
+		}
+	}
+	if len(children) < 2 {
+		return
+	}
+	var links []string
+	for _, child := range children {
+		links = append(links, w.link(inlineText(child.title), p.targets[child.node]))
+	}
+	if len(links) > 10 {
+		w.text("<details>\n<summary>Browse " + strings.ToLower(parent.title) + "</summary>\n\n- " + strings.Join(links, "\n- ") + "\n\n</details>")
+	} else {
+		w.text(strings.Join(links, " · "))
 	}
 }
 

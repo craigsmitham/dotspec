@@ -3,9 +3,11 @@ generated_by: dotspec
 type: requirement-spec-report
 source: "../../specs/quality/usability/diagnosability/diagnostic-severity.requirement.spec.md#diagnostic-severity-is-available-without-styling"
 ---
+[dotspec](<../dotspec.system.spec-report.md>) › [Requirements](<../requirements.md>)
+
 # Diagnostic severity is available without styling
 
-[dotspec](<../dotspec.system.spec-report.md>)
+[View source](<../../specs/quality/usability/diagnosability/diagnostic-severity.requirement.spec.md#diagnostic-severity-is-available-without-styling>)
 
 ## Statement
 
