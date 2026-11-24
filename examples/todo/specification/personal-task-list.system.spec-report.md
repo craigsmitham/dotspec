@@ -18,7 +18,7 @@ A personal list of errands the owner can act on, replies they are waiting for an
 - [System topology](<#system-topology>)
 - [Features](<#features>)
 - [Concepts](<#concepts>)
-- [Quality attributes](<#quality-attributes>)
+- [Quality Attributes](<#quality-attributes>)
 
 </details>
 
@@ -36,8 +36,6 @@ A personal list of errands the owner can act on, replies they are waiting for an
 - [Interfaces](<interfaces.md>)
   - [Provided interfaces](<interfaces.md#provided-interfaces>)
 - [Jobs](<jobs.md>)
-- [Quality attributes](<quality-attributes.md>)
-- [Quality models](<quality-models.md>)
 - [Requirements](<requirements.md>)
 - [Use cases](<use-cases.md>)
 
@@ -102,10 +100,10 @@ flowchart LR
 - [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. Two errands with the same title can be at different stages.
   - Uses [Checklist](<concepts/checklist.concept.spec-report.md>)
 
-## Quality attributes
+## Quality Attributes
 
-**[Durability](<quality/durability/durability.quality-attribute.spec-report.md>)** — Preservation of the owner’s acknowledged decisions between local sessions, including the reply they expect for a waiting errand and the day they chose to follow up. The follow-up cue can change overnight even though those decisions survive intact.
+**[Durability](<quality/durability/durability.quality-attribute.spec-report.md>)** — Preservation of the owner’s acknowledged decisions between local sessions, including the reply they expect for a waiting errand and the day they chose to follow up. …
 
 ---
 
-[View source](<../specs/personal-task-list.system.spec.md#personal-task-list>)
+[View source](<../specs/personal-task-list.system.spec.md#personal-task-list>) · [Quality models](<quality-models.md>)

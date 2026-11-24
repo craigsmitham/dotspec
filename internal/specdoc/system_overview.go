@@ -5,7 +5,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/model"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 )
@@ -20,7 +19,6 @@ type overviewSection struct {
 	passages      [][]*heading
 	detail        string
 	detailLinks   []string
-	attributes    []*subject
 	preview       []entry
 	hasBody       bool
 }
@@ -43,7 +41,7 @@ func overviewOutline(kind string) []overviewSection {
 		{title: "Concepts", level: 2},
 		{title: "Concept uses", level: 3, sources: []string{"concept_uses"}},
 		{title: "Synchronizations", level: 3, sources: []string{"synchronizations"}},
-		{title: "Quality attributes", level: 2},
+		{title: "Quality Attributes", level: 2},
 		{title: "Contracts", level: 2, sources: []string{"contracts"}},
 		{title: "Architecture", level: 2, sources: []string{"architecture"}},
 		{title: "Implementation", level: 2, sources: []string{"implementation"}},
@@ -82,7 +80,7 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 		p.overviewDetails(detail, s, section)
 		section.detail = detail.out.String()
 		section.detailLinks = detail.page.RequiredLinks
-		section.hasBody = len(section.passages) > 0 || section.detail != "" || len(section.preview) > 0 || len(section.attributes) > 0
+		section.hasBody = len(section.passages) > 0 || section.detail != "" || len(section.preview) > 0
 		if section.level == 2 {
 			parent = section
 		} else if section.level == 3 && section.hasBody {
@@ -167,9 +165,6 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 			continue
 		}
 		w.out.WriteString(section.detail)
-		for _, attribute := range section.attributes {
-			w.text(attributeEntry(w, attribute, true))
-		}
 		if len(section.preview) > 0 {
 			var lines []string
 			for _, e := range section.preview {
@@ -185,12 +180,8 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 
 func (p *planner) overviewDetails(w *writer, s *subject, section *overviewSection) {
 	switch section.title {
-	case "Quality attributes":
-		for _, key := range model.Strings(s.r["quality_attributes"]) {
-			if a := p.pages[key]; a != nil && len(model.Strings(a.r["subattribute_of"])) == 0 {
-				section.attributes = append(section.attributes, a)
-			}
-		}
+	case "Quality Attributes":
+		p.attributeOverview(w, s)
 	case "System topology":
 		p.renderTopology(w, s)
 	case "Features", "Concept uses", "Synchronizations":
@@ -234,6 +225,9 @@ func overviewNavigation(w *writer, s *subject) {
 	})
 	var collections []string
 	for _, title := range titles {
+		if s.kind() == "System" && (title == "Quality attributes" || title == "Quality models") {
+			continue
+		}
 		idx := s.indexes[title]
 		line := w.link(collectionTitle(title), idx.file)
 		for _, group := range slices.Sorted(maps.Keys(idx.sources)) {

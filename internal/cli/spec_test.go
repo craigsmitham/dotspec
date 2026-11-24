@@ -317,7 +317,13 @@ Individual authors.
 		}
 		return string(data)
 	}
+	writeFixture(t, "specs/quality-models/shared.quality-model.spec.md", "---\ntype: quality-model-spec\n---\n# Shared model\n\n## Quality attributes\n\n### Precision\n\n**ID:** precision\n\nCloseness of a measurement.\n")
 	page := build()
+	if strings.Contains(page, "## Quality Attributes") || strings.Contains(page, "[Precision]") ||
+		!strings.HasSuffix(strings.TrimSpace(page), " · [Quality models](<quality-models.md>)") ||
+		strings.Count(page, "(<quality-models.md>)") != 1 {
+		t.Fatalf("model-only system overview:\n%s", page)
+	}
 	if !strings.Contains(page, "<summary>On this page</summary>") ||
 		!strings.Contains(page, "## Purpose\n\nKeep notes.") || strings.Contains(page, "## Goals\n") ||
 		!strings.Contains(page, "## Scope and environment\n\nOne notebook.") ||
@@ -351,10 +357,10 @@ An example:
 			"---\ntype: requirement-spec\nquality_attributes: "+labels+"\n---\n# "+name+"\n\n## Statement\nKeep the note.\n")
 	}
 	page = build()
-	if !strings.Contains(page, "[Quality attributes](<#quality-attributes>)") || !strings.Contains(page, "[Quality attributes](<quality-attributes.md>)") || !strings.Contains(page, "## Quality attributes") {
+	if !strings.Contains(page, "[Quality Attributes](<#quality-attributes>)") || strings.Contains(page, "(<quality-attributes.md>)") || strings.Count(page, "## Quality Attributes\n") != 1 {
 		t.Fatalf("unexpected system reading order:\n%s", page)
 	}
-	if !strings.Contains(page, "## Project references\n\nThe [release plan](<../plan.md>) names the reviewer.") || strings.Index(page, "## Project references") < strings.Index(page, "## Quality attributes") {
+	if !strings.Contains(page, "## Project references\n\nThe [release plan](<../plan.md>) names the reviewer.") || strings.Index(page, "## Project references") < strings.Index(page, "## Quality Attributes") {
 		t.Fatal(page)
 	}
 	durability := "- [Durability](<quality/reliability/durability/durability.quality-attribute.spec-report.md>) — The ID: below is permanent."
@@ -370,9 +376,10 @@ An example:
 		"**[Safety](<quality/safety/safety.quality-attribute.spec-report.md>)**", "",
 		durability,
 	}, "\n")
-	if !strings.HasPrefix(strings.TrimSpace(overview), wantOverview) || strings.Contains(page, "[Durability]") || strings.Contains(page, "[Recovery]") ||
-		!strings.Contains(page, "**[Reliability]") || !strings.Contains(page, "**[Safety]") {
-		t.Fatalf("quality attributes overview:\n%s\nwant:\n%s", overview, wantOverview)
+	_, hierarchy, _ := strings.Cut(page, "## Quality Attributes\n")
+	hierarchy, _, _ = strings.Cut(hierarchy, "\n## ")
+	if strings.TrimSpace(hierarchy) != wantOverview || !strings.HasPrefix(strings.TrimSpace(overview), wantOverview) {
+		t.Fatalf("system hierarchy:\n%s\nindex:\n%s\nwant:\n%s", hierarchy, overview, wantOverview)
 	}
 	attributesPage, err := os.ReadFile("specification/quality/reliability/durability/durability.quality-attribute.spec-report.md")
 	if err != nil {

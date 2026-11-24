@@ -25,7 +25,7 @@ System and component overviews open with their subject name and authored descrip
 
 The Concepts body appears when the overview introduces a named concept use or synchronization. Its populated groups have the stable headings Concept uses and Synchronizations in that order. The definitions index is titled Concept definitions. Each overview shows every substantive entry belonging in a body section, in index order, regardless of collection size.
 
-The overview introduces the top-level quality attributes with their definition previews. The attribute index shows the full hierarchy. A shared attribute appears under each declared parent, with its descendants expanded once. Each attribute page links to its classified requirements.
+The system overview has one Quality Attributes section when the system declares attributes. It shows the full hierarchy with linked attribute names and short excerpts from their authored definitions. On this page opens the section. Browse specifications omits the quality attribute and quality model indexes. When the system has a quality model index, a footer link opens it even if the system declares no attributes. The attribute reports’ breadcrumbs lead to the attribute index. A shared attribute appears under each declared parent, with its descendants expanded once. Each attribute page links to its classified requirements.
 
 Index entries use the subject’s linked name and a short excerpt of its authored preview. An ellipsis marks shortened wording. Links to a component collection name both the component and the collection. A concept use identifies its definition with Uses. A requirement index entry identifies each requirement or business rule it refines with Refines. Adding a second refinement preserves the first relationship.
 

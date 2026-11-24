@@ -178,7 +178,7 @@ def spec_journey(cli, tmp):
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")
     sections = ["Framing", "Purpose", "Goals", "Stakeholders and user needs", "Scope and environment", "System topology",
-                "Features", "Concepts", "Quality attributes"]
+                "Features", "Concepts", "Quality Attributes"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
     navigation = overview.split("\n## Framing\n", 1)[0]
     panels = re.findall(r"<details>\n<summary>([^<]+)</summary>\n\n(.+?)\n\n</details>", navigation, re.S)
@@ -213,7 +213,8 @@ def spec_journey(cli, tmp):
         assert f"[{section}](<#{section.lower().replace(' ', '-')}>)" in navigation
     assert all(f"[{name}]" in browse for name in (
         "Jobs", "Business rules", "Components", "Interfaces", "Features", "Capabilities",
-        "Concept definitions", "Concept uses", "Use cases", "Requirements", "Quality attributes", "Quality models"))
+        "Concept definitions", "Concept uses", "Use cases", "Requirements"))
+    assert "quality-attributes.md" not in browse and "quality-models.md" not in browse
     topology = overview.split("## System topology\n", 1)[1].split("\n## ", 1)[0]
     assert "```mermaid" in topology and "contains" in topology and "provides interface" in topology
     assert "Task service" in topology and "Task list forms" in topology
@@ -280,12 +281,14 @@ def spec_journey(cli, tmp):
     statement = acknowledgement.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
     assert component_requirements.read_text(encoding="utf-8").count(statement) == 1
     assert "## Goal" in follow(feature, "Decide what to do about a waiting errand").read_text(encoding="utf-8")
-    qualities_index = follow(root, "Quality attributes")
-    qualities = follow(qualities_index, "Durability")
-    quality_section = overview.split("\n## Quality attributes\n", 1)[1].split("\n## ", 1)[0]
+    qualities = follow(root, "Durability")
+    qualities_index = follow(qualities, "Quality attributes")
+    quality_section = overview.split("\n## Quality Attributes\n", 1)[1].split("\n## ", 1)[0]
     attribute_source = project / "specs/quality/durability/durability.quality-attribute.spec.md"
     definition = attribute_source.read_text(encoding="utf-8").split("## Definition\n\n", 1)[1].split("\n\n", 1)[0].strip()
-    assert definition in quality_section
+    excerpt = quality_section.split(" — ", 1)[1].split("\n", 1)[0]
+    assert excerpt.endswith(" …") and definition.startswith(excerpt[:-2])
+    assert definition in qualities.read_text(encoding="utf-8")
     assert "[Acknowledge after commit](" not in quality_section and "[Preserve tasks across restart](" not in quality_section
     assert follow(promise, "Durability") == qualities
     for page in (qualities_index, promise):
@@ -297,6 +300,7 @@ def spec_journey(cli, tmp):
     assert follow(qualities, "Acknowledge after commit") == acknowledgement
     assert follow(qualities, "Preserve tasks across restart") == promise
     definitions = follow(qualities, "Source definition")
+    assert follow(follow(root, "Quality models"), "Personal data quality") == definitions
     assert definitions == project / "specification/quality-models/personal-data-quality.quality-model.spec-report.md"
     assert claims[project / "specs/quality-models/personal-data.quality-model.spec.md", "personal-data-quality"] == definitions
     use_case = follow(feature, "Decide what to do about a waiting errand")
@@ -349,7 +353,7 @@ def spec_journey(cli, tmp):
             changed = body.replace("acknowledged decisions", "submitted decisions")
         else:
             changed = body
-            destination = qualities_index if page == root else promise
+            destination = qualities if page == root else promise
             for label, target, _, link in markdown_links(page):
                 if target == destination:
                     changed = changed.replace(link, label)

@@ -97,7 +97,9 @@ func addSourceContracts(p *planner) error {
 			if indexPage == nil {
 				return fmt.Errorf("%s: missing collection index %s", s.source.path, idx.file)
 			}
-			requireRoute(page, relative(s.file, idx.file), collectionTitle(title))
+			if title != "Quality attributes" || s.kind() != "System" {
+				requireRoute(page, relative(s.file, idx.file), collectionTitle(title))
+			}
 			requireRoute(indexPage, relative(idx.file, s.file), s.name.title)
 			indexPage.DirectoryMembers = map[string][]string{}
 			for group, headings := range idx.sources {
@@ -153,9 +155,7 @@ func addSourceContracts(p *planner) error {
 				for _, id := range model.Strings(s.r["quality_attributes"]) {
 					h := p.nodes[nameNode(p.elements[id])]
 					requireRoute(indexPage, relative(idx.file, p.targets[id]), attr(h, "decoded_text"))
-					if len(model.Strings(p.elements[id]["subattribute_of"])) == 0 {
-						requireRoute(page, relative(s.file, p.targets[id]), attr(h, "decoded_text"))
-					}
+					requireRoute(page, relative(s.file, p.targets[id]), attr(h, "decoded_text"))
 				}
 			}
 		}

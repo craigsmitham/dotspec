@@ -114,10 +114,7 @@ func attributeEntry(w *writer, a *subject, root bool) string {
 		heading = a.name
 	}
 	if preview := paragraphPreview(sourceProse(a.source, heading)); preview != "" {
-		if w.file != a.system.file {
-			preview = indexPreview(preview)
-		}
-		return name + " — " + inlineText(preview)
+		return name + " — " + inlineText(indexPreview(preview))
 	}
 	return name
 }

@@ -64,7 +64,7 @@ Expand **On this page** to jump to a section in reading order. Expand **Browse s
 | Use cases | The use-case index, where each interaction is listed with its authored goal |
 | Concepts | Links to concept definitions, uses and synchronizations. The body introduces named uses and synchronizations under their own headings. |
 | Requirements | **Requirements** opens the index, including routes by component. |
-| Quality attributes | Top-level attributes and their definition previews. Each attribute page lists the requirements classified under it. |
+| Quality Attributes | Every attribute declared for this system, with a short definition excerpt and its subattributes. Follow an attribute to read its full definition and the requirements it classifies. |
 | Open questions | Decisions that remain open in the system specification |
 | Glossary | Terms defined for this system and links to their definitions |
 | Project references | Authored explanations and links to delivery plans, responsibilities, risks and decisions, when supplied |
@@ -92,7 +92,7 @@ System overviews introduce named goals and assumptions with their title and firs
 The requirement links back to the same entry. A **Referenced by** link returns
 to an authored passage that cites the entry in prose. [Task-list assumptions](../../examples/todo/specification/assumptions.md)
 
-The system’s `quality-attributes.md` index introduces each declared attribute with its definition preview. Shared attributes appear under each declared parent. Their own subattributes expand under the first parent. Select an attribute to read its full definition. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability and criterion together. Links beside the requirement lead back to the precise attribute or use-case passage.
+Use **On this page → Quality Attributes** to see the system’s hierarchy. The breadcrumb on an attribute report opens the same hierarchy in `quality-attributes.md`. To browse reusable models, follow **Quality models** beside **View source** at the foot of the system report. This link is available even if the system has yet to declare an attribute. Shared attributes appear under each declared parent. Their own subattributes expand under the first parent. Select an attribute to read its full definition. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability and criterion together. Links beside the requirement lead back to the precise attribute or use-case passage.
 
 For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with its authored description of the behavior it offers. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
 
@@ -104,7 +104,7 @@ models use their Description section. For requirements and business rules, a
 short Statement introduces the promise or rule. Use cases use their Goal and
 jobs use their Job statement. Concept definitions use their Purpose.
 
-Each overview links to the populated collections in its directory. For example,
+The overview’s **Browse specifications** list links to collections such as use cases and components. For example,
 open `use-cases.md` to choose an interaction by its goal, or `components.md` to
 choose a component by its description. A system’s `systems.md` lists its immediate
 child systems. When a component has entries in a collection, **By component**

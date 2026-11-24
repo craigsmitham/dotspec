@@ -135,7 +135,11 @@ func (p *planner) renderSubject(s *subject) {
 	}
 	if s.isOverview() {
 		w.text("---")
-		w.text(sourceLink)
+		footer := sourceLink
+		if models := s.indexes["Quality models"]; s.kind() == "System" && models != nil {
+			footer += " · " + w.link("Quality models", models.file)
+		}
+		w.text(footer)
 	}
 	p.appendFootnotes(w, s)
 	for _, anchor := range s.emptyCollectionAnchors {
