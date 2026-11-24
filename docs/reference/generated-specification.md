@@ -48,14 +48,14 @@ Commit the authored changes, `SPEC.md` and the generated Markdown in `specificat
 ### Navigate an overview
 
 System and component overviews open with the subject name, authored description, and a linked section map. Component overviews also show their responsibilities, contracts, architecture, and implementation where authored.
-Use **On this page** to jump to a heading and **Browse specifications** to open a collection.
+Expand **On this page** to jump to a section in reading order. Expand **Browse specifications** to find a collection by name. For example, choose **Requirements** to review individual promises. To edit the overview’s authored content, follow **View source** at the foot of the report.
 
 | Section | What you can find |
 | --- | --- |
 | Framing | How the authors understand the situation and what they are still exploring |
 | Purpose | The system’s authored purpose |
 | Goals | Authored goals. Select a named goal to read its full statement and see which specifications support it. |
-| Business rules | **All business rules** opens the index of applicable and local rules. |
+| Business rules | **Business rules** opens the index of applicable and local rules. |
 | Stakeholders and user needs | Who has an interest in the system, their authored needs and the jobs index |
 | Scope and environment | The work the system covers, explicit exclusions, operating conditions, assumptions and constraints |
 | System topology | Immediate parts, boundary partners, and required or provided interfaces, with a Mermaid diagram and linked descriptions |
@@ -63,7 +63,7 @@ Use **On this page** to jump to a heading and **Browse specifications** to open 
 | Capabilities | Capabilities the system provides. When topology identifies a provider, its entry describes the capability. |
 | Use cases | The use-case index, where each interaction is listed with its authored goal |
 | Concepts | Links to concept definitions, uses and synchronizations. The body introduces named uses and synchronizations under their own headings. |
-| Requirements | **All requirements** opens the index, including routes by component. |
+| Requirements | **Requirements** opens the index, including routes by component. |
 | Quality attributes | Top-level attributes and their definition previews. Each attribute page lists the requirements classified under it. |
 | Open questions | Decisions that remain open in the system specification |
 | Glossary | Terms defined for this system and links to their definitions |
@@ -77,7 +77,7 @@ Across overviews and indexes, each entry uses the subject’s linked name and au
 **Refines** beside a requirement leads to each promise it refines, whether a requirement or business rule. Open the requirement to read its full
 statement, conditions, and criteria together.
 
-When the project has authored questions, **All open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings. A topology edge represents a declared relationship.
+When the project has authored questions, **Open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings. A topology edge represents a declared relationship.
 A child system has its own overview showing the next level of detail.
 
 ### Browse subject reports

@@ -53,6 +53,11 @@ func (w *writer) text(value string) {
 		w.out.WriteString("\n" + strings.TrimSpace(value) + "\n")
 	}
 }
+func (w *writer) disclosure(label string, links []string) {
+	if len(links) > 0 {
+		w.text("<details>\n<summary>" + label + "</summary>\n\n- " + strings.Join(links, "\n- ") + "\n\n</details>")
+	}
+}
 func (w *writer) heading(value string) { w.text("## " + value) }
 func (w *writer) link(title, target string) string {
 	dest := relative(w.file, target)
@@ -118,14 +123,19 @@ func (p *planner) renderSubject(s *subject) {
 	w.titleMarkdown = p.headingMarkdown(w, s.source, s.name)
 	w.titleAnchor = s.name.explicitAnchor
 	w.setBreadcrumb(s.parent, s.collection())
-	w.text(link("View source", w.page.Documents))
+	sourceLink := link("View source", w.page.Documents)
 	if s.isOverview() {
 		p.renderOverview(w, s)
 	} else {
+		w.text(sourceLink)
 		p.renderSubjectBody(w, s)
 	}
 	if s.section("Related specifications") == nil {
 		p.relationships(w, s.name, true)
+	}
+	if s.isOverview() {
+		w.text("---")
+		w.text(sourceLink)
 	}
 	p.appendFootnotes(w, s)
 	for _, anchor := range s.emptyCollectionAnchors {
@@ -231,7 +241,7 @@ func (p *planner) sectionNavigation(w *writer, parent *heading, rest []*heading)
 		links = append(links, w.link(inlineText(child.title), p.targets[child.node]))
 	}
 	if len(links) > 10 {
-		w.text("<details>\n<summary>Browse " + strings.ToLower(parent.title) + "</summary>\n\n- " + strings.Join(links, "\n- ") + "\n\n</details>")
+		w.disclosure("Browse "+strings.ToLower(parent.title), links)
 	} else {
 		w.text(strings.Join(links, " · "))
 	}

@@ -7,13 +7,25 @@ source: "../../../app/specs/task-service.component.spec.md#task-service"
 
 # Task service
 
-[View source](<../../../app/specs/task-service.component.spec.md#task-service>)
-
 The local service that decides whether a submitted action still applies to the selected entry and records accepted changes.
 
-**On this page** · [Responsibilities](<#responsibilities>) · [System topology](<#system-topology>) · [Contracts](<#contracts>) · [Implementation](<#implementation>)
+<details>
+<summary>On this page</summary>
 
-**Browse specifications** · [All capabilities](<capabilities.md>) · [All requirements](<requirements.md>)
+- [Responsibilities](<#responsibilities>)
+- [System topology](<#system-topology>)
+- [Contracts](<#contracts>)
+- [Implementation](<#implementation>)
+
+</details>
+
+<details>
+<summary>Browse specifications</summary>
+
+- [Capabilities](<capabilities.md>)
+- [Requirements](<requirements.md>)
+
+</details>
 
 ## Responsibilities
 
@@ -49,3 +61,7 @@ flowchart LR
 ## Implementation
 
 The [Go server](<../../../app/main.go>) owns form handling and storage.
+
+---
+
+[View source](<../../../app/specs/task-service.component.spec.md#task-service>)

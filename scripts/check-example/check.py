@@ -157,7 +157,7 @@ def markdown_links(page):
 
 
 def follow(page, name):
-    matches = {link[1] for link in markdown_links(page) if link[0].casefold() == name.casefold()}
+    matches = {link[1] for link in markdown_links(page) if link[1] != page and link[0].casefold() == name.casefold()}
     assert len(matches) == 1, f"{page}: expected one destination for {name!r}, got {matches}"
     target, = matches
     assert target.is_file(), target
@@ -181,7 +181,13 @@ def spec_journey(cli, tmp):
                 "Features", "Concepts", "Quality attributes"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
     navigation = overview.split("\n## Framing\n", 1)[0]
-    local, browse = navigation.split("**On this page**", 1)[1].split("**Browse specifications**")
+    panels = re.findall(r"<details>\n<summary>([^<]+)</summary>\n\n(.+?)\n\n</details>", navigation, re.S)
+    assert [label for label, _ in panels] == ["On this page", "Browse specifications"]
+    local, browse = (links for _, links in panels)
+    assert re.findall(r"^- \[([^]]+)\]", local, re.M) == sections
+    collections = re.findall(r"^- \[([^]]+)\]", browse, re.M)
+    assert collections == sorted(collections)
+    assert "  - [Provided interfaces](<interfaces.md#provided-interfaces>)" in browse
     assert all(not urlsplit(dest).path for dest in re.findall(r"\]\(<([^>]+)>\)", local))
     assert all(urlsplit(dest).path for dest in re.findall(r"\]\(<([^>]+)>\)", browse))
     assert "### Behavior" not in overview and "### Obligations" not in overview
@@ -199,15 +205,15 @@ def spec_journey(cli, tmp):
         assert "**Referenced by**" not in detail.read_text(encoding="utf-8")
         for page in (root, follow(detail, related)):
             assert any(target == detail and fragment == anchor for _, target, fragment, _ in markdown_links(page))
-    rules = follow(root, "All business rules")
+    rules = follow(root, "Business rules")
     rule = follow(rules, "Completion preserves a commitment")
     statement = rule.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
     assert statement in rules.read_text(encoding="utf-8")
     for section in sections:
         assert f"[{section}](<#{section.lower().replace(' ', '-')}>)" in navigation
-    assert all(f"[{name}]" in navigation for name in (
-        "Jobs", "All business rules", "Components", "Interfaces", "All features", "All capabilities",
-        "Concept definitions", "Concept uses", "All use cases", "All requirements", "All quality attributes", "Quality models"))
+    assert all(f"[{name}]" in browse for name in (
+        "Jobs", "Business rules", "Components", "Interfaces", "Features", "Capabilities",
+        "Concept definitions", "Concept uses", "Use cases", "Requirements", "Quality attributes", "Quality models"))
     topology = overview.split("## System topology\n", 1)[1].split("\n## ", 1)[0]
     assert "```mermaid" in topology and "contains" in topology and "provides interface" in topology
     assert "Task service" in topology and "Task list forms" in topology
@@ -217,14 +223,14 @@ def spec_journey(cli, tmp):
     assert "[My checklist]" in concepts and "Uses [Checklist](<concepts/" in concepts
     for name in ("Components", "Interfaces"):
         assert follow(root, name).name == name.lower() + ".md"
-    feature = follow(follow(root, "All features"), "Pick up where I left off")
+    feature = follow(follow(root, "Features"), "Pick up where I left off")
     promise = follow(feature, "Preserve tasks across restart")
     for name, (collection, source) in {
         "Personal task list": (None, "specs/personal-task-list.system.spec.md"),
-        "Pick up where I left off": ("All features", "specs/features/pick-up-where-i-left-off.feature.spec.md"),
+        "Pick up where I left off": ("Features", "specs/features/pick-up-where-i-left-off.feature.spec.md"),
         "Task service": ("Components", "app/specs/task-service.component.spec.md"),
-        "Local task storage": ("All capabilities", "specs/capabilities/local-task-storage.capability.spec.md"),
-        "Follow-up review": ("All capabilities", "specs/capabilities/follow-up-review.capability.spec.md"),
+        "Local task storage": ("Capabilities", "specs/capabilities/local-task-storage.capability.spec.md"),
+        "Follow-up review": ("Capabilities", "specs/capabilities/follow-up-review.capability.spec.md"),
         "My checklist": ("Concept uses", "specs/personal-task-list.system.spec.md"),
     }.items():
         declaration = (project / source).read_text(encoding="utf-8")
@@ -233,8 +239,11 @@ def spec_journey(cli, tmp):
         directory = follow(root, collection) if collection else root
         page = follow(directory, name) if collection else root
         text = page.read_text(encoding="utf-8")
-        lead = description if name in ("Personal task list", "Task service") else f"## Description\n\n{description}"
-        assert re.search(r"^# " + re.escape(name) + r"\n\n\[View source\].*\n\n" + re.escape(lead), text, re.M)
+        if name in ("Personal task list", "Task service"):
+            assert f"# {name}\n\n{description}\n" in text
+            assert text.rstrip().splitlines()[-1].startswith("[View source]")
+        else:
+            assert re.search(r"^# " + re.escape(name) + r"\n\n\[View source\].*\n\n## Description\n\n" + re.escape(description), text, re.M)
         assert text.count(description) == 1
         if collection:
             line, = [line for line in directory.read_text(encoding="utf-8").splitlines() if line.startswith(f"- [{name}]")]
@@ -257,10 +266,10 @@ def spec_journey(cli, tmp):
         anchor = re.sub(r"[^a-z0-9 -]", "", title.lower()).replace(" ", "-")
         assert (source.resolve(), anchor) in claims, source
     component = follow(follow(root, "Components"), "Task service")
-    assert follow(follow(follow(root, "All capabilities"), "Local task storage"), "Task service") == component
-    assert follow(follow(component, "All capabilities"), "Local task storage") == follow(follow(root, "All capabilities"), "Local task storage")
+    assert follow(follow(follow(root, "Capabilities"), "Local task storage"), "Task service") == component
+    assert follow(follow(component, "Capabilities"), "Local task storage") == follow(follow(root, "Capabilities"), "Local task storage")
     assert component == project / "specification/components/task-service/task-service.component.spec-report.md"
-    component_requirements = follow(component, "All requirements")
+    component_requirements = follow(component, "Requirements")
     acknowledgement = follow(component_requirements, "Acknowledge after commit")
     assert follow(acknowledgement, "Requirements") == component_requirements
     assert follow(acknowledgement, "Task service") == component
@@ -271,7 +280,7 @@ def spec_journey(cli, tmp):
     statement = acknowledgement.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
     assert component_requirements.read_text(encoding="utf-8").count(statement) == 1
     assert "## Goal" in follow(feature, "Decide what to do about a waiting errand").read_text(encoding="utf-8")
-    qualities_index = follow(root, "All quality attributes")
+    qualities_index = follow(root, "Quality attributes")
     qualities = follow(qualities_index, "Durability")
     quality_section = overview.split("\n## Quality attributes\n", 1)[1].split("\n## ", 1)[0]
     attribute_source = project / "specs/quality/durability/durability.quality-attribute.spec.md"
@@ -296,7 +305,7 @@ def spec_journey(cli, tmp):
     availability = follow(use_case, "Keep recorded work available")
     assert availability == claims[project / "specs/requirements/availability.requirement.spec.md", "keep-recorded-work-available"]
     assert follow(promise, "Keep recorded work available") == availability
-    assert follow(follow(root, "All requirements"), "Keep recorded work available") == availability
+    assert follow(follow(root, "Requirements"), "Keep recorded work available") == availability
     assert claims[project / "specs/concepts/checklist.concept.spec.md", "checklist"] == follow(use_case, "Complete")
     headings = re.findall(r"^## (.+)$", promise.read_text(encoding="utf-8"), re.M)
     assert headings[:3] == ["Statement", "Applies to", "Criterion"]
@@ -309,11 +318,11 @@ def spec_journey(cli, tmp):
     assert follow(feature, "Show which replies need follow-up") == cue
     assert follow(cue, "When a reply needs chasing") == follow(rules, "When a reply needs chasing")
     assert follow(cue, "form acceptance test") == project / ACCEPTANCE
-    requirements = follow(root, "All requirements")
+    requirements = follow(root, "Requirements")
     assert requirements == root.parent / "requirements.md"
     assert follow(requirements, "Preserve tasks across restart") == promise
     assert follow(requirements, "Task service requirements") == component_requirements
-    use_cases = follow(root, "All use cases")
+    use_cases = follow(root, "Use cases")
     assert use_cases == root.parent / "use-cases.md"
     assert follow(use_cases, "Decide what to do about a waiting errand") == use_case
     assert not (component.parent / "use-cases.md").exists()

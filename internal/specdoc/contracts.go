@@ -29,7 +29,7 @@ func addSourceContracts(p *planner) error {
 		requireRoute(page, page.Documents, "View source")
 		page.RequiredContent = nil
 		for _, section := range s.overview {
-			if section.level == 2 && section.hasBody {
+			if section.level == 2 {
 				requireRoute(page, relativeURL(s.file, s.file, section.anchor), section.title)
 			}
 		}
@@ -97,11 +97,7 @@ func addSourceContracts(p *planner) error {
 			if indexPage == nil {
 				return fmt.Errorf("%s: missing collection index %s", s.source.path, idx.file)
 			}
-			label := collectionTitle(title)
-			if s.isOverview() {
-				label = overviewIndexLabel(title)
-			}
-			requireRoute(page, relative(s.file, idx.file), label)
+			requireRoute(page, relative(s.file, idx.file), collectionTitle(title))
 			requireRoute(indexPage, relative(idx.file, s.file), s.name.title)
 			indexPage.DirectoryMembers = map[string][]string{}
 			for group, headings := range idx.sources {

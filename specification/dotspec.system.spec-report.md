@@ -5,13 +5,30 @@ source: "../specs/dotspec.system.spec.md#dotspec"
 ---
 # dotspec
 
-[View source](<../specs/dotspec.system.spec.md#dotspec>)
-
 A requirements authoring framework and command-line toolkit for Markdown specifications stored alongside source code.
 
-**On this page** · [Framing](<#framing>) · [Purpose](<#purpose>) · [Scope and environment](<#scope-and-environment>) · [Quality attributes](<#quality-attributes>)
+<details>
+<summary>On this page</summary>
 
-**Browse specifications** · [Jobs](<jobs.md>) · [All use cases](<use-cases.md>) · [Concept definitions](<concepts.md>) · [All requirements](<requirements.md>) · [All quality attributes](<quality-attributes.md>) · [Quality models](<quality-models.md>) · [Glossary](<glossary.md>)
+- [Framing](<#framing>)
+- [Purpose](<#purpose>)
+- [Scope and environment](<#scope-and-environment>)
+- [Quality attributes](<#quality-attributes>)
+
+</details>
+
+<details>
+<summary>Browse specifications</summary>
+
+- [Concept definitions](<concepts.md>)
+- [Glossary](<glossary.md>)
+- [Jobs](<jobs.md>)
+- [Quality attributes](<quality-attributes.md>)
+- [Quality models](<quality-models.md>)
+- [Requirements](<requirements.md>)
+- [Use cases](<use-cases.md>)
+
+</details>
 
 ## Framing
 
@@ -73,6 +90,10 @@ arguments, standard streams, and exit statuses.
 **[Reliability](<quality/reliability/reliability.quality-attribute.spec-report.md>)** — How consistently dotspec performs its intended operations under stated conditions.
 
 **[Usability](<quality/usability/usability.quality-attribute.spec-report.md>)** — How effectively contributors can author, inspect, and maintain specifications.
+
+---
+
+[View source](<../specs/dotspec.system.spec.md#dotspec>)
 
 <a id="empty.goals"></a>
 

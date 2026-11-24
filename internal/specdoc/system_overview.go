@@ -13,16 +13,16 @@ import (
 // Each authored passage has one home in the overview. The same outline drives
 // rendering, source content order, fragment allocation and the navigation map.
 type overviewSection struct {
-	title, anchor        string
-	leadHeading          string
-	level                int
-	sources, collections []string
-	passages             [][]*heading
-	detail               string
-	detailLinks          []string
-	attributes           []*subject
-	preview              []entry
-	hasBody              bool
+	title, anchor string
+	leadHeading   string
+	level         int
+	sources       []string
+	passages      [][]*heading
+	detail        string
+	detailLinks   []string
+	attributes    []*subject
+	preview       []entry
+	hasBody       bool
 }
 
 func overviewOutline(kind string) []overviewSection {
@@ -34,25 +34,21 @@ func overviewOutline(kind string) []overviewSection {
 		{sources: []string{"description"}},
 		{title: "Framing", level: 2, sources: []string{"framing"}},
 		{title: "Purpose", level: 2, sources: []string{"purpose"}},
-		{title: "Goals", level: 2, sources: []string{"goals"}, collections: []string{"Goals"}},
-		{title: "Business rules", level: 2, collections: []string{"Business rules"}},
-		{title: "Stakeholders and user needs", leadHeading: "Stakeholders", level: 2, sources: []string{"stakeholders"}, collections: []string{"Jobs"}},
+		{title: "Goals", level: 2, sources: []string{"goals"}},
+		{title: "Stakeholders and user needs", leadHeading: "Stakeholders", level: 2, sources: []string{"stakeholders"}},
 		{title: "Responsibilities", level: 2, sources: []string{"responsibilities"}},
-		{title: scopeTitle, leadHeading: "Scope", level: 2, sources: []string{"scope", "boundary_description", "out_of_scope", "environment", "assumptions", "constraints"}, collections: []string{"Assumptions"}},
-		{title: "System topology", level: 2, sources: []string{"part_of", "interacts_with", "required_interfaces", "provided_interfaces"}, collections: []string{"Systems", "Components", "Interfaces"}},
-		{title: "Features", level: 2, collections: []string{"Features"}},
-		{title: "Capabilities", level: 2, collections: []string{"Capabilities"}},
-		{title: "Use cases", level: 2, collections: []string{"Use cases"}},
-		{title: "Concepts", level: 2, collections: []string{"Concepts", "Concept uses", "Synchronizations"}},
-		{title: "Concept uses", level: 3, sources: []string{"concept_uses"}, collections: []string{"Concept uses"}},
-		{title: "Synchronizations", level: 3, sources: []string{"synchronizations"}, collections: []string{"Synchronizations"}},
-		{title: "Requirements", level: 2, collections: []string{"Requirements"}},
-		{title: "Quality attributes", level: 2, collections: []string{"Quality attributes", "Quality models"}},
+		{title: scopeTitle, leadHeading: "Scope", level: 2, sources: []string{"scope", "boundary_description", "out_of_scope", "environment", "assumptions", "constraints"}},
+		{title: "System topology", level: 2, sources: []string{"part_of", "interacts_with", "required_interfaces", "provided_interfaces"}},
+		{title: "Features", level: 2},
+		{title: "Concepts", level: 2},
+		{title: "Concept uses", level: 3, sources: []string{"concept_uses"}},
+		{title: "Synchronizations", level: 3, sources: []string{"synchronizations"}},
+		{title: "Quality attributes", level: 2},
 		{title: "Contracts", level: 2, sources: []string{"contracts"}},
 		{title: "Architecture", level: 2, sources: []string{"architecture"}},
 		{title: "Implementation", level: 2, sources: []string{"implementation"}},
-		{title: "Open questions", level: 2, sources: []string{"open_questions"}, collections: []string{"Open questions"}},
-		{title: "Glossary", level: 2, sources: []string{"glossary"}, collections: []string{"Glossary"}},
+		{title: "Open questions", level: 2, sources: []string{"open_questions"}},
+		{title: "Glossary", level: 2, sources: []string{"glossary"}},
 		{title: "Project references", level: 2, sources: []string{"project_references"}},
 		{title: "Reference", level: 2, sources: []string{"related_specifications", "specification_system", "authority_and_evidence", "evidence", "supports", "derived_from", "relies_on"}},
 	}
@@ -77,10 +73,8 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 			section.passages = append(section.passages, groups[title]...)
 			delete(groups, title)
 		}
-		section.collections = slices.DeleteFunc(section.collections, func(title string) bool { return s.indexes[title] == nil })
 	}
 	// Decide which headings exist before allocating their Markdown fragments.
-	// Keep a collection in the map even when it supplies no body content.
 	var parent *overviewSection
 	for i := range sections {
 		section := &sections[i]
@@ -96,7 +90,7 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 		}
 	}
 	return slices.DeleteFunc(sections, func(section overviewSection) bool {
-		return !section.hasBody && len(section.collections) == 0
+		return !section.hasBody
 	})
 }
 
@@ -122,7 +116,7 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 	}
 	for i := range s.overview {
 		section := &s.overview[i]
-		if section.level > 0 && section.hasBody {
+		if section.level > 0 {
 			section.anchor = string(ids.Generate([]byte(section.title), ast.KindHeading))
 			if explicit {
 				section.anchor = "overview." + section.anchor
@@ -149,22 +143,11 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 	}
 }
 
-func overviewIndexLabel(title string) string {
-	switch title {
-	case "Goals", "Assumptions", "Constraints", "Business rules", "Features", "Capabilities", "Use cases", "Requirements", "Open questions", "Quality attributes":
-		return "All " + strings.ToLower(title)
-	}
-	return collectionTitle(title)
-}
-
 func (p *planner) renderOverview(w *writer, s *subject) {
 	for _, title := range slices.Sorted(maps.Keys(s.indexes)) {
 		p.renderIndex(s, title, s.indexes[title])
 	}
-	for i, section := range s.overview {
-		if !section.hasBody {
-			continue
-		}
+	for _, section := range s.overview {
 		if section.level > 0 {
 			if s.name.explicitAnchor != "" {
 				w.text(`<a id="` + section.anchor + `"></a>`)
@@ -179,8 +162,8 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 			}
 			p.renderPassage(w, s, group, offset, merged)
 		}
-		if i == 0 {
-			p.overviewNavigation(w, s)
+		if section.level == 0 {
+			overviewNavigation(w, s)
 			continue
 		}
 		w.out.WriteString(section.detail)
@@ -211,8 +194,7 @@ func (p *planner) overviewDetails(w *writer, s *subject, section *overviewSectio
 	case "System topology":
 		p.renderTopology(w, s)
 	case "Features", "Concept uses", "Synchronizations":
-		for _, title := range section.collections {
-			idx := s.indexes[title]
+		if idx := s.indexes[section.title]; idx != nil {
 			for _, group := range slices.Sorted(maps.Keys(idx.groups)) {
 				if group == "By component" {
 					continue
@@ -238,29 +220,28 @@ func entryLine(w *writer, e entry) string {
 	return line
 }
 
-func (p *planner) overviewNavigation(w *writer, s *subject) {
-	var sections, links []string
+func overviewNavigation(w *writer, s *subject) {
+	var sections []string
 	for _, section := range s.overview {
-		if section.level != 2 {
-			continue
-		}
-		if section.hasBody {
+		if section.level == 2 {
 			sections = append(sections, w.link(section.title, s.file+"#"+section.anchor))
 		}
-		for _, title := range section.collections {
-			idx := s.indexes[title]
-			links = append(links, w.link(overviewIndexLabel(title), idx.file))
-			for _, group := range slices.Sorted(maps.Keys(idx.sources)) {
-				if group != "" {
-					links = append(links, w.link(group, s.sectionIndex(group)))
-				}
+	}
+	w.disclosure("On this page", sections)
+
+	titles := slices.SortedFunc(maps.Keys(s.indexes), func(a, b string) int {
+		return strings.Compare(collectionTitle(a), collectionTitle(b))
+	})
+	var collections []string
+	for _, title := range titles {
+		idx := s.indexes[title]
+		line := w.link(collectionTitle(title), idx.file)
+		for _, group := range slices.Sorted(maps.Keys(idx.sources)) {
+			if group != "" {
+				line += "\n  - " + w.link(group, s.sectionIndex(group))
 			}
 		}
+		collections = append(collections, line)
 	}
-	if len(sections) > 0 {
-		w.text("**On this page** · " + strings.Join(sections, " · "))
-	}
-	if len(links) > 0 {
-		w.text("**Browse specifications** · " + strings.Join(links, " · "))
-	}
+	w.disclosure("Browse specifications", collections)
 }

@@ -5,13 +5,43 @@ source: "../specs/personal-task-list.system.spec.md#personal-task-list"
 ---
 # Personal task list
 
-[View source](<../specs/personal-task-list.system.spec.md#personal-task-list>)
-
 A personal list of errands the owner can act on, replies they are waiting for and commitments they have settled.
 
-**On this page** · [Framing](<#framing>) · [Purpose](<#purpose>) · [Goals](<#goals>) · [Stakeholders and user needs](<#stakeholders-and-user-needs>) · [Scope and environment](<#scope-and-environment>) · [System topology](<#system-topology>) · [Features](<#features>) · [Concepts](<#concepts>) · [Quality attributes](<#quality-attributes>)
+<details>
+<summary>On this page</summary>
 
-**Browse specifications** · [All goals](<goals.md>) · [All business rules](<business-rules.md>) · [Jobs](<jobs.md>) · [All assumptions](<assumptions.md>) · [Components](<components.md>) · [Interfaces](<interfaces.md>) · [Provided interfaces](<interfaces.md#provided-interfaces>) · [All features](<features.md>) · [All capabilities](<capabilities.md>) · [All use cases](<use-cases.md>) · [Concept definitions](<concepts.md>) · [Concept uses](<concept-uses.md>) · [All requirements](<requirements.md>) · [All quality attributes](<quality-attributes.md>) · [Quality models](<quality-models.md>)
+- [Framing](<#framing>)
+- [Purpose](<#purpose>)
+- [Goals](<#goals>)
+- [Stakeholders and user needs](<#stakeholders-and-user-needs>)
+- [Scope and environment](<#scope-and-environment>)
+- [System topology](<#system-topology>)
+- [Features](<#features>)
+- [Concepts](<#concepts>)
+- [Quality attributes](<#quality-attributes>)
+
+</details>
+
+<details>
+<summary>Browse specifications</summary>
+
+- [Assumptions](<assumptions.md>)
+- [Business rules](<business-rules.md>)
+- [Capabilities](<capabilities.md>)
+- [Components](<components.md>)
+- [Concept definitions](<concepts.md>)
+- [Concept uses](<concept-uses.md>)
+- [Features](<features.md>)
+- [Goals](<goals.md>)
+- [Interfaces](<interfaces.md>)
+  - [Provided interfaces](<interfaces.md#provided-interfaces>)
+- [Jobs](<jobs.md>)
+- [Quality attributes](<quality-attributes.md>)
+- [Quality models](<quality-models.md>)
+- [Requirements](<requirements.md>)
+- [Use cases](<use-cases.md>)
+
+</details>
 
 ## Framing
 
@@ -75,3 +105,7 @@ flowchart LR
 ## Quality attributes
 
 **[Durability](<quality/durability/durability.quality-attribute.spec-report.md>)** — Preservation of the owner’s acknowledged decisions between local sessions, including the reply they expect for a waiting errand and the day they chose to follow up. The follow-up cue can change overnight even though those decisions survive intact.
+
+---
+
+[View source](<../specs/personal-task-list.system.spec.md#personal-task-list>)
