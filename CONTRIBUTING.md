@@ -63,7 +63,7 @@ Use the [documentation map](docs/README.md) to find the source for a CLI guide t
 - `internal/specfile` owns common frontmatter, Goldmark outlines, source locations,
   document-local identifiers, reference extraction, and shared filesystem/discovery
   behavior. All specification types use the same Markdown extraction path.
-- `internal/speccollection` implements owner-scoped lookup and subtree listing for business rules, concepts, jobs, requirements and use cases. Each family supplies its reader, slug rules, group result and any enrichment, such as classifying a requirement against its associated system. Reusable quality models have their own selection policy, including bundled starters.
+- `internal/speccollection` implements owner-scoped lookup and subtree listing for business rules, concepts, jobs, requirements and use cases. Each family supplies its layout, reader, group result and any enrichment, such as classifying a requirement against its associated system. Reusable quality models have their own selection policy, including bundled starters.
 - `internal/diagnostic` owns the finding representation and source locations. The checker or parser that detects a condition supplies its rule ID and message.
 - `model/metamodel.yaml` owns the experimental specification metamodel. Generated
   JSON Schema and the inherited range catalog are embedded by the `model` Go
@@ -83,12 +83,22 @@ unknown prose and distinguish draft omissions from structural errors.
 
 | Change | Owner and consumers | Independent check |
 | --- | --- | --- |
-| Reorder a system report | `systemOutline` in `internal/specdoc/overview_layout.go` sets reading order and navigation groups. The planner uses that outline for passage placement, anchors and navigation. Components have their own outline. | The To-do reader journey in `scripts/check-example/check.py` spells out the expected group labels, heading order and link destinations. |
-| Add an allowed endpoint to a relationship | Edit the slot’s reference ranges in `model/metamodel.yaml`, keep any `trace_targets` annotation in agreement, and regenerate the catalog. The exporter uses those ranges when it resolves an authored link. The Markdown mapping owns the heading that supplies the link. Report wording and the placement of each link direction live in `internal/specdoc/relationship_layout.go`. | Exercise both an accepted and a wrong-kind target. The offline validator checks typed occurrences against catalog ranges and the claims in the snapshot. |
-| Change a diagnostic | Change the rule where the condition is detected. `internal/check` aggregates findings and computes inspection status. `internal/cli` formats the result and maps command failures to process status. Markdown model commands share their export, validation and output path in `newModelReadingCommand`. | The process tests check output streams and exit status. Update the diagnostic reference if the public rule changes. |
+| Reorder a system report | Move the section in `systemOutline` in `internal/specdoc/overview_layout.go`. Move Scope with its Out of scope subsection. The planner uses the outline to place passages, omit empty sections, allocate anchors and build navigation. Components have their own outline. | The To-do reader journey in `scripts/check-example/check.py` names the expected heading order, nesting and destinations. Change those expectations when the intended reading order changes. |
+| Add an allowed relationship endpoint | Edit the slot’s `range` or `any_of` in `model/metamodel.yaml` and run `mise run model-generate`. Export and offline validation consume the generated ranges. If a core diagram shows that relationship, include the new endpoint in its node selection. | Use a named accepted target and a named wrong-kind target in an authored example. For scenario steps, see `TestIllustrationIsExplicitAndRejectsWrongEndpoint` and the To-do example’s check that a step illustrates the availability requirement. |
+| Revise the invalid-slug message | `specfile.Layout.ValidateSlug` owns the collection slug grammar and repair text. Each type supplies its optional example through `SlugExample` and identifies its own filename diagnostic. Named systems and components derive filenames from their headings through `NameSlug`. | `diagnostics.txtar` checks the literal text, stream and process status for invalid job and feature arguments and a malformed job filename. |
+| Change a finding’s severity or rule ID | Change the producer that detects the condition. `internal/check` aggregates located findings. `internal/cli` formats reports and maps failures to process status. Update the diagnostic reference when the public rule changes. | The process tests exercise complete scans with findings, incomplete scans and invalid invocations. |
 | Change system grouping in a family list | `internal/speccollection` groups by system source path, sorts equally named systems by path, and puts unassociated members last. Each family constructs its own JSON result. | The job and use-case store fixtures include distinct systems with the same name, unassociated members and nested scopes. |
 
-For a generated report, follow the data from `internal/cli/spec.go`. The CLI supplies the type integrations to `check.InspectSources`. The inventory carries the observed source bytes into `model.ExportInspection`, which maps authored content and resolves references. `specdoc.Generate` plans pages from the snapshot. `specdoc.Write` reconciles generated files, and `specdoc.Check` inspects the delivered Markdown against source and navigation contracts. Offline snapshot validation can also run directly on exported JSON.
+### Follow an authored link into a report
+
+The **Illustrates** field in the To-do use case links a scenario step to the availability requirement. To follow that link through the CLI, start with the [authored step](examples/todo/specs/use-cases/resume-list.use-case.spec.md#main-success-scenario).
+
+1. `check.InspectSources` discovers the selected layouts, acquires the Markdown in a `specfile.SourceSet`, and runs the use-case inspector. The shared Markdown parser preserves source positions. The use-case parser interprets the scenario structure. The checker follows direct references within the repository and records the target file in its inventory.
+2. `model.ExportInspection` takes that inventory, including the type registrations used during discovery. The mapper associates the link occurrence and its source span with the scenario step. Resolution identifies the target, and the generated slot contract determines whether the step may illustrate it. A saved snapshot carries the authored evidence for offline validation.
+3. `specdoc.Generate` plans pages and fragment destinations from the snapshot. `internal/specdoc/relationship_layout.go` supplies reader-facing labels and placement for each direction. `specdoc.Write` reconciles generated files, and `specdoc.Check` inspects the delivered Markdown, including its links and attribution.
+4. The To-do example reads exported JSON and follows links in the built reports. Keep the expected target, heading order and source links in the example expressed in the project's own terms. Its acceptance procedure exercises the running app across a restart. [Example verification](scripts/check-example/check.py) · [App acceptance procedure](examples/todo/tests/acceptance.py).
+
+When a context provider reads Markdown during inspection, pass the inspection’s source set through to the type reader. This keeps context checks and export on the same observed file revision. A new inspection acquires subsequent edits.
 
 ### Adding a specification type
 
@@ -99,7 +109,7 @@ For example, a new concept action already has an editable home and an address wi
 Define a `specfile.Layout` in the owning type package with its specification type
 (the `Kind` field) and its filename or suffix. For a collection such as jobs, provide the default collection directory. For a named directory owner, see the system and component declarations in `internal/specfile/subject.go`. Use that layout for discovery,
 placement validation, creation, and direct lookup so those operations agree.
-Keep slug rules and filename diagnostics in the type package.
+For a collection with user-supplied slugs, use `Layout.ValidateSlug` for creation, lookup and filename checks. Set `SlugExample` when the repair text should illustrate a valid name. Keep the filename diagnostic ID and source location in the type package.
 
 Define a metadata struct embedding `specfile.Metadata` with `yaml:",inline"` and
 pass a fresh pointer to `specfile.ParseOutline` (or `Parse` for required-section
