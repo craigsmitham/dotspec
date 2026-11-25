@@ -185,7 +185,8 @@ def spec_journey(cli, tmp):
     assert all(target != entry for page in (project / "specification").rglob("*.md")
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")
-    sections = ["Framing", "Purpose", "Goals", "Stakeholders", "Scope and environment", "System topology",
+    sections = ["Framing", "Purpose", "Goals", "Stakeholders", "Scope", "Out of scope", "Environment",
+                "Assumptions", "System topology",
                 "Features", "Concepts", "Quality Attributes"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
     navigation = overview.split("\n## Framing\n", 1)[0]

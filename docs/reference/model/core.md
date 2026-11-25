@@ -441,7 +441,7 @@ Subsets: `business-requirements`, `software-requirements`. [Assumption](index.md
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
-| `statement` | [RichContent](index.md#richcontent) | optional |  |
+| `statement` | [RichContent](index.md#richcontent) | optional | The premise relied on, expressed so a reader can recognize a case in which it fails. |
 | `basis` | [RichContent](index.md#richcontent) | optional | Why reliance on this statement is justified, including cited evidence. |
 | `applicability` | [RichContent](index.md#richcontent) | optional | Conditions, locations or periods in which this assumption is expected to hold. |
 
@@ -455,18 +455,18 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 | --- | --- | --- | --- |
 | `framing` | [RichContent](index.md#richcontent) | optional | An evolving account of how the authors understand the situation, approaches worth exploring and questions that could change their direction. |
 | `purpose` | [RichContent](index.md#richcontent) | optional | Why the system exists, including the situation it addresses and its intended benefit. |
-| `scope` | [RichContent](index.md#richcontent) | optional | The work, users and situations the system is intended to serve. |
+| `scope` | [RichContent](index.md#richcontent) | optional | The work this system covers, whom it serves and the situations for which it takes responsibility. |
 | `goals` | [Goal](index.md#goal) | optional; ordered list | Explicitly authored goals, in authored order. |
-| `environment` | [RichContent](index.md#richcontent) | optional | Conditions and surroundings the system must accommodate. |
+| `environment` | [RichContent](index.md#richcontent) | optional | Conditions in the surrounding world that matter to understanding this system’s requirements. These may concern how people work, the physical setting or the technology around the system. |
 | `stakeholder_roles` | [SystemStakeholderRole](index.md#systemstakeholderrole) | optional; ordered list | Stakeholder roles declared by this system, in authored order. |
-| `assumptions` | [Assumption](index.md#assumption) | optional; ordered list | Explicitly authored assumptions, in authored order. |
-| `constraints` | [RichContent](index.md#richcontent) | optional | Externally imposed restrictions the system must respect, as narrative. An individually addressable constraint is a Requirement or BusinessRule. |
+| `assumptions` | [Assumption](index.md#assumption) | optional; ordered list | Named premises this system’s specification relies on, in declaration order. Each premise can identify the basis for relying on it and the circumstances in which it is expected to hold. |
+| `constraints` | [RichContent](index.md#richcontent) | optional | Externally imposed limits on the solutions available for this system. The narrative can identify the source of a limit and link to the Requirement or BusinessRule that states it authoritatively. |
 | `glossary` | [GlossaryTerm](index.md#glossaryterm) | optional; ordered list | Explicitly named terms, in authored order. |
 | `concept_uses` | [ConceptUse](index.md#conceptuse) | optional; ordered list |  |
 | `synchronizations` | [Synchronization](index.md#synchronization) | optional; ordered list |  |
 | `quality_attributes` | [SystemQualityAttribute](index.md#systemqualityattribute) | optional; ordered list | Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. |
 | `part_of` | [System](index.md#system) | optional | Optional explicit parent System. Directory context does not supply this relationship. |
-| `out_of_scope` | [RichContent](index.md#richcontent) | optional | Explicit boundary exclusions; absence is not a statement of scope. |
+| `out_of_scope` | [RichContent](index.md#richcontent) | optional | Work, users or situations explicitly excluded from this system’s responsibility. Omission leaves scope unspecified. |
 | `interacts_with` | [System](index.md#system) or [Component](index.md#component) | optional; list | Explicit interaction partners across this subject boundary; does not establish structural containment. |
 | `required_interfaces` | [Interface](index.md#interface) | optional; ordered list | Services this subject expects from its environment. |
 | `provided_interfaces` | [Interface](index.md#interface) | optional; ordered list | Services this subject exposes to its environment. |

@@ -23,6 +23,8 @@ The project's `SPEC.md` gives the system name and one link to `specification/<na
 
 System and component overviews open with their subject name and authored description. Readers can expand On this page for the populated body sections in reading order, or Browse specifications for an alphabetical list of the scope’s collection indexes. Both lists start collapsed. The overview’s View source link follows the body. Authored stakeholder needs stay in the body. Capabilities appear beside their declared providers in topology. The topology shows immediate parts and boundary relationships in a Mermaid diagram and in linked text.
 
+Between Stakeholders and System topology, the system overview presents Scope, Out of scope, Environment, Assumptions and Constraints as independent peer sections in that order. Each populated section has a matching entry in On this page. A bare heading appears in neither place. An explicit statement of exclusions, authored Markdown and populated local subsections retain their content, hierarchy and link destinations.
+
 The Concepts body appears when the overview introduces a named concept use or synchronization. Its populated groups have the stable headings Concept uses and Synchronizations in that order. The definitions index is titled Concept definitions. Each overview shows every substantive entry belonging in a body section, in index order, regardless of collection size.
 
 The system overview has one Quality Attributes section when the system declares attributes. It shows the full hierarchy with linked attribute names and short excerpts from their authored definitions. On this page opens the section. Browse specifications omits the quality attribute and quality model indexes. When the system has a quality model index, a footer link opens it even if the system declares no attributes. The attribute reports’ breadcrumbs lead to the attribute index. A shared attribute appears under each declared parent, with its descendants expanded once. Each attribute page links to its classified requirements.
@@ -34,7 +36,7 @@ with a linked title and an authored statement preview when available. Each link
 opens the exact entry in the owner's collection. Readers can follow a relationship
 in either direction from the passages it connects. The detail entry keeps its
 qualifications and supporting references together. A citation in prose leads
-back to the citing passage through a “Referenced by” link. Collection entries come from declared members. Constraints stay together in the system scope.
+back to the citing passage through a “Referenced by” link. Collection entries come from declared members.
 The report selects authored fields, and inspection identifies misplaced collection prose and unrecognized sections at their source locations. The component’s
 requirements index lists each explicitly applicable requirement once. Its overview
 keeps authored citations beside the responsibilities they explain.

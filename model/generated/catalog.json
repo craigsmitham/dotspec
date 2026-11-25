@@ -689,7 +689,7 @@
         "statement": {
           "annotations": {},
           "any_of": [],
-          "description": "",
+          "description": "The premise relied on, expressed so a reader can recognize a case in which it fails.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -13821,7 +13821,7 @@
             "relationship_scope": "Exactly one declaring owner in the same source document."
           },
           "any_of": [],
-          "description": "Explicitly authored assumptions, in authored order.",
+          "description": "Named premises this system\u2019s specification relies on, in declaration order. Each premise can identify the basis for relying on it and the circumstances in which it is expected to hold.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -13891,7 +13891,7 @@
         "constraints": {
           "annotations": {},
           "any_of": [],
-          "description": "Externally imposed restrictions the system must respect, as narrative. An individually addressable constraint is a Requirement or BusinessRule.",
+          "description": "Externally imposed limits on the solutions available for this system. The narrative can identify the source of a limit and link to the Requirement or BusinessRule that states it authoritatively.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -13994,7 +13994,7 @@
         "environment": {
           "annotations": {},
           "any_of": [],
-          "description": "Conditions and surroundings the system must accommodate.",
+          "description": "Conditions in the surrounding world that matter to understanding this system\u2019s requirements. These may concern how people work, the physical setting or the technology around the system.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -14237,7 +14237,7 @@
         "out_of_scope": {
           "annotations": {},
           "any_of": [],
-          "description": "Explicit boundary exclusions; absence is not a statement of scope.",
+          "description": "Work, users or situations explicitly excluded from this system\u2019s responsibility. Omission leaves scope unspecified.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -14473,7 +14473,7 @@
         "scope": {
           "annotations": {},
           "any_of": [],
-          "description": "The work, users and situations the system is intended to serve.",
+          "description": "The work this system covers, whom it serves and the situations for which it takes responsibility.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -15662,7 +15662,7 @@
         "GeneratedDocument"
       ],
       "annotations": {},
-      "description": "Explains the system\u2019s purpose and scope and links to its immediate child systems, local subjects, and requirements.",
+      "description": "Explains the system\u2019s purpose, boundary, setting and the premises its specification relies on. Links to its immediate child systems, local subjects and requirements.",
       "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
@@ -17577,7 +17577,7 @@
   },
   "representation_version": "0.4.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "07714b19b5f211771d882a343318ace815b6d83657f9806ffcfd8631c67b40af",
+  "source_sha256": "d48062402bf159bfb2f043dd1a10d1825604a99cd81ac01dda39ea2d3ef0ff71",
   "subsets": {
     "business-requirements": {
       "classification": "core",

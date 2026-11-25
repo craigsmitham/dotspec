@@ -14,7 +14,10 @@ A personal list of errands the owner can act on, replies they are waiting for an
 - [Purpose](<#purpose>)
 - [Goals](<#goals>)
 - [Stakeholders](<#stakeholders>)
-- [Scope and environment](<#scope-and-environment>)
+- [Scope](<#scope>)
+- [Out of scope](<#out-of-scope>)
+- [Environment](<#environment>)
+- [Assumptions](<#assumptions>)
 - [System topology](<#system-topology>)
 - [Features](<#features>)
 - [Concepts](<#concepts>)
@@ -63,19 +66,19 @@ The person who keeps the list relies on it to pick up unfinished errands after a
 
 [View section source](<../specs/personal-task-list.system.spec.md#list-owner>)
 
-## Scope and environment
+## Scope
 
 One person records commitments on one computer and reviews them in Open, Waiting and Completed. They choose what reply to watch for and the day to check back. They receive the reply and judge the result outside the list.
 
-### Out of scope
+## Out of scope
 
 Sending reminders, reading messages, managing delivery deadlines, sharing lists, synchronizing devices and recovering from loss of the database file.
 
-### Operating environment
+## Environment
 
 The browser and service run on the same computer. The owner can close either between visits and return on a different local calendar day. The [follow-up requirement](<requirements/show-which-replies-need-follow-up.requirement.spec-report.md#conditions>) explains what they should see when they open Waiting again.
 
-### Assumptions
+## Assumptions
 
 - [Same local storage](<assumptions.md#same-local-storage>) — The person returns to the same writable database file.
 

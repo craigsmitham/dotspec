@@ -1110,7 +1110,7 @@ The documented subject, serialized as a relative URI to its authored heading.
 
 [System](index.md#system) → [Assumption](index.md#assumption).
 
-Explicitly authored assumptions, in authored order.
+Named premises this system’s specification relies on, in declaration order. Each premise can identify the basis for relying on it and the circumstances in which it is expected to hold.
 
 - Category: Declaration containment. Cardinality: `0..*`.
 - Scope: Exactly one declaring owner in the same source document.

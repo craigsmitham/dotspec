@@ -88,7 +88,8 @@ classes:
           relationship_basis: Identity of the domain record mapped from the referenced heading.
   SystemSpecReport:
     is_a: SubjectReport
-    description: Explains the system’s purpose and scope and links to its immediate child systems, local subjects, and requirements.
+    description: Explains the system’s purpose, boundary, setting and the premises its specification relies on.
+      Links to its immediate child systems, local subjects and requirements.
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -883,7 +884,8 @@ classes:
       out_of_scope:
         range: RichContent
         inlined: true
-        description: Explicit boundary exclusions; absence is not a statement of scope.
+        description: Work, users or situations explicitly excluded from this system’s responsibility.
+          Omission leaves scope unspecified.
       required_interfaces:
         range: Interface
         multivalued: true
@@ -934,7 +936,7 @@ classes:
       scope:
         range: RichContent
         inlined: true
-        description: The work, users and situations the system is intended to serve.
+        description: The work this system covers, whom it serves and the situations for which it takes responsibility.
       goals:
         range: Goal
         multivalued: true
@@ -947,7 +949,8 @@ classes:
       environment:
         range: RichContent
         inlined: true
-        description: Conditions and surroundings the system must accommodate.
+        description: Conditions in the surrounding world that matter to understanding this system’s requirements.
+          These may concern how people work, the physical setting or the technology around the system.
       stakeholder_roles:
         range: SystemStakeholderRole
         multivalued: true
@@ -965,12 +968,13 @@ classes:
           relationship_category: declaration-containment
           relationship_inverse: Assumption.owner
           relationship_label: items
-        description: Explicitly authored assumptions, in authored order.
+        description: Named premises this system’s specification relies on, in declaration order. Each premise
+          can identify the basis for relying on it and the circumstances in which it is expected to hold.
       constraints:
         range: RichContent
         inlined: true
-        description: Externally imposed restrictions the system must respect, as narrative. An individually
-          addressable constraint is a Requirement or BusinessRule.
+        description: Externally imposed limits on the solutions available for this system. The narrative can
+          identify the source of a limit and link to the Requirement or BusinessRule that states it authoritatively.
       glossary_source_paths:
         range: string
         multivalued: true
@@ -1106,6 +1110,7 @@ classes:
           relationship_basis: Checked inverse of canonical membership fields.
           relationship_inverse: System.assumptions
       statement:
+        description: The premise relied on, expressed so a reader can recognize a case in which it fails.
         range: RichContent
         inlined: true
   GlossaryTerm:

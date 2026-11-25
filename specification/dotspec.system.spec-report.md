@@ -13,7 +13,8 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 - [Framing](<#framing>)
 - [Purpose](<#purpose>)
 - [Stakeholders](<#stakeholders>)
-- [Scope and environment](<#scope-and-environment>)
+- [Scope](<#scope>)
+- [Environment](<#environment>)
 - [Quality Attributes](<#quality-attributes>)
 
 </details>
@@ -79,19 +80,17 @@ A reviewer examines a proposed change and needs to know which sources were inspe
 
 [View section source](<../specs/dotspec.system.spec.md#reviewer>)
 
-## Scope and environment
+## Scope
 
 dotspec covers the authoring framework, the `*.spec.md` files teams maintain
 alongside their code, and the CLI that discovers and checks those files and
 builds a requirements specification from them.
 
-### Operating environment
+## Environment
 
 Contributors edit Markdown in ordinary text editors. Git repositories provide
 version history and discovery rules. The CLI communicates through process
 arguments, standard streams, and exit statuses.
-
-### Constraints
 
 ## Quality Attributes
 
@@ -116,3 +115,5 @@ arguments, standard streams, and exit statuses.
 <a id="empty.goals"></a>
 
 <a id="empty.assumptions"></a>
+
+<a id="empty.constraints"></a>

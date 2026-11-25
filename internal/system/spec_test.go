@@ -12,6 +12,8 @@ func TestParse(t *testing.T) {
 		name, source, title, purpose, scope string
 	}{
 		{"minimal", validSpec, "Parser", "Read specs.", "Markdown files."},
+		{"empty scope", strings.Replace(validSpec, "Markdown files.", "", 1), "Parser", "Read specs.", ""},
+		{"omitted scope", strings.Split(validSpec, "## Scope")[0], "Parser", "Read specs.", ""},
 		{"CRLF and BOM", "\xef\xbb\xbf" + strings.ReplaceAll(validSpec, "\n", "\r\n"), "Parser", "Read specs.", "Markdown files."},
 		{"quoted YAML", strings.Replace(validSpec, "type: system-spec", "type: 'system-spec' # comment", 1), "Parser", "Read specs.", "Markdown files."},
 		{"formatted title", strings.Replace(validSpec, "# Parser", "# **Spec** `parser`", 1), "Spec parser", "Read specs.", "Markdown files."},
@@ -52,8 +54,6 @@ func TestParseRejectsMalformedSpecs(t *testing.T) {
 		{"title in code", strings.Replace(validSpec, "# Parser", "```\n# Parser\n```", 1), "name heading"},
 		{"no purpose", strings.Replace(validSpec, "## Purpose", "## Rationale", 1), "Rationale"},
 		{"empty purpose", strings.Replace(validSpec, "Read specs.", "", 1), "Purpose"},
-		{"no scope", strings.Replace(validSpec, "## Scope", "### Scope", 1), "Scope"},
-		{"empty scope", strings.Replace(validSpec, "Markdown files.", "", 1), "Scope"},
 		{"duplicate section", validSpec + "\n## Scope\nAgain.\n", "duplicate Scope"},
 		{"wrong heading case", strings.Replace(validSpec, "## Purpose", "## purpose", 1), "purpose"},
 	}

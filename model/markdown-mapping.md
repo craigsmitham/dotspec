@@ -10,7 +10,19 @@ Omitting a narrative field leaves it absent. An explicitly empty field has an em
 
 ## System
 
-The optional `## Framing` section maps to `System.framing` and preserves authored Markdown, including local subheadings. Purpose, scope, environment and constraints hold authored Markdown. The Project references section maps to `System.project_references`: its content preserves the explanation and its references identify the cited project records. Goals, assumptions, interfaces, concept uses, synchronizations and inline glossary terms have named entries. Declare a system quality attribute in its own specification under the system’s quality directory. A reusable quality model declares its attributes by name under Quality attributes.
+The optional `## Framing` section maps to `System.framing` and preserves authored Markdown, including local subheadings. Purpose holds authored Markdown. The Project references section maps to `System.project_references`: its content preserves the explanation and its references identify the cited project records. Goals, interfaces, concept uses, synchronizations and inline glossary terms have named entries. Declare a system quality attribute in its own specification under the system’s quality directory. A reusable quality model declares its attributes by name under Quality attributes.
+
+A System owns the following optional sections in its `*.system.spec.md` file.
+
+| Authored heading | System field | Content |
+| --- | --- | --- |
+| `## Scope` | `scope` | Rich Markdown describing the work covered |
+| `## Out of scope` | `out_of_scope` | Rich Markdown recording agreed exclusions |
+| `## Environment` | `environment` | Rich Markdown describing relevant conditions in the surrounding world |
+| `## Assumptions` | `assumptions` | Named `Assumption` elements in declaration order |
+| `## Constraints` | `constraints` | Rich Markdown describing externally imposed limits |
+
+Under `## Assumptions`, each level-three heading names one assumption. Its introductory Markdown supplies `Assumption.statement`. Optional level-four headings `#### Basis` and `#### Applicability` map to the corresponding fields. A requirement can link to the named assumption under **Relies on**. Local subheadings in the other four sections organize their narrative.
 
 Under `## Stakeholders`, each level-three heading declares one `SystemStakeholderRole` owned by the System. The heading supplies its name and Markdown anchor. Its body supplies the rich-text `description`. The System lists the roles in `stakeholder_roles` in source order. Link to a role’s heading from the passage where the relationship matters.
 

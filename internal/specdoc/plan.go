@@ -51,18 +51,18 @@ type heading struct {
 }
 
 type subject struct {
-	r                      model.Record
-	source                 *sourceFile
-	name                   *heading
-	system                 *subject
-	navigationParent       *subject
-	indexes                map[string]*collectionIndex
-	glossary               []glossaryPassage
-	passages               [][]*heading
-	overview               []overviewSection
-	externalSystem         bool
-	emptyCollectionAnchors []string
-	file, dir              string
+	r                   model.Record
+	source              *sourceFile
+	name                *heading
+	system              *subject
+	navigationParent    *subject
+	indexes             map[string]*collectionIndex
+	glossary            []glossaryPassage
+	passages            [][]*heading
+	overview            []overviewSection
+	externalSystem      bool
+	emptyHeadingAnchors []string
+	file, dir           string
 }
 
 type planner struct {

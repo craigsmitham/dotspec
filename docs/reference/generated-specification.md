@@ -57,7 +57,11 @@ Expand **On this page** to jump to a section in reading order. Expand **Browse s
 | Goals | Authored goals. Select a named goal to read its full statement and see which specifications support it. |
 | Business rules | **Business rules** opens the index of applicable and local rules. |
 | Stakeholders | Named stakeholder roles in source order, each with its description and a heading that jobs and use cases can link to |
-| Scope and environment | The work the system covers, explicit exclusions, operating conditions, assumptions and constraints |
+| Scope | The work, people and situations the system serves |
+| Out of scope | Plausible expectations the team has explicitly excluded |
+| Environment | Conditions in the surrounding world that help explain the requirements |
+| Assumptions | Named premises in declaration order. Follow a premise to its full statement, basis, applicability and the requirements that rely on it. |
+| Constraints | Externally imposed limits on the solutions available for this system |
 | System topology | Immediate parts, boundary partners, and required or provided interfaces, with a Mermaid diagram and linked descriptions |
 | Features | Product features and their authored descriptions |
 | Capabilities | Capabilities the system provides. When topology identifies a provider, its entry describes the capability. |
@@ -68,6 +72,8 @@ Expand **On this page** to jump to a section in reading order. Expand **Browse s
 | Open questions | Decisions that remain open in the system specification |
 | Glossary | Terms defined for this system and links to their definitions |
 | Project references | Authored explanations and links to delivery plans, responsibilities, risks and decisions, when supplied |
+
+Scope, Out of scope, Environment, Assumptions and Constraints appear independently in the system overview and its section map when they have authored content. A bare heading produces no visible section. Local Markdown subheadings stay with their passage.
 
 Overview sections list all entries with project-specific detail in index order.
 A collection with only navigation stays in the section map. The topology

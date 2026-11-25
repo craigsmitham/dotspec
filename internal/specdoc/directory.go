@@ -175,6 +175,14 @@ func (p *planner) planPassages(s *subject) {
 	}
 	for _, group := range groups {
 		h := group[0]
+		if s.kind() == "System" && slices.Contains(systemContextFields, h.field) && !slices.ContainsFunc(group, func(part *heading) bool {
+			return part.subjectKind != "" || needsHeadingAnchor(s, part) || strings.TrimSpace(s.source.data[part.end:part.bodyEnd]) != ""
+		}) {
+			for _, part := range group {
+				p.keepEmptyHeading(s, part)
+			}
+			continue
+		}
 		if h != s.name && len(group) == 1 && h.subjectKind == "" && !needsHeadingAnchor(s, h) && strings.TrimSpace(sourceProse(s.source, h)) == "" {
 			if dest := s.sectionIndex(h.title); dest != "" {
 				index, part := collectionGroup(h.title)
@@ -184,15 +192,19 @@ func (p *planner) planPassages(s *subject) {
 				continue
 			}
 			if specfile.IsCollectionHeading(h.title) || h.title == "Open questions" {
-				// Keep authored citations to empty collections addressable.
-				anchor := "empty." + h.anchor
-				s.emptyCollectionAnchors = append(s.emptyCollectionAnchors, anchor)
-				p.targets[h.node] = s.file + "#" + anchor
+				p.keepEmptyHeading(s, h)
 				continue
 			}
 		}
 		s.passages = append(s.passages, group)
 	}
+}
+
+// Authored links can still reach an empty heading omitted from the overview.
+func (p *planner) keepEmptyHeading(s *subject, h *heading) {
+	anchor := "empty." + h.anchor
+	s.emptyHeadingAnchors = append(s.emptyHeadingAnchors, anchor)
+	p.targets[h.node] = s.file + "#" + anchor
 }
 
 func sortEntries(entries []entry) {

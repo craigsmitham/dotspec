@@ -13,7 +13,6 @@ import (
 // rendering, source content order, fragment allocation and the navigation map.
 type overviewSection struct {
 	title, anchor string
-	leadHeading   string
 	level         int
 	sources       []string
 	passages      [][]*heading
@@ -23,19 +22,27 @@ type overviewSection struct {
 	hasBody       bool
 }
 
+// These System fields each have their own section in the report, in reading order.
+var systemContextFields = []string{"scope", "out_of_scope", "environment", "assumptions", "constraints"}
+
 func overviewOutline(kind string) []overviewSection {
-	scopeTitle := "Scope"
-	if kind == "System" {
-		scopeTitle = "Scope and environment"
-	}
-	return []overviewSection{
+	sections := []overviewSection{
 		{sources: []string{"description"}},
 		{title: "Framing", level: 2, sources: []string{"framing"}},
 		{title: "Purpose", level: 2, sources: []string{"purpose"}},
 		{title: "Goals", level: 2, sources: []string{"goals"}},
 		{title: "Stakeholders", level: 2, sources: []string{"stakeholder_roles"}},
 		{title: "Responsibilities", level: 2, sources: []string{"responsibilities"}},
-		{title: scopeTitle, leadHeading: "Scope", level: 2, sources: []string{"scope", "boundary_description", "out_of_scope", "environment", "assumptions", "constraints"}},
+	}
+	if kind == "System" {
+		for _, field := range systemContextFields {
+			title := sentenceCase(strings.ReplaceAll(field, "_", " "))
+			sections = append(sections, overviewSection{title: title, level: 2, sources: []string{field}})
+		}
+	} else {
+		sections = append(sections, overviewSection{title: "Scope", level: 2, sources: []string{"boundary_description", "out_of_scope"}})
+	}
+	return append(sections, []overviewSection{
 		{title: "System topology", level: 2, sources: []string{"part_of", "interacts_with", "required_interfaces", "provided_interfaces"}},
 		{title: "Features", level: 2},
 		{title: "Concepts", level: 2},
@@ -50,7 +57,7 @@ func overviewOutline(kind string) []overviewSection {
 		{title: "Glossary", level: 2, sources: []string{"glossary"}},
 		{title: "Project references", level: 2, sources: []string{"project_references"}},
 		{title: "Reference", level: 2, sources: []string{"related_specifications", "specification_system", "authority_and_evidence", "evidence", "supports", "derived_from", "relies_on"}},
-	}
+	}...)
 }
 
 func (p *planner) planOverview(s *subject) []overviewSection {
@@ -98,7 +105,7 @@ func (section overviewSection) merges(i int) bool {
 	if section.level == 0 {
 		return h.title == "Description" && i == 1
 	}
-	return i == 0 && (h.title == section.title || h.title == section.leadHeading)
+	return i == 0 && h.title == section.title
 }
 
 func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {

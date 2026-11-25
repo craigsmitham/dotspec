@@ -162,15 +162,13 @@ func ParseMarkdown(input *specfile.Markdown) (*System, error) {
 		}
 		spec.QualityAttributes = []Attribute{}
 	}
-	for _, name := range []string{"Purpose", "Scope"} {
-		if *fields[name] == "" {
-			location, found := locations[name]
-			if !found {
-				location = doc.NameLocation
-				location.Element = name
-			}
-			return nil, diagnostic.Error("structure.required-section", fmt.Sprintf("missing or empty %s section (use ## %s)", name, name), location)
+	if spec.Purpose == "" {
+		location, found := locations["Purpose"]
+		if !found {
+			location = doc.NameLocation
+			location.Element = "Purpose"
 		}
+		return nil, diagnostic.Error("structure.required-section", "missing or empty Purpose section (use ## Purpose)", location)
 	}
 	ids.AddAnchors(doc.Anchors)
 	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {

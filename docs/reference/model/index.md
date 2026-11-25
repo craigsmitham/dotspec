@@ -136,7 +136,7 @@ Concrete; inherits [TraceableElement](#traceableelement).
 | `relies_on_content` | [RichContent](#richcontent) | optional, embedded | Authored Markdown qualifying the relies on relationship. |
 | `source_document` | [SourceDocument](#sourcedocument) | required, record ID |  |
 | `source_fragment` | [SourceFragment](#sourcefragment) | optional, record ID |  |
-| `statement` | [RichContent](#richcontent) | optional, embedded |  |
+| `statement` | [RichContent](#richcontent) | optional, embedded | The premise relied on, expressed so a reader can recognize a case in which it fails. |
 | `supports` | [Goal](#goal) or [Job](#job) or [JobStep](#jobstep) or [DesiredOutcome](#desiredoutcome) or [UseCase](#usecase) | optional, list, record ID | Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement. |
 | `supports_content` | [RichContent](#richcontent) | optional, embedded | Authored Markdown qualifying the supports relationship. |
 
@@ -1527,16 +1527,16 @@ Concrete; inherits [Specification](#specification).
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `adopts` | [AdoptedProvision](#adoptedprovision) | optional, ordered list, record ID |  |
-| `assumptions` | [Assumption](#assumption) | optional, ordered list, record ID | Explicitly authored assumptions, in authored order. |
+| `assumptions` | [Assumption](#assumption) | optional, ordered list, record ID | Named premises this system’s specification relies on, in declaration order. Each premise can identify the basis for relying on it and the circumstances in which it is expected to hold. |
 | `authored_id` | `string` | optional | An explicitly authored ID when present; no manufactured global identifier. |
 | `authority_and_evidence` | [RichContent](#richcontent) | optional, embedded | Authored authority for the specification. |
 | `concept_uses` | [ConceptUse](#conceptuse) | optional, ordered list, record ID |  |
-| `constraints` | [RichContent](#richcontent) | optional, embedded | Externally imposed restrictions the system must respect, as narrative. An individually addressable constraint is a Requirement or BusinessRule. |
+| `constraints` | [RichContent](#richcontent) | optional, embedded | Externally imposed limits on the solutions available for this system. The narrative can identify the source of a limit and link to the Requirement or BusinessRule that states it authoritatively. |
 | `derived_from` | [DomainElement](#domainelement) or [SourceFragment](#sourcefragment) | optional, list, record ID | Source or rationale for this element, including rules, decisions and requirements; not logical entailment. |
 | `derived_from_content` | [RichContent](#richcontent) | optional, embedded | Authored Markdown qualifying the derived from relationship. |
 | `description` | [RichContent](#richcontent) | optional, embedded | What this system is. |
 | `enclosing_system` | [System](#system) | optional, record ID | Nearest discovered enclosing system document; not a declared part-of relationship. |
-| `environment` | [RichContent](#richcontent) | optional, embedded | Conditions and surroundings the system must accommodate. |
+| `environment` | [RichContent](#richcontent) | optional, embedded | Conditions in the surrounding world that matter to understanding this system’s requirements. These may concern how people work, the physical setting or the technology around the system. |
 | `evidence` | [RichContent](#richcontent) | optional, embedded |  |
 | `framing` | [RichContent](#richcontent) | optional, embedded | An evolving account of how the authors understand the situation, approaches worth exploring and questions that could change their direction. |
 | `glossary` | [GlossaryTerm](#glossaryterm) | optional, ordered list, record ID | Explicitly named terms, in authored order. |
@@ -1549,7 +1549,7 @@ Concrete; inherits [Specification](#specification).
 | `kind` | `string` | required, fixed `System` | Concrete record type discriminator. |
 | `name` | [RichContent](#richcontent) | optional, embedded | Authored title or item name, if present. |
 | `open_questions` | [OpenQuestion](#openquestion) | optional, ordered list, embedded | Explicitly distinguished questions, in authored order. |
-| `out_of_scope` | [RichContent](#richcontent) | optional, embedded | Explicit boundary exclusions; absence is not a statement of scope. |
+| `out_of_scope` | [RichContent](#richcontent) | optional, embedded | Work, users or situations explicitly excluded from this system’s responsibility. Omission leaves scope unspecified. |
 | `part_of` | [System](#system) | optional, record ID | Optional explicit parent System. Directory context does not supply this relationship. |
 | `part_of_content` | [RichContent](#richcontent) | optional, embedded | Authored Markdown qualifying the part of relationship. |
 | `preamble` | [RichContent](#richcontent) | optional, embedded | Authored content between the title and the first named section. |
@@ -1561,7 +1561,7 @@ Concrete; inherits [Specification](#specification).
 | `relies_on` | [Assumption](#assumption) | optional, list, record ID | Assumptions on which the validity of this element depends. |
 | `relies_on_content` | [RichContent](#richcontent) | optional, embedded | Authored Markdown qualifying the relies on relationship. |
 | `required_interfaces` | [Interface](#interface) | optional, ordered list, record ID | Services this subject expects from its environment. |
-| `scope` | [RichContent](#richcontent) | optional, embedded | The work, users and situations the system is intended to serve. |
+| `scope` | [RichContent](#richcontent) | optional, embedded | The work this system covers, whom it serves and the situations for which it takes responsibility. |
 | `slug` | `string` | optional | Path-derived current slug where applicable. |
 | `source_document` | [SourceDocument](#sourcedocument) | required, record ID |  |
 | `source_fragment` | [SourceFragment](#sourcefragment) | optional, record ID |  |
@@ -1652,7 +1652,7 @@ Concrete; inherits [SubjectReport](#subjectreport).
 
 ### SystemSpecReport
 
-Explains the system’s purpose and scope and links to its immediate child systems, local subjects, and requirements.
+Explains the system’s purpose, boundary, setting and the premises its specification relies on. Links to its immediate child systems, local subjects and requirements.
 
 Subsets: `specification-documentation`.
 

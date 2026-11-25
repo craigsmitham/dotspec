@@ -334,7 +334,7 @@ Individual authors.
 	}
 	if !strings.Contains(page, "<summary>On this page</summary>") ||
 		!strings.Contains(page, "## Purpose\n\nKeep notes.") || strings.Contains(page, "## Goals\n") ||
-		!strings.Contains(page, "## Scope and environment\n\nOne notebook.") ||
+		!strings.Contains(page, "## Scope\n\nOne notebook.") ||
 		strings.Index(page, "## Scope") < strings.Index(page, "Individual authors.") ||
 		strings.Contains(page, "open-questions.md") || strings.Contains(page, "## System topology") {
 		t.Fatal(page)
@@ -404,6 +404,65 @@ An example:
 	}
 }
 
+func TestSystemContextSectionsStandAlone(t *testing.T) {
+	t.Chdir(t.TempDir())
+	writeFixture(t, "dotspec.yaml", "name: notes\n")
+	const system = "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nKeep drafts.\n"
+	const source = "specs/notes.system.spec.md"
+	const report = "specification/notes.system.spec-report.md"
+	const promise = "specs/requirements/read.requirement.spec.md"
+	writeFixture(t, promise, "---\ntype: requirement-spec\n---\n# Read notes\n\n## Statement\nSee [winter](../notes.system.spec.md#winter).\n")
+	writeFixture(t, source, system+`
+## Constraints
+
+## Scope
+
+## Assumptions
+
+## Environment
+
+### Winter
+
+- Readers wear gloves.
+
+## Out of scope
+`)
+	build := func() string {
+		t.Helper()
+		for _, args := range [][]string{{"spec", "build"}, {"check"}} {
+			if code, out, errOut := invoke(args...); code != 0 {
+				t.Fatal(code, out, errOut)
+			}
+		}
+		data, err := os.ReadFile(report)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return string(data)
+	}
+	page := build()
+	for _, title := range []string{"Scope", "Out of scope", "Assumptions", "Constraints"} {
+		if strings.Contains(page, "## "+title+"\n") || strings.Contains(page, "["+title+"](") {
+			t.Fatalf("empty %s visible in %s", title, page)
+		}
+	}
+	if !strings.Contains(page, "[Environment](<#environment>)") || !strings.Contains(page, "## Environment\n\n### Winter\n\n- Readers wear gloves.") {
+		t.Fatal(page)
+	}
+	data, err := os.ReadFile("specification/requirements/read-notes.requirement.spec-report.md")
+	if err != nil || !strings.Contains(string(data), "[winter](<../notes.system.spec-report.md#winter>)") {
+		t.Fatalf("nested section citation: %s, %v", data, err)
+	}
+
+	writeFixture(t, promise, "---\ntype: requirement-spec\n---\n# Read notes\n\n## Statement\nRead saved notes.\n")
+	writeFixture(t, source, system+"\n## Scope\n\n## Constraints\nThe archive agreement requires local storage.\n")
+	page = build()
+	if strings.Contains(page, "## Scope\n") || !strings.Contains(page, "[Constraints](<#constraints>)") ||
+		!strings.Contains(page, "## Constraints\n\nThe archive agreement requires local storage.") {
+		t.Fatal(page)
+	}
+}
+
 func TestNamedOverviewEntriesKeepScopedDetailAndLinks(t *testing.T) {
 	t.Chdir(t.TempDir())
 	writeFixture(t, "dotspec.yaml", "name: notes\n")
@@ -421,7 +480,8 @@ Local edits.
 ## Assumptions
 ### The author is present
 
-The author is present.
+- The author is present.
+- A second authorized person can attend when the author asks for help identifying the entries that may be archived after review.
 
 ### Local storage
 A draft stays on disk.
@@ -472,8 +532,17 @@ A separate archive retains old drafts.
 		}
 		return string(data)
 	}
+	premises := read("notes.system.spec-report.md")
+	for _, want := range []string{
+		"## Assumptions\n\n- [The author is present](<assumptions.md#the-author-is-present>) — The author is present. …",
+		"- [Local storage](<assumptions.md#local-storage>) — A draft stays on disk.",
+	} {
+		if !strings.Contains(premises, want) {
+			t.Fatalf("missing assumption preview %q in %s", want, premises)
+		}
+	}
 	overview := read("components/store/store.component.spec-report.md")
-	for _, want := range []string{"Writes occur locally.", "Retain edits.", "A reset clears the draft.", "A separate archive retains old drafts.", "[the basis](<../../assumptions.md#basis>)", "[^disk]: A file"} {
+	for _, want := range []string{"## Scope\n\n### Boundary\n\nWrites occur locally.", "#### Storage\n\nRetain edits.", "A reset clears the draft.", "A separate archive retains old drafts.", "[the basis](<../../assumptions.md#basis>)", "[^disk]: A file"} {
 		if !strings.Contains(overview, want) {
 			t.Fatalf("missing %q in %s", want, overview)
 		}

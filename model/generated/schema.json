@@ -173,7 +173,8 @@
                     "type": "string"
                 },
                 "statement": {
-                    "$ref": "#/$defs/RichContent"
+                    "$ref": "#/$defs/RichContent",
+                    "description": "The premise relied on, expressed so a reader can recognize a case in which it fails."
                 },
                 "supports_content": {
                     "$ref": "#/$defs/RichContent",
@@ -3669,7 +3670,7 @@
                     "type": "array"
                 },
                 "assumptions": {
-                    "description": "Explicitly authored assumptions, in authored order.",
+                    "description": "Named premises this system’s specification relies on, in declaration order. Each premise can identify the basis for relying on it and the circumstances in which it is expected to hold.",
                     "items": {
                         "type": "string"
                     },
@@ -3691,7 +3692,7 @@
                 },
                 "constraints": {
                     "$ref": "#/$defs/RichContent",
-                    "description": "Externally imposed restrictions the system must respect, as narrative. An individually addressable constraint is a Requirement or BusinessRule."
+                    "description": "Externally imposed limits on the solutions available for this system. The narrative can identify the source of a limit and link to the Requirement or BusinessRule that states it authoritatively."
                 },
                 "derived_from_content": {
                     "$ref": "#/$defs/RichContent",
@@ -3707,7 +3708,7 @@
                 },
                 "environment": {
                     "$ref": "#/$defs/RichContent",
-                    "description": "Conditions and surroundings the system must accommodate."
+                    "description": "Conditions in the surrounding world that matter to understanding this system’s requirements. These may concern how people work, the physical setting or the technology around the system."
                 },
                 "evidence": {
                     "$ref": "#/$defs/RichContent"
@@ -3771,7 +3772,7 @@
                 },
                 "out_of_scope": {
                     "$ref": "#/$defs/RichContent",
-                    "description": "Explicit boundary exclusions; absence is not a statement of scope."
+                    "description": "Work, users or situations explicitly excluded from this system’s responsibility. Omission leaves scope unspecified."
                 },
                 "part_of_content": {
                     "$ref": "#/$defs/RichContent",
@@ -3820,7 +3821,7 @@
                 },
                 "scope": {
                     "$ref": "#/$defs/RichContent",
-                    "description": "The work, users and situations the system is intended to serve."
+                    "description": "The work this system covers, whom it serves and the situations for which it takes responsibility."
                 },
                 "slug": {
                     "description": "Path-derived current slug where applicable.",
@@ -4067,7 +4068,7 @@
         },
         "SystemSpecReport": {
             "additionalProperties": false,
-            "description": "Explains the system’s purpose and scope and links to its immediate child systems, local subjects, and requirements.",
+            "description": "Explains the system’s purpose, boundary, setting and the premises its specification relies on. Links to its immediate child systems, local subjects and requirements.",
             "properties": {
                 "documents": {
                     "description": "The documented subject, serialized as a relative URI to its authored heading.",

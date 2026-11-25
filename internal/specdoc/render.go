@@ -151,7 +151,7 @@ func (p *planner) renderSubject(s *subject) {
 		w.text(footer)
 	}
 	p.appendFootnotes(w, s)
-	for _, anchor := range s.emptyCollectionAnchors {
+	for _, anchor := range s.emptyHeadingAnchors {
 		w.text(`<a id="` + html.EscapeString(anchor) + `"></a>`)
 	}
 	w.finish()
@@ -194,7 +194,15 @@ func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offs
 		}
 		if h.detailEntry != nil && w.file == s.file {
 			if h.detailEntry == h {
-				w.text(entryLine(w, entry{h.title, p.targets[h.node], paragraphPreview(sourceProse(s.source, h))}))
+				body := sourceProse(s.source, h)
+				preview := paragraphPreview(body)
+				if h.subjectKind == "Assumption" {
+					if preview == "" {
+						preview = contentText(body)
+					}
+					preview = indexPreview(preview)
+				}
+				w.text(entryLine(w, entry{h.title, p.targets[h.node], preview}))
 			}
 			continue
 		}
@@ -347,9 +355,6 @@ func (p *planner) appendSourceFootnotes(w *writer, sf *sourceFile, onPage func(i
 	}
 }
 func (h *heading) reportTitle() string {
-	if h.field == "environment" && h.title == "Environment" {
-		return "Operating environment"
-	}
 	if h.owner != nil && h.owner.kind() == "ConceptUse" && h.level == h.owner.name.level+1 && h.title == "Definition" {
 		return relations["definition"].forward
 	}
