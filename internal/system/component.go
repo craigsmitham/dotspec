@@ -116,7 +116,7 @@ func subjectChain(files *specfile.SourceSet, owner string) ([]string, error) {
 	if ComponentLayout.Match(path) {
 		return parentChain(files, path, root)
 	}
-	_, err = Read(path)
+	_, err = ReadFrom(files, path)
 	return []string{path}, err
 }
 
