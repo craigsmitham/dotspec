@@ -21,7 +21,7 @@ type designProjection struct {
 }
 type designResolver struct {
 	documentDefinitions map[string]string
-	links               map[[2]string][]string
+	links               map[string]map[string][]string // owner ID, then authored role
 	index               map[string]Record
 	elements            []Record
 	projected           map[string]map[string][]string
@@ -37,11 +37,14 @@ func newDesignResolver(s *Snapshot) *designResolver {
 			d.index[String(r, "id")] = r
 		}
 	}
-	d.links = map[[2]string][]string{}
+	d.links = map[string]map[string][]string{}
 	for _, ref := range s.References {
 		if role := String(ref, "role"); role != "" {
-			key := [2]string{String(ref, "context_owner"), role}
-			d.links[key] = append(d.links[key], String(ref, "id"))
+			owner := String(ref, "context_owner")
+			if d.links[owner] == nil {
+				d.links[owner] = map[string][]string{}
+			}
+			d.links[owner][role] = append(d.links[owner][role], String(ref, "id"))
 		}
 	}
 	return d
@@ -56,16 +59,16 @@ func (d *designResolver) values(r Record, field string) []string {
 // A heading reference resolves to its explicitly named domain record; a file
 // reference to its root concept. Ordinary reference resolution is kept intact.
 func (d *designResolver) refs(r Record, field string) []string {
-	return d.links[[2]string{String(r, "id"), field}]
+	return d.links[String(r, "id")][field]
 }
 
-func (d *designResolver) promote(target Record, kind string) []Record {
-	if String(target, "kind") != "SourceFragment" && designKind(String(target, "kind"), kind) {
+func (d *designResolver) promote(target Record, ranges []string) []Record {
+	if String(target, "kind") != "SourceFragment" && designKind(String(target, "kind"), ranges...) {
 		return []Record{target}
 	}
 	matches := []Record{}
 	for _, r := range d.elements {
-		if !designKind(String(r, "kind"), kind) {
+		if !designKind(String(r, "kind"), ranges...) {
 			continue
 		}
 		if String(target, "kind") == "SourceDocument" && String(r, "source_document") == String(target, "id") && String(r, "owner") == "" {
@@ -75,15 +78,16 @@ func (d *designResolver) promote(target Record, kind string) []Record {
 			matches = append(matches, r)
 		}
 	}
-	if len(matches) == 0 && designKind(String(target, "kind"), kind) {
+	if len(matches) == 0 && designKind(String(target, "kind"), ranges...) {
 		return []Record{target}
 	}
 	return matches
 }
-func (d *designResolver) resolve(r Record, field, kind string, many bool, accepts func(Record) bool) {
+func (d *designResolver) resolve(r Record, field string) {
+	slot := compiledModel().catalog.Classes[String(r, "kind")].Slots[field]
 	refs := d.refs(r, field)
 	values := []string{}
-	if !many && len(refs) > 1 {
+	if !slot.Multivalued && len(refs) > 1 {
 		d.issue(r, field, "error", "Expected one explicit reference.")
 	} else {
 		for _, id := range refs {
@@ -106,15 +110,15 @@ func (d *designResolver) resolve(r Record, field, kind string, many bool, accept
 				if status == "external" || status == "not_attempted" || status == "out_of_scope" {
 					severity = "advice"
 				}
-				d.issue(r, field, severity, fmt.Sprintf("Reference remains %s; no %s relationship was inferred.", status, kind))
+				d.issue(r, field, severity, fmt.Sprintf("Reference remains %s; no %s relationship was inferred.", status, strings.Join(slot.ReferenceRanges, " or ")))
 				continue
 			}
-			matches := d.promote(d.index[String(resolution, "target")], kind)
+			matches := d.promote(d.index[String(resolution, "target")], slot.ReferenceRanges)
 			if len(matches) != 1 {
-				d.issue(r, field, "error", fmt.Sprintf("Reference must identify exactly one %s.", kind))
+				d.issue(r, field, "error", fmt.Sprintf("Reference must identify exactly one %s.", strings.Join(slot.ReferenceRanges, " or ")))
 				continue
 			}
-			if accepts != nil && !accepts(matches[0]) {
+			if String(r, "kind") == "ConceptUse" && field == "dependencies" && !d.sameSystem(r, matches[0]) {
 				d.issue(r, field, "error", "Reference has the wrong declaring concept or system scope.")
 				continue
 			}
@@ -129,7 +133,7 @@ func (d *designResolver) resolve(r Record, field, kind string, many bool, accept
 		d.projected[String(r, "id")] = map[string][]string{}
 	}
 	d.projected[String(r, "id")][field] = values
-	d.projections = append(d.projections, designProjection{r, field, values, many})
+	d.projections = append(d.projections, designProjection{r, field, values, slot.Multivalued})
 }
 func (d *designResolver) sameSystem(r Record, candidate Record) bool {
 	system := governingSystem(r, d.index)
@@ -139,27 +143,26 @@ func (d *designResolver) run() {
 	d.resolveSpecificationSystems()
 	for _, r := range d.elements {
 		if String(r, "kind") == "ConceptUse" {
-			d.resolve(r, "definition", "Concept", false, nil)
+			d.resolve(r, "definition")
 		}
 	}
-	for _, r := range d.elements {
-		switch String(r, "kind") {
-		case "System":
-			d.resolve(r, "part_of", "System", false, nil)
-		case "Component":
-			d.resolve(r, "part_of", "System or Component", false, nil)
-		case "Feature":
-			d.resolve(r, "groups", "Requirement or UseCase or Concept or ConceptUse or Synchronization or Interface", true, nil)
-		case "UseCase":
-			d.resolve(r, "subject_system", "System", false, nil)
-		case "Requirement", "BusinessRule":
-			d.resolve(r, "applies_to", "DomainElement", true, nil)
-		case "ConceptUse":
-			d.resolve(r, "dependencies", "ConceptUse", true, func(t Record) bool { return d.sameSystem(r, t) })
-
+	// Resolve explicit structural links before trace headings. This preserves
+	// diagnostic order and lets cycle checks examine all proposed edges.
+	for _, trace := range []bool{false, true} {
+		for _, r := range d.elements {
+			slots := compiledModel().catalog.Classes[String(r, "kind")].Slots
+			for _, field := range sortedKeys(d.links[String(r, "id")]) {
+				role := slots[field].Annotations
+				if field == "specification_system" || field == "definition" || role["occurrence_role"] != "link" {
+					continue
+				}
+				if (role["trace_heading"] != "") == trace {
+					d.resolve(r, field)
+				}
+			}
 		}
 	}
-	d.resolveTraceability()
+	d.withholdCyclicLinks()
 	d.checkDeclarations()
 	d.traceReview()
 }
@@ -255,9 +258,9 @@ func (b *snapshotBuilder) resolveComposition() bool {
 }
 
 // Definition and applicability references may name a concrete subtype of an abstract range.
-func designKind(actual, expected string) bool {
+func designKind(actual string, expected ...string) bool {
 	ancestors := compiledModel().catalog.Classes[actual].Ancestors
-	for _, kind := range strings.Split(expected, " or ") {
+	for _, kind := range expected {
 		if slices.Contains(ancestors, kind) {
 			return true
 		}

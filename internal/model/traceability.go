@@ -60,22 +60,13 @@ func (m *domainMapper) nestedTraceability() {
 	}
 }
 
-func (d *designResolver) resolveTraceability() {
-	for _, r := range d.elements {
-		cls := compiledModel().catalog.Classes[String(r, "kind")]
-		for _, field := range sortedKeys(cls.Slots) {
-			slot := cls.Slots[field]
-			if targets := slot.Annotations["trace_targets"]; targets != "" {
-				d.resolve(r, field, targets, true, nil)
-			}
-		}
-	}
-	// Preserve authored cycles as occurrences and diagnostics, but do not export
-	// a cyclic refinement claim. Every edge participating in a cycle is withheld.
-	// Snapshot validation replays the same projection; forged cycles are rejected.
+// Preserve authored occurrences and diagnostics while withholding each
+// proposed edge that participates in a cycle forbidden by its owner's slot.
+func (d *designResolver) withholdCyclicLinks() {
 	for i := range d.projections {
 		p := &d.projections[i]
-		if p.field != "refines" && p.field != "part_of" {
+		slot := compiledModel().catalog.Classes[String(p.owner, "kind")].Slots[p.field]
+		if slot.Annotations["relationship_cycles"] != "forbidden" {
 			continue
 		}
 		source := String(p.owner, "id")

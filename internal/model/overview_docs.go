@@ -85,7 +85,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	out.WriteString("## System structure\n\nArrows read **part of**, from a component or subsystem to its explicit structural parent. Declaration location and directory nesting do not create these edges. No requirements are inherited down the structure.\n\n")
 	ids := map[string]string{}
 	for _, r := range elements {
-		if designKind(String(r, "kind"), "System or Component") {
+		if designKind(String(r, "kind"), "System", "Component") {
 			ids[String(r, "id")] = fmt.Sprintf("n%d", len(ids)+1)
 		}
 	}
@@ -184,7 +184,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	}
 	out.WriteString("\n## Descriptions and native references\n\nLinked contracts, architecture decisions, and implementation artifacts retain their own authority. A requirement can explicitly target a system or component.\n\n")
 	for _, r := range elements {
-		included := designKind(String(r, "kind"), "System or Component or Feature or Interface")
+		included := designKind(String(r, "kind"), "System", "Component", "Feature", "Interface")
 		if designKind(String(r, "kind"), "Requirement") {
 			for _, target := range Strings(r["applies_to"]) {
 				included = included || ids[target] != ""

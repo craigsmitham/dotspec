@@ -5,7 +5,7 @@ import (
 )
 
 func (m *domainMapper) boundarySection(r Record, s *Section) bool {
-	if !designKind(String(r, "kind"), "System or Component") {
+	if !designKind(String(r, "kind"), "System", "Component") {
 		return false
 	}
 	switch s.Title {

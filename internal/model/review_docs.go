@@ -39,7 +39,7 @@ func ReviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 	}
 	for _, r := range v.records {
-		if designKind(String(r, "kind"), "Requirement or ConceptAction or UseCase") {
+		if designKind(String(r, "kind"), "Requirement", "ConceptAction", "UseCase") {
 			reach(String(r, "id"), map[string]bool{})
 		}
 	}
@@ -114,7 +114,7 @@ func PEGSMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	v.assumptions()
 	v.out.WriteString("## Goals\n\n")
 	for _, r := range v.records {
-		if !designKind(String(r, "kind"), "Goal or Job or JobStep or DesiredOutcome") {
+		if !designKind(String(r, "kind"), "Goal", "Job", "JobStep", "DesiredOutcome") {
 			continue
 		}
 		fmt.Fprintf(&v.out, "### %s: %s\n\n", String(r, "kind"), v.link(r))
@@ -127,7 +127,7 @@ func PEGSMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	}
 	v.out.WriteString("## System\n\nSpecifications below describe the solution's subjects, concepts, interactions and requirements. Declaration, structural parentage, applicability and behavioral relationships retain their distinct meanings.\n\n")
 	for _, r := range v.records {
-		if !designKind(String(r, "kind"), "System or Component or Feature or Capability or Concept or ConceptUse or Synchronization or Interface or UseCase or Requirement") {
+		if !designKind(String(r, "kind"), "System", "Component", "Feature", "Capability", "Concept", "ConceptUse", "Synchronization", "Interface", "UseCase", "Requirement") {
 			continue
 		}
 		fmt.Fprintf(&v.out, "### %s: %s\n\n", String(r, "kind"), v.link(r))
@@ -237,7 +237,7 @@ func (v *reviewView) boundaries() {
 	v.out.WriteString("## Environment and boundaries\n\nOperating conditions and constraints describe what the solution must accommodate. Assumptions are assessed separately for evidence and justified reliance. Explicit exclusions delimit scope. External partners are separate from structural parents.\n\n")
 	for _, r := range v.records {
 		kind := String(r, "kind")
-		if !designKind(kind, "System or Component or BusinessRule") {
+		if !designKind(kind, "System", "Component", "BusinessRule") {
 			continue
 		}
 		fmt.Fprintf(&v.out, "### %s: %s\n\n", kind, v.link(r))

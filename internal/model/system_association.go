@@ -19,7 +19,7 @@ func (d *designResolver) resolveSpecificationSystems() {
 		if !designKind(String(r, "kind"), "SystemContextSpecification") {
 			continue
 		}
-		d.resolve(r, "specification_system", "System", false, nil)
+		d.resolve(r, "specification_system")
 		if specificationSystemOrigin(r) == "directory" {
 			// The directory default has no authored reference to replay.
 			values := []string{String(r, "specification_system")}

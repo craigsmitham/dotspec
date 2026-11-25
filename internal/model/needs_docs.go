@@ -20,7 +20,7 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	d := newDesignResolver(s)
 	elements := []Record{}
 	for _, r := range s.Elements {
-		if designKind(String(r, "kind"), "Job or JobStep or DesiredOutcome or Capability or Feature or System or Component or Requirement or UseCase or Concept") {
+		if designKind(String(r, "kind"), "Job", "JobStep", "DesiredOutcome", "Capability", "Feature", "System", "Component", "Requirement", "UseCase", "Concept") {
 			elements = append(elements, r)
 		}
 	}
@@ -86,7 +86,7 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 				}
 			}
 		}
-		if designKind(String(r, "kind"), "JobStep or DesiredOutcome or Capability or Component or Feature") {
+		if designKind(String(r, "kind"), "JobStep", "DesiredOutcome", "Capability", "Component", "Feature") {
 			if owner := String(r, "owner"); ids[owner] != "" {
 				edges = append(edges, edge{owner, String(r, "id"), "declares"})
 			}
