@@ -128,12 +128,12 @@ Make structural problems and missing-content advice visible within an explicit i
 - [Accessibility](<quality/usability/accessibility/accessibility.quality-attribute.spec-report.md>) — How effectively people with differing abilities and ways of accessing output can use dotspec.
 - [Diagnosability](<quality/usability/diagnosability/diagnosability.quality-attribute.spec-report.md>) — How effectively findings help contributors understand and locate specification problems.
 
----
-
-[View source](<../specs/dotspec.system.spec.md#dotspec>) · [Quality models](<quality-models.md>)
-
 <a id="empty.goals"></a>
 
 <a id="empty.assumptions"></a>
 
 <a id="empty.constraints"></a>
+
+---
+
+[View source](<../specs/dotspec.system.spec.md#dotspec>) · [Quality models](<quality-models.md>)

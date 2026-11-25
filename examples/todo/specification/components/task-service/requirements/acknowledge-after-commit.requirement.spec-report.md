@@ -7,8 +7,6 @@ source: "../../../../app/specs/requirements/acknowledge-after-commit.requirement
 
 # Acknowledge after commit
 
-[View source](<../../../../app/specs/requirements/acknowledge-after-commit.requirement.spec.md#acknowledge-after-commit>)
-
 ## Statement
 
 The task service must record each change in a single commit to the local database and acknowledge it to the browser only after that commit succeeds.
@@ -42,3 +40,7 @@ The [form acceptance test](<../../../../tests/acceptance.py>) submits Complete f
 **Quality attribute**
 
 - [Durability](<../../../quality/durability/durability.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../../../app/specs/requirements/acknowledge-after-commit.requirement.spec.md#acknowledge-after-commit>)

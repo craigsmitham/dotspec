@@ -91,8 +91,6 @@ flowchart LR
 
 - [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — The forms the list owner uses to review and update commitments.
 
-[View source for “Provided interfaces”](<../specs/personal-task-list.system.spec.md#provided-interfaces>)
-
 ## Capabilities
 
 | Capability | What it enables | Provided by |
@@ -105,8 +103,6 @@ flowchart LR
 - [Pick up where I left off](<features/pick-up-where-i-left-off.feature.spec-report.md>) — Find an errand after a break, see whether a reply needs chasing and take up the work again when an answer arrives.
 
 ## Concepts
-
-[View source for “Concept uses”](<../specs/personal-task-list.system.spec.md#concept-uses>)
 
 <a id="concept.checklist"></a>
 

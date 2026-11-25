@@ -7,8 +7,6 @@ source: "../../specs/use-cases/create-specification.use-case.spec.md#create-a-sp
 
 # Create a specification draft
 
-[View source](<../../specs/use-cases/create-specification.use-case.spec.md#create-a-specification-draft>)
-
 ## Goal
 
 Obtain an editable starting document for a selected kind of specification.
@@ -80,3 +78,7 @@ be edited without invoking init.
 The [init commands](<../../docs/reference/cli.md>) and linked requirement define command behavior.
 The [use-case command examples](<../../internal/integration/testdata/use-cases.txtar>)
 verify the illustrated template-selection and non-overwrite outcomes.
+
+---
+
+[View source](<../../specs/use-cases/create-specification.use-case.spec.md#create-a-specification-draft>)

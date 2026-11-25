@@ -7,8 +7,6 @@ source: "../../specs/requirements/specification-project-isolation.requirement.sp
 
 # Isolate specification projects in a workspace
 
-[View source](<../../specs/requirements/specification-project-isolation.requirement.spec.md#isolate-specification-projects-in-a-workspace>)
-
 ## Statement
 
 Each `dotspec.yaml` declares the name of the specification project rooted in
@@ -36,3 +34,7 @@ explicit domain assertions, independent of tooling partitions.
 ## Evidence
 
 Checks for this requirement include [discovery tests](<../../internal/specfile/workspace_test.go>), [CLI scenarios](<../../internal/cli/workspace_test.go>).
+
+---
+
+[View source](<../../specs/requirements/specification-project-isolation.requirement.spec.md#isolate-specification-projects-in-a-workspace>)

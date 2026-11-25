@@ -7,8 +7,6 @@ source: "../../../../specs/quality/reliability/repeatability/repeatability.quali
 
 # Repeatability
 
-[View source](<../../../../specs/quality/reliability/repeatability/repeatability.quality-attribute.spec.md#repeatability>)
-
 ## Definition
 
 Whether equivalent inspections under unchanged conditions produce equivalent
@@ -24,3 +22,7 @@ reports.
 **Parent attribute**
 
 - [Reliability](<../reliability.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../../../specs/quality/reliability/repeatability/repeatability.quality-attribute.spec.md#repeatability>)

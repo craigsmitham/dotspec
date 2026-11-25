@@ -7,8 +7,6 @@ source: "../../../../specs/quality/reliability/source-preservation/source-preser
 
 # Source preservation
 
-[View source](<../../../../specs/quality/reliability/source-preservation/source-preservation.quality-attribute.spec.md#source-preservation>)
-
 ## Definition
 
 Whether inspection preserves the source material it examines.
@@ -24,3 +22,7 @@ Whether inspection preserves the source material it examines.
 **Parent attribute**
 
 - [Reliability](<../reliability.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../../../specs/quality/reliability/source-preservation/source-preservation.quality-attribute.spec.md#source-preservation>)

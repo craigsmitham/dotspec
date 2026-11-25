@@ -7,8 +7,6 @@ source: "../../specs/quality/reliability/source-preservation/inspection-preserve
 
 # Inspection preserves source material
 
-[View source](<../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material>)
-
 ## Statement
 
 Inspection must leave source-file contents and paths unchanged, without
@@ -46,3 +44,7 @@ describes the read-and-report operation. File creation belongs to the separate
 **Quality attribute**
 
 - [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material>)

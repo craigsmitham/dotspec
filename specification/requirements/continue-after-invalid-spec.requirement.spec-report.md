@@ -7,8 +7,6 @@ source: "../../specs/requirements/continue-after-invalid-spec.requirement.spec.m
 
 # Continue checking after a structural error
 
-[View source](<../../specs/requirements/continue-after-invalid-spec.requirement.spec.md#continue-checking-after-a-structural-error>)
-
 ## Statement
 
 When a discovered specification contains a structural error, dotspec must
@@ -32,3 +30,7 @@ and handling within an individual malformed file.
 **Quality attribute**
 
 - [Diagnosability](<../quality/usability/diagnosability/diagnosability.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../specs/requirements/continue-after-invalid-spec.requirement.spec.md#continue-checking-after-a-structural-error>)

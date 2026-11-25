@@ -7,8 +7,6 @@ source: "../../specs/requirements/model-source-fidelity.requirement.spec.md#pres
 
 # Preserve source and represented content in model exports
 
-[View source](<../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-model-exports>)
-
 ## Statement
 
 Export must preserve the meaning and order of authored Markdown, including conditions,
@@ -57,3 +55,7 @@ representation and named mappings.
 **Quality attribute**
 
 - [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-model-exports>)

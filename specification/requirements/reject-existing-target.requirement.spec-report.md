@@ -7,8 +7,6 @@ source: "../../specs/requirements/reject-existing-target.requirement.spec.md#rej
 
 # Reject initialization at an existing target
 
-[View source](<../../specs/requirements/reject-existing-target.requirement.spec.md#reject-initialization-at-an-existing-target>)
-
 ## Statement
 
 When the target path already exists, initialization must terminate with an
@@ -28,3 +26,7 @@ An existing target requires an explicit editing decision.
 **Quality attribute**
 
 - [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../specs/requirements/reject-existing-target.requirement.spec.md#reject-initialization-at-an-existing-target>)

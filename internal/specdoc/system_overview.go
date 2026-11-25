@@ -14,18 +14,17 @@ import (
 // Each authored passage has one home in the overview. The same outline drives
 // rendering, source content order, fragment allocation and the navigation map.
 type overviewSection struct {
-	collection        string // directory or interface group represented by this section
-	title, anchor     string
-	caption           string // linked heading for a concept definition
-	conceptMembers    []string
-	level             int
-	sources           []string
-	passages          [][]*heading
-	detail            string
-	detailLinks       []string
-	collectionSources []*heading
-	preview           []entry
-	hasBody           bool
+	collection     string // directory or interface group represented by this section
+	title, anchor  string
+	caption        string // linked heading for a concept definition
+	conceptMembers []string
+	level          int
+	sources        []string
+	passages       [][]*heading
+	detail         string
+	detailLinks    []string
+	preview        []entry
+	hasBody        bool
 }
 
 // These System fields each have their own section in the report, in reading order.
@@ -217,7 +216,6 @@ func (p *planner) planCollectionHomes(s *subject) {
 		for _, group := range slices.Sorted(maps.Keys(idx.sources)) {
 			section := sections[group]
 			for _, h := range idx.sources[group] {
-				section.collectionSources = append(section.collectionSources, h)
 				p.targets[h.node] = s.file + "#" + section.anchor
 			}
 		}
@@ -292,9 +290,6 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 				lines = append(lines, p.collectionEntryLine(w, e))
 			}
 			w.text(strings.Join(lines, "\n"))
-		}
-		for _, h := range section.collectionSources {
-			w.text(link(h.sourceLabel(), relativeURL(w.file, s.source.path, h.anchor)))
 		}
 		for _, dest := range section.detailLinks {
 			w.requireLink(dest)

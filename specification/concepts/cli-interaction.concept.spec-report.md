@@ -7,8 +7,6 @@ source: "../../internal/integration/specs/concepts/cli-interaction.concept.spec.
 
 # Command Invocation
 
-[View source](<../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#command-invocation>)
-
 ## Purpose
 
 Let a person or program submit an operation and determine its outcome through a
@@ -75,3 +73,7 @@ Each script supplies its inputs, commands and expected observations. Read the go
 The Go test harness executes these scripts; it does not define additional
 product requirements. The repository's [specification-test convention](<../../CONTRIBUTING.md#specification-tests-and-implementation-tests>)
 identifies the sources that its coverage script requires.
+
+---
+
+[View source](<../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#command-invocation>)

@@ -7,8 +7,6 @@ source: "../../../specs/quality/durability/durability.quality-attribute.spec.md#
 
 # Durability
 
-[View source](<../../../specs/quality/durability/durability.quality-attribute.spec.md#durability>)
-
 ## Definition
 
 Preservation of the owner’s acknowledged decisions between local sessions, including the reply they expect for a waiting errand and the day they chose to follow up. The follow-up cue can change overnight even though those decisions survive intact.
@@ -21,3 +19,7 @@ Preservation of the owner’s acknowledged decisions between local sessions, inc
 
 - [Acknowledge after commit](<../../components/task-service/requirements/acknowledge-after-commit.requirement.spec-report.md>)
 - [Preserve tasks across restart](<../../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
+
+---
+
+[View source](<../../../specs/quality/durability/durability.quality-attribute.spec.md#durability>)

@@ -7,8 +7,6 @@ source: "../../specs/business-rules/follow-up.business-rule.spec.md#when-a-reply
 
 # When a reply needs chasing
 
-[View source](<../../specs/business-rules/follow-up.business-rule.spec.md#when-a-reply-needs-chasing>)
-
 ## Statement
 
 For a reply the person is still waiting for, follow-up is upcoming before the currently chosen day and due from that day onward.
@@ -34,3 +32,7 @@ Suppose my guest arrives on Friday. I choose Wednesday to chase the plumber so I
 **Basis for**
 
 - [Show which replies need follow-up](<../requirements/show-which-replies-need-follow-up.requirement.spec-report.md>)
+
+---
+
+[View source](<../../specs/business-rules/follow-up.business-rule.spec.md#when-a-reply-needs-chasing>)

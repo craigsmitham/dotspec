@@ -114,5 +114,3 @@ An actor goal and its interactions at a stated system boundary, with alternative
 Software requirements · [Model reference](<../docs/reference/model/index.md#usecase>) · [Term source](<../docs/reference/model/glossary.md#use-case>)
 
 From [Feature](<#feature-relationships>) · Can group a use case.
-
-[View source for “Glossary”](<../specs/dotspec.system.spec.md#glossary>)

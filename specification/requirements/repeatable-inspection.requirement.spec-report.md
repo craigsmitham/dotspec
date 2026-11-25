@@ -7,8 +7,6 @@ source: "../../specs/quality/reliability/repeatability/repeatable-inspection.req
 
 # Repeated inspections produce equivalent reports
 
-[View source](<../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports>)
-
 ## Statement
 
 Repeated inspections must produce equivalent structured reports, including the
@@ -47,3 +45,7 @@ defines report fields and their ordering rules.
 **Quality attribute**
 
 - [Repeatability](<../quality/reliability/repeatability/repeatability.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports>)

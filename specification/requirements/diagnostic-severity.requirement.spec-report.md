@@ -7,8 +7,6 @@ source: "../../specs/quality/usability/diagnosability/diagnostic-severity.requir
 
 # Diagnostic severity is available without styling
 
-[View source](<../../specs/quality/usability/diagnosability/diagnostic-severity.requirement.spec.md#diagnostic-severity-is-available-without-styling>)
-
 ## Statement
 
 Every diagnostic must identify its severity using a text label independently
@@ -44,3 +42,7 @@ supported severity values and report structure.
 
 - [Accessibility](<../quality/usability/accessibility/accessibility.quality-attribute.spec-report.md>)
 - [Diagnosability](<../quality/usability/diagnosability/diagnosability.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../specs/quality/usability/diagnosability/diagnostic-severity.requirement.spec.md#diagnostic-severity-is-available-without-styling>)

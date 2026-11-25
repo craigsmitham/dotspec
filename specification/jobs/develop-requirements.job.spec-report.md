@@ -7,8 +7,6 @@ source: "../../specs/jobs/develop-requirements.job.spec.md#develop-requirements"
 
 # Develop Requirements
 
-[View source](<../../specs/jobs/develop-requirements.job.spec.md#develop-requirements>)
-
 ## Job
 
 Define an agreed set of requirements for a proposed software change, from
@@ -271,3 +269,7 @@ This job map and its outcomes are working hypotheses based on the intended
 purpose of dotspec. They have not been validated through interviews or outcome
 research, and the map's completeness has not been established. The proposed
 steps include collaboration and judgment that dotspec may only support.
+
+---
+
+[View source](<../../specs/jobs/develop-requirements.job.spec.md#develop-requirements>)

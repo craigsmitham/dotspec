@@ -7,8 +7,6 @@ source: "../../../specs/quality/reliability/reliability.quality-attribute.spec.m
 
 # Reliability
 
-[View source](<../../../specs/quality/reliability/reliability.quality-attribute.spec.md#reliability>)
-
 ## Definition
 
 How consistently dotspec performs its intended operations under stated
@@ -20,3 +18,7 @@ conditions.
 
 - [Repeatability](<repeatability/repeatability.quality-attribute.spec-report.md>)
 - [Source preservation](<source-preservation/source-preservation.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../../specs/quality/reliability/reliability.quality-attribute.spec.md#reliability>)

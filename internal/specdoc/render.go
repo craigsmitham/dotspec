@@ -109,10 +109,6 @@ func (p *planner) render() *Plan {
 	return p.plan
 }
 
-func (h *heading) sourceLabel() string {
-	return "View source for “" + inlineText(h.title) + "”"
-}
-
 // The title supplies the current location. Each ancestor leads to its overview.
 func (w *writer) setBreadcrumb(owner, member *subject) {
 	var steps []string
@@ -144,29 +140,25 @@ func (p *planner) renderSubject(s *subject) {
 	w.titleMarkdown = p.headingMarkdown(w, s.source, s.name)
 	w.titleAnchor = s.name.explicitAnchor
 	w.setBreadcrumb(s.navigationParent, s)
-	sourceLink := link("View source", w.page.Documents)
 	if s.isOverview() {
 		p.renderOverview(w, s)
 	} else {
-		w.text(sourceLink)
 		p.renderSubjectBody(w, s)
 		p.renderVerification(w, s)
 	}
 	if s.section("Related specifications") == nil {
 		p.relationships(w, s.name, true)
 	}
-	if s.isOverview() {
-		w.text("---")
-		footer := sourceLink
-		if models := s.indexes["Quality models"]; s.kind() == "System" && models != nil {
-			footer += " · " + w.link("Quality models", models.file)
-		}
-		w.text(footer)
-	}
 	p.appendFootnotes(w, s)
 	for _, anchor := range s.emptyHeadingAnchors {
 		w.text(`<a id="` + html.EscapeString(anchor) + `"></a>`)
 	}
+	w.text("---")
+	footer := link("View source", w.page.Documents)
+	if models := s.indexes["Quality models"]; s.kind() == "System" && models != nil {
+		footer += " · " + w.link("Quality models", models.file)
+	}
+	w.text(footer)
 	w.finish()
 }
 

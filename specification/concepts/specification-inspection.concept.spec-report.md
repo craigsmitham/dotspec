@@ -7,8 +7,6 @@ source: "../../specs/concepts/specification-inspection.concept.spec.md#specifica
 
 # Specification Inspection
 
-[View source](<../../specs/concepts/specification-inspection.concept.spec.md#specification-inspection>)
-
 ## Purpose
 
 Make structural problems and missing-content advice visible within an explicit
@@ -80,3 +78,7 @@ on the next run.
 [Advice permits success](<../requirements/advice-permits-success.requirement.spec-report.md>)
 governs the effect of advisory findings on exit status. An access or discovery failure leaves the scan
 incomplete, separately from structural findings in readable files.
+
+---
+
+[View source](<../../specs/concepts/specification-inspection.concept.spec.md#specification-inspection>)

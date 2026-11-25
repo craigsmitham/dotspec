@@ -7,8 +7,6 @@ source: "../../specs/use-cases/discover-specification-sources.use-case.spec.md#d
 
 # Discover specification sources
 
-[View source](<../../specs/use-cases/discover-specification-sources.use-case.spec.md#discover-specification-sources>)
-
 ## Goal
 
 Find specification files and their directly linked context for review.
@@ -94,3 +92,7 @@ inventory to assemble the material for review and decide whether it adequately
 specifies the system. The
 [contributor guide](<../../CONTRIBUTING.md#specification-tests-and-implementation-tests>) explains how
 this project assigns roles to those sources.
+
+---
+
+[View source](<../../specs/use-cases/discover-specification-sources.use-case.spec.md#discover-specification-sources>)

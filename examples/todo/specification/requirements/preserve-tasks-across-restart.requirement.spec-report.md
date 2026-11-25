@@ -7,8 +7,6 @@ source: "../../specs/requirements/restart.requirement.spec.md#preserve-tasks-acr
 
 # Preserve tasks across restart
 
-[View source](<../../specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>)
-
 ## Statement
 
 After the service acknowledges a change, stopping and restarting it on the same
@@ -76,3 +74,7 @@ No matching result recorded.
 **Quality attribute**
 
 - [Durability](<../quality/durability/durability.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart>)

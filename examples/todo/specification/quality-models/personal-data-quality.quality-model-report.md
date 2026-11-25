@@ -7,8 +7,6 @@ source: "../../specs/quality-models/personal-data.quality-model.md#personal-data
 
 # Personal data quality
 
-[View source](<../../specs/quality-models/personal-data.quality-model.md#personal-data-quality>)
-
 ## Description
 
 A task list and an expense journal both hold decisions a person expects to find again. Use durability to ask which acknowledged records and revisions survive an interruption. Each tool chooses the records and interruptions its own requirements cover.
@@ -28,3 +26,7 @@ Adapted from recoverability in [ISO/IEC 25010:2023, §3.5.4](<https://www.iso.or
 **ID:** durability
 
 The ability to retain acknowledged changes when the application stops and starts again.
+
+---
+
+[View source](<../../specs/quality-models/personal-data.quality-model.md#personal-data-quality>)

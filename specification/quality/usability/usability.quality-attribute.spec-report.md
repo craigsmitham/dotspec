@@ -7,8 +7,6 @@ source: "../../../specs/quality/usability/usability.quality-attribute.spec.md#us
 
 # Usability
 
-[View source](<../../../specs/quality/usability/usability.quality-attribute.spec.md#usability>)
-
 ## Definition
 
 How effectively contributors can author, inspect, and maintain specifications.
@@ -24,3 +22,7 @@ How effectively contributors can author, inspect, and maintain specifications.
 
 - [Accessibility](<accessibility/accessibility.quality-attribute.spec-report.md>)
 - [Diagnosability](<diagnosability/diagnosability.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../../specs/quality/usability/usability.quality-attribute.spec.md#usability>)

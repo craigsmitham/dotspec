@@ -7,8 +7,6 @@ source: "../../specs/use-cases/resume-list.use-case.spec.md#decide-what-to-do-ab
 
 # Decide what to do about a waiting errand
 
-[View source](<../../specs/use-cases/resume-list.use-case.spec.md#decide-what-to-do-about-a-waiting-errand>)
-
 ## Goal
 
 Decide whether to take up a waiting errand, keep waiting or mark it settled, and see that decision reflected in my list.
@@ -136,3 +134,7 @@ The person can act on a reply as soon as it arrives. Their chosen day governs wh
 **Feature**
 
 - [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)
+
+---
+
+[View source](<../../specs/use-cases/resume-list.use-case.spec.md#decide-what-to-do-about-a-waiting-errand>)

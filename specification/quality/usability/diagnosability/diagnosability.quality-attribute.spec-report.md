@@ -7,8 +7,6 @@ source: "../../../../specs/quality/usability/diagnosability/diagnosability.quali
 
 # Diagnosability
 
-[View source](<../../../../specs/quality/usability/diagnosability/diagnosability.quality-attribute.spec.md#diagnosability>)
-
 ## Definition
 
 How effectively findings help contributors understand and locate specification
@@ -24,3 +22,7 @@ problems.
 **Parent attribute**
 
 - [Usability](<../usability.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../../../specs/quality/usability/diagnosability/diagnosability.quality-attribute.spec.md#diagnosability>)

@@ -7,8 +7,6 @@ source: "../../specs/requirements/offline-authoring-guidance.requirement.spec.md
 
 # Find authoring guidance in the installed CLI
 
-[View source](<../../specs/requirements/offline-authoring-guidance.requirement.spec.md#find-authoring-guidance-in-the-installed-cli>)
-
 ## Statement
 
 A contributor must be able to reach the relevant versioned guidance from a specification type, a question in their own words, or a mapped diagnostic, then read the selected page, section, or worked example offline. The guidance must identify what the contributor needs to carry out its instructions with that installation.
@@ -46,3 +44,7 @@ A structurally complete draft can still leave the reader guessing about the perf
 **Quality attribute**
 
 - [Usability](<../quality/usability/usability.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../specs/requirements/offline-authoring-guidance.requirement.spec.md#find-authoring-guidance-in-the-installed-cli>)

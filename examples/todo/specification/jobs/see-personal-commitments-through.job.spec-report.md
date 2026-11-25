@@ -7,8 +7,6 @@ source: "../../specs/jobs/personal-commitments.job.spec.md#see-personal-commitme
 
 # See personal commitments through
 
-[View source](<../../specs/jobs/personal-commitments.job.spec.md#see-personal-commitments-through>)
-
 ## Job
 
 See personal commitments through from accepting responsibility for an errand to establishing that the promised result has been delivered or someone else has agreed to take responsibility for it.
@@ -193,3 +191,7 @@ The [return scenario](<../use-cases/decide-what-to-do-about-a-waiting-errand.use
 
 - [Decide what to do about a waiting errand](<../use-cases/decide-what-to-do-about-a-waiting-errand.use-case.spec-report.md>)
 - [My checklist](<../concept-uses/my-checklist.concept-use.spec-report.md>)
+
+---
+
+[View source](<../../specs/jobs/personal-commitments.job.spec.md#see-personal-commitments-through>)

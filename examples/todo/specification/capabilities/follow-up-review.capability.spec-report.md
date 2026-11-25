@@ -7,8 +7,6 @@ source: "../../specs/capabilities/follow-up-review.capability.spec.md#follow-up-
 
 # Follow-up review
 
-[View source](<../../specs/capabilities/follow-up-review.capability.spec.md#follow-up-review>)
-
 ## Description
 
 When the owner reviews waiting errands, they can see which replies they planned to chase by today and what to ask for.
@@ -28,3 +26,7 @@ The owner records what answer they need and chooses when to check back. When the
 ## Provided by
 
 [Task service](<../components/task-service/task-service.component.spec-report.md>).
+
+---
+
+[View source](<../../specs/capabilities/follow-up-review.capability.spec.md#follow-up-review>)

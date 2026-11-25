@@ -7,8 +7,6 @@ source: "../../specs/use-cases/export-specification-model.use-case.spec.md#expor
 
 # Export a specification model for review or integration
 
-[View source](<../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-model-for-review-or-integration>)
-
 ## Goal
 
 Obtain a faithful, structured snapshot of a project's specification content for
@@ -187,3 +185,7 @@ coverage or successful execution of every branch.
 [Specification Inspection](<../concepts/specification-inspection.concept.spec-report.md>)
 provides the existing inspection context. The source, document-content and domain
 layers are explained in [Specification model](<../../docs/reference/specification-model.md>).
+
+---
+
+[View source](<../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-model-for-review-or-integration>)

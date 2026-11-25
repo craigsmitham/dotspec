@@ -7,8 +7,6 @@ source: "../../../../specs/quality/usability/accessibility/accessibility.quality
 
 # Accessibility
 
-[View source](<../../../../specs/quality/usability/accessibility/accessibility.quality-attribute.spec.md#accessibility>)
-
 ## Definition
 
 How effectively people with differing abilities and ways of accessing output
@@ -23,3 +21,7 @@ can use dotspec.
 **Parent attribute**
 
 - [Usability](<../usability.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../../../specs/quality/usability/accessibility/accessibility.quality-attribute.spec.md#accessibility>)

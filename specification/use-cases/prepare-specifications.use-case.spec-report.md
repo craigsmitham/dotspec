@@ -7,8 +7,6 @@ source: "../../specs/use-cases/prepare-specifications.use-case.spec.md#prepare-s
 
 # Prepare specifications for review
 
-[View source](<../../specs/use-cases/prepare-specifications.use-case.spec.md#prepare-specifications-for-review>)
-
 ## Goal
 
 Give reviewers a readable account of proposed behavior and its related sources.
@@ -83,3 +81,7 @@ Representative. Drafting, discovery, and checking can repeat in any useful order
 This is a summary of a contributor workflow, not a mandatory approval process or
 an additional CLI contract. Linked user tasks explain existing command behavior.
 Delivery increments can span these narratives. The linked use cases retain authority over their interactions.
+
+---
+
+[View source](<../../specs/use-cases/prepare-specifications.use-case.spec.md#prepare-specifications-for-review>)

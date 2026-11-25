@@ -7,8 +7,6 @@ source: "../../specs/requirements/generated-specification.requirement.spec.md#re
 
 # Read and verify the generated requirements specification
 
-[View source](<../../specs/requirements/generated-specification.requirement.spec.md#read-and-verify-the-generated-requirements-specification>)
-
 ## Statement
 
 For a project with one root system and reports enabled, contributors must be able to generate a deterministic Markdown requirements specification and check its fidelity, navigation, and freshness with the project-wide check. A reader must be able to reach each authored promise in scope, read its qualifications, follow its declared relationships and supporting references, and locate the editable source.
@@ -21,9 +19,9 @@ Whole-project builds and checks for projects declared with `dotspec.yaml`. Repor
 
 The project's `SPEC.md` gives the system name and one link to `specification/<name>.system.spec-report.md`. Each system and component overview uses the basename of its named source with `.spec.md` changed to `.spec-report.md`. Standalone collection indexes sit beside the overview and use plural names such as `use-cases.md` or `requirements.md`. An index entry links to the subject and includes its authored goal, statement, or description when available. Empty collections produce no index. From the overview, reach the same promise through its feature and through the system’s requirements index. Both routes explain why the promise is listed and lead to its canonical page or passage. The statement, conditions and criterion agree with the authored text. Editing a condition only in the generated spec or removing the feature link produces a check finding. A second build over identical inputs produces identical files.
 
-System and component overviews open with their subject name and authored description. Readers can expand On this page for the populated body sections in reading order, or Browse specifications for an alphabetical list of collections that require a separate browsing destination. Both lists start collapsed. The overview’s View source link follows the body. Authored stakeholder needs stay in the body.
+System and component overviews open with their subject name and authored description. Readers can expand On this page for the populated body sections in reading order, or Browse specifications for an alphabetical list of collections that require a separate browsing destination. Both lists start collapsed. Authored stakeholder needs stay in the body.
 
-For features, components, interfaces, concept definitions, concept uses and system quality attributes, a system overview section that lists every member serves as the collection. The build omits the separate index and its Browse specifications link. Subject breadcrumbs and citations to the authored collection heading open the corresponding overview section. Each section preserves the link to its authored collection heading when present. For interfaces, breadcrumbs and group citations open the matching offered or used list. When the overview covers only part of a collection, Browse specifications links to the complete index, including any By component routes.
+For features, components, interfaces, concept definitions, concept uses and system quality attributes, a system overview section that lists every member serves as the collection. The build omits the separate index and its Browse specifications link. Subject breadcrumbs and citations to the authored collection heading open the corresponding overview section. For interfaces, breadcrumbs and group citations open the matching offered or used list. When the overview covers only part of a collection, Browse specifications links to the complete index, including any By component routes.
 
 Architecture shows immediate parts inside a labeled boundary and labels parts and interfaces with their project names. Declared external interaction partners appear outside the boundary. When both immediate parts and external partners exist, separate structure and context diagrams answer those questions. The linked text groups subsystems, components, interfaces and interactions where populated and preserves authored explanations. When all interfaces are offered, the heading is Interfaces. When a subject uses interfaces, headings identify which it uses and, if applicable, which it offers. A parent link or capabilities alone can be read without a diagram. Authored component Architecture content leads the view.
 
@@ -66,7 +64,7 @@ Resolving the last question removes the index and its navigation link on rebuild
 Each subject report identifies its authored file and heading once in the YAML
 `source` field using a URI relative to the report. This field supplies the
 source attribution for the page and its passages.
-The visible View source link opens that same heading. Each embedded subject links to its own authored heading.
+Each authored subject report ends with one **View source** link in the footer that opens that exact heading. Embedded subjects link to their own declarations. Collection headings serve as navigation and omit source links.
 Above each subject or collection title, the breadcrumb links to its owners in order. A subject’s final breadcrumb opens its collection. The root system is the starting point.
 A use case with multiple extensions links to each named extension under Extensions. Concepts and quality models provide the same navigation for their named actions and attributes.
 Readers can follow supporting references beside the content they supply.
@@ -87,3 +85,7 @@ Reviewers can inspect product intent in Git and follow a promise to its context 
 
 - [Repeatability](<../quality/reliability/repeatability/repeatability.quality-attribute.spec-report.md>)
 - [Usability](<../quality/usability/usability.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../specs/requirements/generated-specification.requirement.spec.md#read-and-verify-the-generated-requirements-specification>)

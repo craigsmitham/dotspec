@@ -7,8 +7,6 @@ source: "../../specs/requirements/availability.requirement.spec.md#keep-recorded
 
 # Keep recorded work available
 
-[View source](<../../specs/requirements/availability.requirement.spec.md#keep-recorded-work-available>)
-
 ## Statement
 
 When the person returns to the same local database, each saved entry must appear once in the view for its recorded state (Open, Waiting or Completed). An intentionally deleted entry must remain absent from every view.
@@ -48,3 +46,7 @@ No matching result recorded.
 **Refined by**
 
 - [Preserve tasks across restart](<preserve-tasks-across-restart.requirement.spec-report.md>)
+
+---
+
+[View source](<../../specs/requirements/availability.requirement.spec.md#keep-recorded-work-available>)

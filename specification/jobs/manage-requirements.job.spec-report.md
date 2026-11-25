@@ -7,8 +7,6 @@ source: "../../specs/jobs/manage-requirements.job.spec.md#manage-requirements"
 
 # Manage Requirements
 
-[View source](<../../specs/jobs/manage-requirements.job.spec.md#manage-requirements>)
-
 ## Job
 
 Keep an agreed requirements set aligned with a proposed product change, from
@@ -258,3 +256,7 @@ The map and outcomes are working hypotheses based on dotspec's
 intended purpose. No interview or outcome research has validated them yet.
 The map's completeness has not been established. It includes decisions and
 collaboration performed outside the CLI.
+
+---
+
+[View source](<../../specs/jobs/manage-requirements.job.spec.md#manage-requirements>)

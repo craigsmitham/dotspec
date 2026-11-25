@@ -182,7 +182,7 @@ func (p *planner) indexOpenQuestions() {
 }
 
 // A collection heading whose children all have their own reports belongs to
-// the directory. Preserve links to its authored fragment there.
+// the directory. Route citations to its authored fragment there.
 func (p *planner) planPassages(s *subject) {
 	var groups [][]*heading
 	for _, h := range s.source.headings {
@@ -327,14 +327,6 @@ func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex
 				e.preview = indexPreview(e.preview)
 			}
 			fmt.Fprintln(&w.out, p.collectionEntryLine(w, e))
-		}
-		for _, h := range idx.sources[group] {
-			w.text(link(h.sourceLabel(), relativeURL(w.file, owner.source.path, h.anchor)))
-		}
-	}
-	if _, ok := idx.groups[""]; !ok {
-		for _, h := range idx.sources[""] {
-			w.text(link(h.sourceLabel(), relativeURL(w.file, owner.source.path, h.anchor)))
 		}
 	}
 	for _, passage := range idx.passages {

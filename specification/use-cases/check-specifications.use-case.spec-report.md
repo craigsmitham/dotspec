@@ -7,8 +7,6 @@ source: "../../specs/use-cases/check-specifications.use-case.spec.md#check-speci
 
 # Check specifications before committing
 
-[View source](<../../specs/use-cases/check-specifications.use-case.spec.md#check-specifications-before-committing>)
-
 ## Goal
 
 Identify structural problems and missing-content advice in the specifications
@@ -159,3 +157,7 @@ describes the report and inspection behavior used in this interaction.
 
 Its [quality requirements](<../concepts/specification-inspection.concept.spec-report.md#state>)
 cover diagnostic severity, report repeatability, and source preservation.
+
+---
+
+[View source](<../../specs/use-cases/check-specifications.use-case.spec.md#check-specifications-before-committing>)

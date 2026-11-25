@@ -7,8 +7,6 @@ source: "../../specs/concepts/job-map.concept.spec.md#job-map"
 
 # Job Map
 
-[View source](<../../specs/concepts/job-map.concept.spec.md#job-map>)
-
 ## Purpose
 
 Make an accomplishment's steps and success criteria inspectable, so people can
@@ -71,3 +69,7 @@ such as identifying stakeholders and evaluating requirements. Attach success
 criteria to the relevant steps and view the map with outcomes. The map makes
 those relationships visible for discussion. Selecting one step lets a reviewer
 focus on its criteria without confusing them with success for the entire job.
+
+---
+
+[View source](<../../specs/concepts/job-map.concept.spec.md#job-map>)

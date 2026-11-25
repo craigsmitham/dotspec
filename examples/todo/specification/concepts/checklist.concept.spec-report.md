@@ -7,8 +7,6 @@ source: "../../specs/concepts/checklist.concept.spec.md#checklist"
 
 # Checklist
 
-[View source](<../../specs/concepts/checklist.concept.spec.md#checklist>)
-
 ## Purpose
 
 Decide what I can do next, which replies I need to chase and which commitments I have already settled.
@@ -140,3 +138,7 @@ Each row describes one accepted action. For an existing entry, the view where th
 **Used by**
 
 - [My checklist](<../concept-uses/my-checklist.concept-use.spec-report.md>)
+
+---
+
+[View source](<../../specs/concepts/checklist.concept.spec.md#checklist>)

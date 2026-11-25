@@ -7,8 +7,6 @@ source: "../../../../specs/quality/performance/responsiveness/responsiveness.qua
 
 # Responsiveness
 
-[View source](<../../../../specs/quality/performance/responsiveness/responsiveness.quality-attribute.spec.md#responsiveness>)
-
 ## Definition
 
 The elapsed time before an operation delivers its result.
@@ -21,3 +19,7 @@ workloads, defined measurement conditions, and baseline measurements.
 **Parent attribute**
 
 - [Performance](<../performance.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../../../specs/quality/performance/responsiveness/responsiveness.quality-attribute.spec.md#responsiveness>)

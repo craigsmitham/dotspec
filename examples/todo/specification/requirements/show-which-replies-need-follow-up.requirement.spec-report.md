@@ -7,8 +7,6 @@ source: "../../specs/requirements/follow-up.requirement.spec.md#show-which-repli
 
 # Show which replies need follow-up
 
-[View source](<../../specs/requirements/follow-up.requirement.spec.md#show-which-replies-need-follow-up>)
-
 ## Statement
 
 Each time the owner opens or refreshes Waiting, the list must show each waiting entry’s expected reply, recorded follow-up date and whether follow-up is due under the [follow-up policy](<../business-rules/when-a-reply-needs-chasing.business-rule.spec-report.md>).
@@ -46,3 +44,7 @@ The [form acceptance test](<../../tests/acceptance.py>) checks the reply, date a
 **Feature**
 
 - [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)
+
+---
+
+[View source](<../../specs/requirements/follow-up.requirement.spec.md#show-which-replies-need-follow-up>)

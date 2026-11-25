@@ -7,8 +7,6 @@ source: "../../specs/features/pick-up-where-i-left-off.feature.spec.md#pick-up-w
 
 # Pick up where I left off
 
-[View source](<../../specs/features/pick-up-where-i-left-off.feature.spec.md#pick-up-where-i-left-off>)
-
 ## Description
 
 Find an errand after a break, see whether a reply needs chasing and take up the work again when an answer arrives.
@@ -23,3 +21,7 @@ Someone can finish making calls for the day while still owing several results. W
 - [Show which replies need follow-up](<../requirements/show-which-replies-need-follow-up.requirement.spec-report.md>) specifies the cue for deciding where to act.
 - [Keep recorded work available](<../requirements/keep-recorded-work-available.requirement.spec-report.md>) lets the owner find each errand in the view for its recorded state when they come back.
 - [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>) covers returning after the service itself has stopped.
+
+---
+
+[View source](<../../specs/features/pick-up-where-i-left-off.feature.spec.md#pick-up-where-i-left-off>)

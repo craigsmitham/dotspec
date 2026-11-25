@@ -105,17 +105,6 @@ func addSourceContracts(p *planner) error {
 				requireRoute(indexPage, relative(home, s.file), s.name.title)
 				indexPage.DirectoryMembers = map[string][]string{}
 			}
-			for group, headings := range idx.sources {
-				for _, h := range headings {
-					dest := relativeURL(home, s.source.path, h.anchor)
-					requireRoute(indexPage, dest, h.sourceLabel())
-					if section := idx.overviewSections[group]; section != nil {
-						requireSectionRoute(indexPage, section.anchor, dest)
-					} else if group != "" {
-						requireSectionRoute(indexPage, specfile.NameSlug(group), dest)
-					}
-				}
-			}
 			for group, members := range idx.groups {
 				anchor := specfile.NameSlug(group)
 				if group == "" {

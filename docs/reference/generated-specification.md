@@ -137,7 +137,7 @@ Each subject report records its source in a YAML `source` field using a URI
 relative to the report, including the fragment for the exact authored heading.
 For example, the todo system report declares
 `source: "../specs/personal-task-list.system.spec.md#personal-task-list"`.
-The visible **View source** link opens this same heading. For a subject defined inside
+Every subject report has one **View source** link in its footer. It opens the heading recorded in `source`. For a subject defined inside
 another spec, the fragment identifies its nested heading.
 
 A subject rendered as a section carries its type and exact authored heading in a

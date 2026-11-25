@@ -7,8 +7,6 @@ source: "../../specs/business-rules/completion.business-rule.spec.md#completion-
 
 # Completion preserves a commitment
 
-[View source](<../../specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment>)
-
 ## Statement
 
 A settled commitment must stay on the person's list until they delete it.
@@ -34,3 +32,7 @@ If the repair fails the next morning, the person can find yesterday's commitment
 **Basis for**
 
 - [Keep recorded work available](<../requirements/keep-recorded-work-available.requirement.spec-report.md>)
+
+---
+
+[View source](<../../specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment>)

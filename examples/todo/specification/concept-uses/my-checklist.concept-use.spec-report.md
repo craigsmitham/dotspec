@@ -7,8 +7,6 @@ source: "../../specs/personal-task-list.system.spec.md#my-checklist"
 
 # My checklist
 
-[View source](<../../specs/personal-task-list.system.spec.md#my-checklist>)
-
 ## Description
 
 Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. Two errands with the same title can be at different stages.
@@ -33,3 +31,7 @@ Each entry follows one commitment through the owner's next action, an outstandin
 **Used in**
 
 - [Decide what to do about a waiting errand](<../use-cases/decide-what-to-do-about-a-waiting-errand.use-case.spec-report.md>)
+
+---
+
+[View source](<../../specs/personal-task-list.system.spec.md#my-checklist>)

@@ -269,9 +269,8 @@ def spec_journey(cli, tmp):
         text = page.read_text(encoding="utf-8")
         if name in ("Personal task list", "Task service"):
             assert f"# {name}\n\n{description}\n" in text
-            assert text.rstrip().splitlines()[-1].startswith("[View source]")
         else:
-            assert re.search(r"^# " + re.escape(name) + r"\n\n\[View source\].*\n\n## Description\n\n" + re.escape(description), text, re.M)
+            assert re.search(r"^# " + re.escape(name) + r"\n\n## Description\n\n" + re.escape(description), text, re.M)
         assert text.count(description) == 1
         if collection == "Capabilities":
             row, = [row for row in capability_rows if row.startswith(f"| [{name}]")]
@@ -285,9 +284,17 @@ def spec_journey(cli, tmp):
     # Every source in this fixture gets one report documenting its H1. Pages
     # for inline subjects document a deeper heading in that same source.
     claims = {}
-    for page in (project / "specification").rglob("*-report.md"):
-        header = page.read_text(encoding="utf-8").split("---\n", 2)[1]
+    for page in (project / "specification").rglob("*.md"):
+        text = page.read_text(encoding="utf-8")
+        assert "[View source for “" not in text, page
+        if not page.name.endswith("-report.md"):
+            assert "[View source](" not in text, page
+            continue
+        header = text.split("---\n", 2)[1]
         primary, = re.findall(r'^source: "([^"]+)"$', header, re.M)
+        footer = text.rstrip().rpartition("\n---\n\n")[2]
+        assert "\n" not in footer, page
+        assert footer.split(" · ", 1)[0] == f"[View source](<{primary}>)", page
         uri = urlsplit(primary)
         key = ((page.parent / unquote(uri.path)).resolve(), unquote(uri.fragment))
         assert key[0].is_file() and key[1], page

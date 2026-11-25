@@ -463,7 +463,6 @@ An example:
 	}, "\n")
 	_, hierarchy, _ := strings.Cut(page, "## Quality Attributes\n")
 	hierarchy, _, _ = strings.Cut(hierarchy, "\n## ")
-	wantOverview += "\n\n[View source for “Quality attributes”](<../specs/notes.system.spec.md#quality-attributes>)"
 	if strings.TrimSpace(hierarchy) != wantOverview {
 		t.Fatalf("system hierarchy:\n%s\nwant:\n%s", hierarchy, wantOverview)
 	}
@@ -712,12 +711,8 @@ See [the boundary detail](#open-questions).
 			t.Fatalf("missing interface breadcrumb to %s: %s, %v", section, data, err)
 		}
 	}
-	// A source link elsewhere on the page cannot stand in for the link at the collection.
-	const source = "[View source for “Required interfaces”](<../specs/scope.system.spec.md#required-interfaces>)"
-	moved := strings.Replace(string(page), source, "", 1) + "\n" + source + "\n"
-	writeFixture(t, "specification/scope.system.spec-report.md", moved)
-	if code, out, msg := invoke("check"); code != 1 || !strings.Contains(out, `section "overview.interfaces-this-system-uses-1" is missing link`) {
-		t.Fatalf("expected missing section source: %d %s %s", code, out, msg)
+	if strings.Contains(string(page), "[View source for") {
+		t.Fatal("unexpected source link on an interface group")
 	}
 }
 

@@ -7,8 +7,6 @@ source: "../../../specs/quality/performance/performance.quality-attribute.spec.m
 
 # Performance
 
-[View source](<../../../specs/quality/performance/performance.quality-attribute.spec.md#performance>)
-
 ## Definition
 
 The time and computing resources required to perform operations under stated
@@ -19,3 +17,7 @@ workloads.
 **Subattributes**
 
 - [Responsiveness](<responsiveness/responsiveness.quality-attribute.spec-report.md>)
+
+---
+
+[View source](<../../../specs/quality/performance/performance.quality-attribute.spec.md#performance>)
