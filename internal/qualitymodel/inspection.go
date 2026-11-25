@@ -27,7 +27,7 @@ func Check(spec *QualityModel) []diagnostic.Diagnostic {
 }
 
 func CheckType() check.Type {
-	return check.Type{Layout: Layout, ValidateSlug: ValidateSlug,
+	return check.Type{Layout: Layout, ValidateSlug: Layout.ValidateSlug,
 		Inspect: func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
 			m, err := readFrom(files, path)
 			if err != nil {

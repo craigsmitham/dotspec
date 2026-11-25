@@ -3,7 +3,6 @@ package system
 import (
 	"fmt"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/check"
@@ -80,15 +79,6 @@ func ParseProductSpecMarkdown(kind string, input *specfile.Markdown) (*ProductSp
 	return spec, nil
 }
 
-var productSlug = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
-
-func ValidateProductSlug(kind, slug string) error {
-	if !productSlug.MatchString(slug) {
-		return fmt.Errorf("invalid %s slug %q: use lowercase letters or digits separated by single hyphens", kind, slug)
-	}
-	return nil
-}
-
 func ReadProductSpec(layout specfile.Layout, path string) (*ProductSpec, error) {
 	return readProduct(&specfile.SourceSet{}, layout, path)
 }
@@ -98,7 +88,7 @@ func readProduct(files *specfile.SourceSet, layout specfile.Layout, path string)
 	if !ok {
 		return nil, fmt.Errorf("expected a %s source path", layout.Kind)
 	}
-	if err := ValidateProductSlug(layout.Kind, slug); err != nil {
+	if err := layout.ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout."+layout.Kind+"-name", err.Error(), diagnostic.Location{Path: path})
 	}
 	input, err := files.Markdown(path)

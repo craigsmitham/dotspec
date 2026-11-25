@@ -18,7 +18,7 @@ func InitWithPreset(path, slug, preset string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if err := ValidateSlug(slug); err != nil {
+	if err := Layout.ValidateSlug(slug); err != nil {
 		return "", err
 	}
 	dir, err := specfile.Directory(path)
@@ -29,7 +29,7 @@ func InitWithPreset(path, slug, preset string) (string, error) {
 }
 
 var collection = speccollection.Collection[Job]{
-	Layout: Layout, Plural: "jobs", ValidateSlug: ValidateSlug, Read: Read,
+	Layout: Layout, Plural: "jobs", Read: Read,
 	SetSystem: func(member *Job, owner *system.System) {
 		member.System = owner
 	},

@@ -67,7 +67,7 @@ func newProductCommand(layout specfile.Layout) *cobra.Command {
 			}
 			selector := args[0]
 			if action.name == "init" || !layout.Match(selector) {
-				if err := system.ValidateProductSlug(layout.Kind, selector); err != nil {
+				if err := layout.ValidateSlug(selector); err != nil {
 					return err
 				}
 			}

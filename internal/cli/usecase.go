@@ -61,7 +61,7 @@ func newUseCaseCommand() *cobra.Command {
 			if action.name == "list" {
 				return listUseCases(path, format, overview, cmd.OutOrStdout())
 			}
-			if err := usecase.ValidateSlug(args[0]); err != nil && (action.name == "init" || !usecase.Layout.Match(args[0])) {
+			if err := usecase.Layout.ValidateSlug(args[0]); err != nil && (action.name == "init" || !usecase.Layout.Match(args[0])) {
 				return err
 			}
 			return runUseCase(action.name, path, args[0], format, template, cmd.OutOrStdout())

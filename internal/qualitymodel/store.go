@@ -51,7 +51,7 @@ func builtin(slug string) (*QualityModel, error) {
 }
 
 func Init(path, slug, from string) (string, error) {
-	if err := ValidateSlug(slug); err != nil {
+	if err := Layout.ValidateSlug(slug); err != nil {
 		return "", err
 	}
 	if m, err := builtin(slug); err != nil {
@@ -80,7 +80,7 @@ func Init(path, slug, from string) (string, error) {
 // Show resolves a source path or unique slug within the selected owner.
 func Show(path, slug string) (*QualityModel, error) {
 	if !Layout.Match(slug) {
-		if err := ValidateSlug(slug); err != nil {
+		if err := Layout.ValidateSlug(slug); err != nil {
 			return nil, err
 		}
 	}

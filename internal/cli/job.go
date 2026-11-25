@@ -101,7 +101,7 @@ func newJobCommand() *cobra.Command {
 			if command == "list" {
 				return listJobs(path, format, cmd.OutOrStdout())
 			}
-			if err := job.ValidateSlug(args[0]); err != nil && (action.name == "init" || !job.Layout.Match(args[0])) {
+			if err := job.Layout.ValidateSlug(args[0]); err != nil && (action.name == "init" || !job.Layout.Match(args[0])) {
 				return err
 			}
 			return runJob(command, args[0], options, cmd.OutOrStdout())

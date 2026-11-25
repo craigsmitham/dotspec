@@ -86,7 +86,7 @@ func newRequirementCommand() *cobra.Command {
 				}
 				return listRequirement(path, format, attribute, cmd.OutOrStdout())
 			}
-			if err := requirement.ValidateSlug(args[0]); err != nil && (action.name == "init" || !requirement.Layout.Match(args[0])) {
+			if err := requirement.Layout.ValidateSlug(args[0]); err != nil && (action.name == "init" || !requirement.Layout.Match(args[0])) {
 				return err
 			}
 			attribute := ""

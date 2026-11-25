@@ -4,7 +4,6 @@ package usecase
 import (
 	"fmt"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
@@ -15,7 +14,7 @@ import (
 const Suffix = ".use-case.spec.md"
 const Collection = "use-cases"
 
-var Layout = specfile.Layout{Kind: "use-case", Collection: Collection, Suffix: Suffix}
+var Layout = specfile.Layout{Kind: "use-case", Collection: Collection, Suffix: Suffix, SlugExample: "check-specifications"}
 
 type metadata struct {
 	specfile.Metadata `yaml:",inline"`
@@ -136,8 +135,6 @@ State whether the scenario's order is representative or required; link to the go
 Link to the jobs, steps, desired outcomes, or higher-level use cases this use case supports.
 `
 
-var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
-
 // UseCase retains section bodies as Markdown for the authoring commands. Model
 // export separately exposes source-backed scenario and extension records. File
 // ownership does not set the system boundary.
@@ -167,13 +164,6 @@ type UseCase struct {
 	SectionLocations     map[string]diagnostic.Location `json:"-"`
 }
 
-func ValidateSlug(slug string) error {
-	if !slugPattern.MatchString(slug) {
-		return fmt.Errorf("invalid use-case slug %q: use lowercase letters or digits separated by single hyphens (for example, check-specifications)", slug)
-	}
-	return nil
-}
-
 func Read(path string) (*UseCase, error) {
 	return readFrom(&specfile.SourceSet{}, path)
 }
@@ -184,7 +174,7 @@ func readFrom(files *specfile.SourceSet, path string) (*UseCase, error) {
 		return nil, diagnostic.Error("layout.use-case-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
 	}
 	slug := strings.TrimSuffix(name, Suffix)
-	if err := ValidateSlug(slug); err != nil {
+	if err := Layout.ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.use-case-name", err.Error(), diagnostic.Location{Path: path})
 	}
 	input, err := files.Markdown(path)

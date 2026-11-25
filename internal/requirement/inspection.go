@@ -8,7 +8,7 @@ import (
 )
 
 func CheckType() check.Type {
-	return check.Type{Layout: Layout, References: readReferences, ValidateSlug: ValidateSlug, Context: system.CheckContext, InspectContext: inspectAttributes,
+	return check.Type{Layout: Layout, References: readReferences, ValidateSlug: Layout.ValidateSlug, Context: system.CheckContext, InspectContext: inspectAttributes,
 		Inspect: func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
 			spec, err := readFrom(files, path)
 			if err != nil {

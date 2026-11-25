@@ -16,7 +16,7 @@ import (
 
 const Suffix = ".job.spec.md"
 
-var Layout = specfile.Layout{Kind: "job", Collection: "jobs", Suffix: Suffix}
+var Layout = specfile.Layout{Kind: "job", Collection: "jobs", Suffix: Suffix, SlugExample: "develop-requirements"}
 
 type metadata struct {
 	specfile.Metadata `yaml:",inline"`
@@ -51,7 +51,6 @@ Describe the progress or result they want to achieve.
 Use an optional Outcomes section for individual success criteria.
 `
 
-var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 var fieldPattern = regexp.MustCompile(`^\*\*(ID|Stage):\*\*\s*(.*?)\s*$`)
 
 type DesiredOutcome struct {
@@ -92,13 +91,6 @@ type Job struct {
 	SectionLocations map[string]diagnostic.Location `json:"-"`
 }
 
-func ValidateSlug(slug string) error {
-	if !slugPattern.MatchString(slug) {
-		return fmt.Errorf("invalid job slug %q: use lowercase letters or digits separated by single hyphens (for example, develop-requirements)", slug)
-	}
-	return nil
-}
-
 func Read(path string) (*Job, error) {
 	return readFrom(&specfile.SourceSet{}, path)
 }
@@ -109,7 +101,7 @@ func readFrom(files *specfile.SourceSet, path string) (*Job, error) {
 		return nil, diagnostic.Error("layout.job-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
 	}
 	slug := strings.TrimSuffix(name, Suffix)
-	if err := ValidateSlug(slug); err != nil {
+	if err := Layout.ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.job-name", err.Error(), diagnostic.Location{Path: path})
 	}
 	input, err := files.Markdown(path)

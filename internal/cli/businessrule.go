@@ -51,7 +51,7 @@ func newBusinessRuleCommand() *cobra.Command {
 			if action.name == "list" {
 				return listBusinessRules(path, format, cmd.OutOrStdout())
 			}
-			if err := businessrule.ValidateSlug(args[0]); err != nil && (action.name == "init" || !businessrule.Layout.Match(args[0])) {
+			if err := businessrule.Layout.ValidateSlug(args[0]); err != nil && (action.name == "init" || !businessrule.Layout.Match(args[0])) {
 				return err
 			}
 			return runBusinessRule(action.name, path, args[0], format, cmd.OutOrStdout())

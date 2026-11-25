@@ -4,7 +4,6 @@ package businessrule
 import (
 	"fmt"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
@@ -15,7 +14,7 @@ import (
 const Suffix = ".business-rule.spec.md"
 const Collection = "business-rules"
 
-var Layout = specfile.Layout{Kind: "business-rule", Collection: Collection, Suffix: Suffix}
+var Layout = specfile.Layout{Kind: "business-rule", Collection: Collection, Suffix: Suffix, SlugExample: "job-map"}
 
 type metadata struct {
 	specfile.Metadata `yaml:",inline"`
@@ -54,8 +53,6 @@ Link to software requirements or use cases that address this rule. Describe thei
 a link alone does not establish enforcement or compliance.
 `
 
-var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
-
 // BusinessRule expresses a business constraint independently of enforcement.
 type BusinessRule struct {
 	References            *specfile.ReferenceDocument    `json:"-"`
@@ -75,13 +72,6 @@ type BusinessRule struct {
 	SectionLocations      map[string]diagnostic.Location `json:"-"`
 }
 
-func ValidateSlug(slug string) error {
-	if !slugPattern.MatchString(slug) {
-		return fmt.Errorf("invalid business-rule slug %q: use lowercase letters or digits separated by single hyphens (for example, job-map)", slug)
-	}
-	return nil
-}
-
 func Read(path string) (*BusinessRule, error) {
 	return readFrom(&specfile.SourceSet{}, path)
 }
@@ -92,7 +82,7 @@ func readFrom(files *specfile.SourceSet, path string) (*BusinessRule, error) {
 		return nil, diagnostic.Error("layout.business-rule-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
 	}
 	slug := strings.TrimSuffix(name, Suffix)
-	if err := ValidateSlug(slug); err != nil {
+	if err := Layout.ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.business-rule-name", err.Error(), diagnostic.Location{Path: path})
 	}
 	input, err := files.Markdown(path)

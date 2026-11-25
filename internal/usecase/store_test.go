@@ -92,7 +92,7 @@ func TestValidationBeforeCreatingFiles(t *testing.T) {
 		t.Fatal("init created the project directory")
 	}
 	for _, slug := range []string{"check-specifications", "2-steps", "check2"} {
-		if err := ValidateSlug(slug); err != nil {
+		if err := Layout.ValidateSlug(slug); err != nil {
 			t.Fatal(err)
 		}
 	}

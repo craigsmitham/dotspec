@@ -26,7 +26,7 @@ func InitWithAttribute(path, slug, preset, attribute string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if err := ValidateSlug(slug); err != nil {
+	if err := Layout.ValidateSlug(slug); err != nil {
 		return "", err
 	}
 	dir, err := specfile.Directory(path)
@@ -55,7 +55,7 @@ func InitWithAttribute(path, slug, preset, attribute string) (string, error) {
 }
 
 var collection = speccollection.Collection[Requirement]{
-	Layout: Layout, Plural: "requirement specs", ValidateSlug: ValidateSlug, Read: Read,
+	Layout: Layout, Plural: "requirement specs", Read: Read,
 	SetSystem: func(member *Requirement, owner *system.System) {
 		member.System = owner
 		member.Classification = Classify(member.QualityAttributes, owner)

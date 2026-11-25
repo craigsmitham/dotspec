@@ -133,7 +133,7 @@ func TestInvalidSlugsAndPaths(t *testing.T) {
 		t.Fatalf("invalid init created files: %v, %v", entries, err)
 	}
 	for _, slug := range []string{"develop-requirements", "job2", "2-steps"} {
-		if err := ValidateSlug(slug); err != nil {
+		if err := Layout.ValidateSlug(slug); err != nil {
 			t.Fatal(err)
 		}
 	}

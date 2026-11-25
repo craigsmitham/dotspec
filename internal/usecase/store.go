@@ -27,7 +27,7 @@ func InitTemplate(path, slug, template string) (string, error) {
 	default:
 		return "", fmt.Errorf("unknown use-case template %q; use brief or expanded", template)
 	}
-	if err := ValidateSlug(slug); err != nil {
+	if err := Layout.ValidateSlug(slug); err != nil {
 		return "", err
 	}
 	dir, err := specfile.Directory(path)
@@ -38,7 +38,7 @@ func InitTemplate(path, slug, template string) (string, error) {
 }
 
 var collection = speccollection.Collection[UseCase]{
-	Layout: Layout, Plural: "use cases", ValidateSlug: ValidateSlug, Read: Read,
+	Layout: Layout, Plural: "use cases", Read: Read,
 	SetSystem: func(member *UseCase, owner *system.System) {
 		member.System = owner
 	},

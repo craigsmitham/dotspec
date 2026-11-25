@@ -13,11 +13,10 @@ import (
 )
 
 type Collection[T any] struct {
-	Layout       specfile.Layout
-	Plural       string
-	ValidateSlug func(string) error
-	Read         func(path string) (*T, error)
-	SetSystem    func(*T, *system.System)
+	Layout    specfile.Layout
+	Plural    string
+	Read      func(path string) (*T, error)
+	SetSystem func(*T, *system.System)
 }
 
 func (c Collection[T]) readMember(path string) (*T, *system.System, error) {
@@ -37,7 +36,7 @@ func (c Collection[T]) readMember(path string) (*T, *system.System, error) {
 // Show accepts a source path or a unique slug within the selected owner.
 func (c Collection[T]) Show(path, selector string) (*T, error) {
 	if !c.Layout.Match(selector) {
-		if err := c.ValidateSlug(selector); err != nil {
+		if err := c.Layout.ValidateSlug(selector); err != nil {
 			return nil, err
 		}
 	}

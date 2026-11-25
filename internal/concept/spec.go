@@ -4,7 +4,6 @@ package concept
 import (
 	"fmt"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
@@ -15,7 +14,7 @@ import (
 const Suffix = ".concept.spec.md"
 const Collection = "concepts"
 
-var Layout = specfile.Layout{Kind: "concept", Collection: Collection, Suffix: Suffix}
+var Layout = specfile.Layout{Kind: "concept", Collection: Collection, Suffix: Suffix, SlugExample: "job-map"}
 
 type metadata struct {
 	specfile.Metadata `yaml:",inline"`
@@ -50,8 +49,6 @@ Use multiple stories when needed to explain the essential behavior.
 The story explains the design; it does not establish exhaustive behavior or verification.
 `
 
-var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
-
 // Concept retains section bodies as Markdown. State and actions have no imposed
 // language; system association does not imply an implementation boundary.
 type Concept struct {
@@ -71,13 +68,6 @@ type Concept struct {
 	SectionLocations      map[string]diagnostic.Location `json:"-"`
 }
 
-func ValidateSlug(slug string) error {
-	if !slugPattern.MatchString(slug) {
-		return fmt.Errorf("invalid concept slug %q: use lowercase letters or digits separated by single hyphens (for example, job-map)", slug)
-	}
-	return nil
-}
-
 func Read(path string) (*Concept, error) {
 	return readFrom(&specfile.SourceSet{}, path)
 }
@@ -88,7 +78,7 @@ func readFrom(files *specfile.SourceSet, path string) (*Concept, error) {
 		return nil, diagnostic.Error("layout.concept-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
 	}
 	slug := strings.TrimSuffix(name, Suffix)
-	if err := ValidateSlug(slug); err != nil {
+	if err := Layout.ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.concept-name", err.Error(), diagnostic.Location{Path: path})
 	}
 	input, err := files.Markdown(path)

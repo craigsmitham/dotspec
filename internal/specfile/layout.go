@@ -2,23 +2,40 @@ package specfile
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
 const Folder = "specs"
 
+var collectionSlug = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
+
 // Layout describes either a singleton filename or a collection of slug-named
-// files. The owning type supplies its kind; layout never infers domain identity
-// from a directory name. Slug validation remains the type's responsibility.
+// files. The owning type supplies its kind and optional example slug.
 type Layout struct {
 	NamedSubject bool
 	Kind         string
 	Collection   string
 	Filename     string
 	Suffix       string
+	SlugExample  string
+}
+
+// ValidateSlug checks a user-supplied collection slug. Named subject filenames
+// follow the Unicode heading conversion in NameSlug.
+func (l Layout) ValidateSlug(slug string) error {
+	if collectionSlug.MatchString(slug) {
+		return nil
+	}
+	advice := "use lowercase letters or digits separated by single hyphens"
+	if l.SlugExample != "" {
+		advice += " (for example, " + l.SlugExample + ")"
+	}
+	return fmt.Errorf("invalid %s slug %q: %s", l.Kind, slug, advice)
 }
 
 func (l Layout) Match(name string) bool {

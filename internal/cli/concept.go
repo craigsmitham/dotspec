@@ -51,7 +51,7 @@ func newConceptCommand() *cobra.Command {
 			if action.name == "list" {
 				return listConcepts(path, format, cmd.OutOrStdout())
 			}
-			if err := concept.ValidateSlug(args[0]); err != nil && (action.name == "init" || !concept.Layout.Match(args[0])) {
+			if err := concept.Layout.ValidateSlug(args[0]); err != nil && (action.name == "init" || !concept.Layout.Match(args[0])) {
 				return err
 			}
 			return runConcept(action.name, path, args[0], format, cmd.OutOrStdout())

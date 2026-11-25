@@ -4,7 +4,6 @@ package requirement
 import (
 	"fmt"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
@@ -16,7 +15,7 @@ import (
 const Suffix = ".requirement.spec.md"
 const Collection = "requirements"
 
-var Layout = specfile.Layout{Kind: "requirement", Collection: Collection, Suffix: Suffix}
+var Layout = specfile.Layout{Kind: "requirement", Collection: Collection, Suffix: Suffix, SlugExample: "reject-existing-target"}
 
 var Template = `---
 type: requirement-spec
@@ -86,8 +85,6 @@ func TemplateFor(preset string) (string, error) {
 	return Template, nil
 }
 
-var slugPattern = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
-
 type metadata struct {
 	specfile.Metadata `yaml:",inline"`
 	ID                string    `yaml:"id"`
@@ -114,13 +111,6 @@ type Requirement struct {
 	AttributeLocations  map[string]diagnostic.Location `json:"-"`
 }
 
-func ValidateSlug(slug string) error {
-	if !slugPattern.MatchString(slug) {
-		return fmt.Errorf("invalid requirement slug %q: use lowercase letters or digits separated by single hyphens (for example, reject-existing-target)", slug)
-	}
-	return nil
-}
-
 func Read(path string) (*Requirement, error) {
 	return readFrom(&specfile.SourceSet{}, path)
 }
@@ -131,7 +121,7 @@ func readFrom(files *specfile.SourceSet, path string) (*Requirement, error) {
 		return nil, diagnostic.Error("layout.requirement-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
 	}
 	slug := strings.TrimSuffix(name, Suffix)
-	if err := ValidateSlug(slug); err != nil {
+	if err := Layout.ValidateSlug(slug); err != nil {
 		return nil, diagnostic.Error("layout.requirement-name", err.Error(), diagnostic.Location{Path: path})
 	}
 	input, err := files.Markdown(path)

@@ -23,6 +23,19 @@ stdout '"complete": false'
 status 2 dotspec check --format unknown
 ! stdout .
 stderr 'unknown output format'
+# A malformed selector is an invocation error. A malformed filename is a located finding.
+status 2 dotspec job init Bad--Slug
+! stdout .
+stderr '^dotspec: invalid job slug "Bad--Slug": use lowercase letters or digits separated by single hyphens \(for example, develop-requirements\)$'
+status 2 dotspec feature init Bad--Slug
+! stdout .
+stderr '^dotspec: invalid feature slug "Bad--Slug": use lowercase letters or digits separated by single hyphens$'
+cp specs/jobs/draft.job.spec.md specs/jobs/Bad--Slug.job.spec.md
+status 1 dotspec check specs/jobs/Bad--Slug.job.spec.md
+stdout 'Bad--Slug\.job\.spec\.md'
+stdout 'error \[layout.job-name\]'
+stdout 'invalid job slug "Bad--Slug": use lowercase letters or digits separated by single hyphens \(for example, develop-requirements\)'
+! stderr .
 -- specs/jobs/invalid.job.spec.md --
 ---
 type: job-spec

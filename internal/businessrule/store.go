@@ -12,7 +12,7 @@ type Group struct {
 }
 
 func Init(path, slug string) (string, error) {
-	if err := ValidateSlug(slug); err != nil {
+	if err := Layout.ValidateSlug(slug); err != nil {
 		return "", err
 	}
 	dir, err := specfile.Directory(path)
@@ -23,7 +23,7 @@ func Init(path, slug string) (string, error) {
 }
 
 var collection = speccollection.Collection[BusinessRule]{
-	Layout: Layout, Plural: "business rules", ValidateSlug: ValidateSlug, Read: Read,
+	Layout: Layout, Plural: "business rules", Read: Read,
 	SetSystem: func(member *BusinessRule, owner *system.System) {
 		member.System = owner
 	},
