@@ -3,7 +3,7 @@ generated_by: dotspec
 type: concept-spec-report
 source: "../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#command-invocation"
 ---
-[dotspec](<../dotspec.system.spec-report.md>) › [Concept definitions](<../dotspec.system.spec-report.md#concept.command-invocation>)
+[dotspec](<../dotspec.system.spec-report.md>) › [Concept definitions](<../dotspec.system.spec-report.md#command-invocation>)
 
 # Command Invocation
 

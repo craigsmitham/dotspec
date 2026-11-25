@@ -42,6 +42,7 @@ type sourceFile struct {
 type heading struct {
 	node, title, anchor, explicitAnchor string
 	field                               string
+	bodyHeadings                        []string // rendered headings inside quotes and lists in this passage
 	start, end, bodyEnd, level          int
 	owner                               *subject
 	detailEntry                         *heading // root of a passage collected on a detail page
@@ -152,6 +153,7 @@ func (p *planner) read() error {
 		p.sources[id(r)] = &sourceFile{path: filepath.ToSlash(rel), data: string(data)}
 	}
 	headingByNode := map[string]*heading{}
+	nested := map[*sourceFile][]model.Record{}
 	// Only top-level headings delimit domain sections. Quoted or listed headings
 	// are authored body content and must remain inside their original block.
 	top := map[string]bool{}
@@ -175,6 +177,7 @@ func (p *planner) read() error {
 		switch attr(n, "node_kind") {
 		case "heading":
 			if !top[id(n)] {
+				nested[sf] = append(nested[sf], n)
 				continue
 			}
 			h := &heading{node: id(n), field: attr(n, "domain_field"), title: attr(n, "decoded_text"), level: model.Number(n["heading_level"]), start: position(n, "start"), end: position(n, "end")}
@@ -193,10 +196,20 @@ func (p *planner) read() error {
 	}
 	for _, sf := range p.sources {
 		slices.SortFunc(sf.headings, func(a, b *heading) int { return cmp.Compare(a.start, b.start) })
+		// Nested headings participate in Markdown fragment numbering even
+		// though they do not declare domain sections.
+		bodyHeadings := nested[sf]
+		slices.SortFunc(bodyHeadings, func(a, b model.Record) int { return cmp.Compare(position(a, "start"), position(b, "start")) })
 		for i, h := range sf.headings {
 			h.bodyEnd = len(sf.data)
 			if i+1 < len(sf.headings) {
 				h.bodyEnd = sf.headings[i+1].start
+			}
+			for len(bodyHeadings) > 0 && position(bodyHeadings[0], "start") < h.bodyEnd {
+				if position(bodyHeadings[0], "start") >= h.end {
+					h.bodyHeadings = append(h.bodyHeadings, attr(bodyHeadings[0], "decoded_text"))
+				}
+				bodyHeadings = bodyHeadings[1:]
 			}
 		}
 		slices.SortFunc(sf.links, func(a, b model.Record) int {
@@ -538,7 +551,7 @@ func (p *planner) indexTargets() {
 	for _, s := range p.subjects {
 		if s.isOverview() {
 			s.overview = p.planOverview(s)
-			p.indexOverviewHeadings(s, parser.NewContext().IDs())
+			p.indexOverviewHeadings(s)
 			p.planCollectionHomes(s)
 		}
 	}

@@ -104,15 +104,11 @@ flowchart LR
 
 ## Concepts
 
-<a id="concept.checklist"></a>
-
 ### [Checklist](<concepts/checklist.concept.spec-report.md>)
 
 Decide what I can do next, which replies I need to chase and which commitments I have already settled.
 
-**Use in this system**
-
-- [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. Two errands with the same title can be at different stages.
+**Used here as** [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — Each entry follows one commitment through the owner's next action, an outstanding reply or settlement.
 
 ## Quality Attributes
 

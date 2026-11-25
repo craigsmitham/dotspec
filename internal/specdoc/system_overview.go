@@ -7,8 +7,6 @@ import (
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/yuin/goldmark/ast"
-	"github.com/yuin/goldmark/parser"
 )
 
 // Each authored passage has one home in the overview. The same outline drives
@@ -120,25 +118,12 @@ func (section overviewSection) merges(i int) bool {
 	return i == 0 && (h.title == section.title || (section.title == "Interactions" && h.title == "Interacts with"))
 }
 
-func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
-	// Markdown renderers derive automatic fragments from heading markup. A
-	// rebased title link can change both its own fragment and later duplicate
-	// suffixes. Use explicit addresses on outlines containing rich headings.
-	// Renderers also differ on whether a linked concept heading consumes its
-	// visible name as a fragment. Protect other headings sharing that name.
-	linkedTitles := map[string]bool{}
-	for _, section := range s.overview {
-		if section.caption != "" {
-			linkedTitles[specfile.NameSlug(section.title)] = true
-		}
-	}
+func (p *planner) indexOverviewHeadings(s *subject) {
+	ids := specfile.RenderedHeadingIDs{}
 	explicit := slices.ContainsFunc(s.source.headings, func(h *heading) bool {
-		return h.owner == s && h.detailEntry == nil && (needsHeadingAnchor(s, h) || linkedTitles[specfile.NameSlug(h.reportTitle())])
-	}) || slices.ContainsFunc(s.overview, func(section overviewSection) bool {
-		return section.caption == "" && linkedTitles[specfile.NameSlug(section.title)]
+		return h.owner == s && h.detailEntry == nil && needsHeadingAnchor(s, h)
 	})
-	conceptIDs := parser.NewContext().IDs()
-	titleID := string(ids.Generate([]byte(s.name.title), ast.KindHeading))
+	titleID := ids.Next(s.name.title)
 	if explicit {
 		s.name.explicitAnchor = "overview.lead"
 		titleID = s.name.explicitAnchor
@@ -146,30 +131,32 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 	for i := range s.overview {
 		section := &s.overview[i]
 		if section.level > 0 {
-			heading := cmp.Or(section.caption, section.title)
-			section.anchor = string(ids.Generate([]byte(heading), ast.KindHeading))
-			if section.caption != "" {
-				section.anchor = "concept." + string(conceptIDs.Generate([]byte(section.title), ast.KindHeading))
-			} else if explicit {
+			section.anchor = ids.Next(section.title)
+			if explicit && section.caption == "" {
 				section.anchor = "overview." + section.anchor
 			}
 		}
 		for j, group := range section.passages {
 			for k, h := range group {
-				if h == s.name || h.detailEntry != nil {
+				if h.detailEntry != nil {
 					continue
 				}
 				anchor := section.anchor
-				if k != 0 || !section.merges(j) {
-					anchor = string(ids.Generate([]byte(h.reportTitle()), ast.KindHeading))
-					if explicit {
+				if h != s.name && (k != 0 || !section.merges(j)) {
+					anchor = ids.Next(h.reportTitle())
+					if explicit || anchor == "" {
 						h.explicitAnchor = "passage." + h.anchor
 						anchor = h.explicitAnchor
 					}
 				} else if section.level == 0 {
 					anchor = titleID
 				}
-				p.targets[h.node] = s.file + "#" + anchor
+				if h != s.name {
+					p.targets[h.node] = s.file + "#" + anchor
+				}
+				for _, title := range h.bodyHeadings {
+					ids.Next(title)
+				}
 			}
 		}
 	}
@@ -265,7 +252,7 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 	}
 	for _, section := range s.overview {
 		if section.level > 0 {
-			if s.name.explicitAnchor != "" || section.caption != "" {
+			if s.name.explicitAnchor != "" && section.caption == "" {
 				w.text(`<a id="` + section.anchor + `"></a>`)
 			}
 			title := cmp.Or(section.caption, section.title)

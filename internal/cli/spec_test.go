@@ -788,9 +788,15 @@ Local notes.
 ### Notebook
 Both published and draft material are in scope.
 
+> ### Notebook
+> An excerpt from a notebook.
+
 ## Concept uses
 
 ### Draft notebook
+
+#### Description
+Keeps drafts for version 2.1. Published notes move to the archive.
 
 #### Definition
 [Notebook](concepts/notebook.concept.spec.md).
@@ -848,19 +854,33 @@ type: component-spec
 		return body
 	}
 	localBody := group(local)
-	for _, want := range []string{"Gather drafts.", "**Uses in this system**", "[Draft notebook]", "[Revision notebook]", "**Declared in** [Editor]"} {
+	for _, want := range []string{"Gather drafts.", "**Used here as**\n\n- [Draft notebook]", " — Keeps drafts for version 2.1.\n", "- [Revision notebook]", "**Declared in** [Editor]"} {
 		if !strings.Contains(localBody, want) {
 			t.Fatalf("expected %s in %s", want, localBody)
 		}
 	}
-	if body := group(external); !strings.Contains(body, "Preserve published work.") || !strings.Contains(body, "[Published notebook]") {
+	if strings.Contains(localBody, "Published notes move") || !strings.Contains(read("concept-uses/draft-notebook.concept-use.spec-report.md"), "Published notes move to the archive.") {
+		t.Fatal("the use report should carry the full description")
+	}
+	if body := group(external); !strings.Contains(body, "Preserve published work.") || !strings.Contains(body, "**Used here as** [Published notebook]") {
 		t.Fatal(body)
+	}
+	// A passage and its block quote both use Notebook before the two definitions.
+	// Each breadcrumb must land on the heading that links to its own definition.
+	for file, fragment := range map[string]string{
+		"concept-uses/published-notebook.concept-use.spec-report.md": "notebook-2",
+		"concept-uses/draft-notebook.concept-use.spec-report.md":     "notebook-3",
+		"concepts/notebook.concept.spec-report.md":                   "notebook-3",
+	} {
+		if !strings.Contains(read(file), "tool.system.spec-report.md#"+fragment+">)") {
+			t.Fatalf("expected %s to return to #%s", file, fragment)
+		}
 	}
 	if body := group("### Concept uses\n"); !strings.Contains(body, "[Pending selection]") {
 		t.Fatal(body)
 	}
 	for _, name := range []string{"Draft notebook", "Published notebook", "Pending selection", "Revision notebook"} {
-		if strings.Count(report, "- ["+name+"]") != 1 {
+		if strings.Count(report, "["+name+"]") != 1 {
 			t.Fatalf("expected one use of %s in %s", name, report)
 		}
 	}
@@ -949,7 +969,7 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 		}
 	}
 	const definition = "### [Notebook](<concepts/notebook.concept.spec-report.md>)\n\nKeep written ideas."
-	if !strings.Contains(section(before, "Concepts"), definition) || !strings.Contains(read("use-cases.md"), "Review a note.") {
+	if body := section(before, "Concepts"); !strings.HasPrefix(body, definition) || strings.Contains(body, "Used here as") || !strings.Contains(read("use-cases.md"), "Review a note.") {
 		t.Fatal("missing index entries")
 	}
 	refines := "\n  - Refines [Keep notes](<requirements/keep-notes.requirement.spec-report.md>)"
@@ -972,9 +992,9 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	if section(after, "Goals") != section(before, "Goals")+"\n\n- [Four](<goals.md#four>) — Fourth goal." || !strings.Contains(read("goals.md"), "Fourth goal.") {
 		t.Fatal(after)
 	}
-	use := "- [My notebook](<concept-uses/my-notebook.concept-use.spec-report.md>) — The current author's notes."
+	use := "**Used here as** [My notebook](<concept-uses/my-notebook.concept-use.spec-report.md>) — The current author's notes."
 	sync := "### Synchronizations\n\n- [Archive updates](<synchronizations/archive-updates.synchronization.spec-report.md>) — When — The note is saved. · Then — Archive the current version."
-	if !strings.HasSuffix(section(after, "Concepts"), definition+"\n\n**Use in this system**\n\n"+use+"\n\n"+sync) {
+	if !strings.HasSuffix(section(after, "Concepts"), definition+"\n\n"+use+"\n\n"+sync) {
 		t.Fatal(after)
 	}
 	if !strings.Contains(read("concept-uses/my-notebook.concept-use.spec-report.md"), "\n## Uses\n\n[Notebook](<../concepts/notebook.concept.spec-report.md>)") {

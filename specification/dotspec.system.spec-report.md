@@ -94,19 +94,13 @@ arguments, standard streams, and exit statuses.
 
 ## Concepts
 
-<a id="concept.command-invocation"></a>
-
 ### [Command Invocation](<concepts/cli-interaction.concept.spec-report.md>)
 
 Let a person or program submit an operation and determine its outcome through a consistent process interface.
 
-<a id="concept.job-map"></a>
-
 ### [Job Map](<concepts/job-map.concept.spec-report.md>)
 
 Make an accomplishment's steps and success criteria inspectable, so people can discuss what the work involves and how success is judged.
-
-<a id="concept.specification-inspection"></a>
 
 ### [Specification Inspection](<concepts/specification-inspection.concept.spec-report.md>)
 

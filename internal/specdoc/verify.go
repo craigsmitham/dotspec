@@ -70,6 +70,10 @@ func parseGenerated(data []byte) parsedPage {
 		level int
 		ids   []string
 	}
+	var overviewIDs specfile.RenderedHeadingIDs
+	if header.Type == "system-spec-report" || header.Type == "component-spec-report" {
+		overviewIDs = specfile.RenderedHeadingIDs{}
+	}
 	var ancestors []section
 	var aliases []string
 	addAnchor := func(id string) { p.anchors[id] = true; aliases = append(aliases, id) }
@@ -110,6 +114,9 @@ func parseGenerated(data []byte) parsedPage {
 		case *ast.Heading:
 			if attr, ok := n.AttributeString("id"); ok {
 				name := string(attr.([]byte))
+				if overviewIDs != nil {
+					name = overviewIDs.Next(specfile.RenderedText(n, body))
+				}
 				p.anchors[name] = true
 				if n.Parent() == doc {
 					for len(ancestors) > 0 && ancestors[len(ancestors)-1].level >= n.Level {
@@ -158,34 +165,7 @@ func parseGenerated(data []byte) parsedPage {
 // Read visible text from the AST. A link label survives destination rebasing,
 // and processor comments and frontmatter cannot satisfy a visible-content rule.
 func visibleText(node ast.Node, source []byte) string {
-	var out strings.Builder
-	_ = ast.Walk(node, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
-		if n.Type() == ast.TypeBlock {
-			out.WriteByte(' ')
-		}
-		if !entering {
-			return ast.WalkContinue, nil
-		}
-		switch n := n.(type) {
-		case *ast.Text:
-			value := n.Value(source)
-			if !n.IsRaw() && n.Parent().Kind() != ast.KindCodeSpan {
-				value = util.ResolveEntityNames(util.ResolveNumericReferences(util.UnescapePunctuations(value)))
-			}
-			out.Write(value)
-			if n.SoftLineBreak() || n.HardLineBreak() {
-				out.WriteByte(' ')
-			}
-		case *ast.String:
-			out.Write(n.Value)
-		case *ast.AutoLink:
-			out.Write(n.Label(source))
-		case *ast.CodeBlock, *ast.FencedCodeBlock:
-			out.Write(n.Lines().Value(source))
-		}
-		return ast.WalkContinue, nil
-	})
-	return strings.Join(strings.Fields(out.String()), " ")
+	return strings.Join(strings.Fields(specfile.RenderedText(node, source)), " ")
 }
 
 func contentText(md string) string {

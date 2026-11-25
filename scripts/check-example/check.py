@@ -235,7 +235,8 @@ def spec_journey(cli, tmp):
     assert len(capability_rows) == 4
     concepts = overview.split("\n## Concepts\n", 1)[1].split("\n## ", 1)[0]
     assert concepts.count("### [Checklist](<concepts/checklist.concept.spec-report.md>)") == 1
-    assert "**Use in this system**\n\n- [My checklist]" in concepts
+    assert "<a id=" not in concepts
+    assert "**Used here as** [My checklist]" in concepts
     assert follow(root, "Checklist") == follow(follow(root, "My checklist"), "Checklist")
     for collection, name, fragment in (
         ("Components", "Task service", "components"),
@@ -243,8 +244,8 @@ def spec_journey(cli, tmp):
         ("Capabilities", "Follow-up review", "capabilities"),
         ("Interfaces", "Task list forms", "interfaces"),
         ("Features", "Pick up where I left off", "features"),
-        ("Concept uses", "My checklist", "concept.checklist"),
-        ("Concept definitions", "Checklist", "concept.checklist"),
+        ("Concept uses", "My checklist", "checklist"),
+        ("Concept definitions", "Checklist", "checklist"),
         ("Quality attributes", "Durability", "quality-attributes"),
     ):
         filename = "concepts" if collection == "Concept definitions" else collection.lower().replace(" ", "-")
@@ -276,6 +277,10 @@ def spec_journey(cli, tmp):
             row, = [row for row in capability_rows if row.startswith(f"| [{name}]")]
             _, preview, provider = row.strip("|").strip().split(" | ")
             assert provider == "[Task service](<components/task-service/task-service.component.spec-report.md>)"
+        elif collection == "Concept uses":
+            use, = [line for line in concepts.splitlines() if line.startswith(f"**Used here as** [{name}]")]
+            assert use.split(" — ", 1)[1] == description.split(". ", 1)[0] + "."
+            continue
         elif collection:
             line, = [line for line in directory.read_text(encoding="utf-8").splitlines() if line.startswith(f"- [{name}]")]
             preview = line.split(" — ", 1)[1].removesuffix("\\")

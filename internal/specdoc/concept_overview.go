@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/rivo/uniseg"
 )
 
 // Key groups by the resolved definition identity. Two definitions may share a
@@ -67,18 +68,23 @@ func (p *planner) conceptGroupSection(owner *subject, key string, g *conceptGrou
 			section.conceptMembers = append(section.conceptMembers, def.file)
 		}
 		w.text(inlineText(indexPreview(p.conceptPurpose(key))))
-		if len(g.uses) > 0 {
-			label := "Use in this "
-			if len(g.uses) > 1 {
-				label = "Uses in this "
-			}
-			w.text("**" + label + strings.ToLower(owner.kind()) + "**")
+		if len(g.uses) > 1 {
+			w.text("**Used here as**")
 		}
 	}
 	sortEntries(g.uses)
 	var lines []string
 	for _, use := range g.uses {
-		line := entryLine(w, use)
+		line := w.link(inlineText(use.title), use.target)
+		sentence, _, _ := uniseg.FirstSentenceInString(use.preview, -1)
+		if preview := strings.TrimSpace(sentence); preview != "" {
+			line += " — " + inlineText(preview)
+		}
+		if key != "" && len(g.uses) == 1 {
+			line = "**Used here as** " + line
+		} else {
+			line = "- " + line
+		}
 		declaring := p.subjectsByFile[use.target].navigationParent
 		if declaring != owner && declaring.kind() == "Component" {
 			line += "\\\n  **Declared in** " + w.link(inlineText(declaring.name.title), declaring.file)
