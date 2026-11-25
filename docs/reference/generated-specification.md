@@ -21,7 +21,7 @@ report:
 
 For one root system, the project landing page opens its specification. For several independent systems, the landing page links to a systems index. Use **Part of** when a system really is a subsystem. A project containing only reusable quality models publishes their reference catalog. [Describe a system](../cli-handbook/guides/describe-a-system.md) · [Separate specification projects](workspaces.md).
 
-Explicit specification-system selections and directory defaults place subjects in their system. Standalone quality models are reusable reference material. Each `*.quality-model.md` source has a `*.quality-model-report.md` reference page. Links into other projects retain their original targets. A locally authored specification that selects another project’s system is reachable from the project landing page under **Specifications for other systems**.
+Explicit specification-system selections and directory defaults place subjects in their system. Standalone quality models are reusable reference material. Each `*.quality-model.md` source has a `*.quality-model-report.md` reference page. Links into other projects retain their original targets. A locally authored specification that selects another project’s system is reachable from the project landing page through the index for its type, such as **Requirements for other systems**.
 
 From the project root, build the reports and check them against the authored specifications.
 
@@ -39,23 +39,22 @@ Commit the authored changes, `SPEC.md` and the generated Markdown in `specificat
 | `SPEC.md` | The system overview, or a project index for multiple systems, external-system specifications, or a reference catalog |
 | `specification/<name>.system.spec-report.md` | Root system overview and links into its specification |
 | `specification/glossary.md` | Alphabetical definitions linked to their sources, a topic index when terms declare topics, context names for distinct meanings, and links back to authored relationships |
-| `specification/use-cases.md` | Use cases with their authored goals and links to the scenarios |
 | `specification/quality/<attribute>/<attribute>.quality-attribute.spec-report.md` | One system attribute, its definition, parent and child attributes, and classified requirements |
-| `specification/requirements.md` | Requirements in this system, each linked to its canonical page or passage |
 | `specification/systems/<child>/<child>.system.spec-report.md` | Child system overview with its own local directories |
 | `specification/open-questions.md` | Questions recorded across the project, each with its subject and a link to the passage. The index appears when at least one authored question exists. |
 
 ### Navigate an overview
 
 System and component overviews open with the subject name, authored description, and a linked section map. Component overviews also show their responsibilities, contracts, architecture, and implementation where authored.
-Expand **On this page** to jump to a section in reading order. Expand **Browse specifications** to find a collection by name. For example, choose **Requirements** to review individual promises. To edit the overview’s authored content, follow **View source** at the foot of the report.
+Expand **On this page** to jump to a section in reading order. Choose **Requirements** there to review individual promises. **Browse specifications** appears when a collection has a separate index. To edit the overview’s authored content, follow **View source** at the foot of the report.
 
 | Section | What you can find |
 | --- | --- |
 | Framing | How the authors understand the situation and what they are still exploring |
 | Purpose | The system’s authored purpose |
 | Goals | Authored goals. Select a named goal to read its full statement and see which specifications support it. |
-| Business rules | **Business rules** opens the index of applicable and local rules. |
+| Business rules | Linked local and applicable rules with statement excerpts |
+| Jobs | Linked jobs with their authored job statements |
 | Stakeholders | Named stakeholder roles in source order, each with its description and a heading that jobs and use cases can link to |
 | Scope | The work, people and situations the system serves, followed by agreed exclusions under **Out of scope** |
 | Environment | Conditions in the surrounding world that help explain the requirements |
@@ -63,27 +62,28 @@ Expand **On this page** to jump to a section in reading order. Expand **Browse s
 | Constraints | Externally imposed limits on the solutions available for this system |
 | Architecture | The system boundary and its immediate subsystems and components, the interfaces it offers or uses, and its declared interactions |
 | Features | Product features and their authored descriptions |
-| Capabilities | A linked row for each ability, its authored description and any declared providers. Select a capability to read its purpose, dependencies and enablers. |
-| Use cases | The use-case index, where each interaction is listed with its authored goal |
-| Concepts | Each linked definition introduces its purpose, followed by its named uses in this system. Synchronizations appear together below the definitions. |
-| Requirements | **Requirements** opens the index, including routes by component. |
-| Quality Attributes | Every attribute declared for this system, with a short definition excerpt and its subattributes. Follow an attribute to read its full definition and the requirements it classifies. |
+| Capabilities | Abilities declared or provided in scope. Open a capability to see who provides it. |
+| Use cases | Linked interactions with their authored goals |
+| Concepts | Local definitions and definitions referenced by scoped uses, with their authored purpose. |
+| Concept uses | Named uses in scope. Open a use to find its definition and configuration. |
+| Synchronizations | Authored coordination between concept uses. |
+| Requirements | Requirements in scope with excerpts from their statements |
+| Quality Attributes | Every attribute declared for this system, with a short definition excerpt. Follow an attribute to see its parent and child attributes and the requirements it classifies. |
 | Open questions | Decisions that remain open in the system specification |
 | Glossary | Terms defined for this system and links to their definitions |
 | Project references | Authored explanations and links to delivery plans, responsibilities, risks and decisions, when supplied |
 
 **On this page** lists **Scope** once when the system describes its scope or records exclusions. If only exclusions are supplied, **Scope** opens directly with the **Out of scope** subsection. Links to exclusions go directly to that subsection. **Environment**, **Assumptions** and **Constraints** each appear as a peer of **Scope** when populated. Local Markdown subheadings stay with their passage.
 
-Overview sections list all entries with project-specific detail in index order.
-A collection with only navigation stays in the section map. Architecture shows one level of explicit **Part of** relationships. Follow a linked part to read its own report. Directory placement alone puts a subject in the browse indexes.
+Each specification directory lists titles alphabetically within one type. Select a title to open its detail report. A short excerpt from the authored text helps you choose where to go. An ellipsis marks shortened wording. A specification without a preview appears by title alone.
 
-The diagram places immediate parts inside their owner’s boundary and labels parts and interfaces with their project names. A single **Interfaces** list shows what the system offers. When the system depends on another interface, **Interfaces this system uses** names those dependencies, and **Interfaces this system offers** appears if populated. Component reports use the same headings with “component” as the subject. External interaction partners appear outside the boundary. When a system declares both parts and external partners, **System structure** shows its decomposition and **System context** shows its interfaces and partners. A component uses **Component structure** and **Component context** for the same views. Parent links and capability lists can stand alone without a diagram. On a component report, an authored **Architecture** passage leads the same view.
+The system directory includes specifications declared in the system and its nested components. A component directory covers that component and its descendants. A separately specified subsystem has its own directories. Explicit applicability and capability providers can bring a specification into scope. A specification reached several ways appears once. Two specifications with the same title keep their own entries and destinations.
 
-The system’s **Capabilities** section follows **Architecture** and includes capabilities declared or provided in its component hierarchy. A capability with several providers has one row with a link to each. An empty provider cell means the specification has yet to name one. On a component report, **Architecture → Capabilities** lists the abilities in that component’s scope.
+The **Architecture** diagram shows immediate parts inside the boundary and declared external interaction partners outside it. When both are present, separate structure and context diagrams show decomposition and interactions. Select a component to read its responsibilities or an interface to see which subject provides or requires it. On a component report, an authored **Architecture** passage leads the view.
 
-Across overviews and indexes, each entry uses the subject’s linked name and authored wording. Indexes shorten long previews and mark an excerpt with an ellipsis. In **Concepts**, select a definition to read its state, actions and operational principles. Under **Used here as**, each name links to the use’s configuration and applicable requirements. Its opening sentence previews how the concept applies here. The overview identifies the declaring component for component-owned uses. A local definition can appear before any use is declared. Uses awaiting a definition appear under **Concept uses**. A use can also link to a definition in another project.
-**Refines** beside a requirement leads to each promise it refines, whether a requirement or business rule. Open the requirement to read its full
-statement, conditions, and criteria together.
+The system’s **Capabilities** section follows **Architecture**. A component lists its capabilities under **Architecture**. Open a capability for its declared providers. Under **Concepts**, select a definition for its state and actions. **Concept uses** includes named uses awaiting a definition. A use can also link to a definition in another project.
+
+For example, the To-do system’s **Requirements** section includes **Acknowledge after commit**, declared on Task service. Following that title from either the system or the component’s requirements opens the same report. Open **Preserve tasks across restart** to read its full statement, conditions and criterion. Its **Refines** section leads to **Keep recorded work available**. [To-do system report](../../examples/todo/specification/personal-task-list.system.spec-report.md#requirements)
 
 When the project has authored questions, **Open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings.
 A child system has its own overview showing the next level of detail.
@@ -100,7 +100,7 @@ System overviews introduce named goals and assumptions with their title and firs
 The requirement links back to the same entry. A **Referenced by** link returns
 to an authored passage that cites the entry in prose. [Task-list assumptions](../../examples/todo/specification/assumptions.md)
 
-Use **On this page → Quality Attributes** to see the system’s hierarchy. The **Quality attributes** breadcrumb on an attribute report returns to that hierarchy. To browse reusable models, follow **Quality models** beside **View source** at the foot of the system report. This link is available even if the system has yet to declare an attribute. Shared attributes appear under each declared parent. Their own subattributes expand under the first parent. Select an attribute to read its full definition. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability and criterion together. Links beside the requirement lead back to the precise attribute or use-case passage.
+Use **On this page → Quality Attributes** to browse every system quality attribute. The **Quality attributes** breadcrumb on an attribute report returns to this directory. Follow **Quality models** beside **View source** to browse reusable models. This link is available when the system has a model catalog, even if it has yet to declare an attribute. Select an attribute to see its definition and relationships. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability and criterion together. Links beside the requirement lead back to the precise attribute or use-case passage.
 
 For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with its authored description of the behavior it offers. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
 
@@ -112,20 +112,11 @@ models use their Description section. For requirements and business rules, a
 short Statement introduces the promise or rule. Use cases use their Goal and
 jobs use their Job statement. Concept definitions use their Purpose.
 
-On a system report, choose a feature under **Features** or a component under **Architecture → Components**. Features, components, interfaces, concept definitions, concept uses and system quality attributes use their overview section as the collection when it lists every member. The breadcrumb on a member’s report returns to that section. If a collection also includes a feature without a preview, a component outside the declared architecture, or a route to a component’s own collection, **Browse specifications** opens the complete index.
-
-Open **Browse specifications → Use cases** to choose an interaction by its goal. A system’s `systems.md` lists its immediate
-child systems. For collections with separate indexes, **By component**
-on the parent index leads to the component’s index of the same name.
+On a system report, choose a feature under **Features** or a component under **Architecture → Components**. When an overview contains the directory, each member’s collection breadcrumb returns to that section. **Browse specifications** links to collections with a separate index. The same alphabetical listing applies in both locations.
 
 Above the title, breadcrumbs lead to the owning system or component and the subject’s collection. Under **Extensions**, **Actions**, and a quality model’s **Quality attributes**, select a named entry to jump to its section when several are present. Longer lists can be expanded.
 
-On subject reports, collections that only provide navigation appear with the page’s index links. Sections with authored descriptions keep that text in the body. Within a component, `interfaces.md` groups required and provided interfaces.
-
-A component’s `requirements.md` lists local requirements, plus
-requirements owned elsewhere that explicitly apply to the component. The
-**Applicable requirements** group collects explicit applicability links, including
-local requirements. Each entry links to the canonical page or passage.
+On subject reports, collections that only provide navigation appear with the page’s index links. Sections with authored descriptions keep that text in the body. A component’s `requirements.md` includes requirements declared in its component hierarchy and those that explicitly apply there. Each entry links directly to its requirement.
 
 Each standalone authored specification in the selected project has exactly one standalone report page. The owning system or component links to its features and capabilities. Inline subjects can also have a report page for their own heading.
 

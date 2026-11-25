@@ -3,7 +3,7 @@ generated_by: dotspec
 type: requirement-spec-report
 source: "../../specs/requirements/follow-up.requirement.spec.md#show-which-replies-need-follow-up"
 ---
-[Personal task list](<../personal-task-list.system.spec-report.md>) › [Requirements](<../requirements.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Requirements](<../personal-task-list.system.spec-report.md#requirements>)
 
 # Show which replies need follow-up
 

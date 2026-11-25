@@ -3,7 +3,7 @@ generated_by: dotspec
 type: use-case-spec-report
 source: "../../specs/use-cases/prepare-specifications.use-case.spec.md#prepare-specifications-for-review"
 ---
-[dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../use-cases.md>)
+[dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../dotspec.system.spec-report.md#use-cases>)
 
 # Prepare specifications for review
 

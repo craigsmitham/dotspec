@@ -3,7 +3,7 @@ generated_by: dotspec
 type: requirement-spec-report
 source: "../../specs/requirements/restart.requirement.spec.md#preserve-tasks-across-restart"
 ---
-[Personal task list](<../personal-task-list.system.spec-report.md>) › [Requirements](<../requirements.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Requirements](<../personal-task-list.system.spec-report.md#requirements>)
 
 # Preserve tasks across restart
 

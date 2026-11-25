@@ -169,7 +169,7 @@ func TestLocallyAuthoredRequirementForExternalSystem(t *testing.T) {
 			}
 		}
 	}
-	index, err := os.ReadFile("specification/specifications-for-other-systems.md")
+	index, err := os.ReadFile("specification/requirements-for-other-systems.md")
 	if err != nil || !strings.Contains(string(index), "remote.requirement.spec-report.md") {
 		t.Fatal(err, string(index))
 	}

@@ -1,10 +1,9 @@
 package specdoc
 
 import (
-	"github.com/craigsmitham/dotspec/internal/model"
-	"maps"
 	"slices"
 
+	"github.com/craigsmitham/dotspec/internal/model"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 )
@@ -45,11 +44,6 @@ func (p *planner) indexDetailHeadings(s *subject) {
 		}
 		ids := parser.NewContext().IDs()
 		ids.Generate([]byte(title), ast.KindHeading)
-		for _, group := range slices.Sorted(maps.Keys(idx.groups)) {
-			if group != "" {
-				ids.Generate([]byte(group), ast.KindHeading)
-			}
-		}
 		// Rebasing a rich heading can change its automatic ID and the suffixes
 		// of later duplicates. Earlier entries keep their natural fragments.
 		richHeadings := false

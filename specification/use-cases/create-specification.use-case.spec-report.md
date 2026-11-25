@@ -3,7 +3,7 @@ generated_by: dotspec
 type: use-case-spec-report
 source: "../../specs/use-cases/create-specification.use-case.spec.md#create-a-specification-draft"
 ---
-[dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../use-cases.md>)
+[dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../dotspec.system.spec-report.md#use-cases>)
 
 # Create a specification draft
 

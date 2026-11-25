@@ -3,7 +3,7 @@ generated_by: dotspec
 type: business-rule-spec-report
 source: "../../specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment"
 ---
-[Personal task list](<../personal-task-list.system.spec-report.md>) › [Business rules](<../business-rules.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Business rules](<../personal-task-list.system.spec-report.md#business-rules>)
 
 # Completion preserves a commitment
 

@@ -3,7 +3,7 @@ generated_by: dotspec
 type: requirement-spec-report
 source: "../../specs/requirements/advice-permits-success.requirement.spec.md#advice-permits-a-successful-check"
 ---
-[dotspec](<../dotspec.system.spec-report.md>) › [Requirements](<../requirements.md>)
+[dotspec](<../dotspec.system.spec-report.md>) › [Requirements](<../dotspec.system.spec-report.md#requirements>)
 
 # Advice permits a successful check
 

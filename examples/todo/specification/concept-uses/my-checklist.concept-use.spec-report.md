@@ -3,7 +3,7 @@ generated_by: dotspec
 type: concept-use-spec-report
 source: "../../specs/personal-task-list.system.spec.md#my-checklist"
 ---
-[Personal task list](<../personal-task-list.system.spec-report.md>) › [Concept uses](<../personal-task-list.system.spec-report.md#checklist>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Concept uses](<../personal-task-list.system.spec-report.md#concept-uses>)
 
 # My checklist
 

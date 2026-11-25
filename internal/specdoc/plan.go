@@ -25,7 +25,7 @@ type Page struct {
 	Document
 	Title, Markdown                                 string
 	SectionDocs                                     map[string]Document
-	DirectoryMembers                                map[string][]string
+	DirectoryMembers                                map[string]directoryContract
 	RequiredLinks, RequiredContent, RequiredAnchors []string
 	RequiredLabels, RequiredSectionLinks            map[string][]string
 	RequiredSectionContent                          map[string][]string
@@ -62,7 +62,6 @@ type subject struct {
 	glossary            []glossaryPassage
 	passages            [][]*heading
 	overview            []overviewSection
-	conceptSections     map[string]*overviewSection // report path to its group in this overview
 	externalSystem      bool
 	emptyHeadingAnchors []string
 	file, dir           string
@@ -78,13 +77,11 @@ type planner struct {
 	nodes, elements map[string]model.Record
 	pages           map[string]*subject
 	subjects        []*subject
-	subjectsByFile  map[string]*subject
 	targets         map[string]string // snapshot record, source, or fragment to canonical project-relative URL
 	governing       *subject
 
 	glossaryTargets map[string]map[string]string // scoped routes for terms shared between systems
 	routes          map[string][]route
-	entryRelations  map[string][]entryRelation
 }
 
 type entry struct {
@@ -446,9 +443,7 @@ func needsHeadingAnchor(s *subject, h *heading) bool {
 }
 
 func (p *planner) indexTargets() {
-	p.subjectsByFile = map[string]*subject{}
 	for _, s := range p.subjects {
-		p.subjectsByFile[s.file] = s
 		p.targets[id(s.r)] = s.file
 		p.targets[s.name.node] = s.file
 		if s.name.level == 1 {
@@ -475,14 +470,15 @@ func (p *planner) indexTargets() {
 	}
 
 	for _, s := range p.subjects {
-		if s != p.governing && !s.name.qualityAttribute {
-			p.placeDirectoryEntry(s)
+		if s != p.governing {
+			owner := s.navigationParent
+			if s.kind() == "SystemQualityAttribute" {
+				owner = s.system
+			}
+			owner.includeMember(s.collection(), entry{s.name.title, s.file, subjectPreview(s)})
 		}
 		if s.isOverview() {
 			p.collectOverviewDetails(s)
-		}
-		if s.kind() == "System" && len(model.Strings(s.r["quality_attributes"])) > 0 {
-			s.index("Quality attributes")
 		}
 	}
 	for _, s := range p.subjects {
@@ -491,38 +487,19 @@ func (p *planner) indexTargets() {
 			for _, target := range model.Strings(s.r["applies_to"]) {
 				if owner := p.pages[target]; owner != nil && (owner.kind() == "System" || owner.kind() == "Component") {
 					e := entry{s.name.title, s.file, subjectPreview(s)}
-					if s.kind() == "Requirement" {
-						owner.index("Requirements").classify("Applicable requirements", e)
-					} else {
-						owner.index("Business rules").classify(applicableRules(owner), e)
-					}
+					owner.includeMember(s.collectionType(), e)
 				}
 			}
 		case "Capability":
 			for _, target := range model.Strings(s.r["provided_by"]) {
 				if provider := p.pages[target]; provider != nil {
-					provider.includeInOverview("Capabilities", entry{s.name.title, s.file, subjectPreview(s)})
+					provider.includeMember("Capabilities", entry{s.name.title, s.file, subjectPreview(s)})
 				}
 			}
 		}
 	}
+	p.indexConceptDefinitions()
 	p.indexOpenQuestions()
-	// A system index also leads to the same collection in its components.
-	// Walk to the enclosing system so nested components remain discoverable
-	// regardless of the order in which their sources were read.
-	for _, s := range p.subjects {
-		if s.kind() != "Component" {
-			continue
-		}
-		for title := range s.indexes {
-			if title == "Components" || inlineComponentCollection(title) {
-				continue
-			}
-			for child := s; child.kind() == "Component"; child = child.navigationParent {
-				child.navigationParent.index(title).add("By component", entry{child.name.title + " " + strings.ToLower(collectionTitle(title)), child.indexes[title].file, ""})
-			}
-		}
-	}
 	for _, s := range p.subjects {
 		if s.kind() == "System" {
 			p.planGlossary(s)
@@ -548,7 +525,6 @@ func (p *planner) indexTargets() {
 			}
 		}
 	}
-	p.indexEntryRelations()
 	for _, s := range p.subjects {
 		if s.isOverview() {
 			s.overview = p.planOverview(s)
@@ -568,8 +544,8 @@ func (p *planner) indexTargets() {
 		if idx == nil {
 			continue
 		}
-		for i, e := range idx.groups[""] {
-			idx.groups[""][i].target = p.targets[e.target]
+		for i, e := range idx.members {
+			idx.members[i].target = p.targets[e.target]
 		}
 	}
 	// Map source paths and their authored or generated fragments as link targets.

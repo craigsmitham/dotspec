@@ -3,7 +3,6 @@ package specdoc
 import (
 	"cmp"
 	"fmt"
-	"maps"
 	"path"
 	"slices"
 	"strings"
@@ -12,18 +11,13 @@ import (
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
-func applicableRules(owner *subject) string {
-	return "Applies to this " + strings.ToLower(owner.kind())
-}
-
-// An empty group is the collection's main list, directly beneath its title.
-// Named groups retain relationships such as required versus provided interfaces.
+// Each target is a canonical subject page. Equal titles may name distinct subjects.
 type collectionIndex struct {
-	file             string
-	overviewSections map[string]*overviewSection
-	groups           map[string][]entry
-	sources          map[string][]*heading
-	passages         [][]*heading
+	file     string
+	overview *overviewSection
+	members  []entry
+	sources  []*heading
+	passages [][]*heading
 }
 
 func (s *subject) index(title string) *collectionIndex {
@@ -31,99 +25,61 @@ func (s *subject) index(title string) *collectionIndex {
 		s.indexes = map[string]*collectionIndex{}
 	}
 	if s.indexes[title] == nil {
-		s.indexes[title] = &collectionIndex{file: path.Join(s.dir, specfile.NameSlug(title)+".md"), groups: map[string][]entry{}, sources: map[string][]*heading{}}
+		s.indexes[title] = &collectionIndex{file: path.Join(s.dir, specfile.NameSlug(title)+".md")}
 	}
 	return s.indexes[title]
 }
 
-func (idx *collectionIndex) contains(group, target string) bool {
-	return idx != nil && slices.ContainsFunc(idx.groups[group], func(e entry) bool { return e.target == target })
-}
-
-func (idx *collectionIndex) add(group string, member entry) {
-	if !idx.contains(group, member.target) {
-		idx.groups[group] = append(idx.groups[group], member)
+func (idx *collectionIndex) add(member entry) {
+	if !slices.ContainsFunc(idx.members, func(e entry) bool { return e.target == member.target }) {
+		idx.members = append(idx.members, member)
 	}
 }
 
 func (s *subject) collection() string {
 	if s.externalSystem {
-		return "Specifications for other systems"
+		return s.collectionType() + " for other systems"
 	}
+	return s.collectionType()
+}
+
+func (s *subject) collectionType() string {
 	if s.name.qualityAttribute {
 		return "Quality attributes"
 	}
 	return sentenceCase(strings.ReplaceAll(families[s.kind()], "-", " "))
 }
 
-func (s *subject) directoryGroup() string {
-	if s.kind() != "Interface" {
-		return ""
-	}
-	if slices.Contains(model.Strings(s.navigationParent.r["required_interfaces"]), id(s.r)) {
-		return "Required interfaces"
-	}
-	return "Provided interfaces"
-}
-
-func (p *planner) placeDirectoryEntry(s *subject) {
-	member := entry{s.name.title, s.file, subjectPreview(s)}
-	if inlineComponentCollection(s.collection()) {
-		s.navigationParent.includeInOverview(s.collection(), member)
-		return
-	}
-	s.navigationParent.index(s.collection()).add(s.directoryGroup(), member)
-}
-
-func inlineComponentCollection(title string) bool {
-	return title == "Capabilities" || title == "Concepts" || title == "Concept uses"
-}
-
-// Include the actual members up to the enclosing system boundary.
-func (s *subject) includeInOverview(title string, member entry) {
-	s.index(title).add("", member)
-	if s.kind() == "Component" {
-		s.navigationParent.includeInOverview(title, member)
+// Give the owner and its enclosing components the same canonical entry.
+// A system (including a subsystem) is the outermost scope.
+func (s *subject) includeMember(title string, member entry) {
+	for owner := s; owner != nil; owner = owner.navigationParent {
+		owner.index(title).add(member)
+		if owner.kind() == "System" {
+			break
+		}
 	}
 }
 
-// An explicitly related member appears once, in the group that explains why it is here.
-func (idx *collectionIndex) classify(group string, member entry) {
-	idx.groups[""] = slices.DeleteFunc(idx.groups[""], func(e entry) bool { return e.target == member.target })
-	if len(idx.groups[""]) == 0 {
-		delete(idx.groups, "")
-	}
-	idx.add(group, member)
-}
-
-// An authored overview section keeps its narrative and points to the matching list.
-func collectionGroup(title string) (string, string) {
-	group := ""
+func collectionName(title string) string {
 	switch title {
 	case "Child systems":
-		title = "Systems"
+		return "Systems"
 	case "Required interfaces", "Provided interfaces":
-		title, group = "Interfaces", title
+		return "Interfaces"
 	case "Applicable requirements":
-		title, group = "Requirements", title
+		return "Requirements"
 	}
-	return title, group
+	return title
 }
 
 func (s *subject) sectionIndex(title string) string {
-	title, group := collectionGroup(title)
-	idx := s.indexes[title]
+	idx := s.indexes[collectionName(title)]
 	if idx == nil {
 		return ""
 	}
-	if group != "" && len(idx.groups[group]) == 0 {
-		return ""
-	}
-	if section := idx.overviewSections[group]; section != nil {
-		return s.file + "#" + section.anchor
-	}
-	if group != "" {
-		return idx.file + "#" + specfile.NameSlug(group)
+	if idx.overview != nil {
+		return s.file + "#" + idx.overview.anchor
 	}
 	return idx.file
 }
@@ -175,7 +131,7 @@ func (p *planner) indexOpenQuestions() {
 				}
 				idx := system.index("Open questions")
 				owner := attr(p.nodes[nameNode(r)], "decoded_text")
-				idx.groups[""] = append(idx.groups[""], entry{question, h.node, owner})
+				idx.members = append(idx.members, entry{question, h.node, owner})
 			}
 		}
 	}
@@ -214,9 +170,9 @@ func (p *planner) planPassages(s *subject) {
 		}
 		if h != s.name && len(group) == 1 && h.subjectKind == "" && !needsHeadingAnchor(s, h) && strings.TrimSpace(sourceProse(s.source, h)) == "" {
 			if dest := s.sectionIndex(h.title); dest != "" {
-				index, part := collectionGroup(h.title)
+				index := collectionName(h.title)
 				idx := s.indexes[index]
-				idx.sources[part] = append(idx.sources[part], h)
+				idx.sources = append(idx.sources, h)
 				p.targets[h.node] = dest
 				continue
 			}
@@ -238,7 +194,7 @@ func (p *planner) keepEmptyHeading(s *subject, h *heading) {
 
 func sortEntries(entries []entry) {
 	slices.SortFunc(entries, func(a, b entry) int {
-		return cmp.Or(strings.Compare(a.title, b.title), strings.Compare(a.target, b.target))
+		return cmp.Or(strings.Compare(strings.ToLower(a.title), strings.ToLower(b.title)), strings.Compare(a.title, b.title), strings.Compare(a.target, b.target))
 	})
 }
 
@@ -249,86 +205,13 @@ func collectionTitle(title string) string {
 	return title
 }
 
-// Each summary uses the same relationship label as the subject report.
-// References into another project keep their authored destination.
-type entryRelation struct {
-	label, title, element  string
-	source, authoredTarget string
-}
-
-func (p *planner) indexEntryRelations() {
-	p.entryRelations = map[string][]entryRelation{}
-	for _, ref := range p.snapshot.References {
-		field := attr(ref, "role")
-		if field != "definition" && field != "refines" && field != "provided_by" {
-			continue
-		}
-		source := p.sources[attr(ref, "source_document")]
-		from := p.elements[attr(ref, "context_owner")]
-		to := attr(model.Object(ref["resolution"]), "target")
-		if source == nil || to == "" {
-			continue
-		}
-		// A citation supplies a summary relationship only if the domain model
-		// accepted its target for that field.
-		if attr(from, field) != to && !slices.Contains(model.Strings(from[field]), to) {
-			continue
-		}
-		key := id(from)
-		if page := p.pages[key]; page != nil {
-			key = page.file
-		}
-		title := attr(p.nodes[nameNode(p.elements[to])], "decoded_text")
-		if title != "" {
-			p.entryRelations[key] = append(p.entryRelations[key], entryRelation{
-				label: relations[field].forward, title: title, element: to,
-				source: source.path, authoredTarget: attr(ref, "authored_target"),
-			})
-		}
-	}
-}
-
-func (p *planner) entryRelationLink(w *writer, r entryRelation) string {
-	if target := p.targets[r.element]; target != "" {
-		return w.link(inlineText(r.title), target)
-	}
-	dest := p.documentLink(w.file, r.source, r.authoredTarget)
-	w.requireLink(dest)
-	return link(inlineText(r.title), dest)
-}
-
-func (p *planner) collectionEntryLine(w *writer, e entry) string {
-	var related []string
-	for _, r := range p.entryRelations[e.target] {
-		related = append(related, "  - "+r.label+" "+p.entryRelationLink(w, r))
-	}
-	slices.Sort(related)
-	return strings.Join(append([]string{entryLine(w, e)}, slices.Compact(related)...), "\n")
-}
-
 func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex) {
 	w := p.newPage(idx.file, Document{}, collectionTitle(title))
 	w.setBreadcrumb(owner, nil)
 	if title == "Glossary" {
 		p.renderGlossary(w, owner)
 	}
-	if title == "Quality attributes" {
-		p.attributeOverview(w, owner)
-	}
-	for _, group := range slices.Sorted(maps.Keys(idx.groups)) {
-		if group != "" {
-			w.heading(group)
-		}
-		members := idx.groups[group]
-		sortEntries(members)
-		w.out.WriteByte('\n')
-		for _, e := range members {
-			if title != "Open questions" {
-				e.preview = indexPreview(e.preview)
-			}
-			fmt.Fprintln(&w.out, p.collectionEntryLine(w, e))
-		}
-	}
+	renderIndexMembers(w, title, idx.members)
 	for _, passage := range idx.passages {
 		p.renderPassage(w, owner, passage, 1+owner.name.level-passage[0].level, false)
 	}
@@ -338,26 +221,38 @@ func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex
 	w.finish()
 }
 
-// Structural and applicability relationships are presented in scoped indexes.
-func (p *planner) relationshipIndex(owner *subject, label, target string) *collectionIndex {
+func renderIndexMembers(w *writer, title string, members []entry) {
+	if len(members) == 0 {
+		return
+	}
+	sortEntries(members)
+	w.out.WriteByte('\n')
+	for _, e := range members {
+		e.preview = directoryPreview(title, e.preview)
+		fmt.Fprintln(&w.out, entryLine(w, e))
+	}
+}
+
+func directoryPreview(title, preview string) string {
+	if title == "Open questions" {
+		return preview
+	}
+	return indexPreview(preview)
+}
+
+// An overview already has a route to these members through its typed directory.
+// The member's own report explains its relationship to the owner.
+func (s *subject) relationshipDirectory(label, target string) string {
+	if !s.isOverview() {
+		return ""
+	}
 	switch label {
-	case "Parts":
-		for _, title := range []string{"Systems", "Components"} {
-			if idx := owner.indexes[title]; idx.contains("", target) {
-				return idx
+	case "Parts", "Provides", "Applies here", "Provided interfaces", "Required interfaces":
+		for title, idx := range s.indexes {
+			if slices.ContainsFunc(idx.members, func(member entry) bool { return member.target == target }) {
+				return s.sectionIndex(title)
 			}
 		}
-	case "Provides":
-		if idx := owner.indexes["Capabilities"]; idx.contains("", target) {
-			return idx
-		}
-	case "Applies here":
-		if idx := owner.indexes["Business rules"]; idx.contains(applicableRules(owner), target) {
-			return idx
-		}
-		if idx := owner.indexes["Requirements"]; idx != nil && slices.ContainsFunc(idx.groups["Applicable requirements"], func(e entry) bool { return e.target == target }) {
-			return idx
-		}
 	}
-	return nil
+	return ""
 }

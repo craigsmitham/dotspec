@@ -3,7 +3,7 @@ generated_by: dotspec
 type: requirement-spec-report
 source: "../../specs/requirements/continue-after-invalid-spec.requirement.spec.md#continue-checking-after-a-structural-error"
 ---
-[dotspec](<../dotspec.system.spec-report.md>) › [Requirements](<../requirements.md>)
+[dotspec](<../dotspec.system.spec-report.md>) › [Requirements](<../dotspec.system.spec-report.md#requirements>)
 
 # Continue checking after a structural error
 

@@ -100,28 +100,13 @@ func addSourceContracts(p *planner) error {
 			if s.browseCollection(title, idx) || title == "Quality models" {
 				requireRoute(page, relative(s.file, idx.file), collectionTitle(title))
 			}
-			if idx.overviewSections == nil {
+			anchor := specfile.NameSlug(collectionTitle(title))
+			if idx.overview == nil {
 				requireRoute(indexPage, relative(home, s.file), s.name.title)
-				indexPage.DirectoryMembers = map[string][]string{}
+			} else {
+				anchor = idx.overview.anchor
 			}
-			for group, members := range idx.groups {
-				anchor := specfile.NameSlug(group)
-				if group == "" {
-					anchor = specfile.NameSlug(collectionTitle(title))
-				}
-				for _, e := range members {
-					dest := relative(home, e.target)
-					if section := idx.overviewSections[group]; section != nil {
-						if specific := s.conceptSections[e.target]; specific != nil {
-							section = specific
-						}
-						requireSectionRoute(indexPage, section.anchor, dest)
-					} else {
-						indexPage.DirectoryMembers[anchor] = append(indexPage.DirectoryMembers[anchor], dest)
-					}
-					requireRoute(indexPage, dest, inlineText(e.title))
-				}
-			}
+			requireDirectory(indexPage, home, anchor, title, idx.members, len(idx.passages) == 0 && (idx.overview == nil || len(idx.overview.passages) == 0))
 			// Full passages on an index introduce their file at its first
 			// contribution. Linked directory previews lead to subject reports.
 			files := map[string]bool{}
@@ -166,17 +151,10 @@ func addSourceContracts(p *planner) error {
 					requireSource(term.anchors[0], dest, "Term source")
 				}
 			}
-			if title == "Quality attributes" {
-				for _, id := range model.Strings(s.r["quality_attributes"]) {
-					h := p.nodes[nameNode(p.elements[id])]
-					dest := relative(home, p.targets[id])
-					requireRoute(indexPage, dest, inlineText(attr(h, "decoded_text")))
-					if section := idx.overviewSections[""]; section != nil {
-						requireSectionRoute(indexPage, section.anchor, dest)
-					}
-					requireRoute(page, relative(s.file, p.targets[id]), inlineText(attr(h, "decoded_text")))
-				}
-			}
+
+		}
+		if s.kind() == "Feature" {
+			requireDirectory(page, s.file, "", "Use cases", p.featureGoals(s), false)
 		}
 		if s != p.governing {
 			parent := s.navigationParent
@@ -205,12 +183,13 @@ func addSourceContracts(p *planner) error {
 			if destination == file {
 				continue
 			}
-			if i == 1 && source == from.file {
-				if idx := p.relationshipIndex(from, relations[field].reverse, destination); idx != nil {
-					file = idx.file
-					if section := idx.overviewSections[""]; section != nil {
-						file, fragment = from.file, section.anchor
-					}
+			if source == from.file {
+				label := relations[field].forward
+				if i == 1 {
+					label = relations[field].reverse
+				}
+				if home := from.relationshipDirectory(label, destination); home != "" {
+					file, fragment, _ = strings.Cut(home, "#")
 				}
 			}
 			page := p.plan.Pages[file]
@@ -226,9 +205,42 @@ func addSourceContracts(p *planner) error {
 	} else {
 		for title, idx := range p.governing.indexes {
 			requireRoute(p.plan.Pages["SPEC.md"], relative("SPEC.md", idx.file), collectionTitle(title))
+			requireDirectory(p.plan.Pages[idx.file], idx.file, specfile.NameSlug(collectionTitle(title)), title, idx.members, true)
 		}
 	}
 	return nil
+}
+
+// Each row contains one leading title link and its authored preview.
+type directoryRow struct {
+	title, destination, text string
+}
+
+type directoryContract struct {
+	rows         []directoryRow
+	wholeSection bool // the directory is the only content planned for this section
+}
+
+func requireDirectory(page *Page, file, anchor, title string, members []entry, wholeSection bool) {
+	if len(members) == 0 {
+		return
+	}
+	if page.DirectoryMembers == nil {
+		page.DirectoryMembers = map[string]directoryContract{}
+	}
+	contract := directoryContract{wholeSection: wholeSection}
+	entries := slices.Clone(members)
+	sortEntries(entries)
+	for _, member := range entries {
+		dest := relative(file, member.target)
+		row := directoryRow{member.title, dest, member.title}
+		if preview := directoryPreview(title, member.preview); preview != "" {
+			row.text += " — " + preview
+		}
+		contract.rows = append(contract.rows, row)
+		requireRoute(page, dest, inlineText(member.title))
+	}
+	page.DirectoryMembers[anchor] = contract
 }
 
 func requireSectionRoute(page *Page, fragment, dest string) {

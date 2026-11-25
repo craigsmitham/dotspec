@@ -3,7 +3,7 @@ generated_by: dotspec
 type: job-spec-report
 source: "../../specs/jobs/manage-requirements.job.spec.md#manage-requirements"
 ---
-[dotspec](<../dotspec.system.spec-report.md>) › [Jobs](<../jobs.md>)
+[dotspec](<../dotspec.system.spec-report.md>) › [Jobs](<../dotspec.system.spec-report.md#jobs>)
 
 # Manage Requirements
 

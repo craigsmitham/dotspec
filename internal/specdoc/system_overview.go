@@ -1,7 +1,6 @@
 package specdoc
 
 import (
-	"cmp"
 	"maps"
 	"slices"
 	"strings"
@@ -12,17 +11,15 @@ import (
 // Each authored passage has one home in the overview. The same outline drives
 // rendering, source content order, fragment allocation and the navigation map.
 type overviewSection struct {
-	collection     string // directory or interface group represented by this section
-	title, anchor  string
-	caption        string // linked heading for a concept definition
-	conceptMembers []string
-	level          int
-	sources        []string
-	passages       [][]*heading
-	detail         string
-	detailLinks    []string
-	preview        []entry
-	hasBody        bool
+	collection    string // type of specification listed in this section
+	title, anchor string
+	directory     *collectionIndex // complete index rendered in this overview
+	level         int
+	sources       []string
+	passages      [][]*heading
+	detail        string
+	detailLinks   []string
+	hasBody       bool
 }
 
 // These System fields each have their own section in the report, in reading order.
@@ -54,12 +51,20 @@ func (p *planner) overviewOutline(s *subject) []overviewSection {
 	if s.kind() == "Component" {
 		capabilityLevel = 3
 	}
-	sections = append(sections, overviewSection{title: "Capabilities", collection: "Capabilities", level: capabilityLevel, sources: []string{"capabilities"}})
-	sections = append(sections, overviewSection{title: "Features", collection: "Features", level: 2})
-	sections = append(sections, p.conceptOverview(s)...)
-	return append(sections, []overviewSection{
-		{title: "Synchronizations", level: 3, sources: []string{"synchronizations"}},
+	sections = append(sections, []overviewSection{
+		{title: "Capabilities", collection: "Capabilities", level: capabilityLevel, sources: []string{"capabilities"}},
+		{title: "Features", collection: "Features", level: 2},
+		{title: "Concepts", collection: "Concepts", level: 2},
+		{title: "Concept uses", collection: "Concept uses", level: 2, sources: []string{"concept_uses"}},
+		{title: "Synchronizations", collection: "Synchronizations", level: 2, sources: []string{"synchronizations"}},
 		{title: "Quality Attributes", collection: "Quality attributes", level: 2},
+	}...)
+	if s.kind() == "System" {
+		for _, title := range []string{"Business rules", "Jobs", "Requirements", "Use cases"} {
+			sections = append(sections, overviewSection{title: title, collection: title, level: 2})
+		}
+	}
+	return append(sections, []overviewSection{
 		{title: "Adopts", level: 2, sources: []string{"adopts"}},
 		{title: "Contracts", level: 2, sources: []string{"contracts"}},
 		{title: "Implementation", level: 2, sources: []string{"implementation"}},
@@ -95,10 +100,13 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 	for i := range sections {
 		section := &sections[i]
 		detail := &writer{file: s.file, page: &Page{}}
-		p.overviewDetails(detail, s, section)
+		section.directory = s.indexes[section.collection]
+		if section.directory != nil {
+			renderIndexMembers(detail, section.collection, section.directory.members)
+		}
 		section.detail += detail.out.String()
 		section.detailLinks = append(section.detailLinks, detail.page.RequiredLinks...)
-		section.hasBody = len(section.passages) > 0 || section.detail != "" || section.caption != "" || len(section.preview) > 0
+		section.hasBody = len(section.passages) > 0 || section.detail != ""
 		if section.level == 2 {
 			parent = section
 		} else if section.level == 3 && section.hasBody {
@@ -132,7 +140,7 @@ func (p *planner) indexOverviewHeadings(s *subject) {
 		section := &s.overview[i]
 		if section.level > 0 {
 			section.anchor = ids.Next(section.title)
-			if explicit && section.caption == "" {
+			if explicit {
 				section.anchor = "overview." + section.anchor
 			}
 		}
@@ -162,83 +170,28 @@ func (p *planner) indexOverviewHeadings(s *subject) {
 	}
 }
 
-// Use an overview section as the directory only when every member has a
-// destination there. Directory discovery can extend beyond declared parts,
-// and component roll-ups lead to collections outside the overview.
 func (p *planner) planCollectionHomes(s *subject) {
-	byCollection := map[string]map[string]*overviewSection{}
-	s.conceptSections = map[string]*overviewSection{}
-	var parent *overviewSection
 	for i := range s.overview {
 		section := &s.overview[i]
-		if section.level == 2 {
-			parent = section
-		}
-		for _, file := range section.conceptMembers {
-			s.conceptSections[file] = section
-		}
-		if section.collection == "" || (s.kind() == "Component" && !inlineComponentCollection(section.collection)) {
+		idx := section.directory
+		if idx == nil {
 			continue
 		}
-		title, group := collectionGroup(section.collection)
-		if byCollection[title] == nil {
-			byCollection[title] = map[string]*overviewSection{"": section}
-		} else if group != "" {
-			// When interfaces span two directions, the common Architecture
-			// section is the destination for citations to the whole collection.
-			byCollection[title][""] = parent
-		}
-		byCollection[title][group] = section
-	}
-	if concepts := byCollection["Concepts"]; concepts != nil {
-		byCollection["Concept uses"] = concepts
-	}
-	for _, title := range slices.Sorted(maps.Keys(byCollection)) {
-		sections := byCollection[title]
-		idx := s.indexes[title]
-		if idx == nil || !idx.coveredBy(s, sections) {
-			continue
-		}
-		idx.overviewSections = sections
-		for _, group := range slices.Sorted(maps.Keys(idx.sources)) {
-			section := sections[group]
-			for _, h := range idx.sources[group] {
-				p.targets[h.node] = s.file + "#" + section.anchor
-			}
+		idx.overview = section
+		for _, h := range idx.sources {
+			p.targets[h.node] = s.file + "#" + section.anchor
 		}
 	}
-}
-
-func (idx *collectionIndex) coveredBy(s *subject, sections map[string]*overviewSection) bool {
-	for group, members := range idx.groups {
-		section := sections[group]
-		if section == nil {
-			return false
-		}
-		links := map[string]bool{}
-		for _, dest := range section.detailLinks {
-			links[dest] = true
-		}
-		for _, e := range section.preview {
-			links[relative(s.file, e.target)] = true
-		}
-		for _, e := range members {
-			if !links[relative(s.file, e.target)] {
-				return false
-			}
-		}
-	}
-	return true
 }
 
 func (s *subject) browseCollection(title string, idx *collectionIndex) bool {
-	if idx.overviewSections != nil {
+	if idx.overview != nil {
 		return false
 	}
 	if s.kind() != "System" {
 		return true
 	}
-	if isDetailCollection(title) && len(idx.passages) > 0 && len(idx.groups) == 0 {
+	if isDetailCollection(title) && len(idx.passages) > 0 && len(idx.members) == 0 {
 		return false
 	}
 	return title != "Quality models"
@@ -246,17 +199,20 @@ func (s *subject) browseCollection(title string, idx *collectionIndex) bool {
 
 func (p *planner) renderOverview(w *writer, s *subject) {
 	for _, title := range slices.Sorted(maps.Keys(s.indexes)) {
-		if idx := s.indexes[title]; idx.overviewSections == nil {
+		if idx := s.indexes[title]; idx.overview == nil {
 			p.renderIndex(s, title, idx)
 		}
 	}
 	for _, section := range s.overview {
 		if section.level > 0 {
-			if s.name.explicitAnchor != "" && section.caption == "" {
+			if s.name.explicitAnchor != "" {
 				w.text(`<a id="` + section.anchor + `"></a>`)
 			}
-			title := cmp.Or(section.caption, section.title)
+			title := section.title
 			w.text(strings.Repeat("#", section.level) + " " + title)
+		}
+		if section.directory != nil {
+			w.out.WriteString(section.detail)
 		}
 		for j, group := range section.passages {
 			merged := section.merges(j)
@@ -270,75 +226,13 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 			overviewNavigation(w, s)
 			continue
 		}
-		w.out.WriteString(section.detail)
-		if len(section.preview) > 0 {
-			var lines []string
-			for _, e := range section.preview {
-				lines = append(lines, p.collectionEntryLine(w, e))
-			}
-			w.text(strings.Join(lines, "\n"))
+		if section.directory == nil {
+			w.out.WriteString(section.detail)
 		}
 		for _, dest := range section.detailLinks {
 			w.requireLink(dest)
 		}
 	}
-}
-
-func (p *planner) overviewDetails(w *writer, s *subject, section *overviewSection) {
-	if len(section.conceptMembers) != 0 {
-		return
-	}
-	switch section.title {
-	case "Capabilities":
-		if idx := s.indexes["Capabilities"]; idx != nil {
-			p.capabilityOverview(w, s, idx.groups[""])
-		}
-	case "Quality Attributes":
-		p.attributeOverview(w, s)
-	case "Features", "Synchronizations":
-		if idx := s.indexes[section.title]; idx != nil {
-			for _, group := range slices.Sorted(maps.Keys(idx.groups)) {
-				if group == "By component" {
-					continue
-				}
-				entries := idx.groups[group]
-				sortEntries(entries)
-				for _, e := range entries {
-					if e.preview == "" && len(p.entryRelations[e.target]) == 0 {
-						continue
-					}
-					section.preview = append(section.preview, e)
-				}
-			}
-		}
-	}
-}
-
-func (p *planner) capabilityOverview(w *writer, owner *subject, entries []entry) {
-	if len(entries) == 0 {
-		return
-	}
-	var rows []string
-	if owner.kind() == "System" {
-		rows = append(rows, "| Capability | What it enables | Provided by |", "| --- | --- | --- |")
-	}
-	sortEntries(entries)
-	for _, e := range entries {
-		e.preview = indexPreview(e.preview)
-		if owner.kind() == "Component" {
-			rows = append(rows, entryLine(w, e))
-			continue
-		}
-		var providers []string
-		for _, r := range p.entryRelations[e.target] {
-			if r.label == relations["provided_by"].forward {
-				providers = append(providers, p.entryRelationLink(w, r))
-			}
-		}
-		slices.Sort(providers)
-		rows = append(rows, "| "+w.link(inlineText(e.title), e.target)+" | "+inlineText(e.preview)+" | "+strings.Join(slices.Compact(providers), " · ")+" |")
-	}
-	w.text(strings.Join(rows, "\n"))
 }
 
 func entryLine(w *writer, e entry) string {
@@ -368,11 +262,6 @@ func overviewNavigation(w *writer, s *subject) {
 			continue
 		}
 		line := w.link(collectionTitle(title), idx.file)
-		for _, group := range slices.Sorted(maps.Keys(idx.sources)) {
-			if group != "" {
-				line += "\n  - " + w.link(group, s.sectionIndex(group))
-			}
-		}
 		collections = append(collections, line)
 	}
 	w.disclosure("Browse specifications", collections)

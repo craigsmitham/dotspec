@@ -1,7 +1,6 @@
 package specdoc
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/model"
@@ -67,58 +66,6 @@ func inlineText(s string) string {
 	return inlineEscapes.Replace(s)
 }
 
-func (p *planner) attributeOverview(w *writer, system *subject) {
-	var roots []*subject
-	children := map[string][]*subject{}
-	for _, id := range model.Strings(system.r["quality_attributes"]) {
-		a := p.pages[id]
-		if a == nil {
-			continue
-		}
-		parents := model.Strings(a.r["subattribute_of"])
-		if len(parents) == 0 {
-			roots = append(roots, a)
-		}
-		for _, parent := range parents {
-			children[parent] = append(children[parent], a)
-		}
-	}
-
-	var renderChildren func(parent string, indent string)
-	renderChildren = func(parent string, indent string) {
-		for _, child := range children[parent] {
-			fmt.Fprintf(&w.out, "%s- %s\n", indent, attributeEntry(w, child, false))
-			// Show every declared grouping, but expand a shared subtree only
-			// under the first parent, where its report also lives.
-			if model.Strings(child.r["subattribute_of"])[0] == parent {
-				renderChildren(id(child.r), indent+"  ")
-			}
-		}
-	}
-	for _, root := range roots {
-		w.text(attributeEntry(w, root, true))
-		if key := id(root.r); len(children[key]) > 0 {
-			w.out.WriteByte('\n')
-			renderChildren(key, "")
-		}
-	}
-}
-
-func attributeEntry(w *writer, a *subject, root bool) string {
-	name := w.link(inlineText(a.name.title), a.file)
-	if root {
-		name = "**" + name + "**"
-	}
-	heading := a.section("Definition")
-	if heading == nil {
-		heading = a.name
-	}
-	if preview := paragraphPreview(sourceProse(a.source, heading)); preview != "" {
-		return name + " — " + inlineText(indexPreview(preview))
-	}
-	return name
-}
-
 func (s *subject) section(title string) *heading {
 	for _, h := range s.source.headings {
 		if h.owner == s && h.level == s.name.level+1 && h.title == title {
@@ -137,6 +84,13 @@ func hasDescriptionSection(kind string) bool {
 }
 
 func subjectPreview(s *subject) string {
+	if s.kind() == "SystemQualityAttribute" {
+		h := s.section("Definition")
+		if h == nil {
+			h = s.name
+		}
+		return paragraphPreview(sourceProse(s.source, h))
+	}
 	if hasDescriptionSection(s.kind()) {
 		if h := s.section("Description"); h != nil {
 			return paragraphPreview(sourceProse(s.source, h))
@@ -185,19 +139,17 @@ func subjectPreview(s *subject) string {
 	return summary
 }
 
-func (p *planner) featureGoals(w *writer, s *subject) {
+func (p *planner) featureGoals(s *subject) []entry {
 	if paragraphPreview(sourceProse(s.source, s.name)) != "" || s.section("Purpose") != nil || s.section("Description") != nil {
-		return
+		return nil
 	}
-	var lines []string
+	var idx collectionIndex
 	for _, id := range model.Strings(s.r["groups"]) {
 		member := p.pages[id]
 		if member == nil || member.kind() != "UseCase" {
 			continue
 		}
-		if goal := subjectPreview(member); goal != "" {
-			lines = append(lines, entryLine(w, entry{member.name.title, p.targets[member.section("Goal").node], goal}))
-		}
+		idx.add(entry{member.name.title, member.file, subjectPreview(member)})
 	}
-	w.text(strings.Join(lines, "\n"))
+	return idx.members
 }

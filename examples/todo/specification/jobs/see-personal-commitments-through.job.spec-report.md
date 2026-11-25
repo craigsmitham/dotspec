@@ -3,7 +3,7 @@ generated_by: dotspec
 type: job-spec-report
 source: "../../specs/jobs/personal-commitments.job.spec.md#see-personal-commitments-through"
 ---
-[Personal task list](<../personal-task-list.system.spec-report.md>) › [Jobs](<../jobs.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Jobs](<../personal-task-list.system.spec-report.md#jobs>)
 
 # See personal commitments through
 

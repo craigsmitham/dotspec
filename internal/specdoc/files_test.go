@@ -172,10 +172,40 @@ func TestCheckScopedLinksAndIndexMembership(t *testing.T) {
 		t.Fatal(rules)
 	}
 	p = parseGenerated([]byte("---\ntype: system-spec-report\ngenerated_by: dotspec\nsource: source.md#tasks\n---\n# Tasks\n\n## Requirements\n\n- [Restart](restart.md)\n- [Unexpected](other.md)\n\n---\n\n[View source](source.md#tasks)\n"))
-	page = Page{Document: Document{Type: "system-spec-report", Documents: "source.md#tasks"}, Title: "Tasks", DirectoryMembers: map[string][]string{"requirements": {"restart.md"}}}
+	page = Page{Document: Document{Type: "system-spec-report", Documents: "source.md#tasks"}, Title: "Tasks", DirectoryMembers: map[string]directoryContract{"requirements": {rows: []directoryRow{{"Restart", "restart.md", "Restart"}}}}}
 	checkPage("report.md", &page, p, report)
 	if !slices.Equal(rules, []string{"spec.membership"}) {
 		t.Fatal("misplaced index member", rules)
+	}
+}
+
+func TestCheckDirectoryPresentation(t *testing.T) {
+	page := Page{Title: "Requirements", DirectoryMembers: map[string]directoryContract{
+		"requirements": {wholeSection: true, rows: []directoryRow{{"Accept", "accept.md", "Accept — Record the change."}, {"Review", "review.md", "Review"}}},
+	}}
+	const accept = "- [Accept](accept.md) — Record the change."
+	const review = "- [Review](review.md)"
+	for _, test := range []struct {
+		name, body string
+		valid      bool
+	}{
+		{"linked titles and preview", accept + "\n" + review, true},
+		{"wrong order", review + "\n" + accept, false},
+		{"duplicate membership", accept + "\n" + accept + "\n" + review, false},
+		{"nested refinement", accept + "\n  - Refines [Review](review.md)\n" + review, false},
+		{"wrong preview", strings.Replace(accept, "Record", "Ignore", 1) + "\n" + review, false},
+		{"relationship suffix", accept + "\n" + review + " — Provided by operations", false},
+		{"extra grouped list", accept + "\n" + review + "\n\n## By component\n\n" + accept, false},
+		{"group heading", "## By component\n\n" + accept + "\n" + review, false},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			report := parseGenerated([]byte("---\ngenerated_by: dotspec\n---\n# Requirements\n\n" + test.body + "\n"))
+			var findings []string
+			checkPage("requirements.md", &page, report, func(rule, _ string) { findings = append(findings, rule) })
+			if test.valid && len(findings) != 0 || !test.valid && !slices.Equal(findings, []string{"spec.membership"}) {
+				t.Fatal(findings)
+			}
+		})
 	}
 }
 

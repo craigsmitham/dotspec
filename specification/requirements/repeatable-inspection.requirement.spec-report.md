@@ -3,7 +3,7 @@ generated_by: dotspec
 type: requirement-spec-report
 source: "../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports"
 ---
-[dotspec](<../dotspec.system.spec-report.md>) › [Requirements](<../requirements.md>)
+[dotspec](<../dotspec.system.spec-report.md>) › [Requirements](<../dotspec.system.spec-report.md#requirements>)
 
 # Repeated inspections produce equivalent reports
 

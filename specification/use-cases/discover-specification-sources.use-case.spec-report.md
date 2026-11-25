@@ -3,7 +3,7 @@ generated_by: dotspec
 type: use-case-spec-report
 source: "../../specs/use-cases/discover-specification-sources.use-case.spec.md#discover-specification-sources"
 ---
-[dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../use-cases.md>)
+[dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../dotspec.system.spec-report.md#use-cases>)
 
 # Discover specification sources
 

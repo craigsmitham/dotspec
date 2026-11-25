@@ -3,7 +3,7 @@ generated_by: dotspec
 type: use-case-spec-report
 source: "../../specs/use-cases/resume-list.use-case.spec.md#decide-what-to-do-about-a-waiting-errand"
 ---
-[Personal task list](<../personal-task-list.system.spec-report.md>) › [Use cases](<../use-cases.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Use cases](<../personal-task-list.system.spec-report.md#use-cases>)
 
 # Decide what to do about a waiting errand
 

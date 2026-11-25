@@ -148,13 +148,7 @@ func (w *writer) setBreadcrumb(owner, member *subject) {
 			owner = member.system
 		}
 		if idx := owner.indexes[title]; idx != nil {
-			dest := idx.file
-			if section := idx.overviewSections[member.directoryGroup()]; section != nil {
-				if group := owner.conceptSections[member.file]; group != nil {
-					section = group
-				}
-				dest = owner.file + "#" + section.anchor
-			}
+			dest := owner.sectionIndex(title)
 			steps = append(steps, w.link(collectionTitle(title), dest))
 		}
 	}
@@ -205,11 +199,6 @@ func (p *planner) renderSubjectBody(w *writer, s *subject) {
 		idx := s.indexes[title]
 		p.renderIndex(s, title, idx)
 		line := "- " + w.link(collectionTitle(title), idx.file)
-		for _, group := range slices.Sorted(maps.Keys(idx.sources)) {
-			if group != "" {
-				line += " · " + w.link(group, s.sectionIndex(group))
-			}
-		}
 		indexes = append(indexes, line)
 	}
 	w.text(strings.Join(indexes, "\n"))
@@ -254,7 +243,7 @@ func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offs
 			}
 		}
 		if h == s.name && s.kind() == "Feature" {
-			p.featureGoals(w, s)
+			renderIndexMembers(w, "Use cases", p.featureGoals(s))
 		}
 		p.body(w, s.source, h)
 		if h.level == s.name.level+1 && (h.title == "Extensions" || h.title == "Actions" || h.title == "Quality attributes") && !s.isOverview() {
@@ -560,8 +549,10 @@ func linkTitle(n model.Record) string {
 type relation struct{ forward, reverse string }
 
 var relations = map[string]relation{
-	"provided_by":     {"Provided by", "Provides"},
-	"subattribute_of": {"Parent attribute", "Subattributes"}, "groups": {"Groups", "Feature"}, "refines": {"Refines", "Refined by"}, "supports": {"Supports", "Supported by"},
+	"provided_by":         {"Provided by", "Provides"},
+	"required_interfaces": {"Required interfaces", "Required by"},
+	"provided_interfaces": {"Provided interfaces", "Provided by"},
+	"subattribute_of":     {"Parent attribute", "Subattributes"}, "groups": {"Groups", "Feature"}, "refines": {"Refines", "Refined by"}, "supports": {"Supports", "Supported by"},
 	"applies_to": {"Applies to", "Applies here"}, "quality_attributes": {"Quality attribute", "Classifies"},
 	"derived_from": {"Derived from", "Basis for"}, "relies_on": {"Relies on", "Relied on by"},
 	"involves": {"Involves", "Used in"}, "illustrates": {"Illustrates", "Illustrated by"},
@@ -635,7 +626,7 @@ func (p *planner) relationships(w *writer, h *heading, showHeading bool) {
 		if r.target == w.file || (r.forward && authored[labeledLink{r.label, relative(w.file, r.target)}]) {
 			continue
 		}
-		if h == h.owner.name && p.relationshipIndex(h.owner, r.label, r.target) != nil {
+		if h == h.owner.name && h.owner.relationshipDirectory(r.label, r.target) != "" {
 			continue
 		}
 		byLabel[r.label] = append(byLabel[r.label], w.link(r.title, r.target))

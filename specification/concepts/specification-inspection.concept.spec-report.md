@@ -3,7 +3,7 @@ generated_by: dotspec
 type: concept-spec-report
 source: "../../specs/concepts/specification-inspection.concept.spec.md#specification-inspection"
 ---
-[dotspec](<../dotspec.system.spec-report.md>) › [Concept definitions](<../dotspec.system.spec-report.md#specification-inspection>)
+[dotspec](<../dotspec.system.spec-report.md>) › [Concept definitions](<../dotspec.system.spec-report.md#concepts>)
 
 # Specification Inspection
 

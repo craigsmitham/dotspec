@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -197,6 +198,12 @@ Each submitted job must remain in the queue until accepted.
 ### Conditions
 The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies examples.
 `)
+	// The same title belongs to two different specs. Only Journal's copy is
+	// visible in Journal. Both roll up through Intake to Queue.
+	for _, component := range []string{"intake", "journal"} {
+		writeFixture(t, filepath.Join(root, "worker/queues/components", component, "specs/requirements/check.requirement.spec.md"),
+			"---\ntype: requirement-spec\n---\n# Check submission\n\n## Statement\nCheck the "+component+" record.\n")
+	}
 	if code, out, errOut := invoke("spec", "build"); code != 0 {
 		t.Fatal(code, out, errOut)
 	}
@@ -217,14 +224,11 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 		}
 	}
 	reader("SPEC.md", "[Read the system specification](<specification/tool.system.spec-report.md>)")
-	reader("specification/tool.system.spec-report.md", "### Subsystems", `[["Worker"]]`, "[Open questions](<open-questions.md>)", "[Systems](<systems.md>)")
-	reader("specification/systems/worker/worker.system.spec-report.md", "## Framing", "Could workers recover interrupted jobs?")
-	reader("specification/systems.md", "- [Worker](<systems/worker/worker.system.spec-report.md>) — A local job executor.")
-	reader("specification/systems/worker/worker.system.spec-report.md", "[Tool](<../../tool.system.spec-report.md>)", "[Systems](<systems.md>)")
-	reader("specification/systems/worker/systems.md", "- [Queue](<systems/queue/queue.system.spec-report.md>)")
-	reader(section+"queue.system.spec-report.md", "### Interfaces this system uses\n\n- [Clock]", "### System structure", "### System context", "### Interactions", "owner ---|interacts with|", "schedules retries.", "[Worker](<../../worker.system.spec-report.md>)", "[Requirements](<requirements.md>)", "[Interfaces](<interfaces.md>)", "### Components\n\n- [Intake](<components/intake/intake.component.spec-report.md>)")
-	reader(section+"requirements.md", "- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>) — Each submitted job must remain in the queue until accepted.", "[Intake requirements](<components/intake/requirements.md>)")
-	reader(section+"queue.system.spec-report.md", "**[Availability](<quality/availability/availability.quality-attribute.spec-report.md>)** — Accept work while either A &#124; B is available.")
+	reader("specification/tool.system.spec-report.md", "### Subsystems", `[["Worker"]]`, "[Open questions](<open-questions.md>)", "- [Worker](<systems/worker/worker.system.spec-report.md>) — A local job executor.")
+	reader("specification/systems/worker/worker.system.spec-report.md", "## Framing", "Could workers recover interrupted jobs?", "[Tool](<../../tool.system.spec-report.md>)", "- [Queue](<systems/queue/queue.system.spec-report.md>)")
+	reader(section+"queue.system.spec-report.md", "### Interfaces", "- [Clock]", "### System structure", "### System context", "### Interactions", "owner ---|interacts with|", "schedules retries.", "[Worker](<../../worker.system.spec-report.md>)", "[Requirements](<#requirements>)", "### Components\n\n- [Intake](<components/intake/intake.component.spec-report.md>)")
+	reader(section+"queue.system.spec-report.md", "- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>) — Each submitted job must remain in the queue until accepted.")
+	reader(section+"queue.system.spec-report.md", "- [Availability](<quality/availability/availability.quality-attribute.spec-report.md>) — Accept work while either A &#124; B is available.")
 	reader(section+"quality/availability/availability.quality-attribute.spec-report.md", "# Availability", "### Limit", "Maintenance windows are excluded.", "[Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)")
 	reader("specification/open-questions.md",
 		"[Which outages count?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>) — Availability",
@@ -232,8 +236,9 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 	intake := section + "components/intake/"
 	const journal = "components/intake/components/journal/"
 	reader(section+"queue.system.spec-report.md",
-		"| [Audit](<"+journal+"capabilities/audit.capability.spec-report.md>) | Inspect pending &#124; accepted jobs. |  |",
-		"| [Retry](<capabilities/retry.capability.spec-report.md>) | Resume an interrupted job. | [Intake](<components/intake/intake.component.spec-report.md>) · [Journal](<"+journal+"journal.component.spec-report.md>) |")
+		"- [Audit](<"+journal+"capabilities/audit.capability.spec-report.md>) — Inspect pending &#124; accepted jobs.",
+		"- [Retry](<capabilities/retry.capability.spec-report.md>) — Resume an interrupted job.")
+	reader(section+"capabilities/retry.capability.spec-report.md", "## Provided by", "[Intake]", "[Journal]")
 	reader(section+journal+"capabilities/audit.capability.spec-report.md", "[Capabilities](<../../../../../queue.system.spec-report.md#capabilities>)")
 	reader(intake+"intake.component.spec-report.md", "[Audit](<components/journal/capabilities/audit.capability.spec-report.md>)", "[Retry](<../../capabilities/retry.capability.spec-report.md>)")
 	for _, path := range []string{section + "queue.system.spec-report.md", "specification/systems/worker/worker.system.spec-report.md"} {
@@ -246,24 +251,52 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 			want = 1
 		}
 		for _, label := range []string{"Audit", "Retry"} {
-			if got := strings.Count(string(data), "| ["+label+"]"); got != want {
+			if got := strings.Count(string(data), "- ["+label+"]"); got != want {
 				t.Fatalf("%s has %d rows for %s, want %d", path, got, label, want)
 			}
 		}
 	}
 	reader(intake+"components/journal/journal.component.spec-report.md", "../../intake.component.spec-report.md", "[Requirements](<requirements.md>)")
-	reader(intake+"components/journal/requirements.md", "## Applicable requirements\n\n- [Retain jobs](<../../../../requirements/retain-jobs.requirement.spec-report.md>)")
-	reader(intake+"intake.component.spec-report.md", "## Architecture\n\nJournal keeps the durable record.", "### Interfaces this component offers\n\n- [Submission]", "### Interfaces this component uses\n\n- [Storage]", "[Interfaces](<interfaces.md>)", "[Required interfaces](<interfaces.md#required-interfaces>)", "[storage contracts](<interfaces.md#required-interfaces>)", "[Components](<components.md>)")
-	componentPage, err := os.ReadFile(filepath.Join(root, intake, "intake.component.spec-report.md"))
-	if err != nil {
-		t.Fatal(err)
+	reader(intake+"components/journal/requirements.md", "- [Retain jobs](<../../../../requirements/retain-jobs.requirement.spec-report.md>)")
+	reader(intake+"intake.component.spec-report.md", "## Architecture\n\nJournal keeps the durable record.", "### Interfaces\n\n- [Storage](<interfaces/storage.interface.spec-report.md>)", "- [Submission](<interfaces/submission.interface.spec-report.md>)", "[storage contracts](<#interfaces>)", "### Components\n\n- [Journal](<components/journal/journal.component.spec-report.md>)")
+	reader(intake+"interfaces/storage.interface.spec-report.md", "**Required by**", "[Intake](<../intake.component.spec-report.md>)")
+	reader(intake+"interfaces/submission.interface.spec-report.md", "**Provided by**", "[Intake](<../intake.component.spec-report.md>)")
+	reader(intake+"requirements.md", "- [Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)")
+	for _, scope := range []struct {
+		file    string
+		entries []string
+	}{
+		{section + "queue.system.spec-report.md", []string{"components/intake/components/journal/requirements/check-submission.requirement.spec-report.md", "components/intake/requirements/check-submission.requirement.spec-report.md", "requirements/retain-jobs.requirement.spec-report.md"}},
+		{intake + "requirements.md", []string{"components/journal/requirements/check-submission.requirement.spec-report.md", "requirements/check-submission.requirement.spec-report.md", "../../requirements/retain-jobs.requirement.spec-report.md"}},
+		{intake + "components/journal/requirements.md", []string{"requirements/check-submission.requirement.spec-report.md", "../../../../requirements/retain-jobs.requirement.spec-report.md"}},
+		{"specification/systems/worker/worker.system.spec-report.md", nil},
+	} {
+		data, err := os.ReadFile(filepath.Join(root, scope.file))
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, body, found := strings.Cut(string(data), "# Requirements\n")
+		if found != (len(scope.entries) != 0) {
+			t.Fatalf("unexpected Requirements section in %s", scope.file)
+		}
+		body, _, _ = strings.Cut(body, "\n## ")
+		body, _, _ = strings.Cut(body, "\n---")
+		var links []string
+		for _, row := range strings.Split(strings.TrimSpace(body), "\n") {
+			if row == "" {
+				continue
+			}
+			_, target, ok := strings.Cut(row, "](<")
+			if !ok || !strings.HasPrefix(row, "- [") {
+				t.Fatalf("%s contains unexpected directory row %q", scope.file, row)
+			}
+			target, _, _ = strings.Cut(target, ">)")
+			links = append(links, target)
+		}
+		if !slices.Equal(links, scope.entries) {
+			t.Fatalf("%s links to %v, want %v", scope.file, links, scope.entries)
+		}
 	}
-	if strings.Contains(string(componentPage), "## Required interfaces") || strings.Contains(string(componentPage), "## Provided interfaces") {
-		t.Fatal("collection-only interface sections in component report", string(componentPage))
-	}
-	reader(intake+"interfaces.md", "## Required interfaces\n\n- [Storage](<interfaces/storage.interface.spec-report.md>)", "## Provided interfaces\n\n- [Submission](<interfaces/submission.interface.spec-report.md>)")
-	reader(intake+"components.md", "- [Journal](<components/journal/journal.component.spec-report.md>)")
-	reader(intake+"requirements.md", "## Applicable requirements\n\n- [Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)", "[Journal requirements](<components/journal/requirements.md>)")
 	reader(section+"requirements/retain-jobs.requirement.spec-report.md", "../components/intake/intake.component.spec-report.md", "../components/intake/components/journal/journal.component.spec-report.md", "apps/demo/specs/demo.system.spec.md", "../quality/availability/availability.quality-attribute.spec-report.md")
 	if _, err := os.Stat(filepath.Join(root, "apps/demo/SPEC.md")); !os.IsNotExist(err) {
 		t.Fatalf("referenced project must not acquire generated files: %v", err)
@@ -313,7 +346,7 @@ func TestGeneratedOpenQuestionsLifecycle(t *testing.T) {
 	}
 }
 
-func TestOverviewKeepsNavigationOnlyCollectionsInTheMap(t *testing.T) {
+func TestOverviewListsEverySpecificationWithOrWithoutPreview(t *testing.T) {
 	t.Chdir(t.TempDir())
 	writeFixture(t, "dotspec.yaml", "name: notes\n")
 	const system = "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nKeep notes.\n\n## Scope\nOne notebook.\n\n"
@@ -333,13 +366,13 @@ func TestOverviewKeepsNavigationOnlyCollectionsInTheMap(t *testing.T) {
 			t.Fatal(err)
 		}
 		page := string(data)
-		for _, route := range []string{"[Business rules](<business-rules.md>)", "[Features](<features.md>)"} {
+		for _, route := range []string{"[Business rules](<#business-rules>)", "[Features](<#features>)"} {
 			if strings.Count(page, route) != 1 {
 				t.Fatalf("expected one navigation route %s in %s", route, page)
 			}
 		}
-		if strings.Contains(page, "## Requirements\n") || strings.Contains(page, "## Features\n") ||
-			strings.Contains(page, "## Business rules\n") || !strings.Contains(page, narrative) {
+		if strings.Contains(page, "## Requirements\n") || !strings.Contains(page, "## Features\n\n- [Archive notes]") ||
+			!strings.Contains(page, "## Business rules\n\n- [Archive rule]") || !strings.Contains(page, narrative) {
 			t.Fatal(page)
 		}
 	}
@@ -355,16 +388,21 @@ func TestSystemFeatureIndexTracksOverviewCoverage(t *testing.T) {
 		if code, out, msg := invoke("spec", "build"); code != 0 {
 			t.Fatal(code, out, msg)
 		}
-		index, err := os.ReadFile("specification/features.md")
-		dest := "../notes.system.spec-report.md#features"
-		if description == "" {
-			dest = "../features.md"
-			if err != nil || !strings.Contains(string(index), "[Review]") || !strings.Contains(string(index), "[Draft]") {
-				t.Fatalf("incomplete feature index: %s, %v", index, err)
-			}
-		} else if !os.IsNotExist(err) {
+		if _, err := os.Stat("specification/features.md"); !os.IsNotExist(err) {
 			t.Fatalf("unexpected separate feature index: %v", err)
 		}
+		report, err := os.ReadFile("specification/notes.system.spec-report.md")
+		if err != nil {
+			t.Fatal(err)
+		}
+		line := "- [Review](<features/review.feature.spec-report.md>)"
+		if description != "" {
+			line += " — Read a note."
+		}
+		if !strings.Contains(string(report), line+"\n") {
+			t.Fatalf("missing %s in %s", line, report)
+		}
+		dest := "../notes.system.spec-report.md#features"
 		member, err := os.ReadFile("specification/features/draft.feature.spec-report.md")
 		if err != nil || !strings.Contains(string(member), "[Features](<"+dest+">)") {
 			t.Fatalf("expected feature breadcrumb to %s: %s, %v", dest, member, err)
@@ -455,11 +493,10 @@ An example:
 		t.Fatalf("unexpected quality attribute index: %v", err)
 	}
 	wantOverview := strings.Join([]string{
-		"**[Reliability](<quality/reliability/reliability.quality-attribute.spec-report.md>)**", "",
 		durability,
-		"  - [Recovery](<quality/reliability/durability/recovery/recovery.quality-attribute.spec-report.md>)", "",
-		"**[Safety](<quality/safety/safety.quality-attribute.spec-report.md>)**", "",
-		durability,
+		"- [Recovery](<quality/reliability/durability/recovery/recovery.quality-attribute.spec-report.md>)",
+		"- [Reliability](<quality/reliability/reliability.quality-attribute.spec-report.md>)",
+		"- [Safety](<quality/safety/safety.quality-attribute.spec-report.md>)",
 	}, "\n")
 	_, hierarchy, _ := strings.Cut(page, "## Quality Attributes\n")
 	hierarchy, _, _ = strings.Cut(hierarchy, "\n## ")
@@ -677,7 +714,7 @@ Read [the description](#description) and [the clock contract](#required-interfac
 ### Open questions
 An authored boundary detail.
 
-### Interfaces this system uses
+### Interfaces
 Timing assumptions.
 
 ## Provided interfaces
@@ -700,12 +737,12 @@ See [the boundary detail](#open-questions).
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"[the description](<#overview.lead>)", "[the boundary detail](<#passage.open-questions>)", "[Open questions](<#overview.open-questions-1>)", "[the clock contract](<#overview.interfaces-this-system-uses-1>)"} {
+	for _, want := range []string{"[the description](<#overview.lead>)", "[the boundary detail](<#passage.open-questions>)", "[Open questions](<#overview.open-questions-1>)", "[the clock contract](<#overview.interfaces-1>)"} {
 		if !strings.Contains(string(page), want) {
 			t.Fatalf("missing %s in %s", want, page)
 		}
 	}
-	for subject, section := range map[string]string{"clock": "interfaces-this-system-uses-1", "draft-form": "interfaces-this-system-offers"} {
+	for subject, section := range map[string]string{"clock": "interfaces-1", "draft-form": "interfaces-1"} {
 		data, err := os.ReadFile("specification/interfaces/" + subject + ".interface.spec-report.md")
 		if err != nil || !strings.Contains(string(data), "[Interfaces](<../scope.system.spec-report.md#overview."+section+">)") {
 			t.Fatalf("missing interface breadcrumb to %s: %s, %v", section, data, err)
@@ -772,7 +809,7 @@ func TestNamedSubjectFilesAgreeWithTheirHeadings(t *testing.T) {
 	}
 }
 
-func TestConceptOverviewGroupsDeclaredUses(t *testing.T) {
+func TestConceptDirectoriesPreserveDistinctDefinitionsAndScopedUses(t *testing.T) {
 	projectFixture(t)
 	writeFixture(t, "specs/tool.system.spec.md", `---
 type: system-spec
@@ -842,42 +879,22 @@ type: component-spec
 		return string(data)
 	}
 	report := read("tool.system.spec-report.md")
-	const local = "### [Notebook](<concepts/notebook.concept.spec-report.md>)"
-	const external = "### [Notebook](<../apps/demo/specs/concepts/notebook.concept.spec.md>)"
-	group := func(heading string) string {
-		t.Helper()
-		if strings.Count(report, heading) != 1 {
-			t.Fatalf("expected one %s in %s", heading, report)
-		}
-		_, body, _ := strings.Cut(report, heading)
-		body, _, _ = strings.Cut(body, "\n### ")
-		return body
+	const local = "- [Notebook](<concepts/notebook.concept.spec-report.md>) — Gather drafts."
+	const external = "- [Notebook](<../apps/demo/specs/concepts/notebook.concept.spec.md>) — Preserve published work."
+	if !strings.Contains(report, "## Concepts\n\n"+external+"\n"+local+"\n") {
+		t.Fatal(report)
 	}
-	localBody := group(local)
-	for _, want := range []string{"Gather drafts.", "**Used here as**\n\n- [Draft notebook]", " — Keeps drafts for version 2.1.\n", "- [Revision notebook]", "**Declared in** [Editor]"} {
-		if !strings.Contains(localBody, want) {
-			t.Fatalf("expected %s in %s", want, localBody)
-		}
-	}
-	if strings.Contains(localBody, "Published notes move") || !strings.Contains(read("concept-uses/draft-notebook.concept-use.spec-report.md"), "Published notes move to the archive.") {
-		t.Fatal("the use report should carry the full description")
-	}
-	if body := group(external); !strings.Contains(body, "Preserve published work.") || !strings.Contains(body, "**Used here as** [Published notebook]") {
-		t.Fatal(body)
-	}
-	// A passage and its block quote both use Notebook before the two definitions.
-	// Each breadcrumb must land on the heading that links to its own definition.
 	for file, fragment := range map[string]string{
-		"concept-uses/published-notebook.concept-use.spec-report.md": "notebook-2",
-		"concept-uses/draft-notebook.concept-use.spec-report.md":     "notebook-3",
-		"concepts/notebook.concept.spec-report.md":                   "notebook-3",
+		"concept-uses/published-notebook.concept-use.spec-report.md": "concept-uses",
+		"concept-uses/draft-notebook.concept-use.spec-report.md":     "concept-uses",
+		"concepts/notebook.concept.spec-report.md":                   "concepts",
 	} {
 		if !strings.Contains(read(file), "tool.system.spec-report.md#"+fragment+">)") {
 			t.Fatalf("expected %s to return to #%s", file, fragment)
 		}
 	}
-	if body := group("### Concept uses\n"); !strings.Contains(body, "[Pending selection]") {
-		t.Fatal(body)
+	if detail := read("concept-uses/draft-notebook.concept-use.spec-report.md"); !strings.Contains(detail, "Published notes move to the archive.") || !strings.Contains(detail, "## Uses\n\n[Notebook]") {
+		t.Fatal(detail)
 	}
 	for _, name := range []string{"Draft notebook", "Published notebook", "Pending selection", "Revision notebook"} {
 		if strings.Count(report, "["+name+"]") != 1 {
@@ -896,7 +913,7 @@ type: component-spec
 	moved := strings.Replace(report, draft, "", 1)
 	moved = strings.Replace(moved, "Preserve published work.", "Preserve published work.\n\n"+draft, 1)
 	writeFixture(t, "specification/tool.system.spec-report.md", moved)
-	if code, out, msg := invoke("check"); code != 1 || !strings.Contains(out, "is missing link to \"concept-uses/draft-notebook.concept-use.spec-report.md\"") {
+	if code, out, msg := invoke("check"); code != 1 || !strings.Contains(out, "spec.membership") {
 		t.Fatalf("expected a finding for the misplaced use: %d %s %s", code, out, msg)
 	}
 }
@@ -959,22 +976,21 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	}
 	before := build()
 	const featureReport = "features/editing.feature.spec-report.md"
-	const editGoal = "- [Edit](<../use-cases/edit.use-case.spec-report.md#goal>) — Edit a note."
+	const editGoal = "- [Edit](<../use-cases/edit.use-case.spec-report.md>) — Edit a note."
 	if !strings.Contains(read(featureReport), editGoal) {
 		t.Fatal(read(featureReport))
 	}
 	for _, heading := range []string{"Use cases", "Requirements"} {
-		if strings.Contains(before, "\n## "+heading+"\n") {
+		if !strings.Contains(before, "\n## "+heading+"\n") {
 			t.Fatal(before)
 		}
 	}
-	const definition = "### [Notebook](<concepts/notebook.concept.spec-report.md>)\n\nKeep written ideas."
-	if body := section(before, "Concepts"); !strings.HasPrefix(body, definition) || strings.Contains(body, "Used here as") || !strings.Contains(read("use-cases.md"), "Review a note.") {
+	const definition = "- [Notebook](<concepts/notebook.concept.spec-report.md>) — Keep written ideas."
+	if body := section(before, "Concepts"); !strings.HasPrefix(body, definition) || strings.Contains(body, "Used here as") || !strings.Contains(section(before, "Use cases"), "Review a note.") {
 		t.Fatal("missing index entries")
 	}
-	refines := "\n  - Refines [Keep notes](<requirements/keep-notes.requirement.spec-report.md>)"
-	if strings.Count(read("requirements.md"), refines) != 1 {
-		t.Fatal(read("requirements.md"))
+	if strings.Contains(section(before, "Requirements"), "Refines") {
+		t.Fatal(section(before, "Requirements"))
 	}
 	writeFixture(t, sharedFile, strings.Replace(sharedSource, "Saved notes remain available.", "Reopened notes retain their text.", 1))
 
@@ -983,30 +999,30 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	addRequirement("Remote")
 	writeFixture(t, systemFile, system+goals+fourthGoal+uses+"\n## Synchronizations\n\n### Archive updates\n\n#### When\nThe note is saved.\n\n#### Then\nArchive the current version.\n")
 	after := build()
-	if !strings.Contains(read(featureReport), "- [Share](<../use-cases/share.use-case.spec-report.md#goal>) — Share a note.") {
+	if !strings.Contains(read(featureReport), "- [Share](<../use-cases/share.use-case.spec-report.md>) — Share a note.") {
 		t.Fatal(read(featureReport))
 	}
-	if strings.Contains(after, "\n## Use cases\n") || !strings.Contains(read("use-cases.md"), "Share a note.") {
+	if !strings.Contains(section(after, "Use cases"), "Share a note.") {
 		t.Fatal(after)
 	}
 	if section(after, "Goals") != section(before, "Goals")+"\n\n- [Four](<goals.md#four>) — Fourth goal." || !strings.Contains(read("goals.md"), "Fourth goal.") {
 		t.Fatal(after)
 	}
-	use := "**Used here as** [My notebook](<concept-uses/my-notebook.concept-use.spec-report.md>) — The current author's notes."
-	sync := "### Synchronizations\n\n- [Archive updates](<synchronizations/archive-updates.synchronization.spec-report.md>) — When — The note is saved. · Then — Archive the current version."
-	if !strings.HasSuffix(section(after, "Concepts"), definition+"\n\n"+use+"\n\n"+sync) {
+	use := "- [My notebook](<concept-uses/my-notebook.concept-use.spec-report.md>) — The current author's notes."
+	sync := "- [Archive updates](<synchronizations/archive-updates.synchronization.spec-report.md>) — When — The note is saved. · Then — Archive the current version."
+	if section(after, "Concepts") != definition || section(after, "Concept uses") != use || section(after, "Synchronizations") != sync {
 		t.Fatal(after)
 	}
 	if !strings.Contains(read("concept-uses/my-notebook.concept-use.spec-report.md"), "\n## Uses\n\n[Notebook](<../concepts/notebook.concept.spec-report.md>)") {
 		t.Fatal("concept use report lost its definition")
 	}
 	for _, name := range []string{"Local", "Remote"} {
-		want := "- [" + name + "](<requirements/" + strings.ToLower(name) + ".requirement.spec-report.md>) — Keep a " + name + " copy." + refines
-		if !strings.Contains(read("requirements.md"), want) {
+		want := "- [" + name + "](<requirements/" + strings.ToLower(name) + ".requirement.spec-report.md>) — Keep a " + name + " copy."
+		if !strings.Contains(section(after, "Requirements"), want) || !strings.Contains(read("requirements/"+strings.ToLower(name)+".requirement.spec-report.md"), "## Refines\n\n[Keep notes]") {
 			t.Fatalf("missing refinement for %s", name)
 		}
 	}
-	for _, file := range []string{"requirements.md", "requirements/keep-notes.requirement.spec-report.md"} {
+	for _, file := range []string{"notes.system.spec-report.md", "requirements/keep-notes.requirement.spec-report.md"} {
 		page := read(file)
 		if !strings.Contains(page, "Reopened notes retain their text.") || strings.Contains(page, "Saved notes remain available.") {
 			t.Fatalf("stale shared requirement in %s:\n%s", file, page)
@@ -1045,7 +1061,7 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	}
 
 	// A second parent can live in another project, where the authored file
-	// remains the destination. Both parents belong beside the same entry.
+	// remains the destination. Both parents belong on the refining requirement.
 	const rulePath = "policy/specs/business-rules/retention.business-rule.spec.md"
 	writeFixture(t, "policy/dotspec.yaml", "name: policy\n")
 	writeFixture(t, "policy/specs/policy.system.spec.md", "---\ntype: system-spec\n---\n# Policy\n\n## Purpose\nRetain notes.\n\n## Scope\nShared policy.\n")
@@ -1056,8 +1072,8 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 		t.Fatal(err)
 	}
 	writeFixture(t, localFile, string(local)+"[Retention](../../"+rulePath+").\n")
-	build()
-	if !strings.Contains(read("requirements.md"), refines+"\n  - Refines [Retention](<../"+rulePath+">)") {
-		t.Fatalf("missing refinement parents:\n%s", read("requirements.md"))
+	after = build()
+	if detail := read("requirements/local.requirement.spec-report.md"); strings.Contains(section(after, "Requirements"), "Refines") || !strings.Contains(detail, "[Keep notes](<keep-notes.requirement.spec-report.md>)") || !strings.Contains(detail, "[Retention](<../../"+rulePath+">)") {
+		t.Fatalf("missing refinement parents:\n%s", section(after, "Requirements"))
 	}
 }

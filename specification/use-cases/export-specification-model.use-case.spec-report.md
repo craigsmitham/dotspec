@@ -3,7 +3,7 @@ generated_by: dotspec
 type: use-case-spec-report
 source: "../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-model-for-review-or-integration"
 ---
-[dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../use-cases.md>)
+[dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../dotspec.system.spec-report.md#use-cases>)
 
 # Export a specification model for review or integration
 

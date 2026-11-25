@@ -3,7 +3,7 @@ generated_by: dotspec
 type: use-case-spec-report
 source: "../../specs/use-cases/check-specifications.use-case.spec.md#check-specifications-before-committing"
 ---
-[dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../use-cases.md>)
+[dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../dotspec.system.spec-report.md#use-cases>)
 
 # Check specifications before committing
 

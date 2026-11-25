@@ -102,26 +102,6 @@ func (v architectureView) diagram(structure, boundary bool) string {
 	return diagram.String()
 }
 
-func architectureLink(w *writer, s *subject) string {
-	preview := subjectPreview(s)
-	if s.kind() == "System" || (s.kind() == "Component" && preview == "") {
-		field := "Purpose"
-		if s.kind() == "Component" {
-			field = "Responsibilities"
-		}
-		if h := s.section(field); h != nil {
-			if summary := paragraphPreview(sourceProse(s.source, h)); summary != "" {
-				preview = summary
-			}
-		}
-	}
-	name := w.link(inlineText(s.name.title), s.file)
-	if preview != "" {
-		return name + " — " + inlineText(indexPreview(preview))
-	}
-	return name
-}
-
 func (v architectureView) sections() []overviewSection {
 	sections := []overviewSection{
 		{title: "Architecture", level: 2, sources: []string{"architecture"}},
@@ -146,36 +126,10 @@ func (v architectureView) sections() []overviewSection {
 		}
 	}
 
-	offered := "Interfaces"
-	if len(v.required) > 0 {
-		offered = "Interfaces this " + strings.ToLower(kind) + " offers"
-	}
-	used := "Interfaces this " + strings.ToLower(kind) + " uses"
-	for _, group := range []struct {
-		title      string
-		source     string
-		collection string
-		items      []*subject
-	}{
-		{title: "Subsystems", items: v.subsystems},
-		{title: "Components", collection: "Components", items: v.components},
-		{title: offered, source: "provided_interfaces", collection: "Provided interfaces", items: v.provided},
-		{title: used, source: "required_interfaces", collection: "Required interfaces", items: v.required},
-		{title: "Interactions", source: "interacts_with"},
-	} {
-		section := overviewSection{title: group.title, level: 3, collection: group.collection}
-		if group.source != "" {
-			section.sources = []string{group.source}
-		}
-		w := &writer{file: v.owner.file, page: &Page{}}
-		var lines []string
-		for _, s := range group.items {
-			lines = append(lines, "- "+architectureLink(w, s))
-		}
-		w.text(strings.Join(lines, "\n"))
-		section.detail = w.out.String()
-		section.detailLinks = w.page.RequiredLinks
-		sections = append(sections, section)
-	}
-	return sections
+	return append(sections,
+		overviewSection{title: "Subsystems", collection: "Systems", level: 3},
+		overviewSection{title: "Components", collection: "Components", level: 3},
+		overviewSection{title: "Interfaces", collection: "Interfaces", level: 3, sources: []string{"provided_interfaces", "required_interfaces"}},
+		overviewSection{title: "Interactions", level: 3, sources: []string{"interacts_with"}},
+	)
 }

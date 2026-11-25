@@ -3,7 +3,7 @@ generated_by: dotspec
 type: requirement-spec-report
 source: "../../specs/requirements/availability.requirement.spec.md#keep-recorded-work-available"
 ---
-[Personal task list](<../personal-task-list.system.spec-report.md>) › [Requirements](<../requirements.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Requirements](<../personal-task-list.system.spec-report.md#requirements>)
 
 # Keep recorded work available
 

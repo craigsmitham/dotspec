@@ -85,7 +85,8 @@ func sourceLabelAllowances(markdown string, generated []sourceRoute) map[sourceR
 type parsedPage struct {
 	footerSource   string
 	sectionDocs    map[string][]Document
-	firstList      map[string][]string
+	sectionLists   map[string]int
+	firstList      map[string][]directoryRow
 	header         pageHeader
 	titles         []string
 	visible        string
@@ -100,7 +101,7 @@ type parsedPage struct {
 func parseGenerated(data []byte) parsedPage {
 	header, body := splitHeader(data)
 	doc := markdownParser.Parse(text.NewReader(body))
-	p := parsedPage{sectionDocs: map[string][]Document{}, firstList: map[string][]string{}, sectionContent: map[string][]string{}, sectionLinks: map[string]map[string]bool{}, header: header, links: make(map[string]int), labels: make(map[string][]string), resources: make(map[string]bool), anchors: make(map[string]bool), visible: visibleText(doc, body)}
+	p := parsedPage{sectionDocs: map[string][]Document{}, sectionLists: map[string]int{}, firstList: map[string][]directoryRow{}, sectionContent: map[string][]string{}, sectionLinks: map[string]map[string]bool{}, header: header, links: make(map[string]int), labels: make(map[string][]string), resources: make(map[string]bool), anchors: make(map[string]bool), visible: visibleText(doc, body)}
 	type section struct {
 		level int
 		ids   []string
@@ -124,21 +125,17 @@ func parseGenerated(data []byte) parsedPage {
 		}
 		// The directory is the first direct list in its section. Later authored
 		// prose and links can refer to other subjects for different reasons.
-		if n.Kind() == ast.KindList && n.Parent() == doc && len(ancestors) > 0 {
+		if list, ok := n.(*ast.List); ok && n.Parent() == doc && len(ancestors) > 0 {
+			for _, ancestor := range ancestors {
+				for _, id := range ancestor.ids {
+					p.sectionLists[id]++
+				}
+			}
 			ids := ancestors[len(ancestors)-1].ids
 			if _, seen := p.firstList[ids[0]]; !seen {
-				var members []string
-				_ = ast.Walk(n, func(child ast.Node, entering bool) (ast.WalkStatus, error) {
-					if child != n && child.Kind() == ast.KindList {
-						return ast.WalkSkipChildren, nil // nested relationships are not directory members
-					}
-					if link, ok := child.(*ast.Link); ok && entering {
-						members = append(members, string(util.URLEscape(link.Destination, true)))
-					}
-					return ast.WalkContinue, nil
-				})
+				rows := parseDirectoryRows(list, body)
 				for _, id := range ids {
-					p.firstList[id] = members
+					p.firstList[id] = rows
 				}
 			}
 		}
@@ -157,7 +154,11 @@ func parseGenerated(data []byte) parsedPage {
 					for len(ancestors) > 0 && ancestors[len(ancestors)-1].level >= n.Level {
 						ancestors = ancestors[:len(ancestors)-1]
 					}
-					ancestors = append(ancestors, section{n.Level, append(aliases, name)})
+					ids := append(aliases, name)
+					if n.Level == 1 {
+						ids = append(ids, "") // the title's introductory section
+					}
+					ancestors = append(ancestors, section{n.Level, ids})
 					aliases = nil
 				}
 			}
@@ -210,6 +211,33 @@ func visibleText(node ast.Node, source []byte) string {
 func contentText(md string) string {
 	source := []byte(md)
 	return visibleText(markdownParser.Parse(text.NewReader(source)), source)
+}
+
+// A directory item is a bullet starting with one title link. Any following
+// preview is plain text. Keep malformed items in the count for diagnostics.
+func parseDirectoryRows(list *ast.List, body []byte) []directoryRow {
+	if list.IsOrdered() {
+		return nil
+	}
+	var rows []directoryRow
+	for item := list.FirstChild(); item != nil; item = item.NextSibling() {
+		row := directoryRow{text: visibleText(item, body)}
+		block := item.FirstChild()
+		if block != nil && block.NextSibling() == nil {
+			if link, ok := block.FirstChild().(*ast.Link); ok {
+				row.destination = string(util.URLEscape(link.Destination, true))
+				row.title = visibleText(link, body)
+				for sibling := link.NextSibling(); sibling != nil; sibling = sibling.NextSibling() {
+					if sibling.Kind() != ast.KindText && sibling.Kind() != ast.KindString {
+						row.destination = ""
+						break
+					}
+				}
+			}
+		}
+		rows = append(rows, row)
+	}
+	return rows
 }
 
 func checkSourceLinks(file string, expected *Page, p parsedPage, report func(string, string)) {
@@ -333,15 +361,15 @@ func checkPage(file string, expected *Page, p parsedPage, report func(string, st
 		}
 	}
 	for _, anchor := range slices.Sorted(maps.Keys(expected.DirectoryMembers)) {
-		var members []string
-		for _, dest := range expected.DirectoryMembers[anchor] {
-			members = append(members, string(util.URLEscape([]byte(dest), true)))
+		directory := expected.DirectoryMembers[anchor]
+		members := slices.Clone(directory.rows)
+		for i := range members {
+			row := &members[i]
+			row.destination = string(util.URLEscape([]byte(row.destination), true))
+			row.text = strings.Join(strings.Fields(row.text), " ")
 		}
-		found := slices.Clone(p.firstList[anchor])
-		slices.Sort(members)
-		slices.Sort(found)
-		if !slices.Equal(members, found) {
-			report("spec.membership", "directory at #"+anchor+" must list each scoped member exactly once")
+		if !slices.Equal(members, p.firstList[anchor]) || (directory.wholeSection && p.sectionLists[anchor] != 1) {
+			report("spec.membership", "directory at #"+anchor+" must list each scoped title and preview once in alphabetical order")
 		}
 	}
 }

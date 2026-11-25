@@ -187,20 +187,17 @@ def spec_journey(cli, tmp):
     overview = root.read_text(encoding="utf-8")
     sections = ["Framing", "Purpose", "Goals", "Stakeholders", "Scope", "Environment",
                 "Assumptions", "Architecture", "Capabilities",
-                "Features", "Concepts", "Quality Attributes"]
+                "Features", "Concepts", "Concept uses", "Quality Attributes", "Business rules", "Jobs", "Requirements", "Use cases"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
     scope = overview.split("\n## Scope\n", 1)[1].split("\n## ", 1)[0]
     included, excluded = scope.split("\n### Out of scope\n")
     assert "One person records commitments" in included and "Sending reminders" in excluded
     navigation = overview.split("\n## Framing\n", 1)[0]
     panels = re.findall(r"<details>\n<summary>([^<]+)</summary>\n\n(.+?)\n\n</details>", navigation, re.S)
-    assert [label for label, _ in panels] == ["On this page", "Browse specifications"]
-    local, browse = (links for _, links in panels)
+    assert [label for label, _ in panels] == ["On this page"]
+    local = panels[0][1]
     assert re.findall(r"^- \[([^]]+)\]", local, re.M) == sections
-    collections = re.findall(r"^- \[([^]]+)\]", browse, re.M)
-    assert collections == ["Business rules", "Jobs", "Requirements", "Use cases"]
     assert all(not urlsplit(dest).path for dest in re.findall(r"\]\(<([^>]+)>\)", local))
-    assert all(urlsplit(dest).path for dest in re.findall(r"\]\(<([^>]+)>\)", browse))
     assert "### Behavior" not in overview and "### Obligations" not in overview
     goals = overview.split("\n## Goals\n", 1)[1].split("\n## ", 1)[0]
     assert "Reduce the effort of working out what still needs attention." in goals
@@ -216,10 +213,9 @@ def spec_journey(cli, tmp):
         assert "**Referenced by**" not in detail.read_text(encoding="utf-8")
         for page in (root, follow(detail, related)):
             assert any(target == detail and fragment == anchor for _, target, fragment, _ in markdown_links(page))
-    rules = follow(root, "Business rules")
-    rule = follow(rules, "Completion preserves a commitment")
+    rule = follow(root, "Completion preserves a commitment")
     statement = rule.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
-    assert statement in rules.read_text(encoding="utf-8")
+    assert statement in overview.split("\n## Business rules\n", 1)[1].split("\n## ", 1)[0]
     for section in sections:
         assert f"[{section}](<#{section.lower().replace(' ', '-')}>)" in navigation
     stakeholders = overview.split("## Stakeholders\n", 1)[1].split("\n## ", 1)[0]
@@ -234,21 +230,24 @@ def spec_journey(cli, tmp):
     service = follow(root, "Task service").read_text(encoding="utf-8")
     assert "```mermaid" not in service and "### Capabilities" in service
     capability_rows = overview.split("\n## Capabilities\n", 1)[1].split("\n## ", 1)[0].strip().splitlines()
-    assert capability_rows[:2] == ["| Capability | What it enables | Provided by |", "| --- | --- | --- |"]
-    assert len(capability_rows) == 4
+    assert [re.match(r"^- \[([^]]+)\]", row)[1] for row in capability_rows] == ["Follow-up review", "Local task storage"]
     concepts = overview.split("\n## Concepts\n", 1)[1].split("\n## ", 1)[0]
-    assert concepts.count("### [Checklist](<concepts/checklist.concept.spec-report.md>)") == 1
+    assert concepts.count("- [Checklist](<concepts/checklist.concept.spec-report.md>)") == 1
     assert "<a id=" not in concepts
-    assert "**Used here as** [My checklist]" in concepts
+    assert "- [My checklist]" in overview.split("\n## Concept uses\n", 1)[1]
     assert follow(root, "Checklist") == follow(follow(root, "My checklist"), "Checklist")
     for collection, name, fragment in (
+        ("Business rules", "Completion preserves a commitment", "business-rules"),
+        ("Jobs", "See personal commitments through", "jobs"),
+        ("Requirements", "Preserve tasks across restart", "requirements"),
+        ("Use cases", "Decide what to do about a waiting errand", "use-cases"),
         ("Components", "Task service", "components"),
         ("Capabilities", "Local task storage", "capabilities"),
         ("Capabilities", "Follow-up review", "capabilities"),
         ("Interfaces", "Task list forms", "interfaces"),
         ("Features", "Pick up where I left off", "features"),
-        ("Concept uses", "My checklist", "checklist"),
-        ("Concept definitions", "Checklist", "checklist"),
+        ("Concept uses", "My checklist", "concept-uses"),
+        ("Concept definitions", "Checklist", "concepts"),
         ("Quality attributes", "Durability", "quality-attributes"),
     ):
         filename = "concepts" if collection == "Concept definitions" else collection.lower().replace(" ", "-")
@@ -268,24 +267,15 @@ def spec_journey(cli, tmp):
         declaration = (project / source).read_text(encoding="utf-8")
         subject = re.search(r"^#+ " + re.escape(name) + r"\n\n#+ Description\n\n([^\n]+)", declaration, re.M)
         description = subject[1]
-        directory = follow(root, collection) if collection in collections else root
-        page = follow(directory, name) if collection else root
+        page = follow(root, name) if collection else root
         text = page.read_text(encoding="utf-8")
         if name in ("Personal task list", "Task service"):
             assert f"# {name}\n\n{description}\n" in text
         else:
             assert re.search(r"^# " + re.escape(name) + r"\n\n## Description\n\n" + re.escape(description), text, re.M)
         assert text.count(description) == 1
-        if collection == "Capabilities":
-            row, = [row for row in capability_rows if row.startswith(f"| [{name}]")]
-            _, preview, provider = row.strip("|").strip().split(" | ")
-            assert provider == "[Task service](<components/task-service/task-service.component.spec-report.md>)"
-        elif collection == "Concept uses":
-            use, = [line for line in concepts.splitlines() if line.startswith(f"**Used here as** [{name}]")]
-            assert use.split(" — ", 1)[1] == description.split(". ", 1)[0] + "."
-            continue
-        elif collection:
-            line, = [line for line in directory.read_text(encoding="utf-8").splitlines() if line.startswith(f"- [{name}]")]
+        if collection:
+            line, = [line for line in overview.splitlines() if line.startswith(f"- [{name}]")]
             preview = line.split(" — ", 1)[1].removesuffix("\\")
         if collection:
             assert preview == description or (preview.endswith(" …") and description.startswith(preview[:-2]))
@@ -326,7 +316,7 @@ def spec_journey(cli, tmp):
     assert follow(acknowledgement, "Requirements") == component_requirements
     assert follow(acknowledgement, "Task service") == component
     assert acknowledgement.parent == component.parent / "requirements"
-    assert "## Applicable requirements" in component_requirements.read_text(encoding="utf-8")
+    assert "## Applicable requirements" not in component_requirements.read_text(encoding="utf-8")
     assert "**Applies here**" not in component.read_text(encoding="utf-8")
     assert follow(component, "Acknowledge after commit") == acknowledgement
     statement = acknowledgement.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
@@ -363,7 +353,7 @@ def spec_journey(cli, tmp):
     availability = follow(use_case, "Keep recorded work available")
     assert availability == claims[project / "specs/requirements/availability.requirement.spec.md", "keep-recorded-work-available"]
     assert follow(promise, "Keep recorded work available") == availability
-    assert follow(follow(root, "Requirements"), "Keep recorded work available") == availability
+    assert follow(root, "Keep recorded work available") == availability
     assert claims[project / "specs/concepts/checklist.concept.spec.md", "checklist"] == follow(use_case, "Complete")
     headings = re.findall(r"^## (.+)$", promise.read_text(encoding="utf-8"), re.M)
     assert headings[:3] == ["Statement", "Applies to", "Criterion"]
@@ -374,21 +364,21 @@ def spec_journey(cli, tmp):
     assert follow(promise, "restart acceptance test") == project / ACCEPTANCE
     cue = follow(use_case, "Show which replies need follow-up")
     assert follow(feature, "Show which replies need follow-up") == cue
-    assert follow(cue, "When a reply needs chasing") == follow(rules, "When a reply needs chasing")
+    assert follow(cue, "When a reply needs chasing") == follow(root, "When a reply needs chasing")
     assert follow(cue, "form acceptance test") == project / ACCEPTANCE
-    requirements = follow(root, "Requirements")
-    assert requirements == root.parent / "requirements.md"
-    assert follow(requirements, "Preserve tasks across restart") == promise
-    assert follow(requirements, "Task service requirements") == component_requirements
-    use_cases = follow(root, "Use cases")
-    assert use_cases == root.parent / "use-cases.md"
-    assert follow(use_cases, "Decide what to do about a waiting errand") == use_case
+    requirements = overview.split("\n## Requirements\n", 1)[1].split("\n## ", 1)[0].strip().splitlines()
+    assert [re.fullmatch(r"- \[([^]]+)\]\(<[^>]+>\) — .+", row)[1] for row in requirements] == [
+        "Acknowledge after commit", "Keep recorded work available", "Preserve tasks across restart",
+        "Show which replies need follow-up"]
+    assert follow(root, "Acknowledge after commit") == acknowledgement
+    assert "## Refines\n\n[Keep recorded work available]" in promise.read_text(encoding="utf-8")
+    assert follow(root, "Decide what to do about a waiting errand") == use_case
     assert not (component.parent / "use-cases.md").exists()
     assert not list((project / "specification").rglob("index.md"))
     cli("check", cwd=project)
     for page, rule in [(promise, "spec.content"), (feature, "spec.navigation"),
                        (qualities, "spec.content"), (root, "spec.navigation"),
-                       (requirements, "spec.membership"), (qualities, "spec.document-type"),
+                       (root, "spec.membership"), (qualities, "spec.document-type"),
                        (promise, "spec.document-type"), (definitions, "spec.document-type")]:
         body = page.read_text(encoding="utf-8")
         if rule == "spec.document-type":
