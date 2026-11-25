@@ -2,11 +2,11 @@ package cli
 
 import (
 	"fmt"
-	"path/filepath"
+	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
-	qualityapply "github.com/craigsmitham/dotspec/internal/qualitymodel/apply"
+
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/spf13/cobra"
 )
@@ -58,20 +58,42 @@ func newQualityModelCommand() *cobra.Command {
 				return err
 			}
 			if action.name == "list" {
+				project, err := specfile.FindProject(path)
+				if err != nil {
+					return err
+				}
+				effective, selection, err := qualitymodel.Resolve(path, project, "")
+				if err != nil {
+					return err
+				}
 				models, err := qualitymodel.List(path)
 				if err != nil {
 					return err
 				}
+				found := false
+				for _, m := range models {
+					if m.Path == effective.Path {
+						found = true
+						break
+					}
+				}
+				if !found {
+					models = append(models, effective)
+				}
 				if format == "json" {
 					return writeJSON(out, struct {
+						Effective     qualitymodel.Selection       `json:"effective_model"`
 						SchemaVersion int                          `json:"schema_version"`
 						Default       string                       `json:"default"`
 						Models        []*qualitymodel.QualityModel `json:"quality_models"`
-					}{1, qualitymodel.Default, models})
+					}{selection, 2, effective.Slug, models})
+				}
+				if _, err := fmt.Fprintln(out, selectionText(selection)); err != nil {
+					return err
 				}
 				for _, m := range models {
 					mark := ""
-					if m.Builtin && m.Slug == qualitymodel.Default {
+					if m.Path == effective.Path {
 						mark = " (default)"
 					}
 					if _, err := fmt.Fprintf(out, "%s%s — %s [%s]\n", m.Slug, mark, m.Name, m.Path); err != nil {
@@ -112,64 +134,22 @@ func newQualityModelCommand() *cobra.Command {
 		addOutput(cmd, false)
 		root.AddCommand(cmd)
 	}
-	cmd := &cobra.Command{Use: "apply [model]", Short: "Copy selected model attributes into a system without overwriting declarations", Long: "Copy attributes from a bundled starter or local quality model. The default model is iso-25010-2023. With no --attributes selection, copy all attributes. Include ancestors automatically; refuse ID conflicts before writing. --dry-run lists each proposed attribute path and its complete content.\n\nLocal declarations remain independent of their source model.", Example: "dotspec quality-model apply --system specs/new-system.system.spec.md --dry-run", Args: cobra.MaximumNArgs(1)}
-	cmd.Flags().String("system", "", "Target example.system.spec.md path, relative to --path")
-	cmd.Flags().StringSlice("attributes", nil, "Comma-separated attribute IDs to copy, including ancestors")
-	cmd.Flags().Bool("dry-run", false, "Preview the new attribute files without writing")
-	_ = cmd.MarkFlagRequired("system")
+	cmd := &cobra.Command{Use: "apply [model]", Short: "Adopt selected quality attributes into one system", Long: "Browse the effective model, select IDs with --attributes or request the whole model with --all. Existing system declarations keep their wording and grouping.", Example: "dotspec quality-model apply --attributes recoverability --dry-run", Args: cobra.MaximumNArgs(1)}
+	cmd.Flags().StringSlice("attributes", nil, "Comma-separated attribute IDs to adopt")
+	cmd.Flags().Bool("all", false, "Adopt every attribute from the model into one system")
+	cmd.MarkFlagsMutuallyExclusive("all", "attributes")
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
-		path, err := projectPath(cmd)
-		if err != nil {
-			return err
-		}
-		format, err := outputFormat(cmd)
-		if err != nil {
-			return err
-		}
-		slug := qualitymodel.Default
-		if len(args) > 0 {
-			slug = args[0]
-		}
-		m, err := qualitymodel.Show(path, slug)
-		if err != nil {
-			return err
-		}
-		target, _ := cmd.Flags().GetString("system")
-		if !filepath.IsAbs(target) {
-			target = filepath.Join(path, target)
-		}
-		if p, err := specfile.FindProject(path); err != nil {
-			return err
-		} else if p != nil {
-			owner, err := specfile.FindProject(filepath.Dir(target))
-			if err != nil {
-				return err
-			}
-			if owner == nil || owner.Root != p.Root {
-				return fmt.Errorf("--system must remain within the selected project %s", p.Name)
-			}
-		}
-		selected, _ := cmd.Flags().GetStringSlice("attributes")
-		if cmd.Flags().Changed("attributes") && len(selected) == 0 {
+		ids, _ := cmd.Flags().GetStringSlice("attributes")
+		if cmd.Flags().Changed("attributes") && (len(ids) == 0 || strings.TrimSpace(strings.Join(ids, "")) == "") {
 			return fmt.Errorf("--attributes requires at least one attribute ID")
 		}
-		dryRun, _ := cmd.Flags().GetBool("dry-run")
-		result, err := qualityapply.Run(m, target, selected, dryRun)
-		if err != nil {
-			return err
+		all, _ := cmd.Flags().GetBool("all")
+		if len(args) > 0 && args[0] == "" {
+			return fmt.Errorf("expected a model ID or path")
 		}
-		if format == "json" {
-			return writeJSON(cmd.OutOrStdout(), result)
-		}
-		if dryRun {
-			_, err = fmt.Fprint(cmd.OutOrStdout(), result.Content)
-		} else {
-			_, err = fmt.Fprintf(cmd.OutOrStdout(), "Added %d attributes to %s from %s.\n", len(result.Added), displayPath(result.Target), m.Slug)
-		}
-		return err
+		return qualityOperation(cmd, qualityRequest{model: firstArg(args), attributes: ids, all: all})
 	}
-	addPath(cmd)
-	addOutput(cmd, false)
+	addAdoptionFlags(cmd)
 	root.AddCommand(cmd)
 	return root
 }

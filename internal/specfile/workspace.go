@@ -10,6 +10,9 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/diagnostic"
 
 	"go.yaml.in/yaml/v3"
 )
@@ -24,9 +27,11 @@ type Workspace struct {
 }
 
 type Project struct {
-	Name   string       `json:"name" yaml:"name"`
-	Report ReportConfig `json:"-" yaml:"report"`
-	Root   string       `json:"root" yaml:"-"`
+	Name            string              `json:"name" yaml:"name"`
+	Report          ReportConfig        `json:"-" yaml:"report"`
+	Root            string              `json:"root" yaml:"-"`
+	QualityModel    string              `json:"-" yaml:"-"`
+	QualityLocation diagnostic.Location `json:"-" yaml:"-"`
 }
 
 type ReportConfig struct {
@@ -55,7 +60,11 @@ func readProject(root string) (*Project, error) {
 	}
 	decoder := yaml.NewDecoder(bytes.NewReader(data))
 	decoder.KnownFields(true)
-	if err := decoder.Decode(p); err != nil {
+	manifest := struct {
+		*Project `yaml:",inline"`
+		Quality  yaml.Node `yaml:"quality"`
+	}{Project: p}
+	if err := decoder.Decode(&manifest); err != nil {
 		return nil, fmt.Errorf("%s: %w", path, err)
 	}
 	var extra any
@@ -64,6 +73,29 @@ func readProject(root string) (*Project, error) {
 	}
 	if !projectName.MatchString(p.Name) {
 		return nil, fmt.Errorf("%s: invalid project name %q", path, p.Name)
+	}
+	q := manifest.Quality
+	if q.Kind == 0 {
+		return p, nil
+	}
+	p.QualityLocation = diagnostic.Location{Path: path, Line: q.Line, Column: q.Column, Element: "quality.model"}
+	if q.Kind != yaml.MappingNode {
+		return p, diagnostic.Error("project.quality-model", "quality must be a mapping", p.QualityLocation)
+	}
+	for i := 0; i < len(q.Content); i += 2 {
+		key, value := q.Content[i], q.Content[i+1]
+		p.QualityLocation.Line, p.QualityLocation.Column = value.Line, value.Column
+		if key.Value != "model" || p.QualityModel != "" {
+			return p, diagnostic.Error("project.quality-model", "quality accepts one optional model field", p.QualityLocation)
+		}
+		if value.Kind != yaml.ScalarNode || value.ShortTag() != "!!str" || strings.TrimSpace(value.Value) == "" {
+			return p, diagnostic.Error("project.quality-model", "quality.model requires a bundled ID or project-relative .quality-model.md path", p.QualityLocation)
+		}
+		p.QualityModel = value.Value
+		localModel := filepath.IsLocal(value.Value) && strings.HasSuffix(value.Value, QualityModelSuffix)
+		if !projectName.MatchString(value.Value) && !localModel {
+			return p, diagnostic.Error("project.quality-model", "invalid quality.model locator: "+value.Value, p.QualityLocation)
+		}
 	}
 	return p, nil
 }
@@ -127,7 +159,8 @@ func FindWorkspace(dir string) (*Workspace, error) {
 	names := map[string]string{}
 	for _, path := range paths {
 		p, err := readProject(filepath.Dir(path))
-		if err != nil {
+		// A named project with an invalid quality setting still has an independent scope.
+		if err != nil && p == nil {
 			return nil, err
 		}
 		if other, ok := names[p.Name]; ok {

@@ -35,7 +35,7 @@ func ParseQualityAttributes(doc *specfile.Outline, section *specfile.Section, id
 		}
 		attributes = append(attributes, attribute)
 	}
-	if err := validateQualityAttributes(attributes); err != nil {
+	if err := ValidateQualityAttributes(attributes); err != nil {
 		return nil, err
 	}
 	return attributes, nil
@@ -102,7 +102,7 @@ func parseAttribute(doc *specfile.Outline, section *specfile.Section, ids *specf
 	return a, nil
 }
 
-func validateQualityAttributes(attributes []Attribute) error {
+func ValidateQualityAttributes(attributes []Attribute) error {
 	byID := make(map[string]*Attribute, len(attributes))
 	for i := range attributes {
 		byID[attributes[i].ID] = &attributes[i]

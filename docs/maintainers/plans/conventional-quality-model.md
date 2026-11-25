@@ -1,6 +1,6 @@
 # Conventional quality models and system quality attribute adoption
 
-**Proposed technical specification.** A new dotspec project should be able to browse useful quality terms offline and adopt one for its system without creating a quality model or editing configuration. The first product decision is which quality matters to this system. The resulting system quality attribute file gives the team a place to say what that quality means locally.
+**Implemented technical specification.** A new dotspec project should be able to browse useful quality terms offline and adopt one for its system without creating a quality model or editing configuration. The first product decision is which quality matters to this system. The resulting system quality attribute file gives the team a place to say what that quality means locally.
 
 For example, the Personal task list team could browse **Reliability → Recoverability**, adopt Recoverability, and edit its definition to identify which acknowledged decisions must survive a restart. Alternatively, it could author **Durability** directly, as the example does today. The system quality requirement then states which fields must survive and how the result is assessed. [System quality attribute](../../../examples/todo/specs/quality/durability/durability.quality-attribute.spec.md) · [System quality requirement](../../../examples/todo/specs/requirements/restart.requirement.spec.md)
 
@@ -35,7 +35,7 @@ For a team vocabulary, replace `q42` with `./specs/quality-models/team-quality.q
 
 ## CLI contract
 
-The following command forms are proposed. Run the examples from the project directory containing the target system.
+Run the examples from the project directory containing the target system.
 
 | Command | Observable behavior |
 | --- | --- |
@@ -52,7 +52,7 @@ For batch adoption, reject `--all` combined with `--attributes`, and reject an e
 
 ## Adoption and repeatability
 
-The current writer includes all ancestors, rejects every existing ID, and publishes whole top-level directories. Adding Fault tolerance after Recoverability therefore needs changes to both planning and publication. [Current writer](../../../internal/qualitymodel/apply/apply.go)
+Adding Fault tolerance after Recoverability reuses the local Reliability definition and installs one new file under its directory. [Adoption writer](../../../internal/qualitymodel/apply/apply.go)
 
 1. Under the target-system lock, read its current declarations and index them by local ID and actual file path. Resolve **all explicitly requested IDs** in the chosen model before planning changes. Deduplicate repeated selections.
 2. Treat an existing local ID as the system’s authoritative meaning. Mark it **already declared** for a directly requested ID or **reused parent** for an implicit ancestor, and show its local path. Stop traversing the model’s parents at that declaration. A team may already have tailored its wording, title, or grouping. The same ID from a different model also resolves to that local declaration; the result must expose the reuse and must never claim a new adoption from that model. Distinct local meanings require distinct IDs.
@@ -65,7 +65,7 @@ Text output should let the author see what was created, what was reused, and whi
 ## Integration and delivery
 
 1. **Resolve and inspect the default.** Extend the [project manifest parser](../../../internal/specfile/workspace.go) with the optional quality configuration. Put catalog selection and model loading in [the quality model package](../../../internal/qualitymodel/store.go), leaving manifest decoding independent of domain parsing. Use that resolver for browsing, default markers, adoption, and configured-model checks. In `check --all`, resolve each manifest independently and attach findings to the owning project.
-2. **Ship incremental adoption.** Refactor the existing writer into a shared plan and publish path, then expose the attribute-first command and the revised [batch command](../../../internal/cli/qualitymodel.go). Make bulk selection explicit in the caller and the writer API. Today an empty ID list means “copy all” in the writer itself. Update callers, fixtures, and shell examples together.
+2. **Ship incremental adoption.** Refactor the existing writer into a shared plan and publish path, then expose the attribute-first command and the revised [batch command](../../../internal/cli/qualitymodel.go). Make bulk selection explicit in the caller and the writer API. The writer requires an explicit whole-model selection. Update callers, fixtures, and shell examples together.
 3. **Publish the authoring workflow.** Lead the handbook with browsing, adopting, and tailoring one system quality attribute. Put model authoring on the reusable-vocabulary path. Document the manifest field, JSON contracts, and migration. Existing bulk scripts must add `--all`; existing source files require no migration. Keep per-system model overrides, model inheritance, and synchronized updates for a later design if projects demonstrate a need.
 
 ## Acceptance cases

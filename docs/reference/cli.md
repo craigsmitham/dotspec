@@ -1046,6 +1046,64 @@ Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid 
 | `--help, -h` | `false` | help for validate |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 
+## dotspec quality-attribute
+
+Browse a quality model and adopt system quality attributes
+
+```sh
+dotspec quality-attribute [flags]
+```
+
+Authoring handbook: dotspec docs quality-attribute
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for quality-attribute |
+
+## dotspec quality-attribute add
+
+Adopt a quality attribute and its missing parents into one system
+
+```sh
+dotspec quality-attribute add <attribute-id> [flags]
+```
+
+```sh
+dotspec quality-attribute add recoverability --dry-run
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--dry-run` | `false` | Preview the decisions and new file contents |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for add |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--model` | `` | Use a bundled model, local slug, or source path for this invocation |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+| `--system` | `` | Target system source path, relative to --path |
+
+## dotspec quality-attribute browse
+
+Browse top-level terms or inspect a term and its neighbors
+
+```sh
+dotspec quality-attribute browse [attribute-id] [flags]
+```
+
+```sh
+dotspec quality-attribute browse reliability
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--format` | `text` | output format: text or json |
+| `--help, -h` | `false` | help for browse |
+| `--json` | `false` | emit structured JSON (equivalent to --format json) |
+| `--model` | `` | Use a bundled model, local slug, or source path for this invocation |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+
 ## dotspec quality-model
 
 Define reusable quality attributes and copy them into systems
@@ -1062,30 +1120,29 @@ Authoring handbook: dotspec docs quality-model
 
 ## dotspec quality-model apply
 
-Copy selected model attributes into a system without overwriting declarations
+Adopt selected quality attributes into one system
 
 ```sh
 dotspec quality-model apply [model] [flags]
 ```
 
-Copy attributes from a bundled starter or local quality model. The default model is iso-25010-2023. With no --attributes selection, copy all attributes. Include ancestors automatically; refuse ID conflicts before writing. --dry-run lists each proposed attribute path and its complete content.
-
-Local declarations remain independent of their source model.
+Browse the effective model, select IDs with --attributes or request the whole model with --all. Existing system declarations keep their wording and grouping.
 
 ```sh
-dotspec quality-model apply --system specs/new-system.system.spec.md --dry-run
+dotspec quality-model apply --attributes recoverability --dry-run
 ```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--attributes` | `[]` | Comma-separated attribute IDs to copy, including ancestors |
-| `--dry-run` | `false` | Preview the new attribute files without writing |
+| `--all` | `false` | Adopt every attribute from the model into one system |
+| `--attributes` | `[]` | Comma-separated attribute IDs to adopt |
+| `--dry-run` | `false` | Preview the decisions and new file contents |
 | `--format` | `text` | output format: text or json |
 | `--help, -h` | `false` | help for apply |
 | `--json` | `false` | emit structured JSON (equivalent to --format json) |
 | `--path` | `.` | project directory to inspect or initialize |
 | `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-| `--system` | `` | Target example.system.spec.md path, relative to --path |
+| `--system` | `` | Target system source path, relative to --path |
 
 ## dotspec quality-model check
 

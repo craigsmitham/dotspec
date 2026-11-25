@@ -15,3 +15,15 @@ Under `## Quality attributes`, give each attribute a level-three heading, a uniq
 Ask what would count in each system. A task list and an expense tracker can both consider whether acknowledged work survives a restart. Their authors can apply that definition to different records. If your shared definition specifies how quickly the expense tracker must recover receipts, move that commitment into the tracker's requirement. [From a shared meaning to a specific promise](../explanations/system-quality-attributes.md#from-a-shared-meaning-to-a-specific-promise).
 
 From the same directory, run `dotspec quality-model check team-quality` and `dotspec quality-model show team-quality` with the model's slug. Inspect the definitions as the second team would read them. Correct any missing parent ID or circular grouping in this model, then run the check again. Once each team can select the relevant terms, use [Define a quality attribute for a system](define-a-system-quality-attribute.md) to tailor them.
+
+## Choose the project default
+
+To use your edited vocabulary whenever someone browses or adopts a term, set `quality.model` in the project's `dotspec.yaml`. Resolve the path from that manifest. For the editable copy created above, use:
+
+```yaml
+name: billing
+quality:
+  model: ./specs/quality-models/team-quality.quality-model.md
+```
+
+Use a bundled ID such as `q42` or `furps` in the same field to choose another starter. Omitting the field selects `iso-25010-2023`. Run `dotspec quality-model list` to see the default, then `dotspec quality-attribute browse` to read its top-level terms. Changing this setting affects future selections. System quality attributes already adopted retain their definitions and requirement links.

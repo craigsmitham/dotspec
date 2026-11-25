@@ -24,7 +24,7 @@ name: billing
 The name identifies the project in commands and reports. It starts with a letter
 or digit and can contain letters, digits, dots, underscores and hyphens. Moving a
 directory carries its project name and boundary with it. Use one YAML document
-with a required `name` field and optional `report` section. Its boolean `enabled` field defaults to `true`. Workspace-wide selection requires unique names.
+with a required `name` field and optional `report.enabled` and `quality.model` settings. Reports default to enabled. Each project independently defaults to the bundled `iso-25010-2023` quality model. A bundled ID or a project-relative `*.quality-model.md` path selects the project vocabulary. [Choose the project default](../cli-handbook/guides/define-a-quality-model.md#choose-the-project-default). Workspace-wide selection requires unique names.
 
 A spec belongs to its nearest enclosing project. A parent scan skips nested
 project directories. Ordinary subdirectories can contain colocated specs, and
@@ -63,7 +63,7 @@ All path-based commands accept `--project`, including initialization and focused
 checks. `--all` is available on collection checks, source inventories, lists and
 model exports/reading views. It cannot be combined with `--project`, `--path`, or
 an individual specification slug. Initialization and other mutations operate on
-one selected project.
+one selected project. On `quality-model apply`, `--all` selects all attributes for a single system.
 
 Workspace text/Markdown output separates projects with headings. JSON output has
 `schema_version: 1`, the searched directory in `workspace`, and a name-sorted

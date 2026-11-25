@@ -4,13 +4,17 @@ Start with a system declaration and a concern whose name will help people find a
 
 ## Select or define the term
 
-From your project directory, preview the selection if a model supplies the term. Substitute your system's path and the model and attribute IDs you intend to use. This example uses the bundled ISO starter and a system declared at `specs/new-system.system.spec.md`.
+From the directory of the system you are specifying, browse the available terms. With a new project, dotspec uses the bundled ISO/IEC 25010:2023 starter offline. For example, suppose you need to decide which work a user can recover after a restart.
 
 ```sh
-dotspec quality-model apply iso-25010-2023 --system specs/new-system.system.spec.md --attributes recoverability --dry-run
+dotspec quality-attribute browse
+dotspec quality-attribute browse reliability
+dotspec quality-attribute add recoverability --dry-run
 ```
 
-The preview includes the selected attribute and its ancestors. Repeat the command without `--dry-run` to create the files. If the system already declares an ID, inspect the existing definition. Reuse it if the meaning fits. To add a new term beneath a parent already present, author the new attribute directly.
+The preview identifies each file that adoption would create, including the broader Reliability definition. Run `dotspec quality-attribute add recoverability` to create the files. Open Recoverability at the path printed by the command and describe which work the user needs back. Later, adopting Fault tolerance reuses the same local Reliability definition. Repeating a selection shows where the system already declares it.
+
+When several systems could own the term, supply `--system` with the intended source path. To explore another vocabulary for this decision, pass the same `--model` to browse and add. A team can also [choose a project default](define-a-quality-model.md#choose-the-project-default).
 
 For a term you originate, create a file in the system's quality directory. For example, next to a declaration in `specs/`, use `specs/quality/durability/durability.quality-attribute.spec.md`. Put `type: quality-attribute-spec` in YAML frontmatter and name the attribute in the H1. Use its title slug for the filename before `.quality-attribute.spec.md`. The title slug also supplies the ID unless you specify `id` in frontmatter. [To-do durability file](../../../examples/todo/specs/quality/durability/durability.quality-attribute.spec.md).
 

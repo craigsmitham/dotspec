@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -40,7 +41,20 @@ func newCheckCommand() *cobra.Command {
 				}
 				return fmt.Errorf("unknown source document type: %s", args[0])
 			}
-			return emitCheckReport(cmd.OutOrStdout(), inspectProject(path), format)
+			report := inspectProject(path)
+			p := report.Scope.Project
+			if p != nil && p.QualityModel != "" && report.Scope.Path == p.Root {
+				_, _, err := qualitymodel.Resolve(p.Root, p, "")
+				if err != nil {
+					var finding *diagnostic.Diagnostic
+					if !errors.As(err, &finding) {
+						report.Complete = false
+						finding = diagnostic.Error("project.quality-model", err.Error(), p.QualityLocation)
+					}
+					report = report.WithFindings(*finding)
+				}
+			}
+			return emitCheckReport(cmd.OutOrStdout(), report, format)
 		},
 	}
 	addPath(cmd)

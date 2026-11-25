@@ -104,7 +104,7 @@ func (s *System) loadQualityTree(files *specfile.SourceSet) error {
 		ids[a.ID] = true
 		s.QualityAttributes = append(s.QualityAttributes, a)
 	}
-	return validateQualityAttributes(s.QualityAttributes)
+	return ValidateQualityAttributes(s.QualityAttributes)
 }
 
 var attributeContext = &check.ContextProvider{

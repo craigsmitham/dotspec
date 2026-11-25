@@ -296,3 +296,11 @@ When the generated spec participates, the JSON check report includes
 spec, `out-of-scope` for a narrower selection, or `incomplete` when an
 operational error interrupted document inspection. Read the findings and
 exit status to determine whether a checked spec passed.
+
+## Browse and adopt quality attributes
+
+`quality-attribute browse --json` returns schema version 1. The `effective_model` identifies the model by `id`, source locator, and selection basis (`explicit`, `project`, or `builtin_default`). The `attributes` array lists top-level terms in source order. With a term ID it lists immediate children, alongside the selected `attribute` and its `parents`. Each entry includes its ID, name, and definition. `quality-model list --json` (version 2) includes the same effective selection.
+
+`quality-attribute add` and `quality-model apply` share adoption result version 3. The result includes `effective_model`, `target`, `dry_run`, the IDs in `added`, and ordered `entries`. Each entry supplies its `id`, `path`, `role` (requested or ancestor), and `decision` (create or reuse). Creations include their complete proposed `content`. Dry runs describe the same decisions and preserve the filesystem. On a repeat write, `added` is empty and reused entries identify the system's own declarations.
+
+Scripts that previously invoked `quality-model apply --system PATH` to copy the whole model must now supply `--all`. With no attribute selection the command browses. Use `--attributes ID,ID` for a batch, or `quality-attribute add ID` for one term. [Define a System quality attribute](../cli-handbook/guides/define-a-system-quality-attribute.md)

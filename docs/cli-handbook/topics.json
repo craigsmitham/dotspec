@@ -194,6 +194,7 @@
       {
         "page": "docs/cli-handbook/guides/define-a-quality-model.md",
         "rules": {
+          "project.quality-model": "choose-the-project-default",
           "quality-model.attributes": "define-and-group-the-shared-terms",
           "quality-model.description": "set-the-scope-and-basis",
           "quality.legacy-hierarchy": "define-and-group-the-shared-terms"

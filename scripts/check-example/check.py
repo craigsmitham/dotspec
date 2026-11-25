@@ -465,7 +465,10 @@ def author(cli, tmp):
     assert "durability" in cli("requirement show", "commit-data", "--path", draft, cwd=project)
     focused = json.loads(cli("requirement check", "commit-data", "--path", draft, "--json", cwd=project))
     assert focused["complete"] and focused["summary"]["errors"] == 0
-    cli("quality-model apply", *args, cwd=project, status=2)
+    assert "Already declared durability" in cli("quality-model apply", *args, cwd=project)
+    assert "Recoverability" in cli("quality-attribute browse", "reliability", cwd=project)
+    adopted = json.loads(cli("quality-attribute add", "recoverability", "--system", target, "--json", cwd=project))
+    assert adopted["added"] == ["reliability", "recoverability"]
     assert target.read_bytes() == before
     cli("quality-model init", "team", "--from", "furps", "--path", draft, cwd=project)
     assert "Supportability" in cli("quality-model show", "team", "--path", draft, cwd=project)
@@ -479,6 +482,50 @@ def author(cli, tmp):
     partial_file.write_text(partial, encoding="utf-8")
     assert json.loads(cli("model validate", partial_file, "--json"))["valid"]
 
+
+def quality_convention(cli, tmp):
+    project = project_copy(tmp, "quality-convention")
+    def source_files():
+        return {p: p.read_bytes() for p in project.rglob("*.spec.md")}
+    def members():
+        product = json.loads(cli("model product", "personal-task-list", cwd=project))
+        return product["members"]
+    def classifications():
+        snapshot = json.loads(cli("model export", cwd=project))
+        return [(o["owner"], o["resolution"]) for o in snapshot["label_occurrences"]
+                if o["role"] == "quality_classification"]
+
+    original = source_files()
+    initial_members = members()
+    assert "builtin_default" in cli("quality-attribute browse", cwd=project)
+    assert source_files() == original and initial_members == members()
+    adopted = json.loads(cli("quality-attribute add", "recoverability", "--json", cwd=project))
+    parent = Path(adopted["entries"][0]["path"])
+    with parent.open("a", encoding="utf-8") as file:
+        file.write("\nPreserve the owner's acknowledged edits.\n")
+    tailored = parent.read_bytes()
+    added = json.loads(cli("quality-attribute add", "fault-tolerance", "--json", cwd=project))
+    assert added["added"] == ["fault-tolerance"] and parent.read_bytes() == tailored
+    cli("spec build", cwd=project)
+    tree = project / "specification"
+    sibling = next(tree.rglob("fault-tolerance.quality-attribute.spec-report.md"))
+    assert follow(sibling, "Reliability") == next(tree.rglob("reliability.quality-attribute.spec-report.md"))
+
+    before = source_files(), members(), classifications()
+    assert before[2]
+    summary = tree / "personal-task-list.system.spec-report.md"
+    overview = summary.read_bytes()
+    with (project / "dotspec.yaml").open("a", encoding="utf-8") as file:
+        file.write("\nquality: {model: q42}\n")
+    assert "builtin:q42" in cli("quality-attribute browse", cwd=project)
+    cli("spec build", cwd=project)
+    assert before == (source_files(), members(), classifications())
+    assert summary.read_bytes() == overview
+    req = project / REQUIREMENT
+    req.write_text(req.read_text().replace("quality_attributes: [durability]", "quality_attributes: [resilience]"))
+    checked = json.loads(cli("requirement check", req, "--json", cwd=project))
+    assert any(d["rule"] == "requirement.undefined-attribute" and "resilience" in d["message"]
+               for d in checked["diagnostics"])
 
 def acceptance(project):
     return run([sys.executable, "-I", project / ACCEPTANCE])
@@ -524,6 +571,7 @@ def main():
         inspect(cli)
         spec_journey(cli, tmp)
         author(cli, tmp)
+        quality_convention(cli, tmp)
         run(["go", "vet", "./..."], cwd=TODO / "app")
         run(["go", "mod", "tidy", "-diff"], cwd=TODO / "app")
         print(acceptance(TODO).strip())
@@ -534,7 +582,7 @@ def main():
                    for e in map(json.loads, events.splitlines())), "help.txtar did not run"
         tooling = {"man", "completion bash", "completion zsh", "completion fish", "completion powershell"}
         public = cli.public_commands()
-        groups = set(TYPES) | {"component","spec", "model", "job outcome", "job step", "completion"}
+        groups = set(TYPES) | {"quality-attribute", "component","spec", "model", "job outcome", "job step", "completion"}
         for group in groups | {""}:
             assert "Available Commands:" in cli("help", *group.split())
         missing = public - cli.exercised - groups - tooling - {""}

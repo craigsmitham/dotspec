@@ -31,6 +31,9 @@ func selectProject(cmd *cobra.Command, path string) (string, error) {
 	if selected, ok := cmd.Context().Value(projectSelectionKey{}).(string); ok {
 		return selected, nil
 	}
+	// Whole-project checks report invalid quality settings through the normal
+	// diagnostic output, including when selecting the project by name.
+	checking := cmd.CommandPath() == "dotspec check" && len(cmd.Flags().Args()) == 0
 	name, _ := cmd.Flags().GetString("project")
 	if cmd.Flags().Changed("project") && name == "" {
 		return "", fmt.Errorf("--project must not be empty")
@@ -59,7 +62,7 @@ func selectProject(cmd *cobra.Command, path string) (string, error) {
 					return "", err
 				}
 				owner, err := specfile.FindProject(selected)
-				if err != nil {
+				if err != nil && (!checking || owner == nil) {
 					return "", err
 				}
 				if owner == nil || owner.Root != p.Root {
@@ -76,7 +79,7 @@ func selectProject(cmd *cobra.Command, path string) (string, error) {
 		return path, nil
 	}
 	p, err := specfile.FindProject(dir)
-	if err != nil {
+	if err != nil && (!checking || p == nil) {
 		return "", err
 	}
 	if p == nil {
@@ -91,7 +94,7 @@ func selectProject(cmd *cobra.Command, path string) (string, error) {
 		// Project inventories start at the manifest. Single-source operations
 		// start where the contributor is working, including inside a component.
 		switch cmd.Name() {
-		case "init", "show", "map":
+		case "init", "show", "map", "add", "apply", "browse":
 			return dir, nil
 		case "check", "list":
 			if len(cmd.Flags().Args()) > 0 {

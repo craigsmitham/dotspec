@@ -151,3 +151,13 @@ func TestWorkspaceDiscoveryBoundaries(t *testing.T) {
 		})
 	}
 }
+
+func TestQualityModelSetting(t *testing.T) {
+	root := t.TempDir()
+	for _, value := range []string{"null", "''", "[]", "{model: 12}", "{model: false}", "{model: null}", "{model: ''}", "{model: ../other.quality-model.md}", "{model: /tmp/other.quality-model.md}", "{model: ./other.spec.md}", "{model: q42, other: 1}", "{model: furps, model: q42}"} {
+		writeManifest(t, root, "name: demo\nquality: "+value)
+		if _, err := readProject(root); err == nil || !strings.Contains(err.Error(), ProjectFilename) {
+			t.Errorf("quality: %s: %v", value, err)
+		}
+	}
+}

@@ -15,6 +15,7 @@ builds:
       - -s -w
       - -X github.com/craigsmitham/dotspec/internal/cli.version={{ .Version }}
       - -X github.com/craigsmitham/dotspec/internal/cli.commit={{ .Commit }}
+      - -X github.com/craigsmitham/dotspec/internal/qualitymodel/apply.releaseCommit={{ .Commit }}
     goos: [linux, darwin, windows]
     goarch: [amd64, arm64]
 archives:

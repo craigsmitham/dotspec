@@ -14,18 +14,19 @@ status 2 dotspec quality-model init furps
 stderr 'reserved'
 status 0 dotspec system init
 cp specs/new-system.system.spec.md before.md
-status 0 dotspec quality-model apply --system specs/new-system.system.spec.md --dry-run
+status 0 dotspec quality-model apply --all --system specs/new-system.system.spec.md --dry-run
 cp stdout preview.md
 cmp specs/new-system.system.spec.md before.md
 stdout 'id: "functional-suitability"'
 stdout 'id: "safety"'
 stdout 'quality/reliability/availability/availability.quality-attribute.spec.md'
 stdout 'id: "safe-integration"'
-status 0 dotspec quality-model apply --system specs/new-system.system.spec.md
+status 0 dotspec quality-model apply --all --system specs/new-system.system.spec.md
 stdout 'Added 49 attributes'
 cmp specs/new-system.system.spec.md before.md
-status 2 dotspec quality-model apply --system specs/new-system.system.spec.md
-stderr 'already exists'
+status 0 dotspec quality-model apply --all --system specs/new-system.system.spec.md
+stdout 'Already declared'
+stdout 'Added 0 attributes'
 cmp specs/new-system.system.spec.md before.md
 status 2 dotspec quality-model apply furps --system specs/new-system.system.spec.md --attributes unknown
 stderr 'unknown attribute'

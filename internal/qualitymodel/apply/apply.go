@@ -8,7 +8,9 @@ import (
 	"io/fs"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime/debug"
 	"slices"
 	"sort"
 	"strconv"
@@ -21,14 +23,26 @@ import (
 	"github.com/rogpeppe/go-internal/lockedfile"
 )
 
+type Options struct {
+	Attributes []string
+	All        bool
+	DryRun     bool
+}
+
+type Entry struct {
+	ID       string `json:"id"`
+	Role     string `json:"role"`
+	Decision string `json:"decision"`
+	Path     string `json:"path"`
+	Content  string `json:"content,omitempty"`
+}
+
 type Result struct {
+	Entries       []Entry  `json:"entries"`
 	SchemaVersion int      `json:"schema_version"`
-	Source        string   `json:"source"`
 	Target        string   `json:"target"`
 	Added         []string `json:"added"`
 	DryRun        bool     `json:"dry_run"`
-	Content       string   `json:"content"`
-	Files         []File   `json:"files"`
 }
 
 type File struct {
@@ -38,12 +52,13 @@ type File struct {
 
 // Run stages independent attribute sources. The first declared parent supplies
 // the directory. All parents are explicit in the new source.
-func Run(source *qualitymodel.QualityModel, target string, selected []string, dryRun bool) (Result, error) {
-	result := Result{SchemaVersion: 2, Source: source.Path, DryRun: dryRun}
-	target, err := filepath.Abs(target)
+func Run(source *qualitymodel.QualityModel, target string, opts Options) (Result, error) {
+	result := Result{SchemaVersion: 3, DryRun: opts.DryRun, Entries: []Entry{}, Added: []string{}}
+	dir, err := specfile.Directory(filepath.Dir(target))
 	if err != nil {
 		return result, err
 	}
+	target = filepath.Join(dir, filepath.Base(target))
 	result.Target = target
 	info, err := os.Lstat(target)
 	if err != nil {
@@ -63,32 +78,44 @@ func Run(source *qualitymodel.QualityModel, target string, selected []string, dr
 	if err != nil {
 		return result, err
 	}
-	chosen, err := selection(source, selected)
-	if err != nil {
-		return result, err
+	local := map[string]system.Attribute{}
+	for _, a := range current.QualityAttributes {
+		local[a.ID] = a
 	}
 	byID := map[string]system.Attribute{}
 	for _, a := range source.QualityAttributes {
 		byID[a.ID] = a
 	}
-	for _, a := range current.QualityAttributes {
-		if chosen[a.ID] {
-			return result, fmt.Errorf("attribute ID %q already exists in %s", a.ID, target)
-		}
+	chosen, requested, err := selection(source, byID, local, opts)
+	if err != nil {
+		return result, err
 	}
 	root := filepath.Join(owner, specfile.Folder, "quality")
 	var folder func(system.Attribute) string
 	folder = func(a system.Attribute) string {
+		if existing, ok := local[a.ID]; ok {
+			return filepath.Dir(existing.Location.Path)
+		}
 		parent := root
 		if len(a.SubattributeOf) > 0 {
 			parent = folder(byID[a.SubattributeOf[0]])
 		}
 		return filepath.Join(parent, specfile.NameSlug(a.Name))
 	}
+	var additions []File
+	combined := slices.Clone(current.QualityAttributes)
 	used := map[string]bool{}
 	relocated := map[string][]system.Attribute{}
 	for _, a := range source.QualityAttributes {
 		if !chosen[a.ID] {
+			continue
+		}
+		role := "ancestor"
+		if requested[a.ID] {
+			role = "requested"
+		}
+		if existing, ok := local[a.ID]; ok {
+			result.Entries = append(result.Entries, Entry{ID: a.ID, Role: role, Decision: "reuse", Path: existing.Location.Path})
 			continue
 		}
 		dir := folder(a)
@@ -118,7 +145,7 @@ func Run(source *qualitymodel.QualityModel, target string, selected []string, dr
 		if i < 0 {
 			return result, fmt.Errorf("missing model attribute %s", a.ID)
 		}
-		link, err := origin(source, file, a.ID)
+		link, err := origin(source, file, a)
 		if err != nil {
 			return result, err
 		}
@@ -131,139 +158,232 @@ func Run(source *qualitymodel.QualityModel, target string, selected []string, dr
 			}
 		}
 		fmt.Fprintf(&body, "---\n\n# %s\n\n## Definition\n\n%s\n\nSource: [quality model definition](<%s>).\n", a.Name, definitions[i].Definition, link)
-		if _, err := system.ParseQualityAttribute(file, []byte(body.String())); err != nil {
+		newAttribute, err := system.ParseQualityAttribute(file, []byte(body.String()))
+		if err != nil {
 			return result, err
 		}
-		result.Files = append(result.Files, File{file, body.String()})
+		combined = append(combined, newAttribute.Attribute)
+		result.Entries = append(result.Entries, Entry{ID: a.ID, Role: role, Decision: "create", Path: file, Content: body.String()})
+		additions = append(additions, File{file, body.String()})
 		result.Added = append(result.Added, a.ID)
 	}
-	var preview strings.Builder
-	for _, f := range result.Files {
-		rel, _ := filepath.Rel(owner, f.Path)
-		fmt.Fprintf(&preview, "-- %s --\n%s", filepath.ToSlash(rel), f.Content)
+	if err := system.ValidateQualityAttributes(combined); err != nil {
+		return result, err
 	}
-	result.Content = preview.String()
-	if !dryRun {
-		err = publish(root, result.Files)
+	for _, file := range additions {
+		if err := validateDestination(owner, target, file.Path); err != nil {
+			return result, err
+		}
+	}
+	if len(additions) == 0 {
+		return result, nil
+	}
+	if err := checkDiscoverable(owner, additions); err != nil {
+		return result, err
+	}
+	if !opts.DryRun {
+		err = publish(owner, additions, os.Link)
 	}
 	return result, err
 }
 
-// Publish complete top-level folders. Roll back only directories installed by
-// this operation if a later rename fails.
-func publish(root string, files []File) error {
-	metadata := filepath.Dir(root)
-	if err := os.Mkdir(metadata, 0755); err != nil && !errors.Is(err, fs.ErrExist) {
+// A successful adoption must be visible to the next system read, which uses
+// Git's discovery rules. Check the complete batch before creating directories.
+func checkDiscoverable(owner string, additions []File) error {
+	root, err := specfile.RepositoryRoot(owner)
+	if err != nil || root == "" {
 		return err
 	}
-	for _, dir := range []string{metadata, root} {
-		info, err := os.Lstat(dir)
-		if err == nil {
-			if !info.IsDir() {
-				return fmt.Errorf("%s must be a directory, not a file or symlink", dir)
-			}
-			if err := specfile.CheckProjectBoundary(dir); err != nil {
-				return err
-			}
-		}
-		if err != nil && !errors.Is(err, fs.ErrNotExist) {
-			return err
-		}
-	}
-	stage, err := os.MkdirTemp(filepath.Dir(root), ".dotspec-quality-")
-	if err != nil {
-		return err
-	}
-	defer func() { _ = os.RemoveAll(stage) }()
-	for _, file := range files {
-		rel, err := filepath.Rel(root, file.Path)
+	var paths strings.Builder
+	for _, f := range additions {
+		rel, err := filepath.Rel(owner, f.Path)
 		if err != nil {
 			return err
 		}
-		dest := filepath.Join(stage, rel)
-		if err := os.MkdirAll(filepath.Dir(dest), 0755); err != nil {
-			return err
-		}
-		if err := os.WriteFile(dest, []byte(file.Content), 0644); err != nil {
-			return err
-		}
+		paths.WriteString(filepath.ToSlash(rel))
+		paths.WriteByte(0)
 	}
-	_, err = os.Lstat(root)
-	if errors.Is(err, fs.ErrNotExist) {
-		if err := os.Chmod(stage, 0755); err != nil {
-			return err
-		}
-		return os.Rename(stage, root)
+	cmd := exec.Command("git", "-C", owner, "check-ignore", "--stdin", "-z")
+	cmd.Stdin = strings.NewReader(paths.String())
+	output, err := cmd.Output()
+	var status *exec.ExitError
+	if errors.As(err, &status) && status.ExitCode() == 1 {
+		return nil
 	}
 	if err != nil {
+		return fmt.Errorf("check attribute destinations against Git ignore rules: %w", err)
+	}
+	first, _, _ := strings.Cut(string(output), "\x00")
+	return fmt.Errorf("attribute destination is ignored by Git: %s", first)
+}
+
+// Check every existing ancestor during preview as well as execution.
+func validateDestination(owner, target, path string) error {
+	rel, err := filepath.Rel(owner, path)
+	if err != nil || !filepath.IsLocal(rel) {
+		return fmt.Errorf("destination outside target system: %s", path)
+	}
+	if _, err := os.Lstat(path); err == nil {
+		return fmt.Errorf("attribute destination already exists: %s", path)
+	} else if !errors.Is(err, fs.ErrNotExist) {
 		return err
 	}
-	entries, err := os.ReadDir(stage)
-	if err != nil {
-		return err
-	}
-	for _, e := range entries {
-		dest := filepath.Join(root, e.Name())
-		if _, err := os.Lstat(dest); err == nil {
-			return fmt.Errorf("attribute folder already exists: %s", dest)
-		} else if !errors.Is(err, fs.ErrNotExist) {
+	for dir := filepath.Dir(path); dir != owner; dir = filepath.Dir(dir) {
+		info, err := os.Lstat(dir)
+		if errors.Is(err, fs.ErrNotExist) {
+			continue
+		}
+		if err != nil {
 			return err
 		}
-	}
-	var installed []string
-	for _, e := range entries {
-		from, to := filepath.Join(stage, e.Name()), filepath.Join(root, e.Name())
-		if err := os.Rename(from, to); err != nil {
-			for _, name := range installed {
-				err = errors.Join(err, os.Rename(filepath.Join(root, name), filepath.Join(stage, name)))
-			}
+		if !info.IsDir() {
+			return fmt.Errorf("attribute destination requires a directory: %s", dir)
+		}
+		if err := specfile.CheckProjectBoundary(dir); err != nil {
 			return err
 		}
-		installed = append(installed, e.Name())
+		decl, err := specfile.LocalDeclaration(dir)
+		if err != nil {
+			return err
+		}
+		if decl != "" && decl != target {
+			return fmt.Errorf("destination belongs to %s", decl)
+		}
 	}
 	return nil
 }
 
-func selection(source *qualitymodel.QualityModel, selected []string) (map[string]bool, error) {
-	byID := map[string]system.Attribute{}
-	for _, a := range source.QualityAttributes {
-		byID[a.ID] = a
+// Stage complete files on the target filesystem. Linking a staged file into
+// place never replaces existing content. Remove only our own additions on error.
+func publish(owner string, files []File, install func(string, string) error) (err error) {
+	stage, err := os.MkdirTemp(owner, ".dotspec-quality-")
+	if err != nil {
+		return err
 	}
-	if len(byID) == 0 {
-		return nil, fmt.Errorf("quality model %q declares no attributes", source.Slug)
+	defer func() { _ = os.RemoveAll(stage) }()
+	for i, f := range files {
+		if err := os.WriteFile(filepath.Join(stage, strconv.Itoa(i)), []byte(f.Content), 0644); err != nil {
+			return err
+		}
 	}
-	if len(selected) == 0 {
+	var created []string
+	defer func() {
+		if err != nil {
+			for _, path := range slices.Backward(created) {
+				err = errors.Join(err, os.Remove(path))
+			}
+		}
+	}()
+	for i, f := range files {
+		rel, err := filepath.Rel(owner, filepath.Dir(f.Path))
+		if err != nil {
+			return err
+		}
+		dir := owner
+		for _, part := range strings.Split(rel, string(filepath.Separator)) {
+			dir = filepath.Join(dir, part)
+			if err := os.Mkdir(dir, 0755); err == nil {
+				created = append(created, dir)
+			} else if !errors.Is(err, fs.ErrExist) {
+				return err
+			}
+			info, err := os.Lstat(dir)
+			if err != nil {
+				return err
+			}
+			if !info.IsDir() {
+				return fmt.Errorf("expected directory: %s", dir)
+			}
+			if dir != owner {
+				if err := specfile.CheckProjectBoundary(dir); err != nil {
+					return err
+				}
+			}
+		}
+		if err := install(filepath.Join(stage, strconv.Itoa(i)), f.Path); err != nil {
+			return err
+		}
+		created = append(created, f.Path)
+	}
+	return nil
+}
+
+func selection(source *qualitymodel.QualityModel, byID, local map[string]system.Attribute, opts Options) (map[string]bool, map[string]bool, error) {
+	selected := opts.Attributes
+	if opts.All {
+		if len(selected) > 0 {
+			return nil, nil, fmt.Errorf("select all attributes or individual IDs")
+		}
 		for _, a := range source.QualityAttributes {
 			selected = append(selected, a.ID)
 		}
 	}
+	if !opts.All && len(selected) == 0 {
+		return nil, nil, fmt.Errorf("no attributes selected in model %s", source.Slug)
+	}
+	requested := map[string]bool{}
+	for _, id := range selected {
+		if _, ok := byID[id]; !ok {
+			return nil, nil, qualitymodel.UnknownAttribute(source, id)
+		}
+		requested[id] = true
+	}
 	chosen := map[string]bool{}
-	queue := append([]string(nil), selected...)
+	queue := slices.Clone(selected)
 	for len(queue) > 0 {
 		id := queue[0]
 		queue = queue[1:]
-		a, ok := byID[id]
-		if !ok {
-			return nil, fmt.Errorf("unknown attribute ID %q in model %s", id, source.Slug)
-		}
 		if chosen[id] {
 			continue
 		}
 		chosen[id] = true
-		queue = append(queue, a.SubattributeOf...)
+		if _, ok := local[id]; !ok {
+			queue = append(queue, byID[id].SubattributeOf...)
+		}
 	}
-	return chosen, nil
+	return chosen, requested, nil
 }
 
-func origin(source *qualitymodel.QualityModel, target, id string) (string, error) {
+// Release builds supply their source commit. Development builds with local
+// modifications identify the exact embedded bytes by digest.
+var releaseCommit string
+
+func bundledOrigin(source *qualitymodel.QualityModel, attribute system.Attribute) string {
+	revision := releaseCommit
+	if revision == "" {
+		if info, ok := debug.ReadBuildInfo(); ok {
+			if info.Main.Path == "github.com/craigsmitham/dotspec" && strings.HasPrefix(info.Main.Version, "v") {
+				revision = info.Main.Version
+			}
+			dirty := false
+			for _, setting := range info.Settings {
+				switch setting.Key {
+				case "vcs.revision":
+					revision = setting.Value
+				case "vcs.modified":
+					dirty = setting.Value == "true"
+				}
+			}
+			if dirty {
+				revision = ""
+			}
+		}
+	}
+	if revision == "" {
+		return fmt.Sprintf("urn:dotspec:quality-model:%s:sha256:%x#%s", source.Slug, sha256.Sum256(source.Data), url.PathEscape(attribute.ID))
+	}
+	return "https://github.com/craigsmitham/dotspec/blob/" + revision + "/internal/qualitymodel/specs/quality-models/" + source.Slug + qualitymodel.Suffix + "#" + url.PathEscape(specfile.NameSlug(attribute.Name))
+}
+
+func origin(source *qualitymodel.QualityModel, target string, attribute system.Attribute) (string, error) {
 	if source.Builtin {
-		return "https://github.com/craigsmitham/dotspec/blob/main/internal/qualitymodel/specs/quality-models/" + source.Slug + qualitymodel.Suffix + "#" + url.PathEscape(id), nil
+		return bundledOrigin(source, attribute), nil
 	}
 	rel, err := filepath.Rel(filepath.Dir(target), source.Path)
 	if err != nil {
 		return "", err
 	}
-	return (&url.URL{Path: filepath.ToSlash(rel), Fragment: id}).String(), nil
+	return (&url.URL{Path: filepath.ToSlash(rel), Fragment: attribute.ID}).String(), nil
 }
 
 // relocate rewrites only link suffix spans. Labels, formatting, code examples,

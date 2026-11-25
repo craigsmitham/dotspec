@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
@@ -124,4 +125,49 @@ func List(path string) ([]*QualityModel, error) {
 		return result[i].Path < result[j].Path
 	})
 	return result, nil
+}
+
+// Selection describes the vocabulary used by this invocation.
+type Selection struct {
+	Basis  string `json:"basis"`
+	ID     string `json:"id"`
+	Source string `json:"source"`
+}
+
+func Resolve(dir string, project *specfile.Project, explicit string) (*QualityModel, Selection, error) {
+	basis, selector := "builtin_default", Default
+	var m *QualityModel
+	var err error
+	switch {
+	case explicit != "":
+		basis, selector = "explicit", explicit
+		m, err = Show(dir, selector)
+	case project != nil && project.QualityModel != "":
+		basis, selector = "project", project.QualityModel
+		if Layout.Match(selector) {
+			m, err = Show(project.Root, selector)
+		} else {
+			m, err = builtin(selector)
+			if m == nil && err == nil {
+				err = diagnostic.Error("project.quality-model", fmt.Sprintf("unknown bundled quality model %q", selector), project.QualityLocation)
+			}
+		}
+		if err != nil {
+			err = fmt.Errorf("%s: quality.model %q: %w", project.Manifest(), selector, err)
+		}
+	default:
+		m, err = builtin(selector)
+	}
+	if err != nil {
+		return nil, Selection{}, err
+	}
+	id := m.ID
+	if id == "" {
+		id = m.Slug
+	}
+	return m, Selection{Basis: basis, ID: id, Source: m.Path}, nil
+}
+
+func UnknownAttribute(m *QualityModel, id string) error {
+	return fmt.Errorf("unknown attribute ID %q in model %s; use dotspec quality-attribute browse to find a term, or author a system *.quality-attribute.spec.md file (dotspec docs quality-attribute)", id, m.Slug)
 }

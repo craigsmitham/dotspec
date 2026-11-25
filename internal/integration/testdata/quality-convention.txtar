@@ -1,0 +1,160 @@
+# A fresh project can browse offline before it has a system.
+mkdir project
+cd project
+exec git init -q
+cp ../default.yaml dotspec.yaml
+status 0 dotspec model export
+cp stdout ../snapshot.json
+status 0 dotspec quality-attribute browse --json
+stdout '"basis": "builtin_default"'
+stdout '"id": "reliability"'
+! stdout '"id": "recoverability"'
+status 0 dotspec quality-model apply --dry-run
+stdout 'iso-25010-2023'
+! exists specs
+status 0 dotspec quality-attribute browse reliability
+stdout 'Recoverability'
+status 0 dotspec quality-attribute browse resilience --model q42
+stdout 'Parent: Reliable'
+stdout 'Parent: Secure'
+cmp dotspec.yaml ../default.yaml
+
+# A project with sibling systems requires an explicit target at the root.
+mkdir alpha beta
+status 0 dotspec system init --path alpha
+status 0 dotspec system init --path beta
+status 2 dotspec quality-attribute add recoverability
+stderr 'alpha.*beta'
+! exists alpha/specs/quality
+! exists beta/specs/quality
+status 0 dotspec quality-model apply --system beta/specs/new-system.system.spec.md
+! exists beta/specs/quality
+status 2 dotspec quality-model apply --all --attributes reliability
+status 2 dotspec quality-model apply --attributes=
+cp ../ignored .gitignore
+status 2 dotspec quality-attribute add recoverability --path alpha
+stderr 'ignored by Git'
+! exists alpha/specs/quality
+rm .gitignore
+status 0 dotspec quality-attribute add recoverability --system alpha/specs/new-system.system.spec.md --dry-run --json
+stdout '"decision": "create"'
+! exists alpha/specs/quality
+mkdir alpha/component
+status 0 dotspec component init Intake --path alpha/component --part-of $WORK/project/alpha/specs/new-system.system.spec.md
+cd alpha/component
+status 0 dotspec quality-attribute add recoverability
+stdout 'Added 2 attributes'
+status 0 dotspec quality-attribute add fault-tolerance
+stdout 'Reused parent reliability'
+stdout 'Added 1 attributes'
+status 0 dotspec quality-attribute add recoverability --json
+stdout '"decision": "reuse"'
+stdout '"added": \[\]'
+! stdout '"decision": "create"'
+cd ../..
+exists alpha/specs/quality/reliability/recoverability/recoverability.quality-attribute.spec.md
+! exists beta/specs/quality
+
+# A checked-in default is relative to its own manifest even from a component.
+cp ../local.yaml dotspec.yaml
+cp ../team.md team.quality-model.md
+cd alpha/component
+status 0 dotspec quality-attribute browse --json
+stdout '"id": "team-vocabulary"'
+stdout '"basis": "project"'
+stdout 'team.quality-model.md'
+status 0 dotspec quality-model list
+stdout 'team \(default\)'
+status 0 dotspec quality-attribute browse --model furps --json
+stdout '"basis": "explicit"'
+stdout '"id": "furps"'
+cd ../..
+cmp ../local.yaml dotspec.yaml
+mkdir nested
+cp ../nested.yaml nested/dotspec.yaml
+status 0 dotspec quality-attribute browse --project nested
+stdout 'builtin_default'
+status 0 dotspec quality-attribute browse --model ./team.quality-model.md
+stdout 'explicit'
+
+# Project checks diagnose the selected source; explicit selection bypasses a missing file.
+cp ../missing.yaml dotspec.yaml
+status 2 dotspec quality-attribute add recoverability --path beta
+! exists beta/specs/quality
+status 0 dotspec quality-attribute browse --model furps
+status 0 dotspec system list
+status 2 dotspec check --all --json
+stdout 'project.quality-model'
+stdout '"complete": false'
+stdout '"name": "nested"'
+stdout '"exit_code": 0'
+cp ../cross.yaml dotspec.yaml
+cp ../team.md nested/team.quality-model.md
+status 2 dotspec quality-attribute browse
+stderr 'dotspec.yaml.*quality.model'
+cp ../invalid.yaml dotspec.yaml
+status 0 dotspec model validate ../snapshot.json --json
+stdout '"valid": true'
+status 1 dotspec check --project product --json
+stdout 'project.quality-model'
+status 1 dotspec quality-attribute browse --model furps
+stderr 'dotspec.yaml.*quality.model'
+status 1 dotspec check --all --json
+stdout 'project.quality-model'
+stdout '"exit_code": 0'
+cp ../unknown.yaml dotspec.yaml
+status 1 dotspec check --json
+stdout 'unknown bundled quality model'
+cp ../local.yaml dotspec.yaml
+cp ../broken.md team.quality-model.md
+status 1 dotspec quality-attribute add recoverability --path beta
+stderr 'team.quality-model.md'
+! exists beta/specs/quality
+status 1 dotspec check --json
+stdout 'team.quality-model.md'
+-- ignored --
+**/recoverability/
+-- default.yaml --
+name: product
+report: {enabled: false}
+-- nested.yaml --
+name: nested
+report: {enabled: false}
+-- local.yaml --
+name: product
+report: {enabled: false}
+quality: {model: ./team.quality-model.md}
+-- missing.yaml --
+name: product
+report: {enabled: false}
+quality: {model: ./missing.quality-model.md}
+-- cross.yaml --
+name: product
+quality: {model: nested/team.quality-model.md}
+-- invalid.yaml --
+name: product
+report: {enabled: false}
+quality: {model: null}
+-- unknown.yaml --
+name: product
+report: {enabled: false}
+quality: {model: typo}
+-- team.md --
+---
+type: quality-model
+id: team-vocabulary
+---
+# Team vocabulary
+## Quality attributes
+### Clarity
+**ID:** clarity
+Readers recognize what is requested.
+-- broken.md --
+---
+type: quality-model
+---
+# Broken
+## Quality attributes
+### Broken child
+**ID:** child
+**Sub-attribute of:** missing
