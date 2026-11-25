@@ -535,6 +535,7 @@ func (p *planner) indexTargets() {
 		if s.isOverview() {
 			s.overview = p.planOverview(s)
 			p.indexOverviewHeadings(s, parser.NewContext().IDs())
+			p.planCollectionHomes(s)
 		}
 	}
 	for _, r := range p.snapshot.Elements {

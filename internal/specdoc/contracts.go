@@ -93,20 +93,25 @@ func addSourceContracts(p *planner) error {
 			destination.RequiredContent = append(destination.RequiredContent, sourceProse(s.source, h))
 		}
 		for title, idx := range s.indexes {
-			indexPage := p.plan.Pages[idx.file]
+			home, _, _ := strings.Cut(s.sectionIndex(title), "#")
+			indexPage := p.plan.Pages[home]
 			if indexPage == nil {
 				return fmt.Errorf("%s: missing collection index %s", s.source.path, idx.file)
 			}
-			if title != "Quality attributes" || s.kind() != "System" {
+			if s.browseCollection(title, idx) || title == "Quality models" {
 				requireRoute(page, relative(s.file, idx.file), collectionTitle(title))
 			}
-			requireRoute(indexPage, relative(idx.file, s.file), s.name.title)
-			indexPage.DirectoryMembers = map[string][]string{}
+			if idx.overviewSections == nil {
+				requireRoute(indexPage, relative(home, s.file), s.name.title)
+				indexPage.DirectoryMembers = map[string][]string{}
+			}
 			for group, headings := range idx.sources {
 				for _, h := range headings {
-					dest := relativeURL(idx.file, s.source.path, h.anchor)
+					dest := relativeURL(home, s.source.path, h.anchor)
 					requireRoute(indexPage, dest, h.sourceLabel())
-					if group != "" {
+					if section := idx.overviewSections[group]; section != nil {
+						requireSectionRoute(indexPage, section.anchor, dest)
+					} else if group != "" {
 						requireSectionRoute(indexPage, specfile.NameSlug(group), dest)
 					}
 				}
@@ -117,8 +122,12 @@ func addSourceContracts(p *planner) error {
 					anchor = specfile.NameSlug(collectionTitle(title))
 				}
 				for _, e := range members {
-					dest := relative(idx.file, e.target)
-					indexPage.DirectoryMembers[anchor] = append(indexPage.DirectoryMembers[anchor], dest)
+					dest := relative(home, e.target)
+					if section := idx.overviewSections[group]; section != nil {
+						requireSectionRoute(indexPage, section.anchor, dest)
+					} else {
+						indexPage.DirectoryMembers[anchor] = append(indexPage.DirectoryMembers[anchor], dest)
+					}
 					requireRoute(indexPage, dest, inlineText(e.title))
 				}
 			}
@@ -154,8 +163,12 @@ func addSourceContracts(p *planner) error {
 			if title == "Quality attributes" {
 				for _, id := range model.Strings(s.r["quality_attributes"]) {
 					h := p.nodes[nameNode(p.elements[id])]
-					requireRoute(indexPage, relative(idx.file, p.targets[id]), attr(h, "decoded_text"))
-					requireRoute(page, relative(s.file, p.targets[id]), attr(h, "decoded_text"))
+					dest := relative(home, p.targets[id])
+					requireRoute(indexPage, dest, inlineText(attr(h, "decoded_text")))
+					if section := idx.overviewSections[""]; section != nil {
+						requireSectionRoute(indexPage, section.anchor, dest)
+					}
+					requireRoute(page, relative(s.file, p.targets[id]), inlineText(attr(h, "decoded_text")))
 				}
 			}
 		}
@@ -189,6 +202,9 @@ func addSourceContracts(p *planner) error {
 			if i == 1 && source == from.file {
 				if idx := p.relationshipIndex(from, relations[field].reverse, destination); idx != nil {
 					file = idx.file
+					if section := idx.overviewSections[""]; section != nil {
+						file, fragment = from.file, section.anchor
+					}
 				}
 			}
 			page := p.plan.Pages[file]

@@ -202,10 +202,9 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 	reader("specification/systems.md", "- [Worker](<systems/worker/worker.system.spec-report.md>) — A local job executor.")
 	reader("specification/systems/worker/worker.system.spec-report.md", "[Tool](<../../tool.system.spec-report.md>)", "[Systems](<systems.md>)")
 	reader("specification/systems/worker/systems.md", "- [Queue](<systems/queue/queue.system.spec-report.md>)")
-	reader(section+"queue.system.spec-report.md", "### Interfaces this system uses\n\n- [Clock]", "### System structure", "### System context", "### Interactions", "owner ---|interacts with|", "schedules retries.", "[Worker](<../../worker.system.spec-report.md>)", "[Requirements](<requirements.md>)", "[Components](<components.md>)")
-	reader(section+"components.md", "- [Intake](<components/intake/intake.component.spec-report.md>)")
+	reader(section+"queue.system.spec-report.md", "### Interfaces this system uses\n\n- [Clock]", "### System structure", "### System context", "### Interactions", "owner ---|interacts with|", "schedules retries.", "[Worker](<../../worker.system.spec-report.md>)", "[Requirements](<requirements.md>)", "[Interfaces](<interfaces.md>)", "### Components\n\n- [Intake](<components/intake/intake.component.spec-report.md>)")
 	reader(section+"requirements.md", "- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>) — Each submitted job must remain in the queue until accepted.", "[Intake requirements](<components/intake/requirements.md>)")
-	reader(section+"quality-attributes.md", "**[Availability](<quality/availability/availability.quality-attribute.spec-report.md>)** — Accept work while either A &#124; B is available.")
+	reader(section+"queue.system.spec-report.md", "**[Availability](<quality/availability/availability.quality-attribute.spec-report.md>)** — Accept work while either A &#124; B is available.")
 	reader(section+"quality/availability/availability.quality-attribute.spec-report.md", "# Availability", "### Limit", "Maintenance windows are excluded.", "[Retain jobs](<../../requirements/retain-jobs.requirement.spec-report.md>)")
 	reader("specification/open-questions.md",
 		"[Which outages count?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>) — Availability",
@@ -305,6 +304,33 @@ func TestOverviewKeepsNavigationOnlyCollectionsInTheMap(t *testing.T) {
 	}
 }
 
+func TestSystemFeatureIndexTracksOverviewCoverage(t *testing.T) {
+	t.Chdir(t.TempDir())
+	writeFixture(t, "dotspec.yaml", "name: notes\n")
+	writeFixture(t, "specs/notes.system.spec.md", "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nKeep notes.\n\n## Scope\nOne notebook.\n")
+	writeFixture(t, "specs/features/draft.feature.spec.md", "---\ntype: feature-spec\n---\n# Draft\n\n## Description\nWrite a note.\n")
+	for _, description := range []string{"", "\n## Description\nRead a note.\n", ""} {
+		writeFixture(t, "specs/features/review.feature.spec.md", "---\ntype: feature-spec\n---\n# Review\n"+description)
+		if code, out, msg := invoke("spec", "build"); code != 0 {
+			t.Fatal(code, out, msg)
+		}
+		index, err := os.ReadFile("specification/features.md")
+		dest := "../notes.system.spec-report.md#features"
+		if description == "" {
+			dest = "../features.md"
+			if err != nil || !strings.Contains(string(index), "[Review]") || !strings.Contains(string(index), "[Draft]") {
+				t.Fatalf("incomplete feature index: %s, %v", index, err)
+			}
+		} else if !os.IsNotExist(err) {
+			t.Fatalf("unexpected separate feature index: %v", err)
+		}
+		member, err := os.ReadFile("specification/features/draft.feature.spec-report.md")
+		if err != nil || !strings.Contains(string(member), "[Features](<"+dest+">)") {
+			t.Fatalf("expected feature breadcrumb to %s: %s, %v", dest, member, err)
+		}
+	}
+}
+
 func TestGeneratedSystemReadingLayout(t *testing.T) {
 	t.Chdir(t.TempDir())
 	writeFixture(t, "dotspec.yaml", "name: notes\n")
@@ -384,11 +410,9 @@ An example:
 		t.Fatal(page)
 	}
 	durability := "- [Durability](<quality/reliability/durability/durability.quality-attribute.spec-report.md>) — The ID: below is permanent."
-	index, err := os.ReadFile("specification/quality-attributes.md")
-	if err != nil {
-		t.Fatal(err)
+	if _, err := os.Stat("specification/quality-attributes.md"); !os.IsNotExist(err) {
+		t.Fatalf("unexpected quality attribute index: %v", err)
 	}
-	_, overview, _ := strings.Cut(string(index), "# Quality attributes\n")
 	wantOverview := strings.Join([]string{
 		"**[Reliability](<quality/reliability/reliability.quality-attribute.spec-report.md>)**", "",
 		durability,
@@ -398,14 +422,16 @@ An example:
 	}, "\n")
 	_, hierarchy, _ := strings.Cut(page, "## Quality Attributes\n")
 	hierarchy, _, _ = strings.Cut(hierarchy, "\n## ")
-	if strings.TrimSpace(hierarchy) != wantOverview || !strings.HasPrefix(strings.TrimSpace(overview), wantOverview) {
-		t.Fatalf("system hierarchy:\n%s\nindex:\n%s\nwant:\n%s", hierarchy, overview, wantOverview)
+	wantOverview += "\n\n[View source for “Quality attributes”](<../specs/notes.system.spec.md#quality-attributes>)"
+	if strings.TrimSpace(hierarchy) != wantOverview {
+		t.Fatalf("system hierarchy:\n%s\nwant:\n%s", hierarchy, wantOverview)
 	}
 	attributesPage, err := os.ReadFile("specification/quality/reliability/durability/durability.quality-attribute.spec-report.md")
 	if err != nil {
 		t.Fatal(err)
 	}
 	for _, want := range []string{
+		"[Quality attributes](<../../../notes.system.spec-report.md#quality-attributes>)",
 		"**Parent attribute**\n\n- [Reliability](<../reliability.quality-attribute.spec-report.md>)\n- [Safety](<../../safety/safety.quality-attribute.spec-report.md>)",
 		"~~~md\n**ID:** example\n**Sub-attribute of:** example-parent\n~~~",
 		"**Classifies**\n\n- [Restore](<../../../requirements/restore.requirement.spec-report.md>)\n- [Save](<../../../requirements/save.requirement.spec-report.md>)",
@@ -606,10 +632,21 @@ A local notebook.
 Remember ideas.
 
 ## Scope
-Read [the description](#description).
+Read [the description](#description) and [the clock contract](#required-interfaces).
 
 ### Open questions
 An authored boundary detail.
+
+### Interfaces this system uses
+Timing assumptions.
+
+## Provided interfaces
+### Draft form
+Accepts a note.
+
+## Required interfaces
+### Clock
+Supplies the time.
 
 ## Open questions
 See [the boundary detail](#open-questions).
@@ -623,10 +660,23 @@ See [the boundary detail](#open-questions).
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, want := range []string{"[the description](<#overview.lead>)", "[the boundary detail](<#passage.open-questions>)", "[Open questions](<#overview.open-questions-1>)"} {
+	for _, want := range []string{"[the description](<#overview.lead>)", "[the boundary detail](<#passage.open-questions>)", "[Open questions](<#overview.open-questions-1>)", "[the clock contract](<#overview.interfaces-this-system-uses-1>)"} {
 		if !strings.Contains(string(page), want) {
 			t.Fatalf("missing %s in %s", want, page)
 		}
+	}
+	for subject, section := range map[string]string{"clock": "interfaces-this-system-uses-1", "draft-form": "interfaces-this-system-offers"} {
+		data, err := os.ReadFile("specification/interfaces/" + subject + ".interface.spec-report.md")
+		if err != nil || !strings.Contains(string(data), "[Interfaces](<../scope.system.spec-report.md#overview."+section+">)") {
+			t.Fatalf("missing interface breadcrumb to %s: %s, %v", section, data, err)
+		}
+	}
+	// A source link elsewhere on the page cannot stand in for the link at the collection.
+	const source = "[View source for “Required interfaces”](<../specs/scope.system.spec.md#required-interfaces>)"
+	moved := strings.Replace(string(page), source, "", 1) + "\n" + source + "\n"
+	writeFixture(t, "specification/scope.system.spec-report.md", moved)
+	if code, out, msg := invoke("check"); code != 1 || !strings.Contains(out, `section "overview.interfaces-this-system-uses-1" is missing link`) {
+		t.Fatalf("expected missing section source: %d %s %s", code, out, msg)
 	}
 }
 
@@ -778,7 +828,7 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	}
 	use := "- [My notebook](<concept-uses/my-notebook.concept-use.spec-report.md>) — The current author's notes.\n  - Uses [Notebook](<concepts/notebook.concept.spec-report.md>)"
 	sync := "### Synchronizations\n\n- [Archive updates](<synchronizations/archive-updates.synchronization.spec-report.md>) — When — The note is saved. · Then — Archive the current version."
-	if section(after, "Concepts") != "### Concept uses\n\n"+use+"\n\n"+sync || !strings.Contains(read("concept-uses.md"), use) {
+	if section(after, "Concepts") != "### Concept uses\n\n"+use+"\n\n[View source for “Concept uses”](<../specs/notes.system.spec.md#concept-uses>)\n\n"+sync {
 		t.Fatal(after)
 	}
 	if !strings.Contains(read("concept-uses/my-notebook.concept-use.spec-report.md"), "\n## Uses\n\n[Notebook](<../concepts/notebook.concept.spec-report.md>)") {

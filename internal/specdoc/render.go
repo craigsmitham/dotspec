@@ -114,14 +114,21 @@ func (h *heading) sourceLabel() string {
 }
 
 // The title supplies the current location. Each ancestor leads to its overview.
-func (w *writer) setBreadcrumb(owner *subject, collection string) {
+func (w *writer) setBreadcrumb(owner, member *subject) {
 	var steps []string
 	for ancestor := owner; ancestor != nil; ancestor = ancestor.navigationParent {
 		steps = append(steps, w.link(inlineText(ancestor.name.title), ancestor.file))
 	}
 	slices.Reverse(steps)
-	if owner != nil && owner.indexes[collection] != nil {
-		steps = append(steps, w.link(collectionTitle(collection), owner.indexes[collection].file))
+	if owner != nil && member != nil {
+		title := member.collection()
+		if idx := owner.indexes[title]; idx != nil {
+			dest := idx.file
+			if section := idx.overviewSections[member.directoryGroup()]; section != nil {
+				dest = owner.file + "#" + section.anchor
+			}
+			steps = append(steps, w.link(collectionTitle(title), dest))
+		}
 	}
 	w.breadcrumb = strings.Join(steps, " › ")
 }
@@ -130,7 +137,7 @@ func (p *planner) renderSubject(s *subject) {
 	w := p.newPage(s.file, subjectDocument(s.file, s.source, s.name), s.name.title)
 	w.titleMarkdown = p.headingMarkdown(w, s.source, s.name)
 	w.titleAnchor = s.name.explicitAnchor
-	w.setBreadcrumb(s.navigationParent, s.collection())
+	w.setBreadcrumb(s.navigationParent, s)
 	sourceLink := link("View source", w.page.Documents)
 	if s.isOverview() {
 		p.renderOverview(w, s)

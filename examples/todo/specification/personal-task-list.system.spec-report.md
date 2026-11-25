@@ -27,16 +27,9 @@ A personal list of errands the owner can act on, replies they are waiting for an
 <details>
 <summary>Browse specifications</summary>
 
-- [Assumptions](<assumptions.md>)
 - [Business rules](<business-rules.md>)
 - [Capabilities](<capabilities.md>)
-- [Components](<components.md>)
 - [Concept definitions](<concepts.md>)
-- [Concept uses](<concept-uses.md>)
-- [Features](<features.md>)
-- [Goals](<goals.md>)
-- [Interfaces](<interfaces.md>)
-  - [Provided interfaces](<interfaces.md#provided-interfaces>)
 - [Jobs](<jobs.md>)
 - [Requirements](<requirements.md>)
 - [Use cases](<use-cases.md>)
@@ -100,6 +93,8 @@ flowchart LR
 
 - [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — The forms the list owner uses to review and update commitments.
 
+[View source for “Provided interfaces”](<../specs/personal-task-list.system.spec.md#provided-interfaces>)
+
 ## Features
 
 - [Pick up where I left off](<features/pick-up-where-i-left-off.feature.spec-report.md>) — Find an errand after a break, see whether a reply needs chasing and take up the work again when an answer arrives.
@@ -110,6 +105,8 @@ flowchart LR
 
 - [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. Two errands with the same title can be at different stages.
   - Uses [Checklist](<concepts/checklist.concept.spec-report.md>)
+
+[View source for “Concept uses”](<../specs/personal-task-list.system.spec.md#concept-uses>)
 
 ## Quality Attributes
 

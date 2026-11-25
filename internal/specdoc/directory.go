@@ -19,10 +19,11 @@ func applicableRules(owner *subject) string {
 // An empty group is the collection's main list, directly beneath its title.
 // Named groups retain relationships such as required versus provided interfaces.
 type collectionIndex struct {
-	file     string
-	groups   map[string][]entry
-	sources  map[string][]*heading
-	passages [][]*heading
+	file             string
+	overviewSections map[string]*overviewSection
+	groups           map[string][]entry
+	sources          map[string][]*heading
+	passages         [][]*heading
 }
 
 func (s *subject) index(title string) *collectionIndex {
@@ -55,16 +56,18 @@ func (s *subject) collection() string {
 	return sentenceCase(strings.ReplaceAll(families[s.kind()], "-", " "))
 }
 
-func (p *planner) placeDirectoryEntry(s *subject) {
-	title := s.collection()
-	group := ""
-	if s.kind() == "Interface" {
-		group = "Provided interfaces"
-		if slices.Contains(model.Strings(s.navigationParent.r["required_interfaces"]), id(s.r)) {
-			group = "Required interfaces"
-		}
+func (s *subject) directoryGroup() string {
+	if s.kind() != "Interface" {
+		return ""
 	}
-	s.navigationParent.index(title).add(group, entry{s.name.title, s.file, subjectPreview(s)})
+	if slices.Contains(model.Strings(s.navigationParent.r["required_interfaces"]), id(s.r)) {
+		return "Required interfaces"
+	}
+	return "Provided interfaces"
+}
+
+func (p *planner) placeDirectoryEntry(s *subject) {
+	s.navigationParent.index(s.collection()).add(s.directoryGroup(), entry{s.name.title, s.file, subjectPreview(s)})
 }
 
 // An explicitly related member appears once, in the group that explains why it is here.
@@ -96,10 +99,13 @@ func (s *subject) sectionIndex(title string) string {
 	if idx == nil {
 		return ""
 	}
+	if group != "" && len(idx.groups[group]) == 0 {
+		return ""
+	}
+	if section := idx.overviewSections[group]; section != nil {
+		return s.file + "#" + section.anchor
+	}
 	if group != "" {
-		if len(idx.groups[group]) == 0 {
-			return ""
-		}
 		return idx.file + "#" + specfile.NameSlug(group)
 	}
 	return idx.file
@@ -284,7 +290,7 @@ func (p *planner) collectionEntryLine(w *writer, e entry) string {
 
 func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex) {
 	w := p.newPage(idx.file, Document{}, collectionTitle(title))
-	w.setBreadcrumb(owner, "")
+	w.setBreadcrumb(owner, nil)
 	if title == "Glossary" {
 		p.renderGlossary(w, owner)
 	}

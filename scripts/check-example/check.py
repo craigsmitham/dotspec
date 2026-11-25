@@ -198,8 +198,7 @@ def spec_journey(cli, tmp):
     local, browse = (links for _, links in panels)
     assert re.findall(r"^- \[([^]]+)\]", local, re.M) == sections
     collections = re.findall(r"^- \[([^]]+)\]", browse, re.M)
-    assert collections == sorted(collections)
-    assert "  - [Provided interfaces](<interfaces.md#provided-interfaces>)" in browse
+    assert collections == ["Business rules", "Capabilities", "Concept definitions", "Jobs", "Requirements", "Use cases"]
     assert all(not urlsplit(dest).path for dest in re.findall(r"\]\(<([^>]+)>\)", local))
     assert all(urlsplit(dest).path for dest in re.findall(r"\]\(<([^>]+)>\)", browse))
     assert "### Behavior" not in overview and "### Obligations" not in overview
@@ -223,10 +222,6 @@ def spec_journey(cli, tmp):
     assert statement in rules.read_text(encoding="utf-8")
     for section in sections:
         assert f"[{section}](<#{section.lower().replace(' ', '-')}>)" in navigation
-    assert all(f"[{name}]" in browse for name in (
-        "Jobs", "Business rules", "Components", "Interfaces", "Features", "Capabilities",
-        "Concept definitions", "Concept uses", "Use cases", "Requirements"))
-    assert "quality-attributes.md" not in browse and "quality-models.md" not in browse
     architecture = overview.split("## Architecture\n", 1)[1].split("\n## ", 1)[0]
     diagram, components, interfaces = re.split(r"^### (?:Components|Interfaces)$", architecture, flags=re.M)
     assert diagram.count('```mermaid') == 1 and 'subgraph owner["Personal task list"]' in diagram
@@ -239,9 +234,17 @@ def spec_journey(cli, tmp):
     assert "## Capabilities" not in overview
     concepts = overview.split("\n## Concepts\n", 1)[1].split("\n## ", 1)[0]
     assert "[My checklist]" in concepts and "Uses [Checklist](<concepts/" in concepts
-    for name in ("Components", "Interfaces"):
-        assert follow(root, name).name == name.lower() + ".md"
-    feature = follow(follow(root, "Features"), "Pick up where I left off")
+    for collection, name, fragment in (
+        ("Components", "Task service", "components"),
+        ("Interfaces", "Task list forms", "interfaces"),
+        ("Features", "Pick up where I left off", "features"),
+        ("Concept uses", "My checklist", "concept-uses"),
+        ("Quality attributes", "Durability", "quality-attributes"),
+    ):
+        assert not (root.parent / f"{collection.lower().replace(' ', '-')}.md").exists()
+        assert any(label == collection and target == root and anchor == fragment
+                   for label, target, anchor, _ in markdown_links(follow(root, name)))
+    feature = follow(root, "Pick up where I left off")
     promise = follow(feature, "Preserve tasks across restart")
     for name, (collection, source) in {
         "Personal task list": (None, "specs/personal-task-list.system.spec.md"),
@@ -254,7 +257,7 @@ def spec_journey(cli, tmp):
         declaration = (project / source).read_text(encoding="utf-8")
         subject = re.search(r"^#+ " + re.escape(name) + r"\n\n#+ Description\n\n([^\n]+)", declaration, re.M)
         description = subject[1]
-        directory = follow(root, collection) if collection else root
+        directory = follow(root, collection) if collection in collections else root
         page = follow(directory, name) if collection else root
         text = page.read_text(encoding="utf-8")
         if name in ("Personal task list", "Task service"):
@@ -265,7 +268,7 @@ def spec_journey(cli, tmp):
         assert text.count(description) == 1
         if collection:
             line, = [line for line in directory.read_text(encoding="utf-8").splitlines() if line.startswith(f"- [{name}]")]
-            preview = line.split(" — ", 1)[1]
+            preview = line.split(" — ", 1)[1].removesuffix("\\")
             assert preview == description or (preview.endswith(" …") and description.startswith(preview[:-2]))
     # Every source in this fixture gets one report documenting its H1. Pages
     # for inline subjects document a deeper heading in that same source.
@@ -283,7 +286,7 @@ def spec_journey(cli, tmp):
         title = re.search(r"^# (.+)$", source.read_text(encoding="utf-8"), re.M)[1]
         anchor = re.sub(r"[^a-z0-9 -]", "", title.lower()).replace(" ", "-")
         assert (source.resolve(), anchor) in claims, source
-    component = follow(follow(root, "Components"), "Task service")
+    component = follow(root, "Task service")
     assert follow(follow(follow(root, "Capabilities"), "Local task storage"), "Task service") == component
     assert follow(follow(component, "Capabilities"), "Local task storage") == follow(follow(root, "Capabilities"), "Local task storage")
     assert component == project / "specification/components/task-service/task-service.component.spec-report.md"
@@ -303,7 +306,6 @@ def spec_journey(cli, tmp):
                and fragment == "list-owner" for label, target, fragment, _ in markdown_links(use_case))
     assert "## Stakeholders\n\n### List owner\n" in overview
     qualities = follow(root, "Durability")
-    qualities_index = follow(qualities, "Quality attributes")
     quality_section = overview.split("\n## Quality Attributes\n", 1)[1].split("\n## ", 1)[0]
     attribute_source = project / "specs/quality/durability/durability.quality-attribute.spec.md"
     definition = attribute_source.read_text(encoding="utf-8").split("## Definition\n\n", 1)[1].split("\n\n", 1)[0].strip()
@@ -312,7 +314,7 @@ def spec_journey(cli, tmp):
     assert definition in qualities.read_text(encoding="utf-8")
     assert "[Acknowledge after commit](" not in quality_section and "[Preserve tasks across restart](" not in quality_section
     assert follow(promise, "Durability") == qualities
-    for page in (qualities_index, promise):
+    for page in (root, promise):
         assert any(target == qualities and not fragment
                    for _, target, fragment, _ in markdown_links(page))
     assert qualities == project / "specification/quality/durability/durability.quality-attribute.spec-report.md"

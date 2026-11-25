@@ -12,14 +12,16 @@ import (
 // Each authored passage has one home in the overview. The same outline drives
 // rendering, source content order, fragment allocation and the navigation map.
 type overviewSection struct {
-	title, anchor string
-	level         int
-	sources       []string
-	passages      [][]*heading
-	detail        string
-	detailLinks   []string
-	preview       []entry
-	hasBody       bool
+	collection        string // directory or interface group represented by this section
+	title, anchor     string
+	level             int
+	sources           []string
+	passages          [][]*heading
+	detail            string
+	detailLinks       []string
+	collectionSources []*heading
+	preview           []entry
+	hasBody           bool
 }
 
 // These System fields each have their own section in the report, in reading order.
@@ -48,11 +50,11 @@ func (p *planner) overviewOutline(s *subject) []overviewSection {
 	}
 	sections = append(sections, p.architecture(s).sections()...)
 	return append(sections, []overviewSection{
-		{title: "Features", level: 2},
+		{title: "Features", collection: "Features", level: 2},
 		{title: "Concepts", level: 2},
-		{title: "Concept uses", level: 3, sources: []string{"concept_uses"}},
+		{title: "Concept uses", collection: "Concept uses", level: 3, sources: []string{"concept_uses"}},
 		{title: "Synchronizations", level: 3, sources: []string{"synchronizations"}},
-		{title: "Quality Attributes", level: 2},
+		{title: "Quality Attributes", collection: "Quality attributes", level: 2},
 		{title: "Adopts", level: 2, sources: []string{"adopts"}},
 		{title: "Contracts", level: 2, sources: []string{"contracts"}},
 		{title: "Implementation", level: 2, sources: []string{"implementation"}},
@@ -152,9 +154,86 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 	}
 }
 
+// Use an overview section as the directory only when every member has a
+// destination there. Directory discovery can extend beyond declared parts,
+// and component roll-ups lead to collections outside the overview.
+func (p *planner) planCollectionHomes(s *subject) {
+	if s.kind() != "System" {
+		return
+	}
+	byCollection := map[string]map[string]*overviewSection{}
+	var parent *overviewSection
+	for i := range s.overview {
+		section := &s.overview[i]
+		if section.level == 2 {
+			parent = section
+		}
+		if section.collection == "" {
+			continue
+		}
+		title, group := collectionGroup(section.collection)
+		if byCollection[title] == nil {
+			byCollection[title] = map[string]*overviewSection{"": section}
+		} else if group != "" {
+			// When interfaces span two directions, the common Architecture
+			// section is the destination for citations to the whole collection.
+			byCollection[title][""] = parent
+		}
+		byCollection[title][group] = section
+	}
+	for title, sections := range byCollection {
+		idx := s.indexes[title]
+		if idx == nil || !idx.coveredBy(s, sections) {
+			continue
+		}
+		idx.overviewSections = sections
+		for _, group := range slices.Sorted(maps.Keys(idx.sources)) {
+			section := sections[group]
+			for _, h := range idx.sources[group] {
+				section.collectionSources = append(section.collectionSources, h)
+				p.targets[h.node] = s.file + "#" + section.anchor
+			}
+		}
+	}
+}
+
+func (idx *collectionIndex) coveredBy(s *subject, sections map[string]*overviewSection) bool {
+	for group, members := range idx.groups {
+		section := sections[group]
+		if section == nil {
+			return false
+		}
+		links := map[string]bool{}
+		for _, dest := range section.detailLinks {
+			links[dest] = true
+		}
+		for _, e := range section.preview {
+			links[relative(s.file, e.target)] = true
+		}
+		for _, e := range members {
+			if !links[relative(s.file, e.target)] {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func (s *subject) browseCollection(title string, idx *collectionIndex) bool {
+	if s.kind() != "System" {
+		return true
+	}
+	if isDetailCollection(title) && len(idx.passages) > 0 && len(idx.groups) == 0 {
+		return false
+	}
+	return idx.overviewSections == nil && title != "Quality models"
+}
+
 func (p *planner) renderOverview(w *writer, s *subject) {
 	for _, title := range slices.Sorted(maps.Keys(s.indexes)) {
-		p.renderIndex(s, title, s.indexes[title])
+		if idx := s.indexes[title]; idx.overviewSections == nil {
+			p.renderIndex(s, title, idx)
+		}
 	}
 	for _, section := range s.overview {
 		if section.level > 0 {
@@ -182,6 +261,9 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 				lines = append(lines, p.collectionEntryLine(w, e))
 			}
 			w.text(strings.Join(lines, "\n"))
+		}
+		for _, h := range section.collectionSources {
+			w.text(link(h.sourceLabel(), relativeURL(w.file, s.source.path, h.anchor)))
 		}
 		for _, dest := range section.detailLinks {
 			w.requireLink(dest)
@@ -234,10 +316,10 @@ func overviewNavigation(w *writer, s *subject) {
 	})
 	var collections []string
 	for _, title := range titles {
-		if s.kind() == "System" && (title == "Quality attributes" || title == "Quality models") {
+		idx := s.indexes[title]
+		if !s.browseCollection(title, idx) {
 			continue
 		}
-		idx := s.indexes[title]
 		line := w.link(collectionTitle(title), idx.file)
 		for _, group := range slices.Sorted(maps.Keys(idx.sources)) {
 			if group != "" {

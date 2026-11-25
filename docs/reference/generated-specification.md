@@ -94,11 +94,11 @@ to `.spec-report.md`. For example, the Task service report lives at
 holds its local requirements, interfaces, and child components. The optional source
 `id` provides an anchor. The subject name determines the overview filename.
 
-System overviews introduce named goals and assumptions with their title and first authored paragraph. Follow a title to read its qualifications and supporting references in `goals.md` or `assumptions.md`. Constraints appear in the owning system’s scope. For example, follow **Same local storage** to see which requirement relies on that assumption.
+System overviews introduce named goals and assumptions with their title and first authored paragraph. Follow a title to read its qualifications and supporting references in `goals.md` or `assumptions.md`. For example, follow **Same local storage** to see which requirement relies on that assumption.
 The requirement links back to the same entry. A **Referenced by** link returns
 to an authored passage that cites the entry in prose. [Task-list assumptions](../../examples/todo/specification/assumptions.md)
 
-Use **On this page → Quality Attributes** to see the system’s hierarchy. The breadcrumb on an attribute report opens the same hierarchy in `quality-attributes.md`. To browse reusable models, follow **Quality models** beside **View source** at the foot of the system report. This link is available even if the system has yet to declare an attribute. Shared attributes appear under each declared parent. Their own subattributes expand under the first parent. Select an attribute to read its full definition. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability and criterion together. Links beside the requirement lead back to the precise attribute or use-case passage.
+Use **On this page → Quality Attributes** to see the system’s hierarchy. The **Quality attributes** breadcrumb on an attribute report returns to that hierarchy. To browse reusable models, follow **Quality models** beside **View source** at the foot of the system report. This link is available even if the system has yet to declare an attribute. Shared attributes appear under each declared parent. Their own subattributes expand under the first parent. Select an attribute to read its full definition. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability and criterion together. Links beside the requirement lead back to the precise attribute or use-case passage.
 
 For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with its authored description of the behavior it offers. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
 
@@ -110,9 +110,9 @@ models use their Description section. For requirements and business rules, a
 short Statement introduces the promise or rule. Use cases use their Goal and
 jobs use their Job statement. Concept definitions use their Purpose.
 
-The overview’s **Browse specifications** list links to collections such as use cases and components. For example,
-open `use-cases.md` to choose an interaction by its goal, or `components.md` to
-choose a component by its description. A system’s `systems.md` lists its immediate
+On a system report, choose a feature under **Features** or a component under **Architecture → Components**. Features, components, interfaces, concept uses and system quality attributes use their overview section as the collection when it lists every member. The breadcrumb on a member’s report returns to that section. If a collection also includes a feature without a preview, a component outside the declared architecture, or a route to a component’s own collection, **Browse specifications** opens the complete index.
+
+Open **Browse specifications → Use cases** to choose an interaction by its goal. A system’s `systems.md` lists its immediate
 child systems. When a component has entries in a collection, **By component**
 on the parent index leads to the component’s index of the same name.
 
@@ -125,7 +125,7 @@ requirements owned elsewhere that explicitly apply to the component. The
 **Applicable requirements** group collects explicit applicability links, including
 local requirements. Each entry links to the canonical page or passage.
 
-Each standalone authored specification in the selected project has exactly one standalone report page. The owning system or component links to indexes of its features and capabilities. Inline subjects can also have a report page for their own heading.
+Each standalone authored specification in the selected project has exactly one standalone report page. The owning system or component links to its features and capabilities. Inline subjects can also have a report page for their own heading.
 
 Authored Markdown uses `<subject>-spec`. The corresponding generated Markdown
 uses `<subject>-spec-report`. For example, `<name>.system.spec.md` declares

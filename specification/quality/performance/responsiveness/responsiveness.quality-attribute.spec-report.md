@@ -3,7 +3,7 @@ generated_by: dotspec
 type: system-quality-attribute-spec-report
 source: "../../../../specs/quality/performance/responsiveness/responsiveness.quality-attribute.spec.md#responsiveness"
 ---
-[dotspec](<../../../dotspec.system.spec-report.md>) › [Quality attributes](<../../../quality-attributes.md>)
+[dotspec](<../../../dotspec.system.spec-report.md>) › [Quality attributes](<../../../dotspec.system.spec-report.md#quality-attributes>)
 
 # Responsiveness
 

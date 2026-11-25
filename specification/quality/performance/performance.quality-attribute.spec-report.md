@@ -3,7 +3,7 @@ generated_by: dotspec
 type: system-quality-attribute-spec-report
 source: "../../../specs/quality/performance/performance.quality-attribute.spec.md#performance"
 ---
-[dotspec](<../../dotspec.system.spec-report.md>) › [Quality attributes](<../../quality-attributes.md>)
+[dotspec](<../../dotspec.system.spec-report.md>) › [Quality attributes](<../../dotspec.system.spec-report.md#quality-attributes>)
 
 # Performance
 

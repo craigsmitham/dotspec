@@ -158,18 +158,19 @@ func (v architectureView) sections() []overviewSection {
 	}
 	used := "Interfaces this " + strings.ToLower(kind) + " uses"
 	for _, group := range []struct {
-		title  string
-		source string
-		items  []*subject
+		title      string
+		source     string
+		collection string
+		items      []*subject
 	}{
 		{title: "Subsystems", items: v.subsystems},
-		{title: "Components", items: v.components},
-		{title: offered, source: "provided_interfaces", items: v.provided},
-		{title: used, source: "required_interfaces", items: v.required},
+		{title: "Components", collection: "Components", items: v.components},
+		{title: offered, source: "provided_interfaces", collection: "Provided interfaces", items: v.provided},
+		{title: used, source: "required_interfaces", collection: "Required interfaces", items: v.required},
 		{title: "Interactions", source: "interacts_with"},
 		{title: "Capabilities", items: v.capabilities[id(v.owner.r)]},
 	} {
-		section := overviewSection{title: group.title, level: 3}
+		section := overviewSection{title: group.title, level: 3, collection: group.collection}
 		if group.source != "" {
 			section.sources = []string{group.source}
 		}

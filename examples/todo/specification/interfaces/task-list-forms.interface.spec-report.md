@@ -3,7 +3,7 @@ generated_by: dotspec
 type: interface-spec-report
 source: "../../specs/personal-task-list.system.spec.md#task-list-forms"
 ---
-[Personal task list](<../personal-task-list.system.spec-report.md>) › [Interfaces](<../interfaces.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Interfaces](<../personal-task-list.system.spec-report.md#interfaces>)
 
 # Task list forms
 

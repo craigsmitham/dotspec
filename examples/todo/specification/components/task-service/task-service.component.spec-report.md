@@ -3,7 +3,7 @@ generated_by: dotspec
 type: component-spec-report
 source: "../../../app/specs/task-service.component.spec.md#task-service"
 ---
-[Personal task list](<../../personal-task-list.system.spec-report.md>) › [Components](<../../components.md>)
+[Personal task list](<../../personal-task-list.system.spec-report.md>) › [Components](<../../personal-task-list.system.spec-report.md#components>)
 
 # Task service
 

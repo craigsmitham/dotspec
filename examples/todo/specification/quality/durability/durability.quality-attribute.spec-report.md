@@ -3,7 +3,7 @@ generated_by: dotspec
 type: system-quality-attribute-spec-report
 source: "../../../specs/quality/durability/durability.quality-attribute.spec.md#durability"
 ---
-[Personal task list](<../../personal-task-list.system.spec-report.md>) › [Quality attributes](<../../quality-attributes.md>)
+[Personal task list](<../../personal-task-list.system.spec-report.md>) › [Quality attributes](<../../personal-task-list.system.spec-report.md#quality-attributes>)
 
 # Durability
 

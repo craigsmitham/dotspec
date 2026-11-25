@@ -3,7 +3,7 @@ generated_by: dotspec
 type: feature-spec-report
 source: "../../specs/features/pick-up-where-i-left-off.feature.spec.md#pick-up-where-i-left-off"
 ---
-[Personal task list](<../personal-task-list.system.spec-report.md>) › [Features](<../features.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Features](<../personal-task-list.system.spec-report.md#features>)
 
 # Pick up where I left off
 
