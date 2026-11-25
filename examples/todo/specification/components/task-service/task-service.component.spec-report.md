@@ -7,7 +7,7 @@ source: "../../../app/specs/task-service.component.spec.md#task-service"
 
 # Task service
 
-The local service that decides whether a submitted action still applies to the selected entry and records accepted changes.
+Checks whether a submitted action still applies to the selected entry and records accepted changes.
 
 <details>
 <summary>On this page</summary>
@@ -39,7 +39,7 @@ The service supplies the current local day when it prepares the Waiting view. [A
 
 [Personal task list](<../../personal-task-list.system.spec-report.md>).
 
-### Provided capabilities
+### Capabilities
 
 - [Follow-up review](<../../capabilities/follow-up-review.capability.spec-report.md>) — When the owner reviews waiting errands, they can see which replies they planned to chase by today and what to ask for.
 - [Local task storage](<../../capabilities/local-task-storage.capability.spec-report.md>) — Keeps a commitment and the owner's last recorded decision together between visits. …

@@ -5,7 +5,7 @@ type: component-spec
 
 ## Description
 
-The local service that decides whether a submitted action still applies to the selected entry and records accepted changes.
+Checks whether a submitted action still applies to the selected entry and records accepted changes.
 
 ## Part of
 

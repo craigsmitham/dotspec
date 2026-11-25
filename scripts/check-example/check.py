@@ -230,11 +230,12 @@ def spec_journey(cli, tmp):
     architecture = overview.split("## Architecture\n", 1)[1].split("\n## ", 1)[0]
     diagram, components, interfaces = re.split(r"^### (?:Components|Interfaces)$", architecture, flags=re.M)
     assert diagram.count('```mermaid') == 1 and 'subgraph owner["Personal task list"]' in diagram
-    assert 'Component: Task service' in diagram and 'Provided interface: Task list forms' in diagram
+    assert '["Task service"]' in diagram and '(["Task list forms"])' in diagram
     assert all(name in components and name not in diagram for name in ("Local task storage", "Follow-up review"))
-    assert "[Task service]" in components and "**Provided** · [Task list forms]" in interfaces
+    assert components.count("**Capabilities:**") == 1 and "Provides " not in components
+    assert "[Task service]" in components and "- [Task list forms]" in interfaces
     service = follow(root, "Task service").read_text(encoding="utf-8")
-    assert "```mermaid" not in service and "### Provided capabilities" in service
+    assert "```mermaid" not in service and "### Capabilities" in service
     assert "## Capabilities" not in overview
     concepts = overview.split("\n## Concepts\n", 1)[1].split("\n## ", 1)[0]
     assert "[My checklist]" in concepts and "Uses [Checklist](<concepts/" in concepts

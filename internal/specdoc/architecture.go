@@ -74,24 +74,19 @@ func (p *planner) insideBoundary(target, owner string) bool {
 func (v architectureView) diagram(structure, boundary bool) string {
 	var inside, outside strings.Builder
 	node := 0
-	add := func(parts []*subject, role string, port bool) {
+	add := func(parts []*subject, open, close string) {
 		for _, s := range parts {
 			node++
-			label := mermaid.Label(role + ": " + s.name.title)
-			if port {
-				fmt.Fprintf(&inside, "        n%d([\"%s\"])\n", node, label)
-			} else {
-				fmt.Fprintf(&inside, "        n%d[\"%s\"]\n", node, label)
-			}
+			fmt.Fprintf(&inside, "        n%d%s\"%s\"%s\n", node, open, mermaid.Label(s.name.title), close)
 		}
 	}
 	if structure {
-		add(v.subsystems, "Subsystem", false)
-		add(v.components, "Component", false)
+		add(v.subsystems, "[[", "]]")
+		add(v.components, "[", "]")
 	}
 	if boundary {
-		add(v.provided, "Provided interface", true)
-		add(v.required, "Required interface", true)
+		add(v.provided, "([", "])")
+		add(v.required, "([", "])")
 		for _, name := range v.partners {
 			node++
 			fmt.Fprintf(&outside, "    owner ---|interacts with| n%d[\"%s\"]\n", node, mermaid.Label(name))
@@ -157,37 +152,39 @@ func (v architectureView) sections() []overviewSection {
 		}
 	}
 
+	offered := "Interfaces"
+	if len(v.required) > 0 {
+		offered = "Interfaces this " + strings.ToLower(kind) + " offers"
+	}
+	used := "Interfaces this " + strings.ToLower(kind) + " uses"
 	for _, group := range []struct {
-		title string
-		items []*subject
+		title  string
+		source string
+		items  []*subject
 	}{
-		{"Subsystems", v.subsystems},
-		{"Components", v.components},
-		{"Interfaces", nil},
-		{"Interactions", nil},
-		{"Provided capabilities", v.capabilities[id(v.owner.r)]},
+		{title: "Subsystems", items: v.subsystems},
+		{title: "Components", items: v.components},
+		{title: offered, source: "provided_interfaces", items: v.provided},
+		{title: used, source: "required_interfaces", items: v.required},
+		{title: "Interactions", source: "interacts_with"},
+		{title: "Capabilities", items: v.capabilities[id(v.owner.r)]},
 	} {
 		section := overviewSection{title: group.title, level: 3}
+		if group.source != "" {
+			section.sources = []string{group.source}
+		}
 		w := &writer{file: v.owner.file, page: &Page{}}
 		var lines []string
-		switch group.title {
-		case "Interactions":
-			section.sources = []string{"interacts_with"}
-		case "Interfaces":
-			section.sources = []string{"provided_interfaces", "required_interfaces"}
-			for _, s := range v.provided {
-				lines = append(lines, "- **Provided** · "+architectureLink(w, s))
+		for _, s := range group.items {
+			line := "- " + architectureLink(w, s)
+			var capabilities []string
+			for _, capability := range v.capabilities[id(s.r)] {
+				capabilities = append(capabilities, w.link(inlineText(capability.name.title), capability.file))
 			}
-			for _, s := range v.required {
-				lines = append(lines, "- **Required** · "+architectureLink(w, s))
+			if len(capabilities) > 0 {
+				line += "\\\n  **Capabilities:** " + strings.Join(capabilities, " · ")
 			}
-		default:
-			for _, s := range group.items {
-				lines = append(lines, "- "+architectureLink(w, s))
-				for _, capability := range v.capabilities[id(s.r)] {
-					lines = append(lines, "  - Provides "+architectureLink(w, capability))
-				}
-			}
+			lines = append(lines, line)
 		}
 		w.text(strings.Join(lines, "\n"))
 		section.detail = w.out.String()

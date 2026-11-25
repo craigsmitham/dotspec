@@ -86,20 +86,19 @@ The browser and service run on the same computer. The owner can close either bet
 ```mermaid
 flowchart LR
     subgraph owner["Personal task list"]
-        n1["Component: Task service"]
-        n2(["Provided interface: Task list forms"])
+        n1["Task service"]
+        n2(["Task list forms"])
     end
 ```
 
 ### Components
 
-- [Task service](<components/task-service/task-service.component.spec-report.md>) — The local service that decides whether a submitted action still applies to the selected entry and records accepted changes.
-  - Provides [Follow-up review](<capabilities/follow-up-review.capability.spec-report.md>) — When the owner reviews waiting errands, they can see which replies they planned to chase by today and what to ask for.
-  - Provides [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>) — Keeps a commitment and the owner's last recorded decision together between visits. …
+- [Task service](<components/task-service/task-service.component.spec-report.md>) — Checks whether a submitted action still applies to the selected entry and records accepted changes.\
+  **Capabilities:** [Follow-up review](<capabilities/follow-up-review.capability.spec-report.md>) · [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>)
 
 ### Interfaces
 
-- **Provided** · [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — Open offers work the owner can advance. …
+- [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — The forms the list owner uses to review and update commitments.
 
 ## Features
 

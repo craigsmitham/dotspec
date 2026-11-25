@@ -73,6 +73,8 @@ Each entry follows one commitment through the owner's next action, an outstandin
 
 ### Task list forms
 
+The forms the list owner uses to review and update commitments.
+
 Open offers work the owner can advance. Waiting shows the expected reply and when to chase it. Completed holds settled errands the owner may reopen. After an accepted change the browser returns to the view where the person submitted it.
 
 #### Contracts

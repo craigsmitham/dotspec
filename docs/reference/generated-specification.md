@@ -61,9 +61,9 @@ Expand **On this page** to jump to a section in reading order. Expand **Browse s
 | Environment | Conditions in the surrounding world that help explain the requirements |
 | Assumptions | Named premises in declaration order. Follow a premise to its full statement, basis, applicability and the requirements that rely on it. |
 | Constraints | Externally imposed limits on the solutions available for this system |
-| Architecture | The system boundary and its immediate subsystems and components, the interfaces it provides or requires, and its declared interactions |
+| Architecture | The system boundary and its immediate subsystems and components, the interfaces it offers or uses, and its declared interactions |
 | Features | Product features and their authored descriptions |
-| Capabilities | Architecture lists capabilities beside the subsystem or component that provides them. The system’s own capabilities appear under Provided capabilities. |
+| Capabilities | Each part lists its capabilities together by name. A system or component lists its own under **Capabilities**. |
 | Use cases | The use-case index, where each interaction is listed with its authored goal |
 | Concepts | Links to concept definitions, uses and synchronizations. The body introduces named uses and synchronizations under their own headings. |
 | Requirements | **Requirements** opens the index, including routes by component. |
@@ -77,7 +77,7 @@ Expand **On this page** to jump to a section in reading order. Expand **Browse s
 Overview sections list all entries with project-specific detail in index order.
 A collection with only navigation stays in the section map. Architecture shows one level of explicit **Part of** relationships. Follow a linked part to read its own report. Directory placement alone puts a subject in the browse indexes.
 
-The diagram places immediate parts inside their owner’s boundary and labels its declared interfaces as provided or required. External interaction partners appear outside the boundary. When a system declares both parts and external partners, **System structure** shows its decomposition and **System context** shows its interfaces and partners. A component uses **Component structure** and **Component context** for the same views. Parent links and capability lists can stand alone without a diagram. On a component report, an authored **Architecture** passage leads the same view.
+The diagram places immediate parts inside their owner’s boundary and labels parts and interfaces with their project names. A single **Interfaces** list shows what the system offers. When the system depends on another interface, **Interfaces this system uses** names those dependencies, and **Interfaces this system offers** appears if populated. Component reports use the same headings with “component” as the subject. External interaction partners appear outside the boundary. When a system declares both parts and external partners, **System structure** shows its decomposition and **System context** shows its interfaces and partners. A component uses **Component structure** and **Component context** for the same views. Parent links and capability lists can stand alone without a diagram. On a component report, an authored **Architecture** passage leads the same view.
 
 Across overviews and indexes, each entry uses the subject’s linked name and authored wording. Indexes shorten long previews and mark an excerpt with an ellipsis. **Uses** beside a concept use leads to its concept definition.
 **Refines** beside a requirement leads to each promise it refines, whether a requirement or business rule. Open the requirement to read its full

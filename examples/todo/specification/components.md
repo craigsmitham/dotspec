@@ -5,4 +5,4 @@ generated_by: dotspec
 
 # Components
 
-- [Task service](<components/task-service/task-service.component.spec-report.md>) — The local service that decides whether a submitted action still applies to the selected entry and records accepted changes.
+- [Task service](<components/task-service/task-service.component.spec-report.md>) — Checks whether a submitted action still applies to the selected entry and records accepted changes.

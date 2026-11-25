@@ -7,6 +7,6 @@ generated_by: dotspec
 
 ## Provided interfaces
 
-- [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — Open offers work the owner can advance. …
+- [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — The forms the list owner uses to review and update commitments.
 
 [View source for “Provided interfaces”](<../specs/personal-task-list.system.spec.md#provided-interfaces>)
