@@ -109,13 +109,17 @@ func selectProject(cmd *cobra.Command, path string) (string, error) {
 func addProjectSelection(cmd *cobra.Command) {
 	cmd.Flags().String("project", "", "select a project by its dotspec.yaml name (--path is relative to its root)")
 	switch cmd.Name() {
-	case "check", "sources", "list", "export", "docs", "trace", "overview", "needs", "review", "pegs":
+	case "check", "sources", "list", "export":
 	default:
 		return
 	}
 	if len(strings.Fields(cmd.Use)) != 1 && cmd.Use != "check [source-path]" {
 		return
 	}
+	addAllProjects(cmd)
+}
+
+func addAllProjects(cmd *cobra.Command) {
 	cmd.Flags().Bool("all", false, "inspect all discovered projects separately")
 	cmd.MarkFlagsMutuallyExclusive("project", "all")
 	cmd.MarkFlagsMutuallyExclusive("path", "all")

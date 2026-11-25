@@ -102,154 +102,6 @@ func newModelCommand() *cobra.Command {
 			return nil
 		}}
 	addOutput(validate, false)
-	docs := &cobra.Command{Use: "docs", Short: "Generate concept references, system compositions, and dependency diagrams as Markdown", Args: cobra.NoArgs,
-		Long:    "Render purpose and operational principles before state and actions. Show explicit named uses, synchronization rules and application dependencies. Diagrams contain resolved relationships only; no behavior is executed or inferred.",
-		Example: "dotspec model docs --path . --relative-to views",
-		RunE: func(cmd *cobra.Command, _ []string) error {
-			path, err := projectPath(cmd)
-			if err != nil {
-				return err
-			}
-			base, err := cmd.Flags().GetString("relative-to")
-			if err != nil {
-				return err
-			}
-			result, err := model.Export(path, supportedTypes()...)
-			if err != nil {
-				return err
-			}
-			findings, err := model.Validate(result.Snapshot)
-			if err != nil {
-				return err
-			}
-			if len(findings) > 0 {
-				return fmt.Errorf("exported model violates %d invariants; first: %s", len(findings), findings[0].Message)
-			}
-			text, err := model.DesignMarkdown(result.Snapshot, base)
-			if err != nil {
-				return err
-			}
-			if _, err = io.WriteString(cmd.OutOrStdout(), text); err != nil {
-				return err
-			}
-			if result.ExitCode != 0 {
-				return &exitError{code: result.ExitCode}
-			}
-			return nil
-		}}
-	trace := &cobra.Command{Use: "trace", Short: "Generate layered requirements traceability and change-review views as Markdown", Args: cobra.NoArgs,
-		Long:    "Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and requirement criteria. Resolved explicit relationships only; paths do not establish satisfaction or evidence.",
-		Example: "dotspec model trace --path . --relative-to views",
-		RunE: func(cmd *cobra.Command, _ []string) error {
-			path, err := projectPath(cmd)
-			if err != nil {
-				return err
-			}
-			base, err := cmd.Flags().GetString("relative-to")
-			if err != nil {
-				return err
-			}
-			result, err := model.Export(path, supportedTypes()...)
-			if err != nil {
-				return err
-			}
-			findings, err := model.Validate(result.Snapshot)
-			if err != nil {
-				return err
-			}
-			if len(findings) > 0 {
-				return fmt.Errorf("exported model violates %d invariants; first: %s", len(findings), findings[0].Message)
-			}
-			text, err := model.TraceMarkdown(result.Snapshot, base)
-			if err != nil {
-				return err
-			}
-			if _, err = io.WriteString(cmd.OutOrStdout(), text); err != nil {
-				return err
-			}
-			if result.ExitCode != 0 {
-				return &exitError{code: result.ExitCode}
-			}
-			return nil
-		}}
-	overview := &cobra.Command{Use: "overview", Short: "Generate system structure, features, and applicable requirements as Markdown", Args: cobra.NoArgs,
-		Long:    "Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and requirement criteria. Directory context remains separate; no implementation or requirement inheritance is inferred.",
-		Example: "dotspec model overview --path . --relative-to views",
-		RunE: func(cmd *cobra.Command, _ []string) error {
-			path, err := projectPath(cmd)
-			if err != nil {
-				return err
-			}
-			base, err := cmd.Flags().GetString("relative-to")
-			if err != nil {
-				return err
-			}
-			result, err := model.Export(path, supportedTypes()...)
-			if err != nil {
-				return err
-			}
-			findings, err := model.Validate(result.Snapshot)
-			if err != nil {
-				return err
-			}
-			if len(findings) > 0 {
-				return fmt.Errorf("exported model violates %d invariants; first: %s", len(findings), findings[0].Message)
-			}
-			text, err := model.OverviewMarkdown(result.Snapshot, base)
-			if err != nil {
-				return err
-			}
-			if _, err = io.WriteString(cmd.OutOrStdout(), text); err != nil {
-				return err
-			}
-			if result.ExitCode != 0 {
-				return &exitError{code: result.ExitCode}
-			}
-			return nil
-		}}
-	needs := &cobra.Command{Use: "needs", Short: "Generate a needs-to-specification map with capability dependencies", Args: cobra.NoArgs,
-		Long:    "Show jobs, shared outcomes, features, requirements and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.",
-		Example: "dotspec model needs --path . --relative-to views",
-		RunE: func(cmd *cobra.Command, _ []string) error {
-			path, err := projectPath(cmd)
-			if err != nil {
-				return err
-			}
-			base, err := cmd.Flags().GetString("relative-to")
-			if err != nil {
-				return err
-			}
-			result, err := model.Export(path, supportedTypes()...)
-			if err != nil {
-				return err
-			}
-			findings, err := model.Validate(result.Snapshot)
-			if err != nil {
-				return err
-			}
-			if len(findings) > 0 {
-				return fmt.Errorf("exported model violates %d invariants; first: %s", len(findings), findings[0].Message)
-			}
-			text, err := model.NeedsMarkdown(result.Snapshot, base)
-			if err != nil {
-				return err
-			}
-			if _, err = io.WriteString(cmd.OutOrStdout(), text); err != nil {
-				return err
-			}
-			if result.ExitCode != 0 {
-				return &exitError{code: result.ExitCode}
-			}
-			return nil
-		}}
-	addPath(docs)
-	docs.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
-	addPath(trace)
-	trace.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
-	addPath(overview)
-	overview.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
-	addPath(needs)
-	needs.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
 	product := &cobra.Command{Use: "product [SYSTEM]", Short: "Show the specification roots, owned elements and references for one system", Args: cobra.MaximumNArgs(1),
 		Example: "dotspec model product",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -288,16 +140,34 @@ func newModelCommand() *cobra.Command {
 		},
 	}
 	addPath(product)
-	cmd.AddCommand(product)
-	cmd.AddCommand(export, schema, validate, docs, trace, overview, needs,
-		newModelReadingCommand("review", "Generate advisory requirements review and open-question inventory", model.ReviewMarkdown),
-		newModelReadingCommand("pegs", "Generate a Project, Environment, Goals, System reading perspective", model.PEGSMarkdown))
+	cmd.AddCommand(product, export, schema, validate)
+	cmd.AddCommand(newModelReadingCommand("docs",
+		"Generate concept references, system compositions, and dependency diagrams as Markdown",
+		"Render purpose and operational principles before state and actions. Show explicit named uses, synchronization rules and application dependencies. Diagrams contain resolved relationships only; no behavior is executed or inferred.",
+		model.DesignMarkdown))
+	cmd.AddCommand(newModelReadingCommand("trace",
+		"Generate layered requirements traceability and change-review views as Markdown",
+		"Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and requirement criteria. Resolved explicit relationships only; paths do not establish satisfaction or evidence.",
+		model.TraceMarkdown))
+	cmd.AddCommand(newModelReadingCommand("overview",
+		"Generate system structure, features, and applicable requirements as Markdown",
+		"Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and requirement criteria. Directory context remains separate; no implementation or requirement inheritance is inferred.",
+		model.OverviewMarkdown))
+	cmd.AddCommand(newModelReadingCommand("needs",
+		"Generate a needs-to-specification map with capability dependencies",
+		"Show jobs, shared outcomes, features, requirements and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.",
+		model.NeedsMarkdown))
+	const readingGuidance = ". Requirements verification concerns specification quality; requirements and system validation concern needs and intended use. Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.\n\n" + exitPolicy
+	const review = "Generate advisory requirements review and open-question inventory"
+	const pegs = "Generate a Project, Environment, Goals, System reading perspective"
+	cmd.AddCommand(newModelReadingCommand("review", review, review+readingGuidance, model.ReviewMarkdown))
+	cmd.AddCommand(newModelReadingCommand("pegs", pegs, pegs+readingGuidance, model.PEGSMarkdown))
 	return cmd
 }
 
-func newModelReadingCommand(name, description string, render func(*model.Snapshot, string) (string, error)) *cobra.Command {
-	cmd := &cobra.Command{Use: name, Short: description, Args: cobra.NoArgs,
-		Long:    description + ". Requirements verification concerns specification quality; requirements and system validation concern needs and intended use. Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.\n\n" + exitPolicy,
+func newModelReadingCommand(name, short, long string, render func(*model.Snapshot, string) (string, error)) *cobra.Command {
+	cmd := &cobra.Command{Use: name, Short: short, Args: cobra.NoArgs,
+		Long:    long,
 		Example: "dotspec model " + name + " --path . --relative-to views",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
@@ -332,6 +202,7 @@ func newModelReadingCommand(name, description string, render func(*model.Snapsho
 			return nil
 		}}
 	addPath(cmd)
+	addAllProjects(cmd)
 	cmd.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
 	return cmd
 }
