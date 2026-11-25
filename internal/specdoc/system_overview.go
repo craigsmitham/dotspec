@@ -11,6 +11,7 @@ import (
 // Each authored passage has one home in the overview. The same outline drives
 // rendering, source content order, fragment allocation and the navigation map.
 type overviewSection struct {
+	group         string // optional label in the system section map
 	collection    string // type of specification listed in this section
 	title, anchor string
 	directory     *collectionIndex // complete index rendered in this overview
@@ -28,41 +29,47 @@ var systemContextFields = []string{"scope", "out_of_scope", "environment", "assu
 func (p *planner) overviewOutline(s *subject) []overviewSection {
 	sections := []overviewSection{
 		{sources: []string{"description"}},
-		{title: "Framing", level: 2, sources: []string{"framing"}},
-		{title: "Purpose", level: 2, sources: []string{"purpose"}},
-		{title: "Goals", level: 2, sources: []string{"goals"}},
-		{title: "Stakeholders", level: 2, sources: []string{"stakeholder_roles"}},
-		{title: "Responsibilities", level: 2, sources: []string{"responsibilities"}},
+		{group: "Intent", title: "Framing", level: 2, sources: []string{"framing"}},
+		{group: "Intent", title: "Purpose", level: 2, sources: []string{"purpose"}},
+		{group: "Intent", title: "Goals", level: 2, sources: []string{"goals"}},
+		{group: "Intent", title: "Stakeholders", level: 2, sources: []string{"stakeholder_roles"}},
 	}
+	features := overviewSection{group: "Behavior", title: "Features", collection: "Features", level: 2}
+	capabilities := overviewSection{group: "Behavior", title: "Capabilities", collection: "Capabilities", level: 2, sources: []string{"capabilities"}}
+	quality := overviewSection{title: "Quality Attributes", collection: "Quality attributes", level: 2}
+	architecture := p.architecture(s).sections()
 	if s.kind() == "System" {
+		sections = append(sections, overviewSection{group: "Intent", title: "Jobs", collection: "Jobs", level: 2})
 		for _, field := range systemContextFields {
 			title := sentenceCase(strings.ReplaceAll(field, "_", " "))
 			level := 2
 			if field == "out_of_scope" {
 				level = 3
 			}
-			sections = append(sections, overviewSection{title: title, level: level, sources: []string{field}})
+			sections = append(sections, overviewSection{group: "Context", title: title, level: level, sources: []string{field}})
 		}
+		sections = append(sections,
+			overviewSection{group: "Context", title: "Business rules", collection: "Business rules", level: 2},
+			features, capabilities,
+			overviewSection{group: "Behavior", title: "Use cases", collection: "Use cases", level: 2},
+			quality, overviewSection{title: "Requirements", collection: "Requirements", level: 2})
 	} else {
-		sections = append(sections, overviewSection{title: "Scope", level: 2, sources: []string{"boundary_description", "out_of_scope"}})
+		sections = append(sections,
+			overviewSection{title: "Responsibilities", level: 2, sources: []string{"responsibilities"}},
+			overviewSection{title: "Scope", level: 2, sources: []string{"boundary_description", "out_of_scope"}})
+		sections = append(sections, architecture...)
+		capabilities.level = 3
+		sections = append(sections, capabilities, features)
 	}
-	sections = append(sections, p.architecture(s).sections()...)
-	capabilityLevel := 2
-	if s.kind() == "Component" {
-		capabilityLevel = 3
-	}
-	sections = append(sections, []overviewSection{
-		{title: "Capabilities", collection: "Capabilities", level: capabilityLevel, sources: []string{"capabilities"}},
-		{title: "Features", collection: "Features", level: 2},
-		{title: "Concepts", collection: "Concepts", level: 2},
-		{title: "Concept uses", collection: "Concept uses", level: 2, sources: []string{"concept_uses"}},
-		{title: "Synchronizations", collection: "Synchronizations", level: 2, sources: []string{"synchronizations"}},
-		{title: "Quality Attributes", collection: "Quality attributes", level: 2},
-	}...)
+	sections = append(sections,
+		overviewSection{group: "Design", title: "Concepts", collection: "Concepts", level: 2},
+		overviewSection{group: "Design", title: "Concept uses", collection: "Concept uses", level: 2, sources: []string{"concept_uses"}},
+		overviewSection{group: "Design", title: "Synchronizations", collection: "Synchronizations", level: 2, sources: []string{"synchronizations"}})
 	if s.kind() == "System" {
-		for _, title := range []string{"Business rules", "Jobs", "Requirements", "Use cases"} {
-			sections = append(sections, overviewSection{title: title, collection: title, level: 2})
-		}
+		architecture[0].group = "Design"
+		sections = append(sections, architecture...)
+	} else {
+		sections = append(sections, quality)
 	}
 	return append(sections, []overviewSection{
 		{title: "Adopts", level: 2, sources: []string{"adopts"}},
@@ -245,12 +252,27 @@ func entryLine(w *writer, e entry) string {
 
 func overviewNavigation(w *writer, s *subject) {
 	var sections []string
+	var previousGroup string
 	for _, section := range s.overview {
-		if section.level == 2 {
-			sections = append(sections, w.link(section.title, s.file+"#"+section.anchor))
+		if section.level != 2 {
+			continue
 		}
+		link := w.link(section.title, s.file+"#"+section.anchor)
+		switch {
+		case s.kind() == "Component" || section.group == "":
+			sections = append(sections, link)
+		case section.group != previousGroup:
+			sections = append(sections, "**"+section.group+"**\\\n"+link)
+		default:
+			sections[len(sections)-1] += " · " + link
+		}
+		previousGroup = section.group
 	}
-	w.disclosure("On this page", sections)
+	if s.kind() == "System" {
+		w.disclosureBody("On this page", strings.Join(sections, "\n\n"))
+	} else {
+		w.disclosure("On this page", sections)
+	}
 
 	titles := slices.SortedFunc(maps.Keys(s.indexes), func(a, b string) int {
 		return strings.Compare(collectionTitle(a), collectionTitle(b))

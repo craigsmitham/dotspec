@@ -46,29 +46,29 @@ Commit the authored changes, `SPEC.md` and the generated Markdown in `specificat
 ### Navigate an overview
 
 System and component overviews open with the subject name, authored description, and a linked section map. Component overviews also show their responsibilities, contracts, architecture, and implementation where authored.
-Expand **On this page** to jump to a section in reading order. Choose **Requirements** there to review individual promises. **Browse specifications** appears when a collection has a separate index. To edit the overview’s authored content, follow **View source** at the foot of the report.
+Expand **On this page** to jump to a section in reading order. On a system report, **Intent**, **Context**, **Behavior** and **Design** bring related links together. Choose **Quality Attributes** or **Requirements** directly between Behavior and Design. Only populated sections appear. **Browse specifications** appears when a collection has a separate index. To edit the overview’s authored content, follow **View source** at the foot of the report.
 
 | Section | What you can find |
 | --- | --- |
 | Framing | How the authors understand the situation and what they are still exploring |
 | Purpose | The system’s authored purpose |
 | Goals | Authored goals. Select a named goal to read its full statement and see which specifications support it. |
-| Business rules | Linked local and applicable rules with statement excerpts |
-| Jobs | Linked jobs with their authored job statements |
 | Stakeholders | Named stakeholder roles in source order, each with its description and a heading that jobs and use cases can link to |
+| Jobs | Linked jobs with their authored job statements |
 | Scope | The work, people and situations the system serves, followed by agreed exclusions under **Out of scope** |
 | Environment | Conditions in the surrounding world that help explain the requirements |
 | Assumptions | Named premises in declaration order. Follow a premise to its full statement, basis, applicability and the requirements that rely on it. |
 | Constraints | Externally imposed limits on the solutions available for this system |
-| Architecture | The system boundary and its immediate subsystems and components, the interfaces it offers or uses, and its declared interactions |
+| Business rules | Linked local and applicable rules with statement excerpts |
 | Features | Product features and their authored descriptions |
 | Capabilities | Abilities declared or provided in scope. Open a capability to see who provides it. |
 | Use cases | Linked interactions with their authored goals |
+| Quality Attributes | Every attribute declared for this system, with a short definition excerpt. Follow an attribute to see its parent and child attributes and the requirements it classifies. |
+| Requirements | Requirements in scope with excerpts from their statements |
 | Concepts | Local definitions and definitions referenced by scoped uses, with their authored purpose. |
 | Concept uses | Named uses in scope. Open a use to find its definition and configuration. |
 | Synchronizations | Authored coordination between concept uses. |
-| Requirements | Requirements in scope with excerpts from their statements |
-| Quality Attributes | Every attribute declared for this system, with a short definition excerpt. Follow an attribute to see its parent and child attributes and the requirements it classifies. |
+| Architecture | The system boundary and its immediate subsystems and components, the interfaces it offers or uses, and its declared interactions |
 | Open questions | Decisions that remain open in the system specification |
 | Glossary | Terms defined for this system and links to their definitions |
 | Project references | Authored explanations and links to delivery plans, responsibilities, risks and decisions, when supplied |
@@ -81,7 +81,7 @@ The system directory includes specifications declared in the system and its nest
 
 The **Architecture** diagram shows immediate parts inside the boundary and declared external interaction partners outside it. When both are present, separate structure and context diagrams show decomposition and interactions. Select a component to read its responsibilities or an interface to see which subject provides or requires it. On a component report, an authored **Architecture** passage leads the view.
 
-The system’s **Capabilities** section follows **Architecture**. A component lists its capabilities under **Architecture**. Open a capability for its declared providers. Under **Concepts**, select a definition for its state and actions. **Concept uses** includes named uses awaiting a definition. A use can also link to a definition in another project.
+A component lists its capabilities under **Architecture**. Open a capability for its declared providers. Under **Concepts**, select a definition for its state and actions. **Concept uses** includes named uses awaiting a definition. A use can also link to a definition in another project.
 
 For example, the To-do system’s **Requirements** section includes **Acknowledge after commit**, declared on Task service. Following that title from either the system or the component’s requirements opens the same report. Open **Preserve tasks across restart** to read its full statement, conditions and criterion. Its **Refines** section leads to **Keep recorded work available**. [To-do system report](../../examples/todo/specification/personal-task-list.system.spec-report.md#requirements)
 

@@ -10,16 +10,21 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 <details>
 <summary>On this page</summary>
 
-- [Framing](<#framing>)
-- [Purpose](<#purpose>)
-- [Stakeholders](<#stakeholders>)
-- [Scope](<#scope>)
-- [Environment](<#environment>)
-- [Concepts](<#concepts>)
-- [Quality Attributes](<#quality-attributes>)
-- [Jobs](<#jobs>)
-- [Requirements](<#requirements>)
-- [Use cases](<#use-cases>)
+**Intent**\
+[Framing](<#framing>) · [Purpose](<#purpose>) · [Stakeholders](<#stakeholders>) · [Jobs](<#jobs>)
+
+**Context**\
+[Scope](<#scope>) · [Environment](<#environment>)
+
+**Behavior**\
+[Use cases](<#use-cases>)
+
+[Quality Attributes](<#quality-attributes>)
+
+[Requirements](<#requirements>)
+
+**Design**\
+[Concepts](<#concepts>)
 
 </details>
 
@@ -76,6 +81,11 @@ A contributor authors or changes specifications and needs findings that identify
 
 A reviewer examines a proposed change and needs to know which sources were inspected and where the evidence for a requirement comes from.
 
+## Jobs
+
+- [Develop Requirements](<jobs/develop-requirements.job.spec-report.md>) — Define an agreed set of requirements for a proposed software change, from understanding the intended change to making an agreed baseline available.
+- [Manage Requirements](<jobs/manage-requirements.job.spec-report.md>) — Keep an agreed requirements set aligned with a proposed product change, from identifying the change's implications to communicating an updated baseline.
+
 ## Scope
 
 dotspec covers the authoring framework, the `*.spec.md` files teams maintain
@@ -88,11 +98,13 @@ Contributors edit Markdown in ordinary text editors. Git repositories provide
 version history and discovery rules. The CLI communicates through process
 arguments, standard streams, and exit statuses.
 
-## Concepts
+## Use cases
 
-- [Command Invocation](<concepts/cli-interaction.concept.spec-report.md>) — Let a person or program submit an operation and determine its outcome through a consistent process interface.
-- [Job Map](<concepts/job-map.concept.spec-report.md>) — Make an accomplishment's steps and success criteria inspectable, so people can discuss what the work involves and how success is judged.
-- [Specification Inspection](<concepts/specification-inspection.concept.spec-report.md>) — Make structural problems and missing-content advice visible within an explicit inspection scope, so contributors can decide what to revise.
+- [Check specifications before committing](<use-cases/check-specifications.use-case.spec-report.md>) — Identify structural problems and missing-content advice in the specifications affected by a proposed change before committing it.
+- [Create a specification draft](<use-cases/create-specification.use-case.spec-report.md>) — Obtain an editable starting document for a selected kind of specification.
+- [Discover specification sources](<use-cases/discover-specification-sources.use-case.spec-report.md>) — Find specification files and their directly linked context for review.
+- [Export a specification model for review or integration](<use-cases/export-specification-model.use-case.spec-report.md>) — Obtain a faithful, structured snapshot of a project's specification content for review or consumption by another tool.
+- [Prepare specifications for review](<use-cases/prepare-specifications.use-case.spec-report.md>) — Give reviewers a readable account of proposed behavior and its related sources.
 
 ## Quality Attributes
 
@@ -104,11 +116,6 @@ arguments, standard streams, and exit statuses.
 - [Responsiveness](<quality/performance/responsiveness/responsiveness.quality-attribute.spec-report.md>) — The elapsed time before an operation delivers its result.
 - [Source preservation](<quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>) — Whether inspection preserves the source material it examines.
 - [Usability](<quality/usability/usability.quality-attribute.spec-report.md>) — How effectively contributors can author, inspect, and maintain specifications.
-
-## Jobs
-
-- [Develop Requirements](<jobs/develop-requirements.job.spec-report.md>) — Define an agreed set of requirements for a proposed software change, from understanding the intended change to making an agreed baseline available.
-- [Manage Requirements](<jobs/manage-requirements.job.spec-report.md>) — Keep an agreed requirements set aligned with a proposed product change, from identifying the change's implications to communicating an updated baseline.
 
 ## Requirements
 
@@ -123,13 +130,11 @@ arguments, standard streams, and exit statuses.
 - [Reject initialization at an existing target](<requirements/reject-existing-target.requirement.spec-report.md>) — When the target path already exists, initialization must terminate with an unsuccessful exit status.
 - [Repeated inspections produce equivalent reports](<requirements/repeatable-inspection.requirement.spec-report.md>) — Repeated inspections must produce equivalent structured reports, including the ordering of array elements.
 
-## Use cases
+## Concepts
 
-- [Check specifications before committing](<use-cases/check-specifications.use-case.spec-report.md>) — Identify structural problems and missing-content advice in the specifications affected by a proposed change before committing it.
-- [Create a specification draft](<use-cases/create-specification.use-case.spec-report.md>) — Obtain an editable starting document for a selected kind of specification.
-- [Discover specification sources](<use-cases/discover-specification-sources.use-case.spec-report.md>) — Find specification files and their directly linked context for review.
-- [Export a specification model for review or integration](<use-cases/export-specification-model.use-case.spec-report.md>) — Obtain a faithful, structured snapshot of a project's specification content for review or consumption by another tool.
-- [Prepare specifications for review](<use-cases/prepare-specifications.use-case.spec-report.md>) — Give reviewers a readable account of proposed behavior and its related sources.
+- [Command Invocation](<concepts/cli-interaction.concept.spec-report.md>) — Let a person or program submit an operation and determine its outcome through a consistent process interface.
+- [Job Map](<concepts/job-map.concept.spec-report.md>) — Make an accomplishment's steps and success criteria inspectable, so people can discuss what the work involves and how success is judged.
+- [Specification Inspection](<concepts/specification-inspection.concept.spec-report.md>) — Make structural problems and missing-content advice visible within an explicit inspection scope, so contributors can decide what to revise.
 
 <a id="empty.goals"></a>
 

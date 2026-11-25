@@ -81,7 +81,12 @@ func (w *writer) text(value string) {
 }
 func (w *writer) disclosure(label string, links []string) {
 	if len(links) > 0 {
-		w.text("<details>\n<summary>" + label + "</summary>\n\n- " + strings.Join(links, "\n- ") + "\n\n</details>")
+		w.disclosureBody(label, "- "+strings.Join(links, "\n- "))
+	}
+}
+func (w *writer) disclosureBody(label, body string) {
+	if body != "" {
+		w.text("<details>\n<summary>" + label + "</summary>\n\n" + body + "\n\n</details>")
 	}
 }
 func (w *writer) heading(value string) { w.text("## " + value) }

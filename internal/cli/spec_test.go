@@ -556,6 +556,11 @@ func TestSystemContextSectionsStandAlone(t *testing.T) {
 		return string(data)
 	}
 	page := build()
+	_, nav, found := strings.Cut(page, "<summary>On this page</summary>")
+	nav, _, _ = strings.Cut(nav, "</details>")
+	if !found || strings.Contains(nav, "**Behavior**") || strings.Contains(nav, "**Design**") {
+		t.Fatalf("unexpected groups in sparse system navigation: %s", nav)
+	}
 	for _, title := range []string{"Scope", "Out of scope", "Assumptions", "Constraints"} {
 		if strings.Contains(page, "## "+title+"\n") || strings.Contains(page, "["+title+"](") {
 			t.Fatalf("empty %s visible in %s", title, page)

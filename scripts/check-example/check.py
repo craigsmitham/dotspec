@@ -185,9 +185,15 @@ def spec_journey(cli, tmp):
     assert all(target != entry for page in (project / "specification").rglob("*.md")
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")
-    sections = ["Framing", "Purpose", "Goals", "Stakeholders", "Scope", "Environment",
-                "Assumptions", "Architecture", "Capabilities",
-                "Features", "Concepts", "Concept uses", "Quality Attributes", "Business rules", "Jobs", "Requirements", "Use cases"]
+    navigation_groups = [
+        ("Intent", ["Framing", "Purpose", "Goals", "Stakeholders", "Jobs"]),
+        ("Context", ["Scope", "Environment", "Assumptions", "Business rules"]),
+        ("Behavior", ["Features", "Capabilities", "Use cases"]),
+        ("", ["Quality Attributes"]),
+        ("", ["Requirements"]),
+        ("Design", ["Concepts", "Concept uses", "Architecture"]),
+    ]
+    sections = [title for _, titles in navigation_groups for title in titles]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
     scope = overview.split("\n## Scope\n", 1)[1].split("\n## ", 1)[0]
     included, excluded = scope.split("\n### Out of scope\n")
@@ -196,9 +202,11 @@ def spec_journey(cli, tmp):
     panels = re.findall(r"<details>\n<summary>([^<]+)</summary>\n\n(.+?)\n\n</details>", navigation, re.S)
     assert [label for label, _ in panels] == ["On this page"]
     local = panels[0][1]
-    assert re.findall(r"^- \[([^]]+)\]", local, re.M) == sections
-    assert all(not urlsplit(dest).path for dest in re.findall(r"\]\(<([^>]+)>\)", local))
-    assert "### Behavior" not in overview and "### Obligations" not in overview
+    blocks = []
+    for group, titles in navigation_groups:
+        links = " · ".join(f"[{title}](<#{title.lower().replace(' ', '-')}>)" for title in titles)
+        blocks.append(f"**{group}**\\\n{links}" if group else links)
+    assert local.split("\n\n") == blocks
     goals = overview.split("\n## Goals\n", 1)[1].split("\n## ", 1)[0]
     assert "Reduce the effort of working out what still needs attention." in goals
     assert "**Supported by**" not in goals and "**Relied on by**" not in overview
