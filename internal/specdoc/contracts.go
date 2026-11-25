@@ -168,8 +168,8 @@ func addSourceContracts(p *planner) error {
 	// present a relation inline, beside a section or in a related-items list.
 	for _, a := range p.snapshot.Relationships() {
 		projection := attr(a, "projection_path")
-		_, field, _ := strings.Cut(projection, ".")
-		if _, ok := relations[field]; !ok || projection == "QualityModel.quality_attributes" || projection == "System.quality_attributes" {
+		rel, ok := reportRelation(projection)
+		if !ok {
 			continue
 		}
 		left, right := attr(a, "subject"), attr(a, "object")
@@ -184,11 +184,11 @@ func addSourceContracts(p *planner) error {
 				continue
 			}
 			if source == from.file {
-				label := relations[field].forward
+				caption := rel.forward
 				if i == 1 {
-					label = relations[field].reverse
+					caption = rel.reverse
 				}
-				if home := from.relationshipDirectory(label, destination); home != "" {
+				if home := caption.directoryHome(from, destination); home != "" {
 					file, fragment, _ = strings.Cut(home, "#")
 				}
 			}

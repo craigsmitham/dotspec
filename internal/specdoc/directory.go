@@ -239,20 +239,3 @@ func directoryPreview(title, preview string) string {
 	}
 	return indexPreview(preview)
 }
-
-// An overview already has a route to these members through its typed directory.
-// The member's own report explains its relationship to the owner.
-func (s *subject) relationshipDirectory(label, target string) string {
-	if !s.isOverview() {
-		return ""
-	}
-	switch label {
-	case "Parts", "Provides", "Applies here", "Provided interfaces", "Required interfaces":
-		for title, idx := range s.indexes {
-			if slices.ContainsFunc(idx.members, func(member entry) bool { return member.target == target }) {
-				return s.sectionIndex(title)
-			}
-		}
-	}
-	return ""
-}

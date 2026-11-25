@@ -372,7 +372,7 @@ func (p *planner) appendSourceFootnotes(w *writer, sf *sourceFile, onPage func(i
 }
 func (h *heading) reportTitle() string {
 	if h.owner != nil && h.owner.kind() == "ConceptUse" && h.level == h.owner.name.level+1 && h.title == "Definition" {
-		return relations["definition"].forward
+		return relations["definition"].forward.label
 	}
 	return h.title
 }
@@ -551,44 +551,25 @@ func linkTitle(n model.Record) string {
 	return ""
 }
 
-type relation struct{ forward, reverse string }
-
-var relations = map[string]relation{
-	"provided_by":         {"Provided by", "Provides"},
-	"required_interfaces": {"Required interfaces", "Required by"},
-	"provided_interfaces": {"Provided interfaces", "Provided by"},
-	"subattribute_of":     {"Parent attribute", "Subattributes"}, "groups": {"Groups", "Feature"}, "refines": {"Refines", "Refined by"}, "supports": {"Supports", "Supported by"},
-	"applies_to": {"Applies to", "Applies here"}, "quality_attributes": {"Quality attribute", "Classifies"},
-	"derived_from": {"Derived from", "Basis for"}, "relies_on": {"Relies on", "Relied on by"},
-	"involves": {"Involves", "Used in"}, "illustrates": {"Illustrates", "Illustrated by"},
-	"definition": {"Uses", "Used by"}, "part_of": {"Part of", "Parts"},
-}
-
-type route struct {
-	label, title, target string
-	forward              bool
-}
-
 func (p *planner) indexRelationships() {
 	p.routes = map[string][]route{}
 	for _, a := range p.snapshot.Relationships() {
 		projection := attr(a, "projection_path")
-		_, field, _ := strings.Cut(projection, ".")
-		words, ok := relations[field]
-		if !ok || projection == "System.quality_attributes" || projection == "QualityModel.quality_attributes" {
+		rel, ok := reportRelation(projection)
+		if !ok {
 			continue
 		}
 		left, right := p.elements[attr(a, "subject")], p.elements[attr(a, "object")]
-		add := func(from, to model.Record, label string, forward bool) {
+		add := func(from, to model.Record, caption relationCaption, forward bool) {
 			dest := p.targets[id(to)]
 			h := nameNode(from)
 			title := attr(p.nodes[nameNode(to)], "decoded_text")
 			if h != "" && title != "" && dest != "" {
-				p.routes[h] = append(p.routes[h], route{label, title, dest, forward})
+				p.routes[h] = append(p.routes[h], route{relationCaption: caption, title: title, target: dest, forward: forward})
 			}
 		}
-		add(left, right, words.forward, true)
-		add(right, left, words.reverse, false)
+		add(left, right, rel.forward, true)
+		add(right, left, rel.reverse, false)
 	}
 }
 
@@ -631,7 +612,7 @@ func (p *planner) relationships(w *writer, h *heading, showHeading bool) {
 		if r.target == w.file || (r.forward && authored[labeledLink{r.label, relative(w.file, r.target)}]) {
 			continue
 		}
-		if h == h.owner.name && h.owner.relationshipDirectory(r.label, r.target) != "" {
+		if h == h.owner.name && r.directoryHome(h.owner, r.target) != "" {
 			continue
 		}
 		byLabel[r.label] = append(byLabel[r.label], w.link(r.title, r.target))

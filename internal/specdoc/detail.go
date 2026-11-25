@@ -88,7 +88,7 @@ func (p *planner) indexDetailReferences() {
 		subject := p.targets[attr(ref, "context_owner")]
 		relation, typed := relations[attr(ref, "role")]
 		if typed && slices.ContainsFunc(p.routes[h.node], func(r route) bool {
-			return r.label == relation.reverse && r.target == subject
+			return r.label == relation.reverse.label && r.target == subject
 		}) {
 			continue
 		}
@@ -98,7 +98,7 @@ func (p *planner) indexDetailReferences() {
 			title += " · " + from.title
 		}
 		if target != "" {
-			p.routes[h.node] = append(p.routes[h.node], route{label: "Referenced by", title: title, target: target})
+			p.routes[h.node] = append(p.routes[h.node], route{relationCaption: onDetail("Referenced by"), title: title, target: target})
 		}
 	}
 }

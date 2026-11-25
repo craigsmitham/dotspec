@@ -62,3 +62,25 @@ func TestLiftedSectionPreservesAuthoredMarkdown(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+// A wording change may give two relationship directions the same caption.
+// Their targets still belong in the directory or the detail according to role.
+func TestRelationshipDirectorySurvivesCaptionChanges(t *testing.T) {
+	system := &subject{r: model.Record{"kind": "System"}, file: "system.md", source: &sourceFile{}}
+	system.name = &heading{node: "system", owner: system}
+	system.index("Components").add(entry{title: "Part", target: "part.md"})
+	system.index("Requirements").add(entry{title: "Rule", target: "rule.md"})
+
+	part, _ := reportRelation("Component.part_of")
+	supports, _ := reportRelation("Requirement.supports")
+	part.reverse.label, supports.reverse.label = "Related", "Related"
+	p := planner{routes: map[string][]route{"system": {
+		{relationCaption: part.reverse, title: "Part", target: "part.md"},
+		{relationCaption: supports.reverse, title: "Rule", target: "rule.md"},
+	}}}
+	w := writer{page: &Page{}, file: system.file}
+	p.relationships(&w, system.name, true)
+	if got := w.out.String(); strings.Contains(got, "part.md") || !strings.Contains(got, "[Rule](<rule.md>)") {
+		t.Fatal(got)
+	}
+}
