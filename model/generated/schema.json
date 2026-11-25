@@ -3064,6 +3064,9 @@
                                 "$ref": "#/$defs/AdoptedProvision"
                             },
                             {
+                                "$ref": "#/$defs/SystemStakeholderRole"
+                            },
+                            {
                                 "$ref": "#/$defs/GlossaryTerm"
                             },
                             {
@@ -3156,7 +3159,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.32.0-draft",
+                    "const": "0.33.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -3829,9 +3832,12 @@
                 "source_fragment": {
                     "type": "string"
                 },
-                "stakeholders": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "People and organizations with an interest in the system, the interests they hold, and sources of requirements; naming them is not endorsement."
+                "stakeholder_roles": {
+                    "description": "Stakeholder roles declared by this system, in authored order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "supports_content": {
                     "$ref": "#/$defs/RichContent",
@@ -4078,6 +4084,79 @@
                 "type"
             ],
             "title": "SystemSpecReport",
+            "type": "object"
+        },
+        "SystemStakeholderRole": {
+            "additionalProperties": false,
+            "description": "A named capacity in which people or organizations have an interest in a particular system.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "description": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "What people or organizations in this role care about, depend on, or decide."
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "SystemStakeholderRole",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "open_questions": {
+                    "description": "Explicitly distinguished questions, in authored order.",
+                    "items": {
+                        "$ref": "#/$defs/OpenQuestion"
+                    },
+                    "type": "array"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "owner",
+                "source_document",
+                "id",
+                "kind"
+            ],
+            "title": "SystemStakeholderRole",
+            "type": "object"
+        },
+        "SystemStakeholderRoleSpecReport": {
+            "additionalProperties": false,
+            "description": "The role’s addressable passage within its owning System report.",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "system-stakeholder-role-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "SystemStakeholderRoleSpecReport",
             "type": "object"
         },
         "TraceableElement": {
@@ -4424,6 +4503,9 @@
                         "$ref": "#/$defs/AdoptedProvision"
                     },
                     {
+                        "$ref": "#/$defs/SystemStakeholderRole"
+                    },
+                    {
                         "$ref": "#/$defs/GlossaryTerm"
                     },
                     {
@@ -4516,7 +4598,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.32.0-draft",
+            "const": "0.33.0-draft",
             "type": "string"
         },
         "references": {
@@ -4561,5 +4643,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.32.0-draft"
+    "version": "0.33.0-draft"
 }

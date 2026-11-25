@@ -96,9 +96,9 @@ func TestStructuredReadContracts(t *testing.T) {
 		if err := json.Unmarshal([]byte(out), &result); err != nil {
 			t.Fatal(err)
 		}
-		wantVersion := float64(1)
-		if len(args) > 1 && args[0] == "job" && (args[1] == "map" || args[1] == "outcome") {
-			wantVersion = 2
+		wantVersion := float64(2)
+		if args[0] == "sources" || (args[0] == "job" && args[1] == "step") {
+			wantVersion = 1
 		}
 		if result["schema_version"] != wantVersion {
 			t.Fatalf("wrong version: %s", out)

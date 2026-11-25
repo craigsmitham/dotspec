@@ -12,6 +12,7 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 
 - [Framing](<#framing>)
 - [Purpose](<#purpose>)
+- [Stakeholders](<#stakeholders>)
 - [Scope and environment](<#scope-and-environment>)
 - [Quality Attributes](<#quality-attributes>)
 
@@ -59,6 +60,24 @@ choices all meet the need, leave them to the implementer.
 
 Help teams develop and maintain software requirements alongside the
 code they describe.
+
+## Stakeholders
+
+### Contributor
+
+<!-- dotspec-doc {"type":"system-stakeholder-role-spec-report","documents":"../specs/dotspec.system.spec.md#contributor"} -->
+
+A contributor authors or changes specifications and needs findings that identify the passage to revise.
+
+[View section source](<../specs/dotspec.system.spec.md#contributor>)
+
+### Reviewer
+
+<!-- dotspec-doc {"type":"system-stakeholder-role-spec-report","documents":"../specs/dotspec.system.spec.md#reviewer"} -->
+
+A reviewer examines a proposed change and needs to know which sources were inspected and where the evidence for a requirement comes from.
+
+[View section source](<../specs/dotspec.system.spec.md#reviewer>)
 
 ## Scope and environment
 

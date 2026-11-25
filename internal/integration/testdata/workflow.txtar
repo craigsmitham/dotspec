@@ -16,7 +16,7 @@ exec dotspec job show --path . -- plan-work
 stdout '# New job'
 stdout 'System: New system'
 exec dotspec system list --json
-stdout '"schema_version": 1'
+stdout '"schema_version": 2'
 stdout '"children": \[\]'
 ! stderr .
 exec dotspec job step list plan-work --json

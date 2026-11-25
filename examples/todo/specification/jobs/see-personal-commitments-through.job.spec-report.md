@@ -15,7 +15,7 @@ See personal commitments through from accepting responsibility for an errand to 
 
 ## Performer
 
-The person who has taken responsibility for the errand and must decide what still needs attention alongside their other commitments.
+The [person who has taken responsibility for the errand](<../personal-task-list.system.spec-report.md#list-owner>) must decide what still needs attention alongside their other commitments.
 
 ## Situation
 

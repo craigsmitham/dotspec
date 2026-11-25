@@ -12040,7 +12040,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.32.0-draft",
+          "equals_string": "0.33.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -13779,7 +13779,7 @@
         "Record"
       ],
       "annotations": {
-        "owned_memberships": "System.goals or System.assumptions or System.glossary or System.concept_uses or System.synchronizations or System.required_interfaces or System.provided_interfaces"
+        "owned_memberships": "System.goals or System.stakeholder_roles or System.assumptions or System.glossary or System.concept_uses or System.synchronizations or System.required_interfaces or System.provided_interfaces"
       },
       "description": "The system described by a system document; subordinate systems retain their own boundaries and quality attributes.",
       "is_a": "Specification",
@@ -14548,20 +14548,28 @@
           ],
           "required": false
         },
-        "stakeholders": {
-          "annotations": {},
+        "stakeholder_roles": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "SystemStakeholderRole.owner",
+            "relationship_label": "declares",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
           "any_of": [],
-          "description": "People and organizations with an interest in the system, the interests they hold, and sources of requirements; naming them is not endorsement.",
+          "description": "Stakeholder roles declared by this system, in authored order.",
           "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
+          "inline_ranges": [],
+          "inlined": false,
           "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
+          "multivalued": true,
+          "ordered": true,
+          "range": "SystemStakeholderRole",
+          "reference_ranges": [
+            "SystemStakeholderRole"
+          ],
           "required": false
         },
         "supports": {
@@ -15688,6 +15696,245 @@
           "any_of": [],
           "description": "Serialized document type fixed by the concrete class.",
           "equals_string": "system-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
+    "SystemStakeholderRole": {
+      "abstract": false,
+      "ancestors": [
+        "SystemStakeholderRole",
+        "DomainElement",
+        "Record"
+      ],
+      "annotations": {},
+      "description": "A named capacity in which people or organizations have an interest in a particular system.",
+      "is_a": "DomainElement",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "authored_id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "An explicitly authored ID when present; no manufactured global identifier.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "description": {
+          "annotations": {},
+          "any_of": [],
+          "description": "What people or organizations in this role care about, depend on, or decide.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "SystemStakeholderRole",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "name": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored title or item name, if present.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "open_questions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicitly distinguished questions, in authored order.",
+          "identifier": false,
+          "inline_ranges": [
+            "OpenQuestion"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "OpenQuestion",
+          "reference_ranges": [],
+          "required": false
+        },
+        "owner": {
+          "annotations": {
+            "relationship_basis": "Checked inverse of canonical membership fields.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "System.stakeholder_roles",
+            "relationship_label": "owner",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": true
+        },
+        "source_document": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source document",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceDocument",
+          "reference_ranges": [
+            "SourceDocument"
+          ],
+          "required": true
+        },
+        "source_fragment": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source fragment",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceFragment",
+          "reference_ranges": [
+            "SourceFragment"
+          ],
+          "required": false
+        }
+      },
+      "subsets": [
+        "business-requirements"
+      ]
+    },
+    "SystemStakeholderRoleSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "SystemStakeholderRoleSpecReport",
+        "SubjectReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "The role\u2019s addressable passage within its owning System report.",
+      "is_a": "SubjectReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SystemStakeholderRole",
+          "reference_ranges": [
+            "SystemStakeholderRole"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "system-stakeholder-role-spec-report",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -17208,7 +17455,7 @@
       "requirement-spec"
     ]
   },
-  "model_version": "0.32.0-draft",
+  "model_version": "0.33.0-draft",
   "projections": [
     "BusinessRule.applies_to",
     "BusinessRule.refines",
@@ -17248,6 +17495,7 @@
     "System.provided_interfaces",
     "System.quality_attributes",
     "System.required_interfaces",
+    "System.stakeholder_roles",
     "System.synchronizations",
     "SystemContextSpecification.directory_system",
     "SystemContextSpecification.specification_owner",
@@ -17329,7 +17577,7 @@
   },
   "representation_version": "0.4.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "6260619d18b374ee229dfa9d22163f7eccdbce33696d5dc9cd4a9d4ffd304f86",
+  "source_sha256": "07714b19b5f211771d882a343318ace815b6d83657f9806ffcfd8631c67b40af",
   "subsets": {
     "business-requirements": {
       "classification": "core",

@@ -7,7 +7,7 @@ generated_by: dotspec
 
 **Browse by topic**
 
-- **Business requirements** · [Business rule](<#business-rule>), [Capability](<#capability>), [System](<#system>)
+- **Business requirements** · [Business rule](<#business-rule>), [Capability](<#capability>), [System](<#system>), [System stakeholder role](<#system-stakeholder-role>)
 - **Software requirements** · [Capability](<#capability>), [Component](<#component>), [Concept](<#concept>), [Feature](<#feature>), [Quality attribute](<#quality-attribute>), [Requirement](<#requirement>), [System](<#system>), [Use case](<#use-case>)
 - **User requirements** · [Job](<#job>)
 
@@ -96,6 +96,14 @@ From [Feature](<#feature-relationships>) · Can group a requirement.
 The system described by a system document; subordinate systems retain their own boundaries and quality attributes.
 
 Business requirements, Software requirements · [Model reference](<../docs/reference/model/index.md#system>) · [Term source](<../docs/reference/model/glossary.md#system>)
+
+## System stakeholder role
+
+<!-- dotspec-doc {"type":"glossary-term-spec-report","documents":"../docs/reference/model/glossary.md#system-stakeholder-role"} -->
+
+A named capacity in which people or organizations have an interest in a particular system.
+
+Business requirements · [Model reference](<../docs/reference/model/index.md#systemstakeholderrole>) · [Term source](<../docs/reference/model/glossary.md#system-stakeholder-role>)
 
 ## Use case
 

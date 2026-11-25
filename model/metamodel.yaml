@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/metamodel.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.32.0-draft
+version: 0.33.0-draft
 description: Source-backed specifications and their reader-facing reports. Domain fields retain the authored
   Markdown through ordered byte ranges. Explicit declarations, links and classification labels supply identity
   and relationships.
@@ -218,6 +218,15 @@ classes:
         equals_string: system-quality-attribute-spec-report
       documents:
         range: SystemQualityAttribute
+  SystemStakeholderRoleSpecReport:
+    is_a: SubjectReport
+    in_subset: [specification-documentation]
+    description: The role’s addressable passage within its owning System report.
+    slot_usage:
+      type:
+        equals_string: system-stakeholder-role-spec-report
+      documents:
+        range: SystemStakeholderRole
   GoalSpecReport:
     is_a: SubjectReport
     in_subset: [specification-documentation]
@@ -307,7 +316,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.32.0-draft
+        equals_string: 0.33.0-draft
       mapping_profile:
         range: string
         description: Versioned rules for mapping declared sections, metadata and references.
@@ -939,11 +948,15 @@ classes:
         range: RichContent
         inlined: true
         description: Conditions and surroundings the system must accommodate.
-      stakeholders:
-        range: RichContent
-        inlined: true
-        description: People and organizations with an interest in the system, the interests they hold, and
-          sources of requirements; naming them is not endorsement.
+      stakeholder_roles:
+        range: SystemStakeholderRole
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_inverse: SystemStakeholderRole.owner
+          relationship_label: declares
+        description: Stakeholder roles declared by this system, in authored order.
       assumptions:
         range: Assumption
         multivalued: true
@@ -1023,9 +1036,29 @@ classes:
         inlined: true
         description: Authored Markdown qualifying the part of relationship.
     annotations:
-      owned_memberships: System.goals or System.assumptions or System.glossary
+      owned_memberships: System.goals or System.stakeholder_roles or System.assumptions or System.glossary
         or System.concept_uses or System.synchronizations
         or System.required_interfaces or System.provided_interfaces
+  SystemStakeholderRole:
+    is_a: DomainElement
+    in_subset:
+    - business-requirements
+    description: A named capacity in which people or organizations have an interest in a particular system.
+    slot_usage:
+      kind:
+        equals_string: SystemStakeholderRole
+    attributes:
+      owner:
+        range: System
+        required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_basis: Checked inverse of canonical membership fields.
+          relationship_inverse: System.stakeholder_roles
+      description:
+        range: RichContent
+        inlined: true
+        description: What people or organizations in this role care about, depend on, or decide.
   Goal:
     in_subset:
     - business-requirements

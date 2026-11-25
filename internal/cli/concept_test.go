@@ -45,7 +45,7 @@ func TestConceptCommandsAndJSON(t *testing.T) {
 	if err := json.Unmarshal([]byte(out), &result); err != nil || code != 0 || errOut != "" || result.Concept == nil {
 		t.Fatalf("show JSON: %d %s %s %v", code, out, errOut, err)
 	}
-	if result.SchemaVersion != 1 || result.Concept.Slug != "review" || result.Concept.System == nil || result.Concept.System.Name != "New system" || result.Concept.Purpose == "" || result.Concept.State == "" || result.Concept.Actions == "" || result.Concept.OperationalPrinciples == "" {
+	if result.SchemaVersion != 2 || result.Concept.Slug != "review" || result.Concept.System == nil || result.Concept.System.Name != "New system" || result.Concept.Purpose == "" || result.Concept.State == "" || result.Concept.Actions == "" || result.Concept.OperationalPrinciples == "" {
 		t.Fatalf("lost fields or association: %+v", result)
 	}
 	code, out, errOut = invoke("concept", "show", "review")

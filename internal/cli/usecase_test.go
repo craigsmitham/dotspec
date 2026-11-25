@@ -32,7 +32,7 @@ func TestUseCaseCommandsAndJSON(t *testing.T) {
 	if err := json.Unmarshal([]byte(out), &result); err != nil || code != 0 || errOut != "" || result.UseCase == nil {
 		t.Fatalf("show JSON: %d %s %s %v", code, out, errOut, err)
 	}
-	if result.SchemaVersion != 1 || result.UseCase.Slug != "review" || result.UseCase.System == nil || result.UseCase.System.Name != "New system" || result.UseCase.Trigger == result.UseCase.Preconditions {
+	if result.SchemaVersion != 2 || result.UseCase.Slug != "review" || result.UseCase.System == nil || result.UseCase.System.Name != "New system" || result.UseCase.Trigger == result.UseCase.Preconditions {
 		t.Fatalf("lost fields or association: %+v", result)
 	}
 	code, out, errOut = invoke("use-case", "show", "review")

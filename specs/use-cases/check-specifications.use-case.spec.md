@@ -17,7 +17,7 @@ enclosing system specifications, and direct reference targets needed as context.
 
 ## Primary actor
 
-A contributor preparing a change for review.
+A [contributor](../dotspec.system.spec.md#contributor) preparing a change for review.
 
 ## Goal level
 
@@ -40,7 +40,7 @@ inside a Git repository.
 
 ## Stakeholder interests
 
-Contributors need actionable findings. Reviewers need an honest account of what
+[Contributors](../dotspec.system.spec.md#contributor) need actionable findings. [Reviewers](../dotspec.system.spec.md#reviewer) need an honest account of what
 was inspected. Both need their authored sources preserved.
 
 ## Minimal guarantees

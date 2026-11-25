@@ -198,6 +198,7 @@ func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offs
 			}
 			continue
 		}
+		var roleSource string
 		if h != s.name {
 			// Preserve addressability for duplicated headings moved onto different pages.
 			if h.explicitAnchor != "" {
@@ -211,13 +212,21 @@ func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offs
 				doc := subjectDocument(w.file, s.source, h)
 				meta, _ := json.Marshal(doc)
 				w.text("<!-- dotspec-doc " + string(meta) + " -->")
-				w.text(link("View section source", doc.Documents))
+				source := link("View section source", doc.Documents)
+				if h.subjectKind == "SystemStakeholderRole" {
+					roleSource = source
+				} else {
+					w.text(source)
+				}
 			}
 		}
 		if h == s.name && s.kind() == "Feature" {
 			p.featureGoals(w, s)
 		}
 		p.body(w, s.source, h)
+		if roleSource != "" {
+			w.text(roleSource)
+		}
 		if h.level == s.name.level+1 && (h.title == "Extensions" || h.title == "Actions" || h.title == "Quality attributes") && !s.isOverview() {
 			p.sectionNavigation(w, h, headings[i+1:])
 		}

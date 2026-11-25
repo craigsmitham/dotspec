@@ -45,6 +45,16 @@ code they describe.
 ## Goals
 
 
+## Stakeholders
+
+### Contributor
+
+A contributor authors or changes specifications and needs findings that identify the passage to revise.
+
+### Reviewer
+
+A reviewer examines a proposed change and needs to know which sources were inspected and where the evidence for a requirement comes from.
+
 ## Scope
 
 dotspec covers the authoring framework, the `*.spec.md` files teams maintain

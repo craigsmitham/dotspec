@@ -125,7 +125,7 @@ func runRequirement(command, path, slug, format, preset, attribute string, out i
 		return err
 	}
 	if format == "json" {
-		return writeJSON(out, requirementResult{1, spec})
+		return writeJSON(out, requirementResult{2, spec})
 	}
 	attributeSource := "None (labels are unbound)"
 	if spec.Classification.SystemPath != "" {
@@ -140,7 +140,7 @@ func listRequirement(path, format, attribute string, out io.Writer) error {
 	if err != nil {
 		return err
 	}
-	result := requirementListResult{1, nonnil(requirement.Filter(groups, attribute)), attribute}
+	result := requirementListResult{2, nonnil(requirement.Filter(groups, attribute)), attribute}
 	if format == "json" {
 		return writeJSON(out, result)
 	}

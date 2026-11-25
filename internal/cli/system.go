@@ -88,7 +88,7 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 		if err != nil {
 			return err
 		}
-		result := systemResult{1, spec, parent}
+		result := systemResult{2, spec, parent}
 		if format == "json" {
 			return writeJSON(out, result)
 		}
@@ -97,9 +97,18 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 			parentText = fmt.Sprintf("%s (%s)", result.EnclosingSystem.Name, displayPath(result.EnclosingSystem.Path))
 		}
 		modelText := ""
-		for _, field := range []struct{ name, value string }{{"Goals", spec.Goals}, {"Environment", spec.Environment}, {"Stakeholders", spec.Stakeholders}, {"Assumptions", spec.Assumptions}, {"Constraints", spec.Constraints}, {"Glossary", spec.Glossary}, {"Part of", spec.PartOf}, {"Components", spec.Components}, {"Concept uses", spec.ConceptUses}, {"Synchronizations", spec.Synchronizations}} {
+		for _, field := range []struct{ name, value string }{{"Goals", spec.Goals}, {"Environment", spec.Environment}, {"Assumptions", spec.Assumptions}, {"Constraints", spec.Constraints}, {"Glossary", spec.Glossary}, {"Part of", spec.PartOf}, {"Components", spec.Components}, {"Concept uses", spec.ConceptUses}, {"Synchronizations", spec.Synchronizations}} {
 			if field.value != "" {
 				modelText += "\n\n" + field.name + "\n" + indent(field.value)
+			}
+		}
+		if len(spec.StakeholderRoles) > 0 {
+			modelText += "\n\nStakeholders"
+			for _, role := range spec.StakeholderRoles {
+				modelText += "\n  " + role.Name
+				if role.Description != "" {
+					modelText += "\n" + indent(role.Description)
+				}
 			}
 		}
 		for _, a := range spec.QualityAttributes {
@@ -129,7 +138,7 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 		if nodes == nil {
 			nodes = []*system.Node{}
 		}
-		result := systemsResult{1, nodes}
+		result := systemsResult{2, nodes}
 		if format == "json" {
 			return writeJSON(out, result)
 		}

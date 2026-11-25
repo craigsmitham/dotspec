@@ -30,7 +30,13 @@ Equipment spends less time unused.
 
 ## Stakeholders
 
-Members borrow equipment. The finance office cares about replacement cost.
+### Member
+
+Members borrow equipment.
+
+### Finance office
+
+The finance office cares about replacement cost.
 
 ## Environment
 
@@ -103,10 +109,15 @@ func TestSystemNarrativeSectionsAndGoals(t *testing.T) {
 	checkSourceText(t, s)
 	d := newDesignResolver(s)
 	sys := designRecord(t, s, "System", "Lending desk")
-	for field, want := range map[string]string{"stakeholders": "finance office", "environment": "intermittent connectivity", "constraints": "seven years"} {
+	for field, want := range map[string]string{"environment": "intermittent connectivity", "constraints": "seven years"} {
 		if !strings.Contains(d.text(sys[field]), want) {
 			t.Errorf("%s narrative lost: %q", field, d.text(sys[field]))
 		}
+	}
+	member := designRecord(t, s, "SystemStakeholderRole", "Member")
+	finance := designRecord(t, s, "SystemStakeholderRole", "Finance office")
+	if !slices.Equal(Strings(sys["stakeholder_roles"]), []string{String(member, "id"), String(finance, "id")}) || member["owner"] != sys["id"] || finance["owner"] != sys["id"] || !strings.Contains(d.text(finance["description"]), "replacement cost") {
+		t.Fatalf("stakeholder roles lost their ownership, order or description: %v %v", member, finance)
 	}
 	goal := designRecord(t, s, "Goal", "Reduce idle equipment")
 	if !slices.Equal(Strings(sys["goals"]), []string{String(goal, "id")}) || sys["goals_content"] != nil || goal["owner"] != sys["id"] {

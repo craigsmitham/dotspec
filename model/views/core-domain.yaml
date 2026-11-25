@@ -26,6 +26,9 @@ types:
   Goal:
   - statement
   - supports
+  SystemStakeholderRole:
+  - owner
+  - description
   Assumption:
   - statement
   - basis
@@ -36,7 +39,7 @@ types:
   - scope
   - goals
   - environment
-  - stakeholders
+  - stakeholder_roles
   - assumptions
   - constraints
   - glossary

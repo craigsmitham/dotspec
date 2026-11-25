@@ -4,13 +4,13 @@ Generated from [the canonical model](../../../model/metamodel.yaml) and [the vie
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.32.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.33.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
 | Subset | Responsibility | Selected types |
 | --- | --- | --- |
-| Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Goal](index.md#goal), [Assumption](index.md#assumption), [System](index.md#system), [BusinessRule](index.md#businessrule), [Applicability](index.md#applicability), [RequirementCriterion](index.md#requirementcriterion), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion) |
+| Business requirements (`core`) | Business objectives, scope, assumptions, and rules governing permissible business activity. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Goal](index.md#goal), [SystemStakeholderRole](index.md#systemstakeholderrole), [Assumption](index.md#assumption), [System](index.md#system), [BusinessRule](index.md#businessrule), [Applicability](index.md#applicability), [RequirementCriterion](index.md#requirementcriterion), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion) |
 | User requirements (`core`) | The progress people seek, their circumstances, work, and desired outcomes. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Job](index.md#job), [JobStep](index.md#jobstep), [DesiredOutcome](index.md#desiredoutcome), [Applicability](index.md#applicability), [RequirementCriterion](index.md#requirementcriterion), [OpenQuestion](index.md#openquestion) |
 | Software requirements (`core`) | Software interactions, concept behavior, requirements, quality classifications and satisfaction criteria. | [DomainElement](index.md#domainelement), [Specification](index.md#specification), [TraceableElement](index.md#traceableelement), [Assumption](index.md#assumption), [System](index.md#system), [UseCase](index.md#usecase), [Scenario](index.md#scenario), [ScenarioStep](index.md#scenariostep), [UseCaseExtension](index.md#usecaseextension), [Concept](index.md#concept), [ConceptUse](index.md#conceptuse), [Synchronization](index.md#synchronization), [ConceptAction](index.md#conceptaction), [Requirement](index.md#requirement), [QualityModel](index.md#qualitymodel), [QualityAttribute](index.md#qualityattribute), [Applicability](index.md#applicability), [RequirementCriterion](index.md#requirementcriterion), [Component](index.md#component), [Feature](index.md#feature), [Capability](index.md#capability), [OpenQuestion](index.md#openquestion), [Interface](index.md#interface) |
 | Specification traceability (`core`) | Explicit connections between specification meaning, authored occurrences, and resolved relationships. | [SourceReference](index.md#sourcereference), [Resolution](index.md#resolution) |
@@ -422,6 +422,17 @@ Subsets: `business-requirements`. [Goal](index.md#goal) contains the complete de
 | `statement` | [RichContent](index.md#richcontent) | optional |  |
 | `supports` | [Goal](index.md#goal) or [Job](index.md#job) or [JobStep](index.md#jobstep) or [DesiredOutcome](index.md#desiredoutcome) or [UseCase](index.md#usecase) | optional; list | Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement. |
 
+### SystemStakeholderRole
+
+A named capacity in which people or organizations have an interest in a particular system.
+
+Subsets: `business-requirements`. [SystemStakeholderRole](index.md#systemstakeholderrole) contains the complete definition.
+
+| Field | Range | Shape | Meaning |
+| --- | --- | --- | --- |
+| `owner` | [System](index.md#system) | required |  |
+| `description` | [RichContent](index.md#richcontent) | optional | What people or organizations in this role care about, depend on, or decide. |
+
 ### Assumption
 
 An explicitly distinguished premise about the environment on which the specification relies; no inferred truth assertion.
@@ -447,7 +458,7 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 | `scope` | [RichContent](index.md#richcontent) | optional | The work, users and situations the system is intended to serve. |
 | `goals` | [Goal](index.md#goal) | optional; ordered list | Explicitly authored goals, in authored order. |
 | `environment` | [RichContent](index.md#richcontent) | optional | Conditions and surroundings the system must accommodate. |
-| `stakeholders` | [RichContent](index.md#richcontent) | optional | People and organizations with an interest in the system, the interests they hold, and sources of requirements; naming them is not endorsement. |
+| `stakeholder_roles` | [SystemStakeholderRole](index.md#systemstakeholderrole) | optional; ordered list | Stakeholder roles declared by this system, in authored order. |
 | `assumptions` | [Assumption](index.md#assumption) | optional; ordered list | Explicitly authored assumptions, in authored order. |
 | `constraints` | [RichContent](index.md#richcontent) | optional | Externally imposed restrictions the system must respect, as narrative. An individually addressable constraint is a Requirement or BusinessRule. |
 | `glossary` | [GlossaryTerm](index.md#glossaryterm) | optional; ordered list | Explicitly named terms, in authored order. |

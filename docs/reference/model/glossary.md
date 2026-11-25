@@ -104,6 +104,16 @@ The system described by a system document; subordinate systems retain their own 
 - Business requirements
 - Software requirements
 
+## System stakeholder role
+
+A named capacity in which people or organizations have an interest in a particular system.
+
+[Model reference](index.md#systemstakeholderrole)
+
+### Topics
+
+- Business requirements
+
 ## Use case
 
 An actor goal and its interactions at a stated system boundary, with alternative paths and protections.

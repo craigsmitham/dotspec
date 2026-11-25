@@ -83,7 +83,7 @@ func runBusinessRule(command, path, slug, format string, out io.Writer) error {
 		return err
 	}
 	if format == "json" {
-		return writeJSON(out, businessruleResult{1, spec})
+		return writeJSON(out, businessruleResult{2, spec})
 	}
 	_, err = fmt.Fprintf(out, "%s\n\nSystem: %s\nSource: %s\n", spec.Markdown, systemLabel(spec.System), displayPath(spec.Path))
 	return err
@@ -94,7 +94,7 @@ func listBusinessRules(path, format string, out io.Writer) error {
 	if err != nil {
 		return err
 	}
-	result := businessRulesResult{1, nonnil(groups)}
+	result := businessRulesResult{2, nonnil(groups)}
 	if format == "json" {
 		return writeJSON(out, result)
 	}

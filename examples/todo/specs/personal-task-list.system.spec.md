@@ -23,7 +23,9 @@ Reduce the effort of working out what still needs attention.
 
 ## Stakeholders
 
-The person who keeps the list also decides which entries can be discarded.
+### List owner
+
+The person who keeps the list relies on it to pick up unfinished errands after an interruption. They decide which entries can be discarded.
 
 ## Scope
 

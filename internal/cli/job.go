@@ -142,7 +142,7 @@ func runJob(command, slug string, options jobOptions, out io.Writer) error {
 	}
 	switch command {
 	case "show":
-		result := jobResult{1, spec}
+		result := jobResult{2, spec}
 		if options.format == "json" {
 			return writeJSON(out, result)
 		}
@@ -191,7 +191,7 @@ func listJobs(path, format string, out io.Writer) error {
 	if err != nil {
 		return err
 	}
-	result := jobsResult{1, nonnil(groups)}
+	result := jobsResult{2, nonnil(groups)}
 	if format == "json" {
 		return writeJSON(out, result)
 	}

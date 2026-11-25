@@ -24,7 +24,12 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 	case "Environment":
 		m.section(r, "environment", s)
 	case "Stakeholders":
-		m.section(r, "stakeholders", s)
+		m.declared(r, "stakeholder_roles", s)
+		for _, child := range s.Children {
+			role := m.named("SystemStakeholderRole", r, child)
+			m.section(role, "description", child)
+			appendID(r, "stakeholder_roles", String(role, "id"))
+		}
 	case "Constraints":
 		// Constraints stay narrative; an addressable constraint is a requirement or business rule.
 		m.section(r, "constraints", s)

@@ -16,7 +16,7 @@ affected by a proposed change before committing it.
 
 ## Primary actor
 
-A contributor preparing a change for review.
+A [contributor](<../dotspec.system.spec-report.md#contributor>) preparing a change for review.
 
 ## Trigger
 
@@ -130,7 +130,7 @@ inside a Git repository.
 
 ## Stakeholder interests
 
-Contributors need actionable findings. Reviewers need an honest account of what
+[Contributors](<../dotspec.system.spec-report.md#contributor>) need actionable findings. [Reviewers](<../dotspec.system.spec-report.md#reviewer>) need an honest account of what
 was inspected. Both need their authored sources preserved.
 
 ## Sequence

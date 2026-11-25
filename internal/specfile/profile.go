@@ -16,7 +16,7 @@ import (
 // Nested headings inside ordinary Markdown fields are local to that prose.
 var headingFields = map[string]string{
 	"Description": "description", "Framing": "framing", "Part of": "part_of", "Purpose": "purpose", "Scope": "scope", "Out of scope": "out_of_scope",
-	"Project references": "project_references", "Environment": "environment", "Stakeholders": "stakeholders", "Constraints": "constraints",
+	"Project references": "project_references", "Environment": "environment", "Stakeholders": "stakeholder_roles", "Constraints": "constraints",
 	"Responsibilities": "responsibilities", "Boundary": "boundary_description", "Contracts": "contracts", "Architecture": "architecture", "Implementation": "implementation",
 	"Interacts with": "interacts_with", "Specification system": "specification_system", "Enablers": "enablers",
 	"Groups": "groups", "Depends on": "depends_on", "Provided by": "provided_by", "Supports": "supports", "Involves": "involves",
@@ -40,8 +40,8 @@ var headingFields = map[string]string{
 }
 
 var collectionKinds = map[string]string{
-	"Adopts": "AdoptedProvision",
-	"Goals":  "Goal", "Assumptions": "Assumption", "Steps": "JobStep", "Outcomes": "DesiredOutcome",
+	"Adopts": "AdoptedProvision", "Stakeholders": "SystemStakeholderRole",
+	"Goals": "Goal", "Assumptions": "Assumption", "Steps": "JobStep", "Outcomes": "DesiredOutcome",
 	"Actions": "ConceptAction", "Required interfaces": "Interface", "Provided interfaces": "Interface",
 	"Quality attributes": "QualityModelAttribute", "Glossary": "GlossaryTerm",
 	"Extensions": "UseCaseExtension", "Concept uses": "ConceptUse", "Synchronizations": "Synchronization",
@@ -153,7 +153,7 @@ func (o *Outline) checkFields(class string, sections []*Section, level int) erro
 				}
 			}
 			// Definitions and goal statements own their subordinate Markdown.
-			if slices.Contains([]string{"QualityModelAttribute", "GlossaryTerm", "Goal"}, member) {
+			if slices.Contains([]string{"QualityModelAttribute", "GlossaryTerm", "Goal", "SystemStakeholderRole"}, member) {
 				continue
 			}
 			if err := o.checkFields(member, child.Children, level+2); err != nil {

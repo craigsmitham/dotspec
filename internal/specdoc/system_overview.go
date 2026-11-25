@@ -33,7 +33,7 @@ func overviewOutline(kind string) []overviewSection {
 		{title: "Framing", level: 2, sources: []string{"framing"}},
 		{title: "Purpose", level: 2, sources: []string{"purpose"}},
 		{title: "Goals", level: 2, sources: []string{"goals"}},
-		{title: "Stakeholders and user needs", leadHeading: "Stakeholders", level: 2, sources: []string{"stakeholders"}},
+		{title: "Stakeholders", level: 2, sources: []string{"stakeholder_roles"}},
 		{title: "Responsibilities", level: 2, sources: []string{"responsibilities"}},
 		{title: scopeTitle, leadHeading: "Scope", level: 2, sources: []string{"scope", "boundary_description", "out_of_scope", "environment", "assumptions", "constraints"}},
 		{title: "System topology", level: 2, sources: []string{"part_of", "interacts_with", "required_interfaces", "provided_interfaces"}},

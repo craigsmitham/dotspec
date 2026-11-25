@@ -83,7 +83,7 @@ func runConcept(command, path, slug, format string, out io.Writer) error {
 		return err
 	}
 	if format == "json" {
-		return writeJSON(out, conceptResult{1, spec})
+		return writeJSON(out, conceptResult{2, spec})
 	}
 	_, err = fmt.Fprintf(out, "%s\n\nSystem: %s\nSource: %s\n", spec.Markdown, systemLabel(spec.System), displayPath(spec.Path))
 	return err
@@ -94,7 +94,7 @@ func listConcepts(path, format string, out io.Writer) error {
 	if err != nil {
 		return err
 	}
-	result := conceptsResult{1, nonnil(groups)}
+	result := conceptsResult{2, nonnil(groups)}
 	if format == "json" {
 		return writeJSON(out, result)
 	}

@@ -23,7 +23,9 @@ Use `--project` to select a project or `--all` to export a workspace envelope. E
 
 A specification declares its subject through its frontmatter type and title. Systems, components, jobs, use cases, concepts, requirements, business rules, system quality attributes, features and capabilities each have their own specification type. A named item such as an interface, job step or desired outcome identifies its declaring owner. Each subject report type identifies the subject it documents.
 
-Model `0.32.0-draft` uses mapping profile `dotspec-markdown/26`. A reusable quality model is a reference document. Export records its type in `scope.selected_reference_types` and specification types in `scope.selected_spec_types`. To migrate a model, rename `<slug>.quality-model.spec.md` to `<slug>.quality-model.md`, set `type: quality-model`, and update citations. Re-export saved snapshots and rebuild the reports. [Markdown mapping](../../model/markdown-mapping.md)
+Model `0.33.0-draft` uses mapping profile `dotspec-markdown/27`. The System now lists named `SystemStakeholderRole` records in `stakeholder_roles`. Migrate prose under `## Stakeholders` to a level-three heading for each role, then re-export and rebuild. The JSON results for `system show` and `system list` use schema version 2 and expose role names and descriptions.
+
+A reusable quality model is a reference document. Export records its type in `scope.selected_reference_types` and specification types in `scope.selected_spec_types`. To migrate a model, rename `<slug>.quality-model.spec.md` to `<slug>.quality-model.md`, set `type: quality-model`, and update citations. Re-export saved snapshots and rebuild the reports. [Markdown mapping](../../model/markdown-mapping.md)
 
 ## Read one product specification
 

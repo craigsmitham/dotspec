@@ -185,7 +185,7 @@ def spec_journey(cli, tmp):
     assert all(target != entry for page in (project / "specification").rglob("*.md")
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")
-    sections = ["Framing", "Purpose", "Goals", "Stakeholders and user needs", "Scope and environment", "System topology",
+    sections = ["Framing", "Purpose", "Goals", "Stakeholders", "Scope and environment", "System topology",
                 "Features", "Concepts", "Quality Attributes"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
     navigation = overview.split("\n## Framing\n", 1)[0]
@@ -288,7 +288,11 @@ def spec_journey(cli, tmp):
     assert follow(component, "Acknowledge after commit") == acknowledgement
     statement = acknowledgement.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
     assert component_requirements.read_text(encoding="utf-8").count(statement) == 1
-    assert "## Goal" in follow(feature, "Decide what to do about a waiting errand").read_text(encoding="utf-8")
+    use_case = follow(feature, "Decide what to do about a waiting errand")
+    assert "## Goal" in use_case.read_text(encoding="utf-8")
+    assert any(label == "The person who promised to get the errand done" and target == root
+               and fragment == "list-owner" for label, target, fragment, _ in markdown_links(use_case))
+    assert "## Stakeholders\n\n### List owner\n" in overview
     qualities = follow(root, "Durability")
     qualities_index = follow(qualities, "Quality attributes")
     quality_section = overview.split("\n## Quality Attributes\n", 1)[1].split("\n## ", 1)[0]

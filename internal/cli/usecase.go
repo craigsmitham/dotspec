@@ -93,7 +93,7 @@ func runUseCase(command, path, slug, format, template string, out io.Writer) err
 		return err
 	}
 	if format == "json" {
-		return writeJSON(out, useCaseResult{1, spec})
+		return writeJSON(out, useCaseResult{2, spec})
 	}
 	_, err = fmt.Fprintf(out, "%s\n\nSystem: %s\nSource: %s\n", spec.Markdown, systemLabel(spec.System), displayPath(spec.Path))
 	return err
@@ -104,7 +104,7 @@ func listUseCases(path, format string, overview bool, out io.Writer) error {
 	if err != nil {
 		return err
 	}
-	result := useCasesResult{1, nonnil(groups)}
+	result := useCasesResult{2, nonnil(groups)}
 	if format == "json" {
 		return writeJSON(out, result)
 	}

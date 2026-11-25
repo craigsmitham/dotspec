@@ -56,7 +56,7 @@ Expand **On this page** to jump to a section in reading order. Expand **Browse s
 | Purpose | The system’s authored purpose |
 | Goals | Authored goals. Select a named goal to read its full statement and see which specifications support it. |
 | Business rules | **Business rules** opens the index of applicable and local rules. |
-| Stakeholders and user needs | Who has an interest in the system, their authored needs and the jobs index |
+| Stakeholders | Named stakeholder roles in source order, each with its description and a heading that jobs and use cases can link to |
 | Scope and environment | The work the system covers, explicit exclusions, operating conditions, assumptions and constraints |
 | System topology | Immediate parts, boundary partners, and required or provided interfaces, with a Mermaid diagram and linked descriptions |
 | Features | Product features and their authored descriptions |

@@ -172,7 +172,7 @@ dotspec use-case show check-specifications --json
 
 ````text
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "use_case": {
     "slug": "check-specifications",
     "name": "New use case",
@@ -318,7 +318,7 @@ dotspec concept show job-map --json
 
 ````text
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "concept": {
     "slug": "job-map",
     "name": "New concept",
@@ -396,7 +396,7 @@ dotspec requirement show diagnostic-severity --json
 
 ````text
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "requirement": {
     "slug": "diagnostic-severity",
     "name": "New quality requirement",
@@ -482,7 +482,7 @@ dotspec requirement show reject-existing-target --json
 
 ````text
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "requirement": {
     "slug": "reject-existing-target",
     "name": "New requirement",
@@ -524,7 +524,7 @@ dotspec requirement list --json
 
 ````text
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "groups": [
     {
       "system": {

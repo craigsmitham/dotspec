@@ -207,8 +207,7 @@ accepts `--format mermaid` and emits standalone diagram source. Redirecting outp
 does not change its format. JSON, Mermaid, and redirected output contain no ANSI
 styling. `NO_COLOR` disables terminal styling, including help and errors.
 
-The JSON results below use `schema_version: 1` except for `job outcome list` and
-`job map`, which use version 2. Check results use the report documented above.
+Show and list results that include a System object use `schema_version: 2`. Each System exposes its named roles in `stakeholder_roles`, with a `name` and authored `description` per entry. This applies to system, job, use-case, concept, requirement and business-rule show and list commands. The job outcome list and map also use version 2. The init commands, sources and job step list use version 1. Check results use the report documented above.
 
 | Command | Result fields |
 | --- | --- |

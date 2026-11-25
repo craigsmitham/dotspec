@@ -15,7 +15,7 @@ Decide whether to take up a waiting errand, keep waiting or mark it settled, and
 
 ## Primary actor
 
-The person who promised to get the errand done.
+[The person who promised to get the errand done](<../personal-task-list.system.spec-report.md#list-owner>).
 
 ## Preconditions
 

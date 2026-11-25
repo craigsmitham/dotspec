@@ -8,9 +8,9 @@ import (
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
-const ModelVersion = "0.32.0-draft"
+const ModelVersion = "0.33.0-draft"
 const RepresentationVersion = "0.4.0"
-const MappingProfile = "dotspec-markdown/26"
+const MappingProfile = "dotspec-markdown/27"
 
 // Record is a schema-validated tagged record or an embedded model value.
 // Values remain JSON-compatible and are never decoded through a base class

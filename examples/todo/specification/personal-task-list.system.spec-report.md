@@ -13,7 +13,7 @@ A personal list of errands the owner can act on, replies they are waiting for an
 - [Framing](<#framing>)
 - [Purpose](<#purpose>)
 - [Goals](<#goals>)
-- [Stakeholders and user needs](<#stakeholders-and-user-needs>)
+- [Stakeholders](<#stakeholders>)
 - [Scope and environment](<#scope-and-environment>)
 - [System topology](<#system-topology>)
 - [Features](<#features>)
@@ -53,9 +53,15 @@ Help one person pick up an errand after an interruption and recognize when to ch
 
 - [Resume unfinished work](<goals.md#resume-unfinished-work>) — Reduce the effort of working out what still needs attention.
 
-## Stakeholders and user needs
+## Stakeholders
 
-The person who keeps the list also decides which entries can be discarded.
+### List owner
+
+<!-- dotspec-doc {"type":"system-stakeholder-role-spec-report","documents":"../specs/personal-task-list.system.spec.md#list-owner"} -->
+
+The person who keeps the list relies on it to pick up unfinished errands after an interruption. They decide which entries can be discarded.
+
+[View section source](<../specs/personal-task-list.system.spec.md#list-owner>)
 
 ## Scope and environment
 

@@ -334,7 +334,7 @@ def glossary_markdown(catalog: dict[str, Any]) -> bytes:
         "Business rule": "BusinessRule", "Capability": "Capability", "Component": "Component",
         "Concept": "Concept", "Feature": "Feature", "Job": "Job",
         "Quality attribute": "QualityAttribute", "Requirement": "Requirement", "System": "System",
-        "Use case": "UseCase",
+        "System stakeholder role": "SystemStakeholderRole", "Use case": "UseCase",
     }
     lines = ["# Dotspec model glossary", "",
              "Generated from the [metamodel](../../../model/metamodel.yaml).", ""]

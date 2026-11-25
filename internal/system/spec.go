@@ -37,6 +37,11 @@ Describe why this system exists and whom it serves.
 Describe the system's boundary and what it includes.
 `
 
+type StakeholderRole struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
 type System struct {
 	Description string `json:"description,omitempty"`
 	Framing     string `json:"framing,omitempty"`
@@ -57,7 +62,7 @@ type System struct {
 	Scope              string                      `json:"scope"`
 	Goals              string                      `json:"goals,omitempty"`
 	Environment        string                      `json:"environment,omitempty"`
-	Stakeholders       string                      `json:"stakeholders,omitempty"`
+	StakeholderRoles   []StakeholderRole           `json:"stakeholder_roles,omitempty"`
 	Assumptions        string                      `json:"assumptions,omitempty"`
 	Constraints        string                      `json:"constraints,omitempty"`
 	GlossarySources    []string                    `json:"glossary_sources,omitempty"`
@@ -114,7 +119,7 @@ func ParseMarkdown(input *specfile.Markdown) (*System, error) {
 		return nil, err
 	}
 	spec := &System{Name: doc.Name, ID: meta.ID, GlossarySources: meta.GlossarySources}
-	fields := map[string]*string{"Description": &spec.Description, "Framing": &spec.Framing, "Out of scope": &spec.OutOfScope, "Interacts with": &spec.InteractsWith, "Required interfaces": &spec.RequiredInterfaces, "Provided interfaces": &spec.ProvidedInterfaces, "Project references": &spec.ProjectReferences, "Components": &spec.Components, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Stakeholders": &spec.Stakeholders, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
+	fields := map[string]*string{"Description": &spec.Description, "Framing": &spec.Framing, "Out of scope": &spec.OutOfScope, "Interacts with": &spec.InteractsWith, "Required interfaces": &spec.RequiredInterfaces, "Provided interfaces": &spec.ProvidedInterfaces, "Project references": &spec.ProjectReferences, "Components": &spec.Components, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
 	locations := make(map[string]diagnostic.Location)
 	var ids specfile.Identifiers
 	if err := ids.Register(meta.ID, "system", input.MetadataLocation("id")); err != nil {
@@ -130,23 +135,26 @@ func ParseMarkdown(input *specfile.Markdown) (*System, error) {
 		if err := rejectInlineSubject(doc, section); err != nil {
 			return nil, err
 		}
-		if section.Level != 2 {
-			if _, known := fields[section.Title]; known || section.Title == "Quality attributes" {
-				return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), doc.Location(section.Start, section.Title))
-			}
-			continue
-		}
 		target, known := fields[section.Title]
-		if !known && section.Title != "Quality attributes" {
+		if !known && section.Title != "Quality attributes" && section.Title != "Stakeholders" {
 			continue
 		}
 		location := doc.Location(section.Start, section.Title)
+		if section.Level != 2 {
+			return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), location)
+		}
 		if previous, exists := locations[section.Title]; exists {
 			return nil, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", section.Title), location, previous)
 		}
 		locations[section.Title] = location
 		if known {
 			*target = doc.Body(section)
+			continue
+		}
+		if section.Title == "Stakeholders" {
+			for _, role := range section.Children {
+				spec.StakeholderRoles = append(spec.StakeholderRoles, StakeholderRole{Name: role.Title, Description: doc.Body(role)})
+			}
 			continue
 		}
 		if len(section.Children) > 0 {

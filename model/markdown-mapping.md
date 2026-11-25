@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/26` maps authored declarations to the classes and fields in the [model reference](../docs/reference/model/index.md). A `*.<kind>.spec.md` file declares one specification root with `type: <kind>-spec` and names it in the level-one heading. The root owns its nested elements. A reusable quality model is an independent reference root in `*.quality-model.md` with `type: quality-model`. Each named attribute in that file belongs to the model. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
+`dotspec-markdown/27` maps authored declarations to the classes and fields in the [model reference](../docs/reference/model/index.md). A `*.<kind>.spec.md` file declares one specification root with `type: <kind>-spec` and names it in the level-one heading. The root owns its nested elements. A reusable quality model is an independent reference root in `*.quality-model.md` with `type: quality-model`. Each named attribute in that file belongs to the model. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
 
 ## Shared mapping rules
 
@@ -10,7 +10,9 @@ Omitting a narrative field leaves it absent. An explicitly empty field has an em
 
 ## System
 
-The optional `## Framing` section maps to `System.framing` and preserves authored Markdown, including local subheadings. Purpose, scope, environment, stakeholders and constraints hold authored Markdown. The Project references section maps to `System.project_references`: its content preserves the explanation and its references identify the cited project records. Goals, assumptions, interfaces, concept uses, synchronizations and inline glossary terms have named entries. Declare a system quality attribute in its own specification under the system’s quality directory. A reusable quality model declares its attributes by name under Quality attributes.
+The optional `## Framing` section maps to `System.framing` and preserves authored Markdown, including local subheadings. Purpose, scope, environment and constraints hold authored Markdown. The Project references section maps to `System.project_references`: its content preserves the explanation and its references identify the cited project records. Goals, assumptions, interfaces, concept uses, synchronizations and inline glossary terms have named entries. Declare a system quality attribute in its own specification under the system’s quality directory. A reusable quality model declares its attributes by name under Quality attributes.
+
+Under `## Stakeholders`, each level-three heading declares one `SystemStakeholderRole` owned by the System. The heading supplies its name and Markdown anchor. Its body supplies the rich-text `description`. The System lists the roles in `stakeholder_roles` in source order. Link to a role’s heading from the passage where the relationship matters.
 
 ## Job
 
