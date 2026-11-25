@@ -139,7 +139,7 @@ func (p *planner) indexOpenQuestions() {
 
 // A collection heading whose children all have their own reports belongs to
 // the directory. Route citations to its authored fragment there.
-func (p *planner) planPassages(s *subject) {
+func (p *planner) planPassages(s *subject, omitEmpty map[string]bool) [][]*heading {
 	var groups [][]*heading
 	for _, h := range s.source.headings {
 		if h.owner != s || h.inGlossary {
@@ -152,15 +152,10 @@ func (p *planner) planPassages(s *subject) {
 			groups[i] = append(groups[i], h)
 		}
 	}
+	var passages [][]*heading
 	for _, group := range groups {
 		h := group[0]
-		field, _, _ := strings.Cut(h.field, ".")
-		field = strings.TrimSuffix(field, "_content")
-		omitEmpty := s.kind() == "System" && slices.Contains(systemContextFields, field)
-		if s.isOverview() && (field == "architecture" || field == "part_of" || field == "interacts_with") {
-			omitEmpty = true
-		}
-		if omitEmpty && !slices.ContainsFunc(group, func(part *heading) bool {
+		if omitEmpty[h.overviewField()] && !slices.ContainsFunc(group, func(part *heading) bool {
 			return part.subjectKind != "" || needsHeadingAnchor(s, part) || strings.TrimSpace(s.source.data[part.end:part.bodyEnd]) != ""
 		}) {
 			for _, part := range group {
@@ -181,8 +176,9 @@ func (p *planner) planPassages(s *subject) {
 				continue
 			}
 		}
-		s.passages = append(s.passages, group)
+		passages = append(passages, group)
 	}
+	return passages
 }
 
 // Authored links can still reach an empty heading omitted from the overview.

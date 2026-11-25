@@ -42,19 +42,26 @@ func navGroup(label string, sections ...overviewSection) []overviewSection {
 	return sections
 }
 
-var systemContextFields = []string{"scope", "out_of_scope", "environment", "assumptions", "constraints"}
-
 func systemOutline(architecture []overviewSection) []overviewSection {
 	sections := []overviewSection{overviewLead}
 	sections = append(sections, navGroup("Intent", framing, purpose, goals, stakeholders, overviewDirectory("Jobs"))...)
 	var context []overviewSection
-	for _, field := range systemContextFields {
-		level := 2
-		if field == "out_of_scope" {
-			level = 3
+	// A top-level field travels with its subsections when the reading order changes.
+	contextFields := [][]string{
+		{"scope", "out_of_scope"},
+		{"environment"},
+		{"assumptions"},
+		{"constraints"},
+	}
+	for _, fields := range contextFields {
+		for i, field := range fields {
+			level := 2
+			if i > 0 {
+				level = 3
+			}
+			title := sentenceCase(strings.ReplaceAll(field, "_", " "))
+			context = append(context, overviewSection{title: title, level: level, sources: []string{field}, omitEmptyPassages: true})
 		}
-		title := sentenceCase(strings.ReplaceAll(field, "_", " "))
-		context = append(context, overviewSection{title: title, level: level, sources: []string{field}})
 	}
 	context = append(context, overviewDirectory("Business rules"))
 	sections = append(sections, navGroup("Context", context...)...)

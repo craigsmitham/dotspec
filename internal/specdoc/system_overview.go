@@ -11,15 +11,21 @@ import (
 // Each authored passage has one home in the overview. The same outline drives
 // rendering, source content order, fragment allocation and the navigation map.
 type overviewSection struct {
-	group         string // optional label in the system section map
-	collection    string // type of specification listed in this section
-	title, anchor string
-	directory     *collectionIndex // complete index rendered in this overview
-	level         int
-	sources       []string
-	passages      [][]*heading
-	diagram       string
-	hasBody       bool
+	group             string // optional label in the system section map
+	collection        string // type of specification listed in this section
+	title, anchor     string
+	directory         *collectionIndex // complete index rendered in this overview
+	level             int
+	sources           []string
+	passages          [][]*heading
+	diagram           string
+	hasBody           bool
+	omitEmptyPassages bool
+}
+
+func (h *heading) overviewField() string {
+	field, _, _ := strings.Cut(h.field, ".")
+	return strings.TrimSuffix(field, "_content")
 }
 
 func (p *planner) planOverview(s *subject) []overviewSection {
@@ -31,14 +37,21 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 		sections = componentOutline(architecture)
 	}
 	sections = append(sections, overviewReferences...)
+	omitEmpty := map[string]bool{}
+	for _, section := range sections {
+		if section.omitEmptyPassages {
+			for _, field := range section.sources {
+				omitEmpty[field] = true
+			}
+		}
+	}
 	groups := map[string][][]*heading{}
-	for _, passage := range s.passages {
+	for _, passage := range p.planPassages(s, omitEmpty) {
 		h := passage[0]
 		if h == s.name {
 			sections[0].passages = append(sections[0].passages, passage)
 		} else {
-			field, _, _ := strings.Cut(h.field, ".")
-			field = strings.TrimSuffix(field, "_content")
+			field := h.overviewField()
 			groups[field] = append(groups[field], passage)
 		}
 	}

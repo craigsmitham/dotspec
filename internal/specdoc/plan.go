@@ -504,11 +504,11 @@ func (p *planner) indexTargets() {
 		if s.kind() == "System" {
 			p.planGlossary(s)
 		}
-		p.planPassages(s)
 		p.indexDetailHeadings(s)
 		if s.isOverview() {
 			continue
 		}
+		s.passages = p.planPassages(s, nil)
 		ids := parser.NewContext().IDs()
 		for _, h := range readingOrder(s) {
 			if h.owner != s || h.detailEntry != nil {

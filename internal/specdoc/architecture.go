@@ -104,8 +104,8 @@ func (v architectureView) diagram(structure, boundary bool) string {
 
 func (v architectureView) sections() []overviewSection {
 	sections := []overviewSection{
-		{title: "Architecture", level: 2, sources: []string{"architecture"}},
-		{title: "Part of", level: 3, sources: []string{"part_of"}},
+		{title: "Architecture", level: 2, sources: []string{"architecture"}, omitEmptyPassages: true},
+		{title: "Part of", level: 3, sources: []string{"part_of"}, omitEmptyPassages: true},
 	}
 	hasParts := len(v.components)+len(v.subsystems) > 0
 	kind := v.owner.kind()
@@ -130,6 +130,6 @@ func (v architectureView) sections() []overviewSection {
 		overviewSection{title: "Subsystems", collection: "Systems", level: 3},
 		overviewSection{title: "Components", collection: "Components", level: 3},
 		overviewSection{title: "Interfaces", collection: "Interfaces", level: 3, sources: []string{"provided_interfaces", "required_interfaces"}},
-		overviewSection{title: "Interactions", level: 3, sources: []string{"interacts_with"}},
+		overviewSection{title: "Interactions", level: 3, sources: []string{"interacts_with"}, omitEmptyPassages: true},
 	)
 }
