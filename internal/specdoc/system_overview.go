@@ -37,7 +37,11 @@ func overviewOutline(kind string) []overviewSection {
 	if kind == "System" {
 		for _, field := range systemContextFields {
 			title := sentenceCase(strings.ReplaceAll(field, "_", " "))
-			sections = append(sections, overviewSection{title: title, level: 2, sources: []string{field}})
+			level := 2
+			if field == "out_of_scope" {
+				level = 3
+			}
+			sections = append(sections, overviewSection{title: title, level: level, sources: []string{field}})
 		}
 	} else {
 		sections = append(sections, overviewSection{title: "Scope", level: 2, sources: []string{"boundary_description", "out_of_scope"}})

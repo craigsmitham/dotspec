@@ -461,6 +461,18 @@ func TestSystemContextSectionsStandAlone(t *testing.T) {
 		!strings.Contains(page, "## Constraints\n\nThe archive agreement requires local storage.") {
 		t.Fatal(page)
 	}
+
+	writeFixture(t, source, system+"\n## Out of scope\nSharing notes.\n\n### Exports\nPrinting is excluded.\n")
+	writeFixture(t, promise, "---\ntype: requirement-spec\n---\n# Read notes\n\n## Statement\nSee [exclusions](../notes.system.spec.md#out-of-scope).\n")
+	page = build()
+	if !strings.Contains(page, "## Scope\n\n### Out of scope\n\nSharing notes.\n\n#### Exports\n\nPrinting is excluded.") ||
+		strings.Count(page, "[Scope](<#scope>)") != 1 || strings.Contains(page, "[Out of scope](<#") {
+		t.Fatal(page)
+	}
+	data, err = os.ReadFile("specification/requirements/read-notes.requirement.spec-report.md")
+	if err != nil || !strings.Contains(string(data), "[exclusions](<../notes.system.spec-report.md#out-of-scope>)") {
+		t.Fatalf("exclusions citation: %s, %v", data, err)
+	}
 }
 
 func TestNamedOverviewEntriesKeepScopedDetailAndLinks(t *testing.T) {
