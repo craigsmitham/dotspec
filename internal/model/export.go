@@ -49,17 +49,17 @@ func Export(path string, types ...check.Type) (ExportResult, error) {
 		return ExportResult{}, err
 	}
 	inspection := check.InspectSources(dir, types...)
-	return ExportInspection(inspection, types...), nil
+	return ExportInspection(inspection), nil
 }
 
 // ExportInspection maps a previously inspected project's precise discovery result.
-func ExportInspection(inspection check.Inventory, types ...check.Type) ExportResult {
+func ExportInspection(inspection check.Inventory) ExportResult {
 	report := inspection.Report
 	dir := report.Scope.Path
 	repo := inspection.Repository
-	kinds := make([]string, 0, len(types))
+	kinds := make([]string, 0, len(inspection.Types))
 	var references []string
-	for _, kind := range types {
+	for _, kind := range inspection.Types {
 		tag := specfile.AuthoredType(kind.Layout.Kind)
 		if slices.Contains(compiledModel().catalog.Enums["ReferenceType"], tag) {
 			references = append(references, tag)
@@ -78,7 +78,7 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 		scope["selected_reference_types"] = references
 	}
 	b := &snapshotBuilder{inputs: inspection.Sources,
-		snapshot: NewSnapshot(scope), types: types, byPath: map[string]*ParsedDocument{},
+		snapshot: NewSnapshot(scope), types: inspection.Types, byPath: map[string]*ParsedDocument{},
 		sources: map[string]Record{}, elements: map[string]Record{}, rootByPath: map[string]string{},
 		primary: map[string]bool{}, follow: map[string]bool{}, contextPath: map[string]string{}, contextOK: map[string]bool{},
 		directorySystem: map[string]string{}, attributeOwners: map[string]string{}, glossaries: map[string]map[string]bool{},
@@ -105,7 +105,7 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 	// Resolve context once for each selected specification owner. Referenced
 	// documents do not recursively expand their own context or outgoing links.
 	for _, path := range sortedKeys(b.primary) {
-		kind := b.kind(path)
+		kind := check.MatchType(path, b.types)
 		if kind == nil || kind.Context == nil {
 			b.contextOK[path] = true
 			continue
@@ -226,15 +226,6 @@ func (b *snapshotBuilder) next(prefix string) string {
 	return fmt.Sprintf("%s:%d", prefix, b.sequence)
 }
 
-func (b *snapshotBuilder) kind(path string) *check.Type {
-	for i := range b.types {
-		if b.types[i].Layout.Match(path) {
-			return &b.types[i]
-		}
-	}
-	return nil
-}
-
 func (b *snapshotBuilder) load(path string) Record {
 	if source := b.sources[path]; source != nil {
 		return source
@@ -248,7 +239,7 @@ func (b *snapshotBuilder) load(path string) Record {
 		b.addError("scan.read", err, path)
 		return source
 	}
-	kind := b.kind(path)
+	kind := check.MatchType(path, b.types)
 	ext := strings.ToLower(filepath.Ext(path))
 	if kind == nil && ext != ".md" && ext != ".markdown" {
 		source := sourceRecord(path)

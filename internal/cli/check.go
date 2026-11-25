@@ -34,10 +34,8 @@ func newCheckCommand() *cobra.Command {
 			}
 			if len(args) > 0 {
 				types := supportedTypes()
-				for _, kind := range types {
-					if kind.Layout.Match(args[0]) {
-						return emitCheckReport(cmd.OutOrStdout(), check.Focused(path, args[0], kind, types...), format)
-					}
+				if kind := check.MatchType(args[0], types); kind != nil {
+					return emitCheckReport(cmd.OutOrStdout(), check.Focused(path, args[0], *kind, types...), format)
 				}
 				return fmt.Errorf("unknown source document type: %s", args[0])
 			}

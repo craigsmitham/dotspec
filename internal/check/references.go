@@ -57,7 +57,7 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 			return result.doc, result.err
 		}
 		var result loaded
-		if kind := findType(path, types); kind != nil && kind.References != nil {
+		if kind := MatchType(path, types); kind != nil && kind.References != nil {
 			result.doc, result.err = kind.References(r.sources, path)
 		} else {
 			var md *specfile.Markdown
@@ -77,7 +77,7 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 		if visited[source] || failed[source] {
 			continue
 		}
-		kind := findType(source, types)
+		kind := MatchType(source, types)
 		if !glossaries[source] && (kind == nil || kind.References == nil) {
 			continue
 		}
@@ -149,7 +149,7 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 				glossaries[target] = true
 				sources = append(sources, target)
 			}
-			targetKind := findType(target, types)
+			targetKind := MatchType(target, types)
 			markdown := strings.EqualFold(filepath.Ext(target), ".md") || strings.EqualFold(filepath.Ext(target), ".markdown")
 			// Native non-Markdown formats own their fragment semantics.
 			if targetKind == nil && (!markdown || u.Fragment == "") {

@@ -49,6 +49,7 @@ func Sources(path string, types ...Type) SourceReport {
 // Inventory retains the observed project boundary, selected specs and source report
 // for subsequent model mapping without a second discovery or source check.
 type Inventory struct {
+	Types             []Type
 	Sources           *specfile.SourceSet
 	Report            Report
 	Files             []SourceFile
@@ -58,8 +59,8 @@ type Inventory struct {
 }
 
 func InspectSources(path string, types ...Type) Inventory {
-	result := Inventory{Files: []SourceFile{}}
-	result.Report = project(path, &result, types...)
+	result := Inventory{Types: slices.Clone(types), Files: []SourceFile{}}
+	result.Report = project(path, &result, result.Types...)
 	for _, file := range result.Report.files {
 		sort.Slice(file.ReferencedBy, func(i, j int) bool {
 			a, b := file.ReferencedBy[i], file.ReferencedBy[j]

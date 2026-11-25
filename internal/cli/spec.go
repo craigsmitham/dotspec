@@ -89,15 +89,14 @@ func inspectProject(path string) check.Report {
 }
 
 func planSpec(root string) (*specdoc.Plan, check.Report) {
-	types := supportedTypes()
-	inventory := check.InspectSources(root, types...)
+	inventory := check.InspectSources(root, supportedTypes()...)
 	report := inventory.Report
 	report.GeneratedSpec = "blocked-by-source"
 	if report.ExitCode() != 0 {
 		return nil, report
 	}
 
-	exported := model.ExportInspection(inventory, types...)
+	exported := model.ExportInspection(inventory)
 	if exported.ExitCode != 0 {
 		report.Complete = exported.ExitCode != 2
 		return nil, report.WithFindings(modelErrors(exported.Snapshot, root)...)

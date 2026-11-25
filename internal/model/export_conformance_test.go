@@ -267,9 +267,28 @@ func TestExportUsesTheSourceAcquiredDuringInspection(t *testing.T) {
 	conformanceWrite(t, root, path, initial)
 	inspection := check.InspectSources(root, conformanceTypes()...)
 	conformanceWrite(t, root, path, strings.ReplaceAll(initial, "Save the record.", "Save its revision."))
-	first := ExportInspection(inspection, conformanceTypes()...).Snapshot
+	first := ExportInspection(inspection).Snapshot
 	next := conformanceExport(t, root).Snapshot
 	if first.Sources[0]["markdown"] != initial || next.Sources[0]["markdown"] == initial {
 		t.Fatal("an inspection must use one source revision throughout check and export")
+	}
+}
+
+func TestExportUsesTheTypesSelectedForInspection(t *testing.T) {
+	root := t.TempDir()
+	conformanceWrite(t, root, "specs/jobs/find.job.spec.md", "---\ntype: job-spec\n---\n# Find\n")
+	conformanceWrite(t, root, "specs/requirements/save.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Save\n")
+	types := []check.Type{job.CheckType()}
+	inspection := check.InspectSources(root, types...)
+
+	// Reuse the caller's slice for a different selection before exporting.
+	types[0] = requirement.CheckType()
+	snapshot := ExportInspection(inspection).Snapshot
+	selected := Strings(snapshot.Scope["selected_spec_types"])
+	if len(selected) != 1 || selected[0] != "job-spec" {
+		t.Fatalf("exported scope: %v", selected)
+	}
+	if len(snapshot.Elements) != 1 || snapshot.Elements[0]["kind"] != "Job" {
+		t.Fatalf("exported subjects: %v", snapshot.Elements)
 	}
 }

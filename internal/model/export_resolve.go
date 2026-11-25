@@ -243,7 +243,7 @@ func (b *snapshotBuilder) resolveLabels() {
 		if _, explicit := b.elements[b.rootByPath[path]]["specification_system_content"]; !explicit && (b.primary[path] || b.contextOK[path]) {
 			continue
 		}
-		kind := b.kind(path)
+		kind := check.MatchType(path, b.types)
 		if kind == nil || kind.Context == nil {
 			continue
 		}

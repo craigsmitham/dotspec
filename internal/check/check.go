@@ -61,7 +61,7 @@ func project(path string, inventory *Inventory, types ...Type) Report {
 		r.files = make(map[string]*SourceFile)
 		inventory.Sources = r.sources
 	}
-	match := func(name string) bool { return findType(name, types) != nil }
+	match := func(name string) bool { return MatchType(name, types) != nil }
 	dir, err := specfile.Directory(path)
 	if err != nil {
 		r.Complete = false
@@ -96,7 +96,7 @@ func project(path string, inventory *Inventory, types ...Type) Report {
 		r.collectFile(path, nil)
 		discovered[path] = true
 		r.Summary.FilesChecked++
-		kind := findType(path, types) // Discovery returned only matching paths.
+		kind := MatchType(path, types) // Discovery returned only matching paths.
 		findings, err := kind.Inspect(r.sources, path)
 		if err != nil {
 			r.record(err, "scan.read", path)
@@ -114,7 +114,8 @@ func project(path string, inventory *Inventory, types ...Type) Report {
 	return r.finish()
 }
 
-func findType(path string, types []Type) *Type {
+// MatchType returns the first registered layout that recognizes the source path.
+func MatchType(path string, types []Type) *Type {
 	for i := range types {
 		if types[i].Layout.Match(path) {
 			return &types[i]
