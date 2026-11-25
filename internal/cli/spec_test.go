@@ -162,6 +162,26 @@ type: component-spec
 ## Part of
 [Intake](../../intake/specs/intake.component.spec.md).
 `)
+	const journalSpecs = "worker/queues/components/journal/specs"
+	writeFixture(t, filepath.Join(root, journalSpecs, "capabilities/audit.capability.spec.md"), `---
+type: capability-spec
+---
+# Audit
+
+## Description
+Inspect pending | accepted jobs.
+`)
+	writeFixture(t, filepath.Join(root, grandchild, "capabilities/retry.capability.spec.md"), `---
+type: capability-spec
+---
+# Retry
+
+## Description
+Resume an interrupted job.
+
+## Provided by
+[Journal](../../components/journal/specs/journal.component.spec.md) and [Intake](../../components/intake/specs/intake.component.spec.md).
+`)
 	writeFixture(t, filepath.Join(root, grandchild, "requirements/retain.requirement.spec.md"), `---
 type: requirement-spec
 quality_attributes: [availability]
@@ -210,6 +230,27 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 		"[Which outages count?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>) — Availability",
 		"[How is uptime measured?](<systems/worker/systems/queue/quality/availability/availability.quality-attribute.spec-report.md#open-questions>) — Availability")
 	intake := section + "components/intake/"
+	const journal = "components/intake/components/journal/"
+	reader(section+"queue.system.spec-report.md",
+		"| [Audit](<"+journal+"capabilities/audit.capability.spec-report.md>) | Inspect pending &#124; accepted jobs. |  |",
+		"| [Retry](<capabilities/retry.capability.spec-report.md>) | Resume an interrupted job. | [Intake](<components/intake/intake.component.spec-report.md>) · [Journal](<"+journal+"journal.component.spec-report.md>) |")
+	reader(section+journal+"capabilities/audit.capability.spec-report.md", "[Capabilities](<../../../../../queue.system.spec-report.md#capabilities>)")
+	reader(intake+"intake.component.spec-report.md", "[Audit](<components/journal/capabilities/audit.capability.spec-report.md>)", "[Retry](<../../capabilities/retry.capability.spec-report.md>)")
+	for _, path := range []string{section + "queue.system.spec-report.md", "specification/systems/worker/worker.system.spec-report.md"} {
+		data, err := os.ReadFile(filepath.Join(root, path))
+		if err != nil {
+			t.Fatal(err)
+		}
+		want := 0
+		if strings.HasPrefix(path, section) {
+			want = 1
+		}
+		for _, label := range []string{"Audit", "Retry"} {
+			if got := strings.Count(string(data), "| ["+label+"]"); got != want {
+				t.Fatalf("%s has %d rows for %s, want %d", path, got, label, want)
+			}
+		}
+	}
 	reader(intake+"components/journal/journal.component.spec-report.md", "../../intake.component.spec-report.md", "[Requirements](<requirements.md>)")
 	reader(intake+"components/journal/requirements.md", "## Applicable requirements\n\n- [Retain jobs](<../../../../requirements/retain-jobs.requirement.spec-report.md>)")
 	reader(intake+"intake.component.spec-report.md", "## Architecture\n\nJournal keeps the durable record.", "### Interfaces this component offers\n\n- [Submission]", "### Interfaces this component uses\n\n- [Storage]", "[Interfaces](<interfaces.md>)", "[Required interfaces](<interfaces.md#required-interfaces>)", "[storage contracts](<interfaces.md#required-interfaces>)", "[Components](<components.md>)")

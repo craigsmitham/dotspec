@@ -22,7 +22,6 @@ Checks whether a submitted action still applies to the selected entry and record
 <details>
 <summary>Browse specifications</summary>
 
-- [Capabilities](<capabilities.md>)
 - [Requirements](<requirements.md>)
 
 </details>

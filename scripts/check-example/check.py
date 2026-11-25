@@ -186,7 +186,7 @@ def spec_journey(cli, tmp):
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")
     sections = ["Framing", "Purpose", "Goals", "Stakeholders", "Scope", "Environment",
-                "Assumptions", "Architecture",
+                "Assumptions", "Architecture", "Capabilities",
                 "Features", "Concepts", "Quality Attributes"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
     scope = overview.split("\n## Scope\n", 1)[1].split("\n## ", 1)[0]
@@ -198,7 +198,7 @@ def spec_journey(cli, tmp):
     local, browse = (links for _, links in panels)
     assert re.findall(r"^- \[([^]]+)\]", local, re.M) == sections
     collections = re.findall(r"^- \[([^]]+)\]", browse, re.M)
-    assert collections == ["Business rules", "Capabilities", "Concept definitions", "Jobs", "Requirements", "Use cases"]
+    assert collections == ["Business rules", "Concept definitions", "Jobs", "Requirements", "Use cases"]
     assert all(not urlsplit(dest).path for dest in re.findall(r"\]\(<([^>]+)>\)", local))
     assert all(urlsplit(dest).path for dest in re.findall(r"\]\(<([^>]+)>\)", browse))
     assert "### Behavior" not in overview and "### Obligations" not in overview
@@ -226,16 +226,19 @@ def spec_journey(cli, tmp):
     diagram, components, interfaces = re.split(r"^### (?:Components|Interfaces)$", architecture, flags=re.M)
     assert diagram.count('```mermaid') == 1 and 'subgraph owner["Personal task list"]' in diagram
     assert '["Task service"]' in diagram and '(["Task list forms"])' in diagram
-    assert all(name in components and name not in diagram for name in ("Local task storage", "Follow-up review"))
-    assert components.count("**Capabilities:**") == 1 and "Provides " not in components
+    assert all(name not in architecture for name in ("Local task storage", "Follow-up review"))
     assert "[Task service]" in components and "- [Task list forms]" in interfaces
     service = follow(root, "Task service").read_text(encoding="utf-8")
     assert "```mermaid" not in service and "### Capabilities" in service
-    assert "## Capabilities" not in overview
+    capability_rows = overview.split("\n## Capabilities\n", 1)[1].split("\n## ", 1)[0].strip().splitlines()
+    assert capability_rows[:2] == ["| Capability | What it enables | Provided by |", "| --- | --- | --- |"]
+    assert len(capability_rows) == 4
     concepts = overview.split("\n## Concepts\n", 1)[1].split("\n## ", 1)[0]
     assert "[My checklist]" in concepts and "Uses [Checklist](<concepts/" in concepts
     for collection, name, fragment in (
         ("Components", "Task service", "components"),
+        ("Capabilities", "Local task storage", "capabilities"),
+        ("Capabilities", "Follow-up review", "capabilities"),
         ("Interfaces", "Task list forms", "interfaces"),
         ("Features", "Pick up where I left off", "features"),
         ("Concept uses", "My checklist", "concept-uses"),
@@ -266,9 +269,14 @@ def spec_journey(cli, tmp):
         else:
             assert re.search(r"^# " + re.escape(name) + r"\n\n\[View source\].*\n\n## Description\n\n" + re.escape(description), text, re.M)
         assert text.count(description) == 1
-        if collection:
+        if collection == "Capabilities":
+            row, = [row for row in capability_rows if row.startswith(f"| [{name}]")]
+            _, preview, provider = row.strip("|").strip().split(" | ")
+            assert provider == "[Task service](<components/task-service/task-service.component.spec-report.md>)"
+        elif collection:
             line, = [line for line in directory.read_text(encoding="utf-8").splitlines() if line.startswith(f"- [{name}]")]
             preview = line.split(" — ", 1)[1].removesuffix("\\")
+        if collection:
             assert preview == description or (preview.endswith(" …") and description.startswith(preview[:-2]))
     # Every source in this fixture gets one report documenting its H1. Pages
     # for inline subjects document a deeper heading in that same source.
@@ -287,8 +295,9 @@ def spec_journey(cli, tmp):
         anchor = re.sub(r"[^a-z0-9 -]", "", title.lower()).replace(" ", "-")
         assert (source.resolve(), anchor) in claims, source
     component = follow(root, "Task service")
-    assert follow(follow(follow(root, "Capabilities"), "Local task storage"), "Task service") == component
-    assert follow(follow(component, "Capabilities"), "Local task storage") == follow(follow(root, "Capabilities"), "Local task storage")
+    assert follow(follow(root, "Local task storage"), "Task service") == component
+    assert not (component.parent / "capabilities.md").exists()
+    assert follow(component, "Local task storage") == follow(root, "Local task storage")
     assert component == project / "specification/components/task-service/task-service.component.spec-report.md"
     component_requirements = follow(component, "Requirements")
     acknowledgement = follow(component_requirements, "Acknowledge after commit")

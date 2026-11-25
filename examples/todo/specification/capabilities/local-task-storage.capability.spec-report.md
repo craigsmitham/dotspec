@@ -3,7 +3,7 @@ generated_by: dotspec
 type: capability-spec-report
 source: "../../specs/capabilities/local-task-storage.capability.spec.md#local-task-storage"
 ---
-[Personal task list](<../personal-task-list.system.spec-report.md>) › [Capabilities](<../capabilities.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Capabilities](<../personal-task-list.system.spec-report.md#capabilities>)
 
 # Local task storage
 

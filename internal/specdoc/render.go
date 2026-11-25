@@ -122,6 +122,9 @@ func (w *writer) setBreadcrumb(owner, member *subject) {
 	slices.Reverse(steps)
 	if owner != nil && member != nil {
 		title := member.collection()
+		if title == "Capabilities" && member.system != nil {
+			owner = member.system
+		}
 		if idx := owner.indexes[title]; idx != nil {
 			dest := idx.file
 			if section := idx.overviewSections[member.directoryGroup()]; section != nil {

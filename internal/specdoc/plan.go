@@ -483,7 +483,7 @@ func (p *planner) indexTargets() {
 		case "Capability":
 			for _, target := range model.Strings(s.r["provided_by"]) {
 				if provider := p.pages[target]; provider != nil {
-					provider.index("Capabilities").classify("Provided capabilities", entry{s.name.title, s.file, subjectPreview(s)})
+					provider.includeCapability(entry{s.name.title, s.file, subjectPreview(s)})
 				}
 			}
 		}
@@ -497,7 +497,7 @@ func (p *planner) indexTargets() {
 			continue
 		}
 		for title := range s.indexes {
-			if title == "Components" {
+			if title == "Components" || title == "Capabilities" {
 				continue
 			}
 			for child := s; child.kind() == "Component"; child = child.navigationParent {

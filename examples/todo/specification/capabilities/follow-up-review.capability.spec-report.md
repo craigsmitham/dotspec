@@ -3,7 +3,7 @@ generated_by: dotspec
 type: capability-spec-report
 source: "../../specs/capabilities/follow-up-review.capability.spec.md#follow-up-review"
 ---
-[Personal task list](<../personal-task-list.system.spec-report.md>) › [Capabilities](<../capabilities.md>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Capabilities](<../personal-task-list.system.spec-report.md#capabilities>)
 
 # Follow-up review
 

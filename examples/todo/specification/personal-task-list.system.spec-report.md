@@ -18,6 +18,7 @@ A personal list of errands the owner can act on, replies they are waiting for an
 - [Environment](<#environment>)
 - [Assumptions](<#assumptions>)
 - [Architecture](<#architecture>)
+- [Capabilities](<#capabilities>)
 - [Features](<#features>)
 - [Concepts](<#concepts>)
 - [Quality Attributes](<#quality-attributes>)
@@ -28,7 +29,6 @@ A personal list of errands the owner can act on, replies they are waiting for an
 <summary>Browse specifications</summary>
 
 - [Business rules](<business-rules.md>)
-- [Capabilities](<capabilities.md>)
 - [Concept definitions](<concepts.md>)
 - [Jobs](<jobs.md>)
 - [Requirements](<requirements.md>)
@@ -86,14 +86,20 @@ flowchart LR
 
 ### Components
 
-- [Task service](<components/task-service/task-service.component.spec-report.md>) — Checks whether a submitted action still applies to the selected entry and records accepted changes.\
-  **Capabilities:** [Follow-up review](<capabilities/follow-up-review.capability.spec-report.md>) · [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>)
+- [Task service](<components/task-service/task-service.component.spec-report.md>) — Checks whether a submitted action still applies to the selected entry and records accepted changes.
 
 ### Interfaces
 
 - [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — The forms the list owner uses to review and update commitments.
 
 [View source for “Provided interfaces”](<../specs/personal-task-list.system.spec.md#provided-interfaces>)
+
+## Capabilities
+
+| Capability | What it enables | Provided by |
+| --- | --- | --- |
+| [Follow-up review](<capabilities/follow-up-review.capability.spec-report.md>) | When the owner reviews waiting errands, they can see which replies they planned to chase by today and what to ask for. | [Task service](<components/task-service/task-service.component.spec-report.md>) |
+| [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>) | Keeps a commitment and the owner's last recorded decision together between visits. … | [Task service](<components/task-service/task-service.component.spec-report.md>) |
 
 ## Features
 

@@ -49,6 +49,11 @@ func (p *planner) overviewOutline(s *subject) []overviewSection {
 		sections = append(sections, overviewSection{title: "Scope", level: 2, sources: []string{"boundary_description", "out_of_scope"}})
 	}
 	sections = append(sections, p.architecture(s).sections()...)
+	capabilityLevel := 2
+	if s.kind() == "Component" {
+		capabilityLevel = 3
+	}
+	sections = append(sections, overviewSection{title: "Capabilities", collection: "Capabilities", level: capabilityLevel, sources: []string{"capabilities"}})
 	return append(sections, []overviewSection{
 		{title: "Features", collection: "Features", level: 2},
 		{title: "Concepts", level: 2},
@@ -158,9 +163,6 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 // destination there. Directory discovery can extend beyond declared parts,
 // and component roll-ups lead to collections outside the overview.
 func (p *planner) planCollectionHomes(s *subject) {
-	if s.kind() != "System" {
-		return
-	}
 	byCollection := map[string]map[string]*overviewSection{}
 	var parent *overviewSection
 	for i := range s.overview {
@@ -168,7 +170,7 @@ func (p *planner) planCollectionHomes(s *subject) {
 		if section.level == 2 {
 			parent = section
 		}
-		if section.collection == "" {
+		if section.collection == "" || (s.kind() == "Component" && section.collection != "Capabilities") {
 			continue
 		}
 		title, group := collectionGroup(section.collection)
@@ -220,13 +222,16 @@ func (idx *collectionIndex) coveredBy(s *subject, sections map[string]*overviewS
 }
 
 func (s *subject) browseCollection(title string, idx *collectionIndex) bool {
+	if idx.overviewSections != nil {
+		return false
+	}
 	if s.kind() != "System" {
 		return true
 	}
 	if isDetailCollection(title) && len(idx.passages) > 0 && len(idx.groups) == 0 {
 		return false
 	}
-	return idx.overviewSections == nil && title != "Quality models"
+	return title != "Quality models"
 }
 
 func (p *planner) renderOverview(w *writer, s *subject) {
@@ -273,6 +278,10 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 
 func (p *planner) overviewDetails(w *writer, s *subject, section *overviewSection) {
 	switch section.title {
+	case "Capabilities":
+		if idx := s.indexes["Capabilities"]; idx != nil {
+			p.capabilityOverview(w, s, idx.groups[""])
+		}
 	case "Quality Attributes":
 		p.attributeOverview(w, s)
 	case "Features", "Concept uses", "Synchronizations":
@@ -292,6 +301,33 @@ func (p *planner) overviewDetails(w *writer, s *subject, section *overviewSectio
 			}
 		}
 	}
+}
+
+func (p *planner) capabilityOverview(w *writer, owner *subject, entries []entry) {
+	if len(entries) == 0 {
+		return
+	}
+	var rows []string
+	if owner.kind() == "System" {
+		rows = append(rows, "| Capability | What it enables | Provided by |", "| --- | --- | --- |")
+	}
+	sortEntries(entries)
+	for _, e := range entries {
+		e.preview = indexPreview(e.preview)
+		if owner.kind() == "Component" {
+			rows = append(rows, entryLine(w, e))
+			continue
+		}
+		var providers []string
+		for _, r := range p.entryRelations[e.target] {
+			if r.label == relations["provided_by"].forward {
+				providers = append(providers, p.entryRelationLink(w, r))
+			}
+		}
+		slices.Sort(providers)
+		rows = append(rows, "| "+w.link(inlineText(e.title), e.target)+" | "+inlineText(e.preview)+" | "+strings.Join(slices.Compact(providers), " · ")+" |")
+	}
+	w.text(strings.Join(rows, "\n"))
 }
 
 func entryLine(w *writer, e entry) string {

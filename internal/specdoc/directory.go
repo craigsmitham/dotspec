@@ -67,7 +67,21 @@ func (s *subject) directoryGroup() string {
 }
 
 func (p *planner) placeDirectoryEntry(s *subject) {
-	s.navigationParent.index(s.collection()).add(s.directoryGroup(), entry{s.name.title, s.file, subjectPreview(s)})
+	member := entry{s.name.title, s.file, subjectPreview(s)}
+	if s.collection() == "Capabilities" {
+		s.navigationParent.includeCapability(member)
+		return
+	}
+	s.navigationParent.index(s.collection()).add(s.directoryGroup(), member)
+}
+
+// Each component and its enclosing system list the capability itself. The
+// directory deduplicates abilities reached through both ownership and providers.
+func (s *subject) includeCapability(member entry) {
+	s.index("Capabilities").add("", member)
+	if s.kind() == "Component" {
+		s.navigationParent.includeCapability(member)
+	}
 }
 
 // An explicitly related member appears once, in the group that explains why it is here.
@@ -243,7 +257,7 @@ func (p *planner) indexEntryRelations() {
 	p.entryRelations = map[string][]entryRelation{}
 	for _, ref := range p.snapshot.References {
 		field := attr(ref, "role")
-		if field != "definition" && field != "refines" {
+		if field != "definition" && field != "refines" && field != "provided_by" {
 			continue
 		}
 		source := p.sources[attr(ref, "source_document")]
@@ -271,18 +285,19 @@ func (p *planner) indexEntryRelations() {
 	}
 }
 
+func (p *planner) entryRelationLink(w *writer, r entryRelation) string {
+	if target := p.targets[r.element]; target != "" {
+		return w.link(inlineText(r.title), target)
+	}
+	dest := p.documentLink(w.file, r.source, r.authoredTarget)
+	w.requireLink(dest)
+	return link(inlineText(r.title), dest)
+}
+
 func (p *planner) collectionEntryLine(w *writer, e entry) string {
-	relations := p.entryRelations[e.target]
 	var related []string
-	for _, r := range relations {
-		var dest string
-		if target := p.targets[r.element]; target != "" {
-			dest = relative(w.file, target)
-		} else {
-			dest = p.documentLink(w.file, r.source, r.authoredTarget)
-		}
-		w.requireLink(dest)
-		related = append(related, "  - "+r.label+" "+link(inlineText(r.title), dest))
+	for _, r := range p.entryRelations[e.target] {
+		related = append(related, "  - "+r.label+" "+p.entryRelationLink(w, r))
 	}
 	slices.Sort(related)
 	return strings.Join(append([]string{entryLine(w, e)}, slices.Compact(related)...), "\n")
@@ -338,7 +353,7 @@ func (p *planner) relationshipIndex(owner *subject, label, target string) *colle
 			}
 		}
 	case "Provides":
-		if idx := owner.indexes["Capabilities"]; idx.contains("Provided capabilities", target) {
+		if idx := owner.indexes["Capabilities"]; idx.contains("", target) {
 			return idx
 		}
 	case "Applies here":

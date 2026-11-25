@@ -63,7 +63,7 @@ Expand **On this page** to jump to a section in reading order. Expand **Browse s
 | Constraints | Externally imposed limits on the solutions available for this system |
 | Architecture | The system boundary and its immediate subsystems and components, the interfaces it offers or uses, and its declared interactions |
 | Features | Product features and their authored descriptions |
-| Capabilities | Each part lists its capabilities together by name. A system or component lists its own under **Capabilities**. |
+| Capabilities | A linked row for each ability, its authored description and any declared providers. Select a capability to read its purpose, dependencies and enablers. |
 | Use cases | The use-case index, where each interaction is listed with its authored goal |
 | Concepts | Links to concept definitions, uses and synchronizations. The body introduces named uses and synchronizations under their own headings. |
 | Requirements | **Requirements** opens the index, including routes by component. |
@@ -78,6 +78,8 @@ Overview sections list all entries with project-specific detail in index order.
 A collection with only navigation stays in the section map. Architecture shows one level of explicit **Part of** relationships. Follow a linked part to read its own report. Directory placement alone puts a subject in the browse indexes.
 
 The diagram places immediate parts inside their owner’s boundary and labels parts and interfaces with their project names. A single **Interfaces** list shows what the system offers. When the system depends on another interface, **Interfaces this system uses** names those dependencies, and **Interfaces this system offers** appears if populated. Component reports use the same headings with “component” as the subject. External interaction partners appear outside the boundary. When a system declares both parts and external partners, **System structure** shows its decomposition and **System context** shows its interfaces and partners. A component uses **Component structure** and **Component context** for the same views. Parent links and capability lists can stand alone without a diagram. On a component report, an authored **Architecture** passage leads the same view.
+
+The system’s **Capabilities** section follows **Architecture** and includes capabilities declared or provided in its component hierarchy. A capability with several providers has one row with a link to each. An empty provider cell means the specification has yet to name one. On a component report, **Architecture → Capabilities** lists the abilities in that component’s scope.
 
 Across overviews and indexes, each entry uses the subject’s linked name and authored wording. Indexes shorten long previews and mark an excerpt with an ellipsis. **Uses** beside a concept use leads to its concept definition.
 **Refines** beside a requirement leads to each promise it refines, whether a requirement or business rule. Open the requirement to read its full
@@ -113,14 +115,14 @@ jobs use their Job statement. Concept definitions use their Purpose.
 On a system report, choose a feature under **Features** or a component under **Architecture → Components**. Features, components, interfaces, concept uses and system quality attributes use their overview section as the collection when it lists every member. The breadcrumb on a member’s report returns to that section. If a collection also includes a feature without a preview, a component outside the declared architecture, or a route to a component’s own collection, **Browse specifications** opens the complete index.
 
 Open **Browse specifications → Use cases** to choose an interaction by its goal. A system’s `systems.md` lists its immediate
-child systems. When a component has entries in a collection, **By component**
+child systems. For collections with separate indexes, **By component**
 on the parent index leads to the component’s index of the same name.
 
 Above the title, breadcrumbs lead to the owning system or component and the subject’s collection. Under **Extensions**, **Actions**, and a quality model’s **Quality attributes**, select a named entry to jump to its section when several are present. Longer lists can be expanded.
 
 On subject reports, collections that only provide navigation appear with the page’s index links. Sections with authored descriptions keep that text in the body. Within a component, `interfaces.md` groups required and provided interfaces.
-A provider’s `capabilities.md` groups explicitly provided capabilities, including
-those specified elsewhere. Its `requirements.md` lists local requirements, plus
+
+A component’s `requirements.md` lists local requirements, plus
 requirements owned elsewhere that explicitly apply to the component. The
 **Applicable requirements** group collects explicit applicability links, including
 local requirements. Each entry links to the canonical page or passage.

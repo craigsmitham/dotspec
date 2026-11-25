@@ -15,11 +15,10 @@ type architectureView struct {
 	subsystems, components []*subject
 	provided, required     []*subject
 	partners               []string
-	capabilities           map[string][]*subject
 }
 
 func (p *planner) architecture(owner *subject) architectureView {
-	v := architectureView{owner: owner, capabilities: map[string][]*subject{}}
+	v := architectureView{owner: owner}
 	for _, s := range p.subjects {
 		if attr(s.r, "part_of") == id(owner.r) {
 			switch s.kind() {
@@ -27,11 +26,6 @@ func (p *planner) architecture(owner *subject) architectureView {
 				v.subsystems = append(v.subsystems, s)
 			case "Component":
 				v.components = append(v.components, s)
-			}
-		}
-		if s.kind() == "Capability" {
-			for _, provider := range model.Strings(s.r["provided_by"]) {
-				v.capabilities[provider] = append(v.capabilities[provider], s)
 			}
 		}
 	}
@@ -168,7 +162,6 @@ func (v architectureView) sections() []overviewSection {
 		{title: offered, source: "provided_interfaces", collection: "Provided interfaces", items: v.provided},
 		{title: used, source: "required_interfaces", collection: "Required interfaces", items: v.required},
 		{title: "Interactions", source: "interacts_with"},
-		{title: "Capabilities", items: v.capabilities[id(v.owner.r)]},
 	} {
 		section := overviewSection{title: group.title, level: 3, collection: group.collection}
 		if group.source != "" {
@@ -177,15 +170,7 @@ func (v architectureView) sections() []overviewSection {
 		w := &writer{file: v.owner.file, page: &Page{}}
 		var lines []string
 		for _, s := range group.items {
-			line := "- " + architectureLink(w, s)
-			var capabilities []string
-			for _, capability := range v.capabilities[id(s.r)] {
-				capabilities = append(capabilities, w.link(inlineText(capability.name.title), capability.file))
-			}
-			if len(capabilities) > 0 {
-				line += "\\\n  **Capabilities:** " + strings.Join(capabilities, " · ")
-			}
-			lines = append(lines, line)
+			lines = append(lines, "- "+architectureLink(w, s))
 		}
 		w.text(strings.Join(lines, "\n"))
 		section.detail = w.out.String()
