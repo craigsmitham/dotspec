@@ -472,8 +472,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -605,8 +604,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -712,8 +710,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -1111,8 +1108,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -1308,8 +1304,7 @@
             "relationship_label": "refines",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Refines",
-            "trace_targets": "BusinessRule"
+            "trace_heading": "Refines"
           },
           "any_of": [],
           "description": "Adds precision while preserving the referenced rule; not replacement, duplication or proof. Multiple parents are permitted.",
@@ -1367,8 +1362,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -1557,8 +1551,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -1812,8 +1805,7 @@
             "relationship_label": "depends on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Depends on",
-            "trace_targets": "Capability"
+            "trace_heading": "Depends on"
           },
           "any_of": [],
           "description": "Capabilities required by this capability; many-to-many dependencies may be cyclic. Not structural containment or an inferred execution sequence.",
@@ -1855,8 +1847,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -2052,8 +2043,7 @@
             "relationship_label": "provided by",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Provided by",
-            "trace_targets": "System or Component"
+            "trace_heading": "Provided by"
           },
           "any_of": [
             "System",
@@ -2131,8 +2121,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -2305,8 +2294,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -2566,8 +2554,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -2700,8 +2687,7 @@
             "relationship_label": "interacts with",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Interacts with",
-            "trace_targets": "System or Component"
+            "trace_heading": "Interacts with"
           },
           "any_of": [
             "System",
@@ -2927,8 +2913,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -3141,8 +3126,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -3393,8 +3377,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -3622,8 +3605,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -3796,8 +3778,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -3898,8 +3879,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -4143,8 +4123,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -4234,8 +4213,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -4532,8 +4510,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -4685,8 +4662,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -4776,8 +4752,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -5082,8 +5057,7 @@
             "relationship_label": "applies to",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Applies to",
-            "trace_targets": "Job or JobStep"
+            "trace_heading": "Applies to"
           },
           "any_of": [
             "Job",
@@ -5143,8 +5117,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -5280,8 +5253,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -5403,8 +5375,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -6324,8 +6295,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -6590,8 +6560,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -6764,8 +6733,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -7242,8 +7210,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -7375,8 +7342,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -7482,8 +7448,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -7699,8 +7664,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -7852,8 +7816,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -7943,8 +7906,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -8131,8 +8093,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -8384,8 +8345,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -8614,8 +8574,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -8759,8 +8718,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -8932,8 +8890,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -9039,8 +8996,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -10402,8 +10358,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -10608,8 +10563,7 @@
             "relationship_label": "refines",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Refines",
-            "trace_targets": "Requirement or BusinessRule"
+            "trace_heading": "Refines"
           },
           "any_of": [
             "Requirement",
@@ -10671,8 +10625,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -10861,8 +10814,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -11749,8 +11701,7 @@
             "relationship_label": "illustrates",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Illustrates",
-            "trace_targets": "Requirement or BusinessRule or ConceptAction"
+            "trace_heading": "Illustrates"
           },
           "any_of": [
             "Requirement",
@@ -12908,8 +12859,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -13064,8 +13014,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -13169,8 +13118,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -13371,8 +13319,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -13508,8 +13455,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -13615,8 +13561,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -13914,8 +13859,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -14150,8 +14094,7 @@
             "relationship_label": "interacts with",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Interacts with",
-            "trace_targets": "System or Component"
+            "trace_heading": "Interacts with"
           },
           "any_of": [
             "System",
@@ -14413,8 +14356,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -14582,8 +14524,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -14735,8 +14676,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -14915,8 +14855,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -15089,8 +15028,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -15238,8 +15176,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -15395,8 +15332,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -15549,8 +15485,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -15987,8 +15922,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -16095,8 +16029,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -16186,8 +16119,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -16335,8 +16267,7 @@
             "relationship_label": "derived from",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
+            "trace_heading": "Derived from"
           },
           "any_of": [
             "DomainElement",
@@ -16493,8 +16424,7 @@
             "relationship_label": "involves",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Involves",
-            "trace_targets": "ConceptUse"
+            "trace_heading": "Involves"
           },
           "any_of": [],
           "description": "Named concept uses participating in this actor-goal interaction; not a service boundary or mandatory execution order.",
@@ -16687,8 +16617,7 @@
             "relationship_label": "relies on",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
+            "trace_heading": "Relies on"
           },
           "any_of": [],
           "description": "Assumptions on which the validity of this element depends.",
@@ -16950,8 +16879,7 @@
             "relationship_label": "supports",
             "relationship_ordering": "unordered",
             "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
+            "trace_heading": "Supports"
           },
           "any_of": [
             "Goal",
@@ -17577,7 +17505,7 @@
   },
   "representation_version": "0.4.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "d48062402bf159bfb2f043dd1a10d1825604a99cd81ac01dda39ea2d3ef0ff71",
+  "source_sha256": "f8a2f2f4cf99484da84d940ab842a5a2cbcfce0499b35745695da06c898e4d60",
   "subsets": {
     "business-requirements": {
       "classification": "core",

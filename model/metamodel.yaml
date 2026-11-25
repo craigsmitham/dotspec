@@ -629,7 +629,6 @@ classes:
           occurrence_role: link
           relationship_category: semantic-association
           trace_heading: Supports
-          trace_targets: Goal or Job or JobStep or DesiredOutcome or UseCase
         any_of:
         - range: Goal
         - range: Job
@@ -649,7 +648,6 @@ classes:
           occurrence_role: link
           relationship_category: semantic-association
           trace_heading: Derived from
-          trace_targets: DomainElement or SourceFragment
         any_of:
         - range: DomainElement
         - range: SourceFragment
@@ -665,7 +663,6 @@ classes:
           occurrence_role: link
           relationship_category: semantic-association
           trace_heading: Relies on
-          trace_targets: Assumption
       relies_on_content:
         range: RichContent
         inlined: true
@@ -826,7 +823,6 @@ classes:
           relationship_category: semantic-association
           relationship_cycles: forbidden
           trace_heading: Refines
-          trace_targets: BusinessRule
       refines_content:
         range: RichContent
         inlined: true
@@ -917,7 +913,6 @@ classes:
           occurrence_role: link
           relationship_category: semantic-association
           trace_heading: Interacts with
-          trace_targets: System or Component
         any_of:
         - range: System
         - range: Component
@@ -1333,7 +1328,6 @@ classes:
           occurrence_role: link
           relationship_category: semantic-association
           trace_heading: Applies to
-          trace_targets: Job or JobStep
         any_of:
         - range: Job
         - range: JobStep
@@ -1412,7 +1406,6 @@ classes:
           occurrence_role: link
           relationship_category: semantic-association
           trace_heading: Involves
-          trace_targets: ConceptUse
       involves_content:
         range: RichContent
         inlined: true
@@ -1477,7 +1470,6 @@ classes:
           occurrence_role: link
           relationship_category: semantic-association
           trace_heading: Illustrates
-          trace_targets: Requirement or BusinessRule or ConceptAction
         any_of:
         - range: Requirement
         - range: BusinessRule
@@ -1740,7 +1732,6 @@ classes:
           relationship_category: semantic-association
           relationship_cycles: forbidden
           trace_heading: Refines
-          trace_targets: Requirement or BusinessRule
         any_of:
         - range: Requirement
         - range: BusinessRule
@@ -2173,7 +2164,6 @@ classes:
           occurrence_role: link
           relationship_category: semantic-association
           trace_heading: Interacts with
-          trace_targets: System or Component
         any_of:
         - range: System
         - range: Component
@@ -2301,7 +2291,6 @@ classes:
           occurrence_role: link
           relationship_category: semantic-association
           trace_heading: Depends on
-          trace_targets: Capability
       depends_on_content:
         range: RichContent
         inlined: true
@@ -2316,7 +2305,6 @@ classes:
           occurrence_role: link
           relationship_category: semantic-association
           trace_heading: Provided by
-          trace_targets: System or Component
         any_of:
         - range: System
         - range: Component

@@ -19,15 +19,13 @@ def validate_relationships(catalog: dict[str, Any]) -> None:
             path = f'{name}.{prop}'
             annotations = slot['annotations']
             heading = annotations.get('trace_heading')
-            targets = annotations.get('trace_targets')
-            if heading or targets:
-                if not heading or not targets or heading in trace_headings:
-                    raise ValueError(f'{path}: trace headings and targets must be paired and unique')
+            if heading:
+                if heading in trace_headings:
+                    raise ValueError(f'{path}: trace headings must be unique within a class')
                 trace_headings.add(heading)
-                if 'DomainElement' not in cls['ancestors'] or not slot['multivalued']:
-                    raise ValueError(f'{path}: trace relationships require a domain element source and multiple targets')
-                if set(targets.split(' or ')) != set(slot['reference_ranges']):
-                    raise ValueError(f'{path}: trace targets must match the canonical endpoint ranges')
+                if ('DomainElement' not in cls['ancestors'] or annotations.get('occurrence_role') != 'link'
+                        or not slot['multivalued'] or not slot['reference_ranges']):
+                    raise ValueError(f'{path}: trace headings require a multivalued link from a domain element to records')
             if not slot['reference_ranges']:
                 continue
             for key in REQUIRED:

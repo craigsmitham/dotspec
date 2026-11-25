@@ -138,9 +138,9 @@ class CatalogTests(unittest.TestCase):
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].pop('relationship_scope'), 'missing relationship metadata'),
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].update(relationship_cycles='guess'), 'cycle policy'),
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].update(relationship_category='guess'), 'invalid relationship category'),
-            (lambda c: c['classes']['UseCase']['slots']['involves']['annotations'].update(trace_targets='Concept'), 'canonical endpoint ranges'),
-            (lambda c: c['classes']['Requirement']['slots']['refines']['annotations'].pop('trace_heading'), 'paired and unique'),
-            (lambda c: c['classes']['UseCase']['slots']['supports']['annotations'].update(trace_heading='Involves'), 'paired and unique'),
+            (lambda c: c['classes']['UseCase']['slots']['involves'].update(reference_ranges=[]), 'multivalued link'),
+            (lambda c: c['classes']['Requirement']['slots']['refines']['annotations'].pop('occurrence_role'), 'multivalued link'),
+            (lambda c: c['classes']['UseCase']['slots']['supports']['annotations'].update(trace_heading='Involves'), 'unique within a class'),
         ]:
             catalog = copy.deepcopy(self.catalog)
             mutate(catalog)
