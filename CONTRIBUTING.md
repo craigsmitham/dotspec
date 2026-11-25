@@ -63,7 +63,8 @@ Use the [documentation map](docs/README.md) to find the source for a CLI guide t
 - `internal/specfile` owns common frontmatter, Goldmark outlines, source locations,
   document-local identifiers, reference extraction, and shared filesystem/discovery
   behavior. All specification types use the same Markdown extraction path.
-- `internal/diagnostic` owns stable findings and source locations.
+- `internal/speccollection` implements owner-scoped lookup and subtree listing for business rules, concepts, jobs, requirements and use cases. Each family supplies its reader, slug rules, group result and any enrichment, such as classifying a requirement against its associated system. Reusable quality models have their own selection policy, including bundled starters.
+- `internal/diagnostic` owns the finding representation and source locations. The checker or parser that detects a condition supplies its rule ID and message.
 - `model/metamodel.yaml` owns the experimental specification metamodel. Generated
   JSON Schema and the inherited range catalog are embedded by the `model` Go
   package. [Model maintenance](model/README.md) describes the pinned toolchain.
@@ -77,6 +78,17 @@ Keep CLI dependencies out of the parser and checker. Preserve authored Markdown
 and locations; semantic validation must not silently rewrite files. Test a new
 specification construct with valid, invalid, and source-location examples. Preserve
 unknown prose and distinguish draft omissions from structural errors.
+
+### Where to change a behavior
+
+| Change | Owner and consumers | Independent check |
+| --- | --- | --- |
+| Reorder a system report | `systemOutline` in `internal/specdoc/overview_layout.go` sets reading order and navigation groups. The planner uses that outline for passage placement, anchors and navigation. Components have their own outline. | The To-do reader journey in `scripts/check-example/check.py` spells out the expected group labels, heading order and link destinations. |
+| Add an allowed endpoint to a relationship | Edit the slot’s reference ranges in `model/metamodel.yaml`, keep any `trace_targets` annotation in agreement, and regenerate the catalog. The exporter uses those ranges when it resolves an authored link. The Markdown mapping owns the heading that supplies the link. Report wording and the placement of each link direction live in `internal/specdoc/relationship_layout.go`. | Exercise both an accepted and a wrong-kind target. The offline validator checks typed occurrences against catalog ranges and the claims in the snapshot. |
+| Change a diagnostic | Change the rule where the condition is detected. `internal/check` aggregates findings and computes inspection status. `internal/cli` formats the result and maps command failures to process status. Markdown model commands share their export, validation and output path in `newModelReadingCommand`. | The process tests check output streams and exit status. Update the diagnostic reference if the public rule changes. |
+| Change system grouping in a family list | `internal/speccollection` groups by system source path, sorts equally named systems by path, and puts unassociated members last. Each family constructs its own JSON result. | The job and use-case store fixtures include distinct systems with the same name, unassociated members and nested scopes. |
+
+For a generated report, follow the data from `internal/cli/spec.go`. The CLI supplies the type integrations to `check.InspectSources`. The inventory carries the observed source bytes into `model.ExportInspection`, which maps authored content and resolves references. `specdoc.Generate` plans pages from the snapshot. `specdoc.Write` reconciles generated files, and `specdoc.Check` inspects the delivered Markdown against source and navigation contracts. Offline snapshot validation can also run directly on exported JSON.
 
 ### Adding a specification type
 
