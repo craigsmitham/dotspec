@@ -12,7 +12,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"regexp"
 	"slices"
 	"strings"
 
@@ -47,7 +46,6 @@ func splitHeader(data []byte) (pageHeader, []byte) {
 	return pageHeader{}, data
 }
 
-var anchorAttribute = regexp.MustCompile(`(?i)^<a\s+(?:[^>]*?\s)?(?:id|name)=["']([^"']+)["']`)
 var markdownParser = goldmark.New(goldmark.WithExtensions(extension.GFM), goldmark.WithParserOptions(parser.WithAutoHeadingID())).Parser()
 
 type parsedPage struct {
@@ -105,6 +103,9 @@ func parseGenerated(data []byte) parsedPage {
 				}
 			}
 		}
+		if anchor := specfile.HTMLAnchor(n, body); anchor != "" {
+			addAnchor(anchor)
+		}
 		switch n := n.(type) {
 		case *ast.Heading:
 			if attr, ok := n.AttributeString("id"); ok {
@@ -137,10 +138,6 @@ func parseGenerated(data []byte) parsedPage {
 			}
 		case *ast.Image:
 			p.resources[string(util.URLEscape(n.Destination, true))] = true
-		case *ast.RawHTML:
-			if m := anchorAttribute.FindSubmatch(n.Segments.Value(body)); m != nil {
-				addAnchor(string(m[1]))
-			}
 		case *ast.HTMLBlock:
 			raw := strings.TrimSpace(string(n.Lines().Value(body)))
 			if data, ok := strings.CutPrefix(raw, "<!-- dotspec-doc "); ok && n.Parent() == doc {
@@ -151,9 +148,6 @@ func parseGenerated(data []byte) parsedPage {
 				var document Document
 				_ = json.Unmarshal([]byte(strings.TrimSuffix(data, " -->")), &document)
 				p.sectionDocs[anchor] = append(p.sectionDocs[anchor], document)
-			}
-			if m := anchorAttribute.FindSubmatch(bytes.TrimSpace(n.Lines().Value(body))); m != nil {
-				addAnchor(string(m[1]))
 			}
 		}
 		return ast.WalkContinue, nil

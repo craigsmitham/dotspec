@@ -29,7 +29,6 @@ A personal list of errands the owner can act on, replies they are waiting for an
 <summary>Browse specifications</summary>
 
 - [Business rules](<business-rules.md>)
-- [Concept definitions](<concepts.md>)
 - [Jobs](<jobs.md>)
 - [Requirements](<requirements.md>)
 - [Use cases](<use-cases.md>)
@@ -107,12 +106,17 @@ flowchart LR
 
 ## Concepts
 
-### Concept uses
+[View source for “Concept uses”](<../specs/personal-task-list.system.spec.md#concept-uses>)
+
+<a id="concept.checklist"></a>
+
+### [Checklist](<concepts/checklist.concept.spec-report.md>)
+
+Decide what I can do next, which replies I need to chase and which commitments I have already settled.
+
+**Use in this system**
 
 - [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. Two errands with the same title can be at different stages.
-  - Uses [Checklist](<concepts/checklist.concept.spec-report.md>)
-
-[View source for “Concept uses”](<../specs/personal-task-list.system.spec.md#concept-uses>)
 
 ## Quality Attributes
 

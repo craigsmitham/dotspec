@@ -124,6 +124,9 @@ func addSourceContracts(p *planner) error {
 				for _, e := range members {
 					dest := relative(home, e.target)
 					if section := idx.overviewSections[group]; section != nil {
+						if specific := s.conceptSections[e.target]; specific != nil {
+							section = specific
+						}
 						requireSectionRoute(indexPage, section.anchor, dest)
 					} else {
 						indexPage.DirectoryMembers[anchor] = append(indexPage.DirectoryMembers[anchor], dest)

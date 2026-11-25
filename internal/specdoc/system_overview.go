@@ -1,10 +1,12 @@
 package specdoc
 
 import (
+	"cmp"
 	"maps"
 	"slices"
 	"strings"
 
+	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 )
@@ -14,6 +16,8 @@ import (
 type overviewSection struct {
 	collection        string // directory or interface group represented by this section
 	title, anchor     string
+	caption           string // linked heading for a concept definition
+	conceptMembers    []string
 	level             int
 	sources           []string
 	passages          [][]*heading
@@ -54,10 +58,9 @@ func (p *planner) overviewOutline(s *subject) []overviewSection {
 		capabilityLevel = 3
 	}
 	sections = append(sections, overviewSection{title: "Capabilities", collection: "Capabilities", level: capabilityLevel, sources: []string{"capabilities"}})
+	sections = append(sections, overviewSection{title: "Features", collection: "Features", level: 2})
+	sections = append(sections, p.conceptOverview(s)...)
 	return append(sections, []overviewSection{
-		{title: "Features", collection: "Features", level: 2},
-		{title: "Concepts", level: 2},
-		{title: "Concept uses", collection: "Concept uses", level: 3, sources: []string{"concept_uses"}},
 		{title: "Synchronizations", level: 3, sources: []string{"synchronizations"}},
 		{title: "Quality Attributes", collection: "Quality attributes", level: 2},
 		{title: "Adopts", level: 2, sources: []string{"adopts"}},
@@ -98,7 +101,7 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 		p.overviewDetails(detail, s, section)
 		section.detail += detail.out.String()
 		section.detailLinks = append(section.detailLinks, detail.page.RequiredLinks...)
-		section.hasBody = len(section.passages) > 0 || section.detail != "" || len(section.preview) > 0
+		section.hasBody = len(section.passages) > 0 || section.detail != "" || section.caption != "" || len(section.preview) > 0
 		if section.level == 2 {
 			parent = section
 		} else if section.level == 3 && section.hasBody {
@@ -122,9 +125,20 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 	// Markdown renderers derive automatic fragments from heading markup. A
 	// rebased title link can change both its own fragment and later duplicate
 	// suffixes. Use explicit addresses on outlines containing rich headings.
+	// Renderers also differ on whether a linked concept heading consumes its
+	// visible name as a fragment. Protect other headings sharing that name.
+	linkedTitles := map[string]bool{}
+	for _, section := range s.overview {
+		if section.caption != "" {
+			linkedTitles[specfile.NameSlug(section.title)] = true
+		}
+	}
 	explicit := slices.ContainsFunc(s.source.headings, func(h *heading) bool {
-		return h.owner == s && h.detailEntry == nil && needsHeadingAnchor(s, h)
+		return h.owner == s && h.detailEntry == nil && (needsHeadingAnchor(s, h) || linkedTitles[specfile.NameSlug(h.reportTitle())])
+	}) || slices.ContainsFunc(s.overview, func(section overviewSection) bool {
+		return section.caption == "" && linkedTitles[specfile.NameSlug(section.title)]
 	})
+	conceptIDs := parser.NewContext().IDs()
 	titleID := string(ids.Generate([]byte(s.name.title), ast.KindHeading))
 	if explicit {
 		s.name.explicitAnchor = "overview.lead"
@@ -133,8 +147,11 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 	for i := range s.overview {
 		section := &s.overview[i]
 		if section.level > 0 {
-			section.anchor = string(ids.Generate([]byte(section.title), ast.KindHeading))
-			if explicit {
+			heading := cmp.Or(section.caption, section.title)
+			section.anchor = string(ids.Generate([]byte(heading), ast.KindHeading))
+			if section.caption != "" {
+				section.anchor = "concept." + string(conceptIDs.Generate([]byte(section.title), ast.KindHeading))
+			} else if explicit {
 				section.anchor = "overview." + section.anchor
 			}
 		}
@@ -164,13 +181,17 @@ func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
 // and component roll-ups lead to collections outside the overview.
 func (p *planner) planCollectionHomes(s *subject) {
 	byCollection := map[string]map[string]*overviewSection{}
+	s.conceptSections = map[string]*overviewSection{}
 	var parent *overviewSection
 	for i := range s.overview {
 		section := &s.overview[i]
 		if section.level == 2 {
 			parent = section
 		}
-		if section.collection == "" || (s.kind() == "Component" && section.collection != "Capabilities") {
+		for _, file := range section.conceptMembers {
+			s.conceptSections[file] = section
+		}
+		if section.collection == "" || (s.kind() == "Component" && !inlineComponentCollection(section.collection)) {
 			continue
 		}
 		title, group := collectionGroup(section.collection)
@@ -183,7 +204,11 @@ func (p *planner) planCollectionHomes(s *subject) {
 		}
 		byCollection[title][group] = section
 	}
-	for title, sections := range byCollection {
+	if concepts := byCollection["Concepts"]; concepts != nil {
+		byCollection["Concept uses"] = concepts
+	}
+	for _, title := range slices.Sorted(maps.Keys(byCollection)) {
+		sections := byCollection[title]
 		idx := s.indexes[title]
 		if idx == nil || !idx.coveredBy(s, sections) {
 			continue
@@ -242,10 +267,11 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 	}
 	for _, section := range s.overview {
 		if section.level > 0 {
-			if s.name.explicitAnchor != "" {
+			if s.name.explicitAnchor != "" || section.caption != "" {
 				w.text(`<a id="` + section.anchor + `"></a>`)
 			}
-			w.text(strings.Repeat("#", section.level) + " " + section.title)
+			title := cmp.Or(section.caption, section.title)
+			w.text(strings.Repeat("#", section.level) + " " + title)
 		}
 		for j, group := range section.passages {
 			merged := section.merges(j)
@@ -277,6 +303,9 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 }
 
 func (p *planner) overviewDetails(w *writer, s *subject, section *overviewSection) {
+	if len(section.conceptMembers) != 0 {
+		return
+	}
 	switch section.title {
 	case "Capabilities":
 		if idx := s.indexes["Capabilities"]; idx != nil {
@@ -284,7 +313,7 @@ func (p *planner) overviewDetails(w *writer, s *subject, section *overviewSectio
 		}
 	case "Quality Attributes":
 		p.attributeOverview(w, s)
-	case "Features", "Concept uses", "Synchronizations":
+	case "Features", "Synchronizations":
 		if idx := s.indexes[section.title]; idx != nil {
 			for _, group := range slices.Sorted(maps.Keys(idx.groups)) {
 				if group == "By component" {

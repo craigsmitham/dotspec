@@ -60,6 +60,7 @@ type subject struct {
 	glossary            []glossaryPassage
 	passages            [][]*heading
 	overview            []overviewSection
+	conceptSections     map[string]*overviewSection // report path to its group in this overview
 	externalSystem      bool
 	emptyHeadingAnchors []string
 	file, dir           string
@@ -75,6 +76,7 @@ type planner struct {
 	nodes, elements map[string]model.Record
 	pages           map[string]*subject
 	subjects        []*subject
+	subjectsByFile  map[string]*subject
 	targets         map[string]string // snapshot record, source, or fragment to canonical project-relative URL
 	governing       *subject
 
@@ -430,7 +432,9 @@ func needsHeadingAnchor(s *subject, h *heading) bool {
 }
 
 func (p *planner) indexTargets() {
+	p.subjectsByFile = map[string]*subject{}
 	for _, s := range p.subjects {
+		p.subjectsByFile[s.file] = s
 		p.targets[id(s.r)] = s.file
 		p.targets[s.name.node] = s.file
 		if s.name.level == 1 {
@@ -483,7 +487,7 @@ func (p *planner) indexTargets() {
 		case "Capability":
 			for _, target := range model.Strings(s.r["provided_by"]) {
 				if provider := p.pages[target]; provider != nil {
-					provider.includeCapability(entry{s.name.title, s.file, subjectPreview(s)})
+					provider.includeInOverview("Capabilities", entry{s.name.title, s.file, subjectPreview(s)})
 				}
 			}
 		}
@@ -497,7 +501,7 @@ func (p *planner) indexTargets() {
 			continue
 		}
 		for title := range s.indexes {
-			if title == "Components" || title == "Capabilities" {
+			if title == "Components" || inlineComponentCollection(title) {
 				continue
 			}
 			for child := s; child.kind() == "Component"; child = child.navigationParent {

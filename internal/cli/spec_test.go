@@ -777,6 +777,115 @@ func TestNamedSubjectFilesAgreeWithTheirHeadings(t *testing.T) {
 	}
 }
 
+func TestConceptOverviewGroupsDeclaredUses(t *testing.T) {
+	projectFixture(t)
+	writeFixture(t, "specs/tool.system.spec.md", `---
+type: system-spec
+---
+# Tool
+
+## Purpose
+Organize work.
+
+## Scope
+Local notes.
+
+### Notebook
+Both published and draft material are in scope.
+
+## Concept uses
+
+### Draft notebook
+
+#### Definition
+[Notebook](concepts/notebook.concept.spec.md).
+
+### Published notebook
+
+#### Definition
+[External notebook](../apps/demo/specs/concepts/notebook.concept.spec.md).
+
+### Pending selection
+
+#### Description
+A use awaiting a design decision.
+`)
+	writeFixture(t, "editor/specs/editor.component.spec.md", `---
+type: component-spec
+---
+# Editor
+
+## Part of
+[Tool](../../specs/tool.system.spec.md).
+
+## Concept uses
+
+### Revision notebook
+
+#### Definition
+[Notebook](../../specs/concepts/notebook.concept.spec.md).
+`)
+	writeFixture(t, "specs/concepts/notebook.concept.spec.md", "---\ntype: concept-spec\n---\n# Notebook\n\n## Purpose\nGather drafts.\n")
+	writeFixture(t, "apps/demo/specs/concepts/notebook.concept.spec.md", "---\ntype: concept-spec\n---\n# Notebook\n\n## Purpose\nPreserve published work.\n")
+	for _, args := range [][]string{{"spec", "build"}, {"check"}} {
+		if code, out, msg := invoke(args...); code != 0 {
+			t.Fatal(args, out, msg)
+		}
+	}
+	read := func(file string) string {
+		t.Helper()
+		data, err := os.ReadFile("specification/" + file)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return string(data)
+	}
+	report := read("tool.system.spec-report.md")
+	const local = "### [Notebook](<concepts/notebook.concept.spec-report.md>)"
+	const external = "### [Notebook](<../apps/demo/specs/concepts/notebook.concept.spec.md>)"
+	group := func(heading string) string {
+		t.Helper()
+		if strings.Count(report, heading) != 1 {
+			t.Fatalf("expected one %s in %s", heading, report)
+		}
+		_, body, _ := strings.Cut(report, heading)
+		body, _, _ = strings.Cut(body, "\n### ")
+		return body
+	}
+	localBody := group(local)
+	for _, want := range []string{"Gather drafts.", "**Uses in this system**", "[Draft notebook]", "[Revision notebook]", "**Declared in** [Editor]"} {
+		if !strings.Contains(localBody, want) {
+			t.Fatalf("expected %s in %s", want, localBody)
+		}
+	}
+	if body := group(external); !strings.Contains(body, "Preserve published work.") || !strings.Contains(body, "[Published notebook]") {
+		t.Fatal(body)
+	}
+	if body := group("### Concept uses\n"); !strings.Contains(body, "[Pending selection]") {
+		t.Fatal(body)
+	}
+	for _, name := range []string{"Draft notebook", "Published notebook", "Pending selection", "Revision notebook"} {
+		if strings.Count(report, "- ["+name+"]") != 1 {
+			t.Fatalf("expected one use of %s in %s", name, report)
+		}
+	}
+	if component := read("components/editor/editor.component.spec-report.md"); !strings.Contains(component, "[Revision notebook]") || strings.Contains(component, "[Draft notebook]") {
+		t.Fatal(component)
+	}
+	for _, file := range []string{"concepts.md", "concept-uses.md", "components/editor/concept-uses.md"} {
+		if _, err := os.Stat("specification/" + file); !os.IsNotExist(err) {
+			t.Fatalf("unexpected index %s: %v", file, err)
+		}
+	}
+	const draft = "- [Draft notebook](<concept-uses/draft-notebook.concept-use.spec-report.md>)"
+	moved := strings.Replace(report, draft, "", 1)
+	moved = strings.Replace(moved, "Preserve published work.", "Preserve published work.\n\n"+draft, 1)
+	writeFixture(t, "specification/tool.system.spec-report.md", moved)
+	if code, out, msg := invoke("check"); code != 1 || !strings.Contains(out, "is missing link to \"concept-uses/draft-notebook.concept-use.spec-report.md\"") {
+		t.Fatalf("expected a finding for the misplaced use: %d %s %s", code, out, msg)
+	}
+}
+
 func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	t.Chdir(t.TempDir())
 	writeFixture(t, "dotspec.yaml", "name: notes\n")
@@ -839,12 +948,13 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	if !strings.Contains(read(featureReport), editGoal) {
 		t.Fatal(read(featureReport))
 	}
-	for _, heading := range []string{"Concepts", "Use cases", "Requirements"} {
+	for _, heading := range []string{"Use cases", "Requirements"} {
 		if strings.Contains(before, "\n## "+heading+"\n") {
 			t.Fatal(before)
 		}
 	}
-	if !strings.Contains(read("concepts.md"), "\n# Concept definitions\n") || !strings.Contains(read("use-cases.md"), "Review a note.") {
+	const definition = "### [Notebook](<concepts/notebook.concept.spec-report.md>)\n\nKeep written ideas."
+	if !strings.Contains(section(before, "Concepts"), definition) || !strings.Contains(read("use-cases.md"), "Review a note.") {
 		t.Fatal("missing index entries")
 	}
 	refines := "\n  - Refines [Keep notes](<requirements/keep-notes.requirement.spec-report.md>)"
@@ -867,9 +977,9 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	if section(after, "Goals") != section(before, "Goals")+"\n\n- [Four](<goals.md#four>) — Fourth goal." || !strings.Contains(read("goals.md"), "Fourth goal.") {
 		t.Fatal(after)
 	}
-	use := "- [My notebook](<concept-uses/my-notebook.concept-use.spec-report.md>) — The current author's notes.\n  - Uses [Notebook](<concepts/notebook.concept.spec-report.md>)"
+	use := "- [My notebook](<concept-uses/my-notebook.concept-use.spec-report.md>) — The current author's notes."
 	sync := "### Synchronizations\n\n- [Archive updates](<synchronizations/archive-updates.synchronization.spec-report.md>) — When — The note is saved. · Then — Archive the current version."
-	if section(after, "Concepts") != "### Concept uses\n\n"+use+"\n\n[View source for “Concept uses”](<../specs/notes.system.spec.md#concept-uses>)\n\n"+sync {
+	if !strings.HasSuffix(section(after, "Concepts"), definition+"\n\n**Use in this system**\n\n"+use+"\n\n"+sync) {
 		t.Fatal(after)
 	}
 	if !strings.Contains(read("concept-uses/my-notebook.concept-use.spec-report.md"), "\n## Uses\n\n[Notebook](<../concepts/notebook.concept.spec-report.md>)") {

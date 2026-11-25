@@ -198,7 +198,7 @@ def spec_journey(cli, tmp):
     local, browse = (links for _, links in panels)
     assert re.findall(r"^- \[([^]]+)\]", local, re.M) == sections
     collections = re.findall(r"^- \[([^]]+)\]", browse, re.M)
-    assert collections == ["Business rules", "Concept definitions", "Jobs", "Requirements", "Use cases"]
+    assert collections == ["Business rules", "Jobs", "Requirements", "Use cases"]
     assert all(not urlsplit(dest).path for dest in re.findall(r"\]\(<([^>]+)>\)", local))
     assert all(urlsplit(dest).path for dest in re.findall(r"\]\(<([^>]+)>\)", browse))
     assert "### Behavior" not in overview and "### Obligations" not in overview
@@ -234,17 +234,21 @@ def spec_journey(cli, tmp):
     assert capability_rows[:2] == ["| Capability | What it enables | Provided by |", "| --- | --- | --- |"]
     assert len(capability_rows) == 4
     concepts = overview.split("\n## Concepts\n", 1)[1].split("\n## ", 1)[0]
-    assert "[My checklist]" in concepts and "Uses [Checklist](<concepts/" in concepts
+    assert concepts.count("### [Checklist](<concepts/checklist.concept.spec-report.md>)") == 1
+    assert "**Use in this system**\n\n- [My checklist]" in concepts
+    assert follow(root, "Checklist") == follow(follow(root, "My checklist"), "Checklist")
     for collection, name, fragment in (
         ("Components", "Task service", "components"),
         ("Capabilities", "Local task storage", "capabilities"),
         ("Capabilities", "Follow-up review", "capabilities"),
         ("Interfaces", "Task list forms", "interfaces"),
         ("Features", "Pick up where I left off", "features"),
-        ("Concept uses", "My checklist", "concept-uses"),
+        ("Concept uses", "My checklist", "concept.checklist"),
+        ("Concept definitions", "Checklist", "concept.checklist"),
         ("Quality attributes", "Durability", "quality-attributes"),
     ):
-        assert not (root.parent / f"{collection.lower().replace(' ', '-')}.md").exists()
+        filename = "concepts" if collection == "Concept definitions" else collection.lower().replace(" ", "-")
+        assert not (root.parent / f"{filename}.md").exists()
         assert any(label == collection and target == root and anchor == fragment
                    for label, target, anchor, _ in markdown_links(follow(root, name)))
     feature = follow(root, "Pick up where I left off")

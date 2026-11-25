@@ -1,6 +1,9 @@
 package specfile
 
 import (
+	"bytes"
+	"regexp"
+
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/yuin/goldmark/ast"
 )
@@ -65,7 +68,26 @@ func (md *Markdown) GlossaryDetailReferences() (*ReferenceDocument, error) {
 	return refs, nil
 }
 
-// MarkdownReferences reads heading targets in native Markdown documents without
+var anchorAttribute = regexp.MustCompile(`(?i)^<a\s+(?:[^>]*?\s)?(?:id|name)=["']([^"']+)["']`)
+
+// HTMLAnchor reads an explicit fragment from an HTML anchor node in Markdown.
+func HTMLAnchor(n ast.Node, source []byte) string {
+	var raw []byte
+	switch node := n.(type) {
+	case *ast.RawHTML:
+		raw = node.Segments.Value(source)
+	case *ast.HTMLBlock:
+		raw = node.Lines().Value(source)
+	default:
+		return ""
+	}
+	if match := anchorAttribute.FindSubmatch(bytes.TrimSpace(raw)); match != nil {
+		return string(match[1])
+	}
+	return ""
+}
+
+// MarkdownReferences reads heading and HTML anchor targets in native Markdown documents without
 // imposing a dotspec schema, title, or layout. Explicit dotspec IDs come only
 // from the owning specification parser.
 func MarkdownReferences(data []byte) *ReferenceDocument {
@@ -78,7 +100,13 @@ func (md *Markdown) AnchorReferences() *ReferenceDocument {
 	outline := md.outline()
 	doc := outline.AST
 	_ = ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
-		if heading, ok := n.(*ast.Heading); entering && ok {
+		if !entering {
+			return ast.WalkContinue, nil
+		}
+		if anchor := HTMLAnchor(n, md.Body); anchor != "" {
+			outline.Anchors[anchor] = true
+		}
+		if heading, ok := n.(*ast.Heading); ok {
 			if id, ok := heading.AttributeString("id"); ok {
 				outline.Anchors[string(id.([]byte))] = true
 			}

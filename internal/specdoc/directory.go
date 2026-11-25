@@ -68,19 +68,22 @@ func (s *subject) directoryGroup() string {
 
 func (p *planner) placeDirectoryEntry(s *subject) {
 	member := entry{s.name.title, s.file, subjectPreview(s)}
-	if s.collection() == "Capabilities" {
-		s.navigationParent.includeCapability(member)
+	if inlineComponentCollection(s.collection()) {
+		s.navigationParent.includeInOverview(s.collection(), member)
 		return
 	}
 	s.navigationParent.index(s.collection()).add(s.directoryGroup(), member)
 }
 
-// Each component and its enclosing system list the capability itself. The
-// directory deduplicates abilities reached through both ownership and providers.
-func (s *subject) includeCapability(member entry) {
-	s.index("Capabilities").add("", member)
+func inlineComponentCollection(title string) bool {
+	return title == "Capabilities" || title == "Concepts" || title == "Concept uses"
+}
+
+// Include the actual members up to the enclosing system boundary.
+func (s *subject) includeInOverview(title string, member entry) {
+	s.index(title).add("", member)
 	if s.kind() == "Component" {
-		s.navigationParent.includeCapability(member)
+		s.navigationParent.includeInOverview(title, member)
 	}
 }
 

@@ -128,6 +128,9 @@ func (w *writer) setBreadcrumb(owner, member *subject) {
 		if idx := owner.indexes[title]; idx != nil {
 			dest := idx.file
 			if section := idx.overviewSections[member.directoryGroup()]; section != nil {
+				if group := owner.conceptSections[member.file]; group != nil {
+					section = group
+				}
 				dest = owner.file + "#" + section.anchor
 			}
 			steps = append(steps, w.link(collectionTitle(title), dest))

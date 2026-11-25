@@ -15,6 +15,7 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 - [Stakeholders](<#stakeholders>)
 - [Scope](<#scope>)
 - [Environment](<#environment>)
+- [Concepts](<#concepts>)
 - [Quality Attributes](<#quality-attributes>)
 
 </details>
@@ -22,7 +23,6 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 <details>
 <summary>Browse specifications</summary>
 
-- [Concept definitions](<concepts.md>)
 - [Glossary](<glossary.md>)
 - [Jobs](<jobs.md>)
 - [Requirements](<requirements.md>)
@@ -91,6 +91,26 @@ builds a requirements specification from them.
 Contributors edit Markdown in ordinary text editors. Git repositories provide
 version history and discovery rules. The CLI communicates through process
 arguments, standard streams, and exit statuses.
+
+## Concepts
+
+<a id="concept.command-invocation"></a>
+
+### [Command Invocation](<concepts/cli-interaction.concept.spec-report.md>)
+
+Let a person or program submit an operation and determine its outcome through a consistent process interface.
+
+<a id="concept.job-map"></a>
+
+### [Job Map](<concepts/job-map.concept.spec-report.md>)
+
+Make an accomplishment's steps and success criteria inspectable, so people can discuss what the work involves and how success is judged.
+
+<a id="concept.specification-inspection"></a>
+
+### [Specification Inspection](<concepts/specification-inspection.concept.spec-report.md>)
+
+Make structural problems and missing-content advice visible within an explicit inspection scope, so contributors can decide what to revise.
 
 ## Quality Attributes
 

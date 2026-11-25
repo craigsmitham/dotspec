@@ -65,7 +65,7 @@ Expand **On this page** to jump to a section in reading order. Expand **Browse s
 | Features | Product features and their authored descriptions |
 | Capabilities | A linked row for each ability, its authored description and any declared providers. Select a capability to read its purpose, dependencies and enablers. |
 | Use cases | The use-case index, where each interaction is listed with its authored goal |
-| Concepts | Links to concept definitions, uses and synchronizations. The body introduces named uses and synchronizations under their own headings. |
+| Concepts | Each linked definition introduces its purpose, followed by its named uses in this system. Synchronizations appear together below the definitions. |
 | Requirements | **Requirements** opens the index, including routes by component. |
 | Quality Attributes | Every attribute declared for this system, with a short definition excerpt and its subattributes. Follow an attribute to read its full definition and the requirements it classifies. |
 | Open questions | Decisions that remain open in the system specification |
@@ -81,7 +81,7 @@ The diagram places immediate parts inside their owner’s boundary and labels pa
 
 The system’s **Capabilities** section follows **Architecture** and includes capabilities declared or provided in its component hierarchy. A capability with several providers has one row with a link to each. An empty provider cell means the specification has yet to name one. On a component report, **Architecture → Capabilities** lists the abilities in that component’s scope.
 
-Across overviews and indexes, each entry uses the subject’s linked name and authored wording. Indexes shorten long previews and mark an excerpt with an ellipsis. **Uses** beside a concept use leads to its concept definition.
+Across overviews and indexes, each entry uses the subject’s linked name and authored wording. Indexes shorten long previews and mark an excerpt with an ellipsis. In **Concepts**, select a definition to read its state, actions and operational principles. Select a named use to read its configuration and the requirements that apply to it. The overview identifies the declaring component for component-owned uses. A local definition can appear before any use is declared. Uses awaiting a definition appear under **Concept uses**. A use can also link to a definition in another project.
 **Refines** beside a requirement leads to each promise it refines, whether a requirement or business rule. Open the requirement to read its full
 statement, conditions, and criteria together.
 
@@ -112,7 +112,7 @@ models use their Description section. For requirements and business rules, a
 short Statement introduces the promise or rule. Use cases use their Goal and
 jobs use their Job statement. Concept definitions use their Purpose.
 
-On a system report, choose a feature under **Features** or a component under **Architecture → Components**. Features, components, interfaces, concept uses and system quality attributes use their overview section as the collection when it lists every member. The breadcrumb on a member’s report returns to that section. If a collection also includes a feature without a preview, a component outside the declared architecture, or a route to a component’s own collection, **Browse specifications** opens the complete index.
+On a system report, choose a feature under **Features** or a component under **Architecture → Components**. Features, components, interfaces, concept definitions, concept uses and system quality attributes use their overview section as the collection when it lists every member. The breadcrumb on a member’s report returns to that section. If a collection also includes a feature without a preview, a component outside the declared architecture, or a route to a component’s own collection, **Browse specifications** opens the complete index.
 
 Open **Browse specifications → Use cases** to choose an interaction by its goal. A system’s `systems.md` lists its immediate
 child systems. For collections with separate indexes, **By component**
