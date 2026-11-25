@@ -1,10 +1,7 @@
 package job
 
 import (
-	"fmt"
-	"path/filepath"
-	"sort"
-
+	"github.com/craigsmitham/dotspec/internal/speccollection"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
 )
@@ -31,89 +28,19 @@ func InitWithPreset(path, slug, preset string) (string, error) {
 	return Layout.Create(dir, slug, template)
 }
 
-// Show resolves a source path or unique slug within the selected owner.
-func Show(path, slug string) (*Job, error) {
-	if !Layout.Match(slug) {
-		if err := ValidateSlug(slug); err != nil {
-			return nil, err
-		}
-	}
-	dir, err := specfile.Directory(path)
-	if err != nil {
-		return nil, err
-	}
-	file, err := Layout.LocalPath(dir, slug)
-	if err != nil {
-		return nil, err
-	}
-	job, err := Read(file)
-	if err != nil {
-		return nil, err
-	}
-	job.System, err = associatedSystem(filepath.Dir(job.Path), job.Path)
-	if err != nil {
-		return nil, err
-	}
-	return job, nil
+var collection = speccollection.Collection[Job]{
+	Layout: Layout, Plural: "jobs", ValidateSlug: ValidateSlug, Read: Read,
+	SetSystem: func(member *Job, owner *system.System) {
+		member.System = owner
+	},
 }
 
-// List groups jobs by the identity of their enclosing system (its source path).
-// Groups are ordered by system name then path, with unassociated jobs last.
-// Jobs within a group are ordered by source path.
+func Show(path, selector string) (*Job, error) {
+	return collection.Show(path, selector)
+}
+
 func List(path string) ([]*Group, error) {
-	dir, err := specfile.Directory(path)
-	if err != nil {
-		return nil, err
-	}
-	paths, err := specfile.Discover(dir, Layout.Match)
-	if err != nil {
-		return nil, err
-	}
-	bySystem := make(map[string]*Group)
-	var groups []*Group
-	for _, path := range paths {
-		job, err := Read(path)
-		if err != nil {
-			return nil, err
-		}
-		dir := Layout.ContextDir(path)
-		associated, err := associatedSystem(dir, path)
-		if err != nil {
-			return nil, err
-		}
-		job.System = associated
-		key := ""
-		if associated != nil {
-			key = associated.Path
-		}
-		group, found := bySystem[key]
-		if !found {
-			group = &Group{System: associated}
-			bySystem[key] = group
-			groups = append(groups, group)
-		}
-		group.Jobs = append(group.Jobs, job)
-	}
-	sort.Slice(groups, func(i, j int) bool {
-		a, b := groups[i].System, groups[j].System
-		if a == nil {
-			return false
-		}
-		if b == nil {
-			return true
-		}
-		if a.Name != b.Name {
-			return a.Name < b.Name
-		}
-		return a.Path < b.Path
+	return speccollection.List(path, collection, func(owner *system.System, members []*Job) *Group {
+		return &Group{System: owner, Jobs: members}
 	})
-	return groups, nil
-}
-
-func associatedSystem(dir, source string) (*system.System, error) {
-	associated, err := system.Associated(dir, source)
-	if err != nil {
-		return nil, fmt.Errorf("resolve associated system for jobs in %s: %w", dir, err)
-	}
-	return associated, nil
 }
