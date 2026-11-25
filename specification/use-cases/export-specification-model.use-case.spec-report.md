@@ -29,8 +29,6 @@ repository discovery may still fail; those outcomes are handled below.
 
 <!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#main-success-scenario"} -->
 
-[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#main-success-scenario>)
-
 1. The contributor selects a project subtree and requests a model export.
 2. Dotspec discovers specifications and their required enclosing context and
    records normalized Markdown and reference identities.
@@ -49,8 +47,6 @@ repository discovery may still fail; those outcomes are handled below.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#malformed-specification"} -->
 
-[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#malformed-specification>)
-
 #### Handling
 
 During steps 2–3, a specification fails syntax or authoring validation. Retain the
@@ -61,8 +57,6 @@ complete snapshot containing authoring errors still achieves the review goal.
 ### Unknown section or unfinished content
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#unknown-section-or-unfinished-content"} -->
-
-[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#unknown-section-or-unfinished-content>)
 
 #### Handling
 
@@ -75,8 +69,6 @@ step 4. Do not invent missing behavior or claim stakeholder adequacy.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#unresolved-or-uninspected-reference"} -->
 
-[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#unresolved-or-uninspected-reference>)
-
 #### Handling
 
 During step 3, a target cannot be resolved or lies outside the traversal boundary.
@@ -87,8 +79,6 @@ Continue to step 4 so the contributor can inspect the result.
 ### Unreadable input or failed discovery
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#unreadable-input-or-failed-discovery"} -->
-
-[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#unreadable-input-or-failed-discovery>)
 
 #### Handling
 
@@ -101,8 +91,6 @@ goal; the contributor can repair access and retry.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#empty-scope"} -->
 
-[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#empty-scope>)
-
 #### Handling
 
 At step 2, the selected scope contains no supported specifications. Report a
@@ -111,8 +99,6 @@ completed empty snapshot at step 4. This is an alternative successful outcome.
 ### Invalid saved snapshot
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#invalid-saved-snapshot"} -->
-
-[View section source](<../../specs/use-cases/export-specification-model.use-case.spec.md#invalid-saved-snapshot>)
 
 #### Handling
 

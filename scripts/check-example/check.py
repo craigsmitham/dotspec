@@ -222,6 +222,9 @@ def spec_journey(cli, tmp):
     assert statement in rules.read_text(encoding="utf-8")
     for section in sections:
         assert f"[{section}](<#{section.lower().replace(' ', '-')}>)" in navigation
+    stakeholders = overview.split("## Stakeholders\n", 1)[1].split("\n## ", 1)[0]
+    assert 'personal-task-list.system.spec.md#list-owner"} -->' in stakeholders
+    assert "[View section source]" not in stakeholders
     architecture = overview.split("## Architecture\n", 1)[1].split("\n## ", 1)[0]
     diagram, components, interfaces = re.split(r"^### (?:Components|Interfaces)$", architecture, flags=re.M)
     assert diagram.count('```mermaid') == 1 and 'subgraph owner["Personal task list"]' in diagram
@@ -291,6 +294,9 @@ def spec_journey(cli, tmp):
     claims = {}
     for page in (project / "specification").rglob("*.md"):
         text = page.read_text(encoding="utf-8")
+        origins = [dest for label, dest, _, _ in markdown_links(page)
+                   if label in ("View source", "View section source", "Term source")]
+        assert len(origins) == len(set(origins)), page
         assert "[View source for “" not in text, page
         if not page.name.endswith("-report.md"):
             assert "[View source](" not in text, page

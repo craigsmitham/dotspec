@@ -140,9 +140,9 @@ For example, the todo system report declares
 Every subject report has one **View source** link in its footer. It opens the heading recorded in `source`. For a subject defined inside
 another spec, the fragment identifies its nested heading.
 
-A subject rendered as a section carries its type and exact authored heading in a
-`dotspec-doc` comment. **View section source** opens the authored declaration. Links to supporting specifications and external evidence
-stay beside the passages that use them. On the glossary index, **Term source** opens the defining passage. Plain topic lists and a trailing model reference share that line. The topic index jumps to term headings, and incoming relationship links return to the passage that describes the connection.
+The footer also covers embedded declarations from the same file, such as **List owner** in the To-do system report. Each declaration retains its type and exact source heading in a `dotspec-doc` comment.
+
+On a page that presents full passages, the first passage from each additional file carries **View section source**, or **Term source** for a glossary entry. Later passages from that file share the link. Short previews link to their subject reports. Authored citations and evidence links stay with the passages they support. The topic index jumps to term headings, and incoming relationship links return to the passage that describes the connection.
 
 Each system quality attribute has a `system-quality-attribute-spec-report` page. Reusable quality model entries remain sections of the model’s report. The file’s `generated_by: dotspec` marker identifies generator
 ownership. See the [document model](model/index.md#generateddocument).

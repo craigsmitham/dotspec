@@ -19,8 +19,6 @@ A contributor proposing a product change.
 
 <!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/prepare-specifications.use-case.spec.md#main-success-scenario"} -->
 
-[View section source](<../../specs/use-cases/prepare-specifications.use-case.spec.md#main-success-scenario>)
-
 1. The contributor [creates a specification draft](<create-specification.use-case.spec-report.md>)
    or edits an existing source to describe the proposed behavior.
 2. The contributor links its governing rules and evidence, then
@@ -37,8 +35,6 @@ A contributor proposing a product change.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/prepare-specifications.use-case.spec.md#behavior-remains-undecided"} -->
 
-[View section source](<../../specs/use-cases/prepare-specifications.use-case.spec.md#behavior-remains-undecided>)
-
 #### Handling
 
 During steps 1–3, the team lacks an agreed response to an identified condition.
@@ -48,8 +44,6 @@ review; the review must resolve it before a delivery relies on that promise.
 ### Inspection cannot finish
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/prepare-specifications.use-case.spec.md#inspection-cannot-finish"} -->
-
-[View section source](<../../specs/use-cases/prepare-specifications.use-case.spec.md#inspection-cannot-finish>)
 
 #### Handling
 

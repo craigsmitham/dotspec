@@ -21,14 +21,37 @@ type writer struct {
 	page                                         *Page
 	file, titleMarkdown, titleAnchor, breadcrumb string
 	out                                          strings.Builder
+	sourceFiles                                  map[string]bool
+	sourceLinks                                  []sourceRoute
 	notePrefixes                                 map[*sourceFile]string // keep footnote labels local when combining sources
 }
 
 func (p *planner) newPage(file string, document Document, title string) *writer {
 	page := &Page{Document: document, Title: title}
 	p.plan.Pages[file] = page
-	return &writer{page: page, file: file, titleMarkdown: title}
+	w := &writer{page: page, file: file, titleMarkdown: title, sourceFiles: map[string]bool{}}
+	if document.Documents != "" {
+		w.sourceFiles[sourceFileKey(file, document.Documents)] = true
+	}
+	return w
 }
+
+// A subject's primary file is represented by its footer. Other files get a
+// source link at their first authored passage, in the page's reading order.
+func (w *writer) passageSource(label, dest string) string {
+	file := sourceFileKey(w.file, dest)
+	if file == sourceFileKey(w.file, w.page.Documents) || w.sourceFiles[file] {
+		return ""
+	}
+	w.sourceFiles[file] = true
+	return w.sourceLink(label, dest)
+}
+
+func (w *writer) sourceLink(label, dest string) string {
+	w.sourceLinks = append(w.sourceLinks, sourceRoute{label, dest})
+	return link(label, dest)
+}
+
 func (w *writer) finish() {
 	var header strings.Builder
 	header.WriteString("---\ngenerated_by: dotspec\n")
@@ -47,6 +70,9 @@ func (w *writer) finish() {
 	}
 	fmt.Fprintf(&header, "# %s\n", w.titleMarkdown)
 	w.page.Markdown = strings.TrimSpace(header.String()+w.out.String()) + "\n"
+	// Capture ordinary links with a source-like caption before validating the
+	// delivered page. Authored citations are allowed to say "View source" too.
+	w.page.otherSourceLabels = sourceLabelAllowances(w.page.Markdown, w.sourceLinks)
 }
 func (w *writer) text(value string) {
 	if value != "" {
@@ -154,7 +180,7 @@ func (p *planner) renderSubject(s *subject) {
 		w.text(`<a id="` + html.EscapeString(anchor) + `"></a>`)
 	}
 	w.text("---")
-	footer := link("View source", w.page.Documents)
+	footer := w.sourceLink("View source", w.page.Documents)
 	if models := s.indexes["Quality models"]; s.kind() == "System" && models != nil {
 		footer += " · " + w.link("Quality models", models.file)
 	}
@@ -211,7 +237,6 @@ func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offs
 			}
 			continue
 		}
-		var roleSource string
 		if h != s.name {
 			// Preserve addressability for duplicated headings moved onto different pages.
 			if h.explicitAnchor != "" {
@@ -225,21 +250,13 @@ func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offs
 				doc := subjectDocument(w.file, s.source, h)
 				meta, _ := json.Marshal(doc)
 				w.text("<!-- dotspec-doc " + string(meta) + " -->")
-				source := link("View section source", doc.Documents)
-				if h.subjectKind == "SystemStakeholderRole" {
-					roleSource = source
-				} else {
-					w.text(source)
-				}
+				w.text(w.passageSource("View section source", doc.Documents))
 			}
 		}
 		if h == s.name && s.kind() == "Feature" {
 			p.featureGoals(w, s)
 		}
 		p.body(w, s.source, h)
-		if roleSource != "" {
-			w.text(roleSource)
-		}
 		if h.level == s.name.level+1 && (h.title == "Extensions" || h.title == "Actions" || h.title == "Quality attributes") && !s.isOverview() {
 			p.sectionNavigation(w, h, headings[i+1:])
 		}

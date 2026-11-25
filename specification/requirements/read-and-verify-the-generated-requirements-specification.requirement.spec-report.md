@@ -51,7 +51,7 @@ navigation belong in the section map or page navigation. Definitions of dotspec
 categories belong in the handbook.
 
 A reader can look up a term from an inline or imported glossary and follow it
-to its defining heading. The topic index links to native Markdown headings. A term’s definition leads into a single line with its plain topic labels, model reference when supplied, and term source. When two
+to its defining heading. The topic index links to native Markdown headings. A term’s definition leads into a single line with its plain topic labels, model reference when supplied, and the source link when this is the first term from its file. When two
 contexts define the same word, each entry names its context. A relationship
 between terms links in both reading directions, with the original statement
 and examples available in the declaring entry.
@@ -64,7 +64,8 @@ Resolving the last question removes the index and its navigation link on rebuild
 Each subject report identifies its authored file and heading once in the YAML
 `source` field using a URI relative to the report. This field supplies the
 source attribution for the page and its passages.
-Each authored subject report ends with one **View source** link in the footer that opens that exact heading. Embedded subjects link to their own declarations. Collection headings serve as navigation and omit source links.
+Each authored subject report ends with one **View source** link in the footer that opens that exact heading. This footer covers all embedded declarations and passages from its file. Each embedded declaration records its exact authored heading in its report metadata.
+On every report or index, the first full passage from each additional authored file introduces one visible source link. Headings within the same resolved file share that link. Linked previews lead to their subject reports. Authored citations, evidence and relationship links remain beside the content they support.
 Above each subject or collection title, the breadcrumb links to its owners in order. A subject’s final breadcrumb opens its collection. The root system is the starting point.
 A use case with multiple extensions links to each named extension under Extensions. Concepts and quality models provide the same navigation for their named actions and attributes.
 Readers can follow supporting references beside the content they supply.

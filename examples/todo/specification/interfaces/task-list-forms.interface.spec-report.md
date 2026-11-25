@@ -21,8 +21,6 @@ Open offers work the owner can advance. Waiting shows the expected reply and whe
 
 <!-- dotspec-doc {"type":"adopted-provision-report","documents":"../../specs/personal-task-list.system.spec.md#redirect-after-an-accepted-form-submission"} -->
 
-[View section source](<../../specs/personal-task-list.system.spec.md#redirect-after-an-accepted-form-submission>)
-
 [303 See Other](<https://www.rfc-editor.org/rfc/rfc9110.html#section-15.4.4>).
 
 #### Edition

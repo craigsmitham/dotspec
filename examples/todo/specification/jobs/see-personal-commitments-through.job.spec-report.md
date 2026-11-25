@@ -29,8 +29,6 @@ Suppose I promise a guest a working sink by Friday. On Monday I call the plumber
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/personal-commitments.job.spec.md#establish-what-is-owed"} -->
 
-[View section source](<../../specs/jobs/personal-commitments.job.spec.md#establish-what-is-owed>)
-
 **Stage:** define
 
 Agree on the result, who is responsible and when it matters. For the repair, a working sink by the visit is the result I have agreed to arrange.
@@ -41,15 +39,11 @@ Agree on the result, who is responsible and when it matters. For the repair, a w
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/personal-commitments.job.spec.md#clear-agreement"} -->
 
-[View section source](<../../specs/jobs/personal-commitments.job.spec.md#clear-agreement>)
-
 Minimize the likelihood of accepting an errand with a different understanding of completion from the person relying on it.
 
 ### Recall outstanding work
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/personal-commitments.job.spec.md#recall-outstanding-work"} -->
-
-[View section source](<../../specs/jobs/personal-commitments.job.spec.md#recall-outstanding-work>)
 
 **ID:** recall
 **Stage:** locate
@@ -64,8 +58,6 @@ Find the commitments that could need attention and recover the details needed to
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/personal-commitments.job.spec.md#arrange-what-is-needed"} -->
 
-[View section source](<../../specs/jobs/personal-commitments.job.spec.md#arrange-what-is-needed>)
-
 **Stage:** prepare
 
 Get the details or materials needed for the next action into usable form. To request a visit I may need the address, a description of the leak and times when someone can let the plumber in.
@@ -73,8 +65,6 @@ Get the details or materials needed for the next action into usable form. To req
 ### Decide which errand can go ahead
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/personal-commitments.job.spec.md#decide-which-errand-can-go-ahead"} -->
-
-[View section source](<../../specs/jobs/personal-commitments.job.spec.md#decide-which-errand-can-go-ahead>)
 
 **Stage:** confirm
 
@@ -86,15 +76,11 @@ Check which commitments are ready to act on given the time, access and people av
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/personal-commitments.job.spec.md#avoid-wasted-trips"} -->
 
-[View section source](<../../specs/jobs/personal-commitments.job.spec.md#avoid-wasted-trips>)
-
 Minimize the likelihood of starting an errand before a necessary prerequisite is in place.
 
 ### Carry out the next action
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/personal-commitments.job.spec.md#carry-out-the-next-action"} -->
-
-[View section source](<../../specs/jobs/personal-commitments.job.spec.md#carry-out-the-next-action>)
 
 **Stage:** execute
 
@@ -103,8 +89,6 @@ Do the work that advances the commitment. Call the plumber to arrange a visit or
 ### Check what remains
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/personal-commitments.job.spec.md#check-what-remains"} -->
-
-[View section source](<../../specs/jobs/personal-commitments.job.spec.md#check-what-remains>)
 
 **Stage:** monitor
 
@@ -120,8 +104,6 @@ Compare what has happened with what was promised. If I am waiting on a reply, de
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/personal-commitments.job.spec.md#notice-a-stalled-errand"} -->
 
-[View section source](<../../specs/jobs/personal-commitments.job.spec.md#notice-a-stalled-errand>)
-
 Minimize the time a commitment goes unattended after an expected reply is overdue.
 
 **Supported by**
@@ -133,8 +115,6 @@ Minimize the time a commitment goes unattended after an expected reply is overdu
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/personal-commitments.job.spec.md#revise-the-plan"} -->
 
-[View section source](<../../specs/jobs/personal-commitments.job.spec.md#revise-the-plan>)
-
 **ID:** reconsider
 **Stage:** modify
 
@@ -143,8 +123,6 @@ Work out what a changed circumstance requires. When the plumber asks for a photo
 ### Settle the commitment
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/personal-commitments.job.spec.md#settle-the-commitment"} -->
-
-[View section source](<../../specs/jobs/personal-commitments.job.spec.md#settle-the-commitment>)
 
 **Stage:** conclude
 
@@ -156,15 +134,11 @@ Establish that the agreed result has been delivered, or confirm who has accepted
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/personal-commitments.job.spec.md#commitments-fulfilled"} -->
 
-[View section source](<../../specs/jobs/personal-commitments.job.spec.md#commitments-fulfilled>)
-
 Minimize the likelihood of missing an agreed deadline for a personal commitment.
 
 ### Less reconstruction
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/personal-commitments.job.spec.md#less-reconstruction"} -->
-
-[View section source](<../../specs/jobs/personal-commitments.job.spec.md#less-reconstruction>)
 
 **ID:** less-reconstruction
 

@@ -48,7 +48,42 @@ func splitHeader(data []byte) (pageHeader, []byte) {
 
 var markdownParser = goldmark.New(goldmark.WithExtensions(extension.GFM), goldmark.WithParserOptions(parser.WithAutoHeadingID())).Parser()
 
+type sourceRoute struct{ label, dest string }
+
+// Relative destinations on the same report have the same base directory.
+// URL parsing decodes the path and discards query and fragment for file identity.
+func sourceFileKey(page, dest string) string {
+	u, err := url.Parse(dest)
+	if err != nil || u.IsAbs() || u.Host != "" || u.Path == "" {
+		return ""
+	}
+	return path.Join(path.Dir(page), u.Path)
+}
+
+func isSourceLabel(label string) bool {
+	return label == "View source" || label == "View section source" || label == "Term source"
+}
+
+func sourceLabelAllowances(markdown string, generated []sourceRoute) map[sourceRoute]int {
+	_, body := splitHeader([]byte(markdown))
+	counts := map[sourceRoute]int{}
+	doc := markdownParser.Parse(text.NewReader(body))
+	_ = ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+		if l, ok := n.(*ast.Link); ok && entering {
+			if label := visibleText(l, body); isSourceLabel(label) {
+				counts[sourceRoute{label, string(util.URLEscape(l.Destination, true))}]++
+			}
+		}
+		return ast.WalkContinue, nil
+	})
+	for _, r := range generated {
+		counts[sourceRoute{r.label, string(util.URLEscape([]byte(r.dest), true))}]--
+	}
+	return counts
+}
+
 type parsedPage struct {
+	footerSource   string
 	sectionDocs    map[string][]Document
 	firstList      map[string][]string
 	header         pageHeader
@@ -132,6 +167,10 @@ func parseGenerated(data []byte) parsedPage {
 		case *ast.Link:
 			if label := visibleText(n, body); label != "" {
 				dest := string(util.URLEscape(n.Destination, true))
+				if label == "View source" && n.Parent() == doc.LastChild() && n == n.Parent().FirstChild() &&
+					n.Parent().Kind() == ast.KindParagraph && n.Parent().PreviousSibling() != nil && n.Parent().PreviousSibling().Kind() == ast.KindThematicBreak {
+					p.footerSource = dest
+				}
 				p.links[dest]++
 				p.labels[dest] = append(p.labels[dest], label)
 				for _, section := range ancestors {
@@ -173,8 +212,50 @@ func contentText(md string) string {
 	return visibleText(markdownParser.Parse(text.NewReader(source)), source)
 }
 
+func checkSourceLinks(file string, expected *Page, p parsedPage, report func(string, string)) {
+	if expected.Documents != "" && p.footerSource != string(util.URLEscape([]byte(expected.Documents), true)) {
+		report("spec.navigation", "expected View source in the footer to open "+expected.Documents)
+	}
+	ordinary := maps.Clone(expected.otherSourceLabels)
+	sources := map[string]int{}
+	for dest, labels := range p.labels {
+		for _, label := range labels {
+			if !isSourceLabel(label) {
+				continue
+			}
+			route := sourceRoute{label, dest}
+			if ordinary[route] > 0 {
+				ordinary[route]--
+				continue
+			}
+			if key := sourceFileKey(file, dest); key != "" {
+				sources[key]++
+			}
+		}
+	}
+	required := map[string]bool{}
+	if expected.Documents != "" {
+		required[sourceFileKey(file, expected.Documents)] = true
+	}
+	for _, declaration := range expected.SectionDocs {
+		required[sourceFileKey(file, declaration.Documents)] = true
+	}
+	for _, key := range slices.Sorted(maps.Keys(required)) {
+		if sources[key] == 0 {
+			report("spec.navigation", "missing generated source link to "+key)
+		}
+	}
+	for _, key := range slices.Sorted(maps.Keys(sources)) {
+		if sources[key] > 1 {
+			report("spec.navigation", "multiple generated source links to "+key)
+		} else if !required[key] {
+			report("spec.navigation", "unexpected generated source link to "+key)
+		}
+	}
+}
+
 // Check the rendered document against the plan's source-derived contract.
-func checkPage(expected *Page, p parsedPage, report func(string, string)) {
+func checkPage(file string, expected *Page, p parsedPage, report func(string, string)) {
 	if p.header.GeneratedBy != "dotspec" || p.header.Type != expected.Type {
 		report("spec.document-type", fmt.Sprintf("expected a generated %s document for %q", expected.Type, expected.Title))
 	}
@@ -184,6 +265,7 @@ func checkPage(expected *Page, p parsedPage, report func(string, string)) {
 	if len(p.titles) != 1 || p.titles[0] != contentText(expected.Title) {
 		report("spec.title", "expected one title naming "+expected.Title)
 	}
+	checkSourceLinks(file, expected, p, report)
 	remaining := p.visible
 	for _, md := range expected.RequiredContent {
 		needle := contentText(md)
@@ -300,7 +382,7 @@ func validateRendered(root string, plan *Plan, files map[string][]byte) ([]diagn
 		report := func(rule, message string) {
 			ds = append(ds, *diagnostic.Error(rule, message, diagnostic.Location{Path: filepath.Join(root, filepath.FromSlash(rel)), Element: expected.Title}))
 		}
-		checkPage(expected, p, report)
+		checkPage(rel, expected, p, report)
 		destinations := maps.Clone(p.resources)
 		if p.header.Source.ShortTag() == "!!str" {
 			destinations[p.header.Source.Value] = true

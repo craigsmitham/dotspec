@@ -55,7 +55,6 @@ func addSourceContracts(p *planner) error {
 				if h.subjectKind != "" {
 					doc := subjectDocument(file, s.source, h)
 					passagePage.SectionDocs[fragment] = doc
-					requireSectionRoute(passagePage, fragment, doc.Documents)
 				}
 			}
 			for _, n := range s.source.links {
@@ -123,6 +122,22 @@ func addSourceContracts(p *planner) error {
 					requireRoute(indexPage, dest, inlineText(e.title))
 				}
 			}
+			// Full passages on an index introduce their file at its first
+			// contribution. Linked directory previews lead to subject reports.
+			files := map[string]bool{}
+			requireSource := func(anchor, dest, label string) {
+				key := sourceFileKey(home, dest)
+				if !files[key] {
+					requireRoute(indexPage, dest, label)
+					requireSectionRoute(indexPage, anchor, dest)
+					files[key] = true
+				}
+			}
+			for _, passage := range idx.passages {
+				h := passage[0]
+				_, anchor, _ := strings.Cut(p.targets[h.node], "#")
+				requireSource(anchor, subjectDocument(home, s.source, h).Documents, "View section source")
+			}
 			if title == "Glossary" {
 				for _, term := range s.glossary {
 					for i, h := range term.headings {
@@ -148,8 +163,7 @@ func addSourceContracts(p *planner) error {
 						indexPage.RequiredSectionContent[anchor] = append(indexPage.RequiredSectionContent[anchor], inlineText(topics))
 					}
 					dest := relativeURL(idx.file, term.source.path, term.headings[0].anchor)
-					requireRoute(indexPage, dest, "Term source")
-					requireSectionRoute(indexPage, term.anchors[0], dest)
+					requireSource(term.anchors[0], dest, "Term source")
 				}
 			}
 			if title == "Quality attributes" {

@@ -30,8 +30,6 @@ assumed away by this precondition.
 
 <!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#main-success-scenario"} -->
 
-[View section source](<../../specs/use-cases/check-specifications.use-case.spec.md#main-success-scenario>)
-
 1. The contributor selects the project subtree to inspect and requests a check.
 2. Dotspec discovers supported specifications and reads the system context
    needed to interpret them.
@@ -47,8 +45,6 @@ assumed away by this precondition.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#malformed-specification"} -->
 
-[View section source](<../../specs/use-cases/check-specifications.use-case.spec.md#malformed-specification>)
-
 #### Handling
 
 During steps 2–3, a specification is malformed. Report its structural error,
@@ -59,8 +55,6 @@ Resume reporting at step 4. A complete report with errors still achieves this go
 ### Unreadable input or failed discovery
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#unreadable-input-or-failed-discovery"} -->
-
-[View section source](<../../specs/use-cases/check-specifications.use-case.spec.md#unreadable-input-or-failed-discovery>)
 
 #### Handling
 
@@ -73,8 +67,6 @@ and start another check.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#empty-scope"} -->
 
-[View section source](<../../specs/use-cases/check-specifications.use-case.spec.md#empty-scope>)
-
 #### Handling
 
 At step 2, no supported specifications are found. Explicitly report an empty,
@@ -83,8 +75,6 @@ completed scan at step 4. This is an alternative successful outcome.
 ### Unfinished content
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/check-specifications.use-case.spec.md#unfinished-content"} -->
-
-[View section source](<../../specs/use-cases/check-specifications.use-case.spec.md#unfinished-content>)
 
 #### Handling
 

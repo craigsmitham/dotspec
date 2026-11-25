@@ -25,7 +25,7 @@ Business requirements · [Model reference](<../docs/reference/model/index.md#bus
 
 An ability needed to deliver value, potentially combining people, procedures and technology. Distinct from a product feature or structural component; its declaration does not establish a provider.
 
-Business requirements, Software requirements · [Model reference](<../docs/reference/model/index.md#capability>) · [Term source](<../docs/reference/model/glossary.md#capability>)
+Business requirements, Software requirements · [Model reference](<../docs/reference/model/index.md#capability>)
 
 ## Component
 
@@ -33,7 +33,7 @@ Business requirements, Software requirements · [Model reference](<../docs/refer
 
 A named part of a system with a described responsibility and boundary. Neither its declaration nor code location establishes structural parentage.
 
-Software requirements · [Model reference](<../docs/reference/model/index.md#component>) · [Term source](<../docs/reference/model/glossary.md#component>)
+Software requirements · [Model reference](<../docs/reference/model/index.md#component>)
 
 ## Concept
 
@@ -41,7 +41,7 @@ Software requirements · [Model reference](<../docs/reference/model/index.md#com
 
 A behavior-bearing concept described by purpose, abstract state, actions and an operational principle.
 
-Software requirements · [Model reference](<../docs/reference/model/index.md#concept>) · [Term source](<../docs/reference/model/glossary.md#concept>)
+Software requirements · [Model reference](<../docs/reference/model/index.md#concept>)
 
 From [Feature](<#feature-relationships>) · Can group a concept.
 
@@ -51,7 +51,7 @@ From [Feature](<#feature-relationships>) · Can group a concept.
 
 A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own requirements.
 
-Software requirements · [Model reference](<../docs/reference/model/index.md#feature>) · [Term source](<../docs/reference/model/glossary.md#feature>)
+Software requirements · [Model reference](<../docs/reference/model/index.md#feature>)
 
 ### Feature relationships
 
@@ -69,7 +69,7 @@ Software requirements · [Model reference](<../docs/reference/model/index.md#fea
 
 What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps and job-story phrasing are optional complementary perspectives.
 
-User requirements · [Model reference](<../docs/reference/model/index.md#job>) · [Term source](<../docs/reference/model/glossary.md#job>)
+User requirements · [Model reference](<../docs/reference/model/index.md#job>)
 
 ## Quality attribute
 
@@ -77,7 +77,7 @@ User requirements · [Model reference](<../docs/reference/model/index.md#job>) �
 
 A named quality definition with acyclic grouping within its declaring model or effective system.
 
-Software requirements · [Model reference](<../docs/reference/model/index.md#qualityattribute>) · [Term source](<../docs/reference/model/glossary.md#quality-attribute>)
+Software requirements · [Model reference](<../docs/reference/model/index.md#qualityattribute>)
 
 ## Requirement
 
@@ -85,7 +85,7 @@ Software requirements · [Model reference](<../docs/reference/model/index.md#qua
 
 One required property or behavior, declared in its own requirement specification. Functional and quality requirements share this type. Either can reference a system quality attribute.
 
-Software requirements · [Model reference](<../docs/reference/model/index.md#requirement>) · [Term source](<../docs/reference/model/glossary.md#requirement>)
+Software requirements · [Model reference](<../docs/reference/model/index.md#requirement>)
 
 From [Feature](<#feature-relationships>) · Can group a requirement.
 
@@ -95,7 +95,7 @@ From [Feature](<#feature-relationships>) · Can group a requirement.
 
 The system described by a system document; subordinate systems retain their own boundaries and quality attributes.
 
-Business requirements, Software requirements · [Model reference](<../docs/reference/model/index.md#system>) · [Term source](<../docs/reference/model/glossary.md#system>)
+Business requirements, Software requirements · [Model reference](<../docs/reference/model/index.md#system>)
 
 ## System stakeholder role
 
@@ -103,7 +103,7 @@ Business requirements, Software requirements · [Model reference](<../docs/refer
 
 A named capacity in which people or organizations have an interest in a particular system.
 
-Business requirements · [Model reference](<../docs/reference/model/index.md#systemstakeholderrole>) · [Term source](<../docs/reference/model/glossary.md#system-stakeholder-role>)
+Business requirements · [Model reference](<../docs/reference/model/index.md#systemstakeholderrole>)
 
 ## Use case
 
@@ -111,6 +111,6 @@ Business requirements · [Model reference](<../docs/reference/model/index.md#sys
 
 An actor goal and its interactions at a stated system boundary, with alternative paths and protections.
 
-Software requirements · [Model reference](<../docs/reference/model/index.md#usecase>) · [Term source](<../docs/reference/model/glossary.md#use-case>)
+Software requirements · [Model reference](<../docs/reference/model/index.md#usecase>)
 
 From [Feature](<#feature-relationships>) · Can group a use case.

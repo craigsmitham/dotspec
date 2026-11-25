@@ -35,8 +35,6 @@ those needs.
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#early-discovery-of-stakeholder-needs"} -->
 
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#early-discovery-of-stakeholder-needs>)
-
 **ID:** OUT-001
 
 Minimize the likelihood that an important stakeholder need is
@@ -45,8 +43,6 @@ discovered only after implementation begins.
 ### Timely agreement on the proposed change
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#timely-agreement-on-the-proposed-change"} -->
-
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#timely-agreement-on-the-proposed-change>)
 
 **ID:** OUT-002
 
@@ -59,8 +55,6 @@ a proposed change.
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#determine-the-scope"} -->
 
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#determine-the-scope>)
-
 **ID:** determine-scope
 **Stage:** define
 
@@ -72,8 +66,6 @@ Establish the change's boundaries and the decisions the requirements must suppor
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#shared-scope"} -->
 
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#shared-scope>)
-
 **ID:** OUT-003
 
 Minimize the likelihood that stakeholders interpret the boundaries
@@ -82,8 +74,6 @@ of the proposed change differently.
 ### Identify stakeholders and sources
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#identify-stakeholders-and-sources"} -->
-
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#identify-stakeholders-and-sources>)
 
 **ID:** identify-stakeholders
 **Stage:** locate
@@ -96,8 +86,6 @@ Identify affected people and sources of relevant needs, constraints, and evidenc
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#stakeholder-discovery-time"} -->
 
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#stakeholder-discovery-time>)
-
 **ID:** OUT-004
 
 Minimize the time needed to identify affected stakeholders.
@@ -105,8 +93,6 @@ Minimize the time needed to identify affected stakeholders.
 ##### Coverage of stakeholders
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#coverage-of-stakeholders"} -->
-
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#coverage-of-stakeholders>)
 
 **ID:** OUT-005
 
@@ -116,8 +102,6 @@ relevant constraint.
 ### Organize the available information
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#organize-the-available-information"} -->
-
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#organize-the-available-information>)
 
 **ID:** organize-information
 **Stage:** prepare
@@ -130,8 +114,6 @@ Organize needs, evidence, constraints, and assumptions so they can be considered
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#evidence-retrieval-time"} -->
 
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#evidence-retrieval-time>)
-
 **ID:** OUT-006
 
 Minimize the time needed to find evidence supporting a stated need.
@@ -139,8 +121,6 @@ Minimize the time needed to find evidence supporting a stated need.
 ### Establish readiness to specify
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#establish-readiness-to-specify"} -->
-
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#establish-readiness-to-specify>)
 
 **ID:** establish-readiness
 **Stage:** confirm
@@ -154,8 +134,6 @@ and identify any assumptions that must remain explicit.
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#explicit-unresolved-assumptions"} -->
 
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#explicit-unresolved-assumptions>)
-
 **ID:** OUT-007
 
 Minimize the likelihood of treating an unresolved assumption as
@@ -164,8 +142,6 @@ an agreed stakeholder need.
 ### Formulate the requirements
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#formulate-the-requirements"} -->
-
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#formulate-the-requirements>)
 
 **ID:** formulate-requirements
 **Stage:** execute
@@ -179,8 +155,6 @@ and assess.
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#consistent-interpretations"} -->
 
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#consistent-interpretations>)
-
 **ID:** OUT-008
 
 Minimize the likelihood that a requirement admits conflicting
@@ -189,8 +163,6 @@ interpretations of the intended behavior.
 ### Evaluate the requirements
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#evaluate-the-requirements"} -->
-
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#evaluate-the-requirements>)
 
 **ID:** evaluate-requirements
 **Stage:** monitor
@@ -208,8 +180,6 @@ complete enough for the change, and possible to verify.
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#detection-of-conflicts"} -->
 
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#detection-of-conflicts>)
-
 **ID:** OUT-009
 
 Minimize the likelihood that conflicting requirements remain undetected.
@@ -217,8 +187,6 @@ Minimize the likelihood that conflicting requirements remain undetected.
 ### Resolve gaps and disagreements
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#resolve-gaps-and-disagreements"} -->
-
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#resolve-gaps-and-disagreements>)
 
 **ID:** resolve-gaps
 **Stage:** modify
@@ -232,8 +200,6 @@ Revisit earlier steps as needed.
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#time-to-resolve-disagreements"} -->
 
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#time-to-resolve-disagreements>)
-
 **ID:** OUT-010
 
 Minimize the time needed to resolve a disagreement about intended behavior.
@@ -241,8 +207,6 @@ Minimize the time needed to resolve a disagreement about intended behavior.
 ### Establish the agreed baseline
 
 <!-- dotspec-doc {"type":"job-step-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#establish-the-agreed-baseline"} -->
-
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#establish-the-agreed-baseline>)
 
 **ID:** establish-baseline
 **Stage:** conclude
@@ -255,8 +219,6 @@ responsible for implementation and verification.
 ##### Baseline retrieval time
 
 <!-- dotspec-doc {"type":"desired-outcome-spec-report","documents":"../../specs/jobs/develop-requirements.job.spec.md#baseline-retrieval-time"} -->
-
-[View section source](<../../specs/jobs/develop-requirements.job.spec.md#baseline-retrieval-time>)
 
 **ID:** OUT-011
 

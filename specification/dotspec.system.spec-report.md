@@ -70,15 +70,11 @@ code they describe.
 
 A contributor authors or changes specifications and needs findings that identify the passage to revise.
 
-[View section source](<../specs/dotspec.system.spec.md#contributor>)
-
 ### Reviewer
 
 <!-- dotspec-doc {"type":"system-stakeholder-role-spec-report","documents":"../specs/dotspec.system.spec.md#reviewer"} -->
 
 A reviewer examines a proposed change and needs to know which sources were inspected and where the evidence for a requirement comes from.
-
-[View section source](<../specs/dotspec.system.spec.md#reviewer>)
 
 ## Scope
 

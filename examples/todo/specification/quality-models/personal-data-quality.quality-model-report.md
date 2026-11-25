@@ -21,8 +21,6 @@ Adapted from recoverability in [ISO/IEC 25010:2023, §3.5.4](<https://www.iso.or
 
 <!-- dotspec-doc {"type":"quality-model-attribute-report","documents":"../../specs/quality-models/personal-data.quality-model.md#durability"} -->
 
-[View section source](<../../specs/quality-models/personal-data.quality-model.md#durability>)
-
 **ID:** durability
 
 The ability to retain acknowledged changes when the application stops and starts again.

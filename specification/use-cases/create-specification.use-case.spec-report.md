@@ -19,8 +19,6 @@ A contributor beginning a behavioral account.
 
 <!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/create-specification.use-case.spec.md#main-success-scenario"} -->
 
-[View section source](<../../specs/use-cases/create-specification.use-case.spec.md#main-success-scenario>)
-
 1. The contributor selects a project directory, specification type, and local name.
 2. Dotspec creates the draft and reports its path with a direct command for the [authoring guidance](<../requirements/find-authoring-guidance-in-the-installed-cli.requirement.spec-report.md>).
 3. The contributor opens the document and replaces prompts with known behavior.
@@ -33,8 +31,6 @@ A contributor beginning a behavioral account.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/create-specification.use-case.spec.md#more-detailed-use-case-prompts"} -->
 
-[View section source](<../../specs/use-cases/create-specification.use-case.spec.md#more-detailed-use-case-prompts>)
-
 #### Handling
 
 At step 1, the contributor selects the expanded use-case template. Dotspec creates
@@ -43,8 +39,6 @@ additional context prompts in the same document format, then continues at step 3
 ### Target already exists
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/create-specification.use-case.spec.md#target-already-exists"} -->
-
-[View section source](<../../specs/use-cases/create-specification.use-case.spec.md#target-already-exists>)
 
 #### Handling
 

@@ -31,16 +31,12 @@ outputs, formats and exit statuses.
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#invoke"} -->
 
-[View section source](<../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#invoke>)
-
 Submit a supported operation and its arguments. Invalid invocation syntax produces
 an error result rather than performing the requested operation.
 
 ### Observe the result
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#observe-the-result"} -->
-
-[View section source](<../../internal/integration/specs/concepts/cli-interaction.concept.spec.md#observe-the-result>)
 
 Read the output and error streams and the exit status when the process completes.
 A successful invocation reports exit status 0; specification findings and invocation

@@ -31,8 +31,6 @@ outcomes can apply to multiple jobs or steps without duplication.
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/job-map.concept.spec.md#describe-the-job-and-its-steps"} -->
 
-[View section source](<../../specs/concepts/job-map.concept.spec.md#describe-the-job-and-its-steps>)
-
 Edit the job specification to describe the accomplishment, add or reorder steps,
 and associate outcomes with the whole job or a particular step. These are file
 edits; the CLI supplies a starting document and reads the authored state.
@@ -40,8 +38,6 @@ edits; the CLI supplies a starting document and reads the authored state.
 ### View the map
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/job-map.concept.spec.md#view-the-map"} -->
-
-[View section source](<../../specs/concepts/job-map.concept.spec.md#view-the-map>)
 
 Display the job's steps in authored order, optionally including outcomes beside
 their owning job or step. A job with no steps still has a view that explicitly
@@ -51,8 +47,6 @@ that execution sequence or establish completeness.
 ### Inspect a step's outcomes
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/job-map.concept.spec.md#inspect-a-steps-outcomes"} -->
-
-[View section source](<../../specs/concepts/job-map.concept.spec.md#inspect-a-steps-outcomes>)
 
 Select a step by its explicit ID and display outcomes it declares. Outcomes
 declared elsewhere are excluded from this selection; the needs map shows their

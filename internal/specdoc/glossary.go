@@ -291,7 +291,9 @@ func (p *planner) renderGlossary(w *writer, s *subject) {
 			if ref != "" {
 				metadata = append(metadata, ref)
 			}
-			metadata = append(metadata, link("Term source", relativeURL(w.file, term.source.path, first.anchor)))
+			if source := w.passageSource("Term source", relativeURL(w.file, term.source.path, first.anchor)); source != "" {
+				metadata = append(metadata, source)
+			}
 			w.text(strings.Join(metadata, " · "))
 			for _, origin := range term.incoming {
 				line := "From " + w.link(inlineText(origin.title), origin.target)

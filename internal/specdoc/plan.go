@@ -21,6 +21,7 @@ import (
 type Plan struct{ Pages map[string]*Page }
 
 type Page struct {
+	otherSourceLabels map[sourceRoute]int // authored or navigational links that share a provenance label
 	Document
 	Title, Markdown                                 string
 	SectionDocs                                     map[string]Document

@@ -165,12 +165,13 @@ A ledger of payments.
 ### Example
 This [account](identity.md#account) can have two invoices.
 ## Invoice
-A request for payment.
+A request for payment. See [Term source](evidence.md#one) and [Term source](evidence.md#two).
 ### Related terms
 [Account](identity.md#account)
 
 [login]: identity.md#account
 `
+	writeFixture(t, "evidence.md", "# Evidence\n\n## One\n\n## Two\n")
 	writeFixture(t, "billing.md", billing)
 	writeFixture(t, "collections.md", "---\ncontext: Billing\n---\n# Collections\n## Balance\nAn amount due.\n### Topics\n- Collections\n")
 	writeFixture(t, "identity.md", "---\ncontext: Identity\n---\n# Identity\n## Account\nA login.\n### Alternative names\n- Balance\n### Topics\n- Customers\n")
@@ -198,6 +199,19 @@ A request for payment.
 		!strings.Contains(page, "Customers, Payments · [Model reference](<#account-identity>) · [Term source](<../billing.md#account>)") {
 		t.Fatal(page)
 	}
+	// Account and Invoice come from the same file. Keep the exact source of
+	// both terms in metadata. Four generated links introduce the four files,
+	// and the author’s two identically labeled evidence citations survive.
+	if strings.Count(page, "[Term source]") != 6 || !strings.Contains(page, "[Term source](<../evidence.md#one>)") || !strings.Contains(page, "[Term source](<../evidence.md#two>)") || strings.Contains(page, "[Term source](<../billing.md#invoice>)") ||
+		!strings.Contains(page, `"documents":"../billing.md#invoice"`) {
+		t.Fatal(page)
+	}
+	duplicate := strings.Replace(page, "A request for payment.", "A request for payment.\n\n[Term source](<../specs/../%62illing.md#invoice>)", 1)
+	writeFixture(t, "specification/glossary.md", duplicate)
+	if out := run(1, "check"); !strings.Contains(out, "multiple generated source links to billing.md") {
+		t.Fatal(out)
+	}
+	writeFixture(t, "specification/glossary.md", page)
 	if strings.Count(page, "A ledger of payments.") != 1 || strings.Count(page, "From [") != 1 || strings.Contains(page, "From [Invoice]") {
 		t.Fatal(page)
 	}

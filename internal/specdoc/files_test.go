@@ -37,12 +37,12 @@ func testPlan(t *testing.T, dir string) *Plan {
 	root := &Page{
 		Document: Document{Type: "system-spec-report", Documents: "../specs/task-list.system.spec.md#task-list"}, Title: "Task list",
 		RequiredLinks: []string{detailLink},
-		Markdown:      "---\ntype: system-spec-report\ngenerated_by: dotspec\nsource: ../specs/task-list.system.spec.md#task-list\n---\n# Task list\n\n[Resume tasks](" + detailLink + ")\n",
+		Markdown:      "---\ntype: system-spec-report\ngenerated_by: dotspec\nsource: ../specs/task-list.system.spec.md#task-list\n---\n# Task list\n\n[Resume tasks](" + detailLink + ")\n\n---\n\n[View source](../specs/task-list.system.spec.md#task-list)\n",
 	}
 	detail := &Page{
 		Document: Document{Type: "requirement-spec-report", Documents: "../../specs/restart.spec.md#restart"}, Title: "Restart",
 		RequiredContent: []string{"**Preserve tasks** on the same database."},
-		Markdown:        "---\ntype: requirement-spec-report\ngenerated_by: dotspec\nsource: ../../specs/restart.spec.md#restart\n---\n# Restart\n\n**Preserve tasks** on the same database.\n",
+		Markdown:        "---\ntype: requirement-spec-report\ngenerated_by: dotspec\nsource: ../../specs/restart.spec.md#restart\n---\n# Restart\n\n**Preserve tasks** on the same database.\n\n---\n\n[View source](../../specs/restart.spec.md#restart)\n",
 	}
 	return &Plan{Pages: map[string]*Page{"SPEC.md": entry, systemPath: root, detailPath: detail}}
 }
@@ -113,7 +113,7 @@ func TestWritePreservesAuthoredFiles(t *testing.T) {
 	}
 	delete(p.Pages, detailPath)
 	p.Pages[systemPath].RequiredLinks = nil
-	p.Pages[systemPath].Markdown = strings.Split(p.Pages[systemPath].Markdown, "[Resume tasks]")[0]
+	p.Pages[systemPath].Markdown = strings.Replace(p.Pages[systemPath].Markdown, "[Resume tasks]("+detailLink+")", "", 1)
 	changes, err := Write(dir, p)
 	if err != nil || len(changes.Removed) != 1 || changes.Removed[0] != detailPath {
 		t.Fatal(changes, err)
@@ -156,24 +156,24 @@ func TestBuildsSerialize(t *testing.T) {
 }
 
 func TestCheckScopedLinksAndIndexMembership(t *testing.T) {
-	source := []byte("---\ntype: use-case-spec-report\ngenerated_by: dotspec\nsource: source.md#return\n---\n# Return\n\n## First promise\n\n## Second promise\n\n[Test](../test.py)\n")
+	source := []byte("---\ntype: use-case-spec-report\ngenerated_by: dotspec\nsource: source.md#return\n---\n# Return\n\n## First promise\n\n## Second promise\n\n[Test](../test.py)\n\n---\n\n[View source](source.md#return)\n")
 	p := parseGenerated(source)
 	page := Page{Title: "Return", Document: Document{Type: "use-case-spec-report", Documents: "source.md#return"}, RequiredSectionLinks: map[string][]string{"first-promise": {"../test.py"}}}
 	var rules []string
 	report := func(rule, _ string) { rules = append(rules, rule) }
-	checkPage(&page, p, report)
+	checkPage("report.md", &page, p, report)
 	if !slices.Equal(rules, []string{"spec.navigation"}) {
 		t.Fatal("link outside governing clause", rules)
 	}
 	page.RequiredSectionLinks = map[string][]string{"second-promise": {"../test.py"}}
 	rules = nil
-	checkPage(&page, p, report)
+	checkPage("report.md", &page, p, report)
 	if len(rules) != 0 {
 		t.Fatal(rules)
 	}
-	p = parseGenerated([]byte("---\ntype: system-spec-report\ngenerated_by: dotspec\nsource: source.md#tasks\n---\n# Tasks\n\n## Requirements\n\n- [Restart](restart.md)\n- [Unexpected](other.md)\n"))
+	p = parseGenerated([]byte("---\ntype: system-spec-report\ngenerated_by: dotspec\nsource: source.md#tasks\n---\n# Tasks\n\n## Requirements\n\n- [Restart](restart.md)\n- [Unexpected](other.md)\n\n---\n\n[View source](source.md#tasks)\n"))
 	page = Page{Document: Document{Type: "system-spec-report", Documents: "source.md#tasks"}, Title: "Tasks", DirectoryMembers: map[string][]string{"requirements": {"restart.md"}}}
-	checkPage(&page, p, report)
+	checkPage("report.md", &page, p, report)
 	if !slices.Equal(rules, []string{"spec.membership"}) {
 		t.Fatal("misplaced index member", rules)
 	}
@@ -194,7 +194,7 @@ func TestCheckRestoresOrderAndHandlesCheckoutLineEndings(t *testing.T) {
 		t.Fatal(ds, err)
 	}
 	page := p.Pages[detailPath]
-	page.Markdown += "\n1. Remove the task.\n2. Start the service.\n"
+	page.Markdown = strings.Replace(page.Markdown, "\n---\n\n[View source]", "\n1. Remove the task.\n2. Start the service.\n\n---\n\n[View source]", 1)
 	page.RequiredContent = append(page.RequiredContent, "Start the service.", "Remove the task.")
 	_, err := Write(dir, p)
 	var d *diagnostic.Diagnostic

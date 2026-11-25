@@ -55,8 +55,6 @@ Help one person pick up an errand after an interruption and recognize when to ch
 
 The person who keeps the list relies on it to pick up unfinished errands after an interruption. They decide which entries can be discarded.
 
-[View section source](<../specs/personal-task-list.system.spec.md#list-owner>)
-
 ## Scope
 
 One person records commitments on one computer and reviews them in Open, Waiting and Completed. They choose what reply to watch for and the day to check back. They receive the reply and judge the result outside the list.

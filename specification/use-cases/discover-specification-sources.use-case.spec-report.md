@@ -19,8 +19,6 @@ A contributor assembling material for review.
 
 <!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/discover-specification-sources.use-case.spec.md#main-success-scenario"} -->
 
-[View section source](<../../specs/use-cases/discover-specification-sources.use-case.spec.md#main-success-scenario>)
-
 1. The contributor selects a project subtree and requests its source inventory.
 2. Dotspec discovers specifications, their enclosing context, and direct references.
 3. Dotspec reports the source inventory and findings for the contributor to inspect.
@@ -33,8 +31,6 @@ A contributor assembling material for review.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/discover-specification-sources.use-case.spec.md#unresolved-reference"} -->
 
-[View section source](<../../specs/use-cases/discover-specification-sources.use-case.spec.md#unresolved-reference>)
-
 #### Handling
 
 At step 2, a reference target cannot be resolved. Report the finding with the
@@ -45,8 +41,6 @@ the link and request another inventory.
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/discover-specification-sources.use-case.spec.md#operational-failure"} -->
 
-[View section source](<../../specs/use-cases/discover-specification-sources.use-case.spec.md#operational-failure>)
-
 #### Handling
 
 During discovery or reading, an operational failure prevents completing the
@@ -56,8 +50,6 @@ the contributor can repair access and retry.
 ### Multiple sources have the same slug
 
 <!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/discover-specification-sources.use-case.spec.md#multiple-sources-have-the-same-slug"} -->
-
-[View section source](<../../specs/use-cases/discover-specification-sources.use-case.spec.md#multiple-sources-have-the-same-slug>)
 
 #### Handling
 
