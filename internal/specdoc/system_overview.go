@@ -25,7 +25,7 @@ type overviewSection struct {
 // These System fields each have their own section in the report, in reading order.
 var systemContextFields = []string{"scope", "out_of_scope", "environment", "assumptions", "constraints"}
 
-func overviewOutline(kind string) []overviewSection {
+func (p *planner) overviewOutline(s *subject) []overviewSection {
 	sections := []overviewSection{
 		{sources: []string{"description"}},
 		{title: "Framing", level: 2, sources: []string{"framing"}},
@@ -34,7 +34,7 @@ func overviewOutline(kind string) []overviewSection {
 		{title: "Stakeholders", level: 2, sources: []string{"stakeholder_roles"}},
 		{title: "Responsibilities", level: 2, sources: []string{"responsibilities"}},
 	}
-	if kind == "System" {
+	if s.kind() == "System" {
 		for _, field := range systemContextFields {
 			title := sentenceCase(strings.ReplaceAll(field, "_", " "))
 			level := 2
@@ -46,8 +46,8 @@ func overviewOutline(kind string) []overviewSection {
 	} else {
 		sections = append(sections, overviewSection{title: "Scope", level: 2, sources: []string{"boundary_description", "out_of_scope"}})
 	}
+	sections = append(sections, p.architecture(s).sections()...)
 	return append(sections, []overviewSection{
-		{title: "System topology", level: 2, sources: []string{"part_of", "interacts_with", "required_interfaces", "provided_interfaces"}},
 		{title: "Features", level: 2},
 		{title: "Concepts", level: 2},
 		{title: "Concept uses", level: 3, sources: []string{"concept_uses"}},
@@ -55,7 +55,6 @@ func overviewOutline(kind string) []overviewSection {
 		{title: "Quality Attributes", level: 2},
 		{title: "Adopts", level: 2, sources: []string{"adopts"}},
 		{title: "Contracts", level: 2, sources: []string{"contracts"}},
-		{title: "Architecture", level: 2, sources: []string{"architecture"}},
 		{title: "Implementation", level: 2, sources: []string{"implementation"}},
 		{title: "Open questions", level: 2, sources: []string{"open_questions"}},
 		{title: "Glossary", level: 2, sources: []string{"glossary"}},
@@ -65,7 +64,7 @@ func overviewOutline(kind string) []overviewSection {
 }
 
 func (p *planner) planOverview(s *subject) []overviewSection {
-	sections := overviewOutline(s.kind())
+	sections := p.overviewOutline(s)
 	groups := map[string][][]*heading{}
 	for _, passage := range s.passages {
 		h := passage[0]
@@ -90,8 +89,8 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 		section := &sections[i]
 		detail := &writer{file: s.file, page: &Page{}}
 		p.overviewDetails(detail, s, section)
-		section.detail = detail.out.String()
-		section.detailLinks = detail.page.RequiredLinks
+		section.detail += detail.out.String()
+		section.detailLinks = append(section.detailLinks, detail.page.RequiredLinks...)
 		section.hasBody = len(section.passages) > 0 || section.detail != "" || len(section.preview) > 0
 		if section.level == 2 {
 			parent = section
@@ -109,7 +108,7 @@ func (section overviewSection) merges(i int) bool {
 	if section.level == 0 {
 		return h.title == "Description" && i == 1
 	}
-	return i == 0 && h.title == section.title
+	return i == 0 && (h.title == section.title || (section.title == "Interactions" && h.title == "Interacts with"))
 }
 
 func (p *planner) indexOverviewHeadings(s *subject, ids parser.IDs) {
@@ -194,8 +193,6 @@ func (p *planner) overviewDetails(w *writer, s *subject, section *overviewSectio
 	switch section.title {
 	case "Quality Attributes":
 		p.attributeOverview(w, s)
-	case "System topology":
-		p.renderTopology(w, s)
 	case "Features", "Concept uses", "Synchronizations":
 		if idx := s.indexes[section.title]; idx != nil {
 			for _, group := range slices.Sorted(maps.Keys(idx.groups)) {

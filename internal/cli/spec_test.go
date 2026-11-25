@@ -102,6 +102,9 @@ Persistence.
 ## Part of
 [Worker](../../specs/worker.system.spec.md).
 
+## Interacts with
+The [Tool](../../../specs/tool.system.spec.md) schedules retries.
+
 `)
 	writeFixture(t, filepath.Join(root, grandchild, "quality/availability/availability.quality-attribute.spec.md"), `---
 type: quality-attribute-spec
@@ -128,6 +131,10 @@ id: incoming-jobs
 ## Responsibilities
 
 Receive submissions through the [storage contracts](#required-interfaces).
+
+## Architecture
+
+Journal keeps the durable record.
 
 ## Required interfaces
 
@@ -185,12 +192,12 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 		}
 	}
 	reader("SPEC.md", "[Read the system specification](<specification/tool.system.spec-report.md>)")
-	reader("specification/tool.system.spec-report.md", "[Open questions](<open-questions.md>)", "[Systems](<systems.md>)")
+	reader("specification/tool.system.spec-report.md", "### Subsystems", "Subsystem: Worker", "[Open questions](<open-questions.md>)", "[Systems](<systems.md>)")
 	reader("specification/systems/worker/worker.system.spec-report.md", "## Framing", "Could workers recover interrupted jobs?")
 	reader("specification/systems.md", "- [Worker](<systems/worker/worker.system.spec-report.md>) — A local job executor.")
 	reader("specification/systems/worker/worker.system.spec-report.md", "[Tool](<../../tool.system.spec-report.md>)", "[Systems](<systems.md>)")
 	reader("specification/systems/worker/systems.md", "- [Queue](<systems/queue/queue.system.spec-report.md>)")
-	reader(section+"queue.system.spec-report.md", "[Worker](<../../worker.system.spec-report.md>)", "[Requirements](<requirements.md>)", "[Components](<components.md>)")
+	reader(section+"queue.system.spec-report.md", "### System structure", "### System context", "### Interactions", "owner ---|interacts with|", "schedules retries.", "[Worker](<../../worker.system.spec-report.md>)", "[Requirements](<requirements.md>)", "[Components](<components.md>)")
 	reader(section+"components.md", "- [Intake](<components/intake/intake.component.spec-report.md>)")
 	reader(section+"requirements.md", "- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>) — Each submitted job must remain in the queue until accepted.", "[Intake requirements](<components/intake/requirements.md>)")
 	reader(section+"quality-attributes.md", "**[Availability](<quality/availability/availability.quality-attribute.spec-report.md>)** — Accept work while either A &#124; B is available.")
@@ -201,7 +208,7 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 	intake := section + "components/intake/"
 	reader(intake+"components/journal/journal.component.spec-report.md", "../../intake.component.spec-report.md", "[Requirements](<requirements.md>)")
 	reader(intake+"components/journal/requirements.md", "## Applicable requirements\n\n- [Retain jobs](<../../../../requirements/retain-jobs.requirement.spec-report.md>)")
-	reader(intake+"intake.component.spec-report.md", "[Interfaces](<interfaces.md>)", "[Required interfaces](<interfaces.md#required-interfaces>)", "[storage contracts](<interfaces.md#required-interfaces>)", "[Components](<components.md>)")
+	reader(intake+"intake.component.spec-report.md", "## Architecture\n\nJournal keeps the durable record.", "- **Provided** · [Submission]", "- **Required** · [Storage]", "[Interfaces](<interfaces.md>)", "[Required interfaces](<interfaces.md#required-interfaces>)", "[storage contracts](<interfaces.md#required-interfaces>)", "[Components](<components.md>)")
 	componentPage, err := os.ReadFile(filepath.Join(root, intake, "intake.component.spec-report.md"))
 	if err != nil {
 		t.Fatal(err)
@@ -336,7 +343,7 @@ Individual authors.
 		!strings.Contains(page, "## Purpose\n\nKeep notes.") || strings.Contains(page, "## Goals\n") ||
 		!strings.Contains(page, "## Scope\n\nOne notebook.") ||
 		strings.Index(page, "## Scope") < strings.Index(page, "Individual authors.") ||
-		strings.Contains(page, "open-questions.md") || strings.Contains(page, "## System topology") {
+		strings.Contains(page, "open-questions.md") || strings.Contains(page, "## Architecture") {
 		t.Fatal(page)
 	}
 

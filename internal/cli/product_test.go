@@ -149,7 +149,7 @@ func TestProductWithStructuralParentInAnotherProject(t *testing.T) {
 		}
 	}
 	report, err := os.ReadFile("specification/tool.system.spec-report.md")
-	if err != nil || !strings.Contains(string(report), "Parent system") || !strings.Contains(string(report), "demo.system.spec.md") {
+	if err != nil || !strings.Contains(string(report), "### Part of") || !strings.Contains(string(report), "demo.system.spec.md") {
 		t.Fatal(err, string(report))
 	}
 }

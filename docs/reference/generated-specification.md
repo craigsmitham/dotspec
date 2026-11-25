@@ -61,9 +61,9 @@ Expand **On this page** to jump to a section in reading order. Expand **Browse s
 | Environment | Conditions in the surrounding world that help explain the requirements |
 | Assumptions | Named premises in declaration order. Follow a premise to its full statement, basis, applicability and the requirements that rely on it. |
 | Constraints | Externally imposed limits on the solutions available for this system |
-| System topology | Immediate parts, boundary partners, and required or provided interfaces, with a Mermaid diagram and linked descriptions |
+| Architecture | The system boundary and its immediate subsystems and components, the interfaces it provides or requires, and its declared interactions |
 | Features | Product features and their authored descriptions |
-| Capabilities | Capabilities the system provides. When topology identifies a provider, its entry describes the capability. |
+| Capabilities | Architecture lists capabilities beside the subsystem or component that provides them. The system’s own capabilities appear under Provided capabilities. |
 | Use cases | The use-case index, where each interaction is listed with its authored goal |
 | Concepts | Links to concept definitions, uses and synchronizations. The body introduces named uses and synchronizations under their own headings. |
 | Requirements | **Requirements** opens the index, including routes by component. |
@@ -75,14 +75,15 @@ Expand **On this page** to jump to a section in reading order. Expand **Browse s
 **On this page** lists **Scope** once when the system describes its scope or records exclusions. If only exclusions are supplied, **Scope** opens directly with the **Out of scope** subsection. Links to exclusions go directly to that subsection. **Environment**, **Assumptions** and **Constraints** each appear as a peer of **Scope** when populated. Local Markdown subheadings stay with their passage.
 
 Overview sections list all entries with project-specific detail in index order.
-A collection with only navigation stays in the section map. The topology
-and quality hierarchy show their declared structure in full.
+A collection with only navigation stays in the section map. Architecture shows one level of explicit **Part of** relationships. Follow a linked part to read its own report. Directory placement alone puts a subject in the browse indexes.
+
+The diagram places immediate parts inside their owner’s boundary and labels its declared interfaces as provided or required. External interaction partners appear outside the boundary. When a system declares both parts and external partners, **System structure** shows its decomposition and **System context** shows its interfaces and partners. A component uses **Component structure** and **Component context** for the same views. Parent links and capability lists can stand alone without a diagram. On a component report, an authored **Architecture** passage leads the same view.
 
 Across overviews and indexes, each entry uses the subject’s linked name and authored wording. Indexes shorten long previews and mark an excerpt with an ellipsis. **Uses** beside a concept use leads to its concept definition.
 **Refines** beside a requirement leads to each promise it refines, whether a requirement or business rule. Open the requirement to read its full
 statement, conditions, and criteria together.
 
-When the project has authored questions, **Open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings. A topology edge represents a declared relationship.
+When the project has authored questions, **Open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings.
 A child system has its own overview showing the next level of detail.
 
 ### Browse subject reports

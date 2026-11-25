@@ -175,7 +175,13 @@ func (p *planner) planPassages(s *subject) {
 	}
 	for _, group := range groups {
 		h := group[0]
-		if s.kind() == "System" && slices.Contains(systemContextFields, h.field) && !slices.ContainsFunc(group, func(part *heading) bool {
+		field, _, _ := strings.Cut(h.field, ".")
+		field = strings.TrimSuffix(field, "_content")
+		omitEmpty := s.kind() == "System" && slices.Contains(systemContextFields, field)
+		if s.isOverview() && (field == "architecture" || field == "part_of" || field == "interacts_with") {
+			omitEmpty = true
+		}
+		if omitEmpty && !slices.ContainsFunc(group, func(part *heading) bool {
 			return part.subjectKind != "" || needsHeadingAnchor(s, part) || strings.TrimSpace(s.source.data[part.end:part.bodyEnd]) != ""
 		}) {
 			for _, part := range group {

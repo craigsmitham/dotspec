@@ -186,7 +186,7 @@ def spec_journey(cli, tmp):
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")
     sections = ["Framing", "Purpose", "Goals", "Stakeholders", "Scope", "Environment",
-                "Assumptions", "System topology",
+                "Assumptions", "Architecture",
                 "Features", "Concepts", "Quality Attributes"]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
     scope = overview.split("\n## Scope\n", 1)[1].split("\n## ", 1)[0]
@@ -227,10 +227,14 @@ def spec_journey(cli, tmp):
         "Jobs", "Business rules", "Components", "Interfaces", "Features", "Capabilities",
         "Concept definitions", "Concept uses", "Use cases", "Requirements"))
     assert "quality-attributes.md" not in browse and "quality-models.md" not in browse
-    topology = overview.split("## System topology\n", 1)[1].split("\n## ", 1)[0]
-    assert "```mermaid" in topology and "contains" in topology and "provides interface" in topology
-    assert "Task service" in topology and "Task list forms" in topology
-    assert all(label in topology for label in ("Provides", "[Local task storage]", "[Follow-up review]"))
+    architecture = overview.split("## Architecture\n", 1)[1].split("\n## ", 1)[0]
+    diagram, components, interfaces = re.split(r"^### (?:Components|Interfaces)$", architecture, flags=re.M)
+    assert diagram.count('```mermaid') == 1 and 'subgraph owner["Personal task list"]' in diagram
+    assert 'Component: Task service' in diagram and 'Provided interface: Task list forms' in diagram
+    assert all(name in components and name not in diagram for name in ("Local task storage", "Follow-up review"))
+    assert "[Task service]" in components and "**Provided** · [Task list forms]" in interfaces
+    service = follow(root, "Task service").read_text(encoding="utf-8")
+    assert "```mermaid" not in service and "### Provided capabilities" in service
     assert "## Capabilities" not in overview
     concepts = overview.split("\n## Concepts\n", 1)[1].split("\n## ", 1)[0]
     assert "[My checklist]" in concepts and "Uses [Checklist](<concepts/" in concepts

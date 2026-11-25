@@ -17,7 +17,7 @@ A personal list of errands the owner can act on, replies they are waiting for an
 - [Scope](<#scope>)
 - [Environment](<#environment>)
 - [Assumptions](<#assumptions>)
-- [System topology](<#system-topology>)
+- [Architecture](<#architecture>)
 - [Features](<#features>)
 - [Concepts](<#concepts>)
 - [Quality Attributes](<#quality-attributes>)
@@ -81,21 +81,25 @@ The browser and service run on the same computer. The owner can close either bet
 
 - [Same local storage](<assumptions.md#same-local-storage>) — The person returns to the same writable database file.
 
-## System topology
+## Architecture
 
 ```mermaid
 flowchart LR
-    n0["Personal task list"]
-    n1["Task service"]
-    n0 -->|contains| n1
-    n2["Task list forms"]
-    n0 -->|provides interface| n2
+    subgraph owner["Personal task list"]
+        n1["Component: Task service"]
+        n2(["Provided interface: Task list forms"])
+    end
 ```
 
-- **Component** · [Task service](<components/task-service/task-service.component.spec-report.md>) — The local service that decides whether a submitted action still applies to the selected entry and records accepted changes.
+### Components
+
+- [Task service](<components/task-service/task-service.component.spec-report.md>) — The local service that decides whether a submitted action still applies to the selected entry and records accepted changes.
   - Provides [Follow-up review](<capabilities/follow-up-review.capability.spec-report.md>) — When the owner reviews waiting errands, they can see which replies they planned to chase by today and what to ask for.
-  - Provides [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>) — Keeps a commitment and the owner's last recorded decision together between visits. Finding the title alone would leave someone who returns to a waiting errand searching their messages for the reply they meant to chase.
-- **Provided interface** · [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — Open offers work the owner can advance. Waiting shows the expected reply and when to chase it. Completed holds settled errands the owner may reopen. After an accepted change the browser returns to the view where the person submitted it.
+  - Provides [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>) — Keeps a commitment and the owner's last recorded decision together between visits. …
+
+### Interfaces
+
+- **Provided** · [Task list forms](<interfaces/task-list-forms.interface.spec-report.md>) — Open offers work the owner can advance. …
 
 ## Features
 
