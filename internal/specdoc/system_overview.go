@@ -18,72 +18,19 @@ type overviewSection struct {
 	level         int
 	sources       []string
 	passages      [][]*heading
-	detail        string
-	detailLinks   []string
+	diagram       string
 	hasBody       bool
 }
 
-// These System fields each have their own section in the report, in reading order.
-var systemContextFields = []string{"scope", "out_of_scope", "environment", "assumptions", "constraints"}
-
-func (p *planner) overviewOutline(s *subject) []overviewSection {
-	sections := []overviewSection{
-		{sources: []string{"description"}},
-		{group: "Intent", title: "Framing", level: 2, sources: []string{"framing"}},
-		{group: "Intent", title: "Purpose", level: 2, sources: []string{"purpose"}},
-		{group: "Intent", title: "Goals", level: 2, sources: []string{"goals"}},
-		{group: "Intent", title: "Stakeholders", level: 2, sources: []string{"stakeholder_roles"}},
-	}
-	features := overviewSection{group: "Behavior", title: "Features", collection: "Features", level: 2}
-	capabilities := overviewSection{group: "Behavior", title: "Capabilities", collection: "Capabilities", level: 2, sources: []string{"capabilities"}}
-	quality := overviewSection{title: "Quality Attributes", collection: "Quality attributes", level: 2}
-	architecture := p.architecture(s).sections()
-	if s.kind() == "System" {
-		sections = append(sections, overviewSection{group: "Intent", title: "Jobs", collection: "Jobs", level: 2})
-		for _, field := range systemContextFields {
-			title := sentenceCase(strings.ReplaceAll(field, "_", " "))
-			level := 2
-			if field == "out_of_scope" {
-				level = 3
-			}
-			sections = append(sections, overviewSection{group: "Context", title: title, level: level, sources: []string{field}})
-		}
-		sections = append(sections,
-			overviewSection{group: "Context", title: "Business rules", collection: "Business rules", level: 2},
-			features, capabilities,
-			overviewSection{group: "Behavior", title: "Use cases", collection: "Use cases", level: 2},
-			quality, overviewSection{title: "Requirements", collection: "Requirements", level: 2})
-	} else {
-		sections = append(sections,
-			overviewSection{title: "Responsibilities", level: 2, sources: []string{"responsibilities"}},
-			overviewSection{title: "Scope", level: 2, sources: []string{"boundary_description", "out_of_scope"}})
-		sections = append(sections, architecture...)
-		capabilities.level = 3
-		sections = append(sections, capabilities, features)
-	}
-	sections = append(sections,
-		overviewSection{group: "Design", title: "Concepts", collection: "Concepts", level: 2},
-		overviewSection{group: "Design", title: "Concept uses", collection: "Concept uses", level: 2, sources: []string{"concept_uses"}},
-		overviewSection{group: "Design", title: "Synchronizations", collection: "Synchronizations", level: 2, sources: []string{"synchronizations"}})
-	if s.kind() == "System" {
-		architecture[0].group = "Design"
-		sections = append(sections, architecture...)
-	} else {
-		sections = append(sections, quality)
-	}
-	return append(sections, []overviewSection{
-		{title: "Adopts", level: 2, sources: []string{"adopts"}},
-		{title: "Contracts", level: 2, sources: []string{"contracts"}},
-		{title: "Implementation", level: 2, sources: []string{"implementation"}},
-		{title: "Open questions", level: 2, sources: []string{"open_questions"}},
-		{title: "Glossary", level: 2, sources: []string{"glossary"}},
-		{title: "Project references", level: 2, sources: []string{"project_references"}},
-		{title: "Reference", level: 2, sources: []string{"related_specifications", "specification_system", "authority_and_evidence", "evidence", "supports", "derived_from", "relies_on"}},
-	}...)
-}
-
 func (p *planner) planOverview(s *subject) []overviewSection {
-	sections := p.overviewOutline(s)
+	architecture := p.architecture(s).sections()
+	var sections []overviewSection
+	if s.kind() == "System" {
+		sections = systemOutline(architecture)
+	} else {
+		sections = componentOutline(architecture)
+	}
+	sections = append(sections, overviewReferences...)
 	groups := map[string][][]*heading{}
 	for _, passage := range s.passages {
 		h := passage[0]
@@ -106,14 +53,9 @@ func (p *planner) planOverview(s *subject) []overviewSection {
 	var parent *overviewSection
 	for i := range sections {
 		section := &sections[i]
-		detail := &writer{file: s.file, page: &Page{}}
 		section.directory = s.indexes[section.collection]
-		if section.directory != nil {
-			renderIndexMembers(detail, section.collection, section.directory.members)
-		}
-		section.detail += detail.out.String()
-		section.detailLinks = append(section.detailLinks, detail.page.RequiredLinks...)
-		section.hasBody = len(section.passages) > 0 || section.detail != ""
+		hasMembers := section.directory != nil && len(section.directory.members) > 0
+		section.hasBody = len(section.passages) > 0 || section.diagram != "" || hasMembers
 		if section.level == 2 {
 			parent = section
 		} else if section.level == 3 && section.hasBody {
@@ -219,7 +161,7 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 			w.text(strings.Repeat("#", section.level) + " " + title)
 		}
 		if section.directory != nil {
-			w.out.WriteString(section.detail)
+			renderIndexMembers(w, section.collection, section.directory.members)
 		}
 		for j, group := range section.passages {
 			merged := section.merges(j)
@@ -233,12 +175,7 @@ func (p *planner) renderOverview(w *writer, s *subject) {
 			overviewNavigation(w, s)
 			continue
 		}
-		if section.directory == nil {
-			w.out.WriteString(section.detail)
-		}
-		for _, dest := range section.detailLinks {
-			w.requireLink(dest)
-		}
+		w.out.WriteString(section.diagram)
 	}
 }
 
@@ -259,7 +196,7 @@ func overviewNavigation(w *writer, s *subject) {
 		}
 		link := w.link(section.title, s.file+"#"+section.anchor)
 		switch {
-		case s.kind() == "Component" || section.group == "":
+		case section.group == "":
 			sections = append(sections, link)
 		case section.group != previousGroup:
 			sections = append(sections, "**"+section.group+"**\\\n"+link)

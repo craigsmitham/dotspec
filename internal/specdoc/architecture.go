@@ -111,8 +111,8 @@ func (v architectureView) sections() []overviewSection {
 	kind := v.owner.kind()
 	if hasParts && len(v.partners) > 0 {
 		sections = append(sections,
-			overviewSection{title: kind + " structure", level: 3, detail: v.diagram(true, false)},
-			overviewSection{title: kind + " context", level: 3, detail: v.diagram(false, true)})
+			overviewSection{title: kind + " structure", level: 3, diagram: v.diagram(true, false)},
+			overviewSection{title: kind + " context", level: 3, diagram: v.diagram(false, true)})
 	} else if diagram := v.diagram(true, true); diagram != "" {
 		// A caption keeps the diagram outside any preceding authored subsection.
 		if v.owner.section("Part of") != nil || v.owner.section("Architecture") != nil {
@@ -120,9 +120,9 @@ func (v architectureView) sections() []overviewSection {
 			if hasParts {
 				title = kind + " structure"
 			}
-			sections = append(sections, overviewSection{title: title, level: 3, detail: diagram})
+			sections = append(sections, overviewSection{title: title, level: 3, diagram: diagram})
 		} else {
-			sections[0].detail = diagram
+			sections[0].diagram = diagram
 		}
 	}
 
