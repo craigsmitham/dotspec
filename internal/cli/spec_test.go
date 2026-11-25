@@ -67,10 +67,18 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 func TestGeneratedSpecificationMultipleRoots(t *testing.T) {
 	root := projectFixture(t)
 	writeFixture(t, filepath.Join(root, "other/specs/other.system.spec.md"), "---\ntype: system-spec\n---\n# Other\n\n## Purpose\nOther work.\n\n## Scope\nOther only.\n")
-	code, out, errOut := invoke("check")
-	if code != 1 || errOut != "" || !strings.Contains(out, "root") {
-		t.Fatalf("expected ambiguous root finding: %d %s %s", code, out, errOut)
+	if code, out, errs := invoke("spec", "build"); code != 0 {
+		t.Fatal(out, errs)
 	}
+	if code, out, errs := invoke("check"); code != 0 {
+		t.Fatal(out, errs)
+	}
+	for _, name := range []string{"tool", "other"} {
+		if code, out, errs := invoke("model", "product", name); code != 0 || !strings.Contains(out, name+".system.spec.md") {
+			t.Fatal(out, errs)
+		}
+	}
+
 }
 
 func TestGeneratedSpecScopedSystemsAndComponents(t *testing.T) {
@@ -317,7 +325,7 @@ Individual authors.
 		}
 		return string(data)
 	}
-	writeFixture(t, "specs/quality-models/shared.quality-model.spec.md", "---\ntype: quality-model-spec\n---\n# Shared model\n\n## Quality attributes\n\n### Precision\n\n**ID:** precision\n\nCloseness of a measurement.\n")
+	writeFixture(t, "specs/quality-models/shared.quality-model.md", "---\ntype: quality-model\n---\n# Shared model\n\n## Quality attributes\n\n### Precision\n\n**ID:** precision\n\nCloseness of a measurement.\n")
 	page := build()
 	if strings.Contains(page, "## Quality Attributes") || strings.Contains(page, "[Precision]") ||
 		!strings.HasSuffix(strings.TrimSpace(page), " · [Quality models](<quality-models.md>)") ||

@@ -55,16 +55,19 @@ type subject struct {
 	source                 *sourceFile
 	name                   *heading
 	system                 *subject
-	parent                 *subject
+	navigationParent       *subject
 	indexes                map[string]*collectionIndex
 	glossary               []glossaryPassage
 	passages               [][]*heading
 	overview               []overviewSection
+	externalSystem         bool
 	emptyCollectionAnchors []string
 	file, dir              string
 }
 
 type planner struct {
+	evidence        model.VerificationEvidence
+	assessments     map[string][]*model.ProcedureAssessment
 	root            string
 	snapshot        *model.Snapshot
 	plan            *Plan
@@ -98,6 +101,9 @@ func Generate(root string, snapshot *model.Snapshot) (*Plan, error) {
 		root = filepath.FromSlash(roots[0])
 	}
 	p := &planner{root: root, snapshot: snapshot, plan: &Plan{Pages: map[string]*Page{}}, sources: map[string]*sourceFile{}, nodes: map[string]model.Record{}, elements: map[string]model.Record{}, pages: map[string]*subject{}, targets: map[string]string{}, glossaryTargets: map[string]map[string]string{}}
+	if err := p.readEvidence(); err != nil {
+		return nil, err
+	}
 	if err := p.read(); err != nil {
 		return nil, err
 	}
@@ -204,7 +210,7 @@ func (p *planner) read() error {
 		h := headingByNode[nameNode(r)]
 		if h != nil {
 			h.subjectKind = attr(r, "kind")
-			h.qualityAttribute = h.subjectKind == "QualityAttribute" || h.subjectKind == "SystemQualityAttribute"
+			h.qualityAttribute = h.subjectKind == "QualityModelAttribute" || h.subjectKind == "SystemQualityAttribute"
 		}
 		if sf == nil || families[attr(r, "kind")] == "" || h == nil {
 			continue
@@ -214,7 +220,7 @@ func (p *planner) read() error {
 		p.pages[id(r)] = s
 		p.subjects = append(p.subjects, s)
 	}
-	// Every selected source is a discovered authored specification. Its H1 must
+	// Every selected source has one independently authored subject. Its H1 must
 	// have exactly one page even when other headings also get their own pages.
 	rootsBySource := make(map[*sourceFile]int)
 	for _, subject := range p.subjects {
@@ -270,69 +276,97 @@ func (s *subject) placeOverview(dir string) {
 
 func (s *subject) collectionDir() string {
 	if s.kind() == "System" {
-		return path.Join(s.parent.dir, "systems")
+		return path.Join(s.navigationParent.dir, "systems")
 	}
-	return path.Join(s.parent.dir, families[s.kind()])
+	return path.Join(s.navigationParent.dir, families[s.kind()])
 }
 
 func (p *planner) place() error {
-	var roots []string
+	var roots []*subject
+	members := map[string]model.ProductMember{}
 	for _, s := range p.subjects {
-		parent := attr(s.r, "specification_system")
-		switch s.kind() {
-		case "System":
-			parent = attr(s.r, "part_of")
-			if parent == "" {
-				p.governing = s
-				roots = append(roots, s.source.path)
+		if s.kind() == "System" && p.pages[attr(s.r, "part_of")] == nil {
+			roots = append(roots, s)
+			product, err := p.snapshot.Product(id(s.r))
+			if err != nil {
+				return err
+			}
+			for _, member := range product.Members {
+				members[member.ID] = member
+			}
+		}
+	}
+	if len(p.subjects) == 0 {
+		return fmt.Errorf("no root system or quality model found in this project")
+	}
+	// A project can author a specification for a system in another project.
+	// Keep its report reachable at project level without enrolling it locally.
+	hasExternal := false
+	for _, s := range p.subjects {
+		system := attr(s.r, "specification_system")
+		if system != "" && p.pages[system] == nil && attr(p.elements[system], "kind") == "System" {
+			s.externalSystem = true
+			hasExternal = true
+		}
+	}
+	if len(roots) == 1 && !hasExternal {
+		p.governing = roots[0]
+		p.governing.placeOverview("specification")
+	} else {
+		title := attr(model.Object(p.snapshot.Scope["project"]), "name")
+		if title == "" {
+			title = "Specifications"
+		}
+		p.governing = &subject{name: &heading{title: title}, file: "SPEC.md", dir: "specification"}
+	}
+	for _, s := range p.subjects {
+		if s == p.governing {
+			continue
+		}
+		if s.kind() == "QualityModel" || s.externalSystem || slices.Contains(roots, s) {
+			s.navigationParent = p.governing
+			continue
+		}
+		member, found := members[id(s.r)]
+		if !found {
+			owner := p.elements[attr(s.r, "owner")]
+			for owner != nil {
+				if member, found = members[id(owner)]; found {
+					break
+				}
+				owner = p.elements[attr(owner, "owner")]
+			}
+		}
+		if !found {
+			if parent := p.pages[attr(s.r, "owner")]; parent != nil && parent.externalSystem {
+				s.navigationParent = parent
 				continue
 			}
-		case "QualityModel":
-			continue // project-wide reference definition
-		}
-		switch s.kind() {
-		case "Component":
-			s.parent = p.pages[attr(s.r, "part_of")]
-		case "System":
-			s.parent = p.pages[parent]
-		default:
-			s.parent = p.pages[attr(s.r, "specification_owner")]
-		}
-		if s.parent == nil {
-			s.parent = p.pages[attr(s.r, "owner")]
-		}
-		if parent == "" {
-			parent = attr(s.r, "owner")
-		}
-		for parent != "" && attr(p.elements[parent], "kind") != "System" {
-			element := p.elements[parent]
-			if attr(element, "kind") == "Component" {
-				parent = attr(element, "specification_system")
-			} else {
-				parent = attr(element, "owner")
-			}
-		}
-		s.system = p.pages[parent]
-		if s.parent == nil {
-			s.parent = s.system
-		}
-		if s.system == nil {
 			return fmt.Errorf("%s: cannot place %s in a selected system", s.source.path, s.name.title)
 		}
-	}
-	if len(roots) != 1 {
-		return fmt.Errorf("generated specification requires one root system; found %d (%s)", len(roots), strings.Join(roots, ", "))
-	}
-	p.governing.placeOverview("specification")
-	for _, s := range p.subjects {
-		if s.kind() == "QualityModel" {
-			s.system = p.governing
-			s.parent = p.governing
+		s.system = p.pages[member.System]
+		switch s.kind() {
+		case "System", "Component":
+			parent := p.pages[attr(s.r, "part_of")]
+			if parent != nil && (s.kind() == "System" || members[id(parent.r)].System == member.System) {
+				s.navigationParent = parent
+			}
+		default:
+			s.navigationParent = p.pages[attr(s.r, "owner")]
+			if s.navigationParent == nil {
+				owner := p.pages[attr(s.r, "specification_owner")]
+				if owner != nil && members[id(owner.r)].System == member.System {
+					s.navigationParent = owner
+				}
+			}
+		}
+		if s.navigationParent == nil {
+			s.navigationParent = s.system
 		}
 	}
 	// Disambiguate siblings by stable project-relative source and authored heading.
 	names := map[string]int{}
-	key := func(s *subject) string { return id(s.parent.r) + "/" + families[s.kind()] + "/" + s.slug() }
+	key := func(s *subject) string { return id(s.navigationParent.r) + "/" + families[s.kind()] + "/" + s.slug() }
 	for _, s := range p.subjects {
 		if s != p.governing {
 			names[key(s)]++
@@ -348,7 +382,7 @@ func (p *planner) place() error {
 			return fmt.Errorf("cycle in system parentage at %s", s.source.path)
 		}
 		active[s] = true
-		if err := assign(s.parent); err != nil {
+		if err := assign(s.navigationParent); err != nil {
 			return err
 		}
 		slug := s.slug()
@@ -369,6 +403,8 @@ func (p *planner) place() error {
 			}
 			s.dir = path.Join(dir, slug)
 			s.file = path.Join(s.dir, slug+".quality-attribute.spec-report.md")
+		} else if s.kind() == "QualityModel" {
+			s.file = base + ".quality-model-report.md"
 		} else if s.isOverview() {
 			s.placeOverview(base)
 		} else {
@@ -464,8 +500,8 @@ func (p *planner) indexTargets() {
 			if title == "Components" {
 				continue
 			}
-			for child := s; child.kind() == "Component"; child = child.parent {
-				child.parent.index(title).add("By component", entry{child.name.title + " " + strings.ToLower(collectionTitle(title)), child.indexes[title].file, ""})
+			for child := s; child.kind() == "Component"; child = child.navigationParent {
+				child.navigationParent.index(title).add("By component", entry{child.name.title + " " + strings.ToLower(collectionTitle(title)), child.indexes[title].file, ""})
 			}
 		}
 	}
@@ -508,7 +544,11 @@ func (p *planner) indexTargets() {
 	}
 	// Question entries initially point at source headings. Their final fragments
 	// are known once every subject and overview has been laid out.
-	if idx := p.governing.indexes["Open questions"]; idx != nil {
+	for _, s := range p.subjects {
+		idx := s.indexes["Open questions"]
+		if idx == nil {
+			continue
+		}
 		for i, e := range idx.groups[""] {
 			idx.groups[""][i].target = p.targets[e.target]
 		}

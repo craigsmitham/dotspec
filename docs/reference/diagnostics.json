@@ -2,6 +2,8 @@
   {
     "page": "docs/reference/inspection.md",
     "rules": {
+      "structure.adoption": "references",
+      "structure.verification-procedure": "references",
       "reference.boundary": "references",
       "reference.invalid": "references",
       "reference.unresolved": "references",

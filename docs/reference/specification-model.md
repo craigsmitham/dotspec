@@ -21,9 +21,15 @@ Use `--project` to select a project or `--all` to export a workspace envelope. E
 
 ## Specification types and declared elements
 
-A specification declares its subject through its frontmatter type and title. Systems, components, jobs, use cases, concepts, requirements, business rules, quality models, system quality attributes, features and capabilities each have their own specification type. A named item such as an interface, job step or desired outcome identifies its declaring owner. Each subject report type identifies the subject it documents.
+A specification declares its subject through its frontmatter type and title. Systems, components, jobs, use cases, concepts, requirements, business rules, system quality attributes, features and capabilities each have their own specification type. A named item such as an interface, job step or desired outcome identifies its declaring owner. Each subject report type identifies the subject it documents.
 
-Model `0.30.0-draft` uses mapping profile `dotspec-markdown/24`. Regenerate saved snapshots after moving former inline requirements to their own files. For scenario outcomes, retain the prose in the use case. Update incoming links before rebuilding reports. [Requirement mapping](../../model/markdown-mapping.md#requirement)
+Model `0.32.0-draft` uses mapping profile `dotspec-markdown/26`. A reusable quality model is a reference document. Export records its type in `scope.selected_reference_types` and specification types in `scope.selected_spec_types`. To migrate a model, rename `<slug>.quality-model.spec.md` to `<slug>.quality-model.md`, set `type: quality-model`, and update citations. Re-export saved snapshots and rebuild the reports. [Markdown mapping](../../model/markdown-mapping.md)
+
+## Read one product specification
+
+From the project root, run `dotspec model product`. For multiple independent systems, supply a system’s source basename (without `.system.spec.md`), authored ID, or snapshot record ID. For example, run `dotspec model product personal-task-list --project todo` in the dotspec checkout. Each member identifies its source, effective system, membership basis, and owned element IDs. A selected system includes its declared descendant systems. A link to a requirement in another project retains its destination. Follow the reference catalog to reusable model definitions.
+
+`complete` concerns observed membership in the selected product. A narrowed scan or an unreadable or malformed source leaves it false. Inspect the reported scope and diagnostics before treating an empty set as an absence. An independent reference catalog can have zero specification members. The `verification` list identifies each linked procedure and the observations for that requirement or criterion. When an evidence file supplies a selection, `verification_selection` gives the requested revision and conditions.
 
 ## Source text and locations
 
@@ -44,3 +50,5 @@ A use case owns Markdown fields for actors, goal level, conditions and guarantee
 ## Concept definitions and composition
 
 A concept declares its purpose, state, named actions and operational principles. A system or component declares concept uses and synchronizations. Definition and dependency links identify their targets. A synchronization retains its authored When, Where, Then and Semantics fields. See the [core domain diagram](model/core.md).
+
+For an adoption, compare the provision locator, edition, applicability, and resolution between exports. When dotspec acquires the cited document, it includes `observed_source_sha256`. A different digest flags the whole document for review. Check the cited clause to decide whether its meaning changed. Remote references retain their locator for review with the provider.

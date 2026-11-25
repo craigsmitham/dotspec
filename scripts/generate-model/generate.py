@@ -113,7 +113,7 @@ def projection_paths(catalog: dict[str, Any], raw_model: dict[str, Any]) -> list
         for slot_name in definition.get("attributes") or {}:
             slot = classes[name]["slots"][slot_name]
             if slot["reference_ranges"] and slot["annotations"].get("relationship_category") in (
-                "semantic-association", "structural-context",
+                "semantic-association", "structural-context", "system-membership",
             ):
                 paths.add(f"{name}.{slot_name}")
     return sorted(paths)

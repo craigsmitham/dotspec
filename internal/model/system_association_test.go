@@ -65,7 +65,7 @@ func TestSpecificationSystemSelectionIsConsistent(t *testing.T) {
 		t.Fatal("quality namespace followed applicability", r)
 	}
 	index := conformanceIndex(s)
-	if index[Strings(r["quality_attributes"])[0]]["owner"] != selected["id"] {
+	if index[Strings(r["quality_attributes"])[0]]["specification_system"] != selected["id"] {
 		t.Fatal(r)
 	}
 	forged := cloneSnapshot(t, s)

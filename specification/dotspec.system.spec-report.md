@@ -30,18 +30,11 @@ A requirements authoring framework and command-line toolkit for Markdown specifi
 
 ## Framing
 
-The idea beheind dotspec is that having a distinctly seperated functional specification for a system and its parts is beneficial for both humans and agents
+A specification records product intent for one independently maintained subject. Each `*.spec.md` file declares one root subject and owns its parts. A use case owns its steps and extensions. A requirement that several use cases rely on has its own declaration.
 
-* Provides shared model and language for describing the intent and shape of a system
-* Easy to infer (agents) and comprhened (humans)
+The specifications in product scope and the relationships among them compose the product specification that dotspec manages. Authors can develop it incrementally and keep each declaration alongside the product or component it describes. Generated reports let people and agents read those decisions together.
 
-dotspec consists of *.spec.md files that are co-located with the system or part/component of the system they specify. These files comprise the foundational "specification" layer for the system. Specs for a system can take many forms (formal methods, executable specifications, etc.), and dotspec is not intended to be the sole source of truth for all specifications, just those it chooses to specify. It is intended to support "progressive specifcitaion" with "just enough" specs to the extent they are helpful.
-
-dotspec provides a rich but simple model for specifying requirements. Not all need to be used, but they can all be used and composed together if desired.
-
-- identify/trace to other sources of truth for specs
-- provide affordances for ensuring verification coverage/traceability
-- non goal: perform verification of requirements or implementation
+A specification can cite an external contract for the provision it adopts, a reusable quality model for a term, or an executable test for evidence. Each retains its own authority. dotspec helps readers trace those sources and inspect verification coverage. Assessing the running implementation takes additional evidence.
 
 ### Inspiration
 

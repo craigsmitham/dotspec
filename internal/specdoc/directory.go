@@ -46,6 +46,9 @@ func (idx *collectionIndex) add(group string, member entry) {
 }
 
 func (s *subject) collection() string {
+	if s.externalSystem {
+		return "Specifications for other systems"
+	}
 	if s.name.qualityAttribute {
 		return "Quality attributes"
 	}
@@ -57,11 +60,11 @@ func (p *planner) placeDirectoryEntry(s *subject) {
 	group := ""
 	if s.kind() == "Interface" {
 		group = "Provided interfaces"
-		if slices.Contains(model.Strings(s.parent.r["required_interfaces"]), id(s.r)) {
+		if slices.Contains(model.Strings(s.navigationParent.r["required_interfaces"]), id(s.r)) {
 			group = "Required interfaces"
 		}
 	}
-	s.parent.index(title).add(group, entry{s.name.title, s.file, subjectPreview(s)})
+	s.navigationParent.index(title).add(group, entry{s.name.title, s.file, subjectPreview(s)})
 }
 
 // An explicitly related member appears once, in the group that explains why it is here.
@@ -137,7 +140,17 @@ func (p *planner) indexOpenQuestions() {
 			end := position(p.nodes[nodes[len(nodes)-1]], "end")
 			question := contentText(src.passageMarkdown(start, end))
 			if question != "" {
-				idx := p.governing.index("Open questions")
+				system := h.owner
+				if system.kind() != "System" {
+					system = system.system
+				}
+				if system == nil {
+					continue
+				}
+				for parent := system.navigationParent; parent != nil && parent.kind() == "System"; parent = parent.navigationParent {
+					system = parent
+				}
+				idx := system.index("Open questions")
 				owner := attr(p.nodes[nameNode(r)], "decoded_text")
 				idx.groups[""] = append(idx.groups[""], entry{question, h.node, owner})
 			}

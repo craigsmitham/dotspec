@@ -4,6 +4,8 @@
 
 Choose the subject you want to write about. Open its explanation to understand which decisions belong there, or its how-to guide to draft and assess a specification.
 
+For the distinction between a specification, one of its parts, and supporting material, read [What belongs in a specification?](explanations/what-belongs-in-a-specification.md).
+
 Run `dotspec docs` from any directory to browse the topics offline.
 
 <!-- Generated topic navigation -->
@@ -14,6 +16,7 @@ Establish which promises the system makes and which conditions it relies on. Run
 
 - [Describe a system and its boundary](guides/describe-a-system.md) (How-to)
 - [Systems and their boundaries](explanations/systems.md) (Explanation)
+- [What belongs in a specification?](explanations/what-belongs-in-a-specification.md) (Explanation)
 
 ### Components
 

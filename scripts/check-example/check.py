@@ -99,6 +99,13 @@ def check_project(cli, project, tmp):
                 and r["resolution"]["status"] == "resolved"}
 
     requirement = one("Requirement", slug="restart")
+    product = json.loads(cli("model product", "personal-task-list", "--path", project))
+    assert product["complete"] and any(m["id"] == requirement["id"] for m in product["members"])
+    assert all(m["kind"] != "QualityModel" for m in product["members"])
+    assert len(product["adoptions"]) == 1 and "rfc9110" in product["adoptions"][0]["provision"]
+    procedures = requirement["criterion"].get("verification_procedures", {}).get("references", [])
+    assert any(ref["id"] in procedures and ref["authored_target"] == "../../tests/acceptance.py"
+               for ref in model["references"]), "restart criterion must identify the acceptance procedure"
     use = one("UseCase", slug="resume-list")
     job = one("Job", slug="personal-commitments")
     availability = one("Requirement", slug="availability", authored_id="keep-recorded-work-available")
@@ -109,7 +116,7 @@ def check_project(cli, project, tmp):
     assert job["id"] in targets(use, "supports")
     assert one("DesiredOutcome", owner=job["id"], authored_id="less-reconstruction")["id"] in targets(requirement, "supports")
     sources = {s["id"]: s for s in model["sources"]}
-    # This project exercises every supported specification file type.
+    # This project exercises each specification type and the quality model reference type.
     root_types = {"System", "Component", "Job", "UseCase", "Concept", "BusinessRule",
                   "Requirement", "Feature", "Capability", "QualityModel", "SystemQualityAttribute"}
     primary = {e["id"]: e for e in elements if e["kind"] in root_types}
@@ -122,7 +129,8 @@ def check_project(cli, project, tmp):
         kind = doc["declared_type"].removesuffix("-spec")
         expected = "SystemQualityAttribute" if kind == "quality-attribute" else kind.title().replace("-", "")
         assert primary[root_id]["kind"] == expected and primary[root_id]["source_document"] == doc["source"]
-        assert source["locator"].endswith("." + kind + ".spec.md")
+        suffix = ".quality-model.md" if kind == "quality-model" else "." + kind + ".spec.md"
+        assert source["locator"].endswith(suffix)
     described = {"System", "Component", "Feature", "Capability", "ConceptUse"}
     for subject in (e for e in elements if e["kind"] in described):
         kind = subject["kind"]
@@ -132,7 +140,7 @@ def check_project(cli, project, tmp):
         assert all(data[span["start"]:span["end"]].strip() for span in spans), kind
     system = one("System")
     assert targets(use, "subject_system") == {system["id"]}
-    attribute = one("SystemQualityAttribute", owner=system["id"], authored_id="durability")
+    attribute = one("SystemQualityAttribute", specification_system=system["id"], authored_id="durability")
     assert any(r["owner"] == requirement["id"] and r["resolution"].get("target") == attribute["id"]
                for r in model["label_occurrences"])
     assert targets(one("ConceptUse"), "definition") == {one("Concept", slug="checklist")["id"]}
@@ -253,7 +261,7 @@ def spec_journey(cli, tmp):
     # Every source in this fixture gets one report documenting its H1. Pages
     # for inline subjects document a deeper heading in that same source.
     claims = {}
-    for page in (project / "specification").rglob("*.spec-report.md"):
+    for page in (project / "specification").rglob("*-report.md"):
         header = page.read_text(encoding="utf-8").split("---\n", 2)[1]
         primary, = re.findall(r'^source: "([^"]+)"$', header, re.M)
         uri = urlsplit(primary)
@@ -262,7 +270,7 @@ def spec_journey(cli, tmp):
         assert [(dest, frag) for label, dest, frag, _ in markdown_links(page) if label == "View source"] == [key]
         assert key not in claims, (page, claims.get(key))
         claims[key] = page
-    for source in project.rglob("*.spec.md"):
+    for source in [*project.rglob("*.spec.md"), *project.rglob("*.quality-model.md")]:
         title = re.search(r"^# (.+)$", source.read_text(encoding="utf-8"), re.M)[1]
         anchor = re.sub(r"[^a-z0-9 -]", "", title.lower()).replace(" ", "-")
         assert (source.resolve(), anchor) in claims, source
@@ -301,8 +309,8 @@ def spec_journey(cli, tmp):
     assert follow(qualities, "Preserve tasks across restart") == promise
     definitions = follow(qualities, "Source definition")
     assert follow(follow(root, "Quality models"), "Personal data quality") == definitions
-    assert definitions == project / "specification/quality-models/personal-data-quality.quality-model.spec-report.md"
-    assert claims[project / "specs/quality-models/personal-data.quality-model.spec.md", "personal-data-quality"] == definitions
+    assert definitions == project / "specification/quality-models/personal-data-quality.quality-model-report.md"
+    assert claims[project / "specs/quality-models/personal-data.quality-model.md", "personal-data-quality"] == definitions
     use_case = follow(feature, "Decide what to do about a waiting errand")
     assert any(label == "The list cannot record the decision" and target == use_case and fragment == "the-list-cannot-record-the-decision"
                for label, target, fragment, _ in markdown_links(use_case))
@@ -412,7 +420,8 @@ def author(cli, tmp):
     cli("component init", "Intake", "--path", component, "--part-of", draft / "specs/new-system.system.spec.md", cwd=project)
     for kind in TYPES.keys() - {"system"}:
         cli(kind + " init", "sample", "--path", draft, cwd=project)
-        assert list((draft / "specs").rglob(f"sample.{kind}.spec.md"))
+        filename = "sample.quality-model.md" if kind == "quality-model" else f"sample.{kind}.spec.md"
+        assert list((draft / "specs").rglob(filename))
     for preset, marker in [("odi", "## Steps"),
                            ("job-story", "When [situation]")]:
         cli("job init", preset, "--preset", preset, "--path", draft, cwd=project)
@@ -434,6 +443,17 @@ def author(cli, tmp):
     cli("quality-model apply", *args, cwd=project)
     copied = draft / "specs/quality/durability/durability.quality-attribute.spec.md"
     assert copied.read_text(encoding="utf-8") in preview and target.read_bytes() == before
+    vocabulary = project / "specs/quality-models/personal-data.quality-model.md"
+    with vocabulary.open("a", encoding="utf-8") as file:
+        file.write("\nTeams can review how their preservation needs change.\n")
+    assert copied.read_text(encoding="utf-8") in preview, "changing a model altered its applied definition"
+    with copied.open("a", encoding="utf-8") as file:
+        file.write("\n## Adopts\n\n### Retention review\n\n[Release review](../../../release-plan.md#release-plan)."
+                   "\n\n#### Edition\n\nevolving\n\n#### Applicability\n\nReview the copied definition before releasing the local storage change.\n")
+    child = copied.parent / "acknowledgement/acknowledgement.quality-attribute.spec.md"
+    child.parent.mkdir()
+    child.write_text("---\ntype: quality-attribute-spec\nsubattribute_of: [durability]\n---\n"
+                     "# Acknowledgement\n\n## Definition\nKeep the last accepted edit.\n", encoding="utf-8")
     cli("requirement init", "commit-data", "--attribute", "durability", "--path", draft, cwd=project)
     assert (draft / "specs/requirements/commit-data.requirement.spec.md").is_file()
     cli("requirement init", "data-loss-tolerance", "--preset", "quality", "--attribute", "durability", "--path", draft, cwd=project)
@@ -467,8 +487,8 @@ def acceptance(project):
 def regressions(cli, tmp):
     for name, path, old, new, reason in [
         ("relationship", REQUIREMENT, "## Refines", "## Related specifications", "missing restart refinement"),
-        ("test-link", REQUIREMENT, "[restart acceptance test](../../tests/acceptance.py)",
-         "restart acceptance test", "restart requirement must link"),
+        ("test-link", REQUIREMENT, "### Verification procedures",
+         "### Test notes", "restart criterion must identify the acceptance procedure"),
         ("persistence", Path("app/main.go"), 'sql.Open("sqlite3", file)',
          'sql.Open("sqlite3", ":memory:")', "restart lost or changed open tasks"),
     ]:

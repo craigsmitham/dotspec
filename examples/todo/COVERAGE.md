@@ -19,6 +19,7 @@ For the model views, run `mise exec -- go run . model VIEW --path examples/todo`
 
 | View | What to look for |
 | --- | --- |
+| `product personal-task-list` | Durability is a member. Personal data quality appears in the reference catalog. Task list forms identifies the provision adopted for redirects. |
 | `overview` | The system provides Task list forms. |
 | `pegs` | The follow-up policy says who still owns a result when the chosen day passes. |
 | `needs` | Less reconstruction appears as a desired outcome. |
@@ -43,7 +44,7 @@ Each case changes one fact from the walkthrough. The answers come from the autho
 | `concept` | Two entries have the same title. I revise the first wait, rename it, complete it and reopen it. | Its identity and revised title survive, its wait is cleared, and the second entry is untouched. [Checklist invariants and effects](specs/concepts/checklist.concept.spec.md#effects-table) |
 | `component` | One tab still offers Complete in Open after another tab moved the parcel to Waiting. Which part decides whether the old form is valid? | The local service checks the current state at submission. It rejects the old form and leaves the parcel waiting. [Task service responsibilities](app/specs/task-service.component.spec.md#responsibilities) |
 | `requirement` | I leave Waiting open on Thursday night with a Friday follow-up. When do I expect “Follow up now”? | When I reload on Friday. A freshly loaded page that still says “Upcoming” violates the criterion. [Requirement and conditions](specs/requirements/follow-up.requirement.spec.md#applies-to) |
-| `quality-model` | An expense journal replaces a saved amount with its earlier value after restart. Is that the same kind of loss as forgetting a revised follow-up? | Both lose an acknowledged decision between sessions. Durability gives the two tools a shared term. [Personal data quality](specs/quality-models/personal-data.quality-model.spec.md#durability) |
+| `quality-model` | An expense journal replaces a saved amount with its earlier value after restart. Is that the same kind of loss as forgetting a revised follow-up? | Both lose an acknowledged decision between sessions. Durability gives the two tools a shared term. [Personal data quality](specs/quality-models/personal-data.quality-model.md#durability) |
 | `quality-attribute` | After restart on Friday my Thursday entry keeps its identity and saved Friday date but shows a different cue. Is that a durability failure? | The cue reflects today. Losing the recorded date would be a failure even if the title and entry count matched. [To-do durability](specs/quality/durability/durability.quality-attribute.spec.md#definition) · [Restart measure](specs/requirements/restart.requirement.spec.md#measure) |
 
 ### Try changing a refinement into an ordinary citation
@@ -70,7 +71,7 @@ These are the review assignments for fields that currently have no populated wit
 | `BusinessRule.refines`, `BusinessRule.refines_content` | In recovery, introduce a specific retention policy and check that its Refines endpoint is the general business rule. |
 | `Component.concept_uses`, `Component.synchronizations` | In a scratch copy, declare a local feature and its capability under Task service. Link a pair of local concept uses through a synchronization and trace their owners. |
 | `Component.interacts_with`, `Component.interacts_with_content`, `Component.required_interfaces`, `Component.out_of_scope`, `System.part_of`, `System.part_of_content` | Use recovery's external clock and an explicitly declared subsystem. Compare interaction, interface direction and structural membership in the overview. |
-| `GlossaryTerm.related_terms`, `Specification.preamble`, `System.constraints` | In a temporary recovery spec, add a preamble, a system constraint and a glossary cross-reference using a Markdown reference definition. Inspect original text, occurrence and resolved target. |
+| `GlossaryTerm.related_terms`, `AuthoredDocumentRoot.preamble`, `System.constraints` | In a temporary recovery spec, add a preamble, a system constraint and a glossary cross-reference using a Markdown reference definition. Inspect original text, occurrence and resolved target. |
 | `ConceptAction.caller_assumptions` | Extend a scratch checklist concept with a caller assumption. Compare it with the enforced guards. |
 | `Applicability.workload` | Specify the workload under which recovery must succeed. |
 | `Document.diagnostics`, `SourceDocument.diagnostics`, `Resolution.candidates`, `Resolution.diagnostics`, `SourceLocation.source` | Compare a malformed specification and ambiguous target with a valid unresolved reference. Inspect the diagnostic's owning record, candidates and source span. The [diagnostic scenarios](../../internal/integration/testdata/diagnostics.txtar) exercise user-visible findings. |

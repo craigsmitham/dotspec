@@ -10,7 +10,7 @@ import (
 
 const Default = "iso-25010-2023"
 
-//go:embed specs/quality-models/*.quality-model.spec.md
+//go:embed specs/quality-models/*.quality-model.md
 var starters embed.FS
 
 func Builtins() ([]*QualityModel, error) {
@@ -71,7 +71,7 @@ func Init(path, slug, from string) (string, error) {
 		if m == nil {
 			return "", fmt.Errorf("--from must name a bundled starter: %q", from)
 		}
-		content = "---\ntype: quality-model-spec\nid: " + slug + "\n---\n\n" + m.Markdown + "\n"
+		content = "---\ntype: quality-model\nid: " + slug + "\n---\n\n" + m.Markdown + "\n"
 	}
 	return Layout.Create(dir, slug, content)
 }

@@ -9,6 +9,9 @@
       },
       {
         "page": "docs/cli-handbook/explanations/systems.md"
+      },
+      {
+        "page": "docs/cli-handbook/explanations/what-belongs-in-a-specification.md"
       }
     ]
   },

@@ -93,7 +93,7 @@ func (v *graphValidator) checkLinkTarget(ref, target Record, location string) {
 		source = path.Join(path.Dir(source), u.Path)
 	}
 	if err == nil && !u.IsAbs() && u.Host == "" && source == targetPath {
-		if u.Fragment == "" && (String(target, "owner") == "" || String(target, "kind") == "SystemQualityAttribute") ||
+		if u.Fragment == "" && v.isA(String(target, "kind"), "AuthoredDocumentRoot") ||
 			u.Fragment != "" && String(target, "authored_id") == u.Fragment {
 			return
 		}

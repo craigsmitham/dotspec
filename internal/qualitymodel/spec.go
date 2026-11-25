@@ -12,7 +12,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/system"
 )
 
-const Suffix = ".quality-model.spec.md"
+const Suffix = specfile.QualityModelSuffix
 const Collection = "quality-models"
 
 var Layout = specfile.Layout{Kind: "quality-model", Collection: Collection, Suffix: Suffix}
@@ -23,7 +23,7 @@ type metadata struct {
 }
 
 const Template = `---
-type: quality-model-spec
+type: quality-model
 ---
 
 # New quality model

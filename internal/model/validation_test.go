@@ -198,18 +198,18 @@ func TestValidationChecksCanonicalSourceAndGraph(t *testing.T) {
 		mutate     func(*Snapshot)
 	}{
 		{"retired inline kind", "shape.invalid", func(s *Snapshot) { elementKind(t, s, "Requirement")["kind"] = "ObligationClause" }},
-		{"unrecognized declared type", "specification.source", func(s *Snapshot) {
+		{"unrecognized declared type", "document.subject-type", func(s *Snapshot) {
 			for _, doc := range s.Documents {
 				if doc["declared_type"] == "requirement-spec" {
 					doc["declared_type"] = "requirement"
 				}
 			}
 		}},
-		{"wrong specification source", "specification.source", func(s *Snapshot) {
+		{"wrong specification source", "document.subject-type", func(s *Snapshot) {
 			r := elementKind(t, s, "Requirement")
 			r["source_document"] = elementKind(t, s, "UseCase")["source_document"]
 		}},
-		{"second primary subject", "specification.root", func(s *Snapshot) {
+		{"second primary subject", "document.primary-subject", func(s *Snapshot) {
 			duplicate := maps.Clone(elementKind(t, s, "Requirement"))
 			duplicate["id"] = "duplicate-requirement"
 			s.Elements = append(s.Elements, duplicate)

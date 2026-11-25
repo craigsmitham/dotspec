@@ -16,7 +16,7 @@ func newModelCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, _ []string) error { return cmd.Help() },
 	}
 	export := &cobra.Command{Use: "export", Short: "Export a source-backed specification snapshot as JSON", Args: cobra.NoArgs,
-		Long:    "Export selected specifications, enclosing systems, and direct reference context as JSON. Retain readable Markdown and source locations, including diagnostics for invalid documents. Filesystem discovery and authoring findings follow check; external references are not fetched.\n\n" + exitPolicy,
+		Long:    "Export selected specifications, reusable quality models, enclosing systems, and direct reference context as JSON. Retain readable Markdown and source locations, including diagnostics for invalid documents. Filesystem discovery and authoring findings follow check; external references are not fetched.\n\n" + exitPolicy,
 		Example: "dotspec model export\ndotspec model export --path internal",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectPath(cmd)
@@ -250,6 +250,45 @@ func newModelCommand() *cobra.Command {
 	overview.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
 	addPath(needs)
 	needs.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
+	product := &cobra.Command{Use: "product [SYSTEM]", Short: "Show the specification roots, owned elements and references for one system", Args: cobra.MaximumNArgs(1),
+		Example: "dotspec model product",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			path, err := projectPath(cmd)
+			if err != nil {
+				return err
+			}
+			result, err := model.Export(path, supportedTypes()...)
+			if err != nil {
+				return err
+			}
+			selector := ""
+			if len(args) > 0 {
+				selector = args[0]
+			}
+			view, err := result.Snapshot.Product(selector)
+			if err != nil {
+				return err
+			}
+			if root := model.String(model.Object(view.Scope["project"]), "root"); root != "" && view.System != "" {
+				evidence, err := model.ReadVerificationEvidence(root)
+				if err != nil {
+					return err
+				}
+				if err := view.IncludeEvidence(result.Snapshot, root, evidence); err != nil {
+					return err
+				}
+			}
+			if err = writeJSON(cmd.OutOrStdout(), view); err != nil {
+				return err
+			}
+			if result.ExitCode != 0 {
+				return &exitError{code: result.ExitCode}
+			}
+			return nil
+		},
+	}
+	addPath(product)
+	cmd.AddCommand(product)
 	cmd.AddCommand(export, schema, validate, docs, trace, overview, needs,
 		newModelReadingCommand("review", "Generate advisory requirements review and open-question inventory", model.ReviewMarkdown),
 		newModelReadingCommand("pegs", "Generate a Project, Environment, Goals, System reading perspective", model.PEGSMarkdown))

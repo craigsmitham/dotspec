@@ -4,7 +4,7 @@ Generated from [the canonical model](../../../model/metamodel.yaml) and [the vie
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.30.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.32.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
@@ -23,13 +23,15 @@ See the [relationship reference](relationships.md) for the complete edge contrac
 
 Arrows use schema-owned relationship labels; reference tables retain exact canonical field paths. Diamond arrows represent declaration containment, dashed arrows structural context and citations, and plain arrows semantic associations or provenance; triangle arrows represent declared inheritance. Multiple edges with the same path show alternative target types; cardinality applies to the slot as a whole. Embedded values are omitted from diagrams; exact paths remain in the reference tables. `specification_system` is a grouping association, not a use-case boundary or inherited requirement. Contextual links to related specifications do not assert enforcement, fulfillment, or compliance.
 
-### Specification types
+### Specification and reference roots
 
-A Specification is the root record of one authored specification document. The specification types correspond one-to-one with these concrete classes. Subsets classify concerns separately from this hierarchy.
+Each authored document has one primary domain subject. A specification root records product intent and owns the elements declared within its file. A quality model is a reference root that owns reusable definitions.
 
 ```mermaid
 classDiagram
     direction TB
+    class AuthoredDocumentRoot
+    <<abstract>> AuthoredDocumentRoot
     class Specification
     <<abstract>> Specification
     class SystemContextSpecification
@@ -45,13 +47,14 @@ classDiagram
     class UseCase
     class Concept
     class Requirement
+    AuthoredDocumentRoot <|-- Specification
     Specification <|-- SystemContextSpecification
     Specification <|-- SystemQualityAttribute
     SystemContextSpecification <|-- Feature
     SystemContextSpecification <|-- Capability
     Specification <|-- System
     SystemContextSpecification <|-- Component
-    Specification <|-- QualityModel
+    AuthoredDocumentRoot <|-- QualityModel
     SystemContextSpecification <|-- BusinessRule
     SystemContextSpecification <|-- Job
     SystemContextSpecification <|-- UseCase
@@ -212,19 +215,21 @@ classDiagram
 
 ### Quality classification
 
-Systems and reusable quality models declare attributes. Each attribute has exactly one declaring owner: a System or a QualityModel. Requirements reference attributes for classification. Sub-attribute of permits multiple parents within the same declaring owner and must be acyclic.
+A quality model owns reusable definitions. Independent system quality attributes classify requirements within their effective system. Both kinds support acyclic grouping within their own scope.
 
 ```mermaid
 classDiagram
     direction LR
     class System
     class QualityModel
-    class QualityAttribute
+    class QualityModelAttribute
+    class SystemQualityAttribute
     class Requirement
-    System *-- "0..*" QualityAttribute : declares
-    QualityModel *-- "0..*" QualityAttribute : declares
-    Requirement --> "0..*" QualityAttribute : classified by
-    QualityAttribute --> "0..*" QualityAttribute : sub-attribute of
+    System --> "0..*" SystemQualityAttribute : declares
+    QualityModel *-- "0..*" QualityModelAttribute : declares
+    Requirement --> "0..*" SystemQualityAttribute : classified by
+    QualityModelAttribute --> "0..*" QualityModelAttribute : sub-attribute of
+    SystemQualityAttribute --> "0..*" SystemQualityAttribute : sub-attribute of
 ```
 
 ### System coordination
@@ -382,7 +387,7 @@ Subsets: `business-requirements`, `user-requirements`, `software-requirements`. 
 
 ### Specification
 
-The root record of one authored specification document. Every specification has exactly one specification type, and specification types correspond one-to-one with concrete Specification classes. Elements declared inside a specification are not specifications. Narrative authority and evidence do not create executable authority assertions.
+An independently maintained aggregate of product intent. Each authored specification file declares one root and can contain addressable parts. The specifications in product scope and their relationships compose the product specification.
 
 Subsets: `business-requirements`, `user-requirements`, `software-requirements`. [Specification](index.md#specification) contains the complete definition.
 
@@ -448,7 +453,7 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 | `glossary` | [GlossaryTerm](index.md#glossaryterm) | optional; ordered list | Explicitly named terms, in authored order. |
 | `concept_uses` | [ConceptUse](index.md#conceptuse) | optional; ordered list |  |
 | `synchronizations` | [Synchronization](index.md#synchronization) | optional; ordered list |  |
-| `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; ordered list | Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. |
+| `quality_attributes` | [SystemQualityAttribute](index.md#systemqualityattribute) | optional; ordered list | Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. |
 | `part_of` | [System](index.md#system) | optional | Optional explicit parent System. Directory context does not supply this relationship. |
 | `out_of_scope` | [RichContent](index.md#richcontent) | optional | Explicit boundary exclusions; absence is not a statement of scope. |
 | `interacts_with` | [System](index.md#system) or [Component](index.md#component) | optional; list | Explicit interaction partners across this subject boundary; does not establish structural containment. |
@@ -642,12 +647,12 @@ Subsets: `software-requirements`. [Requirement](index.md#requirement) contains t
 | `applicability` | [Applicability](index.md#applicability) | optional |  |
 | `applies_to` | [DomainElement](index.md#domainelement) | optional; list |  |
 | `rationale` | [RichContent](index.md#richcontent) | optional |  |
-| `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; list | Only resolved classifications; original occurrences remain separately addressable. |
+| `quality_attributes` | [SystemQualityAttribute](index.md#systemqualityattribute) | optional; list | Only resolved classifications; original occurrences remain separately addressable. |
 | `criterion` | [RequirementCriterion](index.md#requirementcriterion) | optional | Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source. |
 
 ### QualityModel
 
-A standalone reusable set of quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.
+A reference vocabulary of reusable quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.
 
 Subsets: `software-requirements`. [QualityModel](index.md#qualitymodel) contains the complete definition.
 
@@ -656,11 +661,11 @@ Subsets: `software-requirements`. [QualityModel](index.md#qualitymodel) contains
 | `description` | [RichContent](index.md#richcontent) | optional |  |
 | `edition` | [RichContent](index.md#richcontent) | optional |  |
 | `sources` | [ContextualReferences](index.md#contextualreferences) | optional |  |
-| `quality_attributes` | [QualityAttribute](index.md#qualityattribute) | optional; ordered list | Definitions in declaration order. |
+| `quality_attributes` | [QualityModelAttribute](index.md#qualitymodelattribute) | optional; ordered list | Definitions in declaration order. |
 
 ### QualityAttribute
 
-A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit requirements, thresholds, or satisfaction.
+A named quality definition with acyclic grouping within its declaring model or effective system.
 
 Subsets: `software-requirements`. [QualityAttribute](index.md#qualityattribute) contains the complete definition.
 
@@ -749,7 +754,7 @@ Subsets: `software-requirements`. [Feature](index.md#feature) contains the compl
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `purpose` | [RichContent](index.md#richcontent) | optional | Stakeholder benefit expressed by this feature. |
-| `specification_owner` | [System](index.md#system) or [Component](index.md#component) | optional | Nearest system or component declaration owning this document within its project. |
+| `specification_owner` | [System](index.md#system) or [Component](index.md#component) | optional | Nearest system or component used for source lookup within the project. |
 | `groups` | [Requirement](index.md#requirement) or [UseCase](index.md#usecase) or [Concept](index.md#concept) or [ConceptUse](index.md#conceptuse) or [Synchronization](index.md#synchronization) or [Interface](index.md#interface) | optional; list | Non-owning specification membership; the same record may participate in several features. |
 
 ### Capability

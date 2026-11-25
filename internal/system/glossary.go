@@ -21,7 +21,7 @@ func (s *System) glossaryReferences(input *specfile.Markdown) error {
 	seen := map[string]bool{}
 	for _, name := range s.GlossarySources {
 		ext := strings.ToLower(filepath.Ext(name))
-		if filepath.IsAbs(name) || strings.ContainsAny(name, "\\:") || (ext != ".md" && ext != ".markdown") || strings.HasSuffix(name, ".spec.md") {
+		if filepath.IsAbs(name) || strings.ContainsAny(name, "\\:") || (ext != ".md" && ext != ".markdown") || strings.HasSuffix(name, ".spec.md") || strings.HasSuffix(name, specfile.QualityModelSuffix) {
 			return diagnostic.Error("glossary.source", fmt.Sprintf("expected a relative Markdown glossary path, found %q", name), location)
 		}
 		key := filepath.Clean(name)

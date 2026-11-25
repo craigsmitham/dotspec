@@ -70,6 +70,7 @@ func (m *domainMapper) bindReferenceOccurrences(owner Record, field string, ids 
 			if String(ref, "id") == id {
 				node := m.doc.NodeByID[String(ref, "content_node")]
 				node["link_owner"], node["link_field"] = owner["id"], field
+				ref["context_owner"], ref["context_field"] = owner["id"], field
 			}
 		}
 	}

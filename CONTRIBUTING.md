@@ -80,7 +80,9 @@ unknown prose and distinguish draft omissions from structural errors.
 
 ### Adding a specification type
 
-First decide whether the subject needs an independent specification or belongs to an existing one. For example, a new concept action already has an editable home and an address within its concept. A new primary subject needs a concrete specification class and a Markdown mapping that explains its declaration. Add its frontmatter value to `SpecificationType` in the metamodel. [Specification authority](docs/maintainers/plans/specification-authority.md#what-each-source-owns) · [Model maintenance](model/README.md#regeneration).
+Ask two questions before adding a specification type. **What product intent does this subject own? Why must an author maintain it independently?** An independently authored reference, such as a quality model, has its own document type and filename suffix. Reserve `*.spec.md` and `SpecificationType` for roots that meet both tests. [What belongs in a specification?](docs/cli-handbook/explanations/what-belongs-in-a-specification.md)
+
+For example, a new concept action already has an editable home and an address within its concept. A new specification root needs a concrete specification class and a Markdown mapping that explains its declaration. Add its frontmatter value to `SpecificationType` in the metamodel. [Specification authority](docs/maintainers/plans/specification-authority.md#what-each-source-owns) · [Model maintenance](model/README.md#regeneration).
 
 Define a `specfile.Layout` in the owning type package with its specification type
 (the `Kind` field) and its filename or suffix. For a collection such as jobs, provide the default collection directory. For a named directory owner, see the system and component declarations in `internal/specfile/subject.go`. Use that layout for discovery,

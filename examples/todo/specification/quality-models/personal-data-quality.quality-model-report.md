@@ -1,13 +1,13 @@
 ---
 generated_by: dotspec
-type: quality-model-spec-report
-source: "../../specs/quality-models/personal-data.quality-model.spec.md#personal-data-quality"
+type: quality-model-report
+source: "../../specs/quality-models/personal-data.quality-model.md#personal-data-quality"
 ---
 [Personal task list](<../personal-task-list.system.spec-report.md>) › [Quality models](<../quality-models.md>)
 
 # Personal data quality
 
-[View source](<../../specs/quality-models/personal-data.quality-model.spec.md#personal-data-quality>)
+[View source](<../../specs/quality-models/personal-data.quality-model.md#personal-data-quality>)
 
 ## Description
 
@@ -21,9 +21,9 @@ Adapted from recoverability in [ISO/IEC 25010:2023, §3.5.4](<https://www.iso.or
 
 ### Durability
 
-<!-- dotspec-doc {"type":"quality-attribute-spec-report","documents":"../../specs/quality-models/personal-data.quality-model.spec.md#durability"} -->
+<!-- dotspec-doc {"type":"quality-model-attribute-report","documents":"../../specs/quality-models/personal-data.quality-model.md#durability"} -->
 
-[View section source](<../../specs/quality-models/personal-data.quality-model.spec.md#durability>)
+[View section source](<../../specs/quality-models/personal-data.quality-model.md#durability>)
 
 **ID:** durability
 

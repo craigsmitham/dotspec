@@ -42,6 +42,7 @@ func overviewOutline(kind string) []overviewSection {
 		{title: "Concept uses", level: 3, sources: []string{"concept_uses"}},
 		{title: "Synchronizations", level: 3, sources: []string{"synchronizations"}},
 		{title: "Quality Attributes", level: 2},
+		{title: "Adopts", level: 2, sources: []string{"adopts"}},
 		{title: "Contracts", level: 2, sources: []string{"contracts"}},
 		{title: "Architecture", level: 2, sources: []string{"architecture"}},
 		{title: "Implementation", level: 2, sources: []string{"implementation"}},

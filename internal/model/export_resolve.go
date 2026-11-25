@@ -1,7 +1,9 @@
 package model
 
 import (
+	"crypto/sha256"
 	"errors"
+	"fmt"
 	"io/fs"
 	"net/url"
 	"path/filepath"
@@ -226,7 +228,7 @@ func (b *snapshotBuilder) associateAttributeOwners() {
 		if r == nil || sys == nil {
 			continue
 		}
-		r["owner"] = sys["id"]
+		r["specification_system"] = sys["id"]
 		sys["quality_attributes"] = appendUnique(Strings(sys["quality_attributes"]), String(r, "id"))
 	}
 }
@@ -281,7 +283,7 @@ func (b *snapshotBuilder) resolveLabels() {
 		if !designKind(String(element, "kind"), "QualityAttribute") {
 			continue
 		}
-		owner, label := String(element, "owner"), String(element, "authored_id")
+		owner, label := qualityScope(element), String(element, "authored_id")
 		if attributes[owner] == nil {
 			attributes[owner] = map[string][]string{}
 		}
@@ -292,7 +294,7 @@ func (b *snapshotBuilder) resolveLabels() {
 		path, _ := b.documentForSource(String(owner, "source_document"))
 		sys := ""
 		if String(label, "role") == "subattribute_of" {
-			sys = String(owner, "owner")
+			sys = qualityScope(owner)
 		} else {
 			sys = governingSystem(owner, b.elements)
 			if sys == "" && !b.contextOK[path] {
@@ -344,4 +346,43 @@ func (s *Snapshot) Relationships() []Record {
 		}
 	}
 	return relationships
+}
+
+// Observe acquired documents only. The fingerprint concerns the entire cited
+// source, so a change prompts review even when the clause locator still resolves.
+func (b *snapshotBuilder) observeAdoptions() {
+	refs := map[string]Record{}
+	for _, ref := range b.snapshot.References {
+		refs[String(ref, "id")] = ref
+	}
+	digests := map[string]string{}
+	for _, r := range b.snapshot.Elements {
+		if r["kind"] != "AdoptedProvision" {
+			continue
+		}
+		ref := refs[String(r, "provision")]
+		u, err := url.Parse(String(ref, "authored_target"))
+		if err != nil || u.IsAbs() || u.Host != "" || u.Path == "" || filepath.IsAbs(u.Path) {
+			continue
+		}
+		source, _ := b.documentForSource(String(r, "source_document"))
+		target := cleanPath(filepath.Join(filepath.Dir(source), filepath.FromSlash(u.Path)))
+		acquired := b.sources[target]
+		if acquired["read_status"] != "read" {
+			continue
+		}
+		if digests[target] == "" {
+			var data []byte
+			if md, ok := acquired["markdown"].(string); ok {
+				data = []byte(md)
+			} else {
+				data, err = b.inputs.Read(filepath.FromSlash(target))
+				if err != nil {
+					continue
+				}
+			}
+			digests[target] = fmt.Sprintf("%x", sha256.Sum256(data))
+		}
+		r["observed_source_sha256"] = digests[target]
+	}
 }

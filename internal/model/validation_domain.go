@@ -24,7 +24,7 @@ func modelPaths(expression string) [][2]string {
 }
 
 func (v *graphValidator) checkDomain() {
-	v.checkSpecificationSources()
+	v.checkDocumentRoots()
 	v.checkAuthoredIDs()
 	v.checkMemberships()
 	v.checkLabels()
@@ -32,7 +32,36 @@ func (v *graphValidator) checkDomain() {
 	for _, located := range v.sortedRecords() {
 		r, path := located.value, located.path
 		kind := String(r, "kind")
+		if kind == "AdoptedProvision" {
+			ref := v.records[String(r, "provision")].value
+			if ref["context_field"] != "provision" || ref["context_owner"] != r["id"] || (ref["form"] != "inline_link" && ref["form"] != "reference_link") {
+				v.add("adoption.provision", path+"/provision", "expected the provision link authored in this adoption")
+			}
+		}
+		if kind == "Requirement" {
+			for _, field := range []string{"verification_procedures", "criterion.verification_procedures"} {
+				for _, id := range valuesAt(r, field+".references") {
+					ref := v.records[id].value
+					if ref["context_owner"] != r["id"] || ref["context_field"] != field+".references" || (ref["form"] != "inline_link" && ref["form"] != "reference_link") {
+						v.add("verification.procedure", path+"/"+strings.ReplaceAll(field, ".", "/"), "expected a procedure link authored for this subject")
+					}
+				}
+			}
+		}
+		if kind == "SystemQualityAttribute" {
+			system := String(r, "specification_system")
+			if system != "" && !slices.Contains(Strings(v.records[system].value["quality_attributes"]), String(r, "id")) {
+				v.add("quality.membership", path+"/specification_system", "system must include its attribute in its quality vocabulary")
+			}
+		}
 		if kind == "System" {
+			seen := map[string]bool{}
+			for _, attribute := range Strings(r["quality_attributes"]) {
+				if seen[attribute] || String(v.records[attribute].value, "specification_system") != String(r, "id") {
+					v.add("quality.membership", path+"/quality_attributes", "each system attribute must belong to this system exactly once")
+				}
+				seen[attribute] = true
+			}
 			v.checkGlossarySources(r, path)
 		}
 		if kind == "System" || kind == "Component" {
@@ -45,7 +74,7 @@ func (v *graphValidator) checkDomain() {
 		}
 		if v.isA(kind, "QualityAttribute") {
 			for _, id := range valuesAt(r, "subattribute_of") {
-				if other := v.records[id].value; other != nil && String(other, "owner") != String(r, "owner") {
+				if other := v.records[id].value; other != nil && qualityScope(other) != qualityScope(r) {
 					v.add("quality.scope", path+"/subattribute_of", "parent attributes must belong to the same declaring owner")
 				}
 			}
@@ -53,9 +82,9 @@ func (v *graphValidator) checkDomain() {
 	}
 }
 
-// A mapped specification must be the sole primary subject of its source.
+// A mapped specification or reference root must be the sole primary subject of its source.
 // A source rejected during parsing can still be exported with its diagnostics.
-func (v *graphValidator) checkSpecificationSources() {
+func (v *graphValidator) checkDocumentRoots() {
 	docs := map[string]Record{}
 	failed := map[string]bool{}
 	for _, record := range v.sortedRecords() {
@@ -70,19 +99,25 @@ func (v *graphValidator) checkSpecificationSources() {
 		}
 	}
 	roots := map[string]int{}
+	declared := map[string][]string{}
 	for _, record := range v.sortedRecords() {
 		r := record.value
 		kind := String(r, "kind")
-		if !v.isA(kind, "Specification") {
+		if v.isA(kind, "DomainElement") {
+			src := String(r, "source_document")
+			declared[src] = append(declared[src], String(r, "id"))
+		}
+		if !v.isA(kind, "AuthoredDocumentRoot") {
 			continue
 		}
 		source := String(r, "source_document")
 		doc := docs[source]
-		form, typed := strings.CutSuffix(String(doc, "declared_type"), "-spec")
+		declared := String(doc, "declared_type")
+		form := strings.TrimSuffix(declared, "-spec")
 		name := String(v.records[source].value, "locator")
 		roots[source]++
-		if !typed || kind != specfile.SpecificationClass(form) || !strings.HasSuffix(name, "."+form+".spec.md") || !slices.Contains(Strings(doc["elements"]), String(r, "id")) {
-			v.add("specification.source", record.path+"/source_document", "a specification must be declared by its corresponding file and document type")
+		if declared != specfile.AuthoredType(form) || kind != specfile.DocumentRootClass(form) || !strings.HasSuffix(name, specfile.AuthoredSuffix(form)) || !slices.Contains(Strings(doc["elements"]), String(r, "id")) {
+			v.add("document.subject-type", record.path+"/source_document", "an authored root must match its source filename and document type")
 		}
 	}
 	for _, record := range v.sortedRecords() {
@@ -91,8 +126,12 @@ func (v *graphValidator) checkSpecificationSources() {
 			continue
 		}
 		source := String(r, "source")
+		ids := Strings(r["elements"])
+		if len(ids) != len(declared[source]) || !sameStrings(ids, declared[source]) {
+			v.add("document.elements", record.path+"/elements", "document inventory must include exactly the elements declared in this source")
+		}
 		if roots[source] > 1 || (roots[source] == 0 && v.records[source].value["selected"] == true && !failed[source]) {
-			v.add("specification.root", record.path+"/elements", "each successfully mapped specification file declares one primary subject")
+			v.add("document.primary-subject", record.path+"/elements", "each successfully mapped authored document declares one primary subject")
 		}
 	}
 }
@@ -130,8 +169,8 @@ func (v *graphValidator) checkAuthoredIDs() {
 		} else {
 			docs[key] = located.path
 		}
-		if v.isA(String(r, "kind"), "QualityAttribute") {
-			key = String(r, "owner") + "\x00" + authored
+		if v.isA(String(r, "kind"), "QualityAttribute") && qualityScope(r) != "" {
+			key = qualityScope(r) + "\x00" + authored
 			if prior, ok := attributeScopes[key]; ok {
 				v.add("quality.identity", located.path+"/authored_id", fmt.Sprintf("attribute ID %q also occurs at %s under this owner", authored, prior))
 			} else {
@@ -173,8 +212,7 @@ func (v *graphValidator) checkMemberships() {
 					if String(child, "owner") != String(r, "id") {
 						v.add("membership.owner", path, fmt.Sprintf("member %q does not name this record as its owner", id))
 					}
-					externalAttribute := member[0] == "System" && member[1] == "quality_attributes" && String(child, "kind") == "SystemQualityAttribute"
-					if !externalAttribute && v.sourceOf(child) != v.sourceOf(r) {
+					if v.sourceOf(child) != v.sourceOf(r) {
 						v.add("membership.source", path, "owned members must be expressed in the owner's source document")
 					}
 				}
@@ -220,7 +258,7 @@ func (v *graphValidator) checkLabels() {
 				v.add("label.owner", path+"/owner", "parent labels belong to quality attributes")
 				continue
 			}
-			system = String(owner, "owner")
+			system = qualityScope(owner)
 		}
 		if context := String(label, "governing_quality_model"); context != "" && (String(label, "role") != "subattribute_of" || context != system || String(v.records[system].value, "kind") != "QualityModel") {
 			v.add("label.context", path+"/governing_quality_model", "governing quality model must be the declaring model of a parent label")

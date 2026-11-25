@@ -116,14 +116,14 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.parseFailure(err)
 		return m.result
 	}
-	r := m.record(specfile.SpecificationClass(kind), "")
+	r := m.record(specfile.DocumentRootClass(kind), "")
 	m.result.RootID = String(r, "id")
 	if authoredID != "" {
 		r["authored_id"] = authoredID
 	}
 	if kind != "system" {
 		name := filepath.Base(String(doc.Source, "locator"))
-		r["slug"] = strings.TrimSuffix(name, "."+kind+".spec.md")
+		r["slug"] = strings.TrimSuffix(name, specfile.AuthoredSuffix(kind))
 	}
 	if doc.TitleNode != "" {
 		r["name"] = doc.Rich([]string{doc.TitleNode})
@@ -367,8 +367,13 @@ func (m *domainMapper) common(r Record, s *Section) bool {
 		return true
 	}
 	switch s.Title {
+	case "Adopts":
+		if !designKind(String(r, "kind"), "Specification") {
+			return false
+		}
+		m.adoptions(r, s)
 	case "Specification system":
-		if _, ok := compiledModel().catalog.Classes[String(r, "kind")].Slots["specification_system"]; !ok {
+		if _, ok := compiledModel().catalog.Classes[String(r, "kind")].Slots["specification_system_content"]; !ok {
 			return false
 		}
 		m.structureReference(r, "specification_system", s)

@@ -40,6 +40,10 @@ Use the acknowledged changes to establish which entries should survive and in wh
 
 Zero discrepancies across Open, Waiting and Completed.
 
+### Verification procedures
+
+[Restart acceptance test](../../tests/acceptance.py).
+
 ## Evidence
 
 The [restart acceptance test](../../tests/acceptance.py) records entries in Open, Waiting and Completed through the forms, kills the service process without a clean shutdown and starts it again on the same database. It compares each view’s identities and titles with the acknowledged list. A missing, duplicated or unexpected entry fails the run, as would the return of either entry deleted before the stop. For both waiting entries it also compares the expected reply and follow-up date. The test does not stop the service during a change or simulate a power loss.

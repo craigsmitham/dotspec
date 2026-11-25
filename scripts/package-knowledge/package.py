@@ -82,6 +82,9 @@ def publication_pages(catalog):
         for file in sorted((ROOT / folder).rglob('*.spec.md')):
             pages[file.relative_to(ROOT).as_posix()] = "Worked specification from the To-do app."
 
+        for file in sorted((ROOT / folder).rglob('*.quality-model.md')):
+            pages[file.relative_to(ROOT).as_posix()] = "Reusable quality model from the To-do app."
+
     # Other public specifications are copied when an editor selects them for a topic.
     selectable = {file.relative_to(ROOT).as_posix() for file in (ROOT / 'specs').rglob('*.spec.md')}
     selectable.update(file.relative_to(ROOT).as_posix()

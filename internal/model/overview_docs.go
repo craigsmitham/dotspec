@@ -64,6 +64,24 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	var out strings.Builder
 	out.WriteString("# System specification overview\n\nGenerated from authored specifications. Regenerate this view instead of editing it.\n\n")
 	fmt.Fprintf(&out, "Model `%s`; mapping `%s`. This view covers only acquired records within the export's discovery and direct-reference boundary. Missing links do not establish missing behavior or missing implementation.\n\n", s.ModelVersion, s.MappingProfile)
+	for _, r := range elements {
+		parent := d.index[String(r, "part_of")]
+		if r["kind"] != "System" || d.index[String(parent, "source_document")]["selected"] == true || d.index[String(r, "source_document")]["selected"] != true {
+			continue
+		}
+		view, err := s.Product(String(r, "id"))
+		if err != nil {
+			return "", err
+		}
+		fmt.Fprintf(&out, "## Product specification for %s\n\n", d.name(r))
+		for _, member := range view.Members {
+			fmt.Fprintf(&out, "- %s (%s)\n", link(member.ID), member.Basis)
+		}
+		if !view.Complete {
+			out.WriteString("\nMembership outside the inspected scope is unknown.\n")
+		}
+		out.WriteString("\n")
+	}
 	out.WriteString("## System structure\n\nArrows read **part of**, from a component or subsystem to its explicit structural parent. Declaration location and directory nesting do not create these edges. No requirements are inherited down the structure.\n\n")
 	ids := map[string]string{}
 	for _, r := range elements {

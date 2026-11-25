@@ -160,7 +160,7 @@ func addSourceContracts(p *planner) error {
 			}
 		}
 		if s != p.governing {
-			parent := s.parent
+			parent := s.navigationParent
 			if parent == nil {
 				parent = s.system
 			}
@@ -199,7 +199,13 @@ func addSourceContracts(p *planner) error {
 			}
 		}
 	}
-	requireRoute(p.plan.Pages["SPEC.md"], relative("SPEC.md", p.governing.file), "Read the system specification")
+	if p.governing.file != "SPEC.md" {
+		requireRoute(p.plan.Pages["SPEC.md"], relative("SPEC.md", p.governing.file), "Read the system specification")
+	} else {
+		for title, idx := range p.governing.indexes {
+			requireRoute(p.plan.Pages["SPEC.md"], relative("SPEC.md", idx.file), collectionTitle(title))
+		}
+	}
 	return nil
 }
 

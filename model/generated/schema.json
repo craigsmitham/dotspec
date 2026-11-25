@@ -1,5 +1,97 @@
 {
     "$defs": {
+        "AdoptedProvision": {
+            "additionalProperties": false,
+            "description": "The local decision to adopt an identified external provision under stated conditions.",
+            "properties": {
+                "applicability": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "edition": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "The pinned edition or revision, or the word evolving for a moving reference."
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "AdoptedProvision",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "observed_source_sha256": {
+                    "description": "Digest of the acquired provision document for change review. Markdown uses normalized source text.",
+                    "pattern": "^[a-f0-9]{64}$",
+                    "type": "string"
+                },
+                "open_questions": {
+                    "description": "Explicitly distinguished questions, in authored order.",
+                    "items": {
+                        "$ref": "#/$defs/OpenQuestion"
+                    },
+                    "type": "array"
+                },
+                "owner": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "type": "string"
+                },
+                "provision": {
+                    "type": "string"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "owner",
+                "provision",
+                "edition",
+                "applicability",
+                "source_document",
+                "id",
+                "kind"
+            ],
+            "title": "AdoptedProvision",
+            "type": "object"
+        },
+        "AdoptedProvisionReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "adopted-provision-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "AdoptedProvisionReport",
+            "type": "object"
+        },
         "Applicability": {
             "additionalProperties": false,
             "description": "Operating context covered by an requirement or business rule, with optional explicit dimensions. For outcomes of use, identify users, tasks, equipment or assistance, and environment. Record the required operating context here.",
@@ -118,10 +210,67 @@
             "title": "AssumptionSpecReport",
             "type": "object"
         },
+        "AuthoredDocumentRoot": {
+            "additionalProperties": false,
+            "description": "The primary domain subject of an independently authored document.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "open_questions": {
+                    "description": "Explicitly distinguished questions, in authored order.",
+                    "items": {
+                        "$ref": "#/$defs/OpenQuestion"
+                    },
+                    "type": "array"
+                },
+                "preamble": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored content between the title and the first named section."
+                },
+                "slug": {
+                    "description": "Path-derived current slug where applicable.",
+                    "type": "string"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "source_document",
+                "id",
+                "kind"
+            ],
+            "title": "AuthoredDocumentRoot",
+            "type": "object"
+        },
         "BusinessRule": {
             "additionalProperties": false,
             "description": "A declarative business constraint independent of the software or process that enforces it.",
             "properties": {
+                "adopts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "applicability": {
                     "$ref": "#/$defs/Applicability"
                 },
@@ -204,7 +353,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "Nearest system or component declaration owning this document within its project.",
+                    "description": "Nearest system or component used for source lookup within the project.",
                     "type": "string"
                 },
                 "specification_system_content": {
@@ -277,6 +426,12 @@
             "additionalProperties": false,
             "description": "An ability needed to deliver value, potentially combining people, procedures and technology. Distinct from a product feature or structural component; its declaration does not establish a provider.",
             "properties": {
+                "adopts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -365,7 +520,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "Nearest system or component declaration owning this document within its project.",
+                    "description": "Nearest system or component used for source lookup within the project.",
                     "type": "string"
                 },
                 "specification_system_content": {
@@ -410,6 +565,12 @@
             "additionalProperties": false,
             "description": "A named part of a system with a described responsibility and boundary. Neither its declaration nor code location establishes structural parentage.",
             "properties": {
+                "adopts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "architecture": {
                     "$ref": "#/$defs/ContextualReferences",
                     "description": "Links and narrative; external native artifacts remain authoritative. No implementation or satisfaction claim is inferred."
@@ -538,7 +699,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "Nearest system or component declaration owning this document within its project.",
+                    "description": "Nearest system or component used for source lookup within the project.",
                     "type": "string"
                 },
                 "specification_system_content": {
@@ -594,6 +755,12 @@
                 },
                 "actions": {
                     "description": "Explicitly named actions, in authored order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "adopts": {
                     "items": {
                         "type": "string"
                     },
@@ -676,7 +843,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "Nearest system or component declaration owning this document within its project.",
+                    "description": "Nearest system or component used for source lookup within the project.",
                     "type": "string"
                 },
                 "specification_system_content": {
@@ -1201,7 +1368,7 @@
                     "type": "string"
                 },
                 "declared_type": {
-                    "description": "Declared metadata type, exactly as authored; original key/value syntax remains in the tree. A recognized value is a SpecificationType.",
+                    "description": "Declared metadata type, exactly as authored; original key/value syntax remains in the tree. A recognized value is a SpecificationType or ReferenceType.",
                     "type": "string"
                 },
                 "diagnostics": {
@@ -1330,6 +1497,12 @@
             "additionalProperties": false,
             "description": "A recognizable grouping of specified product behavior valued by stakeholders, independent of component structure. Membership does not duplicate or own requirements.",
             "properties": {
+                "adopts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -1410,7 +1583,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "Nearest system or component declaration owning this document within its project.",
+                    "description": "Nearest system or component used for source lookup within the project.",
                     "type": "string"
                 },
                 "specification_system_content": {
@@ -1651,6 +1824,12 @@
             "additionalProperties": false,
             "description": "An independently addressable description of interaction at a System or Component boundary, declared by that System or Component. Required or provided membership states direction relative to the declaring subject. Native protocol contracts retain their authority; neither declaration nor citation proves implementation or compatibility.",
             "properties": {
+                "adopts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -1753,6 +1932,12 @@
             "additionalProperties": false,
             "description": "What a performer seeks to accomplish or change in particular circumstances, independent of the chosen solution. Functional maps and job-story phrasing are optional complementary perspectives.",
             "properties": {
+                "adopts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -1840,7 +2025,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "Nearest system or component declaration owning this document within its project.",
+                    "description": "Nearest system or component used for source lookup within the project.",
                     "type": "string"
                 },
                 "specification_system_content": {
@@ -2074,7 +2259,7 @@
         },
         "QualityAttribute": {
             "additionalProperties": false,
-            "description": "A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit requirements, thresholds, or satisfaction.",
+            "description": "A named quality definition with acyclic grouping within its declaring model or effective system.",
             "properties": {
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
@@ -2089,7 +2274,6 @@
                     "type": "string"
                 },
                 "kind": {
-                    "const": "QualityAttribute",
                     "description": "Concrete record type discriminator.",
                     "type": "string"
                 },
@@ -2104,14 +2288,6 @@
                     },
                     "type": "array"
                 },
-                "owner": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "type": "string"
-                },
                 "source_document": {
                     "type": "string"
                 },
@@ -2120,7 +2296,6 @@
                 }
             },
             "required": [
-                "owner",
                 "authored_id",
                 "source_document",
                 "id",
@@ -2129,50 +2304,18 @@
             "title": "QualityAttribute",
             "type": "object"
         },
-        "QualityAttributeSpecReport": {
-            "additionalProperties": false,
-            "description": "Defines one quality attribute and links to the requirements classified by it.",
-            "properties": {
-                "documents": {
-                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
-                    "type": "string"
-                },
-                "type": {
-                    "const": "quality-attribute-spec-report",
-                    "description": "Serialized document type fixed by the concrete class.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "documents",
-                "type"
-            ],
-            "title": "QualityAttributeSpecReport",
-            "type": "object"
-        },
         "QualityModel": {
             "additionalProperties": false,
-            "description": "A standalone reusable set of quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.",
+            "description": "A reference vocabulary of reusable quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.",
             "properties": {
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
                 },
-                "authority_and_evidence": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored authority for the specification."
-                },
-                "derived_from_content": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored Markdown qualifying the derived from relationship."
-                },
                 "description": {
                     "$ref": "#/$defs/RichContent"
                 },
                 "edition": {
-                    "$ref": "#/$defs/RichContent"
-                },
-                "evidence": {
                     "$ref": "#/$defs/RichContent"
                 },
                 "id": {
@@ -2207,14 +2350,6 @@
                     },
                     "type": "array"
                 },
-                "related_specifications": {
-                    "$ref": "#/$defs/ContextualReferences",
-                    "description": "Contextual citations of related specifications of any type, with their explanation; no implicit support, refinement, enforcement or compliance relation."
-                },
-                "relies_on_content": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored Markdown qualifying the relies on relationship."
-                },
                 "slug": {
                     "description": "Path-derived current slug where applicable.",
                     "type": "string"
@@ -2227,10 +2362,6 @@
                 },
                 "sources": {
                     "$ref": "#/$defs/ContextualReferences"
-                },
-                "supports_content": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "Authored Markdown qualifying the supports relationship."
                 }
             },
             "required": [
@@ -2241,7 +2372,59 @@
             "title": "QualityModel",
             "type": "object"
         },
-        "QualityModelSpecReport": {
+        "QualityModelAttribute": {
+            "additionalProperties": false,
+            "description": "A reusable definition declared within one quality model.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "definition": {
+                    "$ref": "#/$defs/RichContent"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "QualityModelAttribute",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "open_questions": {
+                    "description": "Explicitly distinguished questions, in authored order.",
+                    "items": {
+                        "$ref": "#/$defs/OpenQuestion"
+                    },
+                    "type": "array"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "owner",
+                "authored_id",
+                "source_document",
+                "id",
+                "kind"
+            ],
+            "title": "QualityModelAttribute",
+            "type": "object"
+        },
+        "QualityModelAttributeReport": {
             "additionalProperties": false,
             "description": "",
             "properties": {
@@ -2250,7 +2433,7 @@
                     "type": "string"
                 },
                 "type": {
-                    "const": "quality-model-spec-report",
+                    "const": "quality-model-attribute-report",
                     "description": "Serialized document type fixed by the concrete class.",
                     "type": "string"
                 }
@@ -2259,7 +2442,28 @@
                 "documents",
                 "type"
             ],
-            "title": "QualityModelSpecReport",
+            "title": "QualityModelAttributeReport",
+            "type": "object"
+        },
+        "QualityModelReport": {
+            "additionalProperties": false,
+            "description": "",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "quality-model-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "QualityModelReport",
             "type": "object"
         },
         "ReadStatus": {
@@ -2352,9 +2556,18 @@
             "title": "ReferenceTraversalMode",
             "type": "string"
         },
+        "ReferenceType": {
+            "description": "Markdown frontmatter types for independently authored reference material.",
+            "enum": [
+                "quality-model"
+            ],
+            "title": "ReferenceType",
+            "type": "string"
+        },
         "RelationshipCategory": {
             "description": "Vocabulary of the relationship_category annotation on record-reference fields. Each category supplies the scope, cycle policy and basis of its fields unless a field states its own.",
             "enum": [
+                "system-membership",
                 "declaration-containment",
                 "structural-context",
                 "semantic-association",
@@ -2369,6 +2582,12 @@
             "additionalProperties": false,
             "description": "One required property or behavior, declared in its own requirement specification. Functional and quality requirements share this type. Either can reference a system quality attribute.",
             "properties": {
+                "adopts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "applicability": {
                     "$ref": "#/$defs/Applicability"
                 },
@@ -2451,7 +2670,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "Nearest system or component declaration owning this document within its project.",
+                    "description": "Nearest system or component used for source lookup within the project.",
                     "type": "string"
                 },
                 "specification_system_content": {
@@ -2464,6 +2683,10 @@
                 "supports_content": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored Markdown qualifying the supports relationship."
+                },
+                "verification_procedures": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Explicitly linked executable tests or manual protocols for assessing this subject."
                 }
             },
             "required": [
@@ -2488,6 +2711,10 @@
                 "target": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Required value, bound or acceptable range, including the comparison. Preferred targets belong in Rationale and should be identified as preferences."
+                },
+                "verification_procedures": {
+                    "$ref": "#/$defs/ContextualReferences",
+                    "description": "Explicitly linked executable tests or manual protocols for assessing this subject."
                 }
             },
             "required": [
@@ -2622,6 +2849,13 @@
                 "roots": {
                     "items": {
                         "type": "string"
+                    },
+                    "type": "array"
+                },
+                "selected_reference_types": {
+                    "description": "Reference document types selected for this inspection.",
+                    "items": {
+                        "$ref": "#/$defs/ReferenceType"
                     },
                     "type": "array"
                 },
@@ -2827,10 +3061,10 @@
                     "items": {
                         "anyOf": [
                             {
-                                "$ref": "#/$defs/GlossaryTerm"
+                                "$ref": "#/$defs/AdoptedProvision"
                             },
                             {
-                                "$ref": "#/$defs/QualityAttribute"
+                                "$ref": "#/$defs/GlossaryTerm"
                             },
                             {
                                 "$ref": "#/$defs/Scenario"
@@ -2845,28 +3079,7 @@
                                 "$ref": "#/$defs/SystemQualityAttribute"
                             },
                             {
-                                "$ref": "#/$defs/Goal"
-                            },
-                            {
-                                "$ref": "#/$defs/Assumption"
-                            },
-                            {
-                                "$ref": "#/$defs/JobStep"
-                            },
-                            {
-                                "$ref": "#/$defs/DesiredOutcome"
-                            },
-                            {
-                                "$ref": "#/$defs/ConceptAction"
-                            },
-                            {
-                                "$ref": "#/$defs/ConceptUse"
-                            },
-                            {
-                                "$ref": "#/$defs/Synchronization"
-                            },
-                            {
-                                "$ref": "#/$defs/Interface"
+                                "$ref": "#/$defs/QualityModelAttribute"
                             },
                             {
                                 "$ref": "#/$defs/QualityModel"
@@ -2897,6 +3110,30 @@
                             },
                             {
                                 "$ref": "#/$defs/Capability"
+                            },
+                            {
+                                "$ref": "#/$defs/Goal"
+                            },
+                            {
+                                "$ref": "#/$defs/Assumption"
+                            },
+                            {
+                                "$ref": "#/$defs/JobStep"
+                            },
+                            {
+                                "$ref": "#/$defs/DesiredOutcome"
+                            },
+                            {
+                                "$ref": "#/$defs/ConceptAction"
+                            },
+                            {
+                                "$ref": "#/$defs/ConceptUse"
+                            },
+                            {
+                                "$ref": "#/$defs/Synchronization"
+                            },
+                            {
+                                "$ref": "#/$defs/Interface"
                             }
                         ]
                     },
@@ -2919,7 +3156,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.30.0-draft",
+                    "const": "0.32.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -2929,7 +3166,7 @@
                     "type": "array"
                 },
                 "representation_version": {
-                    "const": "0.3.0",
+                    "const": "0.4.0",
                     "description": "Version of this serialized snapshot contract, separate from the domain metamodel version.",
                     "type": "string"
                 },
@@ -3029,7 +3266,7 @@
                     "$ref": "#/$defs/ReadStatus"
                 },
                 "selected": {
-                    "description": "True for specification files selected by discovery in the scan scope. Context acquired through references or enclosing system lookup is excluded from the selected set.",
+                    "description": "True for authored files selected by discovery in the scan scope. Context acquired through references or enclosing system lookup is excluded from the selected set.",
                     "type": "boolean"
                 }
             },
@@ -3183,8 +3420,14 @@
         },
         "Specification": {
             "additionalProperties": false,
-            "description": "The root record of one authored specification document. Every specification has exactly one specification type, and specification types correspond one-to-one with concrete Specification classes. Elements declared inside a specification are not specifications. Narrative authority and evidence do not create executable authority assertions.",
+            "description": "An independently maintained aggregate of product intent. Each authored specification file declares one root and can contain addressable parts. The specifications in product scope and their relationships compose the product specification.",
             "properties": {
+                "adopts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -3282,7 +3525,6 @@
                 "component-spec",
                 "system-spec",
                 "job-spec",
-                "quality-model-spec",
                 "business-rule-spec",
                 "use-case-spec",
                 "concept-spec",
@@ -3291,7 +3533,7 @@
             "title": "SpecificationType",
             "type": "string"
         },
-        "SubjectSpecReport": {
+        "SubjectReport": {
             "additionalProperties": false,
             "description": "The canonical generated account of one addressable subject in the selected snapshot.",
             "properties": {
@@ -3308,7 +3550,7 @@
                 "documents",
                 "type"
             ],
-            "title": "SubjectSpecReport",
+            "title": "SubjectReport",
             "type": "object"
         },
         "Synchronization": {
@@ -3417,6 +3659,12 @@
             "additionalProperties": false,
             "description": "The system described by a system document; subordinate systems retain their own boundaries and quality attributes.",
             "properties": {
+                "adopts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "assumptions": {
                     "description": "Explicitly authored assumptions, in authored order.",
                     "items": {
@@ -3606,8 +3854,14 @@
         },
         "SystemContextSpecification": {
             "additionalProperties": false,
-            "description": "A specification associated with a system: every specification type other than System and QualityModel. The association is selected explicitly or defaults to the nearest enclosing system found by directory discovery.",
+            "description": "A specification associated with a system selected explicitly or supplied by directory discovery.",
             "properties": {
+                "adopts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -3675,7 +3929,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "Nearest system or component declaration owning this document within its project.",
+                    "description": "Nearest system or component used for source lookup within the project.",
                     "type": "string"
                 },
                 "specification_system_content": {
@@ -3699,6 +3953,12 @@
             "additionalProperties": false,
             "description": "A system's named quality attribute, authored in a standalone quality attribute specification.",
             "properties": {
+                "adopts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -3738,14 +3998,6 @@
                     },
                     "type": "array"
                 },
-                "owner": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        }
-                    ],
-                    "type": "string"
-                },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored content between the title and the first named section."
@@ -3768,6 +4020,10 @@
                 "source_fragment": {
                     "type": "string"
                 },
+                "specification_system": {
+                    "description": "Effective system established by the system's quality directory.",
+                    "type": "string"
+                },
                 "supports_content": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored Markdown qualifying the supports relationship."
@@ -3780,6 +4036,27 @@
                 "kind"
             ],
             "title": "SystemQualityAttribute",
+            "type": "object"
+        },
+        "SystemQualityAttributeSpecReport": {
+            "additionalProperties": false,
+            "description": "Defines one quality attribute and links to the requirements classified by it.",
+            "properties": {
+                "documents": {
+                    "description": "The documented subject, serialized as a relative URI to its authored heading.",
+                    "type": "string"
+                },
+                "type": {
+                    "const": "system-quality-attribute-spec-report",
+                    "description": "Serialized document type fixed by the concrete class.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "documents",
+                "type"
+            ],
+            "title": "SystemQualityAttributeSpecReport",
             "type": "object"
         },
         "SystemSpecReport": {
@@ -3862,6 +4139,12 @@
             "additionalProperties": false,
             "description": "An actor goal and its interactions at a stated system boundary, with alternative paths and protections.",
             "properties": {
+                "adopts": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "authored_id": {
                     "description": "An explicitly authored ID when present; no manufactured global identifier.",
                     "type": "string"
@@ -3967,7 +4250,7 @@
                             "type": "string"
                         }
                     ],
-                    "description": "Nearest system or component declaration owning this document within its project.",
+                    "description": "Nearest system or component used for source lookup within the project.",
                     "type": "string"
                 },
                 "specification_system_content": {
@@ -4138,10 +4421,10 @@
             "items": {
                 "anyOf": [
                     {
-                        "$ref": "#/$defs/GlossaryTerm"
+                        "$ref": "#/$defs/AdoptedProvision"
                     },
                     {
-                        "$ref": "#/$defs/QualityAttribute"
+                        "$ref": "#/$defs/GlossaryTerm"
                     },
                     {
                         "$ref": "#/$defs/Scenario"
@@ -4156,28 +4439,7 @@
                         "$ref": "#/$defs/SystemQualityAttribute"
                     },
                     {
-                        "$ref": "#/$defs/Goal"
-                    },
-                    {
-                        "$ref": "#/$defs/Assumption"
-                    },
-                    {
-                        "$ref": "#/$defs/JobStep"
-                    },
-                    {
-                        "$ref": "#/$defs/DesiredOutcome"
-                    },
-                    {
-                        "$ref": "#/$defs/ConceptAction"
-                    },
-                    {
-                        "$ref": "#/$defs/ConceptUse"
-                    },
-                    {
-                        "$ref": "#/$defs/Synchronization"
-                    },
-                    {
-                        "$ref": "#/$defs/Interface"
+                        "$ref": "#/$defs/QualityModelAttribute"
                     },
                     {
                         "$ref": "#/$defs/QualityModel"
@@ -4208,6 +4470,30 @@
                     },
                     {
                         "$ref": "#/$defs/Capability"
+                    },
+                    {
+                        "$ref": "#/$defs/Goal"
+                    },
+                    {
+                        "$ref": "#/$defs/Assumption"
+                    },
+                    {
+                        "$ref": "#/$defs/JobStep"
+                    },
+                    {
+                        "$ref": "#/$defs/DesiredOutcome"
+                    },
+                    {
+                        "$ref": "#/$defs/ConceptAction"
+                    },
+                    {
+                        "$ref": "#/$defs/ConceptUse"
+                    },
+                    {
+                        "$ref": "#/$defs/Synchronization"
+                    },
+                    {
+                        "$ref": "#/$defs/Interface"
                     }
                 ]
             },
@@ -4230,7 +4516,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.30.0-draft",
+            "const": "0.32.0-draft",
             "type": "string"
         },
         "references": {
@@ -4240,7 +4526,7 @@
             "type": "array"
         },
         "representation_version": {
-            "const": "0.3.0",
+            "const": "0.4.0",
             "description": "Version of this serialized snapshot contract, separate from the domain metamodel version.",
             "type": "string"
         },
@@ -4275,5 +4561,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.30.0-draft"
+    "version": "0.32.0-draft"
 }

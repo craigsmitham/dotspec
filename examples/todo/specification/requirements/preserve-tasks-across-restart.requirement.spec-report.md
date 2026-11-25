@@ -33,6 +33,10 @@ Use the acknowledged changes to establish which entries should survive and in wh
 
 Zero discrepancies across Open, Waiting and Completed.
 
+### Verification procedures
+
+[Restart acceptance test](<../../tests/acceptance.py>).
+
 ## Refines
 
 [Keep recorded work available](<keep-recorded-work-available.requirement.spec-report.md>).
@@ -52,6 +56,12 @@ The [restart acceptance test](<../../tests/acceptance.py>) records entries in Op
 ## Rationale
 
 A list that loses track of earlier decisions forces the person to reconstruct them.
+
+## Criterion verification
+
+Procedure linked.
+
+No matching result recorded.
 
 ## Related specifications
 

@@ -14,8 +14,8 @@ import (
 func (p *planner) renderTopology(w *writer, owner *subject) {
 	type connection struct{ target, edge, role string }
 	var connections []connection
-	if owner.parent != nil && attr(owner.r, "part_of") == id(owner.parent.r) {
-		connections = append(connections, connection{id(owner.parent.r), "part of", "Parent " + strings.ToLower(owner.parent.kind())})
+	if parent := p.elements[attr(owner.r, "part_of")]; parent != nil {
+		connections = append(connections, connection{id(parent), "part of", "Parent " + strings.ToLower(attr(parent, "kind"))})
 	}
 	providers := map[string][]*subject{}
 	for _, child := range p.subjects {

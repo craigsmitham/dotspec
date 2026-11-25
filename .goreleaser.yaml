@@ -35,6 +35,7 @@ archives:
       - examples/todo/dotspec.yaml
       - examples/todo/specs/*.spec.md
       - examples/todo/specs/**/*.spec.md
+      - examples/todo/specs/**/*.quality-model.md
       - examples/todo/app/**/*.spec.md
       - examples/todo/specification/*.md
       - examples/todo/specification/**/*.md

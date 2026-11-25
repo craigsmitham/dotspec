@@ -50,7 +50,7 @@ func TestProjectCheckTextAndJSON(t *testing.T) {
 func TestProjectCheckEmptyAdvisoryAndIncomplete(t *testing.T) {
 	dir := t.TempDir()
 	code, out, errOut := invoke("check", "--path", dir)
-	if code != 0 || errOut != "" || !strings.Contains(out, "No supported specifications found.") {
+	if code != 0 || errOut != "" || !strings.Contains(out, "No supported source files found.") {
 		t.Fatalf("empty: %d %q %q", code, out, errOut)
 	}
 	writeFixture(t, filepath.Join(dir, "specs/jobs/draft.job.spec.md"), "---\ntype: job-spec\n---\n# Draft\n")
@@ -68,7 +68,7 @@ func TestProjectCheckEmptyAdvisoryAndIncomplete(t *testing.T) {
 			if err := json.Unmarshal([]byte(out), &r); err != nil || r.Complete || r.Diagnostics[0].Rule != "scan.scope" {
 				t.Fatalf("incomplete JSON: %v, %+v", err, r)
 			}
-		} else if !strings.Contains(out, "Scan incomplete.") || strings.Contains(out, "No supported specifications found.") {
+		} else if !strings.Contains(out, "Scan incomplete.") || strings.Contains(out, "No supported source files found.") {
 			t.Fatalf("incomplete scan looks successful: %s", out)
 		}
 	}

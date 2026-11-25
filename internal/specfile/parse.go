@@ -22,14 +22,29 @@ type Metadata struct {
 	Type string `yaml:"type"`
 }
 
-// AuthoredType returns the Markdown frontmatter type for a subject kind.
-func AuthoredType(kind string) string { return kind + "-spec" }
+const QualityModelSuffix = ".quality-model.md"
 
-func (m Metadata) SpecType() string { return m.Type }
+// AuthoredType returns the Markdown frontmatter type for a subject kind.
+func AuthoredType(kind string) string {
+	if kind == "quality-model" {
+		return kind
+	}
+	return kind + "-spec"
+}
+
+// AuthoredSuffix distinguishes reusable reference documents from specification files.
+func AuthoredSuffix(kind string) string {
+	if kind == "quality-model" {
+		return QualityModelSuffix
+	}
+	return "." + kind + ".spec.md"
+}
+
+func (m Metadata) DocumentType() string { return m.Type }
 
 // TypedMetadata must be a pointer to the type's metadata destination.
 type TypedMetadata interface {
-	SpecType() string
+	DocumentType() string
 }
 
 func Read(path, kind string, metadata TypedMetadata, required ...string) (*Document, error) {

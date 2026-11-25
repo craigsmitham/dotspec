@@ -60,7 +60,7 @@ def record_witnesses(snapshot, classes, expected, evidence, project, label):
 
 def document_witnesses(project, classes, evidence):
     names = {cls["slots"]["type"]["equals_string"]: name for name, cls in classes.items()
-             if not cls["abstract"] and "SubjectSpecReport" in cls["ancestors"]}
+             if not cls["abstract"] and "SubjectReport" in cls["ancestors"]}
 
     def witness(kind, path):
         for ancestor in classes[names[kind]]["ancestors"]:

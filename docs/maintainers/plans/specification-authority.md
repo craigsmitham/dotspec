@@ -1,6 +1,6 @@
 # One authoritative specification per subject
 
-This plan records the transition to one authoritative specification per subject. To migrate an older project, follow [Move an inline declaration](#move-an-inline-declaration). Each valid authored `*.spec.md` file specifies one primary subject. Each specification kind has one declaration form. A requirement is declared in a `*.requirement.spec.md` file. The product specification brings those sources together through links and generated views. The [contributor guide](../../../CONTRIBUTING.md#specification-tests-and-implementation-tests) governs this convention.
+This plan records the transition to one authoritative specification per subject. To migrate an older project, follow [Move an inline declaration](#move-an-inline-declaration). Each valid authored `*.spec.md` file specifies one primary subject. A reusable quality model is independently authored reference material in a `*.quality-model.md` file. [What belongs in a specification?](../../cli-handbook/explanations/what-belongs-in-a-specification.md) Each specification kind has one declaration form. A requirement is declared in a `*.requirement.spec.md` file. The product specification brings those sources together through links and generated views. The [contributor guide](../../../CONTRIBUTING.md#specification-tests-and-implementation-tests) governs this convention.
 
 ## What each source owns
 

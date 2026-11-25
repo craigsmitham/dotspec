@@ -51,7 +51,7 @@ func TestBundledStarters(t *testing.T) {
 }
 
 func TestParseContentAndValidation(t *testing.T) {
-	source := "---\ntype: quality-model-spec\nid: local\n---\n# Local\n## Description\nA local model.\n## Edition\nTeam revision.\n## Sources\n[Origin](https://example.test).\n## Quality attributes\n### Specific\n**ID:** specific\n**Sub-attribute of:** broad\nA definition.\n#### Detail\nPreserve this.\n### Broad\n**ID:** broad\nA broad concern.\n#### Detail\nKeep unknown content.\n"
+	source := "---\ntype: quality-model\nid: local\n---\n# Local\n## Description\nA local model.\n## Edition\nTeam revision.\n## Sources\n[Origin](https://example.test).\n## Quality attributes\n### Specific\n**ID:** specific\n**Sub-attribute of:** broad\nA definition.\n#### Detail\nPreserve this.\n### Broad\n**ID:** broad\nA broad concern.\n#### Detail\nKeep unknown content.\n"
 	m, err := Parse([]byte("\ufeff" + strings.ReplaceAll(source, "\n", "\r\n")))
 	if err != nil {
 		t.Fatal(err)
@@ -71,11 +71,11 @@ func TestParseContentAndValidation(t *testing.T) {
 			t.Fatalf("accepted invalid source: %s", bad)
 		}
 	}
-	absent, err := Parse([]byte("---\ntype: quality-model-spec\n---\n# Draft\n"))
+	absent, err := Parse([]byte("---\ntype: quality-model\n---\n# Draft\n"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	empty, err := Parse([]byte("---\ntype: quality-model-spec\n---\n# Draft\n## Quality attributes\n"))
+	empty, err := Parse([]byte("---\ntype: quality-model\n---\n# Draft\n## Quality attributes\n"))
 	if err != nil {
 		t.Fatal(err)
 	}

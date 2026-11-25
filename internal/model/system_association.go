@@ -57,3 +57,10 @@ func (b *snapshotBuilder) associateSpecificationSystems() {
 		}
 	}
 }
+
+func qualityScope(attribute Record) string {
+	if String(attribute, "kind") == "SystemQualityAttribute" {
+		return String(attribute, "specification_system")
+	}
+	return String(attribute, "owner")
+}

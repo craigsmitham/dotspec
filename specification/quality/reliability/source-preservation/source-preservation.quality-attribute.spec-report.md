@@ -1,6 +1,6 @@
 ---
 generated_by: dotspec
-type: quality-attribute-spec-report
+type: system-quality-attribute-spec-report
 source: "../../../../specs/quality/reliability/source-preservation/source-preservation.quality-attribute.spec.md#source-preservation"
 ---
 [dotspec](<../../../dotspec.system.spec-report.md>) › [Quality attributes](<../../../quality-attributes.md>)

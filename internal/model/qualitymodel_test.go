@@ -1,11 +1,14 @@
 package model
 
-import "testing"
+import (
+	"slices"
+	"testing"
+)
 
 func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 	root := t.TempDir()
-	source := "---\r\ntype: quality-model-spec\r\nid: team\r\n---\r\n# Team\r\n## Description\r\nA reusable model.\r\n## Edition\r\nOne\r\n## Sources\r\n[Original](https://example.test/model).\r\n## Quality attributes\r\n### Broad\r\n**ID:** broad\r\nA concern.\r\n### Narrow\r\n**ID:** narrow\r\n**Sub-attribute of:** broad, second\r\nA specific concern.\r\n### Second\r\n**ID:** second\r\nAnother grouping.\r\n#### Detail\r\nRetain me.\r\n"
-	conformanceWrite(t, root, "specs/quality-models/team.quality-model.spec.md", "\ufeff"+source)
+	source := "---\r\ntype: quality-model\r\nid: team\r\n---\r\n# Team\r\n## Description\r\nA reusable model.\r\n## Edition\r\nOne\r\n## Sources\r\n[Original](https://example.test/model).\r\n## Quality attributes\r\n### Broad\r\n**ID:** broad\r\nA concern.\r\n### Narrow\r\n**ID:** narrow\r\n**Sub-attribute of:** broad, second\r\nA specific concern.\r\n### Second\r\n**ID:** second\r\nAnother grouping.\r\n#### Detail\r\nRetain me.\r\n"
+	conformanceWrite(t, root, "specs/quality-models/team.quality-model.md", "\ufeff"+source)
 	conformanceWrite(t, root, "specs/system.system.spec.md", "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n")
 	conformanceWrite(t, root, "specs/quality/broad/broad.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: broad\n---\n# Broad\n\n## Definition\n\nA distinct local concern.\n")
 
@@ -17,6 +20,13 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 	s := result.Snapshot
 	checkSourceText(t, s)
 	m := elementKind(t, s, "QualityModel")
+	if designKind("QualityModel", "Specification") || !designKind("QualityModel", "AuthoredDocumentRoot") {
+		t.Fatal("quality models are independently authored reference roots")
+	}
+	if !slices.Equal(Strings(s.Scope["selected_reference_types"]), []string{"quality-model"}) ||
+		slices.Contains(Strings(s.Scope["selected_spec_types"]), "quality-model") {
+		t.Fatal(s.Scope)
+	}
 	if m["specification_system"] != nil {
 		t.Fatal("reusable model acquired system ownership")
 	}
@@ -37,7 +47,7 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 			}
 		} else if String(label, "label") == "broad" {
 			target := snapshotRecord(t, s, String(r, "target"))
-			if String(target, "owner") != String(sys, "id") {
+			if String(target, "specification_system") != String(sys, "id") {
 				t.Fatal("requirement classified by reusable definition")
 			}
 		} else if String(r, "status") != "undefined_label" {
@@ -50,6 +60,12 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 	if rootAttribute["subattribute_of"] != nil || len(Strings(childAttribute["subattribute_of"])) != 2 || Strings(childAttribute["subattribute_of"])[0] != ids[0] {
 		t.Fatalf("array grouping: %+v %+v", rootAttribute, childAttribute)
 	}
+	t.Run("reference root requires a reference document", func(t *testing.T) {
+		broken := cloneSnapshot(t, s)
+		source := snapshotRecord(t, broken, String(m, "source_document"))
+		source["locator"] = "specs/team.quality-model.spec.md"
+		requireFinding(t, broken, "document.subject-type")
+	})
 	t.Run("scalar reference rejected by schema", func(t *testing.T) {
 		broken := cloneSnapshot(t, s)
 		snapshotRecord(t, broken, ids[1])["subattribute_of"] = ids[0]

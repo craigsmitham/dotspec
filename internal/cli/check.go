@@ -19,8 +19,8 @@ import (
 )
 
 func newCheckCommand() *cobra.Command {
-	cmd := &cobra.Command{Use: "check [source-path]", Short: "Check all supported specifications in a project subtree",
-		Long:    "Check authored specifications using the same discovery rules as list. A whole-project check also inspects generated Markdown for projects declared with dotspec.yaml unless report.enabled is false. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.\n\n" + exitPolicy,
+	cmd := &cobra.Command{Use: "check [source-path]", Short: "Check specifications and reference documents in a project subtree",
+		Long:    "Check authored specifications and reference documents using the same discovery rules as list. A whole-project check also inspects generated Markdown for projects declared with dotspec.yaml unless report.enabled is false. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.\n\n" + exitPolicy,
 		Example: "dotspec check\ndotspec check --path internal --json", Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			path, err := projectPath(cmd)
@@ -38,7 +38,7 @@ func newCheckCommand() *cobra.Command {
 						return emitCheckReport(cmd.OutOrStdout(), check.Focused(path, args[0], kind, types...), format)
 					}
 				}
-				return fmt.Errorf("unknown specification source type: %s", args[0])
+				return fmt.Errorf("unknown source document type: %s", args[0])
 			}
 			return emitCheckReport(cmd.OutOrStdout(), inspectProject(path), format)
 		},
@@ -91,9 +91,9 @@ func writeCheckReport(out io.Writer, report check.Report, format string) error {
 		}
 	}
 	if report.Complete && report.Summary.FilesDiscovered == 0 && report.Summary.Errors == 0 {
-		text.WriteString("\nNo supported specifications found.\n")
+		text.WriteString("\nNo supported source files found.\n")
 	}
-	fmt.Fprintf(&text, "\nChecked %d of %d discovered specifications; additional context files: %d.\nErrors: %d; advisory findings: %d.\n",
+	fmt.Fprintf(&text, "\nChecked %d of %d discovered source files; additional context files: %d.\nErrors: %d; advisory findings: %d.\n",
 		report.Summary.FilesChecked, report.Summary.FilesDiscovered, report.Summary.ContextFilesChecked, report.Summary.Errors, report.Summary.Advice)
 	if !report.Complete {
 		text.WriteString("Scan incomplete.\n")

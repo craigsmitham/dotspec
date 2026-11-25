@@ -6,14 +6,14 @@ import (
 	"github.com/craigsmitham/dotspec/internal/guide"
 )
 
-func TestHandbookTopicsMatchSpecificationTypes(t *testing.T) {
+func TestHandbookTopicsMatchAuthoredDocumentTypes(t *testing.T) {
 	missing := map[string]bool{}
 	for _, typ := range supportedTypes() {
 		missing[typ.Layout.Kind] = true
 	}
 	for _, topic := range guide.Topics() {
 		if !missing[topic.Name] {
-			t.Errorf("handbook topic %q has no specification type", topic.Name)
+			t.Errorf("handbook topic %q has no authored document type", topic.Name)
 		}
 		delete(missing, topic.Name)
 		forms := map[string]bool{}
@@ -25,6 +25,6 @@ func TestHandbookTopicsMatchSpecificationTypes(t *testing.T) {
 		}
 	}
 	for kind := range missing {
-		t.Errorf("specification type %q has no handbook topic", kind)
+		t.Errorf("authored document type %q has no handbook topic", kind)
 	}
 }

@@ -127,7 +127,7 @@ func (md *Markdown) decode(kind string, into TypedMetadata) error {
 	if err := md.Metadata.Decode(into); err != nil {
 		return yamlError(err)
 	}
-	if expected := AuthoredType(kind); into.SpecType() != expected {
+	if expected := AuthoredType(kind); into.DocumentType() != expected {
 		return diagnostic.Error("metadata.type", fmt.Sprintf("frontmatter must declare type: %s", expected), md.MetadataLocation("type"))
 	}
 	return nil

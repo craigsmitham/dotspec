@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/24` maps authored specifications to the domain classes and fields in the [model reference](../docs/reference/model/index.md). Each file declares its specification type in YAML frontmatter and names its subject in a level-one heading. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
+`dotspec-markdown/26` maps authored declarations to the classes and fields in the [model reference](../docs/reference/model/index.md). A `*.<kind>.spec.md` file declares one specification root with `type: <kind>-spec` and names it in the level-one heading. The root owns its nested elements. A reusable quality model is an independent reference root in `*.quality-model.md` with `type: quality-model`. Each named attribute in that file belongs to the model. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
 
 ## Shared mapping rules
 
@@ -35,3 +35,15 @@ Only a `*.requirement.spec.md` file declares a Requirement. It keeps its stateme
 ## Relationship contract
 
 A relationship section preserves its authored Markdown, including qualifications and unresolved choices, in its named content field. A semantic link carries its authored destination, source span, owner, role and resolution. An ordinary citation has no semantic role. A successful resolution identifies one endpoint. Other statuses record missing, invalid, ambiguous, external or uninspected targets. Membership fields record declarations in source order. Reverse navigation follows the recorded memberships and resolved occurrences. See the [relationship reference](../docs/reference/model/relationships.md).
+
+## Product membership
+
+A quality model owns its `QualityModelAttribute` records in declaration order. A `SystemQualityAttribute` is an independent specification whose `specification_system` identifies the system that includes its source in its quality directory. A requirement’s classification labels resolve only to attributes of its effective system. The two concrete attribute types can each group under several parents of their own type within the same scope.
+
+## Adopting a provision
+
+A specification or a named interface can have an **Adopts** collection. Each immediately subordinate heading names one adopted provision. In the entry’s introductory paragraph, link once to the exact clause, operation, or other identifiable provision. Give the entry two subsections. **Edition** identifies the revision or says `evolving`. **Applicability** states when the product adopts the provision. Each entry maps to a source-local `AdoptedProvision` with a pointer to the particular link occurrence. Ordinary citations elsewhere retain their own context. [Worked interface](../examples/todo/specs/personal-task-list.system.spec.md#redirect-after-an-accepted-form-submission)
+
+## Verification procedures
+
+In a requirement, **Verification procedures** can be a level-two field for the requirement or an immediate subsection of **Criterion**. Link to each executable test or manual protocol. The mapping retains the passage and indexes its link occurrences as `verification_procedures.references` on the respective subject. **Evidence** retains its authored narrative. Run observations have their own interchange document. [Recording verification results](../docs/reference/generated-specification.md#record-verification-results)

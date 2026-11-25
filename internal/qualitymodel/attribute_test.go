@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-const modelPrefix = "---\ntype: quality-model-spec\n---\n# Example\n## Description\nQuality.\n## Sources\nOur team.\n## Edition\nFirst edition.\n"
+const modelPrefix = "---\ntype: quality-model\n---\n# Example\n## Description\nQuality.\n## Sources\nOur team.\n## Edition\nFirst edition.\n"
 
 func TestQualityAttributesStructure(t *testing.T) {
 	for _, tt := range []struct{ name, body, rule string }{

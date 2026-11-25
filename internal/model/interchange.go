@@ -37,10 +37,7 @@ func (s Snapshot) MarshalJSON() ([]byte, error) {
 	located := func(records []Record) []Record {
 		result := make([]Record, len(records))
 		for i, record := range records {
-			r := maps.Clone(record)
-			delete(r, "content_node")
-			delete(r, "definition_node")
-			result[i] = r
+			result[i] = locatedRecordValue(record)
 		}
 		return result
 	}
@@ -48,6 +45,13 @@ func (s Snapshot) MarshalJSON() ([]byte, error) {
 	out.References = located(s.References)
 	out.LabelOccurrences = located(s.LabelOccurrences)
 	return json.Marshal(out)
+}
+
+func locatedRecordValue(record Record) Record {
+	r := maps.Clone(record)
+	delete(r, "content_node")
+	delete(r, "definition_node")
+	return r
 }
 
 // Rich fields retain only the source ranges in interchange.

@@ -10,7 +10,7 @@ import (
 )
 
 func newSourcesCommand() *cobra.Command {
-	cmd := &cobra.Command{Use: "sources", Short: "List specification files, system context, and directly referenced files",
+	cmd := &cobra.Command{Use: "sources", Short: "List specifications, reference documents, system context, and directly referenced files",
 		Long:    "Inventory sources using the same scan and reference checks as check. File references do not assign authority or classify their contents.\n\n" + exitPolicy,
 		Example: "dotspec sources\ndotspec sources --path internal --json", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {

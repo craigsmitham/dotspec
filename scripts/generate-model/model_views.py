@@ -31,9 +31,9 @@ def validate_groups(catalog: dict[str, Any]) -> None:
         if tag in document_types:
             raise ValueError(f'{name}: duplicate document type {tag}')
         document_types.add(tag)
-        if 'SubjectSpecReport' in cls['ancestors']:
-            subject = name.removesuffix('SpecReport')
-            if (not name.endswith('SpecReport') or
+        if 'SubjectReport' in cls['ancestors']:
+            subject = name.removesuffix('Report').removesuffix('Spec')
+            if (not name.endswith('Report') or
                     cls['slots']['documents']['reference_ranges'] != [subject] or
                     tag != re.sub(r'(?<!^)(?=[A-Z])', '-', name).lower()):
                 raise ValueError(f'{name}: document type must mirror its subject')

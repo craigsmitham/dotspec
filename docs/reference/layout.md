@@ -13,7 +13,7 @@ Each other directory can claim its own subject. For example,
 `app/specs/storage/storage.component.spec.md` claims `app/specs/storage/`.
 A component declares its architectural parent with its `Part of` link. An independent project or repository rooted at a directory named `specs/` owns its own declarations.
 
-The nearest enclosing declaration owns a source. Lookup stops at the project
+The nearest enclosing declaration owns the specifications in its scope. Reusable quality models have independent ownership wherever their `*.quality-model.md` files are kept. Lookup stops at the project
 boundary. A requirement with no enclosing declaration still appears in discovery.
 Moving a requirement within its owner's directory tree preserves its ownership
 until it crosses into another subject. Update relative Markdown links when moving files.

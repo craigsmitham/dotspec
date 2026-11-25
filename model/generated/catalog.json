@@ -7,6 +7,304 @@
   },
   "catalog_version": 1,
   "classes": {
+    "AdoptedProvision": {
+      "abstract": false,
+      "ancestors": [
+        "AdoptedProvision",
+        "DomainElement",
+        "Record"
+      ],
+      "annotations": {},
+      "description": "The local decision to adopt an identified external provision under stated conditions.",
+      "is_a": "DomainElement",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "applicability": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": true
+        },
+        "authored_id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "An explicitly authored ID when present; no manufactured global identifier.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "edition": {
+          "annotations": {},
+          "any_of": [],
+          "description": "The pinned edition or revision, or the word evolving for a moving reference.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": true
+        },
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "AdoptedProvision",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "name": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored title or item name, if present.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "observed_source_sha256": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Digest of the acquired provision document for change review. Markdown uses normalized source text.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "^[a-f0-9]{64}$",
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "open_questions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicitly distinguished questions, in authored order.",
+          "identifier": false,
+          "inline_ranges": [
+            "OpenQuestion"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "OpenQuestion",
+          "reference_ranges": [],
+          "required": false
+        },
+        "owner": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Specification.adopts or Interface.adopts",
+            "relationship_label": "owner",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [
+            "Specification",
+            "Interface"
+          ],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "DomainElement",
+          "reference_ranges": [
+            "Specification",
+            "Interface"
+          ],
+          "required": true
+        },
+        "provision": {
+          "annotations": {
+            "relationship_basis": "The exact link occurrence in the local adoption declaration.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "provision",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": true
+        },
+        "source_document": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source document",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceDocument",
+          "reference_ranges": [
+            "SourceDocument"
+          ],
+          "required": true
+        },
+        "source_fragment": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source fragment",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceFragment",
+          "reference_ranges": [
+            "SourceFragment"
+          ],
+          "required": false
+        }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
+    },
+    "AdoptedProvisionReport": {
+      "abstract": false,
+      "ancestors": [
+        "AdoptedProvisionReport",
+        "SubjectReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "adopted-provision-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "Applicability": {
       "abstract": false,
       "ancestors": [
@@ -467,12 +765,12 @@
       "abstract": false,
       "ancestors": [
         "AssumptionSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -520,6 +818,177 @@
         "specification-documentation"
       ]
     },
+    "AuthoredDocumentRoot": {
+      "abstract": true,
+      "ancestors": [
+        "AuthoredDocumentRoot",
+        "DomainElement",
+        "Record"
+      ],
+      "annotations": {},
+      "description": "The primary domain subject of an independently authored document.",
+      "is_a": "DomainElement",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "authored_id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "An explicitly authored ID when present; no manufactured global identifier.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "name": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored title or item name, if present.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "open_questions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicitly distinguished questions, in authored order.",
+          "identifier": false,
+          "inline_ranges": [
+            "OpenQuestion"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "OpenQuestion",
+          "reference_ranges": [],
+          "required": false
+        },
+        "preamble": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored content between the title and the first named section.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "slug": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Path-derived current slug where applicable.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "source_document": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source document",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceDocument",
+          "reference_ranges": [
+            "SourceDocument"
+          ],
+          "required": true
+        },
+        "source_fragment": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source fragment",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceFragment",
+          "reference_ranges": [
+            "SourceFragment"
+          ],
+          "required": false
+        }
+      },
+      "subsets": [
+        "document-content"
+      ]
+    },
     "BusinessRule": {
       "abstract": false,
       "ancestors": [
@@ -527,6 +996,7 @@
         "SystemContextSpecification",
         "Specification",
         "TraceableElement",
+        "AuthoredDocumentRoot",
         "DomainElement",
         "Record"
       ],
@@ -536,6 +1006,30 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "adopts": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "AdoptedProvision.owner",
+            "relationship_label": "adopts",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
+          ],
+          "required": false
+        },
         "applicability": {
           "annotations": {},
           "any_of": [],
@@ -982,7 +1476,7 @@
             "System",
             "Component"
           ],
-          "description": "Nearest system or component declaration owning this document within its project.",
+          "description": "Nearest system or component used for source lookup within the project.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -1000,7 +1494,7 @@
           "annotations": {
             "occurrence_role": "link",
             "relationship_basis": "Explicit Specification system reference when present; otherwise the nearest enclosing system found by directory discovery.",
-            "relationship_category": "semantic-association",
+            "relationship_category": "system-membership",
             "relationship_cycles": "permitted",
             "relationship_inverse": "none",
             "relationship_label": "specification system",
@@ -1115,12 +1609,12 @@
       "abstract": false,
       "ancestors": [
         "BusinessRuleSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -1244,6 +1738,7 @@
         "SystemContextSpecification",
         "Specification",
         "TraceableElement",
+        "AuthoredDocumentRoot",
         "DomainElement",
         "Record"
       ],
@@ -1253,6 +1748,30 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "adopts": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "AdoptedProvision.owner",
+            "relationship_label": "adopts",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
+          ],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -1721,7 +2240,7 @@
             "System",
             "Component"
           ],
-          "description": "Nearest system or component declaration owning this document within its project.",
+          "description": "Nearest system or component used for source lookup within the project.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -1739,7 +2258,7 @@
           "annotations": {
             "occurrence_role": "link",
             "relationship_basis": "Explicit Specification system reference when present; otherwise the nearest enclosing system found by directory discovery.",
-            "relationship_category": "semantic-association",
+            "relationship_category": "system-membership",
             "relationship_cycles": "permitted",
             "relationship_inverse": "none",
             "relationship_label": "specification system",
@@ -1839,12 +2358,12 @@
       "abstract": false,
       "ancestors": [
         "CapabilitySpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -1899,6 +2418,7 @@
         "SystemContextSpecification",
         "Specification",
         "TraceableElement",
+        "AuthoredDocumentRoot",
         "DomainElement",
         "Record"
       ],
@@ -1910,6 +2430,30 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "adopts": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "AdoptedProvision.owner",
+            "relationship_label": "adopts",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
+          ],
+          "required": false
+        },
         "architecture": {
           "annotations": {},
           "any_of": [],
@@ -2532,7 +3076,7 @@
             "System",
             "Component"
           ],
-          "description": "Nearest system or component declaration owning this document within its project.",
+          "description": "Nearest system or component used for source lookup within the project.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -2550,7 +3094,7 @@
           "annotations": {
             "occurrence_role": "link",
             "relationship_basis": "Explicit Specification system reference when present; otherwise the nearest enclosing system found by directory discovery.",
-            "relationship_category": "semantic-association",
+            "relationship_category": "system-membership",
             "relationship_cycles": "permitted",
             "relationship_inverse": "none",
             "relationship_label": "specification system",
@@ -2673,12 +3217,12 @@
       "abstract": false,
       "ancestors": [
         "ComponentSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "Explains the component\u2019s responsibilities and links to its structural children, declared interfaces, and explicitly applicable requirements.",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -2733,6 +3277,7 @@
         "SystemContextSpecification",
         "Specification",
         "TraceableElement",
+        "AuthoredDocumentRoot",
         "DomainElement",
         "Record"
       ],
@@ -2781,6 +3326,30 @@
           "range": "ConceptAction",
           "reference_ranges": [
             "ConceptAction"
+          ],
+          "required": false
+        },
+        "adopts": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "AdoptedProvision.owner",
+            "relationship_label": "adopts",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
           ],
           "required": false
         },
@@ -3162,7 +3731,7 @@
             "System",
             "Component"
           ],
-          "description": "Nearest system or component declaration owning this document within its project.",
+          "description": "Nearest system or component used for source lookup within the project.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -3180,7 +3749,7 @@
           "annotations": {
             "occurrence_role": "link",
             "relationship_basis": "Explicit Specification system reference when present; otherwise the nearest enclosing system found by directory discovery.",
-            "relationship_category": "semantic-association",
+            "relationship_category": "system-membership",
             "relationship_cycles": "permitted",
             "relationship_inverse": "none",
             "relationship_label": "specification system",
@@ -3717,12 +4286,12 @@
       "abstract": false,
       "ancestors": [
         "ConceptActionSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -3774,12 +4343,12 @@
       "abstract": false,
       "ancestors": [
         "ConceptSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -4259,12 +4828,12 @@
       "abstract": false,
       "ancestors": [
         "ConceptUseSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -4886,12 +5455,12 @@
       "abstract": false,
       "ancestors": [
         "DesiredOutcomeSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -5280,7 +5849,7 @@
         "declared_type": {
           "annotations": {},
           "any_of": [],
-          "description": "Declared metadata type, exactly as authored; original key/value syntax remains in the tree. A recognized value is a SpecificationType.",
+          "description": "Declared metadata type, exactly as authored; original key/value syntax remains in the tree. A recognized value is a SpecificationType or ReferenceType.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -5681,6 +6250,7 @@
         "SystemContextSpecification",
         "Specification",
         "TraceableElement",
+        "AuthoredDocumentRoot",
         "DomainElement",
         "Record"
       ],
@@ -5690,6 +6260,30 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "adopts": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "AdoptedProvision.owner",
+            "relationship_label": "adopts",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
+          ],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -6105,7 +6699,7 @@
             "System",
             "Component"
           ],
-          "description": "Nearest system or component declaration owning this document within its project.",
+          "description": "Nearest system or component used for source lookup within the project.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -6123,7 +6717,7 @@
           "annotations": {
             "occurrence_role": "link",
             "relationship_basis": "Explicit Specification system reference when present; otherwise the nearest enclosing system found by directory discovery.",
-            "relationship_category": "semantic-association",
+            "relationship_category": "system-membership",
             "relationship_cycles": "permitted",
             "relationship_inverse": "none",
             "relationship_label": "specification system",
@@ -6222,12 +6816,12 @@
       "abstract": false,
       "ancestors": [
         "FeatureSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -6557,12 +7151,12 @@
       "abstract": false,
       "ancestors": [
         "GlossaryTermSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -6940,12 +7534,12 @@
       "abstract": false,
       "ancestors": [
         "GoalSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -7001,12 +7595,38 @@
         "DomainElement",
         "Record"
       ],
-      "annotations": {},
+      "annotations": {
+        "owned_memberships": "Interface.adopts"
+      },
       "description": "An independently addressable description of interaction at a System or Component boundary, declared by that System or Component. Required or provided membership states direction relative to the declaring subject. Native protocol contracts retain their authority; neither declaration nor citation proves implementation or compatibility.",
       "is_a": "TraceableElement",
       "mixins": [],
       "rules": [],
       "slots": {
+        "adopts": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "AdoptedProvision.owner",
+            "relationship_label": "adopts",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
+          ],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -7375,12 +7995,12 @@
       "abstract": false,
       "ancestors": [
         "InterfaceSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -7435,6 +8055,7 @@
         "SystemContextSpecification",
         "Specification",
         "TraceableElement",
+        "AuthoredDocumentRoot",
         "DomainElement",
         "Record"
       ],
@@ -7446,6 +8067,30 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "adopts": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "AdoptedProvision.owner",
+            "relationship_label": "adopts",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
+          ],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -7864,7 +8509,7 @@
             "System",
             "Component"
           ],
-          "description": "Nearest system or component declaration owning this document within its project.",
+          "description": "Nearest system or component used for source lookup within the project.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -7882,7 +8527,7 @@
           "annotations": {
             "occurrence_role": "link",
             "relationship_basis": "Explicit Specification system reference when present; otherwise the nearest enclosing system found by directory discovery.",
-            "relationship_category": "semantic-association",
+            "relationship_category": "system-membership",
             "relationship_cycles": "permitted",
             "relationship_inverse": "none",
             "relationship_label": "specification system",
@@ -8021,12 +8666,12 @@
       "abstract": false,
       "ancestors": [
         "JobSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -8446,12 +9091,12 @@
       "abstract": false,
       "ancestors": [
         "JobStepSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -8720,14 +9365,14 @@
       ]
     },
     "QualityAttribute": {
-      "abstract": false,
+      "abstract": true,
       "ancestors": [
         "QualityAttribute",
         "DomainElement",
         "Record"
       ],
       "annotations": {},
-      "description": "A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit requirements, thresholds, or satisfaction.",
+      "description": "A named quality definition with acyclic grouping within its declaring model or effective system.",
       "is_a": "DomainElement",
       "mixins": [],
       "rules": [],
@@ -8781,7 +9426,6 @@
           "annotations": {},
           "any_of": [],
           "description": "Concrete record type discriminator.",
-          "equals_string": "QualityAttribute",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -8823,34 +9467,6 @@
           "range": "OpenQuestion",
           "reference_ranges": [],
           "required": false
-        },
-        "owner": {
-          "annotations": {
-            "relationship_basis": "Checked inverse of canonical membership fields.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "QualityModel.quality_attributes or System.quality_attributes",
-            "relationship_label": "owner",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [
-            "System",
-            "QualityModel"
-          ],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "Specification",
-          "reference_ranges": [
-            "System",
-            "QualityModel"
-          ],
-          "required": true
         },
         "source_document": {
           "annotations": {
@@ -8930,77 +9546,19 @@
         "software-requirements"
       ]
     },
-    "QualityAttributeSpecReport": {
-      "abstract": false,
-      "ancestors": [
-        "QualityAttributeSpecReport",
-        "SubjectSpecReport",
-        "GeneratedDocument"
-      ],
-      "annotations": {},
-      "description": "Defines one quality attribute and links to the requirements classified by it.",
-      "is_a": "SubjectSpecReport",
-      "mixins": [],
-      "rules": [],
-      "slots": {
-        "documents": {
-          "annotations": {
-            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "documents",
-            "relationship_ordering": "single target",
-            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
-          },
-          "any_of": [],
-          "description": "The documented subject, serialized as a relative URI to its authored heading.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "QualityAttribute",
-          "reference_ranges": [
-            "QualityAttribute"
-          ],
-          "required": true
-        },
-        "type": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Serialized document type fixed by the concrete class.",
-          "equals_string": "quality-attribute-spec-report",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "string",
-          "reference_ranges": [],
-          "required": true
-        }
-      },
-      "subsets": [
-        "specification-documentation"
-      ]
-    },
     "QualityModel": {
       "abstract": false,
       "ancestors": [
         "QualityModel",
-        "Specification",
-        "TraceableElement",
+        "AuthoredDocumentRoot",
         "DomainElement",
         "Record"
       ],
       "annotations": {
         "owned_memberships": "QualityModel.quality_attributes"
       },
-      "description": "A standalone reusable set of quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.",
-      "is_a": "Specification",
+      "description": "A reference vocabulary of reusable quality attribute definitions. Copying creates independent system declarations; no live inheritance or synchronization.",
+      "is_a": "AuthoredDocumentRoot",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -9015,69 +9573,6 @@
           "multivalued": false,
           "ordered": false,
           "range": "string",
-          "reference_ranges": [],
-          "required": false
-        },
-        "authority_and_evidence": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored authority for the specification.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "derived_from": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "derived from",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Derived from",
-            "trace_targets": "DomainElement or SourceFragment"
-          },
-          "any_of": [
-            "DomainElement",
-            "SourceFragment"
-          ],
-          "description": "Source or rationale for this element, including rules, decisions and requirements; not logical entailment.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "Record",
-          "reference_ranges": [
-            "DomainElement",
-            "SourceFragment"
-          ],
-          "required": false
-        },
-        "derived_from_content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored Markdown qualifying the derived from relationship.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -9098,22 +9593,6 @@
           "required": false
         },
         "edition": {
-          "annotations": {},
-          "any_of": [],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "evidence": {
           "annotations": {},
           "any_of": [],
           "description": "",
@@ -9212,7 +9691,7 @@
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
             "relationship_category": "declaration-containment",
             "relationship_cycles": "forbidden",
-            "relationship_inverse": "QualityAttribute.owner",
+            "relationship_inverse": "QualityModelAttribute.owner",
             "relationship_label": "declares",
             "relationship_ordering": "authored presentation order; no execution order implied",
             "relationship_scope": "Exactly one declaring owner in the same source document."
@@ -9225,69 +9704,10 @@
           "inlined_as_list": false,
           "multivalued": true,
           "ordered": true,
-          "range": "QualityAttribute",
+          "range": "QualityModelAttribute",
           "reference_ranges": [
-            "QualityAttribute"
+            "QualityModelAttribute"
           ],
-          "required": false
-        },
-        "related_specifications": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Contextual citations of related specifications of any type, with their explanation; no implicit support, refinement, enforcement or compliance relation.",
-          "identifier": false,
-          "inline_ranges": [
-            "ContextualReferences"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ContextualReferences",
-          "reference_ranges": [],
-          "required": false
-        },
-        "relies_on": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "relies on",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Relies on",
-            "trace_targets": "Assumption"
-          },
-          "any_of": [],
-          "description": "Assumptions on which the validity of this element depends.",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": true,
-          "ordered": false,
-          "range": "Assumption",
-          "reference_ranges": [
-            "Assumption"
-          ],
-          "required": false
-        },
-        "relies_on_content": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Authored Markdown qualifying the relies on relationship.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
           "required": false
         },
         "slug": {
@@ -9367,48 +9787,44 @@
           "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
-        },
-        "supports": {
-          "annotations": {
-            "occurrence_role": "link",
-            "relationship_basis": "Projection of explicit authored references; no semantic inference from prose.",
-            "relationship_category": "semantic-association",
-            "relationship_cycles": "permitted",
-            "relationship_inverse": "none",
-            "relationship_label": "supports",
-            "relationship_ordering": "unordered",
-            "relationship_scope": "Explicit acquired targets; cross-system references are permitted.",
-            "trace_heading": "Supports",
-            "trace_targets": "Goal or Job or JobStep or DesiredOutcome or UseCase"
-          },
-          "any_of": [
-            "Goal",
-            "Job",
-            "JobStep",
-            "DesiredOutcome",
-            "UseCase"
-          ],
-          "description": "Intended contribution to a goal, user progress or a higher-level use case; does not assert achievement.",
+        }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
+    },
+    "QualityModelAttribute": {
+      "abstract": false,
+      "ancestors": [
+        "QualityModelAttribute",
+        "QualityAttribute",
+        "DomainElement",
+        "Record"
+      ],
+      "annotations": {},
+      "description": "A reusable definition declared within one quality model.",
+      "is_a": "QualityAttribute",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "authored_id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "An explicitly authored ID when present; no manufactured global identifier.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
           "inlined_as_list": false,
-          "multivalued": true,
+          "multivalued": false,
           "ordered": false,
-          "range": "DomainElement",
-          "reference_ranges": [
-            "Goal",
-            "Job",
-            "JobStep",
-            "DesiredOutcome",
-            "UseCase"
-          ],
-          "required": false
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
         },
-        "supports_content": {
+        "definition": {
           "annotations": {},
           "any_of": [],
-          "description": "Authored Markdown qualifying the supports relationship.",
+          "description": "",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -9420,22 +9836,238 @@
           "range": "RichContent",
           "reference_ranges": [],
           "required": false
+        },
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "QualityModelAttribute",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "name": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored title or item name, if present.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "open_questions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicitly distinguished questions, in authored order.",
+          "identifier": false,
+          "inline_ranges": [
+            "OpenQuestion"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "OpenQuestion",
+          "reference_ranges": [],
+          "required": false
+        },
+        "owner": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "QualityModel.quality_attributes",
+            "relationship_label": "owner",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "QualityModel",
+          "reference_ranges": [
+            "QualityModel"
+          ],
+          "required": true
+        },
+        "source_document": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source document",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceDocument",
+          "reference_ranges": [
+            "SourceDocument"
+          ],
+          "required": true
+        },
+        "source_fragment": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source fragment",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceFragment",
+          "reference_ranges": [
+            "SourceFragment"
+          ],
+          "required": false
+        },
+        "subattribute_of": {
+          "annotations": {
+            "occurrence_role": "label",
+            "relationship_basis": "Projection of explicit authored reference or label occurrences.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "none",
+            "relationship_label": "sub-attribute of",
+            "relationship_ordering": "unordered",
+            "relationship_scope": "Attributes of the same declaring System or QualityModel."
+          },
+          "any_of": [],
+          "description": "Resolved attributes under which this attribute is directly organized, within the same declaring owner. Derive subattributes by reversing this relation; preserve authored labels and provenance.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "QualityModelAttribute",
+          "reference_ranges": [
+            "QualityModelAttribute"
+          ],
+          "required": false
         }
       },
       "subsets": [
         "software-requirements"
       ]
     },
-    "QualityModelSpecReport": {
+    "QualityModelAttributeReport": {
       "abstract": false,
       "ancestors": [
-        "QualityModelSpecReport",
-        "SubjectSpecReport",
+        "QualityModelAttributeReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "QualityModelAttribute",
+          "reference_ranges": [
+            "QualityModelAttribute"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "quality-model-attribute-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
+    "QualityModelReport": {
+      "abstract": false,
+      "ancestors": [
+        "QualityModelReport",
+        "SubjectReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -9467,7 +10099,7 @@
           "annotations": {},
           "any_of": [],
           "description": "Serialized document type fixed by the concrete class.",
-          "equals_string": "quality-model-spec-report",
+          "equals_string": "quality-model-report",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -9639,6 +10271,7 @@
         "SystemContextSpecification",
         "Specification",
         "TraceableElement",
+        "AuthoredDocumentRoot",
         "DomainElement",
         "Record"
       ],
@@ -9648,6 +10281,30 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "adopts": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "AdoptedProvision.owner",
+            "relationship_label": "adopts",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
+          ],
+          "required": false
+        },
         "applicability": {
           "annotations": {},
           "any_of": [],
@@ -9919,9 +10576,9 @@
           "inlined_as_list": false,
           "multivalued": true,
           "ordered": false,
-          "range": "QualityAttribute",
+          "range": "SystemQualityAttribute",
           "reference_ranges": [
-            "QualityAttribute"
+            "SystemQualityAttribute"
           ],
           "required": false
         },
@@ -10123,7 +10780,7 @@
             "System",
             "Component"
           ],
-          "description": "Nearest system or component declaration owning this document within its project.",
+          "description": "Nearest system or component used for source lookup within the project.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -10141,7 +10798,7 @@
           "annotations": {
             "occurrence_role": "link",
             "relationship_basis": "Explicit Specification system reference when present; otherwise the nearest enclosing system found by directory discovery.",
-            "relationship_category": "semantic-association",
+            "relationship_category": "system-membership",
             "relationship_cycles": "permitted",
             "relationship_inverse": "none",
             "relationship_label": "specification system",
@@ -10246,6 +10903,22 @@
           "range": "RichContent",
           "reference_ranges": [],
           "required": false
+        },
+        "verification_procedures": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicitly linked executable tests or manual protocols for assessing this subject.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
         }
       },
       "subsets": [
@@ -10309,6 +10982,22 @@
           "range": "RichContent",
           "reference_ranges": [],
           "required": false
+        },
+        "verification_procedures": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicitly linked executable tests or manual protocols for assessing this subject.",
+          "identifier": false,
+          "inline_ranges": [
+            "ContextualReferences"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "ContextualReferences",
+          "reference_ranges": [],
+          "required": false
         }
       },
       "subsets": [
@@ -10321,12 +11010,12 @@
       "abstract": false,
       "ancestors": [
         "RequirementSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "Brings the requirement statement, applicability and criterion together at one address.",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -10665,6 +11354,23 @@
           "reference_ranges": [],
           "required": true
         },
+        "selected_reference_types": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Reference document types selected for this inspection.",
+          "enum_values": [
+            "quality-model"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": false,
+          "range": "ReferenceType",
+          "reference_ranges": [],
+          "required": false
+        },
         "selected_spec_types": {
           "annotations": {},
           "any_of": [],
@@ -10676,7 +11382,6 @@
             "component-spec",
             "system-spec",
             "job-spec",
-            "quality-model-spec",
             "business-rule-spec",
             "use-case-spec",
             "concept-spec",
@@ -10909,12 +11614,12 @@
       "abstract": false,
       "ancestors": [
         "ScenarioSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -11335,7 +12040,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.30.0-draft",
+          "equals_string": "0.32.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -11366,7 +12071,7 @@
           "annotations": {},
           "any_of": [],
           "description": "Version of this serialized snapshot contract, separate from the domain metamodel version.",
-          "equals_string": "0.3.0",
+          "equals_string": "0.4.0",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -11623,7 +12328,7 @@
         "selected": {
           "annotations": {},
           "any_of": [],
-          "description": "True for specification files selected by discovery in the scan scope. Context acquired through references or enclosing system lookup is excluded from the selected set.",
+          "description": "True for authored files selected by discovery in the scan scope. Context acquired through references or enclosing system lookup is excluded from the selected set.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -12125,15 +12830,44 @@
       "ancestors": [
         "Specification",
         "TraceableElement",
+        "AuthoredDocumentRoot",
         "DomainElement",
         "Record"
       ],
-      "annotations": {},
-      "description": "The root record of one authored specification document. Every specification has exactly one specification type, and specification types correspond one-to-one with concrete Specification classes. Elements declared inside a specification are not specifications. Narrative authority and evidence do not create executable authority assertions.",
-      "is_a": "TraceableElement",
-      "mixins": [],
+      "annotations": {
+        "owned_memberships": "Specification.adopts"
+      },
+      "description": "An independently maintained aggregate of product intent. Each authored specification file declares one root and can contain addressable parts. The specifications in product scope and their relationships compose the product specification.",
+      "is_a": "AuthoredDocumentRoot",
+      "mixins": [
+        "TraceableElement"
+      ],
       "rules": [],
       "slots": {
+        "adopts": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "AdoptedProvision.owner",
+            "relationship_label": "adopts",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
+          ],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -12528,10 +13262,10 @@
         "inspection"
       ]
     },
-    "SubjectSpecReport": {
+    "SubjectReport": {
       "abstract": true,
       "ancestors": [
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
@@ -12981,12 +13715,12 @@
       "abstract": false,
       "ancestors": [
         "SynchronizationSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -13040,17 +13774,42 @@
         "System",
         "Specification",
         "TraceableElement",
+        "AuthoredDocumentRoot",
         "DomainElement",
         "Record"
       ],
       "annotations": {
-        "owned_memberships": "System.goals or System.assumptions or System.glossary or System.quality_attributes or System.concept_uses or System.synchronizations or System.required_interfaces or System.provided_interfaces"
+        "owned_memberships": "System.goals or System.assumptions or System.glossary or System.concept_uses or System.synchronizations or System.required_interfaces or System.provided_interfaces"
       },
       "description": "The system described by a system document; subordinate systems retain their own boundaries and quality attributes.",
       "is_a": "Specification",
       "mixins": [],
       "rules": [],
       "slots": {
+        "adopts": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "AdoptedProvision.owner",
+            "relationship_label": "adopts",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
+          ],
+          "required": false
+        },
         "assumptions": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -13606,13 +14365,13 @@
         },
         "quality_attributes": {
           "annotations": {
-            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "QualityAttribute.owner",
+            "relationship_basis": "Explicit selection or source layout.",
+            "relationship_category": "system-membership",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "SystemQualityAttribute.specification_system",
             "relationship_label": "declares",
             "relationship_ordering": "authored presentation order; no execution order implied",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
+            "relationship_scope": "The effective system of the specification."
           },
           "any_of": [],
           "description": "Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct.",
@@ -13622,9 +14381,9 @@
           "inlined_as_list": false,
           "multivalued": true,
           "ordered": true,
-          "range": "QualityAttribute",
+          "range": "SystemQualityAttribute",
           "reference_ranges": [
-            "QualityAttribute"
+            "SystemQualityAttribute"
           ],
           "required": false
         },
@@ -13894,15 +14653,40 @@
         "SystemContextSpecification",
         "Specification",
         "TraceableElement",
+        "AuthoredDocumentRoot",
         "DomainElement",
         "Record"
       ],
       "annotations": {},
-      "description": "A specification associated with a system: every specification type other than System and QualityModel. The association is selected explicitly or defaults to the nearest enclosing system found by directory discovery.",
+      "description": "A specification associated with a system selected explicitly or supplied by directory discovery.",
       "is_a": "Specification",
       "mixins": [],
       "rules": [],
       "slots": {
+        "adopts": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "AdoptedProvision.owner",
+            "relationship_label": "adopts",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
+          ],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -14232,7 +15016,7 @@
             "System",
             "Component"
           ],
-          "description": "Nearest system or component declaration owning this document within its project.",
+          "description": "Nearest system or component used for source lookup within the project.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -14250,7 +15034,7 @@
           "annotations": {
             "occurrence_role": "link",
             "relationship_basis": "Explicit Specification system reference when present; otherwise the nearest enclosing system found by directory discovery.",
-            "relationship_category": "semantic-association",
+            "relationship_category": "system-membership",
             "relationship_cycles": "permitted",
             "relationship_inverse": "none",
             "relationship_label": "specification system",
@@ -14355,7 +15139,8 @@
         "QualityAttribute",
         "DomainElement",
         "Record",
-        "TraceableElement"
+        "TraceableElement",
+        "AuthoredDocumentRoot"
       ],
       "annotations": {},
       "description": "A system's named quality attribute, authored in a standalone quality attribute specification.",
@@ -14365,6 +15150,30 @@
       ],
       "rules": [],
       "slots": {
+        "adopts": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "AdoptedProvision.owner",
+            "relationship_label": "adopts",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
+          ],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -14536,34 +15345,6 @@
           "reference_ranges": [],
           "required": false
         },
-        "owner": {
-          "annotations": {
-            "relationship_basis": "Checked inverse of canonical membership fields.",
-            "relationship_category": "declaration-containment",
-            "relationship_cycles": "forbidden",
-            "relationship_inverse": "QualityModel.quality_attributes or System.quality_attributes",
-            "relationship_label": "owner",
-            "relationship_ordering": "single target",
-            "relationship_scope": "Exactly one declaring owner in the same source document."
-          },
-          "any_of": [
-            "System",
-            "QualityModel"
-          ],
-          "description": "",
-          "identifier": false,
-          "inline_ranges": [],
-          "inlined": false,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "Specification",
-          "reference_ranges": [
-            "System",
-            "QualityModel"
-          ],
-          "required": false
-        },
         "preamble": {
           "annotations": {},
           "any_of": [],
@@ -14701,6 +15482,30 @@
           ],
           "required": false
         },
+        "specification_system": {
+          "annotations": {
+            "relationship_basis": "Explicit selection or source layout.",
+            "relationship_category": "system-membership",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "System.quality_attributes",
+            "relationship_label": "specification system",
+            "relationship_ordering": "single target",
+            "relationship_scope": "The effective system of the specification."
+          },
+          "any_of": [],
+          "description": "Effective system established by the system's quality directory.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "System",
+          "reference_ranges": [
+            "System"
+          ],
+          "required": false
+        },
         "subattribute_of": {
           "annotations": {
             "occurrence_role": "label",
@@ -14720,9 +15525,9 @@
           "inlined_as_list": false,
           "multivalued": true,
           "ordered": false,
-          "range": "QualityAttribute",
+          "range": "SystemQualityAttribute",
           "reference_ranges": [
-            "QualityAttribute"
+            "SystemQualityAttribute"
           ],
           "required": false
         },
@@ -14784,16 +15589,73 @@
         "software-requirements"
       ]
     },
+    "SystemQualityAttributeSpecReport": {
+      "abstract": false,
+      "ancestors": [
+        "SystemQualityAttributeSpecReport",
+        "SubjectReport",
+        "GeneratedDocument"
+      ],
+      "annotations": {},
+      "description": "Defines one quality attribute and links to the requirements classified by it.",
+      "is_a": "SubjectReport",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "documents": {
+          "annotations": {
+            "relationship_basis": "Identity of the domain record mapped from the referenced heading.",
+            "relationship_category": "semantic-association",
+            "relationship_cycles": "permitted",
+            "relationship_inverse": "none",
+            "relationship_label": "documents",
+            "relationship_ordering": "single target",
+            "relationship_scope": "One selected subject of the concrete document's corresponding domain class."
+          },
+          "any_of": [],
+          "description": "The documented subject, serialized as a relative URI to its authored heading.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SystemQualityAttribute",
+          "reference_ranges": [
+            "SystemQualityAttribute"
+          ],
+          "required": true
+        },
+        "type": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Serialized document type fixed by the concrete class.",
+          "equals_string": "system-quality-attribute-spec-report",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        }
+      },
+      "subsets": [
+        "specification-documentation"
+      ]
+    },
     "SystemSpecReport": {
       "abstract": false,
       "ancestors": [
         "SystemSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "Explains the system\u2019s purpose and scope and links to its immediate child systems, local subjects, and requirements.",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -15134,6 +15996,7 @@
         "SystemContextSpecification",
         "Specification",
         "TraceableElement",
+        "AuthoredDocumentRoot",
         "DomainElement",
         "Record"
       ],
@@ -15145,6 +16008,30 @@
       "mixins": [],
       "rules": [],
       "slots": {
+        "adopts": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "AdoptedProvision.owner",
+            "relationship_label": "adopts",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "AdoptedProvision",
+          "reference_ranges": [
+            "AdoptedProvision"
+          ],
+          "required": false
+        },
         "authored_id": {
           "annotations": {},
           "any_of": [],
@@ -15678,7 +16565,7 @@
             "System",
             "Component"
           ],
-          "description": "Nearest system or component declaration owning this document within its project.",
+          "description": "Nearest system or component used for source lookup within the project.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -15696,7 +16583,7 @@
           "annotations": {
             "occurrence_role": "link",
             "relationship_basis": "Explicit Specification system reference when present; otherwise the nearest enclosing system found by directory discovery.",
-            "relationship_category": "semantic-association",
+            "relationship_category": "system-membership",
             "relationship_cycles": "permitted",
             "relationship_inverse": "none",
             "relationship_label": "specification system",
@@ -16124,12 +17011,12 @@
       "abstract": false,
       "ancestors": [
         "UseCaseExtensionSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -16181,12 +17068,12 @@
       "abstract": false,
       "ancestors": [
         "UseCaseSpecReport",
-        "SubjectSpecReport",
+        "SubjectReport",
         "GeneratedDocument"
       ],
       "annotations": {},
       "description": "",
-      "is_a": "SubjectSpecReport",
+      "is_a": "SubjectReport",
       "mixins": [],
       "rules": [],
       "slots": {
@@ -16279,7 +17166,11 @@
       "direct",
       "transitive"
     ],
+    "ReferenceType": [
+      "quality-model"
+    ],
     "RelationshipCategory": [
+      "system-membership",
       "declaration-containment",
       "structural-context",
       "semantic-association",
@@ -16311,14 +17202,13 @@
       "component-spec",
       "system-spec",
       "job-spec",
-      "quality-model-spec",
       "business-rule-spec",
       "use-case-spec",
       "concept-spec",
       "requirement-spec"
     ]
   },
-  "model_version": "0.30.0-draft",
+  "model_version": "0.32.0-draft",
   "projections": [
     "BusinessRule.applies_to",
     "BusinessRule.refines",
@@ -16336,6 +17226,7 @@
     "DesiredOutcome.applies_to",
     "Document.glossary_terms",
     "Feature.groups",
+    "Interface.adopts",
     "Job.outcomes",
     "Job.steps",
     "JobStep.outcomes",
@@ -16346,6 +17237,7 @@
     "Requirement.refines",
     "Scenario.steps",
     "ScenarioStep.illustrates",
+    "Specification.adopts",
     "System.assumptions",
     "System.concept_uses",
     "System.enclosing_system",
@@ -16360,6 +17252,7 @@
     "SystemContextSpecification.directory_system",
     "SystemContextSpecification.specification_owner",
     "SystemContextSpecification.specification_system",
+    "SystemQualityAttribute.specification_system",
     "TraceableElement.derived_from",
     "TraceableElement.relies_on",
     "TraceableElement.supports",
@@ -16423,11 +17316,20 @@
       },
       "description": "Directory-derived discovery context; no structural decomposition or semantic inheritance.",
       "title": "Structural context"
+    },
+    "system-membership": {
+      "defaults": {
+        "relationship_basis": "Explicit selection or source layout.",
+        "relationship_cycles": "permitted",
+        "relationship_scope": "The effective system of the specification."
+      },
+      "description": "Associates an independently authored specification with its effective system.",
+      "title": "System membership"
     }
   },
-  "representation_version": "0.3.0",
+  "representation_version": "0.4.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "874e6ddccddbe31edef0c2c80f3b7acdea7d1e9f9a6725b13113fe95d34779ea",
+  "source_sha256": "6260619d18b374ee229dfa9d22163f7eccdbce33696d5dc9cd4a9d4ffd304f86",
   "subsets": {
     "business-requirements": {
       "classification": "core",

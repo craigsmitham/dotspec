@@ -13,11 +13,11 @@ dotspec check specs/jobs/develop-requirements.job.spec.md
 
 Use the first finding’s path and location to inspect the source. Correct a structural error and repeat the check. For advice, judge whether the suggested information is known and worth recording. A missing file or an incomplete scan calls for checking the path or restoring access before relying on the report.
 
-`check` discovers the specification types listed in its `scope.types` using the same
+`check` discovers the specification and reference types listed in its `scope.types` using the same
 Git ignore, repository-boundary, and symlink rules as `list`. Outside Git, ignore files do
 not affect discovery. It reports the selected scope, supported types, discovery
 mode, files examined, and whether the scan completed. An empty completed scan
-succeeds and explicitly reports `No supported specifications found.`
+succeeds and explicitly reports `No supported source files found.`
 
 Structural errors fail the check: conflicting subject declarations, invalid metadata, missing
 required system sections, duplicate IDs or conventional sections, malformed
@@ -238,6 +238,8 @@ for shell completion scripts, and `dotspec man` for the root manual in roff form
 See the generated [CLI reference](cli.md) for flags and examples.
 
 ## References
+
+A `structure.adoption` finding points to an entry under **Adopts**. Identify a single provision and give both its edition and local applicability. A `structure.verification-procedure` finding identifies a procedure section that needs an explicit link. [Source mapping](../../model/markdown-mapping.md#adopting-a-provision)
 
 Every check command validates Markdown links in successfully parsed selected
 specifications and their associated system context. Same-document fragments

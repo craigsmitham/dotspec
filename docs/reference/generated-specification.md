@@ -19,9 +19,9 @@ report:
   enabled: false
 ```
 
-A project with generated reports needs one root system. If you have none yet, create it in the project root and fill in its purpose and scope. If the build finds several roots, decide which systems are parts of another and give each child a **Part of** link. An independent product can have its own project manifest. [Describe a system](../cli-handbook/guides/describe-a-system.md) · [Separate specification projects](workspaces.md).
+For one root system, the project landing page opens its specification. For several independent systems, the landing page links to a systems index. Use **Part of** when a system really is a subsystem. A project containing only reusable quality models publishes their reference catalog. [Describe a system](../cli-handbook/guides/describe-a-system.md) · [Separate specification projects](workspaces.md).
 
-Explicit specification-system selections and directory defaults place subjects in their system. Standalone quality models are reusable reference material. Links into other projects retain their original targets.
+Explicit specification-system selections and directory defaults place subjects in their system. Standalone quality models are reusable reference material. Each `*.quality-model.md` source has a `*.quality-model-report.md` reference page. Links into other projects retain their original targets. A locally authored specification that selects another project’s system is reachable from the project landing page under **Specifications for other systems**.
 
 From the project root, build the reports and check them against the authored specifications.
 
@@ -36,7 +36,7 @@ Commit the authored changes, `SPEC.md` and the generated Markdown in `specificat
 
 | Destination | Contents |
 | --- | --- |
-| `SPEC.md` | System name and a single link to its full report |
+| `SPEC.md` | The system overview, or a project index for multiple systems, external-system specifications, or a reference catalog |
 | `specification/<name>.system.spec-report.md` | Root system overview and links into its specification |
 | `specification/glossary.md` | Alphabetical definitions linked to their sources, a topic index when terms declare topics, context names for distinct meanings, and links back to authored relationships |
 | `specification/use-cases.md` | Use cases with their authored goals and links to the scenarios |
@@ -136,7 +136,7 @@ A subject rendered as a section carries its type and exact authored heading in a
 `dotspec-doc` comment. **View section source** opens the authored declaration. Links to supporting specifications and external evidence
 stay beside the passages that use them. On the glossary index, **Term source** opens the defining passage. Plain topic lists and a trailing model reference share that line. The topic index jumps to term headings, and incoming relationship links return to the passage that describes the connection.
 
-Each system quality attribute has a `quality-attribute-spec-report` file. Reusable quality model entries remain sections of the model’s report. The file’s `generated_by: dotspec` marker identifies generator
+Each system quality attribute has a `system-quality-attribute-spec-report` page. Reusable quality model entries remain sections of the model’s report. The file’s `generated_by: dotspec` marker identifies generator
 ownership. See the [document model](model/index.md#generateddocument).
 
 ## Check a workspace
@@ -144,3 +144,30 @@ ownership. See the [document model](model/index.md#generateddocument).
 Use `dotspec spec build --project NAME` to refresh a selected project. Run `dotspec check --all` on a clean checkout in CI, with a pinned dotspec version. Whole-project checks include the generated files for each project unless its manifest sets `report.enabled` to `false`. A missing, obsolete or stale file is a finding. The check also inspects the visible content and navigation. A subtree or individual-subject check covers only its selected source scope.
 
 For early feedback, add `dotspec check --all` to a pre-push hook. Use CI to verify the committed tree. A pre-commit hook that enforces synchronization must check staged contents when contributors stage only part of a change.
+
+## Record verification results
+
+Link each test or manual protocol under **Verification procedures** in its requirement or criterion. After a run, an evidence producer can supply `verification-results.json` in the project root. Running `dotspec spec build` reads this file and publishes observations alongside the requirement. Running `dotspec check` checks the resulting report. The requirement file changes only when the authored decision changes.
+
+This illustrative file requests the results of a restart assessment for revision `build-42`. Replace the revision, conditions, and observation address with the ones from your run.
+
+```json
+{
+  "selection": {
+    "product_revision": "build-42",
+    "conditions": "local database, acknowledged writes"
+  },
+  "results": [
+    {
+      "subject": "specs/requirements/restart.requirement.spec.md#criterion",
+      "procedure": "tests/acceptance.py",
+      "product_revision": "build-42",
+      "conditions": "local database, acknowledged writes",
+      "outcome": "fail",
+      "observation": "evidence/restart-42.log"
+    }
+  ]
+}
+```
+
+Identify the subject by its project-relative requirement URI. Append `#criterion` when the procedure belongs to the criterion. Relative procedure and observation URIs start at the project root. Use `pass`, `fail`, or `inconclusive` for the outcome. A run matches when its procedure is linked for that subject and its product revision and conditions equal the selection. Either record can also carry `specification_revision`. Supplying it in the selection requires an exact match. An unknown product revision or unknown conditions leave an observation outside the matching set. Use an empty results array for a selection with no observations yet. A report preserves competing results and their individual observation links.

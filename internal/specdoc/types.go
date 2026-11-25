@@ -14,5 +14,12 @@ func subjectDocument(file string, sf *sourceFile, h *heading) Document {
 	if h.subjectKind == "" {
 		return Document{} // A physical file can collect several logical documents.
 	}
-	return Document{specfile.AuthoredType(kindName(h.subjectKind)) + "-report", relativeURL(file, sf.path, h.anchor)}
+	tag := specfile.AuthoredType(kindName(h.subjectKind)) + "-report"
+	if h.subjectKind == "SystemQualityAttribute" {
+		tag = "system-quality-attribute-spec-report"
+	}
+	if h.subjectKind == "QualityModelAttribute" || h.subjectKind == "AdoptedProvision" {
+		tag = kindName(h.subjectKind) + "-report"
+	}
+	return Document{tag, relativeURL(file, sf.path, h.anchor)}
 }

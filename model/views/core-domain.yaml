@@ -192,13 +192,14 @@ types:
   - contracts
   - counterpart
 diagrams:
-- title: Specification types
+- title: Specification and reference roots
   direction: TB
   show_cardinality: false
-  description: A Specification is the root record of one authored specification document. The specification
-    types correspond one-to-one with these concrete classes. Subsets classify concerns separately from this
-    hierarchy.
+  description: Each authored document has one primary domain subject. A specification root records product
+    intent and owns the elements declared within its file. A quality model is a reference root that owns
+    reusable definitions.
   nodes:
+  - AuthoredDocumentRoot
   - Specification
   - SystemContextSpecification
   - SystemQualityAttribute
@@ -334,19 +335,20 @@ diagrams:
   - ScenarioStep.illustrates
   inheritance: false
 - title: Quality classification
-  description: 'Systems and reusable quality models declare attributes. Each attribute has exactly one declaring
-    owner: a System or a QualityModel. Requirements reference attributes for classification. Sub-attribute
-    of permits multiple parents within the same declaring owner and must be acyclic.'
+  description: A quality model owns reusable definitions. Independent system quality attributes classify requirements
+    within their effective system. Both kinds support acyclic grouping within their own scope.
   nodes:
   - System
   - QualityModel
-  - QualityAttribute
+  - QualityModelAttribute
+  - SystemQualityAttribute
   - Requirement
   paths:
   - System.quality_attributes
   - QualityModel.quality_attributes
   - Requirement.quality_attributes
-  - QualityAttribute.subattribute_of
+  - QualityModelAttribute.subattribute_of
+  - SystemQualityAttribute.subattribute_of
   inheritance: false
 - title: System coordination
   description: Systems declare concept uses, dependencies, and coordination rules.

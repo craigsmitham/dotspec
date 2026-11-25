@@ -7,7 +7,7 @@ cmp stdout ../created.txt
 ! stderr .
 cp ../new-system.system.spec.md specs/new-system.system.spec.md
 exec dotspec check
-stdout 'Checked 1 of 1 discovered specifications'
+stdout 'Checked 1 of 1 discovered source files'
 stdout 'Errors: 0'
 ! stderr .
 exec dotspec job init plan-work

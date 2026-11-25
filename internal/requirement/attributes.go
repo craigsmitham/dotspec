@@ -36,7 +36,14 @@ func Classify(ids []string, sys *system.System) Classification {
 
 func CheckAttributes(spec *Requirement, sys *system.System) []diagnostic.Diagnostic {
 	var findings []diagnostic.Diagnostic
-	for _, id := range Classify(spec.QualityAttributes, sys).Undefined {
+	if sys == nil {
+		return findings
+	}
+	undefined := Classify(spec.QualityAttributes, sys).Undefined
+	if sys.QualityAttributes == nil {
+		undefined = spec.QualityAttributes
+	}
+	for _, id := range undefined {
 		location := spec.AttributeLocations[id]
 		location.Path = spec.Path
 		findings = append(findings, diagnostic.Advice("requirement.undefined-attribute", fmt.Sprintf("attribute %q is not declared by the associated system (%s)", id, sys.Path), location))

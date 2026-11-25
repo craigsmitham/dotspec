@@ -148,7 +148,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 		owner := index[String(label, "owner")]
 		if String(resolution, "status") == "resolved" {
 			target := index[String(resolution, "target")]
-			if String(target, "owner") != String(label, "governing_system") || String(target, "owner") != String(owner, "specification_system") {
+			if String(target, "specification_system") != String(label, "governing_system") || String(target, "specification_system") != String(owner, "specification_system") {
 				t.Fatalf("classification escaped its declaring system: %+v", label)
 			}
 		}
@@ -173,7 +173,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 			}
 		}
 	}
-	if undefinedAdvice != 2 {
+	if undefinedAdvice != 3 {
 		t.Errorf("undefined-label advice count %d", undefinedAdvice)
 	}
 	checkSourceText(t, result.Snapshot)

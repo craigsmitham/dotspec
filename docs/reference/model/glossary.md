@@ -75,7 +75,7 @@ What a performer seeks to accomplish or change in particular circumstances, inde
 
 ## Quality attribute
 
-A named quality attribute owned by exactly one system or reusable quality model. Attributes may be organized under several other attributes within that owner. This acyclic grouping supports trees and overlapping classifications; it does not inherit requirements, thresholds, or satisfaction.
+A named quality definition with acyclic grouping within its declaring model or effective system.
 
 [Model reference](index.md#qualityattribute)
 

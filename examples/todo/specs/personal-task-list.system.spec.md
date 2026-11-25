@@ -76,3 +76,17 @@ Open offers work the owner can advance. Waiting shows the expected reply and whe
 #### Contracts
 
 [Form template](../app/list.html) supplies the actions and fields.
+
+#### Adopts
+
+##### Redirect after an accepted form submission
+
+[303 See Other](https://www.rfc-editor.org/rfc/rfc9110.html#section-15.4.4).
+
+###### Edition
+
+RFC 9110, June 2022.
+
+###### Applicability
+
+After accepting a change through a task form, Task service redirects the browser to the originating list view.

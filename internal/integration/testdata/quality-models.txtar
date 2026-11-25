@@ -33,13 +33,13 @@ cmp specs/new-system.system.spec.md before.md
 
 # Local models share parsing, checking and discovery. Selecting a leaf copies ancestors.
 status 0 dotspec quality-model init organization-quality --from furps --json
-stdout 'organization-quality.quality-model.spec.md'
+stdout 'organization-quality.quality-model.md'
 status 0 dotspec quality-model show organization-quality --json
 stdout '"id": "organization-quality"'
 stdout '"name": "Supportability"'
 status 2 dotspec quality-model init organization-quality
 stderr 'refusing to overwrite'
-cp ../local.md specs/quality-models/organization-quality.quality-model.spec.md
+cp ../local.md specs/quality-models/organization-quality.quality-model.md
 status 0 dotspec quality-model check organization-quality --json
 stdout '"errors": 0'
 status 0 dotspec quality-model show organization-quality --json
@@ -57,7 +57,7 @@ cmp specs/new-system.system.spec.md before.md
 status 0 dotspec check --json
 stdout '"errors": 0'
 status 0 dotspec sources --json
-stdout 'organization-quality.quality-model.spec.md'
+stdout 'organization-quality.quality-model.md'
 status 0 dotspec model export
 stdout '"kind": "QualityModel"'
 stdout '"governing_quality_model":'
@@ -66,11 +66,11 @@ status 0 dotspec model validate snapshot.json --json
 stdout '"valid": true'
 
 # Editing the reference model does not synchronize the populated system.
-cp ../draft.md specs/quality-models/organization-quality.quality-model.spec.md
+cp ../draft.md specs/quality-models/organization-quality.quality-model.md
 cmp specs/new-system.system.spec.md before.md
 status 0 dotspec quality-model check organization-quality --json
 stdout 'quality-model.attributes'
-cp ../invalid.md specs/quality-models/invalid.quality-model.spec.md
+cp ../invalid.md specs/quality-models/invalid.quality-model.md
 status 1 dotspec quality-model check invalid --json
 stdout 'structure.duplicate-section'
 status 1 dotspec model export
@@ -106,7 +106,7 @@ status 0 dotspec model validate snapshot.json --json
 stdout '"valid": true'
 -- local.md --
 ---
-type: quality-model-spec
+type: quality-model
 id: organization-quality
 ---
 # Organization quality
@@ -129,12 +129,12 @@ Our specific concern.
 A concern to consider later.
 -- draft.md --
 ---
-type: quality-model-spec
+type: quality-model
 ---
 # Draft model
 -- invalid.md --
 ---
-type: quality-model-spec
+type: quality-model
 ---
 # Invalid
 ## Quality attributes

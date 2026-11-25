@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 
@@ -57,8 +58,14 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 	dir := report.Scope.Path
 	repo := inspection.Repository
 	kinds := make([]string, 0, len(types))
+	var references []string
 	for _, kind := range types {
-		kinds = append(kinds, specfile.AuthoredType(kind.Layout.Kind))
+		tag := specfile.AuthoredType(kind.Layout.Kind)
+		if slices.Contains(compiledModel().catalog.Enums["ReferenceType"], tag) {
+			references = append(references, tag)
+		} else {
+			kinds = append(kinds, tag)
+		}
 	}
 	scope := Record{
 		"roots": []string{filepath.ToSlash(dir)}, "selected_spec_types": kinds,
@@ -66,6 +73,9 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 		"reads_complete":     true, "inspection_complete": report.Complete,
 		"discovery_policy":    Record{"mode": report.Scope.Discovery, "rule": "dotspec-discovery/1", "follow_symlinks": false, "include_nested_repositories": false},
 		"reference_traversal": Record{"mode": "direct", "include_system_context": true, "follow_external_resources": false, "repository_bounded": repo != "", "maximum_depth": 1, "rule": "dotspec-direct-references/1"},
+	}
+	if len(references) > 0 {
+		scope["selected_reference_types"] = references
 	}
 	b := &snapshotBuilder{inputs: inspection.Sources,
 		snapshot: NewSnapshot(scope), types: types, byPath: map[string]*ParsedDocument{},
@@ -160,6 +170,7 @@ func ExportInspection(inspection check.Inventory, types ...check.Type) ExportRes
 	b.associateGlossaries()
 	b.associateSystems()
 	b.resolveReferences()
+	b.observeAdoptions()
 	b.resolveLabels()
 	compositionErrors := b.resolveComposition()
 	for _, finding := range report.Diagnostics {

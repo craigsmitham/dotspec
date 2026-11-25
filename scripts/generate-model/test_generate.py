@@ -35,7 +35,7 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(owner["range"], "DomainElement")
         self.assertEqual(owner["reference_ranges"], ["Scenario", "UseCaseExtension"])
         self.assertNotIn("DomainElement", owner["reference_ranges"])
-        self.assertEqual(self.slot("QualityAttribute", "owner")["reference_ranges"], ["System", "QualityModel"])
+        self.assertEqual(self.slot("QualityModelAttribute", "owner")["reference_ranges"], ["QualityModel"])
         self.assertEqual(self.slot("LabelOccurrence", "governing_quality_model")["reference_ranges"], ["QualityModel"])
 
     def test_glossary_follows_model_topics_and_group_members(self):

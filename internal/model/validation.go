@@ -47,6 +47,7 @@ type classDefinition struct {
 }
 
 type modelCatalog struct {
+	Enums   map[string][]string        `json:"enums"`
 	Classes map[string]classDefinition `json:"classes"`
 	// Projections lists the canonical Class.field paths included in relationship views.
 	Projections []string `json:"projections"`

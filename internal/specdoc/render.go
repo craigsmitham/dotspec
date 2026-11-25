@@ -93,7 +93,15 @@ func (p *planner) render() *Plan {
 	p.indexDetailReferences()
 	entry := p.newPage("SPEC.md", Document{}, p.governing.name.title)
 	entry.titleMarkdown = inlineText(p.governing.name.title)
-	entry.text(entry.link("Read the system specification", p.governing.file))
+	if p.governing.file != "SPEC.md" {
+		entry.text(entry.link("Read the system specification", p.governing.file))
+	} else {
+		for _, title := range slices.Sorted(maps.Keys(p.governing.indexes)) {
+			idx := p.governing.indexes[title]
+			p.renderIndex(p.governing, title, idx)
+			entry.text(entry.link(collectionTitle(title), idx.file))
+		}
+	}
 	entry.finish()
 	for _, s := range p.subjects {
 		p.renderSubject(s)
@@ -108,7 +116,7 @@ func (h *heading) sourceLabel() string {
 // The title supplies the current location. Each ancestor leads to its overview.
 func (w *writer) setBreadcrumb(owner *subject, collection string) {
 	var steps []string
-	for ancestor := owner; ancestor != nil; ancestor = ancestor.parent {
+	for ancestor := owner; ancestor != nil; ancestor = ancestor.navigationParent {
 		steps = append(steps, w.link(inlineText(ancestor.name.title), ancestor.file))
 	}
 	slices.Reverse(steps)
@@ -122,13 +130,14 @@ func (p *planner) renderSubject(s *subject) {
 	w := p.newPage(s.file, subjectDocument(s.file, s.source, s.name), s.name.title)
 	w.titleMarkdown = p.headingMarkdown(w, s.source, s.name)
 	w.titleAnchor = s.name.explicitAnchor
-	w.setBreadcrumb(s.parent, s.collection())
+	w.setBreadcrumb(s.navigationParent, s.collection())
 	sourceLink := link("View source", w.page.Documents)
 	if s.isOverview() {
 		p.renderOverview(w, s)
 	} else {
 		w.text(sourceLink)
 		p.renderSubjectBody(w, s)
+		p.renderVerification(w, s)
 	}
 	if s.section("Related specifications") == nil {
 		p.relationships(w, s.name, true)

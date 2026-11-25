@@ -1,5 +1,5 @@
 ---
-type: quality-model-spec
+type: quality-model
 ---
 # Personal data quality
 

@@ -54,7 +54,7 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 			break
 		}
 		for _, child := range s.Children {
-			a := m.named("QualityAttribute", r, child)
+			a := m.named("QualityModelAttribute", r, child)
 			a["authored_id"] = m.fieldText(child, "ID")
 			definition := m.withoutFields(child, child.Content, "ID", "Sub-attribute of")
 			a["definition"] = m.doc.Rich(definition)

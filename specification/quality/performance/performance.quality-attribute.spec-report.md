@@ -1,6 +1,6 @@
 ---
 generated_by: dotspec
-type: quality-attribute-spec-report
+type: system-quality-attribute-spec-report
 source: "../../../specs/quality/performance/performance.quality-attribute.spec.md#performance"
 ---
 [dotspec](<../../dotspec.system.spec-report.md>) › [Quality attributes](<../../quality-attributes.md>)

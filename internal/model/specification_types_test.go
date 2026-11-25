@@ -5,6 +5,8 @@ import (
 	"slices"
 	"strings"
 	"testing"
+
+	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
 const typedSystem = `---
@@ -52,8 +54,17 @@ func TestSpecificationTypesCorrespondToDocumentRoots(t *testing.T) {
 		}
 	}
 	slices.Sort(roots)
-	if want := []string{"BusinessRule", "Capability", "Component", "Concept", "Feature", "Job", "QualityModel", "Requirement", "System", "SystemQualityAttribute", "UseCase"}; !slices.Equal(roots, want) {
-		t.Fatalf("specification classes %v, want %v", roots, want)
+	var declared []string
+	for _, tag := range catalog.Enums["SpecificationType"] {
+		kind, ok := strings.CutSuffix(tag, "-spec")
+		if !ok || specfile.AuthoredSuffix(kind) != "."+kind+".spec.md" {
+			t.Fatalf("unexpected specification form %q", tag)
+		}
+		declared = append(declared, specfile.DocumentRootClass(kind))
+	}
+	slices.Sort(declared)
+	if !slices.Equal(roots, declared) {
+		t.Fatalf("concrete specification classes %v, declared file types map to %v", roots, declared)
 	}
 	root := t.TempDir()
 	conformanceWrite(t, root, "specs/lending-desk.system.spec.md", typedSystem+"\n## Quality attributes\n\n")

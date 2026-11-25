@@ -29,7 +29,7 @@ consulted Markdown, and other acquired reference targets.
 
 ## Criterion
 
-Every valid mapped specification file contributes one primary record of its declared type. A named part retains the identity of its declaring source. Only requirement files contribute Requirement records. Multiple references to one requirement resolve to that same record. Offline validation reports a mismatched primary record or multiple primary subjects for one source.
+Every valid mapped specification file contributes one primary record of its declared type. A named part retains the identity of its declaring source. Each reusable quality model contributes a QualityModel reference root and its owned definitions. The export distinguishes selected reference types from selected specification types. Only requirement files contribute Requirement records. Multiple references to one requirement resolve to that same record. Offline validation reports a mismatched primary record or multiple primary subjects for one source.
 
 ## Rationale
 

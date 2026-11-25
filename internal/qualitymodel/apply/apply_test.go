@@ -100,8 +100,8 @@ func TestDefaultWholeModelAndAppend(t *testing.T) {
 
 func TestLocalAncestorClosureAndLinkRelocation(t *testing.T) {
 	path := target(t, plain)
-	source := filepath.Join(filepath.Dir(path), "quality-models", "local.quality-model.spec.md")
-	data := []byte("---\ntype: quality-model-spec\n---\n# Local\n## Sources\n[doc]: ../../guide.md#topic \"Guide\"\n## Quality attributes\n### Narrow\n**ID:** narrow\n**Sub-attribute of:** broad\nSee [details][doc] and [broad](#broad).\n\n`[code](relative.md)`\n\n![image](../../image.png)\n### Broad\n**ID:** broad\nThe parent concern.\n### Other\n**ID:** other\nUnselected.\n")
+	source := filepath.Join(filepath.Dir(path), "quality-models", "local.quality-model.md")
+	data := []byte("---\ntype: quality-model\n---\n# Local\n## Sources\n[doc]: ../../guide.md#topic \"Guide\"\n## Quality attributes\n### Narrow\n**ID:** narrow\n**Sub-attribute of:** broad\nSee [details][doc] and [broad](#broad).\n\n`[code](relative.md)`\n\n![image](../../image.png)\n### Broad\n**ID:** broad\nThe parent concern.\n### Other\n**ID:** other\nUnselected.\n")
 	m, err := qualitymodel.Parse(data)
 	if err != nil {
 		t.Fatal(err)
@@ -115,7 +115,7 @@ func TestLocalAncestorClosureAndLinkRelocation(t *testing.T) {
 	if strings.Join(r.Added, ",") != "narrow,broad" {
 		t.Fatalf("closure/order: %v", r.Added)
 	}
-	for _, text := range []string{"[details](<../../../../guide.md#topic> \"Guide\")", "[broad](<../../../quality-models/local.quality-model.spec.md#broad>)", "`[code](relative.md)`", "![image](<../../../../image.png>)"} {
+	for _, text := range []string{"[details](<../../../../guide.md#topic> \"Guide\")", "[broad](<../../../quality-models/local.quality-model.md#broad>)", "`[code](relative.md)`", "![image](<../../../../image.png>)"} {
 		if !strings.Contains(r.Content, text) {
 			t.Errorf("missing %q in %s", text, r.Content)
 		}

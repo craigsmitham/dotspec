@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/metamodel.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.30.0-draft
+version: 0.32.0-draft
 description: Source-backed specifications and their reader-facing reports. Domain fields retain the authored
   Markdown through ordered byte ranges. Explicit declarations, links and classification labels supply identity
   and relationships.
@@ -72,7 +72,7 @@ classes:
         required: true
         range: string
         description: Serialized document type fixed by the concrete class.
-  SubjectSpecReport:
+  SubjectReport:
     abstract: true
     is_a: GeneratedDocument
     in_subset: [specification-documentation]
@@ -87,7 +87,7 @@ classes:
           relationship_scope: One selected subject of the concrete document's corresponding domain class.
           relationship_basis: Identity of the domain record mapped from the referenced heading.
   SystemSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     description: Explains the system’s purpose and scope and links to its immediate child systems, local subjects, and requirements.
     in_subset: [specification-documentation]
     slot_usage:
@@ -96,7 +96,7 @@ classes:
       documents:
         range: System
   RequirementSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     description: Brings the requirement statement, applicability and criterion together at one address.
     in_subset: [specification-documentation]
     slot_usage:
@@ -105,7 +105,7 @@ classes:
       documents:
         range: Requirement
   ComponentSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     description: Explains the component’s responsibilities and links to its structural children, declared interfaces, and explicitly applicable requirements.
     in_subset: [specification-documentation]
     slot_usage:
@@ -114,7 +114,7 @@ classes:
       documents:
         range: Component
   FeatureSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -122,7 +122,7 @@ classes:
       documents:
         range: Feature
   CapabilitySpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -130,7 +130,7 @@ classes:
       documents:
         range: Capability
   ConceptUseSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -138,7 +138,7 @@ classes:
       documents:
         range: ConceptUse
   InterfaceSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -146,23 +146,39 @@ classes:
       documents:
         range: Interface
   SynchronizationSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
         equals_string: synchronization-spec-report
       documents:
         range: Synchronization
-  QualityModelSpecReport:
-    is_a: SubjectSpecReport
+  QualityModelReport:
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
-        equals_string: quality-model-spec-report
+        equals_string: quality-model-report
       documents:
         range: QualityModel
+  QualityModelAttributeReport:
+    is_a: SubjectReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: quality-model-attribute-report
+      documents:
+        range: QualityModelAttribute
+  AdoptedProvisionReport:
+    is_a: SubjectReport
+    in_subset: [specification-documentation]
+    slot_usage:
+      type:
+        equals_string: adopted-provision-report
+      documents:
+        range: AdoptedProvision
   BusinessRuleSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -170,7 +186,7 @@ classes:
       documents:
         range: BusinessRule
   JobSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -178,7 +194,7 @@ classes:
       documents:
         range: Job
   UseCaseSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -186,24 +202,24 @@ classes:
       documents:
         range: UseCase
   ConceptSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
         equals_string: concept-spec-report
       documents:
         range: Concept
-  QualityAttributeSpecReport:
-    is_a: SubjectSpecReport
+  SystemQualityAttributeSpecReport:
+    is_a: SubjectReport
     description: Defines one quality attribute and links to the requirements classified by it.
     in_subset: [specification-documentation]
     slot_usage:
       type:
-        equals_string: quality-attribute-spec-report
+        equals_string: system-quality-attribute-spec-report
       documents:
-        range: QualityAttribute
+        range: SystemQualityAttribute
   GoalSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -211,7 +227,7 @@ classes:
       documents:
         range: Goal
   AssumptionSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -219,7 +235,7 @@ classes:
       documents:
         range: Assumption
   GlossaryTermSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -227,7 +243,7 @@ classes:
       documents:
         range: GlossaryTerm
   ScenarioSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -235,7 +251,7 @@ classes:
       documents:
         range: Scenario
   UseCaseExtensionSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -243,7 +259,7 @@ classes:
       documents:
         range: UseCaseExtension
   JobStepSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -251,7 +267,7 @@ classes:
       documents:
         range: JobStep
   DesiredOutcomeSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -259,7 +275,7 @@ classes:
       documents:
         range: DesiredOutcome
   ConceptActionSpecReport:
-    is_a: SubjectSpecReport
+    is_a: SubjectReport
     in_subset: [specification-documentation]
     slot_usage:
       type:
@@ -291,7 +307,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.30.0-draft
+        equals_string: 0.32.0-draft
       mapping_profile:
         range: string
         description: Versioned rules for mapping declared sections, metadata and references.
@@ -335,7 +351,7 @@ classes:
         range: string
         description: Version of this serialized snapshot contract, separate from the domain metamodel version.
         required: true
-        equals_string: 0.3.0
+        equals_string: 0.4.0
       context_sources:
         range: ContextSource
         multivalued: true
@@ -382,6 +398,10 @@ classes:
         required: true
         multivalued: true
         description: Specification types selected for this inspection.
+      selected_reference_types:
+        range: ReferenceType
+        multivalued: true
+        description: Reference document types selected for this inspection.
       discovery_policy:
         range: DiscoveryPolicy
         required: true
@@ -408,7 +428,7 @@ classes:
     attributes:
       selected:
         range: boolean
-        description: True for specification files selected by discovery in the scan scope. Context acquired
+        description: True for authored files selected by discovery in the scan scope. Context acquired
           through references or enclosing system lookup is excluded from the selected set.
       project:
         range: SpecificationProject
@@ -484,7 +504,7 @@ classes:
       declared_type:
         range: string
         description: Declared metadata type, exactly as authored; original key/value syntax remains in the
-          tree. A recognized value is a SpecificationType.
+          tree. A recognized value is a SpecificationType or ReferenceType.
       authored_id:
         range: string
         description: Interpreted document ID when available; invalid metadata remains in the tree and diagnostics.
@@ -640,21 +660,37 @@ classes:
         range: RichContent
         inlined: true
         description: Authored Markdown qualifying the relies on relationship.
-  Specification:
-    in_subset:
-    - business-requirements
-    - user-requirements
-    - software-requirements
-    description: The root record of one authored specification document. Every specification has exactly one
-      specification type, and specification types correspond one-to-one with concrete Specification classes.
-      Elements declared inside a specification are not specifications. Narrative authority and evidence do
-      not create executable authority assertions.
-    is_a: TraceableElement
+  AuthoredDocumentRoot:
     abstract: true
+    is_a: DomainElement
+    in_subset: [document-content]
+    description: The primary domain subject of an independently authored document.
     attributes:
       slug:
         range: string
         description: Path-derived current slug where applicable.
+      preamble:
+        range: RichContent
+        description: Authored content between the title and the first named section.
+        inlined: true
+  Specification:
+    abstract: true
+    is_a: AuthoredDocumentRoot
+    mixins: [TraceableElement]
+    in_subset: [business-requirements, user-requirements, software-requirements]
+    description: An independently maintained aggregate of product intent. Each authored specification file
+      declares one root and can contain addressable parts. The specifications in product scope and their
+      relationships compose the product specification.
+    annotations:
+      owned_memberships: Specification.adopts
+    attributes:
+      adopts:
+        range: AdoptedProvision
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_inverse: AdoptedProvision.owner
       related_specifications:
         range: ContextualReferences
         inlined: true
@@ -667,18 +703,48 @@ classes:
       evidence:
         range: RichContent
         inlined: true
-      preamble:
+  AdoptedProvision:
+    in_subset: [software-requirements]
+    is_a: DomainElement
+    description: The local decision to adopt an identified external provision under stated conditions.
+    slot_usage:
+      kind:
+        equals_string: AdoptedProvision
+    attributes:
+      owner:
+        range: DomainElement
+        any_of:
+        - range: Specification
+        - range: Interface
+        required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_inverse: Specification.adopts or Interface.adopts
+      provision:
+        range: SourceReference
+        required: true
+        annotations:
+          relationship_category: provenance
+          relationship_basis: The exact link occurrence in the local adoption declaration.
+      observed_source_sha256:
+        range: string
+        pattern: '^[a-f0-9]{64}$'
+        description: Digest of the acquired provision document for change review. Markdown uses normalized source text.
+      edition:
         range: RichContent
-        description: Authored content between the title and the first named section.
         inlined: true
+        required: true
+        description: The pinned edition or revision, or the word evolving for a moving reference.
+      applicability:
+        range: RichContent
+        inlined: true
+        required: true
   SystemContextSpecification:
     in_subset:
     - business-requirements
     - user-requirements
     - software-requirements
-    description: 'A specification associated with a system: every specification type other than System and
-      QualityModel. The association is selected explicitly or defaults to the nearest enclosing system found
-      by directory discovery.'
+    description: A specification associated with a system selected explicitly or supplied by directory discovery.
     is_a: Specification
     abstract: true
     attributes:
@@ -692,14 +758,14 @@ classes:
         any_of:
         - range: System
         - range: Component
-        description: Nearest system or component declaration owning this document within its project.
+        description: Nearest system or component used for source lookup within the project.
         annotations:
           relationship_category: structural-context
       specification_system:
         range: System
         annotations:
           occurrence_role: link
-          relationship_category: semantic-association
+          relationship_category: system-membership
           relationship_scope: Explicit selection, or nearest enclosing system when no selection was authored.
           relationship_basis: Explicit Specification system reference when present; otherwise the nearest enclosing
             system found by directory discovery.
@@ -758,9 +824,9 @@ classes:
   QualityModel:
     in_subset:
     - software-requirements
-    description: A standalone reusable set of quality attribute definitions. Copying creates independent system
+    description: A reference vocabulary of reusable quality attribute definitions. Copying creates independent system
       declarations; no live inheritance or synchronization.
-    is_a: Specification
+    is_a: AuthoredDocumentRoot
     slot_usage:
       kind:
         equals_string: QualityModel
@@ -775,13 +841,13 @@ classes:
         range: ContextualReferences
         inlined: true
       quality_attributes:
-        range: QualityAttribute
+        range: QualityModelAttribute
         multivalued: true
         list_elements_ordered: true
         description: Definitions in declaration order.
         annotations:
           relationship_category: declaration-containment
-          relationship_inverse: QualityAttribute.owner
+          relationship_inverse: QualityModelAttribute.owner
           relationship_label: declares
     annotations:
       owned_memberships: QualityModel.quality_attributes
@@ -914,14 +980,14 @@ classes:
           relationship_label: terms
         description: Explicitly named terms, in authored order.
       quality_attributes:
-        range: QualityAttribute
+        range: SystemQualityAttribute
         description: Attributes declared by this system, in authored order. Absent means no declaration; a
           present empty list is distinct.
         multivalued: true
         list_elements_ordered: true
         annotations:
-          relationship_category: declaration-containment
-          relationship_inverse: QualityAttribute.owner
+          relationship_category: system-membership
+          relationship_inverse: SystemQualityAttribute.specification_system
           relationship_label: declares
       concept_uses:
         range: ConceptUse
@@ -957,7 +1023,7 @@ classes:
         inlined: true
         description: Authored Markdown qualifying the part of relationship.
     annotations:
-      owned_memberships: System.goals or System.assumptions or System.glossary or System.quality_attributes
+      owned_memberships: System.goals or System.assumptions or System.glossary
         or System.concept_uses or System.synchronizations
         or System.required_interfaces or System.provided_interfaces
   Goal:
@@ -1059,31 +1125,42 @@ classes:
     slot_usage:
       kind:
         equals_string: SystemQualityAttribute
-      owner:
-        required: false
-  QualityAttribute:
+      subattribute_of:
+        range: SystemQualityAttribute
+    attributes:
+      specification_system:
+        range: System
+        description: Effective system established by the system's quality directory.
+        annotations:
+          relationship_category: system-membership
+          relationship_inverse: System.quality_attributes
+  QualityModelAttribute:
     in_subset:
     - software-requirements
-    description: A named quality attribute owned by exactly one system or reusable quality model. Attributes
-      may be organized under several other attributes within that owner. This acyclic grouping supports trees
-      and overlapping classifications; it does not inherit requirements, thresholds, or satisfaction.
-    is_a: DomainElement
+    is_a: QualityAttribute
+    description: A reusable definition declared within one quality model.
     slot_usage:
       kind:
-        equals_string: QualityAttribute
-      authored_id:
-        required: true
+        equals_string: QualityModelAttribute
+      subattribute_of:
+        range: QualityModelAttribute
     attributes:
       owner:
-        range: Specification
-        any_of:
-        - range: System
-        - range: QualityModel
+        range: QualityModel
         required: true
         annotations:
           relationship_category: declaration-containment
-          relationship_basis: Checked inverse of canonical membership fields.
-          relationship_inverse: QualityModel.quality_attributes or System.quality_attributes
+          relationship_inverse: QualityModel.quality_attributes
+  QualityAttribute:
+    in_subset:
+    - software-requirements
+    abstract: true
+    description: A named quality definition with acyclic grouping within its declaring model or effective system.
+    is_a: DomainElement
+    slot_usage:
+      authored_id:
+        required: true
+    attributes:
       definition:
         range: RichContent
         inlined: true
@@ -1597,6 +1674,10 @@ classes:
       kind:
         equals_string: Requirement
     attributes:
+      verification_procedures:
+        range: ContextualReferences
+        inlined: true
+        description: Explicitly linked executable tests or manual protocols for assessing this subject.
       applies_to:
         range: DomainElement
         multivalued: true
@@ -1630,7 +1711,7 @@ classes:
         inlined: true
         description: Authored Markdown qualifying the refines relationship.
       quality_attributes:
-        range: QualityAttribute
+        range: SystemQualityAttribute
         description: Only resolved classifications; original occurrences remain separately addressable.
         multivalued: true
         annotations:
@@ -1680,6 +1761,10 @@ classes:
       each bound once or reference its authoritative statement or source. Operating context belongs to the requirement's applicability. A criterion is not a measurement procedure
       or an observation, and quality classification does not supply a criterion.
     attributes:
+      verification_procedures:
+        range: ContextualReferences
+        inlined: true
+        description: Explicitly linked executable tests or manual protocols for assessing this subject.
       content:
         range: RichContent
         inlined: true
@@ -2212,7 +2297,16 @@ classes:
     slot_usage:
       kind:
         equals_string: Interface
+    annotations:
+      owned_memberships: Interface.adopts
     attributes:
+      adopts:
+        range: AdoptedProvision
+        multivalued: true
+        list_elements_ordered: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_inverse: AdoptedProvision.owner
       owner:
         range: DomainElement
         any_of:
@@ -2356,6 +2450,11 @@ enums:
         description: Directly referenced target supplies link/fragment context, not another scan.
       other:
         description: Other declared context, explained by rule.
+  ReferenceType:
+    description: Markdown frontmatter types for independently authored reference material.
+    permissible_values:
+      quality-model:
+        description: Reusable quality model.
   SpecificationType:
     description: Markdown frontmatter types for authored specifications. Each
       type has exactly one concrete Specification class.
@@ -2372,8 +2471,6 @@ enums:
         description: System.
       job-spec:
         description: Job.
-      quality-model-spec:
-        description: Quality model.
       business-rule-spec:
         description: Business rule.
       use-case-spec:
@@ -2386,6 +2483,13 @@ enums:
     description: Vocabulary of the relationship_category annotation on record-reference fields. Each category
       supplies the scope, cycle policy and basis of its fields unless a field states its own.
     permissible_values:
+      system-membership:
+        title: System membership
+        description: Associates an independently authored specification with its effective system.
+        annotations:
+          relationship_scope: The effective system of the specification.
+          relationship_cycles: permitted
+          relationship_basis: Explicit selection or source layout.
       declaration-containment:
         title: Declaration containment
         description: A declaration and its owned members; source-local, with checked owner backlinks.

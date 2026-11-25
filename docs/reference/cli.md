@@ -230,13 +230,13 @@ dotspec capability show local-storage
 
 ## dotspec check
 
-Check all supported specifications in a project subtree
+Check specifications and reference documents in a project subtree
 
 ```sh
 dotspec check [source-path] [flags]
 ```
 
-Check authored specifications using the same discovery rules as list. A whole-project check also inspects generated Markdown for projects declared with dotspec.yaml unless report.enabled is false. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.
+Check authored specifications and reference documents using the same discovery rules as list. A whole-project check also inspects generated Markdown for projects declared with dotspec.yaml unless report.enabled is false. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
@@ -863,7 +863,7 @@ Export a source-backed specification snapshot as JSON
 dotspec model export [flags]
 ```
 
-Export selected specifications, enclosing systems, and direct reference context as JSON. Retain readable Markdown and source locations, including diagnostics for invalid documents. Filesystem discovery and authoring findings follow check; external references are not fetched.
+Export selected specifications, reusable quality models, enclosing systems, and direct reference context as JSON. Retain readable Markdown and source locations, including diagnostics for invalid documents. Filesystem discovery and authoring findings follow check; external references are not fetched.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
@@ -946,6 +946,24 @@ dotspec model pegs --path . --relative-to views
 | `--path` | `.` | project directory to inspect or initialize |
 | `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
 | `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
+
+## dotspec model product
+
+Show the specification roots, owned elements and references for one system
+
+```sh
+dotspec model product [SYSTEM] [flags]
+```
+
+```sh
+dotspec model product
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--help, -h` | `false` | help for product |
+| `--path` | `.` | project directory to inspect or initialize |
+| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
 
 ## dotspec model review
 
@@ -1267,7 +1285,7 @@ dotspec requirement show reject-existing-target --path .
 
 ## dotspec sources
 
-List specification files, system context, and directly referenced files
+List specifications, reference documents, system context, and directly referenced files
 
 ```sh
 dotspec sources [flags]
