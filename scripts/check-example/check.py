@@ -191,7 +191,7 @@ def spec_journey(cli, tmp):
         ("Behavior", ["Features", "Capabilities", "Use cases"]),
         ("", ["Quality Attributes"]),
         ("", ["Requirements"]),
-        ("Design", ["Concepts", "Concept uses", "Architecture"]),
+        ("Design", ["Concepts", "Architecture"]),
     ]
     sections = [title for _, titles in navigation_groups for title in titles]
     assert re.findall(r"^## (.+)$", overview, re.M) == sections
@@ -242,7 +242,8 @@ def spec_journey(cli, tmp):
     concepts = overview.split("\n## Concepts\n", 1)[1].split("\n## ", 1)[0]
     assert concepts.count("- [Checklist](<concepts/checklist.concept.spec-report.md>)") == 1
     assert "<a id=" not in concepts
-    assert "- [My checklist]" in overview.split("\n## Concept uses\n", 1)[1]
+    assert "\n  - [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>)" in concepts
+    assert "\n## Concept uses\n" not in overview
     assert follow(root, "Checklist") == follow(follow(root, "My checklist"), "Checklist")
     for collection, name, fragment in (
         ("Business rules", "Completion preserves a commitment", "business-rules"),
@@ -254,11 +255,11 @@ def spec_journey(cli, tmp):
         ("Capabilities", "Follow-up review", "capabilities"),
         ("Interfaces", "Task list forms", "interfaces"),
         ("Features", "Pick up where I left off", "features"),
-        ("Concept uses", "My checklist", "concept-uses"),
-        ("Concept definitions", "Checklist", "concepts"),
+        ("Concepts", "My checklist", "concepts"),
+        ("Concepts", "Checklist", "concepts"),
         ("Quality attributes", "Durability", "quality-attributes"),
     ):
-        filename = "concepts" if collection == "Concept definitions" else collection.lower().replace(" ", "-")
+        filename = collection.lower().replace(" ", "-")
         assert not (root.parent / f"{filename}.md").exists()
         assert any(label == collection and target == root and anchor == fragment
                    for label, target, anchor, _ in markdown_links(follow(root, name)))
@@ -270,7 +271,7 @@ def spec_journey(cli, tmp):
         "Task service": ("Components", "app/specs/task-service.component.spec.md"),
         "Local task storage": ("Capabilities", "specs/capabilities/local-task-storage.capability.spec.md"),
         "Follow-up review": ("Capabilities", "specs/capabilities/follow-up-review.capability.spec.md"),
-        "My checklist": ("Concept uses", "specs/personal-task-list.system.spec.md"),
+        "My checklist": ("Concepts", "specs/personal-task-list.system.spec.md"),
     }.items():
         declaration = (project / source).read_text(encoding="utf-8")
         subject = re.search(r"^#+ " + re.escape(name) + r"\n\n#+ Description\n\n([^\n]+)", declaration, re.M)
@@ -283,7 +284,7 @@ def spec_journey(cli, tmp):
             assert re.search(r"^# " + re.escape(name) + r"\n\n## Description\n\n" + re.escape(description), text, re.M)
         assert text.count(description) == 1
         if collection:
-            line, = [line for line in overview.splitlines() if line.startswith(f"- [{name}]")]
+            line, = [line.lstrip() for line in overview.splitlines() if line.lstrip().startswith(f"- [{name}]")]
             preview = line.split(" — ", 1)[1].removesuffix("\\")
         if collection:
             assert preview == description or (preview.endswith(" …") and description.startswith(preview[:-2]))

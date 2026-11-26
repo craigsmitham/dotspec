@@ -214,21 +214,32 @@ func contentText(md string) string {
 }
 
 // A directory item is a bullet starting with one title link. Any following
-// preview is plain text. Keep malformed items in the count for diagnostics.
+// preview is plain text, optionally with an italic note or label. A nested list holds the item's own members, one level
+// deeper. Keep malformed items in the count for diagnostics.
 func parseDirectoryRows(list *ast.List, body []byte) []directoryRow {
+	return appendDirectoryRows(nil, list, body, 0)
+}
+
+func appendDirectoryRows(rows []directoryRow, list *ast.List, body []byte, depth int) []directoryRow {
 	if list.IsOrdered() {
-		return nil
+		return rows
 	}
-	var rows []directoryRow
 	for item := list.FirstChild(); item != nil; item = item.NextSibling() {
-		row := directoryRow{text: visibleText(item, body)}
+		row := directoryRow{text: visibleText(item, body), depth: depth}
 		block := item.FirstChild()
-		if block != nil && block.NextSibling() == nil {
+		var nested *ast.List
+		if block != nil && block.NextSibling() != nil && block.NextSibling().NextSibling() == nil {
+			nested, _ = block.NextSibling().(*ast.List)
+		}
+		if nested != nil {
+			row.text = visibleText(block, body)
+		}
+		if block != nil && (block.NextSibling() == nil || nested != nil) {
 			if link, ok := block.FirstChild().(*ast.Link); ok {
 				row.destination = string(util.URLEscape(link.Destination, true))
 				row.title = visibleText(link, body)
 				for sibling := link.NextSibling(); sibling != nil; sibling = sibling.NextSibling() {
-					if sibling.Kind() != ast.KindText && sibling.Kind() != ast.KindString {
+					if sibling.Kind() != ast.KindText && sibling.Kind() != ast.KindString && sibling.Kind() != ast.KindEmphasis {
 						row.destination = ""
 						break
 					}
@@ -236,6 +247,9 @@ func parseDirectoryRows(list *ast.List, body []byte) []directoryRow {
 			}
 		}
 		rows = append(rows, row)
+		if nested != nil {
+			rows = appendDirectoryRows(rows, nested, body, depth+1)
+		}
 	}
 	return rows
 }

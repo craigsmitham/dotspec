@@ -149,7 +149,7 @@ func (p *planner) featureGoals(s *subject) []entry {
 		if member == nil || member.kind() != "UseCase" {
 			continue
 		}
-		idx.add(entry{member.name.title, member.file, subjectPreview(member)})
+		idx.add(entry{title: member.name.title, target: member.file, preview: subjectPreview(member)})
 	}
 	return idx.members
 }

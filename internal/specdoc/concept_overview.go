@@ -6,20 +6,22 @@ import (
 	"github.com/craigsmitham/dotspec/internal/model"
 )
 
-// Include a referenced concept even when its definition is authored outside the project.
+// Each concept lists its named uses beneath it. A use without a definition is
+// listed on its own. Include a referenced concept even when its definition is
+// authored outside the project.
 func (p *planner) indexConceptDefinitions() {
 	for _, use := range p.subjects {
 		if use.kind() != "ConceptUse" {
 			continue
 		}
-		key := attr(use.r, "definition")
-		if key == "" {
-			continue
-		}
+		named := entry{title: use.name.title, target: use.file, preview: subjectPreview(use)}
 		var member entry
-		if def := p.pages[key]; def != nil {
-			member = entry{def.name.title, def.file, subjectPreview(def)}
-		} else {
+		key := attr(use.r, "definition")
+		switch def := p.pages[key]; {
+		case key == "":
+		case def != nil:
+			member = entry{title: def.name.title, target: def.file, preview: subjectPreview(def)}
+		default:
 			r := p.elements[key]
 			for _, src := range p.snapshot.Sources {
 				if id(src) != attr(r, "source_document") {
@@ -29,13 +31,18 @@ func (p *planner) indexConceptDefinitions() {
 				if err != nil {
 					continue
 				}
-				member = entry{attr(p.nodes[nameNode(r)], "decoded_text"), filepath.ToSlash(rel), p.conceptPurpose(r, attr(src, "markdown"))}
+				member = entry{title: attr(p.nodes[nameNode(r)], "decoded_text"), target: filepath.ToSlash(rel), preview: p.conceptPurpose(r, attr(src, "markdown"))}
 				break
 			}
 		}
-		if member.target != "" {
-			use.navigationParent.includeMember("Concepts", member)
+		if member.target == "" {
+			named.note = "no definition"
+			use.navigationParent.includeMember("Concepts", named)
+			continue
 		}
+		member.children = []entry{named}
+		member.childLabel = "Uses:"
+		use.navigationParent.includeMember("Concepts", member)
 	}
 }
 

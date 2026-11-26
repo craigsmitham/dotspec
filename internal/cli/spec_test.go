@@ -893,14 +893,20 @@ type: component-spec
 		return string(data)
 	}
 	report := read("tool.system.spec-report.md")
-	const local = "- [Notebook](<concepts/notebook.concept.spec-report.md>) — Gather drafts."
-	const external = "- [Notebook](<../apps/demo/specs/concepts/notebook.concept.spec.md>) — Preserve published work."
-	if !strings.Contains(report, "## Concepts\n\n"+external+"\n"+local+"\n") {
+	// Each use is nested under its definition. A use without one stands alone, marked as such.
+	const concepts = `- [Notebook](<../apps/demo/specs/concepts/notebook.concept.spec.md>) — Preserve published work. *Uses:*
+  - [Published notebook](<concept-uses/published-notebook.concept-use.spec-report.md>)
+- [Notebook](<concepts/notebook.concept.spec-report.md>) — Gather drafts. *Uses:*
+  - [Draft notebook](<concept-uses/draft-notebook.concept-use.spec-report.md>) — Keeps drafts for version 2.1. Published notes move to the archive.
+  - [Revision notebook](<components/editor/concept-uses/revision-notebook.concept-use.spec-report.md>)
+- [Pending selection](<concept-uses/pending-selection.concept-use.spec-report.md>) — A use awaiting a design decision. *(no definition)*
+`
+	if !strings.Contains(report, "## Concepts\n\n"+concepts) || strings.Contains(report, "## Concept uses") {
 		t.Fatal(report)
 	}
 	for file, fragment := range map[string]string{
-		"concept-uses/published-notebook.concept-use.spec-report.md": "concept-uses",
-		"concept-uses/draft-notebook.concept-use.spec-report.md":     "concept-uses",
+		"concept-uses/published-notebook.concept-use.spec-report.md": "concepts",
+		"concept-uses/draft-notebook.concept-use.spec-report.md":     "concepts",
 		"concepts/notebook.concept.spec-report.md":                   "concepts",
 	} {
 		if !strings.Contains(read(file), "tool.system.spec-report.md#"+fragment+">)") {
@@ -1047,7 +1053,7 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	}
 	use := "- [My notebook](<concept-uses/my-notebook.concept-use.spec-report.md>) — The current author's notes."
 	sync := "- [Archive updates](<synchronizations/archive-updates.synchronization.spec-report.md>) — When — The note is saved. · Then — Archive the current version."
-	if section(after, "Concepts") != definition || section(after, "Concept uses") != use || section(after, "Synchronizations") != sync {
+	if section(after, "Concepts") != definition+" *Uses:*\n  "+use || strings.Contains(after, "## Concept uses") || section(after, "Synchronizations") != sync {
 		t.Fatal(after)
 	}
 	if !strings.Contains(read("concept-uses/my-notebook.concept-use.spec-report.md"), "\n## Uses\n\n[Notebook](<../concepts/notebook.concept.spec-report.md>)") {

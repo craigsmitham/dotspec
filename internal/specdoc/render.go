@@ -130,7 +130,7 @@ func (p *planner) render() *Plan {
 		for _, title := range slices.Sorted(maps.Keys(p.governing.indexes)) {
 			idx := p.governing.indexes[title]
 			p.renderIndex(p.governing, title, idx)
-			entry.text(entry.link(collectionTitle(title), idx.file))
+			entry.text(entry.link(title, idx.file))
 		}
 	}
 	entry.finish()
@@ -154,7 +154,7 @@ func (w *writer) setBreadcrumb(owner, member *subject) {
 		}
 		if idx := owner.indexes[title]; idx != nil {
 			dest := owner.sectionIndex(title)
-			steps = append(steps, w.link(collectionTitle(title), dest))
+			steps = append(steps, w.link(title, dest))
 		}
 	}
 	w.breadcrumb = strings.Join(steps, " › ")
@@ -203,7 +203,7 @@ func (p *planner) renderSubjectBody(w *writer, s *subject) {
 	for _, title := range slices.Sorted(maps.Keys(s.indexes)) {
 		idx := s.indexes[title]
 		p.renderIndex(s, title, idx)
-		line := "- " + w.link(collectionTitle(title), idx.file)
+		line := "- " + w.link(title, idx.file)
 		indexes = append(indexes, line)
 	}
 	w.text(strings.Join(indexes, "\n"))
@@ -227,7 +227,7 @@ func (p *planner) renderPassage(w *writer, s *subject, headings []*heading, offs
 					}
 					preview = indexPreview(preview)
 				}
-				w.text(entryLine(w, entry{h.title, p.targets[h.node], preview}))
+				w.text(entryLine(w, entry{title: h.title, target: p.targets[h.node], preview: preview}))
 			}
 			continue
 		}

@@ -24,7 +24,7 @@ A personal list of errands the owner can act on, replies they are waiting for an
 [Requirements](<#requirements>)
 
 **Design**\
-[Concepts](<#concepts>) · [Concept uses](<#concept-uses>) · [Architecture](<#architecture>)
+[Concepts](<#concepts>) · [Architecture](<#architecture>)
 
 </details>
 
@@ -99,11 +99,8 @@ The browser and service run on the same computer. The owner can close either bet
 
 ## Concepts
 
-- [Checklist](<concepts/checklist.concept.spec-report.md>) — Decide what I can do next, which replies I need to chase and which commitments I have already settled.
-
-## Concept uses
-
-- [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. …
+- [Checklist](<concepts/checklist.concept.spec-report.md>) — Decide what I can do next, which replies I need to chase and which commitments I have already settled. *Uses:*
+  - [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. …
 
 ## Architecture
 

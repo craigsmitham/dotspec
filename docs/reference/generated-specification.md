@@ -65,8 +65,7 @@ Expand **On this page** to jump to a section in reading order. On a system repor
 | Use cases | Linked interactions with their authored goals |
 | Quality Attributes | Every attribute declared for this system, with a short definition excerpt. Follow an attribute to see its parent and child attributes and the requirements it classifies. |
 | Requirements | Requirements in scope with excerpts from their statements |
-| Concepts | Local definitions and definitions referenced by scoped uses, with their authored purpose. |
-| Concept uses | Named uses in scope. Open a use to find its definition and configuration. |
+| Concepts | Local definitions and definitions referenced by scoped uses, with their authored purpose. Each named use appears beneath its definition, after *Uses:*. Open a use for its configuration and the specifications that apply to it. |
 | Synchronizations | Authored coordination between concept uses. |
 | Architecture | The system boundary and its immediate subsystems and components, the interfaces it offers or uses, and its declared interactions |
 | Open questions | Decisions that remain open in the system specification |
@@ -81,7 +80,7 @@ The system directory includes specifications declared in the system and its nest
 
 The **Architecture** diagram shows immediate parts inside the boundary and declared external interaction partners outside it. When both are present, separate structure and context diagrams show decomposition and interactions. Select a component to read its responsibilities or an interface to see which subject provides or requires it. On a component report, an authored **Architecture** passage leads the view.
 
-A component lists its capabilities under **Architecture**. Open a capability for its declared providers. Under **Concepts**, select a definition for its state and actions. **Concept uses** includes named uses awaiting a definition. A use can also link to a definition in another project.
+A component lists its capabilities under **Architecture**. Open a capability for its declared providers. Under **Concepts**, select a definition for its state and actions, or a use nested beneath it for how this component applies it. A use awaiting a definition appears in the list by its own title, marked *(no definition)*. A use can also link to a definition in another project.
 
 For example, the To-do system’s **Requirements** section includes **Acknowledge after commit**, declared on Task service. Following that title from either the system or the component’s requirements opens the same report. Open **Preserve tasks across restart** to read its full statement, conditions and criterion. Its **Refines** section leads to **Keep recorded work available**. [To-do system report](../../examples/todo/specification/personal-task-list.system.spec-report.md#requirements)
 

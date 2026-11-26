@@ -86,6 +86,9 @@ type planner struct {
 
 type entry struct {
 	title, target, preview string
+	note                   string  // italic aside after the preview
+	children               []entry // nested under this entry in a directory list
+	childLabel             string  // italic label introducing the children
 }
 
 var families = map[string]string{
@@ -470,12 +473,13 @@ func (p *planner) indexTargets() {
 	}
 
 	for _, s := range p.subjects {
-		if s != p.governing {
+		// Concept uses are listed under their concepts; see indexConceptDefinitions.
+		if s != p.governing && s.kind() != "ConceptUse" {
 			owner := s.navigationParent
 			if s.kind() == "SystemQualityAttribute" {
 				owner = s.system
 			}
-			owner.includeMember(s.collection(), entry{s.name.title, s.file, subjectPreview(s)})
+			owner.includeMember(s.collection(), entry{title: s.name.title, target: s.file, preview: subjectPreview(s)})
 		}
 		if s.isOverview() {
 			p.collectOverviewDetails(s)
@@ -486,14 +490,14 @@ func (p *planner) indexTargets() {
 		case "BusinessRule", "Requirement":
 			for _, target := range model.Strings(s.r["applies_to"]) {
 				if owner := p.pages[target]; owner != nil && (owner.kind() == "System" || owner.kind() == "Component") {
-					e := entry{s.name.title, s.file, subjectPreview(s)}
+					e := entry{title: s.name.title, target: s.file, preview: subjectPreview(s)}
 					owner.includeMember(s.collectionType(), e)
 				}
 			}
 		case "Capability":
 			for _, target := range model.Strings(s.r["provided_by"]) {
 				if provider := p.pages[target]; provider != nil {
-					provider.includeMember("Capabilities", entry{s.name.title, s.file, subjectPreview(s)})
+					provider.includeMember("Capabilities", entry{title: s.name.title, target: s.file, preview: subjectPreview(s)})
 				}
 			}
 		}

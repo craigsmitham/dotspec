@@ -3,7 +3,7 @@ generated_by: dotspec
 type: concept-spec-report
 source: "../../specs/concepts/checklist.concept.spec.md#checklist"
 ---
-[Personal task list](<../personal-task-list.system.spec-report.md>) › [Concept definitions](<../personal-task-list.system.spec-report.md#concepts>)
+[Personal task list](<../personal-task-list.system.spec-report.md>) › [Concepts](<../personal-task-list.system.spec-report.md#concepts>)
 
 # Checklist
 
@@ -119,7 +119,7 @@ Each row describes one accepted action. For an existing entry, the view where th
 
 ## Related specifications
 
-**Used by**
+**Used as**
 
 - [My checklist](<../concept-uses/my-checklist.concept-use.spec-report.md>)
 

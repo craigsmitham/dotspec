@@ -12,8 +12,7 @@ var (
 	stakeholders      = overviewSection{title: "Stakeholders", level: 2, sources: []string{"stakeholder_roles"}}
 	features          = overviewDirectory("Features")
 	capabilities      = overviewDirectory("Capabilities", "capabilities")
-	concepts          = overviewDirectory("Concepts")
-	conceptUses       = overviewDirectory("Concept uses", "concept_uses")
+	concepts          = overviewDirectory("Concepts", "concept_uses")
 	synchronizations  = overviewDirectory("Synchronizations", "synchronizations")
 	qualityAttributes = overviewSection{title: "Quality Attributes", collection: "Quality attributes", level: 2}
 )
@@ -67,7 +66,7 @@ func systemOutline(architecture []overviewSection) []overviewSection {
 	sections = append(sections, navGroup("Context", context...)...)
 	sections = append(sections, navGroup("Behavior", features, capabilities, overviewDirectory("Use cases"))...)
 	sections = append(sections, qualityAttributes, overviewDirectory("Requirements"))
-	sections = append(sections, navGroup("Design", concepts, conceptUses, synchronizations)...)
+	sections = append(sections, navGroup("Design", concepts, synchronizations)...)
 	return append(sections, navGroup("Design", architecture...)...)
 }
 
@@ -80,5 +79,5 @@ func componentOutline(architecture []overviewSection) []overviewSection {
 	sections = append(sections, architecture...)
 	provided := capabilities
 	provided.level = 3
-	return append(sections, provided, features, concepts, conceptUses, synchronizations, qualityAttributes)
+	return append(sections, provided, features, concepts, synchronizations, qualityAttributes)
 }

@@ -3,7 +3,7 @@ generated_by: dotspec
 type: concept-spec-report
 source: "../../specs/concepts/job-map.concept.spec.md#job-map"
 ---
-[dotspec](<../dotspec.system.spec-report.md>) › [Concept definitions](<../dotspec.system.spec-report.md#concepts>)
+[dotspec](<../dotspec.system.spec-report.md>) › [Concepts](<../dotspec.system.spec-report.md#concepts>)
 
 # Job Map
 

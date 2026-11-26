@@ -181,7 +181,9 @@ func (p *planner) glossaryBacklinks(s *subject, file string) {
 			}
 			from := entry{title: term.title(), target: file + "#" + term.anchors[i]}
 			from.preview = term.relationshipPreview(term.headings[i], pos)
-			if !slices.Contains(target.incoming, from) {
+			if !slices.ContainsFunc(target.incoming, func(e entry) bool {
+				return e.title == from.title && e.target == from.target && e.preview == from.preview
+			}) {
 				target.incoming = append(target.incoming, from)
 			}
 		}

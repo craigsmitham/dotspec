@@ -98,9 +98,9 @@ func addSourceContracts(p *planner) error {
 				return fmt.Errorf("%s: missing collection index %s", s.source.path, idx.file)
 			}
 			if s.browseCollection(title, idx) || title == "Quality models" {
-				requireRoute(page, relative(s.file, idx.file), collectionTitle(title))
+				requireRoute(page, relative(s.file, idx.file), title)
 			}
-			anchor := specfile.NameSlug(collectionTitle(title))
+			anchor := specfile.NameSlug(title)
 			if idx.overview == nil {
 				requireRoute(indexPage, relative(home, s.file), s.name.title)
 			} else {
@@ -204,8 +204,8 @@ func addSourceContracts(p *planner) error {
 		requireRoute(p.plan.Pages["SPEC.md"], relative("SPEC.md", p.governing.file), "Read the system specification")
 	} else {
 		for title, idx := range p.governing.indexes {
-			requireRoute(p.plan.Pages["SPEC.md"], relative("SPEC.md", idx.file), collectionTitle(title))
-			requireDirectory(p.plan.Pages[idx.file], idx.file, specfile.NameSlug(collectionTitle(title)), title, idx.members, true)
+			requireRoute(p.plan.Pages["SPEC.md"], relative("SPEC.md", idx.file), title)
+			requireDirectory(p.plan.Pages[idx.file], idx.file, specfile.NameSlug(title), title, idx.members, true)
 		}
 	}
 	return nil
@@ -214,6 +214,7 @@ func addSourceContracts(p *planner) error {
 // Each row contains one leading title link and its authored preview.
 type directoryRow struct {
 	title, destination, text string
+	depth                    int // nesting level within the directory list
 }
 
 type directoryContract struct {
@@ -231,15 +232,26 @@ func requireDirectory(page *Page, file, anchor, title string, members []entry, w
 	contract := directoryContract{wholeSection: wholeSection}
 	entries := slices.Clone(members)
 	sortEntries(entries)
-	for _, member := range entries {
-		dest := relative(file, member.target)
-		row := directoryRow{member.title, dest, member.title}
-		if preview := directoryPreview(title, member.preview); preview != "" {
-			row.text += " — " + preview
+	var add func([]entry, int)
+	add = func(entries []entry, depth int) {
+		for _, member := range entries {
+			dest := relative(file, member.target)
+			row := directoryRow{member.title, dest, member.title, depth}
+			if preview := directoryPreview(title, member.preview); preview != "" {
+				row.text += " — " + preview
+			}
+			if member.note != "" {
+				row.text += " (" + member.note + ")"
+			}
+			if len(member.children) > 0 && member.childLabel != "" {
+				row.text += " " + member.childLabel
+			}
+			contract.rows = append(contract.rows, row)
+			requireRoute(page, dest, inlineText(member.title))
+			add(member.children, depth+1)
 		}
-		contract.rows = append(contract.rows, row)
-		requireRoute(page, dest, inlineText(member.title))
 	}
+	add(entries, 0)
 	page.DirectoryMembers[anchor] = contract
 }
 

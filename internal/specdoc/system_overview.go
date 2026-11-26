@@ -197,6 +197,9 @@ func entryLine(w *writer, e entry) string {
 	if e.preview != "" {
 		line += " — " + inlineText(e.preview)
 	}
+	if e.note != "" {
+		line += " *(" + inlineText(e.note) + ")*"
+	}
 	return line
 }
 
@@ -224,16 +227,14 @@ func overviewNavigation(w *writer, s *subject) {
 		w.disclosure("On this page", sections)
 	}
 
-	titles := slices.SortedFunc(maps.Keys(s.indexes), func(a, b string) int {
-		return strings.Compare(collectionTitle(a), collectionTitle(b))
-	})
+	titles := slices.Sorted(maps.Keys(s.indexes))
 	var collections []string
 	for _, title := range titles {
 		idx := s.indexes[title]
 		if !s.browseCollection(title, idx) {
 			continue
 		}
-		line := w.link(collectionTitle(title), idx.file)
+		line := w.link(title, idx.file)
 		collections = append(collections, line)
 	}
 	w.disclosure("Browse specifications", collections)

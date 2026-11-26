@@ -31,9 +31,22 @@ func (s *subject) index(title string) *collectionIndex {
 }
 
 func (idx *collectionIndex) add(member entry) {
-	if !slices.ContainsFunc(idx.members, func(e entry) bool { return e.target == member.target }) {
-		idx.members = append(idx.members, member)
+	idx.members = addEntry(idx.members, member)
+}
+
+// One target appears once at each level. Repeated members merge their children
+// and keep the first label that introduces them.
+func addEntry(entries []entry, member entry) []entry {
+	i := slices.IndexFunc(entries, func(e entry) bool { return e.target == member.target })
+	if i < 0 {
+		member.children = slices.Clone(member.children)
+		return append(entries, member)
 	}
+	for _, child := range member.children {
+		entries[i].children = addEntry(entries[i].children, child)
+	}
+	entries[i].childLabel = cmp.Or(entries[i].childLabel, member.childLabel)
+	return entries
 }
 
 func (s *subject) collection() string {
@@ -46,6 +59,9 @@ func (s *subject) collection() string {
 func (s *subject) collectionType() string {
 	if s.name.qualityAttribute {
 		return "Quality attributes"
+	}
+	if s.kind() == "ConceptUse" {
+		return "Concepts"
 	}
 	return sentenceCase(strings.ReplaceAll(families[s.kind()], "-", " "))
 }
@@ -69,6 +85,8 @@ func collectionName(title string) string {
 		return "Interfaces"
 	case "Applicable requirements":
 		return "Requirements"
+	case "Concept uses":
+		return "Concepts"
 	}
 	return title
 }
@@ -131,7 +149,7 @@ func (p *planner) indexOpenQuestions() {
 				}
 				idx := system.index("Open questions")
 				owner := attr(p.nodes[nameNode(r)], "decoded_text")
-				idx.members = append(idx.members, entry{question, h.node, owner})
+				idx.members = append(idx.members, entry{title: question, target: h.node, preview: owner})
 			}
 		}
 	}
@@ -192,17 +210,13 @@ func sortEntries(entries []entry) {
 	slices.SortFunc(entries, func(a, b entry) int {
 		return cmp.Or(strings.Compare(strings.ToLower(a.title), strings.ToLower(b.title)), strings.Compare(a.title, b.title), strings.Compare(a.target, b.target))
 	})
-}
-
-func collectionTitle(title string) string {
-	if title == "Concepts" {
-		return "Concept definitions"
+	for _, e := range entries {
+		sortEntries(e.children)
 	}
-	return title
 }
 
 func (p *planner) renderIndex(owner *subject, title string, idx *collectionIndex) {
-	w := p.newPage(idx.file, Document{}, collectionTitle(title))
+	w := p.newPage(idx.file, Document{}, title)
 	w.setBreadcrumb(owner, nil)
 	if title == "Glossary" {
 		p.renderGlossary(w, owner)
@@ -223,9 +237,18 @@ func renderIndexMembers(w *writer, title string, members []entry) {
 	}
 	sortEntries(members)
 	w.out.WriteByte('\n')
-	for _, e := range members {
+	writeIndexEntries(w, title, members, "")
+}
+
+func writeIndexEntries(w *writer, title string, entries []entry, indent string) {
+	for _, e := range entries {
 		e.preview = directoryPreview(title, e.preview)
-		fmt.Fprintln(&w.out, entryLine(w, e))
+		line := indent + entryLine(w, e)
+		if len(e.children) > 0 && e.childLabel != "" {
+			line += " *" + inlineText(e.childLabel) + "*"
+		}
+		fmt.Fprintln(&w.out, line)
+		writeIndexEntries(w, title, e.children, indent+"  ")
 	}
 }
 

@@ -33,7 +33,7 @@ var relations = map[string]relation{
 	"relies_on":           {onDetail("Relies on"), onDetail("Relied on by")},
 	"involves":            {onDetail("Involves"), onDetail("Used in")},
 	"illustrates":         {onDetail("Illustrates"), onDetail("Illustrated by")},
-	"definition":          {onDetail("Uses"), onDetail("Used by")},
+	"definition":          {onDetail("Uses"), onDetail("Used as")},
 	"part_of":             {onDetail("Part of"), inDirectory("Parts")},
 }
 

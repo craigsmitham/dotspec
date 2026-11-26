@@ -172,7 +172,7 @@ func TestCheckScopedLinksAndIndexMembership(t *testing.T) {
 		t.Fatal(rules)
 	}
 	p = parseGenerated([]byte("---\ntype: system-spec-report\ngenerated_by: dotspec\nsource: source.md#tasks\n---\n# Tasks\n\n## Requirements\n\n- [Restart](restart.md)\n- [Unexpected](other.md)\n\n---\n\n[View source](source.md#tasks)\n"))
-	page = Page{Document: Document{Type: "system-spec-report", Documents: "source.md#tasks"}, Title: "Tasks", DirectoryMembers: map[string]directoryContract{"requirements": {rows: []directoryRow{{"Restart", "restart.md", "Restart"}}}}}
+	page = Page{Document: Document{Type: "system-spec-report", Documents: "source.md#tasks"}, Title: "Tasks", DirectoryMembers: map[string]directoryContract{"requirements": {rows: []directoryRow{{title: "Restart", destination: "restart.md", text: "Restart"}}}}}
 	checkPage("report.md", &page, p, report)
 	if !slices.Equal(rules, []string{"spec.membership"}) {
 		t.Fatal("misplaced index member", rules)
@@ -181,7 +181,7 @@ func TestCheckScopedLinksAndIndexMembership(t *testing.T) {
 
 func TestCheckDirectoryPresentation(t *testing.T) {
 	page := Page{Title: "Requirements", DirectoryMembers: map[string]directoryContract{
-		"requirements": {wholeSection: true, rows: []directoryRow{{"Accept", "accept.md", "Accept — Record the change."}, {"Review", "review.md", "Review"}}},
+		"requirements": {wholeSection: true, rows: []directoryRow{{title: "Accept", destination: "accept.md", text: "Accept — Record the change."}, {title: "Review", destination: "review.md", text: "Review"}}},
 	}}
 	const accept = "- [Accept](accept.md) — Record the change."
 	const review = "- [Review](review.md)"
