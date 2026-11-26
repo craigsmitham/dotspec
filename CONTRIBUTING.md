@@ -155,22 +155,31 @@ come from the type packages. Edit those sources, then run `mise run generate`.
 This repository keeps each product decision in the specification for its subject. When adding or changing a CLI example, identify the governing requirement, concept action, use case, or native interface contract. If the example introduces a product requirement, author its requirement file in the same change.
 
 - The scripts in `internal/integration/testdata/*.txtar` own their example inputs, commands and expected observations. They verify the public behavior identified alongside their links in Command Invocation.
-- `internal/cli/quality_contracts_test.go` checks the conditions and criteria in the quality requirements that cite it.
+- `internal/cli/quality_contracts_test.go` checks the conditions and criteria in the quality requirements that list it as a companion.
 - Implementation tests can exercise private parser decisions and regressions. Changing the implementation can change these checks while preserving the specified behavior.
 
 Review changes to example assertions against their governing source. Update that source when the intended behavior changes.
 
-The [CLI Interaction concept](internal/integration/specs/concepts/cli-interaction.concept.spec.md)
-links to the acceptance scripts. Quality requirements explain their verification links.
-Use ordinary file links from the relevant specs, with prose stating the role.
-An entire directory link does not provide file coverage.
+A specification lists its designated tests as companions in its frontmatter. Use
+`role: verifies` for a test that assesses the specification, or `role: illustrates`
+when an executable example is itself part of the specification. When the file holds several
+tests, name the one that applies in the fragment, such as `#TestInspectionQualityContracts`;
+a txtar script can be listed whole. Add a short note saying what it covers. Keep any account of what a
+test exercises under **Evidence**. For example, the
+[repeatable-inspection requirement](specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md)
+lists its quality-contract test. The
+[CLI Interaction concept](internal/integration/specs/concepts/cli-interaction.concept.spec.md)
+links to the acceptance scripts from the passages they demonstrate. An entire directory
+link does not provide file coverage.
 
 `mise run spec-sources-check` runs `scripts/check-spec-sources`, a repository-owned
-consumer of `dotspec sources --json`. It selects the two sets above, requires a
-successful complete inventory, and fails with the missing paths. The same task
-runs in `mise run check` locally and in CI. The script checks file coverage, not
-assertion adequacy or whether a link's prose correctly explains its role. Adapt
-its selection rules in other projects; dotspec has no built-in test-file policy.
+consumer of `dotspec sources --json`. The inventory includes companion targets as
+well as links in the body, so the script sees tests listed either way. It selects
+the two sets above, requires a successful complete inventory, and fails with the
+missing paths. The same task runs in `mise run check` locally and in CI. The script
+checks file coverage, not assertion adequacy or whether a declared role or a link's
+prose correctly describes the test. Adapt its selection rules in other projects;
+dotspec has no built-in test-file policy.
 
 Tests in `internal/integration/testdata/*.txtar` describe real subprocess workflows
 and their files together. `status CODE COMMAND ...` asserts the exact process exit

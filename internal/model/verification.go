@@ -90,11 +90,13 @@ func ParseVerificationEvidence(input []byte) (VerificationEvidence, error) {
 	return evidence, nil
 }
 
-// Assessments indexes the original observations by their stated subject. A
-// procedure's portable identity is its URI resolved relative to the project.
+// Assessments indexes the original observations by their stated subject: a
+// requirement's project-relative URI. Its procedures are the companions it
+// lists with role verifies; a procedure's portable identity is its URI
+// resolved relative to the project.
 func (s *Snapshot) Assessments(root string, evidence VerificationEvidence) (map[string][]*ProcedureAssessment, error) {
 	index := map[string]Record{}
-	for _, collection := range [][]Record{s.Sources, s.References} {
+	for _, collection := range [][]Record{s.Sources, s.References, s.Elements} {
 		for _, r := range collection {
 			index[String(r, "id")] = r
 		}
@@ -111,37 +113,26 @@ func (s *Snapshot) Assessments(root string, evidence VerificationEvidence) (map[
 			return nil, err
 		}
 		subject := (&url.URL{Path: filepath.ToSlash(rel)}).String()
-		add := func(locator string, field any) error {
-			assessment := &ProcedureAssessment{Subject: locator}
-			for _, id := range Strings(Object(field)["references"]) {
-				raw := String(index[id], "authored_target")
-				u, err := url.Parse(raw)
-				if err != nil {
-					return err
-				}
-				if !u.IsAbs() && u.Host == "" && !strings.HasPrefix(u.Path, "/") {
-					if u.Path == "" {
-						u.Path = filepath.ToSlash(rel)
-					} else {
-						u.Path = path.Join(path.Dir(filepath.ToSlash(rel)), u.Path)
-					}
-					u.RawPath = ""
-				}
-				assessment.Procedures = appendUnique(assessment.Procedures, u.String())
+		assessment := &ProcedureAssessment{Subject: subject}
+		for _, id := range Strings(r["companions"]) {
+			companion := index[id]
+			if String(companion, "role") != "verifies" {
+				continue
 			}
-			bySubject[locator] = assessment
-			id := String(r, "id")
-			byRequirement[id] = append(byRequirement[id], assessment)
-			return nil
-		}
-		if err := add(subject, r["verification_procedures"]); err != nil {
-			return nil, err
-		}
-		if criterion := Object(r["criterion"]); criterion != nil {
-			if err := add(subject+"#criterion", criterion["verification_procedures"]); err != nil {
+			raw := String(index[String(companion, "target")], "authored_target")
+			u, err := url.Parse(raw)
+			if err != nil {
 				return nil, err
 			}
+			if !u.IsAbs() && u.Host == "" && !strings.HasPrefix(u.Path, "/") {
+				u.Path = path.Join(path.Dir(filepath.ToSlash(rel)), u.Path)
+				u.RawPath = ""
+			}
+			assessment.Procedures = appendUnique(assessment.Procedures, u.String())
 		}
+		bySubject[subject] = assessment
+		id := String(r, "id")
+		byRequirement[id] = append(byRequirement[id], assessment)
 	}
 	roots := Strings(s.Scope["roots"])
 	wholeProject := len(roots) == 1 && roots[0] == filepath.ToSlash(root) && s.Scope["inspection_complete"] == true
@@ -151,7 +142,7 @@ func (s *Snapshot) Assessments(root string, evidence VerificationEvidence) (map[
 			if !wholeProject {
 				continue
 			}
-			return nil, fmt.Errorf("%s: results[%d]: unknown requirement or criterion %q", VerificationFile, i, result.Subject)
+			return nil, fmt.Errorf("%s: results[%d]: unknown requirement %q", VerificationFile, i, result.Subject)
 		}
 		target.Observations = append(target.Observations, result)
 	}

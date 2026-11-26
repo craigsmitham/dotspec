@@ -21,7 +21,7 @@ var headingFields = map[string]string{
 	"Interacts with": "interacts_with", "Specification system": "specification_system", "Enablers": "enablers",
 	"Groups": "groups", "Depends on": "depends_on", "Provided by": "provided_by", "Supports": "supports", "Involves": "involves",
 	"Derived from": "derived_from", "Relies on": "relies_on", "Refines": "refines", "Applies to": "applies_to",
-	"Adopts": "adopts", "Verification procedures": "verification_procedures", "Evidence": "evidence", "Authority": "authority_and_evidence", "Related specifications": "related_specifications", "Open questions": "open_questions",
+	"Adopts": "adopts", "Evidence": "evidence", "Authority": "authority_and_evidence", "Related specifications": "related_specifications", "Open questions": "open_questions",
 	"Job": "statement", "Performer": "performer", "Situation": "situation", "Motivation": "motivation", "Intended progress": "intended_progress",
 	"Goal": "goal", "System boundary": "boundary_description", "Primary actor": "primary_actor", "Goal level": "goal_level", "Trigger": "trigger",
 	"Supporting actors": "supporting_actors", "Stakeholder interests": "stakeholder_interests", "Main success scenario": "main_success_scenario",
@@ -38,6 +38,8 @@ var headingFields = map[string]string{
 	"Required interfaces": "required_interfaces", "Provided interfaces": "provided_interfaces", "Quality attributes": "quality_attributes",
 	"Glossary": "glossary", "Extensions": "extensions", "Concept uses": "concept_uses", "Synchronizations": "synchronizations",
 }
+
+const verificationProcedureAdvice = "List each verification procedure as a companion with role: verifies in the frontmatter, and keep any account of what it exercises under Evidence."
 
 var collectionKinds = map[string]string{
 	"Adopts": "AdoptedProvision", "Stakeholders": "SystemStakeholderRole",
@@ -108,6 +110,9 @@ func (o *Outline) checkFields(class string, sections []*Section, level int) erro
 			known = class == "QualityModel" || class == "System"
 		}
 		loc := o.Location(s.Start, s.Title)
+		if s.Title == "Verification procedures" {
+			return diagnostic.Error("structure.verification-procedure", verificationProcedureAdvice, loc)
+		}
 		if s.Title == "Obligations" || s.Title == "Requirements" {
 			return diagnostic.Error("structure.inline-requirement", "Declare each requirement in a *.requirement.spec.md file and link to it here. Keep scenario outcomes in the use case.", loc)
 		}
@@ -117,13 +122,10 @@ func (o *Outline) checkFields(class string, sections []*Section, level int) erro
 		if s.Level != level {
 			return diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-%d heading", s.Title, level), loc)
 		}
-		if s.Title == "Verification procedures" && len(o.sectionLinks(s)) == 0 {
-			return diagnostic.Error("structure.verification-procedure", "Link to at least one verification procedure.", loc)
-		}
 		if class == "Requirement" && s.Title == "Criterion" {
 			for _, sub := range s.Children {
-				if sub.Title == "Verification procedures" && (sub.Level != level+1 || len(o.sectionLinks(sub)) == 0) {
-					return diagnostic.Error("structure.verification-procedure", "Use a direct criterion subsection with a link to a procedure.", o.Location(sub.Start, sub.Title))
+				if sub.Title == "Verification procedures" {
+					return diagnostic.Error("structure.verification-procedure", verificationProcedureAdvice, o.Location(sub.Start, sub.Title))
 				}
 			}
 		}

@@ -24,6 +24,8 @@ type Outline struct {
 	AST          ast.Node
 	Sections     []*Section
 	Anchors      map[string]bool
+	// Companions lists the validated frontmatter companions of a typed specification.
+	Companions []Companion
 }
 
 // ParseOutline is the shared Markdown extraction path. The caller supplies a
@@ -39,6 +41,7 @@ func (md *Markdown) TypedOutline(kind string, metadata TypedMetadata) (*Outline,
 	}
 	out, err := md.Outline(kind)
 	if err == nil {
+		out.Companions, _ = md.companions(kind)
 		err = out.checkFields(DocumentRootClass(kind), out.Sections, 2)
 	}
 	return out, err

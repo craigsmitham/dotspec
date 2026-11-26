@@ -39,6 +39,13 @@ The [handbook reader exercise](<../../docs/maintainers/handbook.md#try-the-guida
 
 A structurally complete draft can still leave the reader guessing about the performer’s circumstances. Authors need guidance while they are writing.
 
+## Companions
+
+**Illustrated by**
+
+- [docs.txtar](<../../internal/integration/testdata/docs.txtar>) — Offline guidance
+- [help.txtar](<../../internal/integration/testdata/help.txtar>) — Help, redirected output, completions and manual
+
 ## Related specifications
 
 **Quality attribute**

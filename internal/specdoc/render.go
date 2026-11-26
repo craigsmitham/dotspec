@@ -169,6 +169,7 @@ func (p *planner) renderSubject(s *subject) {
 		p.renderOverview(w, s)
 	} else {
 		p.renderSubjectBody(w, s)
+		p.renderCompanions(w, s)
 		p.renderVerification(w, s)
 	}
 	if s.section("Related specifications") == nil {

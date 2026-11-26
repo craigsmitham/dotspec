@@ -13,13 +13,14 @@ cp ../concept.md specs/concepts/cli.concept.spec.md
 cp ../quality.md specs/requirements/preservation.requirement.spec.md
 cp ../native.tla native.tla
 mkdir more-tests
-cp ../native.tla more-tests/not-included.tla
+cp ../native.tla more-tests/not-included.cfg
 status 0 dotspec sources --path . --json
 stdout 'native.tla'
 stdout '"referenced_by": \['
 stdout '"line":'
 stdout '"complete": true'
 ! stdout 'not-included'
+! stdout 'companion.unlisted'
 ! stderr .
 cp stdout report.json
 status 0 dotspec sources --json
@@ -56,6 +57,9 @@ status 2 dotspec sources --json --format text
 -- concept.md --
 ---
 type: concept-spec
+companions:
+  - target: ../../native.tla#Example
+    role: formalizes
 ---
 # Native example
 ## Purpose

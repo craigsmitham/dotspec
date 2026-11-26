@@ -73,6 +73,13 @@ The [init commands](<../../docs/reference/cli.md>) and linked requirement define
 The [use-case command examples](<../../internal/integration/testdata/use-cases.txtar>)
 verify the illustrated template-selection and non-overwrite outcomes.
 
+## Companions
+
+**Illustrated by**
+
+- [workflow.txtar](<../../internal/integration/testdata/workflow.txtar>) — Create and inspect
+- [use-cases.txtar](<../../internal/integration/testdata/use-cases.txtar>) — Use-case presets and inspection
+
 ---
 
 [View source](<../../specs/use-cases/create-specification.use-case.spec.md#create-a-specification-draft>)

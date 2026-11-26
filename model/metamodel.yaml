@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/metamodel.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.34.0-draft
+version: 0.35.0-draft
 description: Source-backed specifications and their reader-facing reports. Domain fields retain the authored
   Markdown through ordered byte ranges. Explicit declarations, links and classification labels supply identity
   and relationships.
@@ -317,7 +317,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.34.0-draft
+        equals_string: 0.35.0-draft
       mapping_profile:
         range: string
         description: Versioned rules for mapping declared sections, metadata and references.
@@ -689,7 +689,7 @@ classes:
       declares one root and can contain addressable parts. The specifications in product scope and their
       relationships compose the product specification.
     annotations:
-      owned_memberships: Specification.adopts
+      owned_memberships: Specification.adopts or Specification.companions
     attributes:
       adopts:
         range: AdoptedProvision
@@ -698,6 +698,15 @@ classes:
         annotations:
           relationship_category: declaration-containment
           relationship_inverse: AdoptedProvision.owner
+      companions:
+        range: Companion
+        multivalued: true
+        list_elements_ordered: true
+        description: Artifacts that carry part of this specification's intent in another form, in authored
+          frontmatter order.
+        annotations:
+          relationship_category: declaration-containment
+          relationship_inverse: Companion.owner
       related_specifications:
         range: ContextualReferences
         inlined: true
@@ -746,6 +755,34 @@ classes:
         range: RichContent
         inlined: true
         required: true
+  Companion:
+    in_subset: [software-requirements]
+    is_a: DomainElement
+    description: An artifact declared in a specification's frontmatter that carries part of its intent in
+      another form, such as a formal model, an executable example, a test or an explanatory document. The role
+      states the relationship; neither a link nor a passing check confers authority, conformance or satisfaction.
+    slot_usage:
+      kind:
+        equals_string: Companion
+    attributes:
+      owner:
+        range: Specification
+        required: true
+        annotations:
+          relationship_category: declaration-containment
+          relationship_inverse: Specification.companions
+      target:
+        range: SourceReference
+        required: true
+        annotations:
+          relationship_category: provenance
+          relationship_basis: The frontmatter target occurrence of this companion entry.
+      role:
+        range: CompanionRole
+        required: true
+      note:
+        range: string
+        description: Optional single-line description written faithfully to the companion.
   SystemContextSpecification:
     in_subset:
     - business-requirements
@@ -1705,10 +1742,6 @@ classes:
       kind:
         equals_string: Requirement
     attributes:
-      verification_procedures:
-        range: ContextualReferences
-        inlined: true
-        description: Explicitly linked executable tests or manual protocols for assessing this subject.
       applies_to:
         range: DomainElement
         multivalued: true
@@ -1791,10 +1824,6 @@ classes:
       each bound once or reference its authoritative statement or source. Operating context belongs to the requirement's applicability. A criterion is not a measurement procedure
       or an observation, and quality classification does not supply a criterion.
     attributes:
-      verification_procedures:
-        range: ContextualReferences
-        inlined: true
-        description: Explicitly linked executable tests or manual protocols for assessing this subject.
       content:
         range: RichContent
         inlined: true
@@ -2414,6 +2443,21 @@ enums:
         description: Explicit id.
       external_locator:
         description: External locator.
+      frontmatter:
+        description: Locator authored as a YAML frontmatter value.
+  CompanionRole:
+    description: How a companion relates to the specification that declares it.
+    permissible_values:
+      formalizes:
+        description: States the specification more precisely and must preserve its meaning, such as a formal
+          model property or a schema definition. Normative.
+      illustrates:
+        description: Concrete cases that are part of the specification, such as executable examples. Normative.
+      verifies:
+        description: A procedure for assessing the specification, such as a test suite or manual protocol. A
+          source of evidence; its observations are recorded separately.
+      explains:
+        description: Background, rationale or design explanation. Informative.
   ResolutionStatus:
     description: Resolution results, not extraction/decomposition states.
     permissible_values:

@@ -23,7 +23,9 @@ Use `--project` to select a project or `--all` to export a workspace envelope. E
 
 A specification declares its subject through its frontmatter type and title. Systems, components, jobs, use cases, concepts, requirements, business rules, system quality attributes, features and capabilities each have their own specification type. A named item such as an interface, job step or desired outcome identifies its declaring owner. Each subject report type identifies the subject it documents.
 
-Model `0.34.0-draft` uses mapping profile `dotspec-markdown/28`. A System, Component or Feature can explain what it is and how its parts fit together under `## Overview`, recorded in its `overview` field. The earlier system narrative section that preceded Purpose is no longer recognized. Rename its heading to `## Overview`, move it after Purpose, and move any unresolved questions it holds to `## Open questions`. Then re-export and rebuild. The JSON result for `system show` uses schema version 3 and reports the section as `overview`.
+Model `0.35.0-draft` uses mapping profile `dotspec-markdown/29`. Any specification can list the artifacts that carry part of its intent, such as a formal model, an executable example, a test or an explanatory document, under the frontmatter key `companions`. Each entry becomes an owned `Companion` element. A requirement’s `verifies` companions are now its verification procedures. The `## Verification procedures` section and the **Criterion** subsection of that name are no longer recognized, and `Requirement.verification_procedures` and `RequirementCriterion.verification_procedures` are removed. To migrate, list each linked procedure as a companion with `role: verifies` and move any account of what it exercises under **Evidence**. Then delete the section. In `verification-results.json`, drop `#criterion` from each `subject` and give each `procedure` as the companion target resolved against the project root. Re-export saved snapshots and rebuild the reports. [Companion mapping](../../model/markdown-mapping.md#companions) · [Verification results](generated-specification.md#record-verification-results)
+
+A System, Component or Feature can explain what it is and how its parts fit together under `## Overview`, recorded in its `overview` field. The JSON result for `system show` uses schema version 3 and reports the section as `overview`.
 
 The System lists named `SystemStakeholderRole` records in `stakeholder_roles`. Under `## Stakeholders`, give each role a level-three heading. The JSON result for `system list` uses schema version 2 and exposes role names and descriptions.
 
@@ -33,7 +35,7 @@ A reusable quality model is a reference document. Export records its type in `sc
 
 From the project root, run `dotspec model product`. For multiple independent systems, supply a system’s source basename (without `.system.spec.md`), authored ID, or snapshot record ID. For example, run `dotspec model product personal-task-list --project todo` in the dotspec checkout. Each member identifies its source, effective system, membership basis, and owned element IDs. A selected system includes its declared descendant systems. A link to a requirement in another project retains its destination. Follow the reference catalog to reusable model definitions.
 
-`complete` concerns observed membership in the selected product. A narrowed scan or an unreadable or malformed source leaves it false. Inspect the reported scope and diagnostics before treating an empty set as an absence. An independent reference catalog can have zero specification members. The `verification` list identifies each linked procedure and the observations for that requirement or criterion. When an evidence file supplies a selection, `verification_selection` gives the requested revision and conditions.
+`complete` concerns observed membership in the selected product. A narrowed scan or an unreadable or malformed source leaves it false. Inspect the reported scope and diagnostics before treating an empty set as an absence. An independent reference catalog can have zero specification members. The `verification` list identifies each requirement’s `verifies` companions and the observations recorded for that requirement. When an evidence file supplies a selection, `verification_selection` gives the requested revision and conditions.
 
 ## Source text and locations
 
@@ -42,6 +44,10 @@ Look up the document by source ID. Its Markdown has LF line endings and no leadi
 ## References and semantic relationships
 
 Start with `references`. For each link, `authored_target` preserves the destination and `span` locates the occurrence. A typed occurrence adds its `role` and `context_owner`. Its `resolution` holds the status and, on success, the target ID. To find a requirement’s supporting links, select occurrences with that requirement as owner and `supports` as role. To navigate backwards, select resolved occurrences whose target is the requirement. Read ordered declaration membership directly from the owner. The [relationship reference](model/relationships.md) lists the allowed endpoint classes and meanings.
+
+### Companions
+
+Select elements of kind `Companion` to list the artifacts a specification declares. Each records its `owner`, `role` (`formalizes`, `illustrates`, `verifies` or `explains`), optional `note` and a `target` reference. Read the owning specification’s `companions` for authored order. The target is an ordinary `SourceReference` with form `frontmatter`, its `context_owner` set to the Companion and `context_field` set to `target`. It resolves like any other link. When the fragment names a definition in a supported format, such as a Quint `val`, an Alloy `assert` or a Python `def`, the resolution uses rule `native-definition/1` and identifies the target source. If that definition is absent, the resolution is unresolved. A resolved companion establishes where the artifact lives. Whether it preserves the specification’s meaning, and whether a run passed, need their own review and evidence. [Companion](model/index.md#companion) · [CompanionRole](model/index.md#companionrole)
 
 ### Quality attribute grouping
 

@@ -1098,6 +1098,30 @@
           "reference_ranges": [],
           "required": false
         },
+        "companions": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Companion.owner",
+            "relationship_label": "companions",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Companion",
+          "reference_ranges": [
+            "Companion"
+          ],
+          "required": false
+        },
         "derived_from": {
           "annotations": {
             "occurrence_role": "link",
@@ -1795,6 +1819,30 @@
           "reference_ranges": [],
           "required": false
         },
+        "companions": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Companion.owner",
+            "relationship_label": "companions",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Companion",
+          "reference_ranges": [
+            "Companion"
+          ],
+          "required": false
+        },
         "depends_on": {
           "annotations": {
             "occurrence_role": "link",
@@ -2399,6 +2447,230 @@
         "specification-documentation"
       ]
     },
+    "Companion": {
+      "abstract": false,
+      "ancestors": [
+        "Companion",
+        "DomainElement",
+        "Record"
+      ],
+      "annotations": {},
+      "description": "An artifact declared in a specification's frontmatter that carries part of its intent in another form, such as a formal model, an executable example, a test or an explanatory document. The role states the relationship; neither a link nor a passing check confers authority, conformance or satisfaction.",
+      "is_a": "DomainElement",
+      "mixins": [],
+      "rules": [],
+      "slots": {
+        "authored_id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "An explicitly authored ID when present; no manufactured global identifier.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "id": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+          "identifier": true,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "pattern": "[\\s\\S]+",
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "kind": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Concrete record type discriminator.",
+          "equals_string": "Companion",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": true
+        },
+        "name": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Authored title or item name, if present.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "note": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Optional single-line description written faithfully to the companion.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "string",
+          "reference_ranges": [],
+          "required": false
+        },
+        "open_questions": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Explicitly distinguished questions, in authored order.",
+          "identifier": false,
+          "inline_ranges": [
+            "OpenQuestion"
+          ],
+          "inlined": true,
+          "inlined_as_list": true,
+          "multivalued": true,
+          "ordered": true,
+          "range": "OpenQuestion",
+          "reference_ranges": [],
+          "required": false
+        },
+        "owner": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Specification.companions",
+            "relationship_label": "owner",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "Specification",
+          "reference_ranges": [
+            "Specification"
+          ],
+          "required": true
+        },
+        "role": {
+          "annotations": {},
+          "any_of": [],
+          "description": "",
+          "enum_values": [
+            "formalizes",
+            "illustrates",
+            "verifies",
+            "explains"
+          ],
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "CompanionRole",
+          "reference_ranges": [],
+          "required": true
+        },
+        "source_document": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source document",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceDocument",
+          "reference_ranges": [
+            "SourceDocument"
+          ],
+          "required": true
+        },
+        "source_fragment": {
+          "annotations": {
+            "relationship_basis": "Recorded source or inspection evidence.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "source fragment",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceFragment",
+          "reference_ranges": [
+            "SourceFragment"
+          ],
+          "required": false
+        },
+        "target": {
+          "annotations": {
+            "relationship_basis": "The frontmatter target occurrence of this companion entry.",
+            "relationship_category": "provenance",
+            "relationship_cycles": "not-applicable",
+            "relationship_inverse": "none",
+            "relationship_label": "target",
+            "relationship_ordering": "single target",
+            "relationship_scope": "Records in this snapshot; source locations retain their original document scope."
+          },
+          "any_of": [],
+          "description": "",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "SourceReference",
+          "reference_ranges": [
+            "SourceReference"
+          ],
+          "required": true
+        }
+      },
+      "subsets": [
+        "software-requirements"
+      ]
+    },
     "Component": {
       "abstract": false,
       "ancestors": [
@@ -2502,6 +2774,30 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
+          "required": false
+        },
+        "companions": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Companion.owner",
+            "relationship_label": "companions",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Companion",
+          "reference_ranges": [
+            "Companion"
+          ],
           "required": false
         },
         "concept_uses": {
@@ -3381,6 +3677,30 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
+          "required": false
+        },
+        "companions": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Companion.owner",
+            "relationship_label": "companions",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Companion",
+          "reference_ranges": [
+            "Companion"
+          ],
           "required": false
         },
         "derived_from": {
@@ -6301,6 +6621,30 @@
           "reference_ranges": [],
           "required": false
         },
+        "companions": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Companion.owner",
+            "relationship_label": "companions",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Companion",
+          "reference_ranges": [
+            "Companion"
+          ],
+          "required": false
+        },
         "derived_from": {
           "annotations": {
             "occurrence_role": "link",
@@ -8113,6 +8457,30 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
+          "required": false
+        },
+        "companions": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Companion.owner",
+            "relationship_label": "companions",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Companion",
+          "reference_ranges": [
+            "Companion"
+          ],
           "required": false
         },
         "derived_from": {
@@ -10364,6 +10732,30 @@
           "reference_ranges": [],
           "required": false
         },
+        "companions": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Companion.owner",
+            "relationship_label": "companions",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Companion",
+          "reference_ranges": [
+            "Companion"
+          ],
+          "required": false
+        },
         "criterion": {
           "annotations": {},
           "any_of": [],
@@ -10887,22 +11279,6 @@
           "range": "RichContent",
           "reference_ranges": [],
           "required": false
-        },
-        "verification_procedures": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Explicitly linked executable tests or manual protocols for assessing this subject.",
-          "identifier": false,
-          "inline_ranges": [
-            "ContextualReferences"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ContextualReferences",
-          "reference_ranges": [],
-          "required": false
         }
       },
       "subsets": [
@@ -10964,22 +11340,6 @@
           "multivalued": false,
           "ordered": false,
           "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
-        "verification_procedures": {
-          "annotations": {},
-          "any_of": [],
-          "description": "Explicitly linked executable tests or manual protocols for assessing this subject.",
-          "identifier": false,
-          "inline_ranges": [
-            "ContextualReferences"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "ContextualReferences",
           "reference_ranges": [],
           "required": false
         }
@@ -12023,7 +12383,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.34.0-draft",
+          "equals_string": "0.35.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -12645,7 +13005,8 @@
             "footnote",
             "fragment",
             "explicit_id",
-            "external_locator"
+            "external_locator",
+            "frontmatter"
           ],
           "identifier": false,
           "inline_ranges": [],
@@ -12818,7 +13179,7 @@
         "Record"
       ],
       "annotations": {
-        "owned_memberships": "Specification.adopts"
+        "owned_memberships": "Specification.adopts or Specification.companions"
       },
       "description": "An independently maintained aggregate of product intent. Each authored specification file declares one root and can contain addressable parts. The specifications in product scope and their relationships compose the product specification.",
       "is_a": "AuthoredDocumentRoot",
@@ -12879,6 +13240,30 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
+          "required": false
+        },
+        "companions": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Companion.owner",
+            "relationship_label": "companions",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Companion",
+          "reference_ranges": [
+            "Companion"
+          ],
           "required": false
         },
         "derived_from": {
@@ -13841,6 +14226,30 @@
           "reference_ranges": [],
           "required": false
         },
+        "companions": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Companion.owner",
+            "relationship_label": "companions",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Companion",
+          "reference_ranges": [
+            "Companion"
+          ],
+          "required": false
+        },
         "concept_uses": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -14698,6 +15107,30 @@
           "reference_ranges": [],
           "required": false
         },
+        "companions": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Companion.owner",
+            "relationship_label": "companions",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Companion",
+          "reference_ranges": [
+            "Companion"
+          ],
+          "required": false
+        },
         "derived_from": {
           "annotations": {
             "occurrence_role": "link",
@@ -15180,6 +15613,30 @@
           "ordered": false,
           "range": "RichContent",
           "reference_ranges": [],
+          "required": false
+        },
+        "companions": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Companion.owner",
+            "relationship_label": "companions",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Companion",
+          "reference_ranges": [
+            "Companion"
+          ],
           "required": false
         },
         "definition": {
@@ -16289,6 +16746,30 @@
           "reference_ranges": [],
           "required": false
         },
+        "companions": {
+          "annotations": {
+            "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
+            "relationship_category": "declaration-containment",
+            "relationship_cycles": "forbidden",
+            "relationship_inverse": "Companion.owner",
+            "relationship_label": "companions",
+            "relationship_ordering": "authored presentation order; no execution order implied",
+            "relationship_scope": "Exactly one declaring owner in the same source document."
+          },
+          "any_of": [],
+          "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "multivalued": true,
+          "ordered": true,
+          "range": "Companion",
+          "reference_ranges": [
+            "Companion"
+          ],
+          "required": false
+        },
         "derived_from": {
           "annotations": {
             "occurrence_role": "link",
@@ -17330,6 +17811,12 @@
     }
   },
   "enums": {
+    "CompanionRole": [
+      "formalizes",
+      "illustrates",
+      "verifies",
+      "explains"
+    ],
     "ContextSourceRole": [
       "project_configuration",
       "glossary_source",
@@ -17366,7 +17853,8 @@
       "footnote",
       "fragment",
       "explicit_id",
-      "external_locator"
+      "external_locator",
+      "frontmatter"
     ],
     "ReferenceTraversalMode": [
       "none",
@@ -17415,7 +17903,7 @@
       "requirement-spec"
     ]
   },
-  "model_version": "0.34.0-draft",
+  "model_version": "0.35.0-draft",
   "projections": [
     "BusinessRule.applies_to",
     "BusinessRule.refines",
@@ -17445,6 +17933,7 @@
     "Scenario.steps",
     "ScenarioStep.illustrates",
     "Specification.adopts",
+    "Specification.companions",
     "System.assumptions",
     "System.concept_uses",
     "System.enclosing_system",
@@ -17537,7 +18026,7 @@
   },
   "representation_version": "0.4.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "43c2900c9430cfffbbd0f13e39b7f0d754f70602d3458e93443a80fbc6bfe224",
+  "source_sha256": "0009dcf5514f24e5110f20e0b16d97d2c441f2cda8d695167c6874281ff2719a",
   "subsets": {
     "business-requirements": {
       "classification": "core",

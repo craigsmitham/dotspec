@@ -65,6 +65,16 @@ section map links to `specification/open-questions.md`. Each entry shows the
 authored question, names its subject and links to the passage where it appears.
 Resolving the last question removes the index and its navigation link on rebuild.
 
+When a specification lists companions in its frontmatter, its subject report
+presents them under Companions, grouped by Formalized by, Illustrated by,
+Verified by and Explained by. Each entry names the artifact, any definition it
+addresses and the authored note, and links to the artifact or to the canonical
+report of a specification target. A named definition in a supported native
+format links to its declaring line. System and component reports present their
+own companions as a body section. The outermost system's section map links to
+`specification/companions.md`, which lists every companion in the system by
+role with a link to its declaring subject.
+
 Each subject report identifies its authored file and heading once in the YAML
 `source` field using a URI relative to the report. This field supplies the
 source attribution for the page and its passages.

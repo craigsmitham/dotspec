@@ -1,6 +1,10 @@
 ---
 type: requirement-spec
 quality_attributes: [durability]
+companions:
+  - target: ../../tests/acceptance.py#verify
+    role: verifies
+    note: Restart acceptance test; kills the service and compares each view's identities after it starts again
 ---
 # Preserve tasks across restart
 
@@ -39,10 +43,6 @@ Use the acknowledged changes to establish which entries should survive and in wh
 ### Target
 
 Zero discrepancies across Open, Waiting and Completed.
-
-### Verification procedures
-
-[Restart acceptance test](../../tests/acceptance.py).
 
 ## Evidence
 

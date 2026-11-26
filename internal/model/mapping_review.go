@@ -97,7 +97,7 @@ func (m *domainMapper) adoptions(owner Record, section *Section) {
 	}
 }
 
-// Only links identify procedures and provisions. Images and link definitions
+// Only links identify provisions. Images and link definitions
 // can occur in the same Markdown passage without designating a target.
 func (m *domainMapper) linkOccurrences(nodes []string) []string {
 	inside := m.descendants(nodes)
@@ -108,17 +108,4 @@ func (m *domainMapper) linkOccurrences(nodes []string) []string {
 		}
 	}
 	return ids
-}
-
-func (m *domainMapper) procedures(owner, value Record, path string, section *Section) {
-	ids := m.linkOccurrences(section.Content)
-	procedures := Object(value["verification_procedures"])
-	if procedures == nil {
-		procedures = Record{}
-		value["verification_procedures"] = procedures
-	}
-	m.setRich(procedures, "content", section.Content)
-	procedures["references"] = append(Strings(procedures["references"]), ids...)
-	m.markSection(owner, path+".content", section)
-	m.bindReferenceOccurrences(owner, path+".references", ids)
 }

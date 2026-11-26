@@ -85,6 +85,12 @@ specifies the system. The
 [contributor guide](<../../CONTRIBUTING.md#specification-tests-and-implementation-tests>) explains how
 this project assigns roles to those sources.
 
+## Companions
+
+**Illustrated by**
+
+- [sources.txtar](<../../internal/integration/testdata/sources.txtar>) — Source discovery through ordinary references and companions
+
 ---
 
 [View source](<../../specs/use-cases/discover-specification-sources.use-case.spec.md#discover-specification-sources>)

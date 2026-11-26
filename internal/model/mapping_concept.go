@@ -50,15 +50,8 @@ func (m *domainMapper) requirement(r Record, s *Section) bool {
 		m.wrapper(r, "applicability", s, map[string]string{"Conditions": "conditions", "Workload": "workload", "Population": "population", "Exclusions": "exclusions"})
 	case "Statement":
 		m.section(r, "statement", s)
-	case "Verification procedures":
-		m.procedures(r, r, "verification_procedures", s)
 	case "Criterion":
 		m.wrapper(r, "criterion", s, map[string]string{"Measure": "measure", "Target": "target"})
-		for _, sub := range s.Children {
-			if sub.Title == "Verification procedures" {
-				m.procedures(r, Object(r["criterion"]), "criterion.verification_procedures", sub)
-			}
-		}
 		m.openQuestions(r, s.Children)
 	default:
 		return false

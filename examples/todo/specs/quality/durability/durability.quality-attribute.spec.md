@@ -1,5 +1,9 @@
 ---
 type: quality-attribute-spec
+companions:
+  - target: https://www.sqlite.org/atomiccommit.html
+    role: explains
+    note: How SQLite keeps a committed transaction across a crash or power loss
 ---
 
 # Durability

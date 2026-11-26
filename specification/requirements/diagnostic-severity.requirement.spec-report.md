@@ -43,6 +43,18 @@ supported severity values and report structure.
 - [Accessibility](<../quality/usability/accessibility/accessibility.quality-attribute.spec-report.md>)
 - [Diagnosability](<../quality/usability/diagnosability/diagnosability.quality-attribute.spec-report.md>)
 
+## Companions
+
+**Verified by**
+
+- [quality_contracts_test.go › TestDiagnosticSeverityQualityContract](<../../internal/cli/quality_contracts_test.go#L104>) — CLI quality-contract test for severity without styling
+
+## Verification
+
+Procedure linked.
+
+No matching result recorded.
+
 ---
 
 [View source](<../../specs/quality/usability/diagnosability/diagnostic-severity.requirement.spec.md#diagnostic-severity-is-available-without-styling>)

@@ -1,6 +1,10 @@
 ---
 type: use-case-spec
 id: discover-specification-sources
+companions:
+  - target: ../../internal/integration/testdata/sources.txtar
+    role: illustrates
+    note: Source discovery through ordinary references and companions
 ---
 
 # Discover specification sources

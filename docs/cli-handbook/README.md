@@ -91,3 +91,10 @@ Define a quality for one system and connect it to requirements with assessable c
 
 - [Define a quality attribute for a system](guides/define-a-system-quality-attribute.md) (How-to)
 - [What does a quality mean for one system?](explanations/system-quality-attributes.md) (Explanation)
+
+### Companions
+
+List the formal models, examples, tests and notes that carry part of a specification's intent, and declare the authority of each. Run `dotspec docs companion`.
+
+- [List a companion](guides/list-a-companion.md) (How-to)
+- [What does a companion add to a specification?](explanations/companions.md) (Explanation)

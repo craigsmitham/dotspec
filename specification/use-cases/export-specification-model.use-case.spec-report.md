@@ -172,6 +172,12 @@ coverage or successful execution of every branch.
 provides the existing inspection context. The source, document-content and domain
 layers are explained in [Specification model](<../../docs/reference/specification-model.md>).
 
+## Companions
+
+**Illustrated by**
+
+- [model.txtar](<../../internal/integration/testdata/model.txtar>) — Export and offline validation
+
 ---
 
 [View source](<../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-model-for-review-or-integration>)

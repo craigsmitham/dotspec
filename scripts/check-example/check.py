@@ -103,9 +103,11 @@ def check_project(cli, project, tmp):
     assert product["complete"] and any(m["id"] == requirement["id"] for m in product["members"])
     assert all(m["kind"] != "QualityModel" for m in product["members"])
     assert len(product["adoptions"]) == 1 and "rfc9110" in product["adoptions"][0]["provision"]
-    procedures = requirement["criterion"].get("verification_procedures", {}).get("references", [])
-    assert any(ref["id"] in procedures and ref["authored_target"] == "../../tests/acceptance.py"
-               for ref in model["references"]), "restart criterion must identify the acceptance procedure"
+    procedures = {e["target"] for e in elements if e["kind"] == "Companion"
+                  and e["owner"] == requirement["id"] and e["role"] == "verifies"}
+    assert any(ref["id"] in procedures and ref["authored_target"] == "../../tests/acceptance.py#verify"
+               and ref["resolution"]["status"] == "resolved"
+               for ref in model["references"]), "restart requirement must list the acceptance procedure"
     use = one("UseCase", slug="resume-list")
     job = one("Job", slug="personal-commitments")
     availability = one("Requirement", slug="availability", authored_id="keep-recorded-work-available")
@@ -200,8 +202,12 @@ def spec_journey(cli, tmp):
     assert "One person records commitments" in included and "Sending reminders" in excluded
     navigation = overview.split("\n## Purpose\n", 1)[0]
     panels = re.findall(r"<details>\n<summary>([^<]+)</summary>\n\n(.+?)\n\n</details>", navigation, re.S)
-    assert [label for label, _ in panels] == ["On this page"]
+    assert [label for label, _ in panels] == ["On this page", "Browse specifications"]
     local = panels[0][1]
+    # Companions have no section on the system report; their index is a browse destination.
+    assert panels[1][1] == "- [Companions](<companions.md>)"
+    companions = (root.parent / "companions.md").read_text(encoding="utf-8")
+    assert "## Verified by" in companions and "acceptance.py › verify](<../tests/acceptance.py#L" in companions
     blocks = []
     for group, titles in navigation_groups:
         links = " · ".join(f"[{title}](<#{title.lower().replace(' ', '-')}>)" for title in titles)
@@ -579,8 +585,8 @@ def acceptance(project):
 def regressions(cli, tmp):
     for name, path, old, new, reason in [
         ("relationship", REQUIREMENT, "## Refines", "## Related specifications", "missing restart refinement"),
-        ("test-link", REQUIREMENT, "### Verification procedures",
-         "### Test notes", "restart criterion must identify the acceptance procedure"),
+        ("test-link", REQUIREMENT, "    role: verifies",
+         "    role: explains", "restart requirement must list the acceptance procedure"),
         ("persistence", Path("app/main.go"), 'sql.Open("sqlite3", file)',
          'sql.Open("sqlite3", ":memory:")', "restart lost or changed open tasks"),
     ]:

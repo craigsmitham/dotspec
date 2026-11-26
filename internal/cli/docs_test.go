@@ -6,13 +6,16 @@ import (
 	"github.com/craigsmitham/dotspec/internal/guide"
 )
 
+// Companions are authored in the frontmatter of every specification type.
+var crossCuttingTopics = map[string]bool{"companion": true}
+
 func TestHandbookTopicsMatchAuthoredDocumentTypes(t *testing.T) {
 	missing := map[string]bool{}
 	for _, typ := range supportedTypes() {
 		missing[typ.Layout.Kind] = true
 	}
 	for _, topic := range guide.Topics() {
-		if !missing[topic.Name] {
+		if !missing[topic.Name] && !crossCuttingTopics[topic.Name] {
 			t.Errorf("handbook topic %q has no authored document type", topic.Name)
 		}
 		delete(missing, topic.Name)

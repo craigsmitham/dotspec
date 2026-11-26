@@ -13,6 +13,12 @@ Preservation of the owner’s acknowledged decisions between local sessions, inc
 
 [Source definition](<../../quality-models/personal-data-quality.quality-model-report.md#durability>).
 
+## Companions
+
+**Explained by**
+
+- [https://www.sqlite.org/atomiccommit.html](<https://www.sqlite.org/atomiccommit.html>) — How SQLite keeps a committed transaction across a crash or power loss
+
 ## Related specifications
 
 **Classifies**

@@ -46,6 +46,18 @@ defines report fields and their ordering rules.
 
 - [Repeatability](<../quality/reliability/repeatability/repeatability.quality-attribute.spec-report.md>)
 
+## Companions
+
+**Verified by**
+
+- [quality_contracts_test.go › TestInspectionQualityContracts](<../../internal/cli/quality_contracts_test.go#L38>) — CLI quality-contract tests for inspection
+
+## Verification
+
+Procedure linked.
+
+No matching result recorded.
+
 ---
 
 [View source](<../../specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md#repeated-inspections-produce-equivalent-reports>)

@@ -151,6 +151,17 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 			}
 			targetKind := MatchType(target, types)
 			markdown := strings.EqualFold(filepath.Ext(target), ".md") || strings.EqualFold(filepath.Ext(target), ".markdown")
+			// A companion fragment names a definition in a format dotspec can index.
+			// Other native formats keep their own fragment semantics.
+			if location.Element == specfile.CompanionsField && u.Fragment != "" && targetKind == nil && !markdown && specfile.NativeDefinitionFormat(target) {
+				data, err := os.ReadFile(target)
+				if err != nil {
+					r.record(err, "scan.reference", target)
+				} else if specfile.NativeDefinitionLine(target, data, u.Fragment) == 0 {
+					r.Diagnostics = append(r.Diagnostics, *diagnostic.Error("reference.unresolved", fmt.Sprintf("companion %q names no definition %q in %s", destination, u.Fragment, filepath.Base(target)), location, diagnostic.Location{Path: target}))
+				}
+				continue
+			}
 			// Native non-Markdown formats own their fragment semantics.
 			if targetKind == nil && (!markdown || u.Fragment == "") {
 				continue

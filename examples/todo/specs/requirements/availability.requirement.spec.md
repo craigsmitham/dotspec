@@ -1,6 +1,10 @@
 ---
 type: requirement-spec
 id: keep-recorded-work-available
+companions:
+  - target: ../../README.md#run-the-app
+    role: verifies
+    note: Exercise the forms across list views
 ---
 # Keep recorded work available
 
@@ -19,10 +23,6 @@ When the person returns to the same local database, each saved entry must appear
 ## Rationale
 
 The owner can return after closing a tab while the service is still running. A waiting errand that also appears in Open would give them two different answers about whose action comes next.
-
-## Verification procedures
-
-[Exercise the forms across list views](../../README.md#run-the-app).
 
 ## Evidence
 

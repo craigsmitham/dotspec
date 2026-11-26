@@ -19,7 +19,8 @@ type Document struct {
 // Metadata is the common type declaration. Type packages embed it with
 // yaml:",inline" to define their own strictly decoded frontmatter schema.
 type Metadata struct {
-	Type string `yaml:"type"`
+	Type       string      `yaml:"type"`
+	Companions []Companion `yaml:"companions"`
 }
 
 const QualityModelSuffix = ".quality-model.md"

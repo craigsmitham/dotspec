@@ -1,6 +1,13 @@
 ---
 type: use-case-spec
 id: check-specifications
+companions:
+  - target: ../../internal/integration/testdata/discovery.txtar
+    role: illustrates
+    note: Repository discovery
+  - target: ../../internal/integration/testdata/diagnostics.txtar
+    role: illustrates
+    note: Diagnostics and exit statuses
 ---
 
 # Check specifications before committing

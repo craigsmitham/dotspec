@@ -20,15 +20,10 @@ func (p *planner) readEvidence() error {
 
 func (p *planner) renderVerification(w *writer, s *subject) {
 	for _, a := range p.assessments[id(s.r)] {
-		criterion := strings.HasSuffix(a.Subject, "#criterion")
-		if len(a.Procedures) == 0 && len(a.Observations) == 0 && (!criterion || p.evidence.Selection.ProductRevision == "") {
+		if len(a.Procedures) == 0 && len(a.Observations) == 0 && (s.r["criterion"] == nil || p.evidence.Selection.ProductRevision == "") {
 			continue
 		}
-		title := "Requirement verification"
-		if criterion {
-			title = "Criterion verification"
-		}
-		w.heading(title)
+		w.heading("Verification")
 		if len(a.Procedures) > 0 {
 			w.text("Procedure linked.")
 		} else {

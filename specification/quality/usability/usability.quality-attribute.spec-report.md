@@ -16,6 +16,7 @@ How effectively contributors can author, inspect, and maintain specifications.
 **Classifies**
 
 - [Find authoring guidance in the installed CLI](<../../requirements/find-authoring-guidance-in-the-installed-cli.requirement.spec-report.md>)
+- [List the companions that carry a specification's intent](<../../requirements/list-the-companions-that-carry-a-specification-s-intent.requirement.spec-report.md>)
 - [Read and verify the generated requirements specification](<../../requirements/read-and-verify-the-generated-requirements-specification.requirement.spec-report.md>)
 
 **Subattributes**

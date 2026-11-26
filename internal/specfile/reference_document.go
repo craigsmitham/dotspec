@@ -26,6 +26,9 @@ type Reference struct {
 
 func (o *Outline) References() *ReferenceDocument {
 	refs := &ReferenceDocument{Anchors: o.Anchors, Links: []Reference{}}
+	for _, c := range o.Companions {
+		refs.Links = append(refs.Links, Reference{c.Target, c.Location})
+	}
 	outlineLinks(o, o.AST, refs)
 	return refs
 }

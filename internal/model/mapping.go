@@ -133,6 +133,9 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.markField(r, "preamble", doc.Preamble)
 	}
 	m.metadata(r)
+	if designKind(String(r, "kind"), "Specification") {
+		m.companions(r)
+	}
 	if glossarySources != nil {
 		r["glossary_source_paths"] = glossarySources
 	}
@@ -581,18 +584,58 @@ func (m *domainMapper) metadataNode(key, value string) string {
 		if root.Kind == yaml.AliasNode {
 			n = root
 		}
-		e := contentExtractor{p: m.doc, buffer: m.doc.Data}
-		start := e.yamlPosition(n, e.lineEnd(0))
-		end := e.yamlEnd(n, start, len(m.doc.Data)-len(m.doc.Syntax.Body), target.Style&yaml.FlowStyle != 0)
-		id := fmt.Sprintf("%s:metadata:%d", String(m.doc.Source, "id"), start)
-		if m.doc.NodeByID[id] == nil {
-			node := Record{"id": id, "span": e.sourceSpan(start, end), "node_kind": "metadata", "decoded_text": value}
-			m.doc.NodeByID[id] = node
-			m.doc.Nodes = append(m.doc.Nodes, node)
-		}
-		return id
+		return m.yamlContent(n, target.Style&yaml.FlowStyle != 0, value)
 	}
 	return ""
+}
+
+// yamlContent records a frontmatter value as a content node spanning its source.
+func (m *domainMapper) yamlContent(n *yaml.Node, flow bool, value string) string {
+	e := contentExtractor{p: m.doc, buffer: m.doc.Data}
+	start := e.yamlPosition(n, e.lineEnd(0))
+	end := e.yamlEnd(n, start, len(m.doc.Data)-len(m.doc.Syntax.Body), flow)
+	id := fmt.Sprintf("%s:metadata:%d", String(m.doc.Source, "id"), start)
+	if m.doc.NodeByID[id] == nil {
+		node := Record{"id": id, "span": e.sourceSpan(start, end), "node_kind": "metadata", "decoded_text": value}
+		m.doc.NodeByID[id] = node
+		m.doc.Nodes = append(m.doc.Nodes, node)
+	}
+	return id
+}
+
+// companions maps each validated frontmatter entry to an owned Companion whose
+// target is an ordinary source reference, resolved like any authored link.
+func (m *domainMapper) companions(r Record) {
+	list := m.doc.Syntax.Value(specfile.CompanionsField)
+	if list == nil || list.Kind != yaml.SequenceNode {
+		return
+	}
+	r["companions"] = []string{}
+	for _, item := range list.Content {
+		if item.Kind != yaml.MappingNode {
+			continue
+		}
+		flow := item.Style&yaml.FlowStyle != 0 || list.Style&yaml.FlowStyle != 0
+		values := map[string]*yaml.Node{}
+		for i := 0; i+1 < len(item.Content); i += 2 {
+			values[item.Content[i].Value] = item.Content[i+1]
+		}
+		target, role := values["target"], values["role"]
+		if target == nil || role == nil {
+			continue
+		}
+		companion := m.record("Companion", String(r, "id"))
+		companion["role"] = role.Value
+		if note := values["note"]; note != nil && note.Value != "" {
+			companion["note"] = note.Value
+		}
+		node := m.yamlContent(target, flow, target.Value)
+		ref := Record{"id": fmt.Sprintf("reference:%s:companion:%d", String(m.doc.Source, "id"), len(m.doc.References)), "kind": "SourceReference", "source_document": m.doc.Source["id"], "content_node": node, "span": m.doc.NodeByID[node]["span"], "form": "frontmatter", "authored_target": target.Value}
+		m.doc.References = append(m.doc.References, ref)
+		companion["target"] = ref["id"]
+		m.bindReferenceOccurrences(companion, "target", []string{String(ref, "id")})
+		appendID(r, "companions", String(companion, "id"))
+	}
 }
 
 func (m *domainMapper) classification(r Record, labels []string) {

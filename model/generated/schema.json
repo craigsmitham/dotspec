@@ -283,6 +283,13 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored authority for the specification."
                 },
+                "companions": {
+                    "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "derived_from_content": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored Markdown qualifying the derived from relationship."
@@ -441,6 +448,13 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored authority for the specification."
                 },
+                "companions": {
+                    "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "depends_on_content": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored Markdown qualifying the depends on relationship."
@@ -562,6 +576,77 @@
             "title": "CapabilitySpecReport",
             "type": "object"
         },
+        "Companion": {
+            "additionalProperties": false,
+            "description": "An artifact declared in a specification's frontmatter that carries part of its intent in another form, such as a formal model, an executable example, a test or an explanatory document. The role states the relationship; neither a link nor a passing check confers authority, conformance or satisfaction.",
+            "properties": {
+                "authored_id": {
+                    "description": "An explicitly authored ID when present; no manufactured global identifier.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Required snapshot-local record identity; does not require a globally stable authored ID.",
+                    "pattern": "[\\s\\S]+",
+                    "type": "string"
+                },
+                "kind": {
+                    "const": "Companion",
+                    "description": "Concrete record type discriminator.",
+                    "type": "string"
+                },
+                "name": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "Authored title or item name, if present."
+                },
+                "note": {
+                    "description": "Optional single-line description written faithfully to the companion.",
+                    "type": "string"
+                },
+                "open_questions": {
+                    "description": "Explicitly distinguished questions, in authored order.",
+                    "items": {
+                        "$ref": "#/$defs/OpenQuestion"
+                    },
+                    "type": "array"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/$defs/CompanionRole"
+                },
+                "source_document": {
+                    "type": "string"
+                },
+                "source_fragment": {
+                    "type": "string"
+                },
+                "target": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "owner",
+                "target",
+                "role",
+                "source_document",
+                "id",
+                "kind"
+            ],
+            "title": "Companion",
+            "type": "object"
+        },
+        "CompanionRole": {
+            "description": "How a companion relates to the specification that declares it.",
+            "enum": [
+                "formalizes",
+                "illustrates",
+                "verifies",
+                "explains"
+            ],
+            "title": "CompanionRole",
+            "type": "string"
+        },
         "Component": {
             "additionalProperties": false,
             "description": "A named part of a system with a described responsibility and boundary. Neither its declaration nor code location establishes structural parentage.",
@@ -587,6 +672,13 @@
                 "boundary_description": {
                     "$ref": "#/$defs/RichContent",
                     "description": "What the component includes, excludes and delegates; normative commitments remain requirements."
+                },
+                "companions": {
+                    "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "concept_uses": {
                     "items": {
@@ -778,6 +870,13 @@
                 "authority_and_evidence": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored authority for the specification."
+                },
+                "companions": {
+                    "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "derived_from_content": {
                     "$ref": "#/$defs/RichContent",
@@ -1516,6 +1615,13 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored authority for the specification."
                 },
+                "companions": {
+                    "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "derived_from_content": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored Markdown qualifying the derived from relationship."
@@ -1954,6 +2060,13 @@
                 "authority_and_evidence": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored authority for the specification."
+                },
+                "companions": {
+                    "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "derived_from_content": {
                     "$ref": "#/$defs/RichContent",
@@ -2516,7 +2629,8 @@
                 "footnote",
                 "fragment",
                 "explicit_id",
-                "external_locator"
+                "external_locator",
+                "frontmatter"
             ],
             "title": "ReferenceForm",
             "type": "string"
@@ -2608,6 +2722,13 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored authority for the specification."
                 },
+                "companions": {
+                    "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "criterion": {
                     "$ref": "#/$defs/RequirementCriterion",
                     "description": "Optional explicit satisfaction rule, defining or referencing the required bounds once. The criterion can cite an authoritative source."
@@ -2692,10 +2813,6 @@
                 "supports_content": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored Markdown qualifying the supports relationship."
-                },
-                "verification_procedures": {
-                    "$ref": "#/$defs/ContextualReferences",
-                    "description": "Explicitly linked executable tests or manual protocols for assessing this subject."
                 }
             },
             "required": [
@@ -2720,10 +2837,6 @@
                 "target": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Required value, bound or acceptable range, including the comparison. Preferred targets belong in Rationale and should be identified as preferences."
-                },
-                "verification_procedures": {
-                    "$ref": "#/$defs/ContextualReferences",
-                    "description": "Explicitly linked executable tests or manual protocols for assessing this subject."
                 }
             },
             "required": [
@@ -3073,6 +3186,9 @@
                                 "$ref": "#/$defs/AdoptedProvision"
                             },
                             {
+                                "$ref": "#/$defs/Companion"
+                            },
+                            {
                                 "$ref": "#/$defs/SystemStakeholderRole"
                             },
                             {
@@ -3168,7 +3284,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.34.0-draft",
+                    "const": "0.35.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -3448,6 +3564,13 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored authority for the specification."
                 },
+                "companions": {
+                    "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "derived_from_content": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored Markdown qualifying the derived from relationship."
@@ -3692,6 +3815,13 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored authority for the specification."
                 },
+                "companions": {
+                    "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "concept_uses": {
                     "items": {
                         "type": "string"
@@ -3885,6 +4015,13 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored authority for the specification."
                 },
+                "companions": {
+                    "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
                 "derived_from_content": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored Markdown qualifying the derived from relationship."
@@ -3981,6 +4118,13 @@
                 "authority_and_evidence": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored authority for the specification."
+                },
+                "companions": {
+                    "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "definition": {
                     "$ref": "#/$defs/RichContent"
@@ -4244,6 +4388,13 @@
                 "boundary_description": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Boundary description is independent of directory ownership."
+                },
+                "companions": {
+                    "description": "Artifacts that carry part of this specification's intent in another form, in authored frontmatter order.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
                 },
                 "derived_from_content": {
                     "$ref": "#/$defs/RichContent",
@@ -4512,6 +4663,9 @@
                         "$ref": "#/$defs/AdoptedProvision"
                     },
                     {
+                        "$ref": "#/$defs/Companion"
+                    },
+                    {
                         "$ref": "#/$defs/SystemStakeholderRole"
                     },
                     {
@@ -4607,7 +4761,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.34.0-draft",
+            "const": "0.35.0-draft",
             "type": "string"
         },
         "references": {
@@ -4652,5 +4806,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.34.0-draft"
+    "version": "0.35.0-draft"
 }

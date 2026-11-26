@@ -148,6 +148,13 @@ describes the report and inspection behavior used in this interaction.
 Its [quality requirements](<../concepts/specification-inspection.concept.spec-report.md#state>)
 cover diagnostic severity, report repeatability, and source preservation.
 
+## Companions
+
+**Illustrated by**
+
+- [discovery.txtar](<../../internal/integration/testdata/discovery.txtar>) — Repository discovery
+- [diagnostics.txtar](<../../internal/integration/testdata/diagnostics.txtar>) — Diagnostics and exit statuses
+
 ---
 
 [View source](<../../specs/use-cases/check-specifications.use-case.spec.md#check-specifications-before-committing>)

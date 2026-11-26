@@ -1,6 +1,10 @@
 ---
 type: use-case-spec
 id: export-specification-model
+companions:
+  - target: ../../internal/integration/testdata/model.txtar
+    role: illustrates
+    note: Export and offline validation
 ---
 
 # Export a specification model for review or integration

@@ -28,6 +28,13 @@ A personal list of errands the owner can act on, replies they are waiting for an
 
 </details>
 
+<details>
+<summary>Browse specifications</summary>
+
+- [Companions](<companions.md>)
+
+</details>
+
 ## Purpose
 
 Help one person pick up an errand after an interruption and recognize when to chase an outstanding reply.

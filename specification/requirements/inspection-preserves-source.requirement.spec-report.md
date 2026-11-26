@@ -45,6 +45,18 @@ describes the read-and-report operation. File creation belongs to the separate
 
 - [Source preservation](<../quality/reliability/source-preservation/source-preservation.quality-attribute.spec-report.md>)
 
+## Companions
+
+**Verified by**
+
+- [quality_contracts_test.go › TestInspectionQualityContracts](<../../internal/cli/quality_contracts_test.go#L38>) — CLI quality-contract tests for inspection
+
+## Verification
+
+Procedure linked.
+
+No matching result recorded.
+
 ---
 
 [View source](<../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md#inspection-preserves-source-material>)

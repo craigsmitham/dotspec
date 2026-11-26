@@ -124,6 +124,9 @@ func (md *Markdown) decode(kind string, into TypedMetadata) error {
 			return diagnostic.Error("metadata.invalid", fmt.Sprintf("invalid YAML frontmatter: unknown field %q", k.Value), diagnostic.Location{Line: k.Line + 1, Column: k.Column, Element: k.Value})
 		}
 	}
+	if _, err := md.companions(kind); err != nil {
+		return err
+	}
 	if err := md.Metadata.Decode(into); err != nil {
 		return yamlError(err)
 	}

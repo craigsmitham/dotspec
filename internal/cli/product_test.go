@@ -46,7 +46,7 @@ func TestProductChangesAndVerificationObservations(t *testing.T) {
 	if text := read("specification/tool.system.spec-report.md"); !strings.Contains(text, "## Quality Attributes") || !strings.Contains(text, "Preserve an acknowledged change.") {
 		t.Fatal(text)
 	}
-	const body = "---\ntype: requirement-spec\nquality_attributes: [continuity]\n---\n# Recover\n\n## Statement\nRestore acknowledged work.\n\n## Criterion\nThe saved value survives restart.\n\n### Verification procedures\n[Executable](../../tests/restart.sh) and [manual](../../protocol.md#restart).\n\n## Evidence\n[Citation](../../protocol.md#restart).\n"
+	const body = "---\ntype: requirement-spec\nquality_attributes: [continuity]\ncompanions:\n  - target: ../../tests/restart.sh\n    role: verifies\n  - target: ../../protocol.md#restart\n    role: verifies\n    note: Manual restart protocol\n---\n# Recover\n\n## Statement\nRestore acknowledged work.\n\n## Criterion\nThe saved value survives restart.\n\n## Evidence\n[Citation](../../protocol.md#restart).\n"
 	writeFixture(t, req, body)
 	before := product()
 	if !before.Complete || len(before.Members) != 3 || len(before.Adoptions) != 0 {
@@ -71,7 +71,7 @@ func TestProductChangesAndVerificationObservations(t *testing.T) {
 	ctx := model.VerificationContext{ProductRevision: "r2", Conditions: "local storage", SpecificationRevision: "v2"}
 	evidence := model.VerificationEvidence{Selection: ctx}
 	for i, outcome := range []string{"fail", "pass", "fail", "pass", "inconclusive", "fail"} {
-		result := model.VerificationResult{VerificationContext: ctx, Subject: req + "#criterion", Procedure: "tests/restart.sh", Outcome: outcome, Observation: "https://example.test/observations/" + outcome}
+		result := model.VerificationResult{VerificationContext: ctx, Subject: req, Procedure: "tests/restart.sh", Outcome: outcome, Observation: "https://example.test/observations/" + outcome}
 		switch i {
 		case 1:
 			result.Procedure = protocol + "#restart"

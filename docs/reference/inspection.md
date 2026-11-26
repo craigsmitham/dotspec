@@ -113,6 +113,7 @@ Examples of diagnostic rules include the following.
 | `structure.title`, `structure.section-order`, `structure.required-section`, `structure.duplicate-section`, `structure.section-level`, `structure.step-heading`, `structure.duplicate-field` | Required document structure and unambiguous definitions. |
 | `identity.invalid`, `identity.duplicate` | Explicit ID syntax and uniqueness within one document. |
 | `reference.invalid`, `reference.unresolved`, `reference.boundary` | Local reference syntax, target resolution, and repository boundaries. |
+| `companion.invalid`, `companion.role`, `companion.duplicate`, `companion.unlisted` | Frontmatter companion shape, role, uniqueness, and advice for an unlisted model or feature file. |
 | `job.statement`, `job.performer`, `job.boundary`, `job.map`, `job.outcome-empty`, `job.outcome-measure`, `job.story-context` | Advisory job-writing suggestions. |
 | `use-case.goal`, `use-case.system-boundary`, `use-case.primary-actor`, `use-case.goal-level`, `use-case.success-guarantees`, `use-case.main-success-scenario`, `use-case.extensions`, `use-case.sequence` | Advice about missing use-case content or scenario order. |
 | `concept.purpose`, `concept.state`, `concept.actions`, `concept.operational-principle` | Advice about missing concept content. |
@@ -144,7 +145,7 @@ These scripts specify required outcomes for the illustrated command inputs:
 - [Discovery behavior](../../testdata/discovery.txtar)
 ```
 
-The To-do [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md#evidence) links to the test that checks its criterion. The inventory includes that test and identifies the requirement that cited it.
+The To-do [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md#evidence) lists its acceptance test as a `verifies` companion and links to it under Evidence. The inventory includes the test once with both referring locations.
 
 The command uses the same scan, diagnostics, reference rules, and exit statuses
 as `check`, including advisory findings. Results go to stdout even when the scan
@@ -162,7 +163,9 @@ The version-1 JSON result has these fields:
 | `diagnostics` | The same findings and location format as `check`. |
 
 Each `referenced_by` entry is the referring spec's location, including its path,
-line, column, and authored link destination in `element`. Entries are sorted by
+line, column, and authored link destination in `element`. For a frontmatter
+companion, `element` is `companions` and the location points at the entry's
+target value. Entries are sorted by
 path and source position. Files appear once even if several specs reference them;
 multiple authored link locations are retained. Empty collections are `[]`.
 Discovered specs and consulted context can have an empty `referenced_by` array.
@@ -175,8 +178,10 @@ context. Referenced documents do not start a recursive scan. Directory links do
 not include their contents; ignored files can be explicitly referenced within
 the existing repository boundaries. URLs and absolute-path links remain external
 navigation. Images and links in code samples are excluded. Native files are not
-parsed or executed, and native fragments are not resolved by dotspec. Markdown
-heading and declared spec-ID fragments retain the existing reference checks.
+parsed or executed. A body link's native fragment keeps its format's meaning. A
+companion's fragment on a Quint, Alloy, TLA+, Gherkin, Go, Python or txtar
+target must name a definition the file declares. [Name a definition](../cli-handbook/guides/list-a-companion.md#name-a-definition).
+Markdown heading and declared spec-ID fragments retain the existing reference checks.
 
 To check coverage, compare the source files your project expects with `files[].path` in a complete inventory. For an absent specification, verify the selected directory, typed filename suffix, project boundary and Git ignore rules. For a missing contract or test, inspect the relative link in the referring specification and rerun `dotspec sources` after correcting it. Use `referenced_by` to find the specification that links to a test or contract.
 
@@ -238,10 +243,10 @@ See the generated [CLI reference](cli.md) for flags and examples.
 
 ## References
 
-A `structure.adoption` finding points to an entry under **Adopts**. Identify a single provision and give both its edition and local applicability. A `structure.verification-procedure` finding identifies a procedure section that needs an explicit link. [Source mapping](../../model/markdown-mapping.md#adopting-a-provision)
+A `structure.adoption` finding points to an entry under **Adopts**. Identify a single provision and give both its edition and local applicability. A `structure.verification-procedure` finding marks a retired `## Verification procedures` section, or `### Verification procedures` under **Criterion**. List each procedure as a companion with `role: verifies` and keep any account of what it exercises under **Evidence**. [Source mapping](../../model/markdown-mapping.md#adopting-a-provision) · [Move a verification procedure into companions](../cli-handbook/guides/list-a-companion.md#move-a-verification-procedure-into-companions)
 
-Every check command validates Markdown links in successfully parsed selected
-specifications and their associated system context. Same-document fragments
+Every check command validates Markdown links and frontmatter companion targets
+in successfully parsed selected specifications and their associated system context. Same-document fragments
 are checked during parsing as well. Links inside code samples and images are
 not interpreted as specification references.
 
@@ -261,8 +266,10 @@ is structurally parsed, without collecting its writing advice. Invalid targets
 produce their structural diagnostic without cascading missing-fragment errors.
 
 Ordinary Markdown targets provide heading anchors without needing a dotspec
-wrapper. Other native file formats are checked for existence; their fragments
-retain the owning format's semantics. URLs and absolute paths remain external
+wrapper. Other native file formats are checked for existence; a body link's
+fragment retains the owning format's semantics. A companion's fragment on a
+Quint, Alloy, TLA+, Gherkin, Go, Python or txtar target names a definition
+found by its leading keyword, and a missing name is `reference.unresolved`. URLs and absolute paths remain external
 navigation. No network requests are made.
 
 Relative links cannot cross repository/worktree boundaries, enter nested

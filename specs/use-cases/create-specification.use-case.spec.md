@@ -1,6 +1,13 @@
 ---
 type: use-case-spec
 id: create-specification
+companions:
+  - target: ../../internal/integration/testdata/workflow.txtar
+    role: illustrates
+    note: Create and inspect
+  - target: ../../internal/integration/testdata/use-cases.txtar
+    role: illustrates
+    note: Use-case presets and inspection
 ---
 
 # Create a specification draft

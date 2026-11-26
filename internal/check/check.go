@@ -3,8 +3,12 @@ package check
 
 import (
 	"errors"
+	"net/url"
 	"os"
+	"path/filepath"
+	"slices"
 	"sort"
+	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
@@ -111,7 +115,57 @@ func project(path string, inventory *Inventory, types ...Type) Report {
 	}
 	r.inspectContexts(contexts, discovered)
 	r.inspectReferences(referenceSources, discovered, types)
+	r.inspectUnlistedCompanions(dir, paths, types)
 	return r.finish()
+}
+
+// Formal models and Gherkin features nearly always carry intent. Each one in
+// a whole-project scan should be some specification's companion. Listings come
+// from every discovered specification's frontmatter, including a source with
+// unrelated findings, and a listed directory covers the files beneath it.
+var companionFormats = []string{".qnt", ".als", ".tla", ".feature"}
+
+func (r *Report) inspectUnlistedCompanions(dir string, sources []string, types []Type) {
+	if r.Scope.Project == nil || filepath.Clean(dir) != filepath.Clean(r.Scope.Project.Root) {
+		return
+	}
+	var listed []string
+	for _, source := range sources {
+		kind := MatchType(source, types)
+		if kind == nil {
+			continue
+		}
+		md, err := r.sources.Markdown(source)
+		if err != nil {
+			continue
+		}
+		// An invalid list is reported by the source's own inspection.
+		companions, err := md.Companions(kind.Layout.Kind)
+		if err != nil {
+			continue
+		}
+		for _, c := range companions {
+			u, err := url.Parse(c.Target)
+			if err != nil || u.IsAbs() || u.Host != "" || u.Path == "" || strings.HasPrefix(u.Path, "/") {
+				continue
+			}
+			listed = append(listed, filepath.Clean(filepath.Join(filepath.Dir(source), filepath.FromSlash(u.Path))))
+		}
+	}
+	files, err := specfile.Discover(dir, func(name string) bool {
+		return slices.Contains(companionFormats, strings.ToLower(filepath.Ext(name)))
+	})
+	if err != nil {
+		r.record(err, "scan.discovery", dir)
+		return
+	}
+	for _, file := range files {
+		if !slices.ContainsFunc(listed, func(target string) bool {
+			return file == target || strings.HasPrefix(file, target+string(filepath.Separator))
+		}) {
+			r.Diagnostics = append(r.Diagnostics, diagnostic.Advice("companion.unlisted", "No specification lists this file as a companion. Add it to the frontmatter companions of the specification whose intent it carries.", diagnostic.Location{Path: file}))
+		}
+	}
 }
 
 // MatchType returns the first registered layout that recognizes the source path.

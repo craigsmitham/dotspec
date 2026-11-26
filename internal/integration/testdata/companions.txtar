@@ -1,0 +1,176 @@
+# A specification lists companions in its frontmatter. Each target resolves like
+# an authored link, and a fragment names a definition in a supported format.
+env HOME=$WORK/home
+env XDG_CACHE_HOME=$WORK/home/cache
+mkdir home project
+cd project
+exec git init -q
+cp ../manifest dotspec.yaml
+status 0 dotspec system init
+rm specs/new-system.system.spec.md
+cp ../system.md specs/project.system.spec.md
+mkdir specs/requirements
+cp ../requirement.md specs/requirements/one-view.requirement.spec.md
+mkdir models tests
+cp ../tasks.qnt models/tasks.qnt
+cp ../views.feature tests/views.feature
+
+# The report lists companions by role and links a named definition to its line.
+status 0 dotspec spec build
+stdout 'Wrote specification/companions.md'
+status 0 dotspec check
+stdout 'Errors: 0;'
+! stdout 'companion\.'
+! stderr .
+exec cat specification/requirements/one-view.requirement.spec-report.md
+stdout '## Companions'
+stdout '\*\*Formalized by\*\*'
+stdout 'tasks.qnt › exactlyOneView\]\(<../../models/tasks.qnt#L3>\)'
+stdout '\*\*Illustrated by\*\*'
+stdout 'views.feature › resume-a-waiting-entry\]\(<../../tests/views.feature#L2>\)'
+exec cat specification/companions.md
+stdout '## Formalized by'
+stdout 'Task lifecycle; omits storage'
+stdout '\[One view\]\(<requirements/one-view.requirement.spec-report.md>\)'
+exec cat specification/project.system.spec-report.md
+stdout '\[Companions\]\(<companions.md>\)'
+status 0 dotspec check
+! stderr .
+
+# Export records an owned Companion whose target is a frontmatter reference.
+status 0 dotspec model export
+stdout '"kind": "Companion"'
+stdout '"role": "formalizes"'
+stdout '"form": "frontmatter"'
+stdout '"rule": "native-definition/1"'
+cp stdout snapshot.json
+status 0 dotspec model validate snapshot.json
+! stderr .
+
+# A missing definition, unknown role or obsolete procedure section is located.
+cp ../missing-definition.md specs/requirements/one-view.requirement.spec.md
+status 1 dotspec check
+stdout 'one-view.requirement.spec.md:4:13'
+stdout 'names no definition "absent" in tasks.qnt'
+cp ../unknown-role.md specs/requirements/one-view.requirement.spec.md
+status 1 dotspec check
+stdout 'companion.role'
+stdout 'Unknown companion role "proves"'
+cp ../procedures.md specs/requirements/one-view.requirement.spec.md
+status 1 dotspec check
+stdout 'structure.verification-procedure'
+stdout 'role: verifies'
+
+# A formal model or feature file that no specification lists is advice.
+cp ../requirement.md specs/requirements/one-view.requirement.spec.md
+cp ../tasks.qnt models/unlisted.qnt
+status 0 dotspec check
+stdout 'models/unlisted.qnt'
+stdout 'companion.unlisted'
+! stderr .
+
+# The advice belongs to a whole-project scan, and a listed directory covers its files.
+status 0 dotspec check --path models
+! stdout 'companion.unlisted'
+cp ../directory.md specs/requirements/one-view.requirement.spec.md
+status 1 dotspec check
+! stdout 'companion.unlisted'
+
+# A specification with an unrelated finding still lists its companions.
+cp ../unrelated-error.md specs/requirements/one-view.requirement.spec.md
+rm models/unlisted.qnt
+status 1 dotspec check
+stdout 'structure.unknown-section'
+! stdout 'companion.unlisted'
+-- manifest --
+name: project
+-- system.md --
+---
+type: system-spec
+companions:
+  - target: ../models/tasks.qnt
+    role: formalizes
+    note: Task lifecycle; omits storage
+---
+# Project
+## Purpose
+Keep a list.
+## Scope
+One list.
+-- requirement.md --
+---
+type: requirement-spec
+companions:
+  - target: ../../models/tasks.qnt#exactlyOneView
+    role: formalizes
+  - target: ../../tests/views.feature#resume-a-waiting-entry
+    role: illustrates
+  - target: https://example.com/background
+    role: explains
+---
+# One view
+## Statement
+Each entry appears in exactly one view.
+-- missing-definition.md --
+---
+type: requirement-spec
+companions:
+  - target: ../../models/tasks.qnt#absent
+    role: formalizes
+---
+# One view
+## Statement
+Each entry appears in exactly one view.
+-- unknown-role.md --
+---
+type: requirement-spec
+companions:
+  - target: ../../models/tasks.qnt
+    role: proves
+---
+# One view
+## Statement
+Each entry appears in exactly one view.
+-- procedures.md --
+---
+type: requirement-spec
+---
+# One view
+## Statement
+Each entry appears in exactly one view.
+## Verification procedures
+[Test](../../tests/views.feature).
+-- directory.md --
+---
+type: requirement-spec
+companions:
+  - target: ../../models/
+    role: formalizes
+  - target: ../../tests/views.feature
+    role: illustrates
+---
+# One view
+## Statement
+Each entry appears in exactly one view.
+-- unrelated-error.md --
+---
+type: requirement-spec
+companions:
+  - target: ../../models/tasks.qnt#exactlyOneView
+    role: formalizes
+  - target: ../../tests/views.feature
+    role: illustrates
+---
+# One view
+## Statement
+Each entry appears in exactly one view.
+## Bogus heading
+Text.
+-- tasks.qnt --
+module tasks {
+  var views: str -> str
+  val exactlyOneView = true
+}
+-- views.feature --
+Feature: Views
+  Scenario: Resume a waiting entry

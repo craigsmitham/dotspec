@@ -1,6 +1,13 @@
 ---
 type: requirement-spec
 quality_attributes: [usability]
+companions:
+  - target: ../../internal/integration/testdata/docs.txtar
+    role: illustrates
+    note: Offline guidance
+  - target: ../../internal/integration/testdata/help.txtar
+    role: illustrates
+    note: Help, redirected output, completions and manual
 ---
 # Find authoring guidance in the installed CLI
 

@@ -70,6 +70,7 @@ type subject struct {
 type planner struct {
 	evidence        model.VerificationEvidence
 	assessments     map[string][]*model.ProcedureAssessment
+	companions      map[string][]companionView // by subject record
 	root            string
 	snapshot        *model.Snapshot
 	plan            *Plan
@@ -504,6 +505,8 @@ func (p *planner) indexTargets() {
 	}
 	p.indexConceptDefinitions()
 	p.indexOpenQuestions()
+	p.readCompanions()
+	p.indexCompanions()
 	for _, s := range p.subjects {
 		if s.kind() == "System" {
 			p.planGlossary(s)

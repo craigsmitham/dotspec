@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/fs"
 	"net/url"
+	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -139,6 +140,19 @@ func (b *snapshotBuilder) resolveReferences() {
 			continue
 		}
 		targetDoc := b.byPath[targetPath]
+		if targetDoc == nil && form == "frontmatter" && specfile.NativeDefinitionFormat(targetPath) {
+			// A companion names a definition in a format dotspec indexes by keyword.
+			data, err := os.ReadFile(filepath.FromSlash(targetPath))
+			switch {
+			case err != nil:
+				b.resolution(reference, "not_attempted", "", "unreadable-reference-target/1")
+			case specfile.NativeDefinitionLine(targetPath, data, u.Fragment) > 0:
+				b.resolution(reference, "resolved", String(source, "id"), "native-definition/1")
+			default:
+				b.resolution(reference, "unresolved", "", "native-definition/1")
+			}
+			continue
+		}
 		if targetDoc == nil {
 			b.resolution(reference, "not_attempted", "", "native-fragment-semantics/1")
 			continue
