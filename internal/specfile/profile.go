@@ -15,7 +15,7 @@ import (
 // A heading introduces a field only when its owner declares that domain slot.
 // Nested headings inside ordinary Markdown fields are local to that prose.
 var headingFields = map[string]string{
-	"Description": "description", "Framing": "framing", "Part of": "part_of", "Purpose": "purpose", "Scope": "scope", "Out of scope": "out_of_scope",
+	"Description": "description", "Part of": "part_of", "Purpose": "purpose", "Overview": "overview", "Scope": "scope", "Out of scope": "out_of_scope",
 	"Project references": "project_references", "Environment": "environment", "Stakeholders": "stakeholder_roles", "Constraints": "constraints",
 	"Responsibilities": "responsibilities", "Boundary": "boundary_description", "Contracts": "contracts", "Architecture": "architecture", "Implementation": "implementation",
 	"Interacts with": "interacts_with", "Specification system": "specification_system", "Enablers": "enablers",

@@ -30,28 +30,28 @@ dotspec spec build
 dotspec check
 ```
 
-Commit the authored changes, `SPEC.md` and the generated Markdown in `specification/` together. From `SPEC.md`, open the overview. If the project has requirements, follow one to its statement and conditions. If the wording needs to change, select **View source**, edit that file, rebuild, and check again. Build refreshes generator-owned files and removes obsolete generated pages. If it reports that an authored file occupies a planned destination, move the authored file to a permanent location, update any links to it, then rerun the build.
+Commit the authored changes, `SPEC.md` and the generated Markdown in `specification/` together. From `SPEC.md`, open the system report. If the project has requirements, follow one to its statement and conditions. If the wording needs to change, select **View source**, edit that file, rebuild, and check again. Build refreshes generator-owned files and removes obsolete generated pages. If it reports that an authored file occupies a planned destination, move the authored file to a permanent location, update any links to it, then rerun the build.
 
 ## Read the generated files
 
 | Destination | Contents |
 | --- | --- |
-| `SPEC.md` | The system overview, or a project index for multiple systems, external-system specifications, or a reference catalog |
-| `specification/<name>.system.spec-report.md` | Root system overview and links into its specification |
+| `SPEC.md` | A link to the system report, or a project index for multiple systems, external-system specifications, or a reference catalog |
+| `specification/<name>.system.spec-report.md` | Root system report and links into its specification |
 | `specification/glossary.md` | Alphabetical definitions linked to their sources, a topic index when terms declare topics, context names for distinct meanings, and links back to authored relationships |
 | `specification/quality/<attribute>/<attribute>.quality-attribute.spec-report.md` | One system attribute, its definition, parent and child attributes, and classified requirements |
-| `specification/systems/<child>/<child>.system.spec-report.md` | Child system overview with its own local directories |
+| `specification/systems/<child>/<child>.system.spec-report.md` | Child system report with its own local directories |
 | `specification/open-questions.md` | Questions recorded across the project, each with its subject and a link to the passage. The index appears when at least one authored question exists. |
 
-### Navigate an overview
+### Navigate a system or component report
 
-System and component overviews open with the subject name, authored description, and a linked section map. Component overviews also show their responsibilities, contracts, architecture, and implementation where authored.
-Expand **On this page** to jump to a section in reading order. On a system report, **Intent**, **Context**, **Behavior** and **Design** bring related links together. Choose **Quality Attributes** or **Requirements** directly between Behavior and Design. Only populated sections appear. **Browse specifications** appears when a collection has a separate index. To edit the overview’s authored content, follow **View source** at the foot of the report.
+System and component reports open with the subject name, authored description, and a linked section map. Component reports also show their purpose, overview, responsibilities, contracts, architecture, and implementation where authored.
+Expand **On this page** to jump to a section in reading order. On a system report, **Intent**, **Context**, **Behavior** and **Design** bring related links together. Choose **Quality Attributes** or **Requirements** directly between Behavior and Design. Only populated sections appear. **Browse specifications** appears when a collection has a separate index. To edit the report’s authored content, follow **View source** at the foot of the report.
 
 | Section | What you can find |
 | --- | --- |
-| Framing | How the authors understand the situation and what they are still exploring |
 | Purpose | The system’s authored purpose |
+| Overview | The authors’ explanation of what the system is and how its parts fit together |
 | Goals | Authored goals. Select a named goal to read its full statement and see which specifications support it. |
 | Stakeholders | Named stakeholder roles in source order, each with its description and a heading that jobs and use cases can link to |
 | Jobs | Linked jobs with their authored job statements |
@@ -86,17 +86,17 @@ A component lists its capabilities under **Architecture**. Open a capability for
 For example, the To-do system’s **Requirements** section includes **Acknowledge after commit**, declared on Task service. Following that title from either the system or the component’s requirements opens the same report. Open **Preserve tasks across restart** to read its full statement, conditions and criterion. Its **Refines** section leads to **Keep recorded work available**. [To-do system report](../../examples/todo/specification/personal-task-list.system.spec-report.md#requirements)
 
 When the project has authored questions, **Open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings.
-A child system has its own overview showing the next level of detail.
+A child system has its own report showing the next level of detail.
 
 ### Browse subject reports
 
-System and component overviews keep the source basename and change `.spec.md`
+System and component reports keep the source basename and change `.spec.md`
 to `.spec-report.md`. For example, the Task service report lives at
 `components/task-service/task-service.component.spec-report.md`. Its directory also
 holds its local requirements, interfaces, and child components. The optional source
-`id` provides an anchor. The subject name determines the overview filename.
+`id` provides an anchor. The subject name determines the report filename.
 
-System overviews introduce named goals and assumptions with their title and first authored paragraph. Follow a title to read its qualifications and supporting references in `goals.md` or `assumptions.md`. For example, follow **Same local storage** to see which requirement relies on that assumption.
+System reports introduce named goals and assumptions with their title and first authored paragraph. Follow a title to read its qualifications and supporting references in `goals.md` or `assumptions.md`. For example, follow **Same local storage** to see which requirement relies on that assumption.
 The requirement links back to the same entry. A **Referenced by** link returns
 to an authored passage that cites the entry in prose. [Task-list assumptions](../../examples/todo/specification/assumptions.md)
 
@@ -105,14 +105,14 @@ Use **On this page → Quality Attributes** to browse every system quality attri
 For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with its authored description of the behavior it offers. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
 
 A system, component, feature, capability, or concept use can supply a short
-Description. System and component overviews use the description as their lead. Other subject reports open with the Description section. The index entry reuses
+Description. System and component reports use the description as their lead. Other subject reports open with the Description section. A feature report follows it with Purpose and then Overview when they are authored. The index entry reuses
 an excerpt from the first paragraph. An entry with no description shows
 the subject name alone. Interfaces use their introductory description and quality
 models use their Description section. For requirements and business rules, a
 short Statement introduces the promise or rule. Use cases use their Goal and
 jobs use their Job statement. Concept definitions use their Purpose.
 
-On a system report, choose a feature under **Features** or a component under **Architecture → Components**. When an overview contains the directory, each member’s collection breadcrumb returns to that section. **Browse specifications** links to collections with a separate index. The same alphabetical listing applies in both locations.
+On a system report, choose a feature under **Features** or a component under **Architecture → Components**. When a system or component report contains the directory, each member’s collection breadcrumb returns to that section. **Browse specifications** links to collections with a separate index. The same alphabetical listing applies in both locations.
 
 Above the title, breadcrumbs lead to the owning system or component and the subject’s collection. Under **Extensions**, **Actions**, and a quality model’s **Quality attributes**, select a named entry to jump to its section when several are present. Longer lists can be expanded.
 

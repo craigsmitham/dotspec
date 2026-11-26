@@ -646,6 +646,10 @@
                     "$ref": "#/$defs/RichContent",
                     "description": "Explicit boundary exclusions; absence is not a statement of scope."
                 },
+                "overview": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "An explanation of what this component is and how its parts fit together, for a reader new to it. It explains without committing; verifiable obligations remain requirements."
+                },
                 "part_of_content": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Authored Markdown qualifying the part of relationship."
@@ -1551,6 +1555,10 @@
                         "$ref": "#/$defs/OpenQuestion"
                     },
                     "type": "array"
+                },
+                "overview": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "An explanation of how the grouped behavior works together for stakeholders, for a reader new to it. It explains without committing; verifiable obligations remain requirements."
                 },
                 "preamble": {
                     "$ref": "#/$defs/RichContent",
@@ -3160,7 +3168,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.33.0-draft",
+                    "const": "0.34.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -3713,10 +3721,6 @@
                 "evidence": {
                     "$ref": "#/$defs/RichContent"
                 },
-                "framing": {
-                    "$ref": "#/$defs/RichContent",
-                    "description": "An evolving account of how the authors understand the situation, approaches worth exploring and questions that could change their direction."
-                },
                 "glossary": {
                     "description": "Explicitly named terms, in authored order.",
                     "items": {
@@ -3773,6 +3777,10 @@
                 "out_of_scope": {
                     "$ref": "#/$defs/RichContent",
                     "description": "Work, users or situations explicitly excluded from this system’s responsibility. Omission leaves scope unspecified."
+                },
+                "overview": {
+                    "$ref": "#/$defs/RichContent",
+                    "description": "An explanation of what this system is and how its parts fit together, for a reader new to it. It explains without committing; verifiable obligations remain requirements."
                 },
                 "part_of_content": {
                     "$ref": "#/$defs/RichContent",
@@ -4599,7 +4607,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.33.0-draft",
+            "const": "0.34.0-draft",
             "type": "string"
         },
         "references": {
@@ -4644,5 +4652,5 @@
     ],
     "title": "dotspec_metamodel",
     "type": "object",
-    "version": "0.33.0-draft"
+    "version": "0.34.0-draft"
 }

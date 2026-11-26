@@ -6,8 +6,8 @@ import "strings"
 // Each layout takes value copies and supplies their order, nesting and navigation.
 var (
 	overviewLead      = overviewSection{sources: []string{"description"}}
-	framing           = overviewSection{title: "Framing", level: 2, sources: []string{"framing"}}
 	purpose           = overviewSection{title: "Purpose", level: 2, sources: []string{"purpose"}}
+	overview          = overviewSection{title: "Overview", level: 2, sources: []string{"overview"}}
 	goals             = overviewSection{title: "Goals", level: 2, sources: []string{"goals"}}
 	stakeholders      = overviewSection{title: "Stakeholders", level: 2, sources: []string{"stakeholder_roles"}}
 	features          = overviewDirectory("Features")
@@ -44,7 +44,7 @@ func navGroup(label string, sections ...overviewSection) []overviewSection {
 
 func systemOutline(architecture []overviewSection) []overviewSection {
 	sections := []overviewSection{overviewLead}
-	sections = append(sections, navGroup("Intent", framing, purpose, goals, stakeholders, overviewDirectory("Jobs"))...)
+	sections = append(sections, navGroup("Intent", purpose, overview, goals, stakeholders, overviewDirectory("Jobs"))...)
 	var context []overviewSection
 	// A top-level field travels with its subsections when the reading order changes.
 	contextFields := [][]string{
@@ -73,7 +73,7 @@ func systemOutline(architecture []overviewSection) []overviewSection {
 
 func componentOutline(architecture []overviewSection) []overviewSection {
 	sections := []overviewSection{
-		overviewLead, framing, purpose, goals, stakeholders,
+		overviewLead, purpose, overview, goals, stakeholders,
 		{title: "Responsibilities", level: 2, sources: []string{"responsibilities"}},
 		{title: "Scope", level: 2, sources: []string{"boundary_description", "out_of_scope"}},
 	}

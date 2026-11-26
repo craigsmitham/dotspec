@@ -312,6 +312,8 @@ func readingOrder(s *subject) []*heading {
 		first = []string{"statement", "applicability", "criterion"}
 	case "UseCase":
 		first = []string{"goal", "primary_actor", "trigger", "preconditions", "main_success_scenario", "extensions", "success_guarantees", "minimal_guarantees"}
+	case "Feature":
+		first = []string{"description", "purpose", "overview"}
 	default:
 		if hasDescriptionSection(s.kind()) {
 			first = []string{"description"}

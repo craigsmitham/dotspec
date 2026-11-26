@@ -97,8 +97,11 @@ func TestStructuredReadContracts(t *testing.T) {
 			t.Fatal(err)
 		}
 		wantVersion := float64(2)
-		if args[0] == "sources" || (args[0] == "job" && args[1] == "step") {
+		switch {
+		case args[0] == "sources" || (args[0] == "job" && args[1] == "step"):
 			wantVersion = 1
+		case args[0] == "system" && args[1] == "show":
+			wantVersion = 3
 		}
 		if result["schema_version"] != wantVersion {
 			t.Fatalf("wrong version: %s", out)

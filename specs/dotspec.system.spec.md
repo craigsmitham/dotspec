@@ -10,7 +10,12 @@ glossary_sources:
 
 A requirements authoring framework and command-line toolkit for Markdown specifications stored alongside source code.
 
-## Framing
+## Purpose
+
+Help teams develop and maintain software requirements alongside the
+code they describe.
+
+## Overview
 
 A specification records product intent for one independently maintained subject. Each `*.spec.md` file declares one root subject and owns its parts. A use case owns its steps and extensions. A requirement that several use cases rely on has its own declaration.
 
@@ -36,11 +41,6 @@ needs more detail. If a reasonable implementation could satisfy the wording
 and still disappoint its users, refine the requirement. When the remaining
 choices all meet the need, leave them to the implementer.
 [A sufficiently comprehensive spec is not (necessarily) code](https://buttondown.com/hillelwayne/archive/a-sufficiently-comprehensive-spec-is-not/)
-
-## Purpose
-
-Help teams develop and maintain software requirements alongside the
-code they describe.
 
 ## Goals
 

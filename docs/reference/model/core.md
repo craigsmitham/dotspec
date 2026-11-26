@@ -4,7 +4,7 @@ Generated from [the canonical model](../../../model/metamodel.yaml) and [the vie
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.33.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.34.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 
@@ -453,8 +453,8 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
-| `framing` | [RichContent](index.md#richcontent) | optional | An evolving account of how the authors understand the situation, approaches worth exploring and questions that could change their direction. |
 | `purpose` | [RichContent](index.md#richcontent) | optional | Why the system exists, including the situation it addresses and its intended benefit. |
+| `overview` | [RichContent](index.md#richcontent) | optional | An explanation of what this system is and how its parts fit together, for a reader new to it. It explains without committing; verifiable obligations remain requirements. |
 | `scope` | [RichContent](index.md#richcontent) | optional | The work this system covers, whom it serves and the situations for which it takes responsibility. |
 | `goals` | [Goal](index.md#goal) | optional; ordered list | Explicitly authored goals, in authored order. |
 | `environment` | [RichContent](index.md#richcontent) | optional | Conditions in the surrounding world that matter to understanding this system’s requirements. These may concern how people work, the physical setting or the technology around the system. |
@@ -745,6 +745,7 @@ Subsets: `software-requirements`. [Component](index.md#component) contains the c
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `purpose` | [RichContent](index.md#richcontent) | optional | Benefit or reason for this component to exist. |
+| `overview` | [RichContent](index.md#richcontent) | optional | An explanation of what this component is and how its parts fit together, for a reader new to it. It explains without committing; verifiable obligations remain requirements. |
 | `responsibilities` | [RichContent](index.md#richcontent) | optional | Authored responsibilities identifying what this component is expected to do. |
 | `boundary_description` | [RichContent](index.md#richcontent) | optional | What the component includes, excludes and delegates; normative commitments remain requirements. |
 | `part_of` | [System](index.md#system) or [Component](index.md#component) | optional | System or Component identified by the required Part of link, when resolved. The parent chain must be acyclic. |
@@ -765,6 +766,7 @@ Subsets: `software-requirements`. [Feature](index.md#feature) contains the compl
 | Field | Range | Shape | Meaning |
 | --- | --- | --- | --- |
 | `purpose` | [RichContent](index.md#richcontent) | optional | Stakeholder benefit expressed by this feature. |
+| `overview` | [RichContent](index.md#richcontent) | optional | An explanation of how the grouped behavior works together for stakeholders, for a reader new to it. It explains without committing; verifiable obligations remain requirements. |
 | `specification_owner` | [System](index.md#system) or [Component](index.md#component) | optional | Nearest system or component used for source lookup within the project. |
 | `groups` | [Requirement](index.md#requirement) or [UseCase](index.md#usecase) or [Concept](index.md#concept) or [ConceptUse](index.md#conceptuse) or [Synchronization](index.md#synchronization) or [Interface](index.md#interface) | optional; list | Non-owning specification membership; the same record may participate in several features. |
 

@@ -34,8 +34,8 @@ types:
   - basis
   - applicability
   System:
-  - framing
   - purpose
+  - overview
   - scope
   - goals
   - environment
@@ -166,6 +166,7 @@ types:
   - target
   Component:
   - purpose
+  - overview
   - responsibilities
   - boundary_description
   - part_of
@@ -178,6 +179,7 @@ types:
   - provided_interfaces
   Feature:
   - purpose
+  - overview
   - specification_owner
   - groups
   Capability:

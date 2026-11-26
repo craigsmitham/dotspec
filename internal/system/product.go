@@ -61,8 +61,11 @@ func ParseProductSpecMarkdown(kind string, input *specfile.Markdown) (*ProductSp
 	spec := &ProductSpec{Name: doc.Name, ID: meta.ID, Markdown: strings.TrimSpace(string(doc.Source)), References: doc.References()}
 	seen := map[string]diagnostic.Location{}
 	for _, s := range doc.Sections {
+		if s.Title == "Overview" && kind != FeatureLayout.Kind {
+			continue
+		}
 		switch s.Title {
-		case "Description", "Purpose", "Groups", "Enablers", "Supports", "Depends on", "Provided by", "Specification system":
+		case "Description", "Purpose", "Overview", "Groups", "Enablers", "Supports", "Depends on", "Provided by", "Specification system":
 			location := doc.Location(s.Start, s.Title)
 			if s.Level != 2 {
 				return nil, diagnostic.Error("structure.section-level", s.Title+" requires a level-two heading", location)

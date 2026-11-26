@@ -374,13 +374,13 @@ Reduce unnecessary storage cost without shortening the recovery commitment.
 
 Mobile clients sometimes lose connectivity. The service must accommodate retries after reconnection; connectivity loss is an operating condition, not a premise that excuses restoration requirements.
 
-## Framing
+## Overview
 
-Explore recovery workflows.
+Recovery starts from a retained copy.
 
-### Working idea
+### Restore preview
 
-Could a restore preview help?
+A restore preview shows the retained copy before it replaces the current document.
 
 ## Out of scope
 

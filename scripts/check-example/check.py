@@ -186,7 +186,7 @@ def spec_journey(cli, tmp):
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")
     navigation_groups = [
-        ("Intent", ["Framing", "Purpose", "Goals", "Stakeholders", "Jobs"]),
+        ("Intent", ["Purpose", "Overview", "Goals", "Stakeholders", "Jobs"]),
         ("Context", ["Scope", "Environment", "Assumptions", "Business rules"]),
         ("Behavior", ["Features", "Capabilities", "Use cases"]),
         ("", ["Quality Attributes"]),
@@ -198,7 +198,7 @@ def spec_journey(cli, tmp):
     scope = overview.split("\n## Scope\n", 1)[1].split("\n## ", 1)[0]
     included, excluded = scope.split("\n### Out of scope\n")
     assert "One person records commitments" in included and "Sending reminders" in excluded
-    navigation = overview.split("\n## Framing\n", 1)[0]
+    navigation = overview.split("\n## Purpose\n", 1)[0]
     panels = re.findall(r"<details>\n<summary>([^<]+)</summary>\n\n(.+?)\n\n</details>", navigation, re.S)
     assert [label for label, _ in panels] == ["On this page"]
     local = panels[0][1]

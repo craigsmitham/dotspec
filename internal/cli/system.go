@@ -88,7 +88,7 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 		if err != nil {
 			return err
 		}
-		result := systemResult{2, spec, parent}
+		result := systemResult{3, spec, parent}
 		if format == "json" {
 			return writeJSON(out, result)
 		}
@@ -124,11 +124,12 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 		if spec.Description != "" {
 			description = "\n\nDescription\n" + indent(spec.Description)
 		}
-		if spec.Framing != "" {
-			description += "\n\nFraming\n" + indent(spec.Framing)
+		overview := ""
+		if spec.Overview != "" {
+			overview = "\n\nOverview\n" + indent(spec.Overview)
 		}
-		_, err = fmt.Fprintf(out, "%s%s\n\nPurpose\n%s\n\nScope\n%s%s\n\nEnclosing system document: %s\nSource: %s\n",
-			result.System.Name, description, indent(result.System.Purpose), indent(result.System.Scope), modelText, parentText, displayPath(result.System.Path))
+		_, err = fmt.Fprintf(out, "%s%s\n\nPurpose\n%s%s\n\nScope\n%s%s\n\nEnclosing system document: %s\nSource: %s\n",
+			result.System.Name, description, indent(result.System.Purpose), overview, indent(result.System.Scope), modelText, parentText, displayPath(result.System.Path))
 		return err
 	case "list":
 		nodes, err := system.List(path)

@@ -7,13 +7,13 @@ type: system-spec
 
 A personal list of errands the owner can act on, replies they are waiting for and commitments they have settled.
 
-## Framing
-
-Suppose a guest needs a working sink by Friday. Sending the plumber a photo finishes today's action. The owner still owes the repair. The [job of seeing personal commitments through](jobs/personal-commitments.job.spec.md) explains what the owner needs to establish when they return.
-
 ## Purpose
 
 Help one person pick up an errand after an interruption and recognize when to chase an outstanding reply.
+
+## Overview
+
+Each errand sits in one of three views. Open holds work the owner can advance, Waiting holds errands that depend on someone else's reply, and Completed holds commitments the owner has settled. Suppose a guest needs a working sink by Friday. Sending the plumber a photo finishes today's action, so the owner moves the repair to Waiting. They still owe the repair. The [job of seeing personal commitments through](jobs/personal-commitments.job.spec.md) explains what the owner needs to establish when they return.
 
 ## Goals
 

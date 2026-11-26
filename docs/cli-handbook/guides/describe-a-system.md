@@ -4,7 +4,9 @@ Choose a situation the system is meant to handle and one close enough that a sta
 
 In the directory that will own the system, edit its existing `*.system.spec.md` file. For a new system, run `dotspec system init "Personal task list"`, substituting your system’s name. The name in the top-level heading determines the filename.
 
-Use **Description** to introduce the system and **Purpose** to explain why it exists. For the personal task list, the benefit is being able to pick up unfinished work after an interruption. Then choose the heading that fits the claim you want to make.
+Use **Description** to introduce the system in a sentence and **Purpose** to explain why it exists. For the personal task list, the benefit is being able to pick up unfinished work after an interruption. If a reader new to the system needs to see how its parts fit together before the details make sense, explain that under **Overview**. The task list’s Overview introduces its Open, Waiting and Completed views through a repair the owner still owes after sending the plumber a photo. An Overview explains without committing. When the team must be able to check a statement, write it as a requirement. [Personal task list overview (dotspec checkout)](../../../examples/todo/specs/personal-task-list.system.spec.md#overview)
+
+Then choose the heading that fits the claim you want to make.
 
 | Heading | Question to answer |
 | --- | --- |
@@ -14,7 +16,7 @@ Use **Description** to introduce the system and **Purpose** to explain why it ex
 | **Assumptions** | What premise are we relying on, and which promise would we revisit if it failed? |
 | **Constraints** | What choice has already been limited, and who or what imposes that limit? |
 
-For the personal task list, one person keeping commitments on one computer sets the scope. Sending reminders is an agreed exclusion. When a team still needs to decide whether to cover a case, record the question under **Framing**. [Personal task list boundary (dotspec checkout)](../../../examples/todo/specs/personal-task-list.system.spec.md#scope)
+For the personal task list, one person keeping commitments on one computer sets the scope. Sending reminders is an agreed exclusion. When a team still needs to decide whether to cover a case, list the question under **Open questions** with the person or evidence that can settle it. [Personal task list boundary (dotspec checkout)](../../../examples/todo/specs/personal-task-list.system.spec.md#scope)
 
 Under **Stakeholders**, give each role a level-three heading in the project’s own terms. Describe what people in that role depend on or decide. To find perspectives you may have missed, ask who operates, funds, maintains or regulates the system, who benefits from its results, and who else experiences its effects. One person can fill several roles. In To-do, *List owner* identifies who decides what to discard. Link to that heading from a job’s **Performer** or a use case’s **Primary actor** or **Stakeholder interests** when it identifies the same role. [Meyer, §3.4, G.7](https://se.inf.ethz.ch/requirements/plan.pdf#page=5) · [List owner](../../../examples/todo/specs/personal-task-list.system.spec.md#list-owner) · [Resume list primary actor](../../../examples/todo/specs/use-cases/resume-list.use-case.spec.md#primary-actor).
 

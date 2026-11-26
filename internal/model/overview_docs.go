@@ -194,7 +194,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			continue
 		}
 		fmt.Fprintf(&out, "### %s: %s\n\n%s\n\n", String(r, "kind"), d.name(r), link(String(r, "id")))
-		for _, field := range []string{"description", "framing", "purpose", "scope", "responsibilities", "boundary_description", "contracts", "counterpart", "architecture", "implementation", "part_of_content", "groups_content", "statement", "criterion"} {
+		for _, field := range []string{"description", "purpose", "overview", "scope", "responsibilities", "boundary_description", "contracts", "counterpart", "architecture", "implementation", "part_of_content", "groups_content", "statement", "criterion"} {
 			value := r[field]
 			if field == "counterpart" || field == "contracts" || field == "architecture" || field == "implementation" || field == "criterion" {
 				value = Object(value)["content"]

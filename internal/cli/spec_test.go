@@ -86,7 +86,7 @@ func TestGeneratedSpecScopedSystemsAndComponents(t *testing.T) {
 	root := projectFixture(t)
 	writeFixture(t, filepath.Join(root, "README.md"), "# Tool\n\n[Read the spec](SPEC.md).\n")
 	writeFixture(t, filepath.Join(root, "specs/tool.system.spec.md"), "---\ntype: system-spec\n---\n# Tool\n\n## Purpose\nProcess work.\n\n## Scope\nQueued work.\n\n## Evidence\n[Introduction](../README.md).\n")
-	writeFixture(t, filepath.Join(root, "worker/specs/worker.system.spec.md"), "---\ntype: system-spec\n---\n# Worker\n\n## Description\nA **local** job executor.\n\n## Framing\nCould workers recover interrupted jobs?\n\n## Purpose\nClaim jobs.\n\n## Scope\nExecutors.\n\n## Part of\n[Tool](../../specs/tool.system.spec.md).\n")
+	writeFixture(t, filepath.Join(root, "worker/specs/worker.system.spec.md"), "---\ntype: system-spec\n---\n# Worker\n\n## Description\nA **local** job executor.\n\n## Overview\nEach worker claims one job at a time.\n\n### Recovery\nAn interrupted job returns to the queue.\n\n## Purpose\nClaim jobs.\n\n## Scope\nExecutors.\n\n## Part of\n[Tool](../../specs/tool.system.spec.md).\n")
 	const grandchild = "worker/queues/specs"
 	writeFixture(t, filepath.Join(root, grandchild, "queue.system.spec.md"), `---
 type: system-spec
@@ -131,8 +131,16 @@ id: incoming-jobs
 
 # Intake
 
+## Overview
+
+Each submission is journaled before Intake acknowledges it.
+
 ## Part of
 [Queue](../../../specs/queue.system.spec.md#queue).
+
+## Purpose
+
+Accept work for the queue.
 
 ## Responsibilities
 
@@ -225,7 +233,7 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 	}
 	reader("SPEC.md", "[Read the system specification](<specification/tool.system.spec-report.md>)")
 	reader("specification/tool.system.spec-report.md", "### Subsystems", `[["Worker"]]`, "[Open questions](<open-questions.md>)", "- [Worker](<systems/worker/worker.system.spec-report.md>) — A local job executor.")
-	reader("specification/systems/worker/worker.system.spec-report.md", "## Framing", "Could workers recover interrupted jobs?", "[Tool](<../../tool.system.spec-report.md>)", "- [Queue](<systems/queue/queue.system.spec-report.md>)")
+	reader("specification/systems/worker/worker.system.spec-report.md", "[Purpose](<#purpose>) · [Overview](<#overview>)", "## Purpose\n\nClaim jobs.\n\n## Overview\n\nEach worker claims one job at a time.\n\n### Recovery", "[Tool](<../../tool.system.spec-report.md>)", "- [Queue](<systems/queue/queue.system.spec-report.md>)")
 	reader(section+"queue.system.spec-report.md", "### Interfaces", "- [Clock]", "### System structure", "### System context", "### Interactions", "owner ---|interacts with|", "schedules retries.", "[Worker](<../../worker.system.spec-report.md>)", "[Requirements](<#requirements>)", "### Components\n\n- [Intake](<components/intake/intake.component.spec-report.md>)")
 	reader(section+"queue.system.spec-report.md", "- [Retain jobs](<requirements/retain-jobs.requirement.spec-report.md>) — Each submitted job must remain in the queue until accepted.")
 	reader(section+"queue.system.spec-report.md", "- [Availability](<quality/availability/availability.quality-attribute.spec-report.md>) — Accept work while either A &#124; B is available.")
@@ -240,6 +248,7 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 		"- [Retry](<capabilities/retry.capability.spec-report.md>) — Resume an interrupted job.")
 	reader(section+"capabilities/retry.capability.spec-report.md", "## Provided by", "[Intake]", "[Journal]")
 	reader(section+journal+"capabilities/audit.capability.spec-report.md", "[Capabilities](<../../../../../queue.system.spec-report.md#capabilities>)")
+	reader(intake+"intake.component.spec-report.md", "## Purpose\n\nAccept work for the queue.\n\n## Overview\n\nEach submission is journaled before Intake acknowledges it.\n\n## Responsibilities")
 	reader(intake+"intake.component.spec-report.md", "[Audit](<components/journal/capabilities/audit.capability.spec-report.md>)", "[Retry](<../../capabilities/retry.capability.spec-report.md>)")
 	for _, path := range []string{section + "queue.system.spec-report.md", "specification/systems/worker/worker.system.spec-report.md"} {
 		data, err := os.ReadFile(filepath.Join(root, path))
@@ -920,6 +929,29 @@ type: component-spec
 	writeFixture(t, "specification/tool.system.spec-report.md", moved)
 	if code, out, msg := invoke("check"); code != 1 || !strings.Contains(out, "spec.membership") {
 		t.Fatalf("expected a finding for the misplaced use: %d %s %s", code, out, msg)
+	}
+}
+
+func TestFeatureOverviewFollowsPurpose(t *testing.T) {
+	t.Chdir(t.TempDir())
+	writeFixture(t, "dotspec.yaml", "name: notes\n")
+	writeFixture(t, "specs/notes.system.spec.md", "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nRecord notes.\n\n## Scope\nLocal work.\n")
+	writeFixture(t, "specs/features/editing.feature.spec.md", "---\ntype: feature-spec\n---\n# Editing\n\n## Overview\nEdits stay local until saved.\n\n### Drafts\nA draft keeps unsaved edits.\n\n## Purpose\nRevise notes.\n\n## Description\nChange a saved note.\n")
+	for _, args := range [][]string{{"feature", "check", "editing"}, {"spec", "build"}} {
+		if code, out, msg := invoke(args...); code != 0 {
+			t.Fatal(args, out, msg)
+		}
+	}
+	report, err := os.ReadFile("specification/features/editing.feature.spec-report.md")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(report), "# Editing\n\n## Description\n\nChange a saved note.\n\n## Purpose\n\nRevise notes.\n\n## Overview\n\nEdits stay local until saved.\n\n### Drafts") {
+		t.Fatal(string(report))
+	}
+	writeFixture(t, "specs/features/editing.feature.spec.md", "---\ntype: feature-spec\n---\n# Editing\n\n## Overview\nOne.\n\n## Overview\nTwo.\n")
+	if code, out, _ := invoke("feature", "check", "editing"); code == 0 || !strings.Contains(out, "duplicate Overview section") {
+		t.Fatalf("expected a duplicate Overview finding: %d %s", code, out)
 	}
 }
 

@@ -1,7 +1,7 @@
 id: https://github.com/craigsmitham/dotspec/model/metamodel.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.33.0-draft
+version: 0.34.0-draft
 description: Source-backed specifications and their reader-facing reports. Domain fields retain the authored
   Markdown through ordered byte ranges. Explicit declarations, links and classification labels supply identity
   and relationships.
@@ -317,7 +317,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.33.0-draft
+        equals_string: 0.34.0-draft
       mapping_profile:
         range: string
         description: Versioned rules for mapping declared sections, metadata and references.
@@ -868,10 +868,6 @@ classes:
       kind:
         equals_string: System
     attributes:
-      framing:
-        range: RichContent
-        inlined: true
-        description: An evolving account of how the authors understand the situation, approaches worth exploring and questions that could change their direction.
       project_references:
         range: ContextualReferences
         inlined: true
@@ -928,6 +924,11 @@ classes:
         range: RichContent
         inlined: true
         description: Why the system exists, including the situation it addresses and its intended benefit.
+      overview:
+        range: RichContent
+        inlined: true
+        description: An explanation of what this system is and how its parts fit together, for a reader new to it.
+          It explains without committing; verifiable obligations remain requirements.
       scope:
         range: RichContent
         inlined: true
@@ -2179,6 +2180,11 @@ classes:
         range: RichContent
         inlined: true
         description: Benefit or reason for this component to exist.
+      overview:
+        range: RichContent
+        inlined: true
+        description: An explanation of what this component is and how its parts fit together, for a reader new to it.
+          It explains without committing; verifiable obligations remain requirements.
       responsibilities:
         range: RichContent
         inlined: true
@@ -2238,6 +2244,11 @@ classes:
         range: RichContent
         inlined: true
         description: Stakeholder benefit expressed by this feature.
+      overview:
+        range: RichContent
+        inlined: true
+        description: An explanation of how the grouped behavior works together for stakeholders, for a reader new
+          to it. It explains without committing; verifiable obligations remain requirements.
       groups:
         range: DomainElement
         annotations:

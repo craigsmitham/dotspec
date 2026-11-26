@@ -12,10 +12,8 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 	switch s.Title {
 	case "Part of":
 		m.structureReference(r, "part_of", s)
-	case "Framing", "Description":
+	case "Description", "Purpose", "Overview":
 		m.section(r, strings.ToLower(s.Title), s)
-	case "Purpose":
-		m.section(r, "purpose", s)
 	case "Project references":
 		m.contextField(r, "project_references", s.Content)
 		m.markSection(r, "project_references.content", s)

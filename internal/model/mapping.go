@@ -157,7 +157,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		switch kind {
 		case "feature", "capability":
 			switch {
-			case section.Title == "Description" || section.Title == "Purpose" || (kind == "capability" && section.Title == "Enablers"):
+			case section.Title == "Description" || section.Title == "Purpose" || (kind == "feature" && section.Title == "Overview") || (kind == "capability" && section.Title == "Enablers"):
 				m.section(r, strings.ToLower(section.Title), section)
 				mapped = true
 			case kind == "feature" && section.Title == "Groups":

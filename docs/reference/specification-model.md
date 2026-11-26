@@ -23,7 +23,9 @@ Use `--project` to select a project or `--all` to export a workspace envelope. E
 
 A specification declares its subject through its frontmatter type and title. Systems, components, jobs, use cases, concepts, requirements, business rules, system quality attributes, features and capabilities each have their own specification type. A named item such as an interface, job step or desired outcome identifies its declaring owner. Each subject report type identifies the subject it documents.
 
-Model `0.33.0-draft` uses mapping profile `dotspec-markdown/27`. The System now lists named `SystemStakeholderRole` records in `stakeholder_roles`. Migrate prose under `## Stakeholders` to a level-three heading for each role, then re-export and rebuild. The JSON results for `system show` and `system list` use schema version 2 and expose role names and descriptions.
+Model `0.34.0-draft` uses mapping profile `dotspec-markdown/28`. A System, Component or Feature can explain what it is and how its parts fit together under `## Overview`, recorded in its `overview` field. The earlier system narrative section that preceded Purpose is no longer recognized. Rename its heading to `## Overview`, move it after Purpose, and move any unresolved questions it holds to `## Open questions`. Then re-export and rebuild. The JSON result for `system show` uses schema version 3 and reports the section as `overview`.
+
+The System lists named `SystemStakeholderRole` records in `stakeholder_roles`. Under `## Stakeholders`, give each role a level-three heading. The JSON result for `system list` uses schema version 2 and exposes role names and descriptions.
 
 A reusable quality model is a reference document. Export records its type in `scope.selected_reference_types` and specification types in `scope.selected_spec_types`. To migrate a model, rename `<slug>.quality-model.spec.md` to `<slug>.quality-model.md`, set `type: quality-model`, and update citations. Re-export saved snapshots and rebuild the reports. [Markdown mapping](../../model/markdown-mapping.md)
 

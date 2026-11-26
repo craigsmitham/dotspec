@@ -14,7 +14,7 @@ func (m *domainMapper) componentSection(r Record, s *Section) bool {
 		return true
 	}
 	switch s.Title {
-	case "Purpose", "Description", "Responsibilities":
+	case "Purpose", "Description", "Overview", "Responsibilities":
 		m.section(r, strings.ToLower(s.Title), s)
 	case "Part of":
 		m.structureReference(r, "part_of", s)

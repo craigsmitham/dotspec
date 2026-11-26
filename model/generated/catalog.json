@@ -2786,6 +2786,22 @@
           "reference_ranges": [],
           "required": false
         },
+        "overview": {
+          "annotations": {},
+          "any_of": [],
+          "description": "An explanation of what this component is and how its parts fit together, for a reader new to it. It explains without committing; verifiable obligations remain requirements.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
         "part_of": {
           "annotations": {
             "occurrence_role": "link",
@@ -6499,6 +6515,22 @@
           "multivalued": true,
           "ordered": true,
           "range": "OpenQuestion",
+          "reference_ranges": [],
+          "required": false
+        },
+        "overview": {
+          "annotations": {},
+          "any_of": [],
+          "description": "An explanation of how the grouped behavior works together for stakeholders, for a reader new to it. It explains without committing; verifiable obligations remain requirements.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
           "reference_ranges": [],
           "required": false
         },
@@ -11991,7 +12023,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.33.0-draft",
+          "equals_string": "0.34.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -13967,22 +13999,6 @@
           "reference_ranges": [],
           "required": false
         },
-        "framing": {
-          "annotations": {},
-          "any_of": [],
-          "description": "An evolving account of how the authors understand the situation, approaches worth exploring and questions that could change their direction.",
-          "identifier": false,
-          "inline_ranges": [
-            "RichContent"
-          ],
-          "inlined": true,
-          "inlined_as_list": false,
-          "multivalued": false,
-          "ordered": false,
-          "range": "RichContent",
-          "reference_ranges": [],
-          "required": false
-        },
         "glossary": {
           "annotations": {
             "relationship_basis": "Explicit Markdown decomposition under the declared mapping profile.",
@@ -14181,6 +14197,22 @@
           "annotations": {},
           "any_of": [],
           "description": "Work, users or situations explicitly excluded from this system\u2019s responsibility. Omission leaves scope unspecified.",
+          "identifier": false,
+          "inline_ranges": [
+            "RichContent"
+          ],
+          "inlined": true,
+          "inlined_as_list": false,
+          "multivalued": false,
+          "ordered": false,
+          "range": "RichContent",
+          "reference_ranges": [],
+          "required": false
+        },
+        "overview": {
+          "annotations": {},
+          "any_of": [],
+          "description": "An explanation of what this system is and how its parts fit together, for a reader new to it. It explains without committing; verifiable obligations remain requirements.",
           "identifier": false,
           "inline_ranges": [
             "RichContent"
@@ -17383,7 +17415,7 @@
       "requirement-spec"
     ]
   },
-  "model_version": "0.33.0-draft",
+  "model_version": "0.34.0-draft",
   "projections": [
     "BusinessRule.applies_to",
     "BusinessRule.refines",
@@ -17505,7 +17537,7 @@
   },
   "representation_version": "0.4.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "f8a2f2f4cf99484da84d940ab842a5a2cbcfce0499b35745695da06c898e4d60",
+  "source_sha256": "43c2900c9430cfffbbd0f13e39b7f0d754f70602d3458e93443a80fbc6bfe224",
   "subsets": {
     "business-requirements": {
       "classification": "core",
