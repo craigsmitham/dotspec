@@ -13,11 +13,17 @@ func TestGeneratedArtifactsAndReadOnlyDriftCheck(t *testing.T) {
 	if err := os.CopyFS(filepath.Join(dir, "examples"), os.DirFS("../../examples")); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.MkdirAll(filepath.Join(dir, "docs", "cli-handbook"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(dir, handbookDir), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile(filepath.Join(dir, "docs", "cli-handbook", "README.md"), []byte("# Documentation map\n\n<!-- Generated topic navigation -->\n"), 0o644); err != nil {
 		t.Fatal(err)
+	}
+	for _, slug := range publishedGuides {
+		body := "# Test guide\n\n[Related](list-a-companion.md#choose-a-role) · [Map](../README.md)\n\n`[Example](example.md)`\n"
+		if err := os.WriteFile(filepath.Join(dir, handbookDir, slug+".md"), []byte(body), 0o644); err != nil {
+			t.Fatal(err)
+		}
 	}
 	t.Chdir(dir)
 	if err := run(false); err != nil {
@@ -25,6 +31,15 @@ func TestGeneratedArtifactsAndReadOnlyDriftCheck(t *testing.T) {
 	}
 	if err := run(true); err != nil {
 		t.Fatalf("fresh generation drifted: %v", err)
+	}
+	guide, err := os.ReadFile(filepath.Join(dir, "mintlify", "guides", "describe-a-system.mdx"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, expected := range []string{"/guides/list-a-companion#choose-a-role", githubSource + "docs/cli-handbook/README.md", "`[Example](example.md)`"} {
+		if !strings.Contains(string(guide), expected) {
+			t.Fatalf("web guide is missing %q", expected)
+		}
 	}
 	path := filepath.Join(dir, "docs", "reference", "cli.md")
 	original, err := os.ReadFile(path)

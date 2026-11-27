@@ -2,7 +2,7 @@
 
 | What do you want to do? | Start here |
 | --- | --- |
-| Install dotspec and build your first specification | [Website quickstart](../mintlify/quickstart.mdx). |
+| Install dotspec and build your first specification | [Website quickstart](../mintlify/get-started/first-requirement.mdx). |
 | Author or inspect a specification | [CLI handbook](cli-handbook/README.md). Run `dotspec docs` to browse the same topics offline. |
 | Look up a command, inspection result, or model field | [CLI reference](reference/cli.md), [command output examples](reference/command-examples.md), [inspection reports](reference/inspection.md), and [model reference](reference/model/index.md). |
 | Understand why a saved snapshot can validate when a source has errors | [Specification model](reference/specification-model.md#export-and-validate-a-snapshot). |

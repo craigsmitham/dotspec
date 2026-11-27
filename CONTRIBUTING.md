@@ -38,7 +38,7 @@ This repository is the source of truth for the public docs at `dotspec.md`. Mint
 | What are you changing? | Where to edit |
 | --- | --- |
 | Website landing page, quickstart, or navigation | Edit the MDX page under [`mintlify/`](mintlify/) or the navigation in [`docs.json`](mintlify/docs.json). |
-| How to write a specification | Edit the [CLI handbook](docs/cli-handbook/README.md). The CLI ships these guides offline. Run `mise run generate` to refresh the selected guides in `mintlify/guides/`. The [web handbook](mintlify/handbook.mdx) links to both native pages and additional topics in the repository. |
+| How to write a specification | Edit the [CLI handbook](docs/cli-handbook/README.md). The CLI ships these guides offline. Run `mise run generate` to refresh the selected guides in `mintlify/guides/`. The [web handbook](mintlify/guides/choose-a-topic.mdx) links to both native pages and additional topics in the repository. |
 | Commands, flags, or command output examples | Edit the Cobra command or example and run `mise run generate` to refresh the [CLI reference](docs/reference/cli.md) and [command examples](docs/reference/command-examples.md), along with the selected pages in `mintlify/cli/`. |
 | A worked example | Edit the [To-do project](examples/todo/README.md), rebuild its report if the specifications changed, and run `mise run example-check`. Link readers to the relevant source, report section, or test. |
 
@@ -49,7 +49,7 @@ For website changes, run the same checks as the web docs workflow from the repos
 ```sh
 cd mintlify
 npm exec --yes --package=mint@4.3.97 -- mint validate
-npm exec --yes --package=mint@4.3.97 -- mint broken-links --check-anchors
+npm exec --yes --package=mint@4.3.97 -- mint broken-links --check-anchors --check-redirects
 ```
 
 Use the [documentation map](docs/README.md) to find other topics. The [handbook maintenance guide](docs/maintainers/handbook.md#changing-a-reference) lists the inputs and regeneration commands for generated references and examples.
