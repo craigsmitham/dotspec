@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"testing"
 
@@ -22,6 +23,7 @@ func TestCLI(t *testing.T) {
 		Dir:                 "testdata",
 		RequireExplicitExec: true,
 		Setup: func(env *testscript.Env) error {
+			env.Setenv("LocalAppData", filepath.Join(env.WorkDir, "home", "cache"))
 			env.Setenv("GIT_CONFIG_GLOBAL", os.DevNull)
 			env.Setenv("GIT_CONFIG_NOSYSTEM", "1")
 			return nil

@@ -144,12 +144,13 @@ func TestWorkspaceRootWithoutProjectAndPathNarrowing(t *testing.T) {
 	if code != 0 || !strings.Contains(out, `"files_checked": 1`) || !strings.Contains(out, `"name": "demo"`) {
 		t.Fatal(code, out, errOut)
 	}
-	t.Chdir(filepath.Join(root, "apps/demo/internal"))
-	code, out, errOut = invoke("list", "system", "--json")
-	if code != 0 || !strings.Contains(out, "Demo") {
-		t.Fatal(code, out, errOut)
-	}
-	t.Chdir(root)
+	t.Run("discover project from a child directory", func(t *testing.T) {
+		t.Chdir(filepath.Join(root, "apps/demo/internal"))
+		code, out, errOut := invoke("list", "system", "--json")
+		if code != 0 || !strings.Contains(out, "Demo") {
+			t.Fatal(code, out, errOut)
+		}
+	})
 	if err := os.Remove(filepath.Join(root, "dotspec.yaml")); err != nil {
 		t.Fatal(err)
 	}
