@@ -6,14 +6,13 @@ requirements in human-readable Markdown alongside your code.
 ## Quick start
 
 Install the alpha CLI on macOS or Linux with `brew install dotspec-md/tap/dotspec`.
-With npm, install the verified package directly from the prerelease:
+With npm, install the current alpha from the registry.
 
 ```sh
-npm install -g https://github.com/dotspec-md/dotspec/releases/download/v0.1.0-alpha.1/dotspec-0.1.0-alpha.1.tgz
+npm install --global dotspec@alpha
 ```
 
-Standalone
-archives for macOS, Linux, and Windows are available on the
+Standalone archives for macOS, Linux, and Windows are available on the
 [releases page](https://github.com/dotspec-md/dotspec/releases).
 Go users can run `go install github.com/dotspec-md/dotspec@v0.1.0-alpha.1`.
 

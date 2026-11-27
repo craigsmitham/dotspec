@@ -1,0 +1,27 @@
+name: Web docs
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mintlify/**'
+      - '.github/workflows/web-docs.yml'
+  pull_request:
+    paths:
+      - 'mintlify/**'
+      - '.github/workflows/web-docs.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mintlify
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: npm exec --yes --package=mint@4.3.97 -- mint validate
+      - run: npm exec --yes --package=mint@4.3.97 -- mint broken-links --check-anchors

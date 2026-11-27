@@ -33,7 +33,24 @@ then the full gate before submitting a change.
 
 ## Documentation
 
-Use the [documentation map](docs/README.md) to find the source for a CLI guide topic. The [handbook maintenance guide](docs/maintainers/handbook.md#changing-a-reference) identifies the inputs and regeneration commands for generated references and examples.
+This repository is the source of truth for the public docs at `dotspec.md`. Mintlify publishes the [`mintlify/` directory](mintlify/) from `main`. Whether you use a local editor or Mintlify’s editor, land the change in this repository to publish it.
+
+| What are you changing? | Where to edit |
+| --- | --- |
+| Website landing page, quickstart, or navigation | Edit the MDX page under [`mintlify/`](mintlify/) or the navigation in [`docs.json`](mintlify/docs.json). |
+| How to write a specification | Edit the [CLI handbook](docs/cli-handbook/README.md). The CLI ships these guides offline. Link to the guide from the [web handbook](mintlify/handbook.mdx) so the advice has one home. |
+| Commands, flags, or command output examples | Edit the Cobra command or example and run `mise run generate` to refresh the [CLI reference](docs/reference/cli.md) and [command examples](docs/reference/command-examples.md). |
+| A worked example | Edit the [To-do project](examples/todo/README.md), rebuild its report if the specifications changed, and run `mise run example-check`. Link readers to the relevant source, report section, or test. |
+
+For website changes, run the same checks as the web docs workflow from the repository root.
+
+```sh
+cd mintlify
+npm exec --yes --package=mint@4.3.97 -- mint validate
+npm exec --yes --package=mint@4.3.97 -- mint broken-links --check-anchors
+```
+
+Use the [documentation map](docs/README.md) to find other topics. The [handbook maintenance guide](docs/maintainers/handbook.md#changing-a-reference) lists the inputs and regeneration commands for generated references and examples.
 
 ## Architecture
 
