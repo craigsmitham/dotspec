@@ -7,7 +7,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/util"
 )

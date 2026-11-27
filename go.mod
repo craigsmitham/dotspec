@@ -1,4 +1,4 @@
-module github.com/craigsmitham/dotspec
+module github.com/dotspec-md/dotspec
 
 go 1.27.3
 

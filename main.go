@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/craigsmitham/dotspec/internal/cli"
+	"github.com/dotspec-md/dotspec/internal/cli"
 )
 
 func main() {

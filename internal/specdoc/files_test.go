@@ -10,7 +10,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
 )
 
 const (

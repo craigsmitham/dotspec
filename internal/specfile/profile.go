@@ -8,8 +8,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	schema "github.com/craigsmitham/dotspec/model"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	schema "github.com/dotspec-md/dotspec/model"
 )
 
 // A level heading introduces the domain slot it names in sentence case: lowercase

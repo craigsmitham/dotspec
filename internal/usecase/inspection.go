@@ -1,9 +1,9 @@
 package usecase
 
 import (
-	"github.com/craigsmitham/dotspec/internal/check"
-	"github.com/craigsmitham/dotspec/internal/speccollection"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/check"
+	"github.com/dotspec-md/dotspec/internal/speccollection"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 func CheckType() check.Type {

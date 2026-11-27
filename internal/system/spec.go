@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 var Layout = specfile.SystemLayout

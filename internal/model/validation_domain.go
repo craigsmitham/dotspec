@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 // modelPaths is deliberately a small grammar shared by projection and ownership

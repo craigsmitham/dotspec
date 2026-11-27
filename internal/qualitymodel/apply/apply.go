@@ -15,10 +15,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/model"
-	"github.com/craigsmitham/dotspec/internal/qualitymodel"
-	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/dotspec-md/dotspec/internal/model"
+	"github.com/dotspec-md/dotspec/internal/qualitymodel"
+	"github.com/dotspec-md/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/system"
 	"github.com/rogpeppe/go-internal/lockedfile"
 )
 
@@ -395,7 +395,7 @@ func bundledOrigin(source *qualitymodel.QualityModel, revision string, attribute
 	if revision == "" {
 		return fmt.Sprintf("urn:dotspec:quality-model:%s:sha256:%x#%s", source.Slug, sha256.Sum256(source.Data), url.PathEscape(attribute.ID))
 	}
-	return "https://github.com/craigsmitham/dotspec/blob/" + revision + "/internal/qualitymodel/specs/quality-models/" + source.Slug + qualitymodel.Layout.Suffix + "#" + url.PathEscape(specfile.NameSlug(attribute.Name))
+	return "https://github.com/dotspec-md/dotspec/blob/" + revision + "/internal/qualitymodel/specs/quality-models/" + source.Slug + qualitymodel.Layout.Suffix + "#" + url.PathEscape(specfile.NameSlug(attribute.Name))
 }
 
 func origin(source *qualitymodel.QualityModel, target, revision string, attribute system.Attribute) (string, error) {

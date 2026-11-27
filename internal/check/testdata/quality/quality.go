@@ -3,9 +3,9 @@
 package quality
 
 import (
-	"github.com/craigsmitham/dotspec/internal/check"
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/check"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 var Layout = specfile.Layout{Kind: "quality", Collection: "quality", Suffix: ".quality.spec.md"}

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/testproject"
+	"github.com/dotspec-md/dotspec/internal/testproject"
 )
 
 func structureFixture(t *testing.T) string {

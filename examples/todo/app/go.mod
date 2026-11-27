@@ -1,4 +1,4 @@
-module github.com/craigsmitham/dotspec/examples/todo/app
+module github.com/dotspec-md/dotspec/examples/todo/app
 
 go 1.27.3
 

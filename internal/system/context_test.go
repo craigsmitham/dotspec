@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 func TestOptionalSystemContext(t *testing.T) {

@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )

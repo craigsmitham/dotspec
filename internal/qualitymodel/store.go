@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 //go:embed specs/quality-models/*.quality-model.md

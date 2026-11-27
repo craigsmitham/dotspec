@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/dotspec-md/dotspec/internal/model"
 )
 
 func TestInitDoesNotWriteThroughMetadataSymlinks(t *testing.T) {

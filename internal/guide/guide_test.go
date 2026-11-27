@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 func TestPublishedRoutes(t *testing.T) {

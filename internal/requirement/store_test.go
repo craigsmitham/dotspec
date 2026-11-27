@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/speccollection"
-	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/dotspec-md/dotspec/internal/speccollection"
+	"github.com/dotspec-md/dotspec/internal/system"
 )
 
 // classify resolves a requirement's labels against its associated system.

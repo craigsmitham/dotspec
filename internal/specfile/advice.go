@@ -3,7 +3,7 @@ package specfile
 import (
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
 )
 
 // BlankSections collects writing advice for sections whose captured body is blank.

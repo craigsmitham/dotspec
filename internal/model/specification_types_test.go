@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/craigsmitham/dotspec/internal/speckinds"
+	"github.com/dotspec-md/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/speckinds"
 )
 
 const typedSystem = `---

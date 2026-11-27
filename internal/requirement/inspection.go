@@ -1,11 +1,11 @@
 package requirement
 
 import (
-	"github.com/craigsmitham/dotspec/internal/check"
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/speccollection"
-	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/dotspec-md/dotspec/internal/check"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/speccollection"
+	"github.com/dotspec-md/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/system"
 )
 
 func CheckType() check.Type {

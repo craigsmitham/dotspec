@@ -7,13 +7,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/check"
-	"github.com/craigsmitham/dotspec/internal/check/testdata/quality"
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/job"
-	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/craigsmitham/dotspec/internal/system"
-	"github.com/craigsmitham/dotspec/internal/usecase"
+	"github.com/dotspec-md/dotspec/internal/check"
+	"github.com/dotspec-md/dotspec/internal/check/testdata/quality"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/job"
+	"github.com/dotspec-md/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/system"
+	"github.com/dotspec-md/dotspec/internal/usecase"
 )
 
 const qualitySource = "---\ntype: quality-spec\nunit: milliseconds\n---\n# Response time\n\n## Criterion\n95% of requests finish in 200 milliseconds.\n\n## Evidence\nRetain this **authored prose**.\n"

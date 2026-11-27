@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
 )
 
 // Check provides transparent writing heuristics, not proof of semantic quality.

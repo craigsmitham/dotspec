@@ -7,8 +7,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/model"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/model"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 // addSourceContracts runs against the complete subject, heading, and collection

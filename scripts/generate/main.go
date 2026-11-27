@@ -16,8 +16,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/cli"
-	"github.com/craigsmitham/dotspec/internal/guide"
+	"github.com/dotspec-md/dotspec/internal/cli"
+	"github.com/dotspec-md/dotspec/internal/guide"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )

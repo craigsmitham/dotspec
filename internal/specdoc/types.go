@@ -1,6 +1,6 @@
 package specdoc
 
-import "github.com/craigsmitham/dotspec/internal/specfile"
+import "github.com/dotspec-md/dotspec/internal/specfile"
 
 // Document identifies a logical page or passage. Documents is a portable URI
 // to the exact authored subject.

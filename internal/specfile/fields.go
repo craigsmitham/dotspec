@@ -7,7 +7,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
 	"github.com/yuin/goldmark/ast"
 )
 

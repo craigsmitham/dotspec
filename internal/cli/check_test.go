@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/check"
+	"github.com/dotspec-md/dotspec/internal/check"
 )
 
 func TestProjectCheckTextAndJSON(t *testing.T) {

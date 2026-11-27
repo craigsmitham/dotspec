@@ -18040,7 +18040,7 @@
     }
   },
   "representation_version": "0.4.0",
-  "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
+  "schema_id": "https://github.com/dotspec-md/dotspec/model/metamodel.yaml",
   "source_sha256": "7bf3ef58ac6a6df7514abac7606448140af1cfff4b24598b328a7ea83ecbf0dc",
   "subsets": {
     "business-requirements": {

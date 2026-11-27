@@ -4,7 +4,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/guide"
+	"github.com/dotspec-md/dotspec/internal/guide"
 	"github.com/spf13/cobra"
 )
 

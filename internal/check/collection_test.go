@@ -6,9 +6,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/check"
-	"github.com/craigsmitham/dotspec/internal/concept"
-	"github.com/craigsmitham/dotspec/internal/usecase"
+	"github.com/dotspec-md/dotspec/internal/check"
+	"github.com/dotspec-md/dotspec/internal/concept"
+	"github.com/dotspec-md/dotspec/internal/usecase"
 )
 
 // Each specification collection kind checks end to end through check.Focused

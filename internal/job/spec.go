@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 var Layout = specfile.Layout{Kind: "job", Collection: "jobs", Suffix: ".job.spec.md", SlugExample: "develop-requirements"}

@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/model"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/model"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 // A companion as presented: its authored target is relative to the declaring

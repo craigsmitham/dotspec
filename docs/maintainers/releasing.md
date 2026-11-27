@@ -29,5 +29,5 @@ GitHub release using `GITHUB_TOKEN`. Repository Actions must be allowed to creat
 Download an archive for the intended platform from GitHub Releases, verify it against
 `checksums.txt`, extract it, and place `dotspec` (`dotspec.exe` on Windows) on PATH.
 Remove that executable to uninstall. Users with Go can also install the repository
-root package with `go install github.com/craigsmitham/dotspec@vX.Y.Z`, substituting
+root package with `go install github.com/dotspec-md/dotspec@vX.Y.Z`, substituting
 an available release tag.

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 // A component names its parent and a system states its purpose.

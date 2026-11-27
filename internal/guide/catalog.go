@@ -7,7 +7,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/docs"
+	"github.com/dotspec-md/dotspec/docs"
 )
 
 // A Topic groups destinations in editorial order. The first is the starting

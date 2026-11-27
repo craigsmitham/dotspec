@@ -5,7 +5,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/dotspec-md/dotspec/internal/model"
 )
 
 func (p *planner) readEvidence() error {

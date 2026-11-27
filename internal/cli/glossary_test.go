@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/dotspec-md/dotspec/internal/model"
 )
 
 // Two systems share a definition. Only the root system also declares the

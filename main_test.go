@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/docs"
-	"github.com/craigsmitham/dotspec/internal/guide"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/docs"
+	"github.com/dotspec-md/dotspec/internal/guide"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 func TestHandbookPublicationBoundary(t *testing.T) {

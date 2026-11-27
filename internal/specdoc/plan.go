@@ -13,8 +13,8 @@ import (
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 
-	"github.com/craigsmitham/dotspec/internal/model"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/model"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 // Plan binds source-backed expectations to their project-relative generated paths.

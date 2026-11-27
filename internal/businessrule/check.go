@@ -1,8 +1,8 @@
 package businessrule
 
 import (
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 // Check suggests missing content without verifying authority or compliance.

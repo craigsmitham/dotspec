@@ -6,7 +6,7 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/requirement"
+	"github.com/dotspec-md/dotspec/internal/requirement"
 )
 
 func TestMeasurementReviewAgreesAcrossCommandsAndModel(t *testing.T) {

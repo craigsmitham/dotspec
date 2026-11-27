@@ -8,8 +8,8 @@ import (
 	"maps"
 	"slices"
 
-	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/dotspec-md/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/system"
 )
 
 type Collection[T any] struct {

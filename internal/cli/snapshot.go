@@ -5,9 +5,9 @@ import (
 	"io"
 	"os"
 
-	"github.com/craigsmitham/dotspec/internal/model"
-	"github.com/craigsmitham/dotspec/internal/speckinds"
-	modelschema "github.com/craigsmitham/dotspec/model"
+	"github.com/dotspec-md/dotspec/internal/model"
+	"github.com/dotspec-md/dotspec/internal/speckinds"
+	modelschema "github.com/dotspec-md/dotspec/model"
 	"github.com/spf13/cobra"
 )
 

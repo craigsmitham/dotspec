@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/model"
-	"github.com/craigsmitham/dotspec/internal/testproject"
+	"github.com/dotspec-md/dotspec/internal/model"
+	"github.com/dotspec-md/dotspec/internal/testproject"
 )
 
 func TestSnapshotExportValidationAndSourcePreservation(t *testing.T) {

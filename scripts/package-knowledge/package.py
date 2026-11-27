@@ -25,7 +25,7 @@ def bundle_links(markdown, page, included, revision, contents):
         path = posixpath.normpath(posixpath.join(posixpath.dirname(page), url.path))
         if path in included:
             return match[0]
-        return '](' + f'https://github.com/craigsmitham/dotspec/blob/{revision}/{quote(path)}' + (
+        return '](' + f'https://github.com/dotspec-md/dotspec/blob/{revision}/{quote(path)}' + (
             '#' + url.fragment if url.fragment else '') + ')'
 
     # AXM indexes bracket links even inside fenced examples. Keep those examples

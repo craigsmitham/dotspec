@@ -14,7 +14,7 @@ import (
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/fang"
 	"github.com/charmbracelet/x/term"
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
 	"github.com/spf13/cobra"
 )
 

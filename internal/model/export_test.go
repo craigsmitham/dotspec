@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/speckinds"
+	"github.com/dotspec-md/dotspec/internal/speckinds"
 )
 
 func TestExportEmptyScope(t *testing.T) {

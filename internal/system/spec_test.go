@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
 )
 
 const validSpec = "---\ntype: system-spec\n---\n\n# Parser\n\n## Purpose\n\nRead specs.\n\n## Scope\n\nMarkdown files.\n"

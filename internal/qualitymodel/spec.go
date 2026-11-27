@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/system"
 )
 
 var Layout = specfile.Layout{Kind: "quality-model", Collection: "quality-models", Suffix: specfile.QualityModelSuffix, SlugExample: "organization-quality"}

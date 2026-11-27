@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/guide"
-	"github.com/craigsmitham/dotspec/internal/speckinds"
+	"github.com/dotspec-md/dotspec/internal/guide"
+	"github.com/dotspec-md/dotspec/internal/speckinds"
 	"github.com/spf13/cobra"
 )
 

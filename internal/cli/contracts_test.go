@@ -13,12 +13,12 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/craigsmitham/dotspec/internal/businessrule"
-	"github.com/craigsmitham/dotspec/internal/concept"
-	"github.com/craigsmitham/dotspec/internal/qualitymodel"
-	"github.com/craigsmitham/dotspec/internal/requirement"
-	"github.com/craigsmitham/dotspec/internal/system"
-	"github.com/craigsmitham/dotspec/internal/usecase"
+	"github.com/dotspec-md/dotspec/internal/businessrule"
+	"github.com/dotspec-md/dotspec/internal/concept"
+	"github.com/dotspec-md/dotspec/internal/qualitymodel"
+	"github.com/dotspec-md/dotspec/internal/requirement"
+	"github.com/dotspec-md/dotspec/internal/system"
+	"github.com/dotspec-md/dotspec/internal/usecase"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )

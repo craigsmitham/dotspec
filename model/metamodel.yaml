@@ -1,11 +1,11 @@
-id: https://github.com/craigsmitham/dotspec/model/metamodel.yaml
+id: https://github.com/dotspec-md/dotspec/model/metamodel.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
 description: Source-backed specifications and their reader-facing reports. Domain fields retain the authored
   Markdown through ordered byte ranges. Explicit declarations, links and classification labels supply identity
   and relationships.
 prefixes:
-  ds: https://github.com/craigsmitham/dotspec/model/
+  ds: https://github.com/dotspec-md/dotspec/model/
   linkml: https://w3id.org/linkml/
 default_prefix: ds
 default_range: string

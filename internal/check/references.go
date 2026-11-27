@@ -9,8 +9,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 var referenceScheme = regexp.MustCompile(`^[A-Za-z][A-Za-z0-9+.-]*:`)

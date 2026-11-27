@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/qualitymodel"
-	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/dotspec-md/dotspec/internal/qualitymodel"
+	"github.com/dotspec-md/dotspec/internal/system"
 )
 
 func target(t *testing.T, raw string) string {

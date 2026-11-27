@@ -14,8 +14,8 @@ builds:
       - -trimpath
     ldflags:
       - -s -w
-      - -X github.com/craigsmitham/dotspec/internal/cli.version={{ .Version }}
-      - -X github.com/craigsmitham/dotspec/internal/cli.commit={{ .Commit }}
+      - -X github.com/dotspec-md/dotspec/internal/cli.version={{ .Version }}
+      - -X github.com/dotspec-md/dotspec/internal/cli.commit={{ .Commit }}
     goos: [linux, darwin, windows]
     goarch: [amd64, arm64]
 archives:
@@ -58,7 +58,7 @@ release:
   extra_files:
     - glob: .release/dotspec-knowledge.zip
   github:
-    owner: craigsmitham
+    owner: dotspec-md
     name: dotspec
 changelog:
   sort: asc

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
 )
 
 const draft = "---\ntype: use-case-spec\n---\n# Check specifications\n"

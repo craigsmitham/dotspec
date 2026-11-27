@@ -3,7 +3,7 @@ package specdoc
 import (
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 func TestEveryReportedKindHasAReportType(t *testing.T) {

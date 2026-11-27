@@ -11,12 +11,12 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/docs"
-	"github.com/craigsmitham/dotspec/examples"
-	"github.com/craigsmitham/dotspec/internal/qualitymodel"
-	"github.com/craigsmitham/dotspec/internal/specfile"
-	modelschema "github.com/craigsmitham/dotspec/model"
-	"github.com/craigsmitham/dotspec/specs"
+	"github.com/dotspec-md/dotspec/docs"
+	"github.com/dotspec-md/dotspec/examples"
+	"github.com/dotspec-md/dotspec/internal/qualitymodel"
+	"github.com/dotspec-md/dotspec/internal/specfile"
+	modelschema "github.com/dotspec-md/dotspec/model"
+	"github.com/dotspec-md/dotspec/specs"
 	"github.com/yuin/goldmark/ast"
 )
 

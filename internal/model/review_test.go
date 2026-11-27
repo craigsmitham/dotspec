@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/testproject"
+	"github.com/dotspec-md/dotspec/internal/testproject"
 )
 
 func reviewFixture(t *testing.T) string {

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
 )
 
 func TestIdentifiersRetainDefinitionsWithinOneDocument(t *testing.T) {

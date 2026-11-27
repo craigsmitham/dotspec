@@ -13,9 +13,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/docs"
-	"github.com/craigsmitham/dotspec/examples"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/docs"
+	"github.com/dotspec-md/dotspec/examples"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 	"github.com/yuin/goldmark/ast"
 )
 

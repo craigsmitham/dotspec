@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/check"
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/guide"
-	"github.com/craigsmitham/dotspec/internal/speckinds"
+	"github.com/dotspec-md/dotspec/internal/check"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/guide"
+	"github.com/dotspec-md/dotspec/internal/speckinds"
 	"github.com/spf13/cobra"
 )
 

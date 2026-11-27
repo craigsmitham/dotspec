@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/mermaid"
-	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/dotspec-md/dotspec/internal/mermaid"
+	"github.com/dotspec-md/dotspec/internal/model"
 )
 
 // Each view opens one declared boundary. The file tree only determines where

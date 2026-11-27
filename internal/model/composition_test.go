@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/testproject"
+	"github.com/dotspec-md/dotspec/internal/testproject"
 )
 
 func compositionFixture(t *testing.T) string {

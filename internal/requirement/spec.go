@@ -4,8 +4,8 @@ package requirement
 import (
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 	"go.yaml.in/yaml/v3"
 )
 

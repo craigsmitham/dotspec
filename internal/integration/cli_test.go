@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/cli"
+	"github.com/dotspec-md/dotspec/internal/cli"
 	"github.com/rogpeppe/go-internal/testscript"
 )
 

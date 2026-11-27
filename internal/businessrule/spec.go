@@ -4,8 +4,8 @@ package businessrule
 import (
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 var Layout = specfile.Layout{Kind: "business-rule", Collection: "business-rules", Suffix: ".business-rule.spec.md", SlugExample: "purchase-approval"}

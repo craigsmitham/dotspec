@@ -5,9 +5,9 @@ import (
 	"io"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/qualitymodel"
-	qualityapply "github.com/craigsmitham/dotspec/internal/qualitymodel/apply"
-	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/dotspec-md/dotspec/internal/qualitymodel"
+	qualityapply "github.com/dotspec-md/dotspec/internal/qualitymodel/apply"
+	"github.com/dotspec-md/dotspec/internal/system"
 	"github.com/spf13/cobra"
 )
 

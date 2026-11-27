@@ -9,7 +9,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
 )
 
 const Folder = "specs"

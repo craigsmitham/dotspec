@@ -3,8 +3,8 @@ package requirement
 import (
 	"fmt"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/system"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/system"
 )
 
 // Classification separates authored IDs from system attribute resolution and grouping.

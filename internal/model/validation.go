@@ -12,7 +12,7 @@ import (
 	"sync"
 	"unicode/utf8"
 
-	modelschema "github.com/craigsmitham/dotspec/model"
+	modelschema "github.com/dotspec-md/dotspec/model"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 )
 

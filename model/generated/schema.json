@@ -4637,7 +4637,7 @@
             "type": "object"
         }
     },
-    "$id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
+    "$id": "https://github.com/dotspec-md/dotspec/model/metamodel.yaml",
     "$schema": "https://json-schema.org/draft/2019-09/schema",
     "additionalProperties": false,
     "description": "A bounded and potentially incomplete observation of source documents and their mapped domain content.",

@@ -3,7 +3,7 @@ package specfile
 import (
 	"slices"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
 )
 
 // RegisterDeclarations reads IDs only from the introduction of named entries.

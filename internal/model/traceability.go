@@ -3,7 +3,7 @@ package model
 import (
 	"slices"
 
-	"github.com/craigsmitham/dotspec/internal/requirement"
+	"github.com/dotspec-md/dotspec/internal/requirement"
 )
 
 // Traceability uses the schema's heading and endpoint contracts. Ordinary links

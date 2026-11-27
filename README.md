@@ -5,7 +5,7 @@ requirements in human-readable Markdown alongside your code.
 
 ## Quick start
 
-Start with the CLI on your PATH. If a [release archive](https://github.com/craigsmitham/dotspec/releases) is available for your platform, extract its executable. To build from a checkout, run `mise trust`, `mise install`, then `mise run build` at the repository root. Add the resulting `dist` directory to your PATH (on Windows, build with `mise exec -- go build -o dist/dotspec.exe .`). Run `dotspec --version` from the project where you want to keep the specifications.
+Start with the CLI on your PATH. If a [release archive](https://github.com/dotspec-md/dotspec/releases) is available for your platform, extract its executable. To build from a checkout, run `mise trust`, `mise install`, then `mise run build` at the repository root. Add the resulting `dist` directory to your PATH (on Windows, build with `mise exec -- go build -o dist/dotspec.exe .`). Run `dotspec --version` from the project where you want to keep the specifications.
 
 To start the first specification, work from your project root.
 

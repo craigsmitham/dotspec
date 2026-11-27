@@ -1,8 +1,8 @@
 package system
 
 import (
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 // boundaryAdvice prompts for the support a reviewer needs to judge a named

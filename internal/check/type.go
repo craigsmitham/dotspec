@@ -1,8 +1,8 @@
 package check
 
 import (
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 // Type supplies the policy needed to inspect one specification kind. Callers

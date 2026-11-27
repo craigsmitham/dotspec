@@ -3,7 +3,7 @@ package specdoc
 import (
 	"path/filepath"
 
-	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/dotspec-md/dotspec/internal/model"
 )
 
 // Each concept lists its named uses beneath it. A use without a definition is

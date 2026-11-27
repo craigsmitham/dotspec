@@ -7,13 +7,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/check"
-	"github.com/craigsmitham/dotspec/internal/concept"
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/job"
-	"github.com/craigsmitham/dotspec/internal/requirement"
-	"github.com/craigsmitham/dotspec/internal/system"
-	"github.com/craigsmitham/dotspec/internal/usecase"
+	"github.com/dotspec-md/dotspec/internal/check"
+	"github.com/dotspec-md/dotspec/internal/concept"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/job"
+	"github.com/dotspec-md/dotspec/internal/requirement"
+	"github.com/dotspec-md/dotspec/internal/system"
+	"github.com/dotspec-md/dotspec/internal/usecase"
 )
 
 func sourceReport(dir string) check.SourceReport {

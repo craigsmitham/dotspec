@@ -3,7 +3,7 @@ package model
 import (
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/requirement"
+	"github.com/dotspec-md/dotspec/internal/requirement"
 )
 
 func (d *designResolver) richIntro(value any) string {

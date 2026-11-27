@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/speccollection"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/speccollection"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 func writeFile(t *testing.T, path, content string) {

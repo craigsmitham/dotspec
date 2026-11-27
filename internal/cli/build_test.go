@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/check"
-	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/dotspec-md/dotspec/internal/check"
+	"github.com/dotspec-md/dotspec/internal/model"
 )
 
 func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {

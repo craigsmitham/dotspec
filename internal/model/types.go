@@ -5,7 +5,7 @@ package model
 
 import (
 	"encoding/json"
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 const MappingProfile = "dotspec-markdown/30"

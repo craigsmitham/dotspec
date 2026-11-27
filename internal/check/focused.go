@@ -4,7 +4,7 @@ import (
 	"errors"
 	"io/fs"
 
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 // Focused checks one local specification and the context requested by its type.

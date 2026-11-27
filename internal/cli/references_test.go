@@ -17,7 +17,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 	"github.com/spf13/cobra"
 	mdast "github.com/yuin/goldmark/ast"
 )

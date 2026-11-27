@@ -3,7 +3,7 @@ package requirement
 import (
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
 // MeasurementGuidance describes recorded sections, never their adequacy.

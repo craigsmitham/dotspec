@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/cli"
-	"github.com/craigsmitham/dotspec/internal/concept"
+	"github.com/dotspec-md/dotspec/internal/cli"
+	"github.com/dotspec-md/dotspec/internal/concept"
 )
 
 func put(t *testing.T, root, name, content string) {

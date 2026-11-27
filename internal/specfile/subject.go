@@ -9,7 +9,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/dotspec-md/dotspec/internal/diagnostic"
 )
 
 // NameSlug converts the visible subject name into its filesystem identifier.
