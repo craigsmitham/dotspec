@@ -1,0 +1,42 @@
+---
+title: "Build your first specification"
+sidebarTitle: "Quickstart"
+description: "Install the alpha CLI, describe a system, and check the generated specification."
+---
+
+## Install the CLI
+
+On macOS or Linux with Homebrew, run:
+
+```sh
+brew install dotspec-md/tap/dotspec
+```
+
+With npm on macOS, Linux, or Windows, run:
+
+```sh
+npm install --global dotspec@alpha
+```
+
+You can also download a [standalone release](https://github.com/dotspec-md/dotspec/releases). Run `dotspec --version` to check your installation.
+
+## Describe a system
+
+In an empty project directory, run:
+
+```sh
+dotspec init "Booking desk"
+```
+
+Open the system specification named in the output. Describe what the booking desk does, who benefits from it, and which work falls within its scope. Leave enough detail for a teammate to decide whether a proposed feature belongs in the system.
+
+## Build and check
+
+```sh
+dotspec build
+dotspec check
+```
+
+Open `SPEC.md` and follow the link to your system. After you change a specification, run both commands again. Commit the source specifications, `dotspec.yaml`, `SPEC.md`, and the generated `specification/` directory together.
+
+Run `dotspec docs` to read the handbook offline or [choose a topic](/handbook).

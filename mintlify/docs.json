@@ -1,0 +1,13 @@
+{
+  "$schema": "https://www.mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "dotspec",
+  "colors": { "primary": "#196B55", "light": "#65C7A4", "dark": "#196B55" },
+  "navigation": {
+    "groups": [
+      { "group": "Get started", "pages": ["index", "quickstart"] },
+      { "group": "Write specifications", "pages": ["handbook"] }
+    ]
+  },
+  "navbar": { "links": [{ "label": "GitHub", "href": "https://github.com/dotspec-md/dotspec" }] }
+}
