@@ -28,6 +28,7 @@ archives:
       - src: .release/dotspec.1
         dst: man/man1
         strip_parent: true
+      - LICENSE
       - README.md
       - docs/cli-handbook/README.md
       - docs/cli-handbook/**/*.md
@@ -55,6 +56,10 @@ checksum:
     - glob: .release/dotspec-knowledge.zip
   name_template: checksums.txt
 release:
+  draft: true
+  replace_existing_draft: true
+  prerelease: auto
+  make_latest: false
   extra_files:
     - glob: .release/dotspec-knowledge.zip
   github:

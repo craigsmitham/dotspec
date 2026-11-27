@@ -5,7 +5,16 @@ requirements in human-readable Markdown alongside your code.
 
 ## Quick start
 
-Start with the CLI on your PATH. If a [release archive](https://github.com/dotspec-md/dotspec/releases) is available for your platform, extract its executable. To build from a checkout, run `mise trust`, `mise install`, then `mise run build` at the repository root. Add the resulting `dist` directory to your PATH (on Windows, build with `mise exec -- go build -o dist/dotspec.exe .`). Run `dotspec --version` from the project where you want to keep the specifications.
+Install the alpha CLI on macOS or Linux with `brew install dotspec-md/tap/dotspec`.
+With npm, use `npm install -g dotspec@alpha` or run `npx dotspec@alpha --version`.
+For a pinned install, substitute the published version for `alpha`. Standalone
+archives for macOS, Linux, and Windows are available on the
+[releases page](https://github.com/dotspec-md/dotspec/releases).
+Go users can run `go install github.com/dotspec-md/dotspec@v0.1.0-alpha.1`.
+
+Run `dotspec --version` to check the installation and `dotspec docs` to open
+the embedded handbook. To build from a checkout, run `mise trust`,
+`mise install`, then `mise run build`.
 
 To start the first specification, work from your project root.
 

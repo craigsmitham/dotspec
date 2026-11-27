@@ -2,11 +2,25 @@ name: Release
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Published release tag to publish to npm
+        required: true
 permissions:
-  contents: write
+  contents: read
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+env:
+  GH_TOKEN: ${{ github.token }}
+  TAG: ${{ inputs.tag || github.ref_name }}
 jobs:
-  release:
+  draft:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v6
         with:
@@ -14,6 +28,75 @@ jobs:
       - uses: jdx/mise-action@v4
       - run: mise run model-setup
       - run: mise run check
+      - name: Keep published releases immutable on reruns
+        run: |
+          state=$(gh release view "$TAG" --json isDraft --jq .isDraft 2>/dev/null || true)
+          if [[ "$state" == false ]]; then exit 1; fi
       - run: goreleaser release --clean
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+      - run: |
+          python scripts/check-release/check.py
+          python scripts/package-npm/pack.py "${TAG#v}" dist dist/npm
+          gh release upload "$TAG" dist/npm/*.tgz
+  smoke:
+    needs: draft
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Install the draft npm tarball and run the native CLI
+        shell: bash
+        run: |
+          gh release download "$TAG" --pattern 'dotspec-*.tgz' --dir "$RUNNER_TEMP/npm-smoke"
+          cd "$RUNNER_TEMP/npm-smoke"
+          npm install --no-save --ignore-scripts ./dotspec-*.tgz
+          npm exec --offline -- dotspec --version | grep -F "${TAG#v} (${GITHUB_SHA:0:7})"
+          npm exec --offline -- dotspec docs job
+          npm exec --offline -- dotspec init "Release smoke"
+          npm exec --offline -- dotspec build
+          npm exec --offline -- dotspec check
+  publish:
+    needs: smoke
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Publish the verified release
+        run: |
+          if [[ "$TAG" == *-* ]]; then
+            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false --prerelease --latest=false
+          else
+            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false --latest
+          fi
+  npm:
+    needs: publish
+    if: >-
+      always() && !cancelled() &&
+      ((needs.publish.result == 'success' && vars.NPM_TRUSTED_PUBLISHING == 'true') ||
+      github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Publish the verified npm tarball using trusted publishing
+        run: |
+          [[ "$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft)" == false ]]
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern 'dotspec-*.tgz'
+          file="dotspec-${TAG#v}.tgz"
+          channel=latest
+          if [[ "$TAG" == *-* ]]; then
+            channel=${TAG#*-}
+            channel=${channel%%.*}
+          fi
+          npm publish "./$file" --access public --tag "$channel" --provenance

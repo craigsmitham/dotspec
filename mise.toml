@@ -1,3 +1,6 @@
+[env]
+PYTHONUTF8 = "1"
+
 [tools]
 go = "1.27.3"
 golangci-lint = "2.15.0"

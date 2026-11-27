@@ -22,12 +22,33 @@ If a fuzz test fails, keep its reported input and resolve the failing assertion 
 The snapshot task checks each archive for the public handbook, worked specifications and manual page, and rejects repository-only documentation. From `dist/`, choose the archive matching the host OS and architecture. Compare its SHA-256 digest with the entry for that filename in `checksums.txt` (use `shasum -a 256 FILE` on macOS, `sha256sum FILE` on Linux, or `Get-FileHash FILE -Algorithm SHA256` in PowerShell). A mismatch warrants a fresh build before distribution. Extract the archive into an empty directory and run its executable with `--version` and `docs job`. Check that the build identifies the intended revision and the installed handbook opens. [GoReleaser checksums](https://goreleaser.com/customization/package/checksum/) · [Snapshot builds](https://goreleaser.com/customization/publish/snapshots/). Snapshot builds never publish and may be run from an uncommitted worktree.
 Review and commit the final changes before creating a release tag.
 
-A pushed `vX.Y.Z` tag triggers `.github/workflows/release.yml`. The workflow runs the
-same full check task, then publishes the archives and checksums to the repository's
-GitHub release using `GITHUB_TOKEN`. Repository Actions must be allowed to create releases. When you intend to publish, push the new version tag for the reviewed commit. Follow the run for that tag and open the resulting release. Check for six platform archives, `dotspec-knowledge.zip`, and `checksums.txt`. If publication fails, inspect the failed workflow step before deciding what to retry. [Release workflow](../../.github/workflows/release.yml) · [Archive configuration](../../.goreleaser.yaml).
+Push a SemVer tag on a commit that passed the hosted CI matrix. Use
+`v0.1.0-alpha.1`, `v0.1.0-alpha.2`, and so on for alpha releases.
+The release workflow builds a GitHub draft, packs the six checksummed executables
+into one npm tarball, then installs that tarball on Linux, macOS, and Windows.
+Each runner checks the version, opens the embedded handbook, and initializes,
+builds, and checks a project. A passing draft becomes a public GitHub release.
+Alpha releases carry the GitHub prerelease flag. Follow the tag run and verify
+the six platform archives, knowledge ZIP, checksums, and npm tarball.
+[Release workflow](../../.github/workflows/release.yml)
 
-Download an archive for the intended platform from GitHub Releases, verify it against
-`checksums.txt`, extract it, and place `dotspec` (`dotspec.exe` on Windows) on PATH.
-Remove that executable to uninstall. Users with Go can also install the repository
-root package with `go install github.com/dotspec-md/dotspec@vX.Y.Z`, substituting
-an available release tag.
+The Homebrew tap polls published releases every six hours. Run
+`gh workflow run update.yml -R dotspec-md/homebrew-tap` to refresh immediately.
+The tap installs and tests the formula before committing its new tag and revision.
+[TAP workflow](https://github.com/dotspec-md/homebrew-tap/blob/main/.github/workflows/update.yml)
+
+For the first npm release, download the verified `dotspec-<version>.tgz` from
+the GitHub release. With the owning npm account signed in, run
+`npm publish ./dotspec-<version>.tgz --access public --tag alpha` and complete
+npm's authentication prompt. Configure npm trusted publishing for the
+`dotspec` package, GitHub repository `dotspec-md/dotspec`, and workflow
+`release.yml` with publish permission. Set the repository Actions variable
+`NPM_TRUSTED_PUBLISHING=true` to enable subsequent tag publishes. The workflow
+uses GitHub OIDC and maps alpha versions to the npm `alpha` dist-tag.
+[Trusted publishing](https://docs.npmjs.com/trusted-publishers/)
+
+Retry a failed smoke test or draft job from the tag run. Once public, keep that
+tag and its assets intact. If only npm publication failed, dispatch
+`gh workflow run release.yml -f tag=vX.Y.Z` for the existing release. Check
+`npm view dotspec@<version> dist.integrity` and `npx --yes dotspec@<version> --version`
+after publishing. Issue a new version when a distributed artifact needs a fix.
