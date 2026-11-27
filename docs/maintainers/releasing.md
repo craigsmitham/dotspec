@@ -47,7 +47,9 @@ npm's authentication prompt. Configure npm trusted publishing for the
 uses GitHub OIDC and maps alpha versions to the npm `alpha` dist-tag.
 [Trusted publishing](https://docs.npmjs.com/trusted-publishers/)
 
-Retry a failed smoke test or draft job from the tag run. Once public, keep that
+Retry a failed draft job from the tag run. To verify and publish an existing draft
+using the current workflow, dispatch
+`gh workflow run release.yml -f operation=finish-draft -f tag=vX.Y.Z`. Once public, keep that
 tag and its assets intact. If only npm publication failed, dispatch
 `gh workflow run release.yml -f tag=vX.Y.Z` for the existing release. Check
 `npm view dotspec@<version> dist.integrity` and `npx --yes dotspec@<version> --version`
