@@ -1,7 +1,7 @@
 ---
 title: "Build your first specification"
 sidebarTitle: "Quickstart"
-description: "Install the alpha CLI, describe a system, and check the generated specification."
+description: "Write a room-booking requirement, find it in the generated specification, and fix a stale report."
 ---
 
 ## Install the CLI
@@ -20,23 +20,80 @@ npm install --global dotspec@alpha
 
 You can also download a [standalone release](https://github.com/dotspec-md/dotspec/releases). Run `dotspec --version` to check your installation.
 
-## Describe a system
+## Start a booking desk project
 
-In an empty project directory, run:
+In an empty directory, start a project for the front desk of a small hotel.
 
 ```sh
 dotspec init "Booking desk"
 ```
 
-Open the system specification named in the output. Describe what the booking desk does, who benefits from it, and which work falls within its scope. Leave enough detail for a teammate to decide whether a proposed feature belongs in the system.
+Open `specs/booking-desk.system.spec.md`. Keep the title and headings. Replace the three starter paragraphs with these details.
 
-## Build and check
+| Heading | What to write |
+| --- | --- |
+| Description | The booking desk records room reservations for a small hotel. |
+| Purpose | Guests need to know whether a room will be waiting for them. |
+| Scope | The front desk confirms or declines requests for a room and night. The hotel takes payment at check-in. |
+
+## Give the desk one promise
+
+From the same directory, create a requirement.
+
+```sh
+dotspec new requirement avoid-double-booking
+```
+
+Replace the contents of `specs/requirements/avoid-double-booking.requirement.spec.md` with the following Markdown.
+
+```markdown
+---
+type: requirement-spec
+---
+
+# Prevent a second reservation
+
+## Statement
+
+If a room already has a confirmed reservation for a night, the booking desk must decline a second request for that room and night and keep the original reservation.
+
+## Applies to
+
+**Targets:** [Booking desk](../booking-desk.system.spec.md).
+
+### Conditions
+
+The first guest has received confirmation before the second request arrives.
+
+## Criterion
+
+Given a confirmed reservation for Room 12 on 5 June, request Room 12 for the same night as a second guest. The second guest receives a decline. The reservation list for Room 12 on 5 June contains exactly the original reservation.
+
+## Rationale
+
+Both guests need to know whether they have a room before they travel.
+```
+
+Suppose the desk declines the second request but cancels the first booking in the process. The second guest saw the expected response. The reservation list tells you why the result still fails the criterion.
+
+## Read what you built
 
 ```sh
 dotspec build
 dotspec check
 ```
 
-Open `SPEC.md` and follow the link to your system. After you change a specification, run both commands again. Commit the source specifications, `dotspec.yaml`, `SPEC.md`, and the generated `specification/` directory together.
+Open `SPEC.md`, follow **Read the system specification**, and under **Requirements** choose **Prevent a second reservation**. A teammate can now read the promise, the condition, and the example together. **View source** takes them back to the file you edited.
 
-Run `dotspec docs` to read the handbook offline or [choose a topic](/handbook).
+## Fix a stale report
+
+In the requirement source, change the rationale to “A guest with a confirmation needs to be able to rely on it.” Save the file and run `dotspec check` before rebuilding. Among the findings you should see:
+
+```text
+error [spec.stale]
+generated page is stale; run dotspec build in this project
+```
+
+Run `dotspec build` and then `dotspec check`. The check should now report zero errors. Reopen the requirement report to see the new rationale. Commit `dotspec.yaml`, `specs/`, `SPEC.md`, and `specification/` together.
+
+To see a requirement checked against a running application, follow [What survives a restart?](/examples/restart). To write your own criterion, use [Write an assessable requirement](/guides/write-an-assessable-requirement).

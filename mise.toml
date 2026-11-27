@@ -36,7 +36,7 @@ description = "Run unit and process-level CLI tests"
 run = "go test ./..."
 
 [tasks.generate]
-description = "Regenerate the guide map, CLI reference, command output examples, and both project specifications"
+description = "Regenerate the handbook index, CLI reference and examples, web docs, and both project specifications"
 run = ["go run ./scripts/generate", "go run . build", "go run . build -C examples/todo"]
 
 [tasks.generated-check]

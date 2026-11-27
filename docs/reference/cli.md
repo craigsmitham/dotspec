@@ -57,7 +57,7 @@ Check specifications and reference documents in a project subtree
 dotspec check [<path>] [flags]
 ```
 
-Check authored specifications and the reference documents they cite, using the same discovery rules as list. With no <path>, check covers the enclosing project; a directory narrows it to that subtree, and a specification file checks that file and the context it requests. A whole-project check in a project declared with dotspec.yaml also checks that the generated specification is current, unless build.enabled is false. With --all, check covers every project discovered in the workspace separately and exits with the highest project exit code.
+Check authored specifications and the reference documents they cite, using the same discovery rules as list. With no `<path>`, check covers the enclosing project; a directory narrows it to that subtree, and a specification file checks that file and the context it requests. A whole-project check in a project declared with dotspec.yaml also checks that the generated specification is current, unless build.enabled is false. With --all, check covers every project discovered in the workspace separately and exits with the highest project exit code.
 
 A passing check means no checked file has an error finding under dotspec's automated authoring rules. Exits 1 when error findings are reported.
 
@@ -200,7 +200,7 @@ Start a specification project
 dotspec init <system-name> [flags]
 ```
 
-Start a specification project in the working directory. Init writes dotspec.yaml, which declares the project, and the root system specification, whose heading is <system-name> and whose filename is derived from it. The project name defaults to the system name's slug. Init refuses to overwrite either file and exits 2 instead. When the directory lies inside another project, init says so: that project's discovery now stops at the new manifest.
+Start a specification project in the working directory. Init writes dotspec.yaml, which declares the project, and the root system specification, whose heading is `<system-name>` and whose filename is derived from it. The project name defaults to the system name's slug. Init refuses to overwrite either file and exits 2 instead. When the directory lies inside another project, init says so: that project's discovery now stops at the new manifest.
 
 Learn more: dotspec docs system
 
@@ -529,7 +529,7 @@ Create a business-rule specification
 dotspec new business-rule <slug> [flags]
 ```
 
-Describe business constraints independently of their enforcement. Writes specs/business-rules/<slug>.business-rule.spec.md below the working directory.
+Describe business constraints independently of their enforcement. Writes `specs/business-rules/<slug>.business-rule.spec.md` below the working directory.
 
 Learn more: dotspec docs business-rule
 
@@ -550,7 +550,7 @@ Create a capability specification
 dotspec new capability <slug> [flags]
 ```
 
-Describe an ability and the parts that provide it. Writes specs/capabilities/<slug>.capability.spec.md below the working directory.
+Describe an ability and the parts that provide it. Writes `specs/capabilities/<slug>.capability.spec.md` below the working directory.
 
 Learn more: dotspec docs capability
 
@@ -571,7 +571,7 @@ Create a component specification
 dotspec new component <name> [flags]
 ```
 
-Describe a part of a system and its responsibilities. The <name> becomes the heading, and the filename is derived from it. --part-of names the parent system or component, relative to the working directory; Part of is never inferred from the file's location.
+Describe a part of a system and its responsibilities. The `<name>` becomes the heading, and the filename is derived from it. --part-of names the parent system or component, relative to the working directory; Part of is never inferred from the file's location.
 
 Learn more: dotspec docs component
 
@@ -593,7 +593,7 @@ Create a concept specification
 dotspec new concept <slug> [flags]
 ```
 
-Describe purposeful product behavior through state and actions. Writes specs/concepts/<slug>.concept.spec.md below the working directory.
+Describe purposeful product behavior through state and actions. Writes `specs/concepts/<slug>.concept.spec.md` below the working directory.
 
 Learn more: dotspec docs concept
 
@@ -614,7 +614,7 @@ Create a feature specification
 dotspec new feature <slug> [flags]
 ```
 
-Group stakeholder-visible behavior. Writes specs/features/<slug>.feature.spec.md below the working directory.
+Group stakeholder-visible behavior. Writes `specs/features/<slug>.feature.spec.md` below the working directory.
 
 Learn more: dotspec docs feature
 
@@ -635,7 +635,7 @@ Create a job specification
 dotspec new job <slug> [flags]
 ```
 
-Define jobs to be done (JTBDs). Writes specs/jobs/<slug>.job.spec.md below the working directory.
+Define jobs to be done (JTBDs). Writes `specs/jobs/<slug>.job.spec.md` below the working directory.
 
 Learn more: dotspec docs job
 
@@ -656,7 +656,7 @@ Create a quality-attribute specification
 dotspec new quality-attribute <id>... [flags]
 ```
 
-Adopt a quality attribute for a system, blank or from a quality model. Each <id> becomes the attribute's ID and slug in the nearest enclosing system. Without --from, each attribute starts with a blank definition in specs/quality/<id>/. With --from, the definition is copied from the model's term and cited, and the term's missing parents are adopted too; parents the system already declares are reused. --dry-run previews the decisions and new file contents without writing.
+Adopt a quality attribute for a system, blank or from a quality model. Each `<id>` becomes the attribute's ID and slug in the nearest enclosing system. Without --from, each attribute starts with a blank definition in `specs/quality/<id>/.` With --from, the definition is copied from the model's term and cited, and the term's missing parents are adopted too; parents the system already declares are reused. --dry-run previews the decisions and new file contents without writing.
 
 Learn more: dotspec docs quality-attribute
 
@@ -702,7 +702,7 @@ Create a requirement specification
 dotspec new requirement <slug> [flags]
 ```
 
-Specify required results, rules, properties, and restrictions. Writes specs/requirements/<slug>.requirement.spec.md below the working directory.
+Specify required results, rules, properties, and restrictions. Writes `specs/requirements/<slug>.requirement.spec.md` below the working directory.
 
 Learn more: dotspec docs requirement
 
@@ -724,7 +724,7 @@ Create a system specification
 dotspec new system <name> [flags]
 ```
 
-Describe a system's purpose, scope, and context. The <name> becomes the heading, and the filename is derived from it. --part-of names the parent system, relative to the working directory; a project's root system comes from dotspec init.
+Describe a system's purpose, scope, and context. The `<name>` becomes the heading, and the filename is derived from it. --part-of names the parent system, relative to the working directory; a project's root system comes from dotspec init.
 
 Learn more: dotspec docs system
 
@@ -746,7 +746,7 @@ Create a use-case specification
 dotspec new use-case <slug> [flags]
 ```
 
-Describe actor goals and interactions with a system. Writes specs/use-cases/<slug>.use-case.spec.md below the working directory.
+Describe actor goals and interactions with a system. Writes `specs/use-cases/<slug>.use-case.spec.md` below the working directory.
 
 Learn more: dotspec docs use-case
 
@@ -785,7 +785,7 @@ Export a source-backed specification snapshot as JSON
 dotspec snapshot export [<path>] [flags]
 ```
 
-Export selected specifications, reusable quality models, enclosing systems, and direct reference context as JSON. Retain readable Markdown and source locations, including diagnostics for invalid documents. With no <path>, export covers the enclosing project; a directory selects that subtree. Filesystem discovery and authoring findings follow check; external references are not fetched. Exits 1 when error findings are reported.
+Export selected specifications, reusable quality models, enclosing systems, and direct reference context as JSON. Retain readable Markdown and source locations, including diagnostics for invalid documents. With no `<path>`, export covers the enclosing project; a directory selects that subtree. Filesystem discovery and authoring findings follow check; external references are not fetched. Exits 1 when error findings are reported.
 
 Learn more: dotspec docs specs/use-cases/export-specification-model.use-case.spec.md
 
@@ -841,7 +841,7 @@ List specifications, their companions, reference documents, system context, and 
 dotspec sources [<path>] [flags]
 ```
 
-List the files check reads: specifications, reference documents, enclosing system context and directly referenced files, each with the references that reach it. A file a specification lists as a companion shows the role that specification states for it. With no <path>, sources covers the enclosing project; a directory narrows it to that subtree.
+List the files check reads: specifications, reference documents, enclosing system context and directly referenced files, each with the references that reach it. A file a specification lists as a companion shows the role that specification states for it. With no `<path>`, sources covers the enclosing project; a directory narrows it to that subtree.
 
 A listed reference means its target exists and can be addressed, not that the target is authoritative; a companion's role is the author's declaration, not a verified relationship. Exits 1 when error findings are reported.
 

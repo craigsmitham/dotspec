@@ -31,6 +31,8 @@ func main() {
 	}
 }
 
+type generatedFile struct{ path, content string }
+
 func run(check bool) error {
 	root, err := os.Getwd()
 	if err != nil {
@@ -38,7 +40,8 @@ func run(check bool) error {
 	}
 	var reference strings.Builder
 	reference.WriteString("# CLI reference\n\nRun project commands in the directory containing your specifications. Substitute your own names and paths in the examples. The root command's flags, including `-C`, apply to every command. Handbook reading commands work from any directory.\n\n")
-	writeCommand(&reference, cli.NewRoot())
+	commands := cli.NewRoot()
+	writeCommand(&reference, commands)
 	gallery, err := outputGallery()
 	if err != nil {
 		return err
@@ -51,12 +54,17 @@ func run(check bool) error {
 	if err != nil {
 		return err
 	}
-	files := []struct{ path, content string }{
+	files := []generatedFile{
 		{"examples/app_specs_gen.go", appSpecs},
 		{"docs/cli-handbook/README.md", guideMap},
 		{"docs/reference/cli.md", reference.String()},
 		{"docs/reference/command-examples.md", gallery},
 	}
+	web, err := webPages(commands)
+	if err != nil {
+		return err
+	}
+	files = append(files, web...)
 	var stale []string
 	for _, file := range files {
 		path := filepath.Join(root, file.path)
@@ -140,10 +148,22 @@ func writeCommand(out *strings.Builder, cmd *cobra.Command) {
 	if cmd.Hidden {
 		return
 	}
+	fmt.Fprintf(out, "## %s\n\n", cmd.CommandPath())
+	writeCommandBody(out, cmd)
+	for _, child := range cmd.Commands() {
+		writeCommand(out, child)
+	}
+}
+
+// Cobra descriptions are plain text. Quote metavariables so Markdown and MDX
+// render them literally, including when they appear inside an example path.
+var metavar = regexp.MustCompile(`[A-Za-z0-9./_-]*<[A-Za-z0-9_-]+>[A-Za-z0-9./_-]*`)
+
+func writeCommandBody(out *strings.Builder, cmd *cobra.Command) {
 	cmd.InitDefaultHelpFlag()
-	fmt.Fprintf(out, "## %s\n\n%s\n\n```sh\n%s\n```\n", cmd.CommandPath(), cmd.Short, cmd.UseLine())
+	fmt.Fprintf(out, "%s\n\n```sh\n%s\n```\n", cmd.Short, cmd.UseLine())
 	if cmd.Long != "" {
-		fmt.Fprintf(out, "\n%s\n", strings.TrimPrefix(cmd.Long, cmd.Short+"\n\n"))
+		fmt.Fprintf(out, "\n%s\n", metavar.ReplaceAllString(strings.TrimPrefix(cmd.Long, cmd.Short+"\n\n"), "`$0`"))
 	}
 	if cmd.Example != "" {
 		// Help indents examples; a fenced block needs no indent.
@@ -168,9 +188,6 @@ func writeCommand(out *strings.Builder, cmd *cobra.Command) {
 		})
 	}
 	out.WriteByte('\n')
-	for _, child := range cmd.Commands() {
-		writeCommand(out, child)
-	}
 }
 
 func escape(s string) string { return strings.NewReplacer("|", "\\|", "\n", " ").Replace(s) }

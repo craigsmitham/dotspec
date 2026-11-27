@@ -5,8 +5,9 @@
   "colors": { "primary": "#196B55", "light": "#65C7A4", "dark": "#196B55" },
   "navigation": {
     "groups": [
-      { "group": "Get started", "pages": ["index", "quickstart"] },
-      { "group": "Write specifications", "pages": ["handbook"] }
+      { "group": "Get started", "pages": ["index", "quickstart", "examples/restart"] },
+      { "group": "Write specifications", "pages": ["handbook", "guides/describe-a-system", "guides/write-an-assessable-requirement", "guides/list-a-companion"] },
+      { "group": "CLI reference", "pages": ["cli/init", "cli/new-requirement", "cli/build", "cli/check"] }
     ]
   },
   "navbar": { "links": [{ "label": "GitHub", "href": "https://github.com/dotspec-md/dotspec" }] }

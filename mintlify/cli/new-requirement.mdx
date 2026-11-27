@@ -1,0 +1,27 @@
+---
+title: "dotspec new requirement"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+Create a requirement specification
+
+```sh
+dotspec new requirement <slug> [flags]
+```
+
+Specify required results, rules, properties, and restrictions. Writes `specs/requirements/<slug>.requirement.spec.md` below the working directory.
+
+Learn more: dotspec docs requirement
+
+```sh
+dotspec new requirement reject-existing-target
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--attribute <id>` | `` | classify the requirement by this quality attribute of its governing system |
+| `-h, --help` | `false` | help for requirement |
+| `--json` | `false` | emit the result as JSON |
+
+See the [full CLI reference](https://github.com/dotspec-md/dotspec/blob/main/docs/reference/cli.md#dotspec) for global flags.

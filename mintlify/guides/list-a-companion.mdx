@@ -1,0 +1,95 @@
+---
+title: "List a companion"
+---
+
+{/* Generated from docs/cli-handbook/guides/list-a-companion.md by mise run generate. */}
+
+Start with a specification and a file or resource that carries part of its intent, such as a formal model, an executable example, a test or an explanatory note. Aim for an entry that tells a reader which file to open, what it covers and which one to correct if the two disagree. [What does a companion add to a specification?](<https://github.com/dotspec-md/dotspec/blob/main/docs/cli-handbook/explanations/companions.md>).
+
+## Add the entry
+
+Open the `*.spec.md` file whose intent the companion carries. Any specification can list companions. A quality model cannot, because it is reference material. List the companion on each specification that uses the shared term instead. Add a `companions` sequence to the frontmatter:
+
+```yaml
+---
+type: requirement-spec
+companions:
+  - target: ../../tests/acceptance.py#verify
+    role: verifies
+    note: Restart acceptance test; kills the service and compares each view's identities after it starts again
+---
+```
+
+Give each entry a `target` and a `role`. Write the target as a path relative to the specification file or as an absolute URL. A `#fragment` can name a section or definition in the target. A target must be another file or resource. Link to a passage in the same specification from its body. Add a `note` when the file name alone would not tell a reader what the companion covers or leaves out. Write each value on one line, without spaces at either end. [Restart requirement](<https://github.com/dotspec-md/dotspec/blob/main/examples/todo/specs/requirements/restart.requirement.spec.md>).
+
+## Choose a role
+
+Ask what should happen if the companion and the prose disagree.
+
+- Use `formalizes` when the companion states the same intent more precisely and must preserve its meaning, as a model property or schema does. A disagreement is a defect in one of them.
+- Use `illustrates` when the companion's cases are part of what is specified, as executable examples are.
+- Use `verifies` when the companion is a procedure for assessing the specification, such as an automated test or a manual protocol. Record each run's outcome separately.
+- Use `explains` for background or rationale that a reader can set aside.
+
+To decide between `illustrates` and `verifies`, imagine an internal refactoring. If you would have to edit the test, it follows the implementation and verifies the promise. If it would change only when the promise does, it can illustrate it. When a file serves both purposes, list the same target once under each role. [Is a test an illustration or a procedure?](<https://github.com/dotspec-md/dotspec/blob/main/docs/cli-handbook/explanations/companions.md#is-a-test-an-illustration-or-a-procedure>).
+
+## Name a definition
+
+Point a fragment at the smallest part of the companion that carries the intent. In a Markdown file, use a heading anchor, as the availability requirement does with `../../README.md#run-the-app`. dotspec also recognizes named definitions in the following formats. It reads a definition's leading keyword to find its name and does not interpret the definition.
+
+| Format | A fragment can name |
+| --- | --- |
+| Quint `.qnt` | A `module`, `const`, `var`, `type`, `val`, `def`, `pure val`, `pure def`, `action`, `run`, `temporal`, `assume` or `nondet` |
+| Alloy `.als` | A `sig`, including each name in a comma-separated list and with an `abstract`, `one`, `lone`, `some` or `var` prefix, or a `module`, `enum`, `fact`, `pred`, `fun`, `assert`, `check` or `run`. For `pred Sig.name`, use `name`. |
+| TLA+ `.tla` | The `MODULE`, each name after `CONSTANT`, `CONSTANTS`, `VARIABLE` or `VARIABLES`, a named `THEOREM`, `LEMMA` or similar, or a top-level `Name ==` or `Name(args) ==` |
+| Gherkin `.feature` | A `Feature`, `Rule`, `Background`, `Scenario`, `Scenario Outline`, `Scenario Template` or `Example` title, written as a heading anchor. `Scenario: Resume a waiting entry` becomes `#resume-a-waiting-entry`, and a repeated title gains `-1`, `-2` and so on. |
+| Go `.go` | A `func`, including a method, or a `type` |
+| Python `.py` | A `def`, `async def` or `class` |
+| txtar | A file name from a `-- name --` line |
+
+dotspec does not check fragments in other formats. They keep the meaning their format gives them.
+
+## Check the entry
+
+From the project directory, run `dotspec check`. It resolves each target as it resolves an authored link: a relative target must exist inside the repository (an absolute URL is not fetched), and a fragment must name a heading or definition that the target declares. Run `dotspec sources` to see the companion files alongside the other files your specifications reference. Each companion file shows the specification that lists it and the role that entry states, such as `Companion that verifies specs/requirements/restart.requirement.spec.md:5:13`. Check that every file you meant to list appears with the role you intended.
+
+Then run `dotspec build` and open the subject's report page. Its **Companions** section groups the entries under **Formalized by**, **Illustrated by**, **Verified by** and **Explained by**, each followed by its note. A named definition links to its line, and a specification target links to its report page. A system or component report lists its own companions in its overview. The outermost system's report links to `companions.md`, which lists every companion in the system by role with the subject that declares it. Check that a reader could choose the right companion from the label and note alone. [To-do companions](<https://github.com/dotspec-md/dotspec/blob/main/examples/todo/specification/companions.md>).
+
+## Record results for a procedure
+
+A `verifies` companion is the procedure. Its outcomes belong in `verification-results.json` in the project root, so the specification changes only when the promise does. Identify each result's `subject` by the requirement's project-relative path. For its `procedure`, resolve the companion's target from the project root and keep any fragment. For the To-do restart requirement, that is:
+
+```json
+{
+  "subject": "specs/requirements/restart.requirement.spec.md",
+  "procedure": "tests/acceptance.py#verify"
+}
+```
+
+A complete result also records the product revision, conditions, outcome and observation. `dotspec build` shows the matching results under the requirement's **Verification** heading. [Verification results format (dotspec checkout)](<https://github.com/dotspec-md/dotspec/blob/main/docs/reference/generated-specification.md#record-verification-results>).
+
+## Resolve a finding
+
+### Correct the shape of an entry
+
+`companion.invalid` means that an entry does not have the expected form. Write `companions` as a sequence of mappings and use only the `target`, `role` and `note` keys. Give each value as one line of text without spaces at either end, and remove a note that is empty. A target that begins with `#` points into the same specification. Link to that passage from the body instead. If the file is a quality model, move the entry to a specification that uses the model.
+
+### Give each companion a role
+
+`companion.role` means that an entry has no role or an unknown one. Use `formalizes`, `illustrates`, `verifies` or `explains`. If none fits, the file may be a citation that belongs in the body as an ordinary link. [Choose a role](#choose-a-role).
+
+### Remove a repeated entry
+
+`companion.duplicate` means that the same target appears twice with the same role. Keep one entry and combine the notes. The same target can appear again with a different role.
+
+### Name a definition the target declares
+
+`reference.unresolved` reports a missing file or, with the message `companion "X" names no definition "Y" in FILE`, a fragment the target does not declare. Check the spelling, then check that the name appears in a form listed under [Name a definition](#name-a-definition). If the definition was renamed or removed, update the fragment or the entry. `reference.boundary` means the target leaves the repository. Use an absolute URL for a resource outside it.
+
+### Claim an unlisted model or feature file
+
+`companion.unlisted` is advice from a whole-project check. A `.qnt`, `.als`, `.tla` or `.feature` file exists that no specification lists as a companion. Add it to the specification whose intent it carries. If it no longer carries intent, consider removing it.
+
+### Move a verification procedure into companions
+
+`structure.verification-procedure` reports a `## Verification procedures` section, or `### Verification procedures` under **Criterion**. List each procedure in that section as a companion with `role: verifies`, then delete the section. Keep any account of what the procedure exercises and what it leaves out under **Evidence**.

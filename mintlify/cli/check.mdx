@@ -1,0 +1,30 @@
+---
+title: "dotspec check"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+Check specifications and reference documents in a project subtree
+
+```sh
+dotspec check [<path>] [flags]
+```
+
+Check authored specifications and the reference documents they cite, using the same discovery rules as list. With no `<path>`, check covers the enclosing project; a directory narrows it to that subtree, and a specification file checks that file and the context it requests. A whole-project check in a project declared with dotspec.yaml also checks that the generated specification is current, unless build.enabled is false. With --all, check covers every project discovered in the workspace separately and exits with the highest project exit code.
+
+A passing check means no checked file has an error finding under dotspec's automated authoring rules. Exits 1 when error findings are reported.
+
+Learn more: dotspec docs docs/reference/inspection.md#check-specifications
+
+```sh
+dotspec check
+dotspec check internal --json
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--all` | `false` | check every discovered project separately |
+| `-h, --help` | `false` | help for check |
+| `--json` | `false` | emit the result as JSON |
+
+See the [full CLI reference](https://github.com/dotspec-md/dotspec/blob/main/docs/reference/cli.md#dotspec) for global flags.

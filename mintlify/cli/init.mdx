@@ -1,0 +1,27 @@
+---
+title: "dotspec init"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+Start a specification project
+
+```sh
+dotspec init <system-name> [flags]
+```
+
+Start a specification project in the working directory. Init writes dotspec.yaml, which declares the project, and the root system specification, whose heading is `<system-name>` and whose filename is derived from it. The project name defaults to the system name's slug. Init refuses to overwrite either file and exits 2 instead. When the directory lies inside another project, init says so: that project's discovery now stops at the new manifest.
+
+Learn more: dotspec docs system
+
+```sh
+dotspec init Bookings
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for init |
+| `--json` | `false` | emit the result as JSON |
+| `--name <project>` | `` | project name written to dotspec.yaml; defaults to the system name's slug |
+
+See the [full CLI reference](https://github.com/dotspec-md/dotspec/blob/main/docs/reference/cli.md#dotspec) for global flags.
