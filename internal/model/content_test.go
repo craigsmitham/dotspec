@@ -93,7 +93,7 @@ func TestContentLexicalEdges(t *testing.T) {
 }
 
 func FuzzParseContent(f *testing.F) {
-	for _, seed := range []string{"", "# T\n\nText.\n", "0\n0\n-", "**0*", "0*~~0~ ", "[^a]:0\n0!0^a]", "*0***0*", "~00~0", "*\x1c**", "0[]( \")\")0", "\ufeff---\r\ntype: job-spec\r\n---\r\n# T\r\n", "- [x] **a**\n  - b\n", "---\nx: [a, b]\n---\n", "[^a]: Definition\n\nUse[^a].\n", "[a](b \"c)\")\n"} {
+	for _, seed := range []string{"", "# T\n\nText.\n", "0\n0\n-", "- 0\n0\n:-\n", "**0*", "0*~~0~ ", "[^a]:0\n0!0^a]", "*0***0*", "~00~0", "*\x1c**", "0[]( \")\")0", "\ufeff---\r\ntype: job-spec\r\n---\r\n# T\r\n", "- [x] **a**\n  - b\n", "---\nx: [a, b]\n---\n", "[^a]: Definition\n\nUse[^a].\n", "[a](b \"c)\")\n"} {
 		f.Add([]byte(seed))
 	}
 	f.Fuzz(func(t *testing.T, data []byte) {

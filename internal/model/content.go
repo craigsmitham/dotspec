@@ -124,6 +124,11 @@ func (e *contentExtractor) spanBounds(r Record) (int, int) {
 
 func (e *contentExtractor) bounds(n ast.Node) (int, int) {
 	start := n.Pos()
+	// Goldmark assigns the original paragraph's position to a table even
+	// when earlier lines of that paragraph remain as a separate block.
+	if table, ok := n.(*east.Table); ok && table.FirstChild() != nil {
+		start = table.FirstChild().Pos()
+	}
 	end := start
 	if start < 0 {
 		start = len(e.buffer) - e.base
