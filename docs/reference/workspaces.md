@@ -106,13 +106,3 @@ their containing project when one exists. The selected project's `dotspec.yaml`
 is retained as `project_configuration` context and appears in the source inventory.
 Reading views name the selected project and identify acquired domain context
 from other projects.
-
-## This repository
-
-In the dotspec checkout, the root manifest declares `dotspec`. The To-do example has
-its own manifest. Both projects use the default generated reports. From the root,
-`dotspec check` checks the product and its generated spec. Use
-`dotspec check --all` to include To-do. To add a reference app, place a
-`dotspec.yaml` beside its code and specs.
-
-For generated Markdown and whole-project checks, see [Generate a requirements specification](generated-specification.md).

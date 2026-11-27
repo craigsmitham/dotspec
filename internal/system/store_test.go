@@ -51,7 +51,7 @@ func isolatedGit(t *testing.T) {
 
 func TestInitNeverOverwrites(t *testing.T) {
 	dir := t.TempDir()
-	path, err := Init(dir)
+	path, err := InitNamed(dir, "New system")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -59,7 +59,7 @@ func TestInitNeverOverwrites(t *testing.T) {
 		t.Fatalf("template must be a valid system: %v", err)
 	}
 	writeFile(t, path, "existing user content")
-	if _, err := Init(dir); err == nil || !strings.Contains(err.Error(), "refusing to overwrite") {
+	if _, err := InitNamed(dir, "New system"); err == nil || !strings.Contains(err.Error(), "refusing to overwrite") {
 		t.Fatalf("expected overwrite error, got %v", err)
 	}
 	contents, _ := os.ReadFile(path)
@@ -252,7 +252,7 @@ func TestCommandsRejectInvalidPaths(t *testing.T) {
 	dir := t.TempDir()
 	file := writeSpec(t, dir, "Root")
 	for _, path := range []string{filepath.Join(dir, "missing"), file} {
-		if _, err := Init(path); err == nil {
+		if _, err := InitNamed(path, "New system"); err == nil {
 			t.Fatal("init accepted invalid directory")
 		}
 		if _, _, err := Show(path); err == nil {

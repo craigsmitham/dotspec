@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -10,131 +9,97 @@ import (
 	"strings"
 )
 
-// DesignMarkdown renders the authored concept descriptions and the explicitly
-// resolved composition. It neither executes synchronizations nor infers edges.
-// relativeTo is the directory where the returned Markdown will be read.
-func DesignMarkdown(s *Snapshot, relativeTo string) (string, error) {
-	s = s.navigation()
+var (
+	// viewLabelEscape makes link text safe in a Markdown link or table cell.
+	viewLabelEscape = strings.NewReplacer("[", "\\[", "]", "\\]", "|", "\\|", "\n", " ")
+	// viewCellEscape makes plain text safe in a table cell or list item.
+	viewCellEscape = strings.NewReplacer("|", "\\|", "\n", " ")
+)
+
+// viewLinks links the records of a reading view to their declarations, with
+// paths relative to the directory the view is written to.
+type viewLinks struct {
+	d        *designResolver
+	snapshot *Snapshot
+	base     string
+	// name gives a record's link text before escaping.
+	name func(Record) string
+	// escape makes link text safe where the view places it.
+	escape *strings.Replacer
+	// fragment reports whether a source fragment addresses a record. The first
+	// fragment that does supplies the link's anchor.
+	fragment func(r, f Record) bool
+	// ownSource links a record without a source document, such as a source
+	// fragment, to the source that contains it.
+	ownSource bool
+	// anchoredPassages links footnotes in a rebased passage to the record's
+	// anchor rather than to the top of its document.
+	anchoredPassages bool
+}
+
+func newViewLinks(s *Snapshot, relativeTo string) (*viewLinks, error) {
 	base, err := designOutputBase(relativeTo)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	d := newDesignResolver(s)
-	elements := append([]Record{}, s.Elements...)
-	sort.SliceStable(elements, func(i, j int) bool {
-		a, b := elements[i], elements[j]
-		pa, pb := String(d.index[String(a, "source_document")], "locator"), String(d.index[String(b, "source_document")], "locator")
-		if pa != pb {
-			return pa < pb
-		}
-		return d.name(a) < d.name(b)
-	})
-	var out strings.Builder
-	out.WriteString("# Concept design reference\n\nGenerated from authored specifications. Regenerate this view instead of editing it.\n\n")
-	fmt.Fprintf(&out, "Model `%s`; mapping `%s`. Relationships reflect explicit declarations. These views do not establish behavioral completeness or implementation guarantees.\n\n", s.ModelVersion, s.MappingProfile)
-	if len(s.Diagnostics) > 0 {
-		out.WriteString("## Inspection findings\n\n")
-		for _, f := range s.Diagnostics {
-			fmt.Fprintf(&out, "- **%s** `%s`: %s\n", String(f, "severity"), String(f, "code"), strings.ReplaceAll(String(f, "message"), "\n", " "))
-		}
-		out.WriteString("\n")
-	}
-	sourceLink := func(r Record) string {
-		locator := String(d.index[String(r, "source_document")], "locator")
-		rel, e := filepath.Rel(base, filepath.FromSlash(locator))
-		if e != nil {
-			rel = locator
-		}
-		return (&url.URL{Path: filepath.ToSlash(rel)}).String()
-	}
-	section := func(title string, r Record, value any) {
-		text := d.text(value)
-		// Reference-style definitions may live outside this section. Supply them to
-		// the parser, then render references inline so labels cannot collide across concepts.
-		rendered := rebaseDesignMarkdown(text, sourceLink(r), d.definitions(r))
-		if strings.TrimSpace(text) == "" {
-			return
-		}
-		fmt.Fprintf(&out, "#### %s\n\n%s\n\n", title, designHeadings(rendered, 5))
-	}
-	out.WriteString("## Concepts\n\n")
-	concepts := 0
-	for _, r := range elements {
-		if String(r, "kind") != "Concept" {
-			continue
-		}
-		concepts++
-		fmt.Fprintf(&out, "### %s\n\n[Source](%s).\n\n", d.name(r), sourceLink(r))
-		section("Purpose", r, r["purpose"])
-		section("Operational principles", r, r["operational_principles"])
-		section("State", r, r["abstract_state"])
-		for _, id := range Strings(r["actions"]) {
-			action := d.index[id]
-			section(d.name(action), action, action["description"])
-		}
-		section("Effects table", r, r["effects_table"])
-	}
-	if concepts == 0 {
-		out.WriteString("No concept definitions were acquired in this scope.\n\n")
-	}
-	out.WriteString("## System compositions\n\n")
-	systems := 0
-	for _, sys := range elements {
-		if String(sys, "kind") != "System" {
-			continue
-		}
-		_, usesPresent := sys["concept_uses"]
-		_, syncsPresent := sys["synchronizations"]
-		if !usesPresent && !syncsPresent {
-			continue
-		}
-		systems++
-		fmt.Fprintf(&out, "### %s\n\n[Source](%s).\n\n", d.name(sys), sourceLink(sys))
-		uses := Strings(sys["concept_uses"])
-		if len(uses) > 0 {
-			out.WriteString("| Use | Definition |\n| --- | --- |\n")
-			for _, id := range uses {
-				use := d.index[id]
-				definition := d.index[String(use, "definition")]
-				definitionText := "Unresolved or undeclared"
-				if definition != nil {
-					definitionText = fmt.Sprintf("[%s](%s)", designCell(d.name(definition)), sourceLink(definition))
-				}
-				fmt.Fprintf(&out, "| %s | %s |\n", designCell(d.name(use)), definitionText)
-			}
-			out.WriteString("\n")
-			ids := map[string]string{}
-			for i, id := range uses {
-				ids[id] = fmt.Sprintf("u%d", i)
-			}
-			out.WriteString("#### Application dependencies\n\nAn arrow means the source use requires the target use for its role in this system. Cycles are permitted.\n\n```mermaid\nflowchart LR\n")
-			for _, id := range uses {
-				fmt.Fprintf(&out, "    %s[\"%s\"]\n", ids[id], designDiagramLabel(d.name(d.index[id])))
-			}
-			for _, id := range uses {
-				for _, dep := range Strings(d.index[id]["dependencies"]) {
-					if target := ids[dep]; target != "" {
-						fmt.Fprintf(&out, "    %s --> %s\n", ids[id], target)
-					}
-				}
-			}
-			out.WriteString("```\n\n")
-		}
-		for _, field := range []string{"concept_uses", "synchronizations"} {
-			for _, id := range Strings(sys[field]) {
-				item := d.index[id]
-				section(d.name(item), item, item["content"])
-			}
-		}
-	}
-	if systems == 0 {
-		out.WriteString("No explicit system compositions were acquired. Directory association alone does not declare a concept use.\n\n")
-	}
-	return projectReading(s, strings.TrimSpace(out.String())+"\n"), nil
+	return &viewLinks{d: d, snapshot: s, base: base, name: d.name, escape: viewLabelEscape, fragment: anchoredFragment}, nil
 }
-func designCell(s string) string { return strings.NewReplacer("|", "\\|", "\n", " ").Replace(s) }
-func designDiagramLabel(s string) string {
-	return strings.NewReplacer("&", "&amp;", "\"", "&quot;", "<", "&lt;", ">", "&gt;", "\n", " ", "|", "&#124;").Replace(s)
+
+func anchoredFragment(r, f Record) bool {
+	return namesFragment(r, f) && String(f, "generated_anchor") != ""
+}
+
+func (l *viewLinks) document(r Record) string {
+	source := String(r, "source_document")
+	if source == "" && l.ownSource {
+		source = String(r, "source")
+	}
+	return source
+}
+
+func (l *viewLinks) sourceURL(r Record) url.URL {
+	locator := String(l.d.index[l.document(r)], "locator")
+	rel, err := filepath.Rel(l.base, filepath.FromSlash(locator))
+	if err != nil {
+		rel = locator
+	}
+	return url.URL{Path: filepath.ToSlash(rel)}
+}
+
+// source returns the path of the document that declares r.
+func (l *viewLinks) source(r Record) string {
+	u := l.sourceURL(r)
+	return u.String()
+}
+
+// target returns the path of r's document with the anchor of r's fragment.
+func (l *viewLinks) target(r Record) string {
+	u := l.sourceURL(r)
+	document := l.document(r)
+	for _, f := range l.snapshot.Fragments {
+		if String(f, "source") == document && l.fragment(r, f) {
+			u.Fragment = String(f, "generated_anchor")
+			break
+		}
+	}
+	return u.String()
+}
+
+func (l *viewLinks) label(r Record) string { return l.escape.Replace(l.name(r)) }
+
+func (l *viewLinks) link(r Record) string {
+	return "[" + l.label(r) + "](<" + l.target(r) + ">)"
+}
+
+// passage renders authored Markdown from r with links rebased onto the view
+// and headings starting at level.
+func (l *viewLinks) passage(r Record, text string, level int) string {
+	source := l.source(r)
+	if l.anchoredPassages {
+		source = l.target(r)
+	}
+	return designHeadings(rebaseDesignMarkdown(text, source, l.d.definitions(r)), level)
 }
 
 type designEdit struct {

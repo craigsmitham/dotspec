@@ -3,6 +3,7 @@ package cli
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -12,6 +13,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/businessrule"
 	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
+	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/craigsmitham/dotspec/internal/usecase"
@@ -28,7 +30,7 @@ func prepareExample(t *testing.T, command string) {
 		t.Fatal(err)
 	}
 	if command == "dotspec component init" {
-		if _, err := system.Init("."); err != nil {
+		if _, err := system.InitNamed(".", "New system"); err != nil {
 			t.Fatal(err)
 		}
 		return
@@ -36,8 +38,14 @@ func prepareExample(t *testing.T, command string) {
 	if command == "dotspec" || strings.HasSuffix(command, " init") {
 		return
 	}
-	if _, err := system.Init("."); err != nil {
+	if _, err := system.InitNamed(".", "New system"); err != nil {
 		t.Fatal(err)
+	}
+	if command == "dotspec quality-model check" {
+		if _, err := qualitymodel.Init(".", "organization-quality", "furps"); err != nil {
+			t.Fatal(err)
+		}
+		return
 	}
 	if command == "dotspec spec build" {
 		writeFixture(t, "dotspec.yaml", "name: demo\n")
@@ -81,7 +89,7 @@ func TestStructuredReadContracts(t *testing.T) {
 	prepareExample(t, "read")
 	for _, args := range [][]string{
 		{"sources"}, {"system", "show"}, {"system", "list"}, {"job", "show", "develop-requirements"},
-		{"job", "list"}, {"job", "step", "list", "develop-requirements"},
+		{"job", "list"},
 		{"use-case", "show", "check-specifications"}, {"use-case", "list"},
 		{"concept", "show", "job-map"}, {"concept", "list"},
 		{"requirement", "show", "diagnostic-severity"},
@@ -98,7 +106,7 @@ func TestStructuredReadContracts(t *testing.T) {
 		}
 		wantVersion := float64(2)
 		switch {
-		case args[0] == "sources" || (args[0] == "job" && args[1] == "step"):
+		case args[0] == "sources":
 			wantVersion = 1
 		case args[0] == "system" && args[1] == "show":
 			wantVersion = 3
@@ -111,7 +119,9 @@ func TestStructuredReadContracts(t *testing.T) {
 		}
 	}
 	_, output, _ := invoke("job", "show", "develop-requirements", "--json")
-	var result jobResult
+	var result struct {
+		Job *job.Job `json:"job"`
+	}
 	if err := json.Unmarshal([]byte(output), &result); err != nil {
 		t.Fatal(err)
 	}
@@ -139,11 +149,15 @@ func TestStructuredReadContracts(t *testing.T) {
 	}
 }
 
+type failedOutput struct{}
+
+func (failedOutput) Write([]byte) (int, error) { return 0, errors.New("output unavailable") }
+
 func TestOutputFailuresAcrossCommands(t *testing.T) {
 	prepareExample(t, "output")
 	for _, args := range [][]string{
 		{"--help"}, {"--version"}, {"completion", "bash"}, {"man"}, {"sources"}, {"sources", "--json"},
-		{"quality-model", "show", "furps"}, {"quality-model", "list", "--json"}, {"quality-model", "check", "furps", "--json"}, {"quality-model", "apply", "--system", "specs/new-system.system.spec.md", "--dry-run"},
+		{"quality-model", "show", "furps"}, {"quality-model", "list", "--json"}, {"quality-model", "apply", "--all", "--system", "specs/new-system.system.spec.md", "--dry-run"},
 		{"system", "show"}, {"system", "list", "--json"}, {"job", "show", "develop-requirements"},
 		{"job", "check", "develop-requirements", "--json"},
 		{"use-case", "show", "check-specifications"}, {"use-case", "list", "--json"}, {"use-case", "list", "--overview"},
@@ -151,6 +165,8 @@ func TestOutputFailuresAcrossCommands(t *testing.T) {
 		{"concept", "show", "job-map"}, {"concept", "list", "--json"}, {"concept", "check", "job-map", "--json"},
 		{"requirement", "show", "diagnostic-severity"}, {"requirement", "check", "diagnostic-severity", "--json"},
 		{"requirement", "show", "reject-existing-target"}, {"requirement", "list", "--json"}, {"requirement", "check", "reject-existing-target", "--json"},
+		{"model", "export"}, {"model", "schema"}, {"model", "trace"}, {"model", "overview"},
+		{"check", "--format", "text"}, {"check", "--format", "json"},
 	} {
 		var stderr bytes.Buffer
 		if code := Run(args, failedOutput{}, &stderr); code != 2 || !strings.Contains(stderr.String(), "output unavailable") {

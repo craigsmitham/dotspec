@@ -2,11 +2,10 @@ package model
 
 import (
 	"fmt"
-	"net/url"
-	"path/filepath"
-
 	"sort"
 	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/mermaid"
 )
 
 // OverviewMarkdown describes the acquired specification subjects and features.
@@ -14,11 +13,11 @@ import (
 // inherited, and feature involvement is derived solely from grouped requirements.
 func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	s = s.navigation()
-	base, err := designOutputBase(relativeTo)
+	l, err := newViewLinks(s, relativeTo)
 	if err != nil {
 		return "", err
 	}
-	d := newDesignResolver(s)
+	d := l.d
 	elements := append([]Record{}, s.Elements...)
 	sort.SliceStable(elements, func(i, j int) bool {
 		a, b := elements[i], elements[j]
@@ -28,28 +27,12 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		return d.name(a) < d.name(b)
 	})
-	sourceURL := func(r Record) string {
-		locator := String(d.index[String(r, "source_document")], "locator")
-		rel, e := filepath.Rel(base, filepath.FromSlash(locator))
-		if e != nil {
-			rel = locator
-		}
-		return (&url.URL{Path: filepath.ToSlash(rel)}).String()
-	}
 	link := func(id string) string {
 		r := d.index[id]
 		if r == nil {
 			return "Unresolved or undeclared"
 		}
-		target, _ := url.Parse(sourceURL(r))
-		for _, f := range s.Fragments {
-			if String(f, "source") == String(r, "source_document") && namesFragment(r, f) && String(f, "generated_anchor") != "" {
-				target.Fragment = String(f, "generated_anchor")
-				break
-			}
-		}
-		label := strings.NewReplacer("[", "\\[", "]", "\\]", "|", "\\|", "\n", " ").Replace(d.name(r))
-		return "[" + label + "](<" + target.String() + ">)"
+		return l.link(r)
 	}
 	links := func(ids []string) string {
 		values := []string{}
@@ -93,7 +76,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		out.WriteString("```mermaid\nflowchart BT\n")
 		for _, r := range elements {
 			if id := ids[String(r, "id")]; id != "" {
-				fmt.Fprintf(&out, "  %s[\"%s: %s\"]\n", id, String(r, "kind"), designDiagramLabel(d.name(r)))
+				fmt.Fprintf(&out, "  %s[\"%s: %s\"]\n", id, String(r, "kind"), mermaid.Label(d.name(r)))
 			}
 		}
 		for _, r := range elements {
@@ -205,7 +188,7 @@ func OverviewMarkdown(s *Snapshot, relativeTo string) (string, error) {
 			}
 			title := strings.ReplaceAll(strings.TrimSuffix(field, "_content"), "_", " ")
 			title = strings.ToUpper(title[:1]) + title[1:]
-			fmt.Fprintf(&out, "#### %s\n\n%s\n\n", title, designHeadings(rebaseDesignMarkdown(text, sourceURL(r), d.definitions(r)), 5))
+			fmt.Fprintf(&out, "#### %s\n\n%s\n\n", title, l.passage(r, text, 5))
 		}
 	}
 	if len(s.Diagnostics) > 0 {

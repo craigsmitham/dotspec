@@ -5,27 +5,40 @@ exec git init -q
 status 0 dotspec concept list --json
 stdout '"groups": \[\]'
 ! stderr .
+status 0 dotspec concept list
+stdout 'No concepts found'
+! stderr .
 status 0 dotspec concept init --path . -- job-map
 stdout 'Created specs/concepts/job-map.concept.spec.md'
 ! stderr .
-status 0 dotspec concept show job-map --json
+status 0 dotspec concept show --format json -- job-map
+stdout '"schema_version": 2'
+stdout '"slug": "job-map"'
+stdout '"purpose": "[^"]'
+stdout '"state": "[^"]'
+stdout '"actions": "[^"]'
+stdout '"operational_principles": "[^"]'
 stdout '"system": null'
-stdout '"operational_principles":'
+! stderr .
 status 0 dotspec system init
 status 0 dotspec concept show job-map
-stdout '# New concept'
-stdout 'System: New system'
+stdout '(?s)\A# New concept\n\n## Purpose\n.+\n## State\n.+\n## Actions\n.+\n## Operational principles\n.+\nSystem: New system'
+! stderr .
 status 0 dotspec concept list --json
 stdout '"concepts": \['
 stdout '"slug": "job-map"'
 status 0 dotspec concept check job-map --json
 stdout '"complete": true'
+stdout '"types": \[\s+"concept"\s+\]'
 stdout '"discovery": "direct"'
+stdout '"files_checked": 1,'
 stdout '"context_files_checked": 1'
 ! stderr .
+cp specs/concepts/job-map.concept.spec.md ../job-map-before.md
 status 2 dotspec concept init job-map
 stderr 'refusing to overwrite'
 ! stdout .
+cmp specs/concepts/job-map.concept.spec.md ../job-map-before.md
 status 2 dotspec concept init invalid --format mermaid
 ! stdout .
 ! exists specs/concepts/invalid.concept.spec.md
@@ -52,6 +65,15 @@ stdout '"complete": true'
 status 1 dotspec concept list
 stderr 'metadata.frontmatter'
 ! stdout .
+
+# JSON creation reports the absolute path of the new specification.
+cd ..
+mkdir created
+cd created
+status 0 dotspec concept init review --json
+stdout '"schema_version": 1'
+stdout '"path": "(/|[A-Za-z]:\\\\).*review\.concept\.spec\.md"'
+! stderr .
 -- draft.md --
 ---
 type: concept-spec

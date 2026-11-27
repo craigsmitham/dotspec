@@ -7,15 +7,8 @@ import (
 	"github.com/yuin/goldmark/ast"
 )
 
-func markdownOutline(data []byte) *Outline {
-	return NewMarkdown(data).outline()
-}
-
 // SpecificationSystem reads the explicit association without resolving it.
 // Presence remains distinct from absence, including when the selection is invalid.
-func SpecificationSystem(data []byte) (Reference, bool, error) {
-	return NewMarkdown(data).SpecificationSystem()
-}
 func (md *Markdown) SpecificationSystem() (Reference, bool, error) {
 	return md.outline().SpecificationSystem()
 }
@@ -60,10 +53,7 @@ func (o *Outline) SingleSubjectLink(title, rule string) (Reference, bool, error)
 	return links[0], true, nil
 }
 
-// MarkdownTitleAnchor returns only the document title's generated anchor.
-func MarkdownTitleAnchor(data []byte) string {
-	return NewMarkdown(data).TitleAnchor()
-}
+// TitleAnchor returns only the document title's generated anchor.
 func (md *Markdown) TitleAnchor() string {
 	for n := md.Tree.FirstChild(); n != nil; n = n.NextSibling() {
 		if h, ok := n.(*ast.Heading); ok && h.Level == 1 {

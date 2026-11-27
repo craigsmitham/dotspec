@@ -24,7 +24,7 @@ def check(root):
                 names = set(bundle.getnames())
         missing = (pages | examples | {"README.md"}) - names
         extra = {name for name in names if name.startswith("docs/")} - pages
-        extra.update(names & {"CONTRIBUTING.md", "AGENTS.md", "model/README.md", "examples/todo/COVERAGE.md"})
+        extra.update(names & {"CONTRIBUTING.md", "model/README.md", "examples/todo/COVERAGE.md"})
         extra.update(name for name in names if Path(name).name == "AGENTS.md")
         if missing or extra:
             raise ValueError(f"{archive.name}: missing {sorted(missing)}, unexpected {sorted(extra)}")

@@ -24,21 +24,6 @@ func TestParseJob(t *testing.T) {
 	}
 }
 
-func TestIntendedProgressHasOneSpelling(t *testing.T) {
-	source := "---\ntype: job-spec\n---\n# A job\n## Intended progress\nConfidence in the change.\n### Desired outcome\nLegacy narrative.\n"
-	got, err := Parse([]byte(source))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !strings.HasPrefix(got.IntendedProgress, "Confidence in the change.") || !strings.Contains(got.Markdown, "Legacy narrative.") {
-		t.Fatal(got)
-	}
-	_, err = Parse([]byte(source + "\n## Intended progress\n"))
-	if err == nil {
-		t.Fatal("duplicate intended progress accepted")
-	}
-}
-
 func TestParseJobPreservesMarkdown(t *testing.T) {
 	body := "- Understand needs.\n\n### Details\n\n```markdown\n# Not a title\n## Intended progress\n```\n\n> ## Situation\n> Quoted example."
 	source := strings.Replace(validJob, "Understand stakeholder needs.", body, 1)

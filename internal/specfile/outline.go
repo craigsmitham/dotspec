@@ -28,20 +28,17 @@ type Outline struct {
 	Companions []Companion
 }
 
-// ParseOutline is the shared Markdown extraction path. The caller supplies a
+// TypedOutline is the shared Markdown extraction path. The caller supplies a
 // fresh metadata destination defining its accepted fields and interprets the
 // resulting sections and metadata, including any explicit identifiers.
-func ParseOutline(data []byte, kind string, metadata TypedMetadata) (*Outline, error) {
-	return NewMarkdown(data).TypedOutline(kind, metadata)
-}
-
 func (md *Markdown) TypedOutline(kind string, metadata TypedMetadata) (*Outline, error) {
-	if err := md.decode(kind, metadata); err != nil {
+	companions, err := md.decode(kind, metadata)
+	if err != nil {
 		return nil, err
 	}
 	out, err := md.Outline(kind)
 	if err == nil {
-		out.Companions, _ = md.companions(kind)
+		out.Companions = companions
 		err = out.checkFields(DocumentRootClass(kind), out.Sections, 2)
 	}
 	return out, err
@@ -49,11 +46,6 @@ func (md *Markdown) TypedOutline(kind string, metadata TypedMetadata) (*Outline,
 
 func (md *Markdown) Outline(kind string) (*Outline, error) {
 	return md.outline().parseHeadings(kind)
-}
-
-// MarkdownOutline reads ordinary Markdown with optional YAML frontmatter.
-func MarkdownOutline(data []byte, kind string) (*Outline, error) {
-	return markdownOutline(data).parseHeadings(kind)
 }
 
 func (out *Outline) parseHeadings(kind string) (*Outline, error) {
@@ -104,9 +96,27 @@ func (out *Outline) parseHeadings(kind string) (*Outline, error) {
 }
 
 func (o *Outline) Location(offset int, element string) diagnostic.Location {
-	location := BodyLocation(o.Original, o.Source, offset)
+	location := diagnostic.At(o.Original, len(o.Original)-len(o.Source)+offset)
 	location.Element = element
 	return location
+}
+
+// Capture copies the body of each top-level section named in fields and
+// records where it starts. A repeated section is rejected at its second heading.
+func (o *Outline) Capture(fields map[string]*string, locations map[string]diagnostic.Location) error {
+	for _, section := range o.Sections {
+		target, known := fields[section.Title]
+		if !known {
+			continue
+		}
+		location := o.Location(section.Start, section.Title)
+		if previous, exists := locations[section.Title]; exists {
+			return diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", section.Title), location, previous)
+		}
+		locations[section.Title] = location
+		*target = o.Body(section)
+	}
+	return nil
 }
 
 func (o *Outline) Body(s *Section) string {

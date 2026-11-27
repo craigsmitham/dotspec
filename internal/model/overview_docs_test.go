@@ -109,3 +109,20 @@ id: worker-queue
 	// A parent component is allowed to be declared in another system document.
 	checkSourceText(t, s)
 }
+
+func TestOverviewDiagramEncodesNodeLabels(t *testing.T) {
+	root := structureFixture(t)
+	traceEdit(t, root, "specs/online-store.system.spec.md", "# Online Store", `# (Online) & "Store"`)
+	result := conformanceExport(t, root)
+	if result.ExitCode != 0 {
+		t.Fatal(result.Snapshot.Diagnostics)
+	}
+	text, err := OverviewMarkdown(result.Snapshot, root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	diagram := strings.Split(strings.Split(text, "```mermaid\n")[1], "```")[0]
+	if want := `["System: #40;Online#41; #38; #34;Store#34;"]`; !strings.Contains(diagram, want) {
+		t.Fatalf("diagram lacks encoded label %q:\n%s", want, diagram)
+	}
+}

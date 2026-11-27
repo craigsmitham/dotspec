@@ -2,9 +2,6 @@ package model
 
 import (
 	"fmt"
-	"net/url"
-	"path/filepath"
-
 	"sort"
 	"strings"
 
@@ -151,20 +148,39 @@ func PEGSMarkdown(s *Snapshot, relativeTo string) (string, error) {
 }
 
 type reviewView struct {
-	d        *designResolver
-	snapshot *Snapshot
-	records  []Record
-	base     string
-	out      strings.Builder
+	*viewLinks
+	records []Record
+	out     strings.Builder
 }
+
+// Review links appear in headings and lists, never in table cells, so their
+// labels keep '|'.
+var reviewLabelEscape = strings.NewReplacer("[", "\\[", "]", "\\]", "\n", " ")
 
 func newReviewView(s *Snapshot, relativeTo string) (*reviewView, error) {
 	s = s.navigation()
-	base, err := designOutputBase(relativeTo)
+	l, err := newViewLinks(s, relativeTo)
 	if err != nil {
 		return nil, err
 	}
-	v := &reviewView{d: newDesignResolver(s), snapshot: s, base: base, records: append([]Record{}, s.Elements...)}
+	v := &reviewView{viewLinks: l, records: append([]Record{}, s.Elements...)}
+	l.escape = reviewLabelEscape
+	l.fragment = namesFragment
+	l.name = func(r Record) string {
+		name := l.d.name(r)
+		if name == "" {
+			name = String(r, "kind")
+			if label := String(r, "authored_label"); label != "" {
+				name += " " + label
+			}
+		}
+		if String(r, "kind") == "ScenarioStep" {
+			if owner := l.d.index[String(r, "owner")]; owner != nil {
+				name = l.d.name(owner) + " / " + name
+			}
+		}
+		return name
+	}
 	sort.SliceStable(v.records, func(i, j int) bool {
 		a, b := v.records[i], v.records[j]
 		key := func(r Record) string {
@@ -173,38 +189,6 @@ func newReviewView(s *Snapshot, relativeTo string) (*reviewView, error) {
 		return key(a) < key(b)
 	})
 	return v, nil
-}
-func (v *reviewView) source(r Record) string {
-	loc := String(v.d.index[String(r, "source_document")], "locator")
-	rel, err := filepath.Rel(v.base, filepath.FromSlash(loc))
-	if err != nil {
-		rel = loc
-	}
-	return (&url.URL{Path: filepath.ToSlash(rel)}).String()
-}
-func (v *reviewView) link(r Record) string {
-	name := v.d.name(r)
-	if name == "" {
-		name = String(r, "kind")
-		if label := String(r, "authored_label"); label != "" {
-			name += " " + label
-		}
-	}
-	target, _ := url.Parse(v.source(r))
-	for _, f := range v.snapshot.Fragments {
-		if String(f, "source") == String(r, "source_document") && namesFragment(r, f) {
-			target.Fragment = String(f, "generated_anchor")
-			break
-		}
-	}
-	if String(r, "kind") == "ScenarioStep" {
-		owner := v.d.index[String(r, "owner")]
-		if owner != nil {
-			name = v.d.name(owner) + " / " + name
-		}
-	}
-	name = strings.NewReplacer("[", "\\[", "]", "\\]", "\n", " ").Replace(name)
-	return "[" + name + "](<" + target.String() + ">)"
 }
 func (v *reviewView) links(ids []string) string {
 	links := []string{}
@@ -230,7 +214,7 @@ func (v *reviewView) body(r Record, label string, value any) bool {
 	if label != "" {
 		fmt.Fprintf(&v.out, "**%s**\n\n", label)
 	}
-	fmt.Fprintf(&v.out, "%s\n\n", designHeadings(rebaseDesignMarkdown(text, v.source(r), v.d.definitions(r)), 4))
+	fmt.Fprintf(&v.out, "%s\n\n", v.passage(r, text, 4))
 	return true
 }
 func (v *reviewView) boundaries() {
@@ -243,7 +227,7 @@ func (v *reviewView) boundaries() {
 		fmt.Fprintf(&v.out, "### %s: %s\n\n", kind, v.link(r))
 		v.body(r, "Environment", r["environment"])
 		v.body(r, "Constraints", r["constraints"])
-		for _, f := range []string{"statement", "out_of_scope", "basis", "applicability"} {
+		for _, f := range []string{"statement", "out_of_scope", "applicability"} {
 			value := r[f]
 			if kind == "BusinessRule" && f == "applicability" {
 				value = Object(value)["content"]

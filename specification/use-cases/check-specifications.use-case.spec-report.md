@@ -104,7 +104,7 @@ cannot finish.
 
 ## System boundary
 
-The dotspec CLI, reading specifications from the selected project subtree,
+The dotspec CLI, reading specifications from the [selected project subtree](<../../docs/reference/layout.md#creating-and-finding-sources>),
 enclosing system specifications, and direct reference targets needed as context.
 
 ## Goal level
@@ -138,7 +138,7 @@ whether the requirements accurately represent stakeholder needs.
 
 ## Authority
 
-This use case specifies the contributor’s inspection interaction. The linked report contract governs output and the linked requirements govern diagnostic severity, repeatability and preservation of the input. The [use-case command examples](<../../internal/integration/testdata/use-cases.txtar>) check CLI outcomes for selected paths, including focused inspection of an unfinished use case.
+This use case specifies the contributor’s inspection interaction. The linked report contract governs output and the linked requirements govern diagnostic severity, repeatability and preservation of the input.
 
 ## Related specifications
 
@@ -154,6 +154,7 @@ cover diagnostic severity, report repeatability, and source preservation.
 
 - [discovery.txtar](<../../internal/integration/testdata/discovery.txtar>) — Repository discovery
 - [diagnostics.txtar](<../../internal/integration/testdata/diagnostics.txtar>) — Diagnostics and exit statuses
+- [use-cases.txtar](<../../internal/integration/testdata/use-cases.txtar>) — Focused and project-wide checks of draft and malformed use cases
 
 ---
 

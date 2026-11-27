@@ -22,30 +22,18 @@ integration tests. The same check task runs on Linux, macOS, and Windows in CI.
 Git attributes keep text files at LF line endings on every platform so formatting
 and generated-file checks compare the same bytes.
 
-| Task | Purpose |
-| --- | --- |
-| `mise run build` | Build `dist/dotspec` for the current platform |
-| `mise run run -- job list` | Run the CLI from source |
-| `mise run fmt` | Format Go source |
-| `mise run test` | Run unit tests and process-level testscript scenarios |
-| `mise run check` | Check formatting, module tidiness, lint, tests, generated artifacts, specs, specification-source coverage, and release configuration |
-| `mise run spec-sources-check` | Check that designated specification-test files appear in the public source inventory |
-| `mise run generate` | Regenerate the guide map, command reference, output gallery, and the dotspec and To-do requirements specifications |
-| `mise run model-setup` | Provision the isolated model toolchain from its dependency lock |
-| `mise run model-generate` | Regenerate JSON Schema, reference catalog, and model documentation |
-| `mise run model-check` | Verify generated model projections without writing |
-| `mise run model-test` | Test model and catalog generation |
-| `mise run fuzz` | Fuzz each Markdown parser for ten seconds; also runs in CI |
-| `mise run snapshot` | Build the complete release matrix locally without publishing |
+`mise tasks` lists every task with its description, which [mise.toml](mise.toml)
+owns. The `depends` of its `check` task are the steps of the full gate. Pass CLI
+arguments after `--`, as in `mise run run -- job list`. [Releasing](docs/maintainers/releasing.md)
+covers `snapshot`.
 
 `check` is read-only. It fails on generated-file drift and asks you to regenerate;
 it does not stage changes or install Git hooks. Run focused tests while iterating,
-then the full gate before submitting a change. The standard golangci-lint set
-includes errcheck, govet, ineffassign, staticcheck, and unused.
+then the full gate before submitting a change.
 
 ## Documentation
 
-Use the [documentation map](docs/README.md) to find the source for a CLI guide topic. The [handbook maintenance guide](docs/maintainers/handbook.md#changing-a-reference) identifies the inputs and regeneration commands for published tables, starters and examples.
+Use the [documentation map](docs/README.md) to find the source for a CLI guide topic. The [handbook maintenance guide](docs/maintainers/handbook.md#changing-a-reference) identifies the inputs and regeneration commands for generated references and examples.
 
 ## Architecture
 
@@ -63,7 +51,10 @@ Use the [documentation map](docs/README.md) to find the source for a CLI guide t
 - `internal/specfile` owns common frontmatter, Goldmark outlines, source locations,
   document-local identifiers, reference extraction, and shared filesystem/discovery
   behavior. All specification types use the same Markdown extraction path.
-- `internal/speccollection` implements owner-scoped lookup and subtree listing for business rules, concepts, jobs, requirements and use cases. Each family supplies its layout, reader, group result and any enrichment, such as classifying a requirement against its associated system. Reusable quality models have their own selection policy, including bundled starters.
+  It decodes `dotspec.yaml`, including the `quality.model` locator, without
+  parsing any domain content. `internal/qualitymodel` resolves that locator and
+  loads the selected model.
+- `internal/speccollection` implements owner-scoped lookup, subtree listing and the check type for business rules, concepts, jobs, requirements and use cases. Each family supplies its layout, reader, writing advice, group result and any enrichment, such as classifying a requirement against its associated system. Reusable quality models have their own selection policy, including bundled starters.
 - `internal/diagnostic` owns the finding representation and source locations. The checker or parser that detects a condition supplies its rule ID and message.
 - `model/metamodel.yaml` owns the experimental specification metamodel. Generated
   JSON Schema and the inherited range catalog are embedded by the `model` Go
@@ -85,9 +76,9 @@ unknown prose and distinguish draft omissions from structural errors.
 | --- | --- | --- |
 | Reorder a system report | Move the section in `systemOutline` in `internal/specdoc/overview_layout.go`. Move Scope with its Out of scope subsection. The planner uses the outline to place passages, omit empty sections, allocate anchors and build navigation. Components have their own outline. | The To-do reader journey in `scripts/check-example/check.py` names the expected heading order, nesting and destinations. Change those expectations when the intended reading order changes. |
 | Add an allowed relationship endpoint | Edit the slot’s `range` or `any_of` in `model/metamodel.yaml` and run `mise run model-generate`. Export and offline validation consume the generated ranges. If a core diagram shows that relationship, include the new endpoint in its node selection. | Use a named accepted target and a named wrong-kind target in an authored example. For scenario steps, see `TestIllustrationIsExplicitAndRejectsWrongEndpoint` and the To-do example’s check that a step illustrates the availability requirement. |
-| Revise the invalid-slug message | `specfile.Layout.ValidateSlug` owns the collection slug grammar and repair text. Each type supplies its optional example through `SlugExample` and identifies its own filename diagnostic. Named systems and components derive filenames from their headings through `NameSlug`. | `diagnostics.txtar` checks the literal text, stream and process status for invalid job and feature arguments and a malformed job filename. |
+| Revise the invalid-slug message | `specfile.Layout.ValidateSlug` owns the collection slug grammar and repair text. `Layout.Create` and `Layout.LocalPath` apply it when a file is created or looked up by slug. Each type supplies its optional example through `SlugExample`. `specfile.ReadMember` reports a malformed collection filename as `layout.<kind>-name`. Named systems and components derive filenames from their headings through `NameSlug`. | `diagnostics.txtar` checks the literal text, stream and process status for invalid job and feature arguments and a malformed job filename. |
 | Change a finding’s severity or rule ID | Change the producer that detects the condition. `internal/check` aggregates located findings. `internal/cli` formats reports and maps failures to process status. Update the diagnostic reference when the public rule changes. | The process tests exercise complete scans with findings, incomplete scans and invalid invocations. |
-| Change system grouping in a family list | `internal/speccollection` groups by system source path, sorts equally named systems by path, and puts unassociated members last. Each family constructs its own JSON result. | The job and use-case store fixtures include distinct systems with the same name, unassociated members and nested scopes. |
+| Change system grouping in a family list | `internal/speccollection` groups by system source path, sorts equally named systems by path, and puts unassociated members last. Each family constructs its own JSON result. | The job store fixtures in `internal/job/store_test.go` include distinct systems with the same name, unassociated members and nested scopes. `internal/speccollection/collection_test.go` covers lookup and listing from a subtree. |
 
 ### Follow an authored link into a report
 
@@ -107,21 +98,21 @@ Ask two questions before adding a specification type. **What product intent does
 For example, a new concept action already has an editable home and an address within its concept. A new specification root needs a concrete specification class and a Markdown mapping that explains its declaration. Add its frontmatter value to `SpecificationType` in the metamodel. [Specification authority](docs/maintainers/plans/specification-authority.md#what-each-source-owns) · [Model maintenance](model/README.md#regeneration).
 
 Define a `specfile.Layout` in the owning type package with its specification type
-(the `Kind` field) and its filename or suffix. For a collection such as jobs, provide the default collection directory. For a named directory owner, see the system and component declarations in `internal/specfile/subject.go`. Use that layout for discovery,
+(the `Kind` field) and its suffix. For a collection such as jobs, provide the default collection directory. For a named directory owner, see the system and component declarations in `internal/specfile/subject.go`. Use that layout for discovery,
 placement validation, creation, and direct lookup so those operations agree.
-For a collection with user-supplied slugs, use `Layout.ValidateSlug` for creation, lookup and filename checks. Set `SlugExample` when the repair text should illustrate a valid name. Keep the filename diagnostic ID and source location in the type package.
+For a collection with user-supplied slugs, `Layout.Create` and `Layout.LocalPath` enforce the slug grammar from `Layout.ValidateSlug`. `Layout.Create` takes the `--path` value, checks the slug before it touches the filesystem, then resolves the directory, so a type's `Init` only chooses its template. Set `SlugExample` when the repair text should illustrate a valid name. Read each file through `specfile.ReadMember`, which reports a malformed filename as `layout.<kind>-name` at the file's path, then set the slug and path on the result.
 
 Define a metadata struct embedding `specfile.Metadata` with `yaml:",inline"` and
-pass a fresh pointer to `specfile.ParseOutline` (or `Parse` for required-section
-extraction). The shared decoder rejects fields outside that schema. Interpret
+pass a fresh pointer to `(*specfile.Markdown).TypedOutline`. The shared decoder rejects fields outside that schema. Interpret
 sections in the type package; register any explicit IDs with `specfile.Identifiers`
-before validating local references. Preserve authored Markdown and source locations.
+before validating local references with `(*specfile.Outline).ValidateReferences`. Preserve authored Markdown and source locations.
 
-Expose a `CheckType` integration supplying the layout, slug validation, and an
+Expose a `CheckType` integration supplying the layout and an
 inspector that reads the file and returns writing advice only after structural
-validation succeeds. Attach a context provider only when the type needs other
-sources. Business rules, jobs, use cases, concepts, and requirements share
-`system.CheckContext`; other types need not
+validation succeeds. `check.ReadType` builds the inspector and `References` from
+the type's reader. Attach a context provider only when the type needs other
+sources. Types built with `speccollection.CheckType`, and the product and
+component types, attach `system.CheckContext`; other types need not
 depend on system specifications. Providers report attempted source paths even
 when reads fail, and the checker distinguishes structural findings from incomplete
 scans. Sharing a provider instance resolves it once per owning directory. Its optional
@@ -147,14 +138,14 @@ From the repository root, run `mise exec -- go test ./internal/check -run Indepe
 
 Follow [CLI design](docs/maintainers/cli-design.md). Declare commands, flags, and examples in
 the Cobra tree. `scripts/generate` reads that tree without executing it for the
-reference; its output gallery runs real commands in a temporary project. Templates
+reference; its command output examples run real commands in a temporary project. Templates
 come from the type packages. Edit those sources, then run `mise run generate`.
 
 ## Specification tests and implementation tests
 
 This repository keeps each product decision in the specification for its subject. When adding or changing a CLI example, identify the governing requirement, concept action, use case, or native interface contract. If the example introduces a product requirement, author its requirement file in the same change.
 
-- The scripts in `internal/integration/testdata/*.txtar` own their example inputs, commands and expected observations. They verify the public behavior identified alongside their links in Command Invocation.
+- The scripts in `internal/integration/testdata/*.txtar` own their example inputs, commands and expected observations. They verify the public behavior of the specifications that list them as companions, or of the sources paired with them in Command Invocation.
 - `internal/cli/quality_contracts_test.go` checks the conditions and criteria in the quality requirements that list it as a companion.
 - Implementation tests can exercise private parser decisions and regressions. Changing the implementation can change these checks while preserving the specified behavior.
 
@@ -167,10 +158,9 @@ tests, name the one that applies in the fragment, such as `#TestInspectionQualit
 a txtar script can be listed whole. Add a short note saying what it covers. Keep any account of what a
 test exercises under **Evidence**. For example, the
 [repeatable-inspection requirement](specs/quality/reliability/repeatability/repeatable-inspection.requirement.spec.md)
-lists its quality-contract test. The
-[CLI Interaction concept](internal/integration/specs/concepts/cli-interaction.concept.spec.md)
-links to the acceptance scripts from the passages they demonstrate. An entire directory
-link does not provide file coverage.
+lists its quality-contract test. Scripts that no specification lists yet are linked from the
+[Command Invocation concept](internal/integration/specs/concepts/cli-interaction.concept.spec.md),
+beside the sources they exercise. An entire directory link does not provide file coverage.
 
 `mise run spec-sources-check` runs `scripts/check-spec-sources`, a repository-owned
 consumer of `dotspec sources --json`. The inventory includes companion targets as
@@ -189,20 +179,14 @@ edge cases in package-local Go tests and seed relevant cases into the fuzz targe
 
 The command-example test executes examples declared on the Cobra tree. When the README quick start changes, try it in a new directory with the rebuilt binary on PATH and follow the link in the resulting `SPEC.md`.
 
-The model generation pipeline also validates subset classifications, explicit class
-memberships, and the focused documentation view. Edit `model/views/core-domain.yaml`
-for presentation choices; keep types and relationship semantics in `model/metamodel.yaml`.
-
-See [Releasing](docs/maintainers/releasing.md) for snapshot and publication procedures.
-
 Bundled quality models are authored Markdown under
-`internal/qualitymodel/specs/quality-models/`. The CLI embeds those files; the
-standard generator produces their reference pages. Add or edit definitions in
-the source files, retain attribution, and run `mise run generate`. The `internal/qualitymodel/apply` package relocates Markdown references while copying definitions into system attribute files. Try a selective copy in a disposable project and inspect its source attribution. [Apply selected attributes](docs/cli-handbook/guides/define-a-system-quality-attribute.md).
+`internal/qualitymodel/specs/quality-models/`. The CLI embeds those files. Add
+or edit definitions in the source files, retain attribution, and run
+`mise run generate`. The `internal/qualitymodel/apply` package relocates Markdown references while copying definitions into system attribute files. Try a selective copy in a disposable project and inspect its source attribution. [Apply selected attributes](docs/cli-handbook/guides/define-a-system-quality-attribute.md).
 
 The Q42 starter is adapted from arc42's CC BY-SA 4.0 catalog at the revision named
 in its Edition section. Preserve the per-attribute source and license notices so
-selective copies retain attribution. Its generated reference has the same license.
+selective copies retain attribution.
 Refresh names and dimension assignments against a pinned upstream revision; use
 original prompts rather than importing third-party quotations from upstream pages.
 

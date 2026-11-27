@@ -126,7 +126,7 @@ func TestExportReferencedClassificationDoesNotSkipNearerBoundary(t *testing.T) {
 		t.Fatalf("git init: %v %s", err, output)
 	}
 	files := map[string]string{
-		"specs/root.system.spec.md":                             "---\ntype: system-spec\n---\n# Root\n## Purpose\nRead.\n## Scope\nLocal.\n## Quality attributes\n",
+		"specs/root.system.spec.md":                             "---\ntype: system-spec\n---\n# Root\n## Purpose\nRead.\n## Scope\nLocal.\n",
 		"specs/quality/useful/useful.quality-attribute.spec.md": "---\ntype: quality-attribute-spec\nid: useful\n---\n# Useful\n\n## Definition\n\nA concern.\n",
 
 		"consumer/specs/concepts/entry.concept.spec.md":              "---\ntype: concept-spec\n---\n# Entry\n## Purpose\nRead.\n## State\n[Target](../../../middle/child/specs/requirements/target.requirement.spec.md)\n## Actions\n### Read\n## Operational principles\nRead a target.\n",

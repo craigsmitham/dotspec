@@ -30,10 +30,6 @@ be equal, preserving array order. JSON object key order and insignificant whites
 do not affect equivalence. The comparison applies only within the operating context
 in [Applies to](#applies-to).
 
-## Evidence
-
-Checks for this requirement include [CLI quality-contract tests](../../../../internal/cli/quality_contracts_test.go).
-
 ## Rationale
 
 Stable reports make changes in findings easier to identify during review and

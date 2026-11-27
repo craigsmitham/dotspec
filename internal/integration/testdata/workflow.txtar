@@ -19,7 +19,7 @@ exec dotspec system list --json
 stdout '"schema_version": 2'
 stdout '"children": \[\]'
 ! stderr .
-exec dotspec job step list plan-work --json
+exec dotspec job map plan-work --json
 stdout '"steps": \[\]'
 exec dotspec job outcome list plan-work --json
 stdout '"declared_by_job": \[\]'

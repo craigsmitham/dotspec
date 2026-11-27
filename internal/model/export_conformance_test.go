@@ -72,7 +72,7 @@ func checkSourceText(t *testing.T, snapshot *Snapshot) {
 		}
 		actual, present := source["markdown"].(string)
 		if String(source, "media_type") != "text/markdown" {
-			if present || source["payload"] != nil {
+			if present {
 				t.Errorf("native reference embedded: %s", source["locator"])
 			}
 			continue
@@ -109,16 +109,14 @@ func TestExportConformanceCheckedInProjects(t *testing.T) {
 		if err := json.Unmarshal(data, &doc); err != nil {
 			t.Fatal(err)
 		}
-		for _, key := range []string{"content_nodes", "content_bindings", "coverage", "resolutions", "assertions"} {
-			if doc[key] != nil {
-				t.Fatal("redundant interchange field", key)
-			}
+		if doc["content_nodes"] != nil {
+			t.Fatal("redundant interchange field content_nodes")
 		}
 	}
 }
 func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/root.system.spec.md", "---\ntype: system-spec\n---\n# Root\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n\n")
+	conformanceWrite(t, root, "specs/root.system.spec.md", "---\ntype: system-spec\n---\n# Root\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
 	conformanceWrite(t, root, "specs/quality/broad/broad.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: broad\n---\n# Broad\n\n## Definition\n\nA concern.\n")
 	conformanceWrite(t, root, "specs/quality/broad/narrow/narrow.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: narrow\n---\n# Narrow\n\n## Definition\n\nA narrower concern.\n")
 
@@ -126,9 +124,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 	conformanceWrite(t, root, "specs/requirements/undefined.requirement.spec.md", "---\ntype: requirement-spec\nid: reused\nquality_attributes: [unknown]\n---\n# Undefined\n")
 	conformanceWrite(t, root, "sub/specs/subsystem.system.spec.md", "---\ntype: system-spec\n---\n# Subsystem\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n")
 	conformanceWrite(t, root, "sub/specs/requirements/unbound.requirement.spec.md", "---\ntype: requirement-spec\nid: reused\nquality_attributes: [narrow]\n---\n# Unbound\n")
-	conformanceWrite(t, root, "empty/specs/empty-attributes.system.spec.md", "---\ntype: system-spec\n---\n# Empty attributes\n\n## Purpose\n\nP.\n\n## Scope\n\nS.\n\n## Quality attributes\n")
-	conformanceWrite(t, root, "empty/specs/requirements/undefined-empty.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [narrow]\n---\n# Undefined in empty attributes\n")
-	conformanceWrite(t, root, "sibling/specs/sibling.system.spec.md", "---\ntype: system-spec\n---\n# Sibling\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n")
+	conformanceWrite(t, root, "sibling/specs/sibling.system.spec.md", "---\ntype: system-spec\n---\n# Sibling\n## Purpose\nP.\n## Scope\nS.\n")
 	conformanceWrite(t, root, "sibling/specs/quality/local-narrow/local-narrow.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: narrow\n---\n# Local narrow\n\n## Definition\n\nA different concern in this system.\n")
 
 	conformanceWrite(t, root, "sibling/specs/requirements/local.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [narrow]\n---\n# Local classification\n")
@@ -161,7 +157,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 			reused[String(element, "id")] = true
 		}
 	}
-	if len(reused) != 3 || statuses["resolved"] != 2 || statuses["undefined_label"] != 2 || statuses["unbound_label"] != 1 {
+	if len(reused) != 3 || statuses["resolved"] != 2 || statuses["undefined_label"] != 1 || statuses["unbound_label"] != 1 {
 		t.Errorf("IDs/classification states: ids=%d states=%v", len(reused), statuses)
 	}
 	undefinedAdvice := 0
@@ -173,7 +169,7 @@ func TestExportConformanceClassificationAndDocumentLocalIDs(t *testing.T) {
 			}
 		}
 	}
-	if undefinedAdvice != 3 {
+	if undefinedAdvice != 2 {
 		t.Errorf("undefined-label advice count %d", undefinedAdvice)
 	}
 	checkSourceText(t, result.Snapshot)

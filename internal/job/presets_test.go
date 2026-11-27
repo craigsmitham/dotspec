@@ -1,9 +1,6 @@
 package job
 
-import (
-	"strings"
-	"testing"
-)
+import "testing"
 
 func TestJTBDPresetsDoNotImposeODIOnOtherJobs(t *testing.T) {
 	source := "---\ntype: job-spec\n---\n# Travel\n## Job\nArrive confidently.\n## Performer\nA commuter.\n## Outcomes\n### Feel confident about keeping commitments\n\nFeel confident about keeping commitments.\n"
@@ -11,7 +8,7 @@ func TestJTBDPresetsDoNotImposeODIOnOtherJobs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := Check(j); len(got) != 0 {
+	if got := CheckWithPreset(j, "general"); len(got) != 0 {
 		t.Fatal("general check imposed a method", got)
 	}
 	odi := CheckWithPreset(j, "odi")
@@ -34,15 +31,17 @@ func TestJTBDPresetsDoNotImposeODIOnOtherJobs(t *testing.T) {
 		if err != nil {
 			t.Fatalf("%s: %v", preset, err)
 		}
-		if parsed.Statement == "" || strings.Contains(template, "### Desired outcome\n") {
+		if parsed.Statement == "" {
 			t.Fatal(preset, parsed)
 		}
 		if preset == "odi" && (len(parsed.Outcomes) != 1 || parsed.Outcomes[0].AppliesTo == "") {
 			t.Fatal("outcome scope missing", parsed)
 		}
 	}
-	if _, err := TemplateFor("unknown"); err == nil {
-		t.Fatal("unknown preset accepted")
+	for _, preset := range []string{"unknown", ""} {
+		if _, err := TemplateFor(preset); err == nil {
+			t.Fatalf("preset %q accepted", preset)
+		}
 	}
 }
 

@@ -6,7 +6,6 @@ live and restarted list comparisons exercise specs/requirements/availability.req
 and specs/requirements/restart.requirement.spec.md. The failed saves exercise
 app/specs/requirements/acknowledge-after-commit.requirement.spec.md.
 """
-import argparse
 from contextlib import closing, contextmanager
 from datetime import date, datetime, timedelta, timezone
 from html.parser import HTMLParser
@@ -308,7 +307,5 @@ def run(app):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--app", type=Path, default=Path(__file__).resolve().parents[1] / "app")
-    run(parser.parse_args().app)
+    run(Path(__file__).resolve().parents[1] / "app")
     print("Task forms and persistence across process restart passed.")

@@ -1,4 +1,3 @@
-// Package specdoc generates and checks reader-facing requirements specifications.
 package specdoc
 
 import "github.com/craigsmitham/dotspec/internal/specfile"

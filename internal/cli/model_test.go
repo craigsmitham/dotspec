@@ -3,7 +3,6 @@ package cli
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -27,7 +26,7 @@ func TestModelExportValidationAndSourcePreservation(t *testing.T) {
 	if err := json.Unmarshal([]byte(output), &snapshot); err != nil {
 		t.Fatal(err)
 	}
-	if len(snapshot.Elements) < 5 || snapshot.ModelVersion != model.ModelVersion {
+	if len(snapshot.Elements) < 5 || snapshot.ModelVersion != model.NewSnapshot(nil).ModelVersion {
 		t.Fatalf("missing typed domain records: %d", len(snapshot.Elements))
 	}
 	for path, expected := range map[string]string{"specs/system.system.spec.md": system, "specs/use-cases/check.use-case.spec.md": useCase} {
@@ -78,33 +77,10 @@ func TestModelSchemaAndValidationFailures(t *testing.T) {
 	}
 }
 
-type modelBrokenWriter struct{}
-
-func (modelBrokenWriter) Write([]byte) (int, error) { return 0, errors.New("broken output") }
-
-func TestModelOutputFailure(t *testing.T) {
-	t.Chdir(t.TempDir())
-	for _, args := range [][]string{{"model", "export"}, {"model", "schema"}} {
-		var stderr bytes.Buffer
-		if code := Run(args, modelBrokenWriter{}, &stderr); code != 2 || !strings.Contains(stderr.String(), "broken output") {
-			t.Fatalf("%v: %d %s", args, code, &stderr)
-		}
-	}
-}
-
 func TestConceptDesignCommands(t *testing.T) {
 	root := testproject.Open(t, "concept-design")
 	t.Chdir(root)
-	code, output, errOut := invoke("model", "docs", "--relative-to", "docs")
-	if code != 0 || errOut != "" {
-		t.Fatalf("docs %d: %s", code, errOut)
-	}
-	for _, part := range []string{"## Concepts", "#### Start public lifetime", "#### Application dependencies", "../specs/concepts/shorthand.concept.spec.md"} {
-		if !strings.Contains(output, part) {
-			t.Fatalf("missing %q", part)
-		}
-	}
-	code, output, errOut = invoke("system", "show", "--json")
+	code, output, errOut := invoke("system", "show", "--json")
 	if code != 0 || errOut != "" || !strings.Contains(output, `"concept_uses":`) || !strings.Contains(output, `"synchronizations":`) {
 		t.Fatalf("system composition omitted: %d %s %s", code, output, errOut)
 	}
@@ -117,13 +93,9 @@ func TestConceptDesignCommands(t *testing.T) {
 	if err = os.WriteFile(path, data, 0644); err != nil {
 		t.Fatal(err)
 	}
-	code, output, errOut = invoke("model", "docs")
-	if code != 1 || errOut != "" || !strings.Contains(output, "concept.definition") || !strings.Contains(output, "#### Start public lifetime") {
-		t.Fatalf("source findings not retained: %d %s %s", code, output, errOut)
-	}
 	code, output, errOut = invoke("model", "export")
-	if code != 1 || errOut != "" {
-		t.Fatalf("export: %d %s", code, errOut)
+	if code != 1 || errOut != "" || !strings.Contains(output, "concept.definition") {
+		t.Fatalf("source findings not retained: %d %s %s", code, output, errOut)
 	}
 	if err = os.WriteFile("snapshot.json", []byte(output), 0600); err != nil {
 		t.Fatal(err)
@@ -140,10 +112,6 @@ func TestRequirementsTraceCommand(t *testing.T) {
 	code, output, errOut := invoke("model", "trace", "--relative-to", "docs")
 	if code != 0 || errOut != "" || !strings.Contains(output, "## Change review") || !strings.Contains(output, "../specs/requirements/restore-content.requirement.spec.md") {
 		t.Fatalf("trace: %d %s %s", code, output, errOut)
-	}
-	var stderr bytes.Buffer
-	if code := Run([]string{"model", "trace"}, modelBrokenWriter{}, &stderr); code != 2 || !strings.Contains(stderr.String(), "broken output") {
-		t.Fatalf("trace output failure: %d %s", code, &stderr)
 	}
 	path := filepath.Join(root, "specs/requirements/restoration.requirement.spec.md")
 	data, err := os.ReadFile(path)
@@ -166,10 +134,6 @@ func TestSystemOverviewCommand(t *testing.T) {
 	code, output, errOut := invoke("model", "overview", "--relative-to", "docs")
 	if code != 0 || errOut != "" || !strings.Contains(output, "# System specification overview") || !strings.Contains(output, "../components/checkout/specs/checkout.component.spec.md") || !strings.Contains(output, "## Features") {
 		t.Fatalf("overview: %d %s %s", code, output, errOut)
-	}
-	var stderr bytes.Buffer
-	if code := Run([]string{"model", "overview"}, modelBrokenWriter{}, &stderr); code != 2 || !strings.Contains(stderr.String(), "broken output") {
-		t.Fatal(code, &stderr)
 	}
 }
 

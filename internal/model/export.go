@@ -159,12 +159,10 @@ func ExportInspection(inspection check.Inventory) ExportResult {
 			continue
 		}
 		for _, a := range sys.QualityAttributes {
-			if system.AttributeLayout.Match(a.Location.Path) {
-				source := cleanPath(a.Location.Path)
-				b.attributeOwners[source] = file
-				b.load(source)
-				b.follow[source] = true
-			}
+			source := cleanPath(a.Location.Path)
+			b.attributeOwners[source] = file
+			b.load(source)
+			b.follow[source] = true
 		}
 	}
 	b.associateGlossaries()

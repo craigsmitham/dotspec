@@ -141,7 +141,7 @@ func TestReferenceBoundaries(t *testing.T) {
 func TestRequirementsShareSystemAttributeContext(t *testing.T) {
 	dir := t.TempDir()
 	git(t, dir, "init", "-q")
-	write(t, system.Layout.Path(dir, "product"), validSystem+"\n## Quality attributes\n")
+	write(t, system.Layout.Path(dir, "product"), validSystem)
 	write(t, requirement.Layout.Path(dir, "rule"), strings.Replace(requirement.Template, "type: requirement-spec", "type: requirement-spec\nquality_attributes: [missing]", 1))
 	r := referenceCheck(dir)
 	if r.ExitCode() != 0 || r.Summary.Advice != 1 || r.Diagnostics[0].Rule != "requirement.undefined-attribute" || r.Diagnostics[0].Location.Line != 3 {

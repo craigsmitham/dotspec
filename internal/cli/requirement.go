@@ -5,17 +5,12 @@ import (
 	"io"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/spf13/cobra"
 )
-
-type requirementResult struct {
-	SchemaVersion int                      `json:"schema_version"`
-	Requirement   *requirement.Requirement `json:"requirement"`
-}
 
 func labelList(labels []string) string {
 	if len(labels) == 0 {
@@ -38,21 +33,13 @@ func newRequirementCommand() *cobra.Command {
 		{"list", "Discover requirements, grouped by associated system"},
 		{"check", "Check requirement specifications and attribute references"},
 	} {
-		cmd := &cobra.Command{Use: action.name + " <slug>", Short: action.short,
-			Example: "dotspec requirement " + action.name + " reject-existing-target --path .", Args: cobra.ExactArgs(1)}
+		cmd := newSpecAction(requirement.Layout, action.name, action.short)
 		if action.name == "list" {
-			cmd.Use, cmd.Example, cmd.Args = "list", "dotspec requirement list --path .", cobra.NoArgs
 			cmd.Flags().String("attribute", "", "Include requirements with this attribute or a sub-attribute in their system's model")
-		}
-		if action.name == "check" {
-			cmd.Long = action.short + ".\n\n" + exitPolicy
 		}
 		if action.name == "init" {
 			cmd.Flags().String("attribute", "", "Write this governing system attribute ID in quality_attributes.")
 			cmd.Flags().String("preset", "general", "Authoring template: general, or quality to prompt for an explicit criterion")
-		}
-		if action.name == "show" || action.name == "check" {
-			cmd.Use = action.name + " <slug-or-source-path>"
 		}
 		cmd.RunE = func(cmd *cobra.Command, args []string) error {
 			path, err := projectPath(cmd)
@@ -86,7 +73,7 @@ func newRequirementCommand() *cobra.Command {
 				}
 				return listRequirement(path, format, attribute, cmd.OutOrStdout())
 			}
-			if err := requirement.Layout.ValidateSlug(args[0]); err != nil && (action.name == "init" || !requirement.Layout.Match(args[0])) {
+			if err := validateSelector(requirement.Layout, action.name, args[0]); err != nil {
 				return err
 			}
 			attribute := ""
@@ -111,28 +98,24 @@ func runRequirement(command, path, slug, format, preset, attribute string, out i
 		if err != nil {
 			return err
 		}
-		if format == "json" {
-			return writeJSON(out, createdResult{1, target})
-		}
-		_, err = fmt.Fprintf(out, "Created %s\nDescribe the scope, statement, any criterion, rationale, and verification as they become known.\nAuthoring guide: %s\n", displayPath(target), authoringPage("requirement"))
-		return err
+		return writeCreated(out, format, target, "Describe the scope, statement, any criterion, rationale, and verification as they become known.\nAuthoring guide: "+authoringPage("requirement"))
 	}
 	if command == "check" {
-		return emitCheckReport(out, check.Focused(path, slug, requirement.CheckType(), supportedTypes()...), format)
+		return emitFocusedCheck(out, format, path, slug, requirement.CheckType())
 	}
 	spec, err := requirement.Show(path, slug)
 	if err != nil {
 		return err
 	}
 	if format == "json" {
-		return writeJSON(out, requirementResult{2, spec})
+		return writeJSON(out, readResult{"requirement", spec})
 	}
 	attributeSource := "None (labels are unbound)"
 	if spec.Classification.SystemPath != "" {
 		attributeSource = displayPath(spec.Classification.SystemPath)
 	}
-	_, err = fmt.Fprintf(out, "%s\n\nQuality attributes: %s\nAncestor quality attributes: %s\nUndefined quality attributes: %s\nAttribute declarations: %s\nSystem: %s\nSource: %s\n", spec.Markdown, labelList(spec.QualityAttributes), labelList(spec.Classification.Ancestors), labelList(spec.Classification.Undefined), attributeSource, systemLabel(spec.System), displayPath(spec.Path))
-	return err
+	details := fmt.Sprintf("Quality attributes: %s\nAncestor quality attributes: %s\nUndefined quality attributes: %s\nAttribute declarations: %s\n", labelList(spec.QualityAttributes), labelList(spec.Classification.Ancestors), labelList(spec.Classification.Undefined), attributeSource)
+	return writeShown(out, spec.Markdown, details, spec.System, spec.Path)
 }
 
 func listRequirement(path, format, attribute string, out io.Writer) error {
@@ -140,25 +123,19 @@ func listRequirement(path, format, attribute string, out io.Writer) error {
 	if err != nil {
 		return err
 	}
-	result := requirementListResult{2, nonnil(requirement.Filter(groups, attribute)), attribute}
+	result := requirementListResult{readSchemaVersion, nonnil(requirement.Filter(groups, attribute)), attribute}
 	if format == "json" {
 		return writeJSON(out, result)
 	}
-	if len(result.Groups) == 0 {
-		_, err = fmt.Fprintln(out, "No requirements found in the selected subtree.")
-		return err
-	}
-	var output strings.Builder
-	output.WriteString("Requirements\n")
+	heading := "Requirements"
 	if attribute != "" {
-		fmt.Fprintf(&output, "Attribute: %s (including sub-attributes)\n", attribute)
+		heading += fmt.Sprintf("\nAttribute: %s (including sub-attributes)", attribute)
 	}
-	for _, group := range result.Groups {
-		fmt.Fprintf(&output, "\nSystem: %s\n", systemLabel(group.System))
+	owner := func(group *requirement.Group) *system.System { return group.System }
+	return writeGroupedList(out, "requirements", heading, result.Groups, owner, func(output *strings.Builder, group *requirement.Group) {
 		for _, spec := range group.Requirements {
-			fmt.Fprintf(&output, "  %s  (%s)\n    Quality attributes: %s\n", spec.Name, displayPath(spec.Path), labelList(spec.QualityAttributes))
+			writeListEntry(output, spec.Name, spec.Path)
+			fmt.Fprintf(output, "    Quality attributes: %s\n", labelList(spec.QualityAttributes))
 		}
-	}
-	_, err = io.WriteString(out, output.String())
-	return err
+	})
 }

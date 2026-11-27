@@ -15,7 +15,6 @@ builds:
       - -s -w
       - -X github.com/craigsmitham/dotspec/internal/cli.version={{ .Version }}
       - -X github.com/craigsmitham/dotspec/internal/cli.commit={{ .Commit }}
-      - -X github.com/craigsmitham/dotspec/internal/qualitymodel/apply.releaseCommit={{ .Commit }}
     goos: [linux, darwin, windows]
     goarch: [amd64, arm64]
 archives:
@@ -47,7 +46,6 @@ archives:
       - model/metamodel.yaml
       - model/views/core-domain.yaml
       - model/generated/*.json
-      - go.mod
 checksum:
   extra_files:
     - glob: .release/dotspec-knowledge.zip

@@ -76,9 +76,14 @@ func (l Layout) SourcePath(dir, selector string) (string, error) {
 	return path, nil
 }
 
+// LocalPath resolves a source path, or a slug owned by the nearest subject.
+// A collection slug must follow the layout's slug grammar.
 func (l Layout) LocalPath(dir, selector string) (string, error) {
 	if l.Match(selector) {
 		return l.SourcePath(dir, selector)
+	}
+	if err := l.validateName(selector); err != nil {
+		return "", err
 	}
 	boundary, err := ContextRoot(dir)
 	if err != nil {

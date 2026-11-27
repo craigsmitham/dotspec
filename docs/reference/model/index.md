@@ -8,7 +8,7 @@ Model version: `0.35.0-draft`. JSON representation version: `0.4.0`.
 
 The [JSON Schema](../../../model/generated/schema.json) checks local shape. The [runtime catalog](../../../model/generated/catalog.json) supplies inherited class membership, typed reference ranges and ordered slots for graph checks.
 
-Read the [model glossary](glossary.md) for definitions of domain terms. See the [relationship reference](relationships.md) for scopes, inverses, cycle policies and assertion projections.
+Read the [model glossary](glossary.md) for definitions of domain terms. See the [relationship reference](relationships.md) for scopes, inverses and cycle policies.
 
 ## Model constraints
 
@@ -1587,7 +1587,7 @@ Concrete; inherits [Specification](#specification).
 | `project_references` | [ContextualReferences](#contextualreferences) | optional, embedded | Plans, responsibilities, risks and delivery decisions that affect this system, with prose explaining their relevance and links to the records the team maintains. |
 | `provided_interfaces` | [Interface](#interface) | optional, ordered list, record ID | Services this subject exposes to its environment. |
 | `purpose` | [RichContent](#richcontent) | optional, embedded | Why the system exists, including the situation it addresses and its intended benefit. |
-| `quality_attributes` | [SystemQualityAttribute](#systemqualityattribute) | optional, ordered list, record ID | Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. |
+| `quality_attributes` | [SystemQualityAttribute](#systemqualityattribute) | optional, ordered list, record ID | Attributes declared by this system, in authored order. |
 | `related_specifications` | [ContextualReferences](#contextualreferences) | optional, embedded | Contextual citations of related specifications of any type, with their explanation; no implicit support, refinement, enforcement or compliance relation. |
 | `relies_on` | [Assumption](#assumption) | optional, list, record ID | Assumptions on which the validity of this element depends. |
 | `relies_on_content` | [RichContent](#richcontent) | optional, embedded | Authored Markdown qualifying the relies on relationship. |

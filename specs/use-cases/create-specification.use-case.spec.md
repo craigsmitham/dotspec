@@ -7,7 +7,7 @@ companions:
     note: Create and inspect
   - target: ../../internal/integration/testdata/use-cases.txtar
     role: illustrates
-    note: Use-case presets and inspection
+    note: Use-case template selection, non-overwrite and inspection
 ---
 
 # Create a specification draft
@@ -67,5 +67,3 @@ be edited without invoking init.
 ## Authority
 
 The [init commands](../../docs/reference/cli.md) and linked requirement define command behavior.
-The [use-case command examples](../../internal/integration/testdata/use-cases.txtar)
-verify the illustrated template-selection and non-overwrite outcomes.

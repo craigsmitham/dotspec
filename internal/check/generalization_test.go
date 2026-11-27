@@ -1,7 +1,6 @@
 package check_test
 
 import (
-	"errors"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -17,7 +16,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/usecase"
 )
 
-const qualitySource = "---\ntype: quality-spec\nid: QR-1\nunit: milliseconds\n---\n# Response time\n\n## Criterion\n95% of requests finish in 200 milliseconds. See [requirement](#QR-1).\n\n## Evidence\nRetain this **authored prose** and [criterion](#criterion).\n"
+const qualitySource = "---\ntype: quality-spec\nunit: milliseconds\n---\n# Response time\n\n## Criterion\n95% of requests finish in 200 milliseconds.\n\n## Evidence\nRetain this **authored prose**.\n"
 
 func testScope(t *testing.T) string {
 	t.Helper()
@@ -67,36 +66,6 @@ func TestIndependentTypeIntegration(t *testing.T) {
 	}
 }
 
-func TestTypeOwnsMetadataSchemaAndIdentity(t *testing.T) {
-	requirement, err := quality.Parse([]byte(qualitySource))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if requirement.ID != "QR-1" || requirement.Unit != "milliseconds" || !strings.Contains(requirement.Markdown, "Retain this **authored prose**") || requirement.Location.Line != 6 {
-		t.Fatalf("metadata, source, or locations lost: %+v", requirement)
-	}
-	for _, tt := range []struct {
-		name, source, rule string
-		line               int
-	}{
-		{"unknown field", strings.Replace(qualitySource, "unit:", "unknown:", 1), "metadata.invalid", 4},
-		{"wrong scalar", strings.Replace(qualitySource, "unit: milliseconds", "unit: [milliseconds]", 1), "metadata.invalid", 4},
-		{"wrong kind", strings.Replace(qualitySource, "type: quality", "type: another", 1), "metadata.type", 2},
-		{"invalid ID", strings.Replace(qualitySource, "id: QR-1", "id: QR 1", 1), "identity.invalid", 3},
-		{"unresolved ID", strings.Replace(qualitySource, "(#QR-1)", "(#QR-2)", 1), "reference.unresolved", 9},
-	} {
-		t.Run(tt.name, func(t *testing.T) {
-			for _, source := range []string{tt.source, "\ufeff" + strings.ReplaceAll(tt.source, "\n", "\r\n")} {
-				_, err := quality.Parse([]byte(source))
-				var finding *diagnostic.Diagnostic
-				if !errors.As(err, &finding) || finding.Rule != tt.rule || finding.Location.Line != tt.line {
-					t.Fatalf("unexpected diagnostic: %+v (%v)", finding, err)
-				}
-			}
-		})
-	}
-}
-
 func TestIndependentTypeLayoutAndAdvice(t *testing.T) {
 	dir := testScope(t)
 	kind := quality.CheckType()
@@ -107,6 +76,9 @@ func TestIndependentTypeLayoutAndAdvice(t *testing.T) {
 	}
 	if report := check.Focused(dir, "missing", kind); report.ExitCode() != 2 || report.Complete || report.Summary.FilesChecked != 1 {
 		t.Fatalf("missing file contract: %+v", report)
+	}
+	if report := check.Focused(dir, "Bad_Slug", kind); report.ExitCode() != 2 || report.Summary.FilesChecked != 0 || len(report.Diagnostics) != 1 || report.Diagnostics[0].Rule != "scan.scope" || !strings.Contains(report.Diagnostics[0].Message, "invalid quality slug") {
+		t.Fatalf("invalid slug contract: %+v", report)
 	}
 	misplaced := filepath.Join(dir, "specs", "misplaced"+quality.Layout.Suffix)
 	write(t, misplaced, qualitySource)
@@ -147,14 +119,14 @@ func TestContextProvidersAreExplicitAndShared(t *testing.T) {
 	// Distinct providers for the same owner both run, while shared paths are
 	// still deduplicated. Sharing is by provider identity, not just directory.
 	otherCalls := 0
-	other := check.Type{Layout: specfile.Layout{Kind: "evidence", Collection: "quality", Filename: "evidence.spec.md"},
+	other := check.Type{Layout: specfile.Layout{Kind: "evidence", Collection: "quality", Suffix: ".evidence.spec.md"},
 		Inspect: func(*specfile.SourceSet, string) ([]diagnostic.Diagnostic, error) { return nil, nil },
 		Context: &check.ContextProvider{Resolve: func(*specfile.SourceSet, string) ([]string, error) {
 			otherCalls++
 			return []string{evidence}, nil
 		}},
 	}
-	write(t, other.Layout.Path(dir, ""), "evidence")
+	write(t, other.Layout.Path(dir, "x"), "evidence")
 	calls = 0
 	report = check.Project(dir, kind, other)
 	if calls != 1 || otherCalls != 1 || report.Summary.ContextFilesChecked != 1 {

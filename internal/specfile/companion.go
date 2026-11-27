@@ -21,10 +21,9 @@ const CompanionsField = "companions"
 // The role states how it relates to the specification; a link alone confers no
 // authority.
 type Companion struct {
-	Target   string              `yaml:"target" json:"target"`
-	Role     string              `yaml:"role" json:"role"`
-	Note     string              `yaml:"note,omitempty" json:"note,omitempty"`
-	Location diagnostic.Location `yaml:"-" json:"-"`
+	Target   string
+	Role     string
+	Location diagnostic.Location
 }
 
 // CompanionRoles lists the closed role vocabulary in presentation order.
@@ -51,9 +50,7 @@ var companionKeys = []string{"target", "role", "note"}
 // Companions validates the frontmatter list of a specification of this kind
 // and returns its entries with the location of each target. A missing key
 // yields no entries.
-func (md *Markdown) Companions(kind string) ([]Companion, error) { return md.companions(kind) }
-
-func (md *Markdown) companions(kind string) ([]Companion, error) {
+func (md *Markdown) Companions(kind string) ([]Companion, error) {
 	list := md.Value(CompanionsField)
 	if list == nil {
 		return nil, nil
@@ -109,7 +106,6 @@ func (md *Markdown) companions(kind string) ([]Companion, error) {
 			if note.Value == "" {
 				return nil, diagnostic.Error("companion.invalid", "Omit an empty note.", at(note))
 			}
-			entry.Note = note.Value
 		}
 		key := [2]string{entry.Target, entry.Role}
 		if previous, ok := seen[key]; ok {

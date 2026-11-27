@@ -4,24 +4,29 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"slices"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
 
+// outputFormatsAnnotation records, on each command, the --format values addOutput allows.
+const outputFormatsAnnotation = "dotspec.output-formats"
+
 func addOutput(cmd *cobra.Command, mermaid bool) {
-	formats := "text or json"
+	formats := []string{"text", "json"}
 	if mermaid {
-		formats += " or mermaid"
+		formats = append(formats, "mermaid")
 	}
-	cmd.Flags().String("format", "text", "output format: "+formats)
+	if cmd.Annotations == nil {
+		cmd.Annotations = map[string]string{}
+	}
+	cmd.Annotations[outputFormatsAnnotation] = strings.Join(formats, ",")
+	cmd.Flags().String("format", "text", "output format: "+strings.Join(formats, " or "))
 	cmd.Flags().Bool("json", false, "emit structured JSON (equivalent to --format json)")
 	cmd.MarkFlagsMutuallyExclusive("json", "format")
 	_ = cmd.RegisterFlagCompletionFunc("format", func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
-		values := []string{"text", "json"}
-		if mermaid {
-			values = append(values, "mermaid")
-		}
-		return values, cobra.ShellCompDirectiveNoFileComp
+		return formats, cobra.ShellCompDirectiveNoFileComp
 	})
 }
 
@@ -37,7 +42,7 @@ func outputFormat(cmd *cobra.Command) (string, error) {
 	if jsonMode {
 		return "json", nil
 	}
-	if format == "text" || format == "json" || (cmd.Name() == "map" && format == "mermaid") {
+	if slices.Contains(strings.Split(cmd.Annotations[outputFormatsAnnotation], ","), format) {
 		return format, nil
 	}
 	return "", fmt.Errorf("unknown output format %q; see %s --help", format, cmd.CommandPath())

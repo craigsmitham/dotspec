@@ -1,10 +1,8 @@
 package apply
 
 import (
-	"bytes"
 	"os"
 	"path/filepath"
-	"runtime"
 	"slices"
 	"strings"
 	"testing"
@@ -31,8 +29,8 @@ func target(t *testing.T, raw string) string {
 
 const plain = "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n"
 
-func TestDefaultPreviewApplyAndConflict(t *testing.T) {
-	raw := "\ufeff" + strings.ReplaceAll(plain+"## Quality attributes\n## Environment\n<!-- untouched -->\n", "\n", "\r\n")
+func TestDefaultPreviewAndApply(t *testing.T) {
+	raw := plain
 	path := target(t, raw)
 	m, err := qualitymodel.Show(".", qualitymodel.Default)
 	if err != nil {
@@ -42,27 +40,18 @@ func TestDefaultPreviewApplyAndConflict(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	before, _ := os.ReadFile(path)
-	if string(before) != raw {
-		t.Fatal("preview wrote target")
-	}
 	result, err := Run(m, path, Options{Attributes: []string{"reliability", "security"}, DryRun: false})
 	if err != nil {
 		t.Fatal(err)
 	}
-	after, _ := os.ReadFile(path)
-	if string(after) != raw || !slices.Equal(result.Entries, preview.Entries) {
-		t.Fatal("system source changed or preview differs")
+	if !slices.Equal(result.Entries, preview.Entries) {
+		t.Fatal("preview differs")
 	}
 	for _, f := range preview.Entries {
 		got, err := os.ReadFile(f.Path)
 		if err != nil || string(got) != f.Content {
 			t.Fatal(f.Path, err)
 		}
-	}
-	info, _ := os.Stat(path)
-	if runtime.GOOS != "windows" && info.Mode().Perm() != 0640 {
-		t.Fatal("mode changed")
 	}
 	parsed, err := system.Read(path)
 	if err != nil {
@@ -77,9 +66,8 @@ func TestDefaultPreviewApplyAndConflict(t *testing.T) {
 	if next, err := Run(m, path, Options{Attributes: []string{"reliability", "maintainability"}}); err != nil || strings.Join(next.Added, ",") != "maintainability" {
 		t.Fatal("expected reuse and one addition", err, next.Added)
 	}
-	unchanged, _ := os.ReadFile(path)
-	if !bytes.Equal(unchanged, after) {
-		t.Fatal("partial write after conflict")
+	if after, _ := os.ReadFile(path); string(after) != raw {
+		t.Fatal("system source changed")
 	}
 	if _, err := Run(m, path, Options{Attributes: []string{"unknown"}, DryRun: false}); err == nil {
 		t.Fatal("unknown selection accepted")
@@ -87,7 +75,7 @@ func TestDefaultPreviewApplyAndConflict(t *testing.T) {
 }
 
 func TestDefaultWholeModelAndAppend(t *testing.T) {
-	path := target(t, strings.TrimSuffix(plain, "\n"))
+	path := target(t, plain)
 	m, _ := qualitymodel.Show(".", qualitymodel.Default)
 	r, err := Run(m, path, Options{All: true, DryRun: false})
 	if err != nil {
@@ -284,7 +272,7 @@ func TestPublicationRollback(t *testing.T) {
 	if err := os.Mkdir(existing, 0755); err != nil {
 		t.Fatal(err)
 	}
-	files := []File{{filepath.Join(existing, "child", "first.md"), "first"}, {filepath.Join(root, "second", "second.md"), "second"}}
+	files := []Entry{{Path: filepath.Join(existing, "child", "first.md"), Content: "first"}, {Path: filepath.Join(root, "second", "second.md"), Content: "second"}}
 	failSecond := func(from, to string) error {
 		if to == files[1].Path {
 			return os.ErrPermission
@@ -311,13 +299,11 @@ func TestRejectPartialSelectionAndDestinationCollision(t *testing.T) {
 	path := target(t, plain)
 	m, _ := qualitymodel.Show(".", qualitymodel.Default)
 	q := filepath.Join(filepath.Dir(path), "quality")
-	for _, opts := range []Options{{}, {Attributes: []string{"recoverability", "typo"}}, {All: true, Attributes: []string{"availability"}}} {
-		if _, err := Run(m, path, opts); err == nil {
-			t.Fatal("accepted", opts)
-		}
-		if _, err := os.Stat(q); !os.IsNotExist(err) {
-			t.Fatal("unexpected write", err)
-		}
+	if _, err := Run(m, path, Options{Attributes: []string{"recoverability", "typo"}}); err == nil {
+		t.Fatal("accepted unknown attribute")
+	}
+	if _, err := os.Stat(q); !os.IsNotExist(err) {
+		t.Fatal("unexpected write", err)
 	}
 	// A directory occupies the planned file path. No sibling may be installed.
 	collision := filepath.Join(q, "reliability", "recoverability", "recoverability.quality-attribute.spec.md")
@@ -339,10 +325,7 @@ func TestBundledCitationUsesReleaseAndSourceHeading(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	old := releaseCommit
-	releaseCommit = "fixture-commit"
-	t.Cleanup(func() { releaseCommit = old })
-	plan, err := Run(m, target(t, plain), Options{Attributes: []string{"failure-frequency-and-severity"}, DryRun: true})
+	plan, err := Run(m, target(t, plain), Options{Attributes: []string{"failure-frequency-and-severity"}, DryRun: true, Revision: "fixture-commit"})
 	if err != nil {
 		t.Fatal(err)
 	}

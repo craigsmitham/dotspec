@@ -91,6 +91,8 @@ func (md *Markdown) Value(key string) *yaml.Node {
 	return nil
 }
 
+// MetadataLocation points to a YAML value; callers use it only after successful
+// metadata parsing. YAML's line numbers start after the opening fence.
 func (md *Markdown) MetadataLocation(key string) diagnostic.Location {
 	if n := md.Value(key); n != nil {
 		return diagnostic.Location{Line: n.Line + 1, Column: n.Column, Element: key}
@@ -98,19 +100,22 @@ func (md *Markdown) MetadataLocation(key string) diagnostic.Location {
 	return diagnostic.Location{Line: 1, Column: 1, Element: key}
 }
 
-func (md *Markdown) decode(kind string, into TypedMetadata) error {
+// decode strictly decodes the frontmatter into the destination and returns its
+// validated companions.
+func (md *Markdown) decode(kind string, into TypedMetadata) ([]Companion, error) {
 	if md.MetadataError != nil {
-		return md.MetadataError
+		return nil, md.MetadataError
 	}
 	if md.Metadata == nil {
-		return diagnostic.Error("metadata.frontmatter", "expected YAML frontmatter beginning with ---", diagnostic.At(md.Source, 0))
+		return nil, diagnostic.Error("metadata.frontmatter", "expected YAML frontmatter beginning with ---", diagnostic.At(md.Source, 0))
 	}
 	if len(md.Metadata.Content) == 0 || md.Metadata.Content[0].Kind != yaml.MappingNode {
-		return diagnostic.Error("metadata.invalid", "expected a YAML mapping", diagnostic.Location{Line: 2, Column: 1})
+		return nil, diagnostic.Error("metadata.invalid", "expected a YAML mapping", diagnostic.Location{Line: 2, Column: 1})
 	}
 	// Node.Decode accepts unknown keys. Check the actual destination's declared
 	// metadata fields first, including fields promoted by an inline embedding.
-	allowed := map[string]bool{}
+	// Companions are validated separately rather than decoded.
+	allowed := map[string]bool{CompanionsField: true}
 	for _, f := range reflect.VisibleFields(reflect.TypeOf(into).Elem()) {
 		key, _, _ := strings.Cut(f.Tag.Get("yaml"), ",")
 		if key != "" {
@@ -121,19 +126,20 @@ func (md *Markdown) decode(kind string, into TypedMetadata) error {
 	for i := 0; i < len(fields); i += 2 {
 		k := fields[i]
 		if !allowed[k.Value] {
-			return diagnostic.Error("metadata.invalid", fmt.Sprintf("invalid YAML frontmatter: unknown field %q", k.Value), diagnostic.Location{Line: k.Line + 1, Column: k.Column, Element: k.Value})
+			return nil, diagnostic.Error("metadata.invalid", fmt.Sprintf("invalid YAML frontmatter: unknown field %q", k.Value), diagnostic.Location{Line: k.Line + 1, Column: k.Column, Element: k.Value})
 		}
 	}
-	if _, err := md.companions(kind); err != nil {
-		return err
+	companions, err := md.Companions(kind)
+	if err != nil {
+		return nil, err
 	}
 	if err := md.Metadata.Decode(into); err != nil {
-		return yamlError(err)
+		return nil, yamlError(err)
 	}
 	if expected := AuthoredType(kind); into.DocumentType() != expected {
-		return diagnostic.Error("metadata.type", fmt.Sprintf("frontmatter must declare type: %s", expected), md.MetadataLocation("type"))
+		return nil, diagnostic.Error("metadata.type", fmt.Sprintf("frontmatter must declare type: %s", expected), md.MetadataLocation("type"))
 	}
-	return nil
+	return companions, nil
 }
 
 func (md *Markdown) outline() *Outline {

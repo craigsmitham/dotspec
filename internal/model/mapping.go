@@ -25,7 +25,7 @@ import (
 func MapDomain(doc *ParsedDocument, kind string) Mapping {
 	m := &domainMapper{doc: doc, result: Mapping{Elements: []Record{}, Labels: []Record{}, Diagnostics: []Record{}}}
 	if kind == "glossary" {
-		context, err := system.ParseGlossaryMarkdown(doc.Syntax)
+		context, err := system.ParseGlossary(doc.Syntax)
 		if err != nil {
 			m.parseFailure(err)
 			return m.result
@@ -47,7 +47,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 	switch kind {
 	case "feature", "capability":
 		var v *system.ProductSpec
-		v, err = system.ParseProductSpecMarkdown(kind, doc.Syntax)
+		v, err = system.ParseProductSpec(kind, doc.Syntax)
 		if err == nil {
 			authoredID = v.ID
 		}
@@ -133,9 +133,7 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.markField(r, "preamble", doc.Preamble)
 	}
 	m.metadata(r)
-	if designKind(String(r, "kind"), "Specification") {
-		m.companions(r)
-	}
+	m.companions(r)
 	if glossarySources != nil {
 		r["glossary_source_paths"] = glossarySources
 	}
@@ -149,10 +147,6 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		m.classification(r, labels)
 	}
 	for _, section := range doc.Sections {
-		if section.Level != 2 {
-			m.subjectSection(r, section)
-			continue
-		}
 		if m.common(r, section) {
 			continue
 		}
@@ -260,12 +254,6 @@ func (m *domainMapper) markSection(owner Record, field string, s *Section) {
 // A declaration collection contains named members. Its heading records presence.
 func (m *domainMapper) declared(owner Record, field string, s *Section) {
 	m.markHeading(field, s.HeadingID)
-	for _, id := range s.Intro {
-		if String(m.doc.NodeByID[id], "node_kind") != "trivia" {
-			m.authoringFinding(owner, id, "structure.collection-content", fmt.Sprintf("%s contains named entries. Put this passage under its entry or move it to the field it qualifies.", s.Title))
-			break
-		}
-	}
 	if owner[field] == nil {
 		owner[field] = []string{}
 	}
@@ -341,14 +329,11 @@ func diagnosticSourceLocation(location diagnostic.Location, source string) Recor
 }
 
 func (m *domainMapper) subjectSection(owner Record, s *Section) {
-	if designKind(String(owner, "kind"), "Specification") && m.common(owner, s) {
-		return
-	}
 	if m.traceSection(owner, s) || m.boundarySection(owner, s) {
 		return
 	}
 	// Any domain element can carry explicitly headed open questions.
-	if kind := String(owner, "kind"); openQuestionHeading(s.Title) && kind != "Document" {
+	if openQuestionHeading(s.Title) {
 		m.openQuestions(owner, []*Section{s})
 		return
 	}
@@ -371,14 +356,8 @@ func (m *domainMapper) common(r Record, s *Section) bool {
 	}
 	switch s.Title {
 	case "Adopts":
-		if !designKind(String(r, "kind"), "Specification") {
-			return false
-		}
 		m.adoptions(r, s)
 	case "Specification system":
-		if _, ok := compiledModel().catalog.Classes[String(r, "kind")].Slots["specification_system_content"]; !ok {
-			return false
-		}
 		m.structureReference(r, "specification_system", s)
 	case "Related specifications":
 		m.contextField(r, "related_specifications", s.Content)
@@ -652,8 +631,7 @@ func (m *domainMapper) classification(r Record, labels []string) {
 	}
 }
 
-func (m *domainMapper) label(owner Record, label, node, role string) string {
+func (m *domainMapper) label(owner Record, label, node, role string) {
 	r := Record{"id": m.id("label"), "kind": "LabelOccurrence", "owner": String(owner, "id"), "role": role, "label": label, "span": m.doc.NodeByID[node]["span"], "content_node": node}
 	m.result.Labels = append(m.result.Labels, r)
-	return String(r, "id")
 }

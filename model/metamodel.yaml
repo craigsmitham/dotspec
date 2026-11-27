@@ -1,7 +1,6 @@
 id: https://github.com/craigsmitham/dotspec/model/metamodel.yaml
 name: dotspec_metamodel
 title: Dotspec specification metamodel
-version: 0.35.0-draft
 description: Source-backed specifications and their reader-facing reports. Domain fields retain the authored
   Markdown through ordered byte ranges. Explicit declarations, links and classification labels supply identity
   and relationships.
@@ -1031,8 +1030,7 @@ classes:
         description: Explicitly named terms, in authored order.
       quality_attributes:
         range: SystemQualityAttribute
-        description: Attributes declared by this system, in authored order. Absent means no declaration; a
-          present empty list is distinct.
+        description: Attributes declared by this system, in authored order.
         multivalued: true
         list_elements_ordered: true
         annotations:

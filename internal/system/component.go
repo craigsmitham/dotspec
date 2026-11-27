@@ -31,9 +31,6 @@ func ParseComponentMarkdown(input *specfile.Markdown) (*Component, error) {
 		return nil, err
 	}
 	for _, section := range doc.Sections {
-		if err := rejectInlineSubject(doc, section); err != nil {
-			return nil, err
-		}
 		if section.Title == "Specification system" {
 			return nil, diagnostic.Error("structure.part-of", "a component selects its governing system through Part of", doc.Location(section.Start, section.Title))
 		}
@@ -42,10 +39,7 @@ func ParseComponentMarkdown(input *specfile.Markdown) (*Component, error) {
 	if err := ids.Register(meta.ID, "component", input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
-	if err := ids.RegisterDeclarations(doc, "Concept uses", "Synchronizations"); err != nil {
-		return nil, err
-	}
-	if err := ids.RegisterInterfaces(doc); err != nil {
+	if err := ids.RegisterDeclarations(doc, "Required interfaces", "Provided interfaces", "Concept uses", "Synchronizations"); err != nil {
 		return nil, err
 	}
 	ids.AddAnchors(doc.Anchors)
@@ -56,14 +50,10 @@ func ParseComponentMarkdown(input *specfile.Markdown) (*Component, error) {
 	if !present {
 		return nil, diagnostic.Error("structure.part-of", "component requires a Part of link to its parent system or component", doc.NameLocation)
 	}
-	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
+	if err := doc.ValidateReferences(); err != nil {
 		return nil, err
 	}
 	return &Component{Name: doc.Name, ID: meta.ID, Parent: parent, References: doc.References()}, nil
-}
-
-func ReadComponent(path string) (*Component, error) {
-	return readComponent(&specfile.SourceSet{}, path)
 }
 
 func readComponent(files *specfile.SourceSet, path string) (*Component, error) {
@@ -86,16 +76,9 @@ func readComponent(files *specfile.SourceSet, path string) (*Component, error) {
 }
 
 func ComponentCheckType() check.Type {
-	return check.Type{Layout: ComponentLayout, Context: CheckContext, Inspect: func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
-		_, err := readComponent(files, path)
-		return nil, err
-	}, References: func(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error) {
-		c, err := readComponent(files, path)
-		if err != nil {
-			return nil, err
-		}
-		return c.References, nil
-	}}
+	kind := check.ReadType(ComponentLayout, readComponent, func(c *Component) *specfile.ReferenceDocument { return c.References }, nil)
+	kind.Context = CheckContext
+	return kind
 }
 
 // SubjectChain returns the component declarations from the local owner to its

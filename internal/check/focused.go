@@ -19,12 +19,6 @@ func Focused(path, slug string, kind Type, referenceTypes ...Type) Report {
 	}
 	r.Scope.Path = dir
 	r.collectManifest()
-	if kind.ValidateSlug != nil && !kind.Layout.Match(slug) {
-		if err := kind.ValidateSlug(slug); err != nil {
-			r.record(err, "scan.scope", path)
-			return r.finish()
-		}
-	}
 	source, err := kind.Layout.LocalPath(dir, slug)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {

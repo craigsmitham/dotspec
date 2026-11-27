@@ -3936,7 +3936,7 @@
                     "description": "Why the system exists, including the situation it addresses and its intended benefit."
                 },
                 "quality_attributes": {
-                    "description": "Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct.",
+                    "description": "Attributes declared by this system, in authored order.",
                     "items": {
                         "type": "string"
                     },
@@ -4805,6 +4805,5 @@
         "representation_version"
     ],
     "title": "dotspec_metamodel",
-    "type": "object",
-    "version": "0.35.0-draft"
+    "type": "object"
 }

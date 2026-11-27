@@ -8,7 +8,6 @@ status 0 dotspec requirement init work --json
 stdout '"path":'
 ! stderr .
 status 0 dotspec requirement show work --json
-! stdout '"type":'
 stdout '"statement":'
 cp ../system.md specs/new-system.system.spec.md
 mkdir specs/quality/reliability
@@ -91,7 +90,6 @@ Ordinary files.
 ## Glossary
 ### Scan
 An inspection of selected source files.
-## Quality attributes
 -- rule.md --
 ---
 type: requirement-spec

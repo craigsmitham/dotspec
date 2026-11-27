@@ -55,7 +55,7 @@ governs text presentation of severity, and the
 [source-preservation requirement](../../specs/quality/reliability/source-preservation/inspection-preserves-source.requirement.spec.md)
 governs the effect of inspection on source files.
 
-Jobs, use cases, concepts, requirements, and business rules also need their enclosing
+Kinds that read system context, such as requirements, also need their enclosing
 system inspected. Requirements resolve attributes only after that
 system passes structural validation; an invalid system does not trigger
 cascading undefined-attribute advice. As with
@@ -80,11 +80,11 @@ Text and JSON reports are written to standard output, including reports with
 findings or an incomplete scan. Argument and output errors go to standard error.
 Use the exit status as well as the report; a partial report is not a clean check.
 For example, a CI step can run `dotspec check --format json > check-report.json`.
-The focused `job check <slug>`, `use-case check <slug>`,
-`concept check <slug>`, `requirement check <slug>`, and `business-rule check <slug>` commands use the same report, diagnostic IDs, and
+Each focused `KIND check <slug-or-source-path>` command in the
+[CLI reference](cli.md) uses the same report, diagnostic IDs, and
 `0`/`1`/`2` exit behavior. Each inspects one selected
-specification, its enclosing system, and their direct reference targets, with `scope.discovery: "direct"` and
-`scope.types: ["job"]`, `["use-case"]`, `["concept"]`, `["requirement"]`, or `["business-rule"]`. A missing specification
+specification, its system context where that kind has one, and their direct reference targets, with `scope.discovery: "direct"` and
+`scope.types` set to the selected kind, such as `["requirement"]`. A missing specification
 is an incomplete check (exit `2`). File counts represent the selected candidate and attempted read,
 including a missing file. All check commands send their reports to stdout;
 ordinary read-command errors go to stderr.
@@ -110,7 +110,7 @@ Examples of diagnostic rules include the following.
 | --- | --- |
 | `layout.subject-ambiguous`, `layout.subject-name`, `layout.job-name`, `layout.use-case-name`, `layout.concept-name` | Conflicting subject declarations or invalid filenames. |
 | `metadata.frontmatter`, `metadata.invalid`, `metadata.type` | Frontmatter fences, valid YAML and accepted fields, or the declared type. |
-| `structure.title`, `structure.section-order`, `structure.required-section`, `structure.duplicate-section`, `structure.section-level`, `structure.step-heading`, `structure.duplicate-field` | Required document structure and unambiguous definitions. |
+| `structure.title`, `structure.section-order`, `structure.required-section`, `structure.duplicate-section`, `structure.section-level`, `structure.duplicate-field` | Required document structure and unambiguous definitions. |
 | `identity.invalid`, `identity.duplicate` | Explicit ID syntax and uniqueness within one document. |
 | `reference.invalid`, `reference.unresolved`, `reference.boundary` | Local reference syntax, target resolution, and repository boundaries. |
 | `companion.invalid`, `companion.role`, `companion.duplicate`, `companion.unlisted` | Frontmatter companion shape, role, uniqueness, and advice for an unlisted model or feature file. |
@@ -173,52 +173,30 @@ Malformed but existing spec files remain listed; missing targets appear in
 diagnostics rather than as existing files. Do not treat a partial or failed
 inventory as proof of coverage.
 
-The inventory follows one reference edge from discovered specs and their system
-context. Referenced documents do not start a recursive scan. Directory links do
-not include their contents; ignored files can be explicitly referenced within
-the existing repository boundaries. URLs and absolute-path links remain external
-navigation. Images and links in code samples are excluded. Native files are not
-parsed or executed. A body link's native fragment keeps its format's meaning. A
-companion's fragment on a Quint, Alloy, TLA+, Gherkin, Go, Python or txtar
-target must name a definition the file declares. [Name a definition](../cli-handbook/guides/list-a-companion.md#name-a-definition).
-Markdown heading and declared spec-ID fragments retain the existing reference checks.
+The inventory resolves links and companion targets by the rules in
+[References](#references). A directory link does not include the directory's
+contents, and native files are not executed or parsed beyond finding the
+definition a companion fragment names.
 
 To check coverage, compare the source files your project expects with `files[].path` in a complete inventory. For an absent specification, verify the selected directory, typed filename suffix, project boundary and Git ignore rules. For a missing contract or test, inspect the relative link in the referring specification and rerun `dotspec sources` after correcting it. Use `referenced_by` to find the specification that links to a test or contract.
 
 ## Output and automation
 
-From the project directory containing the specifications, save the export and schema for use by other tools. The [specification model](specification-model.md) exposes normalized Markdown, named domain records and their source ranges.
+To save a snapshot for other tools and validate it, see [Export and validate a snapshot](specification-model.md#export-and-validate-a-snapshot). Offline, run `dotspec model schema` to print the snapshot format; the [mapping reference](../../model/markdown-mapping.md) explains how authored Markdown becomes its fields.
 
-```sh
-dotspec model export --path . > specification.json
-dotspec model validate specification.json --json
-dotspec model schema > specification.schema.json
-```
-
-`model export` emits JSON directly. Invalid authored documents retain their source
-and diagnostics. Its exit status follows the findings from inspecting the source.
-`model validate` checks the saved snapshot’s schema, source ranges, ownership
-and relationships. A valid snapshot can describe an invalid source document.
-
-An omitted field is absent. A present, empty Markdown field has an empty span
-list. An unknown field heading produces a located error. Its original text is
-available in the normalized source. See the [specification model](specification-model.md#source-text-and-locations)
-and [mapping reference](../../model/markdown-mapping.md).
-
-The system, job, use-case, concept, requirement, business-rule, and quality-model
-commands (including `init`), as well as `sources`, accept `--json`
+Commands that list `--json` in the [CLI reference](cli.md) accept it
 or `--format json`. Use one of these flags, not both. The default is `--format text`; `job map` also
 accepts `--format mermaid` and emits standalone diagram source. Redirecting output
 does not change its format. JSON, Mermaid, and redirected output contain no ANSI
 styling. `NO_COLOR` disables terminal styling, including help and errors.
 
-Show and list results that include a System object use `schema_version: 2`. Each System exposes its named roles in `stakeholder_roles`, with a `name` and authored `description` per entry. This applies to system, job, use-case, concept, requirement and business-rule show and list commands. The job outcome list and map also use version 2. The init commands, sources and job step list use version 1. Check results use the report documented above.
+`system show` uses `schema_version: 3`. The other show and list results that include a System object use `schema_version: 2`. Each System exposes its named roles in `stakeholder_roles`, with a `name` and authored `description` per entry. This applies to system, job, use-case, concept, requirement and business-rule show and list commands. The job outcome list and map also use version 2. The init commands and sources use version 1. Check results use the report documented above.
 
 | Command | Result fields |
 | --- | --- |
 | `system init`, `job init`, `use-case init`, `concept init`, `requirement init` | `path` of the created specification |
 | `sources` | `scope`, `complete`, `files`, and `diagnostics` as described above |
-| `system show` | `system` and its nullable `enclosing_system` (directory context) |
+| `system show` | `system`, including its `overview`, and its nullable `enclosing_system` (directory context) |
 | `system list` | `systems`, a directory tree of `system` objects and `children` arrays |
 | `job show` | `job`, including its authored Markdown, steps, outcomes, and nullable `system` |
 | `job list` | `groups`, each with a nullable `system` and a `jobs` array |
@@ -228,7 +206,6 @@ Show and list results that include a System object use `schema_version: 2`. Each
 | `concept list` | `groups`, each with a nullable `system` and a `concepts` array |
 | `requirement show` | `requirement`, including its authored Markdown, statement, criterion, attributes, and nullable `system` |
 | `requirement list` | `groups`, each with a nullable `system` and a `requirements` array; `attribute` when `--attribute` selects one |
-| `job step list` | `name`, `path`, and `steps` in authored order |
 | `job outcome list` | `name`, `path`, `declared_by_job` outcomes, and selected `steps` with their outcomes |
 | `job map` | `name`, `path`, `declared_by_job` and `steps`. Outcome arrays are empty unless `--outcomes` is set. |
 
@@ -243,7 +220,7 @@ See the generated [CLI reference](cli.md) for flags and examples.
 
 ## References
 
-A `structure.adoption` finding points to an entry under **Adopts**. Identify a single provision and give both its edition and local applicability. A `structure.verification-procedure` finding marks a retired `## Verification procedures` section, or `### Verification procedures` under **Criterion**. List each procedure as a companion with `role: verifies` and keep any account of what it exercises under **Evidence**. [Source mapping](../../model/markdown-mapping.md#adopting-a-provision) · [Move a verification procedure into companions](../cli-handbook/guides/list-a-companion.md#move-a-verification-procedure-into-companions)
+A `structure.adoption` finding points to an entry under **Adopts**. Identify a single provision and give both its edition and local applicability. [Source mapping](../../model/markdown-mapping.md#adopting-a-provision)
 
 Every check command validates Markdown links and frontmatter companion targets
 in successfully parsed selected specifications and their associated system context. Same-document fragments
@@ -269,8 +246,9 @@ Ordinary Markdown targets provide heading anchors without needing a dotspec
 wrapper. Other native file formats are checked for existence; a body link's
 fragment retains the owning format's semantics. A companion's fragment on a
 Quint, Alloy, TLA+, Gherkin, Go, Python or txtar target names a definition
-found by its leading keyword, and a missing name is `reference.unresolved`. URLs and absolute paths remain external
-navigation. No network requests are made.
+found by its leading keyword, and a missing name is `reference.unresolved`.
+[Name a definition](../cli-handbook/guides/list-a-companion.md#name-a-definition).
+URLs and absolute paths remain external navigation. No network requests are made.
 
 Relative links cannot cross repository/worktree boundaries, enter nested
 repositories or Git metadata, or traverse symbolic links. Outside Git, lookup is
@@ -305,8 +283,8 @@ exit status to determine whether a checked spec passed.
 
 ## Browse and adopt quality attributes
 
-`quality-attribute browse --json` returns schema version 1. The `effective_model` identifies the model by `id`, source locator, and selection basis (`explicit`, `project`, or `builtin_default`). The `attributes` array lists top-level terms in source order. With a term ID it lists immediate children, alongside the selected `attribute` and its `parents`. Each entry includes its ID, name, and definition. `quality-model list --json` (version 2) includes the same effective selection.
+`quality-attribute browse --json` returns schema version 1. The `effective_model` identifies the model by `id`, source locator, and selection basis (`explicit`, `project`, or `builtin_default`). The `attributes` array lists top-level terms in source order. With a term ID it lists immediate children, alongside the selected `attribute` and its `parents`. Each entry includes its ID, name, and definition. `quality-model list --json` (version 3) includes the same effective selection.
 
 `quality-attribute add` and `quality-model apply` share adoption result version 3. The result includes `effective_model`, `target`, `dry_run`, the IDs in `added`, and ordered `entries`. Each entry supplies its `id`, `path`, `role` (requested or ancestor), and `decision` (create or reuse). Creations include their complete proposed `content`. Dry runs describe the same decisions and preserve the filesystem. On a repeat write, `added` is empty and reused entries identify the system's own declarations.
 
-Scripts that previously invoked `quality-model apply --system PATH` to copy the whole model must now supply `--all`. With no attribute selection the command browses. Use `--attributes ID,ID` for a batch, or `quality-attribute add ID` for one term. [Define a System quality attribute](../cli-handbook/guides/define-a-system-quality-attribute.md)
+`quality-model apply` requires `--attributes ID,ID` for a batch or `--all` for the whole model. Use `quality-attribute add ID` for one term. [Define a System quality attribute](../cli-handbook/guides/define-a-system-quality-attribute.md)

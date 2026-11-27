@@ -2,8 +2,6 @@
 package concept
 
 import (
-	"fmt"
-	"path/filepath"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
@@ -11,10 +9,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/system"
 )
 
-const Suffix = ".concept.spec.md"
-const Collection = "concepts"
-
-var Layout = specfile.Layout{Kind: "concept", Collection: Collection, Suffix: Suffix, SlugExample: "job-map"}
+var Layout = specfile.Layout{Kind: "concept", Collection: "concepts", Suffix: ".concept.spec.md", SlugExample: "job-map"}
 
 type metadata struct {
 	specfile.Metadata `yaml:",inline"`
@@ -73,21 +68,9 @@ func Read(path string) (*Concept, error) {
 }
 
 func readFrom(files *specfile.SourceSet, path string) (*Concept, error) {
-	name := filepath.Base(path)
-	if !strings.HasSuffix(name, Suffix) {
-		return nil, diagnostic.Error("layout.concept-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
-	}
-	slug := strings.TrimSuffix(name, Suffix)
-	if err := Layout.ValidateSlug(slug); err != nil {
-		return nil, diagnostic.Error("layout.concept-name", err.Error(), diagnostic.Location{Path: path})
-	}
-	input, err := files.Markdown(path)
+	spec, slug, err := specfile.ReadMember(files, Layout, path, ParseMarkdown)
 	if err != nil {
 		return nil, err
-	}
-	spec, err := ParseMarkdown(input)
-	if err != nil {
-		return nil, diagnostic.WithPath(err, path)
 	}
 	spec.Slug, spec.Path = slug, path
 	return spec, nil
@@ -116,23 +99,10 @@ func ParseMarkdown(input *specfile.Markdown) (*Concept, error) {
 		"Purpose":       &spec.Purpose, "State": &spec.State,
 		"Actions": &spec.Actions, "Operational principles": &spec.OperationalPrinciples,
 	}
-	for _, section := range doc.Sections {
-		title := section.Title
-		target, known := fields[title]
-		if !known {
-			continue
-		}
-		location := doc.Location(section.Start, section.Title)
-		if section.Level != 2 {
-			return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), location)
-		}
-		if previous, exists := spec.SectionLocations[title]; exists {
-			return nil, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", section.Title), location, previous)
-		}
-		spec.SectionLocations[title] = location
-		*target = doc.Body(section)
+	if err := doc.Capture(fields, spec.SectionLocations); err != nil {
+		return nil, err
 	}
-	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
+	if err := doc.ValidateReferences(); err != nil {
 		return nil, err
 	}
 	spec.References = doc.References()

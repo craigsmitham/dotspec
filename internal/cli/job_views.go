@@ -21,38 +21,15 @@ func stepLabel(step job.Step) string {
 }
 
 func outcomeLabel(outcome job.DesiredOutcome) string {
-	if outcome.Name != "" {
-		label := outcome.Name
-		if outcome.ID != "" {
-			label += " [" + outcome.ID + "]"
-		}
-		label += ": " + outcome.Statement
-		if outcome.AppliesTo != "" {
-			label += "\nApplies to: " + outcome.AppliesTo
-		}
-		return label
+	label := outcome.Name
+	if outcome.ID != "" {
+		label += " [" + outcome.ID + "]"
 	}
-	if outcome.ID == "" {
-		return outcome.Statement
+	label += ": " + outcome.Statement
+	if outcome.AppliesTo != "" {
+		label += "\nApplies to: " + outcome.AppliesTo
 	}
-	return outcome.ID + ": " + outcome.Statement
-}
-
-func listSteps(spec *job.Job, out io.Writer) error {
-	if len(spec.Steps) == 0 {
-		_, err := fmt.Fprintln(out, "No steps defined.")
-		return err
-	}
-	var output strings.Builder
-	fmt.Fprintf(&output, "Steps: %s\n", spec.Name)
-	for i, step := range spec.Steps {
-		fmt.Fprintf(&output, "\n%d. %s\n", i+1, stepLabel(step))
-		if step.Description != "" {
-			fmt.Fprintln(&output, indent(step.Description))
-		}
-	}
-	_, err := io.WriteString(out, output.String())
-	return err
+	return label
 }
 
 func selectOutcomes(spec *job.Job, stepID string) (outcomesResult, error) {
@@ -77,14 +54,6 @@ func selectOutcomes(spec *job.Job, stepID string) (outcomesResult, error) {
 		return result, fmt.Errorf("step %q not found in job %s", stepID, spec.Name)
 	}
 	return result, nil
-}
-
-func listOutcomes(spec *job.Job, stepID string, out io.Writer) error {
-	result, err := selectOutcomes(spec, stepID)
-	if err != nil {
-		return err
-	}
-	return renderOutcomes(result, out)
 }
 
 func renderOutcomes(result outcomesResult, out io.Writer) error {
@@ -187,11 +156,8 @@ func writeJobMap(spec *job.Job, options jobOptions, out io.Writer) error {
 }
 
 func outcomeMapLabel(outcome job.DesiredOutcome) string {
-	if outcome.Name != "" {
-		if outcome.ID != "" {
-			return outcome.Name + " [" + outcome.ID + "]"
-		}
-		return outcome.Name
+	if outcome.ID != "" {
+		return outcome.Name + " [" + outcome.ID + "]"
 	}
-	return outcomeLabel(outcome)
+	return outcome.Name
 }

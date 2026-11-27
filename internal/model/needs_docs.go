@@ -2,22 +2,21 @@ package model
 
 import (
 	"fmt"
-	"net/url"
-	"path/filepath"
-
 	"sort"
 	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/mermaid"
 )
 
 // NeedsMarkdown projects authored needs, contributions and capability dependencies.
 // It does not turn dependency into containment or contribution into achievement.
 func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	s = s.navigation()
-	base, err := designOutputBase(relativeTo)
+	l, err := newViewLinks(s, relativeTo)
 	if err != nil {
 		return "", err
 	}
-	d := newDesignResolver(s)
+	d := l.d
 	elements := []Record{}
 	for _, r := range s.Elements {
 		if designKind(String(r, "kind"), "Job", "JobStep", "DesiredOutcome", "Capability", "Feature", "System", "Component", "Requirement", "UseCase", "Concept") {
@@ -32,42 +31,7 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		return String(a, "id") < String(b, "id")
 	})
-	label := func(r Record) string {
-		if name := d.name(r); name != "" {
-			return name
-		}
-		if id := String(r, "authored_id"); id != "" {
-			return id
-		}
-		text := strings.Join(strings.Fields(d.text(r["statement"])), " ")
-		runes := []rune(text)
-		if len(runes) > 80 {
-			text = string(runes[:77]) + "..."
-		}
-		if text != "" {
-			return text
-		}
-		return String(r, "kind")
-	}
-	sourceURL := func(r Record) string {
-		locator := String(d.index[String(r, "source_document")], "locator")
-		rel, e := filepath.Rel(base, filepath.FromSlash(locator))
-		if e != nil {
-			rel = locator
-		}
-		u := url.URL{Path: filepath.ToSlash(rel)}
-		for _, f := range s.Fragments {
-			if String(f, "source") == String(r, "source_document") && namesFragment(r, f) && String(f, "generated_anchor") != "" {
-				u.Fragment = String(f, "generated_anchor")
-				break
-			}
-		}
-		return u.String()
-	}
-	escape := func(s string) string {
-		return strings.NewReplacer("|", "\\|", "[", "\\[", "]", "\\]", "\n", " ").Replace(s)
-	}
-	link := func(r Record) string { return "[" + escape(label(r)) + "](<" + sourceURL(r) + ">)" }
+	l.anchoredPassages = true
 	ids := map[string]string{}
 	for _, r := range elements {
 		ids[String(r, "id")] = fmt.Sprintf("n%d", len(ids)+1)
@@ -99,7 +63,7 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	if len(elements) > 0 {
 		out.WriteString("```mermaid\nflowchart LR\n")
 		for _, r := range elements {
-			fmt.Fprintf(&out, "  %s[\"%s: %s\"]\n", ids[String(r, "id")], String(r, "kind"), designDiagramLabel(label(r)))
+			fmt.Fprintf(&out, "  %s[\"%s: %s\"]\n", ids[String(r, "id")], String(r, "kind"), mermaid.Label(d.name(r)))
 		}
 		for _, e := range edges {
 			if e.relation == "declares" {
@@ -113,11 +77,11 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	}
 	out.WriteString("## Relationships\n\n| From | Relationship | To |\n| --- | --- | --- |\n")
 	for _, e := range edges {
-		fmt.Fprintf(&out, "| %s | %s | %s |\n", link(d.index[e.from]), e.relation, link(d.index[e.to]))
+		fmt.Fprintf(&out, "| %s | %s | %s |\n", l.link(d.index[e.from]), e.relation, l.link(d.index[e.to]))
 	}
 	out.WriteString("\n## Definitions and evidence\n\nShort diagram labels do not replace full statements. Evidence describes its source and limits; importance, satisfaction and opportunity assessments belong to dated research about a population, not to the outcome itself. Requirements express commitments, separately from desired user results.\n\n")
 	for _, r := range elements {
-		fmt.Fprintf(&out, "### %s: %s\n\nSource: %s\n\n", String(r, "kind"), escape(label(r)), link(r))
+		fmt.Fprintf(&out, "### %s: %s\n\nSource: %s\n\n", String(r, "kind"), l.label(r), l.link(r))
 		for _, field := range []string{"statement", "description", "purpose", "performer", "situation", "motivation", "intended_progress", "enablers", "supporting_content", "supports_content", "applies_to_content", "depends_on_content", "provided_by_content", "evidence"} {
 			value := r[field]
 			text := strings.TrimSpace(d.text(value))
@@ -129,7 +93,7 @@ func NeedsMarkdown(s *Snapshot, relativeTo string) (string, error) {
 				title = "supporting content"
 			}
 			title = strings.ToUpper(title[:1]) + title[1:]
-			fmt.Fprintf(&out, "#### %s\n\n%s\n\n", title, designHeadings(rebaseDesignMarkdown(text, sourceURL(r), d.definitions(r)), 5))
+			fmt.Fprintf(&out, "#### %s\n\n%s\n\n", title, l.passage(r, text, 5))
 		}
 	}
 	if len(s.Diagnostics) > 0 {

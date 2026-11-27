@@ -13,9 +13,6 @@ func TestSystemAttributeFiles(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := Parse([]byte(Template + "\n## Quality attributes\n### Old declaration\n")); err == nil {
-		t.Fatal("inline attribute accepted")
-	}
 	write := func(dir, name, meta string) {
 		t.Helper()
 		path := filepath.Join(root, "specs", "quality", dir)

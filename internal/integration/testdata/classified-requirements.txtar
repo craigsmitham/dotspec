@@ -21,8 +21,6 @@ cp ../model2.md specs/quality/usability/accessibility/accessibility.quality-attr
 cp ../requirement.md specs/requirements/work.requirement.spec.md
 status 0 dotspec system show --json
 stdout '"quality_attributes": \['
-! stdout '"quality_attributes_content":'
-! stdout '"quality_model":'
 stdout '"subattribute_of":'
 status 0 dotspec requirement list --attribute usability --json
 stdout '"name": "Accessible diagnostics"'
@@ -74,7 +72,6 @@ type: system-spec
 Help contributors.
 ## Scope
 CLI.
-## Quality attributes
 -- requirement.md --
 ---
 type: requirement-spec
@@ -107,7 +104,6 @@ type: system-spec
 Help contributors.
 ## Scope
 CLI.
-## Quality attributes
 -- model0.md --
 ---
 type: quality-attribute-spec

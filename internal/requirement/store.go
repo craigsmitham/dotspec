@@ -14,27 +14,18 @@ type Group struct {
 	Requirements []*Requirement `json:"requirements"`
 }
 
-func Init(path, slug string) (string, error) { return InitWithPreset(path, slug, "general") }
-
-// InitWithPreset creates a requirement from the selected authoring template.
-func InitWithPreset(path, slug, preset string) (string, error) {
-	return InitWithAttribute(path, slug, preset, "")
-}
-
+// InitWithAttribute creates a requirement from the selected authoring template.
 func InitWithAttribute(path, slug, preset, attribute string) (string, error) {
 	template, err := TemplateFor(preset)
 	if err != nil {
 		return "", err
 	}
-	if err := Layout.ValidateSlug(slug); err != nil {
-		return "", err
+	if attribute == "" {
+		return Layout.Create(path, slug, template)
 	}
 	dir, err := specfile.Directory(path)
 	if err != nil {
 		return "", err
-	}
-	if attribute == "" {
-		return Layout.Create(dir, slug, template)
 	}
 	chain, err := system.SubjectChain(dir)
 	if err != nil {

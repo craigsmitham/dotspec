@@ -44,8 +44,6 @@ func (d Destination) Form() string {
 	switch {
 	case strings.HasPrefix(d.Page, docs.Root+"/explanations/"):
 		return "Explanation"
-	case strings.HasPrefix(d.Page, docs.Root+"/tutorials/"):
-		return "Tutorial"
 	case strings.HasPrefix(d.Page, docs.Root+"/guides/"):
 		return "How-to"
 	case strings.HasPrefix(d.Page, "examples/"), strings.HasPrefix(d.Page, "specs/"):

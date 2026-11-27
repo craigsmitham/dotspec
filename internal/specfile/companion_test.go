@@ -13,12 +13,12 @@ func TestCompanionFrontmatter(t *testing.T) {
 	spec := func(frontmatter string) []byte {
 		return []byte("---\ntype: requirement-spec\n" + frontmatter + "---\n# Keep\n## Statement\nKeep it.\n")
 	}
-	outline, err := ParseOutline(spec("companions:\n  - target: ../models/tasks.qnt#exactlyOneView\n    role: formalizes\n    note: Task lifecycle\n  - {target: https://example.com/doc, role: explains}\n"), "requirement", &Metadata{})
+	outline, err := NewMarkdown(spec("companions:\n  - target: ../models/tasks.qnt#exactlyOneView\n    role: formalizes\n    note: Task lifecycle\n  - {target: https://example.com/doc, role: explains}\n")).TypedOutline("requirement", &Metadata{})
 	if err != nil {
 		t.Fatal(err)
 	}
 	want := []Companion{
-		{Target: "../models/tasks.qnt#exactlyOneView", Role: "formalizes", Note: "Task lifecycle", Location: diagnostic.Location{Line: 4, Column: 13, Element: CompanionsField}},
+		{Target: "../models/tasks.qnt#exactlyOneView", Role: "formalizes", Location: diagnostic.Location{Line: 4, Column: 13, Element: CompanionsField}},
 		{Target: "https://example.com/doc", Role: "explains", Location: diagnostic.Location{Line: 7, Column: 14, Element: CompanionsField}},
 	}
 	if !reflect.DeepEqual(outline.Companions, want) {
@@ -42,18 +42,18 @@ func TestCompanionFrontmatter(t *testing.T) {
 		{"companions:\n  - target: [x.qnt]\n    role: formalizes\n", "companion.invalid", "single-line text"},
 		{"companions:\n  - target: x.qnt\n    role: verifies\n  - target: x.qnt\n    role: verifies\n", "companion.duplicate", "already lists"},
 	} {
-		_, err := ParseOutline(spec(c.frontmatter), "requirement", &Metadata{})
+		_, err := NewMarkdown(spec(c.frontmatter)).TypedOutline("requirement", &Metadata{})
 		var d *diagnostic.Diagnostic
 		if !errors.As(err, &d) || d.Rule != c.rule || !strings.Contains(d.Message, c.message) || d.Location.Element != CompanionsField {
 			t.Errorf("%q: %v", c.frontmatter, err)
 		}
 	}
 	// The same target can serve two roles, such as a model that also checks itself.
-	if _, err := ParseOutline(spec("companions:\n  - target: x.qnt\n    role: formalizes\n  - target: x.qnt\n    role: verifies\n"), "requirement", &Metadata{}); err != nil {
+	if _, err := NewMarkdown(spec("companions:\n  - target: x.qnt\n    role: formalizes\n  - target: x.qnt\n    role: verifies\n")).TypedOutline("requirement", &Metadata{}); err != nil {
 		t.Fatal(err)
 	}
 	model := []byte("---\ntype: quality-model\ncompanions:\n  - target: x.md\n    role: explains\n---\n# Model\n")
-	if _, err := ParseOutline(model, "quality-model", &Metadata{}); err == nil || !strings.Contains(err.Error(), "reference material") {
+	if _, err := NewMarkdown(model).TypedOutline("quality-model", &Metadata{}); err == nil || !strings.Contains(err.Error(), "reference material") {
 		t.Fatal(err)
 	}
 }

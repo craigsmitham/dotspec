@@ -163,7 +163,7 @@ func TestTraceCitationsAndDrafts(t *testing.T) {
 		}
 		codes[String(f, "code")] = true
 	}
-	if !codes["relationship.motivation"] || codes["relationship.system_verification"] {
+	if !codes["relationship.motivation"] {
 		t.Fatal("missing draft advice", codes)
 	}
 	// A selected subtree does not traverse references from its direct targets.

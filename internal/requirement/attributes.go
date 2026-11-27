@@ -36,9 +36,6 @@ func Classify(ids []string, sys *system.System) Classification {
 
 func CheckAttributes(spec *Requirement, sys *system.System) []diagnostic.Diagnostic {
 	var findings []diagnostic.Diagnostic
-	if sys == nil {
-		return findings
-	}
 	undefined := Classify(spec.QualityAttributes, sys).Undefined
 	if sys.QualityAttributes == nil {
 		undefined = spec.QualityAttributes

@@ -56,8 +56,8 @@ func TestDraftAndStructure(t *testing.T) {
 		t.Fatalf("draft advice: %+v", advice)
 	}
 	for _, d := range advice {
-		if d.Severity != "advice" || d.Rule == "requirement.verification" {
-			t.Fatalf("advice location: %+v", d)
+		if d.Severity != "advice" {
+			t.Fatalf("advice severity: %+v", d)
 		}
 	}
 	for _, tt := range []struct{ text, rule string }{

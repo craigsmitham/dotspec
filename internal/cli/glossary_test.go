@@ -239,7 +239,7 @@ A request for payment. See [Term source](evidence.md#one) and [Term source](evid
 			continue
 		}
 		found = true
-		if term["illustrative_examples"] != nil || strings.Join(model.Strings(term["topics"]), ",") != "Customers,Payments" {
+		if strings.Join(model.Strings(term["topics"]), ",") != "Customers,Payments" {
 			t.Fatal(term)
 		}
 	}

@@ -8,7 +8,7 @@ generated_by: dotspec
 ## Verified by
 
 - [README.md › run-the-app](<../README.md#run-the-app>) — Exercise the forms across list views · [Keep recorded work available](<requirements/keep-recorded-work-available.requirement.spec-report.md>)
-- [acceptance.py › verify](<../tests/acceptance.py#L149>) — Restart acceptance test; kills the service and compares each view's identities after it starts again · [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
+- [acceptance.py › verify](<../tests/acceptance.py#L148>) — Restart acceptance test; kills the service and compares each view's identities after it starts again · [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
 
 ## Explained by
 

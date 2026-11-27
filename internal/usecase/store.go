@@ -4,17 +4,12 @@ import (
 	"fmt"
 
 	"github.com/craigsmitham/dotspec/internal/speccollection"
-	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
 )
 
 type Group struct {
 	System   *system.System `json:"system"`
 	UseCases []*UseCase     `json:"use_cases"`
-}
-
-func Init(path, slug string) (string, error) {
-	return InitTemplate(path, slug, "brief")
 }
 
 // InitTemplate selects writing prompts, not a separate format or maturity state.
@@ -27,14 +22,7 @@ func InitTemplate(path, slug, template string) (string, error) {
 	default:
 		return "", fmt.Errorf("unknown use-case template %q; use brief or expanded", template)
 	}
-	if err := Layout.ValidateSlug(slug); err != nil {
-		return "", err
-	}
-	dir, err := specfile.Directory(path)
-	if err != nil {
-		return "", err
-	}
-	return Layout.Create(dir, slug, content)
+	return Layout.Create(path, slug, content)
 }
 
 var collection = speccollection.Collection[UseCase]{

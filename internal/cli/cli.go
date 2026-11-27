@@ -41,10 +41,7 @@ func (e *exitError) Unwrap() error { return e.err }
 
 // Run owns process output and status; handlers never exit the process.
 func Run(args []string, stdout, stderr io.Writer) int {
-	return RunContext(context.Background(), args, stdout, stderr)
-}
-
-func RunContext(ctx context.Context, args []string, stdout, stderr io.Writer) int {
+	ctx := context.Background()
 	out, errOut := &checkedWriter{Writer: stdout}, &checkedWriter{Writer: stderr}
 	root := NewRoot()
 	root.SetArgs(args)
@@ -118,13 +115,6 @@ func (w *checkedWriter) Write(p []byte) (int, error) {
 	return n, err
 }
 
-func (w *checkedWriter) Fd() uintptr {
-	if f, ok := w.Writer.(interface{ Fd() uintptr }); ok {
-		return f.Fd()
-	}
-	return ^uintptr(0)
-}
-
 func terminal(w io.Writer) bool {
 	if _, disabled := os.LookupEnv("NO_COLOR"); disabled {
 		return false
@@ -133,19 +123,42 @@ func terminal(w io.Writer) bool {
 	return ok && term.IsTerminal(f.Fd())
 }
 
+// build is the identity Go records in the binary. A release commit set
+// through ldflags takes the place of the recorded VCS settings.
+type build struct {
+	module   string // main module version, such as v1.2.3, when Go recorded one
+	revision string // source commit
+	dirty    bool   // the recorded commit had local modifications
+}
+
+func readBuild() build {
+	b := build{revision: commit}
+	info, ok := debug.ReadBuildInfo()
+	if !ok {
+		return b
+	}
+	if info.Main.Version != "(devel)" {
+		b.module = info.Main.Version
+	}
+	if commit != "" {
+		return b
+	}
+	for _, setting := range info.Settings {
+		switch setting.Key {
+		case "vcs.revision":
+			b.revision = setting.Value
+		case "vcs.modified":
+			b.dirty = setting.Value == "true"
+		}
+	}
+	return b
+}
+
 func buildVersion() string {
-	v, revision := version, commit
-	if info, ok := debug.ReadBuildInfo(); ok {
-		if v == "dev" && info.Main.Version != "" && info.Main.Version != "(devel)" {
-			v = info.Main.Version
-		}
-		if revision == "" {
-			for _, setting := range info.Settings {
-				if setting.Key == "vcs.revision" {
-					revision = setting.Value
-				}
-			}
-		}
+	b := readBuild()
+	v, revision := version, b.revision
+	if v == "dev" && b.module != "" {
+		v = b.module
 	}
 	if len(revision) > 7 {
 		revision = revision[:7]
@@ -154,6 +167,22 @@ func buildVersion() string {
 		v += " (" + revision + ")"
 	}
 	return v
+}
+
+// citationRevision names the dotspec source that applied bundled quality
+// models cite. A modified working tree has none, so apply cites the embedded
+// bytes by digest.
+func citationRevision() string {
+	b := readBuild()
+	switch {
+	case b.dirty:
+		return ""
+	case b.revision != "":
+		return b.revision
+	case strings.HasPrefix(b.module, "v"):
+		return b.module
+	}
+	return ""
 }
 
 // NewRoot is side-effect free: documentation and execution share this tree.
@@ -182,7 +211,6 @@ func NewRoot() *cobra.Command {
 	root.InitDefaultHelpFlag()
 	root.InitDefaultVersionFlag()
 	root.InitDefaultHelpCmd()
-	root.InitDefaultCompletionCmd()
 	return root
 }
 

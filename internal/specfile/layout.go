@@ -8,19 +8,20 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/diagnostic"
 )
 
 const Folder = "specs"
 
 var collectionSlug = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
 
-// Layout describes either a singleton filename or a collection of slug-named
-// files. The owning type supplies its kind and optional example slug.
+// Layout describes a collection of slug-named files. The owning type supplies
+// its kind and optional example slug.
 type Layout struct {
 	NamedSubject bool
 	Kind         string
 	Collection   string
-	Filename     string
 	Suffix       string
 	SlugExample  string
 }
@@ -38,30 +39,61 @@ func (l Layout) ValidateSlug(slug string) error {
 	return fmt.Errorf("invalid %s slug %q: %s", l.Kind, slug, advice)
 }
 
+// ReadMember reads one slug-named collection file. It rejects a filename
+// outside the layout before reading, and adds the path to parse failures.
+func ReadMember[T any](files *SourceSet, l Layout, path string, parse func(*Markdown) (T, error)) (T, string, error) {
+	var zero T
+	rule := "layout." + l.Kind + "-name"
+	slug, ok := strings.CutSuffix(filepath.Base(path), l.Suffix)
+	if !ok {
+		return zero, "", diagnostic.Error(rule, fmt.Sprintf("expected a <slug>%s filename", l.Suffix), diagnostic.Location{Path: path})
+	}
+	if err := l.ValidateSlug(slug); err != nil {
+		return zero, "", diagnostic.Error(rule, err.Error(), diagnostic.Location{Path: path})
+	}
+	input, err := files.Markdown(path)
+	if err != nil {
+		return zero, "", err
+	}
+	spec, err := parse(input)
+	if err != nil {
+		return zero, "", diagnostic.WithPath(err, path)
+	}
+	return spec, slug, nil
+}
+
 func (l Layout) Match(name string) bool {
 	name = filepath.Base(name)
-	if l.Filename != "" {
-		return name == l.Filename
-	}
 	return strings.HasSuffix(name, l.Suffix) || (l.NamedSubject && name == strings.TrimPrefix(l.Suffix, "."))
 }
 
-func (l Layout) filename(slug string) string {
-	if l.Filename != "" {
-		return l.Filename
+// validateName applies the collection slug grammar; named subjects follow NameSlug.
+func (l Layout) validateName(slug string) error {
+	if l.NamedSubject {
+		return nil
 	}
+	return l.ValidateSlug(slug)
+}
+
+func (l Layout) filename(slug string) string {
 	return slug + l.Suffix
 }
 
 func (l Layout) Path(owner, slug string) string {
-	return l.path(owner, l.filename(slug))
+	return filepath.Join(defaultSpecDir(owner), l.Collection, l.filename(slug))
 }
 
-func (l Layout) path(owner, filename string) string {
-	return filepath.Join(defaultSpecDir(owner), l.Collection, filename)
-}
-
-func (l Layout) Create(owner, slug, template string) (string, error) {
+// Create writes a new member named by slug in the directory selected by path.
+// A collection slug must follow the layout's slug grammar; it is checked before
+// the filesystem is touched.
+func (l Layout) Create(path, slug, template string) (string, error) {
+	if err := l.validateName(slug); err != nil {
+		return "", err
+	}
+	owner, err := Directory(path)
+	if err != nil {
+		return "", err
+	}
 	target := l.Path(owner, slug)
 	rel, err := filepath.Rel(owner, target)
 	if err != nil {

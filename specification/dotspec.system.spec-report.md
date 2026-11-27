@@ -138,12 +138,6 @@ arguments, standard streams, and exit statuses.
 - [Job Map](<concepts/job-map.concept.spec-report.md>) — Make an accomplishment's steps and success criteria inspectable, so people can discuss what the work involves and how success is judged.
 - [Specification Inspection](<concepts/specification-inspection.concept.spec-report.md>) — Make structural problems and missing-content advice visible within an explicit inspection scope, so contributors can decide what to revise.
 
-<a id="empty.goals"></a>
-
-<a id="empty.assumptions"></a>
-
-<a id="empty.constraints"></a>
-
 ---
 
 [View source](<../specs/dotspec.system.spec.md#dotspec>) · [Quality models](<quality-models.md>)

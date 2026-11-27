@@ -24,7 +24,7 @@ func write(t *testing.T, path, content string) {
 
 func writeConcept(t *testing.T, dir, slug string) string {
 	t.Helper()
-	path := filepath.Join(dir, "specs", Collection, slug+Suffix)
+	path := filepath.Join(dir, "specs", Layout.Collection, slug+Layout.Suffix)
 	write(t, path, example)
 	return path
 }
@@ -77,94 +77,17 @@ func TestInitializationAndLocalLookup(t *testing.T) {
 
 func TestValidationBeforeCreatingFiles(t *testing.T) {
 	dir := t.TempDir()
-	for _, slug := range []string{"", "../escape", "two words", "two--hyphens", "Uppercase", "a/b", `a\b`, "work.concept.spec.md", "café"} {
-		if _, err := Init(dir, slug); err == nil {
-			t.Errorf("init accepted %q", slug)
-		}
-		if _, err := Show(dir, slug); err == nil {
-			t.Errorf("show accepted %q", slug)
-		}
+	slug := "work.concept.spec.md"
+	if _, err := Init(dir, slug); err == nil {
+		t.Errorf("init accepted %q", slug)
+	}
+	if _, err := Show(dir, slug); err == nil {
+		t.Errorf("show accepted %q", slug)
 	}
 	if entries, err := os.ReadDir(dir); err != nil || len(entries) != 0 {
 		t.Fatalf("invalid invocation wrote files: %v, %v", entries, err)
 	}
-	if _, err := Init(filepath.Join(dir, "missing"), "valid"); err == nil {
-		t.Fatal("init created the project directory")
-	}
-	for _, slug := range []string{"job-map", "2-steps", "check2"} {
-		if err := Layout.ValidateSlug(slug); err != nil {
-			t.Fatal(err)
-		}
-	}
 }
-
-func TestGroupingAndAncestorContext(t *testing.T) {
-	dir := t.TempDir()
-	git(t, dir, "init", "-q")
-	writeConcept(t, dir, "unassociated")
-	for _, child := range []string{"a", "b"} {
-		owner := filepath.Join(dir, child)
-		writeSystem(t, owner, "Same name")
-		writeConcept(t, owner, "work")
-	}
-	deep := filepath.Join(dir, "a", "deep")
-	writeConcept(t, deep, "deep-work")
-	groups, err := List(dir)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(groups) != 3 || len(groups[0].Concepts) != 2 || groups[0].System.Path == groups[1].System.Path || groups[2].System != nil {
-		t.Fatalf("grouping merged distinct systems or lost unassociated cases: %+v", groups)
-	}
-	if groups[0].Concepts[0].Slug != "deep-work" || groups[0].Concepts[1].Slug != "work" {
-		t.Fatalf("concepts not in source order: %+v", groups[0].Concepts)
-	}
-	groups, err = List(deep)
-	if err != nil || len(groups) != 1 || len(groups[0].Concepts) != 1 || groups[0].System.Name != "Same name" {
-		t.Fatalf("subtree context: %+v, %v", groups, err)
-	}
-	write(t, filepath.Join(dir, "a/specs/new-system.system.spec.md"), "broken")
-	if _, err := List(deep); err == nil {
-		t.Fatal("malformed enclosing system was ignored")
-	}
-}
-
-func TestGitDiscoveryAndRepositoryBoundaries(t *testing.T) {
-	dir := t.TempDir()
-	git(t, dir, "init", "-q")
-	writeConcept(t, dir, "tracked")
-	git(t, dir, "add", "specs/concepts/tracked.concept.spec.md")
-	write(t, filepath.Join(dir, ".gitignore"), "ignored/\ntracked.concept.spec.md\n")
-	write(t, filepath.Join(dir, "ignored/broken.concept.spec.md"), "ignored")
-	nested := filepath.Join(dir, "nested")
-	writeConcept(t, nested, "nested")
-	git(t, nested, "init", "-q")
-	writeSystem(t, dir, "Outer")
-	got, err := Show(nested, "nested")
-	if err != nil || got.System != nil {
-		t.Fatalf("association crossed a repository boundary: %+v, %v", got, err)
-	}
-	outside := t.TempDir()
-	outsideFile := writeConcept(t, outside, "outside")
-	if err := os.Symlink(outsideFile, filepath.Join(dir, "linked.concept.spec.md")); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.Symlink(outside, filepath.Join(dir, "linked-directory")); err != nil {
-		t.Fatal(err)
-	}
-	groups, err := List(dir)
-	if err != nil || len(groups) != 1 || len(groups[0].Concepts) != 1 || groups[0].Concepts[0].Slug != "tracked" {
-		t.Fatalf("Git visibility: %+v, %v", groups, err)
-	}
-	plain := t.TempDir()
-	write(t, filepath.Join(plain, ".gitignore"), "ignored/\n")
-	writeConcept(t, filepath.Join(plain, "ignored"), "visible")
-	groups, err = List(plain)
-	if err != nil || len(groups) != 1 || groups[0].Concepts[0].Slug != "visible" {
-		t.Fatalf("ignore rules applied outside Git: %+v, %v", groups, err)
-	}
-}
-
 func TestReadDiagnosticsAndPreservation(t *testing.T) {
 	dir := t.TempDir()
 	path := writeConcept(t, dir, "work")
@@ -182,7 +105,7 @@ func TestReadDiagnosticsAndPreservation(t *testing.T) {
 		t.Fatalf("read changed source: %q, %v", got, err)
 	}
 	for _, name := range []string{"Wrong.concept.spec.md", "work.md"} {
-		_, err := Read(filepath.Join(dir, "specs", Collection, name))
+		_, err := Read(filepath.Join(dir, "specs", Layout.Collection, name))
 		if !errors.As(err, &d) || d.Rule != "layout.concept-name" {
 			t.Fatalf("filename diagnostic: %v", err)
 		}

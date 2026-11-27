@@ -9,10 +9,11 @@ import (
 	"github.com/yuin/goldmark/ast"
 )
 
-// ValidateReferences checks only same-document fragments. Check commands
-// resolve relative file links separately, with repository context.
-func ValidateReferences(source, body []byte, doc ast.Node, anchors map[string]bool) error {
-	return ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+// ValidateReferences checks that each same-document fragment link resolves to
+// one of the outline's anchors. Check commands resolve relative file links
+// separately, with repository context.
+func (o *Outline) ValidateReferences() error {
+	return ast.Walk(o.AST, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
 			return ast.WalkContinue, nil
 		}
@@ -24,13 +25,12 @@ func ValidateReferences(source, body []byte, doc ast.Node, anchors map[string]bo
 		if !strings.HasPrefix(destination, "#") || destination == "#" {
 			return ast.WalkContinue, nil
 		}
-		location := BodyLocation(source, body, link.Pos())
-		location.Element = destination
+		location := o.Location(link.Pos(), destination)
 		fragment, err := url.PathUnescape(destination[1:])
 		if err != nil {
 			return ast.WalkStop, diagnostic.Error("reference.invalid", fmt.Sprintf("invalid local reference %q", destination), location)
 		}
-		if !anchors[fragment] {
+		if !o.Anchors[fragment] {
 			return ast.WalkStop, diagnostic.Error("reference.unresolved", fmt.Sprintf("unresolved local reference %q; use a declared ID or a Markdown heading anchor", destination), location)
 		}
 		return ast.WalkContinue, nil

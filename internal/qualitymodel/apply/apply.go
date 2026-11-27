@@ -10,7 +10,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime/debug"
 	"slices"
 	"sort"
 	"strconv"
@@ -27,6 +26,9 @@ type Options struct {
 	Attributes []string
 	All        bool
 	DryRun     bool
+	// Revision is the dotspec source commit or release version that citations
+	// of a bundled model link to. Empty cites the embedded bytes by digest.
+	Revision string
 }
 
 type Entry struct {
@@ -43,11 +45,6 @@ type Result struct {
 	Target        string   `json:"target"`
 	Added         []string `json:"added"`
 	DryRun        bool     `json:"dry_run"`
-}
-
-type File struct {
-	Path    string `json:"path"`
-	Content string `json:"content"`
 }
 
 // Run stages independent attribute sources. The first declared parent supplies
@@ -102,7 +99,6 @@ func Run(source *qualitymodel.QualityModel, target string, opts Options) (Result
 		}
 		return filepath.Join(parent, specfile.NameSlug(a.Name))
 	}
-	var additions []File
 	combined := slices.Clone(current.QualityAttributes)
 	used := map[string]bool{}
 	relocated := map[string][]system.Attribute{}
@@ -145,7 +141,7 @@ func Run(source *qualitymodel.QualityModel, target string, opts Options) (Result
 		if i < 0 {
 			return result, fmt.Errorf("missing model attribute %s", a.ID)
 		}
-		link, err := origin(source, file, a)
+		link, err := origin(source, file, opts.Revision, a)
 		if err != nil {
 			return result, err
 		}
@@ -164,12 +160,12 @@ func Run(source *qualitymodel.QualityModel, target string, opts Options) (Result
 		}
 		combined = append(combined, newAttribute.Attribute)
 		result.Entries = append(result.Entries, Entry{ID: a.ID, Role: role, Decision: "create", Path: file, Content: body.String()})
-		additions = append(additions, File{file, body.String()})
 		result.Added = append(result.Added, a.ID)
 	}
 	if err := system.ValidateQualityAttributes(combined); err != nil {
 		return result, err
 	}
+	additions := slices.DeleteFunc(slices.Clone(result.Entries), func(e Entry) bool { return e.Decision != "create" })
 	for _, file := range additions {
 		if err := validateDestination(owner, target, file.Path); err != nil {
 			return result, err
@@ -189,7 +185,7 @@ func Run(source *qualitymodel.QualityModel, target string, opts Options) (Result
 
 // A successful adoption must be visible to the next system read, which uses
 // Git's discovery rules. Check the complete batch before creating directories.
-func checkDiscoverable(owner string, additions []File) error {
+func checkDiscoverable(owner string, additions []Entry) error {
 	root, err := specfile.RepositoryRoot(owner)
 	if err != nil || root == "" {
 		return err
@@ -255,7 +251,7 @@ func validateDestination(owner, target, path string) error {
 
 // Stage complete files on the target filesystem. Linking a staged file into
 // place never replaces existing content. Remove only our own additions on error.
-func publish(owner string, files []File, install func(string, string) error) (err error) {
+func publish(owner string, files []Entry, install func(string, string) error) (err error) {
 	stage, err := os.MkdirTemp(owner, ".dotspec-quality-")
 	if err != nil {
 		return err
@@ -311,15 +307,10 @@ func publish(owner string, files []File, install func(string, string) error) (er
 func selection(source *qualitymodel.QualityModel, byID, local map[string]system.Attribute, opts Options) (map[string]bool, map[string]bool, error) {
 	selected := opts.Attributes
 	if opts.All {
-		if len(selected) > 0 {
-			return nil, nil, fmt.Errorf("select all attributes or individual IDs")
-		}
+		selected = nil
 		for _, a := range source.QualityAttributes {
 			selected = append(selected, a.ID)
 		}
-	}
-	if !opts.All && len(selected) == 0 {
-		return nil, nil, fmt.Errorf("no attributes selected in model %s", source.Slug)
 	}
 	requested := map[string]bool{}
 	for _, id := range selected {
@@ -344,40 +335,16 @@ func selection(source *qualitymodel.QualityModel, byID, local map[string]system.
 	return chosen, requested, nil
 }
 
-// Release builds supply their source commit. Development builds with local
-// modifications identify the exact embedded bytes by digest.
-var releaseCommit string
-
-func bundledOrigin(source *qualitymodel.QualityModel, attribute system.Attribute) string {
-	revision := releaseCommit
-	if revision == "" {
-		if info, ok := debug.ReadBuildInfo(); ok {
-			if info.Main.Path == "github.com/craigsmitham/dotspec" && strings.HasPrefix(info.Main.Version, "v") {
-				revision = info.Main.Version
-			}
-			dirty := false
-			for _, setting := range info.Settings {
-				switch setting.Key {
-				case "vcs.revision":
-					revision = setting.Value
-				case "vcs.modified":
-					dirty = setting.Value == "true"
-				}
-			}
-			if dirty {
-				revision = ""
-			}
-		}
-	}
+func bundledOrigin(source *qualitymodel.QualityModel, revision string, attribute system.Attribute) string {
 	if revision == "" {
 		return fmt.Sprintf("urn:dotspec:quality-model:%s:sha256:%x#%s", source.Slug, sha256.Sum256(source.Data), url.PathEscape(attribute.ID))
 	}
-	return "https://github.com/craigsmitham/dotspec/blob/" + revision + "/internal/qualitymodel/specs/quality-models/" + source.Slug + qualitymodel.Suffix + "#" + url.PathEscape(specfile.NameSlug(attribute.Name))
+	return "https://github.com/craigsmitham/dotspec/blob/" + revision + "/internal/qualitymodel/specs/quality-models/" + source.Slug + qualitymodel.Layout.Suffix + "#" + url.PathEscape(specfile.NameSlug(attribute.Name))
 }
 
-func origin(source *qualitymodel.QualityModel, target string, attribute system.Attribute) (string, error) {
+func origin(source *qualitymodel.QualityModel, target, revision string, attribute system.Attribute) (string, error) {
 	if source.Builtin {
-		return bundledOrigin(source, attribute), nil
+		return bundledOrigin(source, revision, attribute), nil
 	}
 	rel, err := filepath.Rel(filepath.Dir(target), source.Path)
 	if err != nil {

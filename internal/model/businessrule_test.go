@@ -1,9 +1,6 @@
 package model
 
-import (
-	"strings"
-	"testing"
-)
+import "testing"
 
 func TestBusinessRuleExportBindingsAndContextualReferences(t *testing.T) {
 	dir := t.TempDir()
@@ -32,9 +29,6 @@ func TestBusinessRuleExportBindingsAndContextualReferences(t *testing.T) {
 			t.Errorf("missing named field %s", name)
 		}
 	}
-	if len(Strings(rule["extension_sections"])) != 0 {
-		t.Fatal("unknown section not represented")
-	}
 	found := false
 	for _, ref := range result.Snapshot.References {
 		r := Object(ref["resolution"])
@@ -44,10 +38,5 @@ func TestBusinessRuleExportBindingsAndContextualReferences(t *testing.T) {
 	}
 	if !found {
 		t.Fatal("authored rule ID did not resolve")
-	}
-	for _, a := range result.Snapshot.Relationships() {
-		if strings.Contains(strings.ToLower(String(a, "projection_path")), "enforce") {
-			t.Fatal("citation inferred enforcement")
-		}
 	}
 }

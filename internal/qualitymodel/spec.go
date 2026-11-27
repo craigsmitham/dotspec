@@ -3,7 +3,6 @@ package qualitymodel
 
 import (
 	"fmt"
-	"path/filepath"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
@@ -11,10 +10,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/system"
 )
 
-const Suffix = specfile.QualityModelSuffix
-const Collection = "quality-models"
-
-var Layout = specfile.Layout{Kind: "quality-model", Collection: Collection, Suffix: Suffix, SlugExample: "organization-quality"}
+var Layout = specfile.Layout{Kind: "quality-model", Collection: "quality-models", Suffix: specfile.QualityModelSuffix, SlugExample: "organization-quality"}
 
 type metadata struct {
 	specfile.Metadata `yaml:",inline"`
@@ -53,11 +49,10 @@ type QualityModel struct {
 	Sources           string                      `json:"sources"`
 	QualityAttributes []system.Attribute          `json:"quality_attributes"`
 
-	Markdown         string                         `json:"markdown"`
-	Path             string                         `json:"path"`
-	Builtin          bool                           `json:"builtin"`
-	Location         diagnostic.Location            `json:"location"`
-	SectionLocations map[string]diagnostic.Location `json:"-"`
+	Markdown string              `json:"markdown"`
+	Path     string              `json:"path"`
+	Builtin  bool                `json:"builtin"`
+	Location diagnostic.Location `json:"location"`
 	// Data retains the full source for copying and reference relocation.
 	Data []byte `json:"-"`
 }
@@ -67,21 +62,9 @@ func Read(path string) (*QualityModel, error) {
 }
 
 func readFrom(files *specfile.SourceSet, path string) (*QualityModel, error) {
-	name := filepath.Base(path)
-	if !strings.HasSuffix(name, Suffix) {
-		return nil, diagnostic.Error("layout.quality-model-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
-	}
-	slug := strings.TrimSuffix(name, Suffix)
-	if err := Layout.ValidateSlug(slug); err != nil {
-		return nil, diagnostic.Error("layout.quality-model-name", err.Error(), diagnostic.Location{Path: path})
-	}
-	input, err := files.Markdown(path)
+	spec, slug, err := specfile.ReadMember(files, Layout, path, ParseMarkdown)
 	if err != nil {
 		return nil, err
-	}
-	spec, err := ParseMarkdown(input)
-	if err != nil {
-		return nil, diagnostic.WithPath(err, path)
 	}
 	spec.Slug, spec.Path = slug, path
 	for i := range spec.QualityAttributes {
@@ -103,25 +86,23 @@ func ParseMarkdown(input *specfile.Markdown) (*QualityModel, error) {
 	if err != nil {
 		return nil, err
 	}
-	spec := &QualityModel{ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, SectionLocations: make(map[string]diagnostic.Location), Data: append([]byte(nil), data...)}
+	spec := &QualityModel{ID: meta.ID, Name: doc.Name, Markdown: strings.TrimSpace(string(doc.Source)), Location: doc.NameLocation, Data: append([]byte(nil), data...)}
 	var ids specfile.Identifiers
 	if err := ids.Register(spec.ID, "quality-model", input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
 	fields := map[string]*string{"Description": &spec.Description, "Edition": &spec.Edition, "Sources": &spec.Sources}
+	sections := make(map[string]diagnostic.Location)
 	for _, section := range doc.Sections {
 		target, known := fields[section.Title]
 		if !known && section.Title != "Quality attributes" {
 			continue
 		}
 		location := doc.Location(section.Start, section.Title)
-		if section.Level != 2 {
-			return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading", section.Title), location)
-		}
-		if previous, exists := spec.SectionLocations[section.Title]; exists {
+		if previous, exists := sections[section.Title]; exists {
 			return nil, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", section.Title), location, previous)
 		}
-		spec.SectionLocations[section.Title] = location
+		sections[section.Title] = location
 		if known {
 			*target = doc.Body(section)
 			continue
@@ -132,7 +113,7 @@ func ParseMarkdown(input *specfile.Markdown) (*QualityModel, error) {
 		}
 	}
 	ids.AddAnchors(doc.Anchors)
-	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
+	if err := doc.ValidateReferences(); err != nil {
 		return nil, err
 	}
 	spec.References = doc.References()

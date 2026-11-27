@@ -59,7 +59,6 @@ func TestStructuredJobCommands(t *testing.T) {
 		want, absent string
 	}{
 		{[]string{"job", "show", "change"}, "Keep this text and its **formatting**.", "advisory"},
-		{[]string{"job", "step", "list", "change"}, "1. Gather needs [gather] (locate)", "OUT-001"},
 		{[]string{"job", "outcome", "list", "change"}, "OUT-001", "advisory"},
 		{[]string{"job", "outcome", "list", "change", "--step", "gather"}, "OUT-002", "OUT-001"},
 		{[]string{"job", "outcome", "list", "change", "--step", "agree"}, "No outcomes defined", "OUT-001"},
@@ -77,10 +76,8 @@ func TestStructuredJobCommands(t *testing.T) {
 	}
 	for _, args := range [][]string{
 		{"job", "outcome", "list", "change", "--step", "missing"},
-		{"job", "step", "show", "change"},
 		{"job", "map", "change", "--format", "unknown"},
 		{"job", "show", "change", "--outcomes"},
-		{"job", "step", "list"},
 	} {
 		if code, out, errOut := invoke(args...); code == 0 || out != "" || errOut == "" {
 			t.Errorf("expected error: %v: %d %q %q", args, code, out, errOut)
@@ -102,13 +99,13 @@ func TestEmptyMapsAndNewCommandHelp(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, "specs", "jobs", "draft.job.spec.md"), []byte("---\ntype: job-spec\n---\n# Draft\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	for _, args := range [][]string{{"job", "map"}, {"job", "step", "list"}, {"job", "outcome", "list"}} {
+	for _, args := range [][]string{{"job", "map"}, {"job", "outcome", "list"}} {
 		full := append(append([]string{}, args...), "draft", "--path", dir)
 		if code, out, errOut := invoke(full...); code != 0 || !strings.Contains(out, "No ") || errOut != "" {
 			t.Errorf("empty %v: %d %q %q", full, code, out, errOut)
 		}
 	}
-	for _, args := range [][]string{{"job", "map", "--help"}, {"job", "check", "--help"}, {"job", "step", "--help"}, {"job", "step", "list", "--help"}, {"job", "outcome", "list", "--help"}} {
+	for _, args := range [][]string{{"job", "map", "--help"}, {"job", "check", "--help"}, {"job", "outcome", "list", "--help"}} {
 		if code, out, errOut := invoke(args...); code != 0 || !strings.Contains(out, "Usage:") || errOut != "" {
 			t.Errorf("help %v: %d %q %q", args, code, out, errOut)
 		}
@@ -120,8 +117,12 @@ func TestOutcomeScopes(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	result, err := selectOutcomes(spec, "")
+	if err != nil {
+		t.Fatal(err)
+	}
 	var out bytes.Buffer
-	if err := listOutcomes(spec, "", &out); err != nil {
+	if err := renderOutcomes(result, &out); err != nil {
 		t.Fatal(err)
 	}
 	want := "Outcomes: Prepare a change\n\nOutcomes declared by job\n  Minimize the likelihood of missed needs [OUT-001]: Minimize the likelihood of missed needs.\n\nOutcomes declared by step: Gather needs [gather] (locate)\n  Minimize the time needed to identify stakeholders [OUT-002]: Minimize the time needed to identify stakeholders.\n"
@@ -190,10 +191,9 @@ func TestJobMapWithoutSteps(t *testing.T) {
 
 func TestStepSelectionExplainsMissingIdentity(t *testing.T) {
 	spec := &job.Job{Name: "Prepare a change", Steps: []job.Step{{Name: "Locate commitments"}}}
-	var out bytes.Buffer
-	err := listOutcomes(spec, "locate", &out)
-	if err == nil || !strings.Contains(err.Error(), "add **ID:** to that step") || out.Len() != 0 {
-		t.Fatalf("selection should explain how to address an unidentified step: %v, %q", err, out.String())
+	_, err := selectOutcomes(spec, "locate")
+	if err == nil || !strings.Contains(err.Error(), "add **ID:** to that step") {
+		t.Fatalf("selection should explain how to address an unidentified step: %v", err)
 	}
 }
 

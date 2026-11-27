@@ -1,9 +1,7 @@
 package system
 
 import (
-	"errors"
 	"fmt"
-	"io/fs"
 	"path/filepath"
 
 	"github.com/craigsmitham/dotspec/internal/specfile"
@@ -14,63 +12,39 @@ type Node struct {
 	Children []*Node `json:"children"`
 }
 
-// Enclosing returns the nearest system, or nil when none exists. Malformed
-// enclosing specs remain errors. Lookup stops at the repository boundary.
-func Enclosing(path string) (*System, error) {
-	specs, err := enclosing(path, 1)
-	if err != nil || len(specs) == 0 {
-		return nil, err
-	}
-	return specs[0], nil
-}
-
 // Show resolves the nearest system document and its enclosing directory context.
 func Show(path string) (spec, parent *System, err error) {
-	specs, err := enclosing(path, 2)
+	dir, err := specfile.Directory(path)
 	if err != nil {
 		return nil, nil, err
 	}
-	if len(specs) == 0 {
-		return nil, nil, fmt.Errorf("no system spec found for %s; use dotspec system init to create one", path)
-	}
-	if len(specs) > 1 {
-		parent = specs[1]
-	}
-	return specs[0], parent, nil
-}
-
-func enclosing(path string, limit int) ([]*System, error) {
-	dir, err := specfile.Directory(path)
-	if err != nil {
-		return nil, err
-	}
 	root, err := specfile.ContextRoot(dir)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	var specs []*System
 	for current := dir; ; current = filepath.Dir(current) {
 		file, err := Layout.LocalSubject(current)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
-		var candidate *System
 		if file != "" {
-			candidate, err = Read(file)
-		}
-		if candidate != nil {
-			specs = append(specs, candidate)
-			if len(specs) == limit {
-				return specs, nil
+			candidate, err := Read(file)
+			if err != nil {
+				return nil, nil, err
 			}
-		} else if err != nil && !errors.Is(err, fs.ErrNotExist) {
-			return nil, err
+			if spec != nil {
+				return spec, candidate, nil
+			}
+			spec = candidate
 		}
 		if current == root || filepath.Dir(current) == current {
 			break
 		}
 	}
-	return specs, nil
+	if spec == nil {
+		return nil, nil, fmt.Errorf("no system spec found for %s; use dotspec system init to create one", path)
+	}
+	return spec, nil, nil
 }
 
 // List returns directory nesting in source-path order, not declared part_of structure.

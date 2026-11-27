@@ -24,10 +24,6 @@ of terminal styling.
 Use the text-label rule in [Statement](#statement), with supported severity values
 defined by the [check report contract](../../../../docs/reference/inspection.md#check-specifications).
 
-## Evidence
-
-Checks for this requirement include [CLI quality-contract tests](../../../../internal/cli/quality_contracts_test.go).
-
 ## Rationale
 
 Contributors need to distinguish diagnostic severities when reading plain-text

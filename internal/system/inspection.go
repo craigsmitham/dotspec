@@ -85,9 +85,6 @@ func contextPaths(spec *System, err error) ([]string, error) {
 		}
 		return nil, err
 	}
-	if spec == nil {
-		return nil, nil
-	}
 	return []string{spec.Path}, nil
 }
 
@@ -110,9 +107,7 @@ func qualityContext(files *specfile.SourceSet, paths []string, err error) ([]str
 	}
 	context := append([]string{}, paths[:len(paths)-1]...)
 	for _, attr := range sys.QualityAttributes {
-		if AttributeLayout.Match(attr.Location.Path) {
-			context = append(context, attr.Location.Path)
-		}
+		context = append(context, attr.Location.Path)
 	}
 	return append(context, systemPath), nil
 }

@@ -71,11 +71,7 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 		if err != nil {
 			return err
 		}
-		if format == "json" {
-			return writeJSON(out, createdResult{1, target})
-		}
-		_, err = fmt.Fprintf(out, "Created %s\nEdit Description, Purpose, and Scope. Keep the filename in sync if you rename the system.\nAuthoring guide: %s\n", displayPath(target), authoringPage("system"))
-		return err
+		return writeCreated(out, format, target, "Edit Description, Purpose, and Scope. Keep the filename in sync if you rename the system.\nAuthoring guide: "+authoringPage("system"))
 	case "show":
 		if len(args) > 0 {
 			file, err := system.Layout.SourcePath(path, args[0])
@@ -92,12 +88,8 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 		if format == "json" {
 			return writeJSON(out, result)
 		}
-		parentText := "None"
-		if result.EnclosingSystem != nil {
-			parentText = fmt.Sprintf("%s (%s)", result.EnclosingSystem.Name, displayPath(result.EnclosingSystem.Path))
-		}
 		modelText := ""
-		for _, field := range []struct{ name, value string }{{"Goals", spec.Goals}, {"Environment", spec.Environment}, {"Assumptions", spec.Assumptions}, {"Constraints", spec.Constraints}, {"Glossary", spec.Glossary}, {"Part of", spec.PartOf}, {"Components", spec.Components}, {"Concept uses", spec.ConceptUses}, {"Synchronizations", spec.Synchronizations}} {
+		for _, field := range []struct{ name, value string }{{"Goals", spec.Goals}, {"Environment", spec.Environment}, {"Assumptions", spec.Assumptions}, {"Constraints", spec.Constraints}, {"Glossary", spec.Glossary}, {"Part of", spec.PartOf}, {"Concept uses", spec.ConceptUses}, {"Synchronizations", spec.Synchronizations}} {
 			if field.value != "" {
 				modelText += "\n\n" + field.name + "\n" + indent(field.value)
 			}
@@ -111,11 +103,9 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 				}
 			}
 		}
-		for _, a := range spec.QualityAttributes {
-			if system.AttributeLayout.Match(a.Location.Path) {
-				if a.ID == spec.QualityAttributes[0].ID {
-					modelText += "\n\nQuality attributes"
-				}
+		if len(spec.QualityAttributes) > 0 {
+			modelText += "\n\nQuality attributes"
+			for _, a := range spec.QualityAttributes {
 				modelText += "\n  " + a.Name + " (" + a.ID + ") — " + displayPath(a.Location.Path)
 			}
 		}
@@ -129,17 +119,14 @@ func runSystem(command, path, format string, out io.Writer, args ...string) erro
 			overview = "\n\nOverview\n" + indent(spec.Overview)
 		}
 		_, err = fmt.Fprintf(out, "%s%s\n\nPurpose\n%s%s\n\nScope\n%s%s\n\nEnclosing system document: %s\nSource: %s\n",
-			result.System.Name, description, indent(result.System.Purpose), overview, indent(result.System.Scope), modelText, parentText, displayPath(result.System.Path))
+			result.System.Name, description, indent(result.System.Purpose), overview, indent(result.System.Scope), modelText, systemLabel(result.EnclosingSystem), displayPath(result.System.Path))
 		return err
 	case "list":
 		nodes, err := system.List(path)
 		if err != nil {
 			return err
 		}
-		if nodes == nil {
-			nodes = []*system.Node{}
-		}
-		result := systemsResult{2, nodes}
+		result := systemsResult{2, nonnil(nodes)}
 		if format == "json" {
 			return writeJSON(out, result)
 		}
@@ -174,11 +161,7 @@ func newComponentCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if format == "json" {
-				return writeJSON(cmd.OutOrStdout(), createdResult{1, target})
-			}
-			_, err = fmt.Fprintf(cmd.OutOrStdout(), "Created %s\nAuthoring guide: %s\n", displayPath(target), authoringPage("component"))
-			return err
+			return writeCreated(cmd.OutOrStdout(), format, target, "Authoring guide: "+authoringPage("component"))
 		}}
 	cmd.Flags().StringVar(&parent, "part-of", "", "Parent system or component source file, relative to the working directory")
 	_ = cmd.MarkFlagRequired("part-of")

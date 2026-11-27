@@ -12,10 +12,8 @@ var boundaryWords = regexp.MustCompile(`(?i)\b(for|when|during|until|from|within
 var directionWords = regexp.MustCompile(`(?i)\b(minimize|maximize|reduce|increase|decrease|lower|improve)\b`)
 var measureWords = regexp.MustCompile(`(?i)\b(time|likelihood|probability|number|proportion|percentage|amount|cost|effort|frequency|rate|duration|accuracy|completeness)\b`)
 
-// Check provides transparent writing heuristics, not proof of semantic quality.
+// CheckWithPreset provides transparent writing heuristics, not proof of semantic quality.
 // Structural errors are rejected by Parse; suggestions never invalidate a draft.
-func Check(job *Job) []diagnostic.Diagnostic { return CheckWithPreset(job, "general") }
-
 func CheckWithPreset(job *Job, preset string) []diagnostic.Diagnostic {
 	var suggestions []diagnostic.Diagnostic
 	add := func(rule, element, message string, location diagnostic.Location) {

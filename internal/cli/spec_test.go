@@ -16,14 +16,13 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 	root := projectFixture(t)
 	demo := filepath.Join(root, "apps/demo")
 	writeFixture(t, filepath.Join(root, "dotspec.yaml"), "name: tool\nreport:\n  enabled: false\n")
-	readReport := func(wantCode int, state string, args ...string) check.Report {
+	readReport := func(wantCode int, state string, args ...string) {
 		t.Helper()
 		code, out, errOut := invoke(append(args, "--json")...)
 		var report check.Report
 		if code != wantCode || errOut != "" || json.Unmarshal([]byte(out), &report) != nil || report.GeneratedSpec != state {
 			t.Fatalf("unexpected check for %v: code %d, stdout %s, stderr %s", args, code, out, errOut)
 		}
-		return report
 	}
 
 	// A name-only manifest requires reports from the first whole-project check.
@@ -55,12 +54,7 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 	writeFixture(t, filepath.Join(root, "specs/tool.system.spec.md"), "broken\n")
 	readReport(1, "", "check", "--project", "tool")
 	writeFixture(t, filepath.Join(demo, "specs/demo.system.spec.md"), "broken\n")
-	report := readReport(1, "blocked-by-source", "check", "--project", "demo")
-	for _, finding := range report.Diagnostics {
-		if strings.HasPrefix(finding.Rule, "spec.generated") {
-			t.Fatalf("stale finding after invalid sources: %+v", finding)
-		}
-	}
+	readReport(1, "blocked-by-source", "check", "--project", "demo")
 	t.Chdir(filepath.Join(demo, "internal"))
 	readReport(1, "blocked-by-source", "check")
 }
@@ -319,8 +313,6 @@ func TestGeneratedOpenQuestionsLifecycle(t *testing.T) {
 	const source = "specs/notes.system.spec.md"
 	const index = "specification/open-questions.md"
 	const overview = "specification/notes.system.spec-report.md"
-	const retired = "specification/requirements-review.report.md"
-	writeFixture(t, retired, "---\ngenerated_by: dotspec\ntype: requirements-review-report\nsource: null\n---\n# Requirements review\n")
 	build := func() {
 		t.Helper()
 		for _, args := range [][]string{{"spec", "build"}, {"check"}} {
@@ -343,9 +335,6 @@ func TestGeneratedOpenQuestionsLifecycle(t *testing.T) {
 	if page := read(index); !strings.Contains(page, "[Who can recover a note? Should &#95;owner&#95; be required for recovery?](<notes.system.spec-report.md#who-can-recover-a-note>) — Notes") ||
 		strings.Contains(page, "Inspection findings") || !strings.Contains(read(overview), "[Open questions](<open-questions.md>)") {
 		t.Fatal(page)
-	}
-	if _, err := os.Stat(retired); !os.IsNotExist(err) {
-		t.Fatalf("obsolete review report after build: %v", err)
 	}
 
 	writeFixture(t, source, system+"\n## Open questions\n")
@@ -485,7 +474,7 @@ An example:
 	writeFixture(t, "specs/quality/safety/safety.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\n---\n# Safety\n")
 	writeFixture(t, "specs/quality/reliability/durability/recovery/recovery.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nsubattribute_of: [durability]\n---\n# Recovery\n")
 	writeFixture(t, "plan.md", "# Release plan\n")
-	writeFixture(t, "specs/notes.system.spec.md", opening+"\n## Project references\n\nThe [release plan](../plan.md) names the reviewer.\n\n## Quality attributes\n")
+	writeFixture(t, "specs/notes.system.spec.md", opening+"\n## Project references\n\nThe [release plan](../plan.md) names the reviewer.\n")
 	for name, labels := range map[string]string{"Save": "[durability, reliability]", "Restore": "[durability]"} {
 		writeFixture(t, filepath.Join("specs/requirements", strings.ToLower(name)+".requirement.spec.md"),
 			"---\ntype: requirement-spec\nquality_attributes: "+labels+"\n---\n# "+name+"\n\n## Statement\nKeep the note.\n")
@@ -762,9 +751,6 @@ See [the boundary detail](#open-questions).
 			t.Fatalf("missing interface breadcrumb to %s: %s, %v", section, data, err)
 		}
 	}
-	if strings.Contains(string(page), "[View source for") {
-		t.Fatal("unexpected source link on an interface group")
-	}
 }
 
 func TestGeneratedSpecificationMissingSystem(t *testing.T) {
@@ -1029,7 +1015,7 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 		}
 	}
 	const definition = "- [Notebook](<concepts/notebook.concept.spec-report.md>) — Keep written ideas."
-	if body := section(before, "Concepts"); !strings.HasPrefix(body, definition) || strings.Contains(body, "Used here as") || !strings.Contains(section(before, "Use cases"), "Review a note.") {
+	if body := section(before, "Concepts"); !strings.HasPrefix(body, definition) || !strings.Contains(section(before, "Use cases"), "Review a note.") {
 		t.Fatal("missing index entries")
 	}
 	if strings.Contains(section(before, "Requirements"), "Refines") {

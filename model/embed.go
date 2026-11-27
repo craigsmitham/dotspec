@@ -15,7 +15,7 @@ var SchemaJSON []byte
 //go:embed generated/catalog.json
 var CatalogJSON []byte
 
-// GuideFiles contains the authored snapshot and Markdown mapping references.
+// GuideFiles contains the Markdown mapping reference served by dotspec docs.
 //
-//go:embed markdown-mapping.md metamodel.yaml views/core-domain.yaml generated/*.json
+//go:embed markdown-mapping.md
 var GuideFiles embed.FS

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 
 	"github.com/craigsmitham/dotspec/internal/specfile"
@@ -17,23 +16,15 @@ func newQualityModelCommand() *cobra.Command {
 		{"list", "List bundled starters and project quality models"},
 		{"show", "Show a bundled starter or a local quality model"},
 		{"init", "Create an editable project quality model"},
-		{"check", "Check quality-model structure and suggest missing content"},
+		{"check", "Check a local quality model's structure and suggest missing content"},
 	} {
-		cmd := &cobra.Command{Use: action.name + " <slug>", Short: action.short, Args: cobra.ExactArgs(1), Example: "dotspec quality-model " + action.name + " furps --path ."}
+		cmd := newSpecAction(qualitymodel.Layout, action.name, action.short)
+		if action.name == "show" {
+			// The show example names a bundled starter rather than a project slug.
+			cmd.Example = "dotspec quality-model show furps --path ."
+		}
 		if action.name == "init" {
-			cmd.Example = "dotspec quality-model init organization-quality --path ."
 			cmd.Flags().String("from", "", "Copy a bundled starter into the new project model")
-		}
-		if action.name == "list" {
-			cmd.Use = "list"
-			cmd.Args = cobra.NoArgs
-			cmd.Example = "dotspec quality-model list --path ."
-		}
-		if action.name == "check" {
-			cmd.Long = action.short + ".\n\n" + exitPolicy
-		}
-		if action.name == "show" || action.name == "check" {
-			cmd.Use = action.name + " <slug-or-source-path>"
 		}
 		cmd.RunE = func(cmd *cobra.Command, args []string) error {
 			path, err := projectPath(cmd)
@@ -45,17 +36,18 @@ func newQualityModelCommand() *cobra.Command {
 				return err
 			}
 			out := cmd.OutOrStdout()
+			if action.name != "list" {
+				if err := validateSelector(qualitymodel.Layout, action.name, args[0]); err != nil {
+					return err
+				}
+			}
 			if action.name == "init" {
 				from, _ := cmd.Flags().GetString("from")
 				target, err := qualitymodel.Init(path, args[0], from)
 				if err != nil {
 					return err
 				}
-				if format == "json" {
-					return writeJSON(out, createdResult{1, target})
-				}
-				_, err = fmt.Fprintf(out, "Created %s\nAuthoring guide: %s\n", displayPath(target), authoringPage("quality-model"))
-				return err
+				return writeCreated(out, format, target, "Authoring guide: "+authoringPage("quality-model"))
 			}
 			if action.name == "list" {
 				project, err := specfile.FindProject(path)
@@ -84,9 +76,8 @@ func newQualityModelCommand() *cobra.Command {
 					return writeJSON(out, struct {
 						Effective     qualitymodel.Selection       `json:"effective_model"`
 						SchemaVersion int                          `json:"schema_version"`
-						Default       string                       `json:"default"`
 						Models        []*qualitymodel.QualityModel `json:"quality_models"`
-					}{selection, 2, effective.Slug, models})
+					}{selection, 3, models})
 				}
 				if _, err := fmt.Fprintln(out, selectionText(selection)); err != nil {
 					return err
@@ -102,7 +93,6 @@ func newQualityModelCommand() *cobra.Command {
 				}
 				return nil
 			}
-			// Local checks retain standard report semantics, including unreadable files.
 			if action.name == "check" {
 				builtins, err := qualitymodel.Builtins()
 				if err != nil {
@@ -110,12 +100,10 @@ func newQualityModelCommand() *cobra.Command {
 				}
 				for _, m := range builtins {
 					if m.Slug == args[0] {
-						findings := qualitymodel.Check(m)
-						report := check.Report{SchemaVersion: 1, Scope: check.Scope{Path: m.Path, Types: []string{"quality-model"}, Discovery: "bundled"}, Complete: true, ContextFiles: []string{}, Summary: check.Summary{FilesDiscovered: 1, FilesChecked: 1, Advice: len(findings)}, Diagnostics: findings}
-						return emitCheckReport(out, report, format)
+						return fmt.Errorf("%s is a bundled starter; check a local model, or copy it with quality-model init <slug> --from %s", m.Slug, m.Slug)
 					}
 				}
-				return emitCheckReport(out, check.Focused(path, args[0], qualitymodel.CheckType(), supportedTypes()...), format)
+				return emitFocusedCheck(out, format, path, args[0], qualitymodel.CheckType())
 			}
 			m, err := qualitymodel.Show(path, args[0])
 			if err != nil {
@@ -134,7 +122,7 @@ func newQualityModelCommand() *cobra.Command {
 		addOutput(cmd, false)
 		root.AddCommand(cmd)
 	}
-	cmd := &cobra.Command{Use: "apply [model]", Short: "Adopt selected quality attributes into one system", Long: "Browse the effective model, select IDs with --attributes or request the whole model with --all. Existing system declarations keep their wording and grouping.", Example: "dotspec quality-model apply --attributes recoverability --dry-run", Args: cobra.MaximumNArgs(1)}
+	cmd := &cobra.Command{Use: "apply [model]", Short: "Adopt selected quality attributes into one system", Long: "Select IDs with --attributes or request the whole model with --all. Existing system declarations keep their wording and grouping. To explore the model first, use quality-attribute browse.", Example: "dotspec quality-model apply --attributes recoverability --dry-run", Args: cobra.MaximumNArgs(1)}
 	cmd.Flags().StringSlice("attributes", nil, "Comma-separated attribute IDs to adopt")
 	cmd.Flags().Bool("all", false, "Adopt every attribute from the model into one system")
 	cmd.MarkFlagsMutuallyExclusive("all", "attributes")
@@ -144,6 +132,9 @@ func newQualityModelCommand() *cobra.Command {
 			return fmt.Errorf("--attributes requires at least one attribute ID")
 		}
 		all, _ := cmd.Flags().GetBool("all")
+		if !all && len(ids) == 0 {
+			return fmt.Errorf("select attributes with --attributes ID,ID or --all; use quality-attribute browse to explore the model")
+		}
 		if len(args) > 0 && args[0] == "" {
 			return fmt.Errorf("expected a model ID or path")
 		}

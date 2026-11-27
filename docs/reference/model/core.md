@@ -464,7 +464,7 @@ Subsets: `business-requirements`, `software-requirements`. [System](index.md#sys
 | `glossary` | [GlossaryTerm](index.md#glossaryterm) | optional; ordered list | Explicitly named terms, in authored order. |
 | `concept_uses` | [ConceptUse](index.md#conceptuse) | optional; ordered list |  |
 | `synchronizations` | [Synchronization](index.md#synchronization) | optional; ordered list |  |
-| `quality_attributes` | [SystemQualityAttribute](index.md#systemqualityattribute) | optional; ordered list | Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct. |
+| `quality_attributes` | [SystemQualityAttribute](index.md#systemqualityattribute) | optional; ordered list | Attributes declared by this system, in authored order. |
 | `part_of` | [System](index.md#system) | optional | Optional explicit parent System. Directory context does not supply this relationship. |
 | `out_of_scope` | [RichContent](index.md#richcontent) | optional | Work, users or situations explicitly excluded from this system’s responsibility. Omission leaves scope unspecified. |
 | `interacts_with` | [System](index.md#system) or [Component](index.md#component) | optional; list | Explicit interaction partners across this subject boundary; does not establish structural containment. |

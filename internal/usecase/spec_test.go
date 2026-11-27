@@ -122,35 +122,22 @@ func TestDraftsAndAdvice(t *testing.T) {
 	}
 }
 
-func TestStructureAndSourceLocations(t *testing.T) {
+// Shared structure diagnostics are tested in specfile; these rows check that
+// the use-case parser reaches them with its own type and catalog class.
+func TestStructureDiagnostics(t *testing.T) {
 	for _, tt := range []struct {
-		name, source, rule    string
-		line, column, related int
+		name, source, rule string
+		line, column       int
 	}{
-		{"frontmatter", "# Draft", "metadata.frontmatter", 1, 1, 0},
-		{"type", strings.Replace(draft, "type: use-case-spec", "type: job-spec", 1), "metadata.type", 2, 7, 0},
-		{"unknown field", strings.Replace(draft, "type: use-case-spec", "type: use-case-spec\nextra: true", 1), "metadata.invalid", 3, 1, 0},
-		{"invalid ID", strings.Replace(draft, "type: use-case-spec", "type: use-case-spec\nid: bad/id", 1), "identity.invalid", 3, 5, 0},
-		{"duplicate section", draft + "## Goal\n\n## Goal\n", "structure.duplicate-section", 7, 1, 5},
-		{"wrong level", draft + "### Goal\n", "structure.section-level", 5, 1, 0},
-		{"second title", draft + "# Another\n", "structure.title", 5, 1, 4},
-		{"before title", "---\ntype: use-case-spec\n---\n## Goal\n# Title\n", "structure.section-order", 4, 1, 0},
-		{"unresolved reference", draft + "## Evidence\n[Unknown](#missing)\n", "reference.unresolved", 6, 1, 0},
-		{"unicode reference", draft + "## Evidence\né [Unknown](#missing)\n", "reference.unresolved", 6, 3, 0},
-		{"malformed fragment", draft + "## Evidence\n[Unknown](#bad%XX)\n", "reference.invalid", 6, 1, 0},
+		{"type", strings.Replace(draft, "type: use-case-spec", "type: job-spec", 1), "metadata.type", 2, 7},
+		{"wrong level", draft + "### Goal\n", "structure.section-level", 5, 1},
+		{"unresolved reference", draft + "## Evidence\n[Unknown](#missing)\n", "reference.unresolved", 6, 1},
 	} {
-		t.Run(tt.name, func(t *testing.T) {
-			for _, source := range []string{tt.source, "\ufeff" + strings.ReplaceAll(tt.source, "\n", "\r\n")} {
-				_, err := Parse([]byte(source))
-				var d *diagnostic.Diagnostic
-				if !errors.As(err, &d) || d.Rule != tt.rule || d.Location.Line != tt.line || d.Location.Column != tt.column {
-					t.Fatalf("diagnostic: %+v, %v; want %s %d:%d", d, err, tt.rule, tt.line, tt.column)
-				}
-				if tt.related > 0 && (len(d.Related) != 1 || d.Related[0].Line != tt.related) {
-					t.Fatalf("missing previous definition: %+v", d)
-				}
-			}
-		})
+		_, err := Parse([]byte(tt.source))
+		var d *diagnostic.Diagnostic
+		if !errors.As(err, &d) || d.Rule != tt.rule || d.Location.Line != tt.line || d.Location.Column != tt.column {
+			t.Fatalf("%s: %+v, %v; want %s %d:%d", tt.name, d, err, tt.rule, tt.line, tt.column)
+		}
 	}
 }
 
@@ -164,15 +151,13 @@ func TestEveryConventionalSectionRejectsDuplicates(t *testing.T) {
 	}
 }
 
-func TestExamplesAndUnknownProseRemainMarkdown(t *testing.T) {
-	extra := "\n## Evidence\n\n```markdown\n# Example\n## Goal\n[not checked](#missing)\n```\n\n> ## Goal\n> quoted content\n\n### Local goal\nLowercase headings are ordinary prose.\n"
-	source := strings.Replace(example, "## Evidence", "## Related specifications", 1) + extra
-	spec, err := Parse([]byte(source))
+func TestExampleHeadingsAreNotCaptured(t *testing.T) {
+	spec, err := Parse([]byte(example + "\n```markdown\n## Goal\nAn example.\n```\n\n> ## Goal\n> quoted content\n"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if spec.Goal != "Identify structural problems before committing a change." || !strings.Contains(spec.Markdown, strings.TrimSpace(extra)) {
-		t.Fatalf("examples changed parsed content: %+v", spec)
+	if spec.Goal != "Identify structural problems before committing a change." {
+		t.Fatalf("example heading replaced the goal: %q", spec.Goal)
 	}
 	// A link to another file is navigation, even if that file or fragment is missing.
 	if _, err := Parse([]byte(draft + "[elsewhere](missing.spec.md#unknown)\n")); err != nil {

@@ -2,11 +2,10 @@ package model
 
 import (
 	"fmt"
-	"net/url"
-	"path/filepath"
-
 	"sort"
 	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/mermaid"
 )
 
 type traceEdge struct{ source, field, target string }
@@ -15,11 +14,11 @@ type traceEdge struct{ source, field, target string }
 // Reachability only identifies review candidates, never satisfaction or evidence.
 func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 	s = s.navigation()
-	base, err := designOutputBase(relativeTo)
+	l, err := newViewLinks(s, relativeTo)
 	if err != nil {
 		return "", err
 	}
-	d := newDesignResolver(s)
+	d := l.d
 	elements := append([]Record{}, s.Elements...)
 	key := func(r Record) string {
 		source := String(r, "source_document")
@@ -42,28 +41,13 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		}
 		return n
 	}
-	link := func(id string) string {
-		r := d.index[id]
-		source := String(r, "source_document")
-		if source == "" {
-			source = String(r, "source")
-		}
-		locator := String(d.index[source], "locator")
-		rel, e := filepath.Rel(base, filepath.FromSlash(locator))
-		if e != nil {
-			rel = locator
-		}
-		anchor := ""
-		for _, f := range s.Fragments {
-			if String(f, "source") == source && (String(f, "id") == id || namesFragment(r, f)) && String(f, "generated_anchor") != "" {
-				anchor = String(f, "generated_anchor")
-				break
-			}
-		}
-		target := (&url.URL{Path: filepath.ToSlash(rel), Fragment: anchor}).String()
-		label := strings.NewReplacer("[", "\\[", "]", "\\]", "\n", " ", "|", "\\|").Replace(name(r))
-		return "[" + label + "](<" + target + ">)"
+	l.name = name
+	// Source fragments can be derivation bases; link them to their own anchors.
+	l.ownSource = true
+	l.fragment = func(r, f Record) bool {
+		return (String(f, "id") == String(r, "id") || namesFragment(r, f)) && String(f, "generated_anchor") != ""
 	}
+	link := func(id string) string { return l.link(d.index[id]) }
 	edges := []traceEdge{}
 	// These relationships have distinct, documented change-review meanings.
 	fields := []string{"supports", "derived_from", "refines", "relies_on", "involves", "applies_to", "definition", "dependencies", "illustrates", "interacts_with"}
@@ -137,7 +121,7 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 					group = "shared"
 				}
 				if group == g.id {
-					fmt.Fprintf(&out, "        %s[\"%s: %s\"]\n", ids[String(r, "id")], String(r, "kind"), designDiagramLabel(name(r)))
+					fmt.Fprintf(&out, "        %s[\"%s: %s\"]\n", ids[String(r, "id")], String(r, "kind"), mermaid.Label(name(r)))
 				}
 			}
 			out.WriteString("    end\n")
@@ -208,7 +192,7 @@ func TraceMarkdown(s *Snapshot, relativeTo string) (string, error) {
 		if id := String(f, "record"); d.index[id] != nil {
 			prefix = link(id) + ": "
 		}
-		fmt.Fprintf(&out, "- **%s** `%s`: %s%s\n", String(f, "severity"), String(f, "code"), prefix, designCell(String(f, "message")))
+		fmt.Fprintf(&out, "- **%s** `%s`: %s%s\n", String(f, "severity"), String(f, "code"), prefix, viewCellEscape.Replace(String(f, "message")))
 	}
 	return projectReading(s, out.String()), nil
 }

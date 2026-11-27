@@ -22,7 +22,6 @@ func (d *designResolver) measurementGuidance(r Record) requirement.MeasurementGu
 	present := func(v any) bool { return strings.TrimSpace(d.text(v)) != "" }
 	return requirement.MeasurementGuidance{
 		Measurement: present(criterion["measure"]),
-		Criterion:   present(criterion["content"]),
 		Comparison:  d.richIntro(criterion["content"]) != "" || present(criterion["target"]),
 		Conditions:  d.richIntro(applicability["content"]) != "" || present(applicability["conditions"]),
 	}

@@ -22,7 +22,7 @@ func validationSnapshot(t *testing.T) *Snapshot {
 	t.Helper()
 	dir := t.TempDir()
 	files := map[string]string{
-		"specs/example.system.spec.md":                                                "---\ntype: system-spec\n---\n# Example\n## Purpose\nSupport explicit source-backed specifications.\n## Scope\nThese examples.\n## Goals\n### Preserve author intent\n\nPreserve author intent.\n## Glossary\n### Source\nThe original authored bytes.\n## Quality attributes\n",
+		"specs/example.system.spec.md":                                                "---\ntype: system-spec\n---\n# Example\n## Purpose\nSupport explicit source-backed specifications.\n## Scope\nThese examples.\n## Goals\n### Preserve author intent\n\nPreserve author intent.\n## Glossary\n### Source\nThe original authored bytes.\n",
 		"specs/quality/reliability/reliability.quality-attribute.spec.md":             "---\ntype: quality-attribute-spec\nid: reliable\n---\n# Reliability\n\n## Definition\n\nWorks as specified.\n",
 		"specs/quality/reliability/consistency/consistency.quality-attribute.spec.md": "---\ntype: quality-attribute-spec\nid: consistent\nsubattribute_of: [reliable]\n---\n# Consistency\n\n## Definition\n\nProduces the same result from the same source.\n",
 
@@ -197,7 +197,6 @@ func TestValidationChecksCanonicalSourceAndGraph(t *testing.T) {
 		name, code string
 		mutate     func(*Snapshot)
 	}{
-		{"retired inline kind", "shape.invalid", func(s *Snapshot) { elementKind(t, s, "Requirement")["kind"] = "ObligationClause" }},
 		{"unrecognized declared type", "document.subject-type", func(s *Snapshot) {
 			for _, doc := range s.Documents {
 				if doc["declared_type"] == "requirement-spec" {

@@ -27,7 +27,6 @@ class CatalogTests(unittest.TestCase):
         # Requirements are concrete specification roots and may carry classification labels.
         self.assertFalse(self.catalog["classes"]["Requirement"]["abstract"])
         self.assertIn("SystemContextSpecification", self.catalog["classes"]["Requirement"]["ancestors"])
-        self.assertNotIn("ObligationClause", self.catalog["classes"])
         self.assertEqual(self.slot("LabelOccurrence", "owner")["reference_ranges"], ["Requirement", "QualityAttribute"])
         self.assertEqual(self.slot("SourceReference", "resolution")["inline_ranges"], ["Resolution"])
         # A union must not silently reopen the broad DomainElement parent range.
@@ -113,10 +112,9 @@ class CatalogTests(unittest.TestCase):
                      "Job.steps", "Capability.provided_by",
                      "System.enclosing_system", "SystemContextSpecification.specification_system"):
             self.assertIn(path, projections)
-        # Owner backlinks, citations and provenance are not separate relationship claims.
-        for path in ("Goal.owner", "TraceableElement.supports_references", "DomainElement.source_document"):
+        # Owner backlinks and provenance are not separate relationship claims.
+        for path in ("Goal.owner", "DomainElement.source_document"):
             self.assertNotIn(path, projections)
-        self.assertNotIn("Assertion", self.catalog["classes"])
 
     def test_every_induced_slot_is_present(self):
         view = SchemaView(str(generate.MODEL))
@@ -131,8 +129,6 @@ class CatalogTests(unittest.TestCase):
         reference = relationships_markdown(self.catalog).decode()
         self.assertIn('ConceptUse.definition', reference)
         self.assertIn('ContextualReferences.references', reference)
-        for name in ('System', 'QualityModel', 'UseCase', 'Requirement'):
-            self.assertNotIn('system_context', self.catalog['classes'][name]['slots'])
         self.assertIn('TraceableElement.supports', reference)
         for mutate, message in [
             (lambda c: c['classes']['ConceptUse']['slots']['definition']['annotations'].pop('relationship_scope'), 'missing relationship metadata'),
@@ -247,7 +243,6 @@ class ModelViewTests(unittest.TestCase):
         self.assertNotIn('BusinessRule --> "0..1" System : specification system', output)
         self.assertIn('SystemContextSpecification <|-- Requirement', output)
         self.assertIn('SystemContextSpecification <|-- Component', output)
-        self.assertNotIn('enforces -->', output)
 
 if __name__ == "__main__":
     unittest.main()

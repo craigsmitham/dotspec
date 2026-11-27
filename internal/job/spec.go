@@ -2,21 +2,15 @@
 package job
 
 import (
-	"bytes"
 	"fmt"
-	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
-	"github.com/yuin/goldmark/ast"
 )
 
-const Suffix = ".job.spec.md"
-
-var Layout = specfile.Layout{Kind: "job", Collection: "jobs", Suffix: Suffix, SlugExample: "develop-requirements"}
+var Layout = specfile.Layout{Kind: "job", Collection: "jobs", Suffix: ".job.spec.md", SlugExample: "develop-requirements"}
 
 type metadata struct {
 	specfile.Metadata `yaml:",inline"`
@@ -50,8 +44,6 @@ Describe why someone wants to act in this situation.
 Describe the progress or result they want to achieve.
 Use an optional Outcomes section for individual success criteria.
 `
-
-var fieldPattern = regexp.MustCompile(`^\*\*(ID|Stage):\*\*\s*(.*?)\s*$`)
 
 type DesiredOutcome struct {
 	Name      string              `json:"name,omitempty"`
@@ -96,21 +88,9 @@ func Read(path string) (*Job, error) {
 }
 
 func readFrom(files *specfile.SourceSet, path string) (*Job, error) {
-	name := filepath.Base(path)
-	if !strings.HasSuffix(name, Suffix) {
-		return nil, diagnostic.Error("layout.job-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
-	}
-	slug := strings.TrimSuffix(name, Suffix)
-	if err := Layout.ValidateSlug(slug); err != nil {
-		return nil, diagnostic.Error("layout.job-name", err.Error(), diagnostic.Location{Path: path})
-	}
-	input, err := files.Markdown(path)
+	job, slug, err := specfile.ReadMember(files, Layout, path, ParseMarkdown)
 	if err != nil {
 		return nil, err
-	}
-	job, err := ParseMarkdown(input)
-	if err != nil {
-		return nil, diagnostic.WithPath(err, path)
 	}
 	job.Slug, job.Path = slug, path
 	return job, nil
@@ -133,30 +113,19 @@ func ParseMarkdown(input *specfile.Markdown) (*Job, error) {
 	if err := ids.Register(job.ID, "job", input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
-	sections := make(map[string]*specfile.Section)
-	for _, section := range doc.Sections {
-		name := section.Title
-		switch name {
-		case "Job", "Performer", "Situation", "Motivation", "Intended progress", "Outcomes", "Steps", "Evidence":
-			location := doc.Location(section.Start, name)
-			if section.Level != 2 {
-				return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), location)
-			}
-			if _, exists := sections[name]; exists {
-				return nil, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", name), location, job.SectionLocations[name])
-			}
-			sections[name] = section
-			job.SectionLocations[name] = location
-		}
-	}
-	for name, target := range map[string]*string{
+	// Outcomes and Steps are parsed from their sections below. Capturing them
+	// too rejects every duplicate section, in document order, before that parsing.
+	fields := map[string]*string{
 		"Job": &job.Statement, "Performer": &job.Performer, "Situation": &job.Situation,
 		"Motivation": &job.Motivation, "Intended progress": &job.IntendedProgress,
-		"Evidence": &job.Evidence,
-	} {
-		if s := sections[name]; s != nil {
-			*target = doc.Body(s)
-		}
+		"Evidence": &job.Evidence, "Outcomes": new(string), "Steps": new(string),
+	}
+	if err := doc.Capture(fields, job.SectionLocations); err != nil {
+		return nil, err
+	}
+	sections := make(map[string]*specfile.Section)
+	for _, section := range doc.Sections {
+		sections[section.Title] = section
 	}
 	if section := sections["Outcomes"]; section != nil {
 		job.Outcomes, err = parseOutcomes(doc, section)
@@ -171,9 +140,6 @@ func ParseMarkdown(input *specfile.Markdown) (*Job, error) {
 	}
 	if section := sections["Steps"]; section != nil {
 		for _, s := range section.Children {
-			if s.Level != 3 || s.Title == "" {
-				return nil, diagnostic.Error("structure.step-heading", "each step must have a nonempty level-three heading (### Step name)", doc.Location(s.Start, s.Title))
-			}
 			step, err := parseStep(doc, s)
 			if err != nil {
 				return nil, err
@@ -190,17 +156,9 @@ func ParseMarkdown(input *specfile.Markdown) (*Job, error) {
 		}
 	}
 	ids.AddAnchors(doc.Anchors)
-	err = specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors)
+	err = doc.ValidateReferences()
 	if err != nil {
 		return nil, err
-	}
-	if job.Outcomes == nil {
-		job.Outcomes = []DesiredOutcome{}
-	}
-	for i := range job.Steps {
-		if job.Steps[i].Outcomes == nil {
-			job.Steps[i].Outcomes = []DesiredOutcome{}
-		}
 	}
 	job.References = doc.References()
 	return job, nil
@@ -208,56 +166,24 @@ func ParseMarkdown(input *specfile.Markdown) (*Job, error) {
 
 func parseStep(doc *specfile.Outline, section *specfile.Section) (Step, error) {
 	step := Step{Outcomes: []DesiredOutcome{}, Name: section.Title, Location: doc.Location(section.Start, section.Title)}
-	fields := make(map[string]string)
-	fieldLocations := make(map[string]diagnostic.Location)
-	fieldLines := make(map[int]bool)
-	for _, node := range doc.Nodes(section) {
-		if _, ok := node.(*ast.Paragraph); !ok {
-			continue
-		}
-		for i := 0; i < node.Lines().Len(); i++ {
-			segment := node.Lines().At(i)
-			match := fieldPattern.FindStringSubmatch(strings.TrimSpace(string(segment.Value(doc.Source))))
-			if match == nil {
-				continue
-			}
-			if _, exists := fields[match[1]]; exists {
-				return step, diagnostic.Error("structure.duplicate-field", fmt.Sprintf("step %s: duplicate %s field", step.Name, match[1]), doc.Location(segment.Start, step.Name+" / "+match[1]), fieldLocations[match[1]])
-			}
-			fields[match[1]] = match[2]
-			fieldLocations[match[1]] = doc.Location(segment.Start, step.Name+" / "+match[1])
-			fieldLines[bytes.LastIndexByte(doc.Source[:segment.Start], '\n')+1] = true
-		}
+	fields, err := doc.ReadFields("step "+step.Name, section, "ID", "Stage")
+	if err != nil {
+		return step, err
 	}
-	step.ID, step.Stage = fields["ID"], fields["Stage"]
-	step.IDLocation = fieldLocations["ID"]
-	intro := string(doc.Source[section.ContentStart:doc.IntroEnd(section)])
-	// Remove only metadata lines that were recognized in actual paragraphs.
-	// Code fences and other examples remain in the original Markdown.
-	var description []string
-	offset := section.ContentStart
-	for _, line := range strings.Split(intro, "\n") {
-		if !fieldLines[offset] {
-			description = append(description, line)
-		}
-		offset += len(line) + 1
-	}
-	step.Description = strings.TrimSpace(strings.Join(description, "\n"))
+	step.ID, step.Stage = fields.Values["ID"], fields.Values["Stage"]
+	step.IDLocation = fields.Locations["ID"]
+	step.Description = fields.Strip(doc, section.ContentStart, doc.IntroEnd(section))
 	seen := false
 	var outcomesLocation diagnostic.Location
 	for _, child := range section.Children {
 		if child.Title != "Outcomes" {
 			continue
 		}
-		if child.Level != 4 {
-			return step, diagnostic.Error("structure.section-level", fmt.Sprintf("step %s: outcomes must use #### Outcomes", step.Name), doc.Location(child.Start, step.Name+" / Outcomes"))
-		}
 		if seen {
 			return step, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("step %s: duplicate Outcomes section", step.Name), doc.Location(child.Start, step.Name+" / Outcomes"), outcomesLocation)
 		}
 		seen = true
 		outcomesLocation = doc.Location(child.Start, step.Name+" / Outcomes")
-		var err error
 		step.Outcomes, err = parseOutcomes(doc, child)
 		if err != nil {
 			return step, err
@@ -267,39 +193,13 @@ func parseStep(doc *specfile.Outline, section *specfile.Section) (Step, error) {
 }
 
 func parseOutcomes(doc *specfile.Outline, section *specfile.Section) ([]DesiredOutcome, error) {
-	var outcomes []DesiredOutcome
+	outcomes := []DesiredOutcome{}
 	for _, child := range section.Children {
-		outcome := DesiredOutcome{Name: child.Title, Location: doc.Location(child.Start, child.Title)}
-		removed := map[int]bool{}
-		for _, node := range doc.Nodes(child) {
-			if _, ok := node.(*ast.Paragraph); !ok {
-				continue
-			}
-			for i := 0; i < node.Lines().Len(); i++ {
-				segment := node.Lines().At(i)
-				match := fieldPattern.FindStringSubmatch(strings.TrimSpace(string(segment.Value(doc.Source))))
-				if match == nil || match[1] != "ID" {
-					continue
-				}
-				if outcome.ID != "" {
-					return nil, diagnostic.Error("structure.duplicate-field", "duplicate outcome ID", doc.Location(segment.Start, child.Title))
-				}
-				outcome.ID = match[2]
-				removed[bytes.LastIndexByte(doc.Source[:segment.Start], '\n')+1] = true
-			}
+		fields, err := doc.ReadFields("outcome "+child.Title, child, "ID")
+		if err != nil {
+			return nil, err
 		}
-		var lines []string
-		offset := child.ContentStart
-		for _, line := range strings.Split(string(doc.Source[child.ContentStart:doc.IntroEnd(child)]), "\n") {
-			if !removed[offset] {
-				lines = append(lines, line)
-			}
-			offset += len(line) + 1
-		}
-		if child.Level != section.Level+1 || child.Title == "" {
-			return nil, diagnostic.Error("structure.outcome-heading", "each named outcome must use the next heading level", doc.Location(child.Start, child.Title))
-		}
-		outcome.Statement = strings.TrimSpace(strings.Join(lines, "\n"))
+		outcome := DesiredOutcome{Name: child.Title, ID: fields.Values["ID"], Statement: fields.Strip(doc, child.ContentStart, doc.IntroEnd(child)), Location: doc.Location(child.Start, child.Title)}
 		seenAppliesTo := false
 		for _, sub := range child.Children {
 			if sub.Title == "Applies to" {

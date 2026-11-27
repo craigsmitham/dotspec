@@ -57,7 +57,7 @@ func (s *System) checkGlossarySources(files *specfile.SourceSet) error {
 		if err != nil {
 			return err
 		}
-		if _, err := ParseGlossaryMarkdown(data); err != nil {
+		if _, err := ParseGlossary(data); err != nil {
 			return diagnostic.WithPath(err, path)
 		}
 	}
@@ -65,11 +65,7 @@ func (s *System) checkGlossarySources(files *specfile.SourceSet) error {
 }
 
 // ParseGlossary validates the vocabulary and reads its optional context name.
-func ParseGlossary(data []byte) (string, error) {
-	return ParseGlossaryMarkdown(specfile.NewMarkdown(data))
-}
-
-func ParseGlossaryMarkdown(input *specfile.Markdown) (string, error) {
+func ParseGlossary(input *specfile.Markdown) (string, error) {
 	doc, err := input.Outline("glossary")
 	if err != nil {
 		return "", err
@@ -79,7 +75,7 @@ func ParseGlossaryMarkdown(input *specfile.Markdown) (string, error) {
 			return "", diagnostic.Error("glossary.term", "use a named level-two heading and a definition for each glossary entry", doc.Location(term.Start, term.Title))
 		}
 	}
-	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
+	if err := doc.ValidateReferences(); err != nil {
 		return "", err
 	}
 	if input.MetadataError != nil {

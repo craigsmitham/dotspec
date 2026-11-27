@@ -42,9 +42,6 @@ and still disappoint its users, refine the requirement. When the remaining
 choices all meet the need, leave them to the implementer.
 [A sufficiently comprehensive spec is not (necessarily) code](https://buttondown.com/hillelwayne/archive/a-sufficiently-comprehensive-spec-is-not/)
 
-## Goals
-
-
 ## Stakeholders
 
 ### Contributor
@@ -66,10 +63,3 @@ builds a requirements specification from them.
 Contributors edit Markdown in ordinary text editors. Git repositories provide
 version history and discovery rules. The CLI communicates through process
 arguments, standard streams, and exit statuses.
-
-## Assumptions
-
-
-## Constraints
-
-## Glossary

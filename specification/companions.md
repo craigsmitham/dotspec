@@ -12,8 +12,9 @@ generated_by: dotspec
 - [help.txtar](<../internal/integration/testdata/help.txtar>) — Help, redirected output, completions and manual · [Find authoring guidance in the installed CLI](<requirements/find-authoring-guidance-in-the-installed-cli.requirement.spec-report.md>)
 - [discovery.txtar](<../internal/integration/testdata/discovery.txtar>) — Repository discovery · [Check specifications before committing](<use-cases/check-specifications.use-case.spec-report.md>)
 - [diagnostics.txtar](<../internal/integration/testdata/diagnostics.txtar>) — Diagnostics and exit statuses · [Check specifications before committing](<use-cases/check-specifications.use-case.spec-report.md>)
+- [use-cases.txtar](<../internal/integration/testdata/use-cases.txtar>) — Focused and project-wide checks of draft and malformed use cases · [Check specifications before committing](<use-cases/check-specifications.use-case.spec-report.md>)
 - [workflow.txtar](<../internal/integration/testdata/workflow.txtar>) — Create and inspect · [Create a specification draft](<use-cases/create-specification.use-case.spec-report.md>)
-- [use-cases.txtar](<../internal/integration/testdata/use-cases.txtar>) — Use-case presets and inspection · [Create a specification draft](<use-cases/create-specification.use-case.spec-report.md>)
+- [use-cases.txtar](<../internal/integration/testdata/use-cases.txtar>) — Use-case template selection, non-overwrite and inspection · [Create a specification draft](<use-cases/create-specification.use-case.spec-report.md>)
 - [sources.txtar](<../internal/integration/testdata/sources.txtar>) — Source discovery through ordinary references and companions · [Discover specification sources](<use-cases/discover-specification-sources.use-case.spec-report.md>)
 - [model.txtar](<../internal/integration/testdata/model.txtar>) — Export and offline validation · [Export a specification model for review or integration](<use-cases/export-specification-model.use-case.spec-report.md>)
 

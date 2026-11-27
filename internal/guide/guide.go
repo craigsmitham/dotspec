@@ -27,7 +27,7 @@ func readFile(name string) ([]byte, error) {
 			return []byte(content), nil
 		}
 	}
-	if root == "docs" && path.Ext(file) != ".md" && file != "cli-handbook/topics.json" {
+	if root == "docs" && path.Ext(file) != ".md" {
 		return nil, fs.ErrNotExist
 	}
 	if root == "docs" && strings.HasPrefix(file, "reference/") {
@@ -86,8 +86,6 @@ func sourceFor(id string) string {
 	// Check the documentation file first so IDs can contain dots.
 	if _, err := fs.Stat(docs.Files, "cli-handbook/"+file+".md"); err == nil {
 		file = docs.Root + "/" + file + ".md"
-	} else if file == "topics.json" {
-		file = docs.Root + "/" + file
 	}
 	if section {
 		return file + "#" + anchor
@@ -127,10 +125,6 @@ func Read(query string) (string, error) {
 	data, err := readDestination(source)
 	if err == nil {
 		if strings.HasPrefix(source, "examples/") || strings.HasPrefix(source, "specs/") {
-			return string(data), nil
-		}
-		file, _, _ := strings.Cut(source, "#")
-		if path.Ext(file) != ".md" {
 			return string(data), nil
 		}
 		return linkedPage(source, data), nil

@@ -13,8 +13,6 @@ import (
 	"github.com/rogpeppe/go-internal/lockedfile"
 )
 
-func Init(path string) (string, error) { return InitNamed(path, "New system") }
-
 func InitNamed(path, name string) (string, error) {
 	return createSubject(path, name, Layout, func(_ string) (string, string, error) {
 		source := strings.Replace(Template, "# New system", "# "+name, 1)

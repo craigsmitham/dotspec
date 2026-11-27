@@ -26,15 +26,15 @@ func TestInventoryClassifiesAgainstLocalModel(t *testing.T) {
 	if output, err := exec.Command("git", "-C", dir, "init", "-q").CombinedOutput(); err != nil {
 		t.Fatalf("initialize repository: %v: %s", err, output)
 	}
-	put(t, filepath.Join(dir, "specs/system.system.spec.md"), "---\ntype: system-spec\n---\n# System\n## Purpose\nSupport work.\n## Scope\nThis project.\n## Quality attributes\n")
+	put(t, filepath.Join(dir, "specs/system.system.spec.md"), "---\ntype: system-spec\n---\n# System\n## Purpose\nSupport work.\n## Scope\nThis project.\n")
 	put(t, filepath.Join(dir, "specs/quality/reliability/reliability.quality-attribute.spec.md"), "---\ntype: quality-attribute-spec\nid: reliability\n---\n# Reliability\n\n## Definition\n\nConsistent operation.\n")
 	put(t, filepath.Join(dir, "specs/quality/reliability/preservation/preservation.quality-attribute.spec.md"), "---\ntype: quality-attribute-spec\nid: source-preservation\nsubattribute_of: [reliability]\n---\n# Preservation\n\n## Definition\n\nUnchanged sources.\n")
 
-	path, err := Init(dir, "work")
+	path, err := InitWithAttribute(dir, "work", "general", "")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := Init(dir, "work"); err == nil {
+	if _, err := InitWithAttribute(dir, "work", "general", ""); err == nil {
 		t.Fatal("overwrote target")
 	}
 	put(t, path, example)
@@ -74,7 +74,7 @@ func TestQualityPresetCreatesAnOrdinaryRequirement(t *testing.T) {
 	if output, err := exec.Command("git", "-C", dir, "init", "-q").CombinedOutput(); err != nil {
 		t.Fatalf("initialize repository: %v: %s", err, output)
 	}
-	path, err := InitWithPreset(dir, "bounded", "quality")
+	path, err := InitWithAttribute(dir, "bounded", "quality", "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -85,7 +85,7 @@ func TestQualityPresetCreatesAnOrdinaryRequirement(t *testing.T) {
 	if !Layout.Match(path) || !strings.Contains(string(data), "type: requirement-spec") || !strings.Contains(string(data), "## Criterion") {
 		t.Fatalf("quality preset: %s\n%s", path, data)
 	}
-	if _, err := InitWithPreset(dir, "other", "performance"); err == nil {
+	if _, err := InitWithAttribute(dir, "other", "performance", ""); err == nil {
 		t.Fatal("accepted an unknown preset")
 	}
 	draft := "---\ntype: requirement-spec\n---\n# Draft\n"

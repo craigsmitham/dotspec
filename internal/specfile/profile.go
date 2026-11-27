@@ -14,28 +14,28 @@ import (
 
 // A heading introduces a field only when its owner declares that domain slot.
 // Nested headings inside ordinary Markdown fields are local to that prose.
+// checkFields decides the titles whose owners it names directly.
 var headingFields = map[string]string{
 	"Description": "description", "Part of": "part_of", "Purpose": "purpose", "Overview": "overview", "Scope": "scope", "Out of scope": "out_of_scope",
 	"Project references": "project_references", "Environment": "environment", "Stakeholders": "stakeholder_roles", "Constraints": "constraints",
-	"Responsibilities": "responsibilities", "Boundary": "boundary_description", "Contracts": "contracts", "Architecture": "architecture", "Implementation": "implementation",
-	"Interacts with": "interacts_with", "Specification system": "specification_system", "Enablers": "enablers",
+	"Responsibilities": "responsibilities", "Contracts": "contracts", "Architecture": "architecture", "Implementation": "implementation",
+	"Interacts with": "interacts_with", "Enablers": "enablers",
 	"Groups": "groups", "Depends on": "depends_on", "Provided by": "provided_by", "Supports": "supports", "Involves": "involves",
 	"Derived from": "derived_from", "Relies on": "relies_on", "Refines": "refines", "Applies to": "applies_to",
 	"Adopts": "adopts", "Evidence": "evidence", "Authority": "authority_and_evidence", "Related specifications": "related_specifications", "Open questions": "open_questions",
-	"Job": "statement", "Performer": "performer", "Situation": "situation", "Motivation": "motivation", "Intended progress": "intended_progress",
-	"Goal": "goal", "System boundary": "boundary_description", "Primary actor": "primary_actor", "Goal level": "goal_level", "Trigger": "trigger",
+	"Performer": "performer", "Situation": "situation", "Motivation": "motivation", "Intended progress": "intended_progress",
+	"Goal": "goal", "Primary actor": "primary_actor", "Goal level": "goal_level", "Trigger": "trigger",
 	"Supporting actors": "supporting_actors", "Stakeholder interests": "stakeholder_interests", "Main success scenario": "main_success_scenario",
 	"Sequence": "sequence", "Preconditions": "preconditions", "Minimal guarantees": "minimal_guarantees", "Success guarantees": "success_guarantees",
 	"State": "abstract_state", "Operational principles": "operational_principles", "Effects table": "effects_table",
-	"Statement": "statement", "Rationale": "rationale", "Criterion": "criterion", "Exceptions": "exceptions", "Definition": "definition",
-	"Sources": "sources", "Edition": "edition", "Basis": "basis", "Applicability": "applicability", "Supporting content": "supporting_content",
+	"Rationale": "rationale", "Criterion": "criterion", "Exceptions": "exceptions", "Definition": "definition",
+	"Sources": "sources", "Edition": "edition", "Basis": "basis", "Supporting content": "supporting_content",
 	"Configuration": "configuration", "Dependencies": "dependencies", "Counterpart": "counterpart",
 	"When": "when", "Where": "where", "Then": "then", "Semantics": "semantics", "Inputs": "inputs", "Outputs": "outputs",
 	"Initiation": "initiation", "Effects": "effects", "Rejections": "rejections", "Guards": "guards", "Caller assumptions": "caller_assumptions",
-	"Condition": "condition", "Handling": "handling", "Alternative names": "alternative_names", "Topics": "topics",
-	"Relationships": "relationships", "Related terms": "related_terms",
-	"Goals": "goals", "Assumptions": "assumptions", "Steps": "steps", "Outcomes": "outcomes", "Actions": "actions",
-	"Required interfaces": "required_interfaces", "Provided interfaces": "provided_interfaces", "Quality attributes": "quality_attributes",
+	"Condition": "condition", "Handling": "handling",
+	"Goals": "goals", "Assumptions": "assumptions", "Outcomes": "outcomes", "Actions": "actions",
+	"Required interfaces": "required_interfaces", "Provided interfaces": "provided_interfaces",
 	"Glossary": "glossary", "Extensions": "extensions", "Concept uses": "concept_uses", "Synchronizations": "synchronizations",
 }
 
@@ -107,7 +107,7 @@ func (o *Outline) checkFields(class string, sections []*Section, level int) erro
 		case "Applicability":
 			known = class == "Assumption" || class == "AdoptedProvision"
 		case "Quality attributes":
-			known = class == "QualityModel" || class == "System"
+			known = class == "QualityModel"
 		}
 		loc := o.Location(s.Start, s.Title)
 		if s.Title == "Verification procedures" {

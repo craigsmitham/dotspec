@@ -79,12 +79,8 @@ func (s *subject) includeMember(title string, member entry) {
 
 func collectionName(title string) string {
 	switch title {
-	case "Child systems":
-		return "Systems"
 	case "Required interfaces", "Provided interfaces":
 		return "Interfaces"
-	case "Applicable requirements":
-		return "Requirements"
 	case "Concept uses":
 		return "Concepts"
 	}

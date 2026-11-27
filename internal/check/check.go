@@ -131,10 +131,7 @@ func (r *Report) inspectUnlistedCompanions(dir string, sources []string, types [
 	}
 	var listed []string
 	for _, source := range sources {
-		kind := MatchType(source, types)
-		if kind == nil {
-			continue
-		}
+		kind := MatchType(source, types) // Discovery returned only matching paths.
 		md, err := r.sources.Markdown(source)
 		if err != nil {
 			continue

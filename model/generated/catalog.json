@@ -14758,7 +14758,7 @@
             "relationship_scope": "The effective system of the specification."
           },
           "any_of": [],
-          "description": "Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct.",
+          "description": "Attributes declared by this system, in authored order.",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -18026,7 +18026,7 @@
   },
   "representation_version": "0.4.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "0009dcf5514f24e5110f20e0b16d97d2c441f2cda8d695167c6874281ff2719a",
+  "source_sha256": "bbe880e402c9c927eea67555fd2f0a71916ee89c8180d004e7b78ea2d3f6d6cb",
   "subsets": {
     "business-requirements": {
       "classification": "core",

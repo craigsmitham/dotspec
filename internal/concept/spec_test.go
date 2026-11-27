@@ -89,37 +89,22 @@ func TestDraftsAndAdvice(t *testing.T) {
 	}
 }
 
-func TestStructureAndSourceLocations(t *testing.T) {
+// Shared structure diagnostics are tested in specfile; these rows check that
+// the concept parser reaches them with its own type and catalog class.
+func TestStructureDiagnostics(t *testing.T) {
 	for _, tt := range []struct {
-		name, source, rule    string
-		line, column, related int
+		name, source, rule string
+		line, column       int
 	}{
-		{"frontmatter", "# Draft", "metadata.frontmatter", 1, 1, 0},
-		{"type", strings.Replace(draft, "type: concept-spec", "type: job-spec", 1), "metadata.type", 2, 7, 0},
-		{"unknown field", strings.Replace(draft, "type: concept-spec", "type: concept-spec\ndefined_by: other", 1), "metadata.invalid", 3, 1, 0},
-		{"invalid ID", strings.Replace(draft, "type: concept-spec", "type: concept-spec\nid: concept.task", 1), "identity.invalid", 3, 5, 0},
-		{"wrong ID type", strings.Replace(draft, "type: concept-spec", "type: concept-spec\nid: [task]", 1), "metadata.invalid", 3, 1, 0},
-		{"duplicate section", draft + "## Purpose\n\n## Purpose\n", "structure.duplicate-section", 7, 1, 5},
-		{"wrong level", draft + "### Purpose\n", "structure.section-level", 5, 1, 0},
-		{"second title", draft + "# Another\n", "structure.title", 5, 1, 4},
-		{"empty title", strings.Replace(draft, "# Job Map", "#", 1), "structure.title", 4, 1, 0},
-		{"before title", "---\ntype: concept-spec\n---\n## Purpose\n# Title\n", "structure.section-order", 4, 1, 0},
-		{"unresolved reference", draft + "## Evidence\n[Unknown](#missing)\n", "reference.unresolved", 6, 1, 0},
-		{"unicode reference", draft + "## Evidence\né [Unknown](#missing)\n", "reference.unresolved", 6, 3, 0},
-		{"malformed fragment", draft + "## Evidence\n[Unknown](#bad%XX)\n", "reference.invalid", 6, 1, 0},
+		{"type", strings.Replace(draft, "type: concept-spec", "type: job-spec", 1), "metadata.type", 2, 7},
+		{"wrong level", draft + "### Purpose\n", "structure.section-level", 5, 1},
+		{"unresolved reference", draft + "## Evidence\n[Unknown](#missing)\n", "reference.unresolved", 6, 1},
 	} {
-		t.Run(tt.name, func(t *testing.T) {
-			for _, source := range []string{tt.source, "\ufeff" + strings.ReplaceAll(tt.source, "\n", "\r\n")} {
-				_, err := Parse([]byte(source))
-				var d *diagnostic.Diagnostic
-				if !errors.As(err, &d) || d.Rule != tt.rule || d.Location.Line != tt.line || d.Location.Column != tt.column {
-					t.Fatalf("diagnostic: %+v, %v; want %s %d:%d", d, err, tt.rule, tt.line, tt.column)
-				}
-				if tt.related > 0 && (len(d.Related) != 1 || d.Related[0].Line != tt.related) {
-					t.Fatalf("missing previous definition: %+v", d)
-				}
-			}
-		})
+		_, err := Parse([]byte(tt.source))
+		var d *diagnostic.Diagnostic
+		if !errors.As(err, &d) || d.Rule != tt.rule || d.Location.Line != tt.line || d.Location.Column != tt.column {
+			t.Fatalf("%s: %+v, %v; want %s %d:%d", tt.name, d, err, tt.rule, tt.line, tt.column)
+		}
 	}
 }
 
@@ -133,18 +118,13 @@ func TestEveryConventionalSectionRejectsDuplicates(t *testing.T) {
 	}
 }
 
-func TestExamplesAndUnknownProseRemainMarkdown(t *testing.T) {
-	extra := "\n### More notes\n\n```markdown\n# Example\n## Purpose\n[not checked](#missing)\n```\n\n> ## Purpose\n> quoted content\n\n### Local purpose\nLowercase headings are ordinary prose.\n"
-	spec, err := Parse([]byte(example + extra))
+func TestExampleHeadingsAreNotCaptured(t *testing.T) {
+	spec, err := Parse([]byte(example + "\n```markdown\n## Purpose\nAn example.\n```\n\n> ## Purpose\n> quoted content\n"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if spec.Purpose != "Understand an accomplishment and its success criteria." || !strings.Contains(spec.Markdown, strings.TrimSpace(extra)) {
-		t.Fatalf("examples changed parsed content: %+v", spec)
-	}
-	// Explicit identity is independent of the title's generated heading anchor.
-	if _, err := Parse([]byte(strings.Replace(example, "# Job Map", "# Renamed map", 1))); err != nil {
-		t.Fatalf("explicit ID stopped resolving after rename: %v", err)
+	if spec.Purpose != "Understand an accomplishment and its success criteria." {
+		t.Fatalf("example heading replaced the purpose: %q", spec.Purpose)
 	}
 }
 
@@ -157,18 +137,4 @@ func FuzzParse(f *testing.F) {
 			_ = Check(spec)
 		}
 	})
-}
-
-func TestOperationalPrinciplesAliasAndDuplicate(t *testing.T) {
-	source := "---\ntype: concept-spec\n---\n# Example\n## State\n### Item\nAn identity.\n### Token\nA token.\n## Operational principles\n### First story\nOne.\n### Second story\nTwo.\n"
-	spec, err := Parse([]byte(source))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !strings.Contains(spec.OperationalPrinciples, "Second story") {
-		t.Fatal("plural stories or declarations lost")
-	}
-	if _, err = Parse([]byte(source + "\n## Operational principles\nDuplicate.\n")); err == nil {
-		t.Fatal("singular/plural duplicate accepted")
-	}
 }

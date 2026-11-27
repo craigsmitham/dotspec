@@ -70,15 +70,13 @@ be edited without invoking init.
 ## Authority
 
 The [init commands](<../../docs/reference/cli.md>) and linked requirement define command behavior.
-The [use-case command examples](<../../internal/integration/testdata/use-cases.txtar>)
-verify the illustrated template-selection and non-overwrite outcomes.
 
 ## Companions
 
 **Illustrated by**
 
 - [workflow.txtar](<../../internal/integration/testdata/workflow.txtar>) — Create and inspect
-- [use-cases.txtar](<../../internal/integration/testdata/use-cases.txtar>) — Use-case presets and inspection
+- [use-cases.txtar](<../../internal/integration/testdata/use-cases.txtar>) — Use-case template selection, non-overwrite and inspection
 
 ---
 

@@ -11,15 +11,35 @@ import (
 // after structural validation succeeds. Context is optional.
 type Type struct {
 	// References reads validated targets and outgoing links without following them.
-	References   func(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error)
-	Layout       specfile.Layout
-	ValidateSlug func(string) error
-	Inspect      func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error)
-	Context      *ContextProvider
+	References func(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error)
+	Layout     specfile.Layout
+	Inspect    func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error)
+	Context    *ContextProvider
 	// InspectContext checks cross-source relationships after successful context
 	// resolution. Sources are exactly those returned by Context, never ancestors
 	// inferred by the checker. It is skipped when context cannot be read.
 	InspectContext func(files *specfile.SourceSet, path string, sources []string) ([]diagnostic.Diagnostic, error)
+}
+
+// ReadType builds both inspections from one reader, which validates placement
+// and structure. References projects the outgoing links of a file it accepts;
+// advise, when set, runs only after it succeeds. Callers add any context.
+func ReadType[T any](layout specfile.Layout, read func(*specfile.SourceSet, string) (*T, error), references func(*T) *specfile.ReferenceDocument, advise func(*T) []diagnostic.Diagnostic) Type {
+	return Type{Layout: layout,
+		References: func(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error) {
+			member, err := read(files, path)
+			if err != nil {
+				return nil, err
+			}
+			return references(member), nil
+		},
+		Inspect: func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
+			member, err := read(files, path)
+			if err != nil || advise == nil {
+				return nil, err
+			}
+			return advise(member), nil
+		}}
 }
 
 // ContextProvider inspects additional sources needed by a type. Resolve returns

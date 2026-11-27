@@ -122,7 +122,7 @@ func TestDraftsAndLegacyStoriesRemainValid(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if len(Check(got)) == 0 {
+		if len(CheckWithPreset(got, "general")) == 0 {
 			t.Fatal("expected advisory suggestions for the draft")
 		}
 	}
@@ -219,7 +219,7 @@ func TestCheckAllowsOptionalStructure(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if suggestions := Check(got); len(suggestions) != 0 {
+		if suggestions := CheckWithPreset(got, "general"); len(suggestions) != 0 {
 			t.Fatalf("optional structure should not prompt completion: %q: %+v", optional, suggestions)
 		}
 	}
@@ -232,7 +232,7 @@ func FuzzStructuredJob(f *testing.F) {
 	f.Fuzz(func(t *testing.T, data []byte) {
 		parsed, err := Parse(data)
 		if err == nil {
-			_ = Check(parsed)
+			_ = CheckWithPreset(parsed, "general")
 		}
 	})
 }

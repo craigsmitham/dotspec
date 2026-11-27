@@ -88,4 +88,4 @@ A complete result also records the product revision, conditions, outcome and obs
 
 ### Move a verification procedure into companions
 
-`structure.verification-procedure` reports a `## Verification procedures` section, or `### Verification procedures` under **Criterion**. List each procedure in that section as a companion with `role: verifies`, then delete the section. Keep any account of what the procedure exercises and what it leaves out under **Evidence**. Results that named a criterion as their subject now name the requirement.
+`structure.verification-procedure` reports a `## Verification procedures` section, or `### Verification procedures` under **Criterion**. List each procedure in that section as a companion with `role: verifies`, then delete the section. Keep any account of what the procedure exercises and what it leaves out under **Evidence**.

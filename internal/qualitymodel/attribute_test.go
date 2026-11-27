@@ -21,8 +21,6 @@ func TestQualityAttributesStructure(t *testing.T) {
 		{"invalid ID", "## Quality attributes\n### Usability\n**ID:** quality.usability", "identity.invalid"},
 		{"duplicate ID", "## Quality attributes\n### A\n**ID:** same\n### B\n**ID:** same", "identity.duplicate"},
 		{"duplicate field", "## Quality attributes\n### A\n**ID:** a\n**ID:** a", "structure.duplicate-field"},
-		{"legacy broader", "## Quality attributes\n### A\n**ID:** a\n**Broader:** b", "quality.legacy-hierarchy"},
-		{"legacy parents", "## Quality attributes\n### A\n**ID:** a\n**Parents:** b", "quality.legacy-hierarchy"},
 		{"duplicate hierarchy field", "## Quality attributes\n### A\n**ID:** a\n**Sub-attribute of:** b\n**Sub-attribute of:** c", "structure.duplicate-field"},
 		{"unknown parent", "## Quality attributes\n### A\n**ID:** a\n**Sub-attribute of:** missing", "quality.subattribute"},
 		{"empty parent", "## Quality attributes\n### A\n**ID:** a\n**Sub-attribute of:**", "quality.subattribute"},

@@ -11,7 +11,7 @@ var (
 	goals             = overviewSection{title: "Goals", level: 2, sources: []string{"goals"}}
 	stakeholders      = overviewSection{title: "Stakeholders", level: 2, sources: []string{"stakeholder_roles"}}
 	features          = overviewDirectory("Features")
-	capabilities      = overviewDirectory("Capabilities", "capabilities")
+	capabilities      = overviewDirectory("Capabilities")
 	concepts          = overviewDirectory("Concepts", "concept_uses")
 	synchronizations  = overviewDirectory("Synchronizations", "synchronizations")
 	qualityAttributes = overviewSection{title: "Quality Attributes", collection: "Quality attributes", level: 2}
@@ -72,7 +72,7 @@ func systemOutline(architecture []overviewSection) []overviewSection {
 
 func componentOutline(architecture []overviewSection) []overviewSection {
 	sections := []overviewSection{
-		overviewLead, purpose, overview, goals, stakeholders,
+		overviewLead, purpose, overview,
 		{title: "Responsibilities", level: 2, sources: []string{"responsibilities"}},
 		{title: "Scope", level: 2, sources: []string{"boundary_description", "out_of_scope"}},
 	}

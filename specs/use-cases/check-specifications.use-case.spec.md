@@ -8,6 +8,9 @@ companions:
   - target: ../../internal/integration/testdata/diagnostics.txtar
     role: illustrates
     note: Diagnostics and exit statuses
+  - target: ../../internal/integration/testdata/use-cases.txtar
+    role: illustrates
+    note: Focused and project-wide checks of draft and malformed use cases
 ---
 
 # Check specifications before committing
@@ -19,7 +22,7 @@ affected by a proposed change before committing it.
 
 ## System boundary
 
-The dotspec CLI, reading specifications from the selected project subtree,
+The dotspec CLI, reading specifications from the [selected project subtree](../../docs/reference/layout.md#creating-and-finding-sources),
 enclosing system specifications, and direct reference targets needed as context.
 
 ## Primary actor
@@ -139,4 +142,4 @@ cover diagnostic severity, report repeatability, and source preservation.
 
 ## Authority
 
-This use case specifies the contributor’s inspection interaction. The linked report contract governs output and the linked requirements govern diagnostic severity, repeatability and preservation of the input. The [use-case command examples](../../internal/integration/testdata/use-cases.txtar) check CLI outcomes for selected paths, including focused inspection of an unfinished use case.
+This use case specifies the contributor’s inspection interaction. The linked report contract governs output and the linked requirements govern diagnostic severity, repeatability and preservation of the input.

@@ -1,4 +1,4 @@
-# Command examples
+# Command output examples
 
 These commands run in order in a new Git repository. The init commands create the specifications used by later commands. `$PROJECT` stands for that directory’s absolute path.
 
@@ -80,16 +80,6 @@ Use an optional Outcomes section for individual success criteria.
 
 System: New system (specs/new-system.system.spec.md)
 Source: specs/jobs/develop-requirements.job.spec.md
-````
-
-## job step list develop-requirements
-
-```sh
-dotspec job step list develop-requirements
-```
-
-````text
-No steps defined.
 ````
 
 ## job outcome list develop-requirements --json

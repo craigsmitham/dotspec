@@ -73,7 +73,7 @@ func TestSpecificationTypesCorrespondToDocumentRoots(t *testing.T) {
 		t.Fatalf("concrete specification classes %v, declared file types map to %v", roots, declared)
 	}
 	root := t.TempDir()
-	conformanceWrite(t, root, "specs/lending-desk.system.spec.md", typedSystem+"\n## Quality attributes\n\n")
+	conformanceWrite(t, root, "specs/lending-desk.system.spec.md", typedSystem)
 	conformanceWrite(t, root, "specs/quality/speed/speed.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: speed\n---\n# Speed\n\n## Definition\n\nResponse speed.\n")
 
 	conformanceWrite(t, root, "specs/requirements/fast.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [speed]\n---\n# Fast\n\n## Statement\n\nRespond promptly.\n")
@@ -92,7 +92,7 @@ func TestSpecificationTypesCorrespondToDocumentRoots(t *testing.T) {
 		t.Fatal("quality is a classification of a requirement, not another type", fast, plain)
 	}
 	for _, r := range []Record{fast, plain} {
-		if r["specification_system_origin"] != "directory" || r["specification_system"] != designRecord(t, s, "System", "Lending desk")["id"] || r["system_context"] != nil {
+		if r["specification_system_origin"] != "directory" || r["specification_system"] != designRecord(t, s, "System", "Lending desk")["id"] {
 			t.Fatal("directory default should be recorded as the specification system", r)
 		}
 	}
@@ -120,13 +120,8 @@ func TestSystemNarrativeSectionsAndGoals(t *testing.T) {
 		t.Fatalf("stakeholder roles lost their ownership, order or description: %v %v", member, finance)
 	}
 	goal := designRecord(t, s, "Goal", "Reduce idle equipment")
-	if !slices.Equal(Strings(sys["goals"]), []string{String(goal, "id")}) || sys["goals_content"] != nil || goal["owner"] != sys["id"] {
+	if !slices.Equal(Strings(sys["goals"]), []string{String(goal, "id")}) || goal["owner"] != sys["id"] {
 		t.Fatal("goals are a section narrative with declared members", sys["goals"])
-	}
-	for _, e := range s.Elements {
-		if String(e, "kind") == "Constraint" || String(e, "kind") == "ExtensionSection" {
-			t.Fatal("a constraint stays narrative; an addressable one is a requirement or business rule", e)
-		}
 	}
 	projected := map[string]int{}
 	for _, a := range s.Relationships() {
@@ -248,7 +243,7 @@ func TestOpenQuestionsBelongToAnyElement(t *testing.T) {
 	}
 	checkSourceText(t, result.Snapshot)
 	step := designRecord(t, result.Snapshot, "JobStep", "Reserve")
-	if len(records(step["open_questions"])) != 1 || step["extension_sections"] != nil {
+	if len(records(step["open_questions"])) != 1 {
 		t.Fatal("open question under a job step should be its own field", step)
 	}
 }

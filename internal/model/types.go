@@ -8,8 +8,6 @@ import (
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
-const ModelVersion = "0.35.0-draft"
-const RepresentationVersion = "0.4.0"
 const MappingProfile = "dotspec-markdown/29"
 
 // Record is a schema-validated tagged record or an embedded model value.
@@ -34,9 +32,12 @@ type Snapshot struct {
 	ContextSources []Record `json:"context_sources,omitempty"`
 }
 
+// NewSnapshot takes the model and representation versions from the embedded
+// catalog, which the generator writes from metamodel.yaml.
 func NewSnapshot(scope Record) *Snapshot {
+	catalog := compiledModel().catalog
 	return &Snapshot{
-		ModelVersion: ModelVersion, RepresentationVersion: RepresentationVersion,
+		ModelVersion: catalog.ModelVersion, RepresentationVersion: catalog.RepresentationVersion,
 		MappingProfile: MappingProfile, Scope: scope,
 		Sources: []Record{}, Documents: []Record{}, ContentNodes: []Record{},
 		Elements: []Record{},
@@ -56,7 +57,6 @@ type ParsedDocument struct {
 	Fragments   []Record
 	References  []Record
 	Diagnostics []Record
-	Title       string
 	TitleNode   string
 	Preamble    []string
 	Sections    []*Section

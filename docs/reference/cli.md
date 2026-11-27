@@ -151,10 +151,14 @@ Check the specification and its references
 dotspec capability check <slug-or-source-path> [flags]
 ```
 
+Check the specification and its references.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
 Authoring handbook: dotspec docs capability
 
 ```sh
-dotspec capability check local-storage
+dotspec capability check local-storage --path .
 ```
 
 | Flag | Default | Description |
@@ -176,7 +180,7 @@ dotspec capability init <slug> [flags]
 Authoring handbook: dotspec docs capability
 
 ```sh
-dotspec capability init local-storage
+dotspec capability init local-storage --path .
 ```
 
 | Flag | Default | Description |
@@ -217,7 +221,7 @@ dotspec capability show <slug-or-source-path> [flags]
 ```
 
 ```sh
-dotspec capability show local-storage
+dotspec capability show local-storage --path .
 ```
 
 | Flag | Default | Description |
@@ -520,10 +524,14 @@ Check the specification and its references
 dotspec feature check <slug-or-source-path> [flags]
 ```
 
+Check the specification and its references.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
 Authoring handbook: dotspec docs feature
 
 ```sh
-dotspec feature check resume-work
+dotspec feature check resume-work --path .
 ```
 
 | Flag | Default | Description |
@@ -545,7 +553,7 @@ dotspec feature init <slug> [flags]
 Authoring handbook: dotspec docs feature
 
 ```sh
-dotspec feature init resume-work
+dotspec feature init resume-work --path .
 ```
 
 | Flag | Default | Description |
@@ -586,7 +594,7 @@ dotspec feature show <slug-or-source-path> [flags]
 ```
 
 ```sh
-dotspec feature show resume-work
+dotspec feature show resume-work --path .
 ```
 
 | Flag | Default | Description |
@@ -771,38 +779,6 @@ dotspec job show develop-requirements --path .
 | `--path` | `.` | project directory to inspect or initialize |
 | `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
 
-## dotspec job step
-
-List the job's steps in authored order
-
-```sh
-dotspec job step [flags]
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for step |
-
-## dotspec job step list
-
-List the job's steps in authored order
-
-```sh
-dotspec job step list <slug> [flags]
-```
-
-```sh
-dotspec job step list develop-requirements --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for list |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
 ## dotspec man
 
 Write the dotspec manual in roff format
@@ -832,28 +808,6 @@ Export source text, named domain fields, located relationships and inspection fi
 | Flag | Default | Description |
 | --- | --- | --- |
 | `--help, -h` | `false` | help for model |
-
-## dotspec model docs
-
-Generate concept references, system compositions, and dependency diagrams as Markdown
-
-```sh
-dotspec model docs [flags]
-```
-
-Render purpose and operational principles before state and actions. Show explicit named uses, synchronization rules and application dependencies. Diagrams contain resolved relationships only; no behavior is executed or inferred.
-
-```sh
-dotspec model docs --path . --relative-to views
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--help, -h` | `false` | help for docs |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-| `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
 
 ## dotspec model export
 
@@ -1126,7 +1080,7 @@ Adopt selected quality attributes into one system
 dotspec quality-model apply [model] [flags]
 ```
 
-Browse the effective model, select IDs with --attributes or request the whole model with --all. Existing system declarations keep their wording and grouping.
+Select IDs with --attributes or request the whole model with --all. Existing system declarations keep their wording and grouping. To explore the model first, use quality-attribute browse.
 
 ```sh
 dotspec quality-model apply --attributes recoverability --dry-run
@@ -1146,20 +1100,20 @@ dotspec quality-model apply --attributes recoverability --dry-run
 
 ## dotspec quality-model check
 
-Check quality-model structure and suggest missing content
+Check a local quality model's structure and suggest missing content
 
 ```sh
 dotspec quality-model check <slug-or-source-path> [flags]
 ```
 
-Check quality-model structure and suggest missing content.
+Check a local quality model's structure and suggest missing content.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
 Authoring handbook: dotspec docs quality-model
 
 ```sh
-dotspec quality-model check furps --path .
+dotspec quality-model check organization-quality --path .
 ```
 
 | Flag | Default | Description |

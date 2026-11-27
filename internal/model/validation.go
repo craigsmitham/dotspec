@@ -28,14 +28,10 @@ type Finding struct {
 type slotDefinition struct {
 	Annotations     map[string]string `json:"annotations"`
 	Range           string            `json:"range"`
-	AnyOf           []string          `json:"any_of"`
 	ReferenceRanges []string          `json:"reference_ranges"`
 	InlineRanges    []string          `json:"inline_ranges"`
-	Required        bool              `json:"required"`
 	Multivalued     bool              `json:"multivalued"`
 	Inlined         bool              `json:"inlined"`
-	InlinedAsList   bool              `json:"inlined_as_list"`
-	Ordered         bool              `json:"ordered"`
 }
 
 type classDefinition struct {
@@ -47,8 +43,10 @@ type classDefinition struct {
 }
 
 type modelCatalog struct {
-	Enums   map[string][]string        `json:"enums"`
-	Classes map[string]classDefinition `json:"classes"`
+	ModelVersion          string                     `json:"model_version"`
+	RepresentationVersion string                     `json:"representation_version"`
+	Enums                 map[string][]string        `json:"enums"`
+	Classes               map[string]classDefinition `json:"classes"`
 	// Projections lists the canonical Class.field paths included in relationship views.
 	Projections []string `json:"projections"`
 }
@@ -104,7 +102,7 @@ func ValidateJSON(data []byte) ([]Finding, error) {
 	if err := runtime.schema.Validate(value); err != nil {
 		return shapeFindings(runtime, value, err), nil
 	}
-	v := &graphValidator{catalog: runtime.catalog, root: Object(value), records: map[string]locatedRecord{}, findings: []Finding{}}
+	v := &graphValidator{catalog: runtime.catalog, records: map[string]locatedRecord{}, findings: []Finding{}}
 	v.walk(Object(value), "Snapshot", "", true)
 	v.walk(Object(value), "Snapshot", "", false)
 	v.occurrenceRelationships()
@@ -137,7 +135,6 @@ type locatedRecord struct {
 
 type graphValidator struct {
 	catalog        modelCatalog
-	root           Record
 	records        map[string]locatedRecord
 	findings       []Finding
 	orderedRecords []locatedRecord

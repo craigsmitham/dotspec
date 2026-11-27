@@ -1,14 +1,11 @@
 package system
 
 import (
-	"bytes"
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/yuin/goldmark/ast"
 )
 
 type Attribute struct {
@@ -20,15 +17,10 @@ type Attribute struct {
 	subattributeLocation diagnostic.Location
 }
 
-var attributeField = regexp.MustCompile(`^\*\*(ID|Sub-attribute of|Broader|Parents):\*\*\s*(.*?)\s*$`)
-
-// ParseQualityAttributes reads the shared attribute section syntax for systems and reusable models.
+// ParseQualityAttributes reads the attribute section syntax of a reusable quality model.
 func ParseQualityAttributes(doc *specfile.Outline, section *specfile.Section, ids *specfile.Identifiers) ([]Attribute, error) {
 	attributes := []Attribute{}
 	for _, child := range section.Children {
-		if child.Level != 3 || child.Title == "" {
-			return nil, diagnostic.Error("structure.attribute-heading", "each quality attribute must have a nonempty level-three heading (### Attribute name)", doc.Location(child.Start, child.Title))
-		}
 		attribute, err := parseAttribute(doc, child, ids)
 		if err != nil {
 			return nil, err
@@ -43,39 +35,19 @@ func ParseQualityAttributes(doc *specfile.Outline, section *specfile.Section, id
 
 func parseAttribute(doc *specfile.Outline, section *specfile.Section, ids *specfile.Identifiers) (Attribute, error) {
 	a := Attribute{Name: section.Title, SubattributeOf: []string{}, Location: doc.Location(section.Start, section.Title)}
-	fields := make(map[string]string)
-	locations := make(map[string]diagnostic.Location)
-	fieldLines := make(map[int]bool)
-	for _, node := range doc.Nodes(section) {
-		if _, ok := node.(*ast.Paragraph); !ok {
-			continue
-		}
-		for i := 0; i < node.Lines().Len(); i++ {
-			segment := node.Lines().At(i)
-			match := attributeField.FindStringSubmatch(strings.TrimSpace(string(segment.Value(doc.Source))))
-			if match == nil {
-				continue
-			}
-			location := doc.Location(segment.Start, a.Name+" / "+match[1])
-			if match[1] == "Broader" || match[1] == "Parents" {
-				return a, diagnostic.Error("quality.legacy-hierarchy", "Replace **"+match[1]+":** with **Sub-attribute of:**; retain the comma-separated attribute IDs", location)
-			}
-			if previous, exists := locations[match[1]]; exists {
-				return a, diagnostic.Error("structure.duplicate-field", fmt.Sprintf("attribute %s: duplicate %s field", a.Name, match[1]), location, previous)
-			}
-			fields[match[1]], locations[match[1]] = match[2], location
-			fieldLines[bytes.LastIndexByte(doc.Source[:segment.Start], '\n')+1] = true
-		}
+	fields, err := doc.ReadFields("attribute "+a.Name, section, "ID", "Sub-attribute of")
+	if err != nil {
+		return a, err
 	}
-	a.ID = fields["ID"]
+	a.ID = fields.Values["ID"]
 	if a.ID == "" {
 		return a, diagnostic.Error("identity.required", "each quality attribute needs a nonempty **ID:** field", a.Location)
 	}
-	if err := ids.Register(a.ID, "attribute "+a.Name, locations["ID"]); err != nil {
+	if err := ids.Register(a.ID, "attribute "+a.Name, fields.Locations["ID"]); err != nil {
 		return a, err
 	}
-	if value, exists := fields["Sub-attribute of"]; exists {
-		a.subattributeLocation = locations["Sub-attribute of"]
+	if value, exists := fields.Values["Sub-attribute of"]; exists {
+		a.subattributeLocation = fields.Locations["Sub-attribute of"]
 		var references specfile.Identifiers
 		for _, id := range strings.Split(value, ",") {
 			id = strings.TrimSpace(id)
@@ -88,17 +60,9 @@ func parseAttribute(doc *specfile.Outline, section *specfile.Section, ids *specf
 			a.SubattributeOf = append(a.SubattributeOf, id)
 		}
 	}
-	// Remove metadata only from recognized paragraph lines. Preserve examples,
-	// blockquotes, and all deeper Markdown sections as part of the definition.
-	var definition []string
-	offset := section.ContentStart
-	for _, line := range strings.Split(string(doc.Source[section.ContentStart:section.End]), "\n") {
-		if !fieldLines[offset] {
-			definition = append(definition, line)
-		}
-		offset += len(line) + 1
-	}
-	a.Definition = strings.TrimSpace(strings.Join(definition, "\n"))
+	// Remove only the recognized field lines. Preserve examples, blockquotes,
+	// and all deeper Markdown sections as part of the definition.
+	a.Definition = fields.Strip(doc, section.ContentStart, section.End)
 	return a, nil
 }
 
@@ -142,11 +106,9 @@ func ValidateQualityAttributes(attributes []Attribute) error {
 }
 
 func (s *System) FindQualityAttribute(id string) *Attribute {
-	if s != nil {
-		for i := range s.QualityAttributes {
-			if s.QualityAttributes[i].ID == id {
-				return &s.QualityAttributes[i]
-			}
+	for i := range s.QualityAttributes {
+		if s.QualityAttributes[i].ID == id {
+			return &s.QualityAttributes[i]
 		}
 	}
 	return nil
@@ -173,11 +135,9 @@ func (s *System) QualityAttributeAncestors(ids []string) []string {
 		}
 	}
 	result := []string{}
-	if s != nil {
-		for _, a := range s.QualityAttributes {
-			if ancestors[a.ID] {
-				result = append(result, a.ID)
-			}
+	for _, a := range s.QualityAttributes {
+		if ancestors[a.ID] {
+			result = append(result, a.ID)
 		}
 	}
 	return result
@@ -187,11 +147,7 @@ func Check(spec *System) []diagnostic.Diagnostic {
 	var findings []diagnostic.Diagnostic
 	for _, a := range spec.QualityAttributes {
 		if a.Definition == "" {
-			location := a.Location
-			if location.Path == "" {
-				location.Path = spec.Path
-			}
-			findings = append(findings, diagnostic.Advice("quality.definition", "Define what this quality attribute means for the system.", location))
+			findings = append(findings, diagnostic.Advice("quality.definition", "Define what this quality attribute means for the system.", a.Location))
 		}
 	}
 	return findings

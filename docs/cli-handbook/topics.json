@@ -70,10 +70,7 @@
     "description": "Connect an ability to the need it supports, the abilities it depends on and the parts that provide it.",
     "pages": [
       {
-        "page": "docs/cli-handbook/guides/specify-a-capability.md",
-        "rules": {
-          "structure.capability-source": ""
-        }
+        "page": "docs/cli-handbook/guides/specify-a-capability.md"
       },
       {
         "page": "docs/cli-handbook/explanations/capabilities.md"
@@ -89,10 +86,7 @@
     "description": "Group the behaviors that together deliver a benefit a stakeholder can recognize.",
     "pages": [
       {
-        "page": "docs/cli-handbook/guides/define-the-scope-of-a-feature.md",
-        "rules": {
-          "structure.feature-source": ""
-        }
+        "page": "docs/cli-handbook/guides/define-the-scope-of-a-feature.md"
       },
       {
         "page": "docs/cli-handbook/explanations/features.md"
@@ -196,8 +190,7 @@
         "rules": {
           "project.quality-model": "choose-the-project-default",
           "quality-model.attributes": "define-and-group-the-shared-terms",
-          "quality-model.description": "set-the-scope-and-basis",
-          "quality.legacy-hierarchy": "define-and-group-the-shared-terms"
+          "quality-model.description": "set-the-scope-and-basis"
         }
       },
       {

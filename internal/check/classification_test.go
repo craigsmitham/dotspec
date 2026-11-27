@@ -72,7 +72,7 @@ func TestClassifiedRequirementDiscoveryAndSourceLocations(t *testing.T) {
 	git(t, dir, "add", "specs/requirements/tracked.requirement.spec.md")
 	write(t, filepath.Join(dir, ".gitignore"), "tracked.requirement.spec.md\nignored/\n*.system.spec.md\n")
 	write(t, filepath.Join(dir, "ignored/broken.requirement.spec.md"), "ignored")
-	write(t, filepath.Join(dir, "specs/product.system.spec.md"), validSystem+"\n## Quality attributes\n")
+	write(t, filepath.Join(dir, "specs/product.system.spec.md"), validSystem)
 	r := checkProject(dir)
 	if r.ExitCode() != 0 || r.Summary.FilesChecked != 1 || r.Summary.ContextFilesChecked != 1 {
 		t.Fatalf("discovery or ignored context: %+v", r)

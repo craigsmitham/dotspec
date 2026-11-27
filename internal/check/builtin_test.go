@@ -18,11 +18,3 @@ func checkProject(path string) check.Report {
 func checkJob(path, slug string) check.Report {
 	return check.Focused(path, slug, job.CheckType())
 }
-
-func checkUseCase(path, slug string) check.Report {
-	return check.Focused(path, slug, usecase.CheckType())
-}
-
-func checkConcept(path, slug string) check.Report {
-	return check.Focused(path, slug, concept.CheckType())
-}

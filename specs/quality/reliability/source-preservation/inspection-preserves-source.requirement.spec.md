@@ -29,10 +29,6 @@ Apply the preservation rule in [Statement](#statement) to the files covered by
 [Applies to](#applies-to). Filesystem access-time changes are not changes to source
 contents or paths.
 
-## Evidence
-
-Checks for this requirement include [CLI quality-contract tests](../../../../internal/cli/quality_contracts_test.go).
-
 ## Rationale
 
 Contributors must be able to inspect unfinished work without inspection

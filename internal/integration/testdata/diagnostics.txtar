@@ -29,7 +29,7 @@ status 2 dotspec job init Bad--Slug
 stderr '^dotspec: invalid job slug "Bad--Slug": use lowercase letters or digits separated by single hyphens \(for example, develop-requirements\)$'
 status 2 dotspec feature init Bad--Slug
 ! stdout .
-stderr '^dotspec: invalid feature slug "Bad--Slug": use lowercase letters or digits separated by single hyphens$'
+stderr '^dotspec: invalid feature slug "Bad--Slug": use lowercase letters or digits separated by single hyphens \(for example, resume-work\)$'
 cp specs/jobs/draft.job.spec.md specs/jobs/Bad--Slug.job.spec.md
 status 1 dotspec check specs/jobs/Bad--Slug.job.spec.md
 stdout 'Bad--Slug\.job\.spec\.md'

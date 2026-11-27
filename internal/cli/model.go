@@ -141,10 +141,6 @@ func newModelCommand() *cobra.Command {
 	}
 	addPath(product)
 	cmd.AddCommand(product, export, schema, validate)
-	cmd.AddCommand(newModelReadingCommand("docs",
-		"Generate concept references, system compositions, and dependency diagrams as Markdown",
-		"Render purpose and operational principles before state and actions. Show explicit named uses, synchronization rules and application dependencies. Diagrams contain resolved relationships only; no behavior is executed or inferred.",
-		model.DesignMarkdown))
 	cmd.AddCommand(newModelReadingCommand("trace",
 		"Generate layered requirements traceability and change-review views as Markdown",
 		"Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and requirement criteria. Resolved explicit relationships only; paths do not establish satisfaction or evidence.",

@@ -93,7 +93,7 @@ func (e *contentExtractor) node(kind string, start, end int) Record {
 	count := e.counts[key]
 	e.counts[key]++
 	id := fmt.Sprintf("node:%s:%s:%d", e.key, key, count)
-	r := Record{"id": id, "kind": "ContentNode", "document": e.p.Document["id"], "node_kind": kind, "span": e.sourceSpan(start, end)}
+	r := Record{"id": id, "kind": "ContentNode", "node_kind": kind, "span": e.sourceSpan(start, end)}
 	e.p.Nodes = append(e.p.Nodes, r)
 	e.p.NodeByID[id] = r
 	return r
@@ -428,9 +428,6 @@ func (e *contentExtractor) markdown(n ast.Node) string {
 	}
 	r := e.node(kind, start, end)
 	id := String(r, "id")
-	if kind == "opaque" {
-		r["opaque_reason"] = "Unsupported Goldmark node: " + n.Kind().String()
-	}
 	switch x := n.(type) {
 	case *ast.Heading:
 		r["heading_level"] = x.Level
@@ -444,9 +441,6 @@ func (e *contentExtractor) markdown(n ast.Node) string {
 		r["list_ordered"] = x.IsOrdered()
 		r["list_start"] = x.Start
 	case *ast.FencedCodeBlock:
-		if x.Info != nil {
-			r["code_info"] = string(x.Info.Segment.Value(e.buffer[e.base:]))
-		}
 		r["decoded_text"] = string(x.Lines().Value(e.buffer[e.base:]))
 	case *ast.CodeBlock:
 		r["decoded_text"] = string(x.Lines().Value(e.buffer[e.base:]))
@@ -613,7 +607,6 @@ func (e *contentExtractor) sections(ids []string) {
 		if kind == "heading" {
 			level := Number(n["heading_level"])
 			if !seenTitle && level == 1 && len(stack) == 0 {
-				e.p.Title = e.p.Text(id)
 				e.p.TitleNode = id
 				seenTitle = true
 				continue

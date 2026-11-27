@@ -5,7 +5,6 @@ import (
 	"io"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/spf13/cobra"
@@ -14,20 +13,6 @@ import (
 type jobOptions struct {
 	path, format, step, preset string
 	outcomes                   bool
-}
-type jobResult struct {
-	SchemaVersion int      `json:"schema_version"`
-	Job           *job.Job `json:"job"`
-}
-type jobsResult struct {
-	SchemaVersion int          `json:"schema_version"`
-	Groups        []*job.Group `json:"groups"`
-}
-type stepsResult struct {
-	SchemaVersion int        `json:"schema_version"`
-	Name          string     `json:"name"`
-	Path          string     `json:"path"`
-	Steps         []job.Step `json:"steps"`
 }
 type outcomesResult struct {
 	SchemaVersion int                  `json:"schema_version"`
@@ -45,36 +30,19 @@ func newJobCommand() *cobra.Command {
 		{"list", "Discover jobs, grouped by associated system"},
 		{"map", "Map authored step order (text, JSON, or Mermaid)"},
 		{"check", "Check structure and suggest writing improvements"},
-		{"step", "List the job's steps in authored order"},
 		{"outcome", "List outcomes by declaration owner"},
 	} {
-		use := action.name + " <slug>"
-		if action.name == "list" {
-			use = "list"
-		}
-		cmd := &cobra.Command{Use: use, Short: action.short,
-			Example: "dotspec job " + action.name + " develop-requirements --path ."}
+		cmd := newSpecAction(job.Layout, action.name, action.short)
 		command := action.name
-		if command == "step" || command == "outcome" {
+		if command == "outcome" {
 			parent := group(command, action.short)
 			cmd.Use = "list <slug>"
 			command += " list"
-			cmd.Example = "dotspec job " + command + " develop-requirements --path ."
+			cmd.Example = "dotspec job " + command + " " + job.Layout.SlugExample + " --path ."
 			parent.AddCommand(cmd)
 			root.AddCommand(parent)
 		} else {
 			root.AddCommand(cmd)
-		}
-		cmd.Args = cobra.ExactArgs(1)
-		if command == "list" {
-			cmd.Args = cobra.NoArgs
-			cmd.Example = "dotspec job list --path ."
-		}
-		if command == "check" {
-			cmd.Long = action.short + ".\n\n" + exitPolicy
-		}
-		if action.name == "show" || action.name == "check" {
-			cmd.Use = action.name + " <slug-or-source-path>"
 		}
 		cmd.RunE = func(cmd *cobra.Command, args []string) error {
 			path, err := projectPath(cmd)
@@ -101,7 +69,7 @@ func newJobCommand() *cobra.Command {
 			if command == "list" {
 				return listJobs(path, format, cmd.OutOrStdout())
 			}
-			if err := job.Layout.ValidateSlug(args[0]); err != nil && (action.name == "init" || !job.Layout.Match(args[0])) {
+			if err := validateSelector(job.Layout, action.name, args[0]); err != nil {
 				return err
 			}
 			return runJob(command, args[0], options, cmd.OutOrStdout())
@@ -127,14 +95,10 @@ func runJob(command, slug string, options jobOptions, out io.Writer) error {
 		if err != nil {
 			return err
 		}
-		if options.format == "json" {
-			return writeJSON(out, createdResult{1, target})
-		}
-		_, err = fmt.Fprintf(out, "Created %s\nDescribe what the performer wants to accomplish and how they judge success.\nWrite a job from a concrete situation: %s\n", displayPath(target), authoringPage("job"))
-		return err
+		return writeCreated(out, options.format, target, "Describe what the performer wants to accomplish and how they judge success.\nWrite a job from a concrete situation: "+authoringPage("job"))
 	}
 	if command == "check" {
-		return emitCheckReport(out, check.Focused(options.path, slug, job.CheckTypeWithPreset(options.preset), supportedTypes()...), options.format)
+		return emitFocusedCheck(out, options.format, options.path, slug, job.CheckTypeWithPreset(options.preset))
 	}
 	spec, err := job.Show(options.path, slug)
 	if err != nil {
@@ -142,16 +106,10 @@ func runJob(command, slug string, options jobOptions, out io.Writer) error {
 	}
 	switch command {
 	case "show":
-		result := jobResult{2, spec}
 		if options.format == "json" {
-			return writeJSON(out, result)
+			return writeJSON(out, readResult{"job", spec})
 		}
-		_, err = fmt.Fprintf(out, "%s\n\nSystem: %s\nSource: %s\n", result.Job.Markdown, systemLabel(result.Job.System), displayPath(result.Job.Path))
-	case "step list":
-		if options.format == "json" {
-			return writeJSON(out, stepsResult{1, spec.Name, spec.Path, nonnil(spec.Steps)})
-		}
-		err = listSteps(spec, out)
+		err = writeShown(out, spec.Markdown, "", spec.System, spec.Path)
 	case "outcome list":
 		result, selectionErr := selectOutcomes(spec, options.step)
 		if selectionErr != nil {
@@ -191,24 +149,16 @@ func listJobs(path, format string, out io.Writer) error {
 	if err != nil {
 		return err
 	}
-	result := jobsResult{2, nonnil(groups)}
+	groups = nonnil(groups)
 	if format == "json" {
-		return writeJSON(out, result)
+		return writeJSON(out, groupsResult[*job.Group]{readSchemaVersion, groups})
 	}
-	if len(result.Groups) == 0 {
-		_, err = fmt.Fprintln(out, "No jobs found in the selected subtree.")
-		return err
-	}
-	var output strings.Builder
-	output.WriteString("Jobs\n")
-	for _, group := range result.Groups {
-		fmt.Fprintf(&output, "\nSystem: %s\n", systemLabel(group.System))
+	owner := func(group *job.Group) *system.System { return group.System }
+	return writeGroupedList(out, "jobs", "Jobs", groups, owner, func(output *strings.Builder, group *job.Group) {
 		for _, spec := range group.Jobs {
-			fmt.Fprintf(&output, "  %s  (%s)\n", spec.Name, displayPath(spec.Path))
+			writeListEntry(output, spec.Name, spec.Path)
 		}
-	}
-	_, err = io.WriteString(out, output.String())
-	return err
+	})
 }
 
 func systemLabel(spec *system.System) string {

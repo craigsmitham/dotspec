@@ -10,7 +10,7 @@ import (
 // Narrative criteria may carry or reference the complete rule; structured
 // criteria identify a measure and its target separately.
 type MeasurementGuidance struct {
-	Measurement, Criterion, Comparison, Conditions bool
+	Measurement, Comparison, Conditions bool
 }
 
 func (g MeasurementGuidance) Missing() []string {
@@ -18,9 +18,7 @@ func (g MeasurementGuidance) Missing() []string {
 		return nil
 	}
 	missing := []string{}
-	if !g.Criterion {
-		missing = append(missing, "criterion")
-	} else if !g.Comparison {
+	if !g.Comparison {
 		missing = append(missing, "target")
 	}
 	if !g.Conditions {
@@ -35,12 +33,6 @@ func measurementGuidance(doc *specfile.Outline) MeasurementGuidance {
 	sections := map[string]*specfile.Section{}
 	for _, s := range doc.Sections {
 		sections[s.Title] = s
-	}
-	body := func(s *specfile.Section) string {
-		if s == nil {
-			return ""
-		}
-		return doc.Body(s)
 	}
 	intro := func(s *specfile.Section) string {
 		if s == nil {
@@ -63,7 +55,6 @@ func measurementGuidance(doc *specfile.Outline) MeasurementGuidance {
 	criterion, applicability := sections["Criterion"], sections["Applies to"]
 	return MeasurementGuidance{
 		Measurement: child(criterion, "Measure") != "",
-		Criterion:   body(criterion) != "",
 		Comparison:  intro(criterion) != "" || child(criterion, "Target") != "",
 		Conditions:  intro(applicability) != "" || child(applicability, "Conditions") != "",
 	}

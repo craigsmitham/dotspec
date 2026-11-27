@@ -65,7 +65,7 @@ def page_form(page):
         return 'example'
     if root == 'model' or path.is_relative_to('docs/reference'):
         return 'reference'
-    return {'explanations': 'explanation', 'tutorials': 'tutorial'}.get(path.relative_to(HANDBOOK).parts[0], 'guide')
+    return {'explanations': 'explanation'}.get(path.relative_to(HANDBOOK).parts[0], 'guide')
 
 
 def publication_pages(catalog):
@@ -126,8 +126,6 @@ def build(version, target):
         metadata = ('---\ntype: ' + form +
                     '\ndescription: ' + json.dumps(description) +
                     '\ntags: ' + json.dumps(tags) + '\n---\n\n')
-        if PurePosixPath(page).name == "index.md":
-            metadata = ""  # OKF reserves nested indexes for navigation.
         contents["src/" + page] = metadata + bundle_links(body.lstrip(), page, pages, revision, contents)
     contents["src/index.md"] = '\n'.join(index) + '\n'
 

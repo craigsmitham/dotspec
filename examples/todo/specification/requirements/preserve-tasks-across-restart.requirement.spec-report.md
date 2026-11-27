@@ -55,7 +55,7 @@ A list that loses track of earlier decisions forces the person to reconstruct th
 
 **Verified by**
 
-- [acceptance.py › verify](<../../tests/acceptance.py#L149>) — Restart acceptance test; kills the service and compares each view's identities after it starts again
+- [acceptance.py › verify](<../../tests/acceptance.py#L148>) — Restart acceptance test; kills the service and compares each view's identities after it starts again
 
 ## Verification
 

@@ -5,7 +5,7 @@ import "fmt"
 // Presets guide authoring; they do not classify jobs or impose a methodology.
 func ValidatePreset(preset string) error {
 	switch preset {
-	case "", "general", "odi", "job-story":
+	case "general", "odi", "job-story":
 		return nil
 	}
 	return fmt.Errorf("unknown JTBD preset %q: choose general, odi, or job-story", preset)

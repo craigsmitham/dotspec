@@ -1,4 +1,4 @@
-// Package speccollection reads specification families whose members are presented
+// Package speccollection reads and checks specification families whose members are presented
 // with their associated system. The family supplies parsing and enrichment.
 package speccollection
 
@@ -35,11 +35,6 @@ func (c Collection[T]) readMember(path string) (*T, *system.System, error) {
 
 // Show accepts a source path or a unique slug within the selected owner.
 func (c Collection[T]) Show(path, selector string) (*T, error) {
-	if !c.Layout.Match(selector) {
-		if err := c.Layout.ValidateSlug(selector); err != nil {
-			return nil, err
-		}
-	}
 	dir, err := specfile.Directory(path)
 	if err != nil {
 		return nil, err

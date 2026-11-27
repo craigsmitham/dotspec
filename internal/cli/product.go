@@ -4,30 +4,21 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/spf13/cobra"
 )
 
 func newProductCommand(layout specfile.Layout) *cobra.Command {
-	short, example := "Group stakeholder-visible behavior", "resume-work"
+	short := "Group stakeholder-visible behavior"
 	sections := "## Description\n\nDescribe what a stakeholder can do.\n\n## Groups\n\nLink to the specifications that define this behavior."
 	if layout.Kind == "capability" {
-		short, example = "Describe an ability and its providers", "local-storage"
+		short = "Describe an ability and its providers"
 		sections = "## Description\n\nDescribe the ability and what it enables.\n\n## Provided by\n\nLink to the systems or components that provide this ability."
 	}
 	root := group(layout.Kind, short)
 	for _, action := range []struct{ name, short string }{{"init", "Create a standalone specification"}, {"show", "Show the authored specification"}, {"list", "List specifications in the selected subtree"}, {"check", "Check the specification and its references"}} {
-		cmd := &cobra.Command{Use: action.name + " <slug-or-source-path>", Short: action.short, Args: cobra.ExactArgs(1), Example: "dotspec " + layout.Kind + " " + action.name + " " + example}
-		if action.name == "list" {
-			cmd.Use = "list"
-			cmd.Args = cobra.NoArgs
-			cmd.Example = "dotspec " + layout.Kind + " list --path ."
-		}
-		if action.name == "init" {
-			cmd.Use = "init <slug>"
-		}
+		cmd := newSpecAction(layout, action.name, action.short)
 		cmd.RunE = func(cmd *cobra.Command, args []string) error {
 			dir, err := projectPath(cmd)
 			if err != nil {
@@ -66,10 +57,8 @@ func newProductCommand(layout specfile.Layout) *cobra.Command {
 				return nil
 			}
 			selector := args[0]
-			if action.name == "init" || !layout.Match(selector) {
-				if err := layout.ValidateSlug(selector); err != nil {
-					return err
-				}
+			if err := validateSelector(layout, action.name, selector); err != nil {
+				return err
 			}
 			switch action.name {
 			case "init":
@@ -79,13 +68,9 @@ func newProductCommand(layout specfile.Layout) *cobra.Command {
 				if err != nil {
 					return err
 				}
-				if format == "json" {
-					return writeJSON(out, createdResult{1, path})
-				}
-				_, err = fmt.Fprintf(out, "Created %s\nAuthoring guide: %s\n", displayPath(path), authoringPage(layout.Kind))
-				return err
+				return writeCreated(out, format, path, "Authoring guide: "+authoringPage(layout.Kind))
 			case "check":
-				return emitCheckReport(out, check.Focused(dir, selector, system.ProductCheckType(layout), supportedTypes()...), format)
+				return emitFocusedCheck(out, format, dir, selector, system.ProductCheckType(layout))
 			default:
 				path, err := layout.LocalPath(dir, selector)
 				if err != nil {

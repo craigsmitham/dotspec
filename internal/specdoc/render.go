@@ -595,9 +595,6 @@ func (p *planner) relationships(w *writer, h *heading, showHeading bool) {
 		}
 		if section.level == h.level+1 {
 			field = section.reportTitle()
-			if field == "Quality attributes" {
-				field = "Quality attribute"
-			}
 		}
 		if field == "" || section.owner != h.owner {
 			continue

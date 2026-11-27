@@ -1,6 +1,6 @@
 # Composing the product specification
 
-**Implemented in model 0.32.0-draft and Markdown mapping 26.** Run `dotspec model product` to inspect membership, adoption, and verification evidence for a selected system. Model 0.35.0-draft and mapping 29 replace the **Verification procedures** section with `verifies` companions in frontmatter and retire the criterion-level result subject. [Product view](../../reference/specification-model.md#read-one-product-specification) · [Verification results](../../reference/generated-specification.md#record-verification-results)
+**Implemented technical specification.** Run `dotspec model product` to inspect membership, adoption, and verification evidence for a selected system. [Product view](../../reference/specification-model.md#read-one-product-specification) · [Verification results](../../reference/generated-specification.md#record-verification-results)
 
 The rule is **one specification file, one specification root**. A root records a decision about a particular product that its authors can maintain independently. It owns the elements declared within it. The roots in scope for a system, their elements, and their relationships together compose the full product specification. Generated pages present views of that specification.
 
@@ -44,11 +44,13 @@ For example, an interface could adopt the named cancellation clause of a partner
 
 ## 4. Report procedures and observations independently
 
-A requirement owns its criterion for acceptance. A **verification procedure** describes how someone can assess it. A **verification result** records what happened on one occasion. List each procedure as a `verifies` companion in the requirement’s frontmatter. Model 0.35.0-draft implements this and retires the earlier **Verification procedures** section, including its subsection under a criterion. Keep ordinary **Evidence** prose available for rationale, witnesses, and observations. Give a procedure a linkable identity even when it lives in a test suite or manual protocol. [Companions](../../../model/markdown-mapping.md#companions)
+A requirement owns its criterion for acceptance. A **verification procedure** describes how someone can assess it. A **verification result** records what happened on one occasion. List each procedure as a `verifies` companion in the requirement’s frontmatter. Keep ordinary **Evidence** prose available for rationale, witnesses, and observations. Give a procedure a linkable identity even when it lives in a test suite or manual protocol. [Companions](../../../model/markdown-mapping.md#companions)
 
 Accept a result from its evidence source with the requirement, procedure, outcome, assessed product revision, relevant conditions, and a reference to the observation. Record the specification revision assessed when known. Keep results outside specification aggregates so recording a run does not revise product intent. Preserve multiple observations, including conflicting runs. A missing revision or mismatched condition limits the claim a report can make.
 
-Expose two independent facts in reports: the procedures identified for a requirement, and the observations available for the selected revision and conditions. Show “procedure linked” when only a procedure is known and “no matching result recorded” when applicable evidence is absent. A pass or failure belongs to the identified run. Existing prose and links retain their original meaning during migration. Explicit authoring or evidence import supplies the stronger roles. dotspec can index that evidence without becoming the test runner. A result names the requirement’s project-relative URI, without a criterion fragment. [Restart requirement and its procedure](../../../examples/todo/specs/requirements/restart.requirement.spec.md)
+Expose two independent facts in reports: the procedures identified for a requirement, and the observations available for the selected revision and conditions. Show “procedure linked” when only a procedure is known and “no matching result recorded” when applicable evidence is absent. A pass or failure belongs to the identified run. Ordinary prose and links keep their original meaning; explicit authoring or evidence import supplies the stronger roles. dotspec can index that evidence without becoming the test runner. A result names the requirement’s project-relative URI. [Restart requirement and its procedure](../../../examples/todo/specs/requirements/restart.requirement.spec.md)
+
+Open question: should dotspec provide an importer that converts test-runner or manual-assessment output into `verification-results.json`? Today each evidence producer writes the file directly. [Record verification results](../../reference/generated-specification.md#record-verification-results)
 
 ## Acceptance cases
 
@@ -63,12 +65,3 @@ Expose two independent facts in reports: the procedures identified for a require
 | Add an unused quality model or generate a separate page for an owned element | The reference catalog or navigation changes. Product membership stays stable. |
 | Declare Durability before writing its first requirement, then classify the restart requirement | The system summary shows Durability and its local meaning at both stages. The attribute page gains a link to the requirement. An unused model attribute never appears in the summary. |
 | Make a member unreadable or narrow the scan | The view identifies the inspection limit and reports membership outside the observed scope as unknown. |
-
-## Delivery order
-
-1. **Ownership and quality types.** Change the metamodel, Markdown mapping, export, and offline validator together. Regenerate the schema, catalog, and model reference. Require fixtures for same-file containment, cross-file membership, and same-system quality classification.
-2. **Product composition.** Deliver the shared selection in the model layer, exercise it against a multi-system fixture, then use it in reports. Compare the exported member identities with the generated reader routes. Rebuilding a report must preserve source ownership.
-3. **External adoption.** Add the optional authoring form, verification of its structure, and a report showing the adopted provision with its scope. Test citation and adoption against the same target.
-4. **Verification evidence.** Prove the procedure/result distinction with one executable test and one manual assessment. Use those fixtures to settle the smallest result interchange format before adding an importer. Test a stale revision, conflicting observations, and a requirement with no recorded result.
-
-Each stage should ship its source mapping, generated references, and reader-journey tests together. For breaking schema changes, version the model and mapping and regenerate saved snapshots from source. The acceptance cases can be reviewed independently of the proposed heading names or serialization.

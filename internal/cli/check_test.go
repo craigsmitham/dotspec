@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"path/filepath"
@@ -85,19 +84,5 @@ func TestProjectCheckUsage(t *testing.T) {
 	}
 	if code, out, errOut := invoke("check", "--help"); code != 0 || errOut != "" || !strings.Contains(out, "Exit codes:") || !strings.Contains(out, "--format") {
 		t.Fatalf("help: %d %q %q", code, out, errOut)
-	}
-}
-
-type failedOutput struct{}
-
-func (failedOutput) Write([]byte) (int, error) { return 0, fmt.Errorf("output unavailable") }
-
-func TestProjectCheckOutputFailure(t *testing.T) {
-	for _, format := range []string{"text", "json"} {
-		var stderr bytes.Buffer
-		code := Run([]string{"check", "--path", t.TempDir(), "--format", format}, failedOutput{}, &stderr)
-		if code != 2 || !strings.Contains(stderr.String(), "output unavailable") {
-			t.Fatalf("output failure: %d %s", code, &stderr)
-		}
 	}
 }

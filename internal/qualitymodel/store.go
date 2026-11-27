@@ -29,7 +29,7 @@ func Builtins() ([]*QualityModel, error) {
 		if err != nil {
 			return nil, fmt.Errorf("built-in %s: %w", entry.Name(), err)
 		}
-		m.Slug = entry.Name()[:len(entry.Name())-len(Suffix)]
+		m.Slug = entry.Name()[:len(entry.Name())-len(Layout.Suffix)]
 		m.Path = "builtin:" + m.Slug
 		m.Builtin = true
 		result = append(result, m)
@@ -51,9 +51,6 @@ func builtin(slug string) (*QualityModel, error) {
 }
 
 func Init(path, slug, from string) (string, error) {
-	if err := Layout.ValidateSlug(slug); err != nil {
-		return "", err
-	}
 	if m, err := builtin(slug); err != nil {
 		return "", err
 	} else if m != nil {
@@ -79,11 +76,6 @@ func Init(path, slug, from string) (string, error) {
 
 // Show resolves a source path or unique slug within the selected owner.
 func Show(path, slug string) (*QualityModel, error) {
-	if !Layout.Match(slug) {
-		if err := Layout.ValidateSlug(slug); err != nil {
-			return nil, err
-		}
-	}
 	if m, err := builtin(slug); err != nil || m != nil {
 		return m, err
 	}

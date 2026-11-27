@@ -1,8 +1,11 @@
 package system
 
 import (
+	"errors"
 	"strings"
 	"testing"
+
+	"github.com/craigsmitham/dotspec/internal/diagnostic"
 )
 
 const validSpec = "---\ntype: system-spec\n---\n\n# Parser\n\n## Purpose\n\nRead specs.\n\n## Scope\n\nMarkdown files.\n"
@@ -68,7 +71,7 @@ func TestParseRejectsMalformedSpecs(t *testing.T) {
 }
 
 func FuzzParse(f *testing.F) {
-	for _, seed := range []string{validSpec, validSpec + "\n## Quality attributes\n### Cycle\n**ID:** cycle\n**Sub-attribute of:** cycle", Template, "", "---\ntype: system-spec\n---\n#\n## Purpose\n## Scope"} {
+	for _, seed := range []string{validSpec, Template, "", "---\ntype: system-spec\n---\n#\n## Purpose\n## Scope"} {
 		f.Add([]byte(seed))
 	}
 	f.Fuzz(func(t *testing.T, data []byte) {
@@ -95,17 +98,33 @@ func TestSystemAndDeclarationIdentities(t *testing.T) {
 			t.Fatal("accepted invalid declaration identity", bad)
 		}
 	}
+	shared := validSpec + "\n## Provided interfaces\n### API\n**ID:** shared\n## Concept uses\n### Mine\n**ID:** shared\n"
+	_, err = Parse([]byte(shared))
+	var d *diagnostic.Diagnostic
+	if !errors.As(err, &d) || d.Rule != "identity.duplicate" || d.Location.Element != "Mine" || len(d.Related) != 1 || d.Related[0].Element != "API" || d.Location.Line <= d.Related[0].Line {
+		t.Fatalf("duplicate ID across interfaces and concept uses: got %v, want the later Concept uses entry reported", err)
+	}
+	// Every ID field line is read before the value is checked, so a repeated
+	// field is reported even when the first one is empty.
+	_, err = Parse([]byte(strings.Replace(source, "**ID:** scanner", "**ID:**\n**ID:** scanner", 1)))
+	if !errors.As(err, &d) || d.Rule != "structure.duplicate-field" || len(d.Related) != 1 || d.Location.Line != d.Related[0].Line+1 {
+		t.Fatalf("empty ID field followed by another: got %v, want structure.duplicate-field at the second", err)
+	}
 }
 
 func TestFeaturesAndCapabilitiesRequireStandaloneSources(t *testing.T) {
-	for _, collection := range []string{"Features", "Capabilities"} {
+	unknown := func(err error) bool {
+		var d *diagnostic.Diagnostic
+		return errors.As(err, &d) && d.Rule == "structure.unknown-section"
+	}
+	for _, collection := range []string{"Components", "Features", "Capabilities"} {
 		section := "\n## " + collection + "\n\n### Resume work\n"
-		if _, err := Parse([]byte(validSpec + section)); err == nil {
-			t.Fatalf("accepted inline %s on a system", collection)
+		if _, err := Parse([]byte(validSpec + section)); !unknown(err) {
+			t.Fatalf("inline %s on a system: got %v, want structure.unknown-section", collection, err)
 		}
 		component := "---\ntype: component-spec\n---\n# Worker\n\n## Part of\n\n[System](example.system.spec.md)\n"
-		if _, err := ParseComponent([]byte(component + section)); err == nil {
-			t.Fatalf("accepted inline %s on a component", collection)
+		if _, err := ParseComponent([]byte(component + section)); !unknown(err) {
+			t.Fatalf("inline %s on a component: got %v, want structure.unknown-section", collection, err)
 		}
 	}
 }

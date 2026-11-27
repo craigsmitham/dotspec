@@ -49,9 +49,12 @@ from findings or an operational failure. A program can make its next decision fr
 that result without scraping presentation prose for an implied success claim.
 
 The workflow of creating, editing and inspecting specifications spans several
-concepts. The linked executable cases below describe those interactions and their
-expected process outcomes; they do not make every command a separate action of
-this concept.
+concepts. Its executable cases are companions of the
+[create a specification draft](<../use-cases/create-specification.use-case.spec-report.md>)
+and [check specifications before committing](<../use-cases/check-specifications.use-case.spec-report.md>)
+use cases. Scripts that no specification lists as a companion yet are linked below
+beside the sources they exercise; they do not make every command a separate action
+of this concept.
 
 ## Related specifications
 
@@ -59,12 +62,8 @@ Each script supplies its inputs, commands and expected observations. Read the go
 
 | Governing source | Executable cases |
 | --- | --- |
-| [Create a specification](<../use-cases/create-specification.use-case.spec-report.md>), including the linked non-overwrite requirement | [Create and inspect](<../../internal/integration/testdata/workflow.txtar>), [use-case presets and inspection](<../../internal/integration/testdata/use-cases.txtar>) |
-| [Inspection interaction](<../use-cases/check-specifications.use-case.spec-report.md>) and [source selection](<../../docs/reference/layout.md>) | [Repository discovery](<../../internal/integration/testdata/discovery.txtar>), [diagnostics and exit statuses](<../../internal/integration/testdata/diagnostics.txtar>) |
-| [Offline authoring guidance](<../requirements/find-authoring-guidance-in-the-installed-cli.requirement.spec-report.md>), [command arguments](<../../docs/reference/cli.md>) and [process output](<../../docs/reference/inspection.md#output-and-automation>) | [Offline guidance](<../../internal/integration/testdata/docs.txtar>), [help, redirected output, completions and manual](<../../internal/integration/testdata/help.txtar>) |
 | [Concept format](<../../model/markdown-mapping.md#concept>) and [business-rule mapping](<../../model/markdown-mapping.md#business-rule>) | [Concept commands](<../../internal/integration/testdata/concepts.txtar>), [business-rule commands](<../../internal/integration/testdata/business-rules.txtar>) |
 | [System quality attributes](<../../docs/reference/model/index.md#systemqualityattribute>), [quality-model application](<../../docs/reference/cli.md#dotspec-quality-model-apply>) and [requirement format](<../../model/markdown-mapping.md#requirement>) | [Project defaults and incremental adoption](<../../internal/integration/testdata/quality-convention.txtar>), [quality models and system population](<../../internal/integration/testdata/quality-models.txtar>), [classified requirements](<../../internal/integration/testdata/classified-requirements.txtar>), [general requirements](<../../internal/integration/testdata/requirements.txtar>) |
-| [Discover specification sources](<../use-cases/discover-specification-sources.use-case.spec-report.md>) and [export a specification model](<../use-cases/export-specification-model.use-case.spec-report.md>) | [Source discovery through ordinary references](<../../internal/integration/testdata/sources.txtar>), [export and offline validation](<../../internal/integration/testdata/model.txtar>) |
 
 The Go test harness executes these scripts; it does not define additional
 product requirements. The repository's [specification-test convention](<../../CONTRIBUTING.md#specification-tests-and-implementation-tests>)

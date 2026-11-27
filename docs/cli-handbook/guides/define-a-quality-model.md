@@ -10,7 +10,7 @@ The new file is `specs/quality-models/<slug>.quality-model.md` and declares `typ
 
 ## Define and group the shared terms
 
-Under `## Quality attributes`, give each attribute a level-three heading, a unique ID line such as `**ID:** durability`, and a definition that another team can apply. To group a narrower term under a broader one, put the parent ID on a `**Sub-attribute of:**` line. List multiple parents with commas when several groupings help readers find the term. Omit the line for a root. If the checker flags an older `Broader` or `Parents` field, replace it with `**Sub-attribute of:**` and retain the intended parent IDs. [What a quality model helps a team decide](../explanations/quality-models.md).
+Under `## Quality attributes`, give each attribute a level-three heading, a unique ID line such as `**ID:** durability`, and a definition that another team can apply. To group a narrower term under a broader one, put the parent ID on a `**Sub-attribute of:**` line. List multiple parents with commas when several groupings help readers find the term. Omit the line for a root. [What a quality model helps a team decide](../explanations/quality-models.md).
 
 Ask what would count in each system. A task list and an expense tracker can both consider whether acknowledged work survives a restart. Their authors can apply that definition to different records. If your shared definition specifies how quickly the expense tracker must recover receipts, move that commitment into the tracker's requirement. [From a shared meaning to a specific promise](../explanations/system-quality-attributes.md#from-a-shared-meaning-to-a-specific-promise).
 

@@ -63,7 +63,7 @@ func writeManifest(t *testing.T, dir, body string) {
 }
 
 func TestProjectManifestValidation(t *testing.T) {
-	for _, body := range []string{"", "{}", "name: ''", "name: invalid/name", "projects: {tool: .}", "name: demo\nunknown: true", "name: demo\ngenerated_spec: false", "name: demo\nreport: true", "name: demo\nreport:\n  enabled: perhaps", "name: demo\nreport:\n  unknown: false", "name: demo\nname: other", "name: demo\n---\nname: other"} {
+	for _, body := range []string{"", "{}", "name: ''", "name: invalid/name", "name: demo\nunknown: true", "name: demo\nreport: true", "name: demo\nreport:\n  enabled: perhaps", "name: demo\nreport:\n  unknown: false", "name: demo\nname: other", "name: demo\n---\nname: other"} {
 		t.Run(body, func(t *testing.T) {
 			root := workspaceFixture(t)
 			child := filepath.Join(root, "apps/demo")

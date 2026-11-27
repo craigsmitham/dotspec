@@ -13,7 +13,6 @@ exec dotspec docs job
 stdout 'Jobs to be done'
 stdout 'Write a job from a concrete situation \(How-to\)'
 stdout 'What makes something a job to be done.*Explanation'
-! stdout 'Job spec format'
 cp stdout topic
 exec dotspec docs jtbd
 cmp stdout topic
@@ -75,18 +74,13 @@ status 2 dotspec docs ../draft
 stderr 'run dotspec docs'
 status 2 dotspec docs xyzzy-missing
 stderr 'no documentation matches.*run dotspec docs'
-status 2 dotspec guide
 
 # Public reading is bounded by the installed handbook.
 exec dotspec docs README
 stdout 'The dotspec handbook'
-exec dotspec docs
-! stdout 'dotspec docs maintaining'
 exec dotspec __complete docs maintainers/
 ! stdout 'maintainers/'
 status 2 dotspec docs maintainers/releasing
-stderr 'run dotspec docs'
-status 2 dotspec docs handbook/requirements
 stderr 'run dotspec docs'
 status 2 dotspec docs CONTRIBUTING.md
 status 2 dotspec docs 'Snapshot builds never publish'

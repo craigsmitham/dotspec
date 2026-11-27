@@ -27,7 +27,12 @@ func TestStructuralDiagnosticsHaveSourceLocations(t *testing.T) {
 	}{
 		{"## Intended progress\nOne\n## Intended progress\nTwo\n", "structure.duplicate-section", 7, 5},
 		{"## Outcomes\n### First\n\n**ID:** same\n\nFirst\n### Second\n\n**ID:** same\n\nSecond\n", "identity.duplicate", 11, 6},
+		// Every duplicate section is rejected before Outcomes are parsed.
+		{"## Outcomes\n### First\n\n**ID:** same\n\nFirst\n### Second\n\n**ID:** same\n\nSecond\n## Steps\n## Steps\n", "structure.duplicate-section", 17, 16},
 		{"## Steps\n### Gather\n**Stage:** locate\n**Stage:** execute\n", "structure.duplicate-field", 8, 7},
+		{"## Outcomes\n### First\n**ID:** a\n**ID:** b\n", "structure.duplicate-field", 8, 7},
+		// A repeated ID field is rejected even when the first one is empty.
+		{"## Outcomes\n### First\n**ID:**\n**ID:** b\n", "structure.duplicate-field", 8, 7},
 		{"## Evidence\n[Missing](#unknown)\n", "reference.unresolved", 6, 0},
 	} {
 		_, err := Parse([]byte("---\ntype: job-spec\n---\n# Example\n" + tt.body))
@@ -38,6 +43,14 @@ func TestStructuralDiagnosticsHaveSourceLocations(t *testing.T) {
 		if tt.related != 0 && (len(d.Related) != 1 || d.Related[0].Line != tt.related) {
 			t.Fatalf("missing first definition: %+v", d)
 		}
+	}
+}
+
+func TestDuplicateOutcomeIDNamesTheOutcomeField(t *testing.T) {
+	_, err := Parse([]byte("---\ntype: job-spec\n---\n# Example\n## Outcomes\n### First\n**ID:** a\n**ID:** b\n"))
+	var d *diagnostic.Diagnostic
+	if !errors.As(err, &d) || d.Message != "outcome First: duplicate ID field" || d.Location.Element != "First / ID" || len(d.Related) != 1 || d.Related[0].Element != "First / ID" {
+		t.Fatalf("duplicate outcome ID: %#v, %v", d, err)
 	}
 }
 
@@ -59,5 +72,15 @@ func TestAdviceRetainsOutcomeScopeAndLocation(t *testing.T) {
 		if d.Rule != "job.outcome-measure" || d.Severity != "advice" || d.Location.Path != spec.Path {
 			t.Fatalf("advice lost its rule or path: %+v", d)
 		}
+	}
+}
+
+func TestOutcomesRecognizeOnlyTheIDField(t *testing.T) {
+	j, err := Parse([]byte("---\ntype: job-spec\n---\n# Job\n## Outcomes\n### Confidence\n**ID:** confidence\n**Stage:** locate\nFeel confident.\n"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := j.Outcomes[0]; got.ID != "confidence" || got.Statement != "**Stage:** locate\nFeel confident." {
+		t.Fatalf("outcome fields: %+v", got)
 	}
 }

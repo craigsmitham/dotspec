@@ -9,8 +9,6 @@ import (
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
-const Suffix = ".system.spec.md"
-
 var Layout = specfile.SystemLayout
 
 type metadata struct {
@@ -51,7 +49,6 @@ type System struct {
 	ProvidedInterfaces string                      `json:"provided_interfaces,omitempty"`
 	ProjectReferences  string                      `json:"project_references,omitempty"`
 	ID                 string                      `json:"id,omitempty"`
-	Components         string                      `json:"components,omitempty"`
 	PartOf             string                      `json:"part_of,omitempty"`
 	ConceptUses        string                      `json:"concept_uses,omitempty"`
 	Synchronizations   string                      `json:"synchronizations,omitempty"`
@@ -77,7 +74,7 @@ func Read(path string) (*System, error) {
 
 func ReadFrom(files *specfile.SourceSet, path string) (*System, error) {
 	if !Layout.Match(filepath.Base(path)) {
-		return nil, diagnostic.Error("layout.system-location", fmt.Sprintf("expected a <name>%s filename", Suffix), diagnostic.Location{Path: path})
+		return nil, diagnostic.Error("layout.system-location", fmt.Sprintf("expected a <name>%s filename", Layout.Suffix), diagnostic.Location{Path: path})
 	}
 	owner := Layout.ContextDir(path)
 	if _, err := specfile.LocalDeclaration(owner); err != nil {
@@ -95,9 +92,6 @@ func ReadFrom(files *specfile.SourceSet, path string) (*System, error) {
 		return nil, err
 	}
 	spec.Path = path
-	for i := range spec.QualityAttributes {
-		spec.QualityAttributes[i].Location.Path = path
-	}
 	if err := spec.loadQualityTree(files); err != nil {
 		return nil, err
 	}
@@ -119,30 +113,21 @@ func ParseMarkdown(input *specfile.Markdown) (*System, error) {
 		return nil, err
 	}
 	spec := &System{Name: doc.Name, ID: meta.ID, GlossarySources: meta.GlossarySources}
-	fields := map[string]*string{"Description": &spec.Description, "Out of scope": &spec.OutOfScope, "Interacts with": &spec.InteractsWith, "Required interfaces": &spec.RequiredInterfaces, "Provided interfaces": &spec.ProvidedInterfaces, "Project references": &spec.ProjectReferences, "Components": &spec.Components, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Overview": &spec.Overview, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
+	fields := map[string]*string{"Description": &spec.Description, "Out of scope": &spec.OutOfScope, "Interacts with": &spec.InteractsWith, "Required interfaces": &spec.RequiredInterfaces, "Provided interfaces": &spec.ProvidedInterfaces, "Project references": &spec.ProjectReferences, "Part of": &spec.PartOf, "Purpose": &spec.Purpose, "Overview": &spec.Overview, "Scope": &spec.Scope, "Goals": &spec.Goals, "Environment": &spec.Environment, "Assumptions": &spec.Assumptions, "Constraints": &spec.Constraints, "Glossary": &spec.Glossary, "Concept uses": &spec.ConceptUses, "Synchronizations": &spec.Synchronizations}
 	locations := make(map[string]diagnostic.Location)
 	var ids specfile.Identifiers
 	if err := ids.Register(meta.ID, "system", input.MetadataLocation("id")); err != nil {
 		return nil, err
 	}
-	if err := ids.RegisterDeclarations(doc, "Components", "Concept uses", "Synchronizations"); err != nil {
-		return nil, err
-	}
-	if err := ids.RegisterInterfaces(doc); err != nil {
+	if err := ids.RegisterDeclarations(doc, "Required interfaces", "Provided interfaces", "Concept uses", "Synchronizations"); err != nil {
 		return nil, err
 	}
 	for _, section := range doc.Sections {
-		if err := rejectInlineSubject(doc, section); err != nil {
-			return nil, err
-		}
 		target, known := fields[section.Title]
-		if !known && section.Title != "Quality attributes" && section.Title != "Stakeholders" {
+		if !known && section.Title != "Stakeholders" {
 			continue
 		}
 		location := doc.Location(section.Start, section.Title)
-		if section.Level != 2 {
-			return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), location)
-		}
 		if previous, exists := locations[section.Title]; exists {
 			return nil, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", section.Title), location, previous)
 		}
@@ -151,16 +136,9 @@ func ParseMarkdown(input *specfile.Markdown) (*System, error) {
 			*target = doc.Body(section)
 			continue
 		}
-		if section.Title == "Stakeholders" {
-			for _, role := range section.Children {
-				spec.StakeholderRoles = append(spec.StakeholderRoles, StakeholderRole{Name: role.Title, Description: doc.Body(role)})
-			}
-			continue
+		for _, role := range section.Children {
+			spec.StakeholderRoles = append(spec.StakeholderRoles, StakeholderRole{Name: role.Title, Description: doc.Body(role)})
 		}
-		if len(section.Children) > 0 {
-			return nil, diagnostic.Error("quality.attribute-source", "declare each system attribute in its own <name>.quality-attribute.spec.md file", location)
-		}
-		spec.QualityAttributes = []Attribute{}
 	}
 	if spec.Purpose == "" {
 		location, found := locations["Purpose"]
@@ -171,7 +149,7 @@ func ParseMarkdown(input *specfile.Markdown) (*System, error) {
 		return nil, diagnostic.Error("structure.required-section", "missing or empty Purpose section (use ## Purpose)", location)
 	}
 	ids.AddAnchors(doc.Anchors)
-	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
+	if err := doc.ValidateReferences(); err != nil {
 		return nil, err
 	}
 	spec.References = doc.References()

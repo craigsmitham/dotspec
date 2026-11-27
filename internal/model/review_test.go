@@ -44,9 +44,6 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 			t.Fatal("unmapped assumption", field)
 		}
 	}
-	if strings.Contains(d.text(assumption["statement"]), "Assumption validation plan") {
-		t.Fatal("assumption guidance became its premise")
-	}
 	questions := reviewObjects(sys["open_questions"])
 	if len(questions) != 2 {
 		t.Fatal(questions)
@@ -114,15 +111,6 @@ func TestReviewViewsAreAdvisoryAndRebaseSources(t *testing.T) {
 			t.Errorf("PEGS missing %q", want)
 		}
 	}
-	design, err := DesignMarkdown(result.Snapshot, filepath.Join(root, "docs"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, want := range []string{"Effects table", "| Expire | unchanged | false | |", "Blank cells are unspecified"} {
-		if !strings.Contains(design, want) {
-			t.Errorf("design missing %q", want)
-		}
-	}
 	overview, err := OverviewMarkdown(result.Snapshot, filepath.Join(root, "docs"))
 	if err != nil {
 		t.Fatal(err)
@@ -135,7 +123,7 @@ func TestReviewViewsAreAdvisoryAndRebaseSources(t *testing.T) {
 		name   string
 		render func(*Snapshot, string) (string, error)
 		want   string
-	}{{"review", ReviewMarkdown, text}, {"overview", OverviewMarkdown, overview}, {"design", DesignMarkdown, design}, {"pegs", PEGSMarkdown, pegs}} {
+	}{{"review", ReviewMarkdown, text}, {"overview", OverviewMarkdown, overview}, {"pegs", PEGSMarkdown, pegs}} {
 		again, err := view.render(saved, filepath.Join(root, "docs"))
 		if err != nil || again != view.want {
 			t.Errorf("%s differs after JSON round trip: %v", view.name, err)

@@ -3,7 +3,6 @@ package requirement
 
 import (
 	"fmt"
-	"path/filepath"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
@@ -12,10 +11,7 @@ import (
 	"go.yaml.in/yaml/v3"
 )
 
-const Suffix = ".requirement.spec.md"
-const Collection = "requirements"
-
-var Layout = specfile.Layout{Kind: "requirement", Collection: Collection, Suffix: Suffix, SlugExample: "reject-existing-target"}
+var Layout = specfile.Layout{Kind: "requirement", Collection: "requirements", Suffix: ".requirement.spec.md", SlugExample: "reject-existing-target"}
 
 var Template = `---
 type: requirement-spec
@@ -116,21 +112,9 @@ func Read(path string) (*Requirement, error) {
 }
 
 func readFrom(files *specfile.SourceSet, path string) (*Requirement, error) {
-	name := filepath.Base(path)
-	if !strings.HasSuffix(name, Suffix) {
-		return nil, diagnostic.Error("layout.requirement-name", fmt.Sprintf("expected a <slug>%s filename", Suffix), diagnostic.Location{Path: path})
-	}
-	slug := strings.TrimSuffix(name, Suffix)
-	if err := Layout.ValidateSlug(slug); err != nil {
-		return nil, diagnostic.Error("layout.requirement-name", err.Error(), diagnostic.Location{Path: path})
-	}
-	input, err := files.Markdown(path)
+	spec, slug, err := specfile.ReadMember(files, Layout, path, ParseMarkdown)
 	if err != nil {
 		return nil, err
-	}
-	spec, err := ParseMarkdown(input)
-	if err != nil {
-		return nil, diagnostic.WithPath(err, path)
 	}
 	spec.Slug, spec.Path = slug, path
 	spec.Location.Path = path
@@ -158,7 +142,6 @@ func ParseMarkdown(input *specfile.Markdown) (*Requirement, error) {
 	if err := parseAttributes(spec, &meta.QualityAttributes); err != nil {
 		return nil, err
 	}
-	spec.Classification = Classify(spec.QualityAttributes, nil)
 	var ids specfile.Identifiers
 	if err := ids.Register(spec.ID, Layout.Kind, input.MetadataLocation("id")); err != nil {
 		return nil, err
@@ -168,23 +151,11 @@ func ParseMarkdown(input *specfile.Markdown) (*Requirement, error) {
 		"Applies to": &spec.Applicability, "Statement": &spec.Statement,
 		"Criterion": &spec.Criterion, "Rationale": &spec.Rationale,
 	}
-	for _, section := range doc.Sections {
-		target, known := fields[section.Title]
-		if !known {
-			continue
-		}
-		location := doc.Location(section.Start, section.Title)
-		if section.Level != 2 {
-			return nil, diagnostic.Error("structure.section-level", fmt.Sprintf("%s must use a level-two heading (## %s)", section.Title, section.Title), location)
-		}
-		if previous, exists := spec.SectionLocations[section.Title]; exists {
-			return nil, diagnostic.Error("structure.duplicate-section", fmt.Sprintf("duplicate %s section", section.Title), location, previous)
-		}
-		spec.SectionLocations[section.Title] = location
-		*target = doc.Body(section)
+	if err := doc.Capture(fields, spec.SectionLocations); err != nil {
+		return nil, err
 	}
 	spec.MeasurementGuidance = measurementGuidance(doc)
-	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
+	if err := doc.ValidateReferences(); err != nil {
 		return nil, err
 	}
 	spec.References = doc.References()

@@ -47,9 +47,6 @@ const GlossarySourcesField = "glossary_sources"
 
 // GlossaryDetailReferences retains outgoing links in explicitly modeled passages.
 // Ordinary citations in the rest of an imported document keep the normal one-hop scope.
-func GlossaryDetailReferences(data []byte) (*ReferenceDocument, error) {
-	return NewMarkdown(data).GlossaryDetailReferences()
-}
 func (md *Markdown) GlossaryDetailReferences() (*ReferenceDocument, error) {
 	outline, err := md.Outline("glossary")
 	if err != nil {

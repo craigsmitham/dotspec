@@ -1254,7 +1254,7 @@ Services this subject exposes to its environment.
 
 [System](index.md#system) → [SystemQualityAttribute](index.md#systemqualityattribute).
 
-Attributes declared by this system, in authored order. Absent means no declaration; a present empty list is distinct.
+Attributes declared by this system, in authored order.
 
 - Category: System membership. Cardinality: `0..*`.
 - Scope: The effective system of the specification.

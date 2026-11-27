@@ -46,7 +46,7 @@ func shapeFindings(runtime modelRuntime, value any, err error) []Finding {
 			concrete, known := runtime.catalog.Classes[declared]
 			if !known || concrete.Abstract || !slices.Contains(concrete.Ancestors, class) {
 				finding := Finding{Code: "shape.invalid", Path: path + "/kind", Message: fmt.Sprintf("kind %q must identify a concrete %s record", declared, class)}
-				locateShapeFinding(&finding, root, index, object, path)
+				locateShapeFinding(&finding, index, object, path)
 				findings = append(findings, finding)
 				handled = append(handled, path)
 				return
@@ -56,7 +56,7 @@ func shapeFindings(runtime modelRuntime, value any, err error) []Finding {
 				if errors.As(classErr, &classInvalid) {
 					for _, leaf := range validationLeaves(classInvalid) {
 						for _, finding := range leafFindings(leaf, path) {
-							locateShapeFinding(&finding, root, index, object, path)
+							locateShapeFinding(&finding, index, object, path)
 							findings = append(findings, finding)
 						}
 					}
@@ -177,16 +177,13 @@ func shapeRecordIndex(root Record) map[string]Record {
 	return index
 }
 
-func locateShapeFinding(f *Finding, root Record, index map[string]Record, record Record, recordPath string) {
+func locateShapeFinding(f *Finding, index map[string]Record, record Record, recordPath string) {
 	source := String(record, "source_document")
 	if source == "" {
 		source = String(record, "source")
 	}
 	if String(record, "kind") == "SourceDocument" {
 		source = String(record, "id")
-	}
-	if source == "" && String(record, "kind") == "ContentNode" {
-		source = String(index[String(record, "document")], "source")
 	}
 	if source == "" {
 		source = String(index[String(record, "owner")], "source_document")

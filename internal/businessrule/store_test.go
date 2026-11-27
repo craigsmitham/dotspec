@@ -14,7 +14,7 @@ func TestLifecycleDiscoveryAndContext(t *testing.T) {
 	if out, err := exec.Command("git", "-C", root, "init", "-q").CombinedOutput(); err != nil {
 		t.Fatalf("%s: %v", out, err)
 	}
-	if _, err := system.Init(root); err != nil {
+	if _, err := system.InitNamed(root, "New system"); err != nil {
 		t.Fatal(err)
 	}
 	child := filepath.Join(root, "child")

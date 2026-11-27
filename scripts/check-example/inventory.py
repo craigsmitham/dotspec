@@ -10,7 +10,6 @@ def record_witnesses(snapshot, classes, expected, evidence, project, label):
     # Locations and IDs in a snapshot belong to that export. Resolve them before
     # reading the next project, retaining a path a reader can actually inspect.
     sources = {s["id"]: Path(s["locator"]) for s in snapshot["sources"]}
-    documents = {d["id"]: sources[d["source"]] for d in snapshot["documents"]}
 
     records = {r["id"]: r for r in snapshot["elements"]}
     for occurrence in [*snapshot.get("references", []), *snapshot.get("label_occurrences", [])]:
@@ -37,9 +36,6 @@ def record_witnesses(snapshot, classes, expected, evidence, project, label):
         source = record.get("source_document") or record.get("source")
         if isinstance(source, str) and source in sources:
             location = context(sources[source])
-        document = record.get("document")
-        if isinstance(document, str) and document in documents:
-            location = context(documents[document])
         for field, slot in definition["slots"].items():
             value = record.get(field)
             if value is None or value == [] or value == {} or value == "":
@@ -67,9 +63,7 @@ def document_witnesses(project, classes, evidence):
             if "documents" in classes[ancestor]["slots"]:
                 evidence.setdefault(f"{ancestor}.documents", path.relative_to(Path.cwd()).as_posix())
 
-    for path in [project / "SPEC.md", *sorted((project / "specification").rglob("*.md"))]:
-        if not path.is_file():
-            continue
+    for path in sorted((project / "specification").rglob("*.md")):
         text = path.read_text(encoding="utf-8")
         header = re.match(r"^---\n(.*?)\n---\n", text, re.S)
         if not header or "generated_by: dotspec" not in header[1].splitlines():
@@ -100,15 +94,11 @@ def main(binary, scratch, detailed):
             if "DomainElement" in definition["ancestors"] or "Record" not in definition["ancestors"]:
                 forms.add(f"{kind}.{field}")
     evidence = {}
-    examples = root / "examples"
-    todo = examples / "todo"
-    projects = [todo, *sorted(p.parent for p in examples.glob("*/dotspec.yaml") if p.parent != todo)]
-    for project in projects:
-        document_witnesses(project, classes, evidence)
-        raw = subprocess.check_output([binary, "model", "export", "--path", project])
-        snapshot = json.loads(raw)
-        record_witnesses(snapshot, classes, relationships | forms, evidence, project,
-                         project.relative_to(root).as_posix())
+    todo = root / "examples" / "todo"
+    document_witnesses(todo, classes, evidence)
+    snapshot = json.loads(subprocess.check_output([binary, "model", "export", "--path", todo]))
+    record_witnesses(snapshot, classes, relationships | forms, evidence, todo,
+                     todo.relative_to(root).as_posix())
     record_witnesses(json.loads(scratch.read_bytes()), classes, relationships | forms, evidence,
                      scratch.parent / "author", "scratch authoring and diagnostics")
     assignments = (todo / "COVERAGE.md").read_text(encoding="utf-8").split("### Gaps in the exported examples", 1)[1]

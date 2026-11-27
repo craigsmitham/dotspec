@@ -70,7 +70,7 @@ func qualityOperation(cmd *cobra.Command, req qualityRequest) error {
 	}
 	var target string
 	write := req.all || len(req.attributes) > 0
-	if write || cmd.Flags().Changed("system") {
+	if write {
 		selector, _ := cmd.Flags().GetString("system")
 		if selector == "" && cmd.Flags().Changed("system") {
 			return fmt.Errorf("--system requires a source path")
@@ -100,7 +100,7 @@ func qualityOperation(cmd *cobra.Command, req qualityRequest) error {
 		return browseQuality(out, format, source, selection, req.focus)
 	}
 	dryRun, _ := cmd.Flags().GetBool("dry-run")
-	result, err := qualityapply.Run(source, target, qualityapply.Options{Attributes: req.attributes, All: req.all, DryRun: dryRun})
+	result, err := qualityapply.Run(source, target, qualityapply.Options{Attributes: req.attributes, All: req.all, DryRun: dryRun, Revision: citationRevision()})
 	if err != nil {
 		return err
 	}

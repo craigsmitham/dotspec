@@ -96,7 +96,7 @@ def apply_relationship_defaults(name: str, shape: dict[str, Any], categories: di
 
 
 def projection_paths(catalog: dict[str, Any], raw_model: dict[str, Any]) -> list[str]:
-    """Canonical Class.field paths an Assertion may project.
+    """Canonical Class.field paths that project as relationships.
 
     Every declaration membership (the checked owned_memberships paths) and every
     semantic-association or structural-context field declared on a record class.
@@ -133,7 +133,7 @@ def make_catalog(view: Any, raw_model: dict[str, Any], model_bytes: bytes) -> di
     result: dict[str, Any] = {
         "catalog_version": 1,
         "schema_id": str(view.schema.id),
-        "model_version": str(view.schema.version),
+        "model_version": view.induced_slot("model_version", "Snapshot").equals_string,
         "representation_version": view.induced_slot("representation_version", "Snapshot").equals_string,
         "source_sha256": hashlib.sha256(model_bytes).hexdigest(),
         "annotations": annotation_values(view.schema.annotations),
@@ -268,7 +268,7 @@ def reference_markdown(catalog: dict[str, Any], raw_model: dict[str, Any]) -> by
         "The [runtime catalog](../../../model/generated/catalog.json) supplies inherited "
         "class membership, typed reference ranges and ordered slots for graph checks.", "",
         "Read the [model glossary](glossary.md) for definitions of domain terms. "
-        "See the [relationship reference](relationships.md) for scopes, inverses, cycle policies and assertion projections.", "",
+        "See the [relationship reference](relationships.md) for scopes, inverses and cycle policies.", "",
         "## Model constraints", "",
         escape(catalog["annotations"].get("graph_rules", "")), "",
         "## Classes", "",
@@ -381,6 +381,8 @@ def generate_outputs() -> dict[Path, bytes]:
         "--no-generation-date", str(MODEL),
     ]).replace(b"\r\n", b"\n").rstrip(b"\n") + b"\n"
     schema = json.loads(schema_bytes)
+    # The model version lives on the Snapshot slot; LinkML would emit a null header version.
+    schema.pop("version", None)
     catalog = make_catalog(view, raw_model, model_bytes)
     # Typed navigation is derived from the role and resolution of each occurrence.
     # Its endpoint contracts also drive the diagrams and offline graph checks.

@@ -223,7 +223,7 @@ func TestWorkspaceMutationCannotTargetAnotherProject(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	code, _, _ := invoke("quality-model", "apply", "--project", "tool", "--system", "apps/demo/specs/demo.system.spec.md")
+	code, _, _ := invoke("quality-model", "apply", "--all", "--project", "tool", "--system", "apps/demo/specs/demo.system.spec.md")
 	if code != 2 {
 		t.Fatal(code)
 	}

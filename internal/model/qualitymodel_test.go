@@ -9,7 +9,7 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 	root := t.TempDir()
 	source := "---\r\ntype: quality-model\r\nid: team\r\n---\r\n# Team\r\n## Description\r\nA reusable model.\r\n## Edition\r\nOne\r\n## Sources\r\n[Original](https://example.test/model).\r\n## Quality attributes\r\n### Broad\r\n**ID:** broad\r\nA concern.\r\n### Narrow\r\n**ID:** narrow\r\n**Sub-attribute of:** broad, second\r\nA specific concern.\r\n### Second\r\n**ID:** second\r\nAnother grouping.\r\n#### Detail\r\nRetain me.\r\n"
 	conformanceWrite(t, root, "specs/quality-models/team.quality-model.md", "\ufeff"+source)
-	conformanceWrite(t, root, "specs/system.system.spec.md", "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n## Quality attributes\n")
+	conformanceWrite(t, root, "specs/system.system.spec.md", "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n")
 	conformanceWrite(t, root, "specs/quality/broad/broad.quality-attribute.spec.md", "---\ntype: quality-attribute-spec\nid: broad\n---\n# Broad\n\n## Definition\n\nA distinct local concern.\n")
 
 	conformanceWrite(t, root, "specs/requirements/requirement.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [broad, narrow]\n---\n# Requirement\n")
@@ -34,9 +34,6 @@ func TestQualityModelOwnershipMappingAndResolution(t *testing.T) {
 		if m[field] == nil {
 			t.Errorf("missing %s", field)
 		}
-	}
-	if m["extension_sections"] != nil {
-		t.Fatal("unknown content lost")
 	}
 	sys := elementKind(t, s, "System")
 	for _, label := range s.LabelOccurrences {

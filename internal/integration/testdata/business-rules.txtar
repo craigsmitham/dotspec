@@ -29,7 +29,6 @@ status 0 dotspec model export
 stdout '"kind": "BusinessRule"'
 stdout '"related_specifications":'
 stdout '"status": "resolved"'
-! stdout '"kind": "EnforcesRule"'
 cp stdout snapshot.json
 status 0 dotspec model validate snapshot.json --json
 stdout '"valid": true'

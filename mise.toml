@@ -33,7 +33,7 @@ description = "Run unit and process-level CLI tests"
 run = "go test ./..."
 
 [tasks.generate]
-description = "Regenerate the guide map, CLI reference, command gallery, and both project specifications"
+description = "Regenerate the guide map, CLI reference, command output examples, and both project specifications"
 run = ["go run ./scripts/generate", "go run . spec build --project dotspec", "go run . spec build --project todo"]
 
 [tasks.generated-check]
@@ -73,7 +73,7 @@ description = "Run the same complete gate locally and in CI"
 depends = ["fmt-check", "tidy-check", "lint", "test", "generated-check", "model-check", "model-test", "knowledge-test", "spec-check", "spec-sources-check", "release-check", "example-check"]
 
 [tasks.fuzz]
-description = "Exercise all Markdown parsers with bounded fuzzing"
+description = "Fuzz each Markdown parser for ten seconds; also runs in CI"
 run = ["go test ./internal/system -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/job -run=^$ -fuzz=FuzzStructuredJob -fuzztime=10s -parallel=2", "go test ./internal/usecase -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/concept -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/requirement -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/businessrule -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/qualitymodel -run=^$ -fuzz=FuzzParse -fuzztime=10s -parallel=2", "go test ./internal/model -run=^$ -fuzz=FuzzParseContent -fuzztime=10s -parallel=2"]
 
 [tasks.release-check]

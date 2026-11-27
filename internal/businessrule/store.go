@@ -2,7 +2,6 @@ package businessrule
 
 import (
 	"github.com/craigsmitham/dotspec/internal/speccollection"
-	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/system"
 )
 
@@ -12,14 +11,7 @@ type Group struct {
 }
 
 func Init(path, slug string) (string, error) {
-	if err := Layout.ValidateSlug(slug); err != nil {
-		return "", err
-	}
-	dir, err := specfile.Directory(path)
-	if err != nil {
-		return "", err
-	}
-	return Layout.Create(dir, slug, Template)
+	return Layout.Create(path, slug, Template)
 }
 
 var collection = speccollection.Collection[BusinessRule]{

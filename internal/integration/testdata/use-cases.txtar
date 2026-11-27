@@ -5,27 +5,37 @@ exec git init -q
 status 0 dotspec use-case list --json
 stdout '"groups": \[\]'
 ! stderr .
+status 0 dotspec use-case list
+stdout 'No use cases found'
+! stderr .
 status 0 dotspec use-case init --path . -- check-specifications
 stdout 'Created specs/use-cases/check-specifications.use-case.spec.md'
 ! stderr .
-status 0 dotspec use-case show check-specifications --json
+status 0 dotspec use-case show --format json -- check-specifications
+stdout '"schema_version": 2'
+stdout '"slug": "check-specifications"'
 stdout '"system": null'
 stdout '"main_success_scenario":'
+! stderr .
 status 0 dotspec system init
 status 0 dotspec use-case show check-specifications
-stdout '# New use case'
-stdout 'System: New system'
+stdout '(?s)\A# New use case\n\n## Goal\n.+\n## System boundary\n.+\n## Primary actor\n.+\n## Goal level\n.+\n## Main success scenario\n.+\n## Extensions\n.+\nSystem: New system'
+! stderr .
 status 0 dotspec use-case list --json
 stdout '"use_cases": \['
 stdout '"slug": "check-specifications"'
 status 0 dotspec use-case check check-specifications --json
 stdout '"complete": true'
+stdout '"types": \[\s+"use-case"\s+\]'
 stdout '"discovery": "direct"'
+stdout '"files_checked": 1,'
 stdout '"context_files_checked": 1'
 ! stderr .
+cp specs/use-cases/check-specifications.use-case.spec.md ../check-specifications-before.md
 status 2 dotspec use-case init check-specifications
 stderr 'refusing to overwrite'
 ! stdout .
+cmp specs/use-cases/check-specifications.use-case.spec.md ../check-specifications-before.md
 status 2 dotspec use-case init invalid --format mermaid
 ! stdout .
 ! exists specs/use-cases/invalid.use-case.spec.md
@@ -61,8 +71,13 @@ cd elaboration
 status 0 dotspec use-case init reserve
 status 0 dotspec use-case show reserve --json
 stdout '"trigger": ""'
-status 0 dotspec use-case init detailed --template expanded
+status 0 dotspec use-case init detailed --template expanded --json
+stdout '"schema_version": 1'
+stdout '"path": "(/|[A-Za-z]:\\\\).*detailed\.use-case\.spec\.md"'
+! stderr .
 status 0 dotspec use-case show detailed --json
+stdout '"trigger": "Describe the action or time event'
+stdout '"preconditions": "Describe the state expected'
 stdout '"minimal_guarantees": "State or link'
 stdout '"supporting_actors": "Name external'
 status 2 dotspec use-case init invalid --template unknown

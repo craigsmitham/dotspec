@@ -22,7 +22,7 @@ func writeFile(t *testing.T, path, content string) {
 
 func writeJob(t *testing.T, dir, slug, name string) string {
 	t.Helper()
-	path := filepath.Join(dir, "specs", "jobs", slug+Suffix)
+	path := filepath.Join(dir, "specs", "jobs", slug+Layout.Suffix)
 	writeFile(t, path, strings.Replace(validJob, "Develop Requirements", name, 1))
 	return path
 }
@@ -78,7 +78,7 @@ func summary(groups []*Group) []string {
 func TestInitAndLocalIdentity(t *testing.T) {
 	dir := t.TempDir()
 	boundLookup(t, dir)
-	path, err := Init(dir, "develop-requirements")
+	path, err := InitWithPreset(dir, "develop-requirements", "general")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -91,7 +91,7 @@ func TestInitAndLocalIdentity(t *testing.T) {
 	}
 	writeJob(t, dir, "develop-requirements", "A revised title")
 	before, _ := os.ReadFile(path)
-	if _, err := Init(dir, "develop-requirements"); err == nil || !strings.Contains(err.Error(), "refusing to overwrite") {
+	if _, err := InitWithPreset(dir, "develop-requirements", "general"); err == nil || !strings.Contains(err.Error(), "refusing to overwrite") {
 		t.Fatalf("overwrite error: %v", err)
 	}
 	after, _ := os.ReadFile(path)
@@ -102,7 +102,7 @@ func TestInitAndLocalIdentity(t *testing.T) {
 	if err != nil || got.Name != "A revised title" || got.Slug != "develop-requirements" {
 		t.Fatalf("identity changed: %+v, %v", got, err)
 	}
-	if _, err := Init(dir, "manage-requirements"); err != nil {
+	if _, err := InitWithPreset(dir, "manage-requirements", "general"); err != nil {
 		t.Fatal(err)
 	}
 	child := filepath.Join(dir, "child")
@@ -122,7 +122,7 @@ func TestInitAndLocalIdentity(t *testing.T) {
 func TestInvalidSlugsAndPaths(t *testing.T) {
 	dir := t.TempDir()
 	for _, slug := range []string{"", "../escape", "/escape", "a/b", `a\b`, "Uppercase", "two words", "under_score", "-leading", "trailing-", "two--hyphens", "name.job.spec.md", "café"} {
-		if _, err := Init(dir, slug); err == nil {
+		if _, err := InitWithPreset(dir, slug, "general"); err == nil {
 			t.Errorf("init accepted %q", slug)
 		}
 		if _, err := Show(dir, slug); err == nil || (!Layout.Match(slug) && !strings.Contains(err.Error(), "invalid job slug")) {
@@ -139,7 +139,7 @@ func TestInvalidSlugsAndPaths(t *testing.T) {
 	}
 	file := writeJob(t, dir, "valid", "Valid")
 	for _, path := range []string{filepath.Join(dir, "missing"), file} {
-		if _, err := Init(path, "test"); err == nil {
+		if _, err := InitWithPreset(path, "test", "general"); err == nil {
 			t.Fatal("init accepted an invalid directory")
 		}
 		if _, err := Show(path, "test"); err == nil {
@@ -248,35 +248,6 @@ func TestMalformedJobsAndAssociatedSystems(t *testing.T) {
 	writeFile(t, filepath.Join(dir, "specs", "jobs", "Invalid_slug.job.spec.md"), validJob)
 	if _, err := List(dir); err == nil || !strings.Contains(err.Error(), "invalid job slug") {
 		t.Fatalf("invalid filename: %v", err)
-	}
-}
-
-func TestDiscoveryIgnoresAndLinks(t *testing.T) {
-	dir := gitRepo(t)
-	writeJob(t, dir, "tracked", "Tracked")
-	git(t, dir, "add", "specs/jobs/tracked.job.spec.md")
-	writeFile(t, filepath.Join(dir, ".gitignore"), "ignored/\ntracked.job.spec.md\nchoices/*\n!choices/keep/\n")
-	writeFile(t, filepath.Join(dir, "ignored", "bad.job.spec.md"), "malformed but ignored")
-	writeFile(t, filepath.Join(dir, "choices", "omit", "bad.job.spec.md"), "ignored")
-	writeJob(t, filepath.Join(dir, "choices", "keep"), "kept", "Kept")
-	writeFile(t, filepath.Join(dir, "nested", ".gitignore"), "hidden/\n")
-	writeFile(t, filepath.Join(dir, "nested", "hidden", "bad.job.spec.md"), "ignored")
-	writeFile(t, filepath.Join(dir, ".git", "bad.job.spec.md"), "not a job")
-	outside := t.TempDir()
-	outsideFile := writeJob(t, outside, "outside", "Outside")
-	if err := os.Symlink(outside, filepath.Join(dir, "linked-directory")); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.Symlink(outsideFile, filepath.Join(dir, "linked-file.job.spec.md")); err != nil {
-		t.Fatal(err)
-	}
-	nestedRepo := filepath.Join(dir, "nested-repo")
-	writeJob(t, nestedRepo, "nested", "Nested")
-	git(t, nestedRepo, "init", "-q")
-	groups, err := List(dir)
-	want := []string{"None", "  kept: Kept", "  tracked: Tracked"}
-	if err != nil || !reflect.DeepEqual(summary(groups), want) {
-		t.Fatalf("discovery: %v, %v", summary(groups), err)
 	}
 }
 

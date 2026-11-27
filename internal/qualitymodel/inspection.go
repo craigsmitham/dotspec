@@ -18,29 +18,12 @@ func Check(spec *QualityModel) []diagnostic.Diagnostic {
 	}
 	for _, a := range spec.QualityAttributes {
 		if a.Definition == "" {
-			loc := a.Location
-			loc.Path = spec.Path
-			findings = append(findings, diagnostic.Advice("quality.definition", "Define what this quality attribute means.", loc))
+			findings = append(findings, diagnostic.Advice("quality.definition", "Define what this quality attribute means.", a.Location))
 		}
 	}
 	return findings
 }
 
 func CheckType() check.Type {
-	return check.Type{Layout: Layout, ValidateSlug: Layout.ValidateSlug,
-		Inspect: func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
-			m, err := readFrom(files, path)
-			if err != nil {
-				return nil, err
-			}
-			return Check(m), nil
-		},
-		References: func(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error) {
-			m, err := readFrom(files, path)
-			if err != nil {
-				return nil, err
-			}
-			return m.References, nil
-		},
-	}
+	return check.ReadType(Layout, readFrom, func(m *QualityModel) *specfile.ReferenceDocument { return m.References }, Check)
 }

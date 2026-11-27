@@ -143,37 +143,11 @@ A supporting note, not an action.
 		t.Fatal("external definition invented")
 	}
 	rule := designRecord(t, result.Snapshot, "Synchronization", "Draft rule")
-	if rule["when_actions"] != nil || rule["then_actions"] != nil {
-		t.Fatal("semantics or actions inferred from prose")
-	}
-	if rule["extension_sections"] != nil || !strings.Contains(newDesignResolver(result.Snapshot).text(rule["semantics"]), "supporting note") {
+	if !strings.Contains(newDesignResolver(result.Snapshot).text(rule["semantics"]), "supporting note") {
 		t.Fatal("supporting notes lost")
 	}
 }
-func TestDesignMarkdownViews(t *testing.T) {
-	root := compositionFixture(t)
-	s := conformanceExport(t, root).Snapshot
-	output, err := DesignMarkdown(s, filepath.Join(root, "docs"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, part := range []string{"## Concepts", "#### Operational principles", "#### Application dependencies", "PublicLinks", "InternalLinks", "#### Start public lifetime", "##### Initial state\n\nNo codes are registered and no codes have been issued.\n\n##### Issued codes", "Event-based coordination"} {
-		if !strings.Contains(output, part) {
-			t.Errorf("missing %q", part)
-		}
-	}
-	if strings.Index(output, "#### Operational principles") > strings.Index(output, "#### State") {
-		t.Fatal("purposeful behavior should precede state details")
-	}
-	if strings.Contains(output, "```mermaid\nflowchart LR\n```") {
-		t.Fatal("empty diagram")
-	}
-	if got := designDiagramLabel(`A "quoted" <tag> | edge`); strings.Contains(got, `"`) || strings.Contains(got, "<") || strings.Contains(got, "|") {
-		t.Fatal("unescaped Mermaid label", got)
-	}
-}
-
-func TestDesignMarkdownRebasesReferencesWithoutRewritingCode(t *testing.T) {
+func TestRebaseDesignMarkdownRebasesReferencesWithoutRewritingCode(t *testing.T) {
 	source := "See [local](#action), [guide][g], and ![image](image.png).\n\n`[literal](#action)`\n\n```markdown\n[example](#action)\n```\n"
 	got := rebaseDesignMarkdown(source, "../specs/concept.spec.md", "[g]: guide.md \"Guide\"")
 	for _, want := range []string{"[local](../specs/concept.spec.md#action)", "[guide](../specs/guide.md \"Guide\")", "![image](../specs/image.png)", "`[literal](#action)`", "```markdown\n[example](#action)\n```"} {

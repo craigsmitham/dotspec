@@ -6,7 +6,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
-var AttributeLayout = specfile.Layout{Kind: "quality-attribute", Suffix: specfile.AttributeSuffix, Collection: "quality"}
+var AttributeLayout = specfile.Layout{Kind: "quality-attribute", Suffix: specfile.AttributeSuffix}
 
 type AttributeDocument struct {
 	Attribute
@@ -49,25 +49,18 @@ func ParseQualityAttributeMarkdown(path string, input *specfile.Markdown) (*Attr
 	}
 	seenDefinition := false
 	for _, s := range doc.Sections {
-		if s.Title == "Specification system" {
-			return nil, diagnostic.Error("quality.scope", "the nearest subject declares this quality attribute", doc.Location(s.Start, s.Title))
-		}
 		if s.Title == "Definition" {
-			if seenDefinition || s.Level != 2 {
-				return nil, diagnostic.Error("structure.attribute-definition", "use one level-two Definition section", doc.Location(s.Start, s.Title))
+			if seenDefinition {
+				return nil, diagnostic.Error("structure.attribute-definition", "use one Definition section", doc.Location(s.Start, s.Title))
 			}
 			seenDefinition = true
 			a.Definition = doc.Body(s)
 		}
 	}
-	if err := specfile.ValidateReferences(doc.Original, doc.Source, doc.AST, doc.Anchors); err != nil {
+	if err := doc.ValidateReferences(); err != nil {
 		return nil, err
 	}
 	return &AttributeDocument{Attribute: a, References: doc.References()}, nil
-}
-
-func ReadQualityAttribute(path string) (*AttributeDocument, error) {
-	return readAttribute(&specfile.SourceSet{}, path)
 }
 
 func readAttribute(files *specfile.SourceSet, path string) (*AttributeDocument, error) {
@@ -89,9 +82,6 @@ func (s *System) loadQualityTree(files *specfile.SourceSet) error {
 		return err
 	}
 	ids := map[string]bool{}
-	for _, a := range s.QualityAttributes {
-		ids[a.ID] = true
-	}
 	for _, path := range paths {
 		doc, err := readAttribute(files, path)
 		if err != nil {
@@ -126,14 +116,7 @@ var attributeContext = &check.ContextProvider{
 }
 
 func AttributeCheckType() check.Type {
-	return check.Type{Layout: AttributeLayout, Context: attributeContext, Inspect: func(files *specfile.SourceSet, path string) ([]diagnostic.Diagnostic, error) {
-		_, err := readAttribute(files, path)
-		return nil, err
-	}, References: func(files *specfile.SourceSet, path string) (*specfile.ReferenceDocument, error) {
-		a, err := readAttribute(files, path)
-		if err != nil {
-			return nil, err
-		}
-		return a.References, nil
-	}}
+	kind := check.ReadType(AttributeLayout, readAttribute, func(a *AttributeDocument) *specfile.ReferenceDocument { return a.References }, nil)
+	kind.Context = attributeContext
+	return kind
 }
