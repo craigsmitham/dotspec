@@ -3,6 +3,8 @@
 dotspec is a framework and command-line tool for writing and checking software
 requirements in human-readable Markdown alongside your code.
 
+Follow [Build your first specification](https://dotspec.mintlify.site/get-started/first-requirement) to turn a room-booking promise into a requirement you can review. For an example with a running application, see [What survives a restart?](https://dotspec.mintlify.site/examples/restart).
+
 ## Quick start
 
 Install the alpha CLI on macOS or Linux with `brew install dotspec-md/tap/dotspec`.
