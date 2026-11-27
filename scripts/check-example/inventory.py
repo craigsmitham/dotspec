@@ -51,7 +51,7 @@ def record_witnesses(snapshot, classes, expected, evidence, project, label):
                     if isinstance(item, dict):
                         visit(item, slot["range"], location)
 
-    visit(snapshot, "Snapshot", f"model export: {label}")
+    visit(snapshot, "Snapshot", f"snapshot export: {label}")
 
 
 def document_witnesses(project, classes, evidence):
@@ -96,7 +96,7 @@ def main(binary, scratch, detailed):
     evidence = {}
     todo = root / "examples" / "todo"
     document_witnesses(todo, classes, evidence)
-    snapshot = json.loads(subprocess.check_output([binary, "model", "export", "--path", todo]))
+    snapshot = json.loads(subprocess.check_output([binary, "-C", todo, "snapshot", "export"]))
     record_witnesses(snapshot, classes, relationships | forms, evidence, todo,
                      todo.relative_to(root).as_posix())
     record_witnesses(json.loads(scratch.read_bytes()), classes, relationships | forms, evidence,

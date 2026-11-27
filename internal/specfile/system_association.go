@@ -39,7 +39,7 @@ func (o *Outline) SingleSubjectLink(title, rule string) (Reference, bool, error)
 		}
 		_ = ast.Walk(n, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
 			if link, ok := node.(*ast.Link); entering && ok {
-				links = append(links, Reference{string(link.Destination), o.Location(link.Pos(), title)})
+				links = append(links, Reference{Destination: string(link.Destination), Location: o.Location(link.Pos(), title)})
 			}
 			return ast.WalkContinue, nil
 		})

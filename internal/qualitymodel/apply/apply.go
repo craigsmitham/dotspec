@@ -24,7 +24,6 @@ import (
 
 type Options struct {
 	Attributes []string
-	All        bool
 	DryRun     bool
 	// Revision is the dotspec source commit or release version that citations
 	// of a bundled model link to. Empty cites the embedded bytes by digest.
@@ -40,45 +39,23 @@ type Entry struct {
 }
 
 type Result struct {
-	Entries       []Entry  `json:"entries"`
-	SchemaVersion int      `json:"schema_version"`
-	Target        string   `json:"target"`
-	Added         []string `json:"added"`
-	DryRun        bool     `json:"dry_run"`
+	Entries []Entry  `json:"entries"`
+	Target  string   `json:"target"`
+	Added   []string `json:"added"`
+	DryRun  bool     `json:"dry_run"`
 }
 
 // Run stages independent attribute sources. The first declared parent supplies
-// the directory. All parents are explicit in the new source.
+// the directory. All parents are explicit in the new source. A requested
+// attribute the system already declares is refused; existing parents are reused.
 func Run(source *qualitymodel.QualityModel, target string, opts Options) (Result, error) {
-	result := Result{SchemaVersion: 3, DryRun: opts.DryRun, Entries: []Entry{}, Added: []string{}}
-	dir, err := specfile.Directory(filepath.Dir(target))
+	t, unlock, err := open(target, opts)
 	if err != nil {
-		return result, err
-	}
-	target = filepath.Join(dir, filepath.Base(target))
-	result.Target = target
-	info, err := os.Lstat(target)
-	if err != nil {
-		return result, err
-	}
-	if !info.Mode().IsRegular() {
-		return result, fmt.Errorf("target must be a regular system file: %s", target)
-	}
-	owner := system.Layout.ContextDir(target)
-	lock := lockedfile.MutexAt(filepath.Join(os.TempDir(), fmt.Sprintf("dotspec-quality-%x.lock", sha256.Sum256([]byte(target)))))
-	unlock, err := lock.Lock()
-	if err != nil {
-		return result, err
+		return t.result, err
 	}
 	defer unlock()
-	current, err := system.Read(target)
-	if err != nil {
-		return result, err
-	}
-	local := map[string]system.Attribute{}
-	for _, a := range current.QualityAttributes {
-		local[a.ID] = a
-	}
+	result, owner, current, local := t.result, t.owner, t.current, t.local
+	target = result.Target
 	byID := map[string]system.Attribute{}
 	for _, a := range source.QualityAttributes {
 		byID[a.ID] = a
@@ -162,6 +139,91 @@ func Run(source *qualitymodel.QualityModel, target string, opts Options) (Result
 		result.Entries = append(result.Entries, Entry{ID: a.ID, Role: role, Decision: "create", Path: file, Content: body.String()})
 		result.Added = append(result.Added, a.ID)
 	}
+	return finish(result, owner, target, combined, opts.DryRun)
+}
+
+// Blank stages one attribute declaration per ID with a definition prompt and no
+// parents. An ID the system already declares is refused.
+func Blank(target string, opts Options) (Result, error) {
+	t, unlock, err := open(target, opts)
+	if err != nil {
+		return t.result, err
+	}
+	defer unlock()
+	result := t.result
+	combined := slices.Clone(t.current.QualityAttributes)
+	for _, id := range opts.Attributes {
+		if err := system.AttributeLayout.ValidateSlug(id); err != nil {
+			return result, err
+		}
+		if slices.ContainsFunc(result.Entries, func(e Entry) bool { return e.ID == id }) {
+			return result, fmt.Errorf("quality attribute %s is named more than once", id)
+		}
+		name := strings.ToUpper(id[:1]) + strings.ReplaceAll(id[1:], "-", " ")
+		file := specfile.AttributePath(filepath.Join(t.owner, specfile.Folder, "quality", id))
+		body := fmt.Sprintf("---\ntype: quality-attribute-spec\n---\n\n# %s\n\n## Definition\n\nDefine what %s means for this system.\n", name, strings.ToLower(name))
+		parsed, err := system.ParseQualityAttribute(file, []byte(body))
+		if err != nil {
+			return result, err
+		}
+		combined = append(combined, parsed.Attribute)
+		result.Entries = append(result.Entries, Entry{ID: id, Role: "requested", Decision: "create", Path: file, Content: body})
+		result.Added = append(result.Added, id)
+	}
+	return finish(result, t.owner, result.Target, combined, opts.DryRun)
+}
+
+// adoption is a locked target system and the attributes it already declares.
+type adoption struct {
+	result  Result
+	owner   string
+	current *system.System
+	local   map[string]system.Attribute
+}
+
+func open(target string, opts Options) (adoption, func(), error) {
+	t := adoption{result: Result{DryRun: opts.DryRun, Entries: []Entry{}, Added: []string{}}}
+	none := func() {}
+	dir, err := specfile.Directory(filepath.Dir(target))
+	if err != nil {
+		return t, none, err
+	}
+	target = filepath.Join(dir, filepath.Base(target))
+	t.result.Target = target
+	info, err := os.Lstat(target)
+	if err != nil {
+		return t, none, err
+	}
+	if !info.Mode().IsRegular() {
+		return t, none, fmt.Errorf("target must be a regular system file: %s", target)
+	}
+	t.owner = system.Layout.ContextDir(target)
+	lock := lockedfile.MutexAt(filepath.Join(os.TempDir(), fmt.Sprintf("dotspec-quality-%x.lock", sha256.Sum256([]byte(target)))))
+	unlock, err := lock.Lock()
+	if err != nil {
+		return t, none, err
+	}
+	t.current, err = system.Read(target)
+	if err != nil {
+		unlock()
+		return t, none, err
+	}
+	t.local = map[string]system.Attribute{}
+	for _, a := range t.current.QualityAttributes {
+		t.local[a.ID] = a
+	}
+	for _, id := range opts.Attributes {
+		if existing, ok := t.local[id]; ok {
+			unlock()
+			return t, none, fmt.Errorf("quality attribute %s already exists: %s; refusing to overwrite it", id, existing.Location.Path)
+		}
+	}
+	return t, unlock, nil
+}
+
+// finish validates the combined declarations and every destination, then
+// writes the new files unless this is a preview.
+func finish(result Result, owner, target string, combined []system.Attribute, dryRun bool) (Result, error) {
 	if err := system.ValidateQualityAttributes(combined); err != nil {
 		return result, err
 	}
@@ -177,10 +239,10 @@ func Run(source *qualitymodel.QualityModel, target string, opts Options) (Result
 	if err := checkDiscoverable(owner, additions); err != nil {
 		return result, err
 	}
-	if !opts.DryRun {
-		err = publish(owner, additions, os.Link)
+	if !dryRun {
+		return result, publish(owner, additions, os.Link)
 	}
-	return result, err
+	return result, nil
 }
 
 // A successful adoption must be visible to the next system read, which uses
@@ -306,12 +368,6 @@ func publish(owner string, files []Entry, install func(string, string) error) (e
 
 func selection(source *qualitymodel.QualityModel, byID, local map[string]system.Attribute, opts Options) (map[string]bool, map[string]bool, error) {
 	selected := opts.Attributes
-	if opts.All {
-		selected = nil
-		for _, a := range source.QualityAttributes {
-			selected = append(selected, a.ID)
-		}
-	}
 	requested := map[string]bool{}
 	for _, id := range selected {
 		if _, ok := byID[id]; !ok {

@@ -11,6 +11,9 @@ companions:
   - target: ../../internal/integration/testdata/use-cases.txtar
     role: illustrates
     note: Focused and project-wide checks of draft and malformed use cases
+  - target: ../../internal/integration/testdata/boundary-advice.txtar
+    role: illustrates
+    note: Advice on assumptions without Basis or Applicability and interfaces without a contract link
 ---
 
 # Check specifications before committing

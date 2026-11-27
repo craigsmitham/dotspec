@@ -9,7 +9,27 @@ import (
 	"testing"
 
 	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/craigsmitham/dotspec/internal/speckinds"
 )
+
+// productOf composes the product specification the generated specification
+// places, from a fresh export of the project at path.
+func productOf(t *testing.T, path, selector string) *model.ProductSpecification {
+	t.Helper()
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := model.Export(abs, speckinds.All()...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	view, err := result.Snapshot.Product(selector)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return view
+}
 
 func TestProductChangesAndVerificationObservations(t *testing.T) {
 	projectFixture(t)
@@ -34,15 +54,11 @@ func TestProductChangesAndVerificationObservations(t *testing.T) {
 		}
 		return out
 	}
-	product := func(args ...string) model.ProductSpecification {
+	product := func(path ...string) *model.ProductSpecification {
 		t.Helper()
-		var view model.ProductSpecification
-		if err := json.Unmarshal([]byte(run(append([]string{"model", "product", "tool"}, args...)...)), &view); err != nil {
-			t.Fatal(err)
-		}
-		return view
+		return productOf(t, filepath.Join(path...), "tool")
 	}
-	run("spec", "build")
+	run("build")
 	if text := read("specification/tool.system.spec-report.md"); !strings.Contains(text, "## Quality Attributes") || !strings.Contains(text, "Preserve an acknowledged change.") {
 		t.Fatal(text)
 	}
@@ -52,7 +68,7 @@ func TestProductChangesAndVerificationObservations(t *testing.T) {
 	if !before.Complete || len(before.Members) != 3 || len(before.Adoptions) != 0 {
 		t.Fatal(before)
 	}
-	if partial := product("--path", "specs/requirements"); partial.Complete || len(partial.Members) != 2 {
+	if partial := product("specs", "requirements"); partial.Complete || len(partial.Members) != 2 {
 		t.Fatal(partial)
 	}
 	writeFixture(t, req, body+"\n## Adopts\n\n### Recovery protocol\n\n[Restart](../../protocol.md#restart).\n\n#### Edition\n\nevolving\n\n#### Applicability\n\nAfter acknowledged writes.\n")
@@ -60,7 +76,7 @@ func TestProductChangesAndVerificationObservations(t *testing.T) {
 	if len(adopted.Members) != 3 || len(adopted.Adoptions) != 1 || adopted.Adoptions[0]["provision"] != "../../protocol.md#restart" {
 		t.Fatal(adopted.Adoptions)
 	}
-	run("spec", "build")
+	run("build")
 	const report = "specification/requirements/recover.requirement.spec-report.md"
 	if text := read(report); !strings.Contains(text, "Procedure linked.") || !strings.Contains(text, "No matching result recorded.") || !strings.Contains(text, "After acknowledged writes.") {
 		t.Fatal(text)
@@ -91,21 +107,17 @@ func TestProductChangesAndVerificationObservations(t *testing.T) {
 		t.Fatal(err)
 	}
 	writeFixture(t, "verification-results.json", string(data))
-	run("spec", "build")
+	run("build")
 	text := read(report)
 	if strings.Count(text, "Matching observation ·") != 2 || strings.Count(text, "Other recorded observation ·") != 4 || strings.Contains(text, "No matching result recorded.") {
 		t.Fatal(text)
 	}
-	observed := product()
-	if len(observed.Verification) != 1 || len(observed.Verification[0].Observations) != 6 || observed.VerificationSelection == nil {
-		t.Fatal(observed.Verification)
-	}
-	if !reflect.DeepEqual(adopted.Members, observed.Members) {
+	if observed := product(); !reflect.DeepEqual(adopted.Members, observed.Members) {
 		t.Fatal("recording runs changed product membership")
 	}
 	run("check")
 	writeFixture(t, "verification-results.json", `{"selection":{},"results":[]}`)
-	if code, _, _ := invoke("spec", "build"); code == 0 || read(report) != text {
+	if code, _, _ := invoke("build"); code == 0 || read(report) != text {
 		t.Fatal("invalid evidence replaced the last valid report")
 	}
 }
@@ -115,17 +127,13 @@ func TestReferenceOnlyCatalog(t *testing.T) {
 	t.Chdir(root)
 	writeFixture(t, "dotspec.yaml", "name: vocabulary\n")
 	writeFixture(t, "specs/quality-models/team.quality-model.md", "---\ntype: quality-model\n---\n# Team\n## Quality attributes\n### Continuity\n**ID:** continuity\nKeep the record.\n")
-	for _, args := range [][]string{{"spec", "build"}, {"check"}, {"model", "product"}} {
-		code, out, errs := invoke(args...)
-		if code != 0 {
+	for _, args := range [][]string{{"build"}, {"check"}} {
+		if code, out, errs := invoke(args...); code != 0 {
 			t.Fatal(args, out, errs)
 		}
-		if args[0] == "model" {
-			var view model.ProductSpecification
-			if err := json.Unmarshal([]byte(out), &view); err != nil || view.System != "" || len(view.Members) != 0 || len(view.ReferenceCatalog) != 1 {
-				t.Fatal(out)
-			}
-		}
+	}
+	if view := productOf(t, ".", ""); view.System != "" || len(view.Members) != 0 || len(view.ReferenceCatalog) != 1 {
+		t.Fatal(view)
 	}
 	page, err := os.ReadFile(filepath.Join(root, "specification", "quality-models.md"))
 	if err != nil || !strings.Contains(string(page), "team.quality-model-report.md") {
@@ -136,17 +144,13 @@ func TestReferenceOnlyCatalog(t *testing.T) {
 func TestProductWithStructuralParentInAnotherProject(t *testing.T) {
 	projectFixture(t)
 	writeFixture(t, "specs/tool.system.spec.md", "---\ntype: system-spec\n---\n# Tool\n## Purpose\nAssist Demo.\n## Scope\nA local tool.\n## Part of\n[Demo](../apps/demo/specs/demo.system.spec.md).\n")
-	for _, args := range [][]string{{"spec", "build"}, {"check"}, {"model", "product"}} {
-		code, out, errs := invoke(args...)
-		if code != 0 {
+	for _, args := range [][]string{{"build"}, {"check"}} {
+		if code, out, errs := invoke(args...); code != 0 {
 			t.Fatal(args, out, errs)
 		}
-		if args[0] == "model" {
-			var v model.ProductSpecification
-			if err := json.Unmarshal([]byte(out), &v); err != nil || !v.Complete || len(v.Members) != 1 || v.Members[0].Name != "Tool" {
-				t.Fatal(out)
-			}
-		}
+	}
+	if v := productOf(t, ".", ""); !v.Complete || len(v.Members) != 1 || v.Members[0].Name != "Tool" {
+		t.Fatal(v)
 	}
 	report, err := os.ReadFile("specification/tool.system.spec-report.md")
 	if err != nil || !strings.Contains(string(report), "### Part of") || !strings.Contains(string(report), "demo.system.spec.md") {
@@ -157,17 +161,13 @@ func TestProductWithStructuralParentInAnotherProject(t *testing.T) {
 func TestLocallyAuthoredRequirementForExternalSystem(t *testing.T) {
 	projectFixture(t)
 	writeFixture(t, "specs/requirements/remote.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Remote\n## Specification system\n[Demo](../../apps/demo/specs/demo.system.spec.md)\n## Statement\nNotify an operator.\n")
-	for _, args := range [][]string{{"spec", "build"}, {"check"}, {"model", "product", "tool"}} {
-		code, out, errs := invoke(args...)
-		if code != 0 {
+	for _, args := range [][]string{{"build"}, {"check"}} {
+		if code, out, errs := invoke(args...); code != 0 {
 			t.Fatal(args, out, errs)
 		}
-		if args[0] == "model" {
-			var v model.ProductSpecification
-			if err := json.Unmarshal([]byte(out), &v); err != nil || !v.Complete || len(v.Members) != 1 {
-				t.Fatal(out)
-			}
-		}
+	}
+	if v := productOf(t, ".", "tool"); !v.Complete || len(v.Members) != 1 {
+		t.Fatal(v)
 	}
 	index, err := os.ReadFile("specification/requirements-for-other-systems.md")
 	if err != nil || !strings.Contains(string(index), "remote.requirement.spec-report.md") {

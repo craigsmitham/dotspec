@@ -9,13 +9,12 @@ Start with the CLI on your PATH. If a [release archive](https://github.com/craig
 
 To start the first specification, work from your project root.
 
-1. Create a `dotspec.yaml` in the project root with a name, for example `name: my-app`.
-2. Run `dotspec system init "Booking desk"`, substituting your system name. Open the file named in the output. If this directory already declares the system, edit that file.
-3. Replace the starter prose with a description, the benefit someone seeks, and the work the system covers. [Describe a system and its boundary](docs/cli-handbook/guides/describe-a-system.md).
-4. Run `dotspec spec build`. Open `SPEC.md` and follow the system link. Can a teammate tell which work your system takes responsibility for?
-5. Run `dotspec check`. If the report is stale after a source edit, rebuild and check again. Commit the manifest, sources, `SPEC.md`, and `specification/` together.
+1. Run `dotspec init "Booking desk"`, substituting your system name. It writes `dotspec.yaml` and the root system specification, and refuses to replace either file. Open the system file named in the output.
+2. Replace the starter prose with a description, the benefit someone seeks, and the work the system covers. [Describe a system and its boundary](docs/cli-handbook/guides/describe-a-system.md).
+3. Run `dotspec build`. Open `SPEC.md` and follow the system link. Can a teammate tell which work your system takes responsibility for?
+4. Run `dotspec check`. If the generated specification is stale after a source edit, rebuild and check again. Commit the manifest, sources, `SPEC.md`, and `specification/` together.
 
-Run `dotspec docs` to browse the offline handbook. Use `dotspec docs job` to choose guidance on jobs to be done, or `dotspec docs success criteria` to search.
+Run `dotspec new --help` to see the kinds of specification you can add, such as `dotspec new requirement fast-save`, and `dotspec list requirement` to find them again. Run `dotspec docs` to browse the offline handbook. Use `dotspec docs job` to choose guidance on jobs to be done, or `dotspec docs success criteria` to search.
 
 ## Documentation
 

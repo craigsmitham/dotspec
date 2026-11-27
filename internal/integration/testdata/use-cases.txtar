@@ -2,29 +2,31 @@
 mkdir project
 cd project
 exec git init -q
-status 0 dotspec use-case list --json
-stdout '"groups": \[\]'
+status 0 dotspec list use-case --json
+stdout '"entries": \[\]'
 ! stderr .
-status 0 dotspec use-case list
+status 0 dotspec list use-case
 stdout 'No use cases found'
 ! stderr .
-status 0 dotspec use-case init --path . -- check-specifications
+status 0 dotspec new use-case -C . -- check-specifications
 stdout 'Created specs/use-cases/check-specifications.use-case.spec.md'
 ! stderr .
-status 0 dotspec use-case show --format json -- check-specifications
-stdout '"schema_version": 2'
+status 0 dotspec list use-case --json
+stdout '^\{\n  "schema_version": 1,'
 stdout '"slug": "check-specifications"'
 stdout '"system": null'
-stdout '"main_success_scenario":'
 ! stderr .
-status 0 dotspec system init
-status 0 dotspec use-case show check-specifications
-stdout '(?s)\A# New use case\n\n## Goal\n.+\n## System boundary\n.+\n## Primary actor\n.+\n## Goal level\n.+\n## Main success scenario\n.+\n## Extensions\n.+\nSystem: New system'
+grep '## Main success scenario' specs/use-cases/check-specifications.use-case.spec.md
+mkdir specs
+cp $WORK/new-system.md specs/new-system.system.spec.md
+status 0 dotspec list use-case
+stdout 'System: New system'
+stdout 'Check specifications  \(specs/use-cases/check-specifications.use-case.spec.md\)'
 ! stderr .
-status 0 dotspec use-case list --json
-stdout '"use_cases": \['
+status 0 dotspec list use-case --json
+stdout '"kind": "use-case"'
 stdout '"slug": "check-specifications"'
-status 0 dotspec use-case check check-specifications --json
+status 0 dotspec check specs/use-cases/check-specifications.use-case.spec.md --json
 stdout '"complete": true'
 stdout '"types": \[\s+"use-case"\s+\]'
 stdout '"discovery": "direct"'
@@ -32,26 +34,23 @@ stdout '"files_checked": 1,'
 stdout '"context_files_checked": 1'
 ! stderr .
 cp specs/use-cases/check-specifications.use-case.spec.md ../check-specifications-before.md
-status 2 dotspec use-case init check-specifications
+status 2 dotspec new use-case check-specifications
 stderr 'refusing to overwrite'
 ! stdout .
 cmp specs/use-cases/check-specifications.use-case.spec.md ../check-specifications-before.md
-status 2 dotspec use-case init invalid --format mermaid
-! stdout .
-! exists specs/use-cases/invalid.use-case.spec.md
-status 0 dotspec use-case show check-specifications --path specs/use-cases
-status 2 dotspec use-case check absent --json
+status 0 dotspec -C specs/use-cases check check-specifications.use-case.spec.md
+status 2 dotspec check specs/use-cases/absent.use-case.spec.md --json
 stdout '"complete": false'
 ! stderr .
 
 # A focused check ignores malformed siblings; a project scan reports all files.
 cp ../draft.md specs/use-cases/draft.use-case.spec.md
 cp ../broken.md specs/use-cases/broken.use-case.spec.md
-status 0 dotspec use-case check draft
+status 0 dotspec check specs/use-cases/draft.use-case.spec.md
 stdout 'advice \[use-case.goal\]'
-stdout 'Scan complete.'
+stdout '\(scan complete\)'
 ! stderr .
-status 1 dotspec use-case check broken --json
+status 1 dotspec check specs/use-cases/broken.use-case.spec.md --json
 stdout '"rule": "metadata.frontmatter"'
 ! stderr .
 status 1 dotspec check --json
@@ -59,7 +58,7 @@ stdout '"files_checked": 4'
 stdout '"errors": 1'
 stdout '"complete": true'
 ! stderr .
-status 1 dotspec use-case list
+status 1 dotspec list use-case
 stderr 'metadata.frontmatter'
 ! stdout .
 # Brief and expanded prompts share a format and never overwrite existing drafts.
@@ -68,39 +67,31 @@ stderr 'metadata.frontmatter'
 cd ..
 mkdir elaboration
 cd elaboration
-status 0 dotspec use-case init reserve
-status 0 dotspec use-case show reserve --json
-stdout '"trigger": ""'
-status 0 dotspec use-case init detailed --template expanded --json
+status 0 dotspec new use-case reserve
+! grep '## Trigger' specs/use-cases/reserve.use-case.spec.md
+status 0 dotspec new use-case detailed --template expanded --json
 stdout '"schema_version": 1'
 stdout '"path": "(/|[A-Za-z]:\\\\).*detailed\.use-case\.spec\.md"'
 ! stderr .
-status 0 dotspec use-case show detailed --json
-stdout '"trigger": "Describe the action or time event'
-stdout '"preconditions": "Describe the state expected'
-stdout '"minimal_guarantees": "State or link'
-stdout '"supporting_actors": "Name external'
-status 2 dotspec use-case init invalid --template unknown
+grep '## Trigger\n\nDescribe the action or time event' specs/use-cases/detailed.use-case.spec.md
+grep '## Preconditions\n\nDescribe the state expected' specs/use-cases/detailed.use-case.spec.md
+grep '## Minimal guarantees\n\nState or link' specs/use-cases/detailed.use-case.spec.md
+grep '## Supporting actors\n\nName external' specs/use-cases/detailed.use-case.spec.md
+status 2 dotspec new use-case invalid --template unknown
 ! exists specs/use-cases/invalid.use-case.spec.md
-status 2 dotspec use-case init reserve --template expanded
+status 2 dotspec new use-case reserve --template expanded
 stderr 'refusing to overwrite'
 
-# Overview retains the stated boundary and permits unresolved, linkable branches.
+# A use case may leave branches unresolved or link them to other specifications.
 cp ../branch.md specs/use-cases/reserve.use-case.spec.md
-status 0 dotspec use-case list --overview
-stdout 'Customer'
-stdout 'Rental business'
-stdout 'User task'
-status 0 dotspec use-case list --overview --json
-stdout '"boundary_description": "Rental business"'
-status 0 dotspec use-case check reserve --json
+status 0 dotspec check specs/use-cases/reserve.use-case.spec.md --json
 ! stdout '"rule": "use-case.extensions"'
 ! stderr .
 cp ../branch-link.md specs/use-cases/link.use-case.spec.md
-status 0 dotspec use-case check link --json
+status 0 dotspec check specs/use-cases/link.use-case.spec.md --json
 ! stdout '"rule": "reference.unresolved"'
 cp ../broken-branch-link.md specs/use-cases/link.use-case.spec.md
-status 1 dotspec use-case check link --json
+status 1 dotspec check specs/use-cases/link.use-case.spec.md --json
 stdout '"rule": "reference.unresolved"'
 ! stderr .
 -- branch.md --
@@ -140,3 +131,21 @@ type: use-case-spec
 # An unfinished interaction
 -- broken.md --
 This is not a specification.
+-- new-system.md --
+---
+type: system-spec
+---
+
+# New system
+
+## Description
+
+Describe what this system is in one short paragraph.
+
+## Purpose
+
+Describe why this system exists and whom it serves.
+
+## Scope
+
+Describe the system's boundary and what it includes.

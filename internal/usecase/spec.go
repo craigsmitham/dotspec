@@ -6,7 +6,6 @@ import (
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/craigsmitham/dotspec/internal/system"
 )
 
 var Layout = specfile.Layout{Kind: "use-case", Collection: "use-cases", Suffix: ".use-case.spec.md", SlugExample: "check-specifications"}
@@ -154,7 +153,6 @@ type UseCase struct {
 	Supports             string                         `json:"supports,omitempty"`
 	Markdown             string                         `json:"markdown"`
 	Path                 string                         `json:"path"`
-	System               *system.System                 `json:"system"`
 	Location             diagnostic.Location            `json:"location"`
 	SectionLocations     map[string]diagnostic.Location `json:"-"`
 }
@@ -169,6 +167,7 @@ func readFrom(files *specfile.SourceSet, path string) (*UseCase, error) {
 		return nil, err
 	}
 	spec.Slug, spec.Path = slug, path
+	spec.Location.Path = path
 	return spec, nil
 }
 

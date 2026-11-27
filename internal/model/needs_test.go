@@ -1,8 +1,6 @@
 package model
 
 import (
-	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/craigsmitham/dotspec/internal/testproject"
@@ -34,15 +32,6 @@ func TestNeedsRelationshipsAndEvidence(t *testing.T) {
 	if len(Strings(providerless["provided_by"])) != 0 {
 		t.Fatal("inferred provider from declaration", providerless)
 	}
-	text, err := NeedsMarkdown(s, filepath.Join(root, "docs"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, want := range []string{"DesiredOutcome: Timely awareness", "-->|applies to|", "-->|depends on|", "-->|provided by|", "Minimize the time between", "../specs/jobs/reach-work.job.spec.md#timely-awareness"} {
-		if !strings.Contains(text, want) {
-			t.Errorf("missing %q", want)
-		}
-	}
 	// Ownership is not applicability, and provider claims must have source evidence.
 	forged := cloneSnapshot(t, s)
 	designRecord(t, forged, "DesiredOutcome", "Timely awareness")["applies_to"] = []string{String(j, "id")}
@@ -69,16 +58,6 @@ func TestNeedsReferencesRejectWrongKindsAndPreserveUnresolvedNarrative(t *testin
 				t.Fatal(result.Snapshot.Diagnostics)
 			}
 			checkSourceText(t, result.Snapshot)
-			if tc.name == "provider prose" {
-				before, err := NeedsMarkdown(result.Snapshot, root)
-				if err != nil || !strings.Contains(before, tc.replacement) {
-					t.Fatalf("provider qualification missing: %v", err)
-				}
-				after, err := NeedsMarkdown(cloneSnapshot(t, result.Snapshot), root)
-				if err != nil || before != after {
-					t.Fatalf("needs view changed after saving the snapshot: %v", err)
-				}
-			}
 		})
 	}
 }

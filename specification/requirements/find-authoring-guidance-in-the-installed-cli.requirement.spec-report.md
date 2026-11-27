@@ -17,7 +17,7 @@ Contributors using an installed version of dotspec, including in an empty direct
 
 ## Criterion
 
-Root help identifies the handbook. Type help opens a route to the topic. Creating a draft reports its path and a direct reading command. A topic and its synonym show the same ordered destinations, each with its title, documentation form and reading command. Searching by words gives title and topic matches priority over body matches, with repeatable ordering. An exact address opens its destination. An invalid address reports the failed lookup with a route back to browsing.
+Root help identifies the handbook and the list of specification kinds. The kind list in `dotspec new --help` names each kind with its topic, and `dotspec new <kind> --help` opens a route to that kind's topic. Creating a draft reports its path and a direct reading command. A topic and its synonym show the same ordered destinations, each with its title, documentation form and reading command. Searching by words gives title and topic matches priority over body matches, with repeatable ordering. An exact address opens its destination. An invalid address reports the failed lookup with a route back to browsing.
 
 A section includes its subordinate content. Offline reading commands for linked sections preserve their anchors. Redirecting a whole example reproduces the bundled source. The CLI handbook index and knowledge index lead readers to the same catalog destinations as the installed CLI.
 

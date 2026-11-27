@@ -6,18 +6,22 @@ status 0 dotspec sources --json
 stdout '"files": \[\]'
 stdout '"complete": true'
 ! stderr .
-status 0 dotspec system init
-status 0 dotspec concept init cli
-status 0 dotspec requirement init preservation --preset quality
+mkdir specs
+cp ../system.md specs/new-system.system.spec.md
+status 0 dotspec new concept cli
+status 0 dotspec new requirement preservation
 cp ../concept.md specs/concepts/cli.concept.spec.md
 cp ../quality.md specs/requirements/preservation.requirement.spec.md
 cp ../native.tla native.tla
 mkdir more-tests
 cp ../native.tla more-tests/not-included.cfg
-status 0 dotspec sources --path . --json
+status 0 dotspec sources . --json
 stdout 'native.tla'
 stdout '"referenced_by": \['
 stdout '"line":'
+stdout '"companion_of": \['
+stdout '"role": "formalizes"'
+stdout '"target": "../../native.tla#Example"'
 stdout '"complete": true'
 ! stdout 'not-included'
 ! stdout 'companion.unlisted'
@@ -30,9 +34,11 @@ cmp specs/requirements/preservation.requirement.spec.md ../quality.md
 cmp native.tla ../native.tla
 status 0 dotspec sources
 stdout 'Referenced by specs/concepts/cli.concept.spec.md'
+stdout '^  Companion that formalizes specs/concepts/cli.concept.spec.md:4:13 \(../../native.tla#Example\)$'
+! stdout 'Referenced by specs/concepts/cli.concept.spec.md:4:13'
 stdout 'Referenced by specs/requirements/preservation.requirement.spec.md'
-stdout 'Source files: 4.'
-stdout 'Scan complete.'
+! stdout 'Project|Outside any project'
+stdout '^Listed 4 source files in \. \(scan complete\)\.$'
 ! stderr .
 
 # Missing references are findings; an unavailable scope is an incomplete scan.
@@ -41,18 +47,17 @@ status 1 dotspec sources --json
 stdout 'reference.unresolved'
 stdout '"complete": true'
 ! stderr .
-status 2 dotspec sources --path absent --json
+status 2 dotspec sources absent --json
 stdout '"complete": false'
 ! stderr .
-status 1 dotspec sources --path specs --json
+status 2 dotspec sources absent
+stdout '^Listed 0 source files in absent \(scan incomplete\)\.$'
+! stdout 'No source files found'
+! stderr .
+status 1 dotspec sources specs --json
 stdout '"complete": true'
 ! stderr .
-status 2 dotspec sources --format mermaid
-! stdout .
-stderr 'unknown output format'
-status 2 dotspec sources unexpected
-! stdout .
-status 2 dotspec sources --json --format text
+status 2 dotspec sources one two
 ! stdout .
 -- concept.md --
 ---
@@ -92,3 +97,17 @@ Preserve authored work.
 \* Native syntax stays native; dotspec does not interpret this as Markdown.
 \* [Not a specification link](absent.txt)
 ====
+-- system.md --
+---
+type: system-spec
+---
+
+# New system
+
+## Purpose
+
+Describe why this system exists and whom it serves.
+
+## Scope
+
+Describe the system's boundary and what it includes.

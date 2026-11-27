@@ -1,7 +1,6 @@
 package model
 
 import (
-	"encoding/json"
 	"os"
 	"path/filepath"
 	"slices"
@@ -156,15 +155,10 @@ func TestTraceCitationsAndDrafts(t *testing.T) {
 	if len(Strings(designRecord(t, r.Snapshot, "Requirement", "Preserve document metadata on restoration")["refines"])) != 0 {
 		t.Fatal("citation inferred refinement")
 	}
-	codes := map[string]bool{}
 	for _, f := range r.Snapshot.Diagnostics {
 		if String(f, "severity") == "error" {
 			t.Fatal(f)
 		}
-		codes[String(f, "code")] = true
-	}
-	if !codes["relationship.motivation"] {
-		t.Fatal("missing draft advice", codes)
 	}
 	// A selected subtree does not traverse references from its direct targets.
 	data, err := os.ReadFile(filepath.Join(root, "specs/requirements/restoration.requirement.spec.md"))
@@ -180,39 +174,6 @@ func TestTraceCitationsAndDrafts(t *testing.T) {
 	}
 	if !found {
 		t.Fatal("bounded scope was presented as complete")
-	}
-}
-func TestTraceViewIsPortableAndDoesNotClaimProof(t *testing.T) {
-	root := traceFixture(t)
-	s := conformanceExport(t, root).Snapshot
-	before, _ := json.Marshal(s)
-	view, err := TraceMarkdown(s, filepath.Join(root, "docs"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, part := range []string{"## Why:", "## Behavior:", "## Change review", "restore-content.requirement.spec.md", "refines", "supports", "Further review candidates"} {
-		if !strings.Contains(view, part) {
-			t.Fatal("missing", part)
-		}
-	}
-	if strings.Contains(view, root) {
-		t.Fatal("absolute source paths leaked into generated view")
-	}
-	after, _ := json.Marshal(s)
-	if string(before) != string(after) {
-		t.Fatal("view mutated snapshot")
-	}
-	second := traceFixture(t)
-	other, err := TraceMarkdown(conformanceExport(t, second).Snapshot, filepath.Join(second, "docs"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if view != other {
-		t.Fatal("generated output depends on checkout path or snapshot IDs")
-	}
-	again, err := TraceMarkdown(s, filepath.Join(root, "docs"))
-	if err != nil || again != view {
-		t.Fatal("nondeterministic view", err)
 	}
 }
 func TestSeveralRefinementParents(t *testing.T) {

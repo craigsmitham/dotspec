@@ -69,8 +69,8 @@ func TestParsePreservesUseCaseAndDistinctFields(t *testing.T) {
 	if got.Markdown != strings.TrimSpace(body) {
 		t.Fatalf("authored Markdown changed: %q", got.Markdown)
 	}
-	if got.ID != "check-specifications" || got.Name != "Check specifications" || got.System != nil {
-		t.Fatalf("identity or association: %+v", got)
+	if got.ID != "check-specifications" || got.Name != "Check specifications" {
+		t.Fatalf("identity: %+v", got)
 	}
 	want := map[string]string{
 		"goal":               "Identify structural problems before committing a change.",

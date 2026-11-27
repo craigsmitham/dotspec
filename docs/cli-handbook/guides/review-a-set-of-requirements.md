@@ -4,7 +4,7 @@ Choose a stakeholder goal and an occasion when several promises must hold togeth
 
 ## Follow a goal across the promises
 
-Start at your project's generated `SPEC.md` if it has one. Follow the feature or use case to the requirements for the ordinary path. Include component commitments and environmental assumptions on which that path depends. In a project with authored specifications, run `dotspec model trace` from its root to inspect the recorded relationships. A missing promise may have no link to follow, so walk through an interruption or alternative from the actor's perspective too.
+Start at your project's generated `SPEC.md`. If it is missing or out of date, run `dotspec build` from the project root. Follow the feature or use case to the requirements for the ordinary path. Include component commitments and environmental assumptions on which that path depends. Each report shows the relationships recorded for its subject. A missing promise may have no link to follow, so walk through an interruption or alternative from the actor's perspective too.
 
 For To-do, start at the system report, open **Pick up where I left off**, then follow **Decide what to do about a waiting errand**. On Thursday the owner records a reply to chase on Friday. The list acknowledges the change, the service stops and the owner opens Waiting on Friday. Before looking at the test, write down what should be on the screen. Try the same sequence with an entry the owner deleted before stopping the service. [Worked specification](../../../examples/todo/SPEC.md) · [Feature and its grouped specifications](../../../examples/todo/specs/features/pick-up-where-i-left-off.feature.spec.md#groups).
 
@@ -26,7 +26,7 @@ ISO/IEC/IEEE 29148 gives five characteristics for reviewing a set. Use the cases
 | Comprehensible | Can another reader use the specifications to predict the outcome and explain which part of the system owes it? Ask where they had to guess. |
 | Able to be validated | If the system met every promise, how could the people who depend on it judge whether it served their purpose under real conditions? |
 
-Record the conflict, gap or open decision beside its owning specification, along with the evidence or person needed to resolve it. Repeat the case after the decision changes. From the project root, `dotspec model review` collects recorded criteria, open questions and inspection findings to bring to that discussion.
+Record the conflict, gap or open decision beside its owning specification, along with the evidence or person needed to resolve it. Repeat the case after the decision changes. To prepare for that discussion, run `dotspec check` from the project root for inspection findings, and open **Open questions** from the generated system report for the questions recorded across the project.
 
 ## Decide what the evidence supports
 

@@ -134,6 +134,14 @@ Reduce the amount of valuable work lost through accidental deletion.
 
 The platform supplies a trustworthy UTC clock for retention calculations.
 
+#### Basis
+
+The hosting agreement names the platform clock as the time source.
+
+#### Applicability
+
+Every retention calculation in the workspace.
+
 ## Concept uses
 
 ### DocumentTrash

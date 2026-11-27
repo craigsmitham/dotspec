@@ -32,7 +32,11 @@ var CheckContext = &check.ContextProvider{Inspect: func(files *specfile.SourceSe
 		_, err := readComponent(files, path)
 		return nil, err
 	}
-	return inspect(files, path)
+	spec, err := ReadFrom(files, path)
+	if err != nil {
+		return nil, err
+	}
+	return qualityAdvice(spec), spec.checkGlossarySources(files)
 },
 	Resolve: subjectChain,
 	ResolveSource: func(files *specfile.SourceSet, owner, source string) ([]string, error) {

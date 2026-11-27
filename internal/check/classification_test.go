@@ -22,7 +22,7 @@ func TestClassificationContextAndAdvice(t *testing.T) {
 	write(t, attrPath, attr)
 	model := validSystem
 	write(t, modelPath, model)
-	source := strings.Replace(requirement.QualityTemplate, "type: requirement-spec", "type: requirement-spec\nquality_attributes: [known, unknown]", 1)
+	source := strings.Replace(requirement.Template, "type: requirement-spec", "type: requirement-spec\nquality_attributes: [known, unknown]", 1)
 	path := requirement.Layout.Path(child, "work")
 	write(t, path, source)
 	focused := check.Focused(child, "work", requirement.CheckType())
@@ -68,7 +68,7 @@ func TestClassifiedRequirementDiscoveryAndSourceLocations(t *testing.T) {
 	dir := t.TempDir()
 	git(t, dir, "init", "-q")
 	path := requirement.Layout.Path(dir, "tracked")
-	write(t, path, requirement.QualityTemplate)
+	write(t, path, requirement.Template)
 	git(t, dir, "add", "specs/requirements/tracked.requirement.spec.md")
 	write(t, filepath.Join(dir, ".gitignore"), "tracked.requirement.spec.md\nignored/\n*.system.spec.md\n")
 	write(t, filepath.Join(dir, "ignored/broken.requirement.spec.md"), "ignored")

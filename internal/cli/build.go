@@ -16,14 +16,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newSpecCommand() *cobra.Command {
-	cmd := group("spec", "Generate the project's readable requirements specification")
-	build := &cobra.Command{
-		Use: "build", Short: "Build SPEC.md and the supporting Markdown tree",
-		Long:    "Build the requirements specification for one whole project. Reports are enabled by default in projects declared with dotspec.yaml. Validate the candidate before replacing generator-owned output. Run dotspec check to verify the resulting documents.",
-		Example: "dotspec spec build", Args: cobra.NoArgs,
+func newBuildCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use: "build", Short: "Build the generated specification",
+		Long:    "Build the generated specification for the enclosing project declared with dotspec.yaml: SPEC.md and the specification/ tree of pages that let a reader navigate the project's specifications as one. Nothing is written while a source has error findings; the findings are reported instead. " + findingsExit + "\n\nLearn more: dotspec docs docs/reference/inspection.md#check-the-generated-requirements-specification",
+		Example: "dotspec build", Args: operands(0, 0),
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			path, err := projectPath(cmd)
+			path, err := projectScope.dir("")
 			if err != nil {
 				return err
 			}
@@ -32,17 +31,20 @@ func newSpecCommand() *cobra.Command {
 				return err
 			}
 			if project == nil {
-				return fmt.Errorf("spec build requires a project declared in dotspec.yaml")
+				return fmt.Errorf("no dotspec.yaml declares a project here; run dotspec init <system-name> to start one")
 			}
-			if !project.Report.Enabled {
-				return fmt.Errorf("report.enabled is false in %s. Remove that setting to build the specification", project.Manifest())
-			}
-			if path != project.Root {
-				return fmt.Errorf("spec build requires the whole project; select --path %s or --project %s", project.Root, project.Name)
+			if !project.Build.Enabled {
+				return fmt.Errorf("build.enabled is false in %s; remove that setting to build the generated specification", displayPath(project.Manifest()))
 			}
 			plan, report := planSpec(project.Root)
 			if plan == nil {
-				return emitCheckReport(cmd.OutOrStdout(), report, "text")
+				// The lead line states the build's outcome, so the report
+				// does not repeat the generated specification's state.
+				report.GeneratedSpec = ""
+				if _, err := fmt.Fprintf(cmd.OutOrStdout(), "SPEC.md not written: %s.\n\n", count(report.Summary.Errors, "source error", "source errors")); err != nil {
+					return &exitError{code: 2, err: err}
+				}
+				return emitCheckReport(cmd.OutOrStdout(), report, false)
 			}
 			changes, err := specdoc.Write(project.Root, plan)
 			if err != nil {
@@ -60,8 +62,6 @@ func newSpecCommand() *cobra.Command {
 			return err
 		},
 	}
-	addPath(build)
-	cmd.AddCommand(build)
 	return cmd
 }
 
@@ -71,7 +71,7 @@ func inspectProject(path string) check.Report {
 		return check.Project(path, speckinds.All()...)
 	}
 	project, err := specfile.FindProject(dir)
-	if err != nil || project == nil || !project.Report.Enabled || dir != project.Root {
+	if err != nil || project == nil || !project.Build.Enabled || dir != project.Root {
 		return check.Project(path, speckinds.All()...)
 	}
 	plan, report := planSpec(dir)

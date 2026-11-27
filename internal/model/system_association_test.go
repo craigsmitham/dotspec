@@ -7,8 +7,30 @@ import (
 
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/requirement"
+	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/craigsmitham/dotspec/internal/speckinds"
+	"github.com/craigsmitham/dotspec/internal/system"
 )
+
+// association resolves a requirement's system and classification the way
+// listing and checking do.
+func association(t *testing.T, path string) (*system.System, requirement.Classification, error) {
+	t.Helper()
+	dir, err := specfile.Directory(filepath.Dir(path))
+	if err != nil {
+		return nil, requirement.Classification{}, err
+	}
+	path = filepath.Join(dir, filepath.Base(path))
+	spec, err := requirement.Read(path)
+	if err != nil {
+		return nil, requirement.Classification{}, err
+	}
+	owner, err := system.Associated(requirement.Layout.ContextDir(path), path)
+	if err != nil {
+		return nil, requirement.Classification{}, err
+	}
+	return owner, requirement.Classify(spec.QualityAttributes, owner), nil
+}
 
 func associationFixture(t *testing.T) string {
 	t.Helper()
@@ -30,20 +52,16 @@ func associationFixture(t *testing.T) string {
 func TestSpecificationSystemSelectionIsConsistent(t *testing.T) {
 	root := associationFixture(t)
 	for _, slug := range []string{"explicit", "default"} {
-		got, err := requirement.Show(root, slug)
+		owner, classification, err := association(t, requirement.Layout.Path(root, slug))
 		if err != nil {
 			t.Fatal(err)
 		}
-		if got.System == nil || len(got.Classification.Resolved) != 1 || len(got.Classification.Undefined) != 0 {
-			t.Fatal(got)
+		if owner == nil || len(classification.Resolved) != 1 || len(classification.Undefined) != 0 {
+			t.Fatal(owner, classification)
 		}
-		if (got.System.ID == "selected-system") != (slug == "explicit") {
-			t.Fatal(got.System)
+		if (owner.ID == "selected-system") != (slug == "explicit") {
+			t.Fatal(owner)
 		}
-	}
-	groups, err := requirement.List(root)
-	if err != nil || len(groups) != 2 {
-		t.Fatal(groups, err)
 	}
 	report := check.Sources(root, speckinds.All()...)
 	for _, d := range report.Diagnostics {
@@ -79,8 +97,8 @@ func TestInvalidSpecificationSystemNeverFallsBack(t *testing.T) {
 		t.Run(target, func(t *testing.T) {
 			root := associationFixture(t)
 			traceEdit(t, root, "specs/requirements/explicit.requirement.spec.md", "../../remote/specs/explicit-selection.system.spec.md#selected-system", target)
-			if spec, err := requirement.Show(root, "explicit"); err == nil {
-				t.Fatal("invalid selection silently accepted", spec)
+			if owner, _, err := association(t, requirement.Layout.Path(root, "explicit")); err == nil {
+				t.Fatal("invalid selection silently accepted", owner)
 			}
 			result := conformanceExport(t, root)
 			if result.ExitCode == 0 {
@@ -101,9 +119,9 @@ func TestExplicitSelectionDoesNotRequireUnselectedDirectoryDefault(t *testing.T)
 	conformanceWrite(t, root, "specs/directory-default.system.spec.md", "not a valid system")
 	conformanceWrite(t, root, "client/specs/requirements/selected.requirement.spec.md", "---\ntype: requirement-spec\nquality_attributes: [selected]\n---\n# Selected client\n\n## Specification system\n[System](../../../remote/specs/explicit-selection.system.spec.md)\n\n## Statement\nRespond promptly.\n")
 	scope := filepath.Join(root, "client")
-	got, err := requirement.Show(scope, "selected")
-	if err != nil || got.System == nil || got.System.ID != "selected-system" {
-		t.Fatal(got, err)
+	owner, _, err := association(t, requirement.Layout.Path(scope, "selected"))
+	if err != nil || owner == nil || owner.ID != "selected-system" {
+		t.Fatal(owner, err)
 	}
 	result := conformanceExport(t, scope)
 	if result.ExitCode != 0 {
@@ -123,9 +141,9 @@ func TestExplicitSelectionDoesNotRequireUnselectedDirectoryDefault(t *testing.T)
 func TestSpecificationSelectionUsesLinkDestinationsNotLabelsOrImages(t *testing.T) {
 	root := associationFixture(t)
 	traceEdit(t, root, "specs/requirements/explicit.requirement.spec.md", "[Selected](../../remote/specs/explicit-selection.system.spec.md#selected-system)", "[Selected][system?]\n\n![Context illustration](https://example.test/diagram.png)\n\n[system?]: ../../remote/specs/explicit-selection.system.spec.md#selected-system")
-	got, err := requirement.Show(root, "explicit")
-	if err != nil || got.System.ID != "selected-system" {
-		t.Fatal(got, err)
+	owner, _, err := association(t, requirement.Layout.Path(root, "explicit"))
+	if err != nil || owner == nil || owner.ID != "selected-system" {
+		t.Fatal(owner, err)
 	}
 	result := conformanceExport(t, root)
 	if result.ExitCode != 0 {

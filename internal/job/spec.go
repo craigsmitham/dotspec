@@ -7,7 +7,6 @@ import (
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/craigsmitham/dotspec/internal/system"
 )
 
 var Layout = specfile.Layout{Kind: "job", Collection: "jobs", Suffix: ".job.spec.md", SlugExample: "develop-requirements"}
@@ -78,7 +77,6 @@ type Job struct {
 	Outcomes         []DesiredOutcome               `json:"outcomes"`
 	Markdown         string                         `json:"markdown"`
 	Path             string                         `json:"path"`
-	System           *system.System                 `json:"system"`
 	Location         diagnostic.Location            `json:"location"`
 	SectionLocations map[string]diagnostic.Location `json:"-"`
 }
@@ -93,6 +91,16 @@ func readFrom(files *specfile.SourceSet, path string) (*Job, error) {
 		return nil, err
 	}
 	job.Slug, job.Path = slug, path
+	job.Location.Path = path
+	for i := range job.Outcomes {
+		job.Outcomes[i].Location.Path = path
+	}
+	for i := range job.Steps {
+		job.Steps[i].Location.Path = path
+		for j := range job.Steps[i].Outcomes {
+			job.Steps[i].Outcomes[j].Location.Path = path
+		}
+	}
 	return job, nil
 }
 

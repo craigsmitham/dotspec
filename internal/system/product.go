@@ -1,6 +1,7 @@
 package system
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/check"
@@ -72,4 +73,14 @@ func ProductCheckType(layout specfile.Layout) check.Type {
 	kind := check.ReadType(layout, read, func(spec *ProductSpec) *specfile.ReferenceDocument { return spec.References }, nil)
 	kind.Context = CheckContext
 	return kind
+}
+
+// InitProduct creates a feature or capability draft named by slug.
+func InitProduct(layout specfile.Layout, path, slug string) (string, error) {
+	sections := "## Description\n\nDescribe what a stakeholder can do.\n\n## Groups\n\nLink to the specifications that define this behavior."
+	if layout == CapabilityLayout {
+		sections = "## Description\n\nDescribe the ability and what it enables.\n\n## Provided by\n\nLink to the systems or components that provide this ability."
+	}
+	source := fmt.Sprintf("---\ntype: %s\n---\n\n# %s\n\n%s\n", specfile.AuthoredType(layout.Kind), specfile.SlugTitle(slug), sections)
+	return layout.Create(path, slug, source)
 }

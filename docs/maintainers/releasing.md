@@ -2,7 +2,7 @@
 
 The release configuration builds standalone Go executables for Linux, macOS, and
 Windows on amd64 and arm64 with CGO disabled. The binary embeds the handbook and examples. Each platform archive also
-includes the Markdown guides for browsing. Releases attach a separate optional
+includes the Markdown guides for browsing and the manual page `man/man1/dotspec.1`, which a GoReleaser hook writes with the hidden `dotspec man` command. Releases attach a separate optional
 `dotspec-knowledge.zip` for AXM users. GoReleaser generates `checksums.txt` and stamps the version and commit
 reported by `dotspec --version`.
 
@@ -19,7 +19,7 @@ mise run snapshot
 
 If a fuzz test fails, keep its reported input and resolve the failing assertion before tagging the revision.
 
-The snapshot task checks each archive for the public handbook and worked specifications and rejects repository-only documentation. From `dist/`, choose the archive matching the host OS and architecture. Compare its SHA-256 digest with the entry for that filename in `checksums.txt` (use `shasum -a 256 FILE` on macOS, `sha256sum FILE` on Linux, or `Get-FileHash FILE -Algorithm SHA256` in PowerShell). A mismatch warrants a fresh build before distribution. Extract the archive into an empty directory and run its executable with `--version` and `docs job`. Check that the build identifies the intended revision and the installed handbook opens. [GoReleaser checksums](https://goreleaser.com/customization/package/checksum/) · [Snapshot builds](https://goreleaser.com/customization/publish/snapshots/). Snapshot builds never publish and may be run from an uncommitted worktree.
+The snapshot task checks each archive for the public handbook, worked specifications and manual page, and rejects repository-only documentation. From `dist/`, choose the archive matching the host OS and architecture. Compare its SHA-256 digest with the entry for that filename in `checksums.txt` (use `shasum -a 256 FILE` on macOS, `sha256sum FILE` on Linux, or `Get-FileHash FILE -Algorithm SHA256` in PowerShell). A mismatch warrants a fresh build before distribution. Extract the archive into an empty directory and run its executable with `--version` and `docs job`. Check that the build identifies the intended revision and the installed handbook opens. [GoReleaser checksums](https://goreleaser.com/customization/package/checksum/) · [Snapshot builds](https://goreleaser.com/customization/publish/snapshots/). Snapshot builds never publish and may be run from an uncommitted worktree.
 Review and commit the final changes before creating a release tag.
 
 A pushed `vX.Y.Z` tag triggers `.github/workflows/release.yml`. The workflow runs the

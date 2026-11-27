@@ -29,7 +29,7 @@ func TestInitDoesNotWriteThroughMetadataSymlinks(t *testing.T) {
 			if subdir == "specs/concepts" {
 				kind = "concept"
 			}
-			if code, out, errOut := invoke(kind, "init", "work", "--path", dir); code == 0 || out != "" || !strings.Contains(errOut, "symlink") {
+			if code, out, errOut := invoke("-C", dir, "new", kind, "work"); code == 0 || out != "" || !strings.Contains(errOut, "symlink") {
 				t.Fatalf("symlink: %d %q %q", code, out, errOut)
 			}
 			entries, err := os.ReadDir(outside)
@@ -71,12 +71,8 @@ func TestMoveRequirementAcrossSourceLayouts(t *testing.T) {
 		writeFixture(t, stage.file, fmt.Sprintf(requirement, stage.up))
 		previous = stage.file
 		run("check", stage.file)
-		out := run("requirement", "show", "save", "--path", filepath.Dir(stage.file))
-		if !strings.Contains(out, "Ancestor quality attributes: reliable") {
-			t.Fatal(out)
-		}
 		var snapshot model.Snapshot
-		if err := json.Unmarshal([]byte(run("model", "export")), &snapshot); err != nil {
+		if err := json.Unmarshal([]byte(run("snapshot", "export")), &snapshot); err != nil {
 			t.Fatal(err)
 		}
 		if findings, err := model.Validate(&snapshot); err != nil || len(findings) > 0 {
@@ -118,7 +114,7 @@ func TestMoveRequirementAcrossSourceLayouts(t *testing.T) {
 		if name(records[model.String(req, "specification_owner")]) != stage.owner || len(targets) != 1 || name(records[targets[0]]) != "Product" || len(attributes) != 1 || name(records[attributes[0]]) != "Durable" {
 			t.Fatalf("unexpected ownership, targets or attributes in %v", req)
 		}
-		run("spec", "build")
+		run("build")
 		report := filepath.Join("specification", stage.report, "requirements/save.requirement.spec-report.md")
 		content, err := os.ReadFile(report)
 		if err != nil || !strings.Contains(string(content), "Persist each accepted edit.") {
@@ -128,7 +124,7 @@ func TestMoveRequirementAcrossSourceLayouts(t *testing.T) {
 	}
 }
 
-func TestOwnerLookupAmbiguityAndExactPaths(t *testing.T) {
+func TestExactPathsSelectSameSlugSources(t *testing.T) {
 	t.Chdir(t.TempDir())
 	writeFixture(t, "dotspec.yaml", "name: local\n")
 	writeFixture(t, "app/app.system.spec.md", "---\ntype: system-spec\n---\n# App\n## Purpose\nSupport work.\n## Scope\nThe app.\n")
@@ -137,15 +133,9 @@ func TestOwnerLookupAmbiguityAndExactPaths(t *testing.T) {
 	for _, file := range []string{a, b} {
 		writeFixture(t, file, "---\ntype: requirement-spec\n---\n# Retry\n")
 	}
-	for _, action := range []string{"show", "check"} {
-		code, out, errOut := invoke("requirement", action, "retry", "--path", "app")
-		if code == 0 || !strings.Contains(out+errOut, a) || !strings.Contains(out+errOut, b) {
+	for _, file := range []string{a, b} {
+		if code, out, errOut := invoke("check", file); code != 0 {
 			t.Fatal(code, out, errOut)
-		}
-		for _, file := range []string{a, b} {
-			if code, out, errOut := invoke("requirement", action, file); code != 0 {
-				t.Fatal(code, out, errOut)
-			}
 		}
 	}
 	writeFixture(t, "app/specs/wrong.component.spec.md", "---\ntype: component-spec\n---\n# Wrong\n")
@@ -159,13 +149,13 @@ func TestSpecsDirectoryAtProjectBoundary(t *testing.T) {
 	writeFixture(t, "dotspec.yaml", "name: outer\n")
 	writeFixture(t, "specs/dotspec.yaml", "name: inner\n")
 	writeFixture(t, "specs/tool.system.spec.md", "---\ntype: system-spec\n---\n# Tool\n## Purpose\nHelp.\n## Scope\nInner project.\n")
-	if code, out, errOut := invoke("system", "list"); code != 0 || !strings.Contains(out, "No systems") {
+	if code, out, errOut := invoke("list", "system"); code != 0 || !strings.Contains(out, "No systems") {
 		t.Fatal(code, out, errOut)
 	}
-	if code, out, errOut := invoke("system", "show", "--path", "specs"); code != 0 || !strings.Contains(out, "Inner project.") {
+	if code, out, errOut := invoke("-C", "specs", "list", "system"); code != 0 || !strings.Contains(out, "Tool") {
 		t.Fatal(code, out, errOut)
 	}
-	if code, out, errOut := invoke("system", "init", "Outer"); code == 0 || !strings.Contains(errOut, "another project") {
+	if code, out, errOut := invoke("new", "system", "Outer", "--part-of", "specs/tool.system.spec.md"); code == 0 || !strings.Contains(errOut, "another project") {
 		t.Fatal(code, out, errOut)
 	}
 }

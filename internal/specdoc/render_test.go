@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/model"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
@@ -101,5 +102,48 @@ func TestRelationshipDirectorySurvivesCaptionChanges(t *testing.T) {
 	p.relationships(&w, system.name, true)
 	if got := w.out.String(); strings.Contains(got, "part.md") || !strings.Contains(got, "[Rule](<rule.md>)") {
 		t.Fatal(got)
+	}
+}
+
+// A job's page is the view of its map, so a job without steps says so.
+func TestJobPageReportsAbsentSteps(t *testing.T) {
+	root := t.TempDir()
+	files := map[string]string{
+		"dotspec.yaml":                  "name: jobs\n",
+		"specs/sample.system.spec.md":   "---\ntype: system-spec\n---\n# Sample\n\n## Purpose\n\nKeep notes.\n",
+		"specs/jobs/draft.job.spec.md":  "---\ntype: job-spec\n---\n# Draft\n\n## Job\n\nSettle an errand.\n\n## Related specifications\n\n[Mapped](mapped.job.spec.md)\n",
+		"specs/jobs/empty.job.spec.md":  "---\ntype: job-spec\n---\n# Empty\n\n## Job\n\nSettle an errand.\n\n## Steps\n\n## Evidence\n\nAn interview.\n",
+		"specs/jobs/mapped.job.spec.md": "---\ntype: job-spec\n---\n# Mapped\n\n## Job\n\nSettle an errand.\n\n## Steps\n\n### Recall outstanding work\n\nRecover the commitments.\n",
+	}
+	for file, body := range files {
+		loc := filepath.Join(root, filepath.FromSlash(file))
+		if err := os.MkdirAll(filepath.Dir(loc), 0755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(loc, []byte(body), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	result, err := model.Export(root, system.CheckType(), job.CheckType())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.ExitCode != 0 {
+		t.Fatalf("source check: %v", result.Snapshot.Diagnostics)
+	}
+	plan, err := Generate(root, result.Snapshot)
+	if err != nil {
+		t.Fatal(err)
+	}
+	draft := plan.Pages["specification/jobs/draft.job.spec-report.md"].Markdown
+	steps, related := strings.Index(draft, "## Steps\n\nNo steps recorded."), strings.Index(draft, "## Related specifications")
+	if steps < 0 || related < steps {
+		t.Fatalf("absent steps should be reported before cross-references:\n%s", draft)
+	}
+	if empty := plan.Pages["specification/jobs/empty.job.spec-report.md"].Markdown; strings.Count(empty, "## Steps") != 1 || !strings.Contains(empty, "No steps recorded.") {
+		t.Fatalf("an empty Steps heading records no steps:\n%s", empty)
+	}
+	if mapped := plan.Pages["specification/jobs/mapped.job.spec-report.md"].Markdown; strings.Contains(mapped, "No steps recorded") || !strings.Contains(mapped, "### Recall outstanding work") {
+		t.Fatalf("authored steps:\n%s", mapped)
 	}
 }

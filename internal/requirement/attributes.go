@@ -2,7 +2,6 @@ package requirement
 
 import (
 	"fmt"
-	"slices"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/system"
@@ -46,25 +45,4 @@ func CheckAttributes(spec *Requirement, sys *system.System) []diagnostic.Diagnos
 		findings = append(findings, diagnostic.Advice("requirement.undefined-attribute", fmt.Sprintf("attribute %q is not declared by the associated system (%s)", id, sys.Path), location))
 	}
 	return findings
-}
-
-// Filter includes exact labels and descendant classifications. Each requirement
-// appears once, even when more than one label reaches the requested ancestor.
-func Filter(groups []*Group, attribute string) []*Group {
-	if attribute == "" {
-		return groups
-	}
-	filtered := []*Group{}
-	for _, group := range groups {
-		selected := &Group{System: group.System, Requirements: []*Requirement{}}
-		for _, spec := range group.Requirements {
-			if slices.Contains(spec.QualityAttributes, attribute) || slices.Contains(spec.Classification.Ancestors, attribute) {
-				selected.Requirements = append(selected.Requirements, spec)
-			}
-		}
-		if len(selected.Requirements) != 0 {
-			filtered = append(filtered, selected)
-		}
-	}
-	return filtered
 }

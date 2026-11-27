@@ -1,7 +1,6 @@
 package model
 
 import (
-	"path/filepath"
 	"strings"
 	"testing"
 
@@ -44,7 +43,7 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 			t.Fatal("unmapped assumption", field)
 		}
 	}
-	questions := reviewObjects(sys["open_questions"])
+	questions := OpenQuestions(sys)
 	if len(questions) != 2 {
 		t.Fatal(questions)
 	}
@@ -85,50 +84,6 @@ func TestReviewModelSourceFidelityAndSemanticBoundaries(t *testing.T) {
 		}
 	}
 	requireFinding(t, forged, "shape.invalid")
-}
-
-func TestReviewViewsAreAdvisoryAndRebaseSources(t *testing.T) {
-	root := reviewFixture(t)
-	result := conformanceExport(t, root)
-	if result.ExitCode != 0 {
-		t.Fatal(result.Snapshot.Diagnostics)
-	}
-	text, err := ReviewMarkdown(result.Snapshot, filepath.Join(root, "docs"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, want := range []string{"No contribution path recorded", "Contribution path recorded", "ScenarioStep 2", "no rule or action relationship recorded", "no native contract reference recorded", "Before acceptance", "Review required for **recovery copy**", "../specs/document-workspace.system.spec.md#reduce-retention-cost", "../project-plan.md#retention-boundary-decision"} {
-		if !strings.Contains(text, want) {
-			t.Errorf("review missing %q", want)
-		}
-	}
-	pegs, err := PEGSMarkdown(result.Snapshot, filepath.Join(root, "docs"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, want := range []string{"## Project", "## Environment and boundaries", "## Goals", "## System", "../project-plan.md", "../contracts/time.openapi.yaml", "## Open questions"} {
-		if !strings.Contains(pegs, want) {
-			t.Errorf("PEGS missing %q", want)
-		}
-	}
-	overview, err := OverviewMarkdown(result.Snapshot, filepath.Join(root, "docs"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !strings.Contains(overview, "Out of scope") || !strings.Contains(overview, "Time API") {
-		t.Fatal("overview omits boundary information")
-	}
-	saved := cloneSnapshot(t, result.Snapshot)
-	for _, view := range []struct {
-		name   string
-		render func(*Snapshot, string) (string, error)
-		want   string
-	}{{"review", ReviewMarkdown, text}, {"overview", OverviewMarkdown, overview}, {"pegs", PEGSMarkdown, pegs}} {
-		again, err := view.render(saved, filepath.Join(root, "docs"))
-		if err != nil || again != view.want {
-			t.Errorf("%s differs after JSON round trip: %v", view.name, err)
-		}
-	}
 }
 
 func TestIllustrationIsExplicitAndRejectsWrongEndpoint(t *testing.T) {

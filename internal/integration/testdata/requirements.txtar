@@ -2,13 +2,12 @@
 mkdir project
 cd project
 exec git init -q
-status 0 dotspec requirement list --json
-stdout '"groups": \[\]'
-status 0 dotspec requirement init work --json
+status 0 dotspec list requirement --json
+stdout '"entries": \[\]'
+status 0 dotspec new requirement work --json
 stdout '"path":'
 ! stderr .
-status 0 dotspec requirement show work --json
-stdout '"statement":'
+grep '## Statement' specs/requirements/work.requirement.spec.md
 cp ../system.md specs/new-system.system.spec.md
 mkdir specs/quality/reliability
 cp ../system0.md specs/quality/reliability/reliability.quality-attribute.spec.md
@@ -16,37 +15,39 @@ mkdir specs/quality/reliability/preservation
 cp ../system1.md specs/quality/reliability/preservation/preservation.quality-attribute.spec.md
 cp ../rule.md specs/requirements/work.requirement.spec.md
 cp ../repeatable.md specs/requirements/repeatable.requirement.spec.md
-status 0 dotspec requirement list --attribute reliability --json
+status 0 dotspec list requirement --json
 stdout '"name": "Preserve source"'
 stdout '"name": "Repeatable inspection"'
-stdout '"attribute": "reliability"'
-status 0 dotspec system show --json
-stdout '"goals": "### Earlier review'
-stdout '"glossary":'
+status 0 dotspec list quality-attribute
+stdout 'System: New system'
+stdout 'Preservation  \(specs/quality/reliability/preservation/preservation.quality-attribute.spec.md\)'
 
 # Explicit links add bounded context. Checks do not change source files.
-status 0 dotspec requirement check work --json
+status 0 dotspec check specs/requirements/work.requirement.spec.md --json
 stdout '"context_files_checked": 4'
 stdout '"errors": 0'
 ! stderr .
 cmp specs/requirements/work.requirement.spec.md ../rule.md
 cmp specs/requirements/repeatable.requirement.spec.md ../repeatable.md
-status 2 dotspec requirement init work
+status 2 dotspec new requirement work
 ! stdout .
 stderr 'refusing to overwrite'
 cmp specs/requirements/work.requirement.spec.md ../rule.md
-status 2 dotspec requirement init bad --format mermaid
-! exists specs/requirements/bad.requirement.spec.md
-status 2 dotspec requirement list --attribute ''
+status 2 dotspec new requirement other --attribute ''
 ! stdout .
-status 0 dotspec requirement show work --path specs/requirements
-status 2 dotspec requirement check missing --json
+status 2 dotspec new requirement other --attribute unknown
+stderr 'unknown quality attribute "unknown"'
+! exists specs/requirements/other.requirement.spec.md
+status 0 dotspec new requirement other --attribute preservation
+grep 'quality_attributes: \["preservation"\]' specs/requirements/other.requirement.spec.md
+status 0 dotspec -C specs/requirements check work.requirement.spec.md
+status 2 dotspec check specs/requirements/missing.requirement.spec.md --json
 stdout '"complete": false'
 ! stderr .
 
 # Draft omissions are advice and preserve successful status.
 cp ../draft.md specs/requirements/draft.requirement.spec.md
-status 0 dotspec requirement check draft --json
+status 0 dotspec check specs/requirements/draft.requirement.spec.md --json
 stdout 'requirement.statement'
 stdout '"advice": 3'
 stdout '"complete": true'
@@ -64,7 +65,7 @@ stdout '"complete": true'
 
 # A broken cross-file target is a structural finding, not a scan failure.
 cp ../bad-link.md specs/requirements/work.requirement.spec.md
-status 1 dotspec requirement check work --json
+status 1 dotspec check specs/requirements/work.requirement.spec.md --json
 stdout 'reference.unresolved'
 stdout '"complete": true'
 ! stderr .

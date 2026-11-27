@@ -7,10 +7,12 @@ import (
 	"github.com/spf13/cobra/doc"
 )
 
-// Use Cobra's writer-aware generator; Fang's bundled man command writes to the
-// process stdout directly, bypassing embedding and output-error handling.
+// The release build runs this hidden packaging command to ship dotspec.1 in
+// each archive. Use Cobra's writer-aware generator; Fang's bundled man command
+// writes to the process stdout directly, bypassing embedding and output-error
+// handling.
 func newManCommand() *cobra.Command {
-	return &cobra.Command{Use: "man", Short: "Write the dotspec manual in roff format", Args: cobra.NoArgs,
+	return &cobra.Command{Use: "man", Short: "Write the dotspec manual in roff format", Args: operands(0, 0), Hidden: true,
 		Example: "dotspec man",
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			epoch := time.Unix(0, 0).UTC()

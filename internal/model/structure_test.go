@@ -93,3 +93,63 @@ func TestComponentMapsSpecificationSections(t *testing.T) {
 	}
 	checkSourceText(t, result.Snapshot)
 }
+
+func TestComponentRequirementsAndCrossDocumentStructure(t *testing.T) {
+	root := structureFixture(t)
+	conformanceWrite(t, root, "components/checkout/specs/requirements/submission.requirement.spec.md", `---
+type: requirement-spec
+id: idempotent-submission
+---
+# Idempotent submission
+
+## Statement
+
+A repeated submission must not duplicate the order.
+
+## Applies to
+
+**Targets:** [Checkout](../checkout.component.spec.md)
+
+## Rationale
+
+Repeat a submission and count orders.
+`)
+	conformanceWrite(t, root, "worker/specs/worker.system.spec.md", `---
+type: system-spec
+id: worker
+---
+# Worker
+## Purpose
+Do background work.
+## Scope
+Fulfilment work.
+## Part of
+[Store](../../specs/online-store.system.spec.md#store)
+`)
+	conformanceWrite(t, root, "worker/queue/specs/worker-queue.component.spec.md", `---
+type: component-spec
+id: worker-queue
+---
+# Worker queue
+## Part of
+[Checkout](../../../components/checkout/specs/checkout.component.spec.md)
+`)
+	result := conformanceExport(t, root)
+	if result.ExitCode != 0 {
+		t.Fatal(result.Snapshot.Diagnostics)
+	}
+	s := result.Snapshot
+	req := designRecord(t, s, "Requirement", "Idempotent submission")
+	checkout := designRecord(t, s, "Component", "Checkout")
+	if Strings(req["applies_to"])[0] != checkout["id"] {
+		t.Fatal(req)
+	}
+	worker := designRecord(t, s, "System", "Worker")
+	store := designRecord(t, s, "System", "Online Store")
+	queue := designRecord(t, s, "Component", "Worker queue")
+	if worker["part_of"] != store["id"] || queue["part_of"] != checkout["id"] || queue["specification_system"] != store["id"] {
+		t.Fatal(worker, queue)
+	}
+	// A parent component is allowed to be declared in another system document.
+	checkSourceText(t, s)
+}

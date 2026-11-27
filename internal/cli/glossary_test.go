@@ -60,7 +60,7 @@ Examples.
 		}
 		return string(data)
 	}
-	run(0, "spec", "build")
+	run(0, "build")
 	run(0, "check")
 	overview := read("specification/docs.system.spec-report.md")
 	if !strings.Contains(overview, "Terms used by the documentation team.") || !strings.Contains(overview, "glossary.md#draft") || strings.Contains(overview, "An early version") {
@@ -79,12 +79,8 @@ Examples.
 	if !strings.Contains(child, "../../../words.md#sketch") || strings.Contains(child, "## Draft") {
 		t.Fatal(child)
 	}
-	review := run(0, "model", "review")
-	if strings.Count(review, "Review required for **draft**") != 1 || !strings.Contains(review, "words.md#sketch") || !strings.Contains(review, "docs.system.spec.md#draft") {
-		t.Fatal(review)
-	}
 	var s model.Snapshot
-	if err := json.Unmarshal([]byte(run(0, "model", "export")), &s); err != nil {
+	if err := json.Unmarshal([]byte(run(0, "snapshot", "export")), &s); err != nil {
 		t.Fatal(err)
 	}
 	var docs []string
@@ -98,11 +94,11 @@ Examples.
 	}
 	writeFixture(t, "words.md", strings.Replace(vocab, "preliminary", "rough", 1))
 	run(1, "check")
-	run(0, "spec", "build")
+	run(0, "build")
 	if !strings.Contains(read("specification/glossary.md"), "A rough drawing.") || !strings.Contains(read("specification/systems/child/glossary.md"), "A rough drawing.") {
 		t.Fatal("shared definition did not refresh")
 	}
-	if !strings.Contains(run(0, "spec", "build"), "0 written, 0 removed") {
+	if !strings.Contains(run(0, "build"), "0 written, 0 removed") {
 		t.Fatal("rebuild changed files")
 	}
 	writeFixture(t, "words.md", "# Vocabulary\n\n### Unscoped term\n\nInvalid level.\n")
@@ -183,7 +179,7 @@ A request for payment. See [Term source](evidence.md#one) and [Term source](evid
 		}
 		return stdout + stderr
 	}
-	run(0, "spec", "build")
+	run(0, "build")
 	run(0, "check")
 	data, err := os.ReadFile("specification/glossary.md")
 	if err != nil {
@@ -222,14 +218,10 @@ A request for payment. See [Term source](evidence.md#one) and [Term source](evid
 	if !strings.Contains(string(child), "From [Account (Billing)](<#account-billing-relationships>) · Uses the login.") || strings.Contains(string(child), "Account (Ledger)") {
 		t.Fatal(string(child))
 	}
-	review := run(0, "model", "review")
-	if strings.Count(review, "Review required for") != 1 || !strings.Contains(review, "Review required for **balance** in Billing") {
-		t.Fatal(review)
-	}
 	var snapshot model.Snapshot
-	exported := run(0, "model", "export")
+	exported := run(0, "snapshot", "export")
 	writeFixture(t, "snapshot.json", exported)
-	run(0, "model", "validate", "snapshot.json")
+	run(0, "snapshot", "validate", "snapshot.json")
 	if err := json.Unmarshal([]byte(exported), &snapshot); err != nil {
 		t.Fatal(err)
 	}

@@ -5,6 +5,6 @@
 - [Release dotspec](releasing.md) covers packaging and publishing.
 - [Specification authority plan](plans/specification-authority.md) records the decisions behind specification ownership.
 - [Composing the product specification](plans/product-specification-composition.md) describes how to derive product membership and distinguish external provisions, verification procedures, and results.
-- [Conventional quality models](plans/conventional-quality-model.md) describes the project default, attribute adoption commands, and incremental file-writing behavior.
+- [Quality attribute adoption](plans/quality-attribute-adoption.md) describes model and target selection, the adoption command, and incremental file-writing behavior.
 
 See the [contributor guide](../../CONTRIBUTING.md) for development setup and checks.

@@ -1,111 +1,102 @@
-# Three offline starters; default population is explicit, previewable, and local.
+# One offline bundled model; adoption is explicit, previewable, and local.
 mkdir project
 cd project
 exec git init -q
-status 0 dotspec quality-model list --json
-stdout '"effective_model": \{\n\s+"basis": "builtin_default",\n\s+"id": "iso-25010-2023",'
-stdout '"schema_version": 3'
-stdout '"slug": "furps"'
-stdout '"slug": "q42"'
-status 0 dotspec quality-model show furps --json
-stdout '"name": "Supportability"'
-status 2 dotspec quality-model init furps
+status 0 dotspec list quality-model --json
+stdout '^\{\n  "schema_version": 1,'
+stdout '"entries": \[\]'
+exec dotspec docs quality-models/iso-25010-2023
+stdout '### Recoverability'
+status 2 dotspec new quality-model iso-25010-2023
 stderr 'reserved'
-status 2 dotspec quality-model init Bad--Slug --from nope
+status 2 dotspec new quality-model Bad--Slug --from nope
 stderr '^dotspec: invalid quality-model slug "Bad--Slug": '
-status 2 dotspec quality-model check Bad--Slug --json
-stderr '^dotspec: invalid quality-model slug "Bad--Slug": '
-! stdout .
-status 2 dotspec quality-model check furps
-stderr 'furps is a bundled starter; check a local model, or copy it with quality-model init <slug> --from furps'
-status 0 dotspec system init
+mkdir specs
+cp $WORK/new-system.md specs/new-system.system.spec.md
 cp specs/new-system.system.spec.md before.md
-status 0 dotspec quality-model apply --all --system specs/new-system.system.spec.md --dry-run
+status 0 dotspec new quality-attribute availability --from iso-25010-2023 --dry-run
 cmp specs/new-system.system.spec.md before.md
-stdout 'id: "functional-suitability"'
-stdout 'id: "safety"'
+stdout 'id: "reliability"'
+stdout 'id: "availability"'
 stdout 'quality/reliability/availability/availability.quality-attribute.spec.md'
-stdout 'id: "safe-integration"'
-status 0 dotspec quality-model apply --all --system specs/new-system.system.spec.md
-stdout 'Added 49 attributes'
+! exists specs/quality
+status 0 dotspec new quality-attribute availability --from iso-25010-2023
+stdout 'Added 2 attributes'
 cmp specs/new-system.system.spec.md before.md
-status 0 dotspec quality-model apply --all --system specs/new-system.system.spec.md
-stdout 'Already declared'
-stdout 'Added 0 attributes'
-cmp specs/new-system.system.spec.md before.md
-status 2 dotspec quality-model apply furps --system specs/new-system.system.spec.md --attributes unknown
+status 2 dotspec new quality-attribute availability --from iso-25010-2023
+stderr 'quality attribute availability already exists'
+! stdout .
+status 2 dotspec new quality-attribute unknown --from iso-25010-2023
 stderr 'unknown attribute'
 cmp specs/new-system.system.spec.md before.md
 
 # Local models share parsing, checking and discovery. Selecting a leaf copies ancestors.
-status 0 dotspec quality-model init organization-quality --from furps --json
+status 0 dotspec new quality-model organization-quality --from iso-25010-2023 --json
 stdout 'organization-quality.quality-model.md'
-status 0 dotspec quality-model show organization-quality --json
-stdout '"id": "organization-quality"'
-stdout '"name": "Supportability"'
-status 2 dotspec quality-model init organization-quality
+grep '^id: organization-quality$' specs/quality-models/organization-quality.quality-model.md
+grep 'Recoverability' specs/quality-models/organization-quality.quality-model.md
+status 2 dotspec new quality-model organization-quality
 stderr 'refusing to overwrite'
 cp ../local.md specs/quality-models/organization-quality.quality-model.md
-status 0 dotspec quality-model check organization-quality --json
+status 0 dotspec check specs/quality-models/organization-quality.quality-model.md --json
 stdout '"errors": 0'
-status 0 dotspec quality-model show organization-quality --json
-stdout '"edition": "Team edition 1"'
-status 0 dotspec quality-model list --json
+status 0 dotspec list quality-model --json
 stdout '"slug": "organization-quality"'
-status 0 dotspec quality-model apply organization-quality --system specs/new-system.system.spec.md --attributes narrow --dry-run
+stdout '"kind": "quality-model"'
+status 0 dotspec new quality-attribute narrow --from organization-quality --dry-run
 stdout 'id: "broad"'
 stdout 'id: "narrow"'
 ! stdout 'id: "unselected"'
-status 0 dotspec quality-model apply organization-quality --system specs/new-system.system.spec.md --attributes narrow --json
+status 0 dotspec new quality-attribute narrow --from organization-quality --json
 stdout '"added":'
 cmp specs/new-system.system.spec.md before.md
 status 0 dotspec check --json
 stdout '"errors": 0'
 status 0 dotspec sources --json
 stdout 'organization-quality.quality-model.md'
-status 0 dotspec model export
+status 0 dotspec snapshot export
 stdout '"kind": "QualityModel"'
 stdout '"governing_quality_model":'
 cp stdout snapshot.json
-status 0 dotspec model validate snapshot.json --json
+status 0 dotspec snapshot validate snapshot.json --json
 stdout '"valid": true'
 
 cp ../draft.md specs/quality-models/organization-quality.quality-model.md
-status 0 dotspec quality-model check organization-quality --json
+status 0 dotspec check specs/quality-models/organization-quality.quality-model.md --json
 stdout 'quality-model.attributes'
 cp ../invalid.md specs/quality-models/invalid.quality-model.md
-status 1 dotspec quality-model check invalid --json
+status 1 dotspec check specs/quality-models/invalid.quality-model.md --json
 stdout 'structure.duplicate-section'
-status 1 dotspec model export
+status 1 dotspec snapshot export
 cp stdout partial.json
-status 0 dotspec model validate partial.json --json
+status 0 dotspec snapshot validate partial.json --json
 stdout '"valid": true'
-status 2 dotspec quality-model init ../escape
-status 2 dotspec quality-model check missing --json
+status 2 dotspec new quality-model ../escape
+status 2 dotspec check specs/quality-models/missing.quality-model.md --json
 stdout '"complete": false'
-# A shared Q42 quality navigates through both dimensions without adding authored labels.
+# A term with two parents navigates through both without adding authored labels.
 cd ..
-mkdir q42-project
-cd q42-project
+mkdir shared-project
+cd shared-project
 exec git init -q
-status 0 dotspec system init
-status 0 dotspec quality-model apply q42 --system specs/new-system.system.spec.md --attributes resilience
+mkdir specs
+cp $WORK/new-system.md specs/new-system.system.spec.md
+cp ../shared.md shared.quality-model.md
+status 0 dotspec new quality-attribute resilience --from ./shared.quality-model.md
 stdout 'Added 3 attributes'
-status 0 dotspec requirement init resilient-service --preset quality
+status 0 dotspec new requirement resilient-service
 cp ../resilient-service.md specs/requirements/resilient-service.requirement.spec.md
-status 0 dotspec requirement show resilient-service
-stdout 'Quality attributes: resilience'
-stdout 'Ancestor quality attributes: reliable, secure'
-status 0 dotspec requirement list --attribute reliable
-stdout 'Resilient service'
-status 0 dotspec requirement list --attribute secure
-stdout 'Resilient service'
-status 0 dotspec requirement list --attribute safe
-stdout 'No requirements found'
-status 0 dotspec model export
+status 0 dotspec check specs/requirements/resilient-service.requirement.spec.md --json
+stdout '"errors": 0'
+! stdout 'requirement.undefined-attribute'
+status 0 dotspec list quality-attribute
+stdout 'Reliable'
+stdout 'Secure'
+stdout 'Resilience'
+status 0 dotspec snapshot export
 stdout '"role": "subattribute_of"'
 cp stdout snapshot.json
-status 0 dotspec model validate snapshot.json --json
+status 0 dotspec snapshot validate snapshot.json --json
 stdout '"valid": true'
 -- local.md --
 ---
@@ -143,6 +134,26 @@ type: quality-model
 ## Quality attributes
 ## Quality attributes
 
+-- shared.md --
+---
+type: quality-model
+id: shared
+---
+# Shared qualities
+## Quality attributes
+### Reliable
+**ID:** reliable
+Keeps working.
+### Secure
+**ID:** secure
+Resists misuse.
+### Resilience
+**ID:** resilience
+**Sub-attribute of:** reliable, secure
+Recovers from disruption, including attacks.
+### Safe
+**ID:** safe
+Avoids harm.
 -- resilient-service.md --
 ---
 type: requirement-spec
@@ -157,3 +168,21 @@ At least one instance remains able to serve requests.
 Stop one instance and send a request.
 ## Rationale
 Continue useful service during disruption.
+-- new-system.md --
+---
+type: system-spec
+---
+
+# New system
+
+## Description
+
+Describe what this system is in one short paragraph.
+
+## Purpose
+
+Describe why this system exists and whom it serves.
+
+## Scope
+
+Describe the system's boundary and what it includes.

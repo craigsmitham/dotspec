@@ -13,7 +13,7 @@ func newCompletionCommand() *cobra.Command {
 	root.Long = "Generate a completion script, then load it using your shell's completion setup."
 	for _, shell := range []string{"bash", "zsh", "fish", "powershell"} {
 		cmd := &cobra.Command{Use: shell, Short: "Generate the " + shell + " completion script",
-			Example: "dotspec completion " + shell, Args: cobra.NoArgs,
+			Example: "dotspec completion " + shell, Args: operands(0, 0),
 			RunE: func(cmd *cobra.Command, _ []string) error {
 				noDescriptions, err := cmd.Flags().GetBool("no-descriptions")
 				if err != nil {

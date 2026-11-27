@@ -155,6 +155,7 @@ cover diagnostic severity, report repeatability, and source preservation.
 - [discovery.txtar](<../../internal/integration/testdata/discovery.txtar>) — Repository discovery
 - [diagnostics.txtar](<../../internal/integration/testdata/diagnostics.txtar>) — Diagnostics and exit statuses
 - [use-cases.txtar](<../../internal/integration/testdata/use-cases.txtar>) — Focused and project-wide checks of draft and malformed use cases
+- [boundary-advice.txtar](<../../internal/integration/testdata/boundary-advice.txtar>) — Advice on assumptions without Basis or Applicability and interfaces without a contract link
 
 ---
 

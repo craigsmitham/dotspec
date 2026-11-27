@@ -99,7 +99,38 @@ func (l Layout) Create(path, slug, template string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if !l.NamedSubject {
+		template = titled(template, slug)
+	}
 	return Create(owner, rel, template)
+}
+
+// SlugTitle is the draft heading for a collection slug: fast-save becomes
+// "Fast save". Authors rename the heading freely; the slug stays the filename.
+func SlugTitle(slug string) string {
+	title := strings.ReplaceAll(slug, "-", " ")
+	if title == "" {
+		return title
+	}
+	return strings.ToUpper(title[:1]) + title[1:]
+}
+
+// titled replaces a template's placeholder "# New ..." heading with the slug's
+// title, so a fresh draft has a distinct heading and generated page.
+func titled(template, slug string) string {
+	for _, prefix := range []string{"# New ", "\n# New "} {
+		i := strings.Index(template, prefix)
+		if i < 0 || (prefix == "# New " && i != 0) {
+			continue
+		}
+		start := i + len(prefix) - len("# New ")
+		end := strings.IndexByte(template[start:], '\n')
+		if end < 0 {
+			end = len(template) - start
+		}
+		return template[:start] + "# " + SlugTitle(slug) + template[start+end:]
+	}
+	return template
 }
 
 // DeclarationDir is the directory claimed by a subject declaration.

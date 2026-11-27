@@ -3,16 +3,32 @@ package qualitymodel
 import (
 	"embed"
 	"fmt"
-	"sort"
+	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
-const Default = "iso-25010-2023"
-
 //go:embed specs/quality-models/*.quality-model.md
 var starters embed.FS
+
+// Bundled returns the source of a bundled model by slug, so the offline
+// handbook can publish it as a reference page.
+func Bundled(slug string) ([]byte, error) {
+	return starters.ReadFile("specs/quality-models/" + slug + Layout.Suffix)
+}
+
+// BundledSlugs lists the bundled models in source order.
+func BundledSlugs() ([]string, error) {
+	entries, err := starters.ReadDir("specs/quality-models")
+	if err != nil {
+		return nil, err
+	}
+	slugs := make([]string, 0, len(entries))
+	for _, entry := range entries {
+		slugs = append(slugs, strings.TrimSuffix(entry.Name(), Layout.Suffix))
+	}
+	return slugs, nil
+}
 
 func Builtins() ([]*QualityModel, error) {
 	entries, err := starters.ReadDir("specs/quality-models")
@@ -32,6 +48,11 @@ func Builtins() ([]*QualityModel, error) {
 		m.Slug = entry.Name()[:len(entry.Name())-len(Layout.Suffix)]
 		m.Path = "builtin:" + m.Slug
 		m.Builtin = true
+		// A bundled model has no file; its locations name the model instead.
+		m.Location.Path = m.Path
+		for i := range m.QualityAttributes {
+			m.QualityAttributes[i].Location.Path = m.Path
+		}
 		result = append(result, m)
 	}
 	return result, nil
@@ -51,6 +72,9 @@ func builtin(slug string) (*QualityModel, error) {
 }
 
 func Init(path, slug, from string) (string, error) {
+	if err := Layout.ValidateSlug(slug); err != nil {
+		return "", err
+	}
 	if m, err := builtin(slug); err != nil {
 		return "", err
 	} else if m != nil {
@@ -67,7 +91,7 @@ func Init(path, slug, from string) (string, error) {
 			return "", err
 		}
 		if m == nil {
-			return "", fmt.Errorf("--from must name a bundled starter: %q", from)
+			return "", fmt.Errorf("--from must name a bundled model: %q", from)
 		}
 		content = "---\ntype: quality-model\nid: " + slug + "\n---\n\n" + m.Markdown + "\n"
 	}
@@ -90,76 +114,10 @@ func Show(path, slug string) (*QualityModel, error) {
 	return Read(file)
 }
 
-func List(path string) ([]*QualityModel, error) {
-	result, err := Builtins()
-	if err != nil {
-		return nil, err
-	}
-	dir, err := specfile.Directory(path)
-	if err != nil {
-		return nil, err
-	}
-	paths, err := specfile.Discover(dir, Layout.Match)
-	if err != nil {
-		return nil, err
-	}
-	for _, path := range paths {
-		m, err := Read(path)
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, m)
-	}
-	sort.SliceStable(result, func(i, j int) bool {
-		if result[i].Builtin != result[j].Builtin {
-			return result[i].Builtin
-		}
-		return result[i].Path < result[j].Path
-	})
-	return result, nil
-}
-
-// Selection describes the vocabulary used by this invocation.
-type Selection struct {
-	Basis  string `json:"basis"`
-	ID     string `json:"id"`
-	Source string `json:"source"`
-}
-
-func Resolve(dir string, project *specfile.Project, explicit string) (*QualityModel, Selection, error) {
-	basis, selector := "builtin_default", Default
-	var m *QualityModel
-	var err error
-	switch {
-	case explicit != "":
-		basis, selector = "explicit", explicit
-		m, err = Show(dir, selector)
-	case project != nil && project.QualityModel != "":
-		basis, selector = "project", project.QualityModel
-		if Layout.Match(selector) {
-			m, err = Show(project.Root, selector)
-		} else {
-			m, err = builtin(selector)
-			if m == nil && err == nil {
-				err = diagnostic.Error("project.quality-model", fmt.Sprintf("unknown bundled quality model %q", selector), project.QualityLocation)
-			}
-		}
-		if err != nil {
-			err = fmt.Errorf("%s: quality.model %q: %w", project.Manifest(), selector, err)
-		}
-	default:
-		m, err = builtin(selector)
-	}
-	if err != nil {
-		return nil, Selection{}, err
-	}
-	id := m.ID
-	if id == "" {
-		id = m.Slug
-	}
-	return m, Selection{Basis: basis, ID: id, Source: m.Path}, nil
-}
-
 func UnknownAttribute(m *QualityModel, id string) error {
-	return fmt.Errorf("unknown attribute ID %q in model %s; use dotspec quality-attribute browse to find a term, or author a system *.quality-attribute.spec.md file (dotspec docs quality-attribute)", id, m.Slug)
+	where := "read its terms in " + m.Path
+	if m.Builtin {
+		where = "read its terms with dotspec docs " + Layout.Collection + "/" + m.Slug
+	}
+	return fmt.Errorf("unknown attribute ID %q in model %s; %s, or start a blank system attribute with dotspec new quality-attribute %s (dotspec docs quality-attribute)", id, m.Slug, where, id)
 }

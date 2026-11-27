@@ -10,7 +10,7 @@ import (
 
 func newDocsCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:     "docs [TOPIC | PAGE[#SECTION] | RULE | WORDS...]",
+		Use:     "docs [<topic> | <page>[#<section>] | <rule> | <words>...]",
 		Short:   "Browse the offline authoring handbook",
 		Long:    "Browse topics, open a page or section, or search this version's handbook and bundled examples. Topic names and exact addresses open directly. Enter words to find matching pages.",
 		Example: "dotspec docs\ndotspec docs job\ndotspec docs success criteria\ndotspec docs guides/write-a-job\ndotspec docs job.performer",

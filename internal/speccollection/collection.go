@@ -33,20 +33,6 @@ func (c Collection[T]) readMember(path string) (*T, *system.System, error) {
 	return member, owner, nil
 }
 
-// Show accepts a source path or a unique slug within the selected owner.
-func (c Collection[T]) Show(path, selector string) (*T, error) {
-	dir, err := specfile.Directory(path)
-	if err != nil {
-		return nil, err
-	}
-	file, err := c.Layout.LocalPath(dir, selector)
-	if err != nil {
-		return nil, err
-	}
-	member, _, err := c.readMember(file)
-	return member, err
-}
-
 // List groups discovered members by system source identity, preserving source
 // order within each group. The caller constructs its family-specific result.
 func List[T, G any](path string, c Collection[T], makeGroup func(*system.System, []*T) G) ([]G, error) {
@@ -93,4 +79,36 @@ func List[T, G any](path string, c Collection[T], makeGroup func(*system.System,
 		groups = append(groups, makeGroup(group.owner, group.members))
 	}
 	return groups, nil
+}
+
+// Member is a discovered specification of any layout with its associated system.
+type Member struct {
+	Name   string
+	Path   string
+	System *system.System
+}
+
+// Members discovers the files of a layout below path and associates each with
+// its system. The order follows List. The name function reads one file and
+// returns its heading.
+func Members(path string, layout specfile.Layout, plural string, name func(path string) (string, error)) ([]*Member, error) {
+	c := Collection[Member]{Layout: layout, Plural: plural,
+		Read: func(file string) (*Member, error) {
+			heading, err := name(file)
+			if err != nil {
+				return nil, err
+			}
+			return &Member{Name: heading, Path: file}, nil
+		},
+		SetSystem: func(m *Member, owner *system.System) { m.System = owner },
+	}
+	groups, err := List(path, c, func(_ *system.System, members []*Member) []*Member { return members })
+	if err != nil {
+		return nil, err
+	}
+	members := []*Member{}
+	for _, group := range groups {
+		members = append(members, group...)
+	}
+	return members, nil
 }

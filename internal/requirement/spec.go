@@ -2,12 +2,10 @@
 package requirement
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/craigsmitham/dotspec/internal/system"
 	"go.yaml.in/yaml/v3"
 )
 
@@ -34,53 +32,6 @@ Explain why this requirement is needed and reference its source or governing goa
 
 `
 
-// QualityTemplate is the quality preset. It prompts for an explicit criterion;
-// the result is an ordinary requirement, classified by its quality attributes.
-var QualityTemplate = `---
-type: requirement-spec
----
-
-# New quality requirement
-
-## Applies to
-
-Identify the subject and operating conditions, workload, population, and exclusions.
-For outcomes of use, identify the users, their task, available assistance, and environment; link relevant actors, jobs, or use cases.
-
-## Statement
-
-State one coherent quality requirement. What observable result would violate it?
-
-## Criterion
-
-Define or reference what counts as satisfaction. For a measured property, state the measure (including units, aggregation, and observation window as needed) and the required bound. Keep each required bound in one place; reference it if already stated above or in an authoritative source.
-If a bound is unknown, record an open question and the evidence needed to choose it. Qualitative criteria are valid; keep preferred targets distinct from required bounds.
-
-## Rationale
-
-Explain why this quality matters and any relevant tradeoffs.
-
-`
-
-// Presets guide authoring; they do not create another specification type.
-func ValidatePreset(preset string) error {
-	switch preset {
-	case "general", "quality":
-		return nil
-	}
-	return fmt.Errorf("unknown requirement preset %q: choose general or quality", preset)
-}
-
-func TemplateFor(preset string) (string, error) {
-	if err := ValidatePreset(preset); err != nil {
-		return "", err
-	}
-	if preset == "quality" {
-		return QualityTemplate, nil
-	}
-	return Template, nil
-}
-
 type metadata struct {
 	specfile.Metadata `yaml:",inline"`
 	ID                string    `yaml:"id"`
@@ -98,10 +49,8 @@ type Requirement struct {
 	Criterion           string                         `json:"criterion,omitempty"`
 	Rationale           string                         `json:"rationale"`
 	QualityAttributes   []string                       `json:"quality_attributes"`
-	Classification      Classification                 `json:"classification"`
 	Markdown            string                         `json:"markdown"`
 	Path                string                         `json:"path"`
-	System              *system.System                 `json:"system"`
 	Location            diagnostic.Location            `json:"location"`
 	SectionLocations    map[string]diagnostic.Location `json:"-"`
 	AttributeLocations  map[string]diagnostic.Location `json:"-"`

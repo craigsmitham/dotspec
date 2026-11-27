@@ -1,153 +1,122 @@
-# A fresh project can browse offline before it has a system.
+# Adoption names its model. The bundled model is read offline through the handbook.
 mkdir project
 cd project
 exec git init -q
 cp ../default.yaml dotspec.yaml
-status 0 dotspec model export
+status 0 dotspec snapshot export
 cp stdout ../snapshot.json
-status 0 dotspec quality-attribute browse --json
-stdout '"basis": "builtin_default"'
-stdout '"id": "reliability"'
-! stdout '"id": "recoverability"'
+status 0 dotspec docs quality-models/iso-25010-2023
+stdout '^# ISO/IEC 25010:2023'
+stdout '\*\*ID:\*\* recoverability'
+status 0 dotspec docs iso 25010
+stdout 'dotspec docs quality-models/iso-25010-2023'
 ! exists specs
-status 0 dotspec quality-attribute browse reliability
-stdout 'Recoverability'
-status 0 dotspec quality-attribute browse resilience --model q42
-stdout 'Parent: Reliable'
-stdout 'Parent: Secure'
 cmp dotspec.yaml ../default.yaml
 
-# A project with sibling systems requires an explicit target at the root.
-mkdir alpha beta
-status 0 dotspec system init --path alpha
-status 0 dotspec system init --path beta
-status 2 dotspec quality-attribute add recoverability
-stderr 'alpha.*beta'
+# Adoption targets the nearest enclosing system; the project root has none.
+mkdir alpha/specs beta/specs
+cp $WORK/new-system.md alpha/specs/new-system.system.spec.md
+cp $WORK/new-system.md beta/specs/new-system.system.spec.md
+status 2 dotspec new quality-attribute recoverability --from iso-25010-2023
+stderr 'no system spec found'
 ! exists alpha/specs/quality
 ! exists beta/specs/quality
-status 2 dotspec quality-model apply --system beta/specs/new-system.system.spec.md
-stderr 'quality-attribute browse'
+status 2 dotspec -C beta new quality-attribute recoverabilty --from iso-25010-2023
+stderr 'dotspec docs quality-models/iso-25010-2023'
 ! exists beta/specs/quality
-status 2 dotspec quality-model apply --all --attributes reliability
-status 2 dotspec quality-model apply --attributes=
+status 2 dotspec -C beta new quality-attribute recoverability --from=
+stderr '--from requires a model ID or path'
+status 2 dotspec -C beta new quality-attribute recoverability --from unknown-model
+stderr 'unknown-model.quality-model.md: quality-model does not exist'
+! exists beta/specs/quality
 cp ../ignored .gitignore
-status 2 dotspec quality-attribute add recoverability --path alpha
+status 2 dotspec -C alpha new quality-attribute recoverability --from iso-25010-2023
 stderr 'ignored by Git'
 ! exists alpha/specs/quality
 rm .gitignore
-status 0 dotspec quality-attribute add recoverability --system alpha/specs/new-system.system.spec.md --dry-run --json
+status 0 dotspec -C alpha new quality-attribute recoverability --from iso-25010-2023 --dry-run --json
+stdout '^\{\n  "schema_version": 1,'
 stdout '"decision": "create"'
 ! exists alpha/specs/quality
 mkdir alpha/component
-status 0 dotspec component init Intake --path alpha/component --part-of $WORK/project/alpha/specs/new-system.system.spec.md
+status 0 dotspec -C alpha/component new component Intake --part-of ../specs/new-system.system.spec.md
 cd alpha/component
-status 0 dotspec quality-attribute add recoverability
+status 0 dotspec new quality-attribute recoverability --from iso-25010-2023
 stdout 'Added 2 attributes'
-status 0 dotspec quality-attribute add fault-tolerance
+status 0 dotspec new quality-attribute fault-tolerance --from iso-25010-2023
 stdout 'Reused parent reliability'
-stdout 'Added 1 attributes'
-status 0 dotspec quality-attribute add recoverability --json
-stdout '"decision": "reuse"'
-stdout '"added": \[\]'
-! stdout '"decision": "create"'
+stdout 'Added 1 attribute to'
+status 2 dotspec new quality-attribute recoverability --from iso-25010-2023 --json
+stderr 'quality attribute recoverability already exists'
+! stdout .
 cd ../..
 exists alpha/specs/quality/reliability/recoverability/recoverability.quality-attribute.spec.md
 ! exists beta/specs/quality
 
-# A checked-in default is relative to its own manifest even from a component.
-cp ../local.yaml dotspec.yaml
-cp ../team.md team.quality-model.md
-cd alpha/component
-status 0 dotspec quality-attribute browse --json
-stdout '"id": "team-vocabulary"'
-stdout '"basis": "project"'
-stdout 'team.quality-model.md'
-status 0 dotspec quality-model list
-stdout 'team \(default\)'
-status 0 dotspec quality-attribute browse --model furps --json
-stdout '"basis": "explicit"'
-stdout '"id": "furps"'
-cd ../..
-cmp ../local.yaml dotspec.yaml
-mkdir nested
-cp ../nested.yaml nested/dotspec.yaml
-status 0 dotspec quality-attribute browse --project nested
-stdout 'builtin_default'
-status 0 dotspec quality-attribute browse --model ./team.quality-model.md
-stdout 'explicit'
+# A local model is selected by path or slug. A term with two parents copies both.
+cp ../shared.md shared.quality-model.md
+status 0 dotspec -C beta new quality-attribute resilience --from ../shared.quality-model.md --dry-run
+stdout 'Would create reliable'
+stdout 'Would create secure'
+stdout 'subattribute_of:\n  - "reliable"\n  - "secure"'
+! exists beta/specs/quality
+mkdir beta/specs/quality-models
+cp ../shared.md beta/specs/quality-models/shared.quality-model.md
+cd beta
+status 0 dotspec new quality-attribute resilience --from shared
+stdout 'Added 3 attributes'
+! exists specs/quality/safe
+cd ..
+status 0 dotspec list quality-model
+stdout 'Shared qualities  \(beta/specs/quality-models/shared.quality-model.md\)'
+! stdout 'iso-25010'
+status 0 dotspec list quality-model --json
 
-# Project checks diagnose the selected source; explicit selection bypasses a missing file.
-cp ../missing.yaml dotspec.yaml
-status 2 dotspec quality-attribute add recoverability --path beta
-! exists beta/specs/quality
-status 0 dotspec quality-attribute browse --model furps
-status 0 dotspec system list
-status 2 dotspec check --all --json
-stdout 'project.quality-model'
-stdout '"complete": false'
-stdout '"name": "nested"'
-stdout '"exit_code": 0'
-cp ../cross.yaml dotspec.yaml
-cp ../team.md nested/team.quality-model.md
-status 2 dotspec quality-attribute browse
-stderr 'dotspec.yaml.*quality.model'
-cp ../invalid.yaml dotspec.yaml
-status 0 dotspec model validate ../snapshot.json --json
+# A malformed local model blocks adoption and writes nothing.
+cp ../broken.md broken.quality-model.md
+status 1 dotspec -C alpha new quality-attribute child --from ../broken.quality-model.md
+stderr 'broken.quality-model.md'
+! exists alpha/specs/quality/child
+status 1 dotspec check --json
+stdout 'broken.quality-model.md'
+rm broken.quality-model.md
+
+# The manifest has no quality setting, and a valid saved snapshot stays valid.
+cp ../unknown-key.yaml dotspec.yaml
+status 2 dotspec check
+stderr 'line 3: unknown key "quality"; dotspec.yaml accepts name and build.enabled'
+cp ../default.yaml dotspec.yaml
+status 0 dotspec snapshot validate ../snapshot.json --json
 stdout '"valid": true'
-status 1 dotspec check --project product --json
-stdout 'project.quality-model'
-status 1 dotspec quality-attribute browse --model furps
-stderr 'dotspec.yaml.*quality.model'
-status 1 dotspec check --all --json
-stdout 'project.quality-model'
-stdout '"exit_code": 0'
-cp ../unknown.yaml dotspec.yaml
-status 1 dotspec check --json
-stdout 'unknown bundled quality model'
-cp ../local.yaml dotspec.yaml
-cp ../broken.md team.quality-model.md
-status 1 dotspec quality-attribute add recoverability --path beta
-stderr 'team.quality-model.md'
-! exists beta/specs/quality
-status 1 dotspec check --json
-stdout 'team.quality-model.md'
 -- ignored --
 **/recoverability/
 -- default.yaml --
 name: product
-report: {enabled: false}
--- nested.yaml --
-name: nested
-report: {enabled: false}
--- local.yaml --
+build: {enabled: false}
+-- unknown-key.yaml --
 name: product
-report: {enabled: false}
-quality: {model: ./team.quality-model.md}
--- missing.yaml --
-name: product
-report: {enabled: false}
-quality: {model: ./missing.quality-model.md}
--- cross.yaml --
-name: product
-quality: {model: nested/team.quality-model.md}
--- invalid.yaml --
-name: product
-report: {enabled: false}
-quality: {model: null}
--- unknown.yaml --
-name: product
-report: {enabled: false}
-quality: {model: typo}
--- team.md --
+build: {enabled: false}
+quality: {model: iso-25010-2023}
+-- shared.md --
 ---
 type: quality-model
-id: team-vocabulary
+id: shared
 ---
-# Team vocabulary
+# Shared qualities
 ## Quality attributes
-### Clarity
-**ID:** clarity
-Readers recognize what is requested.
+### Reliable
+**ID:** reliable
+Keeps working.
+### Secure
+**ID:** secure
+Resists misuse.
+### Resilience
+**ID:** resilience
+**Sub-attribute of:** reliable, secure
+Recovers from disruption, including attacks.
+### Safe
+**ID:** safe
+Avoids harm.
 -- broken.md --
 ---
 type: quality-model
@@ -157,3 +126,21 @@ type: quality-model
 ### Broken child
 **ID:** child
 **Sub-attribute of:** missing
+-- new-system.md --
+---
+type: system-spec
+---
+
+# New system
+
+## Description
+
+Describe what this system is in one short paragraph.
+
+## Purpose
+
+Describe why this system exists and whom it serves.
+
+## Scope
+
+Describe the system's boundary and what it includes.

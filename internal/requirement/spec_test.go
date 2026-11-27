@@ -78,7 +78,7 @@ func TestDraftAndStructure(t *testing.T) {
 }
 
 func FuzzParse(f *testing.F) {
-	for _, seed := range []string{example, Template, QualityTemplate, "---\ntype: requirement-spec\nquality_attributes: [null]\n---\n# Draft\n"} {
+	for _, seed := range []string{example, Template, "---\ntype: requirement-spec\nquality_attributes: [null]\n---\n# Draft\n"} {
 		f.Add([]byte(seed))
 	}
 	f.Fuzz(func(t *testing.T, data []byte) {

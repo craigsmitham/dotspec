@@ -52,6 +52,14 @@ An existing target is preserved according to the
 At step 1, the contributor selects the expanded use-case template. Dotspec creates
 additional context prompts in the same document format, then continues at step 3.
 
+### Quality attribute
+
+#### Handling
+
+At step 1, the contributor selects a quality attribute for a system, named by
+its ID and optionally copied from a quality model. Continue with
+[Adopt a quality attribute for a system](adopt-quality-attribute.use-case.spec.md).
+
 ### Target already exists
 
 #### Handling
@@ -62,8 +70,8 @@ ends without a new draft; the contributor can edit the existing source instead.
 ## Sequence
 
 Representative. Editing follows creation in this example; existing sources can
-be edited without invoking init.
+be edited without invoking `new`.
 
 ## Authority
 
-The [init commands](../../docs/reference/cli.md) and linked requirement define command behavior.
+The [`init`](../../docs/reference/cli.md#dotspec-init) and [`new`](../../docs/reference/cli.md#dotspec-new) commands and the linked requirement define command behavior.

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 )
 
@@ -118,10 +117,6 @@ type: feature-spec
 		if count != 1 {
 			t.Fatal("interface direction missing from graph", kind, count)
 		}
-	}
-	text, err := OverviewMarkdown(s, root)
-	if err != nil || !strings.Contains(text, "## Interfaces") || !strings.Contains(text, "Interface: Restoration requests") {
-		t.Fatal("interface absent from overview", err, text)
 	}
 	forged := cloneSnapshot(t, s)
 	fSys := designRecord(t, forged, "System", "Document workspace")

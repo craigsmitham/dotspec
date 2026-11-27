@@ -6,7 +6,7 @@ For a review, start with one stakeholder goal and use the generated links to fol
 
 ## Set up a project
 
-Work in the directory that owns your project's `dotspec.yaml`. If you are starting a project, create that file with your project name. The To-do example uses the following manifest. Generated reports are enabled by default.
+Work in the directory that owns your project's `dotspec.yaml`. To start a project, run `dotspec init "<system name>"` in its directory. It writes the manifest and the root system specification, and refuses to replace either file. The To-do example uses the following manifest. The generated specification is enabled by default.
 
 ```yaml
 name: todo
@@ -15,7 +15,7 @@ name: todo
 For a source-only project, add this section to the manifest. The project check still validates authored files.
 
 ```yaml
-report:
+build:
   enabled: false
 ```
 
@@ -23,14 +23,14 @@ For one root system, the project landing page opens its specification. For sever
 
 Explicit specification-system selections and directory defaults place subjects in their system. Standalone quality models are reusable reference material. Each `*.quality-model.md` source has a `*.quality-model-report.md` reference page. Links into other projects retain their original targets. A locally authored specification that selects another project’s system is reachable from the project landing page through the index for its type, such as **Requirements for other systems**.
 
-From the project root, build the reports and check them against the authored specifications.
+From the project root, build the generated specification and check it against the authored specifications.
 
 ```sh
-dotspec spec build
+dotspec build
 dotspec check
 ```
 
-Commit the authored changes, `SPEC.md` and the generated Markdown in `specification/` together. From `SPEC.md`, open the system report. If the project has requirements, follow one to its statement and conditions. If the wording needs to change, select **View source**, edit that file, rebuild, and check again. Build refreshes generator-owned files and removes obsolete generated pages. If it reports that an authored file occupies a planned destination, move the authored file to a permanent location, update any links to it, then rerun the build.
+Commit the authored changes, `SPEC.md` and the generated Markdown in `specification/` together. From `SPEC.md`, open the system report. If the project has requirements, follow one to its statement and conditions. If the wording needs to change, select **View source**, edit that file, rebuild, and check again. Build refreshes generator-owned files and removes obsolete generated pages. While a source has error findings, build writes nothing: its output starts with `SPEC.md not written: 1 source error.` and then lists the findings as `dotspec check` does. If it reports that an authored file occupies a planned destination, move the authored file to a permanent location, update any links to it, then rerun the build.
 
 ## Read the generated files
 
@@ -86,7 +86,7 @@ A component lists its capabilities under **Architecture**. Open a capability for
 
 For example, the To-do system’s **Requirements** section includes **Acknowledge after commit**, declared on Task service. Following that title from either the system or the component’s requirements opens the same report. Open **Preserve tasks across restart** to read its full statement, conditions and criterion. Its **Refines** section leads to **Keep recorded work available**. [To-do system report](../../examples/todo/specification/personal-task-list.system.spec-report.md#requirements)
 
-When the project has authored questions, **Open questions** opens their index from the root system’s section map. Run `dotspec model review` for advisory findings.
+When the project has authored questions, **Open questions** opens their index from the root system’s section map. Run `dotspec check` for advisory findings.
 A child system has its own report showing the next level of detail.
 
 ### Browse subject reports
@@ -104,6 +104,8 @@ to an authored passage that cites the entry in prose. [Task-list assumptions](..
 Use **On this page → Quality Attributes** to browse every system quality attribute. The **Quality attributes** breadcrumb on an attribute report returns to this directory. Follow **Quality models** beside **View source** to browse reusable models. This link is available when the system has a model catalog, even if it has yet to declare an attribute. Select an attribute to see its definition and relationships. Attribute reports nest beneath their first declared parent in the system’s `quality/` directory. Requirement reports live under their owner’s `requirements/` folder. Each attribute page links to requirements that name it. On a requirement page, read the statement, applicability and criterion together. Links beside the requirement lead back to the precise attribute or use-case passage.
 
 For example, [Pick up where I left off](../../examples/todo/specification/features/pick-up-where-i-left-off.feature.spec-report.md) opens with its authored description of the behavior it offers. Follow the interaction to see how the person resumes work, or follow the restart requirement to find what must survive and how the acceptance test checks it.
+
+A job report presents its steps in authored order. Each step shows the outcomes it declares and, under **Applies here**, the shared outcomes that apply to it. A job without steps says “No steps recorded.” [To-do job steps](../../examples/todo/specification/jobs/see-personal-commitments-through.job.spec-report.md#steps)
 
 A system, component, feature, capability, or concept use can supply a short
 Description. System and component reports use the description as their lead. Other subject reports open with the Description section. A feature report follows it with Purpose and then Overview when they are authored. The index entry reuses
@@ -149,13 +151,13 @@ ownership. See the [document model](model/index.md#generateddocument).
 
 ## Check a workspace
 
-Use `dotspec spec build --project NAME` to refresh a selected project. Run `dotspec check --all` on a clean checkout in CI, with a pinned dotspec version. Whole-project checks include the generated files for each project unless its manifest sets `report.enabled` to `false`. A missing, obsolete or stale file is a finding. The check also inspects the visible content and navigation. A subtree or individual-subject check covers only its selected source scope.
+Run `dotspec build` from within a project, or `dotspec -C <dir> build` with the project's directory, to refresh it. Run `dotspec check --all` on a clean checkout in CI, with a pinned dotspec version. Whole-project checks include the generated files for each project unless its manifest sets `build.enabled` to `false`. A missing, obsolete or stale file is a finding. The check also inspects the visible content and navigation. A subtree or individual-subject check covers only its selected source scope.
 
 For early feedback, add `dotspec check --all` to a pre-push hook. Use CI to verify the committed tree. A pre-commit hook that enforces synchronization must check staged contents when contributors stage only part of a change.
 
 ## Record verification results
 
-List each test or manual protocol as a companion of its requirement with `role: verifies`. Keep any account of what the procedure exercises under **Evidence**. After a run, an evidence producer can supply `verification-results.json` in the project root. Running `dotspec spec build` reads this file and publishes observations in the requirement’s **Verification** section. Running `dotspec check` checks the resulting report. The requirement file changes only when the authored decision changes.
+List each test or manual protocol as a companion of its requirement with `role: verifies`. Keep any account of what the procedure exercises under **Evidence**. After a run, an evidence producer can supply `verification-results.json` in the project root. Running `dotspec build` reads this file and publishes observations in the requirement’s **Verification** section. Running `dotspec check` checks the resulting report. The requirement file changes only when the authored decision changes.
 
 This illustrative file requests the results of a restart assessment for revision `build-42`. Replace the revision, conditions, and observation address with the ones from your run.
 

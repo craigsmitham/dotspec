@@ -1,15 +1,12 @@
 # System attribute declarations classify requirements without changing authored labels.
-# The quality preset is an authoring template; it creates an ordinary requirement.
 mkdir project
 cd project
 exec git init -q
-status 0 dotspec requirement init work --preset quality --json
+status 0 dotspec new requirement work --json
 stdout '"schema_version": 1'
 ! stderr .
 grep 'type: requirement-spec' specs/requirements/work.requirement.spec.md
-grep '## Criterion' specs/requirements/work.requirement.spec.md
-status 0 dotspec requirement show work --json
-stdout '"quality_attributes": \[\]'
+status 0 dotspec list requirement --json
 stdout '"system": null'
 cp ../model.md specs/new-system.system.spec.md
 mkdir specs/quality/usability
@@ -19,16 +16,12 @@ cp ../model1.md specs/quality/usability/diagnostics/diagnostics.quality-attribut
 mkdir specs/quality/usability/accessibility
 cp ../model2.md specs/quality/usability/accessibility/accessibility.quality-attribute.spec.md
 cp ../requirement.md specs/requirements/work.requirement.spec.md
-status 0 dotspec system show --json
-stdout '"quality_attributes": \['
-stdout '"subattribute_of":'
-status 0 dotspec requirement list --attribute usability --json
+status 0 dotspec list quality-attribute --json
+stdout '"slug": "diagnostics"'
+stdout '"slug": "accessibility"'
+status 0 dotspec list requirement --json
 stdout '"name": "Accessible diagnostics"'
-stdout '"attribute": "usability"'
-status 0 dotspec requirement show work
-stdout 'Quality attributes: diagnostics, accessibility'
-stdout 'Ancestor quality attributes: usability'
-status 0 dotspec requirement check work --json
+status 0 dotspec check specs/requirements/work.requirement.spec.md --json
 stdout '"context_files_checked": 4'
 stdout '"advice": 1'
 stdout 'requirement.measurement-basis'
@@ -39,16 +32,13 @@ stdout '"files_checked": 5'
 stdout '"context_files_checked": 0'
 cmp specs/requirements/work.requirement.spec.md ../requirement.md
 cmp specs/new-system.system.spec.md ../model.md
-status 2 dotspec requirement init work --preset quality
+status 2 dotspec new requirement work
 stderr 'refusing to overwrite'
 ! stdout .
-status 2 dotspec requirement init other --preset performance
-stderr 'unknown requirement preset'
-! exists specs/requirements/other.requirement.spec.md
 
 # Unknown labels are advice; invalid attribute declarations is a structural error.
 cp ../unknown.md specs/requirements/unknown.requirement.spec.md
-status 0 dotspec requirement check unknown --json
+status 0 dotspec check specs/requirements/unknown.requirement.spec.md --json
 stdout 'requirement.undefined-attribute'
 ! stderr .
 cp ../cycle.md specs/new-system.system.spec.md
@@ -56,11 +46,11 @@ mkdir specs/quality/a
 cp ../cycle0.md specs/quality/a/a.quality-attribute.spec.md
 mkdir specs/quality/a/b
 cp ../cycle1.md specs/quality/a/b/b.quality-attribute.spec.md
-status 1 dotspec requirement check work --json
+status 1 dotspec check specs/requirements/work.requirement.spec.md --json
 stdout 'quality.cycle'
 ! stdout 'undefined-attribute'
 ! stderr .
-status 2 dotspec requirement check missing --json
+status 2 dotspec check specs/requirements/missing.requirement.spec.md --json
 stdout '"complete": false'
 ! stderr .
 -- model.md --

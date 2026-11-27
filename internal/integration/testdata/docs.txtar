@@ -1,11 +1,13 @@
 # A consumer starts outside a project and discovers the same topic in everyday terms.
 exec dotspec --help
 stdout 'docs +Browse the offline authoring handbook'
-stdout 'dotspec docs job'
+stdout 'Kinds: run dotspec new --help\. Handbook: run dotspec docs\.'
 exec dotspec help
-stdout 'dotspec docs job'
-exec dotspec help job
-stdout 'dotspec docs job'
+stdout 'Handbook: run dotspec docs'
+exec dotspec new --help
+stdout 'job +Define jobs to be done \(JTBDs\)\n +dotspec docs job'
+exec dotspec new job --help
+stdout 'Learn more: dotspec docs job'
 exec dotspec docs
 stdout 'What am I trying to specify'
 stdout 'dotspec docs job'
@@ -29,7 +31,7 @@ exec dotspec __complete docs jo
 stdout '^job$'
 
 # Creating a draft leads directly to the how-to, and its links work offline.
-exec dotspec job init resume
+exec dotspec new job resume
 stdout 'dotspec docs guides/write-a-job'
 exec dotspec docs guides/write-a-job
 stdout '## Where does the job end'
@@ -49,13 +51,13 @@ exec dotspec docs examples/todo/specs/jobs/personal-commitments.job.spec.md
 cmp stdout saved
 
 # A finding keeps its stable ID and the plain text guidance leads to the section.
-exec dotspec requirement init feedback
+exec dotspec new requirement feedback
 stdout 'dotspec docs guides/write-an-assessable-requirement'
 cp draft specs/requirements/feedback.requirement.spec.md
-exec dotspec requirement check feedback --json
+exec dotspec check specs/requirements/feedback.requirement.spec.md --json
 stdout '"rule": "requirement.measurement-basis"'
 ! stdout 'dotspec docs'
-exec dotspec requirement check feedback
+exec dotspec check specs/requirements/feedback.requirement.spec.md
 stdout 'Guide: dotspec docs requirement.measurement-basis'
 exec dotspec docs requirement.measurement-basis
 stdout '^## State how to judge a result'
@@ -92,16 +94,21 @@ exec dotspec docs 'examples/todo/specs/jobs/personal-commitments.job.spec.md#job
 stdout '^## Job$'
 ! stdout '^## Performer'
 exec dotspec docs guides/map-needs-to-capabilities
-stdout '`dotspec model needs` from your project root'
-stdout '`dotspec model needs --project todo` from the dotspec repository root'
-status 2 dotspec model needs --project todo
-stderr 'unknown project "todo"'
+stdout '`dotspec build` from your project root'
+stdout '`dotspec docs examples/todo/specification/jobs/see-personal-commitments-through.job.spec-report.md#less-reconstruction`'
+exec dotspec docs 'examples/todo/specification/jobs/see-personal-commitments-through.job.spec-report.md#less-reconstruction'
+stdout '^### Less reconstruction$'
+stdout '\*\*Supported by\*\*'
 cp ../manifest dotspec.yaml
-exec dotspec job init local-errands
-exec dotspec job show local-errands
+mkdir specs
+cp ../system specs/new-system.system.spec.md
+exec dotspec new job local-errands
+exec dotspec list job
 stdout 'local-errands.job.spec.md'
-exec dotspec model needs
-stdout 'Needs and specification map'
+env HOME=$WORK/home
+env XDG_CACHE_HOME=$WORK/home/cache
+exec dotspec build
+exists specification/jobs/local-errands.job.spec-report.md
 cd ..
 
 -- manifest --
@@ -122,3 +129,17 @@ Members receive feedback promptly.
 ### Measure
 
 Elapsed time to visible feedback.
+-- system --
+---
+type: system-spec
+---
+
+# New system
+
+## Purpose
+
+Help a reader plan local errands.
+
+## Scope
+
+Errands for one reader.

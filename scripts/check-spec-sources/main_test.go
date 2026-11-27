@@ -26,7 +26,7 @@ func put(t *testing.T, root, name, content string) {
 
 func cliSources(root string) ([]byte, error) {
 	var out, stderr bytes.Buffer
-	code := cli.Run([]string{"sources", "--path", root, "--json"}, &out, &stderr)
+	code := cli.Run([]string{"-C", root, "sources", "--json"}, &out, &stderr)
 	if code != 0 {
 		return nil, fmt.Errorf("sources exit %d: %s %s", code, &out, &stderr)
 	}

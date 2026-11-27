@@ -2,12 +2,11 @@
 
 ## Check specifications
 
-From the root of your project, run `dotspec check` to locate specification findings. Use a narrower check while correcting a particular file. For the examples below, substitute an existing subtree for `internal/parser` and an existing job’s slug or file path for the illustrated ones.
+From anywhere in your project, run `dotspec check` to locate specification findings across the whole project. Give it a directory or a specification file for a narrower check while correcting a particular file; relative paths resolve against the working directory. For the examples below, substitute an existing subtree for `internal/parser` and an existing job’s file path for the illustrated one.
 
 ```sh
-dotspec check --path internal/parser
-dotspec check --format json
-dotspec job check develop-requirements
+dotspec check internal/parser
+dotspec check --json
 dotspec check specs/jobs/develop-requirements.job.spec.md
 ```
 
@@ -15,9 +14,28 @@ Use the first finding’s path and location to inspect the source. Correct a str
 
 `check` discovers the specification and reference types listed in its `scope.types` using the same
 Git ignore, repository-boundary, and symlink rules as `list`. Outside Git, ignore files do
-not affect discovery. It reports the selected scope, supported types, discovery
-mode, files examined, and whether the scan completed. An empty completed scan
-succeeds and explicitly reports `No supported source files found.`
+not affect discovery. It reports the selected scope, files examined, and whether
+the scan completed; the JSON report also records the supported types and
+discovery mode. An empty completed scan succeeds and explicitly reports
+`No supported source files found.`
+
+The text report lists the findings first. One summary line follows them, naming
+the scope, whether the scan completed and the counts:
+
+```text
+Checked 16 files in project todo (scan complete): 1 error, 0 advisories; 2 context files.
+Generated specification: not checked (source errors prevent building it)
+
+Context files:
+  README.md
+  dotspec.yaml
+```
+
+A whole-project check names its project; a narrower check names its directory.
+When the project builds a generated specification, a sentence after the summary
+says whether this check covered it. The context files come last. Text paths are
+relative to the working directory, so a specification path printed by `list` or
+`sources` can be passed to `check` as it stands.
 
 Structural errors fail the check: conflicting subject declarations, invalid metadata, missing
 required system sections, duplicate IDs or conventional sections, malformed
@@ -58,11 +76,12 @@ governs the effect of inspection on source files.
 Kinds that read system context, such as requirements, also need their enclosing
 system inspected. Requirements resolve attributes only after that
 system passes structural validation; an invalid system does not trigger
-cascading undefined-attribute advice. As with
-`job show`, `use-case show`, and `concept show`, this direct lookup can read an
+cascading undefined-attribute advice. This direct lookup can read an
 ancestor system outside the selected subtree or one excluded from discovery by
 an ignore rule. Such files are listed as additional context
-and counted separately; shared findings appear once. Context lookup stops at
+and counted separately; shared findings appear once. The target of an unresolved
+reference is reported as a `reference.unresolved` finding, not listed as context
+in text; JSON `context_files` still includes it. Context lookup stops at
 the nearest project root, or at the repository/worktree root (filesystem root
 outside Git) when there is no enclosing project manifest.
 Failures to inspect a context directory are reported but do not count that
@@ -78,11 +97,15 @@ All commands use these exit codes:
 
 Text and JSON reports are written to standard output, including reports with
 findings or an incomplete scan. Argument and output errors go to standard error.
+An error names the command and the problem, such as `new requirement: missing <slug>`,
+and then the help to consult; a misspelled command suggests the nearest one.
+Filesystem errors name the path, relative to the working directory where possible,
+and state the problem in plain words. The help of each command that can exit with
+status `1` says so.
 Use the exit status as well as the report; a partial report is not a clean check.
-For example, a CI step can run `dotspec check --format json > check-report.json`.
-Each focused `KIND check <slug-or-source-path>` command in the
-[CLI reference](cli.md) uses the same report, diagnostic IDs, and
-`0`/`1`/`2` exit behavior. Each inspects one selected
+For example, a CI step can run `dotspec check --json > check-report.json`.
+A focused `check <file>`, given one specification's source path, uses the same report, diagnostic IDs, and
+`0`/`1`/`2` exit behavior. It inspects that
 specification, its system context where that kind has one, and their direct reference targets, with `scope.discovery: "direct"` and
 `scope.types` set to the selected kind, such as `["requirement"]`. A missing specification
 is an incomplete check (exit `2`). File counts represent the selected candidate and attempted read,
@@ -93,7 +116,8 @@ JSON schema version `1` contains:
 
 | Field | Meaning |
 | --- | --- |
-| `schema_version` | Report schema version for consumers. |
+| `schema_version` | `1`, always the first key. |
+| `generated_spec` | Present on a whole-project check of a declared project: whether the generated specification was checked. |
 | `scope` | Absolute resolved project path, supported `types`, and `discovery` mode (`git`, `filesystem`, or `unavailable`). An unresolved scope retains the supplied path; focused checks use `direct` discovery. |
 | `complete` | Whether discovery and all attempted file checks completed, independently of structural findings. |
 | `context_files` | Additional source paths consulted outside the discovered set. |
@@ -102,7 +126,7 @@ JSON schema version `1` contains:
 
 Locations contain `path` and optional `line`, `column`, and `element`. Report
 source paths are absolute; text displays them relative to the current directory
-when possible. Use rule IDs rather than matching message text in automation.
+when possible. Every JSON result uses this location shape. Use rule IDs rather than matching message text in automation.
 
 Examples of diagnostic rules include the following.
 
@@ -114,9 +138,10 @@ Examples of diagnostic rules include the following.
 | `identity.invalid`, `identity.duplicate` | Explicit ID syntax and uniqueness within one document. |
 | `reference.invalid`, `reference.unresolved`, `reference.boundary` | Local reference syntax, target resolution, and repository boundaries. |
 | `companion.invalid`, `companion.role`, `companion.duplicate`, `companion.unlisted` | Frontmatter companion shape, role, uniqueness, and advice for an unlisted model or feature file. |
-| `job.statement`, `job.performer`, `job.boundary`, `job.map`, `job.outcome-empty`, `job.outcome-measure`, `job.story-context` | Advisory job-writing suggestions. |
+| `job.statement`, `job.performer`, `job.outcome-empty` | Advice about a missing job statement, performer, or outcome statement. |
 | `use-case.goal`, `use-case.system-boundary`, `use-case.primary-actor`, `use-case.goal-level`, `use-case.success-guarantees`, `use-case.main-success-scenario`, `use-case.extensions`, `use-case.sequence` | Advice about missing use-case content or scenario order. |
 | `concept.purpose`, `concept.state`, `concept.actions`, `concept.operational-principle` | Advice about missing concept content. |
+| `assumption.basis`, `assumption.applicability`, `interface.contract` | Advice about a system assumption with no Basis or Applicability, or a system or component interface that links to no native contract. |
 | `scan.scope`, `scan.discovery`, `scan.read`, `scan.context`, `scan.reference` | Operational failures that prevent a complete check. |
 
 There is one check command rather than a separate lint command. It is read-only:
@@ -124,11 +149,11 @@ it does not move files, rewrite prose, assign IDs, or apply fixes.
 
 ## Discover specification sources
 
-Run from your project directory. For a narrower inventory, substitute a directory containing your specifications for `internal/integration`.
+Run from anywhere in your project. For a narrower inventory, substitute a directory containing your specifications for `internal/integration`.
 
 ```sh
 dotspec sources
-dotspec sources --path internal/integration --json
+dotspec sources internal/integration --json
 ```
 
 `sources` inventories discovered dotspec files, consulted system context, and
@@ -145,30 +170,52 @@ These scripts specify required outcomes for the illustrated command inputs:
 - [Discovery behavior](../../testdata/discovery.txtar)
 ```
 
-The To-do [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md#evidence) lists its acceptance test as a `verifies` companion and links to it under Evidence. The inventory includes the test once with both referring locations.
+A file that a specification lists in its frontmatter `companions` also shows the role that specification states for it. The To-do [restart requirement](../../examples/todo/specs/requirements/restart.requirement.spec.md#evidence) lists its acceptance test as a `verifies` companion and links to it under Evidence. Run from `examples/todo`, the inventory includes the test once, with every specification that links to it. The restart requirement appears twice, once for its companion entry and role and once for its Evidence link:
+
+```text
+tests/acceptance.py
+  Referenced by app/specs/requirements/acknowledge-after-commit.requirement.spec.md:33:5 (../../../tests/acceptance.py)
+  Referenced by specs/requirements/availability.requirement.spec.md:29:5 (../../tests/acceptance.py)
+  Referenced by specs/requirements/follow-up.requirement.spec.md:36:5 (../../tests/acceptance.py)
+  Companion that verifies specs/requirements/restart.requirement.spec.md:5:13 (../../tests/acceptance.py#verify)
+  Referenced by specs/requirements/restart.requirement.spec.md:49:5 (../../tests/acceptance.py)
+```
+
+The role is the author's declaration. dotspec reports it as written and does not judge whether the file formalizes, illustrates, verifies or explains the specification. [What does a companion add to a specification?](../cli-handbook/explanations/companions.md)
 
 The command uses the same scan, diagnostics, reference rules, and exit statuses
 as `check`, including advisory findings. Results go to stdout even when the scan
-fails. Invocation and output errors go to stderr. `--path` selects a directory
+fails. Invocation and output errors go to stderr. A `<path>` operand selects a directory
 subtree, not a declaration that every source applies to one system.
 
 The version-1 JSON result has these fields:
 
 | Field | Meaning |
 | --- | --- |
-| `schema_version` | `1` |
+| `schema_version` | `1`, always the first key. |
 | `scope` | The same resolved path, supported types, and discovery mode as `check`. |
 | `complete` | Whether the scan completed, independently of structural findings. |
-| `files` | Existing regular files, sorted by absolute path, each with `path` and `referenced_by`. |
+| `files` | Existing regular files, sorted by absolute path, each with `path`, `referenced_by` and `companion_of`. |
 | `diagnostics` | The same findings and location format as `check`. |
 
 Each `referenced_by` entry is the referring spec's location, including its path,
 line, column, and authored link destination in `element`. For a frontmatter
 companion, `element` is `companions` and the location points at the entry's
-target value. Entries are sorted by
+target value. Each `companion_of` entry is one frontmatter companion entry that targets the
+file: its `role` (`formalizes`, `illustrates`, `verifies` or `explains`), its
+authored `target`, including any `#definition` fragment, and the `location` of
+the entry, whose `path` is the declaring specification. The same location also
+appears in `referenced_by`. A specification that lists a file under two roles
+contributes two entries. Both arrays are sorted by
 path and source position. Files appear once even if several specs reference them;
 multiple authored link locations are retained. Empty collections are `[]`.
 Discovered specs and consulted context can have an empty `referenced_by` array.
+A companion that targets a directory or an absolute URL is not a file in the
+inventory, so it appears in neither array; the generated
+[companion index](generated-specification.md#follow-a-companion) lists every entry.
+The text inventory groups files under the project that contains them, naming each
+project once, and ends with a summary line such as
+`Listed 21 source files in project todo (scan complete).`
 Malformed but existing spec files remain listed; missing targets appear in
 diagnostics rather than as existing files. Do not treat a partial or failed
 inventory as proof of coverage.
@@ -178,44 +225,42 @@ The inventory resolves links and companion targets by the rules in
 contents, and native files are not executed or parsed beyond finding the
 definition a companion fragment names.
 
-To check coverage, compare the source files your project expects with `files[].path` in a complete inventory. For an absent specification, verify the selected directory, typed filename suffix, project boundary and Git ignore rules. For a missing contract or test, inspect the relative link in the referring specification and rerun `dotspec sources` after correcting it. Use `referenced_by` to find the specification that links to a test or contract.
+To check coverage, compare the source files your project expects with `files[].path` in a complete inventory. For an absent specification, verify the selected directory, typed filename suffix, project boundary and Git ignore rules. For a missing contract or test, inspect the relative link in the referring specification and rerun `dotspec sources` after correcting it. Use `referenced_by` to find the specification that links to a test or contract, and `companion_of` to see which specifications list it as a companion and in what role.
 
 ## Output and automation
 
-To save a snapshot for other tools and validate it, see [Export and validate a snapshot](specification-model.md#export-and-validate-a-snapshot). Offline, run `dotspec model schema` to print the snapshot format; the [mapping reference](../../model/markdown-mapping.md) explains how authored Markdown becomes its fields.
+To save a snapshot for other tools and validate it, see [Export and validate a snapshot](specification-model.md#export-and-validate-a-snapshot). Offline, run `dotspec snapshot schema` to print the snapshot format; the [mapping reference](../../model/markdown-mapping.md) explains how authored Markdown becomes its fields.
 
-Commands that list `--json` in the [CLI reference](cli.md) accept it
-or `--format json`. Use one of these flags, not both. The default is `--format text`; `job map` also
-accepts `--format mermaid` and emits standalone diagram source. Redirecting output
-does not change its format. JSON, Mermaid, and redirected output contain no ANSI
+A command that returns a result accepts a local `--json` flag, listed with its other
+flags in the [CLI reference](cli.md); without it the result is text. `docs`, `help`,
+`completion` and `man` have no result to encode, and `build` writes the generated
+specification instead; none of them accepts `--json`. The snapshot artifacts, `snapshot export`
+and `snapshot schema`, always write JSON. The snapshot is the integration contract for tools
+that consume the whole specification; `--json` on other commands is a per-command
+convenience for scripts. Redirecting output does not change its format. JSON and redirected output contain no ANSI
 styling. `NO_COLOR` disables terminal styling, including help and errors.
 
-`system show` uses `schema_version: 3`. The other show and list results that include a System object use `schema_version: 2`. Each System exposes its named roles in `stakeholder_roles`, with a `name` and authored `description` per entry. This applies to system, job, use-case, concept, requirement and business-rule show and list commands. The job outcome list and map also use version 2. The init commands and sources use version 1. Check results use the report documented above.
+Every command result begins with `"schema_version": 1`. The snapshot is the exception: `snapshot export` carries the `model_version` and `representation_version` of the [specification model](specification-model.md) instead. Check results use the report documented above.
 
 | Command | Result fields |
 | --- | --- |
-| `system init`, `job init`, `use-case init`, `concept init`, `requirement init` | `path` of the created specification |
+| `init` | `project` name, absolute `manifest` and `system` paths, and the nullable `enclosing_project` (`name` and `root`) whose scans now skip the new project |
+| `new <kind>` | `path` of the created specification |
+| `new quality-attribute` | the `target` system, each `entries` decision (`id`, `role` of `requested` or `ancestor`, `decision` of `create` or `reuse`, `path` and, for a new file, its `content`), the `added` IDs and `dry_run` |
+| `list <kind>` | `entries`, each with its `kind`, `slug`, `name`, absolute `path` and nullable `system` (`name` and `path`): a specification's associated system, a component's governing system or a system's enclosing system. A component entry also carries the `part_of` path of its parent |
 | `sources` | `scope`, `complete`, `files`, and `diagnostics` as described above |
-| `system show` | `system`, including its `overview`, and its nullable `enclosing_system` (directory context) |
-| `system list` | `systems`, a directory tree of `system` objects and `children` arrays |
-| `job show` | `job`, including its authored Markdown, steps, outcomes, and nullable `system` |
-| `job list` | `groups`, each with a nullable `system` and a `jobs` array |
-| `use-case show` | `use_case`, including its authored Markdown, conventional section bodies, and nullable `system` |
-| `use-case list` | `groups`, each with a nullable `system` and a `use_cases` array |
-| `concept show` | `concept`, including its authored Markdown, conventional section bodies, optional type declarations, and nullable `system` |
-| `concept list` | `groups`, each with a nullable `system` and a `concepts` array |
-| `requirement show` | `requirement`, including its authored Markdown, statement, criterion, attributes, and nullable `system` |
-| `requirement list` | `groups`, each with a nullable `system` and a `requirements` array; `attribute` when `--attribute` selects one |
-| `job outcome list` | `name`, `path`, `declared_by_job` outcomes, and selected `steps` with their outcomes |
-| `job map` | `name`, `path`, `declared_by_job` and `steps`. Outcome arrays are empty unless `--outcomes` is set. |
+| `snapshot validate` | `valid`, and the `findings` that make a snapshot invalid, each with its `path`, `code` and `message` |
 
 Object keys use snake case. Empty collections are arrays; absent system associations
-are `null`. Paths are absolute in JSON and relative where possible in text. Source
+are `null`. Paths are absolute in JSON and relative where possible in text. Every
+`location` carries the `path` of its source
+file; a bundled quality model, which has no file, is named `builtin:<slug>` instead. Source
 locations use one-based lines and Unicode-code-point columns. Step descriptions and
-Markdown remain authored content. For `job outcome list`, `--step ID` leaves `declared_by_job` empty and selects only outcomes declared under that step. To see which steps an outcome applies to, use `dotspec model needs`. [Outcome ownership and applicability](../cli-handbook/guides/write-a-job.md#record-steps-and-shared-outcomes).
+Markdown remain authored content. In a snapshot, each job step carries only the outcomes it declares. To see which steps an outcome applies to, open the job’s generated report, where each step lists its outcomes under **Applies here**. [Outcome ownership and applicability](../cli-handbook/guides/write-a-job.md#record-steps-and-shared-outcomes).
 
-Use `dotspec --version` for build metadata, `dotspec completion bash|zsh|fish|powershell`
-for shell completion scripts, and `dotspec man` for the root manual in roff format.
+Use `dotspec --version` for build metadata and `dotspec completion bash|zsh|fish|powershell`
+for shell completion scripts. Each release archive includes the manual page
+`man/man1/dotspec.1`.
 See the generated [CLI reference](cli.md) for flags and examples.
 
 ## References
@@ -269,7 +314,7 @@ documents the metamodel's edge categories, cardinalities, scope and projections.
 ## Check the generated requirements specification
 
 A whole-project check includes the generated Markdown by default for projects
-declared with `dotspec.yaml`. Set `report.enabled` to `false` for source-only checks. Commit the output of `dotspec spec build` with its
+declared with `dotspec.yaml`. Set `build.enabled` to `false` for source-only checks. Commit the output of `dotspec build` with its
 sources. Check all configured projects in CI with `dotspec check --all`.
 See [Generate a requirements specification](generated-specification.md) for
 document types, workspace boundaries, reader navigation and recovery from drift.
@@ -278,13 +323,14 @@ When the generated spec participates, the JSON check report includes
 `generated_spec`. Its value is `checked` after the files were inspected,
 `blocked-by-source` when source findings prevent constructing the expected
 spec, `out-of-scope` for a narrower selection, or `incomplete` when an
-operational error interrupted document inspection. Read the findings and
-exit status to determine whether a checked spec passed.
+operational error interrupted document inspection. The text report states the
+same in a sentence after its summary line: `Generated specification: checked`,
+`not checked (source errors prevent building it)`, `not checked (subtree check)`,
+`not checked (focused check)` or `check incomplete (operational error)`. Read the
+findings and exit status to determine whether a checked spec passed.
 
-## Browse and adopt quality attributes
+## Adopt quality attributes
 
-`quality-attribute browse --json` returns schema version 1. The `effective_model` identifies the model by `id`, source locator, and selection basis (`explicit`, `project`, or `builtin_default`). The `attributes` array lists top-level terms in source order. With a term ID it lists immediate children, alongside the selected `attribute` and its `parents`. Each entry includes its ID, name, and definition. `quality-model list --json` (version 3) includes the same effective selection.
+`new quality-attribute <id>...` adopts each named attribute into the nearest system that encloses the working directory. Without `--from`, each attribute starts with a blank definition in `specs/quality/<id>/`. `--from <model>` copies each term and its missing parents from the bundled `iso-25010-2023` model, a local quality model slug, or a model source path; there is no default model. Read the bundled model's terms offline with `dotspec docs quality-models/iso-25010-2023`.
 
-`quality-attribute add` and `quality-model apply` share adoption result version 3. The result includes `effective_model`, `target`, `dry_run`, the IDs in `added`, and ordered `entries`. Each entry supplies its `id`, `path`, `role` (requested or ancestor), and `decision` (create or reuse). Creations include their complete proposed `content`. Dry runs describe the same decisions and preserve the filesystem. On a repeat write, `added` is empty and reused entries identify the system's own declarations.
-
-`quality-model apply` requires `--attributes ID,ID` for a batch or `--all` for the whole model. Use `quality-attribute add ID` for one term. [Define a System quality attribute](../cli-handbook/guides/define-a-system-quality-attribute.md)
+Adoption follows the [no-overwrite rule](../../specs/requirements/reject-existing-target.requirement.spec.md): when the system already declares a named attribute, it exits 2 and writes nothing. A parent the system already declares is reused, keeping its wording and grouping. `new quality-attribute --json` reports `schema_version`, `target`, `dry_run`, the IDs in `added`, and ordered `entries`. Each entry supplies its `id`, `path`, `role` (requested or ancestor), and `decision` (create or reuse). Creations include their complete proposed `content`. `--dry-run` describes the same decisions and preserves the filesystem. `list quality-model` lists the project's own models; the bundled model is read through `dotspec docs`. [Define a System quality attribute](../cli-handbook/guides/define-a-system-quality-attribute.md)

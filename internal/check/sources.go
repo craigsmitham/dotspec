@@ -11,11 +11,22 @@ import (
 )
 
 // SourceFile records a file and its authored incoming links, without assigning
-// authority or interpreting the meaning of its contents.
+// authority or interpreting the meaning of its contents. CompanionOf repeats
+// each frontmatter companion entry that targets the file with the role its
+// author stated; the role is reported, not inferred or verified.
 type SourceFile struct {
 	Project      *specfile.Project     `json:"project,omitempty"`
 	Path         string                `json:"path"`
 	ReferencedBy []diagnostic.Location `json:"referenced_by"`
+	CompanionOf  []SourceCompanion     `json:"companion_of"`
+}
+
+// SourceCompanion is one specification's frontmatter entry listing a file as
+// its companion. The location's path is the declaring specification.
+type SourceCompanion struct {
+	Role     string              `json:"role"`
+	Target   string              `json:"target"`
+	Location diagnostic.Location `json:"location"`
 }
 
 type SourceReport struct {
@@ -71,20 +82,16 @@ func InspectSources(path string, types ...Type) Inventory {
 	result := Inventory{Types: slices.Clone(types), Files: []SourceFile{}}
 	result.Report = project(path, &result, result.Types...)
 	for _, file := range result.Report.files {
-		sort.Slice(file.ReferencedBy, func(i, j int) bool {
-			a, b := file.ReferencedBy[i], file.ReferencedBy[j]
-			if a.Path != b.Path {
-				return a.Path < b.Path
-			}
-			if a.Line != b.Line {
-				return a.Line < b.Line
-			}
-			if a.Column != b.Column {
-				return a.Column < b.Column
-			}
-			return a.Element < b.Element
-		})
+		sort.Slice(file.ReferencedBy, func(i, j int) bool { return locationLess(file.ReferencedBy[i], file.ReferencedBy[j]) })
 		file.ReferencedBy = slices.Compact(file.ReferencedBy)
+		sort.Slice(file.CompanionOf, func(i, j int) bool {
+			a, b := file.CompanionOf[i], file.CompanionOf[j]
+			if a.Location != b.Location {
+				return locationLess(a.Location, b.Location)
+			}
+			return a.Role < b.Role
+		})
+		file.CompanionOf = slices.Compact(file.CompanionOf)
 		result.Files = append(result.Files, *file)
 	}
 	sort.Slice(result.Files, func(i, j int) bool { return result.Files[i].Path < result.Files[j].Path })
@@ -93,7 +100,23 @@ func InspectSources(path string, types ...Type) Inventory {
 	return result
 }
 
-func (r *Report) collectFile(path string, reference *diagnostic.Location) {
+// locationLess orders locations by path and source position.
+func locationLess(a, b diagnostic.Location) bool {
+	if a.Path != b.Path {
+		return a.Path < b.Path
+	}
+	if a.Line != b.Line {
+		return a.Line < b.Line
+	}
+	if a.Column != b.Column {
+		return a.Column < b.Column
+	}
+	return a.Element < b.Element
+}
+
+// collectFile records an existing file and, when reference is set, the link
+// that reaches it. A frontmatter companion link also records its role.
+func (r *Report) collectFile(path string, reference *specfile.Reference) {
 	if r.files == nil || path == "" {
 		return
 	}
@@ -105,7 +128,7 @@ func (r *Report) collectFile(path string, reference *diagnostic.Location) {
 	}
 	file := r.files[path]
 	if file == nil {
-		file = &SourceFile{Path: path, ReferencedBy: []diagnostic.Location{}}
+		file = &SourceFile{Path: path, ReferencedBy: []diagnostic.Location{}, CompanionOf: []SourceCompanion{}}
 		if p, err := specfile.FindProject(filepath.Dir(path)); err != nil {
 			r.record(err, "scan.context", path)
 		} else {
@@ -113,7 +136,11 @@ func (r *Report) collectFile(path string, reference *diagnostic.Location) {
 		}
 		r.files[path] = file
 	}
-	if reference != nil {
-		file.ReferencedBy = append(file.ReferencedBy, *reference)
+	if reference == nil {
+		return
+	}
+	file.ReferencedBy = append(file.ReferencedBy, reference.Location)
+	if reference.Role != "" {
+		file.CompanionOf = append(file.CompanionOf, SourceCompanion{Role: reference.Role, Target: reference.Destination, Location: reference.Location})
 	}
 }

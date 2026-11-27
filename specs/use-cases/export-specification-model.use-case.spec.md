@@ -2,12 +2,12 @@
 type: use-case-spec
 id: export-specification-model
 companions:
-  - target: ../../internal/integration/testdata/model.txtar
+  - target: ../../internal/integration/testdata/snapshot.txtar
     role: illustrates
     note: Export and offline validation
 ---
 
-# Export a specification model for review or integration
+# Export a specification snapshot
 
 ## Goal
 
@@ -30,7 +30,7 @@ User task (sea level).
 
 ## Trigger
 
-The contributor requests a specification-model export.
+The contributor requests a specification snapshot export.
 
 ## Preconditions
 
@@ -71,7 +71,7 @@ that its specifications are accepted, adequate or satisfied.
 
 ## Main success scenario
 
-1. The contributor selects a project subtree and requests a model export.
+1. The contributor selects a project subtree and requests a snapshot export.
 2. Dotspec discovers specifications and their required enclosing context and
    records normalized Markdown and reference identities.
 3. Dotspec represents ordered document content, maps explicit domain structures,

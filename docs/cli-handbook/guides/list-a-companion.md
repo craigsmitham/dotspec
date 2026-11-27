@@ -47,9 +47,9 @@ dotspec does not check fragments in other formats. They keep the meaning their f
 
 ## Check the entry
 
-From the project directory, run `dotspec check`. It resolves each target as it resolves an authored link: a relative target must exist inside the repository (an absolute URL is not fetched), and a fragment must name a heading or definition that the target declares. Run `dotspec sources` to see the companion files alongside the other files your specifications reference.
+From the project directory, run `dotspec check`. It resolves each target as it resolves an authored link: a relative target must exist inside the repository (an absolute URL is not fetched), and a fragment must name a heading or definition that the target declares. Run `dotspec sources` to see the companion files alongside the other files your specifications reference. Each companion file shows the specification that lists it and the role that entry states, such as `Companion that verifies specs/requirements/restart.requirement.spec.md:5:13`. Check that every file you meant to list appears with the role you intended.
 
-Then run `dotspec spec build` and open the subject's report page. Its **Companions** section groups the entries under **Formalized by**, **Illustrated by**, **Verified by** and **Explained by**, each followed by its note. A named definition links to its line, and a specification target links to its report page. A system or component report lists its own companions in its overview. The outermost system's report links to `companions.md`, which lists every companion in the system by role with the subject that declares it. Check that a reader could choose the right companion from the label and note alone. [To-do companions](../../../examples/todo/specification/companions.md).
+Then run `dotspec build` and open the subject's report page. Its **Companions** section groups the entries under **Formalized by**, **Illustrated by**, **Verified by** and **Explained by**, each followed by its note. A named definition links to its line, and a specification target links to its report page. A system or component report lists its own companions in its overview. The outermost system's report links to `companions.md`, which lists every companion in the system by role with the subject that declares it. Check that a reader could choose the right companion from the label and note alone. [To-do companions](../../../examples/todo/specification/companions.md).
 
 ## Record results for a procedure
 
@@ -62,7 +62,7 @@ A `verifies` companion is the procedure. Its outcomes belong in `verification-re
 }
 ```
 
-A complete result also records the product revision, conditions, outcome and observation. `dotspec spec build` shows the matching results under the requirement's **Verification** heading. [Verification results format (dotspec checkout)](../../reference/generated-specification.md#record-verification-results).
+A complete result also records the product revision, conditions, outcome and observation. `dotspec build` shows the matching results under the requirement's **Verification** heading. [Verification results format (dotspec checkout)](../../reference/generated-specification.md#record-verification-results).
 
 ## Resolve a finding
 

@@ -1,61 +1,58 @@
 package cli
 
 import (
-	"errors"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/guide"
-	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/speckinds"
 	"github.com/spf13/cobra"
 )
 
 func newCheckCommand() *cobra.Command {
-	cmd := &cobra.Command{Use: "check [source-path]", Short: "Check specifications and reference documents in a project subtree",
-		Long:    "Check authored specifications and reference documents using the same discovery rules as list. A whole-project check also inspects generated Markdown for projects declared with dotspec.yaml unless report.enabled is false. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.\n\n" + exitPolicy,
-		Example: "dotspec check\ndotspec check --path internal --json", Args: cobra.MaximumNArgs(1),
+	cmd := &cobra.Command{Use: "check [<path>]", Short: "Check specifications and reference documents in a project subtree",
+		Long:    "Check authored specifications and the reference documents they cite, using the same discovery rules as list. With no <path>, check covers the enclosing project; a directory narrows it to that subtree, and a specification file checks that file and the context it requests. A whole-project check in a project declared with dotspec.yaml also checks that the generated specification is current, unless build.enabled is false. With --all, check covers every project discovered in the workspace separately and exits with the highest project exit code.\n\nA passing check means no checked file has an error finding under dotspec's automated authoring rules. " + findingsExit + "\n\nLearn more: dotspec docs docs/reference/inspection.md#check-specifications",
+		Example: "dotspec check\ndotspec check internal --json", Args: operands(0, 1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			path, err := projectPath(cmd)
-			if err != nil {
-				return err
-			}
-			format, err := outputFormat(cmd)
-			if err != nil {
-				return err
-			}
-			if len(args) > 0 {
-				if kind := check.MatchType(args[0], speckinds.All()); kind != nil {
-					return emitFocusedCheck(cmd.OutOrStdout(), format, path, args[0], *kind)
+			asJSON := jsonOutput(cmd)
+			if all, _ := cmd.Flags().GetBool("all"); all {
+				if len(args) > 0 {
+					return usageError(cmd, "--all checks every project; omit <path>")
 				}
-				return fmt.Errorf("unknown source document type: %s", args[0])
+				return checkWorkspace(cmd, asJSON)
 			}
-			report := inspectProject(path)
-			p := report.Scope.Project
-			if p != nil && p.QualityModel != "" && report.Scope.Path == p.Root {
-				_, _, err := qualitymodel.Resolve(p.Root, p, "")
+			target := optionalPath(args)
+			if kind := check.MatchType(target, speckinds.All()); target != "" && kind != nil {
+				// A specification file is checked from its own directory, so it
+				// belongs to its enclosing project wherever the check starts.
+				dir, err := workingScope.dir(filepath.Dir(target))
 				if err != nil {
-					var finding *diagnostic.Diagnostic
-					if !errors.As(err, &finding) {
-						report.Complete = false
-						finding = diagnostic.Error("project.quality-model", err.Error(), p.QualityLocation)
-					}
-					report = report.WithFindings(*finding)
+					return err
 				}
+				return emitCheckReport(cmd.OutOrStdout(), check.Focused(dir, filepath.Base(target), *kind, speckinds.All()...), asJSON)
 			}
-			return emitCheckReport(cmd.OutOrStdout(), report, format)
+			if info, err := os.Stat(target); target != "" && err == nil && !info.IsDir() {
+				return fmt.Errorf("unknown source document type: %s", target)
+			}
+			dir, err := projectScope.dir(target)
+			if err != nil {
+				return err
+			}
+			return emitCheckReport(cmd.OutOrStdout(), inspectProject(dir), asJSON)
 		},
 	}
-	addPath(cmd)
-	addOutput(cmd, false)
+	cmd.Flags().Bool("all", false, "check every discovered project separately")
+	addJSON(cmd)
 	return cmd
 }
 
-func emitCheckReport(out io.Writer, report check.Report, format string) error {
-	if err := writeCheckReport(out, report, format); err != nil {
+func emitCheckReport(out io.Writer, report check.Report, asJSON bool) error {
+	if err := writeCheckReport(out, report, asJSON); err != nil {
 		return &exitError{code: 2, err: err}
 	}
 	if code := report.ExitCode(); code != 0 {
@@ -64,23 +61,13 @@ func emitCheckReport(out io.Writer, report check.Report, format string) error {
 	return nil
 }
 
-func writeCheckReport(out io.Writer, report check.Report, format string) error {
-	if format == "json" {
+func writeCheckReport(out io.Writer, report check.Report, asJSON bool) error {
+	if asJSON {
 		return writeJSON(out, report)
 	}
 	var text strings.Builder
-	if report.Scope.Project != nil {
-		fmt.Fprintf(&text, "Project: %s\n", report.Scope.Project.Name)
-	}
-	fmt.Fprintf(&text, "Checking %s (%s; %s discovery)\n", displayPath(report.Scope.Path), strings.Join(report.Scope.Types, ", "), report.Scope.Discovery)
-	if report.GeneratedSpec != "" {
-		fmt.Fprintf(&text, "Generated specification: %s\n", report.GeneratedSpec)
-	}
-	for _, path := range report.ContextFiles {
-		fmt.Fprintf(&text, "Context: %s\n", displayPath(path))
-	}
 	for _, d := range report.Diagnostics {
-		fmt.Fprintf(&text, "\n%s\n  %s [%s]", diagnosticPath(d.Location), d.Severity, d.Rule)
+		fmt.Fprintf(&text, "%s\n  %s [%s]", diagnosticPath(d.Location), d.Severity, d.Rule)
 		if d.Location.Element != "" {
 			fmt.Fprintf(&text, " %s", d.Location.Element)
 		}
@@ -95,19 +82,66 @@ func writeCheckReport(out io.Writer, report check.Report, format string) error {
 			}
 			text.WriteByte('\n')
 		}
+		text.WriteByte('\n')
 	}
 	if report.Complete && report.Summary.FilesDiscovered == 0 && report.Summary.Errors == 0 {
-		text.WriteString("\nNo supported source files found.\n")
+		text.WriteString("No supported source files found.\n")
 	}
-	fmt.Fprintf(&text, "\nChecked %d of %d discovered source files; additional context files: %d.\nErrors: %d; advisory findings: %d.\n",
-		report.Summary.FilesChecked, report.Summary.FilesDiscovered, report.Summary.ContextFilesChecked, report.Summary.Errors, report.Summary.Advice)
+	completeness := "scan complete"
 	if !report.Complete {
-		text.WriteString("Scan incomplete.\n")
-	} else {
-		text.WriteString("Scan complete.\n")
+		completeness = "scan incomplete"
+	}
+	context := report.ExistingContextFiles()
+	fmt.Fprintf(&text, "Checked %s in %s (%s): %s, %s; %s.\n",
+		count(report.Summary.FilesChecked, "file", "files"), scopeName(report.Scope), completeness,
+		count(report.Summary.Errors, "error", "errors"), count(report.Summary.Advice, "advisory", "advisories"),
+		count(len(context), "context file", "context files"))
+	if state := generatedSpecState(report); state != "" {
+		fmt.Fprintf(&text, "Generated specification: %s\n", state)
+	}
+	if len(context) > 0 {
+		text.WriteString("\nContext files:\n")
+		for _, path := range context {
+			fmt.Fprintf(&text, "  %s\n", displayPath(path))
+		}
 	}
 	_, err := io.WriteString(out, text.String())
 	return err
+}
+
+// scopeName names a report's scope for text output: the project when the
+// scope is the whole project, otherwise the directory.
+func scopeName(scope check.Scope) string {
+	if scope.Project != nil && scope.Path == scope.Project.Root && scope.Discovery != "direct" {
+		return "project " + scope.Project.Name
+	}
+	return displayPath(scope.Path)
+}
+
+// generatedSpecState states in words whether a check covered the generated
+// specification, or "" when the project does not build one.
+func generatedSpecState(report check.Report) string {
+	switch report.GeneratedSpec {
+	case "checked":
+		return "checked"
+	case "out-of-scope":
+		if report.Scope.Discovery == "direct" {
+			return "not checked (focused check)"
+		}
+		return "not checked (subtree check)"
+	case "blocked-by-source":
+		return "not checked (source errors prevent building it)"
+	case "incomplete":
+		return "check incomplete (operational error)"
+	}
+	return ""
+}
+
+func count(n int, one, many string) string {
+	if n == 1 {
+		return "1 " + one
+	}
+	return fmt.Sprintf("%d %s", n, many)
 }
 
 func diagnosticPath(location diagnostic.Location) string {

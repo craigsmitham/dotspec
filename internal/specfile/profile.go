@@ -242,6 +242,17 @@ func (o *Outline) collectionIntro(s *Section) error {
 	return nil
 }
 
+// LinksWithin returns the links anywhere in a section, including its subsections.
+func (o *Outline) LinksWithin(s *Section) []Reference {
+	var refs ReferenceDocument
+	for n := o.AST.FirstChild(); n != nil; n = n.NextSibling() {
+		if n.Pos() >= s.ContentStart && n.Pos() < s.End {
+			outlineLinks(o, n, &refs)
+		}
+	}
+	return refs.Links
+}
+
 func (o *Outline) sectionLinks(s *Section) []Reference {
 	var refs ReferenceDocument
 	for _, n := range o.Nodes(s) {

@@ -10,7 +10,19 @@ import (
 	"testing"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/craigsmitham/dotspec/internal/speccollection"
 )
+
+// members lists use cases below dir as dotspec list use-case does.
+func members(dir string) ([]*speccollection.Member, error) {
+	return speccollection.Members(dir, Layout, "use cases", func(path string) (string, error) {
+		spec, err := Read(path)
+		if err != nil {
+			return "", err
+		}
+		return spec.Name, nil
+	})
+}
 
 func write(t *testing.T, path, content string) {
 	t.Helper()
@@ -41,36 +53,46 @@ func git(t *testing.T, dir string, args ...string) {
 	}
 }
 
-func TestInitializationAndLocalLookup(t *testing.T) {
-	dir := t.TempDir()
+func TestInitializationAndAssociation(t *testing.T) {
+	dir, err := filepath.EvalSymlinks(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
 	git(t, dir, "init", "-q")
 	path, err := InitTemplate(dir, "check-specifications", "brief")
 	if err != nil {
 		t.Fatal(err)
 	}
-	got, err := Show(dir, "check-specifications")
-	if err != nil || got.Slug != "check-specifications" || got.System != nil || got.Name != "New use case" {
+	got, err := Read(path)
+	if err != nil || got.Slug != "check-specifications" || got.Name != "Check specifications" {
 		t.Fatalf("initialized use case: %+v, %v", got, err)
+	}
+	if listed, err := members(dir); err != nil || len(listed) != 1 || listed[0].System != nil {
+		t.Fatalf("unassociated use case: %+v, %v", listed, err)
+	}
+	before, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
 	}
 	if _, err := InitTemplate(dir, "check-specifications", "brief"); err == nil || !strings.Contains(err.Error(), "refusing to overwrite") {
 		t.Fatalf("overwrite: %v", err)
 	}
-	if content, err := os.ReadFile(path); err != nil || string(content) != Template {
+	if content, err := os.ReadFile(path); err != nil || string(content) != string(before) {
 		t.Fatalf("existing file changed: %s, %v", content, err)
 	}
 	write(t, path, strings.Replace(example, "# Check specifications", "# Review structural findings", 1))
-	got, err = Show(dir, "check-specifications")
+	got, err = Read(path)
 	if err != nil || got.Slug != "check-specifications" || got.ID != "check-specifications" || got.Name != "Review structural findings" {
 		t.Fatalf("identity changed with title: %+v, %v", got, err)
 	}
 	child := filepath.Join(dir, "child")
 	writeSystem(t, child, "Child")
-	if _, err := Show(child, "check-specifications"); !errors.Is(err, os.ErrNotExist) {
-		t.Fatalf("lookup must not fall back to an ancestor use case: %v", err)
+	local := writeUseCase(t, child, "check-specifications")
+	listed, err := members(child)
+	if err != nil || len(listed) != 1 || listed[0].Path != local || listed[0].System == nil || listed[0].System.Name != "Child" {
+		t.Fatalf("a subtree lists only its own use cases with their system: %+v, %v", listed, err)
 	}
-	writeUseCase(t, child, "check-specifications")
-	got, err = Show(child, "check-specifications")
-	if err != nil || got.System == nil || got.System.Name != "Child" || got.BoundaryDescription != "The dotspec CLI." {
+	if got, err := Read(local); err != nil || got.BoundaryDescription != "The dotspec CLI." {
 		t.Fatalf("association must not rewrite the stated boundary: %+v, %v", got, err)
 	}
 }
@@ -80,9 +102,6 @@ func TestValidationBeforeCreatingFiles(t *testing.T) {
 	slug := "work.use-case.spec.md"
 	if _, err := InitTemplate(dir, slug, "brief"); err == nil {
 		t.Errorf("init accepted %q", slug)
-	}
-	if _, err := Show(dir, slug); err == nil {
-		t.Errorf("show accepted %q", slug)
 	}
 	if entries, err := os.ReadDir(dir); err != nil || len(entries) != 0 {
 		t.Fatalf("invalid invocation wrote files: %v, %v", entries, err)
@@ -98,7 +117,7 @@ func TestReadDiagnosticsAndPreservation(t *testing.T) {
 	if !errors.As(err, &d) || d.Rule != "structure.duplicate-section" || d.Location.Path != path || d.Related[0].Path != path {
 		t.Fatalf("source path missing from diagnostic: %+v", d)
 	}
-	if _, err := List(dir); err == nil {
+	if _, err := members(dir); err == nil {
 		t.Fatal("list silently omitted malformed input")
 	}
 	if got, err := os.ReadFile(path); err != nil || !reflect.DeepEqual(got, []byte(source)) {

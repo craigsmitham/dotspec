@@ -6,15 +6,15 @@ import (
 	"testing"
 )
 
-func TestBundledStarters(t *testing.T) {
+func TestBundledModel(t *testing.T) {
 	models, err := Builtins()
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(models) != 3 {
-		t.Fatalf("starters: %d", len(models))
+	if len(models) != 1 {
+		t.Fatalf("bundled models: %d", len(models))
 	}
-	counts := map[string]int{"iso-25010-2023": 49, "furps": 36, "q42": 200}
+	counts := map[string]int{"iso-25010-2023": 49}
 	for _, m := range models {
 		if len(m.QualityAttributes) != counts[m.Slug] || len(Check(m)) != 0 || m.Sources == "" || m.Edition == "" {
 			t.Fatalf("incomplete starter: %+v", m)
@@ -32,21 +32,22 @@ func TestBundledStarters(t *testing.T) {
 				}
 			}
 		}
-		wantRoots := map[string]int{"iso-25010-2023": 9, "furps": 5, "q42": 9}[m.Slug]
+		wantRoots := map[string]int{"iso-25010-2023": 9}[m.Slug]
 		if roots != wantRoots {
 			t.Fatalf("%s roots: %d, want %d", m.Slug, roots, wantRoots)
 		}
 		expected := map[string]map[string]int{
 			"iso-25010-2023": {"functional-suitability": 3, "performance-efficiency": 3, "compatibility": 2, "interaction-capability": 8, "reliability": 4, "security": 6, "maintainability": 5, "flexibility": 4, "safety": 5},
-			"furps":          {"functionality": 3, "usability": 7, "reliability": 5, "performance": 8, "supportability": 9},
-			"q42":            {"secure": 28, "usable": 62, "reliable": 61, "flexible": 28, "suitable": 35, "efficient": 35, "maintainable": 19, "operable": 41, "safe": 16},
 		}[m.Slug]
 		if !reflect.DeepEqual(children, expected) {
 			t.Fatalf("%s hierarchy: %v, want %v", m.Slug, children, expected)
 		}
 	}
-	if Default != "iso-25010-2023" {
-		t.Fatal("unexpected default")
+	if slugs, err := BundledSlugs(); err != nil || !reflect.DeepEqual(slugs, []string{"iso-25010-2023"}) {
+		t.Fatal(slugs, err)
+	}
+	if data, err := Bundled("iso-25010-2023"); err != nil || !strings.Contains(string(data), "# ISO/IEC 25010:2023") {
+		t.Fatal(err)
 	}
 }
 

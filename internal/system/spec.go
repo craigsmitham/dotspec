@@ -66,6 +66,7 @@ type System struct {
 	Glossary           string                      `json:"glossary,omitempty"`
 	Path               string                      `json:"path"`
 	QualityAttributes  []Attribute                 `json:"quality_attributes"`
+	advice             []diagnostic.Diagnostic
 }
 
 func Read(path string) (*System, error) {
@@ -153,6 +154,7 @@ func ParseMarkdown(input *specfile.Markdown) (*System, error) {
 		return nil, err
 	}
 	spec.References = doc.References()
+	spec.advice = boundaryAdvice(doc)
 	if err := spec.glossaryReferences(input); err != nil {
 		return nil, err
 	}

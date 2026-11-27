@@ -1,4 +1,4 @@
-"""Verify the documentation shipped in each GoReleaser platform archive."""
+"""Verify the documentation and manual page shipped in each GoReleaser platform archive."""
 from pathlib import Path
 import tarfile
 import zipfile
@@ -22,7 +22,7 @@ def check(root):
         else:
             with tarfile.open(archive) as bundle:
                 names = set(bundle.getnames())
-        missing = (pages | examples | {"README.md"}) - names
+        missing = (pages | examples | {"README.md", "man/man1/dotspec.1"}) - names
         extra = {name for name in names if name.startswith("docs/")} - pages
         extra.update(names & {"CONTRIBUTING.md", "model/README.md", "examples/todo/COVERAGE.md"})
         extra.update(name for name in names if Path(name).name == "AGENTS.md")

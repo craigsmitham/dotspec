@@ -163,7 +163,7 @@ func (d *designResolver) run() {
 	}
 	d.withholdCyclicLinks()
 	d.checkDeclarations()
-	d.traceReview()
+	d.measurementReview()
 }
 func (d *designResolver) text(value any) string {
 	var out strings.Builder

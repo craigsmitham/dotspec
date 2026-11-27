@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/craigsmitham/dotspec/internal/speccollection"
 	"github.com/craigsmitham/dotspec/internal/system"
 )
 
@@ -32,16 +33,18 @@ func TestLifecycleDiscoveryAndContext(t *testing.T) {
 	if _, err := Init(child, "approval"); err == nil {
 		t.Fatal("overwrote existing rule")
 	}
-	got, err := Show(child, "approval")
-	if err != nil || got.System == nil || got.Statement == "" {
-		t.Fatalf("read/context: %+v %v", got, err)
+	if got, err := Read(path); err != nil || got.Statement == "" {
+		t.Fatalf("read: %+v %v", got, err)
 	}
-	if rule, err := Show(root, "approval"); err != nil || rule.Path != path {
-		t.Fatalf("owner lookup: %v", err)
-	}
-	groups, err := List(root)
-	if err != nil || len(groups) != 1 || len(groups[0].BusinessRules) != 1 {
-		t.Fatalf("inventory: %+v %v", groups, err)
+	listed, err := speccollection.Members(root, Layout, "business rules", func(path string) (string, error) {
+		rule, err := Read(path)
+		if err != nil {
+			return "", err
+		}
+		return rule.Name, nil
+	})
+	if err != nil || len(listed) != 1 || listed[0].Path != path || listed[0].System == nil {
+		t.Fatalf("inventory and context: %+v %v", listed, err)
 	}
 	after, err := os.ReadFile(path)
 	if err != nil || string(before) != string(after) {

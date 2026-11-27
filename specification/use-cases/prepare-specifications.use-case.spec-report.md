@@ -25,7 +25,10 @@ A contributor proposing a product change.
    [discovers specification sources](<discover-specification-sources.use-case.spec-report.md>).
 3. The contributor [checks specifications](<check-specifications.use-case.spec-report.md>),
    resolves findings as appropriate, and identifies questions for reviewers.
-4. The contributor makes the sources and remaining questions available for review.
+4. The contributor [builds the generated specification](<build-generated-specification.use-case.spec-report.md>)
+   so that reviewers can read the proposed behavior in context.
+5. The contributor makes the sources, the generated specification and remaining
+   questions available for review.
 
 ## Extensions
 
@@ -68,7 +71,7 @@ Summary (kite).
 
 ## Sequence
 
-Representative. Drafting, discovery, and checking can repeat in any useful order.
+Representative. Drafting, discovery, checking, and building can repeat in any useful order.
 
 ## Authority
 

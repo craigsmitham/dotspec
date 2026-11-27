@@ -121,3 +121,23 @@ func TestTopicLookupNamesAreUnique(t *testing.T) {
 		}
 	}
 }
+
+func TestBundledQualityModelPages(t *testing.T) {
+	page, err := Read("quality-models/iso-25010-2023")
+	if err != nil || !strings.HasPrefix(page, "# ISO/IEC 25010:2023") || !strings.Contains(page, "**ID:** recoverability") {
+		t.Fatalf("page: %v\n%s", err, page)
+	}
+	section, err := Read("quality-models/iso-25010-2023#reliability")
+	if err != nil || !strings.HasPrefix(section, "### Reliability") || strings.Contains(section, "### Security") {
+		t.Fatalf("section: %v\n%s", err, section)
+	}
+	found, err := Read("iso 25010")
+	if err != nil || !strings.Contains(found, "dotspec docs quality-models/iso-25010-2023\n") {
+		t.Fatalf("search: %v\n%s", err, found)
+	}
+	for _, missing := range []string{"quality-models/unknown", "quality-models/../store.go", "quality-models/iso-25010-2023.quality-model.md"} {
+		if _, err := Read(missing); err == nil {
+			t.Errorf("opened %q", missing)
+		}
+	}
+}

@@ -35,7 +35,7 @@ Bob Moesta and the Re-Wired Group use a switch interview to investigate **“Why
 
 Suppose someone moved their errands from messages to a notebook. Losing an agreement in a long thread could supply the **push** to change. Seeing all the errands together could be the **pull**. Worry about leaving the notebook at home could create **anxiety**, while replying in the original thread was already a **habit**. Asking about the actual decision can reveal which of these forces mattered. Keep that timeline with the evidence for the choice.
 
-A **job story** expresses a circumstance, motivation and intended progress in one sentence. “When my guest asks for an update after a few days, I want to recover what we agreed, so I can give them an answer they can rely on.” A story can carry an interview finding or a hypothesis into design discussion. Its evidence tells the reader which. [Paul Adams on job stories](https://www.intercom.com/blog/accidentally-invented-job-stories) · [Job-story preset](../guides/write-a-job.md#check-the-draft).
+A **job story** expresses a circumstance, motivation and intended progress in one sentence. “When my guest asks for an update after a few days, I want to recover what we agreed, so I can give them an answer they can rely on.” A story can carry an interview finding or a hypothesis into design discussion. Its evidence tells the reader which. [Paul Adams on job stories](https://www.intercom.com/blog/accidentally-invented-job-stories) · [Write a job story](../guides/write-a-job.md#what-supports-the-account).
 
 ## From a job map to a user needs map
 

@@ -33,13 +33,27 @@ type Report struct {
 	sources       *specfile.SourceSet
 	files         map[string]*SourceFile
 	contexts      map[string]ContextResult
-	GeneratedSpec string                  `json:"generated_spec,omitempty"`
+	missing       map[string]bool
 	SchemaVersion int                     `json:"schema_version"`
+	GeneratedSpec string                  `json:"generated_spec,omitempty"`
 	Scope         Scope                   `json:"scope"`
 	Complete      bool                    `json:"complete"`
 	ContextFiles  []string                `json:"context_files"`
 	Summary       Summary                 `json:"summary"`
 	Diagnostics   []diagnostic.Diagnostic `json:"diagnostics"`
+}
+
+// ExistingContextFiles returns the context files that exist. ContextFiles
+// also counts the targets of unresolved references, whose absence is reported
+// as a finding.
+func (r Report) ExistingContextFiles() []string {
+	files := make([]string, 0, len(r.ContextFiles))
+	for _, path := range r.ContextFiles {
+		if !r.missing[path] {
+			files = append(files, path)
+		}
+	}
+	return files
 }
 
 func (r Report) ExitCode() int {
@@ -192,11 +206,14 @@ func (r *Report) record(err error, rule, path string) {
 	var finding *diagnostic.Diagnostic
 	if !errors.As(err, &finding) {
 		r.Complete = false
+		message := err.Error()
 		var pathError *os.PathError
 		if errors.As(err, &pathError) {
+			// The location carries the path, so the message states only the problem.
 			path = pathError.Path
+			message = strings.Replace(message, pathError.Error(), diagnostic.FileProblem(pathError), 1)
 		}
-		finding = diagnostic.Error(rule, err.Error(), diagnostic.Location{Path: path})
+		finding = diagnostic.Error(rule, message, diagnostic.Location{Path: path})
 	}
 	r.Diagnostics = append(r.Diagnostics, *finding)
 }
@@ -254,7 +271,7 @@ func (r *Report) collectManifest() {
 		return
 	}
 	r.Scope.Project = p
-	if p != nil && p.Report.Enabled && (r.Scope.Path != p.Root || r.Scope.Discovery == "direct") {
+	if p != nil && p.Build.Enabled && (r.Scope.Path != p.Root || r.Scope.Discovery == "direct") {
 		r.GeneratedSpec = "out-of-scope"
 	}
 	if p != nil {

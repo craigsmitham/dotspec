@@ -10,7 +10,19 @@ import (
 	"testing"
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
+	"github.com/craigsmitham/dotspec/internal/speccollection"
 )
+
+// members lists concepts below dir as dotspec list concept does.
+func members(dir string) ([]*speccollection.Member, error) {
+	return speccollection.Members(dir, Layout, "concepts", func(path string) (string, error) {
+		spec, err := Read(path)
+		if err != nil {
+			return "", err
+		}
+		return spec.Name, nil
+	})
+}
 
 func write(t *testing.T, path, content string) {
 	t.Helper()
@@ -41,36 +53,46 @@ func git(t *testing.T, dir string, args ...string) {
 	}
 }
 
-func TestInitializationAndLocalLookup(t *testing.T) {
-	dir := t.TempDir()
+func TestInitializationAndAssociation(t *testing.T) {
+	dir, err := filepath.EvalSymlinks(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
 	git(t, dir, "init", "-q")
 	path, err := Init(dir, "job-map")
 	if err != nil {
 		t.Fatal(err)
 	}
-	got, err := Show(dir, "job-map")
-	if err != nil || got.Slug != "job-map" || got.System != nil || got.Name != "New concept" {
+	got, err := Read(path)
+	if err != nil || got.Slug != "job-map" || got.Name != "Job map" {
 		t.Fatalf("initialized concept: %+v, %v", got, err)
+	}
+	if listed, err := members(dir); err != nil || len(listed) != 1 || listed[0].System != nil {
+		t.Fatalf("unassociated concept: %+v, %v", listed, err)
+	}
+	before, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
 	}
 	if _, err := Init(dir, "job-map"); err == nil || !strings.Contains(err.Error(), "refusing to overwrite") {
 		t.Fatalf("overwrite: %v", err)
 	}
-	if content, err := os.ReadFile(path); err != nil || string(content) != Template {
+	if content, err := os.ReadFile(path); err != nil || string(content) != string(before) {
 		t.Fatalf("existing file changed: %s, %v", content, err)
 	}
 	write(t, path, strings.Replace(example, "# Job Map", "# Map an accomplishment", 1))
-	got, err = Show(dir, "job-map")
+	got, err = Read(path)
 	if err != nil || got.Slug != "job-map" || got.ID != "job-map" || got.Name != "Map an accomplishment" {
 		t.Fatalf("identity changed with title: %+v, %v", got, err)
 	}
 	child := filepath.Join(dir, "child")
 	writeSystem(t, child, "Child")
-	if _, err := Show(child, "job-map"); !errors.Is(err, os.ErrNotExist) {
-		t.Fatalf("lookup must not fall back to an ancestor concept: %v", err)
+	local := writeConcept(t, child, "job-map")
+	listed, err := members(child)
+	if err != nil || len(listed) != 1 || listed[0].Path != local || listed[0].System == nil || listed[0].System.Name != "Child" {
+		t.Fatalf("a subtree lists only its own concepts with their system: %+v, %v", listed, err)
 	}
-	writeConcept(t, child, "job-map")
-	got, err = Show(child, "job-map")
-	if err != nil || got.System == nil || got.System.Name != "Child" || got.Purpose != "Understand an accomplishment and its success criteria." {
+	if got, err := Read(local); err != nil || got.Purpose != "Understand an accomplishment and its success criteria." {
 		t.Fatalf("association must not rewrite the purpose: %+v, %v", got, err)
 	}
 }
@@ -80,9 +102,6 @@ func TestValidationBeforeCreatingFiles(t *testing.T) {
 	slug := "work.concept.spec.md"
 	if _, err := Init(dir, slug); err == nil {
 		t.Errorf("init accepted %q", slug)
-	}
-	if _, err := Show(dir, slug); err == nil {
-		t.Errorf("show accepted %q", slug)
 	}
 	if entries, err := os.ReadDir(dir); err != nil || len(entries) != 0 {
 		t.Fatalf("invalid invocation wrote files: %v, %v", entries, err)
@@ -98,7 +117,7 @@ func TestReadDiagnosticsAndPreservation(t *testing.T) {
 	if !errors.As(err, &d) || d.Rule != "structure.duplicate-section" || d.Location.Path != path || d.Related[0].Path != path {
 		t.Fatalf("source path missing from diagnostic: %+v", d)
 	}
-	if _, err := List(dir); err == nil {
+	if _, err := members(dir); err == nil {
 		t.Fatal("list silently omitted malformed input")
 	}
 	if got, err := os.ReadFile(path); err != nil || !reflect.DeepEqual(got, []byte(source)) {

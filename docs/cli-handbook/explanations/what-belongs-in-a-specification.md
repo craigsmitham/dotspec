@@ -8,7 +8,7 @@ A specification records product intent for one independently maintained subject.
 
 ## How do the pieces form a product specification?
 
-The specifications in product scope, their owned parts, and the relationships among them compose the product specification. A system can have open questions while its authors settle individual requirements. The generated report brings the current decisions together and links readers to the declarations where they can change them.
+The specifications in product scope, their owned parts, and the relationships among them compose the product specification. A system can have open questions while its authors settle individual requirements. The generated specification brings the current decisions together and links readers to the declarations where they can change them.
 
 References supply vocabulary or external authority. Evidence records what the team observed, and guidance helps authors decide how to do the work. Ask what would change if the document were revised. Changing a restart requirement changes the product's promise. Recording a failed restart test changes the evidence about whether the implementation keeps it.
 

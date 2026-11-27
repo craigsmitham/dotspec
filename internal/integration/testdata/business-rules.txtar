@@ -2,52 +2,50 @@
 mkdir project
 cd project
 exec git init -q
-status 0 dotspec business-rule list --json
-stdout '"groups": \[\]'
-status 0 dotspec system init
-status 0 dotspec use-case init purchase
+status 0 dotspec list business-rule --json
+stdout '"entries": \[\]'
+mkdir specs
+cp $WORK/new-system.md specs/new-system.system.spec.md
+status 0 dotspec new use-case purchase
 cp ../purchase.md specs/use-cases/purchase.use-case.spec.md
-status 0 dotspec business-rule init approval --json
+status 0 dotspec new business-rule approval --json
 stdout 'approval.business-rule.spec.md'
-status 2 dotspec business-rule init approval
+status 2 dotspec new business-rule approval
 stderr 'refusing to overwrite'
 cp ../approval.md specs/business-rules/approval.business-rule.spec.md
-status 0 dotspec business-rule show approval --json
-stdout '"business_rule":'
-stdout '"authority": "Purchasing policy approved by the board."'
-stdout '"exceptions": "Emergency purchases follow a separately approved exception rule."'
-status 0 dotspec business-rule list --json
-stdout '"business_rules":'
+status 0 dotspec list business-rule --json
+stdout '"kind": "business-rule"'
 stdout 'Manager approval'
-status 0 dotspec business-rule check approval --json
+status 0 dotspec check specs/business-rules/approval.business-rule.spec.md --json
 stdout '"errors": 0'
 status 0 dotspec check --json
 stdout '"errors": 0'
 status 0 dotspec sources --json
 stdout 'approval.business-rule.spec.md'
-status 0 dotspec model export
+status 0 dotspec snapshot export
 stdout '"kind": "BusinessRule"'
 stdout '"related_specifications":'
 stdout '"status": "resolved"'
 cp stdout snapshot.json
-status 0 dotspec model validate snapshot.json --json
+status 0 dotspec snapshot validate snapshot.json --json
 stdout '"valid": true'
 cmp specs/business-rules/approval.business-rule.spec.md ../approval.md
 
 # Missing content is advisory; duplicate structure is an error retained by export.
 cp ../draft.md specs/business-rules/draft.business-rule.spec.md
-status 0 dotspec business-rule check draft --json
+status 0 dotspec check specs/business-rules/draft.business-rule.spec.md --json
 stdout 'business-rule.statement'
 cp ../invalid.md specs/business-rules/invalid.business-rule.spec.md
-status 1 dotspec business-rule check invalid --json
+status 1 dotspec check specs/business-rules/invalid.business-rule.spec.md --json
 stdout 'structure.duplicate-section'
-status 1 dotspec model export
+status 1 dotspec snapshot export
 stdout '"severity": "error"'
 cp stdout partial.json
-status 0 dotspec model validate partial.json --json
+status 0 dotspec snapshot validate partial.json --json
 stdout '"valid": true'
-status 2 dotspec business-rule init ../escape
-status 0 dotspec business-rule show approval --path specs
+status 2 dotspec new business-rule ../escape
+status 0 dotspec -C specs check business-rules/approval.business-rule.spec.md
+
 -- approval.md --
 ---
 type: business-rule-spec
@@ -90,3 +88,21 @@ type: business-rule-spec
 First rule.
 ## Statement
 Second rule.
+-- new-system.md --
+---
+type: system-spec
+---
+
+# New system
+
+## Description
+
+Describe what this system is in one short paragraph.
+
+## Purpose
+
+Describe why this system exists and whom it serves.
+
+## Scope
+
+Describe the system's boundary and what it includes.

@@ -25,7 +25,7 @@ A contributor beginning a behavioral account.
 
 ## Extensions
 
-[More detailed use-case prompts](<#more-detailed-use-case-prompts>) · [Target already exists](<#target-already-exists>)
+[More detailed use-case prompts](<#more-detailed-use-case-prompts>) · [Quality attribute](<#quality-attribute>) · [Target already exists](<#target-already-exists>)
 
 ### More detailed use-case prompts
 
@@ -35,6 +35,16 @@ A contributor beginning a behavioral account.
 
 At step 1, the contributor selects the expanded use-case template. Dotspec creates
 additional context prompts in the same document format, then continues at step 3.
+
+### Quality attribute
+
+<!-- dotspec-doc {"type":"use-case-extension-spec-report","documents":"../../specs/use-cases/create-specification.use-case.spec.md#quality-attribute"} -->
+
+#### Handling
+
+At step 1, the contributor selects a quality attribute for a system, named by
+its ID and optionally copied from a quality model. Continue with
+[Adopt a quality attribute for a system](<adopt-quality-attribute.use-case.spec-report.md>).
 
 ### Target already exists
 
@@ -65,11 +75,11 @@ User task (sea).
 ## Sequence
 
 Representative. Editing follows creation in this example; existing sources can
-be edited without invoking init.
+be edited without invoking `new`.
 
 ## Authority
 
-The [init commands](<../../docs/reference/cli.md>) and linked requirement define command behavior.
+The [`init`](<../../docs/reference/cli.md#dotspec-init>) and [`new`](<../../docs/reference/cli.md#dotspec-new>) commands and the linked requirement define command behavior.
 
 ## Companions
 

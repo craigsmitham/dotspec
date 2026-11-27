@@ -1,4 +1,4 @@
-// Package qualitymodel defines reusable quality attribute starters.
+// Package qualitymodel defines reusable quality models, including the bundled ISO/IEC 25010 model.
 package qualitymodel
 
 import (
@@ -67,6 +67,7 @@ func readFrom(files *specfile.SourceSet, path string) (*QualityModel, error) {
 		return nil, err
 	}
 	spec.Slug, spec.Path = slug, path
+	spec.Location.Path = path
 	for i := range spec.QualityAttributes {
 		spec.QualityAttributes[i].Location.Path = path
 	}

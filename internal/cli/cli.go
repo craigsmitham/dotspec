@@ -15,8 +15,6 @@ import (
 	"github.com/charmbracelet/fang"
 	"github.com/charmbracelet/x/term"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
-	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/spf13/cobra"
 )
 
@@ -24,7 +22,11 @@ import (
 var version = "dev"
 var commit = ""
 
-const exitPolicy = "Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure."
+// Root help states the exit-code policy once. A leaf that can exit 1 says so.
+const (
+	exitPolicy   = "Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure."
+	findingsExit = "Exits 1 when error findings are reported."
+)
 
 type exitError struct {
 	code int
@@ -61,7 +63,14 @@ func Run(args []string, stdout, stderr io.Writer) int {
 			}
 		})
 	}
-	err := root.ExecuteContext(ctx)
+	// -C changes the process working directory for this invocation only.
+	if cwd, err := os.Getwd(); err == nil {
+		defer func() { _ = os.Chdir(cwd) }()
+	}
+	err := misspelledHelp(args)
+	if err == nil {
+		err = root.ExecuteContext(ctx)
+	}
 	if out.err != nil {
 		err = &exitError{code: 2, err: out.err}
 	}
@@ -69,7 +78,7 @@ func Run(args []string, stdout, stderr io.Writer) int {
 	if err != nil {
 		var coded *exitError
 		if !errors.As(err, &coded) || coded.err != nil {
-			message := err.Error()
+			message := errorMessage(err)
 			if terminal(stderr) {
 				message = lipgloss.NewStyle().Foreground(lipgloss.ANSIColor(1)).Render(message)
 			}
@@ -187,77 +196,58 @@ func citationRevision() string {
 
 // NewRoot is side-effect free: documentation and execution share this tree.
 func NewRoot() *cobra.Command {
-	root := &cobra.Command{Use: "dotspec", Short: "Manage software requirements alongside your code",
-		Long:    "Manage human-readable software requirements in *.spec.md files.\n\n" + exitPolicy,
-		Example: "dotspec docs job\ndotspec system init\ndotspec job init develop-requirements\ndotspec check",
+	root := &cobra.Command{Use: "dotspec", Short: "Specify what software must do and why, alongside its code",
+		Long: "Specify what software must do and why, alongside its code: author Markdown specifications, check them and the artifacts that carry their intent, and build one generated specification a reader can navigate.\n\n" +
+			"Kinds: run dotspec new --help. Handbook: run dotspec docs.\n\n" + exitPolicy,
+		Example: "dotspec init \"Booking desk\"\ndotspec new requirement fast-save\ndotspec build\ndotspec check",
 		Version: buildVersion(), SilenceUsage: true, SilenceErrors: true,
-		Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, _ []string) error { return cmd.Help() },
+		Args: subcommands, RunE: func(cmd *cobra.Command, _ []string) error { return cmd.Help() },
 	}
 	root.SetVersionTemplate("dotspec {{.Version}}\n")
-	root.AddCommand(newDocsCommand(), newCheckCommand(), newSpecCommand(), newSourcesCommand(), newModelCommand(), newManCommand(), newCompletionCommand())
-	for _, parent := range []*cobra.Command{newQualityModelCommand(), newQualityAttributeCommand(), newBusinessRuleCommand(), newSystemCommand(), newComponentCommand(), newProductCommand(system.FeatureLayout), newProductCommand(system.CapabilityLayout), newJobCommand(), newUseCaseCommand(), newConceptCommand(), newRequirementCommand()} {
-		root.AddCommand(parent)
-		for _, cmd := range append(parent.Commands(), parent) {
-			if cmd != parent && cmd.Name() != "init" && cmd.Name() != "check" {
-				continue
-			}
-			description := cmd.Long
-			if description == "" {
-				description = cmd.Short
-			}
-			cmd.Long = description + "\n\nAuthoring handbook: dotspec docs " + parent.Name()
+	addChdir(root)
+	root.SetFlagErrorFunc(func(cmd *cobra.Command, err error) error {
+		return fmt.Errorf("%w; see %s --help", err, cmd.CommandPath())
+	})
+	for _, g := range []struct {
+		id       string
+		commands []*cobra.Command
+	}{
+		{"Author:", []*cobra.Command{newInitCommand(), newNewCommand()}},
+		{"Inspect:", []*cobra.Command{newCheckCommand(), newListCommand(), newSourcesCommand()}},
+		{"Publish:", []*cobra.Command{newBuildCommand(), newSnapshotCommand()}},
+		{"Help:", []*cobra.Command{newDocsCommand(), newCompletionCommand()}},
+	} {
+		root.AddGroup(&cobra.Group{ID: g.id, Title: g.id})
+		for _, cmd := range g.commands {
+			cmd.GroupID = g.id
+			root.AddCommand(cmd)
 		}
 	}
+	root.AddCommand(newManCommand())
 	root.InitDefaultHelpFlag()
 	root.InitDefaultVersionFlag()
+	help := newHelpCommand()
+	help.GroupID = "Help:"
+	root.SetHelpCommand(help)
 	root.InitDefaultHelpCmd()
+	indentExamples(root)
 	return root
 }
 
+// indentExamples sets examples off from their heading in plain help, as
+// Cobra's own commands do. Fang and the generated reference trim the indent.
+func indentExamples(cmd *cobra.Command) {
+	if cmd.Example != "" {
+		cmd.Example = indent(cmd.Example)
+	}
+	for _, child := range cmd.Commands() {
+		indentExamples(child)
+	}
+}
+
 func group(use, short string) *cobra.Command {
-	return &cobra.Command{Use: use, Short: short, Args: cobra.NoArgs,
+	return &cobra.Command{Use: use, Short: short, Args: subcommands,
 		RunE: func(cmd *cobra.Command, _ []string) error { return cmd.Help() }}
-}
-
-func projectPath(cmd *cobra.Command) (string, error) {
-	path, err := cmd.Flags().GetString("path")
-	if err == nil && strings.TrimSpace(path) == "" {
-		err = fmt.Errorf("--path must not be empty")
-	}
-	if err != nil {
-		return path, err
-	}
-	path, err = selectProject(cmd, path)
-	if err != nil {
-		return "", err
-	}
-	// Checks and inventories include scope failures in reports. Other commands report an
-	// invalid project selector as an invocation error rather than a spec finding.
-	if cmd.Name() != "check" && cmd.Name() != "sources" {
-		resolved, scopeErr := specfile.Directory(path)
-		if scopeErr != nil {
-			return path, &exitError{code: 2, err: scopeErr}
-		}
-		path = resolved
-	}
-	return path, nil
-}
-
-func addPath(cmd *cobra.Command) {
-	cmd.Flags().String("path", ".", "project directory to inspect or initialize")
-	_ = cmd.MarkFlagDirname("path")
-	addProjectSelection(cmd)
-}
-
-func writeTree(out *strings.Builder, nodes []*system.Node, prefix string) {
-	for i, node := range nodes {
-		branch, next := "├── ", "│   "
-		if i == len(nodes)-1 {
-			branch, next = "└── ", "    "
-		}
-		fmt.Fprintf(out, "%s%s%s  (%s)\n", prefix, branch, node.System.Name, displayPath(node.System.Path))
-		writeTree(out, node.Children, prefix+next)
-	}
 }
 
 func displayPath(path string) string {

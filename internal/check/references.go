@@ -128,6 +128,10 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 					r.Diagnostics = append(r.Diagnostics, *diagnostic.Error("reference.boundary", err.Error(), location))
 				} else if errors.Is(err, fs.ErrNotExist) {
 					count(target)
+					if r.missing == nil {
+						r.missing = make(map[string]bool)
+					}
+					r.missing[target] = true
 					r.Diagnostics = append(r.Diagnostics, *diagnostic.Error("reference.unresolved", fmt.Sprintf("reference %q targets a missing file or directory", destination), location, diagnostic.Location{Path: target}))
 				} else {
 					count(target)
@@ -142,7 +146,7 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 				continue
 			}
 			count(target)
-			r.collectFile(target, &location)
+			r.collectFile(target, &specfile.Reference{Destination: destination, Location: location, Role: link.Role})
 			if location.Element == specfile.GlossarySourcesField && kind != nil && kind.Layout.Kind == "system" && !glossaries[target] {
 				glossaries[target] = true
 				sources = append(sources, target)

@@ -55,7 +55,7 @@ Each script supplies its inputs, commands and expected observations. Read the go
 | Governing source | Executable cases |
 | --- | --- |
 | [Concept format](../../../../model/markdown-mapping.md#concept) and [business-rule mapping](../../../../model/markdown-mapping.md#business-rule) | [Concept commands](../../testdata/concepts.txtar), [business-rule commands](../../testdata/business-rules.txtar) |
-| [System quality attributes](../../../../docs/reference/model/index.md#systemqualityattribute), [quality-model application](../../../../docs/reference/cli.md#dotspec-quality-model-apply) and [requirement format](../../../../model/markdown-mapping.md#requirement) | [Project defaults and incremental adoption](../../testdata/quality-convention.txtar), [quality models and system population](../../testdata/quality-models.txtar), [classified requirements](../../testdata/classified-requirements.txtar), [general requirements](../../testdata/requirements.txtar) |
+| [System quality attributes](../../../../docs/reference/model/index.md#systemqualityattribute), [quality attribute adoption](../../../../docs/reference/cli.md#dotspec-new-quality-attribute) and [requirement format](../../../../model/markdown-mapping.md#requirement) | [Explicit model selection and incremental adoption](../../testdata/quality-convention.txtar), [quality models and system population](../../testdata/quality-models.txtar), [classified requirements](../../testdata/classified-requirements.txtar), [general requirements](../../testdata/requirements.txtar) |
 
 The Go test harness executes these scripts; it does not define additional
 product requirements. The repository's [specification-test convention](../../../../CONTRIBUTING.md#specification-tests-and-implementation-tests)

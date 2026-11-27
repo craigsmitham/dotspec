@@ -14,7 +14,7 @@ unsuccessful exit status.
 
 ## Applies to
 
-Initialization commands for all supported specification types.
+Project initialization with `dotspec init`, and creation with `dotspec new <kind>` for every supported specification kind, including adoption of a named quality attribute that the system already declares.
 
 ## Rationale
 

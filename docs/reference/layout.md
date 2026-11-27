@@ -37,34 +37,33 @@ qualities. Attribute definitions declare their parents with `subattribute_of`.
 
 ## Creating and finding sources
 
-`init` uses predictable destinations beneath the selected directory. Systems
-and components go in `specs/`. Collection defaults are `specs/jobs/`,
+`init` and `new` use predictable destinations beneath the working directory. Systems
+and components go in `specs/`, and `new quality-attribute` writes `specs/quality/<id>/` beneath the enclosing system's directory. Collection defaults are `specs/jobs/`,
 `specs/use-cases/`, `specs/concepts/`, `specs/requirements/`,
 `specs/features/`, `specs/capabilities/`, `specs/business-rules/` and `specs/quality-models/`. You can move the files
 next to code or group them by feature. Keep their typed filename suffixes.
 
-For `show` and focused `check`, a slug searches the selected owner's files
-and skips child subjects. With no enclosing subject, it searches the selected
-subtree up to child subjects. If several files match, use a listed source path to select the one you intend. A source path selects one file directly and resolves relative to the
-selected directory (the working directory by default for a single source). Use `--path` to select a directory or `--project` to start at
-a named project root.
+A focused `check` selects one file by its source path, which resolves relative to the
+working directory, so two files that share a slug are never confused. `dotspec list <kind>` prints each file's path to paste into `check`. Use `-C <dir>` to run a command as if it had started in
+another directory.
 
-From the root of the example tree above, these commands select the retry requirement by slug and path, then check the file and its links. In your project, substitute the directory that owns the requirement and its path within that directory.
+From the root of the example tree above, these commands list the requirements with their paths, then check the retry file and its links from the root and from `app/`. In your project, substitute the directory that owns the requirement and its path within that directory.
 
 ```sh
-dotspec requirement show retry --path app
-dotspec requirement show handlers/retry.requirement.spec.md --path app
+dotspec list requirement
 dotspec check app/handlers/retry.requirement.spec.md
+dotspec -C app check handlers/retry.requirement.spec.md
 ```
 
 After a move, run `dotspec check` from the project root as well. The focused check reads outgoing links from the selected file. The project check can also find other specifications still pointing at its former location. Update each reported link relative to its referring file.
 
 ## Independent projects and monorepos
 
-Put a `dotspec.yaml` containing `name: your-project` in each independent
-project's root. Default commands select the nearest enclosing project and skip
-nested projects. Use `--project NAME` to select a project by name or `--all` to
-inspect every project in the Git worktree. Implicit System lookup stops at the
+Each independent project declares itself with a `dotspec.yaml` containing
+`name: your-project` in its root; run `dotspec init "<system name>"` there to
+write it with the root system specification. Default commands select the nearest enclosing project and skip
+nested projects. Use `-C <dir>` to select another project by its directory, or
+`dotspec check --all` to check every project in the Git worktree. Implicit System lookup stops at the
 project root. Explicit links can cross project boundaries.
 See [project discovery and selection](workspaces.md).
 

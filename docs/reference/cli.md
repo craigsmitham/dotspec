@@ -1,262 +1,78 @@
 # CLI reference
 
-Run project commands in the directory containing your specifications. Substitute your own names, paths and project selectors in the examples. Handbook reading commands work from any directory.
+Run project commands in the directory containing your specifications. Substitute your own names and paths in the examples. The root command's flags, including `-C`, apply to every command. Handbook reading commands work from any directory.
 
 ## dotspec
 
-Manage software requirements alongside your code
+Specify what software must do and why, alongside its code
 
 ```sh
 dotspec [flags]
 ```
 
-Manage human-readable software requirements in *.spec.md files.
+Specify what software must do and why, alongside its code: author Markdown specifications, check them and the artifacts that carry their intent, and build one generated specification a reader can navigate.
+
+Kinds: run dotspec new --help. Handbook: run dotspec docs.
 
 Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
 
 ```sh
-dotspec docs job
-dotspec system init
-dotspec job init develop-requirements
+dotspec init "Booking desk"
+dotspec new requirement fast-save
+dotspec build
 dotspec check
 ```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--help, -h` | `false` | help for dotspec |
-| `--version, -v` | `false` | version for dotspec |
+| `-C, --chdir <dir>` | `` | run as if dotspec was started in <dir> |
+| `-h, --help` | `false` | help for dotspec |
+| `-v, --version` | `false` | version for dotspec |
 
-## dotspec business-rule
+## dotspec build
 
-Describe business constraints independently of their enforcement
+Build the generated specification
 
 ```sh
-dotspec business-rule [flags]
+dotspec build [flags]
 ```
 
-Authoring handbook: dotspec docs business-rule
+Build the generated specification for the enclosing project declared with dotspec.yaml: SPEC.md and the specification/ tree of pages that let a reader navigate the project's specifications as one. Nothing is written while a source has error findings; the findings are reported instead. Exits 1 when error findings are reported.
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for business-rule |
-
-## dotspec business-rule check
-
-Check structure and suggest missing business-rule content
+Learn more: dotspec docs docs/reference/inspection.md#check-the-generated-requirements-specification
 
 ```sh
-dotspec business-rule check <slug-or-source-path> [flags]
-```
-
-Check structure and suggest missing business-rule content.
-
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
-
-Authoring handbook: dotspec docs business-rule
-
-```sh
-dotspec business-rule check purchase-approval --path .
+dotspec build
 ```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for check |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec business-rule init
-
-Create a business-rule specification without overwriting an existing file
-
-```sh
-dotspec business-rule init <slug> [flags]
-```
-
-Authoring handbook: dotspec docs business-rule
-
-```sh
-dotspec business-rule init purchase-approval --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for init |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec business-rule list
-
-Discover business rules, grouped by associated system
-
-```sh
-dotspec business-rule list [flags]
-```
-
-```sh
-dotspec business-rule list --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for list |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec business-rule show
-
-Show authored Markdown and the associated system
-
-```sh
-dotspec business-rule show <slug-or-source-path> [flags]
-```
-
-```sh
-dotspec business-rule show purchase-approval --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for show |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec capability
-
-Describe an ability and its providers
-
-```sh
-dotspec capability [flags]
-```
-
-Authoring handbook: dotspec docs capability
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for capability |
-
-## dotspec capability check
-
-Check the specification and its references
-
-```sh
-dotspec capability check <slug-or-source-path> [flags]
-```
-
-Check the specification and its references.
-
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
-
-Authoring handbook: dotspec docs capability
-
-```sh
-dotspec capability check local-storage --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for check |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec capability init
-
-Create a standalone specification
-
-```sh
-dotspec capability init <slug> [flags]
-```
-
-Authoring handbook: dotspec docs capability
-
-```sh
-dotspec capability init local-storage --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for init |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec capability list
-
-List specifications in the selected subtree
-
-```sh
-dotspec capability list [flags]
-```
-
-```sh
-dotspec capability list --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for list |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec capability show
-
-Show the authored specification
-
-```sh
-dotspec capability show <slug-or-source-path> [flags]
-```
-
-```sh
-dotspec capability show local-storage --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for show |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+| `-h, --help` | `false` | help for build |
 
 ## dotspec check
 
 Check specifications and reference documents in a project subtree
 
 ```sh
-dotspec check [source-path] [flags]
+dotspec check [<path>] [flags]
 ```
 
-Check authored specifications and reference documents using the same discovery rules as list. A whole-project check also inspects generated Markdown for projects declared with dotspec.yaml unless report.enabled is false. These automated authoring and selected requirements-quality checks support requirements verification; passing them does not establish full requirements verification, requirements validation, or system verification/validation.
+Check authored specifications and the reference documents they cite, using the same discovery rules as list. With no <path>, check covers the enclosing project; a directory narrows it to that subtree, and a specification file checks that file and the context it requests. A whole-project check in a project declared with dotspec.yaml also checks that the generated specification is current, unless build.enabled is false. With --all, check covers every project discovered in the workspace separately and exits with the highest project exit code.
 
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+A passing check means no checked file has an error finding under dotspec's automated authoring rules. Exits 1 when error findings are reported.
+
+Learn more: dotspec docs docs/reference/inspection.md#check-specifications
 
 ```sh
 dotspec check
-dotspec check --path internal --json
+dotspec check internal --json
 ```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for check |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+| `--all` | `false` | check every discovered project separately |
+| `-h, --help` | `false` | help for check |
+| `--json` | `false` | emit the result as JSON |
 
 ## dotspec completion
 
@@ -270,7 +86,7 @@ Generate a completion script, then load it using your shell's completion setup.
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--help, -h` | `false` | help for completion |
+| `-h, --help` | `false` | help for completion |
 
 ## dotspec completion bash
 
@@ -286,7 +102,7 @@ dotspec completion bash
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--help, -h` | `false` | help for bash |
+| `-h, --help` | `false` | help for bash |
 | `--no-descriptions` | `false` | omit completion descriptions |
 
 ## dotspec completion fish
@@ -303,7 +119,7 @@ dotspec completion fish
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--help, -h` | `false` | help for fish |
+| `-h, --help` | `false` | help for fish |
 | `--no-descriptions` | `false` | omit completion descriptions |
 
 ## dotspec completion powershell
@@ -320,7 +136,7 @@ dotspec completion powershell
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--help, -h` | `false` | help for powershell |
+| `-h, --help` | `false` | help for powershell |
 | `--no-descriptions` | `false` | omit completion descriptions |
 
 ## dotspec completion zsh
@@ -337,155 +153,15 @@ dotspec completion zsh
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--help, -h` | `false` | help for zsh |
+| `-h, --help` | `false` | help for zsh |
 | `--no-descriptions` | `false` | omit completion descriptions |
-
-## dotspec component
-
-Describe a component in its own specification
-
-```sh
-dotspec component [flags]
-```
-
-Authoring handbook: dotspec docs component
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for component |
-
-## dotspec component init
-
-Create a named component specification
-
-```sh
-dotspec component init <name> [flags]
-```
-
-Authoring handbook: dotspec docs component
-
-```sh
-dotspec component init Intake --path internal --part-of specs/new-system.system.spec.md
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for init |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--part-of` | `` | Parent system or component source file, relative to the working directory |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec concept
-
-Describe purposeful product behavior through state and actions
-
-```sh
-dotspec concept [flags]
-```
-
-Authoring handbook: dotspec docs concept
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for concept |
-
-## dotspec concept check
-
-Check structure and suggest missing concept content
-
-```sh
-dotspec concept check <slug-or-source-path> [flags]
-```
-
-Check structure and suggest missing concept content.
-
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
-
-Authoring handbook: dotspec docs concept
-
-```sh
-dotspec concept check job-map --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for check |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec concept init
-
-Create a concept specification without overwriting an existing file
-
-```sh
-dotspec concept init <slug> [flags]
-```
-
-Authoring handbook: dotspec docs concept
-
-```sh
-dotspec concept init job-map --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for init |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec concept list
-
-Discover concepts, grouped by associated system
-
-```sh
-dotspec concept list [flags]
-```
-
-```sh
-dotspec concept list --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for list |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec concept show
-
-Show authored Markdown and the associated system
-
-```sh
-dotspec concept show <slug-or-source-path> [flags]
-```
-
-```sh
-dotspec concept show job-map --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for show |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
 
 ## dotspec docs
 
 Browse the offline authoring handbook
 
 ```sh
-dotspec docs [TOPIC | PAGE[#SECTION] | RULE | WORDS...] [flags]
+dotspec docs [<topic> | <page>[#<section>] | <rule> | <words>...] [flags]
 ```
 
 Browse topics, open a page or section, or search this version's handbook and bundled examples. Topic names and exact addresses open directly. Enter words to find matching pages.
@@ -500,110 +176,7 @@ dotspec docs job.performer
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--help, -h` | `false` | help for docs |
-
-## dotspec feature
-
-Group stakeholder-visible behavior
-
-```sh
-dotspec feature [flags]
-```
-
-Authoring handbook: dotspec docs feature
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for feature |
-
-## dotspec feature check
-
-Check the specification and its references
-
-```sh
-dotspec feature check <slug-or-source-path> [flags]
-```
-
-Check the specification and its references.
-
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
-
-Authoring handbook: dotspec docs feature
-
-```sh
-dotspec feature check resume-work --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for check |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec feature init
-
-Create a standalone specification
-
-```sh
-dotspec feature init <slug> [flags]
-```
-
-Authoring handbook: dotspec docs feature
-
-```sh
-dotspec feature init resume-work --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for init |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec feature list
-
-List specifications in the selected subtree
-
-```sh
-dotspec feature list [flags]
-```
-
-```sh
-dotspec feature list --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for list |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec feature show
-
-Show the authored specification
-
-```sh
-dotspec feature show <slug-or-source-path> [flags]
-```
-
-```sh
-dotspec feature show resume-work --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for show |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+| `-h, --help` | `false` | help for docs |
 
 ## dotspec help
 
@@ -613,926 +186,674 @@ Help about any command
 dotspec help [command] [flags]
 ```
 
-Help provides help for any command in the application.
-Simply type dotspec help [path to command] for full details.
+Show the help for any command, such as dotspec help check.
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--help, -h` | `false` | help for help |
+| `-h, --help` | `false` | help for help |
 
-## dotspec job
+## dotspec init
 
-Define and discover jobs to be done (JTBDs)
+Start a specification project
 
 ```sh
-dotspec job [flags]
+dotspec init <system-name> [flags]
 ```
 
-Authoring handbook: dotspec docs job
+Start a specification project in the working directory. Init writes dotspec.yaml, which declares the project, and the root system specification, whose heading is <system-name> and whose filename is derived from it. The project name defaults to the system name's slug. Init refuses to overwrite either file and exits 2 instead. When the directory lies inside another project, init says so: that project's discovery now stops at the new manifest.
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for job |
-
-## dotspec job check
-
-Check structure and suggest writing improvements
+Learn more: dotspec docs system
 
 ```sh
-dotspec job check <slug-or-source-path> [flags]
-```
-
-Check structure and suggest writing improvements.
-
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
-
-Authoring handbook: dotspec docs job
-
-```sh
-dotspec job check develop-requirements --path .
+dotspec init Bookings
 ```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for check |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--preset` | `general` | JTBD authoring guidance: general, odi, or job-story |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+| `-h, --help` | `false` | help for init |
+| `--json` | `false` | emit the result as JSON |
+| `--name <project>` | `` | project name written to dotspec.yaml; defaults to the system name's slug |
 
-## dotspec job init
+## dotspec list
 
-Create a job specification without overwriting an existing file
+List the specifications of one kind
 
 ```sh
-dotspec job init <slug> [flags]
+dotspec list <kind> [flags]
 ```
 
-Authoring handbook: dotspec docs job
+List the specification files of one kind in the enclosing project, grouped by the system each belongs to. list system prints systems by directory, and list component prints components by their Part of links.
+
+Kinds:
+  system              Describe a system's purpose, scope, and context
+                      dotspec docs system
+  component           Describe a part of a system and its responsibilities
+                      dotspec docs component
+  feature             Group stakeholder-visible behavior
+                      dotspec docs feature
+  capability          Describe an ability and the parts that provide it
+                      dotspec docs capability
+  job                 Define jobs to be done (JTBDs)
+                      dotspec docs job
+  use-case            Describe actor goals and interactions with a system
+                      dotspec docs use-case
+  concept             Describe purposeful product behavior through state and actions
+                      dotspec docs concept
+  business-rule       Describe business constraints independently of their enforcement
+                      dotspec docs business-rule
+  requirement         Specify required results, rules, properties, and restrictions
+                      dotspec docs requirement
+  quality-attribute   Adopt a quality attribute for a system, blank or from a quality model
+                      dotspec docs quality-attribute
+  quality-model       Define reusable quality attributes for systems to adopt
+                      dotspec docs quality-model
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for list |
+
+## dotspec list business-rule
+
+List business rules by system
 
 ```sh
-dotspec job init develop-requirements --path .
+dotspec list business-rule [flags]
+```
+
+List business rules by system. Describe business constraints independently of their enforcement.
+
+Learn more: dotspec docs business-rule
+
+```sh
+dotspec list business-rule
 ```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for init |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--preset` | `general` | JTBD authoring guidance: general, odi, or job-story |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+| `-h, --help` | `false` | help for business-rule |
+| `--json` | `false` | emit the result as JSON |
 
-## dotspec job list
+## dotspec list capability
 
-Discover jobs, grouped by associated system
+List capabilities by system
 
 ```sh
-dotspec job list [flags]
+dotspec list capability [flags]
 ```
 
-```sh
-dotspec job list --path .
-```
+List capabilities by system. Describe an ability and the parts that provide it.
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for list |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec job map
-
-Map authored step order (text, JSON, or Mermaid)
+Learn more: dotspec docs capability
 
 ```sh
-dotspec job map <slug> [flags]
-```
-
-```sh
-dotspec job map develop-requirements --path .
+dotspec list capability
 ```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--format` | `text` | output format: text or json or mermaid |
-| `--help, -h` | `false` | help for map |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--outcomes` | `false` | include job and step outcomes |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+| `-h, --help` | `false` | help for capability |
+| `--json` | `false` | emit the result as JSON |
 
-## dotspec job outcome
+## dotspec list component
 
-List outcomes by declaration owner
+List components by Part of
 
 ```sh
-dotspec job outcome [flags]
+dotspec list component [flags]
+```
+
+List components by Part of. Describe a part of a system and its responsibilities.
+
+Learn more: dotspec docs component
+
+```sh
+dotspec list component
 ```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--help, -h` | `false` | help for outcome |
+| `-h, --help` | `false` | help for component |
+| `--json` | `false` | emit the result as JSON |
 
-## dotspec job outcome list
+## dotspec list concept
 
-List outcomes by declaration owner
+List concepts by system
 
 ```sh
-dotspec job outcome list <slug> [flags]
+dotspec list concept [flags]
 ```
 
-```sh
-dotspec job outcome list develop-requirements --path .
-```
+List concepts by system. Describe purposeful product behavior through state and actions.
 
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for list |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-| `--step` | `` | select the declaring step by its explicit ID |
-
-## dotspec job show
-
-Show authored Markdown and the associated system
+Learn more: dotspec docs concept
 
 ```sh
-dotspec job show <slug-or-source-path> [flags]
-```
-
-```sh
-dotspec job show develop-requirements --path .
+dotspec list concept
 ```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for show |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+| `-h, --help` | `false` | help for concept |
+| `--json` | `false` | emit the result as JSON |
 
-## dotspec man
+## dotspec list feature
 
-Write the dotspec manual in roff format
+List features by system
 
 ```sh
-dotspec man [flags]
+dotspec list feature [flags]
 ```
 
+List features by system. Group stakeholder-visible behavior.
+
+Learn more: dotspec docs feature
+
 ```sh
-dotspec man
+dotspec list feature
 ```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--help, -h` | `false` | help for man |
+| `-h, --help` | `false` | help for feature |
+| `--json` | `false` | emit the result as JSON |
 
-## dotspec model
+## dotspec list job
 
-Export and validate complete specification snapshots
+List jobs by system
 
 ```sh
-dotspec model [flags]
+dotspec list job [flags]
 ```
 
-Export source text, named domain fields, located relationships and inspection findings in a versioned specification model.
+List jobs by system. Define jobs to be done (JTBDs).
+
+Learn more: dotspec docs job
+
+```sh
+dotspec list job
+```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--help, -h` | `false` | help for model |
+| `-h, --help` | `false` | help for job |
+| `--json` | `false` | emit the result as JSON |
 
-## dotspec model export
+## dotspec list quality-attribute
+
+List quality attributes by system
+
+```sh
+dotspec list quality-attribute [flags]
+```
+
+List quality attributes by system. Adopt a quality attribute for a system, blank or from a quality model.
+
+Learn more: dotspec docs quality-attribute
+
+```sh
+dotspec list quality-attribute
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for quality-attribute |
+| `--json` | `false` | emit the result as JSON |
+
+## dotspec list quality-model
+
+List quality models by system
+
+```sh
+dotspec list quality-model [flags]
+```
+
+List quality models by system. Define reusable quality attributes for systems to adopt.
+
+Learn more: dotspec docs quality-model
+
+```sh
+dotspec list quality-model
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for quality-model |
+| `--json` | `false` | emit the result as JSON |
+
+## dotspec list requirement
+
+List requirements by system
+
+```sh
+dotspec list requirement [flags]
+```
+
+List requirements by system. Specify required results, rules, properties, and restrictions.
+
+Learn more: dotspec docs requirement
+
+```sh
+dotspec list requirement
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for requirement |
+| `--json` | `false` | emit the result as JSON |
+
+## dotspec list system
+
+List systems by directory
+
+```sh
+dotspec list system [flags]
+```
+
+List systems by directory. Describe a system's purpose, scope, and context.
+
+Learn more: dotspec docs system
+
+```sh
+dotspec list system
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for system |
+| `--json` | `false` | emit the result as JSON |
+
+## dotspec list use-case
+
+List use cases by system
+
+```sh
+dotspec list use-case [flags]
+```
+
+List use cases by system. Describe actor goals and interactions with a system.
+
+Learn more: dotspec docs use-case
+
+```sh
+dotspec list use-case
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for use-case |
+| `--json` | `false` | emit the result as JSON |
+
+## dotspec new
+
+Create a specification draft of one kind
+
+```sh
+dotspec new <kind> [flags]
+```
+
+Create a specification draft of one kind below the working directory and report its path with the authoring guide to read next. New never overwrites: when the target already exists, it changes nothing and exits 2.
+
+Kinds:
+  system              Describe a system's purpose, scope, and context
+                      dotspec docs system
+  component           Describe a part of a system and its responsibilities
+                      dotspec docs component
+  feature             Group stakeholder-visible behavior
+                      dotspec docs feature
+  capability          Describe an ability and the parts that provide it
+                      dotspec docs capability
+  job                 Define jobs to be done (JTBDs)
+                      dotspec docs job
+  use-case            Describe actor goals and interactions with a system
+                      dotspec docs use-case
+  concept             Describe purposeful product behavior through state and actions
+                      dotspec docs concept
+  business-rule       Describe business constraints independently of their enforcement
+                      dotspec docs business-rule
+  requirement         Specify required results, rules, properties, and restrictions
+                      dotspec docs requirement
+  quality-attribute   Adopt a quality attribute for a system, blank or from a quality model
+                      dotspec docs quality-attribute
+  quality-model       Define reusable quality attributes for systems to adopt
+                      dotspec docs quality-model
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for new |
+
+## dotspec new business-rule
+
+Create a business-rule specification
+
+```sh
+dotspec new business-rule <slug> [flags]
+```
+
+Describe business constraints independently of their enforcement. Writes specs/business-rules/<slug>.business-rule.spec.md below the working directory.
+
+Learn more: dotspec docs business-rule
+
+```sh
+dotspec new business-rule purchase-approval
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for business-rule |
+| `--json` | `false` | emit the result as JSON |
+
+## dotspec new capability
+
+Create a capability specification
+
+```sh
+dotspec new capability <slug> [flags]
+```
+
+Describe an ability and the parts that provide it. Writes specs/capabilities/<slug>.capability.spec.md below the working directory.
+
+Learn more: dotspec docs capability
+
+```sh
+dotspec new capability local-storage
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for capability |
+| `--json` | `false` | emit the result as JSON |
+
+## dotspec new component
+
+Create a component specification
+
+```sh
+dotspec new component <name> [flags]
+```
+
+Describe a part of a system and its responsibilities. The <name> becomes the heading, and the filename is derived from it. --part-of names the parent system or component, relative to the working directory; Part of is never inferred from the file's location.
+
+Learn more: dotspec docs component
+
+```sh
+dotspec new component Intake -C internal --part-of ../specs/new-system.system.spec.md
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for component |
+| `--json` | `false` | emit the result as JSON |
+| `--part-of <path>` | `` | parent system or component source file, relative to the working directory |
+
+## dotspec new concept
+
+Create a concept specification
+
+```sh
+dotspec new concept <slug> [flags]
+```
+
+Describe purposeful product behavior through state and actions. Writes specs/concepts/<slug>.concept.spec.md below the working directory.
+
+Learn more: dotspec docs concept
+
+```sh
+dotspec new concept job-map
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for concept |
+| `--json` | `false` | emit the result as JSON |
+
+## dotspec new feature
+
+Create a feature specification
+
+```sh
+dotspec new feature <slug> [flags]
+```
+
+Group stakeholder-visible behavior. Writes specs/features/<slug>.feature.spec.md below the working directory.
+
+Learn more: dotspec docs feature
+
+```sh
+dotspec new feature resume-work
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for feature |
+| `--json` | `false` | emit the result as JSON |
+
+## dotspec new job
+
+Create a job specification
+
+```sh
+dotspec new job <slug> [flags]
+```
+
+Define jobs to be done (JTBDs). Writes specs/jobs/<slug>.job.spec.md below the working directory.
+
+Learn more: dotspec docs job
+
+```sh
+dotspec new job develop-requirements
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for job |
+| `--json` | `false` | emit the result as JSON |
+
+## dotspec new quality-attribute
+
+Create a quality-attribute specification
+
+```sh
+dotspec new quality-attribute <id>... [flags]
+```
+
+Adopt a quality attribute for a system, blank or from a quality model. Each <id> becomes the attribute's ID and slug in the nearest enclosing system. Without --from, each attribute starts with a blank definition in specs/quality/<id>/. With --from, the definition is copied from the model's term and cited, and the term's missing parents are adopted too; parents the system already declares are reused. --dry-run previews the decisions and new file contents without writing.
+
+Learn more: dotspec docs quality-attribute
+
+```sh
+dotspec new quality-attribute recoverability --from iso-25010-2023 --dry-run
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--dry-run` | `false` | preview the decisions and new file contents without writing |
+| `--from <model>` | `` | copy from a bundled model, local model slug, or model source path |
+| `-h, --help` | `false` | help for quality-attribute |
+| `--json` | `false` | emit the result as JSON |
+
+## dotspec new quality-model
+
+Create a quality-model specification
+
+```sh
+dotspec new quality-model <slug> [flags]
+```
+
+Define reusable quality attributes for systems to adopt. With --from, the new model starts as a copy of a bundled model.
+
+Learn more: dotspec docs quality-model
+
+```sh
+dotspec new quality-model organization-quality
+dotspec new quality-model team-quality --from iso-25010-2023
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--from <model>` | `` | start from a copy of this bundled model |
+| `-h, --help` | `false` | help for quality-model |
+| `--json` | `false` | emit the result as JSON |
+
+## dotspec new requirement
+
+Create a requirement specification
+
+```sh
+dotspec new requirement <slug> [flags]
+```
+
+Specify required results, rules, properties, and restrictions. Writes specs/requirements/<slug>.requirement.spec.md below the working directory.
+
+Learn more: dotspec docs requirement
+
+```sh
+dotspec new requirement reject-existing-target
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--attribute <id>` | `` | classify the requirement by this quality attribute of its governing system |
+| `-h, --help` | `false` | help for requirement |
+| `--json` | `false` | emit the result as JSON |
+
+## dotspec new system
+
+Create a system specification
+
+```sh
+dotspec new system <name> [flags]
+```
+
+Describe a system's purpose, scope, and context. The <name> becomes the heading, and the filename is derived from it. --part-of names the parent system, relative to the working directory; a project's root system comes from dotspec init.
+
+Learn more: dotspec docs system
+
+```sh
+dotspec new system Billing -C internal --part-of ../specs/new-system.system.spec.md
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for system |
+| `--json` | `false` | emit the result as JSON |
+| `--part-of <path>` | `` | parent system source file, relative to the working directory |
+
+## dotspec new use-case
+
+Create a use-case specification
+
+```sh
+dotspec new use-case <slug> [flags]
+```
+
+Describe actor goals and interactions with a system. Writes specs/use-cases/<slug>.use-case.spec.md below the working directory.
+
+Learn more: dotspec docs use-case
+
+```sh
+dotspec new use-case check-specifications
+dotspec new use-case review-change --template expanded
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for use-case |
+| `--json` | `false` | emit the result as JSON |
+| `--template brief\|expanded` | `brief` | writing prompts: brief or expanded (same document format) |
+
+## dotspec snapshot
+
+Export and validate specification snapshots
+
+```sh
+dotspec snapshot [flags]
+```
+
+Export a project's source text, named domain fields, located relationships and inspection findings as one versioned JSON snapshot, print the snapshot's JSON Schema, or validate a saved snapshot.
+
+Learn more: dotspec docs specs/use-cases/export-specification-model.use-case.spec.md
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for snapshot |
+
+## dotspec snapshot export
 
 Export a source-backed specification snapshot as JSON
 
 ```sh
-dotspec model export [flags]
+dotspec snapshot export [<path>] [flags]
 ```
 
-Export selected specifications, reusable quality models, enclosing systems, and direct reference context as JSON. Retain readable Markdown and source locations, including diagnostics for invalid documents. Filesystem discovery and authoring findings follow check; external references are not fetched.
+Export selected specifications, reusable quality models, enclosing systems, and direct reference context as JSON. Retain readable Markdown and source locations, including diagnostics for invalid documents. With no <path>, export covers the enclosing project; a directory selects that subtree. Filesystem discovery and authoring findings follow check; external references are not fetched. Exits 1 when error findings are reported.
 
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+Learn more: dotspec docs specs/use-cases/export-specification-model.use-case.spec.md
 
 ```sh
-dotspec model export
-dotspec model export --path internal
+dotspec snapshot export
+dotspec snapshot export internal
 ```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--help, -h` | `false` | help for export |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+| `-h, --help` | `false` | help for export |
 
-## dotspec model needs
-
-Generate a needs-to-specification map with capability dependencies
-
-```sh
-dotspec model needs [flags]
-```
-
-Show jobs, shared outcomes, features, requirements and optional capabilities. Short labels link to full statements and evidence. Only explicit relationships are projected; contribution does not prove achievement.
-
-```sh
-dotspec model needs --path . --relative-to views
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--help, -h` | `false` | help for needs |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-| `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
-
-## dotspec model overview
-
-Generate system structure, features, and applicable requirements as Markdown
-
-```sh
-dotspec model overview [flags]
-```
-
-Show explicit system parts, non-owning feature groups, applicability, concept uses, native references and requirement criteria. Directory context remains separate; no implementation or requirement inheritance is inferred.
-
-```sh
-dotspec model overview --path . --relative-to views
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--help, -h` | `false` | help for overview |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-| `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
-
-## dotspec model pegs
-
-Generate a Project, Environment, Goals, System reading perspective
-
-```sh
-dotspec model pegs [flags]
-```
-
-Generate a Project, Environment, Goals, System reading perspective. Requirements verification concerns specification quality; requirements and system validation concern needs and intended use. Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.
-
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
-
-```sh
-dotspec model pegs --path . --relative-to views
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--help, -h` | `false` | help for pegs |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-| `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
-
-## dotspec model product
-
-Show the specification roots, owned elements and references for one system
-
-```sh
-dotspec model product [SYSTEM] [flags]
-```
-
-```sh
-dotspec model product
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for product |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec model review
-
-Generate advisory requirements review and open-question inventory
-
-```sh
-dotspec model review [flags]
-```
-
-Generate advisory requirements review and open-question inventory. Requirements verification concerns specification quality; requirements and system validation concern needs and intended use. Only acquired content and explicit relationships are shown; missing information produces advisory review prompts, not completeness or endorsement claims.
-
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
-
-```sh
-dotspec model review --path . --relative-to views
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--help, -h` | `false` | help for review |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-| `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
-
-## dotspec model schema
+## dotspec snapshot schema
 
 Print the embedded snapshot JSON Schema
 
 ```sh
-dotspec model schema [flags]
+dotspec snapshot schema [flags]
 ```
 
 ```sh
-dotspec model schema
+dotspec snapshot schema
 ```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--help, -h` | `false` | help for schema |
-| `--workspace` | `false` | print the schema for a complete model export --all envelope |
+| `-h, --help` | `false` | help for schema |
 
-## dotspec model trace
-
-Generate layered requirements traceability and change-review views as Markdown
-
-```sh
-dotspec model trace [flags]
-```
-
-Show motivation, derivation, refinement, assumptions, use-case participation, reverse change-review links and requirement criteria. Resolved explicit relationships only; paths do not establish satisfaction or evidence.
-
-```sh
-dotspec model trace --path . --relative-to views
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--help, -h` | `false` | help for trace |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-| `--relative-to` | `.` | Directory containing the generated Markdown; source links are relative to it |
-
-## dotspec model validate
+## dotspec snapshot validate
 
 Check a snapshot's shape, source ranges, and relationships
 
 ```sh
-dotspec model validate SNAPSHOT [flags]
+dotspec snapshot validate <file>|- [flags]
 ```
 
-Validate a snapshot file, or use - to read standard input. Snapshot validation checks representation conformance and integrity, not requirements fitness or system behavior; faithfully represented authoring errors do not make a snapshot invalid. No source paths or external targets are fetched.
+Validate a saved snapshot file, or - to read the snapshot from standard input. Source paths and external targets are not fetched.
 
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+A valid snapshot conforms to its declared model and mapping profile, and its source ranges and relationships are consistent; authoring errors it records faithfully do not make it invalid. Exits 1 when the snapshot is invalid.
+
+Learn more: dotspec docs specs/use-cases/export-specification-model.use-case.spec.md
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for validate |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-
-## dotspec quality-attribute
-
-Browse a quality model and adopt system quality attributes
-
-```sh
-dotspec quality-attribute [flags]
-```
-
-Authoring handbook: dotspec docs quality-attribute
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for quality-attribute |
-
-## dotspec quality-attribute add
-
-Adopt a quality attribute and its missing parents into one system
-
-```sh
-dotspec quality-attribute add <attribute-id> [flags]
-```
-
-```sh
-dotspec quality-attribute add recoverability --dry-run
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--dry-run` | `false` | Preview the decisions and new file contents |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for add |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--model` | `` | Use a bundled model, local slug, or source path for this invocation |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-| `--system` | `` | Target system source path, relative to --path |
-
-## dotspec quality-attribute browse
-
-Browse top-level terms or inspect a term and its neighbors
-
-```sh
-dotspec quality-attribute browse [attribute-id] [flags]
-```
-
-```sh
-dotspec quality-attribute browse reliability
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for browse |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--model` | `` | Use a bundled model, local slug, or source path for this invocation |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec quality-model
-
-Define reusable quality attributes and copy them into systems
-
-```sh
-dotspec quality-model [flags]
-```
-
-Authoring handbook: dotspec docs quality-model
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for quality-model |
-
-## dotspec quality-model apply
-
-Adopt selected quality attributes into one system
-
-```sh
-dotspec quality-model apply [model] [flags]
-```
-
-Select IDs with --attributes or request the whole model with --all. Existing system declarations keep their wording and grouping. To explore the model first, use quality-attribute browse.
-
-```sh
-dotspec quality-model apply --attributes recoverability --dry-run
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | Adopt every attribute from the model into one system |
-| `--attributes` | `[]` | Comma-separated attribute IDs to adopt |
-| `--dry-run` | `false` | Preview the decisions and new file contents |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for apply |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-| `--system` | `` | Target system source path, relative to --path |
-
-## dotspec quality-model check
-
-Check a local quality model's structure and suggest missing content
-
-```sh
-dotspec quality-model check <slug-or-source-path> [flags]
-```
-
-Check a local quality model's structure and suggest missing content.
-
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
-
-Authoring handbook: dotspec docs quality-model
-
-```sh
-dotspec quality-model check organization-quality --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for check |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec quality-model init
-
-Create an editable project quality model
-
-```sh
-dotspec quality-model init <slug> [flags]
-```
-
-Authoring handbook: dotspec docs quality-model
-
-```sh
-dotspec quality-model init organization-quality --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--from` | `` | Copy a bundled starter into the new project model |
-| `--help, -h` | `false` | help for init |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec quality-model list
-
-List bundled starters and project quality models
-
-```sh
-dotspec quality-model list [flags]
-```
-
-```sh
-dotspec quality-model list --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for list |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec quality-model show
-
-Show a bundled starter or a local quality model
-
-```sh
-dotspec quality-model show <slug-or-source-path> [flags]
-```
-
-```sh
-dotspec quality-model show furps --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for show |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec requirement
-
-Specify required results, rules, properties, and restrictions
-
-```sh
-dotspec requirement [flags]
-```
-
-Authoring handbook: dotspec docs requirement
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for requirement |
-
-## dotspec requirement check
-
-Check requirement specifications and attribute references
-
-```sh
-dotspec requirement check <slug-or-source-path> [flags]
-```
-
-Check requirement specifications and attribute references.
-
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
-
-Authoring handbook: dotspec docs requirement
-
-```sh
-dotspec requirement check reject-existing-target --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for check |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec requirement init
-
-Create a requirement specification without overwriting an existing file
-
-```sh
-dotspec requirement init <slug> [flags]
-```
-
-Authoring handbook: dotspec docs requirement
-
-```sh
-dotspec requirement init reject-existing-target --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--attribute` | `` | Write this governing system attribute ID in quality_attributes. |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for init |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--preset` | `general` | Authoring template: general, or quality to prompt for an explicit criterion |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec requirement list
-
-Discover requirements, grouped by associated system
-
-```sh
-dotspec requirement list [flags]
-```
-
-```sh
-dotspec requirement list --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--attribute` | `` | Include requirements with this attribute or a sub-attribute in their system's model |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for list |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec requirement show
-
-Show authored Markdown and the associated system
-
-```sh
-dotspec requirement show <slug-or-source-path> [flags]
-```
-
-```sh
-dotspec requirement show reject-existing-target --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for show |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+| `-h, --help` | `false` | help for validate |
+| `--json` | `false` | emit the result as JSON |
 
 ## dotspec sources
 
-List specifications, reference documents, system context, and directly referenced files
+List specifications, their companions, reference documents, system context, and referenced files
 
 ```sh
-dotspec sources [flags]
+dotspec sources [<path>] [flags]
 ```
 
-Inventory sources using the same scan and reference checks as check. File references do not assign authority or classify their contents.
+List the files check reads: specifications, reference documents, enclosing system context and directly referenced files, each with the references that reach it. A file a specification lists as a companion shows the role that specification states for it. With no <path>, sources covers the enclosing project; a directory narrows it to that subtree.
 
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+A listed reference means its target exists and can be addressed, not that the target is authoritative; a companion's role is the author's declaration, not a verified relationship. Exits 1 when error findings are reported.
+
+Learn more: dotspec docs docs/reference/inspection.md#discover-specification-sources
 
 ```sh
 dotspec sources
-dotspec sources --path internal --json
+dotspec sources internal --json
 ```
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for sources |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec spec
-
-Generate the project's readable requirements specification
-
-```sh
-dotspec spec [flags]
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for spec |
-
-## dotspec spec build
-
-Build SPEC.md and the supporting Markdown tree
-
-```sh
-dotspec spec build [flags]
-```
-
-Build the requirements specification for one whole project. Reports are enabled by default in projects declared with dotspec.yaml. Validate the candidate before replacing generator-owned output. Run dotspec check to verify the resulting documents.
-
-```sh
-dotspec spec build
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for build |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec system
-
-Describe systems and discover their directory context
-
-```sh
-dotspec system [flags]
-```
-
-Authoring handbook: dotspec docs system
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for system |
-
-## dotspec system init
-
-Create a named system specification
-
-```sh
-dotspec system init [name] [flags]
-```
-
-Authoring handbook: dotspec docs system
-
-```sh
-dotspec system init --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for init |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec system list
-
-Display systems in the selected subtree
-
-```sh
-dotspec system list [flags]
-```
-
-```sh
-dotspec system list --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for list |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec system show
-
-Describe the nearest system and its enclosing system document
-
-```sh
-dotspec system show [source-path] [flags]
-```
-
-```sh
-dotspec system show --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for show |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec use-case
-
-Describe actor goals and interactions with a system
-
-```sh
-dotspec use-case [flags]
-```
-
-Authoring handbook: dotspec docs use-case
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--help, -h` | `false` | help for use-case |
-
-## dotspec use-case check
-
-Check structure and suggest missing use-case content
-
-```sh
-dotspec use-case check <slug-or-source-path> [flags]
-```
-
-Check structure and suggest missing use-case content.
-
-Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
-
-Authoring handbook: dotspec docs use-case
-
-```sh
-dotspec use-case check check-specifications --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for check |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec use-case init
-
-Create a use-case specification without overwriting an existing file
-
-```sh
-dotspec use-case init <slug> [flags]
-```
-
-Authoring handbook: dotspec docs use-case
-
-```sh
-dotspec use-case init check-specifications --path .
-dotspec use-case init review-change --template expanded --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for init |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-| `--template` | `brief` | Writing prompts: brief or expanded (same document format) |
-
-## dotspec use-case list
-
-Discover use cases, grouped by associated system
-
-```sh
-dotspec use-case list [flags]
-```
-
-```sh
-dotspec use-case list --path .
-dotspec use-case list --overview --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--all` | `false` | inspect all discovered projects separately |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for list |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--overview` | `false` | Show actor, goal, level, and stated boundary in text; JSON retains the full records |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
-
-## dotspec use-case show
-
-Show authored Markdown and the associated system
-
-```sh
-dotspec use-case show <slug-or-source-path> [flags]
-```
-
-```sh
-dotspec use-case show check-specifications --path .
-```
-
-| Flag | Default | Description |
-| --- | --- | --- |
-| `--format` | `text` | output format: text or json |
-| `--help, -h` | `false` | help for show |
-| `--json` | `false` | emit structured JSON (equivalent to --format json) |
-| `--path` | `.` | project directory to inspect or initialize |
-| `--project` | `` | select a project by its dotspec.yaml name (--path is relative to its root) |
+| `-h, --help` | `false` | help for sources |
+| `--json` | `false` | emit the result as JSON |
 

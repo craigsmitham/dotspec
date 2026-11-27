@@ -1,36 +1,5 @@
 package job
 
-import (
-	"github.com/craigsmitham/dotspec/internal/speccollection"
-	"github.com/craigsmitham/dotspec/internal/system"
-)
-
-type Group struct {
-	System *system.System `json:"system"`
-	Jobs   []*Job         `json:"jobs"`
-}
-
-func InitWithPreset(path, slug, preset string) (string, error) {
-	template, err := TemplateFor(preset)
-	if err != nil {
-		return "", err
-	}
-	return Layout.Create(path, slug, template)
-}
-
-var collection = speccollection.Collection[Job]{
-	Layout: Layout, Plural: "jobs", Read: Read,
-	SetSystem: func(member *Job, owner *system.System) {
-		member.System = owner
-	},
-}
-
-func Show(path, selector string) (*Job, error) {
-	return collection.Show(path, selector)
-}
-
-func List(path string) ([]*Group, error) {
-	return speccollection.List(path, collection, func(owner *system.System, members []*Job) *Group {
-		return &Group{System: owner, Jobs: members}
-	})
+func Init(path, slug string) (string, error) {
+	return Layout.Create(path, slug, Template)
 }

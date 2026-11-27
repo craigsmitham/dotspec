@@ -63,7 +63,7 @@ func writeManifest(t *testing.T, dir, body string) {
 }
 
 func TestProjectManifestValidation(t *testing.T) {
-	for _, body := range []string{"", "{}", "name: ''", "name: invalid/name", "name: demo\nunknown: true", "name: demo\nreport: true", "name: demo\nreport:\n  enabled: perhaps", "name: demo\nreport:\n  unknown: false", "name: demo\nname: other", "name: demo\n---\nname: other"} {
+	for _, body := range []string{"", "{}", "name: ''", "name: invalid/name", "name: demo\nunknown: true", "name: demo\nbuild: true", "name: demo\nbuild:\n  enabled: perhaps", "name: demo\nbuild:\n  unknown: false", "name: demo\nreport:\n  enabled: false", "name: demo\nname: other", "name: demo\n---\nname: other"} {
 		t.Run(body, func(t *testing.T) {
 			root := workspaceFixture(t)
 			child := filepath.Join(root, "apps/demo")
@@ -82,15 +82,15 @@ func TestProjectManifestValidation(t *testing.T) {
 	}
 }
 
-func TestReportConfig(t *testing.T) {
+func TestBuildConfig(t *testing.T) {
 	for _, tc := range []struct {
 		section string
 		enabled bool
 	}{
 		{"", true},
-		{"report: {}", true},
-		{"report:\n  enabled: true", true},
-		{"report:\n  enabled: false", false},
+		{"build: {}", true},
+		{"build:\n  enabled: true", true},
+		{"build:\n  enabled: false", false},
 	} {
 		root := t.TempDir()
 		writeManifest(t, root, "name: demo\n"+tc.section)
@@ -98,8 +98,8 @@ func TestReportConfig(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if project.Report.Enabled != tc.enabled {
-			t.Errorf("report.enabled for %q = %t, want %t", tc.section, project.Report.Enabled, tc.enabled)
+		if project.Build.Enabled != tc.enabled {
+			t.Errorf("build.enabled for %q = %t, want %t", tc.section, project.Build.Enabled, tc.enabled)
 		}
 	}
 }
@@ -133,9 +133,9 @@ func TestWorkspaceDiscoveryBoundaries(t *testing.T) {
 				t.Fatal(err)
 			}
 			want := []Project{
-				{Name: "demo", Root: filepath.Join(root, "apps/demo"), Report: ReportConfig{Enabled: true}},
-				{Name: "metadata", Root: filepath.Join(root, "specs"), Report: ReportConfig{Enabled: true}},
-				{Name: "tool", Root: root, Report: ReportConfig{Enabled: true}},
+				{Name: "demo", Root: filepath.Join(root, "apps/demo"), Build: BuildConfig{Enabled: true}},
+				{Name: "metadata", Root: filepath.Join(root, "specs"), Build: BuildConfig{Enabled: true}},
+				{Name: "tool", Root: root, Build: BuildConfig{Enabled: true}},
 			}
 			if w.Root != root || !reflect.DeepEqual(w.Projects, want) {
 				t.Fatal(w)
@@ -149,15 +149,5 @@ func TestWorkspaceDiscoveryBoundaries(t *testing.T) {
 				t.Fatal(err)
 			}
 		})
-	}
-}
-
-func TestQualityModelSetting(t *testing.T) {
-	root := t.TempDir()
-	for _, value := range []string{"null", "''", "[]", "{model: 12}", "{model: false}", "{model: null}", "{model: ''}", "{model: ../other.quality-model.md}", "{model: /tmp/other.quality-model.md}", "{model: ./other.spec.md}", "{model: q42, other: 1}", "{model: furps, model: q42}"} {
-		writeManifest(t, root, "name: demo\nquality: "+value)
-		if _, err := readProject(root); err == nil || !strings.Contains(err.Error(), ProjectFilename) {
-			t.Errorf("quality: %s: %v", value, err)
-		}
 	}
 }

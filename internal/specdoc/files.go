@@ -168,10 +168,10 @@ func Check(root string, plan *Plan) ([]diagnostic.Diagnostic, error) {
 		if _, ok := i.files[rel]; !ok {
 			message = "generated page is missing"
 		}
-		ds = append(ds, *diagnostic.Error("spec.stale", message+"; run dotspec spec build in this project", diagnostic.Location{Path: filepath.Join(root, filepath.FromSlash(rel))}))
+		ds = append(ds, *diagnostic.Error("spec.stale", message+"; run dotspec build in this project", diagnostic.Location{Path: filepath.Join(root, filepath.FromSlash(rel))}))
 	}
 	for _, rel := range i.changes.Removed {
-		ds = append(ds, *diagnostic.Error("spec.obsolete", "obsolete generated page; run dotspec spec build in this project", diagnostic.Location{Path: filepath.Join(root, filepath.FromSlash(rel))}))
+		ds = append(ds, *diagnostic.Error("spec.obsolete", "obsolete generated page; run dotspec build in this project", diagnostic.Location{Path: filepath.Join(root, filepath.FromSlash(rel))}))
 	}
 	more, err := validateRendered(root, plan, i.files)
 	return append(ds, more...), err

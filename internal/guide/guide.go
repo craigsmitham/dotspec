@@ -2,6 +2,7 @@ package guide
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io/fs"
 	"maps"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/craigsmitham/dotspec/docs"
 	"github.com/craigsmitham/dotspec/examples"
+	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	modelschema "github.com/craigsmitham/dotspec/model"
 	"github.com/craigsmitham/dotspec/specs"
@@ -20,8 +22,22 @@ import (
 
 var roots = map[string]fs.FS{"docs": docs.Files, "model": modelschema.GuideFiles, "examples": examples.Files, "specs": specs.Files}
 
+// qualityModels addresses each bundled quality model by slug, for example
+// quality-models/iso-25010-2023, so authors can read its terms offline.
+var qualityModels = qualitymodel.Layout.Collection
+
 func readFile(name string) ([]byte, error) {
 	root, file, _ := strings.Cut(name, "/")
+	if root == qualityModels {
+		if !fs.ValidPath(file) || strings.Contains(file, "/") {
+			return nil, fs.ErrNotExist
+		}
+		data, err := qualitymodel.Bundled(file)
+		if err != nil {
+			return nil, fs.ErrNotExist
+		}
+		return bytes.TrimLeft(specfile.NewMarkdown(data).Body, "\n"), nil
+	}
 	if root == "examples" {
 		if content, ok := examples.AppSpecs[file]; ok {
 			return []byte(content), nil
@@ -124,12 +140,15 @@ func Read(query string) (string, error) {
 	}
 	data, err := readDestination(source)
 	if err == nil {
-		if strings.HasPrefix(source, "examples/") || strings.HasPrefix(source, "specs/") {
+		if strings.HasPrefix(source, "examples/") || strings.HasPrefix(source, "specs/") || strings.HasPrefix(source, qualityModels+"/") {
 			return string(data), nil
 		}
 		return linkedPage(source, data), nil
 	}
 	if strings.ContainsAny(query, "/#.\\") || handbook.rules[query] != "" {
+		if errors.Is(err, fs.ErrNotExist) {
+			return "", fmt.Errorf("cannot open %q: no such page; run dotspec docs to browse topics", query)
+		}
 		return "", fmt.Errorf("cannot open %q: %w; run dotspec docs to browse topics", query, err)
 	}
 	return search(query)
@@ -175,6 +194,13 @@ func linkedPage(source string, data []byte) string {
 
 func bundledFiles(root string) ([]string, error) {
 	var files []string
+	if root == qualityModels {
+		slugs, err := qualitymodel.BundledSlugs()
+		for _, slug := range slugs {
+			files = append(files, qualityModels+"/"+slug)
+		}
+		return files, err
+	}
 	err := fs.WalkDir(roots[root], ".", func(file string, d fs.DirEntry, err error) error {
 		if err == nil && !d.IsDir() && (path.Ext(file) == ".md" || root == "examples") {
 			files = append(files, root+"/"+file)
@@ -193,7 +219,7 @@ func bundledFiles(root string) ([]string, error) {
 // destinations includes searchable pages outside the curated topic collections.
 func destinations() ([]string, error) {
 	set := map[string]bool{}
-	for _, root := range []string{"docs", "examples", "model", "specs"} {
+	for _, root := range []string{"docs", "examples", "model", "specs", qualityModels} {
 		files, err := bundledFiles(root)
 		if err != nil {
 			return nil, err

@@ -9,6 +9,7 @@ import (
 
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/concept"
+	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/requirement"
 	"github.com/craigsmitham/dotspec/internal/system"
@@ -92,6 +93,37 @@ func TestSourcesCollectLinksFromEveryTypeWithoutInterpretingNativeFiles(t *testi
 	}
 }
 
+func TestSourcesReportEachCompanionEntryWithItsStatedRole(t *testing.T) {
+	dir, err := filepath.EvalSymlinks(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	git(t, dir, "init", "-q")
+	write(t, system.Layout.Path(dir, "new-system"), system.Template)
+	test := filepath.Join(dir, "tests", "views.py")
+	write(t, test, "def check():\n    pass\n")
+	path := requirement.Layout.Path(dir, "views")
+	frontmatter := "---\ntype: requirement-spec\ncompanions:\n  - target: ../../tests/views.py#check\n    role: verifies\n  - target: ../../tests/views.py\n    role: illustrates\n  - target: https://example.invalid/background\n    role: explains\n---\n"
+	write(t, path, frontmatter+strings.TrimPrefix(requirement.Template, "---\ntype: requirement-spec\n---\n")+"\n[Body link](../../tests/views.py)\n")
+	r := sourceReport(dir)
+	if r.ExitCode() != 0 || !r.Complete {
+		t.Fatalf("sources: %+v", r)
+	}
+	file := sourceMap(r)[test]
+	want := []check.SourceCompanion{
+		{Role: "verifies", Target: "../../tests/views.py#check", Location: diagnostic.Location{Path: path, Line: 4, Column: 13, Element: "companions"}},
+		{Role: "illustrates", Target: "../../tests/views.py", Location: diagnostic.Location{Path: path, Line: 6, Column: 13, Element: "companions"}},
+	}
+	if !reflect.DeepEqual(file.CompanionOf, want) || len(file.ReferencedBy) != 3 {
+		t.Fatalf("companions: %+v", file)
+	}
+	for _, other := range r.Files {
+		if other.CompanionOf == nil || other.Path != test && len(other.CompanionOf) != 0 {
+			t.Fatalf("companion entries on %s: %+v", other.Path, other.CompanionOf)
+		}
+	}
+}
+
 func TestSourcesIncludeAncestorContextAndKeepBoundaryFailuresVisible(t *testing.T) {
 	dir, err := filepath.EvalSymlinks(t.TempDir())
 	if err != nil {
@@ -142,7 +174,7 @@ func TestSourcesEmptyInvalidAndIncomplete(t *testing.T) {
 	if r := sourceReport(dir); r.ExitCode() != 2 || r.Complete || len(r.Files) != 1 {
 		t.Fatalf("unreadable context directory: %+v", r)
 	}
-	if r := sourceReport(filepath.Join(dir, "absent")); r.ExitCode() != 2 || r.Complete || len(r.Files) != 0 || !strings.Contains(r.Diagnostics[0].Message, "absent") {
+	if r := sourceReport(filepath.Join(dir, "absent")); r.ExitCode() != 2 || r.Complete || len(r.Files) != 0 || !strings.Contains(r.Diagnostics[0].Location.Path, "absent") || r.Diagnostics[0].Message != "path does not exist" {
 		t.Fatalf("missing scope: %+v", r)
 	}
 }

@@ -55,21 +55,21 @@ func TestDuplicateOutcomeIDNamesTheOutcomeField(t *testing.T) {
 }
 
 func TestAdviceRetainsOutcomeScopeAndLocation(t *testing.T) {
-	source := "---\ntype: job-spec\n---\n# Example\n## Job\nPrepare a change for review.\n## Performer\nA reviewer.\n## Outcomes\n### Better results\n\n**ID:** O1\n\nBetter results.\n## Steps\n### Gather\n#### Outcomes\n##### Better results\n\n**ID:** O2\n\nBetter results.\n"
+	source := "---\ntype: job-spec\n---\n# Example\n## Job\nPrepare a change for review.\n## Performer\nA reviewer.\n## Outcomes\n### Better results\n\n**ID:** O1\n## Steps\n### Gather\n#### Outcomes\n##### Better results\n\n**ID:** O2\n"
 	spec, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)
 	}
 	spec.Path = "example.job.spec.md"
-	advice := CheckWithPreset(spec, "odi")
-	if len(advice) != 2 || advice[0].Location.Line != 10 || advice[1].Location.Line != 18 {
+	advice := Check(spec)
+	if len(advice) != 2 || advice[0].Location.Line != 10 || advice[1].Location.Line != 16 {
 		t.Fatalf("outcome locations: %+v", advice)
 	}
 	if advice[0].Location.Element != "Outcomes declared by job / O1" || advice[1].Location.Element != "Outcomes declared by step: Gather / O2" {
 		t.Fatalf("outcome scopes: %+v", advice)
 	}
 	for _, d := range advice {
-		if d.Rule != "job.outcome-measure" || d.Severity != "advice" || d.Location.Path != spec.Path {
+		if d.Rule != "job.outcome-empty" || d.Severity != "advice" || d.Location.Path != spec.Path {
 			t.Fatalf("advice lost its rule or path: %+v", d)
 		}
 	}

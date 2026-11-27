@@ -99,15 +99,11 @@ func (d *designResolver) withholdCyclicLinks() {
 	}
 }
 
-func (d *designResolver) traceReview() {
+func (d *designResolver) measurementReview() {
 	for _, r := range d.elements {
 		if !designKind(String(r, "kind"), "Requirement") {
 			continue
 		}
-		if len(d.refs(r, "supports"))+len(d.refs(r, "derived_from"))+len(d.refs(r, "refines")) == 0 {
-			d.issue(r, "motivation", "advice", "No explicit motivation or derivation is recorded for this requirement; review its justification.")
-		}
-
 		if missing := d.measurementGuidance(r).Missing(); len(missing) > 0 {
 			d.issue(r, "measurement_basis", "advice", requirement.MeasurementMessage(missing))
 		}

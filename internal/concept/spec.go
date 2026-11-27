@@ -6,7 +6,6 @@ import (
 
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
-	"github.com/craigsmitham/dotspec/internal/system"
 )
 
 var Layout = specfile.Layout{Kind: "concept", Collection: "concepts", Suffix: ".concept.spec.md", SlugExample: "job-map"}
@@ -58,7 +57,6 @@ type Concept struct {
 	OperationalPrinciples string                         `json:"operational_principles"`
 	Markdown              string                         `json:"markdown"`
 	Path                  string                         `json:"path"`
-	System                *system.System                 `json:"system"`
 	Location              diagnostic.Location            `json:"location"`
 	SectionLocations      map[string]diagnostic.Location `json:"-"`
 }
@@ -73,6 +71,7 @@ func readFrom(files *specfile.SourceSet, path string) (*Concept, error) {
 		return nil, err
 	}
 	spec.Slug, spec.Path = slug, path
+	spec.Location.Path = path
 	return spec, nil
 }
 

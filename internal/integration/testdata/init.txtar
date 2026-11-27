@@ -1,0 +1,74 @@
+# Start a project, build its generated specification, and refuse to overwrite.
+env HOME=$WORK/home
+env XDG_CACHE_HOME=$WORK/home/cache
+mkdir desk
+cd desk
+exec git init -q
+status 2 dotspec build
+stderr 'run dotspec init <system-name>'
+! stdout .
+exec dotspec init 'Booking desk'
+cmp stdout ../created.txt
+! stderr .
+cmp dotspec.yaml ../manifest.yaml
+exists specs/booking-desk.system.spec.md
+status 1 dotspec check
+stdout 'generated page is missing; run dotspec build'
+exec dotspec build
+stdout 'Built SPEC.md'
+exec dotspec check
+stdout ': 0 errors, 0 advisories;'
+
+# Neither file is replaced, and a failed attempt writes nothing.
+cp dotspec.yaml ../kept.yaml
+status 2 dotspec init 'Booking desk'
+stderr 'dotspec.yaml already exists; refusing to overwrite it'
+! stdout .
+cmp dotspec.yaml ../kept.yaml
+mkdir ../legacy
+cd ../legacy
+mkdir specs
+cp ../legacy.system.spec.md specs/legacy.system.spec.md
+status 2 dotspec init Legacy
+stderr 'refusing to overwrite'
+! exists dotspec.yaml
+status 2 dotspec init Other --name 'not a name'
+stderr 'invalid project name'
+! exists dotspec.yaml
+
+# A project started inside another one says which project it leaves.
+mkdir ../desk/kiosk
+cd ../desk/kiosk
+exec dotspec init Kiosk --name front-kiosk --json
+stdout '^\{\n  "schema_version": 1,'
+stdout '"project": "front-kiosk"'
+stdout '"name": "booking-desk"'
+mkdir ../tablet
+cd ../tablet
+exec dotspec init Tablet
+stdout 'nested in project booking-desk \(../dotspec.yaml\)'
+cd ..
+exec dotspec check
+stdout ': 0 errors, 0 advisories;'
+
+-- created.txt --
+Created dotspec.yaml for project booking-desk
+Created specs/booking-desk.system.spec.md
+Edit Description, Purpose, and Scope. Keep the filename in sync if you rename the system.
+Authoring guide: dotspec docs guides/describe-a-system
+-- manifest.yaml --
+name: booking-desk
+-- legacy.system.spec.md --
+---
+type: system-spec
+---
+
+# Legacy
+
+## Purpose
+
+Keep an existing system specification.
+
+## Scope
+
+The legacy system.

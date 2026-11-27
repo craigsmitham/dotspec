@@ -2,50 +2,23 @@ package cli
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
-	"slices"
-	"strings"
 
 	"github.com/spf13/cobra"
 )
 
-// outputFormatsAnnotation records, on each command, the --format values addOutput allows.
-const outputFormatsAnnotation = "dotspec.output-formats"
+// schemaVersion versions every command result except the snapshot, which
+// carries its own model and representation versions.
+const schemaVersion = 1
 
-func addOutput(cmd *cobra.Command, mermaid bool) {
-	formats := []string{"text", "json"}
-	if mermaid {
-		formats = append(formats, "mermaid")
-	}
-	if cmd.Annotations == nil {
-		cmd.Annotations = map[string]string{}
-	}
-	cmd.Annotations[outputFormatsAnnotation] = strings.Join(formats, ",")
-	cmd.Flags().String("format", "text", "output format: "+strings.Join(formats, " or "))
-	cmd.Flags().Bool("json", false, "emit structured JSON (equivalent to --format json)")
-	cmd.MarkFlagsMutuallyExclusive("json", "format")
-	_ = cmd.RegisterFlagCompletionFunc("format", func(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
-		return formats, cobra.ShellCompDirectiveNoFileComp
-	})
+// addJSON gives a command that returns a result a local --json switch.
+func addJSON(cmd *cobra.Command) {
+	cmd.Flags().Bool("json", false, "emit the result as JSON")
 }
 
-func outputFormat(cmd *cobra.Command) (string, error) {
-	format, err := cmd.Flags().GetString("format")
-	if err != nil {
-		return "", err
-	}
-	jsonMode, err := cmd.Flags().GetBool("json")
-	if err != nil {
-		return "", err
-	}
-	if jsonMode {
-		return "json", nil
-	}
-	if slices.Contains(strings.Split(cmd.Annotations[outputFormatsAnnotation], ","), format) {
-		return format, nil
-	}
-	return "", fmt.Errorf("unknown output format %q; see %s --help", format, cmd.CommandPath())
+func jsonOutput(cmd *cobra.Command) bool {
+	enabled, _ := cmd.Flags().GetBool("json")
+	return enabled
 }
 
 func writeJSON(out io.Writer, value any) error {

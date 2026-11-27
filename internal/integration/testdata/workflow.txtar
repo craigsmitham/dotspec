@@ -1,45 +1,43 @@
 # A complete workflow from a different working directory, including exact output.
+env HOME=$WORK/home
+env XDG_CACHE_HOME=$WORK/home/cache
 mkdir project
 cd project
 exec git init -q
-exec dotspec system init
+exec dotspec init 'New system'
 cmp stdout ../created.txt
 ! stderr .
 cp ../new-system.system.spec.md specs/new-system.system.spec.md
+exec dotspec build
+! stderr .
 exec dotspec check
-stdout 'Checked 1 of 1 discovered source files'
-stdout 'Errors: 0'
+stdout '^Checked 1 file in project new-system \(scan complete\): 0 errors, 0 advisories; 1 context file\.$'
+stdout '^Generated specification: checked$'
+stdout '^  dotspec.yaml$'
 ! stderr .
-exec dotspec job init plan-work
+exec dotspec new job plan-work
 ! stderr .
-exec dotspec job show --path . -- plan-work
-stdout '# New job'
+exec dotspec list job
 stdout 'System: New system'
-exec dotspec system list --json
-stdout '"schema_version": 2'
-stdout '"children": \[\]'
+stdout 'Plan work  \(specs/jobs/plan-work.job.spec.md\)'
+exec dotspec list system --json
+stdout '^\{\n  "schema_version": 1,'
+stdout '"kind": "system"'
+stdout '"system": null'
 ! stderr .
-exec dotspec job map plan-work --json
-stdout '"steps": \[\]'
-exec dotspec job outcome list plan-work --json
-stdout '"declared_by_job": \[\]'
-exec dotspec job map plan-work --format mermaid
-cmp stdout ../map.txt
-exec dotspec job check plan-work --json
+exec dotspec check specs/jobs/plan-work.job.spec.md --json
 stdout '"complete": true'
 stdout '"errors": 0'
 ! stderr .
-status 2 dotspec job init plan-work
+status 2 dotspec new job plan-work
 stderr 'refusing to overwrite'
 ! stdout .
-status 2 dotspec job show plan-work --json --format text
-stderr 'json format'
-! stdout .
-status 2 dotspec job show ../escape
+status 2 dotspec new job ../escape
 ! stdout .
 status 2 dotspec unknown
 ! stdout .
 -- created.txt --
+Created dotspec.yaml for project new-system
 Created specs/new-system.system.spec.md
 Edit Description, Purpose, and Scope. Keep the filename in sync if you rename the system.
 Authoring guide: dotspec docs guides/describe-a-system
@@ -57,8 +55,3 @@ Help a team plan its work.
 ## Scope
 
 Work planning for a single team.
--- map.txt --
-flowchart TD
-  job["New job"]
-  no_steps["No steps defined."]
-  job --- no_steps

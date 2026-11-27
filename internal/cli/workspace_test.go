@@ -7,8 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-
-	"github.com/santhosh-tekuri/jsonschema/v6"
 )
 
 func projectFixture(t *testing.T) string {
@@ -34,23 +32,27 @@ func projectFixture(t *testing.T) string {
 	t.Chdir(root)
 	return root
 }
-func TestProjectSelectorsAndSeparateWorkspaceResults(t *testing.T) {
+func TestChdirSelectsProjectAndSeparateWorkspaceResults(t *testing.T) {
 	root := projectFixture(t)
-	for _, args := range [][]string{{"system", "list", "--json"}, {"system", "list", "--project", "demo", "--json"}} {
+	for _, args := range [][]string{{"list", "system", "--json"}, {"-C", "apps/demo", "list", "system", "--json"}} {
 		code, out, errOut := invoke(args...)
 		if code != 0 {
 			t.Fatal(code, errOut)
 		}
 		want, absent := "Tool", "Demo"
-		if len(args) > 3 {
+		if args[0] == "-C" {
 			want, absent = absent, want
 		}
 		if !strings.Contains(out, want) || strings.Contains(out, absent) {
 			t.Fatal(out)
 		}
 	}
-	for _, project := range []string{"tool", "demo"} {
-		if code, out, errOut := invoke("spec", "build", "--project", project); code != 0 {
+	// -C lasts for one invocation.
+	if cwd, err := os.Getwd(); err != nil || mustEvalSymlinks(t, cwd) != mustEvalSymlinks(t, root) {
+		t.Fatal(cwd, err)
+	}
+	for _, dir := range []string{".", "apps/demo"} {
+		if code, out, errOut := invoke("--chdir", dir, "build"); code != 0 {
 			t.Fatal(code, out, errOut)
 		}
 	}
@@ -62,11 +64,7 @@ func TestProjectSelectorsAndSeparateWorkspaceResults(t *testing.T) {
 	if result.Projects[0].Name != "demo" || result.Projects[1].Name != "tool" {
 		t.Fatal(result)
 	}
-	code, out, errOut = invoke("system", "show", "--project", "demo", "--json")
-	if code != 0 || !strings.Contains(out, `"enclosing_system": null`) {
-		t.Fatal(out, errOut)
-	}
-	code, out, errOut = invoke("model", "export", "--project", "demo")
+	code, out, errOut = invoke("-C", "apps/demo", "snapshot", "export")
 	if code != 0 || strings.Contains(out, `"enclosing_system"`) || !strings.Contains(out, `"project_configuration"`) {
 		t.Fatal(code, errOut, out)
 	}
@@ -74,17 +72,29 @@ func TestProjectSelectorsAndSeparateWorkspaceResults(t *testing.T) {
 	if err := os.Remove(filepath.Join(root, "apps/demo/specs/demo.system.spec.md")); err != nil {
 		t.Fatal(err)
 	}
-	code, out, errOut = invoke("job", "show", "work", "--project", "demo", "--json")
-	if code != 0 || strings.Contains(out, `"name": "Tool"`) {
+	code, out, errOut = invoke("-C", "apps/demo", "list", "job", "--json")
+	if code != 0 || strings.Contains(out, `"name": "Tool"`) || !strings.Contains(out, `"system": null`) {
 		t.Fatal(code, out, errOut)
 	}
-	for _, args := range [][]string{{"check", "--project", "missing"}, {"check", "--project", "tool", "--path", "apps/demo"}, {"check", "--all", "--project", "demo"}} {
-		code, _, _ := invoke(args...)
-		if code != 2 {
-			t.Fatal(args, code)
-		}
+	code, _, errOut = invoke("-C", "missing", "check")
+	if code != 2 || !strings.Contains(errOut, "--chdir missing: directory does not exist") {
+		t.Fatal(code, errOut)
+	}
+	code, _, errOut = invoke("check", "--all", "apps/demo")
+	if code != 2 || !strings.Contains(errOut, "omit <path>") {
+		t.Fatal(code, errOut)
 	}
 }
+
+func mustEvalSymlinks(t *testing.T, path string) string {
+	t.Helper()
+	resolved, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return resolved
+}
+
 func TestExplicitCrossProjectContextAndAllFailures(t *testing.T) {
 	root := projectFixture(t)
 	path := filepath.Join(root, "apps/demo/specs/jobs/work.job.spec.md")
@@ -96,7 +106,7 @@ func TestExplicitCrossProjectContextAndAllFailures(t *testing.T) {
 	if err := os.WriteFile(path, data, 0600); err != nil {
 		t.Fatal(err)
 	}
-	code, out, errOut := invoke("model", "export", "--project", "demo")
+	code, out, errOut := invoke("-C", "apps/demo", "snapshot", "export")
 	if code != 0 || !strings.Contains(out, `"role": "specification_system"`) || !strings.Contains(out, `"name": "tool"`) {
 		t.Fatal(code, errOut, out)
 	}
@@ -108,72 +118,9 @@ func TestExplicitCrossProjectContextAndAllFailures(t *testing.T) {
 	if code != 1 || json.Unmarshal([]byte(out), &result) != nil || len(result.Projects) != 2 {
 		t.Fatal(code, out, errOut)
 	}
-}
-
-func TestWorkspaceExportsValidateOffline(t *testing.T) {
-	root := projectFixture(t)
-	code, out, errOut := invoke("model", "export", "--all")
-	if code != 0 {
-		t.Fatal(code, errOut)
-	}
-	schema, err := workspaceExportSchema()
-	if err != nil {
-		t.Fatal(err)
-	}
-	schemaBytes, err := json.Marshal(schema)
-	if err != nil {
-		t.Fatal(err)
-	}
-	var schemaValue any
-	if err := json.Unmarshal(schemaBytes, &schemaValue); err != nil {
-		t.Fatal(err)
-	}
-	compiler := jsonschema.NewCompiler()
-	if err := compiler.AddResource("https://example.test/workspace.json", schemaValue); err != nil {
-		t.Fatal(err)
-	}
-	compiled, err := compiler.Compile("https://example.test/workspace.json")
-	if err != nil {
-		t.Fatal(err)
-	}
-	var value any
-	if err := json.Unmarshal([]byte(out), &value); err != nil {
-		t.Fatal(err)
-	}
-	if err := compiled.Validate(value); err != nil {
-		t.Fatal(err)
-	}
-	findings, err := validateExportJSON([]byte(out))
-	if err != nil || len(findings) != 0 {
-		t.Fatal(findings, err)
-	}
-	// Acquisition must have recorded the manifest, project provenance and separate snapshots.
-	var envelope workspaceResult
-	if err := json.Unmarshal([]byte(out), &envelope); err != nil {
-		t.Fatal(err)
-	}
-	if len(envelope.Projects) != 2 {
-		t.Fatal(envelope)
-	}
-	path := filepath.Join(root, "export.json")
-	if err := os.WriteFile(path, []byte(out), 0600); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.Remove(filepath.Join(root, "dotspec.yaml")); err != nil {
-		t.Fatal(err)
-	}
-	code, _, errOut = invoke("model", "validate", path)
-	if code != 0 {
-		t.Fatal(code, errOut)
-	}
-	envelope.Projects[0].Name = "forged"
-	data, err := json.Marshal(envelope)
-	if err != nil {
-		t.Fatal(err)
-	}
-	findings, err = validateExportJSON(data)
-	if err != nil || len(findings) == 0 || findings[0].Code != "workspace.scope" {
-		t.Fatal(findings, err)
+	code, out, _ = invoke("check", "--all")
+	if code != 1 || !strings.Contains(out, "# Project: demo") || !strings.Contains(out, "# Project: tool") {
+		t.Fatal(code, out)
 	}
 }
 
@@ -182,12 +129,23 @@ func TestWorkspaceRootWithoutProjectAndPathNarrowing(t *testing.T) {
 	if output, err := exec.Command("git", "-C", root, "init", "-q").CombinedOutput(); err != nil {
 		t.Fatal(err, string(output))
 	}
-	code, out, errOut := invoke("check", "--project", "demo", "--path", "internal", "--json")
+	code, out, errOut := invoke("-C", "apps/demo", "check", "internal", "--json")
 	if code != 0 || !strings.Contains(out, `"files_discovered": 0`) {
 		t.Fatal(code, out, errOut)
 	}
+	// Paths resolve against the working directory that -C selects.
+	code, out, errOut = invoke("-C", "apps/demo", "check", "specs/jobs/work.job.spec.md", "--json")
+	if code != 0 || !strings.Contains(out, `"files_checked": 1`) {
+		t.Fatal(code, out, errOut)
+	}
+	// A named specification file is checked within its own project, not the
+	// project enclosing the working directory.
+	code, out, errOut = invoke("check", "apps/demo/specs/jobs/work.job.spec.md", "--json")
+	if code != 0 || !strings.Contains(out, `"files_checked": 1`) || !strings.Contains(out, `"name": "demo"`) {
+		t.Fatal(code, out, errOut)
+	}
 	t.Chdir(filepath.Join(root, "apps/demo/internal"))
-	code, out, errOut = invoke("system", "list", "--json")
+	code, out, errOut = invoke("list", "system", "--json")
 	if code != 0 || !strings.Contains(out, "Demo") {
 		t.Fatal(code, out, errOut)
 	}
@@ -195,11 +153,15 @@ func TestWorkspaceRootWithoutProjectAndPathNarrowing(t *testing.T) {
 	if err := os.Remove(filepath.Join(root, "dotspec.yaml")); err != nil {
 		t.Fatal(err)
 	}
-	code, _, _ = invoke("check")
-	if code != 2 {
-		t.Fatal(code)
+	code, _, errOut = invoke("check")
+	if code != 2 || !strings.Contains(errOut, "outside any specification project") {
+		t.Fatal(code, errOut)
 	}
-	if code, out, errOut := invoke("spec", "build", "--project", "demo"); code != 0 {
+	if code, out, errOut := invoke("-C", "apps/demo", "build"); code != 0 {
+		t.Fatal(code, out, errOut)
+	}
+	code, out, errOut = invoke("check", "apps/demo", "--json")
+	if code != 0 || !strings.Contains(out, `"name": "demo"`) || !strings.Contains(out, `"generated_spec": "checked"`) {
 		t.Fatal(code, out, errOut)
 	}
 	code, _, errOut = invoke("check", "--all")
@@ -209,13 +171,14 @@ func TestWorkspaceRootWithoutProjectAndPathNarrowing(t *testing.T) {
 	if err := os.Rename(filepath.Join(root, "apps/demo"), filepath.Join(root, "apps/moved")); err != nil {
 		t.Fatal(err)
 	}
-	code, out, errOut = invoke("sources", "--project", "demo", "--json")
+	code, out, errOut = invoke("-C", "apps/moved", "sources", "--json")
 	if code != 0 || !strings.Contains(filepath.ToSlash(out), "moved") || strings.Contains(out, "apps/demo") {
 		t.Fatal(code, out, errOut)
 	}
-
 }
 
+// Adoption writes to the nearest enclosing system of the working directory's
+// project, never to a nested project's system.
 func TestWorkspaceMutationCannotTargetAnotherProject(t *testing.T) {
 	root := projectFixture(t)
 	target := filepath.Join(root, "apps/demo/specs/demo.system.spec.md")
@@ -223,15 +186,15 @@ func TestWorkspaceMutationCannotTargetAnotherProject(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	code, _, _ := invoke("quality-model", "apply", "--all", "--project", "tool", "--system", "apps/demo/specs/demo.system.spec.md")
-	if code != 2 {
-		t.Fatal(code)
+	code, out, errOut := invoke("new", "quality-attribute", "recoverability", "--from", "iso-25010-2023")
+	if code != 0 || !strings.Contains(out, "specs/tool.system.spec.md") {
+		t.Fatal(code, out, errOut)
 	}
 	after, err := os.ReadFile(target)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if string(before) != string(after) {
-		t.Fatal("cross-project target changed")
+	if _, err := os.Stat(filepath.Join(root, "apps/demo/specs/quality")); string(before) != string(after) || !os.IsNotExist(err) {
+		t.Fatal("adoption changed another project")
 	}
 }

@@ -54,7 +54,7 @@ func TestParsePreservesConceptAndDistinctFields(t *testing.T) {
 		t.Fatal(err)
 	}
 	body := example[strings.Index(example, "# Job Map"):]
-	if spec.Markdown != strings.TrimSpace(body) || spec.ID != "job-map" || spec.Name != "Job Map" || spec.System != nil {
+	if spec.Markdown != strings.TrimSpace(body) || spec.ID != "job-map" || spec.Name != "Job Map" {
 		t.Fatalf("authored content or identity changed: %+v", spec)
 	}
 	if spec.Purpose != "Understand an accomplishment and its success criteria." || !strings.Contains(spec.State, "| Step |") || !strings.Contains(spec.Actions, "#### Effects") || !strings.HasPrefix(spec.OperationalPrinciples, "Describe the steps") {

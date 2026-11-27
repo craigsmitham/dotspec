@@ -4,7 +4,9 @@ package diagnostic
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"strings"
+	"syscall"
 	"unicode/utf8"
 )
 
@@ -90,4 +92,25 @@ func WithPath(err error, path string) error {
 		}
 	}
 	return &copy
+}
+
+// FileProblem states a filesystem failure in plain words. It omits the
+// operating-system call that failed, and the path, which callers report as the
+// finding's location or in front of the problem.
+func FileProblem(err *fs.PathError) string {
+	subject := "path"
+	if kind, ok := strings.CutPrefix(err.Op, "find "); ok {
+		subject = kind
+	}
+	switch {
+	case errors.Is(err.Err, fs.ErrNotExist):
+		return subject + " does not exist"
+	case errors.Is(err.Err, fs.ErrPermission):
+		return "permission denied"
+	case errors.Is(err.Err, syscall.ENOTDIR):
+		return "a parent of this path is not a directory"
+	case errors.Is(err.Err, syscall.EISDIR):
+		return "path is a directory"
+	}
+	return err.Err.Error()
 }

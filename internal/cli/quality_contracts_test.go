@@ -53,18 +53,18 @@ func TestInspectionQualityContracts(t *testing.T) {
 			prepareExample(t, "read")
 			writeFixture(t, "specs/requirements/broken.requirement.spec.md", "broken")
 		}, 1},
-		{"shared context outside subtree", []string{"check", "--path", "internal"}, func(t *testing.T) {
+		{"shared context outside subtree", []string{"check", "internal"}, func(t *testing.T) {
 			prepareExample(t, "read")
 			writeFixture(t, "internal/specs/requirements/a.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Draft A\n")
 			writeFixture(t, "internal/specs/requirements/b.requirement.spec.md", "---\ntype: requirement-spec\n---\n# Draft B\n")
 		}, 0},
-		{"focused job", []string{"job", "check", "develop-requirements"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
-		{"focused use case", []string{"use-case", "check", "check-specifications"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
-		{"focused concept", []string{"concept", "check", "job-map"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
-		{"focused general requirement", []string{"requirement", "check", "reject-existing-target"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
-		{"focused quality requirement", []string{"requirement", "check", "diagnostic-severity"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
-		{"missing input", []string{"requirement", "check", "missing"}, func(t *testing.T) { prepareExample(t, "read") }, 2},
-		{"unavailable context", []string{"requirement", "check", "diagnostic-severity"}, func(t *testing.T) {
+		{"focused job", []string{"check", "specs/jobs/develop-requirements.job.spec.md"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
+		{"focused use case", []string{"check", "specs/use-cases/check-specifications.use-case.spec.md"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
+		{"focused concept", []string{"check", "specs/concepts/job-map.concept.spec.md"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
+		{"focused general requirement", []string{"check", "specs/requirements/reject-existing-target.requirement.spec.md"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
+		{"focused quality requirement", []string{"check", "specs/requirements/diagnostic-severity.requirement.spec.md"}, func(t *testing.T) { prepareExample(t, "read") }, 0},
+		{"missing input", []string{"check", "specs/requirements/missing.requirement.spec.md"}, func(t *testing.T) { prepareExample(t, "read") }, 2},
+		{"unavailable context", []string{"check", "specs/requirements/diagnostic-severity.requirement.spec.md"}, func(t *testing.T) {
 			prepareExample(t, "read")
 			if err := os.Remove("specs/new-system.system.spec.md"); err != nil {
 				t.Fatal(err)

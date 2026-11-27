@@ -15,7 +15,7 @@ import (
 func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 	root := projectFixture(t)
 	demo := filepath.Join(root, "apps/demo")
-	writeFixture(t, filepath.Join(root, "dotspec.yaml"), "name: tool\nreport:\n  enabled: false\n")
+	writeFixture(t, filepath.Join(root, "dotspec.yaml"), "name: tool\nbuild:\n  enabled: false\n")
 	readReport := func(wantCode int, state string, args ...string) {
 		t.Helper()
 		code, out, errOut := invoke(append(args, "--json")...)
@@ -26,23 +26,21 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 	}
 
 	// A name-only manifest requires reports from the first whole-project check.
-	readReport(1, "checked", "check", "--project", "demo")
-	readReport(0, "", "check", "--project", "tool")
-	readReport(0, "out-of-scope", "check", "--project", "demo", "--path", "internal")
-	readReport(0, "out-of-scope", "job", "check", "work", "--project", "demo")
-	if code, _, errOut := invoke("spec", "build", "--project", "demo", "--path", "internal"); code != 2 || !strings.Contains(errOut, "whole project") {
+	readReport(1, "checked", "-C", "apps/demo", "check")
+	readReport(0, "", "check")
+	readReport(0, "out-of-scope", "-C", "apps/demo", "check", "internal")
+	readReport(0, "out-of-scope", "-C", "apps/demo", "check", "specs/jobs/work.job.spec.md")
+	if code, _, errOut := invoke("build"); code != 2 || !strings.Contains(errOut, "build.enabled is false") {
 		t.Fatal(code, errOut)
 	}
-	if code, _, errOut := invoke("spec", "build", "--project", "tool"); code != 2 || !strings.Contains(errOut, "report.enabled is false") {
-		t.Fatal(code, errOut)
-	}
-	if code, out, errOut := invoke("spec", "build", "--project", "demo"); code != 0 || !strings.Contains(out, "SPEC.md") || errOut != "" {
+	// Build covers the enclosing project from any directory within it.
+	if code, out, errOut := invoke("-C", "apps/demo/internal", "build"); code != 0 || !strings.Contains(out, "SPEC.md") || errOut != "" {
 		t.Fatal(code, out, errOut)
 	}
-	if code, out, errOut := invoke("spec", "build", "--project", "demo"); code != 0 || !strings.Contains(out, "0 written, 0 removed") || errOut != "" {
+	if code, out, errOut := invoke("-C", "apps/demo", "build"); code != 0 || !strings.Contains(out, "0 written, 0 removed") || errOut != "" {
 		t.Fatal(code, out, errOut)
 	}
-	readReport(0, "checked", "check", "--project", "demo")
+	readReport(0, "checked", "-C", "apps/demo", "check")
 	if err := os.Remove(filepath.Join(demo, "SPEC.md")); err != nil {
 		t.Fatal(err)
 	}
@@ -52,25 +50,34 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 		t.Fatal(code, out, errOut)
 	}
 	writeFixture(t, filepath.Join(root, "specs/tool.system.spec.md"), "broken\n")
-	readReport(1, "", "check", "--project", "tool")
+	readReport(1, "", "check")
 	writeFixture(t, filepath.Join(demo, "specs/demo.system.spec.md"), "broken\n")
-	readReport(1, "blocked-by-source", "check", "--project", "demo")
+	readReport(1, "blocked-by-source", "check", "apps/demo")
 	t.Chdir(filepath.Join(demo, "internal"))
 	readReport(1, "blocked-by-source", "check")
+	// A blocked build leads with its outcome and does not restate it as a
+	// generated-specification state.
+	code, out, errOut = invoke("build")
+	if code != 1 || errOut != "" || !strings.HasPrefix(out, "SPEC.md not written: 1 source error.\n\n") || strings.Contains(out, "Generated specification:") {
+		t.Fatalf("blocked build: %d %q %q", code, out, errOut)
+	}
+	if _, err := os.Stat(filepath.Join(demo, "SPEC.md")); !os.IsNotExist(err) {
+		t.Fatal("blocked build wrote SPEC.md", err)
+	}
 }
 
 func TestGeneratedSpecificationMultipleRoots(t *testing.T) {
 	root := projectFixture(t)
 	writeFixture(t, filepath.Join(root, "other/specs/other.system.spec.md"), "---\ntype: system-spec\n---\n# Other\n\n## Purpose\nOther work.\n\n## Scope\nOther only.\n")
-	if code, out, errs := invoke("spec", "build"); code != 0 {
+	if code, out, errs := invoke("build"); code != 0 {
 		t.Fatal(out, errs)
 	}
 	if code, out, errs := invoke("check"); code != 0 {
 		t.Fatal(out, errs)
 	}
 	for _, name := range []string{"tool", "other"} {
-		if code, out, errs := invoke("model", "product", name); code != 0 || !strings.Contains(out, name+".system.spec.md") {
-			t.Fatal(out, errs)
+		if view := productOf(t, root, name); len(view.Members) != 1 || !strings.HasSuffix(view.Members[0].Source, name+".system.spec.md") {
+			t.Fatal(view)
 		}
 	}
 
@@ -206,7 +213,7 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 		writeFixture(t, filepath.Join(root, "worker/queues/components", component, "specs/requirements/check.requirement.spec.md"),
 			"---\ntype: requirement-spec\n---\n# Check submission\n\n## Statement\nCheck the "+component+" record.\n")
 	}
-	if code, out, errOut := invoke("spec", "build"); code != 0 {
+	if code, out, errOut := invoke("build"); code != 0 {
 		t.Fatal(code, out, errOut)
 	}
 	if code, out, errOut := invoke("check"); code != 0 {
@@ -315,7 +322,7 @@ func TestGeneratedOpenQuestionsLifecycle(t *testing.T) {
 	const overview = "specification/notes.system.spec-report.md"
 	build := func() {
 		t.Helper()
-		for _, args := range [][]string{{"spec", "build"}, {"check"}} {
+		for _, args := range [][]string{{"build"}, {"check"}} {
 			if code, out, errOut := invoke(args...); code != 0 {
 				t.Fatal(code, out, errOut)
 			}
@@ -356,7 +363,7 @@ func TestOverviewListsEverySpecificationWithOrWithoutPreview(t *testing.T) {
 	}
 	for _, narrative := range []string{"", "The archive keeps all published notes."} {
 		writeFixture(t, "specs/notes.system.spec.md", system+narrative+"\n")
-		if code, out, errOut := invoke("spec", "build"); code != 0 {
+		if code, out, errOut := invoke("build"); code != 0 {
 			t.Fatal(code, out, errOut)
 		}
 		data, err := os.ReadFile("specification/notes.system.spec-report.md")
@@ -383,7 +390,7 @@ func TestSystemFeatureIndexTracksOverviewCoverage(t *testing.T) {
 	writeFixture(t, "specs/features/draft.feature.spec.md", "---\ntype: feature-spec\n---\n# Draft\n\n## Description\nWrite a note.\n")
 	for _, description := range []string{"", "\n## Description\nRead a note.\n", ""} {
 		writeFixture(t, "specs/features/review.feature.spec.md", "---\ntype: feature-spec\n---\n# Review\n"+description)
-		if code, out, msg := invoke("spec", "build"); code != 0 {
+		if code, out, msg := invoke("build"); code != 0 {
 			t.Fatal(code, out, msg)
 		}
 		if _, err := os.Stat("specification/features.md"); !os.IsNotExist(err) {
@@ -431,7 +438,7 @@ Individual authors.
 	writeFixture(t, "specs/notes.system.spec.md", opening)
 	build := func() string {
 		t.Helper()
-		if code, out, errOut := invoke("spec", "build"); code != 0 {
+		if code, out, errOut := invoke("build"); code != 0 {
 			t.Fatal(code, out, errOut)
 		}
 		data, err := os.ReadFile("specification/notes.system.spec-report.md")
@@ -542,7 +549,7 @@ func TestSystemContextSectionsStandAlone(t *testing.T) {
 `)
 	build := func() string {
 		t.Helper()
-		for _, args := range [][]string{{"spec", "build"}, {"check"}} {
+		for _, args := range [][]string{{"build"}, {"check"}} {
 			if code, out, errOut := invoke(args...); code != 0 {
 				t.Fatal(code, out, errOut)
 			}
@@ -649,7 +656,7 @@ A reset clears the draft.[^disk] See [the basis](../../specs/notes.system.spec.m
 ### Storage
 A separate archive retains old drafts.
 `)
-	for _, args := range [][]string{{"spec", "build"}, {"check"}} {
+	for _, args := range [][]string{{"build"}, {"check"}} {
 		if code, out, errOut := invoke(args...); code != 0 {
 			t.Fatal(code, out, errOut)
 		}
@@ -683,7 +690,7 @@ A separate archive retains old drafts.
 	// A rebuild retires both the component collection and its system navigation.
 	writeFixture(t, source, component[:strings.Index(component, "## Responsibilities")])
 	writeFixture(t, "specs/notes.system.spec.md", "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nKeep drafts.\n\n## Scope\nLocal edits.\n")
-	if code, out, errOut := invoke("spec", "build"); code != 0 {
+	if code, out, errOut := invoke("build"); code != 0 {
 		t.Fatal(code, out, errOut)
 	}
 	for _, file := range []string{"constraints.md", "components/store/constraints.md", "assumptions.md"} {
@@ -731,7 +738,7 @@ Supplies the time.
 ## Open questions
 See [the boundary detail](#open-questions).
 `)
-	for _, args := range [][]string{{"spec", "build"}, {"check"}} {
+	for _, args := range [][]string{{"build"}, {"check"}} {
 		if code, out, errOut := invoke(args...); code != 0 {
 			t.Fatal(code, out, errOut)
 		}
@@ -773,10 +780,7 @@ func TestNamedSubjectFilesAgreeWithTheirHeadings(t *testing.T) {
 			if err := os.Mkdir(filepath.Join(root, tc.dir), 0755); err != nil {
 				t.Fatal(err)
 			}
-			args := []string{tc.kind, "init", tc.name, "--path", tc.dir}
-			if tc.kind == "component" {
-				args = append(args, "--part-of", "specs/tool.system.spec.md")
-			}
+			args := []string{"-C", tc.dir, "new", tc.kind, tc.name, "--part-of", "../specs/tool.system.spec.md"}
 			if code, _, msg := invoke(args...); code != 0 {
 				t.Fatal(msg)
 			}
@@ -790,7 +794,7 @@ func TestNamedSubjectFilesAgreeWithTheirHeadings(t *testing.T) {
 			if !strings.Contains(string(data), "# "+tc.name+"\n") {
 				t.Fatal(string(data))
 			}
-			if code, out, msg := invoke("check", "--path", tc.dir); code != 0 {
+			if code, out, msg := invoke("check", tc.dir); code != 0 {
 				t.Fatal(out, msg)
 			}
 			for _, bad := range []string{suffix, "different." + suffix} {
@@ -798,7 +802,7 @@ func TestNamedSubjectFilesAgreeWithTheirHeadings(t *testing.T) {
 				if err := os.Rename(path, renamed); err != nil {
 					t.Fatal(err)
 				}
-				if code, out, msg := invoke("check", "--path", tc.dir); code != 1 || !strings.Contains(out+msg, expected) {
+				if code, out, msg := invoke("check", tc.dir); code != 1 || !strings.Contains(out+msg, expected) {
 					t.Fatalf("expected diagnostic naming %s, got %d %s %s", expected, code, out, msg)
 				}
 				if err := os.Rename(renamed, path); err != nil {
@@ -865,7 +869,7 @@ type: component-spec
 `)
 	writeFixture(t, "specs/concepts/notebook.concept.spec.md", "---\ntype: concept-spec\n---\n# Notebook\n\n## Purpose\nGather drafts.\n")
 	writeFixture(t, "apps/demo/specs/concepts/notebook.concept.spec.md", "---\ntype: concept-spec\n---\n# Notebook\n\n## Purpose\nPreserve published work.\n")
-	for _, args := range [][]string{{"spec", "build"}, {"check"}} {
+	for _, args := range [][]string{{"build"}, {"check"}} {
 		if code, out, msg := invoke(args...); code != 0 {
 			t.Fatal(args, out, msg)
 		}
@@ -929,7 +933,7 @@ func TestFeatureOverviewFollowsPurpose(t *testing.T) {
 	writeFixture(t, "dotspec.yaml", "name: notes\n")
 	writeFixture(t, "specs/notes.system.spec.md", "---\ntype: system-spec\n---\n# Notes\n\n## Purpose\nRecord notes.\n\n## Scope\nLocal work.\n")
 	writeFixture(t, "specs/features/editing.feature.spec.md", "---\ntype: feature-spec\n---\n# Editing\n\n## Overview\nEdits stay local until saved.\n\n### Drafts\nA draft keeps unsaved edits.\n\n## Purpose\nRevise notes.\n\n## Description\nChange a saved note.\n")
-	for _, args := range [][]string{{"feature", "check", "editing"}, {"spec", "build"}} {
+	for _, args := range [][]string{{"check", "specs/features/editing.feature.spec.md"}, {"build"}} {
 		if code, out, msg := invoke(args...); code != 0 {
 			t.Fatal(args, out, msg)
 		}
@@ -942,7 +946,7 @@ func TestFeatureOverviewFollowsPurpose(t *testing.T) {
 		t.Fatal(string(report))
 	}
 	writeFixture(t, "specs/features/editing.feature.spec.md", "---\ntype: feature-spec\n---\n# Editing\n\n## Overview\nOne.\n\n## Overview\nTwo.\n")
-	if code, out, _ := invoke("feature", "check", "editing"); code == 0 || !strings.Contains(out, "duplicate Overview section") {
+	if code, out, _ := invoke("check", "specs/features/editing.feature.spec.md"); code == 0 || !strings.Contains(out, "duplicate Overview section") {
 		t.Fatalf("expected a duplicate Overview finding: %d %s", code, out)
 	}
 }
@@ -986,7 +990,7 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	}
 	build := func() string {
 		t.Helper()
-		for _, args := range [][]string{{"spec", "build"}, {"check"}} {
+		for _, args := range [][]string{{"build"}, {"check"}} {
 			if code, out, msg := invoke(args...); code != 0 {
 				t.Fatal(args, out, msg)
 			}
@@ -1060,10 +1064,10 @@ func TestReportPreviewsAsCollectionsGrow(t *testing.T) {
 	if !strings.Contains(read(featureReport), "[Keep notes](<../requirements/keep-notes.requirement.spec-report.md>)") {
 		t.Fatal("feature lost its link to the shared requirement")
 	}
-	code, output, msg := invoke("model", "export")
+	code, output, msg := invoke("snapshot", "export")
 	var snapshot model.Snapshot
 	if code != 0 || json.Unmarshal([]byte(output), &snapshot) != nil {
-		t.Fatal("model export failed", msg)
+		t.Fatal("snapshot export failed", msg)
 	}
 	var sharedIDs []string
 	for _, element := range snapshot.Elements {

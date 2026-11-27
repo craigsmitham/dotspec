@@ -106,7 +106,7 @@ func TestStructuredJob(t *testing.T) {
 	if !strings.Contains(got.Markdown, "CASE-NOTE") {
 		t.Fatal("case prose lost")
 	}
-	if suggestions := CheckWithPreset(got, "odi"); len(suggestions) != 0 {
+	if suggestions := Check(got); len(suggestions) != 0 {
 		t.Fatalf("unexpected suggestions: %+v", suggestions)
 	}
 }
@@ -122,7 +122,7 @@ func TestDraftsAndLegacyStoriesRemainValid(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if len(CheckWithPreset(got, "general")) == 0 {
+		if len(Check(got)) == 0 {
 			t.Fatal("expected advisory suggestions for the draft")
 		}
 	}
@@ -194,15 +194,15 @@ func TestReferencesAndUnknownSections(t *testing.T) {
 	}
 }
 
-func TestCheckExplainsHeuristics(t *testing.T) {
-	source := "---\ntype: job-spec\n---\n# Maintain requirements\n## Job\nManage requirements.\n## Outcomes\n### Make things better\n\n**ID:** O1\n\nMake things better.\n## Steps\n### Review them\n"
+func TestCheckSuggestsMissingContent(t *testing.T) {
+	source := "---\ntype: job-spec\n---\n# Maintain requirements\n## Job\nManage requirements.\n## Outcomes\n### Make things better\n\n**ID:** O1\n## Steps\n### Review them\n"
 	got, err := Parse([]byte(source))
 	if err != nil {
 		t.Fatal(err)
 	}
-	suggestions := CheckWithPreset(got, "odi")
-	if len(suggestions) != 3 {
-		t.Fatalf("want boundary, performer, and authored outcome suggestions; got %+v", suggestions)
+	suggestions := Check(got)
+	if len(suggestions) != 2 || suggestions[0].Rule != "job.performer" || suggestions[1].Rule != "job.outcome-empty" {
+		t.Fatalf("want performer and empty outcome suggestions; got %+v", suggestions)
 	}
 }
 
@@ -219,7 +219,7 @@ func TestCheckAllowsOptionalStructure(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if suggestions := CheckWithPreset(got, "general"); len(suggestions) != 0 {
+		if suggestions := Check(got); len(suggestions) != 0 {
 			t.Fatalf("optional structure should not prompt completion: %q: %+v", optional, suggestions)
 		}
 	}
@@ -232,7 +232,25 @@ func FuzzStructuredJob(f *testing.F) {
 	f.Fuzz(func(t *testing.T, data []byte) {
 		parsed, err := Parse(data)
 		if err == nil {
-			_ = CheckWithPreset(parsed, "general")
+			_ = Check(parsed)
 		}
 	})
+}
+
+func TestNamedOutcomesPreserveFullStatementAndIdentity(t *testing.T) {
+	source := "---\ntype: job-spec\n---\n# Job\n## Steps\n### Plan\n**ID:** plan\n### Monitor\n**ID:** monitor\n## Outcomes\n### Confidence\n**ID:** confidence\nFeel confident about arrival.\n#### Applies to\n[Plan](#plan) and [Monitor](#monitor)\n#### Supporting content\nA heading without an ID remains supporting prose.\n"
+	j, err := Parse([]byte(source))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(j.Outcomes) != 1 || j.Outcomes[0].Name != "Confidence" || j.Outcomes[0].Statement != "Feel confident about arrival." {
+		t.Fatal(j.Outcomes)
+	}
+	if !j.References.Anchors["confidence"] {
+		t.Fatal("named outcome ID not referenceable")
+	}
+	_, err = Parse([]byte(source + "### Duplicate\n**ID:** confidence\nAnother result.\n"))
+	if err == nil {
+		t.Fatal("duplicate outcome ID accepted")
+	}
 }

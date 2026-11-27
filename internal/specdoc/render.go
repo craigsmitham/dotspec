@@ -209,7 +209,31 @@ func (p *planner) renderSubjectBody(w *writer, s *subject) {
 		indexes = append(indexes, line)
 	}
 	w.text(strings.Join(indexes, "\n"))
+	if s.kind() == "Job" && !recordsSteps(s) {
+		// The job page is the view of its map, so it reports absent steps
+		// explicitly, ahead of any cross-references.
+		end := slices.IndexFunc(headings, func(h *heading) bool {
+			return h.level == s.name.level+1 && h.title == "Related specifications"
+		})
+		if end < 0 {
+			end = len(headings)
+		}
+		p.renderPassage(w, s, headings[:end], 0, false)
+		w.heading("Steps")
+		w.text("No steps recorded.")
+		headings = headings[end:]
+	}
 	p.renderPassage(w, s, headings, 0, false)
+}
+
+// recordsSteps reports whether a job declares a step or explains its Steps
+// section in prose; an empty Steps heading records nothing.
+func recordsSteps(s *subject) bool {
+	if slices.ContainsFunc(s.source.headings, func(h *heading) bool { return h.subjectKind == "JobStep" }) {
+		return true
+	}
+	steps := s.section("Steps")
+	return steps != nil && strings.TrimSpace(s.source.data[steps.end:steps.bodyEnd]) != ""
 }
 
 // A system overview can introduce an authored passage under a shared section

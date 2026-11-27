@@ -127,7 +127,7 @@ func Directory(path string) (string, error) {
 		return "", err
 	}
 	if !info.IsDir() {
-		return "", fmt.Errorf("%s is not a directory; --path selects a directory", path)
+		return "", fmt.Errorf("%s is not a directory", path)
 	}
 	return abs, nil
 }

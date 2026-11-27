@@ -42,7 +42,7 @@ func Show(path string) (spec, parent *System, err error) {
 		}
 	}
 	if spec == nil {
-		return nil, nil, fmt.Errorf("no system spec found for %s; use dotspec system init to create one", path)
+		return nil, nil, fmt.Errorf("no system spec found for %s; start a project with dotspec init <system-name>", path)
 	}
 	return spec, nil, nil
 }

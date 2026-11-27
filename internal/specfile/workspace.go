@@ -12,8 +12,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/diagnostic"
-
 	"go.yaml.in/yaml/v3"
 )
 
@@ -27,16 +25,18 @@ type Workspace struct {
 }
 
 type Project struct {
-	Name            string              `json:"name" yaml:"name"`
-	Report          ReportConfig        `json:"-" yaml:"report"`
-	Root            string              `json:"root" yaml:"-"`
-	QualityModel    string              `json:"-" yaml:"-"`
-	QualityLocation diagnostic.Location `json:"-" yaml:"-"`
+	Name  string      `json:"name" yaml:"name"`
+	Build BuildConfig `json:"-" yaml:"build"`
+	Root  string      `json:"root" yaml:"-"`
 }
 
-type ReportConfig struct {
+// BuildConfig controls whether the project has a generated specification.
+type BuildConfig struct {
 	Enabled bool `yaml:"enabled"`
 }
+
+// ValidProjectName reports whether name can identify a project in dotspec.yaml.
+func ValidProjectName(name string) bool { return projectName.MatchString(name) }
 
 func (p Project) Manifest() string {
 	return filepath.Join(p.Root, ProjectFilename)
@@ -52,7 +52,7 @@ func hasManifest(dir string) (bool, error) {
 }
 
 func readProject(root string) (*Project, error) {
-	p := &Project{Root: root, Report: ReportConfig{Enabled: true}}
+	p := &Project{Root: root, Build: BuildConfig{Enabled: true}}
 	path := p.Manifest()
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -60,12 +60,8 @@ func readProject(root string) (*Project, error) {
 	}
 	decoder := yaml.NewDecoder(bytes.NewReader(data))
 	decoder.KnownFields(true)
-	manifest := struct {
-		*Project `yaml:",inline"`
-		Quality  yaml.Node `yaml:"quality"`
-	}{Project: p}
-	if err := decoder.Decode(&manifest); err != nil {
-		return nil, fmt.Errorf("%s: %w", path, err)
+	if err := decoder.Decode(p); err != nil {
+		return nil, fmt.Errorf("%s: %s", path, manifestError(err))
 	}
 	var extra any
 	if err := decoder.Decode(&extra); err != io.EOF {
@@ -73,29 +69,6 @@ func readProject(root string) (*Project, error) {
 	}
 	if !projectName.MatchString(p.Name) {
 		return nil, fmt.Errorf("%s: invalid project name %q", path, p.Name)
-	}
-	q := manifest.Quality
-	if q.Kind == 0 {
-		return p, nil
-	}
-	p.QualityLocation = diagnostic.Location{Path: path, Line: q.Line, Column: q.Column, Element: "quality.model"}
-	if q.Kind != yaml.MappingNode {
-		return p, diagnostic.Error("project.quality-model", "quality must be a mapping", p.QualityLocation)
-	}
-	for i := 0; i < len(q.Content); i += 2 {
-		key, value := q.Content[i], q.Content[i+1]
-		p.QualityLocation.Line, p.QualityLocation.Column = value.Line, value.Column
-		if key.Value != "model" || p.QualityModel != "" {
-			return p, diagnostic.Error("project.quality-model", "quality accepts one optional model field", p.QualityLocation)
-		}
-		if value.Kind != yaml.ScalarNode || value.ShortTag() != "!!str" || strings.TrimSpace(value.Value) == "" {
-			return p, diagnostic.Error("project.quality-model", "quality.model requires a bundled ID or project-relative .quality-model.md path", p.QualityLocation)
-		}
-		p.QualityModel = value.Value
-		localModel := filepath.IsLocal(value.Value) && strings.HasSuffix(value.Value, QualityModelSuffix)
-		if !projectName.MatchString(value.Value) && !localModel {
-			return p, diagnostic.Error("project.quality-model", "invalid quality.model locator: "+value.Value, p.QualityLocation)
-		}
 	}
 	return p, nil
 }
@@ -122,6 +95,20 @@ func FindProject(path string) (*Project, error) {
 			return nil, nil
 		}
 	}
+}
+
+// EnclosingProject returns the project that would contain dir if dir declared
+// no project of its own. A repository root has none.
+func EnclosingProject(dir string) (*Project, error) {
+	dir, err := Directory(dir)
+	if err != nil {
+		return nil, err
+	}
+	repo, err := RepositoryRoot(dir)
+	if err != nil || dir == repo || dir == filepath.Dir(dir) {
+		return nil, err
+	}
+	return FindProject(filepath.Dir(dir))
 }
 
 // In Git the entire worktree is addressable. Outside Git, search from the
@@ -159,8 +146,7 @@ func FindWorkspace(dir string) (*Workspace, error) {
 	names := map[string]string{}
 	for _, path := range paths {
 		p, err := readProject(filepath.Dir(path))
-		// A named project with an invalid quality setting still has an independent scope.
-		if err != nil && p == nil {
+		if err != nil {
 			return nil, err
 		}
 		if other, ok := names[p.Name]; ok {
@@ -209,4 +195,23 @@ func ContextRoot(dir string) (string, error) {
 		return p.Root, nil
 	}
 	return RepositoryRoot(dir)
+}
+
+var unknownManifestField = regexp.MustCompile(`line (\d+): field (\S+) not found in type \S+`)
+
+// manifestError restates YAML decoding errors in manifest terms, so an unknown
+// key names the key and the keys dotspec.yaml accepts instead of a Go type.
+func manifestError(err error) string {
+	var typeErr *yaml.TypeError
+	if !errors.As(err, &typeErr) {
+		return err.Error()
+	}
+	messages := make([]string, 0, len(typeErr.Errors))
+	for _, message := range typeErr.Errors {
+		if m := unknownManifestField.FindStringSubmatch(message); m != nil {
+			message = fmt.Sprintf("line %s: unknown key %q; dotspec.yaml accepts name and build.enabled", m[1], m[2])
+		}
+		messages = append(messages, message)
+	}
+	return strings.Join(messages, "; ")
 }

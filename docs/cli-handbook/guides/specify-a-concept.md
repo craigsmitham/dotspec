@@ -4,7 +4,7 @@ Describe something a person can do, the benefit they get from doing it, and the 
 
 ## Connect the actions to a purpose
 
-From your project directory, run `dotspec concept init checklist` to create `specs/concepts/checklist.concept.spec.md`. Use a slug that names your concept. For an existing draft, work in its concept file. Replace the starter prompts with your account.
+From your project directory, run `dotspec new concept checklist` to create `specs/concepts/checklist.concept.spec.md`. Use a slug that names your concept. For an existing draft, work in its concept file. Replace the starter prompts with your account.
 
 Under **Purpose**, describe what a person gains. Under **Operational principles**, tell a short story that ends where the benefit becomes visible. “An entry is marked complete” leaves open why the change matters. “When I find more to do, I can return the original errand to my open list” gives you a result to check. Jackson calls this characteristic sequence an operational principle. [Jackson, “Concept criteria” (2023), “Three parts”](https://essenceofsoftware.com/tutorials/concept-basics/criteria/).
 
@@ -18,4 +18,4 @@ Try an action that was available a moment ago. In Jackson’s Group example, pos
 
 Give a reviewer two errands with the same title. Have them complete the first and rename the second. Can they predict which entry can be reopened and what its title will be? If the reviewer cannot distinguish the errands, record how state identifies an entry. If they can identify the entry but cannot predict its title, clarify what the action preserves. When a system adopts the concept, add a level-three heading naming its use under **Concept uses** in the system or component specification. Under the use’s level-four **Definition** heading, link to the concept file. [Worked declaration](../../../examples/todo/specs/personal-task-list.system.spec.md#my-checklist).
 
-From the project directory containing your draft, run `dotspec concept check checklist` with your own slug. It checks structure and references and suggests missing content. A reviewer’s account of what happens in the changed story tells you whether the description explains the behavior.
+From the project directory containing your draft, run `dotspec check specs/concepts/checklist.concept.spec.md` with your own file's path. It checks structure and references and suggests missing content. A reviewer’s account of what happens in the changed story tells you whether the description explains the behavior.

@@ -57,14 +57,19 @@ func gitInit(t *testing.T, dir string) {
 
 func groupOf(owner *system.System, members []*member) []*member { return members }
 
-func TestShowDoesNotFallBackToAnAncestorMember(t *testing.T) {
+func TestMembersOfASubtreeExcludeAncestorMembers(t *testing.T) {
 	dir := t.TempDir()
 	gitInit(t, dir)
 	writeNote(t, dir, "work")
 	child := filepath.Join(dir, "child")
 	writeSystem(t, child, "Child")
-	if _, err := notes.Show(child, "work"); !errors.Is(err, os.ErrNotExist) {
-		t.Fatalf("lookup must not fall back to an ancestor member: %v", err)
+	writeNote(t, child, "local")
+	listed, err := Members(child, notes.Layout, notes.Plural, func(string) (string, error) { return "Note", nil })
+	if err != nil || len(listed) != 1 || filepath.Base(listed[0].Path) != "local.note.spec.md" || listed[0].System == nil || listed[0].System.Name != "Child" {
+		t.Fatalf("a subtree lists only its own members with their system: %+v, %v", listed, err)
+	}
+	if _, err := Members(child, notes.Layout, notes.Plural, func(string) (string, error) { return "", errors.New("unreadable") }); err == nil {
+		t.Fatal("an unreadable member was omitted")
 	}
 }
 

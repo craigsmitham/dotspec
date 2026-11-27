@@ -1,11 +1,11 @@
 ---
 generated_by: dotspec
 type: use-case-spec-report
-source: "../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-model-for-review-or-integration"
+source: "../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-snapshot"
 ---
 [dotspec](<../dotspec.system.spec-report.md>) › [Use cases](<../dotspec.system.spec-report.md#use-cases>)
 
-# Export a specification model for review or integration
+# Export a specification snapshot
 
 ## Goal
 
@@ -18,7 +18,7 @@ A contributor preparing specification material for review or tool integration.
 
 ## Trigger
 
-The contributor requests a specification-model export.
+The contributor requests a specification snapshot export.
 
 ## Preconditions
 
@@ -29,7 +29,7 @@ repository discovery may still fail; those outcomes are handled below.
 
 <!-- dotspec-doc {"type":"scenario-spec-report","documents":"../../specs/use-cases/export-specification-model.use-case.spec.md#main-success-scenario"} -->
 
-1. The contributor selects a project subtree and requests a model export.
+1. The contributor selects a project subtree and requests a snapshot export.
 2. Dotspec discovers specifications and their required enclosing context and
    records normalized Markdown and reference identities.
 3. Dotspec represents ordered document content, maps explicit domain structures,
@@ -170,8 +170,8 @@ layers are explained in [Specification model](<../../docs/reference/specificatio
 
 **Illustrated by**
 
-- [model.txtar](<../../internal/integration/testdata/model.txtar>) — Export and offline validation
+- [snapshot.txtar](<../../internal/integration/testdata/snapshot.txtar>) — Export and offline validation
 
 ---
 
-[View source](<../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-model-for-review-or-integration>)
+[View source](<../../specs/use-cases/export-specification-model.use-case.spec.md#export-a-specification-snapshot>)

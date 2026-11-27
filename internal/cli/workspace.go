@@ -2,18 +2,103 @@ package cli
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/spf13/cobra"
 )
 
-type projectSelectionKey struct{}
+// scope is where a command starts when no positional path narrows it. Each
+// command declares its scope when it is built.
+type scope int
+
+const (
+	// projectScope reads the enclosing project from its manifest root.
+	projectScope scope = iota
+	// workingScope creates files and looks up the nearest subject from the
+	// working directory, which may lie inside a component.
+	workingScope
+)
+
+// dir resolves the directory a command reads or writes. A path narrows the
+// scope and is relative to the working directory. Inspections report a path
+// that cannot be read, so an unreadable path is returned unresolved.
+func (s scope) dir(path string) (string, error) {
+	narrowed := path != ""
+	if !narrowed {
+		path = "."
+	}
+	dir, err := specfile.Directory(path)
+	if err != nil {
+		if narrowed {
+			return path, nil
+		}
+		return "", err
+	}
+	p, err := specfile.FindProject(dir)
+	if err != nil {
+		return "", err
+	}
+	if p == nil {
+		found, err := specfile.HasProjects(dir)
+		if err != nil {
+			return "", err
+		}
+		if found {
+			return "", fmt.Errorf("%s is outside any specification project; run dotspec -C <project-dir>, or dotspec check --all", displayPath(dir))
+		}
+		return dir, nil
+	}
+	if narrowed || s == workingScope {
+		return dir, nil
+	}
+	return p.Root, nil
+}
+
+// optionalPath returns a command's [<path>] operand, or "" when it is omitted.
+func optionalPath(args []string) string {
+	if len(args) == 0 {
+		return ""
+	}
+	return args[0]
+}
+
+// addChdir gives the root the global -C, --chdir. Every relative path,
+// positional or flag, then resolves against that directory.
+func addChdir(root *cobra.Command) {
+	stringFlag(root.PersistentFlags(), "chdir", "C", "<dir>", "", "run as if dotspec was started in <dir>")
+	_ = root.MarkPersistentFlagDirname("chdir")
+	root.PersistentPreRunE = func(cmd *cobra.Command, _ []string) error {
+		if err := requiredFlags(cmd); err != nil {
+			return err
+		}
+		dir := flagValue(cmd, "chdir")
+		if !cmd.Flags().Changed("chdir") {
+			return nil
+		}
+		if dir == "" {
+			return usageError(cmd, "--chdir requires a directory")
+		}
+		info, err := os.Stat(dir)
+		switch {
+		case errors.Is(err, fs.ErrNotExist):
+			return fmt.Errorf("--chdir %s: directory does not exist", dir)
+		case err != nil:
+			return fmt.Errorf("--chdir %s: %w", dir, err)
+		case !info.IsDir():
+			return fmt.Errorf("--chdir %s: not a directory", dir)
+		}
+		return os.Chdir(dir)
+	}
+}
+
+// workspaceResult is check --all's result: each discovered project's report,
+// checked separately.
 type workspaceResult struct {
 	SchemaVersion int             `json:"schema_version"`
 	Workspace     string          `json:"workspace"`
@@ -23,185 +108,50 @@ type projectResult struct {
 	Name     string          `json:"name"`
 	Root     string          `json:"root"`
 	ExitCode int             `json:"exit_code"`
-	Result   json.RawMessage `json:"result,omitempty"`
-	Error    string          `json:"error,omitempty"`
+	Result   json.RawMessage `json:"result"`
 }
 
-func selectProject(cmd *cobra.Command, path string) (string, error) {
-	if selected, ok := cmd.Context().Value(projectSelectionKey{}).(string); ok {
-		return selected, nil
-	}
-	// Whole-project checks report invalid quality settings through the normal
-	// diagnostic output, including when selecting the project by name.
-	checking := cmd.CommandPath() == "dotspec check" && len(cmd.Flags().Args()) == 0
-	name, _ := cmd.Flags().GetString("project")
-	if cmd.Flags().Changed("project") && name == "" {
-		return "", fmt.Errorf("--project must not be empty")
-	}
-	if name != "" {
-		cwd, err := os.Getwd()
-		if err != nil {
-			return "", err
-		}
-		w, err := specfile.FindWorkspace(cwd)
-		if err != nil {
-			return "", err
-		}
-
-		for _, p := range w.Projects {
-			if p.Name == name {
-				selected := p.Root
-				if cmd.Flags().Changed("path") {
-					selected = filepath.Join(p.Root, path)
-					if filepath.IsAbs(path) {
-						selected = path
-					}
-				}
-				selected, err = specfile.Directory(selected)
-				if err != nil {
-					return "", err
-				}
-				owner, err := specfile.FindProject(selected)
-				if err != nil && (!checking || owner == nil) {
-					return "", err
-				}
-				if owner == nil || owner.Root != p.Root {
-					return "", fmt.Errorf("--path must stay within project %s", name)
-				}
-				return selected, nil
-			}
-		}
-		return "", fmt.Errorf("unknown project %q in %s", name, w.Root)
-	}
-	// Preserve existing diagnostic reports for invalid path selectors.
-	dir, err := specfile.Directory(path)
+// checkWorkspace checks every project discovered from the working directory
+// and exits with the highest project exit code.
+func checkWorkspace(cmd *cobra.Command, asJSON bool) error {
+	cwd, err := os.Getwd()
 	if err != nil {
-		return path, nil
+		return err
 	}
-	p, err := specfile.FindProject(dir)
-	if err != nil && (!checking || p == nil) {
-		return "", err
+	w, err := specfile.FindWorkspace(cwd)
+	if err != nil {
+		return err
 	}
-	if p == nil {
-		found, err := specfile.HasProjects(dir)
-		if err != nil {
-			return "", err
-		}
-		if found {
-			return "", fmt.Errorf("%s is outside any specification project; select --project NAME or --all", dir)
-		}
-	} else if !cmd.Flags().Changed("path") {
-		// Project inventories start at the manifest. Single-source operations
-		// start where the contributor is working, including inside a component.
-		switch cmd.Name() {
-		case "init", "show", "map", "add", "apply", "browse":
-			return dir, nil
-		case "check", "list":
-			if len(cmd.Flags().Args()) > 0 {
-				return dir, nil
-			}
-		}
-		return p.Root, nil
+	if len(w.Projects) == 0 {
+		return fmt.Errorf("no specification projects found in %s", displayPath(w.Root))
 	}
-	return path, nil
-}
-
-func addProjectSelection(cmd *cobra.Command) {
-	cmd.Flags().String("project", "", "select a project by its dotspec.yaml name (--path is relative to its root)")
-	switch cmd.Name() {
-	case "check", "sources", "list", "export":
-	default:
-		return
-	}
-	if len(strings.Fields(cmd.Use)) != 1 && cmd.Use != "check [source-path]" {
-		return
-	}
-	addAllProjects(cmd)
-}
-
-func addAllProjects(cmd *cobra.Command) {
-	cmd.Flags().Bool("all", false, "inspect all discovered projects separately")
-	cmd.MarkFlagsMutuallyExclusive("project", "all")
-	cmd.MarkFlagsMutuallyExclusive("path", "all")
-	run := cmd.RunE
-	cmd.RunE = func(cmd *cobra.Command, args []string) error {
-		all, _ := cmd.Flags().GetBool("all")
-		if !all {
-			return run(cmd, args)
-		}
-		if len(args) > 0 {
-			return fmt.Errorf("--all cannot select an individual specification")
-		}
-		cwd, err := os.Getwd()
-		if err != nil {
+	out := cmd.OutOrStdout()
+	result := workspaceResult{SchemaVersion: schemaVersion, Workspace: filepath.ToSlash(w.Root), Projects: []projectResult{}}
+	code := 0
+	for _, p := range w.Projects {
+		report := inspectProject(p.Root)
+		var buffer bytes.Buffer
+		if err := writeCheckReport(&buffer, report, asJSON); err != nil {
 			return err
 		}
-		w, err := specfile.FindWorkspace(cwd)
-		if err != nil {
-			return err
-		}
-		if len(w.Projects) == 0 {
-			return fmt.Errorf("no specification projects found in %s", w.Root)
-		}
-		format := "text"
-		if cmd.Flags().Lookup("format") != nil {
-			format, err = outputFormat(cmd)
-			if err != nil {
-				return err
-			}
-		}
-		if cmd.Name() == "export" {
-			format = "json"
-		}
-		result := workspaceResult{SchemaVersion: 1, Workspace: filepath.ToSlash(w.Root), Projects: []projectResult{}}
-		out, ctx := cmd.OutOrStdout(), cmd.Context()
-		defer func() { cmd.SetOut(out); cmd.SetContext(ctx) }()
-		code := 0
-		for _, p := range w.Projects {
-			var buffer bytes.Buffer
-			cmd.SetOut(&buffer)
-			cmd.SetContext(context.WithValue(ctx, projectSelectionKey{}, p.Root))
-			runErr := run(cmd, args)
-			entry := projectResult{Name: p.Name, Root: filepath.ToSlash(p.Root), ExitCode: status(runErr)}
-			if entry.ExitCode > code {
-				code = entry.ExitCode
-			}
-			if runErr != nil {
-				var coded *exitError
-				if e, ok := runErr.(*exitError); ok {
-					coded = e
-				}
-				if coded == nil || coded.err != nil {
-					entry.Error = runErr.Error()
-				}
-			}
-			if format == "json" {
-				if buffer.Len() > 0 {
-					if !json.Valid(buffer.Bytes()) {
-						return fmt.Errorf("project %s produced invalid JSON", p.Name)
-					}
-					entry.Result = append(json.RawMessage(nil), buffer.Bytes()...)
-				}
-			} else {
-				if _, err := fmt.Fprintf(out, "# Project: %s\n\n%s\n", p.Name, buffer.String()); err != nil {
-					return err
-				}
-				if entry.Error != "" {
-					if _, err := fmt.Fprintf(out, "Error: %s\n\n", entry.Error); err != nil {
-						return err
-					}
-				}
-			}
+		entry := projectResult{Name: p.Name, Root: filepath.ToSlash(p.Root), ExitCode: report.ExitCode()}
+		code = max(code, entry.ExitCode)
+		if asJSON {
+			entry.Result = append(json.RawMessage(nil), buffer.Bytes()...)
 			result.Projects = append(result.Projects, entry)
+			continue
 		}
-		if format == "json" {
-			if err := writeJSON(out, result); err != nil {
-				return err
-			}
+		if _, err := fmt.Fprintf(out, "# Project: %s\n\n%s\n", p.Name, buffer.String()); err != nil {
+			return err
 		}
-		if code != 0 {
-			return &exitError{code: code}
-		}
-		return nil
 	}
+	if asJSON {
+		if err := writeJSON(out, result); err != nil {
+			return err
+		}
+	}
+	if code != 0 {
+		return &exitError{code: code}
+	}
+	return nil
 }

@@ -9,15 +9,15 @@ source: "../../specs/requirements/companion-declarations.requirement.spec.md#lis
 
 ## Statement
 
-An author must be able to list, in a specification's frontmatter, each artifact that carries part of its intent in another form, such as a formal model, an executable example, a test or an explanatory document, and state its role: formalizes, illustrates, verifies or explains. A reader of the generated report must be able to reach every listed artifact from the subject it serves and from the companion index of the outermost system that contains it, with each role stated. Inspection must locate a malformed entry, an unknown role, a missing target and a missing named definition at the entry that declares it.
+An author must be able to list, in a specification's frontmatter, each artifact that carries part of its intent in another form, such as a formal model, an executable example, a test or an explanatory document, and state its role: formalizes, illustrates, verifies or explains. A reader of the generated specification must be able to reach every listed artifact from the subject it serves and from the companion index of the outermost system that contains it, with each role stated. Inspection must locate a malformed entry, an unknown role, a missing target and a missing named definition at the entry that declares it.
 
 ## Applies to
 
-Every specification type, `dotspec check`, `dotspec sources`, `dotspec spec build` and `dotspec model export` for projects declared with `dotspec.yaml`.
+Every specification type, `dotspec check`, `dotspec sources`, `dotspec build` and `dotspec snapshot export` for projects declared with `dotspec.yaml`.
 
 ## Criterion
 
-A companion target resolves with the same boundary rules as an authored link. A fragment on a Quint, Alloy, TLA+, Gherkin, Go, Python or txtar target names a declaration found by its leading keyword, and the report links it to the declaring line. Each subject report groups its companions under Formalized by, Illustrated by, Verified by and Explained by. The outermost system's section map links to `specification/companions.md`, which lists each companion with its declaring subject. A requirement's verifies companions are its verification procedures. In a whole-project check, a `.qnt`, `.als`, `.tla` or `.feature` file that no specification lists produces advice naming the file. The export records each entry as a Companion owned by its specification, with its role, note and frontmatter target reference.
+A companion target resolves with the same boundary rules as an authored link. A fragment on a Quint, Alloy, TLA+, Gherkin, Go, Python or txtar target names a declaration found by its leading keyword, and the report links it to the declaring line. Each subject report groups its companions under Formalized by, Illustrated by, Verified by and Explained by. The outermost system's section map links to `specification/companions.md`, which lists each companion with its declaring subject. A requirement's verifies companions are its verification procedures. In a whole-project check, a `.qnt`, `.als`, `.tla` or `.feature` file that no specification lists produces advice naming the file. The source inventory lists each companion file with every entry that targets it: the declaring specification's location and the stated role, in text and in JSON. The export records each entry as a Companion owned by its specification, with its role, note and frontmatter target reference.
 
 ## Rationale
 

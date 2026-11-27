@@ -1,13 +1,15 @@
 package job
 
 import (
-	"github.com/craigsmitham/dotspec/internal/specfile"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/craigsmitham/dotspec/internal/speccollection"
+	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
 func writeFile(t *testing.T, path, content string) {
@@ -60,73 +62,79 @@ func gitRepo(t *testing.T) string {
 	return dir
 }
 
-func summary(groups []*Group) []string {
+// members lists jobs below dir as dotspec list job does.
+func members(dir string) ([]*speccollection.Member, error) {
+	return speccollection.Members(dir, Layout, "jobs", func(path string) (string, error) {
+		job, err := Read(path)
+		if err != nil {
+			return "", err
+		}
+		return job.Name, nil
+	})
+}
+
+// member is the listed job whose filename has slug.
+func member(t *testing.T, dir, slug string) *speccollection.Member {
+	t.Helper()
+	listed, err := members(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, m := range listed {
+		if filepath.Base(m.Path) == slug+Layout.Suffix {
+			return m
+		}
+	}
+	t.Fatalf("job %s not listed below %s", slug, dir)
+	return nil
+}
+
+func summary(listed []*speccollection.Member) []string {
 	var result []string
-	for _, group := range groups {
-		name := "None"
-		if group.System != nil {
-			name = group.System.Name
+	for i, m := range listed {
+		if i == 0 || (m.System == nil) != (listed[i-1].System == nil) || (m.System != nil && m.System.Path != listed[i-1].System.Path) {
+			name := "None"
+			if m.System != nil {
+				name = m.System.Name
+			}
+			result = append(result, name)
 		}
-		result = append(result, name)
-		for _, job := range group.Jobs {
-			result = append(result, "  "+job.Slug+": "+job.Name)
-		}
+		result = append(result, "  "+strings.TrimSuffix(filepath.Base(m.Path), Layout.Suffix)+": "+m.Name)
 	}
 	return result
 }
 
-func TestInitAndLocalIdentity(t *testing.T) {
+func TestInitAndIdentity(t *testing.T) {
 	dir := t.TempDir()
 	boundLookup(t, dir)
-	path, err := InitWithPreset(dir, "develop-requirements", "general")
+	path, err := Init(dir, "develop-requirements")
 	if err != nil {
 		t.Fatal(err)
 	}
-	got, err := Show(dir, "develop-requirements")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if got.Slug != "develop-requirements" || got.System != nil {
-		t.Fatalf("unexpected job: %+v", got)
+	got, err := Read(path)
+	if err != nil || got.Slug != "develop-requirements" || member(t, dir, "develop-requirements").System != nil {
+		t.Fatalf("unexpected job: %+v, %v", got, err)
 	}
 	writeJob(t, dir, "develop-requirements", "A revised title")
 	before, _ := os.ReadFile(path)
-	if _, err := InitWithPreset(dir, "develop-requirements", "general"); err == nil || !strings.Contains(err.Error(), "refusing to overwrite") {
+	if _, err := Init(dir, "develop-requirements"); err == nil || !strings.Contains(err.Error(), "refusing to overwrite") {
 		t.Fatalf("overwrite error: %v", err)
 	}
 	after, _ := os.ReadFile(path)
 	if string(before) != string(after) {
 		t.Fatal("existing content changed")
 	}
-	got, err = Show(dir, "develop-requirements")
+	got, err = Read(path)
 	if err != nil || got.Name != "A revised title" || got.Slug != "develop-requirements" {
 		t.Fatalf("identity changed: %+v, %v", got, err)
-	}
-	if _, err := InitWithPreset(dir, "manage-requirements", "general"); err != nil {
-		t.Fatal(err)
-	}
-	child := filepath.Join(dir, "child")
-	if err := os.Mkdir(child, 0o755); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := Show(child, "develop-requirements"); err == nil {
-		t.Fatal("show must not find an ancestor's job")
-	}
-	writeJob(t, child, "develop-requirements", "Child job")
-	got, err = Show(child, "develop-requirements")
-	if err != nil || got.Name != "Child job" {
-		t.Fatalf("local job: %+v, %v", got, err)
 	}
 }
 
 func TestInvalidSlugsAndPaths(t *testing.T) {
 	dir := t.TempDir()
 	for _, slug := range []string{"", "../escape", "/escape", "a/b", `a\b`, "Uppercase", "two words", "under_score", "-leading", "trailing-", "two--hyphens", "name.job.spec.md", "café"} {
-		if _, err := InitWithPreset(dir, slug, "general"); err == nil {
+		if _, err := Init(dir, slug); err == nil {
 			t.Errorf("init accepted %q", slug)
-		}
-		if _, err := Show(dir, slug); err == nil || (!Layout.Match(slug) && !strings.Contains(err.Error(), "invalid job slug")) {
-			t.Errorf("show accepted %q: %v", slug, err)
 		}
 	}
 	if entries, err := os.ReadDir(dir); err != nil || len(entries) != 0 {
@@ -139,13 +147,10 @@ func TestInvalidSlugsAndPaths(t *testing.T) {
 	}
 	file := writeJob(t, dir, "valid", "Valid")
 	for _, path := range []string{filepath.Join(dir, "missing"), file} {
-		if _, err := InitWithPreset(path, "test", "general"); err == nil {
+		if _, err := Init(path, "test"); err == nil {
 			t.Fatal("init accepted an invalid directory")
 		}
-		if _, err := Show(path, "test"); err == nil {
-			t.Fatal("show accepted an invalid directory")
-		}
-		if _, err := List(path); err == nil {
+		if _, err := members(path); err == nil {
 			t.Fatal("list accepted an invalid directory")
 		}
 	}
@@ -166,17 +171,16 @@ func TestAssociationAndSubtreeGrouping(t *testing.T) {
 		{child, "develop-requirements", "Parser"},
 		{deep, "read-token", "Parser"},
 	} {
-		got, err := Show(tt.path, tt.slug)
-		if err != nil || got.System == nil || got.System.Name != tt.want {
-			t.Fatalf("association: %+v, %v", got, err)
+		if got := member(t, tt.path, tt.slug); got.System == nil || got.System.Name != tt.want {
+			t.Fatalf("association: %+v", got)
 		}
 	}
-	groups, err := List(dir)
+	groups, err := members(dir)
 	want := []string{"Parser", "  develop-requirements: Develop Parser Requirements", "  read-token: Read a token", "dotspec", "  develop-requirements: Develop Requirements", "  manage-requirements: Manage Requirements"}
 	if err != nil || !reflect.DeepEqual(summary(groups), want) {
 		t.Fatalf("got %v, %v; want %v", summary(groups), err, want)
 	}
-	groups, err = List(deep)
+	groups, err = members(deep)
 	want = []string{"Parser", "  read-token: Read a token"}
 	if err != nil || !reflect.DeepEqual(summary(groups), want) {
 		t.Fatalf("subtree: %v, %v", summary(groups), err)
@@ -194,7 +198,7 @@ func TestUnassociatedJobsAndDistinctSystemsWithSameName(t *testing.T) {
 		writeSystem(t, path, "Same name")
 		writeJob(t, path, "work", "Work in "+child)
 	}
-	groups, err := List(dir)
+	groups, err := members(dir)
 	want := []string{"Same name", "  work: Work in a", "Same name", "  work: Work in b", "None", "  unassigned: Unassigned"}
 	if err != nil || !reflect.DeepEqual(summary(groups), want) {
 		t.Fatalf("groups: %v, %v", summary(groups), err)
@@ -215,38 +219,31 @@ func TestAssociationStopsAtRepositoryBoundary(t *testing.T) {
 		} else {
 			boundLookup(t, dir)
 		}
-		got, err := Show(dir, "work")
-		if err != nil || got.System != nil {
-			t.Fatalf("crossed boundary: %+v, %v", got, err)
+		if got := member(t, dir, "work"); got.System != nil {
+			t.Fatalf("crossed boundary: %+v", got)
 		}
 	}
 }
 
 func TestMalformedJobsAndAssociatedSystems(t *testing.T) {
 	dir := gitRepo(t)
-	groups, err := List(dir)
+	groups, err := members(dir)
 	if err != nil || len(groups) != 0 {
 		t.Fatalf("empty list: %v, %v", groups, err)
 	}
 	path := writeJob(t, dir, "work", "Work")
 	writeFile(t, path, "malformed")
-	if _, err := Show(dir, "work"); err == nil || !strings.Contains(err.Error(), "work.job.spec.md") {
-		t.Fatalf("malformed show: %v", err)
-	}
-	if _, err := List(dir); err == nil || !strings.Contains(err.Error(), "work.job.spec.md") {
+	if _, err := members(dir); err == nil || !strings.Contains(err.Error(), "work.job.spec.md") {
 		t.Fatalf("malformed list: %v", err)
 	}
 	writeJob(t, dir, "work", "Work")
 	writeFile(t, filepath.Join(dir, "specs", "new-system.system.spec.md"), "malformed")
-	if _, err := Show(dir, "work"); err == nil || !strings.Contains(err.Error(), "new-system.system.spec.md") {
-		t.Fatalf("malformed association: %v", err)
-	}
-	if _, err := List(dir); err == nil || !strings.Contains(err.Error(), "new-system.system.spec.md") {
+	if _, err := members(dir); err == nil || !strings.Contains(err.Error(), "new-system.system.spec.md") {
 		t.Fatalf("malformed group: %v", err)
 	}
 	writeSystem(t, dir, "Valid")
 	writeFile(t, filepath.Join(dir, "specs", "jobs", "Invalid_slug.job.spec.md"), validJob)
-	if _, err := List(dir); err == nil || !strings.Contains(err.Error(), "invalid job slug") {
+	if _, err := members(dir); err == nil || !strings.Contains(err.Error(), "invalid job slug") {
 		t.Fatalf("invalid filename: %v", err)
 	}
 }
@@ -264,7 +261,7 @@ func TestDiscoveryOutsideGit(t *testing.T) {
 	if err := os.Symlink(path, filepath.Join(dir, "file-link.job.spec.md")); err != nil {
 		t.Fatal(err)
 	}
-	groups, err := List(dir)
+	groups, err := members(dir)
 	want := []string{"Root", "  child: Child job", "  root: Root job"}
 	if err != nil || !reflect.DeepEqual(summary(groups), want) {
 		t.Fatalf("non-Git discovery: %v, %v", summary(groups), err)
@@ -278,7 +275,7 @@ func TestRepositoryDirectoryIsNotAJob(t *testing.T) {
 		t.Fatal(err)
 	}
 	git(t, dir, "init", "-q")
-	groups, err := List(dir)
+	groups, err := members(dir)
 	if err != nil || len(groups) != 0 {
 		t.Fatalf("directory treated as a job: %v, %v", summary(groups), err)
 	}

@@ -1,6 +1,6 @@
 # Composing the product specification
 
-**Implemented technical specification.** Run `dotspec model product` to inspect membership, adoption, and verification evidence for a selected system. [Product view](../../reference/specification-model.md#read-one-product-specification) · [Verification results](../../reference/generated-specification.md#record-verification-results)
+**Implemented technical specification.** Run `dotspec build` to read membership, adoption, and verification evidence for each root system in the generated specification. [Product membership](../../reference/specification-model.md#product-membership) · [Verification results](../../reference/generated-specification.md#record-verification-results)
 
 The rule is **one specification file, one specification root**. A root records a decision about a particular product that its authors can maintain independently. It owns the elements declared within it. The roots in scope for a system, their elements, and their relationships together compose the full product specification. Generated pages present views of that specification.
 
@@ -32,7 +32,7 @@ Use a product-specification view over the source-backed snapshot. The input is a
 3. Expose separately the reference documents and evidence reached from those members. A project reference catalog may also list unused quality models. Its contents do not change membership.
 4. Expose unresolved associations, malformed declarations, and inspection gaps with their source locations. A partial scan can establish observed membership only. With several independent systems, a consumer selects a system. A reference-only project can publish a catalog and has no product specification to assemble.
 
-Have the generated system report and model reading views consume this selection. Give the report planner a separate navigation parent for reference pages. Project quality models have a navigation parent for their browse route. The reference catalog and breadcrumbs should work without implying system membership. No additional product manifest or authored membership list is needed. [Report placement](../../../internal/specdoc/plan.go) · [Project and system boundaries](../../reference/workspaces.md)
+Have the generated specification consume this selection. Give the report planner a separate navigation parent for reference pages. Project quality models have a navigation parent for their browse route. The reference catalog and breadcrumbs should work without implying system membership. No additional product manifest or authored membership list is needed. [Report placement](../../../internal/specdoc/plan.go) · [Project and system boundaries](../../reference/workspaces.md)
 
 On the system summary, keep a single **Quality Attributes** section for that system’s declarations. List each attribute by its linked name with a short description drawn from its local definition. The attribute page carries the full definition, its source when supplied, and links to its system quality requirements. Each requirement page keeps the statement, conditions, and criterion together. Keep reusable models reachable through reference navigation. If the system declares no attributes, omit the section and its contents link.
 

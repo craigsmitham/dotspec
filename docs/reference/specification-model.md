@@ -1,6 +1,6 @@
 # Specification model
 
-A model export contains the acquired source text, declared subjects, relationships and inspection findings for a project. The generated specification uses the same domain fields to present the project to readers. See the [model reference](model/index.md) and [generated specification guide](generated-specification.md).
+A snapshot export contains the acquired source text, declared subjects, relationships and inspection findings for a project. The generated specification uses the same domain fields to present the project to readers. See the [model reference](model/index.md) and [generated specification guide](generated-specification.md).
 
 ## Export and validate a snapshot
 
@@ -8,16 +8,16 @@ Why can an export report a broken link and the saved snapshot still pass validat
 
 Snapshot validation checks the representation. To judge the inspected project, read its diagnostics and the discovery, read and inspection completion flags. An unreadable source can leave a gap even when the rest of the project was inspected. [Model source fidelity](../../specs/requirements/model-source-fidelity.requirement.spec.md) · [Interpret a check report](inspection.md#check-specifications).
 
-In the project directory containing the specifications you want to inspect, save the export and check its exit status before validating the file. An export can write a snapshot and return 1 for source findings. Run the validation command on the saved file even in that case.
+In the project containing the specifications you want to inspect, save the export and check its exit status before validating the file. An export can write a snapshot and return 1 for source findings. Run the validation command on the saved file even in that case.
 
 ```sh
-dotspec model export --path . > snapshot.json
-dotspec model validate snapshot.json
+dotspec snapshot export > snapshot.json
+dotspec snapshot validate snapshot.json
 ```
 
-If validation succeeds, read the snapshot’s `diagnostics` and `scope.discovery_complete`, `scope.reads_complete` and `scope.inspection_complete`. For a broken link, correct the destination in the referring specification and re-export. If validation itself fails, use the reported path to locate the problem in the snapshot. An export interrupted while writing may need to be created again. Run `dotspec model schema` to inspect the single-project format.
+If validation succeeds, read the snapshot’s `diagnostics` and `scope.discovery_complete`, `scope.reads_complete` and `scope.inspection_complete`. For a broken link, correct the destination in the referring specification and re-export. If validation itself fails, use the reported path to locate the problem in the snapshot. An export interrupted while writing may need to be created again. Run `dotspec snapshot schema` to inspect the single-project format.
 
-Use `--project` to select a project or `--all` to export a workspace envelope. Each project retains its own acquisition scope and identities.
+An export covers the enclosing project; give `snapshot export` a directory to export one subtree, or use `-C <dir>` to export another project. Each export retains its project's own acquisition scope and identities.
 
 ## Specification types and declared elements
 
@@ -29,11 +29,9 @@ The System lists named `SystemStakeholderRole` records in `stakeholder_roles`. U
 
 A reusable quality model is a reference document. Export records its type in `scope.selected_reference_types` and specification types in `scope.selected_spec_types`. [Markdown mapping](../../model/markdown-mapping.md)
 
-## Read one product specification
+## Product membership
 
-From the project root, run `dotspec model product`. For multiple independent systems, supply a system’s source basename (without `.system.spec.md`), authored ID, or snapshot record ID. For example, run `dotspec model product personal-task-list --project todo` in the dotspec checkout. Each member identifies its source, effective system, membership basis, and owned element IDs. A selected system includes its declared descendant systems. A link to a requirement in another project retains its destination. Follow the reference catalog to reusable model definitions.
-
-`complete` concerns observed membership in the selected product. A narrowed scan or an unreadable or malformed source leaves it false. Inspect the reported scope and diagnostics before treating an empty set as an absence. An independent reference catalog can have zero specification members. The `verification` list identifies each requirement’s `verifies` companions and the observations recorded for that requirement. When an evidence file supplies a selection, `verification_selection` gives the requested revision and conditions.
+Each specification element records its effective system in `specification_system`. A system's product specification is composed of the specifications associated with it and with its declared descendant systems. The generated specification places each member under its root system's report and keeps a link to a requirement in another project pointing at its destination. A reusable quality model is a reference, not a member: the generated specification lists it in the quality models index. [Composing the product specification](../maintainers/plans/product-specification-composition.md)
 
 ## Source text and locations
 

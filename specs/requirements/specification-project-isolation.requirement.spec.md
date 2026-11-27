@@ -11,9 +11,10 @@ exclude nested projects, and implicit System lookup must stop at the project
 root. Explicit references may acquire context across project boundaries.
 
 From anywhere in a Git worktree, contributors must be able to select a project
-by name or inspect all discovered projects, including when the worktree root
-has no manifest. Workspace-wide operations must preserve project identity,
-attempt every selected project, and return the highest exit code.
+by naming a directory within it, and to check all discovered projects,
+including when the worktree root has no manifest. A workspace-wide check must
+preserve project identity, check every discovered project separately, and
+return the highest exit code.
 
 ## Rationale
 
@@ -23,9 +24,11 @@ explicit domain assertions, independent of tooling partitions.
 
 ## Applies to
 
-Workspace-aware discovery, System context, source inventories, model exports and
-reading views, and CLI project selection. Repositories without project
-manifests retain their existing discovery behavior.
+Workspace-aware discovery and System context in checks, source inventories and
+snapshot exports; CLI project selection by directory (`dotspec -C <dir>`); and the
+workspace-wide check (`dotspec check --all`), the only workspace-wide
+inspection. Repositories without project manifests retain their existing
+discovery behavior.
 
 ## Evidence
 

@@ -25,13 +25,20 @@ TYPES = {
     "requirement": ("restart", "Preserve tasks across restart"),
     "quality-model": ("personal-data", "Personal data quality"),
 }
-VIEWS = {
-    "overview": "Task list forms",
-    "pegs": "A settled commitment must stay",
-    "trace": "| refines | [Keep recorded work available]",
-    "needs": "DesiredOutcome: Less reconstruction",
-    "review": "illustrates [Complete]",
-}
+# Relationships COVERAGE.md asks reviewers to find in the generated specification.
+REPORTS = [
+    ("personal-task-list.system.spec-report.md", "[Task list forms](<interfaces/task-list-forms.interface.spec-report.md>)"),
+    ("personal-task-list.system.spec-report.md", "A settled commitment must stay"),
+    ("personal-task-list.system.spec-report.md",
+     "[Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>)"),
+    ("interfaces/task-list-forms.interface.spec-report.md",
+     "## Adopts\n\n### Redirect after an accepted form submission"),
+    ("requirements/preserve-tasks-across-restart.requirement.spec-report.md",
+     "## Refines\n\n[Keep recorded work available]"),
+    ("jobs/see-personal-commitments-through.job.spec-report.md", "### Recall outstanding work"),
+    ("jobs/see-personal-commitments-through.job.spec-report.md", "### Less reconstruction"),
+    ("use-cases/decide-what-to-do-about-a-waiting-errand.use-case.spec-report.md", "**Illustrates:** [Complete]"),
+]
 
 
 def run(args, cwd=ROOT, status=0):
@@ -55,10 +62,11 @@ class CLI:
         # Discover using the built binary so a stale generated reference cannot hide a command.
         def walk(command):
             help_text = run([self.binary, *command.split(), "--help"])
-            section = re.search(r"^Available Commands:\n((?:  .+\n)+)", help_text, re.M)
+            # Root help lists its commands under group titles; groups list theirs as available commands.
+            sections = re.findall(r"^(?:Available Commands|Author|Inspect|Publish|Help):\n((?:  .+\n)+)", help_text, re.M)
             yield command
-            if section:
-                for child in re.findall(r"^  (\S+)", section[1], re.M):
+            for section in sections:
+                for child in re.findall(r"^  (\S+)", section, re.M):
                     yield from walk((command + " " + child).strip())
         return set(walk(""))
 
@@ -70,7 +78,7 @@ def project_copy(tmp, name):
 
 def check_project(cli, project, tmp):
     def report(command, *args):
-        return json.loads(cli(command, *args, "--path", project, "--json"))
+        return json.loads(cli(command, *args, "-C", project, "--json"))
 
     checked = report("check")
     assert checked["complete"] and checked["scope"]["project"]["name"] == "todo"
@@ -82,8 +90,8 @@ def check_project(cli, project, tmp):
         "restart requirement must link to tests/acceptance.py")
 
     snapshot = tmp / "snapshot.json"
-    snapshot.write_text(cli("model export", "--path", project), encoding="utf-8")
-    assert json.loads(cli("model validate", snapshot, "--json"))["valid"]
+    snapshot.write_text(cli("snapshot export", "-C", project), encoding="utf-8")
+    assert json.loads(cli("snapshot validate", snapshot, "--json"))["valid"]
     model = json.loads(snapshot.read_bytes())
     elements = model["elements"]
 
@@ -98,10 +106,9 @@ def check_project(cli, project, tmp):
                 and r["resolution"]["status"] == "resolved"}
 
     requirement = one("Requirement", slug="restart")
-    product = json.loads(cli("model product", "personal-task-list", "--path", project))
-    assert product["complete"] and any(m["id"] == requirement["id"] for m in product["members"])
-    assert all(m["kind"] != "QualityModel" for m in product["members"])
-    assert len(product["adoptions"]) == 1 and "rfc9110" in product["adoptions"][0]["provision"]
+    adoption, = [e for e in elements if e["kind"] == "AdoptedProvision"]
+    provision, = [r for r in model["references"] if r["id"] == adoption["provision"]]
+    assert "rfc9110" in provision["authored_target"]
     procedures = {e["target"] for e in elements if e["kind"] == "Companion"
                   and e["owner"] == requirement["id"] and e["role"] == "verifies"}
     assert any(ref["id"] in procedures and ref["authored_target"] == "../../tests/acceptance.py#verify"
@@ -146,8 +153,9 @@ def check_project(cli, project, tmp):
                for r in model["label_occurrences"])
     assert targets(one("ConceptUse"), "definition") == {one("Concept", slug="checklist")["id"]}
     assert one("QualityModel", slug="personal-data")["quality_attributes"]
-    for view, marker in VIEWS.items():
-        assert marker in cli("model " + view, "--path", project), f"missing {marker} in {view}"
+    for report, marker in REPORTS:
+        page = project / "specification" / report
+        assert marker in page.read_text(encoding="utf-8"), f"missing {marker} in {report}"
 
 
 def markdown_links(page):
@@ -178,7 +186,7 @@ def spec_journey(cli, tmp):
     entry = project / "SPEC.md"
     entry.unlink()
     shutil.rmtree(project / "specification")
-    cli("spec build", cwd=project)
+    cli("build", cwd=project)
     root = follow(entry, "Read the system specification")
     assert root == project / "specification/personal-task-list.system.spec-report.md"
     assert len(markdown_links(entry)) == 1
@@ -411,27 +419,22 @@ def spec_journey(cli, tmp):
         page.write_text(changed, encoding="utf-8")
         report = json.loads(cli("check", "--json", cwd=project, status=1))
         assert rule in {item["rule"] for item in report["diagnostics"]}, report
-        cli("spec build", cwd=project)
+        cli("build", cwd=project)
         assert page.read_text(encoding="utf-8") == body
     cli("check", cwd=project)
 
 
 def inspect(cli):
-    for kind, (slug, title) in TYPES.items():
-        args = [slug] if slug else []
-        assert title in cli(kind + " list", "--path", TODO)
-        assert title in cli(kind + " show", *args, "--path", TODO)
-        if kind != "system":
-            checked = json.loads(cli(kind + " check", *args, "--path", TODO, "--json"))
-            assert checked["complete"] and checked["summary"]["files_checked"] >= 1
-    assert "Preserve tasks across restart" in cli("requirement list", "--attribute", "durability", "--project", "todo")
-    for command, detail in [
-        ("job map", "Recall outstanding work"),
-        ("job outcome list", "Less reconstruction"),
-    ]:
-        assert detail in cli(command, "personal-commitments", "--path", TODO)
-    assert "s1 --> s2" in cli("job map", "personal-commitments", "--format", "mermaid", "--path", TODO)
-    assert "Snapshot" in json.loads(cli("model schema"))["$defs"]
+    listed = dict(TYPES, component=("", "Task service"), **{"quality-attribute": ("", "Durability")})
+    for kind, (_, title) in listed.items():
+        assert title in cli("list " + kind, "-C", TODO)
+        entries = json.loads(cli("list " + kind, "-C", TODO, "--json"))["entries"]
+        entry, = [e for e in entries if e["name"] == title]
+        assert entry["kind"] == kind and Path(entry["path"]).is_absolute()
+        checked = json.loads(cli("check", entry["path"], "-C", TODO, "--json"))
+        assert checked["complete"] and checked["summary"]["files_checked"] >= 1
+    assert "Preserve tasks across restart" in cli("list requirement", cwd=TODO / "app")
+    assert "Snapshot" in json.loads(cli("snapshot schema"))["$defs"]
     assert "Jobs to be done" in cli("docs")
     assert "examples/todo/specs/jobs/personal-commitments.job.spec.md" in cli("docs", "job")
     catalog = json.loads((ROOT / "docs/cli-handbook/topics.json").read_bytes())
@@ -450,38 +453,51 @@ def inspect(cli):
                 assert cli("docs", rule) == cli("docs", target), rule
 
 
+def start_project(cli, tmp):
+    project = tmp / "started"
+    project.mkdir()
+    run(["git", "init", "-q"], cwd=project)
+    cli("build", cwd=project, status=2)
+    created = cli("init", "Booking desk", cwd=project)
+    assert "Created specs/booking-desk.system.spec.md" in created, created
+    assert (project / "dotspec.yaml").read_text(encoding="utf-8") == "name: booking-desk\n"
+    cli("build", cwd=project)
+    cli("check", cwd=project)
+    manifest = (project / "dotspec.yaml").read_bytes()
+    cli("init", "Booking desk", "--name", "other", cwd=project, status=2)
+    assert (project / "dotspec.yaml").read_bytes() == manifest
+    kiosk = project / "kiosk"
+    kiosk.mkdir()
+    assert "nested in project booking-desk" in cli("init", "Kiosk", cwd=kiosk)
+
+
 def author(cli, tmp):
     project = project_copy(tmp, "author")
-    # Create a second system inside the scratch copy and run the real initializers.
+    # Create a system that is part of To-do inside the scratch copy and run the real initializers.
     draft = project / "draft"
     draft.mkdir()
-    cli("system init", "--path", draft, cwd=project)
+    cli("new system", "New system", "-C", draft, "--part-of", "../specs/personal-task-list.system.spec.md", cwd=project)
     component = draft / "intake"
     component.mkdir()
-    cli("component init", "Intake", "--path", component, "--part-of", draft / "specs/new-system.system.spec.md", cwd=project)
+    # --part-of resolves against the directory -C selects.
+    cli("new component", "Intake", "-C", component, "--part-of", "../specs/new-system.system.spec.md", cwd=project)
     for kind in TYPES.keys() - {"system"}:
-        cli(kind + " init", "sample", "--path", draft, cwd=project)
+        cli("new " + kind, "sample", "-C", draft, cwd=project)
         filename = "sample.quality-model.md" if kind == "quality-model" else f"sample.{kind}.spec.md"
         assert list((draft / "specs").rglob(filename))
-    for preset, marker in [("odi", "## Steps"),
-                           ("job-story", "When [situation]")]:
-        cli("job init", preset, "--preset", preset, "--path", draft, cwd=project)
-        assert marker in cli("job show", preset, "--path", draft, cwd=project)
-        assert json.loads(cli("job check", preset, "--preset", preset, "--json", "--path", draft, cwd=project))["complete"]
-    cli("use-case init", "long-form", "--template", "expanded", "--path", draft, cwd=project)
-    assert "## Stakeholder interests" in cli("use-case show", "long-form", "--path", draft, cwd=project)
-    cli("requirement init", "quality", "--preset", "quality", "--path", draft, cwd=project)
-    assert "## Criterion" in cli("requirement show", "quality", "--path", draft, cwd=project)
+    cli("new use-case", "long-form", "--template", "expanded", "-C", draft, cwd=project)
+    assert "## Stakeholder interests" in (draft / "specs/use-cases/long-form.use-case.spec.md").read_text(encoding="utf-8")
     target = draft / "specs/new-system.system.spec.md"
     (draft / "release-plan.md").write_text(
         "# Release plan\n\nThe release lead reviews the durability checks before rollout.\n", encoding="utf-8")
     with target.open("a", encoding="utf-8") as file:
         file.write("\n## Project references\n\nThe [release plan](../release-plan.md) assigns the durability review.\n")
-    args = ("personal-data", "--system", target, "--attributes", "durability")
+    # Adoption targets the nearest enclosing system, which -C selects.
+    args = ("durability", "--from", "../specs/quality-models/personal-data.quality-model.md", "-C", draft)
     before = target.read_bytes()
-    preview = cli("quality-model apply", *args, "--dry-run", cwd=project)
+    preview = cli("new quality-attribute", *args, "--dry-run", cwd=project)
     assert target.read_bytes() == before
-    cli("quality-model apply", *args, cwd=project)
+    cli("new quality-attribute", *args, cwd=project)
     copied = draft / "specs/quality/durability/durability.quality-attribute.spec.md"
     assert copied.read_text(encoding="utf-8") in preview and target.read_bytes() == before
     vocabulary = project / "specs/quality-models/personal-data.quality-model.md"
@@ -495,76 +511,69 @@ def author(cli, tmp):
     child.parent.mkdir()
     child.write_text("---\ntype: quality-attribute-spec\nsubattribute_of: [durability]\n---\n"
                      "# Acknowledgement\n\n## Definition\nKeep the last accepted edit.\n", encoding="utf-8")
-    cli("requirement init", "commit-data", "--attribute", "durability", "--path", draft, cwd=project)
+    cli("new requirement", "commit-data", "--attribute", "durability", "-C", draft, cwd=project)
     assert (draft / "specs/requirements/commit-data.requirement.spec.md").is_file()
-    cli("requirement init", "data-loss-tolerance", "--preset", "quality", "--attribute", "durability", "--path", draft, cwd=project)
+    cli("new requirement", "data-loss-tolerance", "--attribute", "durability", cwd=draft)
     quality_requirement = draft / "specs/requirements/data-loss-tolerance.requirement.spec.md"
-    shown = json.loads(cli("requirement show", quality_requirement, "--json", cwd=project))
-    assert shown["requirement"]["quality_attributes"] == ["durability"]
-    cli("requirement init", "save-draft", "--attribute", "durability", "--path", component, cwd=project)
+    assert 'quality_attributes: ["durability"]' in quality_requirement.read_text(encoding="utf-8")
+    cli("new requirement", "save-draft", "--attribute", "durability", "-C", component, cwd=project)
     assert (component / "specs/requirements/save-draft.requirement.spec.md").is_file()
-    assert "durability" in cli("requirement show", "commit-data", "--path", draft, cwd=project)
-    focused = json.loads(cli("requirement check", "commit-data", "--path", draft, "--json", cwd=project))
+    focused = json.loads(cli("check", "specs/requirements/commit-data.requirement.spec.md", "-C", draft, "--json", cwd=project))
     assert focused["complete"] and focused["summary"]["errors"] == 0
-    assert "Already declared durability" in cli("quality-model apply", *args, cwd=project)
-    assert "Recoverability" in cli("quality-attribute browse", "reliability", cwd=project)
-    adopted = json.loads(cli("quality-attribute add", "recoverability", "--system", target, "--json", cwd=project))
+    # A named attribute the system already declares is never adopted again.
+    cli("new quality-attribute", *args, cwd=project, status=2)
+    assert "### Recoverability" in cli("docs", "quality-models/iso-25010-2023", cwd=project)
+    adopted = json.loads(cli("new quality-attribute", "recoverability", "--from", "iso-25010-2023",
+                             "-C", draft, "--json", cwd=project))
     assert adopted["added"] == ["reliability", "recoverability"]
     assert target.read_bytes() == before
-    cli("quality-model init", "team", "--from", "furps", "--path", draft, cwd=project)
-    assert "Supportability" in cli("quality-model show", "team", "--path", draft, cwd=project)
+    cli("new quality-model", "team", "--from", "iso-25010-2023", "-C", draft, cwd=project)
+    assert "Recoverability" in (draft / "specs/quality-models/team.quality-model.md").read_text(encoding="utf-8")
     with (project / REQUIREMENT).open("a", encoding="utf-8") as file:
         file.write("\n[Missing verification file](missing.py)\n")
+    # A concept cannot be what a requirement supports, so the export records a
+    # relationship finding against the requirement itself.
+    source = (project / REQUIREMENT).read_text(encoding="utf-8")
+    outcome = "[Less reconstruction](../jobs/personal-commitments.job.spec.md#less-reconstruction)"
+    assert source.count(outcome) == 1, "update the supports regression fixture"
+    (project / REQUIREMENT).write_text(source.replace(outcome, "[Checklist](../concepts/checklist.concept.spec.md)"),
+                                      encoding="utf-8")
     broken = json.loads(cli("check", "--json", cwd=project, status=1))
     assert any(d["rule"] == "reference.unresolved" for d in broken["diagnostics"])
     # Inspect the faithful representation of an invalid source alongside the clean exports.
-    partial = cli("model export", cwd=project, status=1)
+    partial = cli("snapshot export", cwd=project, status=1)
     partial_file = tmp / "author.json"
     partial_file.write_text(partial, encoding="utf-8")
-    assert json.loads(cli("model validate", partial_file, "--json"))["valid"]
+    assert json.loads(cli("snapshot validate", partial_file, "--json"))["valid"]
+    assert any(d["code"] == "relationship.supports" and d.get("record") for d in json.loads(partial)["diagnostics"])
 
 
 def quality_convention(cli, tmp):
     project = project_copy(tmp, "quality-convention")
     def source_files():
         return {p: p.read_bytes() for p in project.rglob("*.spec.md")}
-    def members():
-        product = json.loads(cli("model product", "personal-task-list", cwd=project))
-        return product["members"]
-    def classifications():
-        snapshot = json.loads(cli("model export", cwd=project))
-        return [(o["owner"], o["resolution"]) for o in snapshot["label_occurrences"]
-                if o["role"] == "quality_classification"]
+    def generated():
+        return {p: p.read_bytes() for p in (project / "specification").rglob("*.md")}
 
-    original = source_files()
-    initial_members = members()
-    assert "builtin_default" in cli("quality-attribute browse", cwd=project)
-    assert source_files() == original and initial_members == members()
-    adopted = json.loads(cli("quality-attribute add", "recoverability", "--json", cwd=project))
+    original = source_files(), generated()
+    assert "**ID:** recoverability" in cli("docs", "quality-models/iso-25010-2023", cwd=project)
+    assert (source_files(), generated()) == original
+    adopted = json.loads(cli("new quality-attribute", "recoverability", "--from", "iso-25010-2023", "--json", cwd=project))
     parent = Path(adopted["entries"][0]["path"])
     with parent.open("a", encoding="utf-8") as file:
         file.write("\nPreserve the owner's acknowledged edits.\n")
     tailored = parent.read_bytes()
-    added = json.loads(cli("quality-attribute add", "fault-tolerance", "--json", cwd=project))
+    added = json.loads(cli("new quality-attribute", "fault-tolerance", "--from", "iso-25010-2023", "--json", cwd=project))
     assert added["added"] == ["fault-tolerance"] and parent.read_bytes() == tailored
-    cli("spec build", cwd=project)
+    cli("build", cwd=project)
     tree = project / "specification"
     sibling = next(tree.rglob("fault-tolerance.quality-attribute.spec-report.md"))
     assert follow(sibling, "Reliability") == next(tree.rglob("reliability.quality-attribute.spec-report.md"))
 
-    before = source_files(), members(), classifications()
-    assert before[2]
-    summary = tree / "personal-task-list.system.spec-report.md"
-    overview = summary.read_bytes()
-    with (project / "dotspec.yaml").open("a", encoding="utf-8") as file:
-        file.write("\nquality: {model: q42}\n")
-    assert "builtin:q42" in cli("quality-attribute browse", cwd=project)
-    cli("spec build", cwd=project)
-    assert before == (source_files(), members(), classifications())
-    assert summary.read_bytes() == overview
+    # A catalog term the system has not adopted cannot classify a requirement.
     req = project / REQUIREMENT
     req.write_text(req.read_text().replace("quality_attributes: [durability]", "quality_attributes: [resilience]"))
-    checked = json.loads(cli("requirement check", req, "--json", cwd=project))
+    checked = json.loads(cli("check", req, "--json", cwd=project))
     assert any(d["rule"] == "requirement.undefined-attribute" and "resilience" in d["message"]
                for d in checked["diagnostics"])
 
@@ -589,7 +598,7 @@ def regressions(cli, tmp):
             if name == "persistence":
                 acceptance(copy)
             else:
-                cli("spec build", cwd=copy)
+                cli("build", cwd=copy)
                 check_project(cli, copy, tmp)
         except (AssertionError, RuntimeError) as error:
             if reason not in str(error):
@@ -611,6 +620,7 @@ def main():
         check_project(cli, TODO, tmp)
         inspect(cli)
         spec_journey(cli, tmp)
+        start_project(cli, tmp)
         author(cli, tmp)
         quality_convention(cli, tmp)
         run(["go", "vet", "./..."], cwd=TODO / "app")
@@ -621,11 +631,12 @@ def main():
         events = run(["go", "test", "-json", "-count=1", "./internal/integration", "-run", "^TestCLI$/^help$"])
         assert any(e.get("Test") == "TestCLI/help" and e["Action"] == "pass"
                    for e in map(json.loads, events.splitlines())), "help.txtar did not run"
-        tooling = {"man", "completion bash", "completion zsh", "completion fish", "completion powershell"}
+        tooling = {"completion bash", "completion zsh", "completion fish", "completion powershell"}
         public = cli.public_commands()
-        groups = set(TYPES) | {"quality-attribute", "component","spec", "model", "job outcome", "completion"}
+        groups = {"new", "list", "snapshot", "completion"}
         for group in groups | {""}:
-            assert "Available Commands:" in cli("help", *group.split())
+            # Root help groups its commands by title.
+            assert ("Author:" if not group else "Available Commands:") in cli("help", *group.split())
         missing = public - cli.exercised - groups - tooling - {""}
         assert not missing, f"public commands need coverage: {sorted(missing)}"
         inventory = [sys.executable, "-I", Path(__file__).with_name("inventory.py"), binary, tmp / "author.json"]

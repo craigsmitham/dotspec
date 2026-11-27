@@ -6,8 +6,7 @@ mkdir home project
 cd project
 exec git init -q
 cp ../manifest dotspec.yaml
-status 0 dotspec system init
-rm specs/new-system.system.spec.md
+mkdir specs
 cp ../system.md specs/project.system.spec.md
 mkdir specs/requirements
 cp ../requirement.md specs/requirements/one-view.requirement.spec.md
@@ -16,10 +15,10 @@ cp ../tasks.qnt models/tasks.qnt
 cp ../views.feature tests/views.feature
 
 # The report lists companions by role and links a named definition to its line.
-status 0 dotspec spec build
+status 0 dotspec build
 stdout 'Wrote specification/companions.md'
 status 0 dotspec check
-stdout 'Errors: 0;'
+stdout ': 0 errors, '
 ! stdout 'companion\.'
 ! stderr .
 exec cat specification/requirements/one-view.requirement.spec-report.md
@@ -37,14 +36,27 @@ stdout '\[Companions\]\(<companions.md>\)'
 status 0 dotspec check
 ! stderr .
 
+# The source inventory shows each companion file with its declaring entry and role.
+status 0 dotspec sources
+stdout '^models/tasks.qnt$'
+stdout '^  Companion that formalizes specs/project.system.spec.md:4:13 \(../models/tasks.qnt\)$'
+stdout '^  Companion that formalizes specs/requirements/one-view.requirement.spec.md:4:13 \(../../models/tasks.qnt#exactlyOneView\)$'
+stdout '^  Companion that illustrates specs/requirements/one-view.requirement.spec.md:6:13 \(../../tests/views.feature#resume-a-waiting-entry\)$'
+! stdout 'example.com'
+! stdout '\(companions\)'
+status 0 dotspec sources --json
+stdout '"companion_of": \['
+stdout '"role": "illustrates"'
+! stderr .
+
 # Export records an owned Companion whose target is a frontmatter reference.
-status 0 dotspec model export
+status 0 dotspec snapshot export
 stdout '"kind": "Companion"'
 stdout '"role": "formalizes"'
 stdout '"form": "frontmatter"'
 stdout '"rule": "native-definition/1"'
 cp stdout snapshot.json
-status 0 dotspec model validate snapshot.json
+status 0 dotspec snapshot validate snapshot.json
 ! stderr .
 
 # A missing definition, unknown role or obsolete procedure section is located.
@@ -70,7 +82,7 @@ stdout 'companion.unlisted'
 ! stderr .
 
 # The advice belongs to a whole-project scan, and a listed directory covers its files.
-status 0 dotspec check --path models
+status 0 dotspec check models
 ! stdout 'companion.unlisted'
 cp ../directory.md specs/requirements/one-view.requirement.spec.md
 status 1 dotspec check

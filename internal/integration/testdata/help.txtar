@@ -5,12 +5,10 @@ exec dotspec --help
 stdout 'Usage:'
 stdout 'completion'
 stdout 'Exit codes:'
+! stdout '^  man '
 ! stdout '\x1b'
 ! stderr .
 env NO_COLOR=1
-exec dotspec job outcome list --help
-stdout 'dotspec job outcome list'
-stdout '\-\-step'
 exec dotspec --version
 stdout '^dotspec '
 ! stderr .
@@ -23,6 +21,27 @@ exec dotspec completion fish
 stdout 'fish completion'
 exec dotspec completion powershell
 stdout 'Register-ArgumentCompleter'
+# A misspelled command or a missing operand is an invocation error that names the correction.
+status 2 dotspec new requirment fast-save
+! stdout .
+stderr '^dotspec: unknown command "requirment" for "dotspec new"; did you mean "requirement"\?$'
+status 2 dotspec lst requirement
+stderr '^dotspec: unknown command "lst" for "dotspec"; did you mean "list"\?$'
+status 2 dotspec help chek
+! stdout .
+stderr 'did you mean "check"'
+status 2 dotspec new requirement
+! stdout .
+stderr '^dotspec: new requirement: missing <slug>; see dotspec new requirement --help$'
+status 2 dotspec new
+! stdout .
+stderr '^dotspec: new: missing <kind>; see dotspec new --help$'
+stderr '^  requirement +Specify required results, rules, properties, and restrictions$'
+stderr '^ +dotspec docs requirement$'
+# Examples are indented beneath their heading in plain help.
+exec dotspec check --help
+stdout '^Examples:\n  dotspec check$'
+# The release build writes the manual page with this hidden command.
 exec dotspec man
 stdout '\.TH'
 stdout 'DOTSPEC'

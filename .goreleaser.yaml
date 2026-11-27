@@ -3,6 +3,7 @@ project_name: dotspec
 before:
   hooks:
     - python3 scripts/package-knowledge/package.py --version {{ .Version }} --output .release/dotspec-knowledge.zip
+    - sh -c "mkdir -p .release && go run . man > .release/dotspec.1"
 builds:
   - id: dotspec
     main: .
@@ -24,6 +25,9 @@ archives:
       - goos: windows
         formats: [zip]
     files:
+      - src: .release/dotspec.1
+        dst: man/man1
+        strip_parent: true
       - README.md
       - docs/cli-handbook/README.md
       - docs/cli-handbook/**/*.md

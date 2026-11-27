@@ -2,50 +2,52 @@
 mkdir project
 cd project
 exec git init -q
-status 0 dotspec system init
-status 0 dotspec requirement init preservation
-status 0 dotspec model export
+mkdir specs
+cp $WORK/new-system.md specs/new-system.system.spec.md
+status 0 dotspec new requirement preservation
+status 0 dotspec snapshot export
 stdout '"kind": "Requirement"'
 stdout '"spans":'
 stdout '"markdown":'
 ! stderr .
 cp stdout snapshot.json
-status 0 dotspec model export
+status 0 dotspec snapshot export
 cmp stdout snapshot.json
-status 0 dotspec model validate snapshot.json --json
+status 0 dotspec snapshot validate snapshot.json --json
 stdout '"valid": true'
 ! stderr .
 rm specs
-status 0 dotspec model validate snapshot.json
+status 0 dotspec snapshot validate snapshot.json
 stdout 'Snapshot is valid'
 ! stderr .
 
 # Source authoring errors remain in a structurally valid exported snapshot.
-status 0 dotspec system init
+mkdir specs
+cp $WORK/new-system.md specs/new-system.system.spec.md
 mkdir specs/requirements
 cp ../invalid.md specs/requirements/invalid.requirement.spec.md
-status 1 dotspec model export
+status 1 dotspec snapshot export
 stdout '"diagnostics":'
 stdout '"severity": "error"'
 ! stderr .
 cp stdout invalid-source.json
-status 0 dotspec model validate invalid-source.json --json
+status 0 dotspec snapshot validate invalid-source.json --json
 stdout '"valid": true'
 ! stderr .
 
 # Invalid JSON or model shape is a finding; invocation and I/O failures use 2.
-status 1 dotspec model validate ../bad-json.json --json
+status 1 dotspec snapshot validate ../bad-json.json --json
 stdout '"valid": false'
 stdout 'shape.json'
 ! stderr .
-status 1 dotspec model validate ../bad-shape.json --json
+status 1 dotspec snapshot validate ../bad-shape.json --json
 stdout '"valid": false'
 ! stderr .
-status 2 dotspec model validate absent.json
+status 2 dotspec snapshot validate absent.json
 ! stdout .
-status 2 dotspec model export extra
+status 2 dotspec snapshot export extra
 ! stdout .
-status 0 dotspec model schema
+status 0 dotspec snapshot schema
 stdout '"Snapshot"'
 ! stderr .
 -- invalid.md --
@@ -60,3 +62,21 @@ Keep this text even though the metadata is invalid.
 {"model_version":
 -- bad-shape.json --
 {}
+-- new-system.md --
+---
+type: system-spec
+---
+
+# New system
+
+## Description
+
+Describe what this system is in one short paragraph.
+
+## Purpose
+
+Describe why this system exists and whom it serves.
+
+## Scope
+
+Describe the system's boundary and what it includes.

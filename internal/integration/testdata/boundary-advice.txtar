@@ -1,0 +1,90 @@
+# Check prompts for the support a reviewer needs to judge assumptions and interfaces.
+cd project
+exec git init -q
+status 0 dotspec check --json
+stdout '"rule": "assumption.basis"'
+stdout '"rule": "assumption.applicability"'
+stdout '"rule": "interface.contract"'
+stdout '"element": "Assumptions / Same storage"'
+stdout '"element": "Required interfaces / Clock"'
+stdout '"element": "Provided interfaces / Settings"'
+! stdout 'Provided interfaces / Forms'
+stdout '"advice": 4'
+! stderr .
+status 0 dotspec check
+stdout 'advice \[assumption.basis\]'
+stdout 'Guide: dotspec docs assumption.basis'
+stdout 'Guide: dotspec docs interface.contract'
+! stderr .
+# A focused check advises on the checked file, not on the system it reads as context.
+status 0 dotspec check app/specs/service.component.spec.md --json
+stdout '"rule": "interface.contract"'
+stdout '"advice": 1'
+! stdout 'assumption\.'
+! stderr .
+exec dotspec docs assumption.applicability
+stdout '^# Describe a system and its boundary'
+exec dotspec docs interface.contract
+stdout '^# Describe a system and its boundary'
+
+# Supplying Basis, Applicability and a contract link settles the advice.
+cp ../supported.system.spec.md specs/example.system.spec.md
+cp ../service.component.spec.md app/specs/service.component.spec.md
+status 0 dotspec check --json
+stdout '"advice": 0'
+! stderr .
+-- project/specs/example.system.spec.md --
+---
+type: system-spec
+---
+# Example
+## Purpose
+Keep a list.
+## Assumptions
+### Same storage
+The database file persists between visits.
+## Provided interfaces
+### Forms
+The forms the owner uses.
+#### Contracts
+[Form template](../app/list.html).
+### Settings
+The preferences page.
+-- project/app/list.html --
+<form></form>
+-- project/app/specs/service.component.spec.md --
+---
+type: component-spec
+---
+# Service
+## Part of
+[Example](../../specs/example.system.spec.md)
+## Required interfaces
+### Clock
+The current local day.
+-- supported.system.spec.md --
+---
+type: system-spec
+---
+# Example
+## Purpose
+Keep a list.
+## Assumptions
+### Same storage
+The database file persists between visits.
+#### Basis
+The owner names the file when starting the service.
+#### Applicability
+Each return to the list.
+## Provided interfaces
+### Forms
+The forms the owner uses.
+#### Contracts
+[Form template](../app/list.html).
+-- service.component.spec.md --
+---
+type: component-spec
+---
+# Service
+## Part of
+[Example](../../specs/example.system.spec.md)

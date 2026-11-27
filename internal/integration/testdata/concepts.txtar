@@ -2,32 +2,30 @@
 mkdir project
 cd project
 exec git init -q
-status 0 dotspec concept list --json
-stdout '"groups": \[\]'
+status 0 dotspec list concept --json
+stdout '"entries": \[\]'
 ! stderr .
-status 0 dotspec concept list
+status 0 dotspec list concept
 stdout 'No concepts found'
 ! stderr .
-status 0 dotspec concept init --path . -- job-map
+status 0 dotspec new concept -C . -- job-map
 stdout 'Created specs/concepts/job-map.concept.spec.md'
 ! stderr .
-status 0 dotspec concept show --format json -- job-map
-stdout '"schema_version": 2'
+status 0 dotspec list concept --json
+stdout '^\{\n  "schema_version": 1,'
 stdout '"slug": "job-map"'
-stdout '"purpose": "[^"]'
-stdout '"state": "[^"]'
-stdout '"actions": "[^"]'
-stdout '"operational_principles": "[^"]'
 stdout '"system": null'
 ! stderr .
-status 0 dotspec system init
-status 0 dotspec concept show job-map
-stdout '(?s)\A# New concept\n\n## Purpose\n.+\n## State\n.+\n## Actions\n.+\n## Operational principles\n.+\nSystem: New system'
+mkdir specs
+cp $WORK/new-system.md specs/new-system.system.spec.md
+status 0 dotspec list concept
+stdout 'System: New system'
+stdout 'Job map  \(specs/concepts/job-map.concept.spec.md\)'
 ! stderr .
-status 0 dotspec concept list --json
-stdout '"concepts": \['
+status 0 dotspec list concept --json
+stdout '"kind": "concept"'
 stdout '"slug": "job-map"'
-status 0 dotspec concept check job-map --json
+status 0 dotspec check specs/concepts/job-map.concept.spec.md --json
 stdout '"complete": true'
 stdout '"types": \[\s+"concept"\s+\]'
 stdout '"discovery": "direct"'
@@ -35,26 +33,23 @@ stdout '"files_checked": 1,'
 stdout '"context_files_checked": 1'
 ! stderr .
 cp specs/concepts/job-map.concept.spec.md ../job-map-before.md
-status 2 dotspec concept init job-map
+status 2 dotspec new concept job-map
 stderr 'refusing to overwrite'
 ! stdout .
 cmp specs/concepts/job-map.concept.spec.md ../job-map-before.md
-status 2 dotspec concept init invalid --format mermaid
-! stdout .
-! exists specs/concepts/invalid.concept.spec.md
-status 0 dotspec concept show job-map --path specs/concepts
-status 2 dotspec concept check absent --json
+status 0 dotspec -C specs/concepts check job-map.concept.spec.md
+status 2 dotspec check specs/concepts/absent.concept.spec.md --json
 stdout '"complete": false'
 ! stderr .
 
 # A focused check ignores malformed siblings; a project scan reports all files.
 cp ../draft.md specs/concepts/draft.concept.spec.md
 cp ../broken.md specs/concepts/broken.concept.spec.md
-status 0 dotspec concept check draft
+status 0 dotspec check specs/concepts/draft.concept.spec.md
 stdout 'advice \[concept.purpose\]'
-stdout 'Scan complete.'
+stdout '\(scan complete\)'
 ! stderr .
-status 1 dotspec concept check broken --json
+status 1 dotspec check specs/concepts/broken.concept.spec.md --json
 stdout '"rule": "metadata.frontmatter"'
 ! stderr .
 status 1 dotspec check --json
@@ -62,7 +57,7 @@ stdout '"files_checked": 4'
 stdout '"errors": 1'
 stdout '"complete": true'
 ! stderr .
-status 1 dotspec concept list
+status 1 dotspec list concept
 stderr 'metadata.frontmatter'
 ! stdout .
 
@@ -70,7 +65,7 @@ stderr 'metadata.frontmatter'
 cd ..
 mkdir created
 cd created
-status 0 dotspec concept init review --json
+status 0 dotspec new concept review --json
 stdout '"schema_version": 1'
 stdout '"path": "(/|[A-Za-z]:\\\\).*review\.concept\.spec\.md"'
 ! stderr .
@@ -81,3 +76,21 @@ type: concept-spec
 # An unfinished concept
 -- broken.md --
 This is not a specification.
+-- new-system.md --
+---
+type: system-spec
+---
+
+# New system
+
+## Description
+
+Describe what this system is in one short paragraph.
+
+## Purpose
+
+Describe why this system exists and whom it serves.
+
+## Scope
+
+Describe the system's boundary and what it includes.

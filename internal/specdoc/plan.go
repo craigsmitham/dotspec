@@ -149,7 +149,7 @@ func (p *planner) read() error {
 		}
 		if glossarySources[id(r)] && (rel == "SPEC.md" || strings.HasPrefix(filepath.ToSlash(rel), "specification/")) {
 			if header, _ := splitHeader(data); header.GeneratedBy == "dotspec" {
-				return fmt.Errorf("glossary source %s is an output of this report", rel)
+				return fmt.Errorf("glossary source %s is an output of the generated specification", rel)
 			}
 		}
 		p.sources[id(r)] = &sourceFile{path: filepath.ToSlash(rel), data: string(data)}

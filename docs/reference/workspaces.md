@@ -21,73 +21,69 @@ For example, the entire billing manifest is:
 name: billing
 ```
 
+To start a project, run `dotspec init "Billing" --name billing` in its directory. Init writes the manifest and the project's root system specification, and refuses to replace either file. Without `--name`, the project name is the system name's slug. When the directory lies inside another project, init names that project, whose scans now skip the new directory.
+
 The name identifies the project in commands and reports. It starts with a letter
 or digit and can contain letters, digits, dots, underscores and hyphens. Moving a
 directory carries its project name and boundary with it. Use one YAML document
-with a required `name` field and optional `report.enabled` and `quality.model` settings. Reports default to enabled. Each project independently defaults to the bundled `iso-25010-2023` quality model. A bundled ID or a project-relative `*.quality-model.md` path selects the project vocabulary. [Choose the project default](../cli-handbook/guides/define-a-quality-model.md#choose-the-project-default). Workspace-wide selection requires unique names.
+with a required `name` field and an optional `build.enabled` setting. The generated specification is enabled by default. Any other field is a configuration error. Workspace-wide selection requires unique names.
 
 A spec belongs to its nearest enclosing project. A parent scan skips nested
 project directories. Ordinary subdirectories can contain colocated specs, and
 a project can have zero, one or several System specifications.
 
 For a workspace containing only child projects, leave the repository root
-without a manifest. At that root, use `--project NAME` or `--all`. Repositories
-with no project manifests still support ordinary path-based commands.
+without a manifest. At that root, select a project with `-C <dir>` or check every
+project with `dotspec check --all`. Repositories with no project manifests still
+support ordinary path-based commands.
 
 ## Select what to inspect
 
-Run the following commands in the example workspace root. Substitute your manifest names for `product`, `reference-app` and `billing`. For the narrower check, use an existing directory inside the selected project.
+Run the following commands in the example workspace root. Substitute your project directories for `examples/reference-app` and `apps/billing`. For the narrower check, use an existing directory inside the selected project.
 
 ```sh
-dotspec check                           # current project
-dotspec check --project reference-app
-dotspec check --project product --path internal/parser
-dotspec model overview --project billing
-dotspec check --all                     # every discovered project separately
+dotspec check                                   # current project
+dotspec -C examples/reference-app check
+dotspec check internal/parser                   # one subtree of the current project
+dotspec -C apps/billing snapshot export
+dotspec check --all                             # every discovered project separately
 ```
 
-dotspec finds the nearest ancestor `dotspec.yaml`, stopping at the Git/worktree
-boundary (or filesystem root outside Git). With no explicit selector, project inventories start at the containing project root. Initialization, show, and focused checks start at the working directory. Use `--path` to narrow the scan. On its own, `--path` is
-relative to the working directory. With `--project`, it is relative to that
-project's root and cannot select another project. Absolute paths within that
-project also work.
+`-C <dir>`, or `--chdir <dir>`, runs dotspec as if it had started in that
+directory, like `git -C`. Every relative path, whether an operand such as the
+`<path>` of `check` or a flag value such as `--part-of`, then resolves against
+it. dotspec finds the nearest ancestor `dotspec.yaml`, stopping at the Git/worktree
+boundary (or filesystem root outside Git). Reads such as `check`, `sources`,
+lists, `snapshot export` and `build` cover the enclosing project from its root,
+wherever in the project you run them. `check`, `sources` and `snapshot export`
+take an optional `<path>`, a directory that narrows the scan to one subtree;
+`check` also accepts a single specification file, which it checks within that
+file's own project. `init` and `new` write below the working directory, and
+`new quality-attribute` adopts into the nearest system that encloses it.
 
-For `--project` and `--all`, dotspec searches the entire Git worktree from any
+For `check --all`, dotspec searches the entire Git worktree from any
 subdirectory. Tracked and non-ignored manifests participate. Outside Git, the
 search starts at the outermost enclosing project or, if there is none, at the
 working directory. Discovery skips symlinks and nested repositories. A project manifest or repository root creates a boundary even in a directory named `specs/`.
 A local manifest still bounds direct lookup and parent scans even when Git ignores
-it. Track it to include that project in worktree-wide commands.
+it. Track it to include that project in the workspace check.
 
-All path-based commands accept `--project`, including initialization and focused
-checks. `--all` is available on collection checks, source inventories, lists and
-model exports/reading views. It cannot be combined with `--project`, `--path`, or
-an individual specification slug. Initialization and other mutations operate on
-one selected project. On `quality-model apply`, `--all` selects all attributes for a single system.
+`--all` is available only on `check`, the one workspace-wide inspection, and
+cannot be combined with a `<path>`. Every other command, including
+initialization and other mutations, operates on one project.
 
-Workspace text/Markdown output separates projects with headings. JSON output has
-`schema_version: 1`, the searched directory in `workspace`, and a name-sorted
-`projects` array. Each entry contains
-`name`, `root`, `exit_code`, and its command `result`; an operational failure may
-instead supply `error` without a result. All projects are attempted. The aggregate
-exit code is the highest result: 0 success, 1 specification findings, 2 invocation
-or operational failure.
+Workspace text output separates projects with `# Project: <name>` headings.
+JSON output has `schema_version: 1`, the searched directory in `workspace`, and
+a name-sorted `projects` array. Each entry contains `name`, `root`, `exit_code`,
+and that project's check report in `result`. Every project is checked. The
+aggregate exit code is the highest project result: 0 success, 1 specification
+findings, 2 invocation or operational failure.
 
-Check that the workspace report names each project you expected and that findings appear under their owning project. If a project is missing, check its manifest name and whether Git ignores its directory. When two manifests use the same name, give the projects distinct names before running the workspace command again. If a project’s generated specification is missing or out of date, run `dotspec spec build --project billing` with that project’s name, review the result, and repeat the check. [Generate a requirements specification](generated-specification.md).
+Check that the workspace report names each project you expected and that findings appear under their owning project. If a project is missing, check its manifest name and whether Git ignores its directory. When two manifests use the same name, give the projects distinct names before running the workspace check again. If a project’s generated specification is missing or out of date, run `dotspec -C apps/billing build` with that project’s directory, review the result, and repeat the check. [Generate a requirements specification](generated-specification.md).
 
-To save the independent project snapshots together, export the workspace to a file in your working directory, then validate the saved envelope. Generate its schema if you need it for another tool.
-
-```sh
-dotspec model export --all > workspace.json
-dotspec model validate workspace.json
-dotspec model schema --workspace > workspace.schema.json
-```
-
-Workspace model exports contain independent snapshots rather than one combined
-System. `model validate` checks each snapshot and its envelope identity offline;
-a missing snapshot is incomplete and fails validation. The workspace schema
-covers complete export envelopes, including snapshots that faithfully record
-specification findings.
+To save a project's snapshot, export it from within the project, or name the
+project's directory with `-C`. Each export covers one project with its own
+acquisition scope and identities.
 
 ## Keep context explicit
 
@@ -104,5 +100,3 @@ These references acquire context, not another recursive project scan.
 Snapshot `scope.project` records the selected name and root. Acquired files carry
 their containing project when one exists. The selected project's `dotspec.yaml`
 is retained as `project_configuration` context and appears in the source inventory.
-Reading views name the selected project and identify acquired domain context
-from other projects.

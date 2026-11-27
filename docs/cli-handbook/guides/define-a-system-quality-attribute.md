@@ -4,19 +4,18 @@ Start with a system declaration and a concern whose name will help people find a
 
 ## Select or define the term
 
-From the directory of the system you are specifying, browse the available terms. With a new project, dotspec uses the bundled ISO/IEC 25010:2023 starter offline. For example, suppose you need to decide which work a user can recover after a restart.
+From the directory of the system you are specifying, read the terms of a quality model. dotspec bundles an ISO/IEC 25010:2023 model that you can read offline; each term gives its ID and any **Sub-attribute of** parent. For example, suppose you need to decide which work a user can recover after a restart.
 
 ```sh
-dotspec quality-attribute browse
-dotspec quality-attribute browse reliability
-dotspec quality-attribute add recoverability --dry-run
+dotspec docs quality-models/iso-25010-2023
+dotspec new quality-attribute recoverability --from iso-25010-2023 --dry-run
 ```
 
-The preview identifies each file that adoption would create, including the broader Reliability definition. Run `dotspec quality-attribute add recoverability` to create the files. Open Recoverability at the path printed by the command and describe which work the user needs back. Later, adopting Fault tolerance reuses the same local Reliability definition. Repeating a selection shows where the system already declares it.
+The preview identifies each file that adoption would create, including the broader Reliability definition. Run `dotspec new quality-attribute recoverability --from iso-25010-2023` to create the files. Open Recoverability at the path printed by the command and describe which work the user needs back. Later, adopting Fault tolerance reuses the same local Reliability definition. Adoption refuses an attribute the system already declares; edit that declaration instead.
 
-When several systems could own the term, supply `--system` with the intended source path. To explore another vocabulary for this decision, pass the same `--model` to browse and add. A team can also [choose a project default](define-a-quality-model.md#choose-the-project-default).
+Adoption writes to the nearest system that encloses the current directory. To adopt into another system, run the command from its directory or select that directory with `-C`. To adopt from a team vocabulary, pass its source path to `--from`, relative to the current directory. A slug such as `--from team-quality` finds only a model owned by the system or component that contains the current directory. [Define a quality model](define-a-quality-model.md).
 
-For a term you originate, create a file in the system's quality directory. For example, next to a declaration in `specs/`, use `specs/quality/durability/durability.quality-attribute.spec.md`. Put `type: quality-attribute-spec` in YAML frontmatter and name the attribute in the H1. Use its title slug for the filename before `.quality-attribute.spec.md`. The title slug also supplies the ID unless you specify `id` in frontmatter. [To-do durability file](../../../examples/todo/specs/quality/durability/durability.quality-attribute.spec.md).
+For a term you originate, run `dotspec new quality-attribute durability` without `--from`, substituting the term's ID. It creates a blank declaration in the system's quality directory, such as `specs/quality/durability/durability.quality-attribute.spec.md` next to a declaration in `specs/`. To write one by hand, use the same location. Put `type: quality-attribute-spec` in YAML frontmatter and name the attribute in the H1. Use its title slug for the filename before `.quality-attribute.spec.md`. The title slug also supplies the ID unless you specify `id` in frontmatter. [To-do durability file](../../../examples/todo/specs/quality/durability/durability.quality-attribute.spec.md).
 
 Under **Definition**, identify what someone needs to preserve, recover or otherwise assess in this system. For recoverability, name the work or state someone needs back after an interruption. Replace a copied prompt with the local definition and keep a citation to its source. Leave the accepted loss or delay with the requirement that sets it. [ISO/IEC 25030:2019, §7.4.2, steps 2–5](https://www.iso.org/standard/72116.html) · [Classified restart requirement](../../../examples/todo/specs/requirements/restart.requirement.spec.md).
 
@@ -26,7 +25,7 @@ If a broader concern would help someone find this term, give the narrower attrib
 
 ## Check it from a requirement
 
-For a requirement in this specification system, add the attribute ID to its frontmatter, for example `quality_attributes: [recoverability]`. From the requirement's owning directory, run `dotspec requirement show preserve-entries`, substituting the slug of the requirement you classified. Inspect its reported system, direct labels and ancestor attributes. An unexpected ancestor calls for a review of the attribute's parent links. If the label is undefined, check which system supplies its declarations.
+For a requirement in this specification system, add the attribute ID to its frontmatter, for example `quality_attributes: [recoverability]`. From the project directory, run `dotspec check specs/requirements/preserve-entries.requirement.spec.md`, substituting the path of the requirement you classified. The check reports a label that the requirement's system does not declare. After `dotspec build`, the attribute's generated page lists the requirements it classifies under **Related specifications**; a requirement listed under an unexpected attribute calls for a review of the parent links. If the label is undefined, check which system supplies its declarations.
 
 Read the requirement. Can someone tell which observed result would meet it? If the attribute label is all they have, state the promised result and applicable conditions in the [requirement](write-an-assessable-requirement.md). From the project directory, run `dotspec check` to inspect the declarations and references.
 

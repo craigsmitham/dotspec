@@ -71,7 +71,8 @@ func (l Layout) SourcePath(dir, selector string) (string, error) {
 		return "", err
 	}
 	if !ok {
-		return "", fmt.Errorf("unavailable %s source: %s", l.Kind, path)
+		// A missing, linked or excluded file is out of scope rather than unreadable.
+		return "", &os.PathError{Op: "find " + l.Kind, Path: path, Err: fmt.Errorf("unavailable %s source", l.Kind)}
 	}
 	return path, nil
 }

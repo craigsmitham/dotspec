@@ -5,7 +5,12 @@
     "description": "Establish which promises the system makes and which conditions it relies on.",
     "pages": [
       {
-        "page": "docs/cli-handbook/guides/describe-a-system.md"
+        "page": "docs/cli-handbook/guides/describe-a-system.md",
+        "rules": {
+          "assumption.applicability": "",
+          "assumption.basis": "",
+          "interface.contract": ""
+        }
       },
       {
         "page": "docs/cli-handbook/explanations/systems.md"
@@ -44,13 +49,9 @@
       {
         "page": "docs/cli-handbook/guides/write-a-job.md",
         "rules": {
-          "job.boundary": "where-does-the-job-end",
-          "job.map": "what-work-is-easy-to-overlook",
           "job.outcome-empty": "how-would-the-performer-recognize-success",
-          "job.outcome-measure": "how-would-the-performer-recognize-success",
           "job.performer": "who-owns-the-result",
-          "job.statement": "where-does-the-job-end",
-          "job.story-context": "what-supports-the-account"
+          "job.statement": "where-does-the-job-end"
         }
       },
       {
@@ -188,7 +189,6 @@
       {
         "page": "docs/cli-handbook/guides/define-a-quality-model.md",
         "rules": {
-          "project.quality-model": "choose-the-project-default",
           "quality-model.attributes": "define-and-group-the-shared-terms",
           "quality-model.description": "set-the-scope-and-basis"
         }

@@ -143,7 +143,14 @@ func (s *System) QualityAttributeAncestors(ids []string) []string {
 	return result
 }
 
+// Check returns writing advice for a checked system declaration.
 func Check(spec *System) []diagnostic.Diagnostic {
+	return append(withPath(spec.advice, spec.Path), qualityAdvice(spec)...)
+}
+
+// qualityAdvice also applies when the system is context for another file,
+// because its attributes classify that file's requirements.
+func qualityAdvice(spec *System) []diagnostic.Diagnostic {
 	var findings []diagnostic.Diagnostic
 	for _, a := range spec.QualityAttributes {
 		if a.Definition == "" {

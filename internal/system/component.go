@@ -18,6 +18,7 @@ type Component struct {
 	ID         string
 	Parent     specfile.Reference
 	References *specfile.ReferenceDocument
+	advice     []diagnostic.Diagnostic
 }
 
 func ParseComponent(data []byte) (*Component, error) {
@@ -53,7 +54,7 @@ func ParseComponentMarkdown(input *specfile.Markdown) (*Component, error) {
 	if err := doc.ValidateReferences(); err != nil {
 		return nil, err
 	}
-	return &Component{Name: doc.Name, ID: meta.ID, Parent: parent, References: doc.References()}, nil
+	return &Component{Name: doc.Name, ID: meta.ID, Parent: parent, References: doc.References(), advice: boundaryAdvice(doc)}, nil
 }
 
 func readComponent(files *specfile.SourceSet, path string) (*Component, error) {
@@ -72,13 +73,58 @@ func readComponent(files *specfile.SourceSet, path string) (*Component, error) {
 	if err := ComponentLayout.CheckName(path, c.Name); err != nil {
 		return nil, err
 	}
+	c.advice = withPath(c.advice, path)
 	return c, nil
 }
 
 func ComponentCheckType() check.Type {
-	kind := check.ReadType(ComponentLayout, readComponent, func(c *Component) *specfile.ReferenceDocument { return c.References }, nil)
+	kind := check.ReadType(ComponentLayout, readComponent, func(c *Component) *specfile.ReferenceDocument { return c.References }, func(c *Component) []diagnostic.Diagnostic { return c.advice })
 	kind.Context = CheckContext
 	return kind
+}
+
+// ComponentMember is a discovered component with the declaration its Part of
+// link names and the system at the end of that chain.
+type ComponentMember struct {
+	Name   string
+	Path   string
+	Parent string
+	System *System
+}
+
+// Components discovers the components below path in source order, each with
+// its explicit Part of parent and governing system.
+func Components(path string) ([]ComponentMember, error) {
+	dir, err := specfile.Directory(path)
+	if err != nil {
+		return nil, err
+	}
+	paths, err := specfile.Discover(dir, ComponentLayout.Match)
+	if err != nil {
+		return nil, err
+	}
+	files := &specfile.SourceSet{}
+	members := []ComponentMember{}
+	for _, file := range paths {
+		boundary, err := specfile.ContextRoot(ComponentLayout.ContextDir(file))
+		if err != nil {
+			return nil, err
+		}
+		chain, err := parentChain(files, file, boundary)
+		if err != nil {
+			return nil, err
+		}
+		c, err := readComponent(files, file)
+		if err != nil {
+			return nil, err
+		}
+		governing, err := ReadFrom(files, chain[len(chain)-1])
+		if err != nil {
+			return nil, err
+		}
+		members = append(members, ComponentMember{Name: c.Name, Path: file, Parent: chain[1], System: governing})
+	}
+	return members, nil
 }
 
 // SubjectChain returns the component declarations from the local owner to its

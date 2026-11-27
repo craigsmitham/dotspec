@@ -37,7 +37,7 @@ func run(check bool) error {
 		return err
 	}
 	var reference strings.Builder
-	reference.WriteString("# CLI reference\n\nRun project commands in the directory containing your specifications. Substitute your own names, paths and project selectors in the examples. Handbook reading commands work from any directory.\n\n")
+	reference.WriteString("# CLI reference\n\nRun project commands in the directory containing your specifications. Substitute your own names and paths in the examples. The root command's flags, including `-C`, apply to every command. Handbook reading commands work from any directory.\n\n")
 	writeCommand(&reference, cli.NewRoot())
 	gallery, err := outputGallery()
 	if err != nil {
@@ -146,19 +146,25 @@ func writeCommand(out *strings.Builder, cmd *cobra.Command) {
 		fmt.Fprintf(out, "\n%s\n", strings.TrimPrefix(cmd.Long, cmd.Short+"\n\n"))
 	}
 	if cmd.Example != "" {
-		fmt.Fprintf(out, "\n```sh\n%s\n```\n", cmd.Example)
+		// Help indents examples; a fenced block needs no indent.
+		example := strings.ReplaceAll(strings.TrimPrefix(cmd.Example, "  "), "\n  ", "\n")
+		fmt.Fprintf(out, "\n```sh\n%s\n```\n", example)
 	}
-	if cmd.HasAvailableFlags() {
+	// Global flags such as -C appear once, in the root command's table.
+	if cmd.HasAvailableLocalFlags() {
 		out.WriteString("\n| Flag | Default | Description |\n| --- | --- | --- |\n")
-		cmd.Flags().VisitAll(func(f *pflag.Flag) {
+		cmd.LocalFlags().VisitAll(func(f *pflag.Flag) {
 			if f.Hidden {
 				return
 			}
 			name := "--" + f.Name
 			if f.Shorthand != "" {
-				name += ", -" + f.Shorthand
+				name = "-" + f.Shorthand + ", " + name
 			}
-			fmt.Fprintf(out, "| `%s` | `%s` | %s |\n", name, escape(f.DefValue), escape(f.Usage))
+			if value, _ := pflag.UnquoteUsage(f); value != "" {
+				name += " " + value
+			}
+			fmt.Fprintf(out, "| `%s` | `%s` | %s |\n", escape(name), escape(f.DefValue), escape(f.Usage))
 		})
 	}
 	out.WriteByte('\n')
@@ -188,28 +194,22 @@ func outputGallery() (result string, err error) {
 		return "", fmt.Errorf("initialize example repository: %w: %s", err, output)
 	}
 	var gallery strings.Builder
-	gallery.WriteString("# Command output examples\n\nThese commands run in order in a new Git repository. The init commands create the specifications used by later commands. `$PROJECT` stands for that directory’s absolute path.\n\n")
+	gallery.WriteString("# Command output examples\n\nThese commands run in order in a new Git repository. `init` starts the project and the `new` commands create the specifications used by later commands. `$PROJECT` stands for that directory’s absolute path.\n\n")
 	for _, args := range [][]string{
-		{"system", "init"}, {"job", "init", "develop-requirements"},
-		{"system", "show"}, {"job", "show", "develop-requirements"},
-		{"job", "outcome", "list", "develop-requirements", "--json"},
-		{"job", "map", "develop-requirements", "--format", "mermaid"},
-		{"job", "check", "develop-requirements", "--json"},
-		{"use-case", "init", "check-specifications"},
-		{"use-case", "show", "check-specifications", "--json"},
-		{"use-case", "init", "review-change", "--template", "expanded"},
-		{"use-case", "list", "--overview"},
-		{"use-case", "check", "check-specifications", "--json"},
-		{"concept", "init", "job-map"},
-		{"concept", "show", "job-map", "--json"},
-		{"concept", "check", "job-map", "--json"},
-		{"requirement", "init", "diagnostic-severity", "--preset", "quality"},
-		{"requirement", "show", "diagnostic-severity", "--json"},
-		{"requirement", "check", "diagnostic-severity", "--json"},
-		{"requirement", "init", "reject-existing-target"},
-		{"requirement", "show", "reject-existing-target", "--json"},
-		{"requirement", "list", "--json"},
-		{"requirement", "check", "reject-existing-target", "--json"},
+		{"init", "Bookings"}, {"new", "job", "develop-requirements"},
+		{"list", "system"}, {"list", "job"},
+		{"check", "specs/jobs/develop-requirements.job.spec.md", "--json"},
+		{"new", "use-case", "check-specifications"},
+		{"new", "use-case", "review-change", "--template", "expanded"},
+		{"list", "use-case", "--json"},
+		{"check", "specs/use-cases/check-specifications.use-case.spec.md", "--json"},
+		{"new", "concept", "job-map"},
+		{"check", "specs/concepts/job-map.concept.spec.md", "--json"},
+		{"new", "requirement", "diagnostic-severity"},
+		{"check", "specs/requirements/diagnostic-severity.requirement.spec.md", "--json"},
+		{"new", "requirement", "reject-existing-target"},
+		{"list", "requirement"},
+		{"check", "specs/requirements/reject-existing-target.requirement.spec.md", "--json"},
 		{"sources", "--json"},
 	} {
 		var out, errOut bytes.Buffer

@@ -63,6 +63,11 @@ func ParseQualityAttributeMarkdown(path string, input *specfile.Markdown) (*Attr
 	return &AttributeDocument{Attribute: a, References: doc.References()}, nil
 }
 
+// ReadQualityAttribute reads one system quality attribute declaration.
+func ReadQualityAttribute(path string) (*AttributeDocument, error) {
+	return readAttribute(&specfile.SourceSet{}, path)
+}
+
 func readAttribute(files *specfile.SourceSet, path string) (*AttributeDocument, error) {
 	input, err := files.Markdown(path)
 	if err != nil {

@@ -4,11 +4,11 @@ id: model-source-fidelity
 quality_attributes: [source-preservation]
 ---
 
-# Preserve source and represented content in model exports
+# Preserve source and represented content in specification snapshots
 
 ## Applies to
 
-Specification-model exports and validation of their saved snapshots, including
+Snapshot exports and validation of saved snapshots, including
 all supported specification types, malformed specifications, directly
 consulted Markdown, and other acquired reference targets.
 
@@ -36,7 +36,7 @@ qualifications and unresolved decisions. Source ranges let consumers trace each 
 
 ## Evidence
 
-Checks for this requirement include [content tests](../../internal/model/content_test.go), [export tests](../../internal/model/export_test.go), [export conformance tests](../../internal/model/export_conformance_test.go), [CLI model tests](../../internal/cli/model_test.go).
+Checks for this requirement include [content tests](../../internal/model/content_test.go), [export tests](../../internal/model/export_test.go), [export conformance tests](../../internal/model/export_conformance_test.go), [CLI snapshot tests](../../internal/cli/snapshot_test.go).
 
 ## Related specifications
 

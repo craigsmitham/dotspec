@@ -22,12 +22,15 @@ type ReferenceDocument struct {
 type Reference struct {
 	Destination string
 	Location    diagnostic.Location
+	// Role is the author-stated role of a frontmatter companion; authored body
+	// links have none.
+	Role string
 }
 
 func (o *Outline) References() *ReferenceDocument {
 	refs := &ReferenceDocument{Anchors: o.Anchors, Links: []Reference{}}
 	for _, c := range o.Companions {
-		refs.Links = append(refs.Links, Reference{c.Target, c.Location})
+		refs.Links = append(refs.Links, Reference{Destination: c.Target, Location: c.Location, Role: c.Role})
 	}
 	outlineLinks(o, o.AST, refs)
 	return refs
@@ -36,7 +39,7 @@ func (o *Outline) References() *ReferenceDocument {
 func outlineLinks(o *Outline, root ast.Node, refs *ReferenceDocument) {
 	_ = ast.Walk(root, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if link, ok := n.(*ast.Link); entering && ok {
-			refs.Links = append(refs.Links, Reference{string(link.Destination), o.Location(link.Pos(), string(link.Destination))})
+			refs.Links = append(refs.Links, Reference{Destination: string(link.Destination), Location: o.Location(link.Pos(), string(link.Destination))})
 		}
 		return ast.WalkContinue, nil
 	})

@@ -19,7 +19,7 @@ code they describe.
 
 A specification records product intent for one independently maintained subject. Each `*.spec.md` file declares one root subject and owns its parts. A use case owns its steps and extensions. A requirement that several use cases rely on has its own declaration.
 
-The specifications in product scope and the relationships among them compose the product specification that dotspec manages. Authors can develop it incrementally and keep each declaration alongside the product or component it describes. Generated reports let people and agents read those decisions together.
+The specifications in product scope and the relationships among them compose the product specification that dotspec manages. Authors can develop it incrementally and keep each declaration alongside the product or component it describes. The generated specification lets people and agents read those decisions together.
 
 A specification can cite an external contract for the provision it adopts, a reusable quality model for a term, or an executable test for evidence. Each retains its own authority. dotspec helps readers trace those sources and inspect verification coverage. Assessing the running implementation takes additional evidence.
 

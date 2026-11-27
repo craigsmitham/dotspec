@@ -4,7 +4,7 @@ exec git init -q
 exec git add specs/root.system.spec.md ignored/specs/tracked.system.spec.md
 cp ignore.txt .gitignore
 exec git init -q nested
-exec dotspec system list --json
+exec dotspec list system --json
 stdout 'Root'
 stdout 'Tracked'
 ! stdout 'Untracked'
@@ -14,9 +14,9 @@ exec dotspec check --json
 stdout '"files_discovered": 2'
 ! stderr .
 cd nested
-exec dotspec system show
+exec dotspec list system
 stdout 'Nested'
-stdout 'Enclosing system document: None'
+! stdout 'Root'
 -- ignore.txt --
 ignored/
 untracked/

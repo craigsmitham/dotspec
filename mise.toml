@@ -34,7 +34,7 @@ run = "go test ./..."
 
 [tasks.generate]
 description = "Regenerate the guide map, CLI reference, command output examples, and both project specifications"
-run = ["go run ./scripts/generate", "go run . spec build --project dotspec", "go run . spec build --project todo"]
+run = ["go run ./scripts/generate", "go run . build", "go run . build -C examples/todo"]
 
 [tasks.generated-check]
 description = "Verify generated docs and examples without writing"

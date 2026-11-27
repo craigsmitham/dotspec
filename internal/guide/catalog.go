@@ -48,7 +48,7 @@ func (d Destination) Form() string {
 		return "How-to"
 	case strings.HasPrefix(d.Page, "examples/"), strings.HasPrefix(d.Page, "specs/"):
 		return "Example"
-	case strings.HasPrefix(d.Page, "docs/reference/"), strings.HasPrefix(d.Page, "model/"):
+	case strings.HasPrefix(d.Page, "docs/reference/"), strings.HasPrefix(d.Page, "model/"), strings.HasPrefix(d.Page, qualityModels+"/"):
 		return "Reference"
 	default:
 		return "Handbook"

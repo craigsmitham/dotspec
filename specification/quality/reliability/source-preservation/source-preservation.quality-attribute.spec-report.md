@@ -16,7 +16,7 @@ Whether inspection preserves the source material it examines.
 **Classifies**
 
 - [Inspection preserves source material](<../../../requirements/inspection-preserves-source.requirement.spec-report.md>)
-- [Preserve source and represented content in model exports](<../../../requirements/model-source-fidelity.requirement.spec-report.md>)
+- [Preserve source and represented content in specification snapshots](<../../../requirements/model-source-fidelity.requirement.spec-report.md>)
 - [Reject initialization at an existing target](<../../../requirements/reject-existing-target.requirement.spec-report.md>)
 
 **Parent attribute**

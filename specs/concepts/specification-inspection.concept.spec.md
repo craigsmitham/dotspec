@@ -38,7 +38,7 @@ supported specifications were found.
 
 ### Inspect one specification
 
-Select a supported specification by type, local slug, and project directory.
+Select a supported specification by its source path, relative to the working directory; its typed filename suffix identifies the kind.
 Inspect it and its required system and reference context using the same
 diagnostic rules as the project check. Sibling specifications are consulted only
 when referenced by the selected specification or its system context.

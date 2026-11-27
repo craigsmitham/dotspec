@@ -27,12 +27,30 @@ func target(t *testing.T, raw string) string {
 	return path
 }
 
+const iso = "iso-25010-2023"
+
+// shared groups one term under two roots, so adoption must copy both parents.
+const shared = "---\ntype: quality-model\nid: shared\n---\n# Shared qualities\n## Quality attributes\n### Reliable\n**ID:** reliable\nKeeps working.\n### Secure\n**ID:** secure\nResists misuse.\n### Resilience\n**ID:** resilience\n**Sub-attribute of:** reliable, secure\nRecovers from disruption, including attacks.\n### Safe\n**ID:** safe\nAvoids harm.\n"
+
+func sharedModel(t *testing.T) *qualitymodel.QualityModel {
+	t.Helper()
+	path := filepath.Join(t.TempDir(), "shared.quality-model.md")
+	if err := os.WriteFile(path, []byte(shared), 0644); err != nil {
+		t.Fatal(err)
+	}
+	m, err := qualitymodel.Read(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return m
+}
+
 const plain = "---\ntype: system-spec\n---\n# System\n## Purpose\nP.\n## Scope\nS.\n"
 
 func TestDefaultPreviewAndApply(t *testing.T) {
 	raw := plain
 	path := target(t, raw)
-	m, err := qualitymodel.Show(".", qualitymodel.Default)
+	m, err := qualitymodel.Show(".", iso)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -63,8 +81,11 @@ func TestDefaultPreviewAndApply(t *testing.T) {
 	if !strings.Contains(parsed.QualityAttributes[0].Definition, "quality model definition") {
 		t.Fatal("source link missing")
 	}
-	if next, err := Run(m, path, Options{Attributes: []string{"reliability", "maintainability"}}); err != nil || strings.Join(next.Added, ",") != "maintainability" {
-		t.Fatal("expected reuse and one addition", err, next.Added)
+	if _, err := Run(m, path, Options{Attributes: []string{"reliability", "maintainability"}}); err == nil || !strings.Contains(err.Error(), "reliability already exists") {
+		t.Fatal("a named attribute the system declares must be refused", err)
+	}
+	if next, err := Run(m, path, Options{Attributes: []string{"maintainability"}}); err != nil || strings.Join(next.Added, ",") != "maintainability" {
+		t.Fatal("expected one addition", err, next.Added)
 	}
 	if after, _ := os.ReadFile(path); string(after) != raw {
 		t.Fatal("system source changed")
@@ -74,10 +95,14 @@ func TestDefaultPreviewAndApply(t *testing.T) {
 	}
 }
 
-func TestDefaultWholeModelAndAppend(t *testing.T) {
+func TestEveryTermInOneAdoption(t *testing.T) {
 	path := target(t, plain)
-	m, _ := qualitymodel.Show(".", qualitymodel.Default)
-	r, err := Run(m, path, Options{All: true, DryRun: false})
+	m, _ := qualitymodel.Show(".", iso)
+	var ids []string
+	for _, a := range m.QualityAttributes {
+		ids = append(ids, a.ID)
+	}
+	r, err := Run(m, path, Options{Attributes: ids, DryRun: false})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -137,10 +162,10 @@ func TestLinkRelocationKeepsCodeSpanLabels(t *testing.T) {
 }
 
 func TestFailureLeavesOriginal(t *testing.T) {
-	m, _ := qualitymodel.Show(".", "furps")
+	m, _ := qualitymodel.Show(".", iso)
 	for _, raw := range []string{"invalid specification", strings.ReplaceAll(plain, "# System", "# Wrong name")} {
 		path := target(t, raw)
-		if _, err := Run(m, path, Options{All: true, DryRun: false}); err == nil {
+		if _, err := Run(m, path, Options{Attributes: []string{"recoverability"}, DryRun: false}); err == nil {
 			t.Fatal("unparseable insertion accepted")
 		}
 		data, _ := os.ReadFile(path)
@@ -151,14 +176,14 @@ func TestFailureLeavesOriginal(t *testing.T) {
 	path := target(t, plain)
 	link := filepath.Join(t.TempDir(), "target.system.spec.md")
 	if err := os.Symlink(path, link); err == nil {
-		if _, err := Run(m, link, Options{All: true, DryRun: false}); err == nil {
+		if _, err := Run(m, link, Options{Attributes: []string{"recoverability"}, DryRun: false}); err == nil {
 			t.Fatal("symlink target accepted")
 		}
 	}
 }
 
 func TestISOLeafCopiesItsSingleParent(t *testing.T) {
-	m, err := qualitymodel.Show(".", qualitymodel.Default)
+	m, err := qualitymodel.Show(".", iso)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -182,11 +207,8 @@ func TestISOLeafCopiesItsSingleParent(t *testing.T) {
 	}
 }
 
-func TestQ42SharedQualityCopiesAllDimensions(t *testing.T) {
-	m, err := qualitymodel.Show(".", "q42")
-	if err != nil {
-		t.Fatal(err)
-	}
+func TestSharedQualityCopiesAllDimensions(t *testing.T) {
+	m := sharedModel(t)
 	path := target(t, plain)
 	r, err := Run(m, path, Options{Attributes: []string{"resilience", "resilience"}, DryRun: false})
 	if err != nil {
@@ -203,8 +225,8 @@ func TestQ42SharedQualityCopiesAllDimensions(t *testing.T) {
 	if strings.Join(a.SubattributeOf, ",") != "reliable,secure" {
 		t.Fatal("lost grouping")
 	}
-	if !strings.Contains(a.Definition, "creativecommons.org/licenses/by-sa/4.0/") || !strings.Contains(a.Definition, "0185215bfc133bac6a8091029b79b7104e47e351") {
-		t.Fatal("lost attribution")
+	if s.FindQualityAttribute("safe") != nil {
+		t.Fatal("unselected root copied")
 	}
 	if got := s.QualityAttributeAncestors([]string{"resilience"}); strings.Join(got, ",") != "reliable,secure" {
 		t.Fatalf("navigation: %v", got)
@@ -223,7 +245,7 @@ func TestAdoptUnderTailoredParent(t *testing.T) {
 	if err := os.WriteFile(parent, []byte(original), 0644); err != nil {
 		t.Fatal(err)
 	}
-	m, _ := qualitymodel.Show(".", "q42")
+	m := sharedModel(t)
 	opts := Options{Attributes: []string{"resilience", "resilience"}, DryRun: true}
 	preview, err := Run(m, path, opts)
 	if err != nil {
@@ -259,15 +281,37 @@ func TestAdoptUnderTailoredParent(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	repeat, err := Run(other, path, Options{Attributes: []string{"reliable"}})
-	if err != nil || len(repeat.Added) != 0 || len(repeat.Entries) != 1 || repeat.Entries[0].Path != parent || repeat.Entries[0].Role != "requested" {
-		t.Fatal(repeat, err)
+	if _, err := Run(other, path, Options{Attributes: []string{"reliable"}}); err == nil || !strings.Contains(err.Error(), "already exists") {
+		t.Fatal("a declared attribute was adopted again", err)
+	}
+}
+
+func TestBlankAttributes(t *testing.T) {
+	path := target(t, plain)
+	preview, err := Blank(path, Options{Attributes: []string{"speed", "data-retention"}, DryRun: true})
+	if err != nil || len(preview.Entries) != 2 || !strings.Contains(preview.Entries[1].Content, "# Data retention\n") {
+		t.Fatal(preview, err)
+	}
+	if _, err := os.Stat(preview.Entries[0].Path); !os.IsNotExist(err) {
+		t.Fatal("preview wrote a file")
+	}
+	if _, err := Blank(path, Options{Attributes: []string{"speed"}}); err != nil {
+		t.Fatal(err)
+	}
+	parsed, err := system.Read(path)
+	if err != nil || len(parsed.QualityAttributes) != 1 || parsed.QualityAttributes[0].ID != "speed" {
+		t.Fatal(parsed, err)
+	}
+	for _, ids := range [][]string{{"speed"}, {"Bad--ID"}, {"twice", "twice"}} {
+		if _, err := Blank(path, Options{Attributes: ids}); err == nil {
+			t.Errorf("%v: accepted", ids)
+		}
 	}
 }
 
 func TestSiblingAdoptionsSerialize(t *testing.T) {
 	path := target(t, plain)
-	m, _ := qualitymodel.Show(".", qualitymodel.Default)
+	m, _ := qualitymodel.Show(".", iso)
 	ready := make(chan struct{})
 	done := make(chan error, 2)
 	for _, id := range []string{"recoverability", "fault-tolerance"} {
@@ -316,7 +360,7 @@ func TestPublicationRollback(t *testing.T) {
 
 func TestRejectPartialSelectionAndDestinationCollision(t *testing.T) {
 	path := target(t, plain)
-	m, _ := qualitymodel.Show(".", qualitymodel.Default)
+	m, _ := qualitymodel.Show(".", iso)
 	q := filepath.Join(filepath.Dir(path), "quality")
 	if _, err := Run(m, path, Options{Attributes: []string{"recoverability", "typo"}}); err == nil {
 		t.Fatal("accepted unknown attribute")
@@ -340,16 +384,16 @@ func TestRejectPartialSelectionAndDestinationCollision(t *testing.T) {
 }
 
 func TestBundledCitationUsesReleaseAndSourceHeading(t *testing.T) {
-	m, err := qualitymodel.Show(".", "furps")
+	m, err := qualitymodel.Show(".", iso)
 	if err != nil {
 		t.Fatal(err)
 	}
-	plan, err := Run(m, target(t, plain), Options{Attributes: []string{"failure-frequency-and-severity"}, DryRun: true, Revision: "fixture-commit"})
+	plan, err := Run(m, target(t, plain), Options{Attributes: []string{"recoverability"}, DryRun: true, Revision: "fixture-commit"})
 	if err != nil {
 		t.Fatal(err)
 	}
 	leaf := plan.Entries[len(plan.Entries)-1]
-	if !strings.Contains(leaf.Content, "/blob/fixture-commit/internal/qualitymodel/specs/quality-models/furps.quality-model.md#frequency-and-severity-of-failure") {
+	if !strings.Contains(leaf.Content, "/blob/fixture-commit/internal/qualitymodel/specs/quality-models/iso-25010-2023.quality-model.md#recoverability") {
 		t.Fatal(leaf.Content)
 	}
 }

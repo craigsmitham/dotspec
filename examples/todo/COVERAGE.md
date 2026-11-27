@@ -6,30 +6,31 @@ Use this inventory when reviewing what the To-do example demonstrates or adding 
 
 | Surface | Example and check |
 | --- | --- |
-| Project discovery, selection and scope | Select To-do by path, then by project name for the attribute filter. The gate checks the scope in the JSON inventory. The [workspace tests](../../internal/cli/workspace_test.go) exercise separate multi-project results with `--all`. The [discovery fixture](../../internal/integration/testdata/discovery.txtar) distinguishes tracked, ignored and nested repository files. |
+| Project discovery, selection and scope | Select To-do with `-C`, then list its requirements from its `app/` subdirectory. The gate checks the scope in the JSON inventory. The [workspace tests](../../internal/cli/workspace_test.go) exercise separate multi-project results with `--all`. The [discovery fixture](../../internal/integration/testdata/discovery.txtar) distinguishes tracked, ignored and nested repository files. |
 | Generated specification | From [the overview](specification/personal-task-list.system.spec-report.md), follow a feature and the system’s [requirements index](specification/personal-task-list.system.spec-report.md#requirements) to the restart requirement, its edit link and verification method. The gate rebuilds from sources and deliberately breaks a condition and a navigation link in a temporary project. |
-| Specification families | List and show each collection. Create a named `component` source and verify the Task service report links to its local acknowledgement requirement. Run each available focused check, then the shared project check. Show the restart requirement through the durability attribute filter. Follow the Durability report to both the colocated restart requirement and the component-owned acknowledgement requirement. |
-| Authoring and diagnostics | In a temporary To-do copy, initialize a system and each collection. Exercise general, ODI and job-story jobs, brief and expanded use cases, and general and quality requirements. Preview and apply the local quality model, check repeated adoption preserves the local definition and break a link to obtain a structural finding. The [quality-model fixture](../../internal/integration/testdata/quality-models.txtar) also exercises bundled starters and ancestor copying. |
-| Job navigation | Map the personal commitments job in text and Mermaid, then find the named outcome in the job's outcome list. |
-| Source inventory and model interchange | Find the acceptance file and its referring requirement, export a snapshot to a temporary file and validate it. Inspect the typed edges. Compare the scope with the [independent snapshot exercise](../../internal/integration/testdata/model.txtar). |
+| Specification families | List each kind with `dotspec list <kind>`, including the component tree and the adopted quality attributes, and check each listed file by its path. Create a named `component` source and verify the Task service report links to its local acknowledgement requirement. Run the shared project check. Follow the Durability report to both the colocated restart requirement and the component-owned acknowledgement requirement. |
+| Authoring and diagnostics | In a temporary To-do copy, create a system that is part of To-do and one specification of each kind with `dotspec new`. Exercise brief and expanded use cases, and requirements with and without a quality attribute. Preview and apply the local quality model, check that adopting a declared attribute again is refused and the local definition is preserved, break a link to obtain a structural finding and point the restart requirement’s **Supports** at a concept to obtain a relationship finding on that requirement. The [quality-model fixture](../../internal/integration/testdata/quality-models.txtar) also exercises the bundled ISO/IEC 25010 model, a term with two parents, and ancestor copying. |
+| Source inventory and model interchange | Find the acceptance file and its referring requirement, export a snapshot to a temporary file and validate it. Inspect the typed edges. Compare the scope with the [independent snapshot exercise](../../internal/integration/testdata/snapshot.txtar). |
 | Companions | The [restart requirement](specs/requirements/restart.requirement.spec.md) lists the `verify` function in the acceptance test as a `verifies` companion. The [availability requirement](specs/requirements/availability.requirement.spec.md) lists the README’s run instructions the same way. Open the restart report’s **Companions** and **Verification** sections, then the system’s [companions index](specification/companions.md) under **Browse specifications**. In an export, find each `Companion` and its frontmatter target. The [companion fixture](../../internal/integration/testdata/companions.txtar) exercises formal models, feature files and the findings for a missing definition, an unknown role and an unlisted model. |
 | Guides and diagnostics | Follow each topic to its bundled pages and each diagnostic to its assigned passage. Open the worked job from the Jobs topic. The [guide scenario](../../internal/integration/testdata/docs.txtar) starts in a consumer directory. |
-| Help, completion and manual | Visit the command groups through public help. Run the existing [subprocess scenario](../../internal/integration/testdata/help.txtar) for version, plain output, four shell completions and the roff manual. |
+| Help, completion and manual | Visit the command groups through public help. Run the existing [subprocess scenario](../../internal/integration/testdata/help.txtar) for version, plain output, misspelled commands and missing operands, four shell completions and the roff manual that release archives ship. |
 
-For the model views, run `mise exec -- go run . model VIEW --path examples/todo` from the repository root, substituting one of the view names below.
+The generated specification places each member of Personal task list under its system. Durability appears in the overview’s [Quality Attributes](specification/personal-task-list.system.spec-report.md#quality-attributes). Personal data quality is a reference, not a member. The overview leaves it out, the [quality models index](specification/quality-models.md) lists it, and Durability’s page cites it as the [source definition](specification/quality/durability/durability.quality-attribute.spec-report.md#definition). [Task list forms](specification/interfaces/task-list-forms.interface.spec-report.md#adopts) identifies the provision adopted for redirects.
 
-| View | What to look for |
+The generated specification presents the relationships the authored specifications record. Check these reports.
+
+| Report | What to look for |
 | --- | --- |
-| `product personal-task-list` | Durability is a member. Personal data quality appears in the reference catalog. Task list forms identifies the provision adopted for redirects. |
-| `overview` | The system provides Task list forms. |
-| `pegs` | The follow-up policy says who still owns a result when the chosen day passes. |
-| `needs` | Less reconstruction appears as a desired outcome. |
-| `trace` | The restart requirement refines the standalone availability requirement. |
-| `review` | The return scenario illustrates Resume after a request for a photo, and Complete when a reply settles the commitment. |
+| [System architecture](specification/personal-task-list.system.spec-report.md#interfaces) | The system provides Task list forms. |
+| [System business rules](specification/personal-task-list.system.spec-report.md#business-rules) | The follow-up policy says who still owns a result when the chosen day passes. |
+| [Job steps](specification/jobs/see-personal-commitments-through.job.spec-report.md#steps) | The steps appear in authored order. Recall outstanding work lists Less reconstruction under **Applies here**. |
+| [Job outcomes](specification/jobs/see-personal-commitments-through.job.spec-report.md#less-reconstruction) | Less reconstruction appears as a desired outcome, with the capability and requirement that support it. |
+| [Restart requirement](specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md#refines) | The restart requirement refines the standalone availability requirement. |
+| [Return scenario](specification/use-cases/decide-what-to-do-about-a-waiting-errand.use-case.spec-report.md) | The return scenario illustrates Resume after a request for a photo, and Complete when a reply settles the commitment. |
 
 ## Handbook and authoring exercises
 
-With dotspec on your PATH, use `dotspec docs TOPIC` for each topic below. To use this checkout’s CLI from the repository root, substitute `mise exec -- go run . docs TOPIC`. The questions identify the decision a reader should be able to review.
+With dotspec on your PATH, use `dotspec docs <topic>` for each topic below. To use this checkout’s CLI from the repository root, substitute `mise exec -- go run . docs <topic>`. The questions identify the decision a reader should be able to review.
 
 Each case changes one fact from the walkthrough. The answers come from the authored specifications.
 
@@ -50,7 +51,7 @@ Each case changes one fact from the walkthrough. The answers come from the autho
 
 ### Try changing a refinement into an ordinary citation
 
-Use a disposable copy of the To-do project and a dotspec CLI on your PATH. In the copy’s root, run `dotspec model trace` and find the `refines` row from *Preserve tasks across restart* to *Keep recorded work available*. Change only the heading `## Refines` in the restart requirement to `## Related specifications`. Run `dotspec requirement check restart` and then `dotspec model trace` again. The citation still resolves and the focused check succeeds. The refinement row disappears. Restore the heading and rerun the trace to recover the row.
+Use a disposable copy of the To-do project and a dotspec CLI on your PATH. In the copy’s generated restart requirement report, `specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md`, find **Refines** with its link to *Keep recorded work available*. Change only the heading `## Refines` in the restart requirement to `## Related specifications`. Run `dotspec check specs/requirements/restart.requirement.spec.md`, then `dotspec build` from the copy’s root. The citation still resolves and the focused check succeeds. The rebuilt report loses its **Refines** section, and *Keep recorded work available* no longer lists the restart requirement under **Refined by**. Restore the heading and rebuild to recover both links.
 
 The example gate tests this specific relationship by applying the same edit in its own temporary copy. Its success output includes `Rejected relationship regression: missing restart refinement`. That message comes from comparing the exported relationships with the example’s expected refinement. [Example gate](../../scripts/check-example/check.py).
 
@@ -71,7 +72,7 @@ These are the review assignments for fields that currently have no populated wit
 | `SystemQualityAttribute.derived_from`, `SystemQualityAttribute.relies_on`, `SystemQualityAttribute.supports` | Give a proposed quality attribute a research basis, identify an assumption it relies on, and trace the goal it supports. |
 | `BusinessRule.refines`, `BusinessRule.refines_content` | In a scratch copy, add a retention business rule that refines *Completion preserves a commitment*. Check that its Refines endpoint is the general business rule. |
 | `Component.concept_uses`, `Component.synchronizations` | In a scratch copy, declare a local feature and its capability under Task service. Link a pair of local concept uses through a synchronization and trace their owners. |
-| `Component.interacts_with`, `Component.interacts_with_content`, `Component.required_interfaces`, `Component.out_of_scope`, `System.part_of`, `System.part_of_content` | In a scratch copy, add an external clock and an explicitly declared subsystem. Compare interaction, interface direction and structural membership in the overview. |
+| `Component.interacts_with`, `Component.interacts_with_content`, `Component.required_interfaces`, `Component.out_of_scope` | In a scratch copy, add an external clock. Compare interaction and interface direction in the overview. |
 | `GlossaryTerm.related_terms`, `AuthoredDocumentRoot.preamble`, `System.constraints` | In a scratch copy, add a preamble, a system constraint and a glossary cross-reference using a Markdown reference definition. Inspect original text, occurrence and resolved target. |
 | `ConceptAction.caller_assumptions` | Extend a scratch checklist concept with a caller assumption. Compare it with the enforced guards. |
 | `Applicability.workload` | In a scratch copy of the restart requirement, specify the workload under which restart recovery must succeed. |

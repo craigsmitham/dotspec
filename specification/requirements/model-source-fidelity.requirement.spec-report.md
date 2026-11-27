@@ -1,11 +1,11 @@
 ---
 generated_by: dotspec
 type: requirement-spec-report
-source: "../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-model-exports"
+source: "../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-specification-snapshots"
 ---
 [dotspec](<../dotspec.system.spec-report.md>) › [Requirements](<../dotspec.system.spec-report.md#requirements>)
 
-# Preserve source and represented content in model exports
+# Preserve source and represented content in specification snapshots
 
 ## Statement
 
@@ -21,7 +21,7 @@ retain the available text and findings without acquiring a fabricated domain rec
 
 ## Applies to
 
-Specification-model exports and validation of their saved snapshots, including
+Snapshot exports and validation of saved snapshots, including
 all supported specification types, malformed specifications, directly
 consulted Markdown, and other acquired reference targets.
 
@@ -37,7 +37,7 @@ qualifications and unresolved decisions. Source ranges let consumers trace each 
 
 ## Evidence
 
-Checks for this requirement include [content tests](<../../internal/model/content_test.go>), [export tests](<../../internal/model/export_test.go>), [export conformance tests](<../../internal/model/export_conformance_test.go>), [CLI model tests](<../../internal/cli/model_test.go>).
+Checks for this requirement include [content tests](<../../internal/model/content_test.go>), [export tests](<../../internal/model/export_test.go>), [export conformance tests](<../../internal/model/export_conformance_test.go>), [CLI snapshot tests](<../../internal/cli/snapshot_test.go>).
 
 ## Related specifications
 
@@ -58,4 +58,4 @@ representation and named mappings.
 
 ---
 
-[View source](<../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-model-exports>)
+[View source](<../../specs/requirements/model-source-fidelity.requirement.spec.md#preserve-source-and-represented-content-in-specification-snapshots>)

@@ -4,7 +4,7 @@ Use a reusable model when authors of several systems need a shared vocabulary. H
 
 ## Set the scope and basis
 
-If the model already exists, edit its source. Otherwise, from your project directory, run `dotspec quality-model list`, then `dotspec quality-model show q42`, substituting a listed ID, to see whether a bundled vocabulary already names your term. If its definition fits, [apply it to each system](define-a-system-quality-attribute.md#select-or-define-the-term) instead of defining a new model. To adapt a bundled vocabulary for the team, run `dotspec quality-model init team-quality --from iso-25010-2023` for an editable copy. To start empty, run `dotspec quality-model init team-quality`. In either command, substitute a new slug for your model.
+If the model already exists, edit its source. Otherwise, from your project directory, run `dotspec list quality-model` to see the project's models. Read the bundled model with `dotspec docs quality-models/iso-25010-2023`, or open a project model's source at the path the list prints, to see whether an existing vocabulary already names your term. If its definition fits, [apply it to each system](define-a-system-quality-attribute.md#select-or-define-the-term) instead of defining a new model. To adapt the bundled vocabulary for the team, run `dotspec new quality-model team-quality --from iso-25010-2023` for an editable copy. To start empty, run `dotspec new quality-model team-quality`. In either command, substitute a new slug for your model.
 
 The new file is `specs/quality-models/<slug>.quality-model.md` and declares `type: quality-model`. Give the model a title and replace the prompts in **Description** with its purpose and intended uses. Identify any edition and sources you drew on under **Edition** and **Sources**. If you adapt an external term, tell readers which part of the source meaning you kept and why. For example, ISO/IEC 25010 treats recovery of affected data and restoration of the system's state together. A model specifically about personal records might isolate retention of acknowledged changes for discussion across products. [ISO/IEC 25010:2023, §3.5.4](https://www.iso.org/standard/78176.html) · [Personal data quality](../../../examples/todo/specs/quality-models/personal-data.quality-model.md).
 
@@ -14,16 +14,5 @@ Under `## Quality attributes`, give each attribute a level-three heading, a uniq
 
 Ask what would count in each system. A task list and an expense tracker can both consider whether acknowledged work survives a restart. Their authors can apply that definition to different records. If your shared definition specifies how quickly the expense tracker must recover receipts, move that commitment into the tracker's requirement. [From a shared meaning to a specific promise](../explanations/system-quality-attributes.md#from-a-shared-meaning-to-a-specific-promise).
 
-From the same directory, run `dotspec quality-model check team-quality` and `dotspec quality-model show team-quality` with the model's slug. Inspect the definitions as the second team would read them. Correct any missing parent ID or circular grouping in this model, then run the check again. Once each team can select the relevant terms, use [Define a quality attribute for a system](define-a-system-quality-attribute.md) to tailor them.
+From the same directory, run `dotspec check specs/quality-models/team-quality.quality-model.md` with the model's path, and read the definitions in its source as the second team would. Correct any missing parent ID or circular grouping in this model, then run the check again. Once each team can select the relevant terms, its authors adopt one from their system's directory with `dotspec -C apps/billing new quality-attribute durability --from ../../specs/quality-models/team-quality.quality-model.md`, substituting their system's directory, the term's ID and the model's path relative to that directory, and tailor it as described in [Define a quality attribute for a system](define-a-system-quality-attribute.md). Editing the model later changes only future adoptions. System quality attributes already adopted retain their definitions and requirement links.
 
-## Choose the project default
-
-To use your edited vocabulary whenever someone browses or adopts a term, set `quality.model` in the project's `dotspec.yaml`. Resolve the path from that manifest. For the editable copy created above, use:
-
-```yaml
-name: billing
-quality:
-  model: ./specs/quality-models/team-quality.quality-model.md
-```
-
-Use a bundled ID such as `q42` or `furps` in the same field to choose another starter. Omitting the field selects `iso-25010-2023`. Run `dotspec quality-model list` to see the default, then `dotspec quality-attribute browse` to read its top-level terms. Changing this setting affects future selections. System quality attributes already adopted retain their definitions and requirement links.

@@ -24,7 +24,7 @@ In *Decide what to do about a waiting errand*, the owner returns to a waiting re
 
 ## Acceptance and release
 
-Use these cases when reviewing a change to specification ownership. Work from the root of a dotspec checkout with the [contributor tools](../../../CONTRIBUTING.md) installed. Make the source and generated-file mutations in a disposable copy. The To-do project covers all supported specification types. From the checkout root, `go run . model export --project todo` reads that fixture. From `examples/todo/`, an installed `dotspec` selects it directly.
+Use these cases when reviewing a change to specification ownership. Work from the root of a dotspec checkout with the [contributor tools](../../../CONTRIBUTING.md) installed. Make the source and generated-file mutations in a disposable copy. The To-do project covers all supported specification types. From the checkout root, `go run . -C examples/todo snapshot export` reads that fixture. From `examples/todo/`, an installed `dotspec` selects it directly.
 
 1. Export a fixture covering all supported spec types. Each valid spec file declares one primary subject of its declared type. Named parts resolve to their owning source and heading. The requirements collection consists entirely of requirement-file roots.
 2. Reference one requirement from two use cases and one feature. Export one requirement, preserve all authored references, and resolve every typed relationship to the intended endpoint. Edit its statement once and rebuild. Every generated summary reflects the change and points back to that file.

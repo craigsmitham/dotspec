@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"io"
+	"slices"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/check"
@@ -11,20 +12,16 @@ import (
 )
 
 func newSourcesCommand() *cobra.Command {
-	cmd := &cobra.Command{Use: "sources", Short: "List specifications, reference documents, system context, and directly referenced files",
-		Long:    "Inventory sources using the same scan and reference checks as check. File references do not assign authority or classify their contents.\n\n" + exitPolicy,
-		Example: "dotspec sources\ndotspec sources --path internal --json", Args: cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, _ []string) error {
-			path, err := projectPath(cmd)
-			if err != nil {
-				return err
-			}
-			format, err := outputFormat(cmd)
+	cmd := &cobra.Command{Use: "sources [<path>]", Short: "List specifications, their companions, reference documents, system context, and referenced files",
+		Long:    "List the files check reads: specifications, reference documents, enclosing system context and directly referenced files, each with the references that reach it. A file a specification lists as a companion shows the role that specification states for it. With no <path>, sources covers the enclosing project; a directory narrows it to that subtree.\n\nA listed reference means its target exists and can be addressed, not that the target is authoritative; a companion's role is the author's declaration, not a verified relationship. " + findingsExit + "\n\nLearn more: dotspec docs docs/reference/inspection.md#discover-specification-sources",
+		Example: "dotspec sources\ndotspec sources internal --json", Args: operands(0, 1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			path, err := projectScope.dir(optionalPath(args))
 			if err != nil {
 				return err
 			}
 			r := check.Sources(path, speckinds.All()...)
-			if err := writeSources(cmd.OutOrStdout(), r, format); err != nil {
+			if err := writeSources(cmd.OutOrStdout(), r, jsonOutput(cmd)); err != nil {
 				return &exitError{code: 2, err: err}
 			}
 			if code := r.ExitCode(); code != 0 {
@@ -32,48 +29,70 @@ func newSourcesCommand() *cobra.Command {
 			}
 			return nil
 		}}
-	addPath(cmd)
-	addOutput(cmd, false)
+	addJSON(cmd)
 	return cmd
 }
 
-func writeSources(out io.Writer, r check.SourceReport, format string) error {
-	if format == "json" {
+const outsideProjects = "Outside any project"
+
+func writeSources(out io.Writer, r check.SourceReport, asJSON bool) error {
+	if asJSON {
 		return writeJSON(out, r)
 	}
 	var text strings.Builder
-	if r.Scope.Project != nil {
-		fmt.Fprintf(&text, "Project: %s\n", r.Scope.Project.Name)
-	}
-	fmt.Fprintf(&text, "Sources in %s (%s discovery)\n", displayPath(r.Scope.Path), r.Scope.Discovery)
+	// Files are grouped by project, in the order each project first appears,
+	// so the project is printed once per group.
+	var groups []string
+	members := make(map[string][]check.SourceFile)
 	for _, file := range r.Files {
-		fmt.Fprintf(&text, "\n%s\n", displayPath(file.Path))
+		group := outsideProjects
 		if file.Project != nil {
-			fmt.Fprintf(&text, "  Project: %s\n", file.Project.Name)
+			group = "Project: " + file.Project.Name
 		}
-		for _, location := range file.ReferencedBy {
-			fmt.Fprintf(&text, "  Referenced by %s", diagnosticPath(location))
-			if location.Element != "" {
-				fmt.Fprintf(&text, " (%s)", location.Element)
+		if _, seen := members[group]; !seen {
+			groups = append(groups, group)
+		}
+		members[group] = append(members[group], file)
+	}
+	// Without any project, a group heading would say nothing.
+	headed := len(groups) > 1 || len(groups) == 1 && groups[0] != outsideProjects
+	for _, group := range groups {
+		if headed {
+			fmt.Fprintf(&text, "%s\n\n", group)
+		}
+		for _, file := range members[group] {
+			fmt.Fprintf(&text, "%s\n", displayPath(file.Path))
+			for _, location := range file.ReferencedBy {
+				// A frontmatter companion entry is printed with its stated role.
+				companion := slices.IndexFunc(file.CompanionOf, func(c check.SourceCompanion) bool { return c.Location == location })
+				if companion >= 0 {
+					fmt.Fprintf(&text, "  Companion that %s %s (%s)\n", file.CompanionOf[companion].Role, diagnosticPath(location), file.CompanionOf[companion].Target)
+					continue
+				}
+				fmt.Fprintf(&text, "  Referenced by %s", diagnosticPath(location))
+				if location.Element != "" {
+					fmt.Fprintf(&text, " (%s)", location.Element)
+				}
+				text.WriteByte('\n')
 			}
 			text.WriteByte('\n')
 		}
 	}
-	if len(r.Files) == 0 {
-		text.WriteString("\nNo source files found.\n")
+	if r.Complete && len(r.Files) == 0 {
+		text.WriteString("No source files found.\n\n")
 	}
 	for _, d := range r.Diagnostics {
-		fmt.Fprintf(&text, "\n%s\n  %s [%s] %s\n", diagnosticPath(d.Location), d.Severity, d.Rule, d.Message)
+		fmt.Fprintf(&text, "%s\n  %s [%s] %s\n", diagnosticPath(d.Location), d.Severity, d.Rule, d.Message)
 		for _, related := range d.Related {
 			fmt.Fprintf(&text, "  Related: %s\n", diagnosticPath(related))
 		}
+		text.WriteByte('\n')
 	}
-	fmt.Fprintf(&text, "\nSource files: %d.\n", len(r.Files))
-	if r.Complete {
-		text.WriteString("Scan complete.\n")
-	} else {
-		text.WriteString("Scan incomplete.\n")
+	completeness := "scan complete"
+	if !r.Complete {
+		completeness = "scan incomplete"
 	}
+	fmt.Fprintf(&text, "Listed %s in %s (%s).\n", count(len(r.Files), "source file", "source files"), scopeName(r.Scope), completeness)
 	_, err := io.WriteString(out, text.String())
 	return err
 }

@@ -20,18 +20,16 @@ type ProductMember struct {
 }
 
 type ProductSpecification struct {
-	System                string                `json:"system,omitempty"`
-	Scope                 Record                `json:"scope"`
-	Complete              bool                  `json:"complete"`
-	Members               []ProductMember       `json:"members"`
-	Relationships         []Record              `json:"relationships,omitempty"`
-	References            []Record              `json:"references,omitempty"`
-	ReferenceCatalog      []Record              `json:"reference_catalog,omitempty"`
-	Adoptions             []Record              `json:"adoptions,omitempty"`
-	ReferencedSources     []Record              `json:"referenced_sources,omitempty"`
-	Verification          []ProcedureAssessment `json:"verification,omitempty"`
-	VerificationSelection *VerificationContext  `json:"verification_selection,omitempty"`
-	Diagnostics           []Record              `json:"diagnostics,omitempty"`
+	System            string          `json:"system,omitempty"`
+	Scope             Record          `json:"scope"`
+	Complete          bool            `json:"complete"`
+	Members           []ProductMember `json:"members"`
+	Relationships     []Record        `json:"relationships,omitempty"`
+	References        []Record        `json:"references,omitempty"`
+	ReferenceCatalog  []Record        `json:"reference_catalog,omitempty"`
+	Adoptions         []Record        `json:"adoptions,omitempty"`
+	ReferencedSources []Record        `json:"referenced_sources,omitempty"`
+	Diagnostics       []Record        `json:"diagnostics,omitempty"`
 }
 
 // Product selects by system record ID, authored ID, or source basename.
@@ -195,26 +193,4 @@ func (s *Snapshot) Product(selector string) (*ProductSpecification, error) {
 		}
 	}
 	return view, nil
-}
-
-// IncludeEvidence attaches observations for the selected product without
-// introducing a verification run or its procedure into product membership.
-func (v *ProductSpecification) IncludeEvidence(s *Snapshot, root string, evidence VerificationEvidence) error {
-	assessments, err := s.Assessments(root, evidence)
-	if err != nil {
-		return err
-	}
-	v.Verification = nil
-	v.VerificationSelection = nil
-	if evidence.Selection.ProductRevision != "" {
-		v.VerificationSelection = &evidence.Selection
-	}
-	for _, member := range v.Members {
-		for _, a := range assessments[member.ID] {
-			if len(a.Procedures) > 0 || len(a.Observations) > 0 {
-				v.Verification = append(v.Verification, *a)
-			}
-		}
-	}
-	return nil
 }
