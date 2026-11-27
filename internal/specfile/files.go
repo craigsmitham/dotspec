@@ -210,6 +210,72 @@ func regularPath(path, boundary string, skip func(string) (bool, error)) (bool, 
 	return true, nil
 }
 
+type referenceBoundary struct{ reason string }
+
+func (e *referenceBoundary) Error() string { return e.reason }
+
+// ReferenceTarget applies the repository boundary policy for explicit links
+// without reading a target. Check, snapshot extraction and reports share it.
+// allowed is false only for a policy boundary; missing and unreadable targets
+// remain distinct from prohibited traversal.
+func ReferenceTarget(path, root string) (info os.FileInfo, allowed bool, err error) {
+	info, err = referencePath(path, root)
+	var boundary *referenceBoundary
+	return info, !errors.As(err, &boundary), err
+}
+
+// Explicit links may address ignored files and ancestors within a repository,
+// but must not traverse symlinks, Git internals, or another repository. Outside
+// Git the filesystem root is the boundary, matching system context lookup.
+func referencePath(path, root string) (os.FileInfo, error) {
+	if root != "" {
+		rel, err := filepath.Rel(root, path)
+		if err != nil {
+			return nil, err
+		}
+		if rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+			return nil, &referenceBoundary{"relative reference leaves the repository; use an external URL for external navigation"}
+		}
+	}
+	var target os.FileInfo
+	// Walk from root to leaf to avoid touching a path beneath a symlink first.
+	var components []string
+	for current := path; current != root && filepath.Dir(current) != current; current = filepath.Dir(current) {
+		components = append(components, current)
+	}
+	for i := len(components) - 1; i >= 0; i-- {
+		current := components[i]
+		if filepath.Base(current) == ".git" {
+			return nil, &referenceBoundary{"relative reference targets Git metadata"}
+		}
+		info, err := os.Lstat(current)
+		if err != nil {
+			return nil, err
+		}
+		if info.Mode()&os.ModeSymlink != 0 {
+			return nil, &referenceBoundary{"relative reference traverses a symlink: " + current}
+		}
+		if !info.IsDir() && i > 0 {
+			return nil, fs.ErrNotExist
+		}
+		if info.IsDir() && current != root {
+			if _, err := os.Lstat(filepath.Join(current, ".git")); err == nil {
+				return nil, &referenceBoundary{"relative reference enters another repository: " + current}
+			} else if !errors.Is(err, fs.ErrNotExist) {
+				return nil, err
+			}
+		}
+		target = info
+	}
+	if target == nil {
+		return os.Lstat(path)
+	}
+	if !target.IsDir() && !target.Mode().IsRegular() {
+		return nil, &referenceBoundary{"relative reference must target a regular file or directory"}
+	}
+	return target, nil
+}
+
 func walkSelectedPaths(dir string, match func(string) bool, skip func(string) (bool, error)) ([]string, error) {
 	var paths []string
 	err := filepath.WalkDir(dir, func(path string, entry fs.DirEntry, err error) error {

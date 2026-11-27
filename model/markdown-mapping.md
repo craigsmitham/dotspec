@@ -1,6 +1,6 @@
 # Markdown mapping profile
 
-`dotspec-markdown/29` maps authored declarations to the classes and fields in the [model reference](../docs/reference/model/index.md). A `*.<kind>.spec.md` file declares one specification root with `type: <kind>-spec` and names it in the level-one heading. The root owns its nested elements. A reusable quality model is an independent reference root in `*.quality-model.md` with `type: quality-model`. Each named attribute in that file belongs to the model. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
+`dotspec-markdown/30` maps authored declarations to the classes and fields in the [model reference](../docs/reference/model/index.md). A `*.<kind>.spec.md` file declares one specification root with `type: <kind>-spec` and names it in the level-one heading. The root owns its nested elements. A reusable quality model is an independent reference root in `*.quality-model.md` with `type: quality-model`. Each named attribute in that file belongs to the model. The source text is normalized to UTF-8 with LF line endings and no leading byte-order mark.
 
 ## Shared mapping rules
 
@@ -86,7 +86,7 @@ companions:
 
 Each entry maps to a `Companion` element owned by the specification. `Specification.companions` lists them in authored order through declaration containment. A Companion records its `role`, its optional `note` and a `target` `SourceReference`. That reference has form `frontmatter`, its content node is the frontmatter metadata, its `context_owner` is the Companion and its `context_field` is `target`.
 
-A target resolves like any other authored link to a file, directory, Markdown heading or external locator. A fragment in a supported format names a definition found by its leading keyword. The supported formats are Quint (`.qnt`), Alloy (`.als`), TLA+ (`.tla`), Gherkin (`.feature`), Go, Python and txtar. For example, a fragment can name a Quint `val`, an Alloy `assert`, a TLA+ operator, a Gherkin scenario by its heading-style slug, a Go `func`, a Python `def` or a txtar file. A named definition resolves to the target source with rule `native-definition/1`. A missing definition leaves the reference unresolved. Resolution establishes addressability alone. Other formats keep their own fragment meaning, which dotspec leaves unchecked. [Worked restart requirement](../examples/todo/specs/requirements/restart.requirement.spec.md)
+A target resolves like any other authored link to a file, directory, Markdown heading or external locator. A fragment in a supported format names a definition found by its leading keyword. The supported formats are Quint (`.qnt`), Alloy (`.als`), TLA+ (`.tla`), Gherkin (`.feature`), Go, Python and txtar. For example, a fragment can name a Quint `val`, an Alloy `assert`, a TLA+ operator, a Gherkin scenario by its heading-style slug, a Go `func`, a Python `def` or a txtar file. A named definition resolves to the target source with rule `native-definition/1`, and the resolution records the line that declares it. A missing definition leaves the reference unresolved. Resolution establishes addressability alone. Other formats keep their own fragment meaning, which dotspec leaves unchecked. [Worked restart requirement](../examples/todo/specs/requirements/restart.requirement.spec.md)
 
 ## Verification
 

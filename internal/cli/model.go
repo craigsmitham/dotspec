@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/craigsmitham/dotspec/internal/speckinds"
 	modelschema "github.com/craigsmitham/dotspec/model"
 	"github.com/spf13/cobra"
 )
@@ -23,16 +24,9 @@ func newModelCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			result, err := model.Export(path, supportedTypes()...)
+			result, err := exportValidated(path)
 			if err != nil {
 				return err
-			}
-			findings, err := model.Validate(result.Snapshot)
-			if err != nil {
-				return fmt.Errorf("validate exported model: %w", err)
-			}
-			if len(findings) > 0 {
-				return fmt.Errorf("exported model violates %d invariants; first: %s at %s: %s", len(findings), findings[0].Code, findings[0].Path, findings[0].Message)
 			}
 			if err := writeJSON(cmd.OutOrStdout(), result.Snapshot); err != nil {
 				return err
@@ -109,7 +103,10 @@ func newModelCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			result, err := model.Export(path, supportedTypes()...)
+			// Unlike export and the reading views, product has never applied the
+			// exportValidated invariant guard; adding it would make invariant
+			// violations fail this command instead of being projected.
+			result, err := model.Export(path, speckinds.All()...)
 			if err != nil {
 				return err
 			}
@@ -174,16 +171,9 @@ func newModelReadingCommand(name, short, long string, render func(*model.Snapsho
 			if err != nil {
 				return err
 			}
-			result, err := model.Export(path, supportedTypes()...)
+			result, err := exportValidated(path)
 			if err != nil {
 				return err
-			}
-			findings, err := model.Validate(result.Snapshot)
-			if err != nil {
-				return err
-			}
-			if len(findings) > 0 {
-				return fmt.Errorf("exported model violates %d invariants; first: %s", len(findings), findings[0].Message)
 			}
 			output, err := render(result.Snapshot, base)
 			if err != nil {
@@ -201,4 +191,21 @@ func newModelReadingCommand(name, short, long string, render func(*model.Snapsho
 	addAllProjects(cmd)
 	cmd.Flags().String("relative-to", ".", "Directory containing the generated Markdown; source links are relative to it")
 	return cmd
+}
+
+// exportValidated exports the project at path and rejects a snapshot that
+// violates the model's invariants, so commands never emit a malformed model.
+func exportValidated(path string) (model.ExportResult, error) {
+	result, err := model.Export(path, speckinds.All()...)
+	if err != nil {
+		return result, err
+	}
+	findings, err := model.Validate(result.Snapshot)
+	if err != nil {
+		return result, fmt.Errorf("validate exported model: %w", err)
+	}
+	if len(findings) > 0 {
+		return result, fmt.Errorf("exported model violates %d invariants; first: %s at %s: %s", len(findings), findings[0].Code, findings[0].Path, findings[0].Message)
+	}
+	return result, nil
 }

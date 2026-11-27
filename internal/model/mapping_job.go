@@ -1,11 +1,6 @@
 package model
 
 func (m *domainMapper) job(r Record, s *Section) bool {
-	fields := map[string]string{"Job": "statement", "Performer": "performer", "Situation": "situation", "Motivation": "motivation", "Intended progress": "intended_progress"}
-	if field, ok := fields[s.Title]; ok {
-		m.section(r, field, s)
-		return true
-	}
 	switch s.Title {
 	case "Steps":
 		m.declared(r, "steps", s)
@@ -52,14 +47,7 @@ func (m *domainMapper) outcomes(owner Record, s *Section) {
 		x["statement"] = m.doc.Rich(nodes)
 		m.markField(x, "statement", nodes)
 		for _, detail := range sub.Children {
-			if m.traceSection(x, detail) {
-				continue
-			}
-			if detail.Title == "Supporting content" {
-				m.section(x, "supporting_content", detail)
-			} else {
-				m.subjectSection(x, detail)
-			}
+			m.subjectSection(x, detail)
 		}
 		appendID(owner, "outcomes", String(x, "id"))
 	}

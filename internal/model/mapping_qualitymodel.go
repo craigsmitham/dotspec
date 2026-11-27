@@ -4,10 +4,6 @@ import "strings"
 
 func (m *domainMapper) qualityModel(r Record, s *Section) bool {
 	switch s.Title {
-	case "Description":
-		m.section(r, "description", s)
-	case "Edition":
-		m.section(r, "edition", s)
 	case "Sources":
 		m.contextField(r, "sources", s.Content)
 		m.markSection(r, "sources.content", s)

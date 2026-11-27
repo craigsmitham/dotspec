@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/check"
+	"github.com/craigsmitham/dotspec/internal/speckinds"
 	"github.com/spf13/cobra"
 )
 
@@ -22,7 +23,7 @@ func newSourcesCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			r := check.Sources(path, supportedTypes()...)
+			r := check.Sources(path, speckinds.All()...)
 			if err := writeSources(cmd.OutOrStdout(), r, format); err != nil {
 				return &exitError{code: 2, err: err}
 			}

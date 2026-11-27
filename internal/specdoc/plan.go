@@ -265,7 +265,7 @@ func (p *planner) read() error {
 
 func (s *subject) slug() string {
 	if s.isOverview() || s.kind() == "SystemQualityAttribute" {
-		return strings.TrimSuffix(path.Base(s.source.path), "."+kindName(s.kind())+".spec.md")
+		return strings.TrimSuffix(path.Base(s.source.path), specfile.AuthoredSuffix(kindName(s.kind())))
 	}
 	name := attr(s.r, "authored_id")
 	if name == "" {
@@ -288,7 +288,8 @@ func (s *subject) kind() string {
 // including when a sibling with the same name needs a distinct directory.
 func (s *subject) placeOverview(dir string) {
 	s.dir = dir
-	s.file = path.Join(dir, strings.TrimSuffix(path.Base(s.source.path), ".md")+"-report.md")
+	stem := strings.TrimSuffix(path.Base(s.source.path), specfile.AuthoredSuffix(kindName(s.kind())))
+	s.file = path.Join(dir, stem+reportSuffix(s.kind()))
 }
 
 func (s *subject) collectionDir() string {
@@ -419,13 +420,11 @@ func (p *planner) place() error {
 				}
 			}
 			s.dir = path.Join(dir, slug)
-			s.file = path.Join(s.dir, slug+".quality-attribute.spec-report.md")
-		} else if s.kind() == "QualityModel" {
-			s.file = base + ".quality-model-report.md"
+			s.file = path.Join(s.dir, slug+reportSuffix(s.kind()))
 		} else if s.isOverview() {
 			s.placeOverview(base)
 		} else {
-			s.file = base + "." + kindName(s.kind()) + ".spec-report.md"
+			s.file = base + reportSuffix(s.kind())
 		}
 		return nil
 	}
@@ -498,7 +497,7 @@ func (p *planner) indexTargets() {
 		case "Capability":
 			for _, target := range model.Strings(s.r["provided_by"]) {
 				if provider := p.pages[target]; provider != nil {
-					provider.includeMember("Capabilities", entry{title: s.name.title, target: s.file, preview: subjectPreview(s)})
+					provider.includeMember(collectionTitle("Capability"), entry{title: s.name.title, target: s.file, preview: subjectPreview(s)})
 				}
 			}
 		}

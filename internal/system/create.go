@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/rogpeppe/go-internal/lockedfile"
 )
@@ -40,7 +39,7 @@ func InitComponent(path, name, parent string) (string, error) {
 		if err != nil {
 			return "", "", err
 		}
-		info, ok, err := check.ReferenceTarget(parent, boundary)
+		info, ok, err := specfile.ReferenceTarget(parent, boundary)
 		if err != nil {
 			return "", "", err
 		}

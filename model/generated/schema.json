@@ -2883,6 +2883,11 @@
                     },
                     "type": "array"
                 },
+                "line": {
+                    "description": "Line declaring the named definition in a native companion, for a resolved native-definition/1 reference.",
+                    "minimum": 1,
+                    "type": "integer"
+                },
                 "rule": {
                     "type": "string"
                 },
@@ -3284,7 +3289,7 @@
                     "type": "string"
                 },
                 "model_version": {
-                    "const": "0.35.0-draft",
+                    "const": "0.36.0-draft",
                     "type": "string"
                 },
                 "references": {
@@ -4761,7 +4766,7 @@
             "type": "string"
         },
         "model_version": {
-            "const": "0.35.0-draft",
+            "const": "0.36.0-draft",
             "type": "string"
         },
         "references": {

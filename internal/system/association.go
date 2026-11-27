@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 )
@@ -48,7 +47,7 @@ func associated(files *specfile.SourceSet, owner, source string) (*System, error
 	if err != nil {
 		return nil, err
 	}
-	info, allowed, err := check.ReferenceTarget(target, root)
+	info, allowed, err := specfile.ReferenceTarget(target, root)
 	if !allowed {
 		return invalid("Specification system is outside the permitted repository boundary.")
 	}

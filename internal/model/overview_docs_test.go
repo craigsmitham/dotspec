@@ -45,7 +45,7 @@ func TestOverviewIsPortableAndSeparatesRelationships(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(text, "Unresolved or undeclared") || !strings.Contains(text, "[Missing](components/reservations/specs/missing.md)") || !strings.Contains(text, "Inspection findings") {
+	if !strings.Contains(text, "Unresolved or undeclared") || !strings.Contains(text, "[Missing](<components/reservations/specs/missing.md>)") || !strings.Contains(text, "Inspection findings") {
 		t.Fatal("unresolved authored relationship disappeared", text)
 	}
 }

@@ -1,9 +1,16 @@
 package model
 
-// An explicit selection is identified by its authored section. Any other
-// association is the directory default recorded at export.
+// An explicit selection is identified by its authored section, even when the
+// section's link is invalid.
+func explicitSpecificationSystem(r Record) bool {
+	_, explicit := r["specification_system_content"]
+	return explicit
+}
+
+// Any association other than an explicit selection is the directory default
+// recorded at export.
 func specificationSystemOrigin(r Record) string {
-	if _, explicit := r["specification_system_content"]; explicit {
+	if explicitSpecificationSystem(r) {
 		return "explicit"
 	}
 	if String(r, "specification_system") != "" {
@@ -36,7 +43,7 @@ func (b *snapshotBuilder) associateSpecificationSystems() {
 	// an invalid explicit selection never falls back to it.
 	for id, system := range b.directorySystem {
 		if r := b.elements[id]; designKind(String(r, "kind"), "SystemContextSpecification") {
-			if _, explicit := r["specification_system_content"]; !explicit {
+			if !explicitSpecificationSystem(r) {
 				r["specification_system"] = system
 			}
 		}

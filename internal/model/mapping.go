@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/businessrule"
@@ -152,24 +153,15 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 		}
 		mapped := false
 		switch kind {
-		case "feature", "capability":
-			switch {
-			case section.Title == "Description" || section.Title == "Purpose" || (kind == "feature" && section.Title == "Overview") || (kind == "capability" && section.Title == "Enablers"):
-				m.section(r, strings.ToLower(section.Title), section)
-				mapped = true
-			case kind == "feature" && section.Title == "Groups":
+		case "feature":
+			if section.Title == "Groups" {
 				m.structureReference(r, "groups", section)
-				mapped = true
-			}
-		case "quality-attribute":
-			if section.Title == "Definition" {
-				m.section(r, "definition", section)
 				mapped = true
 			}
 		case "quality-model":
 			mapped = m.qualityModel(r, section)
-		case "business-rule":
-			mapped = m.businessRule(r, section)
+		case "business-rule", "requirement":
+			mapped = m.requirement(r, section)
 		case "component":
 			mapped = m.componentSection(r, section)
 		case "system":
@@ -180,8 +172,6 @@ func MapDomain(doc *ParsedDocument, kind string) Mapping {
 			mapped = m.concept(r, section)
 		case "use-case":
 			mapped = m.useCase(r, section)
-		case "requirement":
-			mapped = m.requirement(r, section)
 		}
 		if !mapped {
 			m.subjectSection(r, section)
@@ -238,10 +228,19 @@ func (m *domainMapper) section(owner Record, field string, s *Section) {
 	m.markSection(owner, field, s)
 }
 
+// setRich adds nodes to a rich-text field, listing each content node once. A
+// field that already holds a whole section keeps it when a nested heading of
+// that section names the same field.
 func (m *domainMapper) setRich(owner Record, field string, nodes []string) {
 	previous := Object(owner[field])
 	if previous != nil {
-		nodes = append(append([]string{}, Strings(previous["content_nodes"])...), nodes...)
+		merged := append([]string{}, Strings(previous["content_nodes"])...)
+		for _, id := range nodes {
+			if !slices.Contains(merged, id) {
+				merged = append(merged, id)
+			}
+		}
+		nodes = merged
 	}
 	owner[field] = m.doc.Rich(nodes)
 }
@@ -337,6 +336,12 @@ func (m *domainMapper) subjectSection(owner Record, s *Section) {
 		m.openQuestions(owner, []*Section{s})
 		return
 	}
+	// A narrative field takes the heading the specfile check accepts for it.
+	kind := String(owner, "kind")
+	if slot, ok := specfile.SectionSlot(kind, s.Title); ok && compiledModel().catalog.Classes[kind].Slots[slot].Range == "RichContent" {
+		m.section(owner, slot, s)
+		return
+	}
 	m.authoringFinding(owner, s.HeadingID, "structure.unknown-section", fmt.Sprintf("Unrecognized section %q. Move its prose into the field it qualifies or use a declared section.", s.Title))
 }
 
@@ -362,10 +367,6 @@ func (m *domainMapper) common(r Record, s *Section) bool {
 	case "Related specifications":
 		m.contextField(r, "related_specifications", s.Content)
 		m.markSection(r, "related_specifications.content", s)
-	case "Authority":
-		m.section(r, "authority_and_evidence", s)
-	case "Evidence":
-		m.section(r, "evidence", s)
 	case "Open questions":
 		m.openQuestions(r, []*Section{s})
 	default:

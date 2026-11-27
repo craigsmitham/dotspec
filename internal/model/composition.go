@@ -20,14 +20,13 @@ type designProjection struct {
 	many   bool
 }
 type designResolver struct {
-	documentDefinitions map[string]string
-	links               map[string]map[string][]string // owner ID, then authored role
-	index               map[string]Record
-	elements            []Record
-	projected           map[string]map[string][]string
-	projections         []designProjection
-	issues              []designIssue
-	occurrences         map[string]string
+	links       map[string]map[string][]string // owner ID, then authored role
+	index       map[string]Record
+	elements    []Record
+	projected   map[string]map[string][]string
+	projections []designProjection
+	issues      []designIssue
+	occurrences map[string]string
 }
 
 func newDesignResolver(s *Snapshot) *designResolver {

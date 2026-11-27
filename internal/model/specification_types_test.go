@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/craigsmitham/dotspec/internal/speckinds"
 )
 
 const typedSystem = `---
@@ -48,6 +49,26 @@ A staffed desk with intermittent connectivity.
 
 Loan records are kept for seven years.
 `
+
+// Every built-in kind needs a root class, a domain mapping and an authored
+// suffix that agrees with its layout, or its files cannot enter the model.
+func TestBuiltInKindsAreRegisteredWithTheModel(t *testing.T) {
+	for _, typ := range speckinds.All() {
+		kind := typ.Layout.Kind
+		if specfile.DocumentRootClass(kind) == "" {
+			t.Errorf("kind %q has no document root class", kind)
+		}
+		if suffix := specfile.AuthoredSuffix(kind); suffix != typ.Layout.Suffix {
+			t.Errorf("kind %q authored suffix %q differs from layout suffix %q", kind, suffix, typ.Layout.Suffix)
+		}
+		doc := parseMarkdownContent("specs/example"+typ.Layout.Suffix, []byte("---\ntype: "+specfile.AuthoredType(kind)+"\n---\n# Example\n"), true)
+		for _, d := range MapDomain(doc, kind).Diagnostics {
+			if strings.Contains(String(d, "message"), "no domain mapping") {
+				t.Errorf("kind %q has no domain mapping", kind)
+			}
+		}
+	}
+}
 
 // A specification is one authored document. Each specification type has one
 // concrete class, and a requirement is that type regardless of its classification.

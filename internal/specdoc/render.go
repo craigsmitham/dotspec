@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/craigsmitham/dotspec/internal/model"
+	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/text"
 )
@@ -149,7 +150,7 @@ func (w *writer) setBreadcrumb(owner, member *subject) {
 	slices.Reverse(steps)
 	if owner != nil && member != nil {
 		title := member.collection()
-		if title == "Capabilities" && member.system != nil {
+		if title == collectionTitle("Capability") && member.system != nil {
 			owner = member.system
 		}
 		if idx := owner.indexes[title]; idx != nil {
@@ -400,9 +401,12 @@ func (p *planner) headingMarkdown(w *writer, source *sourceFile, h *heading) str
 	}
 	return h.title
 }
+
+// kindName names a kind in file suffixes: the authoring form of a root kind,
+// otherwise the kind in kebab case.
 func kindName(kind string) string {
-	if kind == "SystemQualityAttribute" {
-		return "quality-attribute"
+	if name, ok := specfile.RootKind(kind); ok {
+		return name
 	}
 	var b strings.Builder
 	for i, r := range kind {
@@ -412,6 +416,11 @@ func kindName(kind string) string {
 		b.WriteString(strings.ToLower(string(r)))
 	}
 	return b.String()
+}
+
+// A report file replaces its source suffix's ".md" with "-report.md".
+func reportSuffix(kind string) string {
+	return strings.TrimSuffix(specfile.AuthoredSuffix(kindName(kind)), ".md") + "-report.md"
 }
 func sentenceCase(s string) string {
 	if s == "" {
@@ -529,27 +538,16 @@ func rewriteDestination(raw string, n model.Record, target string) string {
 		if at < 0 {
 			return raw
 		}
-		return raw[:at+2] + " <" + target + ">" + linkTitle(n) + "\n"
+		return raw[:at+2] + " " + specfile.FormatDestination(target) + linkTitle(n) + "\n"
 	}
-	level := 0
-	for i := 0; i < len(raw); i++ {
-		switch raw[i] {
-		case '\\':
-			i++
-		case '[':
-			level++
-		case ']':
-			level--
-			if level == 0 {
-				return raw[:i+1] + "(<" + target + ">" + linkTitle(n) + ")"
-			}
-		}
+	if close := specfile.LinkLabelEnd([]byte(raw), strings.IndexByte(raw, '[')); close >= 0 {
+		return raw[:close+1] + "(" + specfile.FormatDestination(target) + linkTitle(n) + ")"
 	}
 	return raw
 }
 func linkTitle(n model.Record) string {
 	if title := attr(n, "title"); title != "" {
-		return " \"" + strings.ReplaceAll(title, "\"", "\\\"") + "\""
+		return " " + specfile.FormatTitle(title)
 	}
 	return ""
 }

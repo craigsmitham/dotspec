@@ -11465,6 +11465,21 @@
           ],
           "required": false
         },
+        "line": {
+          "annotations": {},
+          "any_of": [],
+          "description": "Line declaring the named definition in a native companion, for a resolved native-definition/1 reference.",
+          "identifier": false,
+          "inline_ranges": [],
+          "inlined": false,
+          "inlined_as_list": false,
+          "minimum_value": 1,
+          "multivalued": false,
+          "ordered": false,
+          "range": "integer",
+          "reference_ranges": [],
+          "required": false
+        },
         "rule": {
           "annotations": {},
           "any_of": [],
@@ -12383,7 +12398,7 @@
           "annotations": {},
           "any_of": [],
           "description": "",
-          "equals_string": "0.35.0-draft",
+          "equals_string": "0.36.0-draft",
           "identifier": false,
           "inline_ranges": [],
           "inlined": false,
@@ -17903,7 +17918,7 @@
       "requirement-spec"
     ]
   },
-  "model_version": "0.35.0-draft",
+  "model_version": "0.36.0-draft",
   "projections": [
     "BusinessRule.applies_to",
     "BusinessRule.refines",
@@ -18026,7 +18041,7 @@
   },
   "representation_version": "0.4.0",
   "schema_id": "https://github.com/craigsmitham/dotspec/model/metamodel.yaml",
-  "source_sha256": "bbe880e402c9c927eea67555fd2f0a71916ee89c8180d004e7b78ea2d3f6d6cb",
+  "source_sha256": "7bf3ef58ac6a6df7514abac7606448140af1cfff4b24598b328a7ea83ecbf0dc",
   "subsets": {
     "business-requirements": {
       "classification": "core",

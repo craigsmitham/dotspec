@@ -12,6 +12,7 @@ import (
 	"github.com/craigsmitham/dotspec/internal/model"
 	"github.com/craigsmitham/dotspec/internal/specdoc"
 	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/craigsmitham/dotspec/internal/speckinds"
 	"github.com/spf13/cobra"
 )
 
@@ -67,11 +68,11 @@ func newSpecCommand() *cobra.Command {
 func inspectProject(path string) check.Report {
 	dir, err := specfile.Directory(path)
 	if err != nil {
-		return check.Project(path, supportedTypes()...)
+		return check.Project(path, speckinds.All()...)
 	}
 	project, err := specfile.FindProject(dir)
 	if err != nil || project == nil || !project.Report.Enabled || dir != project.Root {
-		return check.Project(path, supportedTypes()...)
+		return check.Project(path, speckinds.All()...)
 	}
 	plan, report := planSpec(dir)
 	if plan == nil {
@@ -89,7 +90,7 @@ func inspectProject(path string) check.Report {
 }
 
 func planSpec(root string) (*specdoc.Plan, check.Report) {
-	inventory := check.InspectSources(root, supportedTypes()...)
+	inventory := check.InspectSources(root, speckinds.All()...)
 	report := inventory.Report
 	report.GeneratedSpec = "blocked-by-source"
 	if report.ExitCode() != 0 {

@@ -8,6 +8,7 @@ import (
 
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/specfile"
+	"github.com/craigsmitham/dotspec/internal/speckinds"
 	"github.com/craigsmitham/dotspec/internal/system"
 	"github.com/spf13/cobra"
 )
@@ -78,7 +79,7 @@ func writeCreated(out io.Writer, format, target, guidance string) error {
 }
 
 func emitFocusedCheck(out io.Writer, format, path, selector string, kind check.Type) error {
-	return emitCheckReport(out, check.Focused(path, selector, kind, supportedTypes()...), format)
+	return emitCheckReport(out, check.Focused(path, selector, kind, speckinds.All()...), format)
 }
 
 // writeShown prints authored Markdown, any details lines, and the associated system and source.

@@ -63,6 +63,25 @@ func TestLiftedSectionPreservesAuthoredMarkdown(t *testing.T) {
 	}
 }
 
+// Only the destination and title change; the authored label, including a code
+// span that contains a bracket, is kept.
+func TestRewriteDestinationKeepsLabels(t *testing.T) {
+	for _, c := range []struct {
+		raw  string
+		n    model.Record
+		want string
+	}{
+		{"[`]`](x.md)", model.Record{"node_kind": "link"}, "[`]`](<to.md>)"},
+		{"![a [b]](x.png)", model.Record{"node_kind": "image"}, "![a [b]](<to.md>)"},
+		{"[a \\]][ref]", model.Record{"node_kind": "link", "title": `say \"hi\"`}, `[a \]](<to.md> "say \"hi\"")`},
+		{"[ref]: x.md 'it\\'s \"so\"'\n", model.Record{"node_kind": "link_definition", "title": `it\'s "so"`}, "[ref]: <to.md> \"it\\'s \\\"so\\\"\"\n"},
+	} {
+		if got := rewriteDestination(c.raw, c.n, "to.md"); got != c.want {
+			t.Errorf("rewriteDestination(%q) = %q, want %q", c.raw, got, c.want)
+		}
+	}
+}
+
 // A wording change may give two relationship directions the same caption.
 // Their targets still belong in the directory or the detail according to role.
 func TestRelationshipDirectorySurvivesCaptionChanges(t *testing.T) {

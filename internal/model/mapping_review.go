@@ -9,8 +9,6 @@ func (m *domainMapper) boundarySection(r Record, s *Section) bool {
 		return false
 	}
 	switch s.Title {
-	case "Out of scope":
-		m.section(r, "out_of_scope", s)
 	case "Required interfaces", "Provided interfaces":
 		field := "required_interfaces"
 		if s.Title == "Provided interfaces" {
@@ -40,22 +38,6 @@ func (m *domainMapper) boundarySection(r Record, s *Section) bool {
 		return false
 	}
 	return true
-}
-
-func (m *domainMapper) assumptionDetails(r Record, s *Section) {
-	for _, sub := range s.Children {
-		if m.traceSection(r, sub) {
-			continue
-		}
-		switch sub.Title {
-		case "Basis", "Applicability":
-			m.section(r, strings.ToLower(sub.Title), sub)
-		case "Open questions":
-			m.openQuestions(r, []*Section{sub})
-		default:
-			m.subjectSection(r, sub)
-		}
-	}
 }
 
 // Only an explicitly labelled nested bullet supplies a semantic illustration.

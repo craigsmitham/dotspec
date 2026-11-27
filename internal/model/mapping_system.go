@@ -12,15 +12,9 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 	switch s.Title {
 	case "Part of":
 		m.structureReference(r, "part_of", s)
-	case "Description", "Purpose", "Overview":
-		m.section(r, strings.ToLower(s.Title), s)
 	case "Project references":
 		m.contextField(r, "project_references", s.Content)
 		m.markSection(r, "project_references.content", s)
-	case "Scope":
-		m.section(r, "scope", s)
-	case "Environment":
-		m.section(r, "environment", s)
 	case "Stakeholders":
 		m.declared(r, "stakeholder_roles", s)
 		for _, child := range s.Children {
@@ -28,9 +22,6 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 			m.section(role, "description", child)
 			appendID(r, "stakeholder_roles", String(role, "id"))
 		}
-	case "Constraints":
-		// Constraints stay narrative; an addressable constraint is a requirement or business rule.
-		m.section(r, "constraints", s)
 	case "Goals", "Assumptions":
 		field, kind := "goals", "Goal"
 		if s.Title == "Assumptions" {
@@ -42,7 +33,9 @@ func (m *domainMapper) system(r Record, s *Section) bool {
 			if kind == "Assumption" {
 				x["statement"] = m.doc.Rich(child.Intro)
 				m.markField(x, "statement", child.Intro)
-				m.assumptionDetails(x, child)
+				for _, sub := range child.Children {
+					m.subjectSection(x, sub)
+				}
 			} else {
 				m.section(x, "statement", child)
 			}

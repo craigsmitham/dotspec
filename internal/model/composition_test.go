@@ -150,7 +150,7 @@ A supporting note, not an action.
 func TestRebaseDesignMarkdownRebasesReferencesWithoutRewritingCode(t *testing.T) {
 	source := "See [local](#action), [guide][g], and ![image](image.png).\n\n`[literal](#action)`\n\n```markdown\n[example](#action)\n```\n"
 	got := rebaseDesignMarkdown(source, "../specs/concept.spec.md", "[g]: guide.md \"Guide\"")
-	for _, want := range []string{"[local](../specs/concept.spec.md#action)", "[guide](../specs/guide.md \"Guide\")", "![image](../specs/image.png)", "`[literal](#action)`", "```markdown\n[example](#action)\n```"} {
+	for _, want := range []string{"[local](<../specs/concept.spec.md#action>)", "[guide](<../specs/guide.md> \"Guide\")", "![image](<../specs/image.png>)", "`[literal](#action)`", "```markdown\n[example](#action)\n```"} {
 		if !strings.Contains(got, want) {
 			t.Errorf("missing %q in %s", want, got)
 		}

@@ -12,31 +12,82 @@ import (
 	schema "github.com/craigsmitham/dotspec/model"
 )
 
-// A heading introduces a field only when its owner declares that domain slot.
-// Nested headings inside ordinary Markdown fields are local to that prose.
-// checkFields decides the titles whose owners it names directly.
-var headingFields = map[string]string{
-	"Description": "description", "Part of": "part_of", "Purpose": "purpose", "Overview": "overview", "Scope": "scope", "Out of scope": "out_of_scope",
-	"Project references": "project_references", "Environment": "environment", "Stakeholders": "stakeholder_roles", "Constraints": "constraints",
-	"Responsibilities": "responsibilities", "Contracts": "contracts", "Architecture": "architecture", "Implementation": "implementation",
-	"Interacts with": "interacts_with", "Enablers": "enablers",
-	"Groups": "groups", "Depends on": "depends_on", "Provided by": "provided_by", "Supports": "supports", "Involves": "involves",
-	"Derived from": "derived_from", "Relies on": "relies_on", "Refines": "refines", "Applies to": "applies_to",
-	"Adopts": "adopts", "Evidence": "evidence", "Authority": "authority_and_evidence", "Related specifications": "related_specifications", "Open questions": "open_questions",
-	"Performer": "performer", "Situation": "situation", "Motivation": "motivation", "Intended progress": "intended_progress",
-	"Goal": "goal", "Primary actor": "primary_actor", "Goal level": "goal_level", "Trigger": "trigger",
-	"Supporting actors": "supporting_actors", "Stakeholder interests": "stakeholder_interests", "Main success scenario": "main_success_scenario",
-	"Sequence": "sequence", "Preconditions": "preconditions", "Minimal guarantees": "minimal_guarantees", "Success guarantees": "success_guarantees",
-	"State": "abstract_state", "Operational principles": "operational_principles", "Effects table": "effects_table",
-	"Rationale": "rationale", "Criterion": "criterion", "Exceptions": "exceptions", "Definition": "definition",
-	"Sources": "sources", "Edition": "edition", "Basis": "basis", "Supporting content": "supporting_content",
-	"Configuration": "configuration", "Dependencies": "dependencies", "Counterpart": "counterpart",
-	"When": "when", "Where": "where", "Then": "then", "Semantics": "semantics", "Inputs": "inputs", "Outputs": "outputs",
-	"Initiation": "initiation", "Effects": "effects", "Rejections": "rejections", "Guards": "guards", "Caller assumptions": "caller_assumptions",
-	"Condition": "condition", "Handling": "handling",
-	"Goals": "goals", "Assumptions": "assumptions", "Outcomes": "outcomes", "Actions": "actions",
-	"Required interfaces": "required_interfaces", "Provided interfaces": "provided_interfaces",
-	"Glossary": "glossary", "Extensions": "extensions", "Concept uses": "concept_uses", "Synchronizations": "synchronizations",
+// A level heading introduces the domain slot it names in sentence case: lowercase
+// the title and join its words with underscores, so "Out of scope" introduces
+// out_of_scope and "Out Of Scope" introduces nothing.
+// Only the slots listed here are authored as Markdown sections; the others are
+// set from frontmatter, derived, or owned by a structured parent. Nested
+// headings inside ordinary Markdown fields are local to that prose.
+var sectionSlots = setOf(
+	"description", "part_of", "purpose", "overview", "scope", "out_of_scope",
+	"project_references", "environment", "constraints", "responsibilities", "contracts",
+	"architecture", "implementation", "interacts_with", "enablers", "groups", "depends_on",
+	"provided_by", "supports", "involves", "derived_from", "relies_on", "refines", "applies_to",
+	"adopts", "evidence", "related_specifications", "open_questions",
+	"performer", "situation", "motivation", "intended_progress",
+	"goal", "primary_actor", "goal_level", "trigger", "supporting_actors", "stakeholder_interests",
+	"main_success_scenario", "sequence", "preconditions", "minimal_guarantees", "success_guarantees",
+	"operational_principles", "effects_table", "rationale", "criterion", "exceptions", "definition",
+	"sources", "edition", "basis", "supporting_content", "configuration", "dependencies", "counterpart",
+	"when", "where", "then", "semantics", "inputs", "outputs", "initiation", "effects", "rejections",
+	"guards", "caller_assumptions", "condition", "handling",
+	"goals", "assumptions", "outcomes", "actions", "required_interfaces", "provided_interfaces",
+	"glossary", "extensions", "concept_uses", "synchronizations",
+)
+
+// irregularHeadings name the slot of a title that departs from the convention.
+var irregularHeadings = map[string]string{
+	"Stakeholders": "stakeholder_roles", "Authority": "authority_and_evidence", "State": "abstract_state",
+	"Boundary": "boundary_description", "System boundary": "boundary_description", "Job": "statement",
+	"Specification system": "specification_system_content",
+}
+
+// headingOwners restrict a title to the classes that author it as a section.
+// Other classes declaring the same slot set it some other way.
+var headingOwners = map[string][]string{
+	"Job": {"Job"}, "Statement": {"Requirement", "BusinessRule"}, "Boundary": {"Component"},
+	"System boundary": {"UseCase"}, "Steps": {"Job"}, "Applicability": {"Assumption", "AdoptedProvision"},
+	"Quality attributes": {"QualityModel"},
+}
+
+func setOf(items ...string) map[string]bool {
+	set := map[string]bool{}
+	for _, item := range items {
+		set[item] = true
+	}
+	return set
+}
+
+// sentenceCase spells a slot as its heading: "out_of_scope" is "Out of scope".
+func sentenceCase(slot string) string {
+	if slot == "" {
+		return ""
+	}
+	return strings.ToUpper(slot[:1]) + strings.ReplaceAll(slot[1:], "_", " ")
+}
+
+// SectionSlot names the slot a level heading titled title introduces in class,
+// and reports whether class accepts that heading as one of its sections.
+func SectionSlot(class, title string) (string, bool) {
+	schema, ok := classSlots()[class]
+	if !ok {
+		return "", false
+	}
+	slot, irregular := irregularHeadings[title]
+	if !irregular {
+		slot = strings.ReplaceAll(strings.ToLower(title), " ", "_")
+		if title != sentenceCase(slot) {
+			return "", false
+		}
+	}
+	owners, restricted := headingOwners[title]
+	if restricted && !slices.Contains(owners, class) || !restricted && !irregular && !sectionSlots[slot] {
+		return "", false
+	}
+	if _, ok := schema.Slots[slot]; !ok {
+		return "", false
+	}
+	return slot, true
 }
 
 const verificationProcedureAdvice = "List each verification procedure as a companion with role: verifies in the frontmatter, and keep any account of what it exercises under Evidence."
@@ -81,34 +132,50 @@ var documentRootClasses = map[string]string{
 // DocumentRootClass identifies the primary subject of a built-in authoring form.
 func DocumentRootClass(kind string) string { return documentRootClasses[kind] }
 
+// RootKind names the built-in authoring form whose primary subject is class.
+func RootKind(class string) (string, bool) {
+	for kind, root := range documentRootClasses {
+		if root == class {
+			return kind, true
+		}
+	}
+	return "", false
+}
+
+var reportTypes = sync.OnceValue(func() map[string]string {
+	type slot struct {
+		Fixed  string   `json:"equals_string"`
+		Ranges []string `json:"reference_ranges"`
+	}
+	types := map[string]string{}
+	for _, class := range classSlots() {
+		var documents, typ slot
+		if class.Slots["documents"] == nil || class.Slots["type"] == nil {
+			continue
+		}
+		if err := json.Unmarshal(class.Slots["documents"], &documents); err != nil {
+			panic(err)
+		}
+		if err := json.Unmarshal(class.Slots["type"], &typ); err != nil {
+			panic(err)
+		}
+		if len(documents.Ranges) == 1 && typ.Fixed != "" {
+			types[documents.Ranges[0]] = typ.Fixed
+		}
+	}
+	return types
+})
+
+// ReportType returns the fixed type of the report class that documents kind.
+func ReportType(kind string) string { return reportTypes()[kind] }
+
 func (o *Outline) checkFields(class string, sections []*Section, level int) error {
-	schema, builtIn := classSlots()[class]
 	// Independently registered types own their authoring contracts.
-	if !builtIn {
+	if _, builtIn := classSlots()[class]; !builtIn {
 		return nil
 	}
-	slots := schema.Slots
 	for _, s := range sections {
-		field := headingFields[s.Title]
-		_, known := slots[field]
-		switch s.Title {
-		case "Job":
-			known = class == "Job"
-		case "Specification system":
-			_, known = slots["specification_system_content"]
-		case "Statement":
-			known = class == "Requirement" || class == "BusinessRule"
-		case "Boundary":
-			known = class == "Component"
-		case "System boundary":
-			known = class == "UseCase"
-		case "Steps":
-			known = class == "Job"
-		case "Applicability":
-			known = class == "Assumption" || class == "AdoptedProvision"
-		case "Quality attributes":
-			known = class == "QualityModel"
-		}
+		_, known := SectionSlot(class, s.Title)
 		loc := o.Location(s.Start, s.Title)
 		if s.Title == "Verification procedures" {
 			return diagnostic.Error("structure.verification-procedure", verificationProcedureAdvice, loc)

@@ -57,13 +57,22 @@ func (s *subject) collection() string {
 }
 
 func (s *subject) collectionType() string {
-	if s.name.qualityAttribute {
+	return collectionTitle(s.kind())
+}
+
+// collectionTitle names the overview collection that lists subjects of kind.
+func collectionTitle(kind string) string {
+	switch kind {
+	case "SystemQualityAttribute":
 		return "Quality attributes"
-	}
-	if s.kind() == "ConceptUse" {
+	case "ConceptUse":
 		return "Concepts"
 	}
-	return sentenceCase(strings.ReplaceAll(families[s.kind()], "-", " "))
+	family := families[kind]
+	if family == "" {
+		panic("specdoc: no report family for " + kind)
+	}
+	return sentenceCase(strings.ReplaceAll(family, "-", " "))
 }
 
 // Give the owner and its enclosing components the same canonical entry.
@@ -80,9 +89,9 @@ func (s *subject) includeMember(title string, member entry) {
 func collectionName(title string) string {
 	switch title {
 	case "Required interfaces", "Provided interfaces":
-		return "Interfaces"
+		return collectionTitle("Interface")
 	case "Concept uses":
-		return "Concepts"
+		return collectionTitle("ConceptUse")
 	}
 	return title
 }

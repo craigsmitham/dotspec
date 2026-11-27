@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/craigsmitham/dotspec/internal/guide"
+	"github.com/craigsmitham/dotspec/internal/speckinds"
 )
 
 // Companions are authored in the frontmatter of every specification type.
@@ -11,7 +12,7 @@ var crossCuttingTopics = map[string]bool{"companion": true}
 
 func TestHandbookTopicsMatchAuthoredDocumentTypes(t *testing.T) {
 	missing := map[string]bool{}
-	for _, typ := range supportedTypes() {
+	for _, typ := range speckinds.All() {
 		missing[typ.Layout.Kind] = true
 	}
 	for _, topic := range guide.Topics() {

@@ -140,6 +140,37 @@ func TestContextProvidersAreExplicitAndShared(t *testing.T) {
 	}
 }
 
+func TestInventoryRecordsEachSourceContextResolution(t *testing.T) {
+	dir := testScope(t)
+	kind := quality.CheckType()
+	first, second := quality.Layout.Path(dir, "first"), quality.Layout.Path(dir, "second")
+	broken := quality.Layout.Path(dir, "broken")
+	write(t, first, qualitySource)
+	write(t, second, qualitySource)
+	write(t, broken, "broken frontmatter")
+	evidence := filepath.Join(dir, "measurements.csv")
+	failure := &os.PathError{Op: "open", Path: evidence, Err: os.ErrNotExist}
+	kind.Context = &check.ContextProvider{
+		Resolve: func(*specfile.SourceSet, string) ([]string, error) {
+			t.Fatal("source-aware provider used the directory default")
+			return nil, nil
+		},
+		ResolveSource: func(_ *specfile.SourceSet, _, source string) ([]string, error) {
+			if source == second {
+				return []string{evidence}, failure
+			}
+			return []string{evidence}, nil
+		},
+	}
+	inventory := check.InspectSources(dir, kind)
+	// Each source keeps exactly what its provider returned; a source check
+	// could not read has no resolution.
+	want := map[string]check.ContextResult{first: {Paths: []string{evidence}}, second: {Paths: []string{evidence}, Err: failure}}
+	if !reflect.DeepEqual(inventory.Contexts, want) {
+		t.Fatalf("recorded contexts: %+v", inventory.Contexts)
+	}
+}
+
 func TestContextFailuresKeepFileIdentityAndCompletion(t *testing.T) {
 	dir := testScope(t)
 	write(t, quality.Layout.Path(dir, "response-time"), qualitySource)

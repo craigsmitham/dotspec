@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"go.yaml.in/yaml/v3"
@@ -46,7 +45,7 @@ func (s *System) checkGlossarySources(files *specfile.SourceSet) error {
 	for _, name := range s.GlossarySources {
 		path := filepath.Join(dir, filepath.FromSlash(name))
 		loc := diagnostic.Location{Path: s.Path, Element: specfile.GlossarySourcesField}
-		info, allowed, err := check.ReferenceTarget(path, root)
+		info, allowed, err := specfile.ReferenceTarget(path, root)
 		if !allowed || os.IsNotExist(err) || (err == nil && !info.Mode().IsRegular()) {
 			return diagnostic.Error("glossary.source", "glossary source must be an accessible Markdown file within the repository: "+name, loc)
 		}

@@ -102,7 +102,7 @@ func ExportInspection(inspection check.Inventory) ExportResult {
 	for _, source := range inspection.Files {
 		b.load(cleanPath(source.Path))
 	}
-	// Resolve context once for each selected specification owner. Referenced
+	// Map the context check resolved for each selected specification. Referenced
 	// documents do not recursively expand their own context or outgoing links.
 	for _, path := range sortedKeys(b.primary) {
 		kind := check.MatchType(path, b.types)
@@ -111,16 +111,19 @@ func ExportInspection(inspection check.Inventory) ExportResult {
 			continue
 		}
 		owner := kind.Layout.ContextDir(filepath.FromSlash(path))
-		_, explicit := b.elements[b.rootByPath[path]]["specification_system_content"]
-		var contexts []string
-		var contextErr error
-		if explicit && kind.Context.ResolveSource != nil {
-			contexts, contextErr = kind.Context.ResolveSource(b.inputs, owner, filepath.FromSlash(path))
-		} else {
-			contexts, contextErr = kind.Context.Resolve(b.inputs, owner)
+		explicit := explicitSpecificationSystem(b.elements[b.rootByPath[path]])
+		// Reuse check's resolution. Check resolves none for a source it rejects,
+		// but export retains that source, so resolve its context here.
+		resolution, resolved := inspection.Contexts[filepath.FromSlash(path)]
+		if !resolved {
+			if kind.Context.ResolveSource != nil {
+				resolution.Paths, resolution.Err = kind.Context.ResolveSource(b.inputs, owner, filepath.FromSlash(path))
+			} else {
+				resolution.Paths, resolution.Err = kind.Context.Resolve(b.inputs, owner)
+			}
 		}
-		b.contextOK[path] = contextErr == nil
-		for _, context := range contexts {
+		b.contextOK[path] = resolution.Err == nil
+		for _, context := range resolution.Paths {
 			context = cleanPath(context)
 			if system.AttributeLayout.Match(context) {
 				b.load(context)

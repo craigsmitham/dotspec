@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/fs"
 	"net/url"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -123,11 +122,10 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 				continue
 			}
 			target := filepath.Clean(filepath.Join(filepath.Dir(source), filepath.FromSlash(u.Path)))
-			info, err := referencePath(target, root)
+			info, allowed, err := specfile.ReferenceTarget(target, root)
 			if err != nil {
-				var boundary *referenceBoundary
-				if errors.As(err, &boundary) {
-					r.Diagnostics = append(r.Diagnostics, *diagnostic.Error("reference.boundary", boundary.Error(), location))
+				if !allowed {
+					r.Diagnostics = append(r.Diagnostics, *diagnostic.Error("reference.boundary", err.Error(), location))
 				} else if errors.Is(err, fs.ErrNotExist) {
 					count(target)
 					r.Diagnostics = append(r.Diagnostics, *diagnostic.Error("reference.unresolved", fmt.Sprintf("reference %q targets a missing file or directory", destination), location, diagnostic.Location{Path: target}))
@@ -154,10 +152,10 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 			// A companion fragment names a definition in a format dotspec can index.
 			// Other native formats keep their own fragment semantics.
 			if location.Element == specfile.CompanionsField && u.Fragment != "" && targetKind == nil && !markdown && specfile.NativeDefinitionFormat(target) {
-				data, err := os.ReadFile(target)
+				line, err := specfile.NativeDefinitionAt(target, u.Fragment)
 				if err != nil {
 					r.record(err, "scan.reference", target)
-				} else if specfile.NativeDefinitionLine(target, data, u.Fragment) == 0 {
+				} else if line == 0 {
 					r.Diagnostics = append(r.Diagnostics, *diagnostic.Error("reference.unresolved", fmt.Sprintf("companion %q names no definition %q in %s", destination, u.Fragment, filepath.Base(target)), location, diagnostic.Location{Path: target}))
 				}
 				continue
@@ -179,70 +177,4 @@ func (r *Report) inspectReferences(sources []string, discovered map[string]bool,
 			}
 		}
 	}
-}
-
-type referenceBoundary struct{ reason string }
-
-func (e *referenceBoundary) Error() string { return e.reason }
-
-// ReferenceTarget applies the same filesystem boundary policy as check without
-// reading a target. Snapshot extraction uses it for richer reference forms.
-// allowed is false only for a policy boundary; missing and unreadable targets
-// remain distinct from prohibited traversal.
-func ReferenceTarget(path, root string) (info os.FileInfo, allowed bool, err error) {
-	info, err = referencePath(path, root)
-	var boundary *referenceBoundary
-	return info, !errors.As(err, &boundary), err
-}
-
-// Explicit links may address ignored files and ancestors within a repository,
-// but must not traverse symlinks, Git internals, or another repository. Outside
-// Git the filesystem root is the boundary, matching system context lookup.
-func referencePath(path, root string) (os.FileInfo, error) {
-	if root != "" {
-		rel, err := filepath.Rel(root, path)
-		if err != nil {
-			return nil, err
-		}
-		if rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
-			return nil, &referenceBoundary{"relative reference leaves the repository; use an external URL for external navigation"}
-		}
-	}
-	var target os.FileInfo
-	// Walk from root to leaf to avoid touching a path beneath a symlink first.
-	var components []string
-	for current := path; current != root && filepath.Dir(current) != current; current = filepath.Dir(current) {
-		components = append(components, current)
-	}
-	for i := len(components) - 1; i >= 0; i-- {
-		current := components[i]
-		if filepath.Base(current) == ".git" {
-			return nil, &referenceBoundary{"relative reference targets Git metadata"}
-		}
-		info, err := os.Lstat(current)
-		if err != nil {
-			return nil, err
-		}
-		if info.Mode()&os.ModeSymlink != 0 {
-			return nil, &referenceBoundary{"relative reference traverses a symlink: " + current}
-		}
-		if !info.IsDir() && i > 0 {
-			return nil, fs.ErrNotExist
-		}
-		if info.IsDir() && current != root {
-			if _, err := os.Lstat(filepath.Join(current, ".git")); err == nil {
-				return nil, &referenceBoundary{"relative reference enters another repository: " + current}
-			} else if !errors.Is(err, fs.ErrNotExist) {
-				return nil, err
-			}
-		}
-		target = info
-	}
-	if target == nil {
-		return os.Lstat(path)
-	}
-	if !target.IsDir() && !target.Mode().IsRegular() {
-		return nil, &referenceBoundary{"relative reference must target a regular file or directory"}
-	}
-	return target, nil
 }

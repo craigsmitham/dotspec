@@ -11,13 +11,9 @@ func (m *domainMapper) composition(r Record, s *Section) bool {
 			m.section(x, "content", child)
 			for _, sub := range child.Children {
 				switch sub.Title {
-				case "Description":
-					m.section(x, "description", sub)
 				case "Definition":
 					m.relationship(x, "definition", sub.Content)
 					m.markHeading("definition", sub.HeadingID)
-				case "Configuration":
-					m.section(x, "configuration", sub)
 				case "Dependencies":
 					m.section(x, "dependencies_content", sub)
 					m.relationship(x, "dependencies", sub.Content)
@@ -33,12 +29,7 @@ func (m *domainMapper) composition(r Record, s *Section) bool {
 			x := m.named("Synchronization", r, child)
 			m.section(x, "content", child)
 			for _, sub := range child.Children {
-				field := map[string]string{"When": "when", "Where": "where", "Then": "then", "Semantics": "semantics"}[sub.Title]
-				if field == "" {
-					m.subjectSection(x, sub)
-					continue
-				}
-				m.section(x, field, sub)
+				m.subjectSection(x, sub)
 			}
 			appendID(r, "synchronizations", String(x, "id"))
 		}

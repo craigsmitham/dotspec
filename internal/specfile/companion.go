@@ -3,6 +3,7 @@ package specfile
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -258,12 +259,22 @@ func NativeDefinitions(name string, data []byte) []NativeDefinition {
 	return result
 }
 
-// NativeDefinitionLine returns the line declaring name, or zero.
-func NativeDefinitionLine(file string, data []byte, name string) int {
+// nativeDefinitionLine returns the line declaring name, or zero.
+func nativeDefinitionLine(file string, data []byte, name string) int {
 	for _, d := range NativeDefinitions(file, data) {
 		if d.Name == name {
 			return d.Line
 		}
 	}
 	return 0
+}
+
+// NativeDefinitionAt reads a supported native file and returns the line
+// declaring name, or zero.
+func NativeDefinitionAt(path, name string) (int, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return 0, err
+	}
+	return nativeDefinitionLine(path, data, name), nil
 }

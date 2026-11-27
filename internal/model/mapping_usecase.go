@@ -6,18 +6,10 @@ import (
 )
 
 func (m *domainMapper) useCase(r Record, s *Section) bool {
-	fields := map[string]string{"Goal": "goal", "Trigger": "trigger", "Supporting actors": "supporting_actors", "Stakeholder interests": "stakeholder_interests", "Sequence": "sequence"}
-	if field, ok := fields[s.Title]; ok {
-		m.section(r, field, s)
-		return true
-	}
 	switch s.Title {
 	case "System boundary":
 		m.section(r, "boundary_description", s)
 		m.designField(r, "subject_system", s, "Subject system")
-	case "Primary actor", "Goal level", "Preconditions", "Minimal guarantees", "Success guarantees":
-		field := map[string]string{"Primary actor": "primary_actor", "Goal level": "goal_level", "Preconditions": "preconditions", "Minimal guarantees": "minimal_guarantees", "Success guarantees": "success_guarantees"}[s.Title]
-		m.section(r, field, s)
 	case "Main success scenario":
 		x := m.named("Scenario", r, s)
 		m.section(x, "content", s)
@@ -74,13 +66,10 @@ func (m *domainMapper) branch(owner Record, s *Section) Record {
 	x := m.named("UseCaseExtension", owner, s)
 	m.section(x, "content", s)
 	for _, sub := range s.Children {
-		switch sub.Title {
-		case "Condition":
-			m.section(x, "condition", sub)
-		case "Handling":
+		if sub.Title == "Handling" {
 			m.section(x, "handling", sub)
 			x["steps"] = m.scenarioSteps(x, sub.Intro)
-		default:
+		} else {
 			m.subjectSection(x, sub)
 		}
 	}

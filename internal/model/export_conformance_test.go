@@ -8,23 +8,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/businessrule"
 	"github.com/craigsmitham/dotspec/internal/check"
-	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/job"
-	"github.com/craigsmitham/dotspec/internal/qualitymodel"
 	"github.com/craigsmitham/dotspec/internal/requirement"
-	"github.com/craigsmitham/dotspec/internal/system"
-	"github.com/craigsmitham/dotspec/internal/usecase"
+	"github.com/craigsmitham/dotspec/internal/speckinds"
 )
-
-func conformanceTypes() []check.Type {
-	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), system.ProductCheckType(system.FeatureLayout), system.ProductCheckType(system.CapabilityLayout), system.AttributeCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
-}
 
 func conformanceExport(t *testing.T, path string) ExportResult {
 	t.Helper()
-	result, err := Export(path, conformanceTypes()...)
+	result, err := Export(path, speckinds.All()...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -261,7 +253,7 @@ func TestExportUsesTheSourceAcquiredDuringInspection(t *testing.T) {
 	const path = "specs/requirements/save.requirement.spec.md"
 	const initial = "---\ntype: requirement-spec\n---\n# Save\n## Statement\nSave the record.\n"
 	conformanceWrite(t, root, path, initial)
-	inspection := check.InspectSources(root, conformanceTypes()...)
+	inspection := check.InspectSources(root, speckinds.All()...)
 	conformanceWrite(t, root, path, strings.ReplaceAll(initial, "Save the record.", "Save its revision."))
 	first := ExportInspection(inspection).Snapshot
 	next := conformanceExport(t, root).Snapshot

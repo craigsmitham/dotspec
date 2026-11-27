@@ -14,12 +14,8 @@ func (m *domainMapper) componentSection(r Record, s *Section) bool {
 		return true
 	}
 	switch s.Title {
-	case "Purpose", "Description", "Overview", "Responsibilities":
-		m.section(r, strings.ToLower(s.Title), s)
 	case "Part of":
 		m.structureReference(r, "part_of", s)
-	case "Boundary":
-		m.section(r, "boundary_description", s)
 	case "Contracts", "Architecture", "Implementation":
 		field := strings.ToLower(s.Title)
 		m.contextField(r, field, s.Content)

@@ -122,11 +122,8 @@ func governingSystem(r Record, index map[string]Record) string {
 		if String(r, "kind") == "System" {
 			return String(r, "id")
 		}
-		if _, explicit := r["specification_system_content"]; explicit {
+		if specificationSystemOrigin(r) != "" {
 			return String(r, "specification_system")
-		}
-		if id := String(r, "specification_system"); id != "" {
-			return id
 		}
 		r = index[String(r, "owner")]
 	}

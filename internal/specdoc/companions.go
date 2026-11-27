@@ -2,9 +2,7 @@ package specdoc
 
 import (
 	"net/url"
-	"os"
 	"path"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -13,9 +11,11 @@ import (
 )
 
 // A companion as presented: its authored target is relative to the declaring
-// specification's source file.
+// specification's source file. line is the declaring line of a named native
+// definition, as the snapshot resolved it, or zero.
 type companionView struct {
 	role, note, target, source string
+	line                       int
 }
 
 // readCompanions collects each subject's frontmatter companions in authored order.
@@ -31,11 +31,13 @@ func (p *planner) readCompanions() {
 			if c == nil {
 				continue
 			}
+			ref := refs[attr(c, "target")]
 			p.companions[id(s.r)] = append(p.companions[id(s.r)], companionView{
 				role:   attr(c, "role"),
 				note:   attr(c, "note"),
-				target: attr(refs[attr(c, "target")], "authored_target"),
+				target: attr(ref, "authored_target"),
 				source: s.source.path,
+				line:   model.Number(model.Object(ref["resolution"])["line"]),
 			})
 		}
 	}
@@ -53,13 +55,8 @@ func (p *planner) companionLink(page string, c companionView) string {
 	raw := c.target
 	if u.Fragment != "" {
 		title += " › " + u.Fragment
-		if specfile.NativeDefinitionFormat(u.Path) {
-			file := path.Join(path.Dir(c.source), u.Path)
-			if data, err := os.ReadFile(filepath.Join(p.root, filepath.FromSlash(file))); err == nil {
-				if line := specfile.NativeDefinitionLine(file, data, u.Fragment); line > 0 {
-					raw = (&url.URL{Path: u.Path, Fragment: "L" + strconv.Itoa(line)}).String()
-				}
-			}
+		if c.line > 0 {
+			raw = (&url.URL{Path: u.Path, Fragment: "L" + strconv.Itoa(c.line)}).String()
 		}
 	}
 	return link(title, p.documentLink(page, c.source, raw))

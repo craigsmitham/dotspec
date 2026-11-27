@@ -316,7 +316,7 @@ classes:
       model_version:
         range: string
         required: true
-        equals_string: 0.35.0-draft
+        equals_string: 0.36.0-draft
       mapping_profile:
         range: string
         description: Versioned rules for mapping declared sections, metadata and references.
@@ -1975,6 +1975,11 @@ classes:
       rule:
         range: string
         required: true
+      line:
+        range: integer
+        minimum_value: 1
+        description: Line declaring the named definition in a native companion, for a resolved native-definition/1
+          reference.
       diagnostics:
         range: Diagnostic
         multivalued: true

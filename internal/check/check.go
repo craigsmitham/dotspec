@@ -32,6 +32,7 @@ type Summary struct {
 type Report struct {
 	sources       *specfile.SourceSet
 	files         map[string]*SourceFile
+	contexts      map[string]ContextResult
 	GeneratedSpec string                  `json:"generated_spec,omitempty"`
 	SchemaVersion int                     `json:"schema_version"`
 	Scope         Scope                   `json:"scope"`
@@ -63,6 +64,7 @@ func project(path string, inventory *Inventory, types ...Type) Report {
 	r := newReport(path, "unavailable", types)
 	if inventory != nil {
 		r.files = make(map[string]*SourceFile)
+		r.contexts = make(map[string]ContextResult)
 		inventory.Sources = r.sources
 	}
 	match := func(name string) bool { return MatchType(name, types) != nil }

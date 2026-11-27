@@ -10,11 +10,11 @@ var (
 	overview          = overviewSection{title: "Overview", level: 2, sources: []string{"overview"}}
 	goals             = overviewSection{title: "Goals", level: 2, sources: []string{"goals"}}
 	stakeholders      = overviewSection{title: "Stakeholders", level: 2, sources: []string{"stakeholder_roles"}}
-	features          = overviewDirectory("Features")
-	capabilities      = overviewDirectory("Capabilities")
-	concepts          = overviewDirectory("Concepts", "concept_uses")
-	synchronizations  = overviewDirectory("Synchronizations", "synchronizations")
-	qualityAttributes = overviewSection{title: "Quality Attributes", collection: "Quality attributes", level: 2}
+	features          = overviewDirectory("Feature")
+	capabilities      = overviewDirectory("Capability")
+	concepts          = overviewDirectory("Concept", "concept_uses")
+	synchronizations  = overviewDirectory("Synchronization", "synchronizations")
+	qualityAttributes = overviewSection{title: "Quality Attributes", collection: collectionTitle("SystemQualityAttribute"), level: 2}
 )
 
 var overviewReferences = []overviewSection{
@@ -27,7 +27,10 @@ var overviewReferences = []overviewSection{
 	{title: "Reference", level: 2, sources: []string{"related_specifications", "specification_system", "authority_and_evidence", "evidence", "supports", "derived_from", "relies_on"}},
 }
 
-func overviewDirectory(title string, sources ...string) overviewSection {
+// A directory section takes its title from the collection that lists kind, so
+// the outline and the collection cannot drift apart.
+func overviewDirectory(kind string, sources ...string) overviewSection {
+	title := collectionTitle(kind)
 	return overviewSection{title: title, collection: title, level: 2, sources: sources}
 }
 
@@ -43,7 +46,7 @@ func navGroup(label string, sections ...overviewSection) []overviewSection {
 
 func systemOutline(architecture []overviewSection) []overviewSection {
 	sections := []overviewSection{overviewLead}
-	sections = append(sections, navGroup("Intent", purpose, overview, goals, stakeholders, overviewDirectory("Jobs"))...)
+	sections = append(sections, navGroup("Intent", purpose, overview, goals, stakeholders, overviewDirectory("Job"))...)
 	var context []overviewSection
 	// A top-level field travels with its subsections when the reading order changes.
 	contextFields := [][]string{
@@ -62,10 +65,10 @@ func systemOutline(architecture []overviewSection) []overviewSection {
 			context = append(context, overviewSection{title: title, level: level, sources: []string{field}, omitEmptyPassages: true})
 		}
 	}
-	context = append(context, overviewDirectory("Business rules"))
+	context = append(context, overviewDirectory("BusinessRule"))
 	sections = append(sections, navGroup("Context", context...)...)
-	sections = append(sections, navGroup("Behavior", features, capabilities, overviewDirectory("Use cases"))...)
-	sections = append(sections, qualityAttributes, overviewDirectory("Requirements"))
+	sections = append(sections, navGroup("Behavior", features, capabilities, overviewDirectory("UseCase"))...)
+	sections = append(sections, qualityAttributes, overviewDirectory("Requirement"))
 	sections = append(sections, navGroup("Design", concepts, synchronizations)...)
 	return append(sections, navGroup("Design", architecture...)...)
 }

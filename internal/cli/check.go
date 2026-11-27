@@ -6,16 +6,11 @@ import (
 	"io"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/businessrule"
 	"github.com/craigsmitham/dotspec/internal/check"
-	"github.com/craigsmitham/dotspec/internal/concept"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/guide"
-	"github.com/craigsmitham/dotspec/internal/job"
 	"github.com/craigsmitham/dotspec/internal/qualitymodel"
-	"github.com/craigsmitham/dotspec/internal/requirement"
-	"github.com/craigsmitham/dotspec/internal/system"
-	"github.com/craigsmitham/dotspec/internal/usecase"
+	"github.com/craigsmitham/dotspec/internal/speckinds"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +28,7 @@ func newCheckCommand() *cobra.Command {
 				return err
 			}
 			if len(args) > 0 {
-				if kind := check.MatchType(args[0], supportedTypes()); kind != nil {
+				if kind := check.MatchType(args[0], speckinds.All()); kind != nil {
 					return emitFocusedCheck(cmd.OutOrStdout(), format, path, args[0], *kind)
 				}
 				return fmt.Errorf("unknown source document type: %s", args[0])
@@ -118,8 +113,4 @@ func writeCheckReport(out io.Writer, report check.Report, format string) error {
 func diagnosticPath(location diagnostic.Location) string {
 	location.Path = displayPath(location.Path)
 	return location.String()
-}
-
-func supportedTypes() []check.Type {
-	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), system.ProductCheckType(system.FeatureLayout), system.ProductCheckType(system.CapabilityLayout), system.AttributeCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
 }

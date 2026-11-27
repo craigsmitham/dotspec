@@ -127,9 +127,9 @@ func (v architectureView) sections() []overviewSection {
 	}
 
 	return append(sections,
-		overviewSection{title: "Subsystems", collection: "Systems", level: 3},
-		overviewSection{title: "Components", collection: "Components", level: 3},
-		overviewSection{title: "Interfaces", collection: "Interfaces", level: 3, sources: []string{"provided_interfaces", "required_interfaces"}},
+		overviewSection{title: "Subsystems", collection: collectionTitle("System"), level: 3},
+		overviewSection{title: "Components", collection: collectionTitle("Component"), level: 3},
+		overviewSection{title: "Interfaces", collection: collectionTitle("Interface"), level: 3, sources: []string{"provided_interfaces", "required_interfaces"}},
 		overviewSection{title: "Interactions", level: 3, sources: []string{"interacts_with"}, omitEmptyPassages: true},
 	)
 }

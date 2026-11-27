@@ -15,7 +15,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/diagnostic"
 	"github.com/craigsmitham/dotspec/internal/specfile"
 	"github.com/yuin/goldmark"
@@ -461,7 +460,7 @@ func validateRendered(root string, plan *Plan, files map[string][]byte) ([]diagn
 				continue
 			}
 			targetPath := filepath.Join(root, filepath.FromSlash(target))
-			info, allowed, err := check.ReferenceTarget(targetPath, repo)
+			info, allowed, err := specfile.ReferenceTarget(targetPath, repo)
 			if !allowed || errors.Is(err, fs.ErrNotExist) {
 				report("spec.link", fmt.Sprintf("unavailable local destination %q", dest))
 				continue

@@ -296,11 +296,6 @@ func reviewObjects(value any) []Record {
 	}
 }
 
-// OpenQuestions returns the authored question records belonging to an element.
-func OpenQuestions(r Record) []Record {
-	return records(r["open_questions"])
-}
-
 func (v *reviewView) questions() {
 	v.out.WriteString("## Open questions\n\nConsolidated authored questions. External tracking references own resolution workflow. Omitted specification fields are not automatically questions.\n\n")
 	count := 0

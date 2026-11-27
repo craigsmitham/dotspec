@@ -1,0 +1,272 @@
+AdoptedProvision	Applicability
+AdoptedProvision	Edition
+AdoptedProvision	Open questions
+Assumption	Applicability
+Assumption	Basis
+Assumption	Derived from
+Assumption	Open questions
+Assumption	Relies on
+Assumption	Supports
+AuthoredDocumentRoot	Open questions
+BusinessRule	Adopts
+BusinessRule	Applies to
+BusinessRule	Authority
+BusinessRule	Derived from
+BusinessRule	Evidence
+BusinessRule	Exceptions
+BusinessRule	Open questions
+BusinessRule	Rationale
+BusinessRule	Refines
+BusinessRule	Related specifications
+BusinessRule	Relies on
+BusinessRule	Specification system
+BusinessRule	Statement
+BusinessRule	Supports
+Capability	Adopts
+Capability	Authority
+Capability	Depends on
+Capability	Derived from
+Capability	Description
+Capability	Enablers
+Capability	Evidence
+Capability	Open questions
+Capability	Provided by
+Capability	Purpose
+Capability	Related specifications
+Capability	Relies on
+Capability	Specification system
+Capability	Supports
+Companion	Open questions
+Component	Adopts
+Component	Architecture
+Component	Authority
+Component	Boundary
+Component	Concept uses
+Component	Contracts
+Component	Derived from
+Component	Description
+Component	Evidence
+Component	Implementation
+Component	Interacts with
+Component	Open questions
+Component	Out of scope
+Component	Overview
+Component	Part of
+Component	Provided interfaces
+Component	Purpose
+Component	Related specifications
+Component	Relies on
+Component	Required interfaces
+Component	Responsibilities
+Component	Specification system
+Component	Supports
+Component	Synchronizations
+Concept	Actions
+Concept	Adopts
+Concept	Authority
+Concept	Derived from
+Concept	Effects table
+Concept	Evidence
+Concept	Open questions
+Concept	Operational principles
+Concept	Purpose
+Concept	Related specifications
+Concept	Relies on
+Concept	Specification system
+Concept	State
+Concept	Supports
+ConceptAction	Caller assumptions
+ConceptAction	Derived from
+ConceptAction	Description
+ConceptAction	Effects
+ConceptAction	Guards
+ConceptAction	Initiation
+ConceptAction	Inputs
+ConceptAction	Open questions
+ConceptAction	Outputs
+ConceptAction	Rejections
+ConceptAction	Relies on
+ConceptAction	Supports
+ConceptUse	Configuration
+ConceptUse	Definition
+ConceptUse	Dependencies
+ConceptUse	Derived from
+ConceptUse	Description
+ConceptUse	Open questions
+ConceptUse	Relies on
+ConceptUse	Supports
+DesiredOutcome	Applies to
+DesiredOutcome	Derived from
+DesiredOutcome	Open questions
+DesiredOutcome	Relies on
+DesiredOutcome	Supporting content
+DesiredOutcome	Supports
+DomainElement	Open questions
+Feature	Adopts
+Feature	Authority
+Feature	Derived from
+Feature	Description
+Feature	Evidence
+Feature	Groups
+Feature	Open questions
+Feature	Overview
+Feature	Purpose
+Feature	Related specifications
+Feature	Relies on
+Feature	Specification system
+Feature	Supports
+GlossaryTerm	Definition
+GlossaryTerm	Open questions
+Goal	Derived from
+Goal	Open questions
+Goal	Relies on
+Goal	Supports
+Interface	Adopts
+Interface	Contracts
+Interface	Counterpart
+Interface	Derived from
+Interface	Description
+Interface	Open questions
+Interface	Relies on
+Interface	Supports
+Job	Adopts
+Job	Authority
+Job	Derived from
+Job	Evidence
+Job	Intended progress
+Job	Job
+Job	Motivation
+Job	Open questions
+Job	Outcomes
+Job	Performer
+Job	Related specifications
+Job	Relies on
+Job	Situation
+Job	Specification system
+Job	Steps
+Job	Supports
+JobStep	Derived from
+JobStep	Description
+JobStep	Open questions
+JobStep	Outcomes
+JobStep	Relies on
+JobStep	Supports
+QualityAttribute	Definition
+QualityAttribute	Open questions
+QualityModel	Description
+QualityModel	Edition
+QualityModel	Open questions
+QualityModel	Quality attributes
+QualityModel	Sources
+QualityModelAttribute	Definition
+QualityModelAttribute	Open questions
+Requirement	Adopts
+Requirement	Applies to
+Requirement	Authority
+Requirement	Criterion
+Requirement	Derived from
+Requirement	Evidence
+Requirement	Open questions
+Requirement	Rationale
+Requirement	Refines
+Requirement	Related specifications
+Requirement	Relies on
+Requirement	Specification system
+Requirement	Statement
+Requirement	Supports
+Scenario	Open questions
+ScenarioStep	Open questions
+Snapshot	Scope
+Snapshot	Sources
+Specification	Adopts
+Specification	Authority
+Specification	Derived from
+Specification	Evidence
+Specification	Open questions
+Specification	Related specifications
+Specification	Relies on
+Specification	Supports
+Synchronization	Derived from
+Synchronization	Open questions
+Synchronization	Relies on
+Synchronization	Semantics
+Synchronization	Supports
+Synchronization	Then
+Synchronization	When
+Synchronization	Where
+System	Adopts
+System	Assumptions
+System	Authority
+System	Concept uses
+System	Constraints
+System	Derived from
+System	Description
+System	Environment
+System	Evidence
+System	Glossary
+System	Goals
+System	Interacts with
+System	Open questions
+System	Out of scope
+System	Overview
+System	Part of
+System	Project references
+System	Provided interfaces
+System	Purpose
+System	Related specifications
+System	Relies on
+System	Required interfaces
+System	Scope
+System	Stakeholders
+System	Supports
+System	Synchronizations
+SystemContextSpecification	Adopts
+SystemContextSpecification	Authority
+SystemContextSpecification	Derived from
+SystemContextSpecification	Evidence
+SystemContextSpecification	Open questions
+SystemContextSpecification	Related specifications
+SystemContextSpecification	Relies on
+SystemContextSpecification	Specification system
+SystemContextSpecification	Supports
+SystemQualityAttribute	Adopts
+SystemQualityAttribute	Authority
+SystemQualityAttribute	Definition
+SystemQualityAttribute	Derived from
+SystemQualityAttribute	Evidence
+SystemQualityAttribute	Open questions
+SystemQualityAttribute	Related specifications
+SystemQualityAttribute	Relies on
+SystemQualityAttribute	Supports
+SystemStakeholderRole	Description
+SystemStakeholderRole	Open questions
+TraceableElement	Derived from
+TraceableElement	Open questions
+TraceableElement	Relies on
+TraceableElement	Supports
+UseCase	Adopts
+UseCase	Authority
+UseCase	Derived from
+UseCase	Evidence
+UseCase	Extensions
+UseCase	Goal
+UseCase	Goal level
+UseCase	Involves
+UseCase	Main success scenario
+UseCase	Minimal guarantees
+UseCase	Open questions
+UseCase	Preconditions
+UseCase	Primary actor
+UseCase	Related specifications
+UseCase	Relies on
+UseCase	Sequence
+UseCase	Specification system
+UseCase	Stakeholder interests
+UseCase	Success guarantees
+UseCase	Supporting actors
+UseCase	Supports
+UseCase	System boundary
+UseCase	Trigger
+UseCaseExtension	Condition
+UseCaseExtension	Handling
+UseCaseExtension	Open questions

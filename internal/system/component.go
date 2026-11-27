@@ -123,7 +123,7 @@ func parentChain(files *specfile.SourceSet, path, boundary string) ([]string, er
 			return paths, diagnostic.Error("structure.part-of", "Part of must link to a local subject declaration", ref.Location)
 		}
 		path = filepath.Clean(filepath.Join(filepath.Dir(path), filepath.FromSlash(u.Path)))
-		info, ok, err := check.ReferenceTarget(path, boundary)
+		info, ok, err := specfile.ReferenceTarget(path, boundary)
 		if err != nil || !ok || !info.Mode().IsRegular() {
 			return paths, diagnostic.Error("structure.part-of", "unavailable parent declaration: "+path, ref.Location)
 		}

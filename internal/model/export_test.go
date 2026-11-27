@@ -8,22 +8,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/craigsmitham/dotspec/internal/businessrule"
-	"github.com/craigsmitham/dotspec/internal/check"
-	"github.com/craigsmitham/dotspec/internal/concept"
-	"github.com/craigsmitham/dotspec/internal/job"
-	"github.com/craigsmitham/dotspec/internal/qualitymodel"
-	"github.com/craigsmitham/dotspec/internal/requirement"
-	"github.com/craigsmitham/dotspec/internal/system"
-	"github.com/craigsmitham/dotspec/internal/usecase"
+	"github.com/craigsmitham/dotspec/internal/speckinds"
 )
 
-func exportTypes() []check.Type {
-	return []check.Type{qualitymodel.CheckType(), businessrule.CheckType(), system.CheckType(), system.ComponentCheckType(), system.ProductCheckType(system.FeatureLayout), system.ProductCheckType(system.CapabilityLayout), system.AttributeCheckType(), job.CheckType(), usecase.CheckType(), concept.CheckType(), requirement.CheckType()}
-}
-
 func TestExportEmptyScope(t *testing.T) {
-	result, err := Export(t.TempDir(), exportTypes()...)
+	result, err := Export(t.TempDir(), speckinds.All()...)
 	if err != nil || result.ExitCode != 0 {
 		t.Fatalf("empty export: %v %+v", err, result)
 	}
@@ -53,7 +42,7 @@ func TestExportDirectoryImageAndNativeFragments(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	result, err := Export(dir, exportTypes()...)
+	result, err := Export(dir, speckinds.All()...)
 	if err != nil || result.ExitCode != 0 {
 		t.Fatalf("export: %v %d", err, result.ExitCode)
 	}
@@ -74,7 +63,7 @@ func TestExportDirectoryImageAndNativeFragments(t *testing.T) {
 		t.Fatalf("directory=%v image=%v native-selector-preserved=%v", directory, image, native)
 	}
 	first, _ := json.Marshal(result.Snapshot)
-	again, err := Export(dir, exportTypes()...)
+	again, err := Export(dir, speckinds.All()...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -82,6 +71,74 @@ func TestExportDirectoryImageAndNativeFragments(t *testing.T) {
 	if !bytes.Equal(first, second) {
 		t.Fatal("unchanged input did not produce an identical snapshot")
 	}
+}
+
+func TestExportRecordsNativeDefinitionLine(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, "specs/concepts"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	files := map[string]string{
+		"specs/concepts/queue.concept.spec.md": "---\ntype: concept-spec\ncompanions:\n  - target: ../../queue.qnt#inv\n    role: formalizes\n  - target: ../../queue.qnt#missing\n    role: verifies\n---\n# Queue\n## Purpose\nOrder work.\n## State\nItems.\n## Actions\n### Push\n## Operational principles\nFirst in, first out.\n",
+		"queue.qnt":                            "module queue {\n  val inv = true\n}\n",
+	}
+	for path, data := range files {
+		if err := os.WriteFile(filepath.Join(dir, path), []byte(data), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	result, err := Export(dir, speckinds.All()...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	findings, err := Validate(result.Snapshot)
+	if err != nil || len(findings) != 0 {
+		t.Fatalf("snapshot: %v %+v", err, findings)
+	}
+	lines := map[string]any{}
+	for _, ref := range result.Snapshot.References {
+		if resolution := Object(ref["resolution"]); String(resolution, "rule") == "native-definition/1" {
+			lines[String(ref, "authored_target")+" "+String(resolution, "status")] = resolution["line"]
+		}
+	}
+	if len(lines) != 2 || lines["../../queue.qnt#inv resolved"] != 2 || lines["../../queue.qnt#missing unresolved"] != nil {
+		t.Fatalf("native definition resolutions: %v", lines)
+	}
+}
+
+func TestExportResolvesContextForSourceCheckRejects(t *testing.T) {
+	dir := t.TempDir()
+	files := map[string]string{
+		"specs/app.system.spec.md":                    "---\ntype: system-spec\n---\n# App\n## Purpose\nRead.\n## Scope\nLocal.\n",
+		"specs/requirements/save.requirement.spec.md": "---\ntype: requirement-spec\n---\n# Save\n## Criterion\nA criterion.\n## Bogus heading\nText.\n",
+	}
+	for path, data := range files {
+		full := filepath.Join(dir, path)
+		if err := os.MkdirAll(filepath.Dir(full), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(full, []byte(data), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	result, err := Export(dir, speckinds.All()...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ids := map[string]string{}
+	for _, source := range result.Snapshot.Sources {
+		ids[filepath.Base(String(source, "locator"))] = String(source, "id")
+	}
+	for _, context := range result.Snapshot.ContextSources {
+		if String(context, "role") == "system_context" && String(context, "source") == ids["app.system.spec.md"] {
+			for _, requester := range Strings(context["requested_by"]) {
+				if requester == ids["save.requirement.spec.md"] {
+					return
+				}
+			}
+		}
+	}
+	t.Fatalf("rejected requirement did not request its system context: %+v", result.Snapshot.ContextSources)
 }
 
 func TestExportDoesNotSkipInaccessibleParentSystem(t *testing.T) {
@@ -105,7 +162,7 @@ func TestExportDoesNotSkipInaccessibleParentSystem(t *testing.T) {
 	if err := os.Symlink(filepath.Join(dir, "specs/system.system.spec.md"), filepath.Join(dir, "middle/specs/system.system.spec.md")); err != nil {
 		t.Skipf("symlinks unavailable: %v", err)
 	}
-	result, err := Export(dir, exportTypes()...)
+	result, err := Export(dir, speckinds.All()...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -147,7 +204,7 @@ func TestExportReferencedClassificationDoesNotSkipNearerBoundary(t *testing.T) {
 	if err := os.Symlink(filepath.Join(dir, "specs/root.system.spec.md"), filepath.Join(dir, "middle/specs/root.system.spec.md")); err != nil {
 		t.Skipf("symlinks unavailable: %v", err)
 	}
-	result, err := Export(filepath.Join(dir, "consumer"), exportTypes()...)
+	result, err := Export(filepath.Join(dir, "consumer"), speckinds.All()...)
 	if err != nil || result.ExitCode != 0 {
 		t.Fatalf("export: %v %d", err, result.ExitCode)
 	}

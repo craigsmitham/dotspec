@@ -1,12 +1,14 @@
 package model
 
 import (
+	"bytes"
 	"net/url"
 	"os"
 	"path/filepath"
 	"sort"
-	"strconv"
 	"strings"
+
+	"github.com/craigsmitham/dotspec/internal/specfile"
 )
 
 var (
@@ -35,6 +37,8 @@ type viewLinks struct {
 	// anchoredPassages links footnotes in a rebased passage to the record's
 	// anchor rather than to the top of its document.
 	anchoredPassages bool
+	// definitions caches each source document's reference definitions.
+	definitions map[string]string
 }
 
 func newViewLinks(s *Snapshot, relativeTo string) (*viewLinks, error) {
@@ -43,7 +47,7 @@ func newViewLinks(s *Snapshot, relativeTo string) (*viewLinks, error) {
 		return nil, err
 	}
 	d := newDesignResolver(s)
-	return &viewLinks{d: d, snapshot: s, base: base, name: d.name, escape: viewLabelEscape, fragment: anchoredFragment}, nil
+	return &viewLinks{d: d, snapshot: s, base: base, name: d.name, escape: viewLabelEscape, fragment: anchoredFragment, definitions: map[string]string{}}, nil
 }
 
 func anchoredFragment(r, f Record) bool {
@@ -99,7 +103,7 @@ func (l *viewLinks) passage(r Record, text string, level int) string {
 	if l.anchoredPassages {
 		source = l.target(r)
 	}
-	return designHeadings(rebaseDesignMarkdown(text, source, l.d.definitions(r)), level)
+	return designHeadings(rebaseDesignMarkdown(text, source, l.documentDefinitions(r)), level)
 }
 
 type designEdit struct {
@@ -172,22 +176,23 @@ func rebaseDesignMarkdown(text, source, definitions string) string {
 			}
 		}
 		label := ""
-		if a, b := designLinkLabel(string(doc.Data[start:end])); a >= 0 {
-			label = apply(start+a, start+b)
-		}
-		target := u.String()
-		if strings.ContainsAny(target, "() ") {
-			target = "<" + target + ">"
+		// Content-node spans may include enclosing syntax for source coverage;
+		// keep only the authored label inside the link or image wrapper.
+		raw := doc.Data[start:end]
+		if open := bytes.IndexByte(raw, '['); open >= 0 {
+			if close := specfile.LinkLabelEnd(raw, open); close >= 0 {
+				label = apply(start+open+1, start+close)
+			}
 		}
 		title := ""
 		if String(n, "title") != "" {
-			title = " " + strconv.Quote(String(n, "title"))
+			title = " " + specfile.FormatTitle(String(n, "title"))
 		}
 		prefix := ""
 		if form == "image" {
 			prefix = "!"
 		}
-		edits = append(edits, designEdit{start, end, prefix + "[" + label + "](" + target + title + ")"})
+		edits = append(edits, designEdit{start, end, prefix + "[" + label + "](" + specfile.FormatDestination(u.String()) + title + ")"})
 	}
 	return apply(0, len(text))
 }
@@ -240,39 +245,6 @@ func designHeadings(text string, level int) string {
 	return strings.Join(lines, "\n")
 }
 
-// Return the authored label range, excluding link/image wrappers. Content-node
-// spans may deliberately include enclosing syntax for source coverage.
-func designLinkLabel(raw string) (int, int) {
-	start := strings.IndexByte(raw, '[')
-	if start < 0 {
-		return -1, -1
-	}
-	depth := 1
-	for i := start + 1; i < len(raw); i++ {
-		switch raw[i] {
-		case '\\':
-			i++
-		case '`':
-			end := i
-			for end < len(raw) && raw[end] == '`' {
-				end++
-			}
-			delimiter := raw[i:end]
-			if next := strings.Index(raw[end:], delimiter); next >= 0 {
-				i = end + next + len(delimiter) - 1
-			}
-		case '[':
-			depth++
-		case ']':
-			depth--
-			if depth == 0 {
-				return start + 1, i
-			}
-		}
-	}
-	return -1, -1
-}
-
 func designOutputBase(relativeTo string) (string, error) {
 	base, err := filepath.Abs(relativeTo)
 	if err != nil {
@@ -300,24 +272,21 @@ func designOutputBase(relativeTo string) (string, error) {
 
 // Markdown views can be generated directly from an exported snapshot. Extract
 // reference definitions once per source, including definitions outside the field.
-func (d *designResolver) definitions(owner Record) string {
+func (l *viewLinks) documentDefinitions(owner Record) string {
 	source := String(owner, "source_document")
-	if defs, ok := d.documentDefinitions[source]; ok {
+	if defs, ok := l.definitions[source]; ok {
 		return defs
 	}
-	if d.documentDefinitions == nil {
-		d.documentDefinitions = map[string]string{}
-	}
-	text := String(d.index[source], "markdown")
+	text := String(l.d.index[source], "markdown")
 	var definitions []string
 	if strings.Contains(text, "]:") {
-		doc := ParseContent(String(d.index[source], "locator"), []byte(text))
+		doc := ParseContent(String(l.d.index[source], "locator"), []byte(text))
 		for _, n := range doc.Nodes {
 			if String(n, "node_kind") == "link_definition" {
 				definitions = append(definitions, doc.Raw(String(n, "id")))
 			}
 		}
 	}
-	d.documentDefinitions[source] = strings.Join(definitions, "\n")
-	return d.documentDefinitions[source]
+	l.definitions[source] = strings.Join(definitions, "\n")
+	return l.definitions[source]
 }

@@ -48,14 +48,23 @@ func Sources(path string, types ...Type) SourceReport {
 
 // Inventory retains the observed project boundary, selected specs and source report
 // for subsequent model mapping without a second discovery or source check.
+// Contexts holds each inspected source's context resolution, keyed by source path.
 type Inventory struct {
 	Types             []Type
 	Sources           *specfile.SourceSet
 	Report            Report
 	Files             []SourceFile
+	Contexts          map[string]ContextResult
 	Selected          []string
 	Repository        string
 	DiscoveryComplete bool
+}
+
+// ContextResult is what a source's ContextProvider returned during check:
+// the resolved paths, including failed reads, and the resolution error.
+type ContextResult struct {
+	Paths []string
+	Err   error
 }
 
 func InspectSources(path string, types ...Type) Inventory {
@@ -79,7 +88,8 @@ func InspectSources(path string, types ...Type) Inventory {
 		result.Files = append(result.Files, *file)
 	}
 	sort.Slice(result.Files, func(i, j int) bool { return result.Files[i].Path < result.Files[j].Path })
-	result.Report.files = nil
+	result.Contexts = result.Report.contexts
+	result.Report.files, result.Report.contexts = nil, nil
 	return result
 }
 

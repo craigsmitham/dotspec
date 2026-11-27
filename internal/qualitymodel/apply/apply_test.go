@@ -117,6 +117,25 @@ func TestLocalAncestorClosureAndLinkRelocation(t *testing.T) {
 	}
 }
 
+func TestLinkRelocationKeepsCodeSpanLabels(t *testing.T) {
+	path := target(t, plain)
+	source := filepath.Join(filepath.Dir(path), "quality-models", "local.quality-model.md")
+	data := []byte("---\ntype: quality-model\n---\n# Local\n## Quality attributes\n### Narrow\n**ID:** narrow\nSee [`]`](../../guide.md \"ends in \\\\\").\n")
+	m, err := qualitymodel.Parse(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	m.Path = source
+	m.Slug = "local"
+	r, err := Run(m, path, Options{Attributes: []string{"narrow"}, DryRun: false})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if want := "See [`]`](<../../../guide.md> \"ends in \\\\\")."; !strings.Contains(r.Entries[0].Content, want) {
+		t.Fatalf("missing %q in %s", want, r.Entries[0].Content)
+	}
+}
+
 func TestFailureLeavesOriginal(t *testing.T) {
 	m, _ := qualitymodel.Show(".", "furps")
 	for _, raw := range []string{"invalid specification", strings.ReplaceAll(plain, "# System", "# Wrong name")} {

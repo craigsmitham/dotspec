@@ -7,6 +7,7 @@ import (
 
 	"github.com/craigsmitham/dotspec/internal/check"
 	"github.com/craigsmitham/dotspec/internal/requirement"
+	"github.com/craigsmitham/dotspec/internal/speckinds"
 )
 
 func associationFixture(t *testing.T) string {
@@ -44,7 +45,7 @@ func TestSpecificationSystemSelectionIsConsistent(t *testing.T) {
 	if err != nil || len(groups) != 2 {
 		t.Fatal(groups, err)
 	}
-	report := check.Sources(root, conformanceTypes()...)
+	report := check.Sources(root, speckinds.All()...)
 	for _, d := range report.Diagnostics {
 		if strings.Contains(d.Rule, "undefined-attribute") || d.Severity == "error" {
 			t.Fatal(d)

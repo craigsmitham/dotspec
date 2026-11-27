@@ -37,12 +37,12 @@ func (p *planner) indexConceptDefinitions() {
 		}
 		if member.target == "" {
 			named.note = "no definition"
-			use.navigationParent.includeMember("Concepts", named)
+			use.navigationParent.includeMember(collectionTitle("ConceptUse"), named)
 			continue
 		}
 		member.children = []entry{named}
 		member.childLabel = "Uses:"
-		use.navigationParent.includeMember("Concepts", member)
+		use.navigationParent.includeMember(collectionTitle("ConceptUse"), member)
 	}
 }
 

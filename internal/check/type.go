@@ -68,11 +68,7 @@ type contextRequest struct {
 }
 
 func (r *Report) inspectContexts(requests []contextRequest, discovered map[string]bool) {
-	type resolution struct {
-		paths []string
-		err   error
-	}
-	resolved := make(map[contextKey]resolution)
+	resolved := make(map[contextKey]ContextResult)
 	counted := make(map[string]bool)
 	type inspectionKey struct {
 		provider *ContextProvider
@@ -87,17 +83,20 @@ func (r *Report) inspectContexts(requests []contextRequest, discovered map[strin
 		result, found := resolved[key]
 		if !found {
 			if key.provider.ResolveSource != nil {
-				result.paths, result.err = key.provider.ResolveSource(r.sources, key.owner, request.source)
+				result.Paths, result.Err = key.provider.ResolveSource(r.sources, key.owner, request.source)
 			} else {
-				result.paths, result.err = key.provider.Resolve(r.sources, key.owner)
+				result.Paths, result.Err = key.provider.Resolve(r.sources, key.owner)
 			}
 			resolved[key] = result
-			if result.err != nil {
-				r.record(result.err, "scan.context", key.owner)
+			if result.Err != nil {
+				r.record(result.Err, "scan.context", key.owner)
 			}
 		}
-		contextOK := result.err == nil
-		for _, path := range result.paths {
+		if r.contexts != nil {
+			r.contexts[request.source] = result
+		}
+		contextOK := result.Err == nil
+		for _, path := range result.Paths {
 			r.collectFile(path, nil)
 			if path != "" && !discovered[path] && !counted[path] {
 				counted[path] = true
@@ -120,7 +119,7 @@ func (r *Report) inspectContexts(requests []contextRequest, discovered map[strin
 			}
 		}
 		if contextOK && request.inspect != nil {
-			findings, err := request.inspect(r.sources, request.source, result.paths)
+			findings, err := request.inspect(r.sources, request.source, result.Paths)
 			r.Diagnostics = append(r.Diagnostics, findings...)
 			if err != nil {
 				r.record(err, "scan.context", request.source)

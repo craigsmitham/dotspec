@@ -2,6 +2,8 @@ package specfile
 
 import (
 	"errors"
+	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -91,7 +93,20 @@ func TestNativeDefinitions(t *testing.T) {
 	if NativeDefinitionFormat("diagram.puml") || NativeDefinitions("diagram.puml", []byte("@startuml")) != nil {
 		t.Fatal("unsupported formats keep their own fragment semantics")
 	}
-	if line := NativeDefinitionLine("x.QNT", []byte("module x {\r\n  val inv = true\r\n}"), "inv"); line != 2 {
+	if line := nativeDefinitionLine("x.QNT", []byte("module x {\r\n  val inv = true\r\n}"), "inv"); line != 2 {
 		t.Fatal(line)
+	}
+	file := filepath.Join(t.TempDir(), "x.qnt")
+	if err := os.WriteFile(file, []byte("module x {\n  val inv = true\n}"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if line, err := NativeDefinitionAt(file, "inv"); err != nil || line != 2 {
+		t.Fatal(line, err)
+	}
+	if line, err := NativeDefinitionAt(file, "missing"); err != nil || line != 0 {
+		t.Fatal(line, err)
+	}
+	if _, err := NativeDefinitionAt(filepath.Join(filepath.Dir(file), "absent.qnt"), "inv"); err == nil {
+		t.Fatal("missing file read")
 	}
 }

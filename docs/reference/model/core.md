@@ -4,7 +4,7 @@ Generated from [the canonical model](../../../model/metamodel.yaml) and [the vie
 
 A focused reference for maintainers and authors understanding business requirements, user requirements, software requirements, and their traceability. Business rules describe business constraints independently of enforcement. Jobs describe user progress; use cases describe software interactions. Supporting and generic model machinery remains available in the complete reference.
 
-Model version: `0.35.0-draft`. See the [complete reference](index.md) for all fields and constraints.
+Model version: `0.36.0-draft`. See the [complete reference](index.md) for all fields and constraints.
 
 ## Core subsets
 

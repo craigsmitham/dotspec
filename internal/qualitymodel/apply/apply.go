@@ -405,13 +405,13 @@ func relocate(source *qualitymodel.QualityModel, target string) ([]byte, error) 
 		if raw[0] == '!' {
 			begin++
 		}
-		close := labelEnd(raw, begin)
+		close := specfile.LinkLabelEnd(raw, begin)
 		if close < 0 {
 			return nil, fmt.Errorf("cannot relocate source link %q", raw)
 		}
-		suffix := "(<" + strings.NewReplacer("<", "%3C", ">", "%3E", "\n", "%0A", "\r", "%0D").Replace(dest) + ">"
+		suffix := "(" + specfile.FormatDestination(dest)
 		if title := model.String(n, "title"); title != "" {
-			suffix += " \"" + strings.NewReplacer("\\", "\\\\", "\"", "\\\"").Replace(title) + "\""
+			suffix += " " + specfile.FormatTitle(title)
 		}
 		suffix += ")"
 		edits = append(edits, edit{start + close + 1, end, suffix})
@@ -426,25 +426,4 @@ func relocate(source *qualitymodel.QualityModel, target string) ([]byte, error) 
 		limit = e.start
 	}
 	return data, nil
-}
-
-func labelEnd(raw []byte, start int) int {
-	if start >= len(raw) || raw[start] != '[' {
-		return -1
-	}
-	depth := 0
-	for i := start; i < len(raw); i++ {
-		switch raw[i] {
-		case '\\':
-			i++
-		case '[':
-			depth++
-		case ']':
-			depth--
-			if depth == 0 {
-				return i
-			}
-		}
-	}
-	return -1
 }
