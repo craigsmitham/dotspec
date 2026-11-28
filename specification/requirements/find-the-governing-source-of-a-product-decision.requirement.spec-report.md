@@ -21,6 +21,10 @@ From a feature and the requirements index a reader can reach its named executabl
 
 A whole-project check identifies candidate artifacts using recognized formats and project-selected patterns. The declaration establishes authority. Inspection establishes addressability within the supported formats. The snapshot preserves the declaration, its owner and source, verification procedures and contextual references.
 
+## Rationale
+
+Maintaining the same decision in prose and in executable cases creates two places to edit and review. Naming the governing source lets a reader find it from the product specification while the team changes each decision in one place.
+
 ## Verification
 
 - [Catalog a suite and resolve its declarations](<../../internal/integration/testdata/catalog.txtar>)
