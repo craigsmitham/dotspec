@@ -17,7 +17,11 @@ Specification frontmatter, inspection, source inventory, snapshot export and gen
 
 ## Criterion
 
+A reader can explain the promised behavior from the declaring subject’s Markdown and follow its link to the native source that governs the decision. When a particular definition governs the decision, the link identifies that definition.
+
 From a feature and the requirements index a reader can reach its named executable suite. From the suite's inventory entry a reader can locate the feature that declared it. Adding another governing case in the suite requires no Markdown edit. Renaming a cited scenario produces a finding at the referring occurrence. A report distinguishes a procedure from an observation and can show a run of the suite itself for the recorded revision and conditions.
+
+A passing bounded model check supports a claim about the model at the recorded revision, within the checked bounds and conditions. A claim that the running implementation conforms to that model requires evidence connecting the implementation to the model.
 
 A whole-project check identifies candidate artifacts using recognized formats and project-selected patterns. The declaration establishes authority. Inspection establishes addressability within the supported formats. The snapshot preserves the declaration, its owner and source, verification procedures and contextual references.
 

@@ -11,6 +11,8 @@ specifications:
 
 ## Choose the source
 
+Choose a form that makes the decision easy to review. A table can show which combinations of conditions change a business rule. A Mermaid state diagram can show permitted transitions and let reviewers see a changed edge in the diff. If the promise depends on the ordering of concurrent events, a formal model can state the invariant precisely. Keep the claim and its explanation in the Markdown body so a reader can understand the promise before opening the native definition.
+
 Use a whole file when its scope matches the declaration. Use a fragment for one rule in a mixed suite, one invariant in a model, or one operation in a contract. Another subject can link directly to that native definition or to the catalog entry on the declaring spec, for example `waiting.feature.spec.md#specification.follow-up-timing-for-waiting-replies`. The declaration anchor is `specification.` followed by the heading-style fragment of the name.
 
 The To-do project uses one Python function as the governing example for [saved follow-up dates across time zones](../../../examples/todo/specs/quality/durability/durability.quality-attribute.spec.md). Open its named declaration to find the native cases and their verification procedure.
