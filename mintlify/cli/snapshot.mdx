@@ -1,0 +1,27 @@
+---
+title: "dotspec snapshot"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+Export and validate specification snapshots
+
+```sh
+dotspec snapshot [flags]
+```
+
+Export a project's source text, named domain fields, located relationships and inspection findings as one versioned JSON snapshot, print the snapshot's JSON Schema, or validate a saved snapshot.
+
+Learn more: dotspec docs specs/use-cases/export-specification-model.use-case.spec.md
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for snapshot |
+
+See [global flags](/cli/overview) for options available to every command.
+
+## Choose a command
+
+- [dotspec snapshot export](/cli/snapshot-export) — Export a source-backed specification snapshot as JSON
+- [dotspec snapshot schema](/cli/snapshot-schema) — Print the embedded snapshot JSON Schema
+- [dotspec snapshot validate](/cli/snapshot-validate) — Check a snapshot's shape, source ranges, and relationships

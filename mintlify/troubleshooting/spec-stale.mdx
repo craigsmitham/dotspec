@@ -1,0 +1,15 @@
+---
+title: "Generated specification is stale (spec.stale)"
+description: "Rebuild a report after changing a specification and confirm CI will see the same result."
+---
+
+A project-wide check reports `spec.stale` when a generated page differs from what the current sources would produce. Read the path in the finding. If the intended wording belongs in the product specification, edit its source under `specs/`.
+
+From the project directory, rebuild and check again.
+
+```sh
+dotspec build
+dotspec check
+```
+
+If the build reports a source error, fix the named file and repeat. Review the generated diff and commit the source and report together. In CI, run the check against the committed report before any rebuild so the job can detect stale output. [See an actual failure and successful recheck](/cli/check#check-an-edited-project).

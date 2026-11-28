@@ -1,0 +1,57 @@
+---
+title: "dotspec new"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+Create a specification draft of one kind
+
+```sh
+dotspec new <kind> [flags]
+```
+
+Create a specification draft of one kind below the working directory and report its path with the authoring guide to read next. New never overwrites: when the target already exists, it changes nothing and exits 2.
+
+Kinds:
+  system              Describe a system's purpose, scope, and context
+                      dotspec docs system
+  component           Describe a part of a system and its responsibilities
+                      dotspec docs component
+  feature             Group stakeholder-visible behavior
+                      dotspec docs feature
+  capability          Describe an ability and the parts that provide it
+                      dotspec docs capability
+  job                 Define jobs to be done (JTBDs)
+                      dotspec docs job
+  use-case            Describe actor goals and interactions with a system
+                      dotspec docs use-case
+  concept             Describe purposeful product behavior through state and actions
+                      dotspec docs concept
+  business-rule       Describe business constraints independently of their enforcement
+                      dotspec docs business-rule
+  requirement         Specify required results, rules, properties, and restrictions
+                      dotspec docs requirement
+  quality-attribute   Adopt a quality attribute for a system, blank or from a quality model
+                      dotspec docs quality-attribute
+  quality-model       Define reusable quality attributes for systems to adopt
+                      dotspec docs quality-model
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for new |
+
+See [global flags](/cli/overview) for options available to every command.
+
+## Choose a command
+
+- [dotspec new business-rule](/cli/new-business-rule) — Create a business-rule specification
+- [dotspec new capability](/cli/new-capability) — Create a capability specification
+- [dotspec new component](/cli/new-component) — Create a component specification
+- [dotspec new concept](/cli/new-concept) — Create a concept specification
+- [dotspec new feature](/cli/new-feature) — Create a feature specification
+- [dotspec new job](/cli/new-job) — Create a job specification
+- [dotspec new quality-attribute](/cli/new-quality-attribute) — Create a quality-attribute specification
+- [dotspec new quality-model](/cli/new-quality-model) — Create a quality-model specification
+- [dotspec new requirement](/cli/new-requirement) — Create a requirement specification
+- [dotspec new system](/cli/new-system) — Create a system specification
+- [dotspec new use-case](/cli/new-use-case) — Create a use-case specification

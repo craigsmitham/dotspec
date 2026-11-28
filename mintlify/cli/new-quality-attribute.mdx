@@ -1,0 +1,28 @@
+---
+title: "dotspec new quality-attribute"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+Create a quality-attribute specification
+
+```sh
+dotspec new quality-attribute <id>... [flags]
+```
+
+Adopt a quality attribute for a system, blank or from a quality model. Each `<id>` becomes the attribute's ID and slug in the nearest enclosing system. Without --from, each attribute starts with a blank definition in `specs/quality/<id>/.` With --from, the definition is copied from the model's term and cited, and the term's missing parents are adopted too; parents the system already declares are reused. --dry-run previews the decisions and new file contents without writing.
+
+Learn more: dotspec docs quality-attribute
+
+```sh
+dotspec new quality-attribute recoverability --from iso-25010-2023 --dry-run
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--dry-run` | `false` | preview the decisions and new file contents without writing |
+| `--from <model>` | `` | copy from a bundled model, local model slug, or model source path |
+| `-h, --help` | `false` | help for quality-attribute |
+| `--json` | `false` | emit the result as JSON |
+
+See [global flags](/cli/overview) for options available to every command.

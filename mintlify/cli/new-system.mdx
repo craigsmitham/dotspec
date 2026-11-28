@@ -1,0 +1,27 @@
+---
+title: "dotspec new system"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+Create a system specification
+
+```sh
+dotspec new system <name> [flags]
+```
+
+Describe a system's purpose, scope, and context. The `<name>` becomes the heading, and the filename is derived from it. --part-of names the parent system, relative to the working directory; a project's root system comes from dotspec init.
+
+Learn more: dotspec docs system
+
+```sh
+dotspec new system Billing -C internal --part-of ../specs/new-system.system.spec.md
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for system |
+| `--json` | `false` | emit the result as JSON |
+| `--part-of <path>` | `` | parent system source file, relative to the working directory |
+
+See [global flags](/cli/overview) for options available to every command.

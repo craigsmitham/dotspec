@@ -65,7 +65,32 @@ func run(check bool) error {
 		return err
 	}
 	files = append(files, web...)
+	wanted := map[string]bool{}
+	for _, f := range web {
+		wanted[f.path] = true
+	}
+	existing, err := filepath.Glob(filepath.Join("mintlify", "cli", "*.mdx"))
+	if err != nil {
+		return err
+	}
 	var stale []string
+	for _, name := range existing {
+		if wanted[filepath.ToSlash(name)] {
+			continue
+		}
+		data, err := os.ReadFile(name)
+		if err != nil {
+			return err
+		}
+		if !bytes.Contains(data, []byte("{/* Generated from Cobra command tree by mise run generate. */}")) {
+			continue
+		}
+		if check {
+			stale = append(stale, name)
+		} else if err := os.Remove(name); err != nil {
+			return err
+		}
+	}
 	for _, file := range files {
 		path := filepath.Join(root, file.path)
 		if check {
@@ -184,7 +209,7 @@ func writeCommandBody(out *strings.Builder, cmd *cobra.Command) {
 			if value, _ := pflag.UnquoteUsage(f); value != "" {
 				name += " " + value
 			}
-			fmt.Fprintf(out, "| `%s` | `%s` | %s |\n", escape(name), escape(f.DefValue), escape(f.Usage))
+			fmt.Fprintf(out, "| `%s` | `%s` | %s |\n", escape(name), escape(f.DefValue), metavar.ReplaceAllString(escape(f.Usage), "`$0`"))
 		})
 	}
 	out.WriteByte('\n')

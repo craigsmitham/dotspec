@@ -6,19 +6,25 @@ description: "Write a room-booking requirement, find it in the generated specifi
 
 ## Install the CLI
 
-On macOS or Linux with Homebrew, run:
+This walkthrough was verified with dotspec `0.1.0-alpha.1`. Choose an installation method.
 
-```sh
+<CodeGroup>
+```sh Homebrew
 brew install dotspec-md/tap/dotspec
 ```
-
-With npm on macOS, Linux, or Windows, run:
-
-```sh
+```sh npm
 npm install --global dotspec@alpha
 ```
+```sh Go
+go install github.com/dotspec-md/dotspec@v0.1.0-alpha.1
+```
+</CodeGroup>
 
-You can also download a [standalone release](https://github.com/dotspec-md/dotspec/releases). Run `dotspec --version` to check your installation.
+[Standalone binaries](https://github.com/dotspec-md/dotspec/releases) are also available. Check the installed version.
+
+```sh
+dotspec --version
+```
 
 ## Start a booking desk project
 
@@ -83,6 +89,12 @@ dotspec build
 dotspec check
 ```
 
+```text nocopy
+specs/requirements/avoid-double-booking.requirement.spec.md          # edit
+SPEC.md                                                            # open first
+specification/requirements/prevent-a-second-reservation.requirement.spec-report.md
+```
+
 Open `SPEC.md`, follow **Read the system specification**, and under **Requirements** choose **Prevent a second reservation**. A teammate can now read the promise, the condition, and the example together. **View source** takes them back to the file you edited.
 
 ## Fix a stale report
@@ -95,5 +107,7 @@ generated page is stale; run dotspec build in this project
 ```
 
 Run `dotspec build` and then `dotspec check`. The check should now report zero errors. Reopen the requirement report to see the new rationale. Commit `dotspec.yaml`, `specs/`, `SPEC.md`, and `specification/` together.
+
+[Repair a stale specification](/troubleshooting/spec-stale) explains this finding.
 
 To see a requirement checked against a running application, follow [What survives a restart?](/examples/restart). To write your own criterion, use [Write an assessable requirement](/guides/write-an-assessable-requirement).

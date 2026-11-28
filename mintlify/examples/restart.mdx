@@ -5,15 +5,17 @@ description: "Follow a waiting task from a durability requirement to the test th
 
 You have asked Lee for a visit time to repair the guest sink. You move the task to **Waiting** and save a follow-up date. The service acknowledges the change and then stops. When you return, how would you tell whether the list kept your commitment?
 
+Walkthrough verified with dotspec `0.1.0-alpha.1`.
+
 ## Read the promise
 
 Open **Preserve tasks across restart** and read **Statement** and **Conditions** together. The promise covers changes the service acknowledged before it stopped, on functioning local storage. If you reopen the same database, you should find the same task in Waiting with its title, expected reply, and saved follow-up date. On a later day, the cue beside that date can change to **Follow up now**. The follow-up rule determines when that happens. [Restart requirement](https://github.com/dotspec-md/dotspec/blob/main/examples/todo/specs/requirements/restart.requirement.spec.md#statement) · [Follow-up rule](https://github.com/dotspec-md/dotspec/blob/main/examples/todo/specs/business-rules/follow-up.business-rule.spec.md#statement).
 
 ## Follow the requirement to its test
 
-Open the generated requirement report. Under **Criterion**, the target is zero discrepancies across Open, Waiting, and Completed. Finding a task with the expected title is only one observation. If the service created a new task with that title and lost the old one's identity, the result would still fail. [Read the generated criterion](https://github.com/dotspec-md/dotspec/blob/main/examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md#criterion).
+Open the generated requirement report. Under **Criterion**, the target is zero discrepancies across Open, Waiting, and Completed. Finding a task with the expected title is only one observation. If the service created a new task with that title and lost the old one's identity, the result would still fail. [Read the generated criterion](/examples/restart-requirement#criterion).
 
-Under **Companions → Verified by**, follow **acceptance.py › verify**. The requirement's frontmatter names this function as its verification procedure. The report resolves that name to the definition. Under **Verification**, “No matching result recorded” means the report has no recorded run for that procedure. [Open the report at Companions](https://github.com/dotspec-md/dotspec/blob/main/examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md#companions).
+Under **Companions → Verified by**, follow **acceptance.py › verify**. The requirement's frontmatter names this function as its verification procedure. The report resolves that name to the definition. Under **Verification**, “No matching result recorded” means the report has no recorded run for that procedure. [Open the report at Companions](/examples/restart-requirement#companions).
 
 ## Run the two checks
 

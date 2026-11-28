@@ -1,0 +1,26 @@
+---
+title: "dotspec snapshot export"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+Export a source-backed specification snapshot as JSON
+
+```sh
+dotspec snapshot export [<path>] [flags]
+```
+
+Export selected specifications, reusable quality models, enclosing systems, and direct reference context as JSON. Retain readable Markdown and source locations, including diagnostics for invalid documents. With no `<path>`, export covers the enclosing project; a directory selects that subtree. Filesystem discovery and authoring findings follow check; external references are not fetched. Exits 1 when error findings are reported.
+
+Learn more: dotspec docs specs/use-cases/export-specification-model.use-case.spec.md
+
+```sh
+dotspec snapshot export
+dotspec snapshot export internal
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for export |
+
+See [global flags](/cli/overview) for options available to every command.

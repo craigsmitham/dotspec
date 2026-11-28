@@ -1,19 +1,121 @@
 {
   "$schema": "https://www.mintlify.com/docs.json",
-  "theme": "mint",
+  "colors": {
+    "primary": "#196B55",
+    "light": "#65C7A4",
+    "dark": "#196B55"
+  },
   "name": "dotspec",
-  "colors": { "primary": "#196B55", "light": "#65C7A4", "dark": "#196B55" },
+  "navbar": {
+    "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/dotspec-md/dotspec"
+      }
+    ]
+  },
   "navigation": {
     "groups": [
-      { "group": "Get started", "pages": ["get-started/overview", "get-started/first-requirement", "examples/restart"] },
-      { "group": "Write specifications", "pages": ["guides/choose-a-topic", "guides/describe-a-system", "guides/write-an-assessable-requirement", "guides/list-a-companion"] },
-      { "group": "CLI reference", "pages": ["cli/init", "cli/new-requirement", "cli/build", "cli/check"] }
+      {
+        "group": "Get started",
+        "pages": [
+          "get-started/overview",
+          "get-started/first-requirement",
+          "examples/restart",
+          "examples/restart-requirement",
+          "examples/storage-assumption",
+          "troubleshooting/spec-stale"
+        ]
+      },
+      {
+        "group": "Write specifications",
+        "pages": [
+          "guides/choose-a-topic",
+          "guides/describe-a-system",
+          "guides/write-an-assessable-requirement",
+          "guides/list-a-companion"
+        ]
+      },
+      {
+        "group": "CLI reference",
+        "pages": [
+          "cli/build",
+          "cli/check",
+          {
+            "group": "completion",
+            "pages": [
+              "cli/completion-bash",
+              "cli/completion-fish",
+              "cli/completion-powershell",
+              "cli/completion-zsh"
+            ],
+            "root": "cli/completion"
+          },
+          "cli/docs",
+          "cli/help",
+          "cli/init",
+          {
+            "group": "list",
+            "pages": [
+              "cli/list-business-rule",
+              "cli/list-capability",
+              "cli/list-component",
+              "cli/list-concept",
+              "cli/list-feature",
+              "cli/list-job",
+              "cli/list-quality-attribute",
+              "cli/list-quality-model",
+              "cli/list-requirement",
+              "cli/list-system",
+              "cli/list-use-case"
+            ],
+            "root": "cli/list"
+          },
+          {
+            "group": "new",
+            "pages": [
+              "cli/new-business-rule",
+              "cli/new-capability",
+              "cli/new-component",
+              "cli/new-concept",
+              "cli/new-feature",
+              "cli/new-job",
+              "cli/new-quality-attribute",
+              "cli/new-quality-model",
+              "cli/new-requirement",
+              "cli/new-system",
+              "cli/new-use-case"
+            ],
+            "root": "cli/new"
+          },
+          {
+            "group": "snapshot",
+            "pages": [
+              "cli/snapshot-export",
+              "cli/snapshot-schema",
+              "cli/snapshot-validate"
+            ],
+            "root": "cli/snapshot"
+          },
+          "cli/sources"
+        ],
+        "root": "cli/overview"
+      }
     ]
   },
   "redirects": [
-    { "source": "/index", "destination": "/get-started/overview" },
-    { "source": "/quickstart", "destination": "/get-started/first-requirement" },
-    { "source": "/handbook", "destination": "/guides/choose-a-topic" }
+    {
+      "source": "/index",
+      "destination": "/get-started/overview"
+    },
+    {
+      "source": "/quickstart",
+      "destination": "/get-started/first-requirement"
+    },
+    {
+      "source": "/handbook",
+      "destination": "/guides/choose-a-topic"
+    }
   ],
-  "navbar": { "links": [{ "label": "GitHub", "href": "https://github.com/dotspec-md/dotspec" }] }
+  "theme": "mint"
 }

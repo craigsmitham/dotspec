@@ -1,0 +1,27 @@
+---
+title: "dotspec new component"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+Create a component specification
+
+```sh
+dotspec new component <name> [flags]
+```
+
+Describe a part of a system and its responsibilities. The `<name>` becomes the heading, and the filename is derived from it. --part-of names the parent system or component, relative to the working directory; Part of is never inferred from the file's location.
+
+Learn more: dotspec docs component
+
+```sh
+dotspec new component Intake -C internal --part-of ../specs/new-system.system.spec.md
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for component |
+| `--json` | `false` | emit the result as JSON |
+| `--part-of <path>` | `` | parent system or component source file, relative to the working directory |
+
+See [global flags](/cli/overview) for options available to every command.

@@ -1,0 +1,24 @@
+---
+title: "dotspec snapshot validate"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+Check a snapshot's shape, source ranges, and relationships
+
+```sh
+dotspec snapshot validate <file>|- [flags]
+```
+
+Validate a saved snapshot file, or - to read the snapshot from standard input. Source paths and external targets are not fetched.
+
+A valid snapshot conforms to its declared model and mapping profile, and its source ranges and relationships are consistent; authoring errors it records faithfully do not make it invalid. Exits 1 when the snapshot is invalid.
+
+Learn more: dotspec docs specs/use-cases/export-specification-model.use-case.spec.md
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for validate |
+| `--json` | `false` | emit the result as JSON |
+
+See [global flags](/cli/overview) for options available to every command.

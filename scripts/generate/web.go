@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/url"
@@ -37,17 +38,107 @@ func webPages(commands *cobra.Command) ([]generatedFile, error) {
 		}
 		pages = append(pages, webPage("guides/"+slug, heading[2:], source, body))
 	}
-	for _, name := range []string{"init", "new requirement", "build", "check"} {
-		cmd, remaining, err := commands.Find(strings.Fields(name))
-		if err != nil || len(remaining) != 0 || cmd.CommandPath() != "dotspec "+name {
-			return nil, fmt.Errorf("missing command %q in the CLI reference", name)
+	for _, file := range []string{restartReport, assumptionReport} {
+		page, err := publishReport(file)
+		if err != nil {
+			return nil, err
 		}
+		pages = append(pages, page)
+	}
+	walkthrough, err := checkWalkthrough()
+	if err != nil {
+		return nil, err
+	}
+	var visit func(*cobra.Command) any
+	visit = func(cmd *cobra.Command) any {
+		route := commandRoute(cmd)
 		var body strings.Builder
 		writeCommandBody(&body, cmd)
-		body.WriteString("See the [full CLI reference](" + githubSource + "docs/reference/cli.md#dotspec) for global flags.\n")
-		pages = append(pages, webPage("cli/"+strings.ReplaceAll(name, " ", "-"), cmd.CommandPath(), "Cobra command tree", body.String()))
+		switch route {
+		case "cli/check":
+			body.WriteString(walkthrough)
+		case "cli/build":
+			body.WriteString("[Repair a stale specification](/troubleshooting/spec-stale).\n")
+		}
+		if cmd.HasParent() {
+			body.WriteString("See [global flags](/cli/overview) for options available to every command.\n")
+		}
+		var children []any
+		for _, child := range cmd.Commands() {
+			if child.Hidden {
+				continue
+			}
+			if len(children) == 0 {
+				body.WriteString("\n## Choose a command\n\n")
+			}
+			fmt.Fprintf(&body, "- [%s](/%s) — %s\n", child.CommandPath(), commandRoute(child), child.Short)
+			children = append(children, visit(child))
+		}
+		pages = append(pages, webPage(route, cmd.CommandPath(), "Cobra command tree", body.String()))
+		if len(children) == 0 {
+			return route
+		}
+		label := cmd.Name()
+		if !cmd.HasParent() {
+			label = "CLI reference"
+		}
+		return map[string]any{"group": label, "root": route, "pages": children}
 	}
-	return pages, nil
+	group := visit(commands)
+	const config = "mintlify/docs.json"
+	data, err := os.ReadFile(config)
+	if err != nil {
+		return nil, err
+	}
+	var site map[string]json.RawMessage
+	if err = json.Unmarshal(data, &site); err != nil {
+		return nil, err
+	}
+	var nav map[string]json.RawMessage
+	if err = json.Unmarshal(site["navigation"], &nav); err != nil {
+		return nil, err
+	}
+	var groups []json.RawMessage
+	if err = json.Unmarshal(nav["groups"], &groups); err != nil {
+		return nil, err
+	}
+	found := false
+	for i, raw := range groups {
+		var meta struct{ Group string }
+		if err = json.Unmarshal(raw, &meta); err != nil {
+			return nil, err
+		}
+		if meta.Group == "CLI reference" {
+			groups[i], err = json.Marshal(group)
+			if err != nil {
+				return nil, err
+			}
+			found = true
+		}
+	}
+	if !found {
+		return nil, errors.New("missing CLI reference navigation group")
+	}
+	nav["groups"], err = json.Marshal(groups)
+	if err != nil {
+		return nil, err
+	}
+	site["navigation"], err = json.Marshal(nav)
+	if err != nil {
+		return nil, err
+	}
+	data, err = json.MarshalIndent(site, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	return append(pages, generatedFile{config, string(data) + "\n"}), nil
+}
+
+func commandRoute(cmd *cobra.Command) string {
+	if !cmd.HasParent() {
+		return "cli/overview"
+	}
+	return "cli/" + strings.ReplaceAll(strings.TrimPrefix(cmd.CommandPath(), cmd.Root().Name()+" "), " ", "-")
 }
 
 func webPage(route, title, source, body string) generatedFile {
@@ -81,7 +172,9 @@ func webGuide(source string, data []byte) (string, error) {
 			return "", err
 		}
 		slug := strings.TrimSuffix(path.Base(file), ".md")
-		if file == handbookDir+slug+".md" && slices.Contains(publishedGuides, slug) {
+		if route, ok := reportRoutes[file]; ok {
+			dest.Path = "/" + route
+		} else if file == handbookDir+slug+".md" && slices.Contains(publishedGuides, slug) {
 			dest.Path = "/guides/" + slug
 		} else {
 			dest.Scheme, dest.Host, dest.Path = "https", "github.com", "/dotspec-md/dotspec/blob/main/"+file

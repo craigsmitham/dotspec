@@ -39,10 +39,10 @@ This repository is the source of truth for the public docs at `dotspec.md`. Mint
 | --- | --- |
 | Website landing page, quickstart, or navigation | Edit the MDX page under [`mintlify/`](mintlify/) or the navigation in [`docs.json`](mintlify/docs.json). |
 | How to write a specification | Edit the [CLI handbook](docs/cli-handbook/README.md). The CLI ships these guides offline. Run `mise run generate` to refresh the selected guides in `mintlify/guides/`. The [web handbook](mintlify/guides/choose-a-topic.mdx) links to both native pages and additional topics in the repository. |
-| Commands, flags, or command output examples | Edit the Cobra command or example and run `mise run generate` to refresh the [CLI reference](docs/reference/cli.md) and [command examples](docs/reference/command-examples.md), along with the selected pages in `mintlify/cli/`. |
+| Commands, flags, or command output examples | Edit the Cobra command or example and run `mise run generate` to refresh the [CLI reference](docs/reference/cli.md) and [command examples](docs/reference/command-examples.md), along with every public command page in `mintlify/cli/`. |
 | A worked example | Edit the [To-do project](examples/todo/README.md), rebuild its report if the specifications changed, and run `mise run example-check`. Link readers to the relevant source, report section, or test. |
 
-The [website generator](scripts/generate/web.go) selects the published guides and commands. To publish another, add it there and to the [site navigation](mintlify/docs.json), then run `mise run generate`. CI checks the generated files against their sources with `mise run generated-check`.
+The [website generator](scripts/generate/web.go) walks the public Cobra tree and updates the CLI reference navigation. It also publishes selected handbook guides. To publish another guide, add it there and to the [site navigation](mintlify/docs.json), then run `mise run generate`. CI checks the generated files against their sources with `mise run generated-check`.
 
 For website changes, run the same checks as the web docs workflow from the repository root.
 

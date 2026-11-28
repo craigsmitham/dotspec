@@ -1,0 +1,57 @@
+---
+title: "dotspec list"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+List the specifications of one kind
+
+```sh
+dotspec list <kind> [flags]
+```
+
+List the specification files of one kind in the enclosing project, grouped by the system each belongs to. list system prints systems by directory, and list component prints components by their Part of links.
+
+Kinds:
+  system              Describe a system's purpose, scope, and context
+                      dotspec docs system
+  component           Describe a part of a system and its responsibilities
+                      dotspec docs component
+  feature             Group stakeholder-visible behavior
+                      dotspec docs feature
+  capability          Describe an ability and the parts that provide it
+                      dotspec docs capability
+  job                 Define jobs to be done (JTBDs)
+                      dotspec docs job
+  use-case            Describe actor goals and interactions with a system
+                      dotspec docs use-case
+  concept             Describe purposeful product behavior through state and actions
+                      dotspec docs concept
+  business-rule       Describe business constraints independently of their enforcement
+                      dotspec docs business-rule
+  requirement         Specify required results, rules, properties, and restrictions
+                      dotspec docs requirement
+  quality-attribute   Adopt a quality attribute for a system, blank or from a quality model
+                      dotspec docs quality-attribute
+  quality-model       Define reusable quality attributes for systems to adopt
+                      dotspec docs quality-model
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for list |
+
+See [global flags](/cli/overview) for options available to every command.
+
+## Choose a command
+
+- [dotspec list business-rule](/cli/list-business-rule) — List business rules by system
+- [dotspec list capability](/cli/list-capability) — List capabilities by system
+- [dotspec list component](/cli/list-component) — List components by Part of
+- [dotspec list concept](/cli/list-concept) — List concepts by system
+- [dotspec list feature](/cli/list-feature) — List features by system
+- [dotspec list job](/cli/list-job) — List jobs by system
+- [dotspec list quality-attribute](/cli/list-quality-attribute) — List quality attributes by system
+- [dotspec list quality-model](/cli/list-quality-model) — List quality models by system
+- [dotspec list requirement](/cli/list-requirement) — List requirements by system
+- [dotspec list system](/cli/list-system) — List systems by directory
+- [dotspec list use-case](/cli/list-use-case) — List use cases by system

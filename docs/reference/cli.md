@@ -25,7 +25,7 @@ dotspec check
 
 | Flag | Default | Description |
 | --- | --- | --- |
-| `-C, --chdir <dir>` | `` | run as if dotspec was started in <dir> |
+| `-C, --chdir <dir>` | `` | run as if dotspec was started in `<dir>` |
 | `-h, --help` | `false` | help for dotspec |
 | `-v, --version` | `false` | version for dotspec |
 

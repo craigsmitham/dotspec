@@ -27,4 +27,67 @@ dotspec check internal --json
 | `-h, --help` | `false` | help for check |
 | `--json` | `false` | emit the result as JSON |
 
-See the [full CLI reference](https://github.com/dotspec-md/dotspec/blob/main/docs/reference/cli.md#dotspec) for global flags.
+
+## Check an edited project
+
+From the project root, check after editing the system scope. The previously built report still contains the earlier wording.
+
+```sh
+dotspec check
+```
+
+```text nocopy
+specification/booking-desk.system.spec-report.md
+  error [spec.content] Booking desk
+  missing, altered, or out-of-order authored content: "The desk takes reservations for one hotel."
+
+specification/booking-desk.system.spec-report.md
+  error [spec.content] Booking desk
+  source content missing or altered in section "scope"
+
+specification/booking-desk.system.spec-report.md
+  error [spec.stale]
+  generated page is stale; run dotspec build in this project
+
+Checked 1 file in project booking-desk (scan complete): 3 errors, 0 advisories; 1 context file.
+Generated specification: checked
+
+Context files:
+  dotspec.yaml
+```
+
+```sh
+dotspec build
+```
+
+```text nocopy
+Wrote specification/booking-desk.system.spec-report.md
+Built SPEC.md (1 written, 0 removed).
+```
+
+```sh
+dotspec check
+```
+
+```text nocopy
+Checked 1 file in project booking-desk (scan complete): 0 errors, 0 advisories; 1 context file.
+Generated specification: checked
+
+Context files:
+  dotspec.yaml
+```
+
+[Repair a stale specification](/troubleshooting/spec-stale).
+
+## Use the result in CI
+
+Run this as the final command in a shell step. Redirection saves the report and preserves the process exit status.
+
+```sh
+dotspec check --json > check-report.json
+```
+
+Exit 0 means the check completed successfully and may include advice. Exit 1 means specification findings prevented success. Exit 2 covers invalid invocations, missing input, discovery, file access, or output failures. Reports go to stdout, including incomplete scans. Invocation and output errors go to stderr. Inspect the scan status before relying on a partial report. A passing check assesses the authored files and report. Exercise the application separately to verify its behavior. [Inspection contract](https://github.com/dotspec-md/dotspec/blob/main/docs/reference/inspection.md) · [Restart example](/examples/restart).
+
+Read the scope and findings guide offline with `dotspec docs docs/reference/inspection.md#check-specifications`.
+See [global flags](/cli/overview) for options available to every command.

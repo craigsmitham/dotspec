@@ -1,0 +1,28 @@
+---
+title: "dotspec new use-case"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+Create a use-case specification
+
+```sh
+dotspec new use-case <slug> [flags]
+```
+
+Describe actor goals and interactions with a system. Writes `specs/use-cases/<slug>.use-case.spec.md` below the working directory.
+
+Learn more: dotspec docs use-case
+
+```sh
+dotspec new use-case check-specifications
+dotspec new use-case review-change --template expanded
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for use-case |
+| `--json` | `false` | emit the result as JSON |
+| `--template brief\|expanded` | `brief` | writing prompts: brief or expanded (same document format) |
+
+See [global flags](/cli/overview) for options available to every command.

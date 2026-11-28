@@ -1,0 +1,44 @@
+---
+title: "dotspec"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+Specify what software must do and why, alongside its code
+
+```sh
+dotspec [flags]
+```
+
+Specify what software must do and why, alongside its code: author Markdown specifications, check them and the artifacts that carry their intent, and build one generated specification a reader can navigate.
+
+Kinds: run dotspec new --help. Handbook: run dotspec docs.
+
+Exit codes: 0 success (advice is nonfatal), 1 specification findings, 2 invalid invocation or operational failure.
+
+```sh
+dotspec init "Booking desk"
+dotspec new requirement fast-save
+dotspec build
+dotspec check
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-C, --chdir <dir>` | `` | run as if dotspec was started in `<dir>` |
+| `-h, --help` | `false` | help for dotspec |
+| `-v, --version` | `false` | version for dotspec |
+
+
+## Choose a command
+
+- [dotspec build](/cli/build) — Build the generated specification
+- [dotspec check](/cli/check) — Check specifications and reference documents in a project subtree
+- [dotspec completion](/cli/completion) — Generate a shell completion script
+- [dotspec docs](/cli/docs) — Browse the offline authoring handbook
+- [dotspec help](/cli/help) — Help about any command
+- [dotspec init](/cli/init) — Start a specification project
+- [dotspec list](/cli/list) — List the specifications of one kind
+- [dotspec new](/cli/new) — Create a specification draft of one kind
+- [dotspec snapshot](/cli/snapshot) — Export and validate specification snapshots
+- [dotspec sources](/cli/sources) — List specifications, their companions, reference documents, system context, and referenced files

@@ -1,0 +1,26 @@
+---
+title: "dotspec new business-rule"
+---
+
+{/* Generated from Cobra command tree by mise run generate. */}
+
+Create a business-rule specification
+
+```sh
+dotspec new business-rule <slug> [flags]
+```
+
+Describe business constraints independently of their enforcement. Writes `specs/business-rules/<slug>.business-rule.spec.md` below the working directory.
+
+Learn more: dotspec docs business-rule
+
+```sh
+dotspec new business-rule purchase-approval
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-h, --help` | `false` | help for business-rule |
+| `--json` | `false` | emit the result as JSON |
+
+See [global flags](/cli/overview) for options available to every command.
