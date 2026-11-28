@@ -16,7 +16,8 @@
       "origin": "bundled"
     },
     "improve-whatever": "agentxm:@craigsmitham/skills/improve-whatever",
-    "refine-guidance": "workspace"
+    "refine-guidance": "workspace",
+    "mintlify": "github:mintlify/docs//agent-context/context/skills/mintlify@main"
   },
   "packs": {
     "codebase-renewal": "agentxm:@craigsmitham/packs/codebase-renewal",

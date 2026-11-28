@@ -3,6 +3,13 @@
 version = 1
 
 [[package]]
+id = "github.com/mintlify/docs/agent-context/context/skills/mintlify"
+source = { git = "https://github.com/mintlify/docs.git", path = "agent-context/context/skills/mintlify", format = "native" }
+commit = "69a1f865d4e5c09ef737924b16d429614c74a1f4"
+git-tree = "61b83aef365c7bf2e2c7b8d0b3605304c39c9d24"
+tree = "sha256-tree-v2:f7ef0db90894253486866e44ae52cd8996556349471cafe49d8886967a9ff9a9"
+
+[[package]]
 id = "registry.agentxm.ai/@craigsmitham/knowledge/docs"
 source = { registry = "https://registry.agentxm.ai" }
 version = "0.16.0"
@@ -173,6 +180,7 @@ experiment = { package = "registry.agentxm.ai/@craigsmitham/skills/experiment", 
 generalize = { package = "registry.agentxm.ai/@craigsmitham/skills/generalize", name = "@craigsmitham/skills/generalize" }
 improve = { package = "registry.agentxm.ai/@craigsmitham/skills/improve", name = "@craigsmitham/skills/improve" }
 improve-whatever = { package = "registry.agentxm.ai/@craigsmitham/skills/improve-whatever", name = "@craigsmitham/skills/improve-whatever" }
+mintlify = { package = "github.com/mintlify/docs/agent-context/context/skills/mintlify", name = "mintlify", spec = "main" }
 modularize = { package = "registry.agentxm.ai/@craigsmitham/skills/modularize", name = "@craigsmitham/skills/modularize" }
 prune = { package = "registry.agentxm.ai/@craigsmitham/skills/prune", name = "@craigsmitham/skills/prune" }
 reconcile = { package = "registry.agentxm.ai/@craigsmitham/skills/reconcile", name = "@craigsmitham/skills/reconcile" }
