@@ -1,43 +1,31 @@
 # dotspec
 
-dotspec is a framework and command-line tool for writing and checking software
-requirements in human-readable Markdown alongside your code.
+dotspec helps teams record what their software must do and why. Write requirements in Markdown alongside your code. The CLI builds one specification where readers can follow a promise to the model or contract that defines it, or to the test that checks it.
 
-Follow [Build your first specification](https://dotspec.mintlify.site/get-started/first-requirement) to turn a room-booking promise into a requirement you can review. For an example with a running application, see [What survives a restart?](https://dotspec.mintlify.site/examples/restart).
+## What survives a restart?
+
+After the To-do app confirms a save, restarting it on the same database must preserve a waiting task’s expected reply and follow-up date. The report links to the Python function that tests this promise and shows whether a matching result has been recorded. [Read the requirement](examples/todo/specs/requirements/restart.requirement.spec.md#statement) · [Inspect the generated report](examples/todo/specification/requirements/preserve-tasks-across-restart.requirement.spec-report.md#companions) · [Run the restart example](https://dotspec.mintlify.site/examples/restart#run-the-two-checks).
 
 ## Quick start
 
-Install the alpha CLI on macOS or Linux with `brew install dotspec-md/tap/dotspec`.
-With npm, install the current alpha from the registry.
+Install the alpha CLI with `brew install dotspec-md/tap/dotspec` or `npm install --global dotspec@alpha`. [Standalone downloads and Go installation](https://github.com/dotspec-md/dotspec/releases).
+
+In an empty project directory, run `dotspec init "Booking desk"`. Open the system file named in the output. Describe who the desk serves and which work it handles, then build and check the specification.
 
 ```sh
-npm install --global dotspec@alpha
+dotspec build
+dotspec check
 ```
 
-Standalone archives for macOS, Linux, and Windows are available on the
-[releases page](https://github.com/dotspec-md/dotspec/releases).
-Go users can run `go install github.com/dotspec-md/dotspec@v0.1.0-alpha.1`.
-
-Run `dotspec --version` to check the installation and `dotspec docs` to open
-the embedded handbook. To build from a checkout, run `mise trust`,
-`mise install`, then `mise run build`.
-
-To start the first specification, work from your project root.
-
-1. Run `dotspec init "Booking desk"`, substituting your system name. It writes `dotspec.yaml` and the root system specification, and refuses to replace either file. Open the system file named in the output.
-2. Replace the starter prose with a description, the benefit someone seeks, and the work the system covers. [Describe a system and its boundary](docs/cli-handbook/guides/describe-a-system.md).
-3. Run `dotspec build`. Open `SPEC.md` and follow the system link. Can a teammate tell which work your system takes responsibility for?
-4. Run `dotspec check`. If the generated specification is stale after a source edit, rebuild and check again. Commit the manifest, sources, `SPEC.md`, and `specification/` together.
-
-Run `dotspec new --help` to see the kinds of specification you can add, such as `dotspec new requirement fast-save`, and `dotspec list requirement` to find them again. Run `dotspec docs` to browse the offline handbook. Use `dotspec docs job` to choose guidance on jobs to be done, or `dotspec docs success criteria` to search.
+Open `SPEC.md` and follow the system link. Can a teammate tell whether the desk takes payments? [Add a requirement to prevent double booking](https://dotspec.mintlify.site/get-started/first-requirement#give-the-desk-one-promise).
 
 ## Documentation
 
-- [Authoring handbook](docs/cli-handbook/README.md) and [runnable To-do example](examples/todo/README.md)
-- [Generate a requirements specification](docs/reference/generated-specification.md) and [browse the To-do spec](examples/todo/SPEC.md)
-- [CLI reference](docs/reference/cli.md) and [documentation index](docs/README.md)
-- [dotspec's requirements specification](SPEC.md) and [contributing guide](CONTRIBUTING.md)
+- [Choose an authoring guide](docs/cli-handbook/README.md) or run `dotspec docs` offline.
+- [Look up a CLI command](docs/reference/cli.md).
+- [Read dotspec’s own specification](SPEC.md).
+- [Report a problem](https://github.com/dotspec-md/dotspec/issues) or [contribute to dotspec](CONTRIBUTING.md).
 
 ## License
 
-dotspec is released under the [MIT License](LICENSE).
+[MIT License](LICENSE)
