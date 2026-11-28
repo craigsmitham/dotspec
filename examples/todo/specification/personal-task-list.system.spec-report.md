@@ -31,6 +31,7 @@ A personal list of errands the owner can act on, replies they are waiting for an
 <details>
 <summary>Browse specifications</summary>
 
+- [Contracts](<contracts.md>)
 - [Specifications](<specifications.md>)
 
 </details>
@@ -78,7 +79,8 @@ The browser and service run on the same computer. The owner can close either bet
 ## Business rules
 
 - [Completion preserves a commitment](<business-rules/completion-preserves-a-commitment.business-rule.spec-report.md>) — A settled commitment must stay on the person's list until they delete it.
-- [When a reply needs chasing](<business-rules/when-a-reply-needs-chasing.business-rule.spec-report.md>) — For a reply the person is still waiting for, follow-up is upcoming before the currently chosen day and due from that day onward.
+- [Follow-up decision table](<business-rules/when-a-reply-needs-chasing.business-rule.spec-report.md#specification.follow-up-decision-table>) *(When a reply needs chasing)*
+- [When a reply needs chasing](<business-rules/when-a-reply-needs-chasing.business-rule.spec-report.md>) — For a reply the person is still waiting for, the follow-up decision table determines whether to chase it by comparing today with the chosen day.
 
 ## Features
 
@@ -100,6 +102,7 @@ The browser and service run on the same computer. The owner can close either bet
 ## Requirements
 
 - [Acknowledge after commit](<components/task-service/requirements/acknowledge-after-commit.requirement.spec-report.md>) — The task service must record each change in a single commit to the local database and acknowledge it to the browser only after that commit succeeds.
+- [Calendar dates accepted for follow-up](<features/pick-up-where-i-left-off.feature.spec-report.md#specification.calendar-dates-accepted-for-follow-up>) *(Pick up where I left off)*
 - [Keep recorded work available](<requirements/keep-recorded-work-available.requirement.spec-report.md>) — When the person returns to the same local database, each saved entry must appear once in the view for its recorded state (Open, Waiting or Completed). …
 - [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>) — After the service acknowledges a change, stopping and restarting it on the same database must preserve each surviving entry’s identity, title and state. …
 - [Saved follow-up dates across time zones](<quality/durability/durability.quality-attribute.spec-report.md#specification.saved-follow-up-dates-across-time-zones>) *(Durability)*
@@ -109,6 +112,7 @@ The browser and service run on the same computer. The owner can close either bet
 
 - [Checklist](<concepts/checklist.concept.spec-report.md>) — Decide what I can do next, which replies I need to chase and which commitments I have already settled. *Uses:*
   - [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. …
+- [Renaming an entry by identity](<concepts/checklist.concept.spec-report.md#specification.renaming-an-entry-by-identity>) *(Checklist)*
 
 ## Architecture
 

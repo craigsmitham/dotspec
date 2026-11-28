@@ -1,5 +1,9 @@
 ---
 type: component-spec
+specifications:
+  - name: Task form actions and fields
+    defines: contracts
+    source: ../list.html
 ---
 # Task service
 
@@ -19,7 +23,7 @@ The service supplies the current local day when it prepares the Waiting view. [A
 
 ## Contracts
 
-- The browser submits changes through [Task list forms](../../specs/personal-task-list.system.spec.md#task-list-forms), whose [form template](../list.html) supplies the actions and fields.
+- The browser submits changes through [Task list forms](../../specs/personal-task-list.system.spec.md#task-list-forms), whose [form template](#specification.task-form-actions-and-fields) supplies the actions and fields.
 
 ## Implementation
 

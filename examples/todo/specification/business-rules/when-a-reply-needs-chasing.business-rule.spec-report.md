@@ -9,7 +9,7 @@ source: "../../specs/business-rules/follow-up.business-rule.spec.md#when-a-reply
 
 ## Statement
 
-For a reply the person is still waiting for, follow-up is upcoming before the currently chosen day and due from that day onward.
+For a reply the person is still waiting for, the [follow-up decision table](<#specification.follow-up-decision-table>) determines whether to chase it by comparing today with the chosen day.
 
 ## Applies to
 
@@ -32,6 +32,14 @@ Suppose my guest arrives on Friday. I choose Wednesday to chase the plumber so I
 **Basis for**
 
 - [Show which replies need follow-up](<../requirements/show-which-replies-need-follow-up.requirement.spec-report.md>)
+
+## Specification sources
+
+<a id="specification.follow-up-decision-table"></a>
+
+### [Follow-up decision table](<../../specs/business-rules/follow-up.csv>)
+
+Defines business rules.
 
 ---
 

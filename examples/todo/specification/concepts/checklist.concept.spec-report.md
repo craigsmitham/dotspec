@@ -13,7 +13,7 @@ Decide what I can do next, which replies I need to chase and which commitments I
 
 ## Operational principles
 
-I promise to get the sink fixed. Once I've asked the plumber for a visit time and chosen a day to chase the reply, I can turn to another errand. When I return, I still find the reply I need and the day I chose. If the plumber asks me for a photo, I resume the same repair entry. After the repair I can complete it. If the sink leaks again, I can reopen that entry without having to remember its title or reconstruct the old wait.
+I promise to get the sink fixed. Once I've asked the plumber for a visit time and chosen a day to chase the reply, I can turn to another errand. When I return, I still find the reply I need and the day I chose. If the plumber asks me for a photo, I resume the same repair entry. After the repair I can complete it. If the sink leaks again, I can reopen that entry without having to remember its title or reconstruct the old wait. The [repair example](<../../specs/concepts/repair.md>) illustrates that sequence.
 
 ## State
 
@@ -43,7 +43,7 @@ Record a commitment under a title. Ignore surrounding whitespace. Reject an empt
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#rename"} -->
 
-Change how the person will recognize the entry on their next visit.
+Change how the person will recognize the entry on their next visit. The [rename model](<#specification.renaming-an-entry-by-identity>) defines the effect on titles when several entries have the same name.
 
 #### Inputs
 
@@ -116,6 +116,20 @@ Each row describes one accepted action. For an existing entry, the view where th
 | Complete | unchanged | unchanged | completed | cleared |
 | Reopen | unchanged | unchanged | open | absent |
 | Delete | removed | removed | removed | removed |
+
+## Specification sources
+
+<a id="specification.renaming-an-entry-by-identity"></a>
+
+### [Renaming an entry by identity](<../../specs/concepts/rename.als#L1>)
+
+Defines concepts.
+
+#### Verification
+
+- [Check preservation of other titles](<../../specs/concepts/rename.als#L14>)
+
+No matching result recorded.
 
 ## Related specifications
 

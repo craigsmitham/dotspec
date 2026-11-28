@@ -28,6 +28,20 @@ Start at [SPEC.md](SPEC.md) and open the system specification. Under **Goals**, 
 
 For the distinction between facts the owner saved and a cue that can change overnight, start with the restart requirement. Try predicting Friday’s screen from Thursday’s saved entry before reading the test. The feature groups the promises, and the handbook shows how to review them together. [Pick up where I left off](specs/features/pick-up-where-i-left-off.feature.spec.md) · [Preserve tasks across restart](specs/requirements/restart.requirement.spec.md) · [Review a set of requirements](../../docs/cli-handbook/guides/review-a-set-of-requirements.md).
 
+## Find the governing source
+
+Open the [Specifications index](specification/specifications.md) and choose the decision you want to change.
+
+| Decision | Governing source |
+| --- | --- |
+| Which calendar dates can someone enter? | The feature delegates the set of accepted and rejected examples to a [whole Go test suite](app/follow_up_date_test.go). From `examples/todo/app`, run `go test -run "^TestFollowUpDate" .`. |
+| What happens to a saved date when the local day changes across time zones? | Durability delegates this case to [the acceptance suite](tests/acceptance.py) at `verify_changed_day`. The remaining tests cover other decisions. |
+| When is it time to chase a reply? | The [decision table](specs/business-rules/follow-up.csv) defines the cutoff. The project configuration also flags new business-rule CSV files for catalog review. |
+| What happens when I rename one of two identically titled errands? | The [`rename` predicate](specs/concepts/rename.als) defines the change by identity. The same file includes a bounded check for preservation of other titles. |
+| Which actions and fields does the browser submit? | The [HTML form template](app/list.html) is the contract. The interface separately names the external provision governing the redirect after submission. |
+
+The [repair diagram](specs/concepts/repair.md) illustrates one path through the checklist. The [restart requirement](specs/requirements/restart.requirement.spec.md) gives another relationship to executable code. Its promise lives in Markdown and its acceptance test checks the running service.
+
 ## Verify the example
 
 From the root of the dotspec checkout, run the acceptance test by itself or run the full example gate.

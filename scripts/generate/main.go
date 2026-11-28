@@ -121,7 +121,7 @@ func embeddedAppSpecs() (string, error) {
 		if err != nil {
 			return err
 		}
-		if !entry.Type().IsRegular() || !strings.HasSuffix(file, ".spec.md") {
+		if !entry.Type().IsRegular() || (!strings.HasSuffix(file, ".spec.md") && entry.Name() != "follow_up_date_test.go" && entry.Name() != "list.html") {
 			return nil
 		}
 		data, err := os.ReadFile(file)

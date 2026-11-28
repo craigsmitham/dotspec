@@ -1,5 +1,9 @@
 ---
 type: feature-spec
+specifications:
+  - name: Calendar dates accepted for follow-up
+    defines: requirements
+    source: ../../app/follow_up_date_test.go
 ---
 
 # Pick up where I left off
@@ -7,6 +11,8 @@ type: feature-spec
 ## Description
 
 Find an errand after a break, see whether a reply needs chasing and take up the work again when an answer arrives.
+
+The [calendar date suite](#specification.calendar-dates-accepted-for-follow-up) defines which dates a person can enter, including leap days and dates beyond year 9999.
 
 ## Purpose
 

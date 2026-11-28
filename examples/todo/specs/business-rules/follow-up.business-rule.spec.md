@@ -1,11 +1,15 @@
 ---
 type: business-rule-spec
+specifications:
+  - name: Follow-up decision table
+    defines: business-rules
+    source: follow-up.csv
 ---
 # When a reply needs chasing
 
 ## Statement
 
-For a reply the person is still waiting for, follow-up is upcoming before the currently chosen day and due from that day onward.
+For a reply the person is still waiting for, the [follow-up decision table](#specification.follow-up-decision-table) determines whether to chase it by comparing today with the chosen day.
 
 ## Applies to
 

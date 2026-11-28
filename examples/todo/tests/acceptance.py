@@ -296,6 +296,7 @@ def run(app):
     with tempfile.TemporaryDirectory() as tmp:
         binary = Path(tmp) / ("todo.exe" if os.name == "nt" else "todo")
         subprocess.run(["go", "build", "-mod=readonly", "-o", binary, "."], cwd=app, check=True)
+        subprocess.run(["go", "test", "-mod=readonly", "-run", "^TestFollowUpDate", "."], cwd=app, check=True)
         verify(binary, Path(tmp) / "tasks.sqlite")
         verify_follow_up_calendar(binary, Path(tmp) / "dates.sqlite")
         # Complete fails at its second write, after the waiting details were removed in the same transaction.

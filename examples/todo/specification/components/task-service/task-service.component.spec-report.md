@@ -22,6 +22,7 @@ Checks whether a submitted action still applies to the selected entry and record
 <details>
 <summary>Browse specifications</summary>
 
+- [Contracts](<contracts.md>)
 - [Requirements](<requirements.md>)
 
 </details>
@@ -45,11 +46,19 @@ The service supplies the current local day when it prepares the Waiting view. [A
 
 ## Contracts
 
-- The browser submits changes through [Task list forms](<../../interfaces/task-list-forms.interface.spec-report.md>), whose [form template](<../../../app/list.html>) supplies the actions and fields.
+- The browser submits changes through [Task list forms](<../../interfaces/task-list-forms.interface.spec-report.md>), whose [form template](<#specification.task-form-actions-and-fields>) supplies the actions and fields.
 
 ## Implementation
 
 The [Go server](<../../../app/main.go>) owns form handling and storage.
+
+## Specification sources
+
+<a id="specification.task-form-actions-and-fields"></a>
+
+### [Task form actions and fields](<../../../app/list.html>)
+
+Defines contracts.
 
 ---
 
