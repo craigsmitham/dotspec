@@ -41,3 +41,7 @@ Use `axm knowledge concepts --help` to search, read, and explore these bundles.
 | --- | --- |
 | [docs](agent_extensions/registry.agentxm.ai/@craigsmitham/knowledge/docs/src/index.md) | Explainers, authoring guides, and patterns for documentation across domains, including knowledge bases, product guides, and reusable checklists |
 <!-- /axm:knowledge -->
+
+<!-- dotspec:specification -->
+Before changing or reviewing product behavior, read the [system specification](<specification/dotspec.system.spec-report.md>) and follow the relevant requirement to its governing source.
+<!-- /dotspec:specification -->

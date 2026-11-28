@@ -18,14 +18,22 @@ import (
 
 // Changes lists generated paths relative to the selected project.
 type Changes struct {
+	Advice  []diagnostic.Diagnostic
 	Written []string
 	Removed []string
 }
 
+type instructionEdit struct {
+	original []byte // nil when the file did not exist at preflight
+	message  string
+}
+
 type inventory struct {
-	files      map[string][]byte
-	changes    Changes
-	collisions []diagnostic.Diagnostic
+	instructions map[string]instructionEdit
+	candidate    map[string][]byte
+	files        map[string][]byte
+	changes      Changes
+	collisions   []diagnostic.Diagnostic
 }
 
 func projectDirectory(dir string) (string, error) {
@@ -81,8 +89,9 @@ func nestedBoundary(dir string) (bool, error) {
 }
 
 func inspectFiles(root string, plan *Plan) (*inventory, error) {
-	result := &inventory{files: map[string][]byte{}}
+	result := &inventory{files: map[string][]byte{}, instructions: map[string]instructionEdit{}, candidate: map[string][]byte{}}
 	for _, rel := range slices.Sorted(maps.Keys(plan.Pages)) {
+		result.candidate[rel] = []byte(plan.Pages[rel].Markdown)
 		path, err := outputPath(root, rel)
 		var d *diagnostic.Diagnostic
 		if errors.As(err, &d) {
@@ -103,10 +112,6 @@ func inspectFiles(root string, plan *Plan) (*inventory, error) {
 				result.collisions = append(result.collisions, *diagnostic.Error("spec.collision", "authored file occupies a generated destination", diagnostic.Location{Path: path}))
 				continue
 			}
-		}
-		// A checkout may materialize Git text files using native line endings.
-		if !bytes.Equal(bytes.ReplaceAll(actual, []byte("\r\n"), []byte("\n")), []byte(plan.Pages[rel].Markdown)) {
-			result.changes.Written = append(result.changes.Written, rel)
 		}
 	}
 	tree := filepath.Join(root, "specification")
@@ -148,7 +153,32 @@ func inspectFiles(root string, plan *Plan) (*inventory, error) {
 		}
 		return nil
 	})
-	return result, err
+	if err != nil {
+		return nil, err
+	}
+	legacy := filepath.Join(root, "SPEC.md")
+	if info, err := os.Lstat(legacy); err == nil && info.Mode().IsRegular() {
+		data, err := os.ReadFile(legacy)
+		if err != nil {
+			return nil, err
+		}
+		header, _ := splitHeader(data)
+		if header.GeneratedBy == "dotspec" {
+			result.changes.Removed = append(result.changes.Removed, "SPEC.md")
+		}
+	} else if err != nil && !errors.Is(err, fs.ErrNotExist) {
+		return nil, err
+	}
+	if err := result.planInstructions(root, plan); err != nil {
+		return nil, err
+	}
+	for _, rel := range slices.Sorted(maps.Keys(plan.Pages)) {
+		actual := bytes.ReplaceAll(result.files[rel], []byte("\r\n"), []byte("\n"))
+		if !bytes.Equal(actual, result.candidate[rel]) {
+			result.changes.Written = append(result.changes.Written, rel)
+		}
+	}
+	return result, nil
 }
 
 // Check reads the actual output, compares the complete generated file set, and
@@ -162,11 +192,14 @@ func Check(root string, plan *Plan) ([]diagnostic.Diagnostic, error) {
 	if err != nil {
 		return nil, err
 	}
-	ds := i.collisions
+	ds := slices.Concat(i.collisions, i.changes.Advice)
 	for _, rel := range i.changes.Written {
 		message := "generated page is stale"
 		if _, ok := i.files[rel]; !ok {
 			message = "generated page is missing"
+		}
+		if edit, ok := i.instructions[rel]; ok {
+			message = edit.message
 		}
 		ds = append(ds, *diagnostic.Error("spec.stale", message+"; run dotspec build in this project", diagnostic.Location{Path: filepath.Join(root, filepath.FromSlash(rel))}))
 	}
@@ -198,10 +231,6 @@ func Write(root string, plan *Plan) (Changes, error) {
 		return Changes{}, err
 	}
 	defer unlock()
-	candidate := make(map[string][]byte, len(plan.Pages))
-	for rel, p := range plan.Pages {
-		candidate[rel] = []byte(p.Markdown)
-	}
 	i, err := inspectFiles(root, plan)
 	if err != nil {
 		return Changes{}, err
@@ -209,7 +238,11 @@ func Write(root string, plan *Plan) (Changes, error) {
 	if len(i.collisions) > 0 {
 		return Changes{}, &i.collisions[0]
 	}
-	ds, err := validateRendered(root, plan, candidate)
+	pages := map[string][]byte{}
+	for rel := range plan.Pages {
+		pages[rel] = i.candidate[rel]
+	}
+	ds, err := validateRendered(root, plan, pages)
 	if err != nil {
 		return Changes{}, err
 	}
@@ -220,13 +253,14 @@ func Write(root string, plan *Plan) (Changes, error) {
 	if len(changes.Written)+len(changes.Removed) == 0 {
 		return changes, nil
 	}
-	if err := installPages(root, candidate, changes); err != nil {
+	if err := installPages(root, i); err != nil {
 		return Changes{}, err
 	}
 	return changes, nil
 }
 
-func installPages(root string, files map[string][]byte, changes Changes) (err error) {
+func installPages(root string, i *inventory) (err error) {
+	files, changes := i.candidate, i.changes
 	stage, err := os.MkdirTemp(root, ".dotspec-build-")
 	if err != nil {
 		return err
@@ -277,19 +311,35 @@ func installPages(root string, files map[string][]byte, changes Changes) (err er
 		}
 	}()
 	for _, rel := range slices.Concat(changes.Written, changes.Removed) {
-		dest, err := outputPath(root, rel)
+		edit, partial := i.instructions[rel]
+		var dest string
+		if partial {
+			var canonical string
+			canonical, err = instructionPath(root, rel)
+			if err == nil && canonical != rel {
+				err = fmt.Errorf("%s: instruction destination changed during build", rel)
+			}
+			dest = filepath.Join(root, filepath.FromSlash(rel))
+		} else {
+			dest, err = outputPath(root, rel)
+		}
 		if err != nil {
 			return err
 		}
-		if _, err := os.Lstat(dest); err == nil {
+		if info, err := os.Lstat(dest); err == nil {
 			// Recheck ownership immediately before moving an existing file.
 			data, err := os.ReadFile(dest)
 			if err != nil {
 				return err
 			}
 			h, _ := splitHeader(data)
-			if h.GeneratedBy != "dotspec" {
+			if partial && (edit.original == nil || !bytes.Equal(edit.original, data)) || !partial && h.GeneratedBy != "dotspec" {
 				return diagnostic.Error("spec.collision", "generated destination changed during build", diagnostic.Location{Path: dest})
+			}
+			if partial {
+				if err := os.Chmod(stageName("new", rel), info.Mode().Perm()); err != nil {
+					return err
+				}
 			}
 			backup := stageName("old", rel)
 			if err := os.MkdirAll(filepath.Dir(backup), 0755); err != nil {
@@ -300,6 +350,9 @@ func installPages(root string, files map[string][]byte, changes Changes) (err er
 			}
 			edits = append(edits, applied{dest: dest, backup: backup})
 		} else if errors.Is(err, fs.ErrNotExist) {
+			if partial && edit.original != nil {
+				return fmt.Errorf("%s disappeared during build", dest)
+			}
 			edits = append(edits, applied{dest: dest})
 		} else {
 			return err

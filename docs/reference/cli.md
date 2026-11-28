@@ -37,7 +37,7 @@ Build the generated specification
 dotspec build [flags]
 ```
 
-Build the generated specification for the enclosing project declared with dotspec.yaml: SPEC.md and the specification/ tree of pages that let a reader navigate the project's specifications as one. Nothing is written while a source has error findings; the findings are reported instead. Exits 1 when error findings are reported.
+Generate the enclosing project's report under specification/ and print its entry point. By default, update the specification link in the project's agent instructions. Set build.agent_instruction_files to [] in dotspec.yaml to opt out. Source errors prevent all writes. Exits 1 when error findings are reported.
 
 Learn more: dotspec docs docs/reference/inspection.md#check-the-generated-requirements-specification
 

@@ -84,7 +84,7 @@ rm broken.quality-model.md
 # The manifest has no quality setting, and a valid saved snapshot stays valid.
 cp ../unknown-key.yaml dotspec.yaml
 status 2 dotspec check
-stderr 'line 3: unknown key "quality"; dotspec.yaml accepts name and build.enabled'
+stderr 'line 3: unknown key "quality"; dotspec.yaml accepts name, specification_patterns, build.enabled and build.agent_instruction_files'
 cp ../default.yaml dotspec.yaml
 status 0 dotspec snapshot validate ../snapshot.json --json
 stdout '"valid": true'

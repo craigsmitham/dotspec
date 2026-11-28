@@ -200,11 +200,9 @@ func addSourceContracts(p *planner) error {
 			}
 		}
 	}
-	if p.governing.file != "SPEC.md" {
-		requireRoute(p.plan.Pages["SPEC.md"], relative("SPEC.md", p.governing.file), "Read the system specification")
-	} else {
+	if p.governing.file == projectIndex {
 		for title, idx := range p.governing.indexes {
-			requireRoute(p.plan.Pages["SPEC.md"], relative("SPEC.md", idx.file), title)
+			requireRoute(p.plan.Pages[projectIndex], relative(projectIndex, idx.file), title)
 			requireDirectory(p.plan.Pages[idx.file], idx.file, specfile.NameSlug(title), title, idx.members, true)
 		}
 	}

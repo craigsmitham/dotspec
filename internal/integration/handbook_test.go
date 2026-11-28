@@ -41,7 +41,7 @@ func TestHandbookPublication(t *testing.T) {
 			return fs.SkipDir
 		}
 		if err == nil && !entry.IsDir() && path.Ext(file) == ".md" &&
-			path.Base(file) != "SPEC.md" && !strings.HasSuffix(file, ".spec.md") {
+			!strings.HasSuffix(file, ".spec.md") {
 			pages = append(pages, "examples/"+file)
 		}
 		return err

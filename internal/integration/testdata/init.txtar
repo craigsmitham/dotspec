@@ -15,7 +15,7 @@ exists specs/booking-desk.system.spec.md
 status 1 dotspec check
 stdout 'generated page is missing; run dotspec build'
 exec dotspec build
-stdout 'Built SPEC.md'
+stdout 'Built specification/booking-desk.system.spec-report.md'
 exec dotspec check
 stdout ': 0 errors, 0 advisories;'
 

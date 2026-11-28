@@ -51,7 +51,7 @@ func TestManifestUnknownKeyNamesTheKey(t *testing.T) {
 		t.Fatal(err)
 	}
 	_, err := readProject(dir)
-	if err == nil || !strings.Contains(err.Error(), `line 2: unknown key "report"; dotspec.yaml accepts name and build.enabled`) || strings.Contains(err.Error(), "specfile.Project") {
+	if err == nil || !strings.Contains(err.Error(), `line 2: unknown key "report"; dotspec.yaml accepts name, specification_patterns, build.enabled and build.agent_instruction_files`) || strings.Contains(err.Error(), "specfile.Project") {
 		t.Fatalf("err = %v", err)
 	}
 }

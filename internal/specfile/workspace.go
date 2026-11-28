@@ -10,6 +10,7 @@ import (
 	pathpkg "path"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 
@@ -34,7 +35,40 @@ type Project struct {
 
 // BuildConfig controls whether the project has a generated specification.
 type BuildConfig struct {
-	Enabled bool `yaml:"enabled"`
+	Enabled               bool     `yaml:"enabled"`
+	AgentInstructionFiles []string `yaml:"agent_instruction_files"`
+}
+
+// UnmarshalYAML distinguishes an omitted selection (discover) from an empty
+// sequence (disable). Reject null so an unfinished setting is visible.
+func (b *BuildConfig) UnmarshalYAML(node *yaml.Node) error {
+	type plain BuildConfig
+	if err := node.Decode((*plain)(b)); err != nil {
+		return err
+	}
+	for i := 0; i < len(node.Content); i += 2 {
+		key, value := node.Content[i], node.Content[i+1]
+		switch key.Value {
+		case "enabled":
+		case "agent_instruction_files":
+			if value.Kind != yaml.SequenceNode {
+				return fmt.Errorf("agent_instruction_files must be a list of Markdown paths (use [] to opt out)")
+			}
+			for _, item := range value.Content {
+				if item.ShortTag() != "!!str" || !ValidInstructionPath(item.Value) {
+					return fmt.Errorf("invalid agent instruction path %q", item.Value)
+				}
+			}
+		default:
+			return fmt.Errorf("unknown build setting %q", key.Value)
+		}
+	}
+	return nil
+}
+
+// ValidInstructionPath accepts portable project-relative Markdown filenames.
+func ValidInstructionPath(path string) bool {
+	return fs.ValidPath(path) && filepath.IsLocal(filepath.FromSlash(path)) && !strings.ContainsAny(path, "\\:\x00\r\n") && strings.EqualFold(pathpkg.Ext(path), ".md") && !slices.Contains(strings.Split(strings.ToLower(path), "/"), ".git")
 }
 
 // ValidProjectName reports whether name can identify a project in dotspec.yaml.
@@ -216,7 +250,7 @@ func manifestError(err error) string {
 	messages := make([]string, 0, len(typeErr.Errors))
 	for _, message := range typeErr.Errors {
 		if m := unknownManifestField.FindStringSubmatch(message); m != nil {
-			message = fmt.Sprintf("line %s: unknown key %q; dotspec.yaml accepts name and build.enabled", m[1], m[2])
+			message = fmt.Sprintf("line %s: unknown key %q; dotspec.yaml accepts name, specification_patterns, build.enabled and build.agent_instruction_files", m[1], m[2])
 		}
 		messages = append(messages, message)
 	}

@@ -180,7 +180,7 @@ code; `stdout`, `stderr`, and `cmp` verify results. Add scenarios there for chan
 to path handling, pipelines, command composition, or error behavior. Keep parser
 edge cases in package-local Go tests and seed relevant cases into the fuzz targets.
 
-The command-example test executes examples declared on the Cobra tree. When the README quick start changes, try it in a new directory with the rebuilt binary on PATH and follow the link in the resulting `SPEC.md`.
+The command-example test executes examples declared on the Cobra tree. When the README quick start changes, try it in a new directory with the rebuilt binary on PATH and open the system report named in the build output.
 
 The bundled ISO/IEC 25010:2023 model is authored Markdown under
 `internal/qualitymodel/specs/quality-models/`. The CLI embeds that file and

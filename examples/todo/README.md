@@ -24,7 +24,7 @@ Open the address printed in the terminal. The person keeping the list is the onl
 
 ## Follow one decision
 
-Start at [SPEC.md](SPEC.md) and open the system specification. Under **Goals**, open **Resume unfinished work**. Under **Supported by**, choose the job **See personal commitments through**. In the job’s **Evidence** section, follow the **return scenario**. At step 2, open **Show which replies need follow-up**. Its **Derived from** link takes you to the rule that explains why an unanswered errand is still yours after the day passes. Its **Evidence** link takes you to the test that reads the cue on the rendered form.
+Start at the [system specification](specification/personal-task-list.system.spec-report.md). Under **Goals**, open **Resume unfinished work**. Under **Supported by**, choose the job **See personal commitments through**. In the job’s **Evidence** section, follow the **return scenario**. At step 2, open **Show which replies need follow-up**. Its **Derived from** link takes you to the rule that explains why an unanswered errand is still yours after the day passes. Its **Evidence** link takes you to the test that reads the cue on the rendered form.
 
 For the distinction between facts the owner saved and a cue that can change overnight, start with the restart requirement. Try predicting Friday’s screen from Thursday’s saved entry before reading the test. The feature groups the promises, and the handbook shows how to review them together. [Pick up where I left off](specs/features/pick-up-where-i-left-off.feature.spec.md) · [Preserve tasks across restart](specs/requirements/restart.requirement.spec.md) · [Review a set of requirements](../../docs/cli-handbook/guides/review-a-set-of-requirements.md).
 
@@ -53,7 +53,7 @@ mise run example-check
 
 The acceptance test builds the app, submits its HTML forms and starts a second process on the same disposable database. It checks the entry identities and visible details in each view, including the expected reply and chosen follow-up day. The [coverage inventory (dotspec checkout)](COVERAGE.md) gives cases to try against each authored specification and identifies concerns left for a larger system.
 
-To follow the specifications with an installed CLI, run `dotspec docs job` from any directory and open the worked job listed there. To inspect your edits in the checkout, run `mise run generate` from its root, then open [the generated specification](SPEC.md) and follow the relationships from the edited subject’s report.
+To follow the specifications with an installed CLI, run `dotspec docs job` from any directory and open the worked job listed there. To inspect your edits in the checkout, run `mise run generate` from its root, then open [the generated specification](specification/personal-task-list.system.spec-report.md) and follow the relationships from the edited subject’s report.
 
 ## Try the workflow with a participant
 

@@ -17,13 +17,13 @@ dotspec build
 dotspec check
 ```
 
-Open `SPEC.md` and follow the system link. Can a teammate tell whether the desk takes payments? [Add a requirement to prevent double booking](https://dotspec.mintlify.site/get-started/first-requirement#give-the-desk-one-promise).
+Open the system report named by `dotspec build`. Can a teammate tell whether the desk takes payments? [Add a requirement to prevent double booking](https://dotspec.mintlify.site/get-started/first-requirement#give-the-desk-one-promise).
 
 ## Documentation
 
 - [Choose an authoring guide](docs/cli-handbook/README.md) or run `dotspec docs` offline.
 - [Look up a CLI command](docs/reference/cli.md).
-- [Read dotspec’s own specification](SPEC.md).
+- [Read dotspec’s own specification](specification/dotspec.system.spec-report.md).
 - [Report a problem](https://github.com/dotspec-md/dotspec/issues) or [contribute to dotspec](CONTRIBUTING.md).
 
 ## License

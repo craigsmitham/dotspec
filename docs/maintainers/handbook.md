@@ -128,4 +128,4 @@ Edit the technical contract in `docs/reference/` or the Markdown mapping in `mod
 | --- | --- | --- |
 | CLI reference and command output examples | [Cobra commands](../../internal/cli) and the [example scenarios](../../scripts/generate/main.go) | `mise run generate` |
 | Core domain, fields, and relationships | [Metamodel](../../model/metamodel.yaml) and [core view definition](../../model/views/core-domain.yaml) | `mise run model-generate` |
-| [To-do requirements specification](../../examples/todo/SPEC.md) | [To-do specifications](../../examples/todo/specs) for the example, [document generator](../../internal/specdoc) for presentation | `mise run generate` |
+| [To-do requirements specification](../../examples/todo/specification/personal-task-list.system.spec-report.md) | [To-do specifications](../../examples/todo/specs) for the example, [document generator](../../internal/specdoc) for presentation | `mise run generate` |

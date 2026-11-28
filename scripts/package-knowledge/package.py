@@ -89,7 +89,6 @@ def publication_pages(catalog):
     selectable = {file.relative_to(ROOT).as_posix() for file in (ROOT / 'specs').rglob('*.spec.md')}
     selectable.update(file.relative_to(ROOT).as_posix()
                       for file in (ROOT / 'examples/todo/specification').rglob('*.md'))
-    selectable.add('examples/todo/SPEC.md')
     for entry in catalog:
         for destination in entry['pages']:
             page = destination['page'].partition('#')[0]

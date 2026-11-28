@@ -34,14 +34,14 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 		t.Fatal(code, errOut)
 	}
 	// Build covers the enclosing project from any directory within it.
-	if code, out, errOut := invoke("-C", "apps/demo/internal", "build"); code != 0 || !strings.Contains(out, "SPEC.md") || errOut != "" {
+	if code, out, errOut := invoke("-C", "apps/demo/internal", "build"); code != 0 || !strings.Contains(out, "specification/demo.system.spec-report.md") || errOut != "" {
 		t.Fatal(code, out, errOut)
 	}
 	if code, out, errOut := invoke("-C", "apps/demo", "build"); code != 0 || !strings.Contains(out, "0 written, 0 removed") || errOut != "" {
 		t.Fatal(code, out, errOut)
 	}
 	readReport(0, "checked", "-C", "apps/demo", "check")
-	if err := os.Remove(filepath.Join(demo, "SPEC.md")); err != nil {
+	if err := os.Remove(filepath.Join(demo, "specification/demo.system.spec-report.md")); err != nil {
 		t.Fatal(err)
 	}
 	code, out, errOut := invoke("check", "--all", "--json")
@@ -58,18 +58,18 @@ func TestGeneratedSpecificationWorkspaceAndScopes(t *testing.T) {
 	// A blocked build leads with its outcome and does not restate it as a
 	// generated-specification state.
 	code, out, errOut = invoke("build")
-	if code != 1 || errOut != "" || !strings.HasPrefix(out, "SPEC.md not written: 1 source error.\n\n") || strings.Contains(out, "Generated specification:") {
+	if code != 1 || errOut != "" || !strings.HasPrefix(out, "Specification not written: 1 source error.\n\n") || strings.Contains(out, "Generated specification:") {
 		t.Fatalf("blocked build: %d %q %q", code, out, errOut)
 	}
-	if _, err := os.Stat(filepath.Join(demo, "SPEC.md")); !os.IsNotExist(err) {
-		t.Fatal("blocked build wrote SPEC.md", err)
+	if _, err := os.Stat(filepath.Join(demo, "specification/demo.system.spec-report.md")); !os.IsNotExist(err) {
+		t.Fatal("blocked build wrote system report", err)
 	}
 }
 
 func TestGeneratedSpecificationMultipleRoots(t *testing.T) {
 	root := projectFixture(t)
 	writeFixture(t, filepath.Join(root, "other/specs/other.system.spec.md"), "---\ntype: system-spec\n---\n# Other\n\n## Purpose\nOther work.\n\n## Scope\nOther only.\n")
-	if code, out, errs := invoke("build"); code != 0 {
+	if code, out, errs := invoke("build"); code != 0 || !strings.Contains(out, "Built specification/README.md") {
 		t.Fatal(out, errs)
 	}
 	if code, out, errs := invoke("check"); code != 0 {
@@ -85,7 +85,7 @@ func TestGeneratedSpecificationMultipleRoots(t *testing.T) {
 
 func TestGeneratedSpecScopedSystemsAndComponents(t *testing.T) {
 	root := projectFixture(t)
-	writeFixture(t, filepath.Join(root, "README.md"), "# Tool\n\n[Read the spec](SPEC.md).\n")
+	writeFixture(t, filepath.Join(root, "README.md"), "# Tool\n\n[Read the spec](specification/tool.system.spec-report.md).\n")
 	writeFixture(t, filepath.Join(root, "specs/tool.system.spec.md"), "---\ntype: system-spec\n---\n# Tool\n\n## Purpose\nProcess work.\n\n## Scope\nQueued work.\n\n## Evidence\n[Introduction](../README.md).\n")
 	writeFixture(t, filepath.Join(root, "worker/specs/worker.system.spec.md"), "---\ntype: system-spec\n---\n# Worker\n\n## Description\nA **local** job executor.\n\n## Overview\nEach worker claims one job at a time.\n\n### Recovery\nAn interrupted job returns to the queue.\n\n## Purpose\nClaim jobs.\n\n## Scope\nExecutors.\n\n## Part of\n[Tool](../../specs/tool.system.spec.md).\n")
 	const grandchild = "worker/queues/specs"
@@ -232,7 +232,7 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 			}
 		}
 	}
-	reader("SPEC.md", "[Read the system specification](<specification/tool.system.spec-report.md>)")
+	reader("AGENTS.md", "[system specification](<specification/tool.system.spec-report.md>)")
 	reader("specification/tool.system.spec-report.md", "### Subsystems", `[["Worker"]]`, "[Open questions](<open-questions.md>)", "- [Worker](<systems/worker/worker.system.spec-report.md>) — A local job executor.")
 	reader("specification/systems/worker/worker.system.spec-report.md", "[Purpose](<#purpose>) · [Overview](<#overview>)", "## Purpose\n\nClaim jobs.\n\n## Overview\n\nEach worker claims one job at a time.\n\n### Recovery", "[Tool](<../../tool.system.spec-report.md>)", "- [Queue](<systems/queue/queue.system.spec-report.md>)")
 	reader(section+"queue.system.spec-report.md", "### Interfaces", "- [Clock]", "### System structure", "### System context", "### Interactions", "owner ---|interacts with|", "schedules retries.", "[Worker](<../../worker.system.spec-report.md>)", "[Requirements](<#requirements>)", "### Components\n\n- [Intake](<components/intake/intake.component.spec-report.md>)")
@@ -308,7 +308,7 @@ The [Demo system](../../../../apps/demo/specs/demo.system.spec.md) supplies exam
 		}
 	}
 	reader(section+"requirements/retain-jobs.requirement.spec-report.md", "../components/intake/intake.component.spec-report.md", "../components/intake/components/journal/journal.component.spec-report.md", "apps/demo/specs/demo.system.spec.md", "../quality/availability/availability.quality-attribute.spec-report.md")
-	if _, err := os.Stat(filepath.Join(root, "apps/demo/SPEC.md")); !os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(root, "apps/demo/specification")); !os.IsNotExist(err) {
 		t.Fatalf("referenced project must not acquire generated files: %v", err)
 	}
 }

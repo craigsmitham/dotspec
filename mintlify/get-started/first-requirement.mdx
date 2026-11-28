@@ -91,11 +91,11 @@ dotspec check
 
 ```text nocopy
 specs/requirements/avoid-double-booking.requirement.spec.md          # edit
-SPEC.md                                                            # open first
+specification/booking-desk.system.spec-report.md                     # open first
 specification/requirements/prevent-a-second-reservation.requirement.spec-report.md
 ```
 
-Open `SPEC.md`, follow **Read the system specification**, and under **Requirements** choose **Prevent a second reservation**. A teammate can now read the promise, the condition, and the example together. **View source** takes them back to the file you edited.
+Open the system report and under **Requirements** choose **Prevent a second reservation**. A teammate can now read the promise, the condition, and the example together. **View source** takes them back to the file you edited.
 
 ## Fix a stale report
 
@@ -106,7 +106,7 @@ error [spec.stale]
 generated page is stale; run dotspec build in this project
 ```
 
-Run `dotspec build` and then `dotspec check`. The check should now report zero errors. Reopen the requirement report to see the new rationale. Commit `dotspec.yaml`, `specs/`, `SPEC.md`, and `specification/` together.
+Run `dotspec build` and then `dotspec check`. The check should now report zero errors. Reopen the requirement report to see the new rationale. Commit `dotspec.yaml`, `specs/`, `AGENTS.md`, and `specification/` together.
 
 [Repair a stale specification](/troubleshooting/spec-stale) explains this finding.
 

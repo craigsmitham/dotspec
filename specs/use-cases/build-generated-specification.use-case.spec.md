@@ -16,8 +16,7 @@ matches the authored sources.
 ## System boundary
 
 The dotspec CLI reading every specification in a project declared with
-`dotspec.yaml` and writing that project's generated specification: `SPEC.md`
-and the pages beneath `specification/`.
+`dotspec.yaml` and writing its generated reports beneath `specification/` and updating the selected agent instruction files.
 
 ## Primary actor
 
@@ -53,9 +52,9 @@ describes, and a whole-project check confirms that it is current.
 1. The contributor requests a build of the whole project.
 2. Dotspec inspects every specification in the project, as a
    [check](check-specifications.use-case.spec.md) would.
-3. Dotspec writes `SPEC.md` and the pages beneath `specification/`, removes
+3. Dotspec writes the reports and updates the agent instruction links, removes
    obsolete generated pages, and reports what changed.
-4. The contributor reads the result from `SPEC.md` and commits it with its
+4. The contributor reads the result from the entry point named in the output and commits it with its
    sources.
 
 ## Extensions
@@ -87,7 +86,7 @@ writes nothing and names the project, because a build covers the whole project.
 #### Handling
 
 At step 2, a source has error findings. Dotspec writes nothing, states that
-`SPEC.md` was not written and how many source errors prevent it, and reports the
+the specification was not written and how many source errors prevent it, and reports the
 findings as a check would. The contributor repairs the sources and repeats
 step 1.
 

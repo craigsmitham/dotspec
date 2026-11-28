@@ -123,18 +123,17 @@ func relativeURL(from, file, frag string) string {
 func (p *planner) render() *Plan {
 	p.indexRelationships()
 	p.indexDetailReferences()
-	entry := p.newPage("SPEC.md", Document{}, p.governing.name.title)
-	entry.titleMarkdown = inlineText(p.governing.name.title)
-	if p.governing.file != "SPEC.md" {
-		entry.text(entry.link("Read the system specification", p.governing.file))
-	} else {
+	p.plan.EntryPoint = p.governing.file
+	if p.governing.file == projectIndex {
+		entry := p.newPage(projectIndex, Document{}, p.governing.name.title)
+		entry.titleMarkdown = inlineText(p.governing.name.title)
 		for _, title := range slices.Sorted(maps.Keys(p.governing.indexes)) {
 			idx := p.governing.indexes[title]
 			p.renderIndex(p.governing, title, idx)
 			entry.text(entry.link(title, idx.file))
 		}
+		entry.finish()
 	}
-	entry.finish()
 	for _, s := range p.subjects {
 		p.renderSubject(s)
 	}

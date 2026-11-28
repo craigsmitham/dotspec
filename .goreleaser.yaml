@@ -36,7 +36,6 @@ archives:
       - docs/reference/*.md
       - docs/reference/**/*.md
       - examples/todo/README.md
-      - examples/todo/SPEC.md
       - examples/todo/dotspec.yaml
       - examples/todo/specs/*.spec.md
       - examples/todo/specs/**/*.spec.md

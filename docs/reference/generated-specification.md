@@ -1,6 +1,6 @@
 # Generate a requirements specification
 
-Use a generated spec when readers need one entry point for requirements authored across a project. Open the project’s `SPEC.md` and follow its link to read the system’s purpose and scope, choose a feature, and follow its promises to the source and supporting evidence. The To-do example includes a [complete generated spec](../../examples/todo/SPEC.md).
+Use a generated spec when readers need one entry point for requirements authored across a project. Open the report named by `dotspec build` to read the system’s purpose and scope, choose a feature, and follow its promises to the source and supporting evidence. The To-do example includes a [complete generated spec](../../examples/todo/specification/personal-task-list.system.spec-report.md).
 
 For a review, start with one stakeholder goal and use the generated links to follow the promises across their owners. [Review a set of requirements](../cli-handbook/guides/review-a-set-of-requirements.md).
 
@@ -19,7 +19,7 @@ build:
   enabled: false
 ```
 
-For one root system, the project landing page opens its specification. For several independent systems, the landing page links to a systems index. Use **Part of** when a system really is a subsystem. A project containing only reusable quality models publishes their reference catalog. [Describe a system](../cli-handbook/guides/describe-a-system.md) · [Separate specification projects](workspaces.md).
+For one root system, the entry point is its system report. For several independent systems, the landing page links to a systems index. Use **Part of** when a system really is a subsystem. A project containing only reusable quality models publishes their reference catalog. [Describe a system](../cli-handbook/guides/describe-a-system.md) · [Separate specification projects](workspaces.md).
 
 Explicit specification-system selections and directory defaults place subjects in their system. Standalone quality models are reusable reference material. Each `*.quality-model.md` source has a `*.quality-model-report.md` reference page. Links into other projects retain their original targets. A locally authored specification that selects another project’s system is reachable from the project landing page through the index for its type, such as **Requirements for other systems**.
 
@@ -30,13 +30,28 @@ dotspec build
 dotspec check
 ```
 
-Commit the authored changes, `SPEC.md` and the generated Markdown in `specification/` together. From `SPEC.md`, open the system report. If the project has requirements, follow one to its statement and conditions. If the wording needs to change, select **View source**, edit that file, rebuild, and check again. Build refreshes generator-owned files and removes obsolete generated pages. While a source has error findings, build writes nothing: its output starts with `SPEC.md not written: 1 source error.` and then lists the findings as `dotspec check` does. If it reports that an authored file occupies a planned destination, move the authored file to a permanent location, update any links to it, then rerun the build.
+Commit the authored changes, the updated agent instructions, and the generated Markdown in `specification/` together. Open the report named in the build output. If the project has requirements, follow one to its statement and conditions. If the wording needs to change, select **View source**, edit that file, rebuild, and check again. Build refreshes generator-owned files and removes obsolete generated pages. While a source has error findings, build writes nothing: its output starts with `Specification not written: 1 source error.` and then lists the findings as `dotspec check` does. If it reports that an authored file occupies a planned destination, move the authored file to a permanent location, update any links to it, then rerun the build.
+
+## Link agent instructions to the specification
+
+By default, build adds a specification link to the project's existing `AGENTS.md`, `CLAUDE.md`, and `.claude/CLAUDE.md`. If none exist, it creates `AGENTS.md`. In-project symlink aliases share one block. A Claude file that directly imports the selected `AGENTS.md` also shares its block. Check the advisory if a Codex override shadows your instructions.
+
+Set `build.agent_instruction_files` to a list of project-relative Markdown paths to choose the destinations. Build creates a missing selected file. A null value, an absolute path, or a path that escapes the project produces an error. For example:
+
+```yaml
+build:
+  agent_instruction_files:
+    - AGENTS.md
+    - .github/copilot-instructions.md
+```
+
+Set `agent_instruction_files: []` under `build` to opt out. The next build removes previously managed blocks and continues generating the report. Each block runs from `<!-- dotspec:specification -->` through `<!-- /dotspec:specification -->`. Build refreshes the block in place and restores it if deleted while its file is selected. Keep project-specific instructions outside it. Run `dotspec check` to inspect pending changes.
 
 ## Read the generated files
 
 | Destination | Contents |
 | --- | --- |
-| `SPEC.md` | A link to the system report, or a project index for multiple systems, external-system specifications, or a reference catalog |
+| `specification/README.md` | Project index for multiple systems, external-system specifications, or a reference catalog |
 | `specification/<name>.system.spec-report.md` | Root system report and links into its specification |
 | `specification/glossary.md` | Alphabetical definitions linked to their sources, a topic index when terms declare topics, context names for distinct meanings, and links back to authored relationships |
 | `specification/quality/<attribute>/<attribute>.quality-attribute.spec-report.md` | One system attribute, its definition, parent and child attributes, and classified requirements |

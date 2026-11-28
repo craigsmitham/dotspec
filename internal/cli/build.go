@@ -19,7 +19,7 @@ import (
 func newBuildCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "build", Short: "Build the generated specification",
-		Long:    "Build the generated specification for the enclosing project declared with dotspec.yaml: SPEC.md and the specification/ tree of pages that let a reader navigate the project's specifications as one. Nothing is written while a source has error findings; the findings are reported instead. " + findingsExit + "\n\nLearn more: dotspec docs docs/reference/inspection.md#check-the-generated-requirements-specification",
+		Long:    "Generate the enclosing project's report under specification/ and print its entry point. By default, update the specification link in the project's agent instructions. Set build.agent_instruction_files to [] in dotspec.yaml to opt out. Source errors prevent all writes. " + findingsExit + "\n\nLearn more: dotspec docs docs/reference/inspection.md#check-the-generated-requirements-specification",
 		Example: "dotspec build", Args: operands(0, 0),
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			path, err := projectScope.dir("")
@@ -36,12 +36,12 @@ func newBuildCommand() *cobra.Command {
 			if !project.Build.Enabled {
 				return fmt.Errorf("build.enabled is false in %s; remove that setting to build the generated specification", displayPath(project.Manifest()))
 			}
-			plan, report := planSpec(project.Root)
+			plan, report := planSpec(project)
 			if plan == nil {
 				// The lead line states the build's outcome, so the report
 				// does not repeat the generated specification's state.
 				report.GeneratedSpec = ""
-				if _, err := fmt.Fprintf(cmd.OutOrStdout(), "SPEC.md not written: %s.\n\n", count(report.Summary.Errors, "source error", "source errors")); err != nil {
+				if _, err := fmt.Fprintf(cmd.OutOrStdout(), "Specification not written: %s.\n\n", count(report.Summary.Errors, "source error", "source errors")); err != nil {
 					return &exitError{code: 2, err: err}
 				}
 				return emitCheckReport(cmd.OutOrStdout(), report, false)
@@ -51,13 +51,16 @@ func newBuildCommand() *cobra.Command {
 				return err
 			}
 			var out strings.Builder
+			for _, note := range changes.Advice {
+				fmt.Fprintln(&out, note.Error())
+			}
 			for _, path := range changes.Written {
 				fmt.Fprintf(&out, "Wrote %s\n", path)
 			}
 			for _, path := range changes.Removed {
 				fmt.Fprintf(&out, "Removed %s\n", path)
 			}
-			fmt.Fprintf(&out, "Built %s (%d written, %d removed).\n", displayPath(filepath.Join(project.Root, "SPEC.md")), len(changes.Written), len(changes.Removed))
+			fmt.Fprintf(&out, "Built %s (%d written, %d removed).\n", displayPath(filepath.Join(project.Root, plan.EntryPoint)), len(changes.Written), len(changes.Removed))
 			_, err = io.WriteString(cmd.OutOrStdout(), out.String())
 			return err
 		},
@@ -74,7 +77,7 @@ func inspectProject(path string) check.Report {
 	if err != nil || project == nil || !project.Build.Enabled || dir != project.Root {
 		return check.Project(path, speckinds.All()...)
 	}
-	plan, report := planSpec(dir)
+	plan, report := planSpec(project)
 	if plan == nil {
 		return report
 	}
@@ -89,7 +92,8 @@ func inspectProject(path string) check.Report {
 	return report.WithFindings(findings...)
 }
 
-func planSpec(root string) (*specdoc.Plan, check.Report) {
+func planSpec(project *specfile.Project) (*specdoc.Plan, check.Report) {
+	root := project.Root
 	inventory := check.InspectSources(root, speckinds.All()...)
 	report := inventory.Report
 	report.GeneratedSpec = "blocked-by-source"
@@ -110,6 +114,7 @@ func planSpec(root string) (*specdoc.Plan, check.Report) {
 		}
 		return nil, report.WithFindings(*diagnostic.Error("spec.structure", err.Error(), diagnostic.Location{Path: root}))
 	}
+	plan.InstructionFiles = project.Build.AgentInstructionFiles
 	return plan, report
 }
 

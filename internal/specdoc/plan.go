@@ -17,8 +17,15 @@ import (
 	"github.com/dotspec-md/dotspec/internal/specfile"
 )
 
+const projectIndex = "specification/README.md"
+
 // Plan binds source-backed expectations to their project-relative generated paths.
-type Plan struct{ Pages map[string]*Page }
+
+type Plan struct {
+	Pages            map[string]*Page
+	EntryPoint       string
+	InstructionFiles []string
+}
 
 type Page struct {
 	otherSourceLabels map[sourceRoute]int // authored or navigational links that share a provenance label
@@ -147,7 +154,7 @@ func (p *planner) read() error {
 		if err != nil {
 			return err
 		}
-		if glossarySources[id(r)] && (rel == "SPEC.md" || strings.HasPrefix(filepath.ToSlash(rel), "specification/")) {
+		if glossarySources[id(r)] && strings.HasPrefix(filepath.ToSlash(rel), "specification/") {
 			if header, _ := splitHeader(data); header.GeneratedBy == "dotspec" {
 				return fmt.Errorf("glossary source %s is an output of the generated specification", rel)
 			}
@@ -335,7 +342,7 @@ func (p *planner) place() error {
 		if title == "" {
 			title = "Specifications"
 		}
-		p.governing = &subject{name: &heading{title: title}, file: "SPEC.md", dir: "specification"}
+		p.governing = &subject{name: &heading{title: title}, file: projectIndex, dir: "specification"}
 	}
 	for _, s := range p.subjects {
 		if s == p.governing {

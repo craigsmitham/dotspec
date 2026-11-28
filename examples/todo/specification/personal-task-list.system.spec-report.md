@@ -1,5 +1,6 @@
 ---
 generated_by: dotspec
+agent_instruction_files: ["AGENTS.md"]
 type: system-spec-report
 source: "../specs/personal-task-list.system.spec.md#personal-task-list"
 ---

@@ -183,14 +183,14 @@ def follow(page, name):
 
 def spec_journey(cli, tmp):
     project = project_copy(tmp, "reader")
-    entry = project / "SPEC.md"
+    entry = project / "AGENTS.md"
     entry.unlink()
     shutil.rmtree(project / "specification")
     cli("build", cwd=project)
-    root = follow(entry, "Read the system specification")
+    root = follow(entry, "system specification")
     assert root == project / "specification/personal-task-list.system.spec-report.md"
     assert len(markdown_links(entry)) == 1
-    assert sorted(project.rglob("SPEC.md")) == [entry]
+    assert not list(project.rglob("SPEC.md"))
     assert all(target != entry for page in (project / "specification").rglob("*.md")
                for _, target, _, _ in markdown_links(page))
     overview = root.read_text(encoding="utf-8")

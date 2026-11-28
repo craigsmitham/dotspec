@@ -27,9 +27,10 @@ import (
 )
 
 type pageHeader struct {
-	Source      yaml.Node `yaml:"source"`
-	Type        string    `yaml:"type"`
-	GeneratedBy string    `yaml:"generated_by"`
+	InstructionFiles []string  `yaml:"agent_instruction_files"`
+	Source           yaml.Node `yaml:"source"`
+	Type             string    `yaml:"type"`
+	GeneratedBy      string    `yaml:"generated_by"`
 }
 
 func splitHeader(data []byte) (pageHeader, []byte) {
@@ -494,9 +495,9 @@ func validateRendered(root string, plan *Plan, files map[string][]byte) ([]diagn
 	}
 	// Missing pages already have actionable findings. Verify that every existing
 	// page can be reached by a reader starting at the root document.
-	if _, ok := pages["SPEC.md"]; ok {
-		seen := map[string]bool{"SPEC.md": true}
-		queue := []string{"SPEC.md"}
+	if _, ok := pages[plan.EntryPoint]; ok {
+		seen := map[string]bool{plan.EntryPoint: true}
+		queue := []string{plan.EntryPoint}
 		for len(queue) > 0 {
 			current := queue[0]
 			queue = queue[1:]
@@ -509,7 +510,7 @@ func validateRendered(root string, plan *Plan, files map[string][]byte) ([]diagn
 		}
 		for _, rel := range slices.Sorted(maps.Keys(pages)) {
 			if plan.Pages[rel] != nil && !seen[rel] {
-				ds = append(ds, *diagnostic.Error("spec.unreachable", "no visible route from SPEC.md", diagnostic.Location{Path: filepath.Join(root, filepath.FromSlash(rel))}))
+				ds = append(ds, *diagnostic.Error("spec.unreachable", "no visible route from "+plan.EntryPoint, diagnostic.Location{Path: filepath.Join(root, filepath.FromSlash(rel))}))
 			}
 		}
 	}

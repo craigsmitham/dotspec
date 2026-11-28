@@ -151,3 +151,24 @@ func TestWorkspaceDiscoveryBoundaries(t *testing.T) {
 		})
 	}
 }
+
+func TestInstructionFileConfiguration(t *testing.T) {
+	for _, test := range []struct {
+		setting         string
+		valid, discover bool
+	}{
+		{"", true, true}, {"build: {agent_instruction_files: []}", true, false},
+		{"build: {agent_instruction_files: [.github/copilot-instructions.md]}", true, false},
+		{"build: {agent_instruction_files: null}", false, false}, {"build: {agent_instruction_files: [../agent.md]}", false, false},
+		{"build: {agent_instruction_files: .github/copilot-instructions.md}", false, false}, {"build: {agent_instruction_files: [/absolute.md]}", false, false},
+	} {
+		dir := t.TempDir()
+		if err := os.WriteFile(filepath.Join(dir, ProjectFilename), []byte("name: demo\n"+test.setting+"\n"), 0644); err != nil {
+			t.Fatal(err)
+		}
+		p, err := readProject(dir)
+		if (err == nil) != test.valid || err == nil && ((p.Build.AgentInstructionFiles == nil) != test.discover || !p.Build.Enabled) {
+			t.Fatal(test, p, err)
+		}
+	}
+}

@@ -31,8 +31,8 @@ func testPlan(t *testing.T, dir string) *Plan {
 		}
 	}
 	entry := &Page{
-		Title: "Task list", RequiredLinks: []string{systemPath},
-		Markdown: "---\ngenerated_by: dotspec\n---\n# Task list\n\n[Read the system specification](" + systemPath + ")\n",
+		Title: "Task list", RequiredLinks: []string{filepath.Base(systemPath)},
+		Markdown: "---\ngenerated_by: dotspec\n---\n# Task list\n\n[Read the system specification](" + filepath.Base(systemPath) + ")\n",
 	}
 	root := &Page{
 		Document: Document{Type: "system-spec-report", Documents: "../specs/task-list.system.spec.md#task-list"}, Title: "Task list",
@@ -44,7 +44,7 @@ func testPlan(t *testing.T, dir string) *Plan {
 		RequiredContent: []string{"**Preserve tasks** on the same database."},
 		Markdown:        "---\ntype: requirement-spec-report\ngenerated_by: dotspec\nsource: ../../specs/restart.spec.md#restart\n---\n# Restart\n\n**Preserve tasks** on the same database.\n\n---\n\n[View source](../../specs/restart.spec.md#restart)\n",
 	}
-	return &Plan{Pages: map[string]*Page{"SPEC.md": entry, systemPath: root, detailPath: detail}}
+	return &Plan{EntryPoint: projectIndex, InstructionFiles: []string{}, Pages: map[string]*Page{projectIndex: entry, systemPath: root, detailPath: detail}}
 }
 
 func TestCheckRenderedSourceAndRoutes(t *testing.T) {
@@ -85,7 +85,10 @@ func TestCheckRenderedSourceAndRoutes(t *testing.T) {
 func TestWritePreservesAuthoredFiles(t *testing.T) {
 	dir := t.TempDir()
 	p := testPlan(t, dir)
-	root := filepath.Join(dir, "SPEC.md")
+	root := filepath.Join(dir, projectIndex)
+	if err := os.Mkdir(filepath.Dir(root), 0755); err != nil {
+		t.Fatal(err)
+	}
 	if err := os.WriteFile(root, []byte("# Authored\n"), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -94,7 +97,7 @@ func TestWritePreservesAuthoredFiles(t *testing.T) {
 	if !errors.As(err, &finding) || finding.Rule != "spec.collision" {
 		t.Fatal(err)
 	}
-	if _, err := os.Stat(filepath.Join(dir, "specification")); !errors.Is(err, fs.ErrNotExist) {
+	if _, err := os.Stat(filepath.Join(dir, systemPath)); !errors.Is(err, fs.ErrNotExist) {
 		t.Fatalf("partial build: %v", err)
 	}
 	data, err := os.ReadFile(root)
@@ -131,7 +134,7 @@ func TestWriteRejectsSymlinkedDestination(t *testing.T) {
 	if _, err := Write(dir, testPlan(t, dir)); err == nil {
 		t.Fatal("wrote through a linked directory")
 	}
-	for _, name := range []string{filepath.Join(dir, "SPEC.md"), filepath.Join(other, filepath.Base(systemPath))} {
+	for _, name := range []string{filepath.Join(dir, "AGENTS.md"), filepath.Join(other, filepath.Base(systemPath))} {
 		if _, err := os.Stat(name); !errors.Is(err, fs.ErrNotExist) {
 			t.Fatal(name, err)
 		}
@@ -256,7 +259,7 @@ func TestWriteRespectsNestedProjectBoundaries(t *testing.T) {
 			if _, err := os.Stat(stale); err != nil {
 				t.Fatal(err)
 			}
-			if _, err := os.Stat(filepath.Join(dir, "SPEC.md")); !errors.Is(err, fs.ErrNotExist) {
+			if _, err := os.Stat(filepath.Join(dir, "AGENTS.md")); !errors.Is(err, fs.ErrNotExist) {
 				t.Fatalf("partial build: %v", err)
 			}
 		})
