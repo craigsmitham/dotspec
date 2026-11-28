@@ -42,7 +42,7 @@ The service supplies the current local day when it prepares the Waiting view. [A
 ### Capabilities
 
 - [Follow-up review](<../../capabilities/follow-up-review.capability.spec-report.md>) — When the owner reviews waiting errands, they can see which replies they planned to chase by today and what to ask for.
-- [Local task storage](<../../capabilities/local-task-storage.capability.spec-report.md>) — Keeps a commitment and the owner's last recorded decision together between visits. …
+- [Remember task progress between visits](<../../capabilities/remember-task-progress-between-visits.capability.spec-report.md>) — Remember my tasks and which ones I have checked off between visits. For a waiting task, keep the expected reply and follow-up day too.
 
 ## Contracts
 

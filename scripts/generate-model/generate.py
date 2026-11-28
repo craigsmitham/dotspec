@@ -359,7 +359,7 @@ def glossary_markdown(catalog: dict[str, Any]) -> bytes:
                 examples = "../../../examples/todo/specs"
                 lines.extend(["### Example", "",
                               f"[Pick up where I left off]({examples}/features/pick-up-where-i-left-off.feature.spec.md) "
-                              f"groups the [Decide what to do about a waiting errand]({examples}/use-cases/resume-list.use-case.spec.md) use case.", ""])
+                              f"groups the [See what is left to do]({examples}/use-cases/see-remaining.use-case.spec.md) use case.", ""])
     return "\n".join(lines).encode()
 
 

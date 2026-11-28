@@ -2,6 +2,8 @@
 type: requirement-spec
 id: keep-recorded-work-available
 verification:
+  - name: Review errands after a break and distinguish a failed read
+    source: ../../tests/acceptance.py#verify_errands
   - name: Exercise the forms across list views
     source: ../../README.md#run-the-app
 ---
@@ -11,13 +13,21 @@ verification:
 
 When the person returns to the same local database, each saved entry must appear once in the view for its recorded state (Open, Waiting or Completed). An intentionally deleted entry must remain absent from every view.
 
+## Supports
+
+[Less time retracing my steps](../jobs/errands.job.spec.md#less-time-retracing-my-steps).
+
+## Criterion
+
+If the books are completed and the parcel is open, returning to Open shows just the parcel. After completing the parcel too, Open reports that it has no tasks. A failed read must report the failure so the owner can distinguish it from an empty list.
+
 ## Applies to
 
 **Targets:** [My checklist](../personal-task-list.system.spec.md#my-checklist).
 
 ## Derived from
 
-[Completion preserves a commitment](../business-rules/completion.business-rule.spec.md).
+[Keep completed tasks until I remove them](../business-rules/completion.business-rule.spec.md).
 
 ## Rationale
 

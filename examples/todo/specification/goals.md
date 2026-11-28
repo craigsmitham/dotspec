@@ -16,3 +16,4 @@ Reduce the effort of working out what still needs attention.
 **Supported by**
 
 - [See personal commitments through](<jobs/see-personal-commitments-through.job.spec-report.md>)
+- [Take care of an errand I have to leave for later](<jobs/take-care-of-an-errand-i-have-to-leave-for-later.job.spec-report.md>)

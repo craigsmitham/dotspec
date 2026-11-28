@@ -9,28 +9,18 @@ source: "../../specs/features/pick-up-where-i-left-off.feature.spec.md#pick-up-w
 
 ## Description
 
-Find an errand after a break, see whether a reply needs chasing and take up the work again when an answer arrives.
-
-The [calendar date suite](<#specification.calendar-dates-accepted-for-follow-up>) defines which dates a person can enter, including leap days and dates beyond year 9999.
+Put an errand on my list while it is fresh in my mind and come back to see which tasks are still open.
 
 ## Purpose
 
-Someone can finish making calls for the day while still owing several results. When they return, they can see which calls need chasing and what answer they were waiting for. [Follow-up review](<../capabilities/follow-up-review.capability.spec-report.md>) helps them choose whom to contact first.
+I can return to breakfast knowing that tomorrow I can find the parcel I still need to mail and check whether I already returned the books.
 
 ## Groups
 
-- [Decide what to do about a waiting errand](<../use-cases/decide-what-to-do-about-a-waiting-errand.use-case.spec-report.md>) shows how the owner decides whether to take up the work, keep waiting or mark the errand settled.
-- [Show which replies need follow-up](<../requirements/show-which-replies-need-follow-up.requirement.spec-report.md>) specifies the cue for deciding where to act.
-- [Keep recorded work available](<../requirements/keep-recorded-work-available.requirement.spec-report.md>) lets the owner find each errand in the view for its recorded state when they come back.
-- [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>) covers returning after the service itself has stopped.
-
-## Specification sources
-
-<a id="specification.calendar-dates-accepted-for-follow-up"></a>
-
-### [Calendar dates accepted for follow-up](<../../app/follow_up_date_test.go>)
-
-Defines requirements.
+- [Save an errand for later](<../use-cases/save-an-errand-for-later.use-case.spec-report.md>).
+- [See what is left to do](<../use-cases/see-what-is-left-to-do.use-case.spec-report.md>).
+- [Keep recorded work available](<../requirements/keep-recorded-work-available.requirement.spec-report.md>).
+- [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>).
 
 ---
 

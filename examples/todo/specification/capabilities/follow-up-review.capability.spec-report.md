@@ -13,7 +13,7 @@ When the owner reviews waiting errands, they can see which replies they planned 
 
 ## Depends on
 
-[Local task storage](<local-task-storage.capability.spec-report.md>) keeps the owner's note about the expected reply and their chosen follow-up day available between visits.
+[Remember task progress between visits](<remember-task-progress-between-visits.capability.spec-report.md>) keeps the owner's note about the expected reply and their chosen follow-up day available between visits.
 
 ## Supports
 

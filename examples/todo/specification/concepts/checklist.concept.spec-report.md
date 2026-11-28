@@ -9,11 +9,13 @@ source: "../../specs/concepts/checklist.concept.spec.md#checklist"
 
 ## Purpose
 
-Decide what I can do next, which replies I need to chase and which commitments I have already settled.
+Keep track of what I still need to do and what I have already done.
 
 ## Operational principles
 
-I promise to get the sink fixed. Once I've asked the plumber for a visit time and chosen a day to chase the reply, I can turn to another errand. When I return, I still find the reply I need and the day I chose. If the plumber asks me for a photo, I resume the same repair entry. After the repair I can complete it. If the sink leaks again, I can reopen that entry without having to remember its title or reconstruct the old wait. The [repair example](<../../specs/concepts/repair.md>) illustrates that sequence.
+I write down the books and the parcel. Crossing off the books leaves the parcel open. Finding another book in my bag means I can reopen the original task.
+
+Sometimes an errand depends on a reply. I promise to get the sink fixed. Once I've asked the plumber for a visit time and chosen a day to chase the reply, I can turn to another errand. When I return, I still find the reply I need and the day I chose. If the plumber asks me for a photo, I resume the same repair entry. After the repair I can complete it. If the sink leaks again, I can reopen that entry without having to remember its title or reconstruct the old wait. The [repair example](<../../specs/concepts/repair.md>) illustrates that sequence.
 
 ## State
 
@@ -88,7 +90,7 @@ Take back the next action on a waiting commitment when the person can move the w
 
 <!-- dotspec-doc {"type":"concept-action-spec-report","documents":"../../specs/concepts/checklist.concept.spec.md#complete"} -->
 
-Mark an open or waiting commitment settled. If the person selected Complete in Open and the entry is now Waiting, reject the old action. They can still choose Complete from Waiting. See the [shared check for actions on an entry](<#effects-table>) and the [completion rule](<../business-rules/completion-preserves-a-commitment.business-rule.spec-report.md>).
+Mark an open or waiting commitment settled. If the person selected Complete in Open and the entry is now Waiting, reject the old action. They can still choose Complete from Waiting. See the [shared check for actions on an entry](<#effects-table>) and the [completion rule](<../business-rules/keep-completed-tasks-until-i-remove-them.business-rule.spec-report.md>).
 
 ### Reopen
 

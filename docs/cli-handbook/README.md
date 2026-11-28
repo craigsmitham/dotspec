@@ -31,6 +31,7 @@ Map a functional job and its success criteria, investigate switching, and connec
 
 - [Write a job from a concrete situation](guides/write-a-job.md) (How-to)
 - [What makes something a job to be done?](explanations/jobs-to-be-done.md) (Explanation)
+- [Take care of an errand I have to leave for later](../../examples/todo/specs/jobs/errands.job.spec.md) (Example)
 - [See personal commitments through](../../examples/todo/specs/jobs/personal-commitments.job.spec.md) (Example)
 - [Connect needs to capabilities and specifications](guides/map-needs-to-capabilities.md#connect-needs-to-capabilities-and-specifications) (How-to)
 

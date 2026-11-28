@@ -17,8 +17,8 @@ ACCEPTANCE = Path("tests/acceptance.py")
 TYPES = {
     "system": ("", "Personal task list"),
     "feature": ("pick-up-where-i-left-off", "Pick up where I left off"),
-    "capability": ("local-task-storage", "Local task storage"),
-    "business-rule": ("completion", "Completion preserves a commitment"),
+    "capability": ("local-task-storage", "Remember task progress between visits"),
+    "business-rule": ("completion", "Keep completed tasks until I remove them"),
     "job": ("personal-commitments", "See personal commitments through"),
     "use-case": ("resume-list", "Decide what to do about a waiting errand"),
     "concept": ("checklist", "Checklist"),
@@ -28,7 +28,7 @@ TYPES = {
 # Relationships COVERAGE.md asks reviewers to find in the generated specification.
 REPORTS = [
     ("personal-task-list.system.spec-report.md", "[Task list forms](<interfaces/task-list-forms.interface.spec-report.md>)"),
-    ("personal-task-list.system.spec-report.md", "A settled commitment must stay"),
+    ("personal-task-list.system.spec-report.md", "A completed task must stay"),
     ("personal-task-list.system.spec-report.md",
      "[Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>)"),
     ("interfaces/task-list-forms.interface.spec-report.md",
@@ -241,7 +241,7 @@ def spec_journey(cli, tmp):
         assert "**Referenced by**" not in detail.read_text(encoding="utf-8")
         for page in (root, follow(detail, related)):
             assert any(target == detail and fragment == anchor for _, target, fragment, _ in markdown_links(page))
-    rule = follow(root, "Completion preserves a commitment")
+    rule = follow(root, "Keep completed tasks until I remove them")
     statement = rule.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
     assert statement in overview.split("\n## Business rules\n", 1)[1].split("\n## ", 1)[0]
     stakeholders = overview.split("## Stakeholders\n", 1)[1].split("\n## ", 1)[0]
@@ -251,24 +251,24 @@ def spec_journey(cli, tmp):
     diagram, components, interfaces = re.split(r"^### (?:Components|Interfaces)$", architecture, flags=re.M)
     assert diagram.count('```mermaid') == 1 and 'subgraph owner["Personal task list"]' in diagram
     assert '["Task service"]' in diagram and '(["Task list forms"])' in diagram
-    assert all(name not in architecture for name in ("Local task storage", "Follow-up review"))
+    assert all(name not in architecture for name in ("Remember task progress between visits", "Follow-up review"))
     assert "[Task service]" in components and "- [Task list forms]" in interfaces
     service = follow(root, "Task service").read_text(encoding="utf-8")
     assert "```mermaid" not in service and "### Capabilities" in service
     capability_rows = overview.split("\n## Capabilities\n", 1)[1].split("\n## ", 1)[0].strip().splitlines()
-    assert [re.match(r"^- \[([^]]+)\]", row)[1] for row in capability_rows] == ["Follow-up review", "Local task storage"]
+    assert [re.match(r"^- \[([^]]+)\]", row)[1] for row in capability_rows] == ["Follow-up review", "Remember task progress between visits"]
     concepts = overview.split("\n## Concepts\n", 1)[1].split("\n## ", 1)[0]
     assert concepts.count("- [Checklist](<concepts/checklist.concept.spec-report.md>)") == 1
     assert "<a id=" not in concepts
     assert "\n  - [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>)" in concepts
     assert follow(root, "Checklist") == follow(follow(root, "My checklist"), "Checklist")
     for collection, name, fragment in (
-        ("Business rules", "Completion preserves a commitment", "business-rules"),
+        ("Business rules", "Keep completed tasks until I remove them", "business-rules"),
         ("Jobs", "See personal commitments through", "jobs"),
         ("Requirements", "Preserve tasks across restart", "requirements"),
         ("Use cases", "Decide what to do about a waiting errand", "use-cases"),
         ("Components", "Task service", "components"),
-        ("Capabilities", "Local task storage", "capabilities"),
+        ("Capabilities", "Remember task progress between visits", "capabilities"),
         ("Capabilities", "Follow-up review", "capabilities"),
         ("Interfaces", "Task list forms", "interfaces"),
         ("Features", "Pick up where I left off", "features"),
@@ -286,7 +286,7 @@ def spec_journey(cli, tmp):
         "Personal task list": (None, "specs/personal-task-list.system.spec.md"),
         "Pick up where I left off": ("Features", "specs/features/pick-up-where-i-left-off.feature.spec.md"),
         "Task service": ("Components", "app/specs/task-service.component.spec.md"),
-        "Local task storage": ("Capabilities", "specs/capabilities/local-task-storage.capability.spec.md"),
+        "Remember task progress between visits": ("Capabilities", "specs/capabilities/local-task-storage.capability.spec.md"),
         "Follow-up review": ("Capabilities", "specs/capabilities/follow-up-review.capability.spec.md"),
         "My checklist": ("Concepts", "specs/personal-task-list.system.spec.md"),
     }.items():
@@ -332,9 +332,9 @@ def spec_journey(cli, tmp):
         anchor = re.sub(r"[^a-z0-9 -]", "", title.lower()).replace(" ", "-")
         assert (source.resolve(), anchor) in claims, source
     component = follow(root, "Task service")
-    assert follow(follow(root, "Local task storage"), "Task service") == component
+    assert follow(follow(root, "Remember task progress between visits"), "Task service") == component
     assert not (component.parent / "capabilities.md").exists()
-    assert follow(component, "Local task storage") == follow(root, "Local task storage")
+    assert follow(component, "Remember task progress between visits") == follow(root, "Remember task progress between visits")
     assert component == project / "specification/components/task-service/task-service.component.spec-report.md"
     component_requirements = follow(component, "Requirements")
     acknowledgement = follow(component_requirements, "Acknowledge after commit")
@@ -345,7 +345,11 @@ def spec_journey(cli, tmp):
     assert follow(component, "Acknowledge after commit") == acknowledgement
     statement = acknowledgement.read_text(encoding="utf-8").split("## Statement\n\n", 1)[1].split("\n\n", 1)[0]
     assert component_requirements.read_text(encoding="utf-8").count(statement) == 1
-    use_case = follow(feature, "Decide what to do about a waiting errand")
+    assert follow(feature, "Save an errand for later") == follow(root, "Save an errand for later")
+    remaining = follow(feature, "See what is left to do")
+    assert follow(remaining, "Keep recorded work available") == follow(root, "Keep recorded work available")
+    follow_up = follow(root, "Follow up when someone owes me a reply")
+    use_case = follow(follow_up, "Decide what to do about a waiting errand")
     assert "## Goal" in use_case.read_text(encoding="utf-8")
     assert any(label == "The person who promised to get the errand done" and target == root
                and fragment == "list-owner" for label, target, fragment, _ in markdown_links(use_case))
@@ -385,12 +389,12 @@ def spec_journey(cli, tmp):
         assert phrase in text, phrase
     assert follow(promise, "restart acceptance test") == project / ACCEPTANCE
     cue = follow(use_case, "Show which replies need follow-up")
-    assert follow(feature, "Show which replies need follow-up") == cue
+    assert follow(follow_up, "Show which replies need follow-up") == cue
     assert follow(cue, "When a reply needs chasing") == follow(root, "When a reply needs chasing")
     assert follow(cue, "form acceptance test") == project / ACCEPTANCE
     requirements = overview.split("\n## Requirements\n", 1)[1].split("\n## ", 1)[0].strip().splitlines()
-    assert follow(root, "Calendar dates accepted for follow-up") == feature
-    assert follow(feature, "Calendar dates accepted for follow-up") == project / "app/follow_up_date_test.go"
+    assert follow(root, "Calendar dates accepted for follow-up") == follow_up
+    assert follow(follow_up, "Calendar dates accepted for follow-up") == project / "app/follow_up_date_test.go"
     assert follow(root, "Saved follow-up dates across time zones") == qualities
     assert follow(qualities, "Saved follow-up dates across time zones") == project / ACCEPTANCE
     assert [re.fullmatch(r"- \[([^]]+)\]\(<[^>]+>\) — .+", row)[1] for row in requirements if "#specification." not in row] == [

@@ -1,15 +1,15 @@
 ---
 title: "What survives a restart?"
-description: "Follow a waiting task from a durability requirement to the test that kills and restarts the To-do service."
+description: "Follow two everyday errands from a durability requirement to the test that kills and restarts the To-do service."
 ---
 
-You have asked Lee for a visit time to repair the guest sink. You move the task to **Waiting** and save a follow-up date. The service acknowledges the change and then stops. When you return, how would you tell whether the list kept your commitment?
+Yesterday you returned the library books and crossed them off. You still have a parcel to mail. The task service stops overnight. What should your list show this morning?
 
 Walkthrough verified with dotspec `0.1.0-alpha.1`.
 
 ## Read the promise
 
-Open **Preserve tasks across restart** and read **Statement** and **Conditions** together. The promise covers changes the service acknowledged before it stopped, on functioning local storage. If you reopen the same database, you should find the same task in Waiting with its title, expected reply, and saved follow-up date. On a later day, the cue beside that date can change to **Follow up now**. The follow-up rule determines when that happens. [Restart requirement](https://github.com/dotspec-md/dotspec/blob/main/examples/todo/specs/requirements/restart.requirement.spec.md#statement) · [Follow-up rule](https://github.com/dotspec-md/dotspec/blob/main/examples/todo/specs/business-rules/follow-up.business-rule.spec.md#statement).
+Open **Preserve tasks across restart** and read **Statement** and **Conditions** together. The promise covers changes the service acknowledged before it stopped, on functioning local storage. If you reopen the same database, you should find the parcel in Open and the books in Completed. If you discover another book in your bag, you can reopen the original task. [Restart requirement](https://github.com/dotspec-md/dotspec/blob/main/examples/todo/specs/requirements/restart.requirement.spec.md#statement).
 
 ## Follow the requirement to its test
 
@@ -33,6 +33,6 @@ mise install
 mise exec -- python -I examples/todo/tests/acceptance.py
 ```
 
-The test records **Book sink repair** in Waiting with the expected reply **Visit time from Lee**. It kills the service, starts a new process on the same disposable database, and compares the identities and titles in all three views. It also checks the expected replies and dates for both waiting entries. On success it prints `Task forms and persistence across process restart passed.` [Acceptance procedure](https://github.com/dotspec-md/dotspec/blob/main/examples/todo/tests/acceptance.py).
+The everyday errand case compares both tasks after restart and reopens the books. A second case records **Book sink repair** in Waiting with the expected reply **Visit time from Lee**. It kills the service, starts a new process on the same disposable database, and compares the identities and titles in all three views. It also checks the expected replies and dates for both waiting entries. On success it prints `Task forms and persistence across process restart passed.` [Acceptance procedure](https://github.com/dotspec-md/dotspec/blob/main/examples/todo/tests/acceptance.py).
 
-That run exercises a process stop after acknowledgement. A power loss or a stop during an unacknowledged write would need its own conditions and evidence. To try the same handoff through the browser, follow the [To-do app walkthrough](https://github.com/dotspec-md/dotspec/blob/main/examples/todo/README.md#run-the-app).
+That run exercises a process stop after acknowledgement. A power loss or a stop during an unacknowledged write would need its own conditions and evidence. To try the books and parcel through the browser, follow the [To-do app walkthrough](https://github.com/dotspec-md/dotspec/blob/main/examples/todo/README.md#run-the-app).

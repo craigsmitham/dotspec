@@ -43,7 +43,7 @@ The [form acceptance test](<../../tests/acceptance.py>) checks the reply, date a
 
 **Feature**
 
-- [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)
+- [Follow up when someone owes me a reply](<../features/follow-up-when-someone-owes-me-a-reply.feature.spec-report.md>)
 
 ---
 

@@ -58,6 +58,9 @@
         "page": "docs/cli-handbook/explanations/jobs-to-be-done.md"
       },
       {
+        "page": "examples/todo/specs/jobs/errands.job.spec.md"
+      },
+      {
         "page": "examples/todo/specs/jobs/personal-commitments.job.spec.md"
       },
       {

@@ -1,6 +1,6 @@
 # Write a job from a concrete situation
 
-Start with a person's account of a particular occasion, or a situation you can label as a hypothesis. Describe what the performer is trying to accomplish in terms that hold across different ways of doing the work. In the To-do example, someone crosses “Call the plumber” off their list. Ask **“When the call is finished, what does the person still owe?”**
+Start with a particular occasion. At breakfast someone remembers the library books and a parcel. Tomorrow, how will they know which errand still needs doing? The [everyday errand job](../../../examples/todo/specs/jobs/errands.job.spec.md) works with a note by the keys, a checklist or the parcel by the door. Its outcomes are hypotheses a performer can question. The second example follows a longer errand in which someone else owes the performer a reply.
 
 ## Start a job specification
 

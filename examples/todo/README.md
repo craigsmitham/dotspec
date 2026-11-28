@@ -1,6 +1,6 @@
 # To-do
 
-Suppose you promised a guest a working sink by Friday. On Monday you ask the plumber for a visit time and decide to chase the reply on Wednesday. What should the list tell you on Wednesday? If the plumber asks for a photo, whose turn is it to act? This example follows that decision from a personal commitment to a working browser form and a restart test.
+At breakfast you remember the library books and a parcel you need to mail. You get to the library this afternoon. Tomorrow, when you have time to go out again, what is left? Start with the [job of taking care of an errand that has to wait](specs/jobs/errands.job.spec.md).
 
 ## Run the app
 
@@ -14,7 +14,22 @@ todo_dir=$(mktemp -d)
 mise exec -- go run . -port 0 -db "$todo_dir/list.sqlite"
 ```
 
-Open the address printed in the terminal. The person keeping the list is the only one who uses it. Calls and messages in the walkthrough are fictional.
+Open the address printed in the terminal.
+
+1. Add **Return the library books** and **Mail the parcel** in Open. A title is enough.
+2. After the library visit, choose **Complete** for the books. Open now shows just the parcel.
+3. Stop the service, run the same command again and open the new address. The parcel is still open. The books are in Completed.
+4. You find one more library book in your bag. Choose **Reopen** in Completed and find both errands in Open again.
+
+## Would clearing completed tasks overnight work?
+
+In the [system report](specification/personal-task-list.system.spec-report.md), open **Pick up where I left off**, then **See what is left to do**. Follow step 2 to **Keep recorded work available**. Its **Derived from** link leads to the rule about who decides when to discard a task. Clearing Completed overnight would leave Open looking right but take away your ability to recover the books. Choosing to delete the task yourself fits the rule.
+
+The [restart refinement](specs/requirements/restart.requirement.spec.md) gives a reviewer a way to check the difference. Compare which tasks appear in each view after restarting on the same database.
+
+## Follow up when someone owes me a reply
+
+Try this [second feature](specs/features/follow-up.feature.spec.md) on a fresh list. Suppose you promised a guest a working sink by Friday.
 
 1. In **Open**, add **Fix the guest sink** and **Collect keys**. You have called the plumber. Under the sink entry, expand **Wait for reply**. Enter **Plumber’s visit time** and choose today as the **Follow-up date**. Submit the form. Open now contains just the keys.
 2. Open **Waiting**. The sink entry shows your expected reply, today’s date and **Follow up now**. Suppose you chase the plumber and agree to check back tomorrow. Expand **Update follow-up**, change just the date to tomorrow and submit. The same entry now reads **Upcoming**. That day is when to chase the plumber. Friday is still when you owe your guest a working sink.
@@ -26,7 +41,7 @@ Open the address printed in the terminal. The person keeping the list is the onl
 
 Start at the [system specification](specification/personal-task-list.system.spec-report.md). Under **Goals**, open **Resume unfinished work**. Under **Supported by**, choose the job **See personal commitments through**. In the job’s **Evidence** section, follow the **return scenario**. At step 2, open **Show which replies need follow-up**. Its **Derived from** link takes you to the rule that explains why an unanswered errand is still yours after the day passes. Its **Evidence** link takes you to the test that reads the cue on the rendered form.
 
-For the distinction between facts the owner saved and a cue that can change overnight, start with the restart requirement. Try predicting Friday’s screen from Thursday’s saved entry before reading the test. The feature groups the promises, and the handbook shows how to review them together. [Pick up where I left off](specs/features/pick-up-where-i-left-off.feature.spec.md) · [Preserve tasks across restart](specs/requirements/restart.requirement.spec.md) · [Review a set of requirements](../../docs/cli-handbook/guides/review-a-set-of-requirements.md).
+For the distinction between facts the owner saved and a cue that can change overnight, start with the restart requirement. Try predicting Friday’s screen from Thursday’s saved entry before reading the test. The feature groups the promises, and the handbook shows how to review them together. [Follow up when someone owes me a reply](specs/features/follow-up.feature.spec.md) · [Preserve tasks across restart](specs/requirements/restart.requirement.spec.md) · [Review a set of requirements](../../docs/cli-handbook/guides/review-a-set-of-requirements.md).
 
 ## Find the governing source
 
@@ -57,6 +72,4 @@ To follow the specifications with an installed CLI, run `dotspec docs job` from 
 
 ## Try the workflow with a participant
 
-Use a fresh database. Invite someone to recall a recent errand where they needed an answer from another person. What had they promised, what did they do while waiting, and how did they tell it was finished? Let them record an example they are comfortable sharing, take a break, and then return to the list. Ask what needs attention today and what they would do if a reply requested more work. Let them choose the controls.
-
-With their consent, record the cue they used, the action they took and anything they had to reconstruct elsewhere. The job and its outcomes are hypotheses. A passing restart test establishes what the software preserved. Whether those details help someone resume a real commitment is still open. [Less reconstruction](specs/jobs/personal-commitments.job.spec.md#less-reconstruction).
+Ask someone to recall the last errand they had to put off. What brought it back to mind? How did they know what was still left to do? Invite them to use a fresh list for two errands, mark one finished, take a break and return. Ask which errand they would do next. With their consent, record what they consulted and what they had to reconstruct. The restart test checks the software. Their experience helps assess the [proposed outcomes](specs/jobs/errands.job.spec.md#outcomes).

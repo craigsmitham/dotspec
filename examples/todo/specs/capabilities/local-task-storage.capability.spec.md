@@ -2,15 +2,15 @@
 type: capability-spec
 ---
 
-# Local task storage
+# Remember task progress between visits
 
 ## Description
 
-Keeps a commitment and the owner's last recorded decision together between visits. Finding the title alone would leave someone who returns to a waiting errand searching their messages for the reply they meant to chase.
+Remember my tasks and which ones I have checked off between visits. For a waiting task, keep the expected reply and follow-up day too.
 
 ## Supports
 
-[Less reconstruction](../jobs/personal-commitments.job.spec.md#less-reconstruction).
+[Less time retracing my steps](../jobs/errands.job.spec.md#less-time-retracing-my-steps) and [Less reconstruction](../jobs/personal-commitments.job.spec.md#less-reconstruction).
 
 ## Provided by
 

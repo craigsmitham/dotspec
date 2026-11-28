@@ -61,7 +61,7 @@ Software requirements · [Model reference](<../docs/reference/model/index.md#fea
 
 ### Feature example
 
-[Pick up where I left off](<../examples/todo/specs/features/pick-up-where-i-left-off.feature.spec.md>) groups the [Decide what to do about a waiting errand](<../examples/todo/specs/use-cases/resume-list.use-case.spec.md>) use case.
+[Pick up where I left off](<../examples/todo/specs/features/pick-up-where-i-left-off.feature.spec.md>) groups the [See what is left to do](<../examples/todo/specs/use-cases/see-remaining.use-case.spec.md>) use case.
 
 ## Job
 

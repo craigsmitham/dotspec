@@ -146,8 +146,8 @@ Minimize the time it takes to identify the next outstanding action when returnin
 
 **Supported by**
 
-- [Local task storage](<../capabilities/local-task-storage.capability.spec-report.md>)
 - [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
+- [Remember task progress between visits](<../capabilities/remember-task-progress-between-visits.capability.spec-report.md>)
 
 #### Applies to
 

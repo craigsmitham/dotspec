@@ -6,7 +6,7 @@ source: "../specs/personal-task-list.system.spec.md#personal-task-list"
 ---
 # Personal task list
 
-A personal list of errands the owner can act on, replies they are waiting for and commitments they have settled.
+A personal checklist for errands I want to remember and work I have already finished.
 
 <details>
 <summary>On this page</summary>
@@ -39,11 +39,13 @@ A personal list of errands the owner can act on, replies they are waiting for an
 
 ## Purpose
 
-Help one person pick up an errand after an interruption and recognize when to chase an outstanding reply.
+Give one person a place to put a task down now and find out what is left when they return.
 
 ## Overview
 
-Each errand sits in one of three views. Open holds work the owner can advance, Waiting holds errands that depend on someone else's reply, and Completed holds commitments the owner has settled. Suppose a guest needs a working sink by Friday. Sending the plumber a photo finishes today's action, so the owner moves the repair to Waiting. They still owe the repair. The [job of seeing personal commitments through](<jobs/see-personal-commitments-through.job.spec-report.md>) explains what the owner needs to establish when they return.
+At breakfast I remember to return the library books and mail a parcel. I write both down. That afternoon I return the books and cross them off. The next morning the parcel is still in Open. If I find another library book in my bag, I can reopen the same task. [Take care of an errand I have to leave for later](<jobs/take-care-of-an-errand-i-have-to-leave-for-later.job.spec-report.md>).
+
+Sometimes the next action belongs to someone else. The [follow-up example](<features/follow-up-when-someone-owes-me-a-reply.feature.spec-report.md>) shows how I keep track of a reply.
 
 ## Goals
 
@@ -60,6 +62,7 @@ The person who keeps the list relies on it to pick up unfinished errands after a
 ## Jobs
 
 - [See personal commitments through](<jobs/see-personal-commitments-through.job.spec-report.md>) — See personal commitments through from accepting responsibility for an errand to establishing that the promised result has been delivered or someone else has agreed to take responsibility for it.
+- [Take care of an errand I have to leave for later](<jobs/take-care-of-an-errand-i-have-to-leave-for-later.job.spec-report.md>) — Take care of an errand that comes to mind before I can do it. …
 
 ## Scope
 
@@ -79,22 +82,25 @@ The browser and service run on the same computer. The owner can close either bet
 
 ## Business rules
 
-- [Completion preserves a commitment](<business-rules/completion-preserves-a-commitment.business-rule.spec-report.md>) — A settled commitment must stay on the person's list until they delete it.
 - [Follow-up decision table](<business-rules/when-a-reply-needs-chasing.business-rule.spec-report.md#specification.follow-up-decision-table>) *(When a reply needs chasing)*
+- [Keep completed tasks until I remove them](<business-rules/keep-completed-tasks-until-i-remove-them.business-rule.spec-report.md>) — A completed task must stay on the person's list until they delete it.
 - [When a reply needs chasing](<business-rules/when-a-reply-needs-chasing.business-rule.spec-report.md>) — For a reply the person is still waiting for, the follow-up decision table determines whether to chase it by comparing today with the chosen day.
 
 ## Features
 
-- [Pick up where I left off](<features/pick-up-where-i-left-off.feature.spec-report.md>) — Find an errand after a break, see whether a reply needs chasing and take up the work again when an answer arrives.
+- [Follow up when someone owes me a reply](<features/follow-up-when-someone-owes-me-a-reply.feature.spec-report.md>) — Find an errand after a break, see whether a reply needs chasing and take up the work again when an answer arrives.
+- [Pick up where I left off](<features/pick-up-where-i-left-off.feature.spec-report.md>) — Put an errand on my list while it is fresh in my mind and come back to see which tasks are still open.
 
 ## Capabilities
 
 - [Follow-up review](<capabilities/follow-up-review.capability.spec-report.md>) — When the owner reviews waiting errands, they can see which replies they planned to chase by today and what to ask for.
-- [Local task storage](<capabilities/local-task-storage.capability.spec-report.md>) — Keeps a commitment and the owner's last recorded decision together between visits. …
+- [Remember task progress between visits](<capabilities/remember-task-progress-between-visits.capability.spec-report.md>) — Remember my tasks and which ones I have checked off between visits. For a waiting task, keep the expected reply and follow-up day too.
 
 ## Use cases
 
 - [Decide what to do about a waiting errand](<use-cases/decide-what-to-do-about-a-waiting-errand.use-case.spec-report.md>) — Decide whether to take up a waiting errand, keep waiting or mark it settled, and see that decision reflected in my list.
+- [Save an errand for later](<use-cases/save-an-errand-for-later.use-case.spec-report.md>) — Put an errand down so I can get back to what I was doing.
+- [See what is left to do](<use-cases/see-what-is-left-to-do.use-case.spec-report.md>) — Work out which of my saved errands I still need to do.
 
 ## Quality Attributes
 
@@ -103,7 +109,7 @@ The browser and service run on the same computer. The owner can close either bet
 ## Requirements
 
 - [Acknowledge after commit](<components/task-service/requirements/acknowledge-after-commit.requirement.spec-report.md>) — The task service must record each change in a single commit to the local database and acknowledge it to the browser only after that commit succeeds.
-- [Calendar dates accepted for follow-up](<features/pick-up-where-i-left-off.feature.spec-report.md#specification.calendar-dates-accepted-for-follow-up>) *(Pick up where I left off)*
+- [Calendar dates accepted for follow-up](<features/follow-up-when-someone-owes-me-a-reply.feature.spec-report.md#specification.calendar-dates-accepted-for-follow-up>) *(Follow up when someone owes me a reply)*
 - [Keep recorded work available](<requirements/keep-recorded-work-available.requirement.spec-report.md>) — When the person returns to the same local database, each saved entry must appear once in the view for its recorded state (Open, Waiting or Completed). …
 - [Preserve tasks across restart](<requirements/preserve-tasks-across-restart.requirement.spec-report.md>) — After the service acknowledges a change, stopping and restarting it on the same database must preserve each surviving entry’s identity, title and state. …
 - [Saved follow-up dates across time zones](<quality/durability/durability.quality-attribute.spec-report.md#specification.saved-follow-up-dates-across-time-zones>) *(Durability)*
@@ -111,8 +117,8 @@ The browser and service run on the same computer. The owner can close either bet
 
 ## Concepts
 
-- [Checklist](<concepts/checklist.concept.spec-report.md>) — Decide what I can do next, which replies I need to chase and which commitments I have already settled. *Uses:*
-  - [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. …
+- [Checklist](<concepts/checklist.concept.spec-report.md>) — Keep track of what I still need to do and what I have already done. *Uses:*
+  - [My checklist](<concept-uses/my-checklist.concept-use.spec-report.md>) — I can cross off one errand, leave another open and put a task back if there is more to do. …
 - [Renaming an entry by identity](<concepts/checklist.concept.spec-report.md#specification.renaming-an-entry-by-identity>) *(Checklist)*
 
 ## Architecture

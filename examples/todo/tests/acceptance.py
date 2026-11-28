@@ -145,6 +145,35 @@ def expect_waiting(waiting, entry, reason, follow_up, cue):
     assert other not in text, (entry, text)
 
 
+def verify_errands(binary, db):
+    with running(binary, db) as base:
+        _, books = add(base, "Return the library books")
+        current, parcel = add(base, "Mail the parcel")
+        submit(base, current, books + "/complete")
+
+    with running(binary, db) as base:
+        assert page(base).entries() == {parcel: "Mail the parcel"}, "restart lost or changed open tasks"
+        completed = page(base, "/completed")
+        assert completed.entries() == {books: "Return the library books"}
+        submit(base, completed, books + "/reopen")
+        assert page(base).entries() == {books: "Return the library books", parcel: "Mail the parcel"}
+        for entry in (books, parcel):
+            submit(base, page(base), entry + "/complete")
+        with urlopen(base, timeout=10) as response:
+            assert "No open tasks." in response.read().decode()
+        with closing(sqlite3.connect(db)) as connection:
+            connection.execute("DROP VIEW task_list")
+        try:
+            page(base)
+        except HTTPError as error:
+            with error:
+                assert error.code == 500
+                message = error.read().decode()
+                assert "Could not access the task list." in message and "No open tasks." not in message
+        else:
+            raise AssertionError("unreadable list returned success")
+
+
 def verify(binary, db):
     with running(binary, db) as base:
         current = page(base)
@@ -297,6 +326,7 @@ def run(app):
         binary = Path(tmp) / ("todo.exe" if os.name == "nt" else "todo")
         subprocess.run(["go", "build", "-mod=readonly", "-o", binary, "."], cwd=app, check=True)
         subprocess.run(["go", "test", "-mod=readonly", "-run", "^TestFollowUpDate", "."], cwd=app, check=True)
+        verify_errands(binary, Path(tmp) / "errands.sqlite")
         verify(binary, Path(tmp) / "tasks.sqlite")
         verify_follow_up_calendar(binary, Path(tmp) / "dates.sqlite")
         # Complete fails at its second write, after the waiting details were removed in the same transaction.

@@ -21,19 +21,19 @@ The [time-zone cases](<#specification.saved-follow-up-dates-across-time-zones>) 
 
 <a id="specification.saved-follow-up-dates-across-time-zones"></a>
 
-### [Saved follow-up dates across time zones](<../../../tests/acceptance.py#L249>)
+### [Saved follow-up dates across time zones](<../../../tests/acceptance.py#L278>)
 
 Defines requirements.
 
 #### Verification
 
-- [Run the acceptance suite on Unix](<../../../tests/acceptance.py#L295>)
+- [Run the acceptance suite on Unix](<../../../tests/acceptance.py#L324>)
 
 No matching result recorded.
 
 ## Verification
 
-- [Recover acknowledged changes after restart](<../../../tests/acceptance.py#L148>)
+- [Recover acknowledged changes after restart](<../../../tests/acceptance.py#L177>)
 
 No matching result recorded.
 

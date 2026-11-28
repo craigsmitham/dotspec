@@ -53,7 +53,7 @@ A list that loses track of earlier decisions forces the person to reconstruct th
 
 ## Verification
 
-- [Restart acceptance test](<../../tests/acceptance.py#L148>)
+- [Restart acceptance test](<../../tests/acceptance.py#L177>)
 
 No matching result recorded.
 
@@ -65,6 +65,7 @@ No matching result recorded.
 
 **Feature**
 
+- [Follow up when someone owes me a reply](<../features/follow-up-when-someone-owes-me-a-reply.feature.spec-report.md>)
 - [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)
 
 **Quality attribute**

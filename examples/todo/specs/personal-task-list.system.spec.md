@@ -5,15 +5,17 @@ type: system-spec
 
 ## Description
 
-A personal list of errands the owner can act on, replies they are waiting for and commitments they have settled.
+A personal checklist for errands I want to remember and work I have already finished.
 
 ## Purpose
 
-Help one person pick up an errand after an interruption and recognize when to chase an outstanding reply.
+Give one person a place to put a task down now and find out what is left when they return.
 
 ## Overview
 
-Each errand sits in one of three views. Open holds work the owner can advance, Waiting holds errands that depend on someone else's reply, and Completed holds commitments the owner has settled. Suppose a guest needs a working sink by Friday. Sending the plumber a photo finishes today's action, so the owner moves the repair to Waiting. They still owe the repair. The [job of seeing personal commitments through](jobs/personal-commitments.job.spec.md) explains what the owner needs to establish when they return.
+At breakfast I remember to return the library books and mail a parcel. I write both down. That afternoon I return the books and cross them off. The next morning the parcel is still in Open. If I find another library book in my bag, I can reopen the same task. [Take care of an errand I have to leave for later](jobs/errands.job.spec.md).
+
+Sometimes the next action belongs to someone else. The [follow-up example](features/follow-up.feature.spec.md) shows how I keep track of a reply.
 
 ## Goals
 
@@ -59,7 +61,7 @@ Each return to the list on the owner's computer, including after the service res
 
 #### Description
 
-Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. Two errands with the same title can be at different stages.
+I can cross off one errand, leave another open and put a task back if there is more to do. Two errands with the same title can be at different stages.
 
 #### Definition
 
@@ -67,7 +69,7 @@ Each entry follows one commitment through the owner's next action, an outstandin
 
 #### Supports
 
-[See personal commitments through](jobs/personal-commitments.job.spec.md).
+[Take care of an errand I have to leave for later](jobs/errands.job.spec.md) and [See personal commitments through](jobs/personal-commitments.job.spec.md).
 
 ## Provided interfaces
 

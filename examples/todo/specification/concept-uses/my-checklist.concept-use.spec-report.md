@@ -9,7 +9,7 @@ source: "../../specs/personal-task-list.system.spec.md#my-checklist"
 
 ## Description
 
-Each entry follows one commitment through the owner's next action, an outstanding reply or settlement. Two errands with the same title can be at different stages.
+I can cross off one errand, leave another open and put a task back if there is more to do. Two errands with the same title can be at different stages.
 
 ## Uses
 
@@ -17,13 +17,13 @@ Each entry follows one commitment through the owner's next action, an outstandin
 
 ## Supports
 
-[See personal commitments through](<../jobs/see-personal-commitments-through.job.spec-report.md>).
+[Take care of an errand I have to leave for later](<../jobs/take-care-of-an-errand-i-have-to-leave-for-later.job.spec-report.md>) and [See personal commitments through](<../jobs/see-personal-commitments-through.job.spec-report.md>).
 
 ## Related specifications
 
 **Applies here**
 
-- [Completion preserves a commitment](<../business-rules/completion-preserves-a-commitment.business-rule.spec-report.md>)
+- [Keep completed tasks until I remove them](<../business-rules/keep-completed-tasks-until-i-remove-them.business-rule.spec-report.md>)
 - [Keep recorded work available](<../requirements/keep-recorded-work-available.requirement.spec-report.md>)
 - [Preserve tasks across restart](<../requirements/preserve-tasks-across-restart.requirement.spec-report.md>)
 - [When a reply needs chasing](<../business-rules/when-a-reply-needs-chasing.business-rule.spec-report.md>)

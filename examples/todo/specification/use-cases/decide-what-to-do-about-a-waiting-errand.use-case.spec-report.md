@@ -123,7 +123,7 @@ The person can act on a reply as soon as it arrives. Their chosen day governs wh
 
 **Feature**
 
-- [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)
+- [Follow up when someone owes me a reply](<../features/follow-up-when-someone-owes-me-a-reply.feature.spec-report.md>)
 
 ---
 

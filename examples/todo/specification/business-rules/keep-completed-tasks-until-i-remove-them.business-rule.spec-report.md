@@ -1,15 +1,15 @@
 ---
 generated_by: dotspec
 type: business-rule-spec-report
-source: "../../specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment"
+source: "../../specs/business-rules/completion.business-rule.spec.md#keep-completed-tasks-until-i-remove-them"
 ---
 [Personal task list](<../personal-task-list.system.spec-report.md>) › [Business rules](<../personal-task-list.system.spec-report.md#business-rules>)
 
-# Completion preserves a commitment
+# Keep completed tasks until I remove them
 
 ## Statement
 
-A settled commitment must stay on the person's list until they delete it.
+A completed task must stay on the person's list until they delete it.
 
 ## Applies to
 
@@ -23,7 +23,7 @@ The recordkeeping policy chosen for this worked example. The person who keeps th
 
 ## Rationale
 
-If the repair fails the next morning, the person can find yesterday's commitment and take it up again. Deleting the record gives up that option.
+If I find a library book in my bag tomorrow, I can reopen the errand I crossed off yesterday. Clearing completed tasks overnight would take that option away.
 
 ## Related specifications
 
@@ -35,4 +35,4 @@ If the repair fails the next morning, the person can find yesterday's commitment
 
 ---
 
-[View source](<../../specs/business-rules/completion.business-rule.spec.md#completion-preserves-a-commitment>)
+[View source](<../../specs/business-rules/completion.business-rule.spec.md#keep-completed-tasks-until-i-remove-them>)

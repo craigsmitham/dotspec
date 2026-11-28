@@ -15,9 +15,17 @@ When the person returns to the same local database, each saved entry must appear
 
 **Targets:** [My checklist](<../concept-uses/my-checklist.concept-use.spec-report.md>).
 
+## Criterion
+
+If the books are completed and the parcel is open, returning to Open shows just the parcel. After completing the parcel too, Open reports that it has no tasks. A failed read must report the failure so the owner can distinguish it from an empty list.
+
+## Supports
+
+[Less time retracing my steps](<../jobs/take-care-of-an-errand-i-have-to-leave-for-later.job.spec-report.md#less-time-retracing-my-steps>).
+
 ## Derived from
 
-[Completion preserves a commitment](<../business-rules/completion-preserves-a-commitment.business-rule.spec-report.md>).
+[Keep completed tasks until I remove them](<../business-rules/keep-completed-tasks-until-i-remove-them.business-rule.spec-report.md>).
 
 ## Rationale
 
@@ -29,6 +37,8 @@ The [form acceptance test](<../../tests/acceptance.py>) returns to Open, Waiting
 
 ## Verification
 
+- [Review errands after a break and distinguish a failed read](<../../tests/acceptance.py#L148>)
+
 - [Exercise the forms across list views](<../../README.md#run-the-app>)
 
 No matching result recorded.
@@ -37,6 +47,7 @@ No matching result recorded.
 
 **Feature**
 
+- [Follow up when someone owes me a reply](<../features/follow-up-when-someone-owes-me-a-reply.feature.spec-report.md>)
 - [Pick up where I left off](<../features/pick-up-where-i-left-off.feature.spec-report.md>)
 
 **Refined by**
