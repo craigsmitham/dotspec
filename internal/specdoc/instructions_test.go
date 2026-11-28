@@ -73,7 +73,7 @@ func TestInstructionLifecycle(t *testing.T) {
 		t.Fatal(err)
 	}
 	body := read("AGENTS.md")
-	if !strings.HasPrefix(body, original) || strings.Count(body, blockStart) != 1 || !strings.Contains(body, "[project specification index](<specification/README.md>)") || strings.Contains(strings.ReplaceAll(body, "\r\n", ""), "\n") {
+	if !strings.HasPrefix(body, original+blockStart+"\r\n## System specification\r\n\r\n") || strings.Count(body, blockStart) != 1 || !strings.Contains(body, "[project specification index](<specification/README.md>)") || strings.Contains(strings.ReplaceAll(body, "\r\n", ""), "\n") {
 		t.Fatal(body)
 	}
 	if info, err := os.Stat(agents); err != nil || info.Mode().Perm() != originalInfo.Mode().Perm() {

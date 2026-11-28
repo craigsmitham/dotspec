@@ -219,7 +219,8 @@ func (i *inventory) planInstructions(root string, plan *Plan) error {
 		}
 		body := ""
 		if targets[rel] {
-			body = "For behavior changes and reviews, use the " + link(label, relative(rel, plan.EntryPoint)) + " to find the relevant requirement. Follow its links to the governing source and any verification procedures."
+			body = "## System specification\n\n"
+			body += "For behavior changes and reviews, use the " + link(label, relative(rel, plan.EntryPoint)) + " to find the relevant requirement. Follow its links to the governing source and any verification procedures."
 			body += "\n\nRecord new or revised behavior in the source that defines it. After editing specification sources, run `dotspec build` then `dotspec check` from the directory containing `dotspec.yaml`. Use `dotspec docs` for authoring guidance."
 		}
 		next, err := updateBlock(data, body)
